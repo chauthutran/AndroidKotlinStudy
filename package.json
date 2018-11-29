@@ -1,0 +1,12 @@
+{
+  "name": "CwSServiceWorkerBuild",
+  "version": "1.0.0",
+  "description": "CwS PWA service worker build",
+  "author": "James Chang",
+  "scripts": {
+    "build": "node cws_sw_build.js"
+  },
+  "dependencies": {
+    "workbox-build": "^3.6.3"
+  }
+}

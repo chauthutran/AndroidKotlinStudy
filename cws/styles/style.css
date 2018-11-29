@@ -1,0 +1,242 @@
+.card {
+  margin: 15px;
+}
+
+.container {
+  text-align: center;
+}
+
+/* START: added by Greg (checkbox on login: remember me) */
+/* CHECKBOX AND RADIO*/
+/*
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border: 1px solid #95989A;
+}
+
+.check {
+  border-radius: 4px;
+}
+
+.radio {
+  border-radius: 50%;
+}
+
+.container:hover input~.checkmark {
+  background-color: #ccc;
+}
+
+  .container input:checked~.checkmark {
+    background-color: #FFC61D;
+    border: none;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .container input:checked~.checkmark:after {
+    display: block;
+  }
+
+  .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+*/
+/* END: added by Greg (checkbox on login: remember me) */
+
+
+.cssDefault {
+  background-color: white !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+button {
+  background-color: white !important;
+}
+
+input {
+  border-color: #ccc;
+  border-width: thin;
+  padding: 2px;
+}
+
+/* =========================== */
+/* App Custom Style */
+
+.reget {
+  cursor:pointer;
+}
+
+.blockStyle {
+  /*margin: 5px;
+  padding: 3px;*/
+  background-color: #f4f4f4;
+  /* border: 1px solid silver; */
+  text-align: left;
+}
+
+.itemBlock{
+  margin: 5px;
+  padding: 3px;
+  background-color: #f4f4f4;
+  border: 1px solid silver;
+  text-align: left;
+} 
+
+.testSec {
+  margin: 5px;
+  padding: 6px;
+  background-color: #EEE;
+  border: 1px solid silver;
+  text-align: left;
+}
+
+.testBlock {
+  display: inline-block;
+  margin: 3px;
+  padding: 5px;
+  background-color: lightgreen;
+  border: 1px solid gray;  
+  cursor: pointer;
+}
+
+.btnType {
+  display: inline-block;
+  cursor: pointer;                
+  margin: 5px;
+}
+
+
+.inputDiv {
+  margin: 3px;
+  padding: 5px;
+  background-color: white;  
+}
+
+.titleDiv {
+  display: inline-block;
+  min-width: 90px;
+  padding-left: 5px;
+}
+
+.entryDiv {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.actionsDiv {
+  margin: 3px;
+  margin-top: 9px;  
+  padding: 5px;
+  padding-left: 15px;
+  background-color: rgb(240, 240, 240);    
+  /*border: 1px solid gray;  */
+}
+
+.actionBtn {
+  margin-right: 10px;
+}
+
+.selectionDiv 
+{
+    display: inline-block;
+    cursor: pointer;                
+}
+
+.queueDiv,.redeemListDiv
+{
+  border: 1px solid darkolivegreen; 
+  margin: 4px;
+  padding: 4px;
+  background-color: #d6d6e8;
+  cursor: pointer;                
+}
+
+.listItemDetail {
+  margin: 5px;
+  padding: 5px;
+  background-color: #EEE;
+  color: darkblue;
+  font-size: 13px;
+}
+/* =========================== */
+
+/* =========================== */
+/* From materialize.css */
+
+body{
+  margin: 0;
+  display: block;
+  /*font-size: 14px;*/
+}
+
+/*
+nav {
+  color: #fff;
+  background-color: #5c5c5c;
+  width: 100%;
+  height: 35px;
+  line-height: 35px;
+
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);  
+
+  display: block;
+}
+*/
+
+nav .nav-wrapper {
+  position: relative;
+  height: 100%;
+  text-align: center;
+}
+
+.bgc_blue {
+  background-color: #0D47A1 !important;
+}
+
+.bgc_orange {
+  background-color: #ee6e73 !important;
+}
+
+a.brand-logo {
+  font-size: 22px;
+  color: white;
+  text-decoration: none;
+}
+
+.errorMsg
+{
+  color: red;
+  font-style: italic;
+  font-size: 10px;
+}
+
+.topIconsTbl td {
+  padding: 1px 2px;
+}
+
+/* =========================== */

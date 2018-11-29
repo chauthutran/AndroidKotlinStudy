@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-color">
+
+  <head>
+    <title>CwS - Provider: redeemGen</title>
+    <script type="text/javascript" src="scripts/libraries/jquery-3.3.1.js"></script>
+    <style>
+        div.label {
+            width:150px;
+        }
+        div.output { font-family: monospace; }
+    </style>
+  </head>
+ 
+  <body>
+
+    <table style="width:100%;height:100%">
+        <tr>
+            <td>
+                
+                <!-- INPUT  -->
+
+                <table>
+
+                    <tr>
+                        <td>
+                            <div class="label">user</div>
+                        </td>
+                        <td>
+                            <input type="text" class="user" value="1004">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label">status</div>
+                        </td>
+                        <td>
+                            <input type="text" class="status" value="queued">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label">redeem url</div>
+                        </td>
+                        <td>
+                            <input type="text" class="redeemURL" value="" >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <div class="label">rows</div>
+                        </td>
+                        <td>
+                            <input type="text" class="rows" value="20">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <div class="label">spread over mins</div>
+                        </td>
+                        <td>
+                            <input type="text" class="minSpread" value="30">
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <div class="label"></div>
+                        </td>
+                        <td>
+                            <input type="button" value="generate" onclick="generate()">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                
+                <!-- OUTPUT  -->
+
+                <div class="output" style="width:600px;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></div> 
+                <textarea class="output" style="display:none;min-width:50%;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></textarea> 
+
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <div class="label"></div>
+                        </td>
+                        <td>
+                                <input type="button" value="Save to LocalStorage" onclick="writeToLocalStorage()">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+
+        $('input.redeemURL').css ( 'width',  $('div.output').css('width').replace('px','') - 90 );
+
+        $('input.redeemURL').val ( location.origin + '/eRefWSDev3/api/dc/redeem')
+
+        http://localhost:8080/eRefWSDev3/api/dc/redeem
+    
+    function generate()
+    {
+        var myTemplate = template();
+        var myDateTimeSeed = new Date();
+        var myResult = '', tmpRow = '';
+
+        for (var i = 1; i <= $('input.rows').val(); i++) 
+        {
+            myDateTimeSeed = getCalcTime(myDateTimeSeed,$('input.minSpread').val () * -1)
+            var myDate = getTodayDate(myDateTimeSeed);
+            var myTime = getTimeNow(myDateTimeSeed);
+    
+            tmpRow = myTemplate;
+
+            let newID = generateRandomString(8);
+            let rnd8 = generateRandomNumber(8);
+            let rnd12 = generateRandomNumber(12);
+
+            tmpRow = tmpRow.replace( /{NEWID}/g, newID );
+            tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
+            tmpRow = tmpRow.replace( /{NUMERIC12}/g, rnd12 );
+            tmpRow = tmpRow.replace( /{DATETODAY}/g, myDate );
+            tmpRow = tmpRow.replace( /{TIMENOW}/g, myTime );
+            tmpRow = tmpRow.replace( /{user}/g, $('input.user').val() );
+            tmpRow = tmpRow.replace( /{status}/g, $('input.status').val() );
+            tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
+
+            myResult += tmpRow + ',';
+
+        }
+
+        myResult = myResult.substring(myResult,myResult.length-1);
+
+        $('div.output').empty();
+        $('div.output').append( document.createTextNode( eval( JSON.stringify(myResult, undefined, 2) ) ) );
+        $('textarea.output').val( myResult );
+        
+
+    }
+
+    function getCalcTime(dtmSeed,min)
+    {
+        return new Date(dtmSeed.getTime() + (min*60000));
+    }
+
+    function template()
+    {
+        return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "id":"{NUMERIC12}", "status":"{status}", "network":false, ' +
+             ' "data":{  "payloadJson":{  "countryType":"MZ", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
+             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"Cape Town", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
+             ' }, ' +
+             ' "url":"{redeemURL}", ' +
+             ' "actionJson":{   "actionType":"sendToWS", "payloadBody":["voucherCode" ], "payloadHeader":[  "usr","pwd" ], "alertResult":"true", "wsNACase":{  "note":"display message" },' +
+             ' "redeemListInsert":"true", "url":"/api/dc/redeem" }}} '
+    }
+
+    function getTodayDate(dtmSeed)
+    {
+        var date = new Date(dtmSeed);
+        var month = eval( date.getMonth() ) + 1;
+        month = ( month < 10 ) ? "0" + month : month;
+        var day = eval( date.getDate() );
+        day = ( day < 10 ) ? "0" + day : day;
+        return date.getFullYear() + "-" + month + "-" + day;
+    }
+
+    function getTimeNow(dtmSeed)
+    {
+        var d = new Date(dtmSeed),
+            h = (d.getHours()<10?'0':'') + d.getHours(),
+            m = (d.getMinutes()<10?'0':'') + d.getMinutes(),
+            s = (d.getSeconds()<10?'0':'') + d.getSeconds();
+        return (h+':'+m+':'+s);
+    }
+
+    function generateRandomNumberRange(min_value , max_value) 
+    {
+        return Math.random() * (max_value-min_value) + min_value ;
+    }
+    function generateRandomString(len) {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < len; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
+    function generateRandomNumber(len) {
+        var text = "";
+        var possible = "0123456789";
+
+        for (var i = 0; i < len; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
+
+    function writeToLocalStorage()
+    {
+        localStorage.setItem( 'redeemList', '{"list":[ ' +  $('textarea.output').val() + ']}' );
+    }
+    
+    </script>
+
+  </body>
+
+</html>
