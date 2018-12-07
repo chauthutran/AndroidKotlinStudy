@@ -83,7 +83,7 @@
               <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;"></span></div>
             </td>
             <td>
-              <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/blank.gif' style="width: 10px; height: 10px; vertical-align: bottom; margin-bottom: 2px;"/></div>
+              <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/offline.jpg' style="width: 10px; height: 10px; vertical-align: bottom; margin-bottom: 2px;border-radius: 6px;"/></div>
             </td>
             <td>
               <div id="menuTopDiv">
@@ -113,7 +113,8 @@
         <span id="spanMsgAreaClose">
           <img src="images/hide.png" title="Close" id="btnMsgAreaClose">
         </span>
-      </div>        
+        <div id="divMsgProgress" style="display:none;position: relative;left:-8px;top:2px;height:10px;"></div>
+      </div>
     </div>
 
     <!-- LOGIN FORM DIV -->
@@ -132,10 +133,10 @@
               <img src='img/key.svg' class="tab-image">
               <label> Simple options</label>
             </li>
-            <li tabId="2">
+            <!-- <li tabId="2">
               <img src='img/settings.svg' class="tab-image">
               <label> Advanced options(X)</label>
-            </li>
+            </li> -->
           </ul>
       
 

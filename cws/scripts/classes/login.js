@@ -254,13 +254,50 @@ function Login( cwsRenderObj )
 			var newSaveObj = Object.assign( {} , loginData);
 
 			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: me._staySignedIn };
-			newSaveObj.about = { platform: navigator.platform, vendor: navigator.vendor, config_version: loginData.dcdConfig.version, countrycode: loginData.dcdConfig.countryCode, dhis_server: loginData.orgUnitData.dhisServer, login_server: FormUtil.login_server };
+			//newSaveObj.about = {  }; ignore about json block > this information is obtained elsewhere
 
 			DataManager.saveData( me._userName, newSaveObj );	
 		}
 		/* END > added by Greg: 2018/11/23  */
 
+
+		/* START > Greg added: 2018/12/06 */
+    	/* @James: SPECIAL NOTE: Fav-Icon code should go into its own class */
+		$( '.floatListMenuSubIcons' ).empty();
+		//me.floatListMenuSubIconsTag.empty();
+
+		if ( loginData && loginData.dcdConfig && loginData.dcdConfig.favActionList )
+		{
+			for ( var f = 0; f < loginData.dcdConfig.favActionList.length; f++ )
+			{
+				favIcon = loginData.dcdConfig.favActionList[f];
+
+				me.createFavIconButton( favIcon );		
+			}
+		}
+		/* END > Greg added: 2018/12/06 */
+
 	}
+
+	/* START > Greg added: 2018/12/06 */
+	me.createFavIconButton = function( favIcon )
+	{
+
+		$.get( location.pathname +'img/'+ favIcon.img, function(data) {
+			var unqID = Util.generateRandomId();
+			var divTag = $( '<div id="'+unqID+'" class="iconClicker pointer" />');
+			var svg = ( $(data)[0].documentElement );
+
+			$(svg).find("tspan").html(favIcon.name) 
+			$(divTag).on("click", function() {  alert (' you clicked ' + favIcon.name )  } );
+
+			divTag.append( svg );
+
+			$( '.floatListMenuSubIcons' ).append( divTag );
+		});
+
+	}
+	/* END > Greg added: 2018/12/06 */
 
 	// --------------------------------------
 	

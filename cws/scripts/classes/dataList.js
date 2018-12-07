@@ -74,6 +74,7 @@ function DataList( cwsRenderObj, blockObj )
                 blockTag.append( divItemTag );
 
                 // Generate and append items
+                me.renderIconTag( itemAttrDataList, divItemTag );
                 me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
                 me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
                 
@@ -143,7 +144,27 @@ function DataList( cwsRenderObj, blockObj )
         converted.displayData = JSON.parse( JSON.stringify( jsonList.displayData[idx] ) );
         return converted;
     }
-    
+  
+    me.renderIconTag = function( valueData, parentItemTag )
+    {
+        var lastData = localStorage.getItem( 'lastPayload' ); //added by Greg (2018/12/05) > incorrect here > async calls so this value is never loaded in time
+
+        var labelText;
+
+        if ( lastData )
+        {
+            labelText = lastData.data.phoneNumber;
+        }
+        else if ( valueData.length )
+        {
+            labelText = valueData[0].value;
+        }
+
+        // Set Icons..
+        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <small class="voucherIcon"><img src="img/voucher.svg"></small> <small class="statusIcon"><img src="img/open.svg"></small> <strong> ' + labelText +' </strong> </div>' );
+        parentItemTag.append( iconListTag );
+    }
+  
 	// -------------------------------
 	
 	// me.initialize();

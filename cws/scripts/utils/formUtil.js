@@ -275,16 +275,6 @@ FormUtil.getFetchWSJson = function( payloadJson )
 
 FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
 {	
-	/* Greg (2018/11/27): Do we even need this check to be present? */
-	// headers info change? or pass as body??
-	/*if ( !FormUtil.checkLoginSubmitCase( payloadJson ) && !FormUtil.checkLogin() )
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		alert( 'Not Loggged In!' );
-		returnFunc( false );
-	*/
-	
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -539,3 +529,51 @@ FormUtil.getTagVal = function( tag )
 
 	return val;
 }
+
+/* START > Added by Greg: 2018/12/04 */
+FormUtil.getAboutInfo = function()
+{
+	var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+	var retObj = {};
+	var aboutApp = [];
+	var aboutSession = [];
+	var aboutBrowser = [];
+
+	aboutApp.push ( { name: 'appName', value: 'CwS: ' +$( 'div.logo-desc-all' ).html() } );
+	aboutApp.push ( { name: 'appVersion', value: $( '#spanVersion' ).html() } );
+	aboutApp.push ( { name: 'urlName', value: FormUtil.appUrlName } );
+	aboutApp.push ( { name: 'staticWSName', value: FormUtil.staticWSName } );
+
+	retObj.about = ( aboutApp );
+
+	/*for ( keyObj in navigator )
+	{
+		if ( !( typeof navigator[keyObj]  === 'object' ) && !( typeof navigator[keyObj]  === 'function' ) && !( navigator[keyObj] == '' ) )
+		{
+			aboutBrowser.push ( { name: keyObj, value: navigator[keyObj] } );
+		}
+
+		retObj.browser = ( aboutBrowser );
+
+	}*/
+
+	aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
+	aboutBrowser.push ( { name: 'appVersion', value: navigator.appVersion } );
+	aboutBrowser.push ( { name: 'language', value: navigator.language } );
+	aboutBrowser.push ( { name: 'userAgent', value: navigator.userAgent } );
+
+	retObj.device_browser = ( aboutBrowser );
+
+	aboutSession.push ( { name: 'dcdVersion', value: userConfig.dcdConfig.version } );
+	aboutSession.push ( { name: 'dcdCountryCode', value: userConfig.dcdConfig.countryCode } );
+	aboutSession.push ( { name: 'dataServer', value: userConfig.orgUnitData.dhisServer } );
+	aboutSession.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
+	aboutSession.push ( { name: 'authenticateServer', value: FormUtil.login_server } );
+	aboutSession.push ( { name: 'dateCreation', value: userConfig.mySession.createdDate } );
+	aboutSession.push ( { name: 'dateUpdated', value: userConfig.mySession.lastUpdated } );
+
+	retObj.advanced = ( aboutSession );
+
+	return retObj;
+}
+/* END > Added by Greg: 2018/12/04 */

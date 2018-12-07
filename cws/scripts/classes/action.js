@@ -195,7 +195,7 @@ function Action( cwsRenderObj, blockObj )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );				
 
-				console.log( 'formDivSecTag: ' + formDivSecTag.html() );
+				//console.log( 'formDivSecTag: ' + formDivSecTag.html() );
 
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
@@ -284,6 +284,7 @@ function Action( cwsRenderObj, blockObj )
 							{
 								passData.push( returnJson );
 								me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
+								localStorage.setItem( 'lastPayload', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 							}
 							else
 							{

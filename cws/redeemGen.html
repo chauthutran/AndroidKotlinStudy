@@ -9,6 +9,7 @@
             width:150px;
         }
         div.output { font-family: monospace; }
+        input.button { width:120px;}
     </style>
   </head>
  
@@ -35,7 +36,12 @@
                             <div class="label">status</div>
                         </td>
                         <td>
-                            <input type="text" class="status" value="queued">
+                            <select class="status">
+                                <option value="random">mixed</option>
+                                <option value="queued">queued</option>
+                                <option value="submit">submit</option>
+                                <option value="failed">failed</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -56,7 +62,7 @@
                     </tr>
                     <tr>
                         <td style="text-align:right">
-                            <div class="label">spread over mins</div>
+                            <div class="label">minutes apart</div>
                         </td>
                         <td>
                             <input type="text" class="minSpread" value="30">
@@ -75,7 +81,7 @@
                             <div class="label"></div>
                         </td>
                         <td>
-                            <input type="button" value="generate" onclick="generate()">
+                            <input type="button" class="button" value="generate" onclick="generate()">
                         </td>
                     </tr>
                 </table>
@@ -87,8 +93,8 @@
                 
                 <!-- OUTPUT  -->
 
-                <div class="output" style="width:600px;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></div> 
-                <textarea class="output" style="display:none;min-width:50%;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></textarea> 
+                <!-- <div class="output" style="width:600px;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></div>  -->
+                <textarea class="output" style="min-width:50%;height:100%;min-height:200px;border:1px solid #C0C0C0;overflow: scroll"></textarea> 
 
             </td>
         </tr>
@@ -98,10 +104,11 @@
                 <table>
                     <tr>
                         <td>
-                            <div class="label"></div>
+                            <div style="text-align:right">localStorage</div>
                         </td>
                         <td>
-                                <input type="button" value="Save to LocalStorage" onclick="writeToLocalStorage()">
+                                <input type="button" class="button" value="Overwrite" onclick="writeToLocalStorage(true)">
+                                <input type="button" class="button" value="Append" onclick="writeToLocalStorage(false)">
                         </td>
                     </tr>
                 </table>
@@ -111,9 +118,14 @@
 
     <script>
 
-        $('input.redeemURL').css ( 'width',  $('div.output').css('width').replace('px','') - 90 );
+        $('input.redeemURL').css ( 'width',  $('textarea.output').css('width').replace('px','') - 90 );
 
         $('input.redeemURL').val ( location.origin + '/eRefWSDev3/api/dc/redeem')
+
+        if ( localStorage.getItem ('session') )
+        {
+            $('input.user').val ( JSON.parse(localStorage.getItem ('session')).user )
+        }
 
         http://localhost:8080/eRefWSDev3/api/dc/redeem
     
@@ -128,12 +140,14 @@
             myDateTimeSeed = getCalcTime(myDateTimeSeed,$('input.minSpread').val () * -1)
             var myDate = getTodayDate(myDateTimeSeed);
             var myTime = getTimeNow(myDateTimeSeed);
+            var myUniqueItm = (new Date() ).toISOString();
     
             tmpRow = myTemplate;
 
             let newID = generateRandomString(8);
             let rnd8 = generateRandomNumber(8);
             let rnd12 = generateRandomNumber(12);
+            let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
             tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
@@ -141,7 +155,7 @@
             tmpRow = tmpRow.replace( /{DATETODAY}/g, myDate );
             tmpRow = tmpRow.replace( /{TIMENOW}/g, myTime );
             tmpRow = tmpRow.replace( /{user}/g, $('input.user').val() );
-            tmpRow = tmpRow.replace( /{status}/g, $('input.status').val() );
+            tmpRow = tmpRow.replace( /{status}/g, mystatus );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
@@ -150,10 +164,7 @@
 
         myResult = myResult.substring(myResult,myResult.length-1);
 
-        $('div.output').empty();
-        $('div.output').append( document.createTextNode( eval( JSON.stringify(myResult, undefined, 2) ) ) );
-        $('textarea.output').val( myResult );
-        
+        $('textarea.output').val( (myResult) );
 
     }
 
@@ -196,6 +207,14 @@
     {
         return Math.random() * (max_value-min_value) + min_value ;
     }
+
+    function getRandomWord(slist,anythingRandom)
+    {
+        var arrL = slist.split(',');
+        var i = generateRandomNumberRange(0,arrL.length-1).toFixed(0);
+        return arrL[i];
+    }
+
     function generateRandomString(len) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -205,6 +224,7 @@
 
         return text;
     }
+
     function generateRandomNumber(len) {
         var text = "";
         var possible = "0123456789";
@@ -215,12 +235,85 @@
         return text;
     }
 
-    function writeToLocalStorage()
+    function writeToLocalStorage(overwrite)
     {
-        localStorage.setItem( 'redeemList', '{"list":[ ' +  $('textarea.output').val() + ']}' );
+        if ( overwrite )
+        {
+            localStorage.setItem( 'redeemList', '{"list":[ ' +  $('textarea.output').val() + ' ] } ' );
+        }
+        else
+        {
+            var lsRed = JSON.parse( localStorage.getItem ('redeemList') ) ;
+
+            if ( lsRed && lsRed.list )
+            {
+                var appList = JSON.parse( '[' + $('textarea.output').val() + ']' );
+                var newList = lsRed.list.concat(appList);
+
+                console.log( newList );
+                console.log( JSON.stringify( newList ) );
+
+                localStorage.setItem( 'redeemList', '{"list": ' + JSON.stringify( newList ) + ' } ' );
+            }
+            else
+            {
+                localStorage.setItem( 'redeemList', '{"list":[ ' +  $('textarea.output').val() + ' ] } ' );
+            }
+
+        }
+        
     }
     
     </script>
+
+
+    <style>
+    #f1_container {
+    position: relative;
+    margin: 10px auto;
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+    }
+    #f1_container {
+    perspective: 1000;
+    }
+    #f1_card {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: all 1.0s linear;
+    }
+    #f1_container:hover #f1_card {
+    transform: rotateY(180deg);
+    }
+    .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    }
+    .face.back {
+    display: block;
+    transform: rotateY(180deg);
+    box-sizing: border-box;
+    color: white;
+    text-align: center;
+    background-color: #fff;
+    }
+    </style>
+
+
+    <div id="f1_container">
+        <div id="f1_card" class="shadow">
+            <div class="front face">
+                <img src="img/net.svg"/>
+            </div>
+            <div class="back face center">
+                    <img src="img/net-sync.svg"/>
+            </div>
+        </div>
+    </div>
 
   </body>
 

@@ -71,24 +71,34 @@ function BlockList( cwsRenderObj, blockObj )
         if ( redeemList )
         {
 
-            // Filter me.redeemList for the current (logged in) user's redeemList
+            MsgManager.msgAreaShow( 'loading ' + (redeemList.length) );
+
             me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName); 
 
-            if ( me.redeemList === undefined || me.redeemList.length == 0 )
-            {
-                var liTag = $( '<li class="emptyListLi"></li>' );
-                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
-                liTag.append( spanTag );
-                listContentUlTag.append( liTag );
-            }
-            else
-            {
-                var arrNewFirst = me.redeemList.reverse();
-                for( var i = 0; i < arrNewFirst.length; i++ )
+            //setTimeout( function() {
+
+                // Filter me.redeemList for the current (logged in) user's redeemList
+
+                if ( me.redeemList === undefined || me.redeemList.length == 0 )
                 {
-                    me.renderRedeemListItemTag( arrNewFirst[i], listContentUlTag );
+                    var liTag = $( '<li class="emptyListLi"></li>' );
+                    var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
+                    liTag.append( spanTag );
+                    listContentUlTag.append( liTag );
                 }
-            }
+                else
+                {
+                    var arrNewFirst = me.redeemList; //.reverse();
+                    for( var i = 0; i < arrNewFirst.length; i++ )
+                    {
+                        me.renderRedeemListItemTag( arrNewFirst[i], listContentUlTag );
+                    }
+                }
+                setTimeout( function() {
+                    MsgManager.msgAreaClear();
+                }, 500 );
+
+            //}, 500 );
 
         }
         else
