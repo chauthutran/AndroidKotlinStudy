@@ -61,14 +61,20 @@
   function appInfoOperation( returnFunc ) 
   {
 
-    // Only online mode, check the version diff.
-    if ( ConnManager.getAppConnMode_Online() )
+    // Only online mode and by app.psi-mis.org, check the version diff.
+    if ( ConnManager.getAppConnMode_Online() && FormUtil.isAppsPsiServer() )
     {
-      // TODO: Need to do 'loading..' or display message about retrieving version
-      FormUtil.getAppInfo( function( jsonData ) {
+      
+      FormMsgManager.appBlock( "Loading App Data..." );
+
+      FormUtil.getAppInfo( function( success, jsonData ) 
+      {
+        FormMsgManager.appUnblock();
 
         if ( jsonData )
         {
+          console.log( 'AppInfo Retrieved: ' + JSON.stringify( jsonData ) );
+
           // App version check and possibly reload into the new version
           appVersionCheckAndReload( jsonData.version );
 
@@ -86,8 +92,9 @@
 
   };
 
-  function appVersionCheckAndReload( version ) {
 
+  function appVersionCheckAndReload( version ) 
+  {
     var latestVersionStr = ( version ) ? version : '';
 
     // compare the version..  true if online version (retrieved one) is higher..

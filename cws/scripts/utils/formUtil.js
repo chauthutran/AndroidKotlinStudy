@@ -52,6 +52,11 @@ FormUtil.getServerUrl = function()
 	
 };
 
+FormUtil.isAppsPsiServer = function()
+{
+	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
+}
+
 FormUtil.generateUrl = function( inputsJson, actionJson )
 {
 	var url;
@@ -89,35 +94,59 @@ FormUtil.generateUrl = function( inputsJson, actionJson )
 }
 
 
-FormUtil.generateInputJson = function( formDivSecTag )
+FormUtil.generateInputJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var inputsJson = {};
-
 	var inputTags = formDivSecTag.find( 'input,select' );
 
 	inputTags.each( function()
 	{
 		var inputTag = $(this);	
 		var attrDisplay = inputTag.attr( 'display' );
-		var getVal = false;
+		var nameVal = inputTag.attr( 'name' );
 
 		if ( attrDisplay === 'hiddenVal' ) getVal = true;
 		else if ( inputTag.is( ':visible' ) ) getVal = true;
 
-		if ( getVal )
-		{
-			var val = inputTag.val();
-
+		// If list is not available, get all values.  If list exists, only get value matches in the list.
+		if ( getValList === undefined || getValList.indexOf( nameVal ) >= 0 )
+		{			
+			// Need to handle check box
+			var val = FormUtil.getTagVal( inputTag );
 			if ( val === null || val === undefined ) val = '';
 
-			var nameVal = inputTag.attr( 'name' );
 			inputsJson[ nameVal ] = val;
 		}
 	});		
 
 	return inputsJson;
 }
+
+// Temp use by 'dataList' for now - might populate it fully for more common use
+FormUtil.renderInputTag = function( dataJson, containerDivTag )
+{
+	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
+	entryTag.attr( 'display', dataJson.display );
+
+	// If 'defaultValue' exists, set val
+	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
+	
+	// If containerDivTag was passed in, append to it.
+	if ( containerDivTag )
+	{
+		containerDivTag.append( entryTag );
+
+		// Set Tag Visibility
+		if ( dataJson.display === "hiddenVal" || dataJson.display === "none" )
+		{
+			containerDivTag.hide();
+		}
+	}
+
+	return entryTag;
+}
+
 
 FormUtil.generateLoadingTag = function( btnTag )
 {
@@ -159,31 +188,9 @@ FormUtil.submitRedeem = function( url, payloadJson, actionJson, loadingTag, retu
 
 	FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson )
 	{
-		if ( success )
-		{			
-			if ( actionJson.alertResult === "true" )
-			{
-				if ( returnJson.resultData )
-				{
-					if( returnJson.resultData.status === "success")
-					{
-						alert( "Success!" );
-					}
-					else if ( returnJson.resultData.status === "fail")
-					{
-						alert( "Failed!" );
-					}	
-				}
-			}			
-			
-			if ( returnFunc ) returnFunc( true, returnJson );
-			if ( asyncCall ) asyncCall( returnJson );
-		}
-		else
-		{
-			if ( returnFunc ) returnFunc( false );
-			if ( syncCall ) syncCall();
-		}
+		if ( returnFunc ) returnFunc( success, returnJson );
+		if ( asyncCall ) asyncCall( returnJson );
+		if ( syncCall ) syncCall();
 	});
 }
 
@@ -276,40 +283,15 @@ FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
 
 		alert( 'Not Loggged In!' );
 		returnFunc( false );
-	}
-	else*/
+	*/
+	
+	// Send the POST reqesut	
+	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
-		// Send the POST reqesut
-		fetch( url, FormUtil.getFetchWSJson( payloadJson ) )
-		.then( function( response ) 
-		{
-			if ( response ) 
-			{
-				if ( response.ok )
-				{
-					response.json().then(
-						function( returnJson ) 
-						{
-							if ( loadingTag ) loadingTag.remove();
-							if ( returnFunc ) returnFunc( true, returnJson );
-						}
-					);
-				}
-				else
-				{
-					//alert( 'Response Failed' );
-					if ( loadingTag ) loadingTag.remove();
-					if ( returnFunc ) returnFunc( false, response );
-				}
-			}
-			else
-			{
-				alert( 'Response Not available' );
-				if ( loadingTag ) loadingTag.remove();
-				if ( returnFunc ) returnFunc( false, response );
-			}
-		});
-	}
+		if ( loadingTag ) loadingTag.remove();
+
+		if ( returnFunc ) returnFunc( success, returnJson );
+	});
 }
 
 
@@ -317,24 +299,25 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 {
 	mainIconTag.on('click', function( event )
 	{
+		//console.log( 'mainIconTag Clicked' );
 		event.preventDefault();
 
 		var thisTag = $(this);
 		var className_Open = openCloseClass[0];
 		var className_Close = openCloseClass[1];
 
-		if ( thisTag.hasClass( className_Close ) )
-		{
-			thisTag.removeClass( className_Close );
-			thisTag.addClass( className_Open );
-			subListIconsTag.show();
-		} 
-		else 
+		if ( thisTag.hasClass( className_Open ) )
 		{
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 			subListIconsTag.hide();
 		}
+		else 
+		{
+			thisTag.removeClass( className_Close );
+			thisTag.addClass( className_Open );
+			subListIconsTag.show();
+		} 
 	});	
 }
 
@@ -503,4 +486,56 @@ FormUtil.getAppInfo = function( returnFunc )
 	var url = FormUtil.getWsUrl( '/api/getPWAInfo' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
+}
+
+
+// ======================================
+
+FormUtil.checkTag_CheckBox = function( tag )
+{
+	var isType = false;
+
+	if ( tag )
+	{
+		if ( tag.attr( 'type' ) === 'checkbox' ) isType = true;
+	}
+	
+	return isType;
+}
+
+FormUtil.setTagVal = function( tag, val, returnFunc )
+{
+	if( val !== undefined ) // && val !== '' )
+	{
+		if ( FormUtil.checkTag_CheckBox( tag ) )
+		{
+			tag.prop( 'checked', ( val === 'true' || val === true ) ); 
+		}
+		else
+		{
+			tag.val( val );
+		}
+
+		if ( returnFunc ) returnFunc();
+	}
+}
+
+
+FormUtil.getTagVal = function( tag )
+{
+	var val;
+
+	if( tag )
+	{
+		if ( FormUtil.checkTag_CheckBox( tag ) )
+		{			
+			val = tag.is( ":checked" ) ? "true" : "" ;
+		}
+		else
+		{
+			val = tag.val();
+		}
+	}
+
+	return val;
 }

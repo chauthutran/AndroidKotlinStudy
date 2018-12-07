@@ -147,8 +147,8 @@ function cwsRender()
 					})
 
 					me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '</table>' );
-					me.aboutFormDivTag.show( 'fast' ).delay(5000).hide( 'fast' );
 
+					me.aboutFormDivTag.show();
 				}
 
 			}
@@ -169,6 +169,10 @@ function cwsRender()
 	{
 		menuTag.click( function() {
 
+			// Reset Area Display
+			me.ResetAreaDisplay();
+
+
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
 			var clicked_area = Util.getFromList( me.areaList, clicked_areaId, "id" );
@@ -186,8 +190,6 @@ function cwsRender()
 
 					if (loginData)
 					{
-						var loginData = JSON.parse(localStorage.getItem(lastSession.user));
-
 						if ( ConnManager.getAppConnMode_Online() )
 						{
 							// for ONLINE > update dcd config for last menu action (default to this page on refresh)
@@ -257,6 +259,31 @@ function cwsRender()
 
 				}
 				/* END > Greg added: 2018/11/23 */
+				else if ( clicked_areaId === 'aboutPage')
+				{
+					me.aboutFormDivTag.show( 'fast' );
+					if ( localStorage.length )
+					{
+		
+						var lastSession = JSON.parse(localStorage.getItem('session'));
+		
+						if (lastSession)
+						{
+		
+							var aboutObj = JSON.parse(localStorage.getItem(lastSession.user)).about;
+							me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '<table>' );
+		
+							$.each(aboutObj, function(k, v) {
+								me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '<tr><td align=right><strong> '+k+'</strong>: </td><td align=left> ' + v + ' </td></tr>' );
+							})
+		
+							me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '</table>' );
+		
+							me.aboutFormDivTag.show();
+						}
+		
+					}
+				}
 			}
 	
 			// hide the menu
@@ -268,6 +295,13 @@ function cwsRender()
 	
 		});
 	}
+
+	me.ResetAreaDisplay = function()
+	{
+		// Reset the display
+		me.aboutFormDivTag.hide();
+	}
+
 	// =============================================
 
 
@@ -281,20 +315,20 @@ function cwsRender()
 		{
 			me.LoginObj.openForm();
 		}
-    else
-    {  
-  		me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-  	
-  		var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-  
-  		// if menu is clicked,
-  		// reload the block refresh?
-  		if ( selectedArea.startBlockName )
-  		{
-  			var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
-  			startBlockObj.renderBlock();  // should been done/rendered automatically?  			
-  		}
-	  }
+		else
+		{  
+			me.areaList = ConfigUtil.getAllAreaList( me.configJson );
+		
+			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
+	
+			// if menu is clicked,
+			// reload the block refresh?
+			if ( selectedArea.startBlockName )
+			{
+				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+				startBlockObj.renderBlock();  // should been done/rendered automatically?  			
+			}
+		}
 	}
 
 	// --------------------------------------
@@ -303,12 +337,13 @@ function cwsRender()
 	{
 		if ( me._localConfigUse )
 		{
-			ConfigUtil.getDsConfigJson( me.dsConfigLoc, function( configDataFile ) {
+			ConfigUtil.getDsConfigJson( me.dsConfigLoc, function( success, configDataFile ) {
 
 				console.log( 'local config' );
 				console.log( configDataFile );
 	
 				me.configJson = configDataFile;
+				ConfigUtil.setConfigJson( me.configJson );
 
 				me.startBlockExecute( me.configJson );
 			});		
@@ -319,6 +354,7 @@ function cwsRender()
 			//console.log( configJson );
 
 			me.configJson = configJson;
+			ConfigUtil.setConfigJson( me.configJson );
 
 			me.startBlockExecute( me.configJson );
 		}

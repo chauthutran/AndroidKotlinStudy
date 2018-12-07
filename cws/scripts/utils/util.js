@@ -176,6 +176,10 @@ Util.reverseArray = function( arr )
 
 // ----------------------------------
 // Check Variable Related
+Util.getProperValue = function( val )
+{
+	Util.getNotEmpty( val );
+}
 
 Util.getNotEmpty = function( input ) {
 
@@ -349,39 +353,6 @@ Util.getFirst = function( inputList )
 	}
 	
 	return returnVal;
-};
-
-
-Util.findItemFromList = function( listData, searchProperty, searchValue )
-{
-	var foundData;
-
-	$.each( listData, function( i, item )
-	{
-		if ( item[ searchProperty ] == searchValue )
-		{
-			foundData = item;
-			return false;
-		}
-	});
-
-	return foundData;
-};
-
-
-Util.findItemsFromList = function( listData, searchProperty, searchValue )
-{
-	var list = new Array();
-
-	$.each( listData, function( i, item )
-	{
-		if ( item[ searchProperty ] == searchValue )
-		{
-			list.push( item );
-		}
-	});
-
-	return list;
 };
 
 
@@ -571,7 +542,7 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 	selectObj.empty();
 
 	selectObj.append( '<option selected disabled="disabled">Choose an option</option>' );
-
+	
 	var valuePropStr = "id";
 	var namePropStr = "name";
 
@@ -1164,6 +1135,21 @@ Util.upNumber_IntArr = function( arr, upNumber )
 		arr[i] = arr[i] + upNumber;
 	}
 };
+
+Util.generateRandomId = function() 
+{
+	var id = '';
+	var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var id_size = 12;
+
+	for (var i = 1; i <= id_size; i++) 
+	{
+		var randPos = Math.floor( Math.random() * charSet.length );
+		id += charSet[ randPos ];
+	}
+	
+	return id;
+}
 
 // Others
 // ----------------------------------

@@ -33,18 +33,15 @@ function Action( cwsRenderObj, blockObj )
 
 	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, clickedItemData )
 	{		
-		var blockDivTag = btnTag.closest( '.block' );
-		var formDivSecTag = blockDivTag.find( '.formDivSec' );
+		var blockDivTag = btnTag.closest( 'div.block' );
+		var itemBlockTag = btnTag.closest( 'div.itemBlock' );
 
 		// NOTE: TRAN VALIDATION
-		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
+		if( me.blockObj.validationObj.checkFormEntryTagsData( itemBlockTag ) )
 		{
 			var passData = [];
 
-			console.log( 'btnOnClickActions' );
-			console.log( btnOnClickActions );
-
-			me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, passData, clickedItemData, function( finalPassData ) {
+			me.recurrsiveActions( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, passData, clickedItemData, function( finalPassData ) {
 			} );
 		}
 	}
@@ -170,6 +167,10 @@ function Action( cwsRenderObj, blockObj )
 			{
 				alert( clickActionJson.message );
 			}
+			else if ( clickActionJson.actionType === "topNotifyMsg" )
+			{				
+				MsgManager.msgAreaShow( clickActionJson.message );
+			}
 			else if ( clickActionJson.actionType === "processWSResult" ) 
 			{
 				// 1. Match the case..
@@ -193,11 +194,15 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "sendToWS" ) 
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );				
-				// generate inputsJson
-				var inputsJson = FormUtil.generateInputJson( formDivSecTag );
+
+				console.log( 'formDivSecTag: ' + formDivSecTag.html() );
+
+				// generate inputsJson - with value assigned...
+				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 
 
-
+				// REMOVE 'payloadBody' from the config json since we are not using it!!
+				/*
 				// ????  How to describe this?  We need to step through this process and make it 
 				// easier to follow.
 				if( clickActionJson.payloadBody !== undefined && clickedItemData !== undefined )
@@ -219,6 +224,7 @@ function Action( cwsRenderObj, blockObj )
 						inputsJson[uid] = value;
 					}
 				}
+				*/
 
 				// generate url
 				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
@@ -267,16 +273,28 @@ function Action( cwsRenderObj, blockObj )
 							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
 						}
 
-						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, undefined, function( returnJson ) {
+						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, returnJson ) {
 							// final call..
 							actionIndex++;
-							passData.push( returnJson );
-							me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );
-						}, function() {
+							if ( !returnJson ) returnJson = {};
+
+							console.log( 'FormUtil.submitRedeem returnJson - ' + JSON.stringify( returnJson ) + ", success - " + success );
+
+							if ( success )
+							{
+								passData.push( returnJson );
+								me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
+							}
+							else
+							{
+								alert( 'Process Failed!!' );
+							}
+						});
+						/*, function() {
 							actionIndex++;
 							passData.push( {} );
 							me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
-						});
+						});*/
 					}
 				}
 			}

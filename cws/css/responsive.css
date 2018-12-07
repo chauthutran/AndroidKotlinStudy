@@ -141,17 +141,21 @@
       display: block;
     }
 
+    /*
     .m_top_cont {
       width: 15%;
     }
+    */
 
     .m_top {
       display: none;
     }
 
+    /*
     #menu_e {
       margin-right: 10px;
     }
+    */
 
 
     /* ---------------------- */

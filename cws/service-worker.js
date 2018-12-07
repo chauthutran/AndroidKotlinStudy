@@ -36,23 +36,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "eabe518cf8b307319f15f210ce3800be"
+    "revision": "a9b7ddf3c855edce638d3fed1be65853"
   },
   {
     "url": "css/style.css",
-    "revision": "6b0eabab029120fce0c23836d299b309"
-  },
-  {
-    "url": "data/dsConfig.json",
-    "revision": "40553c88ce22892b32951e5402bbc52a"
-  },
-  {
-    "url": "data/old/dcNew1_back.json",
-    "revision": "5c0fcfdd5b37d828d064b1e7e4d05258"
-  },
-  {
-    "url": "data/old/dsConfig_back.json",
-    "revision": "1bb4e47340731de96aef985922b5bb0c"
+    "revision": "0f6d20c2b88b1a3b0de4978f788c1b19"
   },
   {
     "url": "images/blank.gif",
@@ -65,6 +53,10 @@ self.__precacheManifest = [
   {
     "url": "images/captureByVoucher.jpg",
     "revision": "4e6c2f569dabd33ff4c8720113b19587"
+  },
+  {
+    "url": "images/hide.png",
+    "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
   {
     "url": "images/icons/icon-128x128.png",
@@ -236,7 +228,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "69000774e315be361dfcd24271422b7c"
+    "revision": "720a968549fde4b361ac64da43c0fecc"
   },
   {
     "url": "manifest.json",
@@ -244,27 +236,27 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "0b86265fdd9c40b127bebdcb57ea54bc"
+    "revision": "145e1dc7493a781099c7f8b38840cb92"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "f5cd6d3cd72ffe6afaac21797041473b"
+    "revision": "37cf95d6edc0d21de1aa9d4564aa62bc"
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "27ece97f1de9a3ddb89048a4cb696141"
+    "revision": "810af286a0abf87394df88d57fbccb88"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "3b9b3790e9cbd7de4cc89b15610a23ee"
+    "revision": "14d06343149f753e84227375b9506161"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f8b3dce236526a8045c393fda937c95c"
+    "revision": "978333bb7a0ff890b3f6aede2e2d204e"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "6333ccab40f36a20bc4f7ee7287b6fa5"
+    "revision": "9a65fd209a434c3c40094d7e5609735f"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -272,11 +264,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "303382bdf35cae8ffb551a50ee47c5c4"
+    "revision": "2b15f0adb6d684d436077a4aa2418924"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "fb115046b919a18a7c535502c15f0e2e"
+    "revision": "da511d2254900c692353a2337da469cc"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -284,7 +276,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "104d604763df87fb5ff75654f7538efe"
+    "revision": "0e54bf9a900cbfddc1cf5a0906d58211"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -308,7 +300,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/configUtil.js",
-    "revision": "520c38b1cfac0a06e981b0d39f56e494"
+    "revision": "b3d3f0be838558b42c01e3cc789572a7"
   },
   {
     "url": "scripts/utils/connManager.js",
@@ -319,16 +311,24 @@ self.__precacheManifest = [
     "revision": "e821dc1c87a358493602212223a28bb2"
   },
   {
+    "url": "scripts/utils/formMsgManager.js",
+    "revision": "7b99cbd79c7340c9cdf3db3f494f24c5"
+  },
+  {
     "url": "scripts/utils/formUtil.js",
-    "revision": "f83990542a12c7f4cd9477452824e4e4"
+    "revision": "8c486e9a0505428ce576577ffbf06a9a"
+  },
+  {
+    "url": "scripts/utils/msgManager.js",
+    "revision": "a6eeee85f33b3614fffe907d252dfb88"
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "991d07ba6e9d62d805701f8192c0d406"
+    "revision": "3718932a0f18d021ba3264ac3d769dd4"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "c8c076944837121e70b1a8124a580864"
+    "revision": "881f499e0416fad46d55eaa5a2a55838"
   },
   {
     "url": "scripts/z. Old Files/cwsRender_v0.js",
@@ -341,10 +341,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/z. Old Files/testSection.js",
     "revision": "0e632d23fbb96b56bf389700041637dc"
-  },
-  {
-    "url": "service-worker_back.js",
-    "revision": "de80056a12a74c2a49b1de762e295cb9"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -384,11 +380,11 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "0ef754c17082d59d9dcdb52c3bd6621c"
+    "revision": "68cd3cc40ef6d100fa5e9e4e7cb9c363"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst(), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst({ "cacheName":"v1.0.0.1", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');

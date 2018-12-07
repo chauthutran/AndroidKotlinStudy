@@ -248,7 +248,7 @@ function Login( cwsRenderObj )
 			loginData.mySession.stayLoggedIn = me._staySignedIn;
 
 			DataManager.saveData( me._userName, loginData );	
-	}
+		}
 		else
 		{
 			var newSaveObj = Object.assign( {} , loginData);

@@ -57,6 +57,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			else
 			{
 				// Normal Block case..
+				console.log( 'Normal Block case..' );
 			}
 
 
@@ -177,7 +178,7 @@ function BlockButton( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					btnTag = $( '<button class="btnType ' + btnJson.buttonType + '">' + btnJson.defaultLabel + '</button>' );
+					btnTag = $( '<button ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
 				}
 			}	
 		}
@@ -199,7 +200,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			{			
 				btnTag.click( function() {
 	
-					me.blockObj.actionObj.handleClickActions( btnTag, btnJson.onClick );
+					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 	
 					console.log( 'button clicked' );
 				});
@@ -207,8 +208,10 @@ function BlockButton( cwsRenderObj, blockObj )
 			else if( btnJson.onClickItem !== undefined )
 			{
 				btnTag.click( function() {
-					var idx = btnTag.closest("itemBlock").attr("idx");
-					me.blockObj.actionObj.handleItemClickActions( btnTag, btnJson.onClickItem, idx, passedData );
+
+					var idx = $( this ).closest(".itemBlock").attr("idx");
+					
+					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
 				});
 			}	
 		}

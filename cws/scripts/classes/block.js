@@ -134,8 +134,8 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 			me.blockListObj.renderList( me.blockJson.list, me.blockTag, me.passedData );
 
 			// Reder Data List
-			me.dataListObj.initialize( me.passedData, me.blockJson );
-			me.dataListObj.renderList( me.blockJson.list, me.blockTag );
+			//me.dataListObj.initialize( me.passedData, me.blockJson );
+			me.dataListObj.renderList( me.blockJson, me.blockTag, me.passedData );
 
 			// Render Buttons
 			me.blockButtonObj.renderBlockButtons( me.blockJson.buttons, me.blockTag, undefined );

@@ -30,7 +30,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.16'; </script>
+    <script> var _ver = '1.0.21'; </script>
 
 
     <link rel="manifest" href="manifest.json">
@@ -50,22 +50,14 @@
         <img src='img/logo_top.svg'>
       </div>
       <div class='logo_desc nav_child'>
-        <div class="logo-desc-all">Service provision</div>
-        <div style="float: left;"><img src='img/net.svg' class="tab-image"></div>
-        <div id="loggedInDiv" style="float: left; margin-left: 6px; margin-top: 2px; cursor: pointer;">
-          <span id="spanOuName" style="font-style: italic; color: darkseagreen;">[LogIn]</span>
-        </div>  
-      </div>
-
-      <div id="menuTopDiv" class='m_top_cont nav_child' style="width: 4%;">
-        <!-- fully expanded menu displayed on top?  No good?-->
-        <div class='m_top'>
-          <label id='menu_2' class="lab_m" for="">Menu 1</label>
-          <label id='menu_3' class="lab_m" for="">Menu 2</label>
-          <label id='menu_4' class="lab_m" for="">Menu 3</label>
+        <div>
+          <div class="logo-desc-all">Service provision</div>
         </div>
-        <div id='menu_e' class="close">
-          <img src='img/menu_icon.svg'>
+        <div>
+          <div style="display: inline-block;"><img src='img/net.svg' class="tab-image"></div>
+          <div id="loggedInDiv" style="display: inline-block; cursor: pointer;">
+            <span id="spanOuName" style="font-style: italic; color: darkseagreen;">[LogIn]</span>
+          </div>      
         </div>
       </div>
 
@@ -93,6 +85,19 @@
             <td>
               <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/blank.gif' style="width: 10px; height: 10px; vertical-align: bottom; margin-bottom: 2px;"/></div>
             </td>
+            <td>
+              <div id="menuTopDiv">
+                <!-- fully expanded menu displayed on top?  No good?-->
+                <div class='m_top'>
+                  <label id='menu_2' class="lab_m" for="">Menu 1</label>
+                  <label id='menu_3' class="lab_m" for="">Menu 2</label>
+                  <label id='menu_4' class="lab_m" for="">Menu 3</label>
+                </div>
+                <div id='menu_e'>
+                  <img src='img/menu_icon.svg' style="margin: -15px;">
+                </div>
+              </div>        
+            </td>
           </tr>
         </table>
       </div>
@@ -102,6 +107,14 @@
     <div id="menuDiv" class="menu-mobile">
     </div>
         
+    <div id="divMsgAreaWrap">
+      <div id="divMsgArea" style="display:none;">
+        <span id="spanMsgAreaText"></span>
+        <span id="spanMsgAreaClose">
+          <img src="images/hide.png" title="Close" id="btnMsgAreaClose">
+        </span>
+      </div>        
+    </div>
 
     <!-- LOGIN FORM DIV -->
     <div id="loginFormDiv" style="display:none;">
@@ -192,7 +205,16 @@
     <!-- AFTER LOGIN - MAIN APP CONTENT DIV -->
     <div id="pageDiv" style="display:none;">
 
-      <div name="top-body" class="bodytop bg-color-program-son"></div>
+      <div name="top-body" class="bodytop bg-color-program-son">
+      </div>
+
+      <!-- ABOUT FORM DIV -->
+      <div id="aboutFormDiv" style="display:none;">
+          <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;" >
+              testing contents...
+          </div>
+      </div>
+
 
       <section class="wrapper">
 
@@ -207,14 +229,6 @@
       </section>
 
     </div>
-
-    <!-- ABOUT FORM DIV -->
-    <div id="aboutFormDiv" style="display:none;min-width:25%;max-width:310px;color:#000;" class="bodytop logo-desc-all ">
-        <div class="aboutListDiv itemBlock">
-
-        </div>
-    </div>
-
 
     <!-- LIST, FLOATING ICON TEMPLATE DIV -->
     <div id="listTemplateDiv" style="display:none;">
@@ -249,6 +263,8 @@
 
  
     <script type="text/javascript" src="scripts/utils/util.js"></script>
+    <script type="text/javascript" src="scripts/utils/msgManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/connManager.js"></script>
     <script type="text/javascript" src="scripts/utils/dataManager.js"></script>

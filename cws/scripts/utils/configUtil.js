@@ -3,24 +3,64 @@
 
 function ConfigUtil() {}
 
+ConfigUtil.configJson = {};     // store the configJson here when first loading config?
+ConfigUtil.configSetting = {};
+
 // ==== Methods ======================
 
 ConfigUtil.getDsConfigJson = function( dsConfigLoc, returnFunc )
-{
-    // 1. fetch config json
-    fetch( dsConfigLoc )
-    .then( response => response.json() )
-    .then( configJson => {
-        returnFunc( configJson );
-    });
-    // TODO: NEED TO PROPERLY IMPLEMENT THE 'CATCH' PHRASE
-    /*
-    .catch( error => {  
-        console.log( 'Failed to load the config file: ', error );  
-        //alert( 'Failed to load the config file' );
-    });
-    */			
+{    
+    RESTUtil.retrieveJson( dsConfigLoc, returnFunc );
 };
+
+ConfigUtil.setConfigJson = function ( configJson ) 
+{
+    ConfigUtil.configJson = configJson;
+};  
+
+ConfigUtil.setSettingsJson = function( configJson )
+{
+    ConfigUtil.configSetting = configJson.settings;
+    /*
+        "settings": {
+            "message": {
+                "autoHide": true,
+                "autoHideTime": "5000",
+                "networkFailedMsgType": "alertMsg"
+            }
+        },
+    */
+};
+
+ConfigUtil.getSettings = function( settingName )
+{
+    if ( settingName )
+    {
+        return ConfigUtil.configSetting[ settingName ];
+    }   
+    else
+    {
+        return ConfigUtil.configSetting;
+    } 
+}
+
+
+ConfigUtil.getMsgAutoHide = function( configJson )
+{
+    ConfigUtil.configSetting = configJson.settings;
+    /*
+        "settings": {
+            "message": {
+                "autoHide": true,
+                "autoHideTime": "5000",
+                "networkFailedMsgType": "alertMsg"
+            }
+        },
+    */
+};
+
+
+// ------------------------------------
 
 ConfigUtil.getAreaListByStatus = function( bOnline, configJson )
 {

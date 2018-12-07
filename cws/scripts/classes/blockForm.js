@@ -7,11 +7,13 @@ function BlockForm( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	
-	
+	me.formJsonArr;
+
+	me._childTargetActionDelay = 400;
+
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
-
 
 
 	// -----------------------------
@@ -23,25 +25,27 @@ function BlockForm( cwsRenderObj, blockObj )
 	me.renderForm = function( formDef, blockTag, passedData )
 	{
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, me.cwsRenderObj.configJson.definitionForms );
+		me.formJsonArr = formJsonArr;
 
 		if ( formJsonArr !== undefined )
 		{
 			formDivSecTag = $( '<div class="formDivSec"></div>' );
 			blockTag.append( formDivSecTag );
 
-			var idList = me.getIdList_FormJson( formJsonArr );
+			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
 
 			for( var i = 0; i < formJsonArr.length; i++ )
 			{
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
-				{
-					me.renderInput_TabContent( formJsonArr[i], formDivSecTag, idList, passedData );
+				{					
+					me.renderInput_TabContent( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
 				}
 				else
 				{
-					me.renderInput( formJsonArr[i], formDivSecTag, idList, passedData );
+					me.renderInput( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
 				}
 			}
+
 
 			me.populateFormData( passedData, formDivSecTag );
 
@@ -59,235 +63,168 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		for( var i = 0; i < formJsonArr.length; i++ )
 		{
-			var inputJson = formJsonArr[i];
+			var formItemJson = formJsonArr[i];
 
-			if ( inputJson.id ) idList.push( inputJson.id );
+			if ( formItemJson.id ) idList.push( formItemJson.id );
 		}
 
 		return idList;
 	}
 
+
+	me.getFormItemJson_FromId = function( formJsonArr, id )
+	{
+		return Util.getFromList( formJsonArr, id, "id" );
+	}
+
+
 	// Old UI Used Method
-	me.renderInput = function( inputJson, formDivSecTag, idList, passedData )
+	me.renderInput = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
 	{
 		var divInputTag = $( '<div class="inputDiv"></div>' );
 
 		var spanTitleTag = $( '<span class="titleSpan"></span>' );
-		spanTitleTag.text( inputJson.defaultName );
+		spanTitleTag.text( formItemJson.defaultName );
 		var titleDivTag = $( '<div class="titleDiv"></div>' ).append( spanTitleTag );
 
 		divInputTag.append( titleDivTag );
 
-		me.renderInputTag( inputJson, divInputTag, formDivSecTag, idList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent= function( inputJson, formDivSecTag, idList, passedData )
+	me.renderInput_TabContent= function( formItemJson, formDivSecTag, formFull_IdList, passedData )
 	{
 		//console.log( 'adding renderInput_TabContent' );
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
 
 		var spanTitleTag = $( '<label class="from-string titleDiv"></label>' );
-		spanTitleTag.text( inputJson.defaultName );
+		spanTitleTag.text( formItemJson.defaultName );
 		divInputTag.append( spanTitleTag );
 
-		me.renderInputTag( inputJson, divInputTag, formDivSecTag, idList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
 
-	/*
-	me.renderInputTag = function( inputData, divInputTag, formDivSecTag, idList, passedData )
+
+	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData )
 	{
-		if ( inputData !== undefined )
-		{
-			var entryTag;
-			var entryDivTag = $( '<div class="entryDiv"></div>' );
-			
-			if ( inputData.controlType === "INT"
-				|| inputData.controlType === "SHORT_TEXT" )
-			{
-				entryTag = $( '<input name="' + inputData.id + '" uid="' + inputData.uid + '" />' );
-				if( inputData.defaultValue !== undefined )
-				{
-					// Set default data
-					entryTag.val( inputData.defaultValue );	
-				}
-				entryDivTag.append( entryTag );	
-			}
-			else if ( inputData.controlType === "DROPDOWN_LIST" )
-			{
-				var optionList = FormUtil.getObjFromDefinition( inputData.options, me.cwsRenderObj.configJson.definitionOptions );
-
-				entryTag = $( '<select class="selector" name="' + inputData.id + '" uid="' + inputData.uid + '" ></select>' );
-				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
-
-				if( inputData.defaultValue !== undefined )
-				{
-					// Set default data
-					entryTag.val( inputData.defaultValue );	
-				}
-				var divSelectTag = $( '<div class="select"></div>' );
-				divSelectTag.append( entryTag );
-				entryDivTag.append( divSelectTag );	
-			}
-			else if( inputData.controlType === "DIV_CONTENT" )
-			{
-				entryTag = $( '<div name="' + inputData.id + '" uid="' + inputData.uid + '" ></div>' );
-				if( inputData.defaultValue !== undefined )
-				{
-					// Set default data
-					entryTag.html( inputData.defaultValue );	
-				}
-				entryDivTag.append( entryTag );	
-			}
-
-			// Finally Set/Attach to the parent tag
-			divInputTag.append( entryDivTag );
-
-
-			// Setup events and visibility and rules
-			me.setEventsAndRules( inputData, entryTag, divInputTag, formDivSecTag, idList, passedData );
-		}
-	}
-	*/
-
-	me.renderInputTag = function( inputData, divInputTag, formDivSecTag, idList, passedData )
-	{
-		if ( inputData !== undefined )
+		if ( formItemJson !== undefined )
 		{
 			var entryTag;
 
-			if ( inputData.controlType === "INT"
-				|| inputData.controlType === "SHORT_TEXT" )
+
+			// TEMP DROPDOWN --> CHECKBOX
+			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
+
+
+			if ( formItemJson.controlType === "INT"
+				|| formItemJson.controlType === "SHORT_TEXT" )
 			{
-				entryTag = $( '<input name="' + inputData.id + '" uid="' + inputData.uid + '" class="form-type-text" type="text" />' );
-				if( inputData.defaultValue !== undefined )
-				{
-					// Set default data
-					entryTag.val( inputData.defaultValue );	
-				}
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+				
 				divInputTag.append( entryTag );
 			}			
-			else if ( inputData.controlType === "DROPDOWN_LIST" )
+			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
 			{
-				var optionList = FormUtil.getObjFromDefinition( inputData.options, me.cwsRenderObj.configJson.definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 
-				// START > Changes by Greg (2018/11/27)
-				if ( inputData.options == 'boolOption' )
-				{
-					entryTag = $( '<input name="' + inputData.id + '" uid="' + inputData.uid + '" class="form-type-checkbox" type="checkbox" />' );
-					if( inputData.defaultValue !== undefined )
-					{
-						// Set default data
-						if ( inputData.defaultValue === 'true' )
-						{
-							entryTag.prop('checked', true); // Added by Greg (2018/11/27): this might need to come after control gets appended..?
-						}
+				entryTag = $( '<select class="selector" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
+				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
-					}
-					divInputTag.append( entryTag );
-				}
-				else
-				{
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
-					entryTag = $( '<select class="selector" name="' + inputData.id + '" uid="' + inputData.uid + '" ></select>' );
-					Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
-
-					if( inputData.defaultValue !== undefined )
-					{
-						// Set default data
-						entryTag.val( inputData.defaultValue );	
-					}
-					var divSelectTag = $( '<div class="select"></div>' );
-					divSelectTag.append( entryTag );
-					divInputTag.append( divSelectTag );
-				}
-				// END > Changes by Greg (2018/11/27)
+				var divSelectTag = $( '<div class="select"></div>' );
+				divSelectTag.append( entryTag );
+				divInputTag.append( divSelectTag );
 			}
-			else if ( inputData.controlType === "CHECKBOX" )
+			else if ( formItemJson.controlType === "CHECKBOX" )
 			{
-				entryTag = $( '<input name="' + inputData.id + '" uid="' + inputData.uid + '" class="form-type-text" type="checkbox" />' );
-				if( inputData.defaultValue !== undefined )
-				{
-					// START > Added by Greg (2018/11/27)
-					if ( inputData.defaultValue === 'true' ) // Set default data
-					{
-						entryTag.prop('checked', true); 
-					}
-					// END > Added by Greg (2018/11/27)
-				}
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="checkbox" />' );
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+
 				divInputTag.append( entryTag );
 			}
-			else if ( inputData.controlType === "LABEL" )
+			else if ( formItemJson.controlType === "LABEL" )
 			{
 				divInputTag.css( 'background-color', 'darkgray' );
 				divInputTag.find( 'label.titleDiv' ).css( 'color', 'white' );
 			}
 
+
 			// Setup events and visibility and rules
-			me.setEventsAndRules( inputData, entryTag, divInputTag, formDivSecTag, idList, passedData );
+			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData );
 		}
 	}
 
 	
-	me.setEventsAndRules = function( inputData, entryTag, divInputTag, formDivSecTag, idList, passedData)
+	me.setEventsAndRules = function( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData)
 	{
 		if ( entryTag )
 		{
 			// Set Event
-			entryTag.change( function() {
-				me.performEvalActions( $(this).val(), inputData, formDivSecTag, idList );
+			entryTag.change( function() 
+			{
+				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
 
 		
 		// NOTE: TRAN VALIDATION
 		// Add rules for IMPUT fields
-		me.addRuleForField( divInputTag, inputData );
+		me.addRuleForField( divInputTag, formItemJson );
 
 
 		// Set Tag Visibility
-		if ( inputData.display === "hiddenVal" )
+		if ( formItemJson.display === "hiddenVal" )
 		{
 			divInputTag.hide();
 			entryTag.attr( 'display', 'hiddenVal' );
+			//console.log( 'tag.hide() - hiddenVal' );
 		}
-		else if ( inputData.display === "none" )
+		else if ( formItemJson.display === "none" )
 		{
 			divInputTag.hide();
+			//console.log( 'tag.hide() - none' );
 		}
 		
 
 		if ( passedData !== undefined 
 			&& passedData.hideCase !== undefined 
-			&& inputData.hideCase !== undefined
-			&& inputData.hideCase.indexOf( passedData.hideCase ) >= 0 )
+			&& formItemJson.hideCase !== undefined
+			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
+			//console.log( 'hideCase - by passedData' );
 			//divInputTag.find("input,select").remove();
 			divInputTag.hide();
 		}
 
 		if ( passedData !== undefined 
 			&& passedData.showCase !== undefined 
-			&& inputData.showCase !== undefined
-			&& inputData.showCase.indexOf( passedData.showCase ) >= 0 )
+			&& formItemJson.showCase !== undefined
+			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
 		{
+			//console.log( 'showCase - by passedData' );
 			divInputTag.show();
 		}		
 	}
 
 
-	me.addRuleForField = function( divInputTag, inputData )
+	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-		if( inputData.rules !== undefined )
+		//console.log( 'addRuleForField: ' + divInputTag.html() );
+		//console.log( formItemJson );
+
+		if( formItemJson.rules !== undefined )
 		{
-			for( var i in inputData.rules )
+			for( var i in formItemJson.rules )
 			{
-				var rule = inputData.rules[i];
+				var rule = formItemJson.rules[i];
 
 				var entryTag = divInputTag.find( "select,input" );
 				entryTag.attr( rule.name, rule.value );
@@ -305,25 +242,34 @@ function BlockForm( cwsRenderObj, blockObj )
 	// ----------------------------------------------------
 	// ---- EVAL Actions Related --------------------------
 
-	me.performEvalActions = function( tagVal, inputData, formDivSecTag, idList )
-	{
-		if ( inputData.evalActions !== undefined )
+	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
+	{		
+		var tagVal = FormUtil.getTagVal( tag );
+
+		if ( tagVal )
 		{
-			for ( var i = 0; i < inputData.evalActions.length; i++ )
+			if ( formItemJson.evalActions !== undefined )
 			{
-				me.performEvalAction( inputData.evalActions[i], tagVal, formDivSecTag, idList );
-			}
+				//console.log( 'performEvalActions, tag: ' + tag.attr( 'name ' ) );
+
+				for ( var i = 0; i < formItemJson.evalActions.length; i++ )
+				{
+					me.performEvalAction( formItemJson.evalActions[i], tagVal, formDivSecTag, formFull_IdList );
+				}
+			}	
 		}
 	}
 
-	me.performEvalAction = function( evalAction, tagVal, formDivSecTag, idList )
+	me.performEvalAction = function( evalAction, tagVal, formDivSecTag, formFull_IdList )
 	{
 		if ( evalAction !== undefined )
 		{
-			if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, idList ) )
+			if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, formFull_IdList ) )
 			{
-				me.performCondiShowHide( evalAction.shows, formDivSecTag, true );
-				me.performCondiShowHide( evalAction.hides, formDivSecTag, false );
+				//console.log( 'performEvalAction, tagVal: ' + tagVal );
+
+				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
+				me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
 
 				me.performCondiAction( evalAction.actions, formDivSecTag, false );
 			}
@@ -331,15 +277,15 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				if ( evalAction.conditionInverse !== undefined )
 				{
-					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, false );
-					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, true );
+					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, false );
+					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, true );
 					if ( evalAction.conditionInverse.indexOf( "actions" ) >= 0 ) me.performCondiAction( evalAction.actions, formDivSecTag, true );
 				}
 			}			
 		}
 	}
 
-	me.checkCondition = function( evalCondition, tagVal, formDivSecTag, idList )
+	me.checkCondition = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
 		var result = false;
 
@@ -348,7 +294,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			try
 			{
 				// var afterCondStr = evalCondition.replace( '$$(this)', tagVal );
-				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, idList )
+				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
 				result = eval( afterCondStr );	
 			}
@@ -356,7 +302,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				console.log( 'Failed during condition eval: ' );
 				console.log( ex );
-				//alert( 'Failed during ' );
 			}
 		}
 
@@ -364,15 +309,15 @@ function BlockForm( cwsRenderObj, blockObj )
 	};
 
 	
-	me.conditionVarIdToVal = function( evalCondition, tagVal, formDivSecTag, idList )
+	me.conditionVarIdToVal = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
 		// Replace 'this' first.
 		evalCondition = Util.replaceAll( evalCondition, '$$(this)', tagVal );
 		
 		// Replace other tag val cases.
-		for ( var i = 0; i < idList.length; i++ )
+		for ( var i = 0; i < formFull_IdList.length; i++ )
 		{
-			var idStr = idList[i];
+			var idStr = formFull_IdList[i];
 			var matchKeyStr = '$$(' + idStr + ')';
 
 			var tag = me.getMatchingInputTag( formDivSecTag, idStr );
@@ -400,7 +345,11 @@ function BlockForm( cwsRenderObj, blockObj )
 						if ( reset ) matchingTag.val( '' );
 						else
 						{
-							if ( action.value ) matchingTag.val( action.value );
+							if ( action.value ) 
+							{
+								matchingTag.val( action.value );
+								matchingTag.change();
+							}
 						}	
 					}
 				}
@@ -408,16 +357,43 @@ function BlockForm( cwsRenderObj, blockObj )
 		}
 	};
 
-	me.performCondiShowHide = function( idList, formDivSecTag, visible )
+	me.performCondiShowHide = function( idList, formDivSecTag, formFull_IdList, visible )
 	{
 		if ( idList )
 		{
 			for ( var i = 0; i < idList.length; i++ )
 			{
-				var tag = me.getMatchingInputTag( formDivSecTag, idList[i] ).closest( 'div.inputDiv');
-				( visible ) ? tag.show( 'fast' ) : tag.hide();
+				var idStr = idList[i];
+				var targetInputTag = me.getMatchingInputTag( formDivSecTag, idStr );
+				var targetInputDivTag = targetInputTag.closest( 'div.inputDiv');
+
+				if ( visible ) 
+				{
+					targetInputDivTag.show( 'fast' );
+
+					//console.log( 'show by condition: id/name: ' + idStr );
+
+					// target inputs subsequent show/hide
+					// Due to parent tag initializing show hide of same target
+					// Perform this a bit after time delay
+					me.performChildTagEvalActions( idStr, targetInputTag, formDivSecTag, formFull_IdList );
+				}
+				else 
+				{
+					targetInputDivTag.hide();
+				}  
 			}
 		}
+	};
+
+
+	me.performChildTagEvalActions = function( idStr, targetInputTag, formDivSecTag, formFull_IdList )
+	{
+		setTimeout( function() 
+		{
+			var formItemJson = me.getFormItemJson_FromId( me.formJsonArr, idStr );
+			me.performEvalActions( targetInputTag, formItemJson, formDivSecTag, formFull_IdList );
+		}, me._childTargetActionDelay );
 	};
 
 	me.getMatchingInputTag = function( formDivSecTag, idStr )
@@ -440,10 +416,9 @@ function BlockForm( cwsRenderObj, blockObj )
 			//   a list that holds 'id' and 'value' for population...
 			//	regardless of type 'tei attribute val', 'dataElement value'
 
-			var clientId = passedData.resultData.clientId;
-			clientId = ( clientId === undefined ) ? "" : clientId;
-			var voucherId = passedData.resultData.voucherId;
-			voucherId = ( voucherId === undefined ) ? "" : voucherId;
+			// getProperValue
+			var clientId = Util.getNotEmpty( passedData.resultData.clientId );
+			var voucherId = Util.getNotEmpty( passedData.resultData.voucherId );
 
 			// formDivSecTag.find( '#countryType' ).val( "MZ" );
 			// formDivSecTag.find( '#cbdCase' ).val( "Y" );
@@ -456,16 +431,33 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				// var attributes = passedData.data.relationships[0].relative.attributes;
 				var attributes = passedData.displayData;
+				var inputTags = formDivSecTag.find( 'input,select' );
 
-				for ( var i = 0; i < attributes.length; i++ )
+				// Go through each input tags and use 'uid' to match the attribute for data population
+
+				inputTags.each( function( i ) 
 				{
-					var attrJson = attributes[i];
+					var inputTag = $( this );
+					var uidStr = inputTag.attr( 'uid' );
 
-					// populate the attribute value to matching tag
-					var matchingTag = formDivSecTag.find( 'input,select' ).filter( '[uid="' + attrJson.id + '"]' );
-					matchingTag.val( attrJson.value );
+					if ( uidStr )
+					{
+						var attrJson = Util.getFromList( attributes, uidStr, "id" );
+						if ( attrJson )
+						{
+							// ADDED - CheckBox mark by passed in data + perform change event if passed in value are populated.
+							FormUtil.setTagVal( inputTag, attrJson.value, function() 
+							{
+								//console.log( 'populating tag data, name: ' + inputTag.attr( 'name' ) + ', val: ' + attrJson.value );
+								inputTag.change();
+							});
+						}
+					}
+				});
 
+					// breakRule?  How is is used?
 					// populate the attribute value to matching DIV tag
+					/*
 					matchingTag = formDivSecTag.find( 'div,span' ).filter( '[uid="' + attrJson.id + '"]' );
 					var message = attrJson.value;
 					if( attrJson.breakRule !== undefined )
@@ -476,9 +468,13 @@ function BlockForm( cwsRenderObj, blockObj )
 					{
 						matchingTag.html( message );
 					}
-				}
+					*/
+
+				//}
 			}
 			catch(err) {
+				console.log( 'Error Duing "populateFormData".' );
+				console.log( err );
 			}					
 		}
 	}
