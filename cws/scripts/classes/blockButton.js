@@ -157,9 +157,9 @@ function BlockButton( cwsRenderObj, blockObj )
 					var liTabTag = divTag.find( 'ul.tabs li[tabId="' + btnNo + '"]' );
 					var aContentTag = divTag.find( 'ul.tab_content li[tabId="' + btnNo + '"] a.expandable' );
 
-					liTabTag.append( '<img src="' + btnJson.imageSrc + '" class="tab-image"><label>' + btnJson.defaultLabel + '</label>' );
-					aContentTag.append( '<div class="icon-row"><img src="' + btnJson.imageSrc + '">' + btnJson.defaultLabel + '</div>' );
-					aContentTag.append( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
+					liTabTag.append( $('<img src="' + btnJson.imageSrc + '" class="tab-image"><label>' + btnJson.defaultLabel + '</label>' ) );
+					aContentTag.append( $('<div class="icon-row"><img src="' + btnJson.imageSrc + '">' + btnJson.defaultLabel + '</div>') );
+					aContentTag.append( $('<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>') );
 
 					// In 'li' vs 'anchor' click action sync, 'anchor' is the main one called - 'FormUtil.setUpTabAnchorUI( tag )'
 					// Thus, set 'anchor' as the main tag..

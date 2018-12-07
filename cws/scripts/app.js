@@ -136,9 +136,11 @@
 
   function connStatTagUpdate( bOnline ) {
 
-    var imgSrc = ( bOnline ) ? 'images/online.jpg': 'images/offline.jpg';
+    var imgSrc = ( bOnline ) ? 'images/online.svg': 'images/offline.svg';
+    var imgBg = ( bOnline ) ? '#33FF00': '#C0C0C0';
 
     $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
+    $( '#divNetworkStatus' ).css( 'background-color', imgBg );
 
     //console.log( '=== Network Online: ' + bOnline );
   };

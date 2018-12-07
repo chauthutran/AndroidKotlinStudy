@@ -66,11 +66,12 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
+            console.log ( jsonList );
             for( var i = 0; i < jsonList.length; i++ )
             {
                 var itemAttrDataList = jsonList[i];
 
-                var divItemTag = $( '<div class="inputDiv itemBlock" idx="' + i + '"></div>' );
+                var divItemTag = $( '<div class="inputDiv itemBlock" idx="' + i + '" style="border:1px solid #F5F5F5;"></div>' );
                 blockTag.append( divItemTag );
 
                 // Generate and append items
@@ -83,7 +84,7 @@ function DataList( cwsRenderObj, blockObj )
             }	
         }
     }
-                    
+
     me.renderHiddenKeys = function( keyList, itemAttrDataList, divItemTag )
     {
         if ( keyList )
@@ -133,7 +134,9 @@ function DataList( cwsRenderObj, blockObj )
     me.renderDataValueTag = function( attrData, divItemTag )
     {    
         // Set Text..
-        var spanDivTag = $( '<div> ' + attrData.displayName + " : <b>" + attrData.value + '</b></div>' );
+        //var spanDivTag = $( '<div> ' + attrData.displayName + " : <b>" + attrData.value + '</b></div>' );
+        var spanDivTag = $( '<div style="margin:0 0 0 36px">' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
+        //var spanDivTag = $( '<div style="margin:0 0 0 45px"> ' + attrData.value + '</div>' );
         divItemTag.append( spanDivTag );
     }
 
@@ -147,13 +150,12 @@ function DataList( cwsRenderObj, blockObj )
   
     me.renderIconTag = function( valueData, parentItemTag )
     {
-        var lastData = localStorage.getItem( 'lastPayload' ); //added by Greg (2018/12/05) > incorrect here > async calls so this value is never loaded in time
-
+        var lastData = localStorage.getItem( 'lastPayload.posted' ); //added by Greg (2018/12/05)
         var labelText;
 
         if ( lastData )
         {
-            labelText = lastData.data.phoneNumber;
+            labelText = JSON.parse(lastData).data.phoneNumber;
         }
         else if ( valueData.length )
         {
@@ -161,7 +163,7 @@ function DataList( cwsRenderObj, blockObj )
         }
 
         // Set Icons..
-        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <small class="voucherIcon"><img src="img/voucher.svg"></small> <small class="statusIcon"><img src="img/open.svg"></small> <strong> ' + labelText +' </strong> </div>' );
+        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <img src="img/mobile.svg" style="-webkit-filter: contrast(60%);filter: contrast(60%);"> <span style="font-size:11pt;"> ' + labelText +' </span> </div>' );
         parentItemTag.append( iconListTag );
     }
   

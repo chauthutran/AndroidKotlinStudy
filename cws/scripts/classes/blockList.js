@@ -94,6 +94,7 @@ function BlockList( cwsRenderObj, blockObj )
                         me.renderRedeemListItemTag( arrNewFirst[i], listContentUlTag );
                     }
                 }
+
                 setTimeout( function() {
                     MsgManager.msgAreaClear();
                 }, 500 );

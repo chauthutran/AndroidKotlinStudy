@@ -200,6 +200,7 @@ function Action( cwsRenderObj, blockObj )
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 
+				localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 
 				// REMOVE 'payloadBody' from the config json since we are not using it!!
 				/*
@@ -278,13 +279,13 @@ function Action( cwsRenderObj, blockObj )
 							actionIndex++;
 							if ( !returnJson ) returnJson = {};
 
-							console.log( 'FormUtil.submitRedeem returnJson - ' + JSON.stringify( returnJson ) + ", success - " + success );
+							//console.log( 'FormUtil.submitRedeem returnJson - ' + JSON.stringify( returnJson ) + ", success - " + success );
 
 							if ( success )
 							{
 								passData.push( returnJson );
 								me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
-								localStorage.setItem( 'lastPayload', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
+								//localStorage.setItem( 'lastPayload', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 							}
 							else
 							{

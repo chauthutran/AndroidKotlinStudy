@@ -12,6 +12,7 @@ function Login( cwsRenderObj )
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.spanOuNameTag = $( '#spanOuName' );
+	me.pageTitleDivTab = $( 'div.logo-desc-all' );
 
 		  
   // Greg added: 2018/11/23 -- below 3 lines
@@ -276,6 +277,8 @@ function Login( cwsRenderObj )
 			}
 		}
 		/* END > Greg added: 2018/12/06 */
+
+		me.pageTitleDivTab.hide(); // Greg added: 2018/12/07
 
 	}
 

@@ -51,12 +51,12 @@
       </div>
       <div class='logo_desc nav_child'>
         <div>
-          <div class="logo-desc-all">Service provision</div>
+          <div class="logo-desc-all" style='font-size: 18pt;position: relative;top: 10px;left: 4px;'>Connect</div>
         </div>
         <div>
-          <div style="display: inline-block;"><img src='img/net.svg' class="tab-image"></div>
-          <div id="loggedInDiv" style="display: inline-block; cursor: pointer;">
-            <span id="spanOuName" style="font-style: italic; color: darkseagreen;">[LogIn]</span>
+          <div style="display: none"><img src='img/net.svg' class="tab-image"></div>
+          <div id="loggedInDiv" style="display: none; cursor: pointer;">
+            <span id="spanOuName" style="font-style: italic;color: darkseagreen;font-size: 20pt;position: relative;top: 8px;">[LogIn]</span>
           </div>      
         </div>
       </div>
@@ -80,10 +80,10 @@
               </div>   
             </td>
             <td>
-              <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;"></span></div>
+              <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div>
             </td>
             <td>
-              <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/offline.jpg' style="width: 10px; height: 10px; vertical-align: bottom; margin-bottom: 2px;border-radius: 6px;"/></div>
+              <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/offline.svg' style="width: 40px;height: 40px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;"/></div>
             </td>
             <td>
               <div id="menuTopDiv">
@@ -169,7 +169,7 @@
                   </ul>
                 </div>
               </li>
-              <li tabId="2">
+              <li tabId="2" style="display:none;">
                 <a class="expandable" id="a-opt">
                   <div class="icon-row"><img src="img/settings.svg"> Advanced options</div>
                   <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>
