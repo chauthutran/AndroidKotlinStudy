@@ -41,8 +41,16 @@ function BlockList( cwsRenderObj, blockObj )
                     // Add Event from 'FormUtil'
                     //  - To Enable click
                     FormUtil.setUpTabAnchorUI( newBlockTag.find( 'ul.tab__content_act') );
-                                
-                    me.setFloatingListMenuIconEvents( newBlockTag.find( '.floatListMenuIcon' ), newBlockTag.find( '.floatListMenuSubIcons' ) );
+
+                    if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favActionList  )
+                    {
+                        me.setFloatingListMenuIconEvents( newBlockTag.find( '.floatListMenuIcon' ), newBlockTag.find( '.floatListMenuSubIcons' ) );
+                    }
+                    else
+                    {
+                        newBlockTag.find( '.floatListMenuIcon' ).hide();
+                    }
+
 				}
 			}
 		}
@@ -129,11 +137,12 @@ function BlockList( cwsRenderObj, blockObj )
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
 
-        var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - hh:MM a");
+        var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:MM ");
 
         var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
-        var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
+        //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
         var voucherTag = $( '<div class="act-r"><small><b>'+itemData.data.payloadJson.voucherCode+'</b> - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
 
         anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
@@ -181,29 +190,29 @@ function BlockList( cwsRenderObj, blockObj )
                 <small class="statusIcon"><img src="img/open.svg"></small>
         */
 
-        var smallStatusNameTag = statusSecDivTag.find( 'small.statusName' );
-        var imgStatusIconTag = statusSecDivTag.find( 'small.statusIcon img' );
+        //var smallStatusNameTag = statusSecDivTag.find( 'small.statusName' );
+        //var imgStatusIconTag = statusSecDivTag.find( 'small.statusIcon img' );
         var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
         var imgErrIconTag = statusSecDivTag.find( 'small.errorIcon img' );
 
         if ( itemData.status === me.status_redeem_submit )
         {
-            smallStatusNameTag.text( 'submitted' ).css( 'color', '#e48825' ); // Redeemed?
-            imgStatusIconTag.attr( 'src', 'img/lock.svg' );
+            //smallStatusNameTag.text( 'submitted' ).css( 'color', '#e48825' ); // Redeemed?
+            //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync.svg' );
             imgErrIconTag.css ( 'visibility', 'hidden' );
         }
         else if ( itemData.status === me.status_redeem_failed )
         {
-            smallStatusNameTag.text( 'invalid' ).css( 'color', '#e48825' ); //Invalid?
-            imgStatusIconTag.attr( 'src', 'img/lock.svg' );
+            //smallStatusNameTag.text( 'invalid' ).css( 'color', '#e48825' ); //Invalid?
+            //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
             imgErrIconTag.css ( 'visibility', 'visible' );
         }
         else
         {
-            smallStatusNameTag.text( 'open' ).css( 'color', '#787878' ); //Unmatched?
-            imgStatusIconTag.attr( 'src', 'img/open.svg' );
+            //smallStatusNameTag.text( 'open' ).css( 'color', '#787878' ); //Unmatched?
+            //imgStatusIconTag.attr( 'src', 'img/open.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
             imgErrIconTag.css ( 'visibility', 'hidden' );
 

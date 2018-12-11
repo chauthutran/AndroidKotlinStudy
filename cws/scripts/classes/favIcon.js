@@ -5,8 +5,7 @@ function favIcons( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.favIconsTag = $( '.floatListMenuSubIcons' );
-    me.dcdObject;
+    me.favIconsTag = $( 'div.floatListMenuSubIcons' );
     me.incr = 0;
 
 	// TODO: NEED TO IMPLEMENT
@@ -22,13 +21,14 @@ function favIcons( cwsRender )
 
         me.favIconsTag.empty();
 
-        if ( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) )
+        if ( FormUtil.dcdConfig )
         {
-            me.dcdObject = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).dcdConfig;
 
-            if ( me.dcdObject && me.dcdObject.favActionList )
+            if ( FormUtil.dcdConfig && FormUtil.favActionList )
             {
-                me.createIconButtons( me.dcdObject.favActionList );
+                me.favIconsTag.show();
+
+                me.createIconButtons( FormUtil.favActionList );
             }
 
         }

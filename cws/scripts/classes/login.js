@@ -218,6 +218,7 @@ function Login( cwsRenderObj )
 		if ( loginData.orgUnitData )
 		{
 			me.loggedInDivTag.show();
+			me.spanOuNameTag.show();
 			me.spanOuNameTag.text( '[' + loginData.orgUnitData.userName + ']' ).attr( 'title', loginData.orgUnitData.ouName );	
 		} 
 
