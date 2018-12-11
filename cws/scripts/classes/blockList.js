@@ -134,7 +134,7 @@ function BlockList( cwsRenderObj, blockObj )
         var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
         var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
-        var voucherTag = $( '<div class="act-r"><small><b>ZW12 cc</b> - eVoucher</small></div>' );
+        var voucherTag = $( '<div class="act-r"><small><b>'+FormUtil.dcdConfig.countryCode+''+itemData.data.payloadJson.voucherCode+'</b> - eVoucher</small></div>' );
 
         anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
 

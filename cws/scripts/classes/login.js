@@ -212,7 +212,7 @@ function Login( cwsRenderObj )
 	{		
 
 		me.closeForm();
-		me.pageTitleDivTab.hide(); // Greg added: 2018/12/07
+		me.pageTitleDivTab.hide(); 
 
 		// Set Logged in orgUnit info
 		if ( loginData.orgUnitData )
@@ -224,12 +224,12 @@ function Login( cwsRenderObj )
 		// Load config and continue the CWS App process
 		if ( loginData.dcdConfig ) 
 		{
+			FormUtil.dcdConfig = loginData.dcdConfig; 
 			// call CWS start with this config data..
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 		}
 
-		/* create/edit 'session' information block  */
-		/* START > added by Greg: 2018/11/23  */
+
 		var dtmNow = ( new Date() ).toISOString();
 
 		// if session data exists, update the lastUpdated date else create new session data
@@ -245,16 +245,15 @@ function Login( cwsRenderObj )
 			var newSaveObj = Object.assign( {} , loginData);
 
 			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: me._staySignedIn };
-			//newSaveObj.about = {  }; ignore about json block > this information is obtained elsewhere
 
-			DataManager.saveData( me._userName, newSaveObj );	
+			DataManager.saveData( me._userName, newSaveObj );
+
+			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
 		}
-		/* END > added by Greg: 2018/11/23  */
 
-
-		/* START > Greg added: 2018/12/06 */
+		// initialise favIcons
 		me.favIconsObj = new favIcons( me.cwsRenderObj );
-		/* END > Greg added: 2018/12/06 */
+
 	}
 
 	// --------------------------------------

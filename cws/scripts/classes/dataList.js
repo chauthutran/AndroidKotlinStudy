@@ -66,12 +66,10 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
-           
+  
             for( var i = 0; i < jsonList.length; i++ )
             {
                 var itemAttrDataList = jsonList[i];
-
-                //console.log ( itemAttrDataList );
 
                 if ( me.blockDataContainsKeyListValue(itemDisplayAttrList, itemAttrDataList) )
                 {
