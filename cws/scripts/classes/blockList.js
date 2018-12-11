@@ -55,12 +55,12 @@ function BlockList( cwsRenderObj, blockObj )
 			}
 		}
     }
-    
-    
+
+
     me.redeemList_Display = function( blockTag )
     {
         var jsonStorageData = DataManager.getOrCreateData( me.storageName_RedeemList );
-        
+
         me.renderRedeemList( jsonStorageData.list, blockTag );	
     }
    

@@ -21,16 +21,9 @@ function favIcons( cwsRender )
 
         me.favIconsTag.empty();
 
-        if ( FormUtil.dcdConfig )
+        if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favActionList )
         {
-
-            if ( FormUtil.dcdConfig && FormUtil.favActionList )
-            {
-                me.favIconsTag.show();
-
-                me.createIconButtons( FormUtil.favActionList );
-            }
-
+            me.createIconButtons( FormUtil.dcdConfig.favActionList );
         }
 
     }

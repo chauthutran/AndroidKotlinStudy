@@ -78,7 +78,7 @@ function DataList( cwsRenderObj, blockObj )
                     blockTag.append( divItemTag );
 
                     // Generate and append items
-                    me.renderIconTag( itemAttrDataList, divItemTag );
+                    me.renderIconTag( blockJson, itemAttrDataList, divItemTag );
                     me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
                     me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
                     
@@ -158,7 +158,6 @@ function DataList( cwsRenderObj, blockObj )
     me.renderDataValueTag = function( attrData, divItemTag )
     {    
         // Set Text..
-        //var spanDivTag = $( '<div> ' + attrData.displayName + " : <b>" + attrData.value + '</b></div>' );
         var spanDivTag = $( '<div style="margin:0 0 0 14px">' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
         //var spanDivTag = $( '<div style="margin:0 0 0 45px"> ' + attrData.value + '</div>' );
         divItemTag.append( spanDivTag );
@@ -172,7 +171,7 @@ function DataList( cwsRenderObj, blockObj )
         return converted;
     }
   
-    me.renderIconTag = function( valueData, parentItemTag )
+    me.renderIconTag = function( blockJson, valueData, parentItemTag )
     {
         var lastData = localStorage.getItem( 'lastPayload.posted' ); //added by Greg (2018/12/05)
         var labelText;

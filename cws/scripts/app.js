@@ -141,6 +141,7 @@
 
     $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
     $( '#divNetworkStatus' ).css( 'background-color', imgBg );
+    $( '#divNetworkStatus' ).css( 'display', 'block' );
 
     //console.log( '=== Network Online: ' + bOnline );
   };

@@ -148,7 +148,18 @@ function BlockButton( cwsRenderObj, blockObj )
 
 		if ( btnJson !== undefined )
 		{
-			if ( btnJson.buttonType === 'imageButton' )
+			if ( btnJson.buttonType === 'radioButton' )
+			{
+				/*if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
+				{
+					btnTag = $( '<div class="tb-content-buttom ">' + btnJson.defaultLabel + '</div>' );
+				}
+				else*/
+				{
+					btnTag = $( '<div style="padding:14px;" class=""><input type="radio" class="stayLoggedIn" style="width: 1.4em; height: 1.4em;"><span style="vertical-align: top; margin-left: 5px; ">'+btnJson.defaultLabel+'</span></div>' );
+				}
+			}
+			else if ( btnJson.buttonType === 'imageButton' )
 			{
 				// NEW - added 'tabs' style..
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
@@ -178,7 +189,7 @@ function BlockButton( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					btnTag = $( '<button ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
+					btnTag = $( '<button ranid="' + Util.generateRandomId() + '" class="tb-content-buttom ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
 				}
 			}	
 		}
@@ -201,8 +212,6 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() {
 
-					console.log( me.blockObj );
-	
 					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 	
 					console.log( 'button click handler created' );
