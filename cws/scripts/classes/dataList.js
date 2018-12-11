@@ -66,23 +66,49 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
-            console.log ( jsonList );
+           
             for( var i = 0; i < jsonList.length; i++ )
             {
                 var itemAttrDataList = jsonList[i];
 
-                var divItemTag = $( '<div class="inputDiv itemBlock" idx="' + i + '" style="border:1px solid #F5F5F5;"></div>' );
-                blockTag.append( divItemTag );
+                //console.log ( itemAttrDataList );
 
-                // Generate and append items
-                me.renderIconTag( itemAttrDataList, divItemTag );
-                me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
-                me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
-                
-                // Generate Button - with click event
-                 me.renderButtons( divItemTag, blockJson.itemButtons );
+                if ( me.blockDataContainsKeyListValue(itemDisplayAttrList, itemAttrDataList) )
+                {
+
+                    var divItemTag = $( '<div class="inputDiv itemBlock" idx="' + i + '" style="border:1px solid #F5F5F5;"></div>' );
+                    blockTag.append( divItemTag );
+
+                    // Generate and append items
+                    me.renderIconTag( itemAttrDataList, divItemTag );
+                    me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
+                    me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
+                    
+                    // Generate Button - with click event
+                    me.renderButtons( divItemTag, blockJson.itemButtons );
+
+                }
             }	
         }
+    }
+
+    me.blockDataContainsKeyListValue = function( itemAttrList, searchResults )
+    {
+        /* ONLY display results where any part of the resulting payload contains compliant/expected result data */
+        var iMatch = 0;
+
+        for( var a = 0; a < itemAttrList.length; a++ )
+        {
+            for( var i = 0; i < searchResults.length; i++ )
+            {
+                if ( itemAttrList[a] == searchResults[i].id )
+                {
+                    return true;
+                }
+
+            }
+        }
+
     }
 
     me.renderHiddenKeys = function( keyList, itemAttrDataList, divItemTag )
