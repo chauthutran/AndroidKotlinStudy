@@ -60,23 +60,27 @@ self.__precacheManifest = [
   },
   {
     "url": "images/icons/icon-128x128.png",
-    "revision": "9828f9995d52f35cc202efd0e1cd65cc"
+    "revision": "663516616720d1107c5621f326b899e8"
   },
   {
     "url": "images/icons/icon-144x144.png",
-    "revision": "aa14407a2c513a84700518838bed9a30"
+    "revision": "4cf8223442d2fbf91653b6ebb5dad779"
   },
   {
     "url": "images/icons/icon-152x152.png",
-    "revision": "fd9ee07f034b409b522d479076843e60"
+    "revision": "982f5ccc626f58ca9f099457a0240c47"
   },
   {
     "url": "images/icons/icon-192x192.png",
-    "revision": "7b997cde4d36d2cc05a31c1fda5c6a13"
+    "revision": "997013800576eb8bb6ced2572e16ec7b"
   },
   {
     "url": "images/icons/icon-256x256.png",
-    "revision": "461dd0d2fe65456ecac7085856d1cf95"
+    "revision": "f845c1b014e454d73a1d62215a9f4d84"
+  },
+  {
+    "url": "images/icons/logo-44x44.png",
+    "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
     "url": "images/listInQueue.jpg",
@@ -103,12 +107,20 @@ self.__precacheManifest = [
     "revision": "6334d3fb9d2884cf47c16aaea13bff03"
   },
   {
-    "url": "images/offline.svg",
+    "url": "images/offline.jpg",
     "revision": "607ea3a3094fb6195aee6f5f3fc5f35a"
   },
   {
-    "url": "images/online.svg",
+    "url": "images/offline.svg",
+    "revision": "00a8901e7e49ac9cd9af9fba7fa4fac8"
+  },
+  {
+    "url": "images/online.jpg",
     "revision": "d399f85bd9589fe3cacabcce42724c5f"
+  },
+  {
+    "url": "images/online.svg",
+    "revision": "5257c8f497dac61c6047124e51504180"
   },
   {
     "url": "images/reload.png",
@@ -157,6 +169,18 @@ self.__precacheManifest = [
   {
     "url": "img/contact.svg",
     "revision": "3426c2fced5715e0a5ab6160a3b71088"
+  },
+  {
+    "url": "img/favbar_act.svg",
+    "revision": "14ad465130eb38d00480ce6b414990bc"
+  },
+  {
+    "url": "img/favbar_arrows.svg",
+    "revision": "b58d4150200999df19be3bbe767d788b"
+  },
+  {
+    "url": "img/favbar_contact.svg",
+    "revision": "ba8537b7fffe061d9f73184a21602551"
   },
   {
     "url": "img/key.svg",
@@ -228,19 +252,23 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "720a968549fde4b361ac64da43c0fecc"
+    "revision": "aba8f9c4190ac4c2c32d5a71c51245ae"
   },
   {
     "url": "manifest.json",
     "revision": "05b4e421ab4a0d49ef25e76b35064600"
   },
   {
+    "url": "redeemGen.html",
+    "revision": "f6a0708fcc84af90bafd2d5dae108959"
+  },
+  {
     "url": "scripts/app.js",
-    "revision": "145e1dc7493a781099c7f8b38840cb92"
+    "revision": "02d1ea63d3327357dbc6e3c0dee1613c"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "37cf95d6edc0d21de1aa9d4564aa62bc"
+    "revision": "e8471871fc3a65a5d8bb3bda76609d92"
   },
   {
     "url": "scripts/classes/block.js",
@@ -248,15 +276,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "14d06343149f753e84227375b9506161"
+    "revision": "f824946a5de8cf2825f073c19074b100"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "978333bb7a0ff890b3f6aede2e2d204e"
+    "revision": "8b9098be2142a215910993374825834a"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "9a65fd209a434c3c40094d7e5609735f"
+    "revision": "3eb7b32293421d8ad7e8024ba1575a4b"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -264,11 +292,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "2b15f0adb6d684d436077a4aa2418924"
+    "revision": "8f66f9a5a5acf8530ff826199f8bcfe0"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "da511d2254900c692353a2337da469cc"
+    "revision": "9c975a5638467ad7f0a9b64acfe8c990"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -276,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "0e54bf9a900cbfddc1cf5a0906d58211"
+    "revision": "2a9988096cef716ac0ff5000b007b768"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -316,11 +344,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "8c486e9a0505428ce576577ffbf06a9a"
+    "revision": "e7efae74e35ae898d13ecef2ed511079"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "a6eeee85f33b3614fffe907d252dfb88"
+    "revision": "890849f08c53edee79f41bdcb079ee65"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -341,6 +369,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/z. Old Files/testSection.js",
     "revision": "0e632d23fbb96b56bf389700041637dc"
+  },
+  {
+    "url": "service-worker_back.js",
+    "revision": "de80056a12a74c2a49b1de762e295cb9"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -380,7 +412,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "68cd3cc40ef6d100fa5e9e4e7cb9c363"
+    "revision": "b846192028992b7f0c01fa7a6db2bcdc"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

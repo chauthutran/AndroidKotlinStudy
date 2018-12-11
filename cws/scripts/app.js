@@ -101,6 +101,9 @@
     if ( _ver < latestVersionStr )
     {
       if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) {
+
+        FormMsgManager.appBlock( "Regetting version and restarting the app..." );
+
         $( '.reget' ).click();
       } else {
         console.log( 'Using old version.  This app version: ' + _ver + ', latestVersion: ' + latestVersionStr );

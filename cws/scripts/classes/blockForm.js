@@ -416,29 +416,32 @@ function BlockForm( cwsRenderObj, blockObj )
 			//   a list that holds 'id' and 'value' for population...
 			//	regardless of type 'tei attribute val', 'dataElement value'
 
-			// getProperValue
+			// getProperValue  <-- but 'clientId' and voucherId' could be populated by hidden inputs..
 			var clientId = Util.getNotEmpty( passedData.resultData.clientId );
 			var voucherId = Util.getNotEmpty( passedData.resultData.voucherId );
 
 			// formDivSecTag.find( '#countryType' ).val( "MZ" );
 			// formDivSecTag.find( '#cbdCase' ).val( "Y" );
-			formDivSecTag.find( '[name="clientId"]' ).val( clientId );
-			formDivSecTag.find( '[name="voucherId"]' ).val( voucherId );
+			if ( clientId ) formDivSecTag.find( '[name="clientId"]' ).val( clientId );
+			if ( voucherId ) formDivSecTag.find( '[name="voucherId"]' ).val( voucherId );
+			// NOTE: But these coudl also be populated by below data..
+
 			// formDivSecTag.find( '#cbdEnrollOuId' ).val( passedData.data.relationships[0].cbdEnrollOu );
-			formDivSecTag.find( '[name="walkInClientCase"]' ).val( me.getWalkInClientCase ( clientId, voucherId ) );
+
 
 			try 
 			{
 				// var attributes = passedData.data.relationships[0].relative.attributes;
-				var attributes = passedData.displayData;
+				var attributes = passedData.displayData;  // <-- we are assuming this is single list...
 				var inputTags = formDivSecTag.find( 'input,select' );
 
 				// Go through each input tags and use 'uid' to match the attribute for data population
-
 				inputTags.each( function( i ) 
 				{
 					var inputTag = $( this );
 					var uidStr = inputTag.attr( 'uid' );
+
+					//console.log( 'inputTag visible, uid: ' + uidStr + ', visible: ' + inputTags.is( ':visible') );
 
 					if ( uidStr )
 					{
@@ -454,6 +457,13 @@ function BlockForm( cwsRenderObj, blockObj )
 						}
 					}
 				});
+
+				clientId = formDivSecTag.find( '[name="clientId"]' ).val();
+				voucherId = formDivSecTag.find( '[name="voucherId"]' ).val();
+				formDivSecTag.find( '[name="walkInClientCase"]' ).val( me.getWalkInClientCase ( clientId, voucherId ) );
+
+
+
 
 					// breakRule?  How is is used?
 					// populate the attribute value to matching DIV tag
