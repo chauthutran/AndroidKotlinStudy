@@ -135,7 +135,7 @@ function DataList( cwsRenderObj, blockObj )
     {    
         // Set Text..
         //var spanDivTag = $( '<div> ' + attrData.displayName + " : <b>" + attrData.value + '</b></div>' );
-        var spanDivTag = $( '<div style="margin:0 0 0 36px">' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
+        var spanDivTag = $( '<div style="margin:0 0 0 14px">' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
         //var spanDivTag = $( '<div style="margin:0 0 0 45px"> ' + attrData.value + '</div>' );
         divItemTag.append( spanDivTag );
     }
@@ -163,7 +163,8 @@ function DataList( cwsRenderObj, blockObj )
         }
 
         // Set Icons..
-        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <img src="img/mobile.svg" style="-webkit-filter: contrast(60%);filter: contrast(60%);"> <span style="font-size:11pt;"> ' + labelText +' </span> </div>' );
+        //var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <img src="img/mobile.svg" style="-webkit-filter: contrast(60%);filter: contrast(60%);"> <span style="font-size:11pt;"> ' + labelText +' </span> </div>' );
+        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <strong style="font-size:11pt;"> ' + labelText +' </strong> </div>' );
         parentItemTag.append( iconListTag );
     }
   

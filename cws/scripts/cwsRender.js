@@ -11,7 +11,8 @@ function cwsRender()
 	me.renderBlockTag = $( '#renderBlock' );
 	me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
 	me.menuDivTag = $( '#menuDiv' );
-	me.menuTopRightIconTag = $( '#menu_e' );
+	//me.menuTopRightIconTag = $( '#menu_e' );
+	me.menuAppMenuIconTag;
 
 	// This get cloned..  Thus, we should use it as icon class name?
 	me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
@@ -25,7 +26,7 @@ function cwsRender()
 	// global variables
 	me.configJson;
 	me.areaList = [];
-
+	me.manifest;
 
 	me.storageName_RedeemList = "redeemList";
 	me._globalMsg = "";
@@ -47,6 +48,8 @@ function cwsRender()
 		me.createSubClasses();
 
 		me.setEvents_OnInit();
+
+		me.setDefaults();
 	}
 
 	me.render = function()
@@ -83,6 +86,7 @@ function cwsRender()
 			me.LoginObj.loginFormDivTag.show();
 			me.LoginObj.render(); // Open Log Form
 		}
+
 		/* END > Greg added: 2018/11/23 */
 
 	}
@@ -99,6 +103,11 @@ function cwsRender()
 		// Set Body vs Set Header..
 		me.setPageHeaderEvents();
 	}
+
+	me.setDefaults = function()
+	{
+		me.manifest = FormUtil.getManifest();
+	}
 	// =============================================
 
 
@@ -114,7 +123,7 @@ function cwsRender()
 		});
 
 		// menu click handler
-		me.setTopRightMenuClick();
+		//me.setTopRightMenuClick();
 
 		// loggedIn Name Link Click Event - opens Login Form > DISABLED by Greg 2018/12/26 (as per Bruno's request)
 		/*me.loggedInDivTag.click( function() {
@@ -130,10 +139,10 @@ function cwsRender()
 
 	// -------------------------
 
-	me.setTopRightMenuClick = function()
+	/*me.setTopRightMenuClick = function()
 	{
 		FormUtil.setClickSwitchEvent( me.menuTopRightIconTag, me.menuDivTag, [ 'open', 'close' ] );
-	}
+	}*/
 
 	me.setupMenuTagClick = function( menuTag )
 	{
@@ -151,6 +160,12 @@ function cwsRender()
 			// reload the block refresh?
 			if ( clicked_area.startBlockName )
 			{
+				// added by Greg (2018/12/10)
+				if ( !$( 'div.mainDiv' ).is( ":visible" ) )
+				{
+					$( 'div.mainDiv' ).show();
+				}
+
 				/* START > Greg added: 2018/11/23 */
 				var lastSession = JSON.parse(localStorage.getItem('session'));
 
@@ -220,18 +235,26 @@ function cwsRender()
 					}
 
 
-					if ( me.menuDivTag.is( ":visible" ) && me.menuTopRightIconTag.is( ":visible" ) )
+					if ( me.menuDivTag.is( ":visible" ) && me.menuAppMenuIconTag.is( ":visible" ) )
 					{
-						me.menuTopRightIconTag.click();
+						me.menuAppMenuIconTag.click();
 					}
+
+					me.LoginObj.spanOuNameTag.text( '' );
+					me.LoginObj.spanOuNameTag.hide();
 
 					me.LoginObj.openForm();
 
 				}
 				/* END > Greg added: 2018/11/23 */
+
 				/* START > Greg edited: 2018/12/04 */
 				else if ( clicked_areaId === 'aboutPage')
 				{
+					if ( $( 'div.mainDiv' ).is( ":visible" ) )
+					{
+						$( 'div.mainDiv' ).hide();
+					}
 					me.aboutFormDivTag.show( 'fast' );
 
 					if ( localStorage.length )
@@ -264,9 +287,6 @@ function cwsRender()
 
 							})
 
-							//me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '<tr><td colspan=2 style="padding:18px;text-align:center;background-Color:#FFF;">&nbsp;<input type=button value="check for updates">&nbsp;</td></tr>' );
-							//me.aboutFormDivTag.find( 'div.aboutListDiv' ).append( '</table>' );
-
 							me.aboutFormDivTag.show();
 						}
 
@@ -276,10 +296,9 @@ function cwsRender()
 			}
 
 			// hide the menu
-			//$( '#menu_e:visible' ).click();
-			if ( me.menuDivTag.is( ":visible" ) && me.menuTopRightIconTag.is( ":visible" ) )
+			if ( me.menuDivTag.is( ":visible" ) && me.menuAppMenuIconTag.is( ":visible" ) )
 			{
-				me.menuTopRightIconTag.click();
+				me.menuAppMenuIconTag.click();
 			}
 	
 		});

@@ -92,7 +92,7 @@ select option {
 /* App Custom Style */
 
 .reget {
-  cursor:pointer;
+  cursor:pointer;display: none;
 }
 
 .blockStyle {

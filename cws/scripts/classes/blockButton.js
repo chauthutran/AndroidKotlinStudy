@@ -196,13 +196,16 @@ function BlockButton( cwsRenderObj, blockObj )
 	{
 		if ( btnJson && btnTag )
 		{
+
 			if ( btnJson.onClick !== undefined )
-			{			
+			{
 				btnTag.click( function() {
+
+					console.log( me.blockObj );
 	
 					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 	
-					console.log( 'button clicked' );
+					console.log( 'button click handler created' );
 				});
 			}
 			else if( btnJson.onClickItem !== undefined )
@@ -217,7 +220,7 @@ function BlockButton( cwsRenderObj, blockObj )
 		}
 	}
 
-		
+
 	me.renderBlockTabContent = function( liContentTag, onClick )
 	{
 		if ( onClick && onClick.length > 0 )

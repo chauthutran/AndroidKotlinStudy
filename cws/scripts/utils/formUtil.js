@@ -539,9 +539,8 @@ FormUtil.getAboutInfo = function()
 	var aboutSession = [];
 	var aboutBrowser = [];
 
-	aboutApp.push ( { name: 'appName', value: 'CwS: ' +$( 'div.logo-desc-all' ).html() } );
 	aboutApp.push ( { name: 'appVersion', value: $( '#spanVersion' ).html() } );
-	aboutApp.push ( { name: 'urlName', value: FormUtil.appUrlName } );
+	aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
 	aboutApp.push ( { name: 'staticWSName', value: FormUtil.staticWSName } );
 
 	retObj.about = ( aboutApp );
@@ -577,3 +576,19 @@ FormUtil.getAboutInfo = function()
 	return retObj;
 }
 /* END > Added by Greg: 2018/12/04 */
+
+/* START > Added by Greg: 2018/12/10 */
+FormUtil.getManifest = function()	
+{
+	$.get( location.pathname +'manifest.json', function( jsonData, status )
+		{
+			if ( status == 'success' )
+			{
+				return jsonData
+			}
+
+		}
+	);
+
+}
+/* END > Added by Greg: 2018/12/10 */

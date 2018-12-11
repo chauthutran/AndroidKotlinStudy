@@ -103,11 +103,11 @@ self.__precacheManifest = [
     "revision": "6334d3fb9d2884cf47c16aaea13bff03"
   },
   {
-    "url": "images/offline.jpg",
+    "url": "images/offline.svg",
     "revision": "607ea3a3094fb6195aee6f5f3fc5f35a"
   },
   {
-    "url": "images/online.jpg",
+    "url": "images/online.svg",
     "revision": "d399f85bd9589fe3cacabcce42724c5f"
   },
   {

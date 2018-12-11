@@ -16,6 +16,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="CwS">
     <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+    
     <!-- Windows -->
     <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
     <meta name="msapplication-TileColor" content="#2F3BA2">
@@ -47,11 +48,11 @@
 
   <nav class="bg-color-program">
       <div class='logo_top nav_child headerLogo'>
-        <img src='img/logo_top.svg'>
+        
       </div>
       <div class='logo_desc nav_child'>
         <div>
-          <div class="logo-desc-all" style='font-size: 18pt;position: relative;top: 10px;left: 4px;'>Connect</div>
+          <div class="logo-desc-all" style='font-weight: 600;font-size: 18pt;position: relative;top: 10px;left: 4px;'></div>
         </div>
         <div>
           <div style="display: none"><img src='img/net.svg' class="tab-image"></div>
@@ -70,8 +71,8 @@
                 </div>
             </td>
             <td>
-                <div id="swRefresh" class="reget" title="reGet" style="font-size: 12px; cursor:pointer;">
-                    <img src='images/reload.png' style="width: 12px; height: 12px; vertical-align: bottom; margin-bottom: 0px;"/>
+                <div id="swRefresh" class="reget" title="reGet" style="font-size: 12px; cursor:pointer;display:none;">
+                    <img src='images/reload.png' style="width: 12px; height: 12px; vertical-align: bottom; margin-bottom: 0px;display:none;"/>
                 </div>
             </td>
             <td>          
@@ -83,11 +84,10 @@
               <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div>
             </td>
             <td>
-              <div id="divNetworkStatus"><img id="imgNetworkStatus" src='images/offline.svg' style="width: 40px;height: 40px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;"/></div>
+              <div id="divNetworkStatus" style="padding: 3px;"><img id="imgNetworkStatus" src='images/offline.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;"/></div>
             </td>
-            <td>
+            <!-- <td>
               <div id="menuTopDiv">
-                <!-- fully expanded menu displayed on top?  No good?-->
                 <div class='m_top'>
                   <label id='menu_2' class="lab_m" for="">Menu 1</label>
                   <label id='menu_3' class="lab_m" for="">Menu 2</label>
@@ -97,7 +97,7 @@
                   <img src='img/menu_icon.svg' style="margin: -15px;">
                 </div>
               </div>        
-            </td>
+            </td> -->
           </tr>
         </table>
       </div>
@@ -131,7 +131,7 @@
           <ul class="tabs">
             <li tabId="1" class="active">
               <img src='img/key.svg' class="tab-image">
-              <label> Simple options</label>
+              <label> Login </label>
             </li>
             <!-- <li tabId="2">
               <img src='img/settings.svg' class="tab-image">
@@ -144,7 +144,7 @@
             <ul class="tab_content">
               <li tabId="1" class="active">
                 <a class="expandable expanded" id="s-opt">
-                  <div class="icon-row"><img src="img/key.svg"> Simple options</div>
+                  <div class="icon-row"><img src="img/key.svg"> Login </div>
                   <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>
                 </a>
                 <div>
@@ -272,6 +272,7 @@
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
 
+    <script type="text/javascript" src="scripts/classes/favIcon.js"></script>	
     <script type="text/javascript" src="scripts/classes/validation.js"></script>	
     <script type="text/javascript" src="scripts/classes/login.js"></script>
     <script type="text/javascript" src="scripts/classes/action.js"></script>
