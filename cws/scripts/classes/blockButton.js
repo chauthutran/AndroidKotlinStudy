@@ -214,7 +214,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 	
-					console.log( 'button clicked' );
+					console.log( 'button click handler created' );
 				});
 			}
 			else if( btnJson.onClickItem !== undefined )
