@@ -102,8 +102,11 @@ function DataList( cwsRenderObj, blockObj )
                     var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:50px;">' );
                     trTopObjTag.append( tdRightobjTag );
 
+                    var AhrefTag = $( '<a class="searchresultSelector">' );
+                    tdRightobjTag.append( AhrefTag );
+
                     var imgSelectorTag = $( '<img src="img/arrow_up.svg" class="rotate90 click">' );
-                    tdRightobjTag.append( imgSelectorTag );
+                    AhrefTag.append( imgSelectorTag );
 
                     var trBottomObjTag = $( '<tr>' );
                     var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
@@ -113,10 +116,10 @@ function DataList( cwsRenderObj, blockObj )
                     trBottomObjTag.append( tdBottomtobjTag );
                     tdBottomtobjTag.append( divObjTag );
 
-                    imgSelectorTag.on("click", function() { 
+                    imgSelectorTag.on("click", function() 
                     {
                         
-                    }
+                    });
 
 
                     //divItemTag.html ( objResult.toString() );

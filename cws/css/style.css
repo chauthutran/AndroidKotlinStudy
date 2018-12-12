@@ -647,3 +647,12 @@ img.rotate90 {
 div.formDivSec{
   background-color: #fff;
 }
+
+a.searchresultSelector {
+  cursor: pointer;
+}
+
+a.searchresultSelector:hover {
+  opacity: 0.5;
+  background-color: #46a1de;
+}
