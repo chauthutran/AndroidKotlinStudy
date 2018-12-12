@@ -66,34 +66,79 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
-  
+            var divFormContainerTag = $( '<div class="formDivSec">' );
+            blockTag.append( divFormContainerTag );
+
             for( var i = 0; i < jsonList.length; i++ )
             {
                 var itemAttrDataList = jsonList[i];
+                var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
 
-                if ( me.blockDataContainsKeyListValue(itemDisplayAttrList, itemAttrDataList) )
+                if ( objResult.length )
                 {
+                    var tblObjTag = $( '<table style="width:100%;">' );
+                    var trTopObjTag = $( '<tr>' );
+                    var tdLeftobjTag = $( '<td>' );
 
-                    var divItemTag = $( '<div class="inputDiv itemBlock" idx="' + i + '" style="border:1px solid #F5F5F5;"></div>' );
-                    blockTag.append( divItemTag );
+                    divFormContainerTag.append( tblObjTag );
+                    tblObjTag.append( trTopObjTag );
+                    trTopObjTag.append( tdLeftobjTag );
+
+                    objResult.forEach( function(jsonData) {        
+
+                        var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
+                        var labelTag = $( '<label class="from-string titleDiv" />' );
+                        var inputTag = $( '<div id="'+jsonData.id+'" class="form-type-text">');
+
+                        tdLeftobjTag.append( divAttrTag );
+                        divAttrTag.append( labelTag );
+                        divAttrTag.append( inputTag );
+
+                        labelTag.html( jsonData.name );
+                        inputTag.html( jsonData.value );
+
+                    });
+
+                    var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:50px;">' );
+                    trTopObjTag.append( tdRightobjTag );
+
+                    var imgSelectorTag = $( '<img src="img/arrow_up.svg" class="rotate90 click">' );
+                    tdRightobjTag.append( imgSelectorTag );
+
+                    var trBottomObjTag = $( '<tr>' );
+                    var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
+                    var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
+
+                    tblObjTag.append( trBottomObjTag );
+                    trBottomObjTag.append( tdBottomtobjTag );
+                    tdBottomtobjTag.append( divObjTag );
+
+                    imgSelectorTag.on("click", function() { 
+                    {
+                        
+                    }
+
+
+                    //divItemTag.html ( objResult.toString() );
 
                     // Generate and append items
-                    me.renderIconTag( blockJson, itemAttrDataList, divItemTag );
-                    me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
-                    me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
+                    //me.renderIconTag( blockJson, itemAttrDataList, divItemTag );
+                    //me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, divItemTag );
+                    //me.renderItemAttrs( itemDisplayAttrList, itemAttrDataList, divItemTag );
                     
                     // Generate Button - with click event
-                    me.renderButtons( divItemTag, blockJson.itemButtons );
+                    //me.renderButtons( divItemTag, blockJson.itemButtons );
 
                 }
             }	
         }
     }
 
-    me.blockDataContainsKeyListValue = function( itemAttrList, searchResults )
+    me.blockDataValidResultArray = function( itemAttrList, searchResults )
     {
-        /* ONLY display results where any part of the resulting payload contains compliant/expected result data */
-        var iMatch = 0;
+
+        /* ONLY return array pairs where payload contains expected UID fields */
+        var validResults = [];
 
         for( var a = 0; a < itemAttrList.length; a++ )
         {
@@ -101,11 +146,16 @@ function DataList( cwsRenderObj, blockObj )
             {
                 if ( itemAttrList[a] == searchResults[i].id )
                 {
-                    return true;
+                    if ( searchResults[i].value )
+                    {   
+                        validResults.push ( { 'id': itemAttrList[a], 'name': searchResults[i].displayName, 'value': searchResults[i].value } );
+                    }
                 }
 
             }
         }
+
+        return validResults;
 
     }
 
@@ -142,7 +192,7 @@ function DataList( cwsRenderObj, blockObj )
             if ( attrData ) me.renderDataValueTag( attrData, divItemTag );
         }
     }
-    
+
     me.renderButtons = function( divItemTag, itemButtons )
     {
         if ( itemButtons )

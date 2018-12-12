@@ -279,6 +279,7 @@
     /* 2A. 1 column input less than 866px */
     @media screen and (max-width: 865px) {
       .tb-content-d,
+      .tb-content-result,
       .tb-content-buttom {
         width: 96%;
       }
@@ -287,6 +288,7 @@
     /* 2B. 2 column input wider than 866px */
     @media screen and (min-width: 866px) {
       .tb-content-d,
+      .tb-content-result,
       .tb-content-buttom {
         width: 47%;
       }
