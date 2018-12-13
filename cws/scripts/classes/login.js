@@ -5,18 +5,17 @@ function Login( cwsRenderObj )
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
-	
+
 	me.loginFormDivTag = $( "#loginFormDiv" );
 	me.pageDivTag = $( "#pageDiv" );	// Get it from cwsRender object?
 	me.menuTopDivTag; // = $( '#menuTopDiv' ); //edited by Greg (2018/12/10)
-	me.favIconsObj; //added by Greg (2018/12/10)
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.spanOuNameTag = $( '#spanOuName' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
-	
 
-		  
+
+
   // Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
 	me._pHash = '';
@@ -31,7 +30,7 @@ function Login( cwsRenderObj )
 
 		me.setEvents_OnInit();
 	}
-	
+
 	me.render = function()
 	{
 		me.openForm();
@@ -252,9 +251,6 @@ function Login( cwsRenderObj )
 			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
 		}
 
-		// initialise favIcons
-		me.favIconsObj = new favIcons( me.cwsRenderObj );
-
 	}
 
 	// --------------------------------------
@@ -310,7 +306,7 @@ function Login( cwsRenderObj )
 
 			cwsRenderObj.menuAppMenuIconTag = dvContain;
 
-			FormUtil.setClickSwitchEvent( dvContain, targetDiv, [ 'open', 'close' ] );
+			FormUtil.setClickSwitchEvent( dvContain, targetDiv, [ 'open', 'close' ], cwsRenderObj );
 
 		}
 

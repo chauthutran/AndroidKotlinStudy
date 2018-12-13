@@ -191,7 +191,21 @@ function BlockButton( cwsRenderObj, blockObj )
 				{
 					btnTag = $( '<button ranid="' + Util.generateRandomId() + '" class="tb-content-buttom ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
 				}
-			}	
+			}
+			else if ( btnJson.buttonType === 'listRightImg' )
+			{
+				console.log( 'btnJson.buttonType === listRightImg' );
+				
+				console.log( btnJson );
+
+				// NOTE: THIS IS ONLY USED ON LIST VIEW
+				// FOR NOW, LET's find the div tag of this '
+
+				btnTag = $( '<img src="' + btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="rotate90 btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
+				//btnTag = $( '<img src="' + btnJson.img + '" class="rotate90 ' + btnJson.buttonType + '" style="cursor: pointer;">' );
+
+				//btnJson.img": "favbar_arrows.svg",
+			}
 		}
 
 		if ( btnTag === undefined )

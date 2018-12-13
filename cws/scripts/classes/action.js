@@ -168,7 +168,7 @@ function Action( cwsRenderObj, blockObj )
 				alert( clickActionJson.message );
 			}
 			else if ( clickActionJson.actionType === "topNotifyMsg" )
-			{				
+			{
 				MsgManager.msgAreaShow( clickActionJson.message );
 			}
 			else if ( clickActionJson.actionType === "processWSResult" ) 
@@ -195,11 +195,10 @@ function Action( cwsRenderObj, blockObj )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );				
 
-				//console.log( 'formDivSecTag: ' + formDivSecTag.html() );
+				localStorage.setItem( 'lastPayload.all', '{ ' + JSON.stringify( clickActionJson ) + ' } ' ); // added by Greg (2018/12/05)
 
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
-
 				localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 
 				// REMOVE 'payloadBody' from the config json since we are not using it!!

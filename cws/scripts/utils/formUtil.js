@@ -285,7 +285,7 @@ FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
 }
 
 
-FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass )
+FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
 {
 	mainIconTag.on('click', function( event )
 	{
@@ -307,6 +307,10 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
 			subListIconsTag.show();
+
+			//console.log(cwsRenderObj.favIconsObj);
+			//cwsRender.favIconsObj.setFavIconClickTarget
+
 		} 
 	});	
 }
@@ -510,7 +514,6 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 	}
 }
 
-
 FormUtil.getTagVal = function( tag )
 {
 	var val;
@@ -529,53 +532,6 @@ FormUtil.getTagVal = function( tag )
 
 	return val;
 }
-
-/* START > Added by Greg: 2018/12/04 */
-FormUtil.getAboutInfo = function()
-{
-	var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
-	var retObj = {};
-	var aboutApp = [];
-	var aboutSession = [];
-	var aboutBrowser = [];
-
-	aboutApp.push ( { name: 'appVersion', value: $( '#spanVersion' ).html() } );
-	aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
-	aboutApp.push ( { name: 'staticWSName', value: FormUtil.staticWSName } );
-
-	retObj.about = ( aboutApp );
-
-	/*for ( keyObj in navigator )
-	{
-		if ( !( typeof navigator[keyObj]  === 'object' ) && !( typeof navigator[keyObj]  === 'function' ) && !( navigator[keyObj] == '' ) )
-		{
-			aboutBrowser.push ( { name: keyObj, value: navigator[keyObj] } );
-		}
-
-		retObj.browser = ( aboutBrowser );
-
-	}*/
-
-	aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
-	aboutBrowser.push ( { name: 'appVersion', value: navigator.appVersion } );
-	aboutBrowser.push ( { name: 'language', value: navigator.language } );
-	aboutBrowser.push ( { name: 'userAgent', value: navigator.userAgent } );
-
-	retObj.device_browser = ( aboutBrowser );
-
-	aboutSession.push ( { name: 'dcdVersion', value: userConfig.dcdConfig.version } );
-	aboutSession.push ( { name: 'dcdCountryCode', value: userConfig.dcdConfig.countryCode } );
-	aboutSession.push ( { name: 'dataServer', value: userConfig.orgUnitData.dhisServer } );
-	aboutSession.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
-	aboutSession.push ( { name: 'authenticateServer', value: FormUtil.login_server } );
-	aboutSession.push ( { name: 'dateCreation', value: userConfig.mySession.createdDate } );
-	aboutSession.push ( { name: 'dateUpdated', value: userConfig.mySession.lastUpdated } );
-
-	retObj.advanced = ( aboutSession );
-
-	return retObj;
-}
-/* END > Added by Greg: 2018/12/04 */
 
 /* START > Added by Greg: 2018/12/10 */
 FormUtil.getManifest = function()	

@@ -26,6 +26,8 @@ function favIcons( cwsRender )
             me.createIconButtons( FormUtil.dcdConfig.favActionList );
         }
 
+        return me;
+
     }
 
     me.createIconButtons = function( favData ) {
@@ -43,44 +45,41 @@ function favIcons( cwsRender )
         // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
 		$.get( location.pathname +''+ favIcon.img, function(data) {
 
-            me.incr += 1; 
 			var unqID = Util.generateRandomId();
-			var divTag = $( '<div id="'+unqID+'" class="iconClicker pointer" />');
+			var divTag = $( '<div id="favIcon_'+unqID+'" class="iconClicker pointer" />');
             var svg = ( $(data)[0].documentElement );
-            me.blockObj;
 
-			$(svg).find("tspan").html(favIcon.name) 
-			//$(divTag).on("click", function() {  alert (' you clicked ' + favIcon.name )  } );
+            $(svg).find("tspan").html(favIcon.name) 
 
             divTag.append( svg );
-
-            //divTag.on("click", function() {  alert (' you clicked ' + favIcon.name )  } );
-
-            //var newBlockButton = new BlockButton ( me.cwsRenderObj )
-            //newBlockButton.initialize();
-            //newBlockButton.setUpBtnClick ( divTag, favIcon );
-
-            //var newAct = new Action( me.cwsRenderObj, new Block( me.cwsRenderObj, favIcon) );
-            //newAct.handleItemClickActions( divTag, favIcon.onClick, me.incr,  )
-
-            //var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
-            //startBlockObj.renderBlock();  // should been done/rendered automatically?
-
-            divTag.on("click", function() {
-                alert (' you clicked ' + favIcon.name )
-                me.cwsRenderObj.ResetAreaDisplay();
-				//var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
-				//startBlockObj.renderBlock();  // should been done/rendered automatically?
-            });
-
             me.favIconsTag.append( divTag );
+
+            if ( favIcon.target )
+            {
+                me.setFavIconClickTarget ( favIcon.target, unqID )
+            }
 
 		});
 
-	}
+    }
+
+    me.setFavIconClickTarget = function( favTarget, targetID )
+    {
+        // Weird > bindings being lost after 1st click event
+        //tagTarget.on("click", function() {
+        $(document).on('click', '#favIcon_'+targetID, function() {
+
+            if ( favTarget.blockId )
+            {
+                //console.log ( favTarget.options );
+                //$( 'li.active > label' ).html( favTarget.name );
+                me.cwsRenderObj.renderBlock( favTarget.blockId, favTarget.options )
+            }
+
+        });
+    }
 
 	// ------------------------------------
-
 
 	me.initialize();
 }

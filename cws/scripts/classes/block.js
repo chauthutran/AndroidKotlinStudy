@@ -120,7 +120,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	{
 		// We could appent to parentTag here is desired..
 
-		console.log( 'on renderBlock, me.blockJson: ' + JSON.stringify( me.blockJson ) );
+		console.log( 'on renderBlock, me.blockJson: ' + JSON.stringify( me.blockJson ) + ', options: ' + JSON.stringify( me.options ) );
 
 		if ( me.blockJson )
 		{			
@@ -131,11 +131,11 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 			me.blockFormObj.renderForm( me.blockJson.form, me.blockTag, me.passedData );
 
 			// Render List
-			me.blockListObj.renderList( me.blockJson.list, me.blockTag, me.passedData );
+			me.blockListObj.renderList( me.blockJson.list, me.blockTag, me.passedData, me.options );
 
 			// Reder Data List
 			//me.dataListObj.initialize( me.passedData, me.blockJson );
-			me.dataListObj.renderList( me.blockJson, me.blockTag, me.passedData );
+			me.dataListObj.renderList( me.blockJson, me.blockTag, me.passedData, me.options );
 
 			// Render Buttons
 			me.blockButtonObj.renderBlockButtons( me.blockJson.buttons, me.blockTag, undefined );

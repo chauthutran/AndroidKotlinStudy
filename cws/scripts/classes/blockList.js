@@ -8,6 +8,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.blockObj = blockObj;        
 
     me.redeemList;
+    me.options;
 
     me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit";
@@ -28,7 +29,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 	// -----------------------------------
 
-    me.renderList = function( list, newBlockTag, passedData )
+    me.renderList = function( list, newBlockTag, passedData, options )
 	{
 		if ( list !== undefined )
 		{
@@ -36,6 +37,11 @@ function BlockList( cwsRenderObj, blockObj )
 			{
 				if ( list === 'redeemList' )
 				{
+                    if ( options )
+                    {
+                        me.options = options;
+                    }
+
                     me.redeemList_Display( newBlockTag );
                     
                     // Add Event from 'FormUtil'
@@ -79,9 +85,21 @@ function BlockList( cwsRenderObj, blockObj )
         if ( redeemList )
         {
 
-            MsgManager.msgAreaShow( 'loading ' + (redeemList.length) );
+            me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName);
 
-            me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName); 
+            if ( me.options && me.options.filter )
+            {
+                for( var o=0; o<me.options.filter.length; o++ )
+                {
+                    var filterObj = me.options.filter[o];
+                    var keys = Object.keys(filterObj);
+                    var keyValue = filterObj[keys[0]];
+
+                    me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
+                }
+            }
+
+            MsgManager.msgAreaShow( 'loading ' + (me.redeemList.length) );
 
             //setTimeout( function() {
 
@@ -137,7 +155,7 @@ function BlockList( cwsRenderObj, blockObj )
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
 
-        var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:MM ");
+        var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:mm ");
 
         var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
@@ -519,7 +537,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
 	{
-		FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ] );		
+		FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me.cwsRenderObj );		
 	}
 
 	// =============================================

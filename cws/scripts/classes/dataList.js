@@ -66,11 +66,10 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
-            var divFormContainerTag = $( '<div class="formDivSec">' );
+            var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
             blockTag.append( divFormContainerTag );
 
             var searchPostPayload = JSON.parse( localStorage.getItem('lastPayload.posted') ).data;
-
 
             for( var i = 0; i < jsonList.length; i++ )
             {
@@ -87,35 +86,48 @@ function DataList( cwsRenderObj, blockObj )
                     tblObjTag.append( trTopObjTag );
                     trTopObjTag.append( tdLeftobjTag );
 
+                    // add search criteria to results field list > what if search criteria already part of output specification?
                     for(var k in searchPostPayload) 
                     {
                         objResult.push ( { 'id': '', 'name': k, 'value': searchPostPayload[k] } );
                     }
 
-                    objResult.forEach( function(jsonData) {        
-
+                    //objResult.forEach( function(jsonData) {
+                    for( var o = 0; o < objResult.length; o++ )
+                    {
                         var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
                         var labelTag = $( '<label class="from-string titleDiv" />' );
-                        var inputTag = $( '<div id="'+jsonData.id+'" class="form-type-text">');
+                        var inputTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
 
                         tdLeftobjTag.append( divAttrTag );
                         divAttrTag.append( labelTag );
                         divAttrTag.append( inputTag );
 
-                        labelTag.html( jsonData.name );
-                        inputTag.html( jsonData.value );
+                        labelTag.html( objResult[o].name );
+                        inputTag.html( objResult[o].value );
 
-                    });
+                        if ( objResult[o].id == '' ) //added from search criteria
+                        {
+                            labelTag.css('font-weight',"600");
+                            //labelTag.css('color',"#8F5959");
+                            //inputTag.css('color',"#612A2A");
+                        }
+
+                    };
 
                     var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:50px;">' );
                     trTopObjTag.append( tdRightobjTag );
 
-                    var AhrefTag = $( '<a class="searchresultSelector">' );
-                    tdRightobjTag.append( AhrefTag );
+                    //var AhrefTag = $( '<a class="searchresultSelector">' );
+                    //tdRightobjTag.append( AhrefTag );
 
-                    var imgSelectorTag = $( '<img src="img/arrow_up.svg" class="rotate90 click">' );
-                    AhrefTag.append( imgSelectorTag );
+                    me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
+                    me.renderButtons( tdRightobjTag, blockJson.itemButtons );
 
+                    //var imgSelectorTag = $( '<img src="img/arrow_up.svg" style="width:40px;height:40px;" class="rotate90 click">' );
+                    //AhrefTag.append( imgSelectorTag );
+
+                    /* START > LINE SEPARATOR */
                     var trBottomObjTag = $( '<tr>' );
                     var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
                     var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
@@ -123,11 +135,7 @@ function DataList( cwsRenderObj, blockObj )
                     tblObjTag.append( trBottomObjTag );
                     trBottomObjTag.append( tdBottomtobjTag );
                     tdBottomtobjTag.append( divObjTag );
-
-                    imgSelectorTag.on("click", function() 
-                    {
-                        
-                    });
+                    /* END > LINE SEPARATOR */
 
 
                     //divItemTag.html ( objResult.toString() );
