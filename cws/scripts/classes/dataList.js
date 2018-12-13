@@ -79,10 +79,11 @@ function DataList( cwsRenderObj, blockObj )
                 if ( objResult.length )
                 {
                     var tblObjTag = $( '<table style="width:100%;">' );
-                    var trTopObjTag = $( '<tr>' );
+                    var trTopObjTag = $( '<tr class="itemBlock">' );
                     var tdLeftobjTag = $( '<td>' );
 
                     divFormContainerTag.append( tblObjTag );
+                    
                     tblObjTag.append( trTopObjTag );
                     trTopObjTag.append( tdLeftobjTag );
 

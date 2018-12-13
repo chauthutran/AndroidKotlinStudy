@@ -34,7 +34,7 @@ function Action( cwsRenderObj, blockObj )
 	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, clickedItemData )
 	{		
 		var blockDivTag = btnTag.closest( 'div.block' );
-		var itemBlockTag = btnTag.closest( 'div.itemBlock' );
+		var itemBlockTag = btnTag.closest( '.itemBlock' );
 
 		// NOTE: TRAN VALIDATION
 		if( me.blockObj.validationObj.checkFormEntryTagsData( itemBlockTag ) )
