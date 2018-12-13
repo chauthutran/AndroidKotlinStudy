@@ -101,18 +101,31 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	var inputTags = formDivSecTag.find( 'input,select' );
 
 	inputTags.each( function()
-	{
+	{		
 		var inputTag = $(this);	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
+		var getVal_visible = false;
+		var getVal = false;
 
-		if ( attrDisplay === 'hiddenVal' ) getVal = true;
-		else if ( inputTag.is( ':visible' ) ) getVal = true;
+		if ( attrDisplay === 'hiddenVal' ) getVal_visible = true;
+		else if ( inputTag.is( ':visible' ) ) getVal_visible = true;
 
-		// If list is not available, get all values.  If list exists, only get value matches in the list.
-		if ( getValList === undefined || getValList.indexOf( nameVal ) >= 0 )
-		{			
-			// Need to handle check box
+		if ( getVal_visible )
+		{
+			// Check if the submit var list exists (from config).  If so, only items on that list are added.
+			if ( getValList === undefined )
+			{			
+				getVal = true;
+			}
+			else
+			{
+				if ( getValList.indexOf( nameVal ) >= 0 ) getVal = true;
+			}
+		}
+
+		if ( getVal )
+		{
 			var val = FormUtil.getTagVal( inputTag );
 			if ( val === null || val === undefined ) val = '';
 
