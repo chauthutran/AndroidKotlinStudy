@@ -50,7 +50,7 @@ function aboutApp( cwsRender )
 
                 $.each(me.aboutData, function(k, o) {
 
-                    o.sort (function(a, b) { return (a['name'] > b['name']) ? 1 : ((a['name'] < b['name']) ? -1 : 0); } );
+                    //o.sort (function(a, b) { return (a['name'] > b['name']) ? 1 : ((a['name'] < b['name']) ? -1 : 0); } );
 
                     var bgAlt = '#FFF';
                     myTable.append( '<tr><td colspan=2 style="padding:8px 8px 8px 0;text-align:left;background-Color:' + bgAlt + ';font-weight:600">&nbsp;'+k.toString().toUpperCase()+'&nbsp;</td></tr>' );
@@ -64,6 +64,23 @@ function aboutApp( cwsRender )
                     })
 
                 })
+
+
+               /* var myButton = $( '<button value="" class="">Hard Reload</button>');
+                me.aboutContentDivTag.append( myButton );
+
+                $( myButton ).click( () => {
+
+                    if ( ConnManager.isOffline() )
+                    {
+                      alert( 'Only re-register service-worker while online, please.' );
+                    }
+                    else
+                    {
+                      me.cwsRenderObj.reGet(); 
+                    }
+                
+                });*/
 
                 me.aboutFormDivTag.show();
             }
@@ -81,38 +98,30 @@ function aboutApp( cwsRender )
         var aboutBrowser = [];
 
         aboutApp.push ( { name: 'appVersion', value: $( '#spanVersion' ).html() } );
-        aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
+        aboutApp.push ( { name: 'dcdVersion', value: userConfig.dcdConfig.version } );
+        aboutApp.push ( { name: 'country', value: userConfig.dcdConfig.countryCode } );
+        //aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
+        aboutApp.push ( { name: 'urlNameRAW', value: ( location.pathname ) } );
+        aboutApp.push ( { name: 'dataServer', value: userConfig.orgUnitData.dhisServer } );
         aboutApp.push ( { name: 'staticWSName', value: FormUtil.staticWSName } );
+        //aboutApp.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
 
         retObj.about = ( aboutApp );
 
-        /*for ( keyObj in navigator )
-        {
-            if ( !( typeof navigator[keyObj]  === 'object' ) && !( typeof navigator[keyObj]  === 'function' ) && !( navigator[keyObj] == '' ) )
-            {
-                aboutBrowser.push ( { name: keyObj, value: navigator[keyObj] } );
-            }
-
-            retObj.browser = ( aboutBrowser );
-
-        }*/
-
-        aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
-        aboutBrowser.push ( { name: 'appVersion', value: navigator.appVersion } );
+        //aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
         aboutBrowser.push ( { name: 'language', value: navigator.language } );
         aboutBrowser.push ( { name: 'userAgent', value: navigator.userAgent } );
 
-        retObj.device_browser = ( aboutBrowser );
+        retObj.Browser = ( aboutBrowser );
 
-        aboutSession.push ( { name: 'dcdVersion', value: userConfig.dcdConfig.version } );
-        aboutSession.push ( { name: 'dcdCountryCode', value: userConfig.dcdConfig.countryCode } );
-        aboutSession.push ( { name: 'dataServer', value: userConfig.orgUnitData.dhisServer } );
-        aboutSession.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
-        aboutSession.push ( { name: 'authenticateServer', value: FormUtil.login_server } );
-        aboutSession.push ( { name: 'dateCreation', value: userConfig.mySession.createdDate } );
-        aboutSession.push ( { name: 'dateUpdated', value: userConfig.mySession.lastUpdated } );
+        //JSON.stringify(jsObj, null, "\t"); // stringify with tabs inserted at each level
+        //JSON.stringify(jsObj, null, 4);  
+        //aboutSession.push ( { name: 'authenticateServer', value: FormUtil.login_server } );
+        //aboutSession.push ( { name: 'dateCreation', value: userConfig.mySession.createdDate } );
+        //aboutSession.push ( { name: 'dateUpdated', value: userConfig.mySession.lastUpdated } );
+        //aboutSession.push ( { name: 'favActionList', value: JSON.stringify(userConfig.dcdConfig.favActionList, null, "\t") } );
+        //retObj.sessionData = ( aboutSession );
 
-        retObj.advanced = ( aboutSession );
 
         return retObj;
     }

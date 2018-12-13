@@ -27,6 +27,7 @@ function cwsRender()
 	me.manifest;
 	me.favIconsObj;
 	me.aboutApp;
+	me.registrationObj;
 
 	me.storageName_RedeemList = "redeemList";
 	me._globalMsg = "";
@@ -96,7 +97,7 @@ function cwsRender()
 	me.createSubClasses = function()
 	{
 		me.LoginObj = new Login( me );
-		me.aboutApp = new aboutApp();
+		me.aboutApp = new aboutApp( me );
 	}
 
 	me.setEvents_OnInit = function()
@@ -396,6 +397,22 @@ function cwsRender()
 		return startMenuTag;
 	}
 
+	
+	me.setRegistrationObject = function( registrationObj )
+	{
+		me.registrationObj = registrationObj;
+	}
+
+	me.reGet = function()
+	{
+		if ( me.registrationObj !== undefined )
+		{
+			console.log ( 'reloading + unregistering SW');
+			me.registrationObj.unregister().then(function(boolean) {
+			location.reload(true);
+		});
+		}  
+	}
 	// ======================================
 
 	me.initialize();

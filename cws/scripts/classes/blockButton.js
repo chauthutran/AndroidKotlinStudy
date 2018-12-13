@@ -194,17 +194,8 @@ function BlockButton( cwsRenderObj, blockObj )
 			}
 			else if ( btnJson.buttonType === 'listRightImg' )
 			{
-				console.log( 'btnJson.buttonType === listRightImg' );
-				
-				console.log( btnJson );
-
-				// NOTE: THIS IS ONLY USED ON LIST VIEW
-				// FOR NOW, LET's find the div tag of this '
-
-				btnTag = $( '<img src="' + btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="rotate90 btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
+				btnTag = $( '<img src="' + btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
 				//btnTag = $( '<img src="' + btnJson.img + '" class="rotate90 ' + btnJson.buttonType + '" style="cursor: pointer;">' );
-
-				//btnJson.img": "favbar_arrows.svg",
 			}
 		}
 
@@ -226,18 +217,46 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() {
 
+					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+					if ( btnJson.buttonType === 'listRightImg' )
+					{
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						btnTag.hide();
+						btnTag.parent().append( loadingTag );
+					} 
+
 					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
-	
-					console.log( 'button click handler created' );
+
 				});
 			}
 			else if( btnJson.onClickItem !== undefined )
 			{
 				btnTag.click( function() {
 
+					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+					if ( btnJson.buttonType === 'listRightImg' )
+					{
+						var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
+
+						for( var i = 0; i < parentDiv.children.length; i++ )
+						{
+							let tbl = parentDiv.children[i];
+
+							if ( tbl != btnTag.parent().parent().parent().parent()[0] )
+							{
+								$( tbl ).css('opacity','0.5');
+							}
+
+						}
+
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						btnTag.hide();
+						btnTag.parent().append( loadingTag );
+					} 
+
 					var idx = $( this ).closest(".itemBlock").attr("idx");
-					
 					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
+
 				});
 			}	
 		}

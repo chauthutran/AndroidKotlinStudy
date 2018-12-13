@@ -193,13 +193,16 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "sendToWS" ) 
 			{
-				var currBlockId = blockDivTag.attr( 'blockId' );				
-
-				localStorage.setItem( 'lastPayload.all', '{ ' + JSON.stringify( clickActionJson ) + ' } ' ); // added by Greg (2018/12/05)
+				var currBlockId = blockDivTag.attr( 'blockId' );
 
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
-				localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
+
+				FormUtil.setLastPayload ( inputsJson )
+
+				//localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
+
+				//localStorage.setItem( 'lastPayload.all', '{ ' + JSON.stringify( clickActionJson ) + ' } ' ); // added by Greg (2018/12/05)
 
 				// REMOVE 'payloadBody' from the config json since we are not using it!!
 				/*

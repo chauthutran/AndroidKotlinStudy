@@ -14,6 +14,7 @@ FormUtil.dcdConfig;
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
 FormUtil._serverUrl = location.protocol + '//' + location.host;
+
 // 'https://apps.psi-mis.org';  <-- white listing try
 
 // ==== Methods ======================
@@ -549,7 +550,7 @@ FormUtil.getTagVal = function( tag )
 /* START > Added by Greg: 2018/12/10 */
 FormUtil.getManifest = function()	
 {
-	$.get( location.pathname +'manifest.json', function( jsonData, status )
+	$.get( 'manifest.json', function( jsonData, status )
 		{
 			if ( status == 'success' )
 			{
@@ -561,3 +562,48 @@ FormUtil.getManifest = function()
 
 }
 /* END > Added by Greg: 2018/12/10 */
+
+/* START > Added by Greg: 2018/12/103 */
+
+FormUtil.setLastPayload = function( jsonData )
+{
+
+	var sessionData = localStorage.getItem('session');
+
+	if ( sessionData )
+	{
+
+		var SessionObj = JSON.parse( sessionData );
+		//var payload = JSON.stringify( jsonData );
+
+		if ( SessionObj.last && SessionObj.last.payload )
+		{
+			SessionObj.last.payload = jsonData;
+		}
+		else
+		{
+			SessionObj.last = { 'payload': jsonData };
+		}
+
+		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
+
+	}
+}
+
+FormUtil.getLastPayload = function()
+{
+	var sessionData = localStorage.getItem('session');
+
+	if ( sessionData )
+	{
+		var SessionObj = JSON.parse( sessionData );
+
+		if ( SessionObj.last && SessionObj.last.payload )
+		{
+			return SessionObj.last.payload;
+		}
+
+	}
+}
+
+/* END > Added by Greg: 2018/12/13 */

@@ -8,6 +8,10 @@ function BlockList( cwsRenderObj, blockObj )
     me.blockObj = blockObj;        
 
     me.redeemList;
+    me.redeemListTargetTag;
+    me.redeemListScrollSize = 10;
+    me.lastRedeemDate;
+    me.redeemListLimit;
     me.options;
 
     me.storageName_RedeemList = "redeemList";
@@ -25,7 +29,9 @@ function BlockList( cwsRenderObj, blockObj )
 	// -----------------------------
 	// ---- Methods ----------------
 	
-	me.initialize = function() {}
+	me.initialize = function() {
+        me.redeemListLimit = false;
+    }
 
 	// -----------------------------------
 
@@ -69,7 +75,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         me.renderRedeemList( jsonStorageData.list, blockTag );	
     }
-   
+
     me.renderRedeemList = function( redeemList, blockTag )
     {   
 
@@ -80,11 +86,11 @@ function BlockList( cwsRenderObj, blockObj )
         $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
         var listContentUlTag = blockTag.find( '.tab__content_act' );
+        me.redeemListTargetTag = listContentUlTag;
 
         /* START > Added by Greg: 2018/11/26 */
         if ( redeemList )
         {
-
             me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName);
 
             if ( me.options && me.options.filter )
@@ -99,33 +105,64 @@ function BlockList( cwsRenderObj, blockObj )
                 }
             }
 
-            MsgManager.msgAreaShow( 'loading ' + (me.redeemList.length) );
-
-            //setTimeout( function() {
-
-                // Filter me.redeemList for the current (logged in) user's redeemList
-
-                if ( me.redeemList === undefined || me.redeemList.length == 0 )
-                {
-                    var liTag = $( '<li class="emptyListLi"></li>' );
-                    var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
-                    liTag.append( spanTag );
-                    listContentUlTag.append( liTag );
+            (me.redeemList).sort(function (a, b) {
+                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
+                if (b.created > a.created) {
+                    return b1st;
                 }
-                else
+                else if (a.created > b.created) {
+                    return a1st;
+                }
+                else {
+                    return equal;
+                }
+            });
+
+            console.log ( me.lastRedeemDate );
+            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+
+            MsgManager.msgAreaShow( 'loading ' + ( ( me.redeemListScrollSize < me.redeemList.length) ? me.redeemListScrollSize : arrNewFirst.length ) );
+
+            if ( me.redeemList === undefined || me.redeemList.length == 0 )
+            {
+                var liTag = $( '<li class="emptyListLi"></li>' );
+                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
+                liTag.append( spanTag );
+                listContentUlTag.append( liTag );
+            }
+            else
+            {
+                var arrNewFirst = me.redeemList; //.reverse();
+ 
+                for( var i = 0; ( ( i < arrNewFirst.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
                 {
-                    var arrNewFirst = me.redeemList; //.reverse();
-                    for( var i = 0; i < arrNewFirst.length; i++ )
-                    {
-                        me.renderRedeemListItemTag( arrNewFirst[i], listContentUlTag );
-                    }
+                    me.lastRedeemDate =  arrNewFirst[i].created;
+                    me.renderRedeemListItemTag( arrNewFirst[i], me.redeemListTargetTag );
+
                 }
 
-                setTimeout( function() {
-                    MsgManager.msgAreaClear();
-                }, 500 );
+                if ( ( arrNewFirst.length >= parseInt(me.redeemListScrollSize) ) )
+                {
+                    //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
+                    setTimeout( function() {
+                        document.addEventListener('scroll', function (event) {
+                            me.evalScrollOnBottom()
+                        }, true /*Capture event*/);
+                        console.log ('initialised eval scroll');
+                    }, 750 );
 
-            //}, 500 );
+                }
+
+                if ( ( i ==  ( arrNewFirst.length -1 ) ) || ( i == ( parseInt(me.redeemListScrollSize) -1 ) ) )
+                {
+                    me.redeemListLimit = true;
+                }
+
+            }
+
+            /*setTimeout( function() {
+                MsgManager.msgAreaClear();
+            }, 500 );*/
 
         }
         else
@@ -138,6 +175,39 @@ function BlockList( cwsRenderObj, blockObj )
             /* END > Edited by Greg: 2018/11/26 */
         }
         /* END > Added by Greg: 2018/11/26 */
+
+    }
+
+    me.evalScrollOnBottom = function()
+    {
+        if ( !me.redeemListLimit )
+        {
+            setTimeout( function() {
+                if ( ( $( window ).scrollTop() + $( window ).height() + 50) > $( document ).height() )
+                {
+                    me.appendRedeemListOnScrollBottom();
+                }
+            }, 500 );
+        }
+    }
+
+    me.appendRedeemListOnScrollBottom = function()
+    {
+
+        if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+
+        var arrNewFirst = me.redeemList; //.reverse();
+
+        for( var i = 0; ( ( i < arrNewFirst.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
+        {
+            me.lastRedeemDate =  arrNewFirst[i].created;
+            me.renderRedeemListItemTag( arrNewFirst[i], me.redeemListTargetTag );
+        }
+
+        if ( ( i == (arrNewFirst.length-1) ) || ( i ==  ( arrNewFirst.length -1 ) ) || ( i == ( me.redeemListScrollSize -1 ) ) )
+        {
+            me.redeemListLimit = true;
+        }
 
     }
 
@@ -154,9 +224,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
-
         var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:mm ");
-
         var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
         //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
@@ -265,8 +333,11 @@ function BlockList( cwsRenderObj, blockObj )
             imgSyncIconTag.click( function(e) {
 
                 var mySyncIcon = $( this );
+                var dtmRedeemAttempt = (new Date() ).toISOString();
 
                 mySyncIcon.rotate({ count:999, forceJS: true, startDeg: true });
+
+                itemData.lastAttempt = dtmRedeemAttempt;
 
                 //$(this).parent().parent().parent().siblings().html( 'Connecting...' );
                 var myTag = mySyncIcon.parent().parent().parent().siblings();
@@ -294,8 +365,11 @@ function BlockList( cwsRenderObj, blockObj )
 
                         mySyncIcon.stop();
 
+                        var dtmRedeemDate = (new Date() ).toISOString();
+
                         if ( success )
                         {
+                            itemData.redeemDate = dtmRedeemDate;
                             itemData.status = me.status_redeem_submit;
                             itemData.returnJson = returnJson;
                             myTag.html( 'Success' );
@@ -351,7 +425,6 @@ function BlockList( cwsRenderObj, blockObj )
 
             // Add buttons - 'close' and 'submit'?
             var divButtonsTag = $( '<div class="listItemDetailActionButtons" style="margin-top: 5px;"></div>' );
-
             var btnCloseTag = $( '<button class="actionBtn btnCloseListItemDetail">Close</button>' );
             var btnRemoveTag = $( '<button class="actionBtn btnRemoveListItemDetail">Remove</button>' );
             var btnRedeemSubmitTag = $( '<button class="actionBtn btnSubmitRedeem">Redeem Submit</button>' );

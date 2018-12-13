@@ -156,6 +156,7 @@
       .register('./service-worker.js')
       .then(function( registration ) 
       { 
+        _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
         _registrationObj = registration;
         console.log('Service Worker Registered'); 
       });

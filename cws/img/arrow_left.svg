@@ -12,7 +12,7 @@
    viewBox="0 0 24 24"
    version="1.1"
    id="svg4489"
-   sodipodi:docname="arrow_down.svg"
+   sodipodi:docname="arrow_left.svg"
    inkscape:version="0.92.1 r15371">
   <metadata
      id="metadata4495">
@@ -49,11 +49,11 @@
      inkscape:window-maximized="0"
      inkscape:current-layer="svg4489" />
   <path
-     d="M 16.59,8 12,12.58 7.41,8 6,9.41 l 6,6 6,-6 z"
+     d="m 15.705,16.295 -4.58,-4.59 4.58,-4.59 -1.41,-1.41 -6,6 6,6 z"
      id="path4485"
      inkscape:connector-curvature="0" />
   <path
-     d="M 24,24 H 0 V 0 h 24 z"
+     d="M 0,24 V 0 h 24 v 24 z"
      id="path4487"
      inkscape:connector-curvature="0"
      style="fill:none" />

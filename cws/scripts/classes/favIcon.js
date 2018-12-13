@@ -43,8 +43,8 @@ function favIcons( cwsRender )
 	{
 
         // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
-		$.get( location.pathname +''+ favIcon.img, function(data) {
-
+		$.get( favIcon.img, function(data) {
+            //location.pathname +''+ favIcon.img
 			var unqID = Util.generateRandomId();
 			var divTag = $( '<div id="favIcon_'+unqID+'" class="iconClicker pointer" />');
             var svg = ( $(data)[0].documentElement );

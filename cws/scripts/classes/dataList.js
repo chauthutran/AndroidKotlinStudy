@@ -69,7 +69,7 @@ function DataList( cwsRenderObj, blockObj )
             var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
             blockTag.append( divFormContainerTag );
 
-            var searchPostPayload = JSON.parse( localStorage.getItem('lastPayload.posted') ).data;
+            var searchPostPayload =  FormUtil.getLastPayload() // JSON.parse( localStorage.getItem('lastPayload.posted') ).data;
 
             for( var i = 0; i < jsonList.length; i++ )
             {
@@ -78,7 +78,7 @@ function DataList( cwsRenderObj, blockObj )
 
                 if ( objResult.length )
                 {
-                    var tblObjTag = $( '<table style="width:100%;">' );
+                    var tblObjTag = $( '<table style="width:100%;" id="searchResult_'+i+'">' );
                     var trTopObjTag = $( '<tr class="itemBlock">' );
                     var tdLeftobjTag = $( '<td>' );
 
@@ -98,20 +98,22 @@ function DataList( cwsRenderObj, blockObj )
                     {
                         var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
                         var labelTag = $( '<label class="from-string titleDiv" />' );
-                        var inputTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
+                        var valueTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
 
                         tdLeftobjTag.append( divAttrTag );
                         divAttrTag.append( labelTag );
-                        divAttrTag.append( inputTag );
+                        divAttrTag.append( valueTag );
 
                         labelTag.html( objResult[o].name );
-                        inputTag.html( objResult[o].value );
+                        valueTag.html( objResult[o].value );
 
                         if ( objResult[o].id == '' ) //added from search criteria
                         {
                             labelTag.css('font-weight',"600");
+                            valueTag.css('color','#909090');
+
                             //labelTag.css('color',"#8F5959");
-                            //inputTag.css('color',"#612A2A");
+                            //valueTag.css('color',"#612A2A");
                         }
 
                     };
@@ -119,27 +121,21 @@ function DataList( cwsRenderObj, blockObj )
                     var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:50px;">' );
                     trTopObjTag.append( tdRightobjTag );
 
-                    //var AhrefTag = $( '<a class="searchresultSelector">' );
-                    //tdRightobjTag.append( AhrefTag );
-
                     me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
                     me.renderButtons( tdRightobjTag, blockJson.itemButtons );
 
-                    //var imgSelectorTag = $( '<img src="img/arrow_up.svg" style="width:40px;height:40px;" class="rotate90 click">' );
-                    //AhrefTag.append( imgSelectorTag );
+                    if ( i < (jsonList.length - 1))
+                    {
+                        /* START > LINE SEPARATOR */
+                        var trBottomObjTag = $( '<tr>' );
+                        var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
+                        var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
 
-                    /* START > LINE SEPARATOR */
-                    var trBottomObjTag = $( '<tr>' );
-                    var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
-                    var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
-
-                    tblObjTag.append( trBottomObjTag );
-                    trBottomObjTag.append( tdBottomtobjTag );
-                    tdBottomtobjTag.append( divObjTag );
-                    /* END > LINE SEPARATOR */
-
-
-                    //divItemTag.html ( objResult.toString() );
+                        tblObjTag.append( trBottomObjTag );
+                        trBottomObjTag.append( tdBottomtobjTag );
+                        tdBottomtobjTag.append( divObjTag );
+                        /* END > LINE SEPARATOR */
+                    }
 
                     // Generate and append items
                     //me.renderIconTag( blockJson, itemAttrDataList, divItemTag );
@@ -239,26 +235,6 @@ function DataList( cwsRenderObj, blockObj )
         converted.resultData = JSON.parse( JSON.stringify( jsonList.resultData ) );
         converted.displayData = JSON.parse( JSON.stringify( jsonList.displayData[idx] ) );
         return converted;
-    }
-  
-    me.renderIconTag = function( blockJson, valueData, parentItemTag )
-    {
-        var lastData = localStorage.getItem( 'lastPayload.posted' ); //added by Greg (2018/12/05)
-        var labelText;
-
-        if ( lastData )
-        {
-            labelText = JSON.parse(lastData).data.phoneNumber;
-        }
-        else if ( valueData.length )
-        {
-            labelText = valueData[0].value;
-        }
-
-        // Set Icons..
-        //var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <img src="img/mobile.svg" style="-webkit-filter: contrast(60%);filter: contrast(60%);"> <span style="font-size:11pt;"> ' + labelText +' </span> </div>' );
-        var iconListTag = $( '<div class="icons-status" style="padding:2px;width:100%;"> <strong style="font-size:11pt;"> ' + labelText +' </strong> </div>' );
-        parentItemTag.append( iconListTag );
     }
   
 	// -------------------------------
