@@ -1422,12 +1422,12 @@ $.fn.rotate=function(options) {
 	  }
 	  $this.queue(function(next) {
 		if (opts.startDeg!==false) {
-		  $this.css(prefixed('transform', 'rotate('+opts.startDeg+'deg)'));
+		  $this.css(prefixed('transform', 'rotate(-'+opts.startDeg+'deg)'));
 		}
 		setTimeout(function() {
 		  $this
 			.css(prefixed('transition', 'all '+opts.duration+'s '+opts.easing))
-			.css(prefixed('transform', 'rotate('+opts.endDeg+'deg)'))
+			.css(prefixed('transform', 'rotate(-'+opts.endDeg+'deg)'))
 			.css(opts.animate);
 		}, wait4css);
   
@@ -1454,7 +1454,7 @@ $.fn.rotate=function(options) {
 		  if (fx.prop==='perc') {
 			deg=opts.startDeg+(opts.endDeg-opts.startDeg)*perc/100;
 			$this
-			  .css(prefixed('transform', 'rotate('+deg+'deg)'))
+			  .css(prefixed('transform', 'rotate(-'+deg+'deg)'))
 			  .css('filter', generateFilter(deg));
 		  }
 		},

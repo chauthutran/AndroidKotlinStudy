@@ -335,9 +335,6 @@ function cwsRender()
 			me.startBlockExecute( me.configJson );
 		}
 
-		// initialise favIcons
-		me.favIconsObj = new favIcons( me );
-
 	}
 
 	me.startBlockExecute = function( configJson )
@@ -359,6 +356,11 @@ function cwsRender()
 			var startMenuTag = me.populateMenuList( me.areaList );
 
 			if ( startMenuTag ) startMenuTag.click();
+
+			
+			// initialise favIcons
+			me.favIconsObj = new favIcons( me );
+
 		}
 	} 
 

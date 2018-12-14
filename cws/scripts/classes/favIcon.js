@@ -54,45 +54,85 @@ function favIcons( cwsRender )
             me.createRecursiveFavIconButton ( favList, 0 )
         }
 
-        //me.favIconsTag.empty();
-        //console.log( favList );
-
-        /*for ( var f = 0; f < favList.length; f++ )
-        {
-            me.createFavIconButton( favList[f] );		
-        }*/
-
     }
 
 	me.createRecursiveFavIconButton = function( favList, favItm )
 	{
-
         if ( favList[favItm] )
         {
-            console.log ( 'recursive FavIcon: ' + favItm );
-            // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
-            $.get( favList[favItm].img, function(data) {
-                //location.pathname +''+ favList[favItm].img
-                var unqID = Util.generateRandomId();
-                var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                var svg = ( $(data)[0].documentElement );
+            var favObj = favList[favItm];
+            var networkStatus = ( ConnManager.getAppConnMode_Online() ) ? 'online' : 'offline';
 
-                $(svg).find("tspan").html(favList[favItm].name) 
-
-                divTag.append( svg );
-                me.favIconsTag.append( divTag );
-
-                if ( favList[favItm].target )
+            // 1st test > Current favIcon object supports network connection-status OPTIONS
+            if ( favObj.areas )
+            {
+                //console.log ( 'testing [' + favObj.name + '] status: ' + networkStatus + ' : ' + ( favObj.areas[ networkStatus ] == undefined ) )
+                // 2nd test > Current favIcon object supports CURRENT network connection-status 
+                if ( favObj.areas[ networkStatus ] )
                 {
-                    me.setFavIconClickTarget ( favList[favItm].target, unqID )
+                    // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
+                    $.get( favList[favItm].img, function(data) {
 
+                        var unqID = Util.generateRandomId();
+                        var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
+                        var svg = ( $(data)[0].documentElement );
+        
+                        $(svg).find("tspan").html(favList[favItm].name) 
+        
+                        divTag.append( svg );
+                        me.favIconsTag.append( divTag );
+        
+                        if ( favObj.areas[ networkStatus ].target )
+                        {
+                            me.setFavIconClickTarget ( favObj.areas[ networkStatus ].target, unqID )
+
+                            if ( favList.length > (favItm+1) )
+                            {
+                                me.createRecursiveFavIconButton( favList, (favItm+1)  )
+                            }
+                        }
+        
+                    });
+
+                }
+                else
+                {
                     if ( favList.length > (favItm+1) )
                     {
                         me.createRecursiveFavIconButton( favList, (favItm+1)  )
                     }
                 }
 
-            });
+            }
+            else
+            {
+
+                // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
+                $.get( favList[favItm].img, function(data) {
+
+                    var unqID = Util.generateRandomId();
+                    var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
+                    var svg = ( $(data)[0].documentElement );
+    
+                    $(svg).find("tspan").html(favList[favItm].name) 
+    
+                    divTag.append( svg );
+                    me.favIconsTag.append( divTag );
+    
+                    if ( favList[favItm].target )
+                    {
+                        me.setFavIconClickTarget ( favList[favItm].target, unqID )
+    
+                        if ( favList.length > (favItm+1) )
+                        {
+                            me.createRecursiveFavIconButton( favList, (favItm+1)  )
+                        }
+                    }
+    
+                });
+
+            }
+
         }
 
     }
@@ -123,9 +163,7 @@ function favIcons( cwsRender )
     me.setFavIconClickTarget = function( favTarget, targetID )
     {
         // Weird > bindings being lost after 1st click event
-        //tagTarget.on("click", function() {
         $(document).on('click', '#favIcon_'+targetID, function() {
-
             if ( favTarget.blockId )
             {
                 //console.log ( favTarget.options );
