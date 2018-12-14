@@ -45,31 +45,33 @@ function aboutApp( cwsRender )
 
                 me.aboutContentDivTag.empty();
 
-                var myTable = $( '<table style="padding:0;border:0;border-spacing: 0;border-collapse: collapse;">'); 
-                me.aboutContentDivTag.append( myTable );
-
                 $.each(me.aboutData, function(k, o) {
-
-                    //o.sort (function(a, b) { return (a['name'] > b['name']) ? 1 : ((a['name'] < b['name']) ? -1 : 0); } );
-
-                    var bgAlt = '#FFF';
-                    myTable.append( '<tr><td colspan=2 style="padding:8px 8px 8px 0;text-align:left;background-Color:' + bgAlt + ';font-weight:600">&nbsp;'+k.toString().toUpperCase()+'&nbsp;</td></tr>' );
-                    bgAlt = ( ( bgAlt == '#FFF' ) ? '#F5F5F5' : '#FFF' );
 
                     $.each(o, function(l, v) {
 
-                        myTable.append( '<tr><td style="padding:8px;text-align:left;background-Color:' + bgAlt + '">' + v.name + '</td><td style="padding:8px;text-align:left;background-Color:' + bgAlt + '">' + v.value + '</td></tr>' );
-                        bgAlt = ( ( bgAlt == '#FFF' ) ? '#F5F5F5' : '#FFF' );
+                        var divAttrTag = $( '<div class="tb-content-about inputDiv" />' );
+                        var labelTag = $( '<label class="about-string-header titleDiv" />' );
+                        var valueTag = $( '<div id="aboutInfo_'+l+'" class="form-about-text" />');
+    
+                        me.aboutContentDivTag.append( divAttrTag );
+                        divAttrTag.append( labelTag );
+                        divAttrTag.append( valueTag );
+    
+                        labelTag.html( v.name );
+                        valueTag.html( v.value );
 
                     })
 
                 })
 
+                var divButtonTag = $( '<div style="float: left;margin:10px;padding:10px;" />' );
+                me.aboutContentDivTag.append( divButtonTag );
 
-               /* var myButton = $( '<button value="" class="">Hard Reload</button>');
-                me.aboutContentDivTag.append( myButton );
+                var btnAppShell = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:200px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
+                btnAppShell.html( 'reGet appShell' );
+                divButtonTag.append( btnAppShell );
 
-                $( myButton ).click( () => {
+                $( btnAppShell ).click( () => {
 
                     if ( ConnManager.isOffline() )
                     {
@@ -77,10 +79,27 @@ function aboutApp( cwsRender )
                     }
                     else
                     {
-                      me.cwsRenderObj.reGet(); 
+                      me.cwsRenderObj.reGetAppShell(); 
                     }
-                
-                });*/
+
+                });
+
+                var btnDCDconfig = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:200px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
+                btnDCDconfig.html( 'reGet dcdConfig' );
+                divButtonTag.append( btnDCDconfig );
+
+                $( btnDCDconfig ).click( () => {
+
+                    if ( ConnManager.isOffline() )
+                    {
+                      alert( 'Only re-register service-worker while online, please.' );
+                    }
+                    else
+                    {
+                      me.cwsRenderObj.reGetDCDconfig(); 
+                    }
+
+                });
 
                 me.aboutFormDivTag.show();
             }
@@ -97,35 +116,43 @@ function aboutApp( cwsRender )
         var aboutSession = [];
         var aboutBrowser = [];
 
-        aboutApp.push ( { name: 'appVersion', value: $( '#spanVersion' ).html() } );
-        aboutApp.push ( { name: 'dcdVersion', value: userConfig.dcdConfig.version } );
-        aboutApp.push ( { name: 'country', value: userConfig.dcdConfig.countryCode } );
+        aboutApp.push ( { name: 'Application version', value: $( '#spanVersion' ).html() } );
+        aboutApp.push ( { name: 'Config version', value: userConfig.dcdConfig.version } );
+        aboutApp.push ( { name: 'Country', value: userConfig.dcdConfig.countryCode } );
         //aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
-        aboutApp.push ( { name: 'urlNameRAW', value: ( location.pathname ) } );
-        aboutApp.push ( { name: 'dataServer', value: userConfig.orgUnitData.dhisServer } );
-        aboutApp.push ( { name: 'staticWSName', value: FormUtil.staticWSName } );
+        //aboutApp.push ( { name: 'urlNameRAW', value: ( location.pathname ) } );
+        aboutApp.push ( { name: 'Data server', value: userConfig.orgUnitData.dhisServer } );
+        aboutApp.push ( { name: 'WS server', value: FormUtil.staticWSName } );
         //aboutApp.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
 
         retObj.about = ( aboutApp );
 
         //aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
-        aboutBrowser.push ( { name: 'language', value: navigator.language } );
-        aboutBrowser.push ( { name: 'userAgent', value: navigator.userAgent } );
+        aboutBrowser.push ( { name: 'Browser', value: navigator.sayswho } );
+        aboutBrowser.push ( { name: 'User language', value: navigator.language } );
 
         retObj.Browser = ( aboutBrowser );
-
-        //JSON.stringify(jsObj, null, "\t"); // stringify with tabs inserted at each level
-        //JSON.stringify(jsObj, null, 4);  
-        //aboutSession.push ( { name: 'authenticateServer', value: FormUtil.login_server } );
-        //aboutSession.push ( { name: 'dateCreation', value: userConfig.mySession.createdDate } );
-        //aboutSession.push ( { name: 'dateUpdated', value: userConfig.mySession.lastUpdated } );
-        //aboutSession.push ( { name: 'favActionList', value: JSON.stringify(userConfig.dcdConfig.favActionList, null, "\t") } );
-        //retObj.sessionData = ( aboutSession );
 
 
         return retObj;
     }
     /* END > Added by Greg: 2018/12/04 */
+
+    navigator.sayswho= (function(){
+        var ua= navigator.userAgent, tem, 
+        M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+        if(/trident/i.test(M[1])){
+            tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+            return 'IE '+(tem[1] || '');
+        }
+        if(M[1]=== 'Chrome'){
+            tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+            if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+        }
+        M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+        if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+        return M.join(' ');
+    })();
 
 	// ------------------------------------
 

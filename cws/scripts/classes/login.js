@@ -206,6 +206,14 @@ function Login( cwsRenderObj )
 
 	}
 
+	me.regetDCDconfig = function()
+	{
+		var userName = JSON.parse( localStorage.getItem('session') ).user;
+		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+
+		// greg: use location.origin for server parameter? Always records server location
+		me.processLogin( userName, userPin, location.origin, $( this ) );
+	}
 
 	me.loginSuccessProcess = function( loginData ) 
 	{		

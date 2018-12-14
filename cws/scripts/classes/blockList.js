@@ -9,7 +9,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemList;
     me.redeemListTargetTag;
-    me.redeemListScrollSize = 10;
+    me.redeemListScrollSize = 15;
     me.lastRedeemDate;
     me.redeemListLimit;
     me.options;
@@ -118,10 +118,10 @@ function BlockList( cwsRenderObj, blockObj )
                 }
             });
 
-            console.log ( me.lastRedeemDate );
+            //console.log ( me.lastRedeemDate );
             if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-            MsgManager.msgAreaShow( 'loading ' + ( ( me.redeemListScrollSize < me.redeemList.length) ? me.redeemListScrollSize : arrNewFirst.length ) );
+            //MsgManager.msgAreaShow( 'loading ' + ( ( me.redeemListScrollSize < me.redeemList.length) ? me.redeemListScrollSize : arrNewFirst.length ) );
 
             if ( me.redeemList === undefined || me.redeemList.length == 0 )
             {
@@ -183,8 +183,9 @@ function BlockList( cwsRenderObj, blockObj )
         if ( !me.redeemListLimit )
         {
             setTimeout( function() {
-                if ( ( $( window ).scrollTop() + $( window ).height() + 50) > $( document ).height() )
+                if ( ( $( window ).scrollTop() + $( window ).height() + 100) > $( document ).height() )
                 {
+                    MsgManager.msgAreaShow( 'fetching rows ' );
                     me.appendRedeemListOnScrollBottom();
                 }
             }, 500 );

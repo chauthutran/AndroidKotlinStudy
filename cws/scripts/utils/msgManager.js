@@ -15,8 +15,8 @@ MsgManager.countDownNumerator = 0;  //added by Greg (2018/12/06)
 MsgManager.countDownDenominator = 0; //added by Greg (2018/12/06)
 MsgManager.progressBarUpdateTimer = 25; //added by Greg (2018/12/06)
 MsgManager.progressCheckCount = 0; //added by Greg (2018/12/06)
-MsgManager._autoHide = false; //added by Greg (2018/12/05)
-MsgManager._autoHideDelay = 0; //added by Greg (2018/12/05)
+MsgManager._autoHide = true; //added by Greg (2018/12/05)
+MsgManager._autoHideDelay = 500; //added by Greg (2018/12/05)
 
 
 MsgManager.initialSetup = function()
@@ -54,11 +54,11 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
 
         MsgManager.divMsgAreaTag.hide( 'fast' );
         MsgManager.spanMsgAreaTextTag.text( '' );
-    
+
         MsgManager.spanMsgAreaTextTag.text( msg );
         MsgManager.divMsgAreaTag.show( 'fast' );
-    
-        console.log( ' -- Msg: ' + msg );    
+
+        //console.log( ' -- Msg: ' + msg );    
 
         if ( timeoutTime )
         {

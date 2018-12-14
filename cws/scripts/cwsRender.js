@@ -403,7 +403,7 @@ function cwsRender()
 		me.registrationObj = registrationObj;
 	}
 
-	me.reGet = function()
+	me.reGetAppShell = function()
 	{
 		if ( me.registrationObj !== undefined )
 		{
@@ -413,6 +413,15 @@ function cwsRender()
 		});
 		}  
 	}
+
+	me.reGetDCDconfig = function()
+	{
+		if ( me.LoginObj !== undefined )
+		{
+			me.LoginObj.regetDCDconfig();
+		}  
+	}
+
 	// ======================================
 
 	me.initialize();
