@@ -244,7 +244,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 							if ( tbl != btnTag.parent().parent().parent().parent()[0] )
 							{
-								$( tbl ).css('opacity','0.5');
+								$( tbl ).css('opacity','0.4');
 							}
 
 						}

@@ -9,10 +9,11 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemList;
     me.redeemListTargetTag;
-    me.redeemListScrollSize = 15;
+    me.redeemListScrollSize = 15; // move where?
     me.lastRedeemDate;
     me.redeemListLimit;
     me.options;
+    me.newBlockTag;
 
     me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit";
@@ -48,19 +49,24 @@ function BlockList( cwsRenderObj, blockObj )
                         me.options = options;
                     }
 
-                    me.redeemList_Display( newBlockTag );
+                    if ( newBlockTag )
+                    {
+                        me.newBlockTag = newBlockTag;
+                    }
+
+                    me.redeemList_Display( me.newBlockTag );
                     
                     // Add Event from 'FormUtil'
                     //  - To Enable click
-                    FormUtil.setUpTabAnchorUI( newBlockTag.find( 'ul.tab__content_act') );
+                    FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
                     if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favActionList  )
                     {
-                        me.setFloatingListMenuIconEvents( newBlockTag.find( '.floatListMenuIcon' ), newBlockTag.find( '.floatListMenuSubIcons' ) );
+                        me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
                     }
                     else
                     {
-                        newBlockTag.find( '.floatListMenuIcon' ).hide();
+                        me.newBlockTag.find( '.floatListMenuIcon' ).hide();
                     }
 
 				}
@@ -118,7 +124,6 @@ function BlockList( cwsRenderObj, blockObj )
                 }
             });
 
-            //console.log ( me.lastRedeemDate );
             if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
             //MsgManager.msgAreaShow( 'loading ' + ( ( me.redeemListScrollSize < me.redeemList.length) ? me.redeemListScrollSize : arrNewFirst.length ) );
@@ -132,16 +137,14 @@ function BlockList( cwsRenderObj, blockObj )
             }
             else
             {
-                var arrNewFirst = me.redeemList; //.reverse();
  
-                for( var i = 0; ( ( i < arrNewFirst.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
+                for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
                 {
-                    me.lastRedeemDate =  arrNewFirst[i].created;
-                    me.renderRedeemListItemTag( arrNewFirst[i], me.redeemListTargetTag );
-
+                    me.lastRedeemDate =  me.redeemList[i].created;
+                    me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
                 }
 
-                if ( ( arrNewFirst.length >= parseInt(me.redeemListScrollSize) ) )
+                if ( ( me.redeemList.length >= parseInt(me.redeemListScrollSize) ) )
                 {
                     //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
                     setTimeout( function() {
@@ -150,12 +153,13 @@ function BlockList( cwsRenderObj, blockObj )
                         }, true /*Capture event*/);
                         console.log ('initialised eval scroll');
                     }, 750 );
-
                 }
 
-                if ( ( i ==  ( arrNewFirst.length -1 ) ) || ( i == ( parseInt(me.redeemListScrollSize) -1 ) ) )
+                if ( i < parseInt(me.redeemListScrollSize) )
                 {
                     me.redeemListLimit = true;
+                    document.removeEventListener('scroll', me.evalScrollOnBottom());
+                    console.log('removed scroll event');
                 }
 
             }
@@ -185,7 +189,7 @@ function BlockList( cwsRenderObj, blockObj )
             setTimeout( function() {
                 if ( ( $( window ).scrollTop() + $( window ).height() + 100) > $( document ).height() )
                 {
-                    MsgManager.msgAreaShow( 'fetching rows ' );
+                    //MsgManager.msgAreaShow( 'fetching rows ' );
                     me.appendRedeemListOnScrollBottom();
                 }
             }, 500 );
@@ -197,17 +201,20 @@ function BlockList( cwsRenderObj, blockObj )
 
         if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-        var arrNewFirst = me.redeemList; //.reverse();
-
-        for( var i = 0; ( ( i < arrNewFirst.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
+        for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
         {
-            me.lastRedeemDate =  arrNewFirst[i].created;
-            me.renderRedeemListItemTag( arrNewFirst[i], me.redeemListTargetTag );
+            me.lastRedeemDate =  me.redeemList[i].created;
+            me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
         }
 
-        if ( ( i == (arrNewFirst.length-1) ) || ( i ==  ( arrNewFirst.length -1 ) ) || ( i == ( me.redeemListScrollSize -1 ) ) )
+        console.log(' scroll listener added ' + i);
+        FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') ); // add click event (expander to show voucher details) to newly created items
+
+        if ( i < parseInt(me.redeemListScrollSize) )
         {
             me.redeemListLimit = true;
+            document.removeEventListener('scroll', me.evalScrollOnBottom());
+            console.log('removed scroll event');
         }
 
     }
@@ -220,7 +227,6 @@ function BlockList( cwsRenderObj, blockObj )
     {   
 
         var itemAttrStr = 'itemId="' + itemData.id + '"';
-
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
