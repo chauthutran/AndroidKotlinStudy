@@ -151,7 +151,7 @@ function BlockList( cwsRenderObj, blockObj )
                         document.addEventListener('scroll', function (event) {
                             me.evalScrollOnBottom()
                         }, true /*Capture event*/);
-                        console.log ('initialised eval scroll');
+                        //console.log ('initialised eval scroll');
                     }, 750 );
                 }
 
@@ -159,7 +159,7 @@ function BlockList( cwsRenderObj, blockObj )
                 {
                     me.redeemListLimit = true;
                     document.removeEventListener('scroll', me.evalScrollOnBottom());
-                    console.log('removed scroll event');
+                    //console.log('removed scroll event');
                 }
 
             }
@@ -187,7 +187,7 @@ function BlockList( cwsRenderObj, blockObj )
         if ( !me.redeemListLimit )
         {
             setTimeout( function() {
-                if ( ( $( window ).scrollTop() + $( window ).height() + 100) > $( document ).height() )
+                if ( ( $( window ).scrollTop() + $( window ).height() + 50) > $( document ).height() )
                 {
                     //MsgManager.msgAreaShow( 'fetching rows ' );
                     me.appendRedeemListOnScrollBottom();
@@ -207,14 +207,14 @@ function BlockList( cwsRenderObj, blockObj )
             me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
         }
 
-        console.log(' scroll listener added ' + i);
+        //console.log(' scroll listener added ' + i);
         FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') ); // add click event (expander to show voucher details) to newly created items
 
         if ( i < parseInt(me.redeemListScrollSize) )
         {
             me.redeemListLimit = true;
             document.removeEventListener('scroll', me.evalScrollOnBottom());
-            console.log('removed scroll event');
+            //console.log('removed scroll event');
         }
 
     }
@@ -323,7 +323,7 @@ function BlockList( cwsRenderObj, blockObj )
             var itemId = contentDivClickedTag.attr( 'itemId' );
 
             var itemClicked = Util.getFromList( me.redeemList, itemId, "id" );
-            console.log( 'itemDiv clicked - ' + JSON.stringify( itemClicked ) ); // + itemAnchorTag.outerHtml() );
+            //console.log( 'itemDiv clicked - ' + JSON.stringify( itemClicked ) ); // + itemAnchorTag.outerHtml() );
         });        
     }
 
@@ -368,7 +368,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                     FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
                     {
-                        console.log( 'Redeem submittion isSucccess: ' + success );
+                        //console.log( 'Redeem submittion isSucccess: ' + success );
 
                         mySyncIcon.stop();
 
@@ -461,7 +461,7 @@ function BlockList( cwsRenderObj, blockObj )
                     divButtonsTag.append( loadingTag );
                     FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
                     {
-                        console.log( 'Redeem submittion isSucccess: ' + success );
+                        //console.log( 'Redeem submittion isSucccess: ' + success );
     
                         if ( success )
                         {
@@ -495,7 +495,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.submitForListedItem = function( itemData, queueTag )
     {
-        console.log( itemData );
+        //console.log( itemData );
         /*
         // TODO: 'isOffline' works?
         if ( ConnManager.isOffline() )

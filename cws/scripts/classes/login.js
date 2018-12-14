@@ -143,7 +143,8 @@ function Login( cwsRenderObj )
 	{
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
-		me.configureMobileMenuIcon( $( '#menuDiv' ) );
+
+		me.cwsRenderObj.configureMobileMenuIcon();
 	}
 
 	me.processLogin = function( userName, password, server, btnTag )
@@ -295,31 +296,6 @@ function Login( cwsRenderObj )
 		});		
 	};
 
-	/* START > Greg added: 2018/12/10 */
-	me.configureMobileMenuIcon = function(targetDiv)
-	{
-		var destArea = $( 'div.headerLogo');
-
-		if ( destArea )
-		{
-			destArea.empty();
-
-			var dvContain = $( '<div id="menuTopDiv"></div>' );
-			var dvMenuObj = $( '<div id="menu_e"></div>' );
-			var imgMenuObj = $( '<img src="img/menu_icon.svg" style="margin: 0px;" >' );
-
-			destArea.append ( dvContain );
-			dvContain.append ( dvMenuObj );
-			dvMenuObj.append ( imgMenuObj );
-
-			cwsRenderObj.menuAppMenuIconTag = dvContain;
-
-			FormUtil.setClickSwitchEvent( dvContain, targetDiv, [ 'open', 'close' ], cwsRenderObj );
-
-		}
-
-	}
-	/* END > Greg added: 2018/12/10 */
 
 	// ================================
 

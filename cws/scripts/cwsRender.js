@@ -28,6 +28,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
+	me.navBurgerTag;
 
 	me.storageName_RedeemList = "redeemList";
 	me._globalMsg = "";
@@ -232,12 +233,6 @@ function cwsRender()
 						}
 					}
 
-
-					if ( me.menuDivTag.is( ":visible" ) && me.menuAppMenuIconTag.is( ":visible" ) )
-					{
-						me.menuAppMenuIconTag.click();
-					}
-
 					me.LoginObj.spanOuNameTag.text( '' );
 					me.LoginObj.spanOuNameTag.hide();
 
@@ -251,6 +246,7 @@ function cwsRender()
 				{
 					me.aboutApp.render();
 				}
+
 				/* END > Greg edited: 2018/12/04 */
 			}
 
@@ -258,8 +254,13 @@ function cwsRender()
 			if ( me.menuDivTag.is( ":visible" ) && me.menuAppMenuIconTag.is( ":visible" ) )
 			{
 				me.menuAppMenuIconTag.click();
+				//console.log ( 'click menuAppMenuIconTag' );
+				$('#nav-toggle').removeClass('active');
 			}
-	
+			//console.log( $('#nav-toggle')[0].classList );
+			//$('#nav-toggle').removeClass('active');
+			//$( "#nav-toggle" ).classList.toggle( "active" );
+
 		});
 	}
 
@@ -371,6 +372,43 @@ function cwsRender()
 	}
 
 	// ----------------------------------
+
+	
+	/* START > Greg added: 2018/12/10 */
+	me.configureMobileMenuIcon = function()
+	{
+		var destArea = $( 'div.headerLogo');
+
+		if ( destArea )
+		{
+			destArea.empty();
+
+			/*var dvContain = $( '<div id="menuTopDiv"></div>' );
+			var dvMenuObj = $( '<div id="menu_e"></div>' );
+			var imgMenuObj = $( '<img src="img/menu_icon.svg" style="margin: 0px;" >' );
+
+			destArea.append ( dvContain );
+			dvContain.append ( dvMenuObj );
+			dvMenuObj.append ( imgMenuObj );*/
+
+			var dvMenuObj = $( '<a id="nav-toggle" href="#"><span></span></a>' );
+			destArea.append ( dvMenuObj );
+
+			me.navBurgerTag = dvMenuObj;
+
+			document.querySelector( "#nav-toggle" )
+			 .addEventListener( "click", function() {
+			  this.classList.toggle( "active" );
+			});
+
+			me.menuAppMenuIconTag = dvMenuObj;
+
+			FormUtil.setClickSwitchEvent( dvMenuObj, me.menuDivTag, [ 'open', 'close' ], me );
+
+		}
+
+	}
+	/* END > Greg added: 2018/12/10 */
 
 	me.populateMenuList = function( areaList )
 	{
