@@ -67,6 +67,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			me.performValidationCheck( tag, 'maxvalue', divTag );
 			me.performValidationCheck( tag, 'isNumber', divTag );
 			me.performValidationCheck( tag, 'phoneNumber', divTag );
+			me.performValidationCheck( tag, 'patterns', divTag );
 		}
 
 		var valid = ( tag.attr( 'valid' ) == 'true' );
@@ -95,7 +96,8 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			else if ( type == 'exactlength' ) valid = me.checkValueLen( tag, divTag, type, Number( validationAttr ) );
 			else if ( type == 'isNumber' ) valid = me.checkNumberOnly( tag, divTag, type );
 			else if ( type == 'phoneNumber' ) valid = me.checkPhoneNumberValue( tag, divTag, type );
-			
+			else if ( type == 'patterns' ) valid = me.checkValue_RegxRules( tag, divTag, type );
+
 			if ( !valid ) tag.attr( 'valid', false );
 		}		
 	};
@@ -227,7 +229,34 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		return valid;
 	};
 	
-	
+	me.checkValue_RegxRules = function( inputTag, divTag, type )
+	{
+		var valid = true;
+
+		var regxRulesStr = decodeURI( inputTag.attr( "patterns" ) );
+
+		if ( regxRulesStr ) 
+		{
+			var regxRules = [];			
+			regxRules = JSON.parse( regxRulesStr );
+
+			for ( var i = 0; i < regxRules.length; i++ )
+			{				
+				var regxRuleJson = regxRules[i];
+
+				var regexTest = new RegExp( regxRuleJson.pattern );
+
+				if ( !regexTest.test( inputTag.val() ) )
+				{
+					valid = false;
+					divTag.append( me.getErrorSpanTag( regxRuleJson.msg ) );
+				}				
+			}
+		}
+
+		return valid;
+	}
+
 
 	me.phoneNumberValidation = function( phoneVal )
 	{

@@ -219,6 +219,8 @@ function BlockForm( cwsRenderObj, blockObj )
 	{
 		//console.log( 'addRuleForField: ' + divInputTag.html() );
 		//console.log( formItemJson );
+		var entryTag = divInputTag.find( "select,input" );
+		var regxRules = [];
 
 		if( formItemJson.rules !== undefined )
 		{
@@ -226,15 +228,35 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				var rule = formItemJson.rules[i];
 
-				var entryTag = divInputTag.find( "select,input" );
-				entryTag.attr( rule.name, rule.value );
-
-				if( rule.name === "mandatory" && rule.value === "true" )
+				if ( rule.name )
 				{
-					var titleTag = divInputTag.find( ".titleDiv" );
-					titleTag.append("<span style='color:red;'> * </span>")
-				}
+					entryTag.attr( rule.name, rule.value );
+					
+					if( rule.name === "mandatory" && rule.value === "true" )
+					{
+						var titleTag = divInputTag.find( ".titleDiv" );
+						titleTag.append("<span style='color:red;'> * </span>")
+					}	
+				}	
+				else if ( rule.pattern )
+				{
+					var regxRuleJson = {};
+					regxRuleJson.pattern = rule.pattern;
+					regxRuleJson.msg = rule.msg;
+					
+					regxRules.push( regxRuleJson );
+				} 
 			}
+
+			if ( regxRules.length > 0 )
+			{
+				//console.log( 'condition rules: ');
+				//var rulesStr = JSON.stringify( regxRules );
+				//console.log( rulesStr );
+				//console.log( encodeURI( rulesStr ) );
+				
+				entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
+			} 
 		}
 
 	}
