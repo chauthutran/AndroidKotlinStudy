@@ -64,10 +64,10 @@ function aboutApp( cwsRender )
 
                 })
 
-                var divButtonTag = $( '<div style="float: left;margin:10px;padding:10px;" />' );
+                var divButtonTag = $( '<div style="float: left;margin:10px;padding:10px;text-align:center;width:100%;" />' );
                 me.aboutContentDivTag.append( divButtonTag );
 
-                var btnAppShell = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:200px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
+                var btnAppShell = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:140px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
                 btnAppShell.html( 'reGet appShell' );
                 divButtonTag.append( btnAppShell );
 
@@ -84,7 +84,7 @@ function aboutApp( cwsRender )
 
                 });
 
-                var btnDCDconfig = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:200px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
+                var btnDCDconfig = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:140px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
                 btnDCDconfig.html( 'reGet dcdConfig' );
                 divButtonTag.append( btnDCDconfig );
 
