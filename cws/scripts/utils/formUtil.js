@@ -605,5 +605,31 @@ FormUtil.getLastPayload = function()
 
 	}
 }
-
 /* END > Added by Greg: 2018/12/13 */
+
+FormUtil.performReget = function( regObj )
+{		
+	if ( ConnManager.isOffline() )
+	{
+		alert( 'Only re-register service-worker while online, please.' );
+	}
+	else
+	{      
+		if ( regObj !== undefined )
+		{
+			FormMsgManager.appBlock( "Reget App - restarting..." );
+
+			regObj.unregister().then(function(boolean) {
+				//console.log('Service Worker UnRegistered');
+				// if boolean = true, unregister is successful
+				location.reload(true);
+			});
+
+			FormMsgManager.appUnblock();
+		}
+		else
+		{
+			alert( 'Reget Failed - service worker not found' );
+		}  
+	}
+}

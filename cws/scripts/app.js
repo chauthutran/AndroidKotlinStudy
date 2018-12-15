@@ -36,22 +36,7 @@
   
   $( '.reget' ).click( () => {
 
-    if ( ConnManager.isOffline() )
-    {
-      alert( 'Only re-register service-worker while online, please.' );
-    }
-    else
-    {
-      if ( _registrationObj !== undefined )
-      {
-        _registrationObj.unregister().then(function(boolean) {
-          //console.log('Service Worker UnRegistered');
-          // if boolean = true, unregister is successful
-          location.reload(true);
-        });
-      }  
-    }
-
+    FormUtil.performReget( _registrationObj );
   });
 
 
@@ -102,9 +87,8 @@
     {
       if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) {
 
-        FormMsgManager.appBlock( "Regetting version and restarting the app..." );
-
         $( '.reget' ).click();
+
       } else {
         console.log( 'Using old version.  This app version: ' + _ver + ', latestVersion: ' + latestVersionStr );
       }
@@ -157,6 +141,10 @@
       .then(function( registration ) 
       { 
         _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
+        
+        // '_cwsRenderObj' is available at this time?
+        console.log( _cwsRenderObj );
+
         _registrationObj = registration;
         console.log('Service Worker Registered'); 
       });

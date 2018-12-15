@@ -445,13 +445,15 @@ function cwsRender()
 
 	me.reGetAppShell = function()
 	{
+		$( '#swRefresh2' ).click();
+		/*
 		if ( me.registrationObj !== undefined )
 		{
 			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
 			location.reload(true);
 		});
-		}  
+		} */ 
 	}
 
 	me.reGetDCDconfig = function()

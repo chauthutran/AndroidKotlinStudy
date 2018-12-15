@@ -23,6 +23,10 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "back_files/service-worker_back.js",
+    "revision": "de80056a12a74c2a49b1de762e295cb9"
+  },
+  {
     "url": "css/log.css",
     "revision": "528354822cf90529d81b97d1223f7114"
   },
@@ -40,7 +44,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "26a05b5cacb7d050a89613fe3da3943f"
+    "revision": "43285808850489a31580c49a7cc91f52"
   },
   {
     "url": "images/blank.gif",
@@ -176,15 +180,15 @@ self.__precacheManifest = [
   },
   {
     "url": "img/favbar_act.svg",
-    "revision": "14ad465130eb38d00480ce6b414990bc"
+    "revision": "c5833659a76dea9aa368ca97a27f3b16"
   },
   {
     "url": "img/favbar_arrows.svg",
-    "revision": "b58d4150200999df19be3bbe767d788b"
+    "revision": "2b91fa26982504bd640d1c9e037b0dd7"
   },
   {
     "url": "img/favbar_contact.svg",
-    "revision": "ba8537b7fffe061d9f73184a21602551"
+    "revision": "62cca59cf88ec032832bf2e3868e1bb2"
   },
   {
     "url": "img/key.svg",
@@ -256,7 +260,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5cada6c48ccdc6ad2210f448d5a0884c"
+    "revision": "68cdfa123603c45d06ebbd5cf6239706"
   },
   {
     "url": "manifest.json",
@@ -268,11 +272,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "2d9f5f00937e5bd8d02ce8d1a82f22ec"
+    "revision": "6afff295625ecdaebdfce5375398df8c"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "ede5fbe864db46474dfc02628e528d39"
+    "revision": "33271faff10a4f5a2f7b44dce6307f2a"
   },
   {
     "url": "scripts/classes/action.js",
@@ -284,7 +288,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "3b342e4cd6a4edf939d4f609c9c36c6a"
+    "revision": "4707729284d0dc5d407c40f329d68e5f"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -292,7 +296,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "a3adf1d23d69f745fff3dc8c139e457a"
+    "revision": "f8f4632049e127922b91c3ca50df4e33"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -304,11 +308,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "9482f6cb724c1a318ba1444bb80cc56b"
+    "revision": "c724a549734ef5da22f883dfa3bad6d4"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "6029e39448c1d7fee7f2809e857ab713"
+    "revision": "fd842a1cd44364744026cc53f5e64145"
   },
   {
     "url": "scripts/classes/test.json",
@@ -320,7 +324,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "5947882a5f95cd9d3114c42fd8d07bb1"
+    "revision": "fe18a1c73c0152c15859df46434e31ab"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -360,11 +364,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "41eed238a01cea02bd14b8c577670cfc"
+    "revision": "340c39f5815b26a3b6bb0a65a1dff242"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "890849f08c53edee79f41bdcb079ee65"
+    "revision": "396337833dadb1dd1d10cd503d4b31c3"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -372,7 +376,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "881f499e0416fad46d55eaa5a2a55838"
+    "revision": "ff626f5f24db041e6cb90322c11e267d"
   },
   {
     "url": "scripts/z. Old Files/cwsRender_v0.js",
@@ -385,10 +389,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/z. Old Files/testSection.js",
     "revision": "0e632d23fbb96b56bf389700041637dc"
-  },
-  {
-    "url": "service-worker_back.js",
-    "revision": "de80056a12a74c2a49b1de762e295cb9"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -428,7 +428,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "1c3e7bc24ce6bde6e86973ab3141514a"
+    "revision": "e529f798a2154e26a9fe48b2a252a4c8"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

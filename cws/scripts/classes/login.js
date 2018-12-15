@@ -160,7 +160,7 @@ function Login( cwsRenderObj )
 
 		FormUtil.login_server = server;
 
-		// ONLINE vs OFFLINE HANDLING HERE!!!!
+		// ONLINE vs OFFLINE HANDLING
 		if ( ConnManager.getAppConnMode_Offline() )
 		{
 			/* START > Added by Greg: 2018/11/26 */
@@ -178,7 +178,7 @@ function Login( cwsRenderObj )
 			}
 			else
 			{
-				alert( 'Login Failed' );
+				alert( 'Offline Login Failed - userName/pin does not match' );
 			}
 			/* END > Added by Greg: 2018/11/26 */
 		}
@@ -195,7 +195,9 @@ function Login( cwsRenderObj )
 				}
 				else
 				{
-					alert( 'Login Failed' );
+					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
+					
+					alert( 'Login Failed' + errDetail );
 				}
 			} );
 		}
