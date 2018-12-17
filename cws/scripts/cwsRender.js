@@ -28,7 +28,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
-	//me.navBurgerTag = me.menuAppMenuIconTag;
+	me.enableCustomColors = false;
 
 
 	me.storageName_RedeemList = "redeemList";
@@ -174,7 +174,7 @@ function cwsRender()
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
 
 				// Change start area mark based on last user info..
-				me.trackUserLocation( clicked_area );
+				//me.trackUserLocation( clicked_area );
 
 			}
 			else
@@ -478,6 +478,25 @@ function cwsRender()
 
 	me.updateColorScheme = function ( favObj )
 	{
+		console.log('custom colors enabled: ' + me.enableCustomColors);
+		if ( me.enableCustomColors )
+		{
+			//console.log ( favObj.children()[0].attr('colors.background') );
+			//console.log ( favObj.children()[0].attr('colors.foreground') );
+			console.log ( favObj.find('svg').attr('colors.background') );
+			console.log ( favObj.find('svg').attr('colors.foreground') );
+
+			$( 'nav.bg-color-program' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
+
+			$( 'div.bg-color-program-son' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
+			$( 'div.bg-color-program-son' ).css( 'opacity', 0.4 );
+
+			$( '#spanOuName' ).css( 'color', favObj.find('svg').attr('colors.foreground') );
+
+			$( 'div.menu-mobile' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
+			//$( 'div.menu-mobile' ).css( 'opacity', 0.75 );
+			
+		}
 		/*console.log ( favObj );
 		console.log ( favObj.children() );
 		console.log ( favObj.children()[0] );
