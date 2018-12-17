@@ -260,7 +260,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "68cdfa123603c45d06ebbd5cf6239706"
+    "revision": "e0eec71f819b0308d4923993ff1fbbed"
   },
   {
     "url": "manifest.json",
@@ -272,15 +272,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "6afff295625ecdaebdfce5375398df8c"
+    "revision": "51984261834be004b4104ab2c2ece5a1"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "33271faff10a4f5a2f7b44dce6307f2a"
+    "revision": "5398975379212db43317177306c2cd84"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "929f73809817a583817375be82c467bb"
+    "revision": "18bdb74a48ac236183e3bfb3ed98c0c6"
   },
   {
     "url": "scripts/classes/block.js",
@@ -292,7 +292,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "249aa6c7e62e2958383af441734e9b27"
+    "revision": "8164f14c41a466e3340aef7ab2948ae9"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -312,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "fd842a1cd44364744026cc53f5e64145"
+    "revision": "d8aff087eb0694636de0661741124fd5"
   },
   {
     "url": "scripts/classes/test.json",
@@ -320,11 +320,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "11b7cc597ffe1a88660c444698180679"
+    "revision": "edf7ccf7a20f2265e072918934f78c26"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "fe18a1c73c0152c15859df46434e31ab"
+    "revision": "d85fc7ae0a2cb9d98dde3838a701184f"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -364,11 +364,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "340c39f5815b26a3b6bb0a65a1dff242"
+    "revision": "5bf366fc22c0f1050381548d743f1143"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "396337833dadb1dd1d10cd503d4b31c3"
+    "revision": "d0a5577e032838ef769ae037c3ac1998"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -434,5 +434,5 @@ self.__precacheManifest = [
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst({ "cacheName":"v1.0.0.1", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');

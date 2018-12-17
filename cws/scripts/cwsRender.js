@@ -12,7 +12,7 @@ function cwsRender()
 	me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
 	me.menuDivTag = $( '#menuDiv' );
 	//me.menuTopRightIconTag = $( '#menu_e' );
-	me.menuAppMenuIconTag;
+	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
 	// This get cloned..  Thus, we should use it as icon class name?
 	me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
@@ -28,7 +28,8 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
-	me.navBurgerTag;
+	//me.navBurgerTag = me.menuAppMenuIconTag;
+
 
 	me.storageName_RedeemList = "redeemList";
 	me._globalMsg = "";
@@ -137,6 +138,9 @@ function cwsRender()
 			}
 			me.LoginObj.openForm();
 		});*/
+
+		
+		me.configureMobileMenuIcon();
 		
 	}
 
@@ -165,61 +169,21 @@ function cwsRender()
 					$( '#aboutFormDiv' ).hide();
 				}
 
-				/* START > Greg added: 2018/11/23 */
-				var lastSession = JSON.parse(localStorage.getItem('session'));
 
-				if (lastSession)
-				{
-					var loginData = JSON.parse(localStorage.getItem(lastSession.user));
+				// Change start area mark based on last user info..
+				me.updateDcdConfigData( clicked_area );
 
-					if (loginData)
-					{
-						if ( ConnManager.getAppConnMode_Online() )
-						{
-							// for ONLINE > update dcd config for last menu action (default to this page on refresh)
-							for ( var i = 0; i < loginData.dcdConfig.areas.online.length; i++ )
-							{
-								if ( clicked_area.id == loginData.dcdConfig.areas.online[i].id )
-								{
-									loginData.dcdConfig.areas.online[i].startArea = true;
-								}
-								else 
-								{
-									loginData.dcdConfig.areas.online[i].startArea = false;
-								}
-							}
-						}
-						else
-						{
-							// for OFFLINE > update dcd config for last menu action (default to this page on refresh)
-							for ( var i = 0; i < loginData.dcdConfig.areas.offline.length; i++ )
-							{
-								if ( clicked_area.id == loginData.dcdConfig.areas.offline[i].id )
-								{
-									loginData.dcdConfig.areas.offline[i].startArea = true;
-								}
-								else 
-								{
-									loginData.dcdConfig.areas.offline[i].startArea = false;
-								}
-							}
-						}
-
-						//UPDATE lastStorage session for current user (based on last menu selection)
-						localStorage[ lastSession.user ] = JSON.stringify( loginData )
-
-					}
-				}
-				/* END > Greg added: 2018/11/23 */
 
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
 			}
 			else
 			{
-				/* START > Greg added: 2018/11/23 */
 				if (clicked_areaId === 'logOut')
 				{
+
+					// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
+					// set Log off
 					var lastSession = JSON.parse(localStorage.getItem('session'));
 
 					if (lastSession)
@@ -239,31 +203,76 @@ function cwsRender()
 					me.LoginObj.openForm();
 
 				}
-				/* END > Greg added: 2018/11/23 */
-
-				/* START > Greg edited: 2018/12/04 */
 				else if ( clicked_areaId === 'aboutPage')
 				{
 					me.aboutApp.render();
 				}
-
-				/* END > Greg edited: 2018/12/04 */
 			}
 
-			// hide the menu
-			if ( me.menuDivTag.is( ":visible" ) && me.menuAppMenuIconTag.is( ":visible" ) )
-			{
-				me.menuAppMenuIconTag.click();
-				//console.log ( 'click menuAppMenuIconTag' );
-				$('#nav-toggle').removeClass('active');
-			}
-			//console.log( $('#nav-toggle')[0].classList );
-			//$('#nav-toggle').removeClass('active');
-			//$( "#nav-toggle" ).classList.toggle( "active" );
-
+			// hide the menu div if open
+			me.hideMenuDiv();
 		});
 	}
 
+
+	// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
+	me.updateDcdConfigData = function( clicked_area )
+	{
+		var lastSession = JSON.parse(localStorage.getItem('session'));
+
+		if (lastSession)
+		{
+			var loginData = JSON.parse(localStorage.getItem(lastSession.user));
+	
+			if (loginData)
+			{
+				if ( ConnManager.getAppConnMode_Online() )
+				{
+					// for ONLINE > update dcd config for last menu action (default to this page on refresh)
+					for ( var i = 0; i < loginData.dcdConfig.areas.online.length; i++ )
+					{
+						if ( clicked_area.id == loginData.dcdConfig.areas.online[i].id )
+						{
+							loginData.dcdConfig.areas.online[i].startArea = true;
+						}
+						else 
+						{
+							loginData.dcdConfig.areas.online[i].startArea = false;
+						}
+					}
+				}
+				else
+				{
+					// for OFFLINE > update dcd config for last menu action (default to this page on refresh)
+					for ( var i = 0; i < loginData.dcdConfig.areas.offline.length; i++ )
+					{
+						if ( clicked_area.id == loginData.dcdConfig.areas.offline[i].id )
+						{
+							loginData.dcdConfig.areas.offline[i].startArea = true;
+						}
+						else 
+						{
+							loginData.dcdConfig.areas.offline[i].startArea = false;
+						}
+					}
+				}
+	
+				//UPDATE lastStorage session for current user (based on last menu selection)
+				localStorage[ lastSession.user ] = JSON.stringify( loginData )
+	
+			}
+		}
+	}
+
+	me.hideMenuDiv = function()
+	{
+		// hide the menu
+		if ( me.menuDivTag.is( ":visible" ) )
+		{
+			me.menuAppMenuIconTag.click();
+			$('#nav-toggle').removeClass('active');
+		}		
+	}
 	// =============================================
 
 
@@ -276,6 +285,9 @@ function cwsRender()
 		if (areaId === 'logOut')
 		{
 			me.LoginObj.openForm();
+
+			// hide the menu div if open
+			me.hideMenuDiv();			
 		}
 		else
 		{  
@@ -374,41 +386,27 @@ function cwsRender()
 	// ----------------------------------
 
 	
-	/* START > Greg added: 2018/12/10 */
 	me.configureMobileMenuIcon = function()
 	{
 		var destArea = $( 'div.headerLogo');
 
 		if ( destArea )
 		{
-			destArea.empty();
+			//destArea.empty();
 
-			/*var dvContain = $( '<div id="menuTopDiv"></div>' );
-			var dvMenuObj = $( '<div id="menu_e"></div>' );
-			var imgMenuObj = $( '<img src="img/menu_icon.svg" style="margin: 0px;" >' );
+			//me.menuAppMenuIconTag.show();
 
-			destArea.append ( dvContain );
-			dvContain.append ( dvMenuObj );
-			dvMenuObj.append ( imgMenuObj );*/
-
-			var dvMenuObj = $( '<a id="nav-toggle" href="#"><span></span></a>' );
-			destArea.append ( dvMenuObj );
-
-			me.navBurgerTag = dvMenuObj;
+			//me.navBurgerTag = dvMenuObj;
 
 			document.querySelector( "#nav-toggle" )
 			 .addEventListener( "click", function() {
 			  this.classList.toggle( "active" );
 			});
 
-			me.menuAppMenuIconTag = dvMenuObj;
-
-			FormUtil.setClickSwitchEvent( dvMenuObj, me.menuDivTag, [ 'open', 'close' ], me );
-
+			FormUtil.setClickSwitchEvent( me.menuAppMenuIconTag, me.menuDivTag, [ 'open', 'close' ], me );
 		}
 
 	}
-	/* END > Greg added: 2018/12/10 */
 
 	me.populateMenuList = function( areaList )
 	{

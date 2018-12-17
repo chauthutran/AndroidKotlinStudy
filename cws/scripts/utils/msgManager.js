@@ -9,14 +9,14 @@ MsgManager.divMsgAreaTag;
 MsgManager.spanMsgAreaCloseTag;
 MsgManager.btnMsgAreaCloseTag;
 MsgManager.spanMsgAreaTextTag;
-MsgManager.divProgressAreaTag; //added by Greg (2018/12/06)
+MsgManager.divProgressAreaTag;
 MsgManager.progressBar;
-MsgManager.countDownNumerator = 0;  //added by Greg (2018/12/06)
-MsgManager.countDownDenominator = 0; //added by Greg (2018/12/06)
-MsgManager.progressBarUpdateTimer = 25; //added by Greg (2018/12/06)
-MsgManager.progressCheckCount = 0; //added by Greg (2018/12/06)
-MsgManager._autoHide = true; //added by Greg (2018/12/05)
-MsgManager._autoHideDelay = 500; //added by Greg (2018/12/05)
+MsgManager.countDownNumerator = 0;
+MsgManager.countDownDenominator = 0;
+MsgManager.progressBarUpdateTimer = 25;
+MsgManager.progressCheckCount = 0;
+MsgManager._autoHide = true;
+MsgManager._autoHideDelay = 5000; //changed to 5 sec by James (2018/12/17)
 
 
 MsgManager.initialSetup = function()
@@ -25,7 +25,7 @@ MsgManager.initialSetup = function()
     MsgManager.spanMsgAreaCloseTag = $( '#spanMsgAreaClose' );
     MsgManager.btnMsgAreaCloseTag = $( '#btnMsgAreaClose' );
     MsgManager.spanMsgAreaTextTag = $( '#spanMsgAreaText' );
-    MsgManager.divProgressAreaTag = $( '#divMsgProgress' ); //added by Greg (2018/12/06)
+    MsgManager.divProgressAreaTag = $( '#divMsgProgress' );
 
     MsgManager.btnMsgAreaCloseTag.click( function()
     {
@@ -52,8 +52,8 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
         }
         /* END > added by Greg (2018/12/05) */
 
-        MsgManager.divMsgAreaTag.hide( 'fast' );
-        MsgManager.spanMsgAreaTextTag.text( '' );
+        //MsgManager.divMsgAreaTag.hide( 'fast' );
+        //MsgManager.spanMsgAreaTextTag.text( '' );
 
         MsgManager.spanMsgAreaTextTag.text( msg );
         MsgManager.divMsgAreaTag.show( 'fast' );

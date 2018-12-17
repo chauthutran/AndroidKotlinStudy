@@ -35,10 +35,12 @@
   $( '#spanVersion' ).text( 'v' + _ver );
   
   $( '.reget' ).click( () => {
-
     FormUtil.performReget( _registrationObj );
   });
 
+  $( '#swRefresh' ).click( () => {
+    FormUtil.performReget( _registrationObj, "update" );
+  });
 
   // App version check and return always..  
   //  (Unless version is outdated and agreed to perform 'reget' for new service worker

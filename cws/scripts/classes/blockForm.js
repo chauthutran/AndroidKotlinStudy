@@ -226,23 +226,25 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			for( var i in formItemJson.rules )
 			{
-				var rule = formItemJson.rules[i];
+				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
 
-				if ( rule.name )
+				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, me.cwsRenderObj.configJson.definitionRules );
+
+				if ( ruleJson.name )
 				{
-					entryTag.attr( rule.name, rule.value );
+					entryTag.attr( ruleJson.name, ruleJson.value );
 					
-					if( rule.name === "mandatory" && rule.value === "true" )
+					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
 						titleTag.append("<span style='color:red;'> * </span>")
 					}	
 				}	
-				else if ( rule.pattern )
+				else if ( ruleJson.pattern )
 				{
 					var regxRuleJson = {};
-					regxRuleJson.pattern = rule.pattern;
-					regxRuleJson.msg = rule.msg;
+					regxRuleJson.pattern = ruleJson.pattern;
+					regxRuleJson.msg = ruleJson.msg;
 					
 					regxRules.push( regxRuleJson );
 				} 
@@ -250,11 +252,6 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			if ( regxRules.length > 0 )
 			{
-				//console.log( 'condition rules: ');
-				//var rulesStr = JSON.stringify( regxRules );
-				//console.log( rulesStr );
-				//console.log( encodeURI( rulesStr ) );
-				
 				entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
 			} 
 		}
@@ -484,25 +481,6 @@ function BlockForm( cwsRenderObj, blockObj )
 				voucherId = formDivSecTag.find( '[name="voucherId"]' ).val();
 				formDivSecTag.find( '[name="walkInClientCase"]' ).val( me.getWalkInClientCase ( clientId, voucherId ) );
 
-
-
-
-					// breakRule?  How is is used?
-					// populate the attribute value to matching DIV tag
-					/*
-					matchingTag = formDivSecTag.find( 'div,span' ).filter( '[uid="' + attrJson.id + '"]' );
-					var message = attrJson.value;
-					if( attrJson.breakRule !== undefined )
-					{
-						matchingTag.html( message.split( attrJson.breakRule ).join("<br>") );
-					}
-					else
-					{
-						matchingTag.html( message );
-					}
-					*/
-
-				//}
 			}
 			catch(err) {
 				console.log( 'Error Duing "populateFormData".' );
@@ -513,7 +491,7 @@ function BlockForm( cwsRenderObj, blockObj )
 	
 	me.getWalkInClientCase = function( clientId, voucherId )
 	{
-		var walkInClientCase = "3";
+		var walkInClientCase = "";
 		var hasClient = ( clientId !== undefined && clientId !== "" );
 		var hasVoucherId = ( voucherId !== undefined && voucherId !== "" );
 		
@@ -529,6 +507,8 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			walkInClientCase = "3";
 		}
+
+		console.log( 'set Walk In Clint case: ' + walkInClientCase );
 		
 		return walkInClientCase;
 	}

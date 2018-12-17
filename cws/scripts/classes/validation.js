@@ -239,18 +239,28 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		{
 			var regxRules = [];			
 			regxRules = JSON.parse( regxRulesStr );
+			var notFirstErr = false;
 
 			for ( var i = 0; i < regxRules.length; i++ )
 			{				
-				var regxRuleJson = regxRules[i];
-
-				var regexTest = new RegExp( regxRuleJson.pattern );
-
-				if ( !regexTest.test( inputTag.val() ) )
+				try
 				{
-					valid = false;
-					divTag.append( me.getErrorSpanTag( regxRuleJson.msg ) );
-				}				
+					var regxRuleJson = regxRules[i];
+	
+					var regexTest = new RegExp( regxRuleJson.pattern );
+	
+					if ( !regexTest.test( inputTag.val() ) )
+					{
+						valid = false;
+						var startCommaStr = ( notFirstErr ) ? ", ": "";
+						divTag.append( me.getErrorSpanTag( startCommaStr + regxRuleJson.msg ) );
+						notFirstErr = true;
+					}	
+				}
+				catch( ex )
+				{
+					console.log( 'rule regex check failed.. ' + ex );
+				}
 			}
 		}
 
@@ -344,4 +354,6 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	
 	// me.init();
 	
+
+	// test 6
 }

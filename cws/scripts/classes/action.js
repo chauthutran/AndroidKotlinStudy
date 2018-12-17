@@ -291,6 +291,7 @@ function Action( cwsRenderObj, blockObj )
 							}
 							else
 							{
+								console.log( returnJson );
 								alert( 'Process Failed!!' );
 							}
 						});

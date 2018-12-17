@@ -88,7 +88,7 @@ function aboutApp( cwsRender )
                 btnDCDconfig.html( 'reGet dcdConfig' );
                 divButtonTag.append( btnDCDconfig );
 
-                $( btnDCDconfig ).click( () => {
+                btnDCDconfig.click( () => {
 
                     if ( ConnManager.isOffline() )
                     {
@@ -100,6 +100,16 @@ function aboutApp( cwsRender )
                     }
 
                 });
+
+
+		        // James added: 2018/12/17 - BUT WE SHOULD SIMPLY HAVE STATIC TAGS IN index.html, not dynamic ones..
+                var spanConsoleOutConfig = $( '<span title="console out config" style="opacity: 0; cursor:pointer; margin-left: 15px;">v</span>');
+                divButtonTag.append( spanConsoleOutConfig );
+
+                spanConsoleOutConfig.click( function() {
+                    console.log( me.cwsRenderObj.configJson );
+                });
+                
 
                 me.aboutFormDivTag.show();
             }

@@ -21,20 +21,15 @@ FormUtil._serverUrl = location.protocol + '//' + location.host;
 
 FormUtil.getObjFromDefinition = function( def, definitions )
 {
-	var objJson;
+	var objJson = def;  // default is the passed in object/name
 
 	if ( def !== undefined && definitions !== undefined )
 	{
 		if ( typeof def === 'string' )
 		{
-			//console.log( 'get string object: ' + def );
 			// get object from definition
 			objJson = definitions[ def ];
 		}
-		else if ( typeof def === 'object' )
-		{
-			objJson = def;
-		}	
 	}
 
 	return objJson;
@@ -607,7 +602,7 @@ FormUtil.getLastPayload = function()
 }
 /* END > Added by Greg: 2018/12/13 */
 
-FormUtil.performReget = function( regObj )
+FormUtil.performReget = function( regObj, option )
 {		
 	if ( ConnManager.isOffline() )
 	{
@@ -617,15 +612,26 @@ FormUtil.performReget = function( regObj )
 	{      
 		if ( regObj !== undefined )
 		{
-			FormMsgManager.appBlock( "Reget App - restarting..." );
+			if ( option === "update" )
+			{
+				FormMsgManager.appBlock( "Service Worker Updating and App restart.." );
+				regObj.update().then( function( ){
+					location.reload( true );
+				});
+				FormMsgManager.appUnblock();	
+			}
+			else
+			{
+				FormMsgManager.appBlock( "Reget App - restarting..." );
 
-			regObj.unregister().then(function(boolean) {
-				//console.log('Service Worker UnRegistered');
-				// if boolean = true, unregister is successful
-				location.reload(true);
-			});
-
-			FormMsgManager.appUnblock();
+				regObj.unregister().then(function(boolean) {
+					//console.log('Service Worker UnRegistered');
+					// if boolean = true, unregister is successful
+					location.reload( true );
+				});
+	
+				FormMsgManager.appUnblock();	
+			}
 		}
 		else
 		{

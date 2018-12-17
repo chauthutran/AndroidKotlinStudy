@@ -127,7 +127,13 @@ function Login( cwsRenderObj )
 
 		/* START > Added by Greg (2018/12/10) */
 		var divIcon = $( 'div.logo_top' );
-		divIcon.html( $( '<img src="img/logo_top.svg">' ) );
+		
+		$( '#nav-toggle' ).hide();
+		$( '#loggedInDiv' ).hide();		
+		$( '#loginImg' ).show();
+
+
+		//divIcon.html( $( '<img src="img/logo_top.svg">' ) );
 		/*if ( me.cwsRenderObj.manifest )
 		{
 			me.pageTitleDivTab.show();
@@ -144,7 +150,11 @@ function Login( cwsRenderObj )
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
 
-		me.cwsRenderObj.configureMobileMenuIcon();
+		$( '#loginImg' ).hide();
+		$( '#nav-toggle' ).show();
+		$( '#loggedInDiv' ).show();		
+
+		//me.cwsRenderObj.configureMobileMenuIcon();
 	}
 
 	me.processLogin = function( userName, password, server, btnTag )
