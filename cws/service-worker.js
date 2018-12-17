@@ -280,7 +280,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "18bdb74a48ac236183e3bfb3ed98c0c6"
+    "revision": "92c8fe09e183c2f0c5970bed40be3cde"
   },
   {
     "url": "scripts/classes/block.js",

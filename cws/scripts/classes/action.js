@@ -201,34 +201,16 @@ function Action( cwsRenderObj, blockObj )
 				FormUtil.setLastPayload ( inputsJson )
 
 				//localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
-
 				//localStorage.setItem( 'lastPayload.all', '{ ' + JSON.stringify( clickActionJson ) + ' } ' ); // added by Greg (2018/12/05)
 
-				// REMOVE 'payloadBody' from the config json since we are not using it!!
-				/*
-				// ????  How to describe this?  We need to step through this process and make it 
-				// easier to follow.
-				if( clickActionJson.payloadBody !== undefined && clickedItemData !== undefined )
+
+				// Voucher Status add to payload
+				if ( clickActionJson.voucherStatus )
 				{
-					passedData = clickedItemData;
-
-					for( var i = 0; i < clickActionJson.payloadBody.length; i++  )
-					{
-						var uid = clickActionJson.payloadBody[i];
-						var value = "";
-						for( var j = 0; j < passedData.displayData.length; j++  )
-						{
-							if( passedData.displayData[j].id === uid )
-							{
-								value = passedData.displayData[j].value;
-							}
-						}
-
-						inputsJson[uid] = value;
-					}
+					inputsJson.voucherStatus = clickActionJson.voucherStatus;
 				}
-				*/
 
+				
 				// generate url
 				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
 
@@ -260,8 +242,6 @@ function Action( cwsRenderObj, blockObj )
 					{					
 						// generate url
 						var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-						//console.log( 'url: ' + url );
-						//console.log( 'inputsJson: ' + JSON.stringify( inputsJson ) );
 						
 						asyncCalled = true;
 
