@@ -62,11 +62,11 @@ function cwsRender()
 
 		if ( localStorage.length )
 		{
-			var lastSession = JSON.parse(localStorage.getItem('session'));
+			var lastSession = JSON.parse( localStorage.getItem('session') );
 			
 			if ( lastSession )
 			{
-				var loginData = JSON.parse(localStorage.getItem(lastSession.user));
+				var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
 
 				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
 				{
@@ -170,12 +170,12 @@ function cwsRender()
 				}
 
 
-				// Change start area mark based on last user info..
-				me.updateDcdConfigData( clicked_area );
-
-
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
+
+				// Change start area mark based on last user info..
+				me.trackUserLocation( clicked_area );
+
 			}
 			else
 			{
@@ -184,11 +184,11 @@ function cwsRender()
 
 					// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
 					// set Log off
-					var lastSession = JSON.parse(localStorage.getItem('session'));
+					var lastSession = JSON.parse( localStorage.getItem('session') );
 
 					if (lastSession)
 					{
-						var loginData = JSON.parse(localStorage.getItem(lastSession.user));
+						var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
 
 						if ( loginData.mySession && loginData.mySession.stayLoggedIn ) 
 						{
@@ -216,45 +216,58 @@ function cwsRender()
 
 
 	// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-	me.updateDcdConfigData = function( clicked_area )
+	me.trackUserLocation = function( clicked_area )
 	{
-		var lastSession = JSON.parse(localStorage.getItem('session'));
+		var lastSession = JSON.parse( localStorage.getItem('session') );
+		var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
+		var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
+		var matchOn = [ "id", "startBlockName", "name" ];
+		var matchedOn, areaMatched;
 
 		if (lastSession)
 		{
-			var loginData = JSON.parse(localStorage.getItem(lastSession.user));
-	
+			var loginData = JSON.parse( localStorage.getItem( lastSession.user ) );
+
 			if (loginData)
 			{
-				if ( ConnManager.getAppConnMode_Online() )
+				for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
 				{
-					// for ONLINE > update dcd config for last menu action (default to this page on refresh)
-					for ( var i = 0; i < loginData.dcdConfig.areas.online.length; i++ )
+					loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
+
+					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
 					{
-						if ( clicked_area.id == loginData.dcdConfig.areas.online[i].id )
+						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
+
+						// test if altNetworkMode value exists for current selected area and update to equivalent of 'lastActive' > startArea
+						// test on available matchOn values
+						for ( var m = 0; m < matchOn.length; m++ )
 						{
-							loginData.dcdConfig.areas.online[i].startArea = true;
+							for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
+							{
+								// check if properties exist on both off+online areas
+								if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] && loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
+								{
+									if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] == loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
+									{
+										matchedOn = matchOn[m];
+										areaMatched = n;
+										loginData.dcdConfig.areas[altNetworkMode][n].startArea = true;
+
+									}
+								}
+							}
 						}
-						else 
+						// 'reset' (deactivate) all other selectable areas 
+						for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
 						{
-							loginData.dcdConfig.areas.online[i].startArea = false;
+							if ( loginData.dcdConfig.areas[altNetworkMode][areaMatched][matchedOn] != loginData.dcdConfig.areas[altNetworkMode][n][matchedOn] )
+							{
+								loginData.dcdConfig.areas[altNetworkMode][n].startArea = false;
+							}
 						}
+
 					}
-				}
-				else
-				{
-					// for OFFLINE > update dcd config for last menu action (default to this page on refresh)
-					for ( var i = 0; i < loginData.dcdConfig.areas.offline.length; i++ )
-					{
-						if ( clicked_area.id == loginData.dcdConfig.areas.offline[i].id )
-						{
-							loginData.dcdConfig.areas.offline[i].startArea = true;
-						}
-						else 
-						{
-							loginData.dcdConfig.areas.offline[i].startArea = false;
-						}
-					}
+
 				}
 	
 				//UPDATE lastStorage session for current user (based on last menu selection)
@@ -380,7 +393,8 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
 	me.startBlockExecuteAgain = function()
 	{
-		me.startBlockExecute( me.configJson );
+		//me.startBlockExecute( me.configJson );
+		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ) );
 	}
 
 	// ----------------------------------
@@ -460,6 +474,14 @@ function cwsRender()
 		{
 			me.LoginObj.regetDCDconfig();
 		}  
+	}
+
+	me.updateColorScheme = function ( favObj )
+	{
+		/*console.log ( favObj );
+		console.log ( favObj.children() );
+		console.log ( favObj.children()[0] );
+		console.log ( favObj.children()[0].attributes );*/
 	}
 
 	// ======================================

@@ -19,8 +19,6 @@ function favIcons( cwsRender )
 
 	me.initialize = function() {
 
-        //me.favIconsTag.empty();
-
         if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favActionList )
         {
             me.createIconButtons( FormUtil.dcdConfig.favActionList );
@@ -51,12 +49,12 @@ function favIcons( cwsRender )
 
             me.favIconsTag.empty();
 
-            me.createRecursiveFavIconButton ( favList, 0 )
+            me.createRecursiveFavIcons ( favList, 0 )
         }
 
     }
 
-	me.createRecursiveFavIconButton = function( favList, favItm )
+	me.createRecursiveFavIcons = function( favList, favItm )
 	{
         if ( favList[favItm] )
         {
@@ -66,29 +64,48 @@ function favIcons( cwsRender )
             // 1st test > Current favIcon object supports network connection-status OPTIONS
             if ( favObj.areas )
             {
-                //console.log ( 'testing [' + favObj.name + '] status: ' + networkStatus + ' : ' + ( favObj.areas[ networkStatus ] == undefined ) )
                 // 2nd test > Current favIcon object supports CURRENT network connection-status 
                 if ( favObj.areas[ networkStatus ] )
                 {
-                    // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
+                    //me.recursiveCreateIcon(favObj, )
+                    // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
                     $.get( favList[favItm].img, function(data) {
+                        
+                        console.log( 'FavIcon WITH online/offline areas defined ' );
 
                         var unqID = Util.generateRandomId();
                         var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                        var svg = ( $(data)[0].documentElement );
-        
-                        $(svg).find("tspan").html(favList[favItm].name) 
-        
-                        divTag.append( svg );
+                        var svgObject = ( $(data)[0].documentElement );
+
+                        $( svgObject ).attr( 'id', 'svg_'+unqID );
+                        $( svgObject ).find("tspan").html(favList[favItm].name) 
+
+                        if ( favList[favItm].colors )
+                        {
+                            if ( favList[favItm].colors.background )
+                            {
+                                $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, favList[favItm].colors.background) );
+                                $( svgObject ).attr( 'colors.background', favList[favItm].colors.background );
+                                //console.log ( '   ~ replace bgcolor: ' + favList[favItm].colors.background);
+                            }
+                            if ( favList[favItm].colors.foreground )
+                            {
+                                $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, favList[favItm].colors.foreground) );
+                                $( svgObject ).attr( 'colors.foreground', favList[favItm].colors.foreground );
+                                //console.log ( '   ~ replace color: ' + favList[favItm].colors.foreground);
+                            }
+                        }
+
+                        divTag.append( svgObject );
                         me.favIconsTag.append( divTag );
-        
+
                         if ( favObj.areas[ networkStatus ].target )
                         {
                             me.setFavIconClickTarget ( favObj.areas[ networkStatus ].target, unqID )
 
                             if ( favList.length > (favItm+1) )
                             {
-                                me.createRecursiveFavIconButton( favList, (favItm+1)  )
+                                me.createRecursiveFavIcons( favList, (favItm+1)  )
                             }
                         }
         
@@ -99,24 +116,43 @@ function favIcons( cwsRender )
                 {
                     if ( favList.length > (favItm+1) )
                     {
-                        me.createRecursiveFavIconButton( favList, (favItm+1)  )
+                        me.createRecursiveFavIcons( favList, (favItm+1)  )
                     }
                 }
 
             }
             else
             {
-
-                // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
+                // no online/offline options defined for favIcon - display regardless of network mode/status
+                // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
                 $.get( favList[favItm].img, function(data) {
+
+                    console.log( 'FavIcon withOUT online/offline areas defined ' );
 
                     var unqID = Util.generateRandomId();
                     var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                    var svg = ( $(data)[0].documentElement );
-    
-                    $(svg).find("tspan").html(favList[favItm].name) 
-    
-                    divTag.append( svg );
+                    var svgObject = ( $(data)[0].documentElement );
+
+                    $( svgObject ).attr( 'id', 'svg_'+unqID );
+                    $( svgObject ).find("tspan").html(favList[favItm].name) 
+
+                    if ( favList[favItm].colors )
+                    {
+                        if ( favList[favItm].colors.background )
+                        {
+                            $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, favList[favItm].colors.background) );
+                            $( svgObject ).attr( 'colors.background', favList[favItm].colors.background );
+                            //console.log ( '   ~ replace bgcolor: ' + favList[favItm].colors.background);
+                        }
+                        if ( favList[favItm].colors.foreground )
+                        {
+                            $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, favList[favItm].colors.foreground) );
+                            $( svgObject ).attr( 'colors.foreground', favList[favItm].colors.foreground );
+                            //console.log ( '   ~ replace color: ' + favList[favItm].colors.foreground);
+                        }
+                    }
+
+                    divTag.append( svgObject );
                     me.favIconsTag.append( divTag );
     
                     if ( favList[favItm].target )
@@ -125,7 +161,7 @@ function favIcons( cwsRender )
     
                         if ( favList.length > (favItm+1) )
                         {
-                            me.createRecursiveFavIconButton( favList, (favItm+1)  )
+                            me.createRecursiveFavIcons( favList, (favItm+1)  )
                         }
                     }
     
@@ -137,37 +173,13 @@ function favIcons( cwsRender )
 
     }
 
-    /*me.createFavIconButton = function( favIcon )
-	{
-        // Greg: this may be a 'risky' method (reads SVG xml structure, then replacees )
-		$.get( favIcon.img, function(data) {
-            //location.pathname +''+ favIcon.img
-			var unqID = Util.generateRandomId();
-			var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favIcon.id + '" name="' + (favIcon.name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-            var svg = ( $(data)[0].documentElement );
-
-            $(svg).find("tspan").html(favIcon.name) 
-
-            divTag.append( svg );
-            me.favIconsTag.append( divTag );
-
-            if ( favIcon.target )
-            {
-                me.setFavIconClickTarget ( favIcon.target, unqID )
-            }
-
-		});
-
-    }*/
-
     me.setFavIconClickTarget = function( favTarget, targetID )
     {
         // Weird > bindings being lost after 1st click event
         $(document).on('click', '#favIcon_'+targetID, function() {
             if ( favTarget.blockId )
             {
-                //console.log ( favTarget.options );
-                //$( 'li.active > label' ).html( favTarget.name );
+                me.cwsRenderObj.updateColorScheme ( $( '#favIcon_'+targetID ) );
                 me.cwsRenderObj.renderBlock( favTarget.blockId, favTarget.options )
             }
 
