@@ -260,7 +260,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "e0eec71f819b0308d4923993ff1fbbed"
+    "revision": "5d18d16e760a8e40c053febe584486b8"
   },
   {
     "url": "manifest.json",
@@ -292,7 +292,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "8164f14c41a466e3340aef7ab2948ae9"
+    "revision": "f91bffeaad8078f591214c4c2dc47ad9"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "edf7ccf7a20f2265e072918934f78c26"
+    "revision": "c6f9bec044a49aeaead4ca8f8559304b"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -376,7 +376,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ff626f5f24db041e6cb90322c11e267d"
+    "revision": "cf6b205c31fbc5cfe95a81601fd53ef0"
   },
   {
     "url": "scripts/z. Old Files/cwsRender_v0.js",

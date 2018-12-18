@@ -134,6 +134,8 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 
+				Util.decodeURI_ItemList( optionList, "defaultName" );
+
 				entryTag = $( '<select class="selector" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
 				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 

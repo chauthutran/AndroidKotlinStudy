@@ -643,6 +643,20 @@ Util.selectOption_WithOptionalInsert = function ( selectObj, id, list )
 };
 
 
+Util.decodeURI_ItemList = function( jsonItemList, propName )
+{
+	if ( jsonItemList )
+	{
+		$.each( jsonItemList, function( i, item ) 
+		{
+			if ( item[ propName ] )
+			{
+				item[ propName ] = decodeURI( item[ propName ] );
+			}
+		});
+	}
+};
+
 Util.setSelectDefaultByName = function( ctrlTag, name )
 {
 	ctrlTag.find( "option:contains('" + name + "')" ).attr( 'selected', true );
