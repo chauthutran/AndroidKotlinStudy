@@ -665,6 +665,12 @@ select {
 
 div.select select {
   border: none;
+  background-color: White;
+}
+
+div.select select option {
+  border: none;
+  background-color: White !important;
 }
 
 select::-ms-expand {

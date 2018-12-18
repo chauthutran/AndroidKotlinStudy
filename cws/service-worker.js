@@ -44,7 +44,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "43285808850489a31580c49a7cc91f52"
+    "revision": "ff56ab87634bbf84cfb977e5124da9c2"
   },
   {
     "url": "images/blank.gif",
@@ -187,6 +187,18 @@ self.__precacheManifest = [
     "revision": "2b91fa26982504bd640d1c9e037b0dd7"
   },
   {
+    "url": "img/favbar_color_act.svg",
+    "revision": "3d7fb155bbe8f786205d2c17334ba495"
+  },
+  {
+    "url": "img/favbar_color_arrows.svg",
+    "revision": "73caa91e4f239e6094f99b62c15c8c40"
+  },
+  {
+    "url": "img/favbar_color_contact.svg",
+    "revision": "d5b28a8335ffe5a9efa061c02c65ed64"
+  },
+  {
     "url": "img/favbar_contact.svg",
     "revision": "62cca59cf88ec032832bf2e3868e1bb2"
   },
@@ -225,6 +237,14 @@ self.__precacheManifest = [
   {
     "url": "img/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
+  },
+  {
+    "url": "img/plus_color.svg",
+    "revision": "0855672affe535b3921b90a5d45e1e34"
+  },
+  {
+    "url": "img/plus_on_color.svg",
+    "revision": "84c9647fca9d7f6bbaa6fe44c933993d"
   },
   {
     "url": "img/plus_on.svg",
@@ -308,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "c724a549734ef5da22f883dfa3bad6d4"
+    "revision": "51c02cb90ccd0f2abdcd60d9da314b76"
   },
   {
     "url": "scripts/classes/login.js",
@@ -324,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "d85fc7ae0a2cb9d98dde3838a701184f"
+    "revision": "92dec137c178b2ed345e04fec8e3fc77"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
