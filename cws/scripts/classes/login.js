@@ -272,6 +272,8 @@ function Login( cwsRenderObj )
 			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
 		}
 
+		me.cwsRenderObj.renderDefaultTheme();
+
 	}
 
 	// --------------------------------------

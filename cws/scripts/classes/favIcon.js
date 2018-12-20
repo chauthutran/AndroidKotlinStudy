@@ -179,7 +179,7 @@ function favIcons( cwsRender )
         $(document).on('click', '#favIcon_'+targetID, function() {
             if ( favTarget.blockId )
             {
-                me.cwsRenderObj.updateColorScheme ( $( '#favIcon_'+targetID ) );
+                //me.cwsRenderObj.updateColorScheme ( $( '#favIcon_'+targetID ) );
                 me.cwsRenderObj.renderBlock( favTarget.blockId, favTarget.options )
             }
 

@@ -200,10 +200,6 @@ function Action( cwsRenderObj, blockObj )
 
 				FormUtil.setLastPayload ( inputsJson )
 
-				//localStorage.setItem( 'lastPayload.posted', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
-				//localStorage.setItem( 'lastPayload.all', '{ ' + JSON.stringify( clickActionJson ) + ' } ' ); // added by Greg (2018/12/05)
-
-
 				// Voucher Status add to payload
 				if ( clickActionJson.voucherStatus )
 				{

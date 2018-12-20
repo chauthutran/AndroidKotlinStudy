@@ -28,7 +28,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
-	me.enableCustomColors = false;
+	me.enableCustomColors = true;
 
 
 	me.storageName_RedeemList = "redeemList";
@@ -71,6 +71,7 @@ function cwsRender()
 				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
 				{
 					initializeStartBlock = false;
+					me.renderDefaultTheme();
 				}
 			}
 
@@ -174,7 +175,7 @@ function cwsRender()
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
 
 				// Change start area mark based on last user info..
-				//me.trackUserLocation( clicked_area );
+				me.trackUserLocation( clicked_area );
 
 			}
 			else
@@ -199,7 +200,7 @@ function cwsRender()
 
 					me.LoginObj.spanOuNameTag.text( '' );
 					me.LoginObj.spanOuNameTag.hide();
-
+					me.renderDefaultTheme();
 					me.LoginObj.openForm();
 
 				}
@@ -240,6 +241,7 @@ function cwsRender()
 
 						// test if altNetworkMode value exists for current selected area and update to equivalent of 'lastActive' > startArea
 						// test on available matchOn values
+						/* GREG: MORE TESTING TO BE DONE 
 						for ( var m = 0; m < matchOn.length; m++ )
 						{
 							for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
@@ -264,7 +266,7 @@ function cwsRender()
 							{
 								loginData.dcdConfig.areas[altNetworkMode][n].startArea = false;
 							}
-						}
+						} */
 
 					}
 
@@ -476,13 +478,67 @@ function cwsRender()
 		}  
 	}
 
+
+	/* @Greg: do we create a new class for managing color-scheme themes? */
+	me.renderDefaultTheme = function ()
+	{
+		if ( me.configJson && me.configJson.settings && me.configJson.settings.theme && me.configJson.themes )
+		{
+			console.log( 'Updating to theme: ' + me.configJson.settings.theme);
+			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
+
+			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
+
+			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
+
+			$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
+
+			$( 'div.menu-mobile' ).css( 'background-color', defTheme.menuMobile.colors.background );
+
+			$( 'div.menu-mobile' ).css( 'color', defTheme.menuMobile.colors.foreground );
+
+			$('#styleCssMobileRow').remove();
+
+			if ( defTheme.button.colors )
+			{
+				var btnStyle = '';
+				if ( defTheme.button.colors.foreground )
+				{
+					btnStyle += ' color: ' + defTheme.button.colors.foreground + ';'
+				}
+				if ( defTheme.button.colors.background )
+				{
+					btnStyle += ' background-color: ' + defTheme.button.colors.background + ';'
+				}
+
+				$( 'head' ).append('<style id="styleCssMobileRow"> .tb-content-buttom { ' + btnStyle + ' } </style>');
+
+			}
+
+		}
+		
+	}
+
+	me.getThemeConfig = function ( themeArr, theme )
+	{
+		for ( var i = 0; i < themeArr.length; i++ )
+		{
+			if ( themeArr[i].name == theme )
+			{
+				return themeArr[i].spec;
+			}
+
+		}
+
+	}
+
 	me.updateColorScheme = function ( favObj )
 	{
 		console.log('custom colors enabled: ' + me.enableCustomColors);
+		console.log( favObj );
 		if ( me.enableCustomColors )
 		{
-			//console.log ( favObj.children()[0].attr('colors.background') );
-			//console.log ( favObj.children()[0].attr('colors.foreground') );
+
 			console.log ( favObj.find('svg').attr('colors.background') );
 			console.log ( favObj.find('svg').attr('colors.foreground') );
 
@@ -493,7 +549,14 @@ function cwsRender()
 
 			$( '#spanOuName' ).css( 'color', favObj.find('svg').attr('colors.foreground') );
 
+			//spanOuName.html(favObj.innerHTML)
+
 			$( 'div.menu-mobile' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
+
+			$('#styleCssMobileRow').remove();
+
+			$( 'head' ).append('<style id="styleCssMobileRow"> .menu-mobile-row{ color: ' + favObj.find('svg').attr('colors.foreground') + '; } </style>');
+
 			//$( 'div.menu-mobile' ).css( 'opacity', 0.75 );
 			
 		}

@@ -355,5 +355,5 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	// me.init();
 	
 
-	// test 7
+	// test 6
 }

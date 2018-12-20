@@ -91,6 +91,7 @@ function BlockList( cwsRenderObj, blockObj )
         // Copy from list html template
         $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
+        var listUlLiActiveTag = blockTag.find( 'li.active' );
         var listContentUlTag = blockTag.find( '.tab__content_act' );
         me.redeemListTargetTag = listContentUlTag;
 
@@ -109,6 +110,11 @@ function BlockList( cwsRenderObj, blockObj )
 
                     me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
                 }
+                listUlLiActiveTag.find( 'label' ).html('List');
+            }
+            else
+            {
+
             }
 
             (me.redeemList).sort(function (a, b) {
@@ -232,10 +238,46 @@ function BlockList( cwsRenderObj, blockObj )
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
         var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:mm ");
-        var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
+
+        if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusOptions )
+        {
+            var statusOpt = me.getStatusOpt ( itemData );
+
+            if ( statusOpt )
+            {
+                var dateTimeTag = $( '<div class="icon-row" />' );
+                var tblObj = $( '<table style="width:100%;">' ); 
+                var trObj = $( '<tr>' ); 
+                var tdLeftObj = $( '<td>' ); 
+                var tdRightObj = $( '<td>' ); 
+
+                //var iconObj = $( '<div id="redeemListIcon_' + unqID + '" />' ); //img : changed from img to span as svg will be appended
+                var labelDtm = $( '<div>' + dateTimeStr + '</div>' );
+
+                tblObj.append( trObj );
+                trObj.append( tdLeftObj );
+                trObj.append( tdRightObj );
+                tblObj.append( trObj );
+
+                dateTimeTag.append( tblObj );
+                tdRightObj.append( labelDtm );
+
+                me.appendStatusOptThemeIcon ( tdLeftObj, statusOpt );
+            }
+            else
+            {
+                var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
+            }
+        }
+        else
+        {
+            var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
+        }
+        
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
+        
         //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync.svg"></small></div>' );
         var voucherTag = $( '<div class="act-r"><small><b>'+itemData.data.payloadJson.voucherCode+'</b> - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
 
         anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
@@ -258,9 +300,57 @@ function BlockList( cwsRenderObj, blockObj )
         // Populate the Item Content
         me.populateData_RedeemItemTag( itemData, liContentTag );
 
+    }
+
+    me.getStatusOpt = function( itemData )
+    {
+
+        var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
+
+        for ( var i=0; i< opts.length; i++ )
+        {
+            if ( opts[i].name == itemData.status )
+            {
+                return opts[i];
+            }
+        }
 
     }
 
+    me.appendStatusOptThemeIcon = function ( iconObj, statusOpt )
+    {
+
+        // read local SVG xml structure, then replace appropriate content 'holders'
+        $.get( statusOpt.icon.path, function(data) {
+
+            var svgObject = ( $(data)[0].documentElement );
+
+            if ( statusOpt.icon.colors )
+            {
+                if ( statusOpt.icon.colors.background )
+                {
+                    $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+                    $( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+                }
+                if ( statusOpt.icon.colors.foreground )
+                {
+                    $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+                    $( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+                }
+
+            }
+
+            $( iconObj ).append( svgObject );
+
+            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.size )
+            {
+                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.size.width ) );
+                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.size.height ) );
+
+            }
+        });
+
+    }
 
     me.populateData_RedeemItemTag = function( itemData, itemLiTag )
     {    
@@ -286,28 +376,28 @@ function BlockList( cwsRenderObj, blockObj )
         //var smallStatusNameTag = statusSecDivTag.find( 'small.statusName' );
         //var imgStatusIconTag = statusSecDivTag.find( 'small.statusIcon img' );
         var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-        var imgErrIconTag = statusSecDivTag.find( 'small.errorIcon img' );
+        //var imgErrIconTag = statusSecDivTag.find( 'small.errorIcon img' );
 
         if ( itemData.status === me.status_redeem_submit )
         {
             //smallStatusNameTag.text( 'submitted' ).css( 'color', '#e48825' ); // Redeemed?
             //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync.svg' );
-            imgErrIconTag.css ( 'visibility', 'hidden' );
+            //imgErrIconTag.css ( 'visibility', 'hidden' );
         }
         else if ( itemData.status === me.status_redeem_failed )
         {
             //smallStatusNameTag.text( 'invalid' ).css( 'color', '#e48825' ); //Invalid?
             //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
-            imgErrIconTag.css ( 'visibility', 'visible' );
+            //imgErrIconTag.css ( 'visibility', 'visible' );
         }
         else
         {
             //smallStatusNameTag.text( 'open' ).css( 'color', '#787878' ); //Unmatched?
             //imgStatusIconTag.attr( 'src', 'img/open.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
-            imgErrIconTag.css ( 'visibility', 'hidden' );
+            //imgErrIconTag.css ( 'visibility', 'hidden' );
 
         }
 

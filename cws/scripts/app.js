@@ -125,11 +125,11 @@
 
   function connStatTagUpdate( bOnline ) {
 
-    var imgSrc = ( bOnline ) ? 'images/online.svg': 'images/offline.svg';
+    var imgSrc = ( bOnline ) ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg';
     var imgBg = ( bOnline ) ? '#33FF00': '#C0C0C0';
 
     $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
-    $( '#divNetworkStatus' ).css( 'background-color', imgBg );
+    //$( '#divNetworkStatus' ).css( 'background-color', imgBg );
     $( '#divNetworkStatus' ).css( 'display', 'block' );
 
     //console.log( '=== Network Online: ' + bOnline );
