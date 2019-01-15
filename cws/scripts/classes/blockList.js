@@ -146,12 +146,12 @@ function BlockList( cwsRenderObj, blockObj )
                 me.cwsRenderObj.pulsatingProgress.show();
                 me.redeemListScrollLimit = me.redeemList.length;
 
-                for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
+                /*for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
                 {
                     me.lastRedeemDate =  me.redeemList[i].created;
                     me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
                     me.redeemListScrollCount += 1;
-                }
+                }*/
 
                 if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
                 {
@@ -163,6 +163,9 @@ function BlockList( cwsRenderObj, blockObj )
                         }, true );
 
                         me.redeemListScrollExists = 1;
+
+                        me.evalScrollOnBottom();
+
                     }
 
                 }
@@ -453,7 +456,7 @@ function BlockList( cwsRenderObj, blockObj )
                 else
                 {   
                     //  counter exists for this item AND counter is below limit
-                    if ( itemData.networkAttempt <= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                    if ( itemData.networkAttempt < me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                     {
                         bProcess = true;
                     }
@@ -523,7 +526,7 @@ function BlockList( cwsRenderObj, blockObj )
                                 }
 
                                 /* only when sync-test exceeds limit do we mark item as FAIL */
-                                if ( itemData.networkAttempt > me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                                if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                                 {
                                     itemData.status = me.status_redeem_failed;
                                 }

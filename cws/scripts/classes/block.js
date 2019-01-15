@@ -120,7 +120,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	{
 		// We could appent to parentTag here is desired..
 
-		console.log( 'on renderBlock, me.blockJson: ' + JSON.stringify( me.blockJson ) + ', options: ' + JSON.stringify( me.options ) );
+		//console.log( 'on renderBlock, me.blockJson: ' + JSON.stringify( me.blockJson ) + ', options: ' + JSON.stringify( me.options ) );
 
 		if ( me.blockJson )
 		{			

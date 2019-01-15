@@ -174,7 +174,7 @@
     /* ======================= */
     /* 1A. Smallest Anchor Mode */
     @media screen and (max-width: 559px) {
-      #menuDiv
+      #navDrawerDiv
       {
         max-width: 300px;
       }
@@ -206,7 +206,7 @@
     /* 1B. Tab content mode - hide Anchor */
     @media screen and (min-width: 560px) {
 
-      #menuDiv
+      #navDrawerDiv
       {
         max-width: 400px;
       }
@@ -286,7 +286,7 @@
     /* ==================================== */
     /* 2A. 1 column input less than 866px */
     @media screen and (max-width: 865px) {
-      #menuDiv
+      #navDrawerDiv
       {
         max-width: 440px;
       }
@@ -299,7 +299,7 @@
 
     /* 2B. 2 column input wider than 866px */
     @media screen and (min-width: 866px) {
-      #menuDiv
+      #navDrawerDiv
       {
         min-width: 440px;
       }

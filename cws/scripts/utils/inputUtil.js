@@ -34,7 +34,7 @@ function inputMonitor( destObj )
         var diffX = initialX - currentX;
         var diffY = initialY - currentY;
 
-        if ( ( destObj == '#focusRelegator' ) || ( destObj == '#menuDiv' ) )
+        if ( ( destObj == '#focusRelegator' ) || ( destObj == '#navDrawerDiv' ) )
         {
             if (Math.abs(diffX) > Math.abs(diffY)) 
             {

@@ -5,7 +5,7 @@
   "theme_color": "#ffc61d",
   "background_color": "#ffc61d",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "start_url": "/cws/",
   "scope": "/cws/",  
   "icons": [{
