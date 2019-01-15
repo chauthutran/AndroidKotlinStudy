@@ -13,7 +13,7 @@
 
     <!-- Add to home screen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FFC61D">
     <meta name="apple-mobile-web-app-title" content="CwS">
     <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
     
@@ -26,8 +26,7 @@
       <meta name="theme-color" content="#FFC61D">
       <!-- Windows Phone -->
       <meta name="msapplication-navbutton-color" content="#FFC61D">
-      <!-- iOS Safari -->
-      <meta name="apple-mobile-web-app-status-bar-style" content="#FFC61D">
+
 
     <title>CwS - Apps</title>
 
@@ -39,17 +38,15 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.25'; </script>
+    <script> var _ver = '1.0.26'; </script>
 
 
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" type="text/css" href="styles/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="styles/style.css">
 
-    <!--link rel="stylesheet" href="css/openSans.css"-->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <!--link rel="stylesheet" href="css/log.css"-->
   
   </head>
   <body>
@@ -75,7 +72,7 @@
       <div id="pwa_tools" style="float: right; margin-right: 3px; margin-top: 5px;">
         <table class="topIconsTbl" style="border-spacing: 0px;">
           <tr>
-            <td>
+            <!-- <td>
                 <div id="swRefresh2" class="reget" title="reGet" style="font-size: 12px; cursor:pointer; display: unset; opacity: 0;">
                     <span title="reGet" style="font-size: 12px;">v</span>
                 </div>
@@ -84,30 +81,19 @@
                 <div id="swRefresh" title="reGet2" style="font-size: 12px; cursor:pointer; display: unset; opacity: 0;">
                   <span title="reGet2" style="font-size: 12px;">z</span>
                 </div>
-            </td>
-            <td>          
+            </td>-->
+            <td>
               <div id='topRight_loadingDiv' style='display:none'>
                 <img src='images/loader-bar.gif'/>
-              </div>   
+              </div>
             </td>
             <td>
-              <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div>
+              <!-- <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div> -->
+              <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="img/sync-banner.svg"></div>
             </td>
             <td>
-              <div id="divNetworkStatus" style="padding: 3px;display: none;"><img id="imgNetworkStatus" src='images/offline.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;"/></div>
+              <div id="divNetworkStatus" style="padding: 3px;display: none;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
             </td>
-            <!-- <td>
-              <div id="menuTopDiv">
-                <div class='m_top'>
-                  <label id='menu_2' class="lab_m" for="">Menu 1</label>
-                  <label id='menu_3' class="lab_m" for="">Menu 2</label>
-                  <label id='menu_4' class="lab_m" for="">Menu 3</label>
-                </div>
-                <div id='menu_e'>
-                  <img src='img/menu_icon.svg' style="margin: -15px;">
-                </div>
-              </div>        
-            </td> -->
           </tr>
         </table>
       </div>
@@ -116,7 +102,9 @@
     
     <div id="menuDiv" class="menu-mobile">
     </div>
-        
+
+    <div id="divProgressBar" class="progress"><div class="indeterminate"></div></div>
+
     <div id="divMsgAreaWrap">
       <div id="divMsgArea" style="display:none;">
         <span id="spanMsgAreaText"></span>
@@ -148,7 +136,7 @@
               <label> Advanced options(X)</label>
             </li> -->
           </ul>
-      
+
 
           <div class="menu-wrapper">
             <ul class="tab_content">
@@ -173,7 +161,7 @@
                           <input type="checkbox" class="stayLoggedIn" checked style="width: 1.4em; height: 1.4em;">
                           <span style="vertical-align: top; margin-left: 5px; font-size: 1.1em;"> Stay signed in </span>
                         </div>
-                        <div class="tb-content-buttom-log divBtn loginBtn">LOG IN</div>
+                        <div class="tb-content-buttom btn divBtn loginBtn" style="width:96%;">LOG IN</div>
                         <div style="text-align: center; margin:0 0 6px 0;">
                           <span id="spanVersion" title="" style="font-size: 12px;color:#95989A">v</span> 
                         </div>
@@ -210,7 +198,7 @@
               </li>
             </ul>
 
-            
+
 
           </div>
       
@@ -221,23 +209,7 @@
 
     <!-- AFTER LOGIN - MAIN APP CONTENT DIV -->
     <div id="pageDiv" style="display:none;">
-
-      <div name="top-body" class="bodytop bg-color-program-son">
-      </div>
-
-      <!-- ABOUT FORM DIV -->
-      <div id="aboutFormDiv" style="display:none;">
-          <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;" >
-            <table id="" class="" style="">
-              <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-              </tr>
-            </table>
-
-          </div>
-      </div>
+      <div name="top-body" class="bodytop bg-color-program-son"></div>
 
 
       <section class="wrapper">
@@ -254,6 +226,25 @@
 
     </div>
 
+    <div id="pulsatingCircle" style="display:none;"></div>
+
+    <!-- ABOUT FORM DIV -->
+    <div id="aboutFormDiv" style="display:none;">
+
+      <div name="top-body" class="bodytop bg-color-program-son"></div>
+
+      <section class="wrapper">
+        <main class="container">
+
+        <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;" >
+            
+        </div>
+
+      </main>
+    </section>
+
+    </div>
+
     <!-- LIST, FLOATING ICON TEMPLATE DIV -->
     <div id="listTemplateDiv" style="display:none;">
 
@@ -266,24 +257,26 @@
           </li>
         </ul>
 
-        <ul class="tab__content_act">
-        </ul>
+        <ul class="tab__content_act"></ul>
 
         <div class="title-act-mobile"><img src='img/active.svg' class="tab-image"><label> Active</label></div>
-
-        <div class="floatListMenuIcon fixed_father pointer off">
+        
+        <div class="floatListMenuIcon fixed_father pointer off" onselectstart="return false">
           <img class="buttom-plus" src="img/plus.svg">
         </div>
 
-        <div class="floatListMenuSubIcons fixed_child">
+        <div class="floatListMenuSubIcons fixed_child" onselectstart="return false"></div>
 
-        </div>
-        
       </div>
 
     </div>
 
- 
+
+    <div id="focusRelegator" style="background-color: #000;opacity: 0.4;position: fixed;top:0;left:0;width: 100%;height: 100%;display: none;"></div>
+
+
+    <script type="text/javascript" src="scripts/utils/inputUtil.js"></script>
+    <script type="text/javascript" src="scripts/utils/syncManager.js"></script>
     <script type="text/javascript" src="scripts/utils/util.js"></script>
     <script type="text/javascript" src="scripts/utils/msgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>

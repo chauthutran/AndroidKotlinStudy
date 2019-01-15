@@ -5,6 +5,8 @@ function ConnManager() {}
 
 ConnManager.network_Online = true; // current network status.. false if offline.  //  'online';
 ConnManager.appConnMode_Online = true; // app mode: Online / Offline 
+ConnManager.appShellServer_Online = true;
+ConnManager.dataServer_Online = true;
 
 ConnManager.currIntv_Online = true;
 ConnManager.prevIntv_Online = true;

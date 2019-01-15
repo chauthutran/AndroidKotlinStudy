@@ -58,7 +58,8 @@ function DataList( cwsRenderObj, blockObj )
             // Emmpty case
             var divTag = $( '<div class="emptyListDiv" style="min-height: 40px; margin: 10px;"></div>' );
         
-            var spanTag = $( '<span style="color: #888; font-weight: bold;">List is empty.</span>' );
+            //var spanTag = $( '<span style="color: #888; font-weight: bold;">List is empty.</span>' );
+            var spanTag = $( '<a style="min-height: 60px; padding: 10px; color: #888;">List is empty.</a>' );
 
             divTag.append( spanTag );
 

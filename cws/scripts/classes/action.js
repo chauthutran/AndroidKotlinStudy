@@ -89,6 +89,11 @@ function Action( cwsRenderObj, blockObj )
 				var currBlockId = blockDivTag.attr( 'blockId' );
 
 				me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "closeBlock" )
 			{
@@ -117,11 +122,21 @@ function Action( cwsRenderObj, blockObj )
 				{
 					me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 				}
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "hideBlock" )
 			{
 				//blockDivTag.hide();
 				me.blockObj.hideBlock();
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "openBlock" )
 			{
@@ -139,6 +154,11 @@ function Action( cwsRenderObj, blockObj )
 					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, passedData, { 'notClear': true } );	
 					//var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.renderBlockTag, passedData, { 'notClear': true } );	
 					newBlockObj.renderBlock();
+
+					if ( btnTag.hasClass( 'clicked' ) )
+					{ 
+						btnTag.removeClass( 'clicked' );
+					}
 				}
 			}
 			else if ( clickActionJson.actionType === "openArea" )
@@ -149,6 +169,11 @@ function Action( cwsRenderObj, blockObj )
 				if ( clickActionJson.areaId )
 				{					
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
+				}
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
 				}
 			}
 			else if ( clickActionJson.actionType === "filledData" )
@@ -162,14 +187,29 @@ function Action( cwsRenderObj, blockObj )
 					var value = dataFromDivTag.find("[name='" + dataItems[i] + "']").val()
 					dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
 				}
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "alertMsg" )
 			{
 				alert( clickActionJson.message );
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "topNotifyMsg" )
 			{
 				MsgManager.msgAreaShow( clickActionJson.message );
+
+				if ( btnTag.hasClass( 'clicked' ) )
+				{ 
+					btnTag.removeClass( 'clicked' );
+				}
 			}
 			else if ( clickActionJson.actionType === "processWSResult" ) 
 			{
@@ -233,6 +273,10 @@ function Action( cwsRenderObj, blockObj )
 						var returnJson = { 'resultData': { 'status': 'offline' } };					
 						passData.push( returnJson );
 
+						if ( btnTag.hasClass( 'clicked' ) )
+						{ 
+							btnTag.removeClass( 'clicked' );
+						}
 					}
 					else if ( clickActionJson.url !== undefined )
 					{					
@@ -270,6 +314,12 @@ function Action( cwsRenderObj, blockObj )
 								console.log( returnJson );
 								alert( 'Process Failed!!' );
 							}
+
+							if ( btnTag.hasClass( 'clicked' ) )
+							{ 
+								btnTag.removeClass( 'clicked' );
+							}
+
 						});
 						/*, function() {
 							actionIndex++;

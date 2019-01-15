@@ -212,10 +212,8 @@ function Login( cwsRenderObj )
 			} );
 		}
 
-		/* START: Added by Greg: 2018/11/23 */
 		var lastSession = { user: userName, lastUpdated: dtmNow }; //, networkOnline: ConnManager.getAppConnMode_Offline()
 		DataManager.saveData( 'session', lastSession );	
-		/* END: Added by Greg: 2018/11/23 */
 
 	}
 
@@ -273,6 +271,8 @@ function Login( cwsRenderObj )
 		}
 
 		me.cwsRenderObj.renderDefaultTheme();
+
+		FormUtil.hideProgressBar();
 
 	}
 

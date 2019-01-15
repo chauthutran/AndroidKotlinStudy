@@ -3,6 +3,9 @@
 
   let _registrationObj;
   const _cwsRenderObj = new cwsRender();
+  const _syncManager = new syncManager();
+  
+
   //const _testSection = new testSection();
 
   window.onload = function() {
@@ -26,6 +29,8 @@
       // Create a class that represent the object..
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
+      _syncManager.initialize( _cwsRenderObj );
+
     });
 
   }
@@ -120,16 +125,22 @@
 
     ConnManager.network_Online = navigator.onLine;
     connStatTagUpdate( ConnManager.network_Online );
+    if ( _cwsRenderObj.initializeStartBlock )
+    _syncManager.initialize( _cwsRenderObj );
   };
 
 
   function connStatTagUpdate( bOnline ) {
 
     var imgSrc = ( bOnline ) ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg';
-    var imgBg = ( bOnline ) ? '#33FF00': '#C0C0C0';
+    //var imgBg = ( bOnline ) ? '#33FF00': '#C0C0C0';
 
-    $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
-    //$( '#divNetworkStatus' ).css( 'background-color', imgBg );
+    $( '#imgNetworkStatus' ).css( 'transform', ( bOnline ) ? 'rotateY(180deg)' : '' );
+    //$( '#imgNetworkStatus' ).attr( 'src', imgSrc );
+    setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)
+        $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
+    }, 500 );
+
     $( '#divNetworkStatus' ).css( 'display', 'block' );
 
     //console.log( '=== Network Online: ' + bOnline );
@@ -145,7 +156,7 @@
         _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
         
         // '_cwsRenderObj' is available at this time?
-        console.log( _cwsRenderObj );
+        //console.log( _cwsRenderObj );
 
         _registrationObj = registration;
         console.log('Service Worker Registered'); 

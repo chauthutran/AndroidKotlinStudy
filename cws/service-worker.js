@@ -399,18 +399,6 @@ self.__precacheManifest = [
     "revision": "cf6b205c31fbc5cfe95a81601fd53ef0"
   },
   {
-    "url": "scripts/z. Old Files/cwsRender_v0.js",
-    "revision": "190671a49009c2cc6caa80d022d71fe4"
-  },
-  {
-    "url": "scripts/z. Old Files/materialize.js",
-    "revision": "38de72592b09b35b61ac49ebf1eba54b"
-  },
-  {
-    "url": "scripts/z. Old Files/testSection.js",
-    "revision": "0e632d23fbb96b56bf389700041637dc"
-  },
-  {
     "url": "styles/images/ui-icons_444444_256x240.png",
     "revision": "d10bc07005bb2d604f4905183690ac04"
   },
@@ -454,5 +442,6 @@ self.__precacheManifest = [
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
+/* workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET'); */
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');

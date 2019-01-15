@@ -1489,3 +1489,32 @@ $.fn.rotate=function(options) {
 	return $this;
   };
   /* END: Added by Greg: 2018/11/26 */
+
+  
+  /* START: Added by Greg: 2019/01/10 */
+  Util.ping = function ( host /*, pong*/ ) {
+
+	var started = new Date().getTime();
+	var http = new XMLHttpRequest();
+	var milliseconds;
+  
+	//http.open("GET", "http://" + host + ":" + port, /*async*/true);
+	http.open("GET", host, /*async*/true);
+	http.onreadystatechange = function() {
+	  if (http.readyState == 4) {
+		var ended = new Date().getTime();
+		milliseconds = ended - started;
+		/*if (pong != null) {
+		  pong(milliseconds);
+		}*/
+	  }
+	};
+	try {
+	  http.send(null);
+	} catch(exception) {
+	  // this is expected
+	}
+	
+  }
+  
+  /* END: Added by Greg: 2019/01/10 */

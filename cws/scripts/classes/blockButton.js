@@ -213,53 +213,66 @@ function BlockButton( cwsRenderObj, blockObj )
 		if ( btnJson && btnTag )
 		{
 
-			if ( btnJson.onClick !== undefined )
-			{
-				btnTag.click( function() {
+				if ( btnJson.onClick !== undefined )
+				{
+					btnTag.click( function() {
 
-					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-					if ( btnJson.buttonType === 'listRightImg' )
-					{
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-						btnTag.hide();
-						btnTag.parent().append( loadingTag );
-					} 
-
-					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
-
-				});
-			}
-			else if( btnJson.onClickItem !== undefined )
-			{
-				btnTag.click( function() {
-
-					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-					if ( btnJson.buttonType === 'listRightImg' )
-					{
-						var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
-
-						for( var i = 0; i < parentDiv.children.length; i++ )
+						if ( ! btnTag.hasClass( 'clicked' ) )
 						{
-							let tbl = parentDiv.children[i];
+							btnTag.addClass( 'clicked' );
 
-							if ( tbl != btnTag.parent().parent().parent().parent()[0] )
+							// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+							if ( btnJson.buttonType === 'listRightImg' )
 							{
-								$( tbl ).css('opacity','0.4');
-							}
+								var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+								btnTag.hide();
+								btnTag.parent().append( loadingTag );
+							} 
+
+							me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 
 						}
 
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-						btnTag.hide();
-						btnTag.parent().append( loadingTag );
-					} 
+					});
+				}
+				else if( btnJson.onClickItem !== undefined )
+				{
+					btnTag.click( function() {
 
-					var idx = $( this ).closest(".itemBlock").attr("idx");
-					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
+						if ( ! btnTag.hasClass( 'clicked' ) )
+						{
+							btnTag.addClass( 'clicked' );
 
-				});
-			}	
-		}
+							// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+							if ( btnJson.buttonType === 'listRightImg' )
+							{
+								var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
+
+								for( var i = 0; i < parentDiv.children.length; i++ )
+								{
+									let tbl = parentDiv.children[i];
+
+									if ( tbl != btnTag.parent().parent().parent().parent()[0] )
+									{
+										$( tbl ).css('opacity','0.4');
+									}
+
+								}
+
+								var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+								btnTag.hide();
+								btnTag.parent().append( loadingTag );
+							} 
+
+							var idx = $( this ).closest(".itemBlock").attr("idx");
+							me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
+
+						}
+
+					});
+				}
+			}
+
 	}
 
 

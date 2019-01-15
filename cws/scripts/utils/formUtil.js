@@ -309,16 +309,53 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 		{
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
-			subListIconsTag.hide();
+
+			/* added by Greg (7 Jan 2019)*/
+			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeOut( 'fast', 'linear' );
+			//else subListIconsTag.hide();
+
+			//Greg: Strange behaviour on hamburger icon, not removing 'active' class when executing #focusRelegator.click() > forcibly removing this class
+			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) 
+			{
+				thisTag.removeClass( 'active' );
+				subListIconsTag.hide("slide", { direction: "left" }, 250);
+			}
+			else
+			{
+				subListIconsTag.fadeOut( 'fast', 'linear' );
+			}
+
+			$( '#focusRelegator').hide();
+
 		}
 		else 
 		{
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
-			subListIconsTag.show();
 
-			//console.log(cwsRenderObj.favIconsObj);
-			//cwsRender.favIconsObj.setFavIconClickTarget
+			$( '#focusRelegator').show();
+
+			$( '#focusRelegator').css('zIndex',100);
+			thisTag.css('zIndex',200);
+			subListIconsTag.css('zIndex',10000);
+
+			/* added by Greg (7 Jan 2019)*/
+			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeIn( 'fast', 'linear' );
+			//else subListIconsTag.show();
+
+			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) subListIconsTag.show("slide", { direction: "left" }, 250);
+			else subListIconsTag.fadeIn( 'fast', 'linear' );
+
+			$( '#focusRelegator').unbind();
+
+			$( '#focusRelegator').on('click', function( event )
+			{
+				console.log( 'focusRelegator Clicked ' );
+				event.preventDefault();
+
+				thisTag.click();
+
+			});
 
 		} 
 	});	
@@ -370,7 +407,7 @@ FormUtil.setUpTabAnchorUI = function( tag )
 		/* START > Greg added: 2018/11/23 */
 		FormUtil.setUserLastSelectedTab(tabId)
 		/* END > Added by Greg: 2018/11/24 */
-		
+
 		tag.find('.active').removeClass('active');
 		matchingTabsTag.addClass("active");
 
@@ -638,4 +675,32 @@ FormUtil.performReget = function( regObj, option )
 			alert( 'Reget Failed - service worker not found' );
 		}  
 	}
+}
+
+FormUtil.getMyListData = function( listName )
+{
+	var redList = {}, returnList = {};
+
+	if ( localStorage.getItem( listName ) )
+	{
+		redList = JSON.parse( localStorage.getItem( listName ) );
+
+		if ( redList )
+		{
+			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
+			return returnList;
+		}
+
+	}
+}
+
+FormUtil.showProgressBar = function()
+{
+	$( '#divProgressBar' ).css( 'display', 'block' );
+	$( '#divProgressBar' ).css( 'zIndex', '10000' );
+}
+
+FormUtil.hideProgressBar = function()
+{
+	$( '#divProgressBar' ).css( 'display', 'none' );
 }

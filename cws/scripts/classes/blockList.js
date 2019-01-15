@@ -10,17 +10,21 @@ function BlockList( cwsRenderObj, blockObj )
     me.redeemList;
     me.redeemListTargetTag;
     me.redeemListScrollSize = 15; // move where?
+    me.redeemListScrollingState = 0;
+    me.redeemListScrollCount = 0;
+    me.redeemListScrollLimit = 0;
+    me.redeemListScrollExists = 0;
     me.lastRedeemDate;
     me.redeemListLimit;
     me.options;
     me.newBlockTag;
 
-    me.storageName_RedeemList = "redeemList";
-    me.status_redeem_submit = "submit";
-    me.status_redeem_queued = "queued";
-    me.status_redeem_failed = "failed";
-	
-	
+    me.storageName_RedeemList = cwsRenderObj.storageName_RedeemList; // "redeemList";
+    me.status_redeem_submit = cwsRenderObj.status_redeem_submit; //"submit"; 
+    me.status_redeem_queued = cwsRenderObj.status_redeem_queued; //"queued"; 
+    me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed"; 
+
+
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -55,12 +59,12 @@ function BlockList( cwsRenderObj, blockObj )
                     }
 
                     me.redeemList_Display( me.newBlockTag );
-                    
+
                     // Add Event from 'FormUtil'
                     //  - To Enable click
                     FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
-                    if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favActionList  )
+                    if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
                     {
                         me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
                     }
@@ -83,7 +87,9 @@ function BlockList( cwsRenderObj, blockObj )
     }
 
     me.renderRedeemList = function( redeemList, blockTag )
-    {   
+    {
+
+        $(window).scrollTop(0);
 
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
@@ -93,9 +99,9 @@ function BlockList( cwsRenderObj, blockObj )
 
         var listUlLiActiveTag = blockTag.find( 'li.active' );
         var listContentUlTag = blockTag.find( '.tab__content_act' );
+
         me.redeemListTargetTag = listContentUlTag;
 
-        /* START > Added by Greg: 2018/11/26 */
         if ( redeemList )
         {
             me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName);
@@ -110,11 +116,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                     me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
                 }
-                listUlLiActiveTag.find( 'label' ).html('List');
-            }
-            else
-            {
-
+                //listUlLiActiveTag.find( 'label' ).html('List');
             }
 
             (me.redeemList).sort(function (a, b) {
@@ -132,74 +134,85 @@ function BlockList( cwsRenderObj, blockObj )
 
             if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-            //MsgManager.msgAreaShow( 'loading ' + ( ( me.redeemListScrollSize < me.redeemList.length) ? me.redeemListScrollSize : arrNewFirst.length ) );
-
             if ( me.redeemList === undefined || me.redeemList.length == 0 )
             {
                 var liTag = $( '<li class="emptyListLi"></li>' );
-                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
+                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;">List is empty.</a>' );
                 liTag.append( spanTag );
                 listContentUlTag.append( liTag );
             }
             else
             {
- 
+                me.cwsRenderObj.pulsatingProgress.show();
+                me.redeemListScrollLimit = me.redeemList.length;
+
                 for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
                 {
                     me.lastRedeemDate =  me.redeemList[i].created;
                     me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
+                    me.redeemListScrollCount += 1;
                 }
 
-                if ( ( me.redeemList.length >= parseInt(me.redeemListScrollSize) ) )
+                if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
                 {
                     //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
-                    setTimeout( function() {
+                   if ( me.redeemListScrollExists == 0)
+                   {
                         document.addEventListener('scroll', function (event) {
-                            me.evalScrollOnBottom()
-                        }, true /*Capture event*/);
-                        //console.log ('initialised eval scroll');
-                    }, 750 );
-                }
+                            me.evalScrollOnBottom();
+                        }, true );
 
-                if ( i < parseInt(me.redeemListScrollSize) )
+                        me.redeemListScrollExists = 1;
+                    }
+
+                }
+                else
                 {
                     me.redeemListLimit = true;
-                    document.removeEventListener('scroll', me.evalScrollOnBottom());
-                    //console.log('removed scroll event');
+                    document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
+                    me.redeemListScrollExists = 0;
                 }
 
-            }
+                setTimeout( function() {
+                    me.cwsRenderObj.pulsatingProgress.hide();
+                }, 500 );
 
-            /*setTimeout( function() {
-                MsgManager.msgAreaClear();
-            }, 500 );*/
+            }
 
         }
         else
         {
-            /* START > Edited by Greg: 2018/11/26 */
+
             var liTag = $( '<li class="emptyListLi"></li>' );
-            var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888; font-weight: 800;">List is empty.</a>' );
+            var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;"><br>&nbsp;<label class="from-string titleDiv">List is empty.</label></a>' );
             liTag.append( spanTag );
             listContentUlTag.append( liTag );
-            /* END > Edited by Greg: 2018/11/26 */
+
         }
-        /* END > Added by Greg: 2018/11/26 */
 
     }
 
     me.evalScrollOnBottom = function()
     {
+
         if ( !me.redeemListLimit )
         {
-            setTimeout( function() {
-                if ( ( $( window ).scrollTop() + $( window ).height() + 50) > $( document ).height() )
+            if ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() )
+            {
+                if ( me.redeemListScrollingState == 0 )
                 {
-                    //MsgManager.msgAreaShow( 'fetching rows ' );
-                    me.appendRedeemListOnScrollBottom();
+                    me.cwsRenderObj.pulsatingProgress.show();
+                    me.redeemListScrollingState = 1;
+
+                    setTimeout( function() {
+                        me.appendRedeemListOnScrollBottom();
+                    }, 500 );
+
                 }
-            }, 500 );
+                
+            }
         }
+       
     }
 
     me.appendRedeemListOnScrollBottom = function()
@@ -211,17 +224,20 @@ function BlockList( cwsRenderObj, blockObj )
         {
             me.lastRedeemDate =  me.redeemList[i].created;
             me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
+            me.redeemListScrollCount += 1;
         }
 
-        //console.log(' scroll listener added ' + i);
         FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') ); // add click event (expander to show voucher details) to newly created items
 
-        if ( i < parseInt(me.redeemListScrollSize) )
+        if ( parseInt( me.redeemListScrollCount ) == parseInt( me.redeemListScrollLimit ) )
         {
             me.redeemListLimit = true;
-            document.removeEventListener('scroll', me.evalScrollOnBottom());
-            //console.log('removed scroll event');
+            document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
+            me.redeemListScrollExists = 0;
         }
+
+        me.cwsRenderObj.pulsatingProgress.hide();
+        me.redeemListScrollingState = 0;
 
     }
 
@@ -248,7 +264,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var dateTimeTag = $( '<div class="icon-row" />' );
                 var tblObj = $( '<table style="width:100%;">' ); 
                 var trObj = $( '<tr>' ); 
-                var tdLeftObj = $( '<td>' ); 
+                var tdLeftObj = $( '<td id="icon_' + itemData.id + '">' ); 
                 var tdRightObj = $( '<td>' ); 
 
                 //var iconObj = $( '<div id="redeemListIcon_' + unqID + '" />' ); //img : changed from img to span as svg will be appended
@@ -278,12 +294,12 @@ function BlockList( cwsRenderObj, blockObj )
         
         //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
         var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync.svg"></small></div>' );
-        var voucherTag = $( '<div class="act-r"><small><b>'+itemData.data.payloadJson.voucherCode+'</b> - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
+        var voucherTag = $( '<div class="act-r"><small>'+itemData.data.payloadJson.voucherCode+' - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
 
         anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" ' + itemAttrStr + ' style="position: relative; background-color: beige;"></div>' );
+        var contentDivTag = $( '<div class="act-l" ' + itemAttrStr + ' style="position: relative; background-color: rgba(255, 218, 109, 0.507);"></div>' );
         contentDivTag.append( '<span>' + itemData.title + '</span>' );
         var itemActionButtonsDivTag = $( '<div class="listItemDetailActionButtons"></div>' );
         contentDivTag.append( itemActionButtonsDivTag );
@@ -340,6 +356,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             }
 
+            $( iconObj ).empty();
             $( iconObj ).append( svgObject );
 
             if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.size )
@@ -420,8 +437,6 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
     {        
-        // remove previous ones
-        //itemActionButtonsDivTag.find( 'button.actionBtn' ).remove();
 
         if ( itemData.status != me.status_redeem_submit ) // changed by Greg (2018/11/27) from '== !' to '!=' > was failing to test correctly
         {
@@ -429,240 +444,121 @@ function BlockList( cwsRenderObj, blockObj )
 
             imgSyncIconTag.click( function(e) {
 
-                var mySyncIcon = $( this );
-                var dtmRedeemAttempt = (new Date() ).toISOString();
+                var bProcess = false;
 
-                mySyncIcon.rotate({ count:999, forceJS: true, startDeg: true });
-
-                itemData.lastAttempt = dtmRedeemAttempt;
-
-                //$(this).parent().parent().parent().siblings().html( 'Connecting...' );
-                var myTag = mySyncIcon.parent().parent().parent().siblings();
-                var redeemID = myTag.attr( 'itemid' );
-                var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
-
-                myTag.html( '' );
-                myTag.append( loadingTag );
-
-                e.stopPropagation();                
-
-                // if offline, alert it!!
-                if ( ConnManager.isOffline() )
+                if ( !itemData.networkAttempt ) // no counter exists for this item
                 {
-                    alert( 'Currently in offline.  Need to be in online for this.' );
-                    myTag.html( itemData.title );
-                    $(this).stop();
+                    bProcess = true;
                 }
                 else
-                {
-
-                    FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
+                {   
+                    //  counter exists for this item AND counter is below limit
+                    if ( itemData.networkAttempt <= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                     {
-                        //console.log( 'Redeem submittion isSucccess: ' + success );
-
-                        mySyncIcon.stop();
-
-                        var dtmRedeemDate = (new Date() ).toISOString();
-
-                        if ( success )
-                        {
-                            itemData.redeemDate = dtmRedeemDate;
-                            itemData.status = me.status_redeem_submit;
-                            itemData.returnJson = returnJson;
-                            myTag.html( 'Success' );
-                        }
-                        else 
-                        {
-                            itemData.status = me.status_redeem_failed;
-                            myTag.html( 'Error redeeming' );
-                        }
-
-                        setTimeout( function() {
-                            myTag.html( itemData.title );
-                        }, 2000 );
-
-                        DataManager.updateItemFromData( me.storageName_RedeemList, itemData.id, itemData );
-
-                        me.populateData_RedeemItemTag( itemData, itemLiTag );
-                    } );
-
-                }
-
-            });
-        }
-
-    }
-
-    // -----------------------------
-    // Old Toggling Event
-    me.toggleDetail = function( itemData, listItemTag )
-    {
-        var expandStr = listItemTag.attr( 'expand' );
-
-        if ( expandStr === 'true' )
-        {
-            // collapse - if found
-            listItemTag.find( 'div.listItemDetail' ).hide( 'fast' );
-
-            listItemTag.attr( 'expand', 'false' );
-        }
-        else
-        {
-            // expand - if not exists, create one..
-            listItemTag.find( 'div.listItemDetail' ).remove();
-
-            divListItemDetailTag = $( '<div class="listItemDetail"></div>' ); 
-            listItemTag.append( divListItemDetailTag ).attr( 'expand', 'true' );
-
-            var spanDetailTag = $( '<span></span>' ); 
-            spanDetailTag.text( JSON.stringify( itemData.data.payloadJson ) );
-
-            divListItemDetailTag.append( spanDetailTag );
-
-
-            // Add buttons - 'close' and 'submit'?
-            var divButtonsTag = $( '<div class="listItemDetailActionButtons" style="margin-top: 5px;"></div>' );
-            var btnCloseTag = $( '<button class="actionBtn btnCloseListItemDetail">Close</button>' );
-            var btnRemoveTag = $( '<button class="actionBtn btnRemoveListItemDetail">Remove</button>' );
-            var btnRedeemSubmitTag = $( '<button class="actionBtn btnSubmitRedeem">Redeem Submit</button>' );
-
-            btnCloseTag.click( function(e) {
-                e.stopPropagation();
-                me.toggleDetail( itemData, listItemTag );
-            });
-
-            btnRemoveTag.click( function(e) {
-                e.stopPropagation();                
-                DataManager.removeItemFromData( me.storageName_RedeemList, itemData.id );                
-                me.redeemList_Reload( listItemTag );
-            });
-            
-            btnRedeemSubmitTag.click( function(e) {
-                e.stopPropagation();                
-
-                // if offline, alert it!!
-                if ( ConnManager.isOffline() )
-                {
-                    alert( 'Currently in offline.  Need to be in online for this.' );
-                }
-                else
-                {
-                    var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-                    divButtonsTag.append( loadingTag );
-                    FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
+                        bProcess = true;
+                    }
+                    else
                     {
-                        //console.log( 'Redeem submittion isSucccess: ' + success );
-    
-                        if ( success )
-                        {
-                            itemData.status = me.status_redeem_submit;
-                            itemData.returnJson = returnJson;
-                            
-                            me.toggleDetail( itemData, listItemTag );
-                        }
-                        else 
-                        {
-                            itemData.status = me.status_redeem_failed;
-                        }    
-                        
-                        DataManager.updateItemFromData( me.storageName_RedeemList, itemData.id, itemData );
-                            
-                        me.renderRedeemListItemTag( itemData, listItemTag );
-                    } );
+                        MsgManager.msgAreaShow( ' network TEST LIMIT >> ' + itemData.networkAttempt + ' of ' +me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
+                    }
                 }
+
+                if ( bProcess )
+                {
+
+                    var mySyncIcon = $( this );
+                    var dtmRedeemAttempt = (new Date() ).toISOString();
+
+                    mySyncIcon.rotate({ count:999, forceJS: true, startDeg: true });
+
+                    itemData.lastAttempt = dtmRedeemAttempt;
+
+                    var myTag = mySyncIcon.parent().parent().parent().siblings();
+                    var redeemID = myTag.attr( 'itemid' );
+                    var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
+
+                    myTag.empty();
+                    myTag.append( loadingTag );
+
+                    e.stopPropagation();                
+
+                    // if offline, alert it!! OR data server unavailable
+                    if ( ConnManager.isOffline() )
+                    {
+                        alert( 'Currently in offline.  Need to be in online for this.' );
+                        myTag.html( itemData.title );
+                        $(this).stop();
+                    }
+                    else
+                    {
+                        //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
+                        FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
+                        {
+
+                            mySyncIcon.stop();
+
+                            itemData.returnJson = returnJson;
+
+                            // added by Greg (2019-01-14) > record network sync attempts (for limit management)
+                            if ( itemData.networkAttempt ) itemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
+                            else itemData.networkAttempt = 1;
+
+                            // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
+                            if ( success && ( returnJson.resultData.status != 'fail' ) )
+                            {
+                                var dtmRedeemDate = (new Date() ).toISOString();
+
+                                itemData.redeemDate = dtmRedeemDate;
+                                itemData.status = me.status_redeem_submit;
+                                //itemData.returnJson = returnJson;
+                                myTag.html( 'Success' );
+                            }
+                            else 
+                            {
+                                if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) ) 
+                                {
+                                    var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+
+                                    itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                                }
+
+                                /* only when sync-test exceeds limit do we mark item as FAIL */
+                                if ( itemData.networkAttempt > me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                                {
+                                    itemData.status = me.status_redeem_failed;
+                                }
+
+                                myTag.html( 'Error redeeming' );
+                            }
+
+                            //itemData.state = 0; //1=in use, 0=unused
+
+                            setTimeout( function() {
+                                myTag.html( itemData.title );
+                                me.appendStatusOptThemeIcon ( $( '#icon_' + itemData.id ), me.getStatusOpt ( itemData ) )
+                            }, 2000 );
+
+                            me.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), itemData ); 
+
+                            DataManager.updateItemFromData( me.storageName_RedeemList, itemData.id, itemData );
+
+                        } );
+
+                    }
+
+                }
+
             });
-
-
-            divButtonsTag.append( btnCloseTag );
-            divButtonsTag.append( btnRemoveTag );
-            if ( itemData.status != me.status_redeem_submit ) divButtonsTag.append( btnRedeemSubmitTag );
-            
-            divListItemDetailTag.append( divButtonsTag );
-
         }
+
     }
 
-
-    me.submitForListedItem = function( itemData, queueTag )
-    {
-        //console.log( itemData );
-        /*
-        // TODO: 'isOffline' works?
-        if ( ConnManager.isOffline() )
-        {
-            queueTag.css( 'background-color', 'orange' );
-    
-            setTimeout( function() {
-                alert( 'Not Online!!' );
-    
-                queueTag.css( 'background-color', '#d6d6e8' );
-            }, 200 );
-        }
-        else
-        {
-            var url = me.getServerUrl() + "/eRefWSTest/api/submitForQueue";
-            
-            // TODO: this is part that should be moved to web service..
-            queueData.processed = "Processed at " + (new Date() ).toISOString();
-            //queueData.id = Util.generateRandomId();
-            queueData.status = "processed";					
-            var dataId = queueData.id;
-            queueTag.css( 'background-color', 'lightGreen' );
-    
-    
-            fetch( url, {  
-                method: 'POST',  
-                //headers: { 'auth': '1234' },  
-                body: JSON.stringify( queueData )
-            })
-            .then( response => response.json() )  
-            .then( responseJson => {
-    
-                console.log( 'Removal Request success: ', responseJson);  
-    
-                // This worked..
-                DataManager.removeItemFromData( me.storageName_Queue, queueData.id );
-                            
-                // get the tag...
-                //var divTag = $( '#' + dataId ); // '<div class="queueDiv"></div>' );
-                queueTag.css( 'background-color', 'yellow' ).hide( 500 );
-    
-                //me.renderQueueList( responseJson.list, blockTag );
-    
-                // Queue refresh, etc..
-                alert( 'submitted data: ' + JSON.stringify( queueData ) );
-    
-            })  
-            .catch(function (error) {  
-            console.log('Request failure: ', error);  
-            });			
-        }	
-        */
-    }
 	// =============================================
 
 
 	// =============================================
 	// === OTHER METHODS ========================
-    
-    me.renderRedeemListItemTag_Old = function( itemData, divItemTag )
-    {    
-        // Set status color
-        me.updateDivStatusColor( itemData.status, divItemTag );
-       
-        // Set Text..
-        var spanTitleTag = $( '<span class="titleSpan"></span>' );
-        spanTitleTag.text( itemData.title );
-    
-        divItemTag.append( spanTitleTag );
-    
-        divItemTag.off( 'click' ).click( function() {
 
-
-            me.toggleDetail( itemData, $( this ) );
-            // me.submitForListedItem( itemData, $( this ) );
-        } );
-    }
 
     me.redeemList_Add = function( submitJson, status )
     {
@@ -685,7 +581,6 @@ function BlockList( cwsRenderObj, blockObj )
         var blockTag = listItemTag.closest( 'div.block' );
         blockTag.find( 'div.redeemListDiv' ).remove();
         me.redeemList_Display( blockTag );
-        // me.toggleDetail( itemData, listItemTag );
     }
 
     me.updateDivStatusColor = function( status, divTag )
@@ -707,10 +602,10 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
 	{
-		FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me.cwsRenderObj );		
+        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me.cwsRenderObj );
 	}
 
 	// =============================================
-	
+
 	me.initialize();
 }

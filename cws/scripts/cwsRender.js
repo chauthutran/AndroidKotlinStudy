@@ -9,7 +9,8 @@ function cwsRender()
 
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
-	me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
+	//me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
+	me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
 	me.menuDivTag = $( '#menuDiv' );
 	//me.menuTopRightIconTag = $( '#menu_e' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
@@ -20,6 +21,7 @@ function cwsRender()
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.headerLogoTag = $( '.headerLogo' );
+	me.pulsatingProgress = $( '#pulsatingCircle' );
 
 	// global variables
 	me.configJson;
@@ -32,6 +34,11 @@ function cwsRender()
 
 
 	me.storageName_RedeemList = "redeemList";
+    me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
+    me.status_redeem_queued = "queued"; // initialize from dcd@XX ?
+	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
+
+	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
 	me._globalMsg = "";
 	me._globalJsonData = undefined;
 
@@ -42,7 +49,8 @@ function cwsRender()
 	me.LoginObj;
 
 	me._localConfigUse = false;
-
+	//me.syncManager;
+ 
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
@@ -57,7 +65,7 @@ function cwsRender()
 
 	me.render = function()
 	{
-		/* START > Greg added: 2018/11/23 */
+
 		var initializeStartBlock = true;
 
 		if ( localStorage.length )
@@ -91,7 +99,8 @@ function cwsRender()
 			me.LoginObj.render(); // Open Log Form
 		}
 
-		/* END > Greg added: 2018/11/23 */
+		var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
+		var inputUtilMenu = inputMonitor( '#menuDiv' ); //detect swipe for android
 
 	}
 
@@ -118,29 +127,33 @@ function cwsRender()
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
-	
+
 	me.setPageHeaderEvents = function()
 	{
 		// Connection manual change click event: ask first and manually change it.
-		me.divAppModeConnStatusTag.click( function() {
+		/*me.divAppModeConnStatusTag.click( function() {
 			ConnManager.change_AppConnMode( "switch" );
 			return false;
-		});
-
-		// menu click handler
-		//me.setTopRightMenuClick();
-
-		// loggedIn Name Link Click Event - opens Login Form > DISABLED by Greg 2018/12/26 (as per Bruno's request)
-		/*me.loggedInDivTag.click( function() {
-			// hide menuDiv if visible (when logging out)
-			if ( me.menuDivTag.is( ":visible" ) && me.menuTopRightIconTag.is( ":visible" ) )
-			{
-				me.menuTopRightIconTag.click();
-			}
-			me.LoginObj.openForm();
 		});*/
 
-		
+		me.imgAppDataSyncStatusTag.click( function() {
+
+			$( this ).rotate({ count: 9999, forceJS: true, startDeg: true });
+
+			setTimeout( function()  
+			{
+				me.imgAppDataSyncStatusTag.stop();
+
+			}, 10000 );
+
+			/*
+
+			if ( ConnManager.isOnline() && dataServer.isOnline && Util.redeemListItemsUnsaved() )
+
+			*/
+
+		});
+
 		me.configureMobileMenuIcon();
 		
 	}
@@ -152,7 +165,6 @@ function cwsRender()
 		menuTag.click( function() {
 
 			var clicked_areaId = $( this ).attr( 'areaId' );
-
 			var clicked_area = Util.getFromList( me.areaList, clicked_areaId, "id" );
 	
 			// if menu is clicked,
@@ -160,16 +172,8 @@ function cwsRender()
 			if ( clicked_area.startBlockName )
 			{
 				// added by Greg (2018/12/10)
-				if ( !$( 'div.mainDiv' ).is( ":visible" ) )
-				{
-					$( 'div.mainDiv' ).show();
-				}
-
-				if ( $( '#aboutFormDiv' ).is( ":visible" ) )
-				{
-					$( '#aboutFormDiv' ).hide();
-				}
-
+				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
+				if ( $( '#aboutFormDiv' ).is( ":visible" ) ) $( '#aboutFormDiv' ).hide();
 
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
@@ -212,6 +216,8 @@ function cwsRender()
 
 			// hide the menu div if open
 			me.hideMenuDiv();
+			$( '#focusRelegator' ).hide();
+
 		});
 	}
 
@@ -285,6 +291,8 @@ function cwsRender()
 		if ( me.menuDivTag.is( ":visible" ) )
 		{
 			me.menuAppMenuIconTag.click();
+			me.menuAppMenuIconTag.css( 'width', 0 );
+
 			$('#nav-toggle').removeClass('active');
 		}		
 	}
@@ -367,6 +375,7 @@ function cwsRender()
 
 	me.startBlockExecute = function( configJson )
 	{		
+		console.log( configJson );
 		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.getAppConnMode_Online(), configJson );
 
 		if ( me.areaList )
@@ -396,7 +405,7 @@ function cwsRender()
 	me.startBlockExecuteAgain = function()
 	{
 		//me.startBlockExecute( me.configJson );
-		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ) );
+		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).dcdConfig );
 	}
 
 	// ----------------------------------
@@ -409,14 +418,29 @@ function cwsRender()
 		if ( destArea )
 		{
 			//destArea.empty();
-
 			//me.menuAppMenuIconTag.show();
-
 			//me.navBurgerTag = dvMenuObj;
 
 			document.querySelector( "#nav-toggle" )
 			 .addEventListener( "click", function() {
-			  this.classList.toggle( "active" );
+				this.classList.toggle( "active" );
+				if ( $( this ).hasClass( 'active' ) )
+				{
+					$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
+					var myData = FormUtil.getMyListData( me.storageName_RedeemList );
+
+					if ( myData )
+					{
+						var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
+						var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt <= me.storage_offline_ItemNetworkAttemptLimit) );
+
+						$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) );
+					} 
+					else 
+					{
+						$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
+					}
+				}
 			});
 
 			FormUtil.setClickSwitchEvent( me.menuAppMenuIconTag, me.menuDivTag, [ 'open', 'close' ], me );
@@ -428,8 +452,35 @@ function cwsRender()
 	{
 		var startMenuTag;
 
+		$( '#menuDiv' ).empty();
+
 		// clear the list first
 		me.menuDivTag.find( 'div.menu-mobile-row' ).remove();
+
+		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
+		var navMenuTbl = $( '<table id="navDrawerHeader" style="width:100%;height:100px;" />' );
+		var tr = $( '<tr />' );
+		var tdLeft = $( '<td style="padding:10px;width:80px;" />' );
+		var tdRight = $( '<td  style="padding:2px 0 0 0;height:75px;" />' );
+
+		me.menuDivTag.append ( navMenuHead );
+		navMenuHead.append ( navMenuTbl );
+		navMenuTbl.append ( tr );
+		tr.append ( tdLeft );
+		tr.append ( tdRight );
+
+		var navMenuLogo = $( '<img src="img/logo_top.svg" />' );
+
+		tdLeft.append ( navMenuLogo );
+		tdRight.append ( $( '<div id="divNavDrawerOUName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;">' + JSON.parse( localStorage.getItem('session') ).user + '</div>') );
+		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;" />' ) );
+
+		var tr = $( '<tr />' );
+		var td = $( '<td colspan=2 style="height:20px;" />' );
+
+		navMenuTbl.append ( tr );
+		tr.append ( td );
+		td.append ( $( '<div id="divNavDrawerSummaryData" class="navMenuHeader" style="position:relative;top:-5px;padding: 0 0 0 20px; font-size:.8rem;font-weight:400;text-align:left;justify-content:normal;background-Color:transparent" />') );
 
 		// Add the menu rows
 		if ( areaList )
@@ -451,7 +502,6 @@ function cwsRender()
 		return startMenuTag;
 	}
 
-	
 	me.setRegistrationObject = function( registrationObj )
 	{
 		me.registrationObj = registrationObj;
@@ -459,15 +509,15 @@ function cwsRender()
 
 	me.reGetAppShell = function()
 	{
-		$( '#swRefresh2' ).click();
-		/*
+		//$( '#swRefresh2' ).click();
 		if ( me.registrationObj !== undefined )
 		{
 			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
-			location.reload(true);
-		});
-		} */ 
+				location.reload(true);
+				FormUtil.hideProgressBar();
+			});
+		}
 	}
 
 	me.reGetDCDconfig = function()
@@ -485,19 +535,31 @@ function cwsRender()
 		if ( me.configJson && me.configJson.settings && me.configJson.settings.theme && me.configJson.themes )
 		{
 			console.log( 'Updating to theme: ' + me.configJson.settings.theme);
+
 			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
 
+			//console.log( defTheme );
+
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
-
 			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
-
+			$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
+			$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
+			$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
 			$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
+			$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
+			$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( 'div.menu-mobile' ).css( 'background-color', defTheme.navDrawer.colors.background );
+			$( 'div.menu-mobile-row' ).css( 'background-color', defTheme.navDrawer.colors.background );
+			$( 'div.menu-mobile-row' ).css( 'color', defTheme.navDrawer.colors.foreground );
 
-			$( 'div.menu-mobile' ).css( 'background-color', defTheme.menuMobile.colors.background );
-
-			$( 'div.menu-mobile' ).css( 'color', defTheme.menuMobile.colors.foreground );
 
 			$('#styleCssMobileRow').remove();
+			$('#styleCssPulse').remove();
+			$('#styleCssProgress').remove();
+
+			$( 'head' ).append('<style id="styleCssProgress"> .determinate, .indeterminate { background-color: ' + defTheme.navTop.colors.foreground + ' } </style>');
 
 			if ( defTheme.button.colors )
 			{
@@ -509,9 +571,15 @@ function cwsRender()
 				if ( defTheme.button.colors.background )
 				{
 					btnStyle += ' background-color: ' + defTheme.button.colors.background + ';'
+
+					$( 'head' ).append('<style id="styleCssPulse"> #pulsatingCircle:before, #pulsatingCircle:after { ' + btnStyle + ' } </style>');
+				}
+				else
+				{
+					$( 'head' ).append('<style id="styleCssPulse"> #pulsatingCircle:before, #pulsatingCircle:after { background-Color: #FFC61D; } </style>');
 				}
 
-				$( 'head' ).append('<style id="styleCssMobileRow"> .tb-content-buttom { ' + btnStyle + ' } </style>');
+				$( 'head' ).append('<style id="styleCssMobileRow"> .navMenuHeader, .tb-content-buttom { ' + btnStyle + ' } </style>');
 
 			}
 

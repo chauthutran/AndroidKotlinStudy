@@ -31,7 +31,8 @@ function aboutApp( cwsRender )
 
     me.render = function() {
 
-        me.aboutData = me.getAboutInfo();
+        //me.aboutData = me.getAboutInfo();
+        var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
 
         if ( $( 'div.mainDiv' ).is( ":visible" ) )
         {
@@ -40,18 +41,19 @@ function aboutApp( cwsRender )
 
         me.aboutFormDivTag.show( 'fast' );
 
-            if (me.aboutData)
+            if (userConfig)
             {
 
                 me.aboutContentDivTag.empty();
 
-                $.each(me.aboutData, function(k, o) {
+
+                /*$.each(me.aboutData, function(k, o) {
 
                     $.each(o, function(l, v) {
 
                         var divAttrTag = $( '<div class="tb-content-about inputDiv" />' );
-                        var labelTag = $( '<label class="about-string-header titleDiv" />' );
-                        var valueTag = $( '<div id="aboutInfo_'+l+'" class="form-about-text" />');
+                        var labelTag = $( '<label class="from-string titleDiv" />' );
+                        var valueTag = $( '<div id="aboutInfo_'+l+'" class="form-type-text" />');
     
                         me.aboutContentDivTag.append( divAttrTag );
                         divAttrTag.append( labelTag );
@@ -62,54 +64,151 @@ function aboutApp( cwsRender )
 
                     })
 
-                })
+                })*/
+ 
+                var divContainerTag = $( '<div class="" style="border-bottom:0;position:fixed;text-align:left;max-width:900px;min-width:300px;" />' );
+                me.aboutContentDivTag.append( divContainerTag );
 
-                var divButtonTag = $( '<div style="float: left;margin:10px;padding:10px;text-align:center;width:100%;" />' );
-                me.aboutContentDivTag.append( divButtonTag );
+                var divAttrTag = $( '<div class="inputDiv" style="width:250px;margin: 15px 0 0 0;" />' );
+                divContainerTag.append( divAttrTag );
 
-                var btnAppShell = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:140px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
-                btnAppShell.html( 'reGet appShell' );
-                divButtonTag.append( btnAppShell );
+                var divHeaderLabelTag = $( '<label class="from-string titleDiv" style="max-width:250px;text-align: left;font-size: 1.1em;background-color: #fff;color:#000;padding:10px;" /><br>' );
+                divHeaderLabelTag.html( 'About' );
+                divAttrTag.append( divHeaderLabelTag );
 
+                var divAttrTag = $( '<div class="inputDiv" style="width: 100%;width: 900px;margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Application version' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_AppVersion" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px" />');
+                valueTag.html( $( '#spanVersion' ).html().replace('v','') );
+                divAttrTag.append( valueTag );
+
+                /* check for App Version updates BUTTON */
+                var divButtonAppVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
+                valueTag.append( divButtonAppVersionTag );
+                var btnAppShell = $( '<button value="" class="divBtn" style="position:relative;top:3px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
+                btnAppShell.html( 'check for updates' );
+                divButtonAppVersionTag.append( btnAppShell );
+                
                 $( btnAppShell ).click( () => {
 
                     if ( ConnManager.isOffline() )
                     {
-                      alert( 'Only re-register service-worker while online, please.' );
+                        alert( 'Only re-register service-worker while online, please.' );
                     }
                     else
                     {
-                      me.cwsRenderObj.reGetAppShell(); 
+                        FormUtil.showProgressBar();
+                        var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
+                        setTimeout( function() {
+                            me.cwsRenderObj.reGetAppShell(); 
+                        }, 500 );
+                        
                     }
 
                 });
 
-                var btnDCDconfig = $( '<button value="" class="divBtn" style="margin:4px;padding:8px;width:140px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;" />');
-                btnDCDconfig.html( 'reGet dcdConfig' );
-                divButtonTag.append( btnDCDconfig );
 
-                btnDCDconfig.click( () => {
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
 
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Config version' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_dcdVersion" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( userConfig.dcdConfig.version );
+                divAttrTag.append( valueTag );
+
+                /* check for DCD Version updates BUTTON */
+                var divButtonDcdVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
+                valueTag.append( divButtonDcdVersionTag );
+                var btnDcdShell = $( '<button value="" class="divBtn" style="position:relative;top:3px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
+                btnDcdShell.html( 'check for updates' );
+                divButtonDcdVersionTag.append( btnDcdShell );
+
+                $( btnDcdShell ).click( () => {
                     if ( ConnManager.isOffline() )
                     {
-                      alert( 'Only re-register service-worker while online, please.' );
+                        msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
                     }
                     else
                     {
-                      me.cwsRenderObj.reGetDCDconfig(); 
+                        FormUtil.showProgressBar();
+                        var loadingTag = FormUtil.generateLoadingTag( divButtonDcdVersionTag );
+                        setTimeout( function() {
+                            me.cwsRenderObj.reGetDCDconfig(); 
+                        }, 500 );
                     }
-
                 });
 
 
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Country' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_Country" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( userConfig.dcdConfig.countryCode );
+                divAttrTag.append( valueTag );
+
+                
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Data server' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_dataServer" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( userConfig.orgUnitData.dhisServer );
+                divAttrTag.append( valueTag );
+
+
+                /*var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'WS server' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_WebServer" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( FormUtil.staticWSName );
+                divAttrTag.append( valueTag );*/
+
+
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Browser' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( navigator.sayswho );
+                divAttrTag.append( valueTag );
+
+
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'User language' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                valueTag.html( navigator.language );
+                divAttrTag.append( valueTag );
+
+                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
 		        // James added: 2018/12/17 - BUT WE SHOULD SIMPLY HAVE STATIC TAGS IN index.html, not dynamic ones..
-                var spanConsoleOutConfig = $( '<span title="console out config" style="opacity: 0; cursor:pointer; margin-left: 15px;">v</span>');
+                /*var spanConsoleOutConfig = $( '<span title="console out config" style="opacity: 0; cursor:pointer; margin-left: 15px;">v</span>');
                 divButtonTag.append( spanConsoleOutConfig );
 
                 spanConsoleOutConfig.click( function() {
                     console.log( me.cwsRenderObj.configJson );
-                });
-                
+                });*/
 
                 me.aboutFormDivTag.show();
             }
@@ -126,7 +225,7 @@ function aboutApp( cwsRender )
         var aboutSession = [];
         var aboutBrowser = [];
 
-        aboutApp.push ( { name: 'Application version', value: $( '#spanVersion' ).html() } );
+        aboutApp.push ( { name: 'Application version', value: $( '#spanVersion' ).html().replace('v','') } );
         aboutApp.push ( { name: 'Config version', value: userConfig.dcdConfig.version } );
         aboutApp.push ( { name: 'Country', value: userConfig.dcdConfig.countryCode } );
         //aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
