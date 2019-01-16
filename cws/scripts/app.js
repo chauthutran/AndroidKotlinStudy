@@ -47,6 +47,10 @@
     FormUtil.performReget( _registrationObj, "update" );
   });
 
+  $( '#imgAppDataSyncStatus' ).click ( () => {
+    _syncManager.syncOfflineData();
+  });
+
   // App version check and return always..  
   //  (Unless version is outdated and agreed to perform 'reget' for new service worker
   //    - which leads to app reload with new version of service worker.

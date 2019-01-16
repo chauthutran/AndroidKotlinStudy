@@ -4,8 +4,8 @@ function syncManager()
 {
     var me = this;
 
-    me.storage_offline_SyncTimerAutoProcessRun = 60000; // make 60 seconds?
-    me.storage_offline_SyncTimerConditionsCheck = 10000; // make 60 seconds?
+    me.storage_offline_SyncTimerAutomationRun; 
+    me.storage_offline_SyncTimerConditionsCheck; 
 
     //me.haltTimers = false;
     me.appShell;
@@ -19,7 +19,8 @@ function syncManager()
 
     me.subProgressBar
 
-    var syncTimeout;
+    var syncConditionCheckTimeout;
+    var syncAutomationRunTimeout;
     var progClass;;
 
     // TODO: NEED TO IMPLEMENT
@@ -36,8 +37,8 @@ function syncManager()
         me.cwsRenderObj = cwsRenderObj;
 
         //console.log( 'initialize syncManager' );
-        me.storage_offline_SyncTimerAutoProcessRun = cwsRenderObj.storage_offline_SyncTimerAutoProcessRun;
-        me.storage_offline_SyncTimerConditionsCheck = cwsRenderObj.storage_offline_SyncTimerAutoProcessRun;
+        me.storage_offline_SyncTimerAutomationRun = cwsRenderObj.storage_offline_SyncTimerAutomationRun;
+        me.storage_offline_SyncTimerConditionsCheck = cwsRenderObj.storage_offline_SyncTimerConditionsCheck;
 
         me.subProgressBar = $( '#divProgressBar' ).children()[0];
         progClass = me.subProgressBar.className;
@@ -45,7 +46,8 @@ function syncManager()
         $( me.subProgressBar ).removeClass( progClass );
         $( me.subProgressBar ).addClass( 'determinate' );
 
-        me.scheduleSyncTest();
+        me.scheduleSyncConditionsTest();
+        me.scheduleSyncAutomationRun();
 
     }
 
@@ -97,13 +99,29 @@ function syncManager()
         }
     }
 
-    me.scheduleSyncTest = function()
+    me.scheduleSyncConditionsTest = function()
     {
-        console.log ( 'scheduleSyncTest.syncTimeout: ' + syncTimeout );
+        console.log ( 'scheduleSyncConditionsTest.syncConditionCheckTimeout: ' + syncConditionCheckTimeout );
 
         me.evalDataListContent();
 
-        if ( syncTimeout ) clearTimeout( syncTimeout );
+        me.evalSyncConditions();
+
+        if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
+
+        syncConditionCheckTimeout = setTimeout( function() {
+            me.scheduleSyncConditionsTest();
+        }, me.storage_offline_SyncTimerConditionsCheck );
+
+    }
+
+    me.scheduleSyncAutomationRun = function()
+    {
+        console.log ( 'scheduleSyncAutomationTest.syncAutomationRunTimeout: ' + syncAutomationRunTimeout );
+
+        //me.evalDataListContent();
+
+        if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
 
         if ( me.evalSyncConditions() )
         {
@@ -113,9 +131,9 @@ function syncManager()
         else
         {
             console.log('evalSyncConditions = FALSE, adding timer');
-            syncTimeout = setTimeout( function() {
-                me.scheduleSyncTest();
-            }, me.storage_offline_SyncTimerConditionsCheck );
+            syncAutomationRunTimeout = setTimeout( function() {
+                me.scheduleSyncAutomationRun();
+            }, me.storage_offline_SyncTimerAutomationRun );
         }
 
     }
@@ -260,11 +278,11 @@ function syncManager()
             console.log( me.dataCombine );
 
 
-            if ( syncTimeout ) clearTimeout( syncTimeout );
+            if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
 
-            syncTimeout = setTimeout( function() {
-                me.scheduleSyncTest();
-            }, me.storage_offline_SyncTimerConditionsCheck );
+            syncAutomationRunTimeout = setTimeout( function() {
+                me.scheduleSyncAutomationRun();
+            }, me.storage_offline_SyncTimerAutomationRun );
 
             /*if ( $( 'div.listDiv').is(':visible') )
             {
@@ -277,6 +295,8 @@ function syncManager()
     me.syncOfflineData = function()
     {
 
+        if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
+
         if ( FormUtil.login_UserName ) // correct valid-login test?
         {
             if ( ConnManager.isOnline() )
@@ -288,7 +308,11 @@ function syncManager()
 
                     $( '#imgAppDataSyncStatus' ).rotate({ count: 99999, forceJS: true, startDeg: true });
 
-                    if ( syncTimeout ) clearTimeout( syncTimeout );
+                    if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
+
+                    $( me.subProgressBar ).removeClass( progClass );
+                    $( me.subProgressBar ).addClass( 'determinate' );
+
                     FormUtil.showProgressBar();
                     me.recursiveSyncItemData ( 0 )
 
