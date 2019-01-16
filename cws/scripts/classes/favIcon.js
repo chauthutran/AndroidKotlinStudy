@@ -64,8 +64,6 @@ function favIcons( cwsRender )
             // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
             $.get( favList[ favItm ].img, function(data) {
 
-                console.log( 'FavIcon  ' );
-
                 var unqID = Util.generateRandomId();
                 var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[ favItm ].id + '" name="' + (favList[ favItm ].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
                 var svgObject = ( $(data)[0].documentElement );

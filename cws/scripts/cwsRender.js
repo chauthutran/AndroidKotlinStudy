@@ -11,7 +11,7 @@ function cwsRender()
 	me.renderBlockTag = $( '#renderBlock' );
 	//me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
 	me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
-	me.menuDivTag = $( '#menuDiv' );
+	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	//me.menuTopRightIconTag = $( '#menu_e' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
@@ -100,7 +100,7 @@ function cwsRender()
 		}
 
 		var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
-		var inputUtilMenu = inputMonitor( '#menuDiv' ); //detect swipe for android
+		var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
 
 	}
 
@@ -215,7 +215,7 @@ function cwsRender()
 			}
 
 			// hide the menu div if open
-			me.hideMenuDiv();
+			me.hidenavDrawerDiv();
 			$( '#focusRelegator' ).hide();
 
 		});
@@ -285,10 +285,10 @@ function cwsRender()
 		}
 	}
 
-	me.hideMenuDiv = function()
+	me.hidenavDrawerDiv = function()
 	{
 		// hide the menu
-		if ( me.menuDivTag.is( ":visible" ) )
+		if ( me.navDrawerDivTag.is( ":visible" ) )
 		{
 			me.menuAppMenuIconTag.click();
 			me.menuAppMenuIconTag.css( 'width', 0 );
@@ -310,7 +310,7 @@ function cwsRender()
 			me.LoginObj.openForm();
 
 			// hide the menu div if open
-			me.hideMenuDiv();			
+			me.hidenavDrawerDiv();			
 		}
 		else
 		{  
@@ -374,8 +374,8 @@ function cwsRender()
 	}
 
 	me.startBlockExecute = function( configJson )
-	{		
-		console.log( configJson );
+	{
+		//console.log( configJson );
 		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.getAppConnMode_Online(), configJson );
 
 		if ( me.areaList )
@@ -431,19 +431,21 @@ function cwsRender()
 
 					if ( myData )
 					{
+						var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 						var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
 						var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt <= me.storage_offline_ItemNetworkAttemptLimit) );
 
-						$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) );
+						$( '#divNavDrawerSummaryData' ).html ( 'redeemed : ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
 					} 
 					else 
 					{
-						$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
+						//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
+						$( '#divNavDrawerSummaryData' ).html ( 'redeemed : 0 ' );
 					}
 				}
 			});
 
-			FormUtil.setClickSwitchEvent( me.menuAppMenuIconTag, me.menuDivTag, [ 'open', 'close' ], me );
+			FormUtil.setClickSwitchEvent( me.menuAppMenuIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
 		}
 
 	}
@@ -451,11 +453,11 @@ function cwsRender()
 	me.populateMenuList = function( areaList )
 	{
 		var startMenuTag;
-
-		$( '#menuDiv' ).empty();
+		//console.log('cwsRender.populateMenuList()');
+		$( '#navDrawerDiv' ).empty();
 
 		// clear the list first
-		me.menuDivTag.find( 'div.menu-mobile-row' ).remove();
+		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
 		var navMenuTbl = $( '<table id="navDrawerHeader" style="width:100%;height:100px;" />' );
@@ -463,7 +465,7 @@ function cwsRender()
 		var tdLeft = $( '<td style="padding:10px;width:80px;" />' );
 		var tdRight = $( '<td  style="padding:2px 0 0 0;height:75px;" />' );
 
-		me.menuDivTag.append ( navMenuHead );
+		me.navDrawerDivTag.append ( navMenuHead );
 		navMenuHead.append ( navMenuTbl );
 		navMenuTbl.append ( tr );
 		tr.append ( tdLeft );
@@ -493,7 +495,7 @@ function cwsRender()
 
 				me.setupMenuTagClick( menuTag );
 
-				me.menuDivTag.append( menuTag );
+				me.navDrawerDivTag.append( menuTag );
 
 				if ( area.startArea ) startMenuTag = menuTag;
 			}	

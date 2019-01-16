@@ -350,7 +350,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			$( '#focusRelegator').on('click', function( event )
 			{
-				console.log( 'focusRelegator Clicked ' );
+				//console.log( 'focusRelegator Clicked ' );
 				event.preventDefault();
 
 				thisTag.click();
