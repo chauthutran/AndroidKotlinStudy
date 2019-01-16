@@ -337,7 +337,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			$( '#focusRelegator').css('zIndex',100);
 			thisTag.css('zIndex',200);
-			subListIconsTag.css('zIndex',10000);
+			subListIconsTag.css('zIndex',300);
 
 			/* added by Greg (7 Jan 2019)*/
 			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeIn( 'fast', 'linear' );
@@ -694,10 +694,17 @@ FormUtil.getMyListData = function( listName )
 	}
 }
 
+FormUtil.updateProgressPercent = function( Perc )
+{
+	//$( '#divProgressBar' ).css( 'display', 'block' );
+	//$( '#divProgressBar' ).css( 'zIndex', '100' );
+	$( '#divProgressBar' ).css('width',Perc+'%')
+}
+
 FormUtil.showProgressBar = function()
 {
 	$( '#divProgressBar' ).css( 'display', 'block' );
-	$( '#divProgressBar' ).css( 'zIndex', '10000' );
+	$( '#divProgressBar' ).css( 'zIndex', '100' );
 }
 
 FormUtil.hideProgressBar = function()

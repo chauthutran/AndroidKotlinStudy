@@ -10,7 +10,7 @@ function cwsRender()
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
 	//me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
-	me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
+	//me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	//me.menuTopRightIconTag = $( '#menu_e' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
@@ -30,7 +30,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
-	me.enableCustomColors = true;
+	//me.enableThemedColorSchemes = false;
 
 
 	me.storageName_RedeemList = "redeemList";
@@ -39,6 +39,9 @@ function cwsRender()
 	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
 
 	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
+    me.storage_offline_SyncTimerAutoProcessRun = 60000; // make 60 seconds?
+    me.storage_offline_SyncTimerConditionsCheck = 10000; // make 60 seconds?
+
 	me._globalMsg = "";
 	me._globalJsonData = undefined;
 
@@ -136,24 +139,6 @@ function cwsRender()
 			return false;
 		});*/
 
-		me.imgAppDataSyncStatusTag.click( function() {
-
-			$( this ).rotate({ count: 9999, forceJS: true, startDeg: true });
-
-			setTimeout( function()  
-			{
-				me.imgAppDataSyncStatusTag.stop();
-
-			}, 10000 );
-
-			/*
-
-			if ( ConnManager.isOnline() && dataServer.isOnline && Util.redeemListItemsUnsaved() )
-
-			*/
-
-		});
-
 		me.configureMobileMenuIcon();
 		
 	}
@@ -166,14 +151,18 @@ function cwsRender()
 
 			var clicked_areaId = $( this ).attr( 'areaId' );
 			var clicked_area = Util.getFromList( me.areaList, clicked_areaId, "id" );
-	
+
+			me.pulsatingProgress.hide();
+			$( '#divProgressBar' ).hide();
+			$( '#focusRelegator' ).hide();
+			$( '#aboutFormDiv' ).hide();
+
 			// if menu is clicked,
 			// reload the block refresh?
 			if ( clicked_area.startBlockName )
 			{
 				// added by Greg (2018/12/10)
 				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
-				if ( $( '#aboutFormDiv' ).is( ":visible" ) ) $( '#aboutFormDiv' ).hide();
 
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
 				startBlockObj.renderBlock();  // should been done/rendered automatically?
@@ -433,14 +422,14 @@ function cwsRender()
 					{
 						var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 						var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
-						var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt <= me.storage_offline_ItemNetworkAttemptLimit) );
-
-						$( '#divNavDrawerSummaryData' ).html ( 'redeemed : ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+						var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+						
+						$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
 					} 
 					else 
 					{
 						//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-						$( '#divNavDrawerSummaryData' ).html ( 'redeemed : 0 ' );
+						$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: 0 ' );
 					}
 				}
 			});
@@ -501,6 +490,8 @@ function cwsRender()
 			}	
 		}
 
+		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
+
 		return startMenuTag;
 	}
 
@@ -539,8 +530,6 @@ function cwsRender()
 			console.log( 'Updating to theme: ' + me.configJson.settings.theme);
 
 			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
-
-			//console.log( defTheme );
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -600,40 +589,6 @@ function cwsRender()
 
 		}
 
-	}
-
-	me.updateColorScheme = function ( favObj )
-	{
-		console.log('custom colors enabled: ' + me.enableCustomColors);
-		console.log( favObj );
-		if ( me.enableCustomColors )
-		{
-
-			console.log ( favObj.find('svg').attr('colors.background') );
-			console.log ( favObj.find('svg').attr('colors.foreground') );
-
-			$( 'nav.bg-color-program' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
-
-			$( 'div.bg-color-program-son' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
-			$( 'div.bg-color-program-son' ).css( 'opacity', 0.4 );
-
-			$( '#spanOuName' ).css( 'color', favObj.find('svg').attr('colors.foreground') );
-
-			//spanOuName.html(favObj.innerHTML)
-
-			$( 'div.menu-mobile' ).css( 'background-color', favObj.find('svg').attr('colors.background') );
-
-			$('#styleCssMobileRow').remove();
-
-			$( 'head' ).append('<style id="styleCssMobileRow"> .menu-mobile-row{ color: ' + favObj.find('svg').attr('colors.foreground') + '; } </style>');
-
-			//$( 'div.menu-mobile' ).css( 'opacity', 0.75 );
-			
-		}
-		/*console.log ( favObj );
-		console.log ( favObj.children() );
-		console.log ( favObj.children()[0] );
-		console.log ( favObj.children()[0].attributes );*/
 	}
 
 	// ======================================

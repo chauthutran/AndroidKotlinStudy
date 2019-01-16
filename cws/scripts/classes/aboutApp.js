@@ -8,6 +8,7 @@ function aboutApp( cwsRender )
     me.aboutFormDivTag = $( '#aboutFormDiv' );
     me.aboutContentDivTag = $( '#aboutContentDiv' );
     me.aboutData;
+    me.syncMgr;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -46,54 +47,34 @@ function aboutApp( cwsRender )
 
                 me.aboutContentDivTag.empty();
 
-
-                /*$.each(me.aboutData, function(k, o) {
-
-                    $.each(o, function(l, v) {
-
-                        var divAttrTag = $( '<div class="tb-content-about inputDiv" />' );
-                        var labelTag = $( '<label class="from-string titleDiv" />' );
-                        var valueTag = $( '<div id="aboutInfo_'+l+'" class="form-type-text" />');
-    
-                        me.aboutContentDivTag.append( divAttrTag );
-                        divAttrTag.append( labelTag );
-                        divAttrTag.append( valueTag );
-    
-                        labelTag.html( v.name );
-                        valueTag.html( v.value );
-
-                    })
-
-                })*/
- 
-                var divContainerTag = $( '<div class="" style="border-bottom:0;position:fixed;text-align:left;max-width:900px;min-width:300px;" />' );
+                var divContainerTag = $( '<ul class="aboutDivContainer" style="border-bottom:0;position:fixed;text-align:left;max-width:900px;min-width:250px;" />' );
                 me.aboutContentDivTag.append( divContainerTag );
 
-                var divAttrTag = $( '<div class="inputDiv" style="width:250px;margin: 15px 0 0 0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width:250px;margin: 15px 0 0 0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var divHeaderLabelTag = $( '<label class="from-string titleDiv" style="max-width:250px;text-align: left;font-size: 1.1em;background-color: #fff;color:#000;padding:10px;" /><br>' );
                 divHeaderLabelTag.html( 'About' );
                 divAttrTag.append( divHeaderLabelTag );
 
-                var divAttrTag = $( '<div class="inputDiv" style="width: 100%;width: 900px;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'Application version' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_AppVersion" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px" />');
+                var valueTag = $( '<div id="aboutInfo_AppVersion" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px" />');
                 valueTag.html( $( '#spanVersion' ).html().replace('v','') );
                 divAttrTag.append( valueTag );
 
                 /* check for App Version updates BUTTON */
                 var divButtonAppVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
                 valueTag.append( divButtonAppVersionTag );
-                var btnAppShell = $( '<button value="" class="divBtn" style="position:relative;top:3px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
-                btnAppShell.html( 'check for updates' );
-                divButtonAppVersionTag.append( btnAppShell );
-                
-                $( btnAppShell ).click( () => {
+                var btnAppShellTag = $( '<button value="" id="appShellUpdateBtn" class="divBtn" style="position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
+                btnAppShellTag.html( 'check for updates' );
+                divButtonAppVersionTag.append( btnAppShellTag );
+
+                $( btnAppShellTag ).click( () => {
 
                     if ( ConnManager.isOffline() )
                     {
@@ -106,30 +87,30 @@ function aboutApp( cwsRender )
                         setTimeout( function() {
                             me.cwsRenderObj.reGetAppShell(); 
                         }, 500 );
-                        
+
                     }
 
                 });
 
 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'Config version' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_dcdVersion" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_dcdVersion" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"/>');
                 valueTag.html( userConfig.dcdConfig.version );
                 divAttrTag.append( valueTag );
 
                 /* check for DCD Version updates BUTTON */
                 var divButtonDcdVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
                 valueTag.append( divButtonDcdVersionTag );
-                var btnDcdShell = $( '<button value="" class="divBtn" style="position:relative;top:3px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
-                btnDcdShell.html( 'check for updates' );
-                divButtonDcdVersionTag.append( btnDcdShell );
+                var btnDcdConfigTag = $( '<button value="" id="dcdUpdateBtn" class="divBtn" style="display:none;position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
+                btnDcdConfigTag.html( 'new version available' );
+                divButtonDcdVersionTag.append( btnDcdConfigTag );
 
-                $( btnDcdShell ).click( () => {
+                $( btnDcdConfigTag ).click( () => {
                     if ( ConnManager.isOffline() )
                     {
                         msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
@@ -145,61 +126,71 @@ function aboutApp( cwsRender )
                 });
 
 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'Country' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Country" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_Country" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
                 valueTag.html( userConfig.dcdConfig.countryCode );
                 divAttrTag.append( valueTag );
 
                 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'Data server' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_dataServer" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_dataServer" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
                 valueTag.html( userConfig.orgUnitData.dhisServer );
-                divAttrTag.append( valueTag );
+                divAttrTag.append( valueTag );*/
 
 
-                /*var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'WS server' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_WebServer" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_WebServer" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
                 valueTag.html( FormUtil.staticWSName );
                 divAttrTag.append( valueTag );*/
 
 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'Browser' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
                 valueTag.html( navigator.sayswho );
                 divAttrTag.append( valueTag );
 
 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
                 labelTag.html( 'User language' );
                 divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 1px solid #DCDCDC;padding:10px 0 15px 10px"/>');
+                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"/>');
                 valueTag.html( navigator.language );
                 divAttrTag.append( valueTag );
 
-                var divAttrTag = $( '<div class="inputDiv" style="margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                divContainerTag.append( divAttrTag );
+
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                labelTag.html( 'Theme' );
+                divAttrTag.append( labelTag );
+                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px"/>');
+                valueTag.html( userConfig.dcdConfig.settings.theme );
+                divAttrTag.append( valueTag );
+
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
 		        // James added: 2018/12/17 - BUT WE SHOULD SIMPLY HAVE STATIC TAGS IN index.html, not dynamic ones..
@@ -211,6 +202,9 @@ function aboutApp( cwsRender )
                 });*/
 
                 me.aboutFormDivTag.show();
+
+                me.syncMgr = new syncManager();
+                me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );
             }
 
     }

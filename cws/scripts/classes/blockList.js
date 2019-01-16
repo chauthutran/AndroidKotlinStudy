@@ -198,7 +198,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.evalScrollOnBottom = function()
     {
 
-        if ( !me.redeemListLimit )
+        if ( !me.redeemListLimit && $( 'div.listDiv' ).is(':visible') )
         {
             if ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() )
             {
@@ -462,7 +462,7 @@ function BlockList( cwsRenderObj, blockObj )
                     }
                     else
                     {
-                        MsgManager.msgAreaShow( ' network TEST LIMIT >> ' + itemData.networkAttempt + ' of ' +me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
+                        MsgManager.msgAreaShow( 'Network upload FAIL LIMIT exceeded: ' + me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
                     }
                 }
 
@@ -536,14 +536,14 @@ function BlockList( cwsRenderObj, blockObj )
 
                             //itemData.state = 0; //1=in use, 0=unused
 
-                            setTimeout( function() {
-                                myTag.html( itemData.title );
-                                me.appendStatusOptThemeIcon ( $( '#icon_' + itemData.id ), me.getStatusOpt ( itemData ) )
-                            }, 2000 );
-
                             me.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), itemData ); 
 
                             DataManager.updateItemFromData( me.storageName_RedeemList, itemData.id, itemData );
+
+                            setTimeout( function() {
+                                myTag.html( itemData.title );
+                                me.appendStatusOptThemeIcon ( $( '#icon_' + itemData.id ), me.getStatusOpt ( itemData ) )
+                            }, 1000 );
 
                         } );
 

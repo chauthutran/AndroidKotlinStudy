@@ -362,7 +362,7 @@ a.brand-logo {
 /* START > PROGRESS BAR */
 .progress {
 	position: fixed;
-	height: 4px;
+	height: 3px;
 	display: block;
 	width: inherit;
 	background-color: transparent;
@@ -373,9 +373,11 @@ a.brand-logo {
 }
 .progress .determinate {
   position: fixed;
-  background-color: inherit;
-  /* background-color: #404040; */
-  transition: width .3s linear; 
+  width: 100%;
+  height: 4px;
+  /* background-color: inherit;
+  background-color: #404040; 
+  transition: width 200ms linear; */
 }
 .progress .indeterminate {
   /* background-color: #404040; */

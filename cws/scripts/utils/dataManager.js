@@ -108,6 +108,14 @@ DataManager.updateItemFromData = function( secName, id, jsonDataItem )
 
 			DataManager.saveData( secName, jsonMainData );			
 		}
+		else
+		{
+			console.log ( 'failed `jsonMainData.list !== undefined`: ' + secName + ' ' + id  );
+		}
+	}
+	else
+	{
+		console.log ( 'failed `DataManager.updateItemFromData` on secName && id: ' + secName + ' ' + id  );
 	}
 };
 
