@@ -304,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "5fa775962339480c4e118fc6d9fafbeb"
+    "revision": "1496b12f4f1cb037fcde04ad9aabf4ae"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -356,7 +356,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "98fb056dfdc23dd5608916e7083df56d"
+    "revision": "c5020dfbe0afd308c8f8b6215c3b0e73"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -412,7 +412,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "db72a038d7a2b89d1972329c15651df1"
+    "revision": "78c79959f4c7deac94f81ee974358fe6"
   },
   {
     "url": "scripts/utils/util.js",
