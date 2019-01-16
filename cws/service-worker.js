@@ -40,11 +40,23 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "d7134845ef85ea83fe672ba20a8a4fed"
+    "revision": "9841f4816574780b53fdbe577149e11a"
   },
   {
     "url": "css/style.css",
-    "revision": "ff56ab87634bbf84cfb977e5124da9c2"
+    "revision": "3d65929c4db78e363976c70bcb7a286d"
+  },
+  {
+    "url": "images/baseline-cloud_off-24px.svg",
+    "revision": "bc7f6d61a42dc641790bb96a6c381dfb"
+  },
+  {
+    "url": "images/baseline-cloud-24px_green.svg",
+    "revision": "40dc9e3e4e184f60349091702664a346"
+  },
+  {
+    "url": "images/baseline-cloud-24px.svg",
+    "revision": "b88790cbd2e52f24f0a892907a8f0d9a"
   },
   {
     "url": "images/blank.gif",
@@ -116,7 +128,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/offline.svg",
-    "revision": "00a8901e7e49ac9cd9af9fba7fa4fac8"
+    "revision": "476f7226d96a04f58073e26b68e82a9f"
   },
   {
     "url": "images/online.jpg",
@@ -143,16 +155,20 @@ self.__precacheManifest = [
     "revision": "444a5b20edb9dec94c4036b14fb2e1ae"
   },
   {
-    "url": "img/act.svg",
-    "revision": "a59f1cd43cdb7fe359000002283a50a7"
+    "url": "images/sharp-cloud_queue-24px.svg",
+    "revision": "7ff516ae1c523351b09e2f4a8d46d7d3"
+  },
+  {
+    "url": "img/act_col.svg",
+    "revision": "d7397b5aabba1c795a8a77da2053a6c7"
   },
   {
     "url": "img/active.svg",
     "revision": "f7bed36b34a604e93941d71404522168"
   },
   {
-    "url": "img/alert.svg",
-    "revision": "5f2f94439570a21a82cf1007d5359b8a"
+    "url": "img/alert_col.svg",
+    "revision": "ed00a205c0ee21cff01ef3da6f3b75bf"
   },
   {
     "url": "img/arrow_down.svg",
@@ -171,36 +187,24 @@ self.__precacheManifest = [
     "revision": "aa66e325f7c4d48a42cc37f265646e40"
   },
   {
+    "url": "img/arrows_col.svg",
+    "revision": "3e3f227aa06dbfea700cb4ba587bf182"
+  },
+  {
     "url": "img/client.svg",
     "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
   },
   {
-    "url": "img/contact.svg",
-    "revision": "3426c2fced5715e0a5ab6160a3b71088"
-  },
-  {
-    "url": "img/favbar_act.svg",
-    "revision": "c5833659a76dea9aa368ca97a27f3b16"
-  },
-  {
-    "url": "img/favbar_arrows.svg",
-    "revision": "2b91fa26982504bd640d1c9e037b0dd7"
-  },
-  {
     "url": "img/favbar_color_act.svg",
-    "revision": "3d7fb155bbe8f786205d2c17334ba495"
+    "revision": "95f34a049890161cfb81d08a7f7978c1"
   },
   {
     "url": "img/favbar_color_arrows.svg",
-    "revision": "73caa91e4f239e6094f99b62c15c8c40"
+    "revision": "461d5e8b6ff37176a97a260954ed61ee"
   },
   {
     "url": "img/favbar_color_contact.svg",
-    "revision": "d5b28a8335ffe5a9efa061c02c65ed64"
-  },
-  {
-    "url": "img/favbar_contact.svg",
-    "revision": "62cca59cf88ec032832bf2e3868e1bb2"
+    "revision": "3a13ded0a18298b8dc62cda8b42e388e"
   },
   {
     "url": "img/key.svg",
@@ -219,10 +223,6 @@ self.__precacheManifest = [
     "revision": "35e285c0cccf3fc660d9fa7b4aadefd5"
   },
   {
-    "url": "img/menu_icon.svg",
-    "revision": "528dd5f2e025f2208386bead7bbc1e59"
-  },
-  {
     "url": "img/mobile.svg",
     "revision": "56d9b808639a50927115cab90dd8e246"
   },
@@ -239,12 +239,12 @@ self.__precacheManifest = [
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
   {
-    "url": "img/plus_color.svg",
-    "revision": "0855672affe535b3921b90a5d45e1e34"
+    "url": "img/outline-verified_user-24px.svg",
+    "revision": "a8f2461542d527ad1641e4c72c9251fb"
   },
   {
-    "url": "img/plus_on_color.svg",
-    "revision": "84c9647fca9d7f6bbaa6fe44c933993d"
+    "url": "img/plus_color.svg",
+    "revision": "0855672affe535b3921b90a5d45e1e34"
   },
   {
     "url": "img/plus_on.svg",
@@ -255,16 +255,12 @@ self.__precacheManifest = [
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
   },
   {
-    "url": "img/request.svg",
-    "revision": "5a9e932915d53546d8e80c2071b867b8"
-  },
-  {
-    "url": "img/service.svg",
-    "revision": "35363617ed2f2f7fb7d14b5b33af2ee5"
-  },
-  {
     "url": "img/settings.svg",
     "revision": "7c8dcb4c9fce086566e3fe6414dccd08"
+  },
+  {
+    "url": "img/sync-banner.svg",
+    "revision": "406d8238e4a0a815172a2d39edd13db9"
   },
   {
     "url": "img/sync-n.svg",
@@ -280,7 +276,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5d18d16e760a8e40c053febe584486b8"
+    "revision": "0f2b5f08d3c2a35dfc6137f34f4ef90d"
   },
   {
     "url": "manifest.json",
@@ -292,15 +288,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "51984261834be004b4104ab2c2ece5a1"
+    "revision": "5fa775962339480c4e118fc6d9fafbeb"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "5398975379212db43317177306c2cd84"
+    "revision": "b2e4e11ea1a542f9189e0f4f48a4b700"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "92c8fe09e183c2f0c5970bed40be3cde"
+    "revision": "526807c3d573d4a38e6f9e52b227e262"
   },
   {
     "url": "scripts/classes/block.js",
@@ -308,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "4707729284d0dc5d407c40f329d68e5f"
+    "revision": "c1918d30bafcd8118d486691d934fad4"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -316,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "f8f4632049e127922b91c3ca50df4e33"
+    "revision": "42e3b339ce1840a0df6bece3d0b4540f"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -324,15 +320,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "e1219b1f604eb064754ae4bf88518d96"
+    "revision": "aa2306150a1af1c36035b8d24f27c4fb"
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "51c02cb90ccd0f2abdcd60d9da314b76"
+    "revision": "4aeaea8b66558ebf0854832e62cb79b4"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "d8aff087eb0694636de0661741124fd5"
+    "revision": "98baae1f7416ea96c0bb0dbdb13bb875"
   },
   {
     "url": "scripts/classes/test.json",
@@ -340,11 +336,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "c6f9bec044a49aeaead4ca8f8559304b"
+    "revision": "edf7ccf7a20f2265e072918934f78c26"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "92dec137c178b2ed345e04fec8e3fc77"
+    "revision": "d95d2e4840957fb518b1533e9f013251"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -372,7 +368,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "a24dc13c381c415c7b4824ba09e4bc52"
+    "revision": "75e8f650eb794d200e2a11cb29230254"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -384,7 +380,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "5bf366fc22c0f1050381548d743f1143"
+    "revision": "33fbe563a83434373cf285600b826362"
+  },
+  {
+    "url": "scripts/utils/inputUtil.js",
+    "revision": "b17ffbab885f51b7e51c29c0282ad2d3"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -395,8 +395,28 @@ self.__precacheManifest = [
     "revision": "3718932a0f18d021ba3264ac3d769dd4"
   },
   {
+    "url": "scripts/utils/syncManager.js",
+    "revision": "d2f64beaa040af66fe2211b735837eb9"
+  },
+  {
     "url": "scripts/utils/util.js",
-    "revision": "cf6b205c31fbc5cfe95a81601fd53ef0"
+    "revision": "f15e8c5442874ab3fa8b56caa62e48a9"
+  },
+  {
+    "url": "scripts/z. Old Files/cwsRender_v0.js",
+    "revision": "190671a49009c2cc6caa80d022d71fe4"
+  },
+  {
+    "url": "scripts/z. Old Files/materialize.js",
+    "revision": "38de72592b09b35b61ac49ebf1eba54b"
+  },
+  {
+    "url": "scripts/z. Old Files/testSection.js",
+    "revision": "0e632d23fbb96b56bf389700041637dc"
+  },
+  {
+    "url": "service-worker_back.js",
+    "revision": "de80056a12a74c2a49b1de762e295cb9"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -436,12 +456,11 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "e529f798a2154e26a9fe48b2a252a4c8"
+    "revision": "ef70fa00f4eb9677c96e4027a34735ff"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-/* workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET'); */
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst(), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');
