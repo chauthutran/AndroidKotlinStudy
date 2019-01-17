@@ -48,7 +48,7 @@
   });
 
   $( '#imgAppDataSyncStatus' ).click ( () => {
-    _syncManager.syncOfflineData();
+    _syncManager.syncOfflineData( this );
   });
 
   // App version check and return always..  

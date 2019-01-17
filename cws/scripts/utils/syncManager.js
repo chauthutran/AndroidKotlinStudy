@@ -4,8 +4,8 @@ function syncManager()
 {
     var me = this;
 
-    me.storage_offline_SyncTimerAutomationRun; 
-    me.storage_offline_SyncTimerConditionsCheck; 
+    me.storage_offline_SyncTimerAutomationRun;      //uses setTimeout
+    me.storage_offline_SyncTimerConditionsCheck;    //uses setInterval
 
     //me.haltTimers = false;
     me.appShell;
@@ -17,37 +17,34 @@ function syncManager()
     me.dataFailed = {};
     me.dataCombine = {};
 
-    me.subProgressBar
+    me.syncRunning = 0;
+    me.subProgressBar;
 
-    var syncConditionCheckTimeout;
-    var syncAutomationRunTimeout;
-    var progClass;;
-
-    // TODO: NEED TO IMPLEMENT
-	// =============================================
-	// === TEMPLATE METHODS ========================
-
-
+    var syncConditionCheckTimer = 0;
+    var syncAutomationRunTimeout = 0;
+    var syncAutomationLastTimeout = 0;
+    var progClass;
 
 	// -----------------------------
-	// ---- Methods ----------------
+    // syncManager: uses timerInterval for 'conditionCheck', then uses timeOut to call automated Sync (unless already clicked by user)
+    // -----------------------------
 
     me.initialize = function( cwsRenderObj ) 
     {
-        me.cwsRenderObj = cwsRenderObj;
 
         //console.log( 'initialize syncManager' );
+
+        me.cwsRenderObj = cwsRenderObj;
         me.storage_offline_SyncTimerAutomationRun = cwsRenderObj.storage_offline_SyncTimerAutomationRun;
         me.storage_offline_SyncTimerConditionsCheck = cwsRenderObj.storage_offline_SyncTimerConditionsCheck;
 
+        /* store progress bar class - to be upgraded to it's own class later */
         me.subProgressBar = $( '#divProgressBar' ).children()[0];
         progClass = me.subProgressBar.className;
 
-        $( me.subProgressBar ).removeClass( progClass );
-        $( me.subProgressBar ).addClass( 'determinate' );
-
-        me.scheduleSyncConditionsTest();
-        me.scheduleSyncAutomationRun();
+        syncConditionCheckTimer = setInterval( function() {
+            me.scheduleSyncConditionsTest();
+        }, me.storage_offline_SyncTimerConditionsCheck );
 
     }
 
@@ -101,39 +98,51 @@ function syncManager()
 
     me.scheduleSyncConditionsTest = function()
     {
-        console.log ( 'scheduleSyncConditionsTest.syncConditionCheckTimeout: ' + syncConditionCheckTimeout );
-
         me.evalDataListContent();
 
-        me.evalSyncConditions();
+        if ( me.evalSyncConditions() )
+        {
+            if ( ( syncAutomationLastTimeout && syncAutomationRunTimeout ) && ( syncAutomationLastTimeout == syncAutomationRunTimeout ) )
+            {
+                //clearTimeout( syncAutomationRunTimeout ); //this doesn't work??? not clearing anything: let's assume it's safe to simply recreate a new timer as the old one will have already completed
+                //console.log('same old + new automation timeout');
+                if ( !me.syncRunning )
+                {
+                    me.scheduleSyncAutomationRun();
+                }
+            }
+            else
+            {
+                if ( !syncAutomationRunTimeout && !me.syncRunning ) me.scheduleSyncAutomationRun();
+            }
+            //console.log ( 'scheduleSyncConditionsTest.GOOD, syncAutomationRunTimeout: ' + syncAutomationRunTimeout );
+        }
+        else
+        {
+            if ( syncAutomationRunTimeout )
+            {
+                clearTimeout( syncAutomationRunTimeout );
+                syncAutomationLastTimeout = syncAutomationRunTimeout;
+            }
+        }
 
-        if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
-
-        syncConditionCheckTimeout = setTimeout( function() {
-            me.scheduleSyncConditionsTest();
-        }, me.storage_offline_SyncTimerConditionsCheck );
 
     }
 
     me.scheduleSyncAutomationRun = function()
     {
-        console.log ( 'scheduleSyncAutomationTest.syncAutomationRunTimeout: ' + syncAutomationRunTimeout );
-
-        //me.evalDataListContent();
-
-        if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
-
-        if ( me.evalSyncConditions() )
+        if ( me.evalSyncConditions() && !me.syncRunning )
         {
-            console.log('evalSyncConditions = true, running SYNC');
-            me.syncOfflineData();
+            console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > creating timer in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
+            syncAutomationRunTimeout = setTimeout( function() {
+                //me.scheduleSyncAutomationRun();
+                console.log('syncOfflineData, running SYNC');
+                me.syncOfflineData();
+            }, me.storage_offline_SyncTimerAutomationRun );
         }
         else
         {
-            console.log('evalSyncConditions = FALSE, adding timer');
-            syncAutomationRunTimeout = setTimeout( function() {
-                me.scheduleSyncAutomationRun();
-            }, me.storage_offline_SyncTimerAutomationRun );
+            console.log('evalSyncConditions = FALSE, skilling timer creation');
         }
 
     }
@@ -177,8 +186,11 @@ function syncManager()
 
     }
 
-    me.recursiveSyncItemData = function( listItem )
+    me.recursiveSyncItemData = function( listItem, btnTag )
     {
+
+        me.syncRunning = 1;
+        FormUtil.showProgressBar();
 
         var bProcess = false;
         var itemData = me.dataCombine[ listItem ];
@@ -205,8 +217,8 @@ function syncManager()
 
         if ( bProcess )
         {
-
-            FormUtil.updateProgressPercent( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
+            console.log ( 'SyncItem > ' + (listItem+1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
+            FormUtil.updateProgressWidth( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) + '%' );
 
             var dtmRedeemAttempt = (new Date() ).toISOString();
 
@@ -259,7 +271,7 @@ function syncManager()
 
                 DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
 
-                me.recursiveSyncItemData ( (listItem + 1) )
+                me.recursiveSyncItemData ( (listItem + 1), btnTag )
 
             } );
 
@@ -275,15 +287,22 @@ function syncManager()
             $( '#divAppDataSyncStatus' ).hide();
             $( '#imgAppDataSyncStatus' ).hide();
 
-            console.log( me.dataCombine );
 
+            if ( btnTag )
+            {
+                if ( btnTag.hasClass( 'clicked' ) )
+                { 
+                    btnTag.removeClass( 'clicked' );
+                }
+            }
 
-            if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
+            me.syncRunning = 0;
 
-            syncAutomationRunTimeout = setTimeout( function() {
-                me.scheduleSyncAutomationRun();
-            }, me.storage_offline_SyncTimerAutomationRun );
+            //if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
 
+            //me.scheduleSyncConditionsTest();
+
+            // refresh list if currently visible > ideally each itemData block should be refreshed
             /*if ( $( 'div.listDiv').is(':visible') )
             {
                 me.cwsRenderObj.startBlockExecuteAgain();
@@ -292,41 +311,70 @@ function syncManager()
 
     }
 
-    me.syncOfflineData = function()
+    me.syncOfflineData = function( btnTag )
     {
+        var Proceed = false;
 
-        if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
-
-        if ( FormUtil.login_UserName ) // correct valid-login test?
+        if ( me.syncRunning == 0 )
         {
-            if ( ConnManager.isOnline() )
+            if ( btnTag ) //called from click_event
             {
-                if ( me.dataQueued.length + me.dataFailed.length )
+                if ( ! btnTag.hasClass( 'clicked' ) )
                 {
-
-                    me.dataCombine = me.dataQueued.concat(me.dataFailed);
-
-                    $( '#imgAppDataSyncStatus' ).rotate({ count: 99999, forceJS: true, startDeg: true });
-
-                    if ( syncConditionCheckTimeout ) clearTimeout( syncConditionCheckTimeout );
-
-                    $( me.subProgressBar ).removeClass( progClass );
-                    $( me.subProgressBar ).addClass( 'determinate' );
-
-                    FormUtil.showProgressBar();
-                    me.recursiveSyncItemData ( 0 )
-
+                    btnTag.addClass( 'clicked' );
+                    Proceed = true;
                 }
             }
             else
             {
-                MsgManager.msgAreaShow( 'Network unavailable: cannot Synchronize offline data' );
+                Proceed = true;
             }
+
+            if ( Proceed )
+            {
+
+                if ( FormUtil.login_UserName ) // correct valid-login test?
+                {
+                    if ( ConnManager.isOnline() )
+                    {
+                        if ( me.dataQueued.length + me.dataFailed.length )
+                        {
+
+                            //if ( syncConditionCheckTimer ) clearTimeout( syncConditionCheckTimer );
+                            //if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
+
+                            me.evalDataListContent();
+            
+                            me.dataCombine = me.dataQueued.concat(me.dataFailed);
+
+                            $( '#imgAppDataSyncStatus' ).rotate({ count: 99999, forceJS: true, startDeg: true });
+
+                            $( me.subProgressBar ).removeClass( progClass );
+                            $( me.subProgressBar ).addClass( 'determinate' );
+
+                            syncAutomationLastTimeout = syncAutomationRunTimeout;
+
+                            FormUtil.updateProgressWidth( 0 );
+                            FormUtil.showProgressBar( 0 );
+
+                            me.recursiveSyncItemData ( 0, btnTag )
+
+                        }
+                    }
+                    else
+                    {
+                        MsgManager.msgAreaShow( 'Network unavailable: cannot Synchronize offline data' );
+                    }
+                }
+                else
+                {
+                    MsgManager.msgAreaShow( 'Session error: cannot Synchronize offline data, please login again' );
+                }
+
+            }
+
         }
-        else
-        {
-            MsgManager.msgAreaShow( 'Session error: cannot Synchronize offline data, please login again' );
-        }
+
     }
 
 }

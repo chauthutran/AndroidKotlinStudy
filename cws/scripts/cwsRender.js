@@ -104,6 +104,7 @@ function cwsRender()
 
 		var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
 		var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
+		var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
 
 	}
 

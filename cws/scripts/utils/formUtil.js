@@ -3,7 +3,7 @@
 
 function FormUtil() {}
 
-FormUtil.staticWSName = 'eRefWSDev3';			// Need to be dynamically retrieved
+FormUtil.staticWSName = 'eRefWSStage'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
 FormUtil.appUrlName = 'cws';			// App name - Part of the url
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
@@ -694,20 +694,30 @@ FormUtil.getMyListData = function( listName )
 	}
 }
 
-FormUtil.updateProgressPercent = function( Perc )
+FormUtil.updateProgressWidth = function( W )
 {
 	//$( '#divProgressBar' ).css( 'display', 'block' );
 	//$( '#divProgressBar' ).css( 'zIndex', '100' );
-	$( '#divProgressBar' ).css('width',Perc+'%')
+	//$( '#divProgressBar' ).css('width', W );
+	$( 'div.indeterminate' ).css('width', W );
+	$( 'div.determinate' ).css('width', W );
 }
 
-FormUtil.showProgressBar = function()
+FormUtil.showProgressBar = function( width )
 {
+	if ( width )
+	{
+		//$( '#divProgressBar' ).css('width', width );
+		$( 'div.indeterminate' ).css('width', width );
+		$( 'div.determinate' ).css('width', width );
+	}
 	$( '#divProgressBar' ).css( 'display', 'block' );
+	$( '#divProgressBar' ).show();
 	$( '#divProgressBar' ).css( 'zIndex', '100' );
 }
 
 FormUtil.hideProgressBar = function()
 {
-	$( '#divProgressBar' ).css( 'display', 'none' );
+	//$( '#divProgressBar' ).css( 'display', 'none' );
+	$( '#divProgressBar' ).hide();
 }
