@@ -30,6 +30,8 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.registrationObj;
+	me.loginObj;
+	me.langTermObj;
 	//me.enableThemedColorSchemes = false;
 
 
@@ -48,9 +50,6 @@ function cwsRender()
 	// Create separate class for this?
 	me.blocks = {};	// "blockId": blockObj..
 	
-	//me.blockObj;
-	me.LoginObj;
-
 	me._localConfigUse = false;
 	//me.syncManager;
  
@@ -68,9 +67,9 @@ function cwsRender()
 
 	me.render = function()
 	{
-
 		var initializeStartBlock = true;
 
+		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
 		if ( localStorage.length )
 		{
 			var lastSession = JSON.parse( localStorage.getItem('session') );
@@ -88,18 +87,20 @@ function cwsRender()
 
 		}
 
+		// If set to use saved data loading, set up the neccessary data
 		if ( !initializeStartBlock )
 		{
-			me.LoginObj.loginFormDivTag.hide();
-			me.LoginObj._userName = lastSession.user;
+			me.loginObj.loginFormDivTag.hide();
+			me.loginObj._userName = lastSession.user;
 			FormUtil.login_UserName = lastSession.user;
 			FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
-			me.LoginObj.loginSuccessProcess( loginData );
+			me.loginObj.loginSuccessProcess( loginData );
 		}
 		else
 		{
-			me.LoginObj.loginFormDivTag.show();
-			me.LoginObj.render(); // Open Log Form
+			// If 'initializeStartBlock' case, open the Login form.
+			me.loginObj.loginFormDivTag.show();
+			me.loginObj.render(); // Open Log Form
 		}
 
 		var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
@@ -122,8 +123,9 @@ function cwsRender()
 
 	me.createSubClasses = function()
 	{
-		me.LoginObj = new Login( me );
+		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
+		me.langTermObj = new LangTerm( me );
 	}
 
 	// =============================================
@@ -192,10 +194,10 @@ function cwsRender()
 						}
 					}
 
-					me.LoginObj.spanOuNameTag.text( '' );
-					me.LoginObj.spanOuNameTag.hide();
+					me.loginObj.spanOuNameTag.text( '' );
+					me.loginObj.spanOuNameTag.hide();
 					me.renderDefaultTheme();
-					me.LoginObj.openForm();
+					me.loginObj.openForm();
 
 				}
 				else if ( clicked_areaId === 'aboutPage')
@@ -297,7 +299,7 @@ function cwsRender()
 		// should close current tag/content?
 		if (areaId === 'logOut')
 		{
-			me.LoginObj.openForm();
+			me.loginObj.openForm();
 
 			// hide the menu div if open
 			me.hidenavDrawerDiv();			
@@ -516,14 +518,15 @@ function cwsRender()
 
 	me.reGetDCDconfig = function()
 	{
-		if ( me.LoginObj !== undefined )
+		if ( me.loginObj !== undefined )
 		{
-			me.LoginObj.regetDCDconfig();
+			me.loginObj.regetDCDconfig();
 		}  
 	}
 
 
 	/* @Greg: do we create a new class for managing color-scheme themes? */
+	// Yes, it will be nice. : )
 	me.renderDefaultTheme = function ()
 	{
 		if ( me.configJson && me.configJson.settings && me.configJson.settings.theme && me.configJson.themes )

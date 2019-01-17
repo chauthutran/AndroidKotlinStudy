@@ -16,8 +16,6 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	me.passedData = passedData;
 	me.options = options;
 
-	//me.uid = // Need to create unique id? (new Date().getTime()).toString(36) + count?
-
 	me.blockTag;
 
 	// -- Sub class objects -----

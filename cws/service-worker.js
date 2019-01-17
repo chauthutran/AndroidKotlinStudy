@@ -163,20 +163,12 @@ self.__precacheManifest = [
     "revision": "d7397b5aabba1c795a8a77da2053a6c7"
   },
   {
-    "url": "img/act.svg",
-    "revision": "a59f1cd43cdb7fe359000002283a50a7"
-  },
-  {
     "url": "img/active.svg",
     "revision": "f7bed36b34a604e93941d71404522168"
   },
   {
     "url": "img/alert_col.svg",
     "revision": "ed00a205c0ee21cff01ef3da6f3b75bf"
-  },
-  {
-    "url": "img/alert.svg",
-    "revision": "5f2f94439570a21a82cf1007d5359b8a"
   },
   {
     "url": "img/arrow_down.svg",
@@ -203,18 +195,6 @@ self.__precacheManifest = [
     "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
   },
   {
-    "url": "img/contact.svg",
-    "revision": "3426c2fced5715e0a5ab6160a3b71088"
-  },
-  {
-    "url": "img/favbar_act.svg",
-    "revision": "c5833659a76dea9aa368ca97a27f3b16"
-  },
-  {
-    "url": "img/favbar_arrows.svg",
-    "revision": "2b91fa26982504bd640d1c9e037b0dd7"
-  },
-  {
     "url": "img/favbar_color_act.svg",
     "revision": "95f34a049890161cfb81d08a7f7978c1"
   },
@@ -225,10 +205,6 @@ self.__precacheManifest = [
   {
     "url": "img/favbar_color_contact.svg",
     "revision": "3a13ded0a18298b8dc62cda8b42e388e"
-  },
-  {
-    "url": "img/favbar_contact.svg",
-    "revision": "62cca59cf88ec032832bf2e3868e1bb2"
   },
   {
     "url": "img/key.svg",
@@ -245,10 +221,6 @@ self.__precacheManifest = [
   {
     "url": "img/logo_top.svg",
     "revision": "35e285c0cccf3fc660d9fa7b4aadefd5"
-  },
-  {
-    "url": "img/menu_icon.svg",
-    "revision": "528dd5f2e025f2208386bead7bbc1e59"
   },
   {
     "url": "img/mobile.svg",
@@ -291,24 +263,12 @@ self.__precacheManifest = [
     "revision": "0855672affe535b3921b90a5d45e1e34"
   },
   {
-    "url": "img/plus_on_color.svg",
-    "revision": "84c9647fca9d7f6bbaa6fe44c933993d"
-  },
-  {
     "url": "img/plus_on.svg",
     "revision": "1122c272c9085cf3f611902a4c879b28"
   },
   {
     "url": "img/plus.svg",
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
-  },
-  {
-    "url": "img/request.svg",
-    "revision": "5a9e932915d53546d8e80c2071b867b8"
-  },
-  {
-    "url": "img/service.svg",
-    "revision": "35363617ed2f2f7fb7d14b5b33af2ee5"
   },
   {
     "url": "img/settings.svg",
@@ -332,7 +292,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "7c3b62ade8a7c02b4eef891700c5345a"
+    "revision": "65a8ff605c530454ee29c72c7c94bef8"
   },
   {
     "url": "manifest.json",
@@ -356,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "c7215a6e00bb1b3a2f060610ce4ee181"
+    "revision": "79aa4b0d3028e3459be86322b61b43c5"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -383,6 +343,10 @@ self.__precacheManifest = [
     "revision": "92ea67aa50d0b6392ac9d18d8bf0ca5b"
   },
   {
+    "url": "scripts/classes/langTerm.js",
+    "revision": "e37f592053b9ac04071d44375c5d7b13"
+  },
+  {
     "url": "scripts/classes/login.js",
     "revision": "97a0476867e5d05193169b0ac91d80f8"
   },
@@ -396,7 +360,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1af347124622005d3cf1db71ec670a48"
+    "revision": "2affefc1d31559b54457dc889e833d7e"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
