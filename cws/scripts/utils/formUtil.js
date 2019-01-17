@@ -50,7 +50,8 @@ FormUtil.getServerUrl = function()
 
 FormUtil.isAppsPsiServer = function()
 {
-	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
+	return true;
+	//return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
 }
 
 FormUtil.generateUrl = function( inputsJson, actionJson )

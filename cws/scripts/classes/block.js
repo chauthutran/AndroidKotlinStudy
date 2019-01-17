@@ -8,7 +8,10 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 
 	me.blockType = ( blockJson ) ? blockJson.blockType : undefined;
 	me.blockJson = blockJson;
-	me.blockId = blockId;	// Block Type Name <-- from config, blockId
+	me.blockId = blockId;	// TODO: Should be 'blockName' but since used in config as 'blockId', need to replace together..
+	// TODO: CHANGE ABOVE 'blockId' with Greg
+
+	me.blockUid = Util.generateTimedUid();  //<-- Can generate timed unique id..
 	me.parentTag = parentTag;
 	me.passedData = passedData;
 	me.options = options;
@@ -27,133 +30,79 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	me.blockMsgObj;
 
 	me.blockButtonListObj;  // New Class/Object to implement
-
-	/*
-	// TODO: NEED TO IMPLEMENT
+	
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
 	me.initialize = function()
 	{
-		// On subClasses, they need blockTag..
-		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
+		me.setInitialData();
 
-		me.createSubClasses( me.cwsRenderObj, me.blockJson, me.blockTag, me.passedData );
-
-		me.setEvents_OnInit();
+		me.createSubClasses();				
 	}
-	
+
 	me.render = function()
 	{
-		if ( me.blockFormObj ) me.blockFormObj.render();
-		if ( me.blockListObj ) me.blockListObj.render();
-		//if ( me.dataListObj ) me.dataListObj.render();
-		if ( me.blockButtonObj ) me.blockButtonObj.render();
-		if ( me.blockMsgObj ) me.blockMsgObj.render();
+		if ( me.blockJson )
+		{			
+			// Render Form
+			if ( me.blockJson.form ) me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
+
+			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
+			if ( me.blockJson.list === 'redeemList' ) me.blockListObj.render( me.blockJson.list, me.blockTag, me.passedData, me.options );
+			else if ( me.blockJson.list === 'dataList' ) me.dataListObj.render( me.blockJson, me.blockTag, me.passedData, me.options );
+
+			// Render Buttons
+			if ( me.blockJson.buttons ) me.blockButtonObj.render( me.blockJson.buttons, me.blockTag, undefined );
+
+			// Render Msg
+			if ( me.blockJson.message ) me.blockMsgObj.render( me.blockJson.message, me.blockTag, me.passedData );
+		}			
 	}
 
 	// ------------------
 
-	me.createSubClasses = function( cwsRenderObj, blockJson, blockTag, passedData )
+	me.setInitialData = function()
 	{
-		if ( blockJson )
-		{			
-			// Render Form
-			if ( blockJson.form ) me.blockFormObj = new blockForm( cwsRenderObj, me, blockJson.form, blockTag, passedData );
-			
-			// Render List
-			if ( blockJson.list ) 
-			{
-				me.blockListObj = new blockForm( cwsRenderObj, me, blockJson.list, blockTag, passedData );
+		// Set to be able to reference this object in either 'blockUid' or 'blockId'
+		me.cwsRenderObj.blocks[ me.blockUid ] = me;  // add this block object to the main block memory list - for global referencing
+		me.cwsRenderObj.blocks[ me.blockId ] = me;  // add this block object to the main block memory list - for global referencing
 
-				// NOTE: WS Result is list
-				//me.dataListObj = new DataList( cwsRenderObj, me, blockJson.list, blockTag, passedData );
-			}
+		if ( me.blockJson ) me.blockType = me.blockJson.blockType;
 
-			if ( me.blockJson.buttons ) me.blockButtonObj = new blockButton( cwsRenderObj, me, blockJson.buttons, blockTag, undefined );
-			// TODO: NEED TO CREATE BUTTON LIST CLASS.
-
-			if ( me.blockJson.message ) me.blockMsgObj = new blockMsg( cwsRenderObj, me, blockJson.message, blockTag, passedData );
-		}			
+		
+		// Form BlockTag generate/assign
+		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
 	}
 
-	me.setEvents_OnInit = function()
-	{		
+	me.createSubClasses = function()
+	{
+		me.actionObj = new Action( me.cwsRenderObj, me );
+		me.validationObj = new Validation( me.cwsRenderObj, me );
+		me.blockFormObj = new BlockForm( me.cwsRenderObj, me );
+		me.blockListObj = new BlockList( me.cwsRenderObj, me );
+		me.dataListObj = new DataList( me.cwsRenderObj, me );
+		me.blockButtonObj = new BlockButton( me.cwsRenderObj, me );
+		me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
 	}
+
+	//me.setEvents_OnInit = function() { }
+
 	// =============================================
 
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
-	
-
 	// =============================================
 
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-	
-
-	*/
-
-	// -----------------------------
-	// ---- Methods ----------------
-	
-	me.initialize = function()
-	{
-		me.actionObj = new Action( me.cwsRenderObj, me );
-		me.validationObj = new Validation( me.cwsRenderObj, me );
-		me.blockFormObj = new BlockForm( me.cwsRenderObj, me ); // Do this only if exists/needed
-		me.blockListObj = new BlockList( me.cwsRenderObj, me );	// Do this only if exists/needed		
-		me.dataListObj = new DataList( me.cwsRenderObj, me );	// Do this only if exists/needed
-		me.blockButtonObj = new BlockButton( me.cwsRenderObj, me );
-		me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
-				
-		if ( me.blockJson ) me.blockType = me.blockJson.blockType;
-
-		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
-	}
-
-	// --------------------------------------
-
-	me.renderBlock = function()
-	{
-		// We could appent to parentTag here is desired..
-
-		//console.log( 'on renderBlock, me.blockJson: ' + JSON.stringify( me.blockJson ) + ', options: ' + JSON.stringify( me.options ) );
-
-		if ( me.blockJson )
-		{			
-			// TODO: CREATE BLOCKDATA CLASS TO HANDLE ALL THESE..
-			me.cwsRenderObj.blockData[ me.blockId ] = {};
-
-			// Render Form
-			me.blockFormObj.renderForm( me.blockJson.form, me.blockTag, me.passedData );
-
-			// Render List
-			me.blockListObj.renderList( me.blockJson.list, me.blockTag, me.passedData, me.options );
-
-			// Reder Data List
-			//me.dataListObj.initialize( me.passedData, me.blockJson );
-			me.dataListObj.renderList( me.blockJson, me.blockTag, me.passedData, me.options );
-
-			// Render Buttons
-			me.blockButtonObj.renderBlockButtons( me.blockJson.buttons, me.blockTag, undefined );
-
-
-			// Render Msg
-			me.blockMsgObj.renderMessage( me.blockJson.message, me.blockTag, me.passedData );
-		}			
-	}
-
-	// -------------------------------
-	// --- Methods -------------------
 
 	me.createBlockTag = function( blockId, blockType, parentTag )
 	{
 		var blockTag = $( '<div class="block" blockId="' + blockId + '"></div>' );
 		blockTag.addClass( blockType );
-
 
 		// If 'me.options.notClear' exists and set to be true, do not clear the parent Tag contents
 		if ( !( me.options && me.options.notClear ) )
@@ -161,7 +110,6 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 			// Clear any existing block - not always..  We could have option to hide instead for 'back' feature.
 			parentTag.find( 'div.block' ).remove();
 		}
-
 
 		// Put it under parentTag
 		parentTag.append( blockTag.addClass( 'blockStyle' ) );		

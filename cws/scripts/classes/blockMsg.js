@@ -21,7 +21,7 @@ function BlockMsg( cwsRenderObj, blockObj )
 
 	// ------------------------------------
 	
-	me.renderMessage = function( messageJson, blockTag, passedData )
+	me.render = function( messageJson, blockTag, passedData )
 	{
 		formDivSecTag = $( '<div class="formDivSec"></div>' );
 		blockTag.append( formDivSecTag );

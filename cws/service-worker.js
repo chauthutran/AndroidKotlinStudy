@@ -163,12 +163,20 @@ self.__precacheManifest = [
     "revision": "d7397b5aabba1c795a8a77da2053a6c7"
   },
   {
+    "url": "img/act.svg",
+    "revision": "a59f1cd43cdb7fe359000002283a50a7"
+  },
+  {
     "url": "img/active.svg",
     "revision": "f7bed36b34a604e93941d71404522168"
   },
   {
     "url": "img/alert_col.svg",
     "revision": "ed00a205c0ee21cff01ef3da6f3b75bf"
+  },
+  {
+    "url": "img/alert.svg",
+    "revision": "5f2f94439570a21a82cf1007d5359b8a"
   },
   {
     "url": "img/arrow_down.svg",
@@ -195,6 +203,18 @@ self.__precacheManifest = [
     "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
   },
   {
+    "url": "img/contact.svg",
+    "revision": "3426c2fced5715e0a5ab6160a3b71088"
+  },
+  {
+    "url": "img/favbar_act.svg",
+    "revision": "c5833659a76dea9aa368ca97a27f3b16"
+  },
+  {
+    "url": "img/favbar_arrows.svg",
+    "revision": "2b91fa26982504bd640d1c9e037b0dd7"
+  },
+  {
     "url": "img/favbar_color_act.svg",
     "revision": "95f34a049890161cfb81d08a7f7978c1"
   },
@@ -205,6 +225,10 @@ self.__precacheManifest = [
   {
     "url": "img/favbar_color_contact.svg",
     "revision": "3a13ded0a18298b8dc62cda8b42e388e"
+  },
+  {
+    "url": "img/favbar_contact.svg",
+    "revision": "62cca59cf88ec032832bf2e3868e1bb2"
   },
   {
     "url": "img/key.svg",
@@ -221,6 +245,10 @@ self.__precacheManifest = [
   {
     "url": "img/logo_top.svg",
     "revision": "35e285c0cccf3fc660d9fa7b4aadefd5"
+  },
+  {
+    "url": "img/menu_icon.svg",
+    "revision": "528dd5f2e025f2208386bead7bbc1e59"
   },
   {
     "url": "img/mobile.svg",
@@ -263,12 +291,24 @@ self.__precacheManifest = [
     "revision": "0855672affe535b3921b90a5d45e1e34"
   },
   {
+    "url": "img/plus_on_color.svg",
+    "revision": "84c9647fca9d7f6bbaa6fe44c933993d"
+  },
+  {
     "url": "img/plus_on.svg",
     "revision": "1122c272c9085cf3f611902a4c879b28"
   },
   {
     "url": "img/plus.svg",
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
+  },
+  {
+    "url": "img/request.svg",
+    "revision": "5a9e932915d53546d8e80c2071b867b8"
+  },
+  {
+    "url": "img/service.svg",
+    "revision": "35363617ed2f2f7fb7d14b5b33af2ee5"
   },
   {
     "url": "img/settings.svg",
@@ -292,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0feb1087a6e74d5d195be5870811f323"
+    "revision": "7c3b62ade8a7c02b4eef891700c5345a"
   },
   {
     "url": "manifest.json",
@@ -312,31 +352,31 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "526807c3d573d4a38e6f9e52b227e262"
+    "revision": "0555e7fb53f65795fe93872df3948baf"
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "aed7ccf845c38ac3cea084124b5ef078"
+    "revision": "c7215a6e00bb1b3a2f060610ce4ee181"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "c1918d30bafcd8118d486691d934fad4"
+    "revision": "d6da8be86d24a6ee2a6c0347028d1679"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f91bffeaad8078f591214c4c2dc47ad9"
+    "revision": "8e5713b3538577a985455f08f8bf947a"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "43a1c0e1c157747f5d6f33d1ac03700d"
+    "revision": "cca02462aa899f64c1d31ca69f6dd8bd"
   },
   {
     "url": "scripts/classes/blockMsg.js",
-    "revision": "e07c7ceac70600386f0c601d307493aa"
+    "revision": "ae440bac958d28ed25d99759bfac11ca"
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "aa2306150a1af1c36035b8d24f27c4fb"
+    "revision": "522f3a2e91adf10379bbc67b82f5a22d"
   },
   {
     "url": "scripts/classes/favIcon.js",
@@ -344,7 +384,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "98baae1f7416ea96c0bb0dbdb13bb875"
+    "revision": "97a0476867e5d05193169b0ac91d80f8"
   },
   {
     "url": "scripts/classes/test.json",
@@ -356,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "c5020dfbe0afd308c8f8b6215c3b0e73"
+    "revision": "1af347124622005d3cf1db71ec670a48"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -396,7 +436,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "c0a8715c573aec51aa146059df1b8a6b"
+    "revision": "eb0a209b9f6a40110a8b8ada5499e6ab"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -416,7 +456,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "f15e8c5442874ab3fa8b56caa62e48a9"
+    "revision": "6898dee065d125a43b4e88071767bb8c"
   },
   {
     "url": "scripts/z. Old Files/cwsRender_v0.js",
@@ -478,5 +518,5 @@ self.__precacheManifest = [
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst(), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');

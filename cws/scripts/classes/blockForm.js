@@ -11,18 +11,12 @@ function BlockForm( cwsRenderObj, blockObj )
 
 	me._childTargetActionDelay = 400;
 
-	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
-
-
-	// -----------------------------
-	// ---- Methods ----------------
 	
 	me.initialize = function() { }
 
-	// ------------------------------------
-	me.renderForm = function( formDef, blockTag, passedData )
+	me.render = function( formDef, blockTag, passedData )
 	{
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, me.cwsRenderObj.configJson.definitionForms );
 		me.formJsonArr = formJsonArr;
@@ -54,8 +48,8 @@ function BlockForm( cwsRenderObj, blockObj )
 		}
 	}
 	
-	// -----------------------------------
-	// ---- 2nd level methods -----------
+	// =============================================
+	// === OTHER INTERNAL/EXTERNAL METHODS =========
 	
 	me.getIdList_FormJson = function( formJsonArr )
 	{

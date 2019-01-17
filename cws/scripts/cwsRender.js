@@ -46,8 +46,8 @@ function cwsRender()
 	me._globalJsonData = undefined;
 
 	// Create separate class for this?
-	me.blockData = {};	// "blockId": { "formData": [], "returnData?": {}, "otherAddedData": {} }
-
+	me.blocks = {};	// "blockId": blockObj..
+	
 	//me.blockObj;
 	me.LoginObj;
 
@@ -59,11 +59,11 @@ function cwsRender()
 
 	me.initialize = function()
 	{
-		me.createSubClasses();
+		me.setInitialData();
 
 		me.setEvents_OnInit();
 
-		me.setDefaults();
+		me.createSubClasses();
 	}
 
 	me.render = function()
@@ -109,10 +109,9 @@ function cwsRender()
 
 	// ------------------
 
-	me.createSubClasses = function()
+	me.setInitialData = function()
 	{
-		me.LoginObj = new Login( me );
-		me.aboutApp = new aboutApp( me );
+		me.manifest = FormUtil.getManifest();
 	}
 
 	me.setEvents_OnInit = function()
@@ -121,10 +120,12 @@ function cwsRender()
 		me.setPageHeaderEvents();
 	}
 
-	me.setDefaults = function()
+	me.createSubClasses = function()
 	{
-		me.manifest = FormUtil.getManifest();
+		me.LoginObj = new Login( me );
+		me.aboutApp = new aboutApp( me );
 	}
+
 	// =============================================
 
 
@@ -165,7 +166,7 @@ function cwsRender()
 				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
-				startBlockObj.renderBlock();  // should been done/rendered automatically?
+				startBlockObj.render();  // should been done/rendered automatically?
 
 				// Change start area mark based on last user info..
 				me.trackUserLocation( clicked_area );
@@ -312,7 +313,7 @@ function cwsRender()
 			if ( selectedArea.startBlockName )
 			{
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
-				startBlockObj.renderBlock();  // should been done/rendered automatically?  			
+				startBlockObj.render();  // should been done/rendered automatically?  			
 			}
 		}
 	}
@@ -329,7 +330,7 @@ function cwsRender()
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
-		blockObj.renderBlock();  // should been done/rendered automatically?  			
+		blockObj.render();  // should been done/rendered automatically?  			
 
 		return blockObj;
 	}

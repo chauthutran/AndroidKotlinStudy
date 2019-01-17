@@ -1101,6 +1101,11 @@ Util.generateRandomId = function()
 	return id;
 };
 
+Util.generateTimedUid = function() 
+{
+	return ( new Date().getTime() ).toString( 36 );
+}
+
 
 Util.getParameterByName = function( name ) 
 {
@@ -1150,20 +1155,6 @@ Util.upNumber_IntArr = function( arr, upNumber )
 	}
 };
 
-Util.generateRandomId = function() 
-{
-	var id = '';
-	var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var id_size = 12;
-
-	for (var i = 1; i <= id_size; i++) 
-	{
-		var randPos = Math.floor( Math.random() * charSet.length );
-		id += charSet[ randPos ];
-	}
-	
-	return id;
-}
 
 // Others
 // ----------------------------------

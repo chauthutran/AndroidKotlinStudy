@@ -1,5 +1,6 @@
 // -------------------------------------------
-// -- BlockList Class/Methods
+// -- DataList Class/Methods
+// -- (Web Service) Returned data list rendering as list..
 function DataList( cwsRenderObj, blockObj ) 
 {
     var me = this;
@@ -29,7 +30,7 @@ function DataList( cwsRenderObj, blockObj )
 
 	// -----------------------------------
 
-    me.renderList = function( blockJson, newBlockTag, jsonListData )
+    me.render = function( blockJson, newBlockTag, jsonListData )
 	{
         me.blockJson = blockJson;
         if ( blockJson.displayResult ) me.itemDisplayAttrList = blockJson.displayResult;
@@ -216,9 +217,7 @@ function DataList( cwsRenderObj, blockObj )
         {
             var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj );
 
-            newItemBtn.renderBlockButtons( itemButtons, divItemTag );
-
-            //me.blockObj.blockButtonObj.renderBlockButtons( itemButtons, divItemTag );//, itemData );
+            newItemBtn.render( itemButtons, divItemTag );
         } 
     }
 

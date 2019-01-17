@@ -153,7 +153,7 @@ function Action( cwsRenderObj, blockObj )
 
 					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, passedData, { 'notClear': true } );	
 					//var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.renderBlockTag, passedData, { 'notClear': true } );	
-					newBlockObj.renderBlock();
+					newBlockObj.render();
 
 					if ( btnTag.hasClass( 'clicked' ) )
 					{ 

@@ -29,8 +29,6 @@ function BlockList( cwsRenderObj, blockObj )
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
-
-
 	// -----------------------------
 	// ---- Methods ----------------
 	
@@ -40,42 +38,36 @@ function BlockList( cwsRenderObj, blockObj )
 
 	// -----------------------------------
 
-    me.renderList = function( list, newBlockTag, passedData, options )
+    me.render = function( list, newBlockTag, passedData, options )
 	{
-		if ( list !== undefined )
-		{
-			if ( typeof list === 'string' ) 
-			{
-				if ( list === 'redeemList' )
-				{
-                    if ( options )
-                    {
-                        me.options = options;
-                    }
+		if ( list === 'redeemList' )
+        {
+            if ( options )
+            {
+                me.options = options;
+            }
 
-                    if ( newBlockTag )
-                    {
-                        me.newBlockTag = newBlockTag;
-                    }
+            if ( newBlockTag )
+            {
+                me.newBlockTag = newBlockTag;
+            }
 
-                    me.redeemList_Display( me.newBlockTag );
+            me.redeemList_Display( me.newBlockTag );
 
-                    // Add Event from 'FormUtil'
-                    //  - To Enable click
-                    FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
+            // Add Event from 'FormUtil'
+            //  - To Enable click
+            FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
-                    if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
-                    {
-                        me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
-                    }
-                    else
-                    {
-                        me.newBlockTag.find( '.floatListMenuIcon' ).hide();
-                    }
+            if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+            {
+                me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
+            }
+            else
+            {
+                me.newBlockTag.find( '.floatListMenuIcon' ).hide();
+            }
 
-				}
-			}
-		}
+        }
     }
 
 

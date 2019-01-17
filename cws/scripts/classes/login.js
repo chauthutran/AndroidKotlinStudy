@@ -14,9 +14,7 @@ function Login( cwsRenderObj )
 	me.spanOuNameTag = $( '#spanOuName' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
 
-
-
-  // Greg added: 2018/11/23 -- below 3 lines
+  	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
 	me._pHash = '';
 	me._staySignedIn = true;
@@ -26,9 +24,9 @@ function Login( cwsRenderObj )
 
 	me.initialize = function()
 	{
-		me.createSubClasses();
-
 		me.setEvents_OnInit();
+
+		//me.createSubClasses();	
 	}
 
 	me.render = function()
@@ -38,7 +36,7 @@ function Login( cwsRenderObj )
 
 	// ------------------
 
-	me.createSubClasses = function() { }
+	//me.createSubClasses = function() { }
 
 	me.setEvents_OnInit = function()
 	{
