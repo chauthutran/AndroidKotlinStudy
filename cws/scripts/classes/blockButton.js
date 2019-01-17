@@ -7,13 +7,12 @@ function BlockButton( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 		
-	// -----------------------------
-	// ---- Methods ----------------
+	// =============================================
+	// === TEMPLATE METHODS ========================
 	
 	me.initialize = function() {}
 
-	// -----------------------------------
-	me.renderBlockButtons = function( buttonsJson, blockTag, passedData )
+	me.render = function( buttonsJson, blockTag, passedData )
 	{
 		if ( buttonsJson !== undefined )
 		{
@@ -97,8 +96,8 @@ function BlockButton( cwsRenderObj, blockObj )
 		}
 	}
 	
-	// -----------------------------------
-	// ---- 2nd level methods -----------
+	// =============================================
+	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
 	me.renderBlockButton = function( btnNo, btnData, divTag, passedData )
 	{
@@ -293,7 +292,7 @@ function BlockButton( cwsRenderObj, blockObj )
 	
 				// Create the block and render it.
 				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag );	
-				newBlockObj.renderBlock();
+				newBlockObj.render();
 			}
 		}
 	}

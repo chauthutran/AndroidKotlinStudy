@@ -196,7 +196,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0feb1087a6e74d5d195be5870811f323"
+    "revision": "65a8ff605c530454ee29c72c7c94bef8"
   },
   {
     "url": "manifest.json",
@@ -216,39 +216,43 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "526807c3d573d4a38e6f9e52b227e262"
+    "revision": "0555e7fb53f65795fe93872df3948baf"
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "aed7ccf845c38ac3cea084124b5ef078"
+    "revision": "79aa4b0d3028e3459be86322b61b43c5"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "c1918d30bafcd8118d486691d934fad4"
+    "revision": "d6da8be86d24a6ee2a6c0347028d1679"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f91bffeaad8078f591214c4c2dc47ad9"
+    "revision": "8e5713b3538577a985455f08f8bf947a"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "43a1c0e1c157747f5d6f33d1ac03700d"
+    "revision": "cca02462aa899f64c1d31ca69f6dd8bd"
   },
   {
     "url": "scripts/classes/blockMsg.js",
-    "revision": "e07c7ceac70600386f0c601d307493aa"
+    "revision": "ae440bac958d28ed25d99759bfac11ca"
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "aa2306150a1af1c36035b8d24f27c4fb"
+    "revision": "522f3a2e91adf10379bbc67b82f5a22d"
   },
   {
     "url": "scripts/classes/favIcon.js",
     "revision": "92ea67aa50d0b6392ac9d18d8bf0ca5b"
   },
   {
+    "url": "scripts/classes/langTerm.js",
+    "revision": "e37f592053b9ac04071d44375c5d7b13"
+  },
+  {
     "url": "scripts/classes/login.js",
-    "revision": "98baae1f7416ea96c0bb0dbdb13bb875"
+    "revision": "97a0476867e5d05193169b0ac91d80f8"
   },
   {
     "url": "scripts/classes/test.json",
@@ -260,7 +264,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "c5020dfbe0afd308c8f8b6215c3b0e73"
+    "revision": "2affefc1d31559b54457dc889e833d7e"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -300,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "c0a8715c573aec51aa146059df1b8a6b"
+    "revision": "eb0a209b9f6a40110a8b8ada5499e6ab"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -320,7 +324,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "f15e8c5442874ab3fa8b56caa62e48a9"
+    "revision": "6898dee065d125a43b4e88071767bb8c"
   },
   {
     "url": "styles/jquery-ui.css",
@@ -342,5 +346,5 @@ self.__precacheManifest = [
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst(), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');
