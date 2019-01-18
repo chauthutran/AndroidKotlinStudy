@@ -191,7 +191,78 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 	return newJsonArr;
 }
 // -----------------------------
-// ---- Submit Related ----------
+// ---- REST (Retrieval/Submit(POST)) Related ----------
+
+FormUtil.getWsUrl = function( subUrl )
+{
+	// if 'subUrl' is full url, use it.  Otherwise, add server url in front.
+	if ( subUrl.indexOf( 'http' ) === 0 )
+	{
+		return subUrl;  // THIS WOULD NOT NORMALY WORK DUE TO CORS policy
+	} 
+	else 
+	{
+		return FormUtil.getServerUrl() + "/" + FormUtil.staticWSName + subUrl;
+	}
+}
+
+
+// GET Request to Web Service..
+FormUtil.wsRetrievalGeneral = function( queryLoc, loadingTag, returnFunc )
+{		
+	var url = FormUtil.getWsUrl( queryLoc ); //  queryLoc --> '/api/loginCheck'
+
+	RESTUtil.retrieveJson( url, function( success, returnJson )
+	{
+		if ( loadingTag ) loadingTag.remove();
+
+		if ( returnFunc ) returnFunc( returnJson );
+	});
+}
+
+
+// POST Request required json prepare
+FormUtil.getFetchWSJson = function( payloadJson )
+{
+	var fetchJson = {
+		method: 'POST'
+		,headers: { 'usr': '', 'pwd': '' }
+		,body: '{}'
+	};
+
+
+	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
+	{
+		fetchJson.headers.usr = payloadJson.submitLogin_usr;
+		fetchJson.headers.pwd = payloadJson.submitLogin_pwd;	
+	}
+	else
+	{
+		fetchJson.headers.usr = FormUtil.login_UserName;
+		fetchJson.headers.pwd = FormUtil.login_Password;	
+	}
+		
+	if ( payloadJson ) fetchJson.body = JSON.stringify( payloadJson );
+	
+	return fetchJson;
+}
+
+
+// POST Request to Web Service..
+FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
+{	
+	// Send the POST reqesut	
+	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
+	{
+		if ( loadingTag ) loadingTag.remove();
+
+		if ( returnFunc ) returnFunc( success, returnJson );
+	});
+}
+
+
+
+// --- --- --- ---
 
 FormUtil.submitRedeem = function( url, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
 {
@@ -253,47 +324,7 @@ FormUtil.checkLogin = function()
 	return ( FormUtil.login_UserName && FormUtil.login_Password );
 }
 
-FormUtil.getWsUrl = function( subUrl )
-{
-	return FormUtil.getServerUrl() + "/" + FormUtil.staticWSName + subUrl;
-}
-
-FormUtil.getFetchWSJson = function( payloadJson )
-{
-	var fetchJson = {
-		method: 'POST'
-		,headers: { 'usr': '', 'pwd': '' }
-		,body: '{}'
-	};
-
-
-	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
-	{
-		fetchJson.headers.usr = payloadJson.submitLogin_usr;
-		fetchJson.headers.pwd = payloadJson.submitLogin_pwd;	
-	}
-	else
-	{
-		fetchJson.headers.usr = FormUtil.login_UserName;
-		fetchJson.headers.pwd = FormUtil.login_Password;	
-	}
-		
-	if ( payloadJson ) fetchJson.body = JSON.stringify( payloadJson );
-	
-	return fetchJson;
-}
-
-FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
-{	
-	// Send the POST reqesut	
-	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( success, returnJson );
-	});
-}
-
+// ---------------------------------------------------------
 
 FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
 {

@@ -23,6 +23,10 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "back_files/service-worker_back.js",
+    "revision": "de80056a12a74c2a49b1de762e295cb9"
+  },
+  {
     "url": "css/log.css",
     "revision": "528354822cf90529d81b97d1223f7114"
   },
@@ -41,6 +45,14 @@ self.__precacheManifest = [
   {
     "url": "css/style.css",
     "revision": "3d65929c4db78e363976c70bcb7a286d"
+  },
+  {
+    "url": "images/baseline-cloud_off-24px.svg",
+    "revision": "bc7f6d61a42dc641790bb96a6c381dfb"
+  },
+  {
+    "url": "images/baseline-cloud-24px_green.svg",
+    "revision": "40dc9e3e4e184f60349091702664a346"
   },
   {
     "url": "images/baseline-cloud-24px.svg",
@@ -163,6 +175,14 @@ self.__precacheManifest = [
     "revision": "56d9b808639a50927115cab90dd8e246"
   },
   {
+    "url": "img/net-sync.svg",
+    "revision": "ca8591a7226c1592fedda68b4d1efa1f"
+  },
+  {
+    "url": "img/net.svg",
+    "revision": "2144acb467584dffbf59e6798923bd2b"
+  },
+  {
     "url": "img/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
@@ -196,7 +216,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "65a8ff605c530454ee29c72c7c94bef8"
+    "revision": "f133a56747a2899f60cf4bffd88de4f6"
   },
   {
     "url": "manifest.json",
@@ -208,7 +228,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "1496b12f4f1cb037fcde04ad9aabf4ae"
+    "revision": "a6b201f9b6c21b16cad954161f270750"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -248,7 +268,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "e37f592053b9ac04071d44375c5d7b13"
+    "revision": "73532093cc1c7cf2b7f143656c9cc769"
   },
   {
     "url": "scripts/classes/login.js",
@@ -264,7 +284,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "2affefc1d31559b54457dc889e833d7e"
+    "revision": "767b7de814540dbb14bf45047ad40d95"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -304,11 +324,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "eb0a209b9f6a40110a8b8ada5499e6ab"
+    "revision": "74e2cbc8d750a4f1e5a50fe70ef0427d"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "a5d13c3b4ce654291a8bbd643a0c8b6c"
+    "revision": "c309e0fda013496fcb516c90e2463ea2"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -316,15 +336,51 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "3718932a0f18d021ba3264ac3d769dd4"
+    "revision": "4602d38331ea511aa30cb8a1407f2981"
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "78c79959f4c7deac94f81ee974358fe6"
+    "revision": "4d4c15f36ca13138ebea867877649d6e"
   },
   {
     "url": "scripts/utils/util.js",
     "revision": "6898dee065d125a43b4e88071767bb8c"
+  },
+  {
+    "url": "scripts/z. Old Files/cwsRender_v0.js",
+    "revision": "190671a49009c2cc6caa80d022d71fe4"
+  },
+  {
+    "url": "scripts/z. Old Files/materialize.js",
+    "revision": "38de72592b09b35b61ac49ebf1eba54b"
+  },
+  {
+    "url": "scripts/z. Old Files/testSection.js",
+    "revision": "0e632d23fbb96b56bf389700041637dc"
+  },
+  {
+    "url": "styles/images/ui-icons_444444_256x240.png",
+    "revision": "d10bc07005bb2d604f4905183690ac04"
+  },
+  {
+    "url": "styles/images/ui-icons_555555_256x240.png",
+    "revision": "00dd0ec0a16a1085e714c7906ff8fb06"
+  },
+  {
+    "url": "styles/images/ui-icons_777620_256x240.png",
+    "revision": "4e7e3e142f3939883cd0a7e00cabdaef"
+  },
+  {
+    "url": "styles/images/ui-icons_777777_256x240.png",
+    "revision": "40bf25799e4fec8079c7775083de09df"
+  },
+  {
+    "url": "styles/images/ui-icons_cc0000_256x240.png",
+    "revision": "093a819138276b446611d1d2a45b98a2"
+  },
+  {
+    "url": "styles/images/ui-icons_ffffff_256x240.png",
+    "revision": "ea4ebe072be75fbbea002631916836de"
   },
   {
     "url": "styles/jquery-ui.css",
@@ -340,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "d6be5a144883d6535c7fa3574a10bd40"
+    "revision": "fb90c84bb4e0b98e6008ec03ab1286ef"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
