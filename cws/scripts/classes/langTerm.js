@@ -40,11 +40,11 @@ function LangTerm( cwsRenderObj )
 
 	// MAIN METHOD 1.
 	// Retrieve it from ws and put it on local storage or local store location
-	me.retrieveLangTermInner = function( returnFunc )
+	me.retrieveLangTermInner = function( lang, returnFunc )
 	{
-		var lang = "en";
+		//var lang = "en";
 
-		var queryLoc = '/api/langTerms?lang=en';  // '/api/langTerms' for all lang..
+		var queryLoc = '/api/langTerms?lang=' + lang;  // '/api/langTerms' for all lang..
 		var loadingTag = undefined;
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
@@ -90,9 +90,9 @@ function LangTerm( cwsRenderObj )
 		});
 	}
 
-	me.retrieveLangTerm = function( returnFunc )
+	me.retrieveLangTerm = function( lang, returnFunc )
 	{
-		me.retrieveLangTermInner( function( returnJson )
+		me.retrieveLangTermInner( lang, function( returnJson )
 		{
 			me.currentLangTerm = returnJson;
 			returnFunc( returnJson );

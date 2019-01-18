@@ -53,7 +53,7 @@ function cwsRender()
 	me._localConfigUse = false;
 	//me.syncManager;
  
-	me._translateEnable = true;
+	me._translateEnable = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -112,8 +112,10 @@ function cwsRender()
 
 		if ( me._translateEnable )
 		{
+			var lang = "pt";
+
 			// NOTE: Try language download here.
-			me.langTermObj.retrieveLangTerm( function() {
+			me.langTermObj.retrieveLangTerm( lang, function() {
 			
 				me.langTermObj.translatePage();
 			});

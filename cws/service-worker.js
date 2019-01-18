@@ -268,7 +268,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "73532093cc1c7cf2b7f143656c9cc769"
+    "revision": "6efc5013547ba18742c281dc8dfe685e"
   },
   {
     "url": "scripts/classes/login.js",
@@ -284,7 +284,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "767b7de814540dbb14bf45047ad40d95"
+    "revision": "5147c56b1adaddf563be19c31418564e"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
