@@ -203,8 +203,46 @@ a.brand-logo {
   -webkit-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.65);
   -moz-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.65);
   box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.65);
-  -webkit-transition: width 500ms, -webkit-transform 500ms; /* Safari */
+  /* -webkit-transition: width 500ms, -webkit-transform 500ms; */ /* Safari */ 
   transition: width 500ms, transform 500ms;
+  overflow-y: hidden;
+  border-right: 3px solid inherit;
+}
+
+#navDrawerHeader
+{
+  width:100%;
+  height:100px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.navMenuHeader
+{
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.navDrawerTransitionSmooth
+{
+  -webkit-transition: width 500ms, -webkit-transform 500ms; /* Safari */ 
+  transition: width 500ms, transform 500ms;
+}
+
+.navDrawerTransitionNone
+{
+  -webkit-transition: none !important; /* Safari */ 
+  transition: none !important;
+}
+
+.navDrawerTransitionNone .menu-mobile-row
+{
+  opacity: 0.75;
+}
+
+.navDrawerTransitionSmooth .menu-mobile-row
+{
+  opacity: 1;
 }
 
 #divMsgAreaWrap

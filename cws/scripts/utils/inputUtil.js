@@ -1,16 +1,28 @@
 // =========================================
 // === Message with entire screen blocking
-function inputMonitor( destObj ) 
+function inputMonitor() 
 {
-    var container = document.querySelector( destObj );
+    //var container = document.querySelector( destObj );
 
-    container.addEventListener("touchstart", startTouch, false);
-    container.addEventListener("touchmove", moveTouch, false);
-    container.addEventListener("touchend", touchEnd, false);
-  
+    document.addEventListener("touchstart", startTouch, false);
+    document.addEventListener("touchmove", moveTouch, false);
+    document.addEventListener("touchend", touchEnd, false);
+
+    var screenWidth = document.body.clientWidth; //container.offsetWidth;
+    var screenHeight = document.body.clientHeight; //container.offsetHeight;
+
     // Swipe Up / Down / Left / Right
     var initialX = null;
     var initialY = null;
+
+    var navDrawerVisibleOnStart = false;
+    var navDrawerVisibleOnMove = false;
+
+    var initialNavDrawerWidth = 0;
+    var loggedIn = false;
+
+    var trackXtouchDistance = 0;
+    var trackYtouchDistance = 0;
 
     var currentX = null;
     var currentY = null;
@@ -18,17 +30,25 @@ function inputMonitor( destObj )
     var diffX = null;
     var diffY = null;
 
-    var destObjWidth = container.offsetWidth;
-    var destObjHeight = container.offsetHeight;
 
     function startTouch(e) 
     {
         initialX = e.touches[0].clientX;
         initialY = e.touches[0].clientY;
+
+        navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
+        initialNavDrawerWidth = document.querySelector( '#navDrawerDiv' ).offsetWidth;
+
+        loggedIn = FormUtil.checkLogin();
     };
     
     function moveTouch(e) 
     {
+        if ( !loggedIn )
+        {
+            return;
+        }
+
         if (initialX === null) {
             return;
         }
@@ -37,34 +57,70 @@ function inputMonitor( destObj )
             return;
         }
 
-        var currentX = e.touches[0].clientX;
-        var currentY = e.touches[0].clientY;
+        if ( e.touches[0].clientX == null)
+        {
+            return;
+        }
 
-        var diffX = initialX - currentX;
-        var diffY = initialY - currentY;
+        currentX = e.touches[0].clientX;
+        currentY = e.touches[0].clientY;
 
+        diffX = initialX - currentX;
+        diffY = initialY - currentY;
+
+        trackXtouchDistance += diffX;
+        trackYtouchDistance += diffY;
+
+        navDrawerVisibleOnMove = $( '#navDrawerDiv' ).is( ':visible' );
 
         if (Math.abs(diffX) > Math.abs(diffY)) 
         {
-            // sliding horizontally > changed from ZERO to 10 because any swipe (even 1px) works
-            if ( diffX > 10 ) 
+            if ( diffX > 0 ) 
             {
-                // swiped left
-                console.log("swiped left");
-                if ( ( destObj == '#focusRelegator' ) || ( destObj == '#navDrawerDiv' ) )
+                // swiping left
+                console.log("swiping left");
+
+                if ( navDrawerVisibleOnStart && ( currentX < initialNavDrawerWidth ) )
                 {
-                    $( '#nav-toggle' ).click();
+                    if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) )
+                    {
+                        $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionSmooth' );
+                        $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionNone' );
+                    }
+
+                    $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+
+                    if ( !navDrawerVisibleOnMove )
+                    {
+                        $( '#navDrawerDiv' ).show();
+                    }
                 }
             }
             else
             {
-                // swiped right
-                console.log("swiped right");
-                if ( destObj == '#pageDiv' )
+                // swiping right
+                console.log("swiping right");
+
+                /* run navDrawer slide-expand (eval) for right-swipe ONLY if starting Xposition < 50px */
+                if ( initialX < 50 )
                 {
-                    $( '#nav-toggle' ).click();
+                    if ( ! navDrawerVisibleOnStart )
+                    {
+                        if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) )
+                        {
+                            $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionSmooth' );
+                            $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionNone' );
+                        }
+
+                        $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+
+                        if ( !navDrawerVisibleOnMove )
+                        {
+                            $( '#navDrawerDiv' ).show();
+                        }
+                    }
                 }
-                //alert ('swiped right');
+
             }
         }
         else
@@ -72,18 +128,15 @@ function inputMonitor( destObj )
             // sliding vertically
             if (diffY > 0) 
             {
-                // swiped up
-                console.log("swiped up");
+                // swiping up
+                console.log("swiping up");
             } 
             else 
             {
-                // swiped down
-                console.log("swiped down");
+                // swiping down
+                console.log("swiping down");
             }
         }
-
-        initialX = null;
-        initialY = null;
 
         e.preventDefault();
 
@@ -92,6 +145,80 @@ function inputMonitor( destObj )
     function touchEnd(e) 
     {
 
+        //if ( !loggedIn || ( diffX == 0 ) )
+        if ( !loggedIn || ( trackXtouchDistance == 0) )
+        {
+            return;
+        }
+
+        console.log( getSessionSummary() );
+
+        var autoExpandThreshold = FormUtil.navDrawerExpandThreshold( screenWidth );
+
+        /* MENU HIDDEN/CLOSED > CHECK SWIPE OPEN THRESHOLDS */
+        if ( ! navDrawerVisibleOnStart && ( initialX < 50 ) ) // wasn't shown at start of swipe + swipe started within 50px of left part of screen
+        {
+            /* CHECK SWIPE LEFT-to-RIGHT thresholds to SHOW MENU */
+            /* navDrawerVisibleOnStart = false */
+            if ( currentX > autoExpandThreshold ) // menu dragged OPEN (LEFT-to-RIGHT) WIDER than minimum width threshold >> SHOW
+            {
+
+                $( '#navDrawerDiv' ).css( 'width', FormUtil.navDrawerMaxWidth( screenWidth ) );
+                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
+                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
+                $( '#nav-toggle' ).click();
+
+            }
+            else    // menu NOT dragged (LEFT-to-RIGHT) wider than minimum width threshold >> HIDE
+            {
+
+                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
+                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
+                //$( '#navDrawerDiv' ).css( 'width', '0' );
+                $( '#navDrawerDiv' ).hide();
+                $( '#navDrawerDiv' ).css( 'width', 'auto' );
+
+            }
+        }
+        else
+        {
+            /* MENU ALREADY OPEN > CHECK SWIPE CLOSE THRESHOLDS */
+            /* navDrawerVisibleOnStart = true */
+            if ( currentX < autoExpandThreshold ) // menu dragged open (while visible) LESS than minimum width threshold >> HIDE
+            {
+                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
+                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
+                $( '#nav-toggle' ).click();
+
+            }
+            else
+            {
+                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
+                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
+                $( '#navDrawerDiv' ).css( 'width', FormUtil.navDrawerMaxWidth( screenWidth ) );
+
+            }
+        }
+
+        initialX = null;
+        initialY = null;
+
+        trackXtouchDistance = 0;
+        trackYtouchDistance = 0;
+
     };
 
+    function getSessionSummary()
+    {
+        var msg = 'initialX = ' + initialX + 
+                ' initialY = '+ initialY + 
+                ' currentX = ' + currentX + 
+                ' currentY = ' + currentY + 
+                ' diffX = ' + diffX + 
+                ' diffY = ' + diffY + 
+                ' trackXtouchDistance = ' + trackXtouchDistance +
+                ' trackYtouchDistance = ' + trackYtouchDistance;
+
+        return msg;
+    }
 }

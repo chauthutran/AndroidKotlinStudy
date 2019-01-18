@@ -173,7 +173,7 @@ function aboutApp( cwsRender )
                 var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
-                var labelTag = $( '<label class="from-string titleDiv" />' );
+                var labelTag = $( '<label term="User_Language" class="from-string titleDiv" />' );
                 labelTag.html( 'User language' );
                 divAttrTag.append( labelTag );
                 var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"/>');
@@ -190,7 +190,7 @@ function aboutApp( cwsRender )
                 valueTag.html( userConfig.dcdConfig.settings.theme );
                 divAttrTag.append( valueTag );
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
 		        // James added: 2018/12/17 - BUT WE SHOULD SIMPLY HAVE STATIC TAGS IN index.html, not dynamic ones..
@@ -201,7 +201,9 @@ function aboutApp( cwsRender )
                     console.log( me.cwsRenderObj.configJson );
                 });*/
 
+
                 me.aboutFormDivTag.show();
+                me.cwsRenderObj.langTermObj.translatePage();
 
                 me.syncMgr = new syncManager();
                 me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );

@@ -50,7 +50,7 @@ function syncManager()
 
     me.evalDataListContent = function()
     {
-        if ( FormUtil.login_UserName ) // correct valid-login test?
+        if ( FormUtil.checkLogin() ) // correct valid-login test?
         {
             if ( me.cwsRenderObj )
             {
@@ -71,7 +71,7 @@ function syncManager()
 
     me.evalSyncConditions = function()
     {
-        if ( FormUtil.login_UserName ) // correct valid-login test?
+        if ( FormUtil.checkLogin() ) // correct valid-login test?
         {
             if ( ConnManager.isOnline() )
             {
@@ -104,12 +104,7 @@ function syncManager()
         {
             if ( ( syncAutomationLastTimeout && syncAutomationRunTimeout ) && ( syncAutomationLastTimeout == syncAutomationRunTimeout ) )
             {
-                //clearTimeout( syncAutomationRunTimeout ); //this doesn't work??? not clearing anything: let's assume it's safe to simply recreate a new timer as the old one will have already completed
-                //console.log('same old + new automation timeout');
-                if ( !me.syncRunning )
-                {
-                    me.scheduleSyncAutomationRun();
-                }
+                if ( !me.syncRunning ) me.scheduleSyncAutomationRun();
             }
             else
             {
@@ -149,7 +144,7 @@ function syncManager()
 
     me.dcdConfigVersionTest = function( btnTag )
     {
-        if ( FormUtil.login_UserName ) // correct valid-login test?
+        if ( FormUtil.checkLogin() ) // correct valid-login test?
         {
             if ( ConnManager.isOnline() )
             {
@@ -333,15 +328,12 @@ function syncManager()
             if ( Proceed )
             {
 
-                if ( FormUtil.login_UserName ) // correct valid-login test?
+                if ( FormUtil.checkLogin() ) // correct valid-login test?
                 {
                     if ( ConnManager.isOnline() )
                     {
                         if ( me.dataQueued.length + me.dataFailed.length )
                         {
-
-                            //if ( syncConditionCheckTimer ) clearTimeout( syncConditionCheckTimer );
-                            //if ( syncAutomationRunTimeout ) clearTimeout( syncAutomationRunTimeout );
 
                             me.evalDataListContent();
             

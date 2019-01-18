@@ -17,6 +17,7 @@ MsgManager.progressBarUpdateTimer = 25;
 MsgManager.progressCheckCount = 0;
 MsgManager._autoHide = true;
 MsgManager._autoHideDelay = 5000; //changed to 5 sec by James (2018/12/17)
+MsgManager.timer = 0;
 
 
 MsgManager.initialSetup = function()
@@ -39,7 +40,6 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
 {
     if ( msg )
     {
-        /* START > added by Greg (2018/12/05) */
         if ( !MsgManager._autoHide )
         {
             var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
@@ -50,22 +50,24 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
                 MsgManager._autoHideDelay = dcdConf.dcdConfig.settings.message.autoHideTime;
             }
         }
-        /* END > added by Greg (2018/12/05) */
-
-        //MsgManager.divMsgAreaTag.hide( 'fast' );
-        //MsgManager.spanMsgAreaTextTag.text( '' );
 
         MsgManager.spanMsgAreaTextTag.text( msg );
-        MsgManager.divMsgAreaTag.show( 'fast' );
 
-        //console.log( ' -- Msg: ' + msg );    
+        if ( ! $( '#divMsgArea' ).is( ':visible' ) )
+        {
+            MsgManager.divMsgAreaTag.show( 'fast' );
+        }
+        else
+        {
+            clearTimeout ( MsgManager.timer );
+        }
 
         if ( timeoutTime )
         {
-            setTimeout( function() {                
+            MsgManager.timer = setTimeout( function() {                
                 MsgManager.msgAreaClear( 'slow' );
             }, timeoutTime );
-        } /* START > added by Greg (2018/12/05) */
+        }
         else
         {
             if ( countDown )
@@ -92,12 +94,12 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
             {
                 if ( MsgManager._autoHide )
                 {
-                    setTimeout( function() {                
+                    MsgManager.timer = setTimeout( function() {                
                         MsgManager.msgAreaClear( );
                     }, MsgManager._autoHideDelay );
                 }
             }
-        } /* END > added by Greg (2018/12/05) */
+        }
 
     }
 }

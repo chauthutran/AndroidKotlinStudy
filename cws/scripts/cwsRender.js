@@ -53,7 +53,7 @@ function cwsRender()
 	me._localConfigUse = false;
 	//me.syncManager;
  
-	me._translateEnable = false;
+	me._translateEnable = true;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -69,29 +69,29 @@ function cwsRender()
 
 	me.render = function()
 	{
-		var initializeStartBlock = true;
-
+		var initializeStartBlock = false;
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
 		if ( localStorage.length )
 		{
 			var lastSession = JSON.parse( localStorage.getItem('session') );
-			
+
 			if ( lastSession )
 			{
 				var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
 
 				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
 				{
-					initializeStartBlock = false;
-					me.renderDefaultTheme();
+					initializeStartBlock = true;
 				}
+			
 			}
 
 		}
 
 		// If set to use saved data loading, set up the neccessary data
-		if ( !initializeStartBlock )
+		if ( initializeStartBlock )
 		{
+			me.renderDefaultTheme();
 			me.loginObj.loginFormDivTag.hide();
 			me.loginObj._userName = lastSession.user;
 			FormUtil.login_UserName = lastSession.user;
@@ -105,9 +105,11 @@ function cwsRender()
 			me.loginObj.render(); // Open Log Form
 		}
 
-		var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
-		var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
-		var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
+		//var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
+		//var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
+		//var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
+
+		var manageInputSwipe = inputMonitor();
 
 
 		if ( me._translateEnable )
@@ -211,6 +213,7 @@ function cwsRender()
 
 					me.loginObj.spanOuNameTag.text( '' );
 					me.loginObj.spanOuNameTag.hide();
+					FormUtil.undoLogin();
 					me.renderDefaultTheme();
 					me.loginObj.openForm();
 
@@ -405,6 +408,8 @@ function cwsRender()
 			// initialise favIcons
 			me.favIconsObj = new favIcons( me );
 
+			//me.renderDefaultTheme();
+
 		}
 	} 
 
@@ -424,31 +429,13 @@ function cwsRender()
 
 		if ( destArea )
 		{
-			//destArea.empty();
-			//me.menuAppMenuIconTag.show();
-			//me.navBurgerTag = dvMenuObj;
 
 			document.querySelector( "#nav-toggle" )
 			 .addEventListener( "click", function() {
 				this.classList.toggle( "active" );
 				if ( $( this ).hasClass( 'active' ) )
 				{
-					$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
-					var myData = FormUtil.getMyListData( me.storageName_RedeemList );
-
-					if ( myData )
-					{
-						var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
-						var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
-						var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
-						
-						$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
-					} 
-					else 
-					{
-						//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-						$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: 0 ' );
-					}
+					me.updateNavDrawerHeaderContent();
 				}
 			});
 
@@ -457,19 +444,41 @@ function cwsRender()
 
 	}
 
+	me.updateNavDrawerHeaderContent = function()
+	{
+
+		$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
+
+		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
+
+		if ( myData )
+		{
+			var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
+			var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
+			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+			
+			$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+		} 
+		else 
+		{
+			//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
+			$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: 0 ' );
+		}
+	}
+
 	me.populateMenuList = function( areaList )
 	{
 		var startMenuTag;
-		//console.log('cwsRender.populateMenuList()');
+
 		$( '#navDrawerDiv' ).empty();
 
 		// clear the list first
 		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
-		var navMenuTbl = $( '<table id="navDrawerHeader" style="width:100%;height:100px;" />' );
+		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 		var tr = $( '<tr />' );
-		var tdLeft = $( '<td style="padding:10px;width:80px;" />' );
+		var tdLeft = $( '<td style="padding:10px;width:56px;" />' );
 		var tdRight = $( '<td  style="padding:2px 0 0 0;height:75px;" />' );
 
 		me.navDrawerDivTag.append ( navMenuHead );

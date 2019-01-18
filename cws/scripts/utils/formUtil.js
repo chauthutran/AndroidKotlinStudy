@@ -3,7 +3,7 @@
 
 function FormUtil() {}
 
-FormUtil.staticWSName = 'eRefWSStage'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
+FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
 FormUtil.appUrlName = 'cws';			// App name - Part of the url
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
@@ -50,8 +50,8 @@ FormUtil.getServerUrl = function()
 
 FormUtil.isAppsPsiServer = function()
 {
-	return true;
-	//return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
+	//return true;
+	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
 }
 
 FormUtil.generateUrl = function( inputsJson, actionJson )
@@ -324,6 +324,12 @@ FormUtil.checkLogin = function()
 	return ( FormUtil.login_UserName && FormUtil.login_Password );
 }
 
+FormUtil.undoLogin = function()
+{
+	FormUtil.login_UserName = '';
+	FormUtil.login_Password = '';	
+}
+
 // ---------------------------------------------------------
 
 FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
@@ -375,6 +381,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeIn( 'fast', 'linear' );
 			//else subListIconsTag.show();
 
+			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) subListIconsTag.css( 'width', FormUtil.navDrawerMaxWidth( document.body.clientWidth ));
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) subListIconsTag.show("slide", { direction: "left" }, 250);
 			else subListIconsTag.fadeIn( 'fast', 'linear' );
 
@@ -753,3 +760,74 @@ FormUtil.hideProgressBar = function()
 	//$( '#divProgressBar' ).css( 'display', 'none' );
 	$( '#divProgressBar' ).hide();
 }
+
+
+FormUtil.navDrawerExpandThreshold = function( screenWidth )
+{
+	/* BASED ON Responsive.css VALUES FOR SCREEN WIDTH  */
+	/* NB: IF tests to be ordered in descending order of size  */
+
+	var expectedWidth;
+
+	/* 2B. 2 column input wider than 866px */
+	if ( screenWidth >= 866)
+	{
+		expectedWidth = 400;
+	}
+
+	/* 2A. 1 column input less than 866px */
+	if ( screenWidth <= 865)
+	{
+		expectedWidth = 400;
+	}
+
+	/* 1B. Tab content mode - hide Anchor */
+	/*if ( screenWidth >= 560)
+	{
+		expectedWidth = 360;
+	}*/
+
+	/* 1A. Smallest Anchor Mode 560 */
+	if ( screenWidth <= 559)
+	{
+		expectedWidth = 280;
+	}
+
+	return ( expectedWidth / 2).toFixed(0);
+
+};
+
+FormUtil.navDrawerMaxWidth = function( screenWidth )
+{
+	/* BASED ON Responsive.css VALUES FOR SCREEN WIDTH  */
+	/* NB: IF tests to be ordered in descending order of size  */
+
+	var expectedWidth;
+
+	/* 2B. 2 column input wider than 866px */
+	if ( screenWidth >= 866)
+	{
+		expectedWidth = 400;
+	}
+
+	/* 2A. 1 column input less than 866px */
+	if ( screenWidth <= 865)
+	{
+		expectedWidth = 400;
+	}
+
+	/* 1B. Tab content mode - hide Anchor */
+	/*if ( screenWidth >= 560)
+	{
+		expectedWidth = 360;
+	}*/
+
+	/* 1A. Smallest Anchor Mode 560 */
+	if ( screenWidth <= 559)
+	{
+		expectedWidth = 280;
+	}
+
+	return expectedWidth;
+
+};

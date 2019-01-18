@@ -176,7 +176,7 @@
     @media screen and (max-width: 559px) {
       #navDrawerDiv
       {
-        max-width: 300px;
+        max-width: 280px;
       }
       /* VERSION MOBILE */
       .tabs,
@@ -288,7 +288,7 @@
     @media screen and (max-width: 865px) {
       #navDrawerDiv
       {
-        max-width: 440px;
+        max-width: 360px;
       }
       .tb-content-d,
       .tb-content-result,
@@ -301,7 +301,7 @@
     @media screen and (min-width: 866px) {
       #navDrawerDiv
       {
-        min-width: 440px;
+        min-width: 400px;
       }
       .tb-content-d,
       .tb-content-result,
