@@ -207,20 +207,6 @@ FormUtil.getWsUrl = function( subUrl )
 }
 
 
-// GET Request to Web Service..
-FormUtil.wsRetrievalGeneral = function( queryLoc, loadingTag, returnFunc )
-{		
-	var url = FormUtil.getWsUrl( queryLoc ); //  queryLoc --> '/api/loginCheck'
-
-	RESTUtil.retrieveJson( url, function( success, returnJson )
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( returnJson );
-	});
-}
-
-
 // POST Request required json prepare
 FormUtil.getFetchWSJson = function( payloadJson )
 {
@@ -248,9 +234,24 @@ FormUtil.getFetchWSJson = function( payloadJson )
 }
 
 
+// GET Request to Web Service..
+FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
+{		
+	var url = FormUtil.getWsUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+
+	RESTUtil.retrieveJson( url, function( success, returnJson )
+	{
+		if ( loadingTag ) loadingTag.remove();
+
+		if ( returnFunc ) returnFunc( returnJson );
+	});
+}
+
 // POST Request to Web Service..
-FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
+FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
+	var url = FormUtil.getWsUrl( apiPath );
+		
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -260,14 +261,11 @@ FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
 	});
 }
 
-
-
 // --- --- --- ---
 
-FormUtil.submitRedeem = function( url, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
+FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
 {
-
-	FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson )
+	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
 		if ( returnFunc ) returnFunc( success, returnJson );
 		if ( asyncCall ) asyncCall( returnJson );
@@ -278,12 +276,12 @@ FormUtil.submitRedeem = function( url, payloadJson, actionJson, loadingTag, retu
 
 FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
-	var url = FormUtil.getWsUrl( '/api/loginCheck' );
+	var apiPath = '/api/loginCheck';
 
 	// FormUtil.orgUnitData <-- Reset before?
 	var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
 
-	FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson )
+	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
 		if ( success )
 		{

@@ -63,7 +63,7 @@ function LangTerm( cwsRenderObj )
 				// Try retrieving all dailyCache on WebService..
 
 				// try running the dailyCache
-				FormUtil.wsSubmitGeneral( '/api/dailyCache', new Object(), loadingTag, function( success, allLangTermsJson ) {
+				FormUtil.wsSubmitGeneral( '/api/dailyCache', { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
 					if ( success && allLangTermsJson )
 					{
 						console.log( 'all langTerm: ' );
