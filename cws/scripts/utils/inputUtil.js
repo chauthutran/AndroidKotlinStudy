@@ -1,7 +1,8 @@
 // =========================================
 // === Message with entire screen blocking
-function inputMonitor() 
+function inputMonitor( cwsRenderObj ) 
 {
+    var cwsRenderInputMon = cwsRenderObj;
     //var container = document.querySelector( destObj );
 
     document.addEventListener("touchstart", startTouch, false);
@@ -18,7 +19,8 @@ function inputMonitor()
     var navDrawerVisibleOnStart = false;
     var navDrawerVisibleOnMove = false;
 
-    var initialNavDrawerWidth = 0;
+    var expectedNavDrawerWidth = 0;
+    var thresholdNavDrawerWidth = 0;
     var loggedIn = false;
 
     var trackXtouchDistance = 0;
@@ -37,8 +39,12 @@ function inputMonitor()
         initialY = e.touches[0].clientY;
 
         navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
-        initialNavDrawerWidth = document.querySelector( '#navDrawerDiv' ).offsetWidth;
+        expectedNavDrawerWidth  = FormUtil.navDrawerWidthLimit( screenWidth );
+        thresholdNavDrawerWidth = ( FormUtil.navDrawerWidthLimit( screenWidth ) / 2 ).toFixed( 0 );
 
+        console.log(screenWidth + ': ' + expectedNavDrawerWidth);
+
+        cwsRenderInputMon.updateNavDrawerHeaderContent();
         loggedIn = FormUtil.checkLogin();
     };
     
@@ -71,29 +77,40 @@ function inputMonitor()
         trackXtouchDistance += diffX;
         trackYtouchDistance += diffY;
 
+        //MsgManager.msgAreaShow( initialX.toFixed(0) + ' ' + ': diffX: ' + diffX.toFixed(0) + ' ' + ' currX: ' + currentX.toFixed(0) + '   ' + initialY.toFixed(0) + ', ' + ': diffY: ' + diffY.toFixed(0) + ', ' + ' currY: ' + currentY.toFixed(0) );
         navDrawerVisibleOnMove = $( '#navDrawerDiv' ).is( ':visible' );
 
-        if (Math.abs(diffX) > Math.abs(diffY)) 
+        if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) ) 
+        {
+            $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionSmooth' );
+            $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionNone' );
+        }
+
+        //if ( Math.abs(diffX) > Math.abs(diffY) || Math.abs(trackXtouchDistance) > Math.abs(trackYtouchDistance) ) 
         {
             if ( diffX > 0 ) 
             {
                 // swiping left
                 console.log("swiping left");
 
-                if ( navDrawerVisibleOnStart && ( currentX < initialNavDrawerWidth ) )
+                if ( navDrawerVisibleOnStart )
                 {
-                    if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) )
+                    //$( '#focusRelegator' ).css( 'opacity',0.5 *  (currentX / expectedNavDrawerWidth) );
+                    $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+
+                    if ( currentX <= expectedNavDrawerWidth )
                     {
-                        $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionSmooth' );
-                        $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionNone' );
+                        $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                        $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                    }
+                    else
+                    {
+                        $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                        $( '#navDrawerDiv' ).css( 'left', '0px' );
                     }
 
-                    $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+                    if ( !navDrawerVisibleOnMove ) $( '#navDrawerDiv' ).show();
 
-                    if ( !navDrawerVisibleOnMove )
-                    {
-                        $( '#navDrawerDiv' ).show();
-                    }
                 }
             }
             else
@@ -106,24 +123,47 @@ function inputMonitor()
                 {
                     if ( ! navDrawerVisibleOnStart )
                     {
-                        if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) )
+
+                        if ( ! $( '#focusRelegator').is(':visible') )
                         {
-                            $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionSmooth' );
-                            $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionNone' );
+                            $( '#focusRelegator').show();
+                            $( '#focusRelegator' ).css( 'zIndex',100);
+                            $( '#navDrawerDiv' ).css('zIndex',200);
                         }
 
-                        $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+                        $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
-                        if ( !navDrawerVisibleOnMove )
+                        if ( currentX > expectedNavDrawerWidth )
+                        {
+                            $( '#navDrawerDiv' ).css( 'left', '0px' );
+                            $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+                        }
+                        else
+                        {
+                            $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                        }
+
+                        if ( !navDrawerVisibleOnMove || (! $( '#navDrawerDiv' ).is(':visible') ) )
                         {
                             $( '#navDrawerDiv' ).show();
                         }
                     }
                 }
+                else
+                {
+                    if ( navDrawerVisibleOnStart )
+                    {
+                        $( '#focusRelegator' ).css( 'opacity',0.5 *  (currentX / expectedNavDrawerWidth) );
+
+                        $( '#navDrawerDiv' ).css( 'left', '0px' );
+                        $( '#navDrawerDiv' ).css( 'width', currentX + 'px' );
+                    }
+                }
 
             }
         }
-        else
+        // IGNORE UP+DOWN INPUT SWIPE FOR NOW
+        /*else
         {
             // sliding vertically
             if (diffY > 0) 
@@ -136,7 +176,7 @@ function inputMonitor()
                 // swiping down
                 console.log("swiping down");
             }
-        }
+        }*/
 
         e.preventDefault();
 
@@ -145,38 +185,46 @@ function inputMonitor()
     function touchEnd(e) 
     {
 
-        //if ( !loggedIn || ( diffX == 0 ) )
-        if ( !loggedIn || ( trackXtouchDistance == 0) )
+        if ( !loggedIn || ( trackXtouchDistance == 0) || ( !navDrawerVisibleOnStart && !navDrawerVisibleOnMove ) )
         {
             return;
         }
 
-        console.log( getSessionSummary() );
+        if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionNone' ) )
+        {
+            $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
+        } 
+        if ( ! $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) )
+        {
+            $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
+        } 
 
-        var autoExpandThreshold = FormUtil.navDrawerExpandThreshold( screenWidth );
+        $( '#navDrawerDiv' ).css( 'left', '0px' );
+        $( '#focusRelegator').css( 'opacity', 0.5 );
 
         /* MENU HIDDEN/CLOSED > CHECK SWIPE OPEN THRESHOLDS */
         if ( ! navDrawerVisibleOnStart && ( initialX < 50 ) ) // wasn't shown at start of swipe + swipe started within 50px of left part of screen
         {
+
             /* CHECK SWIPE LEFT-to-RIGHT thresholds to SHOW MENU */
             /* navDrawerVisibleOnStart = false */
-            if ( currentX > autoExpandThreshold ) // menu dragged OPEN (LEFT-to-RIGHT) WIDER than minimum width threshold >> SHOW
+            if ( currentX > thresholdNavDrawerWidth ) // menu dragged OPEN (LEFT-to-RIGHT) WIDER than minimum width threshold >> SHOW
             {
+                console.log ( 'showing menu ' );
+                $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
 
-                $( '#navDrawerDiv' ).css( 'width', FormUtil.navDrawerMaxWidth( screenWidth ) );
-                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
-                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
                 $( '#nav-toggle' ).click();
 
             }
             else    // menu NOT dragged (LEFT-to-RIGHT) wider than minimum width threshold >> HIDE
             {
+                console.log ( 'staying closed ' );
 
-                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
-                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
-                //$( '#navDrawerDiv' ).css( 'width', '0' );
+                $( '#navDrawerDiv' ).css( 'width', '0px' );
+
                 $( '#navDrawerDiv' ).hide();
-                $( '#navDrawerDiv' ).css( 'width', 'auto' );
+
+                if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
 
             }
         }
@@ -184,18 +232,23 @@ function inputMonitor()
         {
             /* MENU ALREADY OPEN > CHECK SWIPE CLOSE THRESHOLDS */
             /* navDrawerVisibleOnStart = true */
-            if ( currentX < autoExpandThreshold ) // menu dragged open (while visible) LESS than minimum width threshold >> HIDE
-            {
-                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
-                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
-                $( '#nav-toggle' ).click();
 
+            if ( currentX < thresholdNavDrawerWidth ) // menu dragged beyond minimum width threshold >> clicking HIDE
+            {
+                console.log ( 'click closing menu ' );
+
+                if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
+                
+                $( '#nav-toggle' ).click(); //click close
             }
             else
             {
-                $( '#navDrawerDiv' ).removeClass( 'navDrawerTransitionNone' );
-                $( '#navDrawerDiv' ).addClass( 'navDrawerTransitionSmooth' );
-                $( '#navDrawerDiv' ).css( 'width', FormUtil.navDrawerMaxWidth( screenWidth ) );
+                // stay open
+                console.log ( 'staying open ' );
+
+                $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+
+                if ( ! $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').show();
 
             }
         }

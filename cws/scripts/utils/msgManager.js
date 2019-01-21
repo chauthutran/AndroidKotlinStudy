@@ -57,10 +57,8 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
         {
             MsgManager.divMsgAreaTag.show( 'fast' );
         }
-        else
-        {
-            clearTimeout ( MsgManager.timer );
-        }
+
+        if ( MsgManager.timer > 0 ) clearTimeout ( MsgManager.timer );
 
         if ( timeoutTime )
         {

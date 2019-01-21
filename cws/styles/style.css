@@ -204,7 +204,7 @@ a.brand-logo {
   -moz-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.65);
   box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.65);
   /* -webkit-transition: width 500ms, -webkit-transform 500ms; */ /* Safari */ 
-  transition: width 500ms, transform 500ms;
+  /*transition: width 250ms, transform 250ms;*/
   overflow-y: hidden;
   border-right: 3px solid inherit;
 }
@@ -225,14 +225,16 @@ a.brand-logo {
 
 .navDrawerTransitionSmooth
 {
-  -webkit-transition: width 500ms, -webkit-transform 500ms; /* Safari */ 
-  transition: width 500ms, transform 500ms;
+  -webkit-transition: all 250ms, -webkit-transform 250ms; /* Safari */ 
+  transition: all 250ms, transform 250ms;
+  position: fixed;
 }
 
 .navDrawerTransitionNone
 {
   -webkit-transition: none !important; /* Safari */ 
   transition: none !important;
+  position: absolute;
 }
 
 .navDrawerTransitionNone .menu-mobile-row

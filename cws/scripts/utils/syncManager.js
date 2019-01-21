@@ -142,18 +142,89 @@ function syncManager()
 
     }
 
+    me.appShellVersionTest = function( btnTag )
+    {
+		// api/dataStore/Connect_config/pwa_info
+
+		var queryLoc = FormUtil.getWsUrl( '/api/getPWAInfo' ); 
+		var loadingTag = undefined;
+
+		// Do silently?  translate it afterwards?  <-- how do we do this?
+		// config should also note all the 'term' into tags..
+		FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
+		{
+			if ( returnJson && returnJson.version )
+			{
+				console.log( 'appShellVersionTest: ' + queryLoc );
+                //console.log( returnJson );
+
+                var appShellVersion = $( '#spanVersion' ).html().replace('v','');
+                
+                if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                {
+                    MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
+                    if ( btnTag )
+                    {
+                        btnTag.text( 'Update to v' +returnJson.version );
+                        btnTag.show();
+                    }
+                }
+
+				//if ( returnFunc ) returnFunc( returnJson );
+			}
+			else
+			{
+                console.log( 'error checking appShellInfo, trying again : ' + queryLoc );
+
+				// try running the dailyCache
+				FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
+					if ( success && allJson )
+					{
+						//console.log( 'all appShellInfo: ' );
+						//console.log( allJson );
+
+                        if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                        {
+                            //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
+                            MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
+                            if ( btnTag )
+                            {
+                                btnTag.text( 'Update to v' +returnJson.version );
+                                btnTag.show();
+                            }
+                        }
+
+						/*if ( allJson.langauges )
+						{
+							var enLang = Util.getFromList( allJson.langauges, "en", "code" );
+							if ( enLang ) enLangTerm = enLang.terms;
+						}*/
+
+						//if ( returnFunc ) returnFunc( enLangTerm );
+					}
+					else
+					{
+						console.log( 'all appShellInfo FAILED: ' );
+
+						//if ( returnFunc ) returnFunc( new Object() );
+					}
+				});			
+			}
+		});
+    }
+
     me.dcdConfigVersionTest = function( btnTag )
     {
         if ( FormUtil.checkLogin() ) // correct valid-login test?
         {
             if ( ConnManager.isOnline() )
             {
-                //console.log( 'dcdConfigVersionTest');
+                var loadingTag = undefined;
                 var userName = JSON.parse( localStorage.getItem('session') ).user;
                 var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
                 var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
 
-                FormUtil.submitLogin( userName, userPin, undefined, function( success, loginData ) 
+                FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
                 {
                     if ( success )
                     {

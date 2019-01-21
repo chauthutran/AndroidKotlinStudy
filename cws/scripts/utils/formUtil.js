@@ -354,7 +354,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) 
 			{
 				thisTag.removeClass( 'active' );
-				subListIconsTag.hide("slide", { direction: "left" }, 250);
+				subListIconsTag.hide( 'slide', { direction: 'left' }, 250);
+				//subListIconsTag.hide();
 			}
 			else
 			{
@@ -369,8 +370,6 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
 
-			$( '#focusRelegator').show();
-
 			$( '#focusRelegator').css('zIndex',100);
 			thisTag.css('zIndex',200);
 			subListIconsTag.css('zIndex',300);
@@ -379,9 +378,15 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeIn( 'fast', 'linear' );
 			//else subListIconsTag.show();
 
-			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) subListIconsTag.css( 'width', FormUtil.navDrawerMaxWidth( document.body.clientWidth ));
-			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) subListIconsTag.show("slide", { direction: "left" }, 250);
-			else subListIconsTag.fadeIn( 'fast', 'linear' );
+			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			{
+				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ));
+				subListIconsTag.show( 'slide', { direction: 'right' }, 250);
+			} 
+			else
+			{
+				subListIconsTag.fadeIn( 'fast', 'linear' );
+			}
 
 			$( '#focusRelegator').unbind();
 
@@ -393,6 +398,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				thisTag.click();
 
 			});
+
+			$( '#focusRelegator').show();
 
 		} 
 	});	
@@ -760,42 +767,7 @@ FormUtil.hideProgressBar = function()
 }
 
 
-FormUtil.navDrawerExpandThreshold = function( screenWidth )
-{
-	/* BASED ON Responsive.css VALUES FOR SCREEN WIDTH  */
-	/* NB: IF tests to be ordered in descending order of size  */
-
-	var expectedWidth;
-
-	/* 2B. 2 column input wider than 866px */
-	if ( screenWidth >= 866)
-	{
-		expectedWidth = 400;
-	}
-
-	/* 2A. 1 column input less than 866px */
-	if ( screenWidth <= 865)
-	{
-		expectedWidth = 400;
-	}
-
-	/* 1B. Tab content mode - hide Anchor */
-	/*if ( screenWidth >= 560)
-	{
-		expectedWidth = 360;
-	}*/
-
-	/* 1A. Smallest Anchor Mode 560 */
-	if ( screenWidth <= 559)
-	{
-		expectedWidth = 280;
-	}
-
-	return ( expectedWidth / 2).toFixed(0);
-
-};
-
-FormUtil.navDrawerMaxWidth = function( screenWidth )
+FormUtil.navDrawerWidthLimit = function( screenWidth )
 {
 	/* BASED ON Responsive.css VALUES FOR SCREEN WIDTH  */
 	/* NB: IF tests to be ordered in descending order of size  */
@@ -829,3 +801,11 @@ FormUtil.navDrawerMaxWidth = function( screenWidth )
 	return expectedWidth;
 
 };
+
+FormUtil.defaultLanguage = function()
+{
+	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
+	var navLang = (navigator.language).toString().substring(0,2);
+	console.log( ' FormUtil.defaultLanguage: ' + navLang)
+	return navLang;
+}

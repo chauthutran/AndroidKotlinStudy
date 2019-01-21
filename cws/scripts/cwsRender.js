@@ -105,16 +105,31 @@ function cwsRender()
 			me.loginObj.render(); // Open Log Form
 		}
 
+		$( '#loginImg' ).click( function() {
+			if ( localStorage.getItem('session') )
+			{
+				var lastSession = JSON.parse( localStorage.getItem('session') );
+				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
+				{
+					localStorage.removeItem( 'session' );
+					localStorage.removeItem( lastSession.user );
+				}
+
+			}
+			
+			me.reGetAppShell();
+		});
+
 		//var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
 
-		var manageInputSwipe = inputMonitor();
+		var manageInputSwipe = inputMonitor( me );
 
 
 		if ( me._translateEnable )
 		{
-			var lang = "pt";
+			var lang = FormUtil.defaultLanguage(); //"pt";
 
 			// NOTE: Try language download here.
 			me.langTermObj.retrieveLangTerm( lang, function() {
@@ -429,7 +444,6 @@ function cwsRender()
 
 		if ( destArea )
 		{
-
 			document.querySelector( "#nav-toggle" )
 			 .addEventListener( "click", function() {
 				this.classList.toggle( "active" );
@@ -446,6 +460,11 @@ function cwsRender()
 
 	me.updateNavDrawerHeaderContent = function()
 	{
+
+		if ( !localStorage.getItem('session') )
+		{
+			return;
+		}
 
 		$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
 

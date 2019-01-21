@@ -57,7 +57,7 @@ function aboutApp( cwsRender )
                 divHeaderLabelTag.html( 'About' );
                 divAttrTag.append( divHeaderLabelTag );
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -70,8 +70,8 @@ function aboutApp( cwsRender )
                 /* check for App Version updates BUTTON */
                 var divButtonAppVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
                 valueTag.append( divButtonAppVersionTag );
-                var btnAppShellTag = $( '<button value="" id="appShellUpdateBtn" class="divBtn" style="position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
-                btnAppShellTag.html( 'check for updates' );
+                var btnAppShellTag = $( '<button value="" id="appShellUpdateBtn" class="divBtn" style="display:none;position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
+                btnAppShellTag.html( 'new version available' );
                 divButtonAppVersionTag.append( btnAppShellTag );
 
                 $( btnAppShellTag ).click( () => {
@@ -93,7 +93,7 @@ function aboutApp( cwsRender )
                 });
 
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -126,7 +126,7 @@ function aboutApp( cwsRender )
                 });
 
 
-                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -137,7 +137,7 @@ function aboutApp( cwsRender )
                 divAttrTag.append( valueTag );
 
                 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -148,7 +148,7 @@ function aboutApp( cwsRender )
                 divAttrTag.append( valueTag );*/
 
 
-                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -159,7 +159,7 @@ function aboutApp( cwsRender )
                 divAttrTag.append( valueTag );*/
 
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -170,7 +170,7 @@ function aboutApp( cwsRender )
                 divAttrTag.append( valueTag );
 
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label term="User_Language" class="from-string titleDiv" />' );
@@ -180,7 +180,7 @@ function aboutApp( cwsRender )
                 valueTag.html( navigator.language );
                 divAttrTag.append( valueTag );
 
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;;margin:0;" />' );
+                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
                 divContainerTag.append( divAttrTag );
 
                 var labelTag = $( '<label class="from-string titleDiv" />' );
@@ -206,6 +206,7 @@ function aboutApp( cwsRender )
                 me.cwsRenderObj.langTermObj.translatePage();
 
                 me.syncMgr = new syncManager();
+                me.syncMgr.appShellVersionTest( $( '#appShellUpdateBtn' ) );
                 me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );
             }
 
