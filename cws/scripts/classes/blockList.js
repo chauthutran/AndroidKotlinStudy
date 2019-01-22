@@ -288,7 +288,7 @@ function BlockList( cwsRenderObj, blockObj )
         var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
         
         //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync.svg"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg"></small></div>' );
         var voucherTag = $( '<div class="act-r"><small>'+itemData.data.payloadJson.voucherCode+' - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
 
         anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
@@ -394,21 +394,28 @@ function BlockList( cwsRenderObj, blockObj )
         {
             //smallStatusNameTag.text( 'submitted' ).css( 'color', '#e48825' ); // Redeemed?
             //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
-            imgSyncIconTag.attr ( 'src', 'img/sync.svg' );
+            imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
             //imgErrIconTag.css ( 'visibility', 'hidden' );
         }
         else if ( itemData.status === me.status_redeem_failed )
         {
             //smallStatusNameTag.text( 'invalid' ).css( 'color', '#e48825' ); //Invalid?
             //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
-            imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+            if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
+            {
+                imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' ); // should show the 'active' icon: sync-banner.svg
+            }
+            else
+            {
+                imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+            }
             //imgErrIconTag.css ( 'visibility', 'visible' );
         }
         else
         {
             //smallStatusNameTag.text( 'open' ).css( 'color', '#787878' ); //Unmatched?
             //imgStatusIconTag.attr( 'src', 'img/open.svg' );
-            imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+            imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
             //imgErrIconTag.css ( 'visibility', 'hidden' );
 
         }
@@ -431,7 +438,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
     me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
-    {        
+    {
 
         if ( itemData.status != me.status_redeem_submit ) // changed by Greg (2018/11/27) from '== !' to '!=' > was failing to test correctly
         {
@@ -440,15 +447,19 @@ function BlockList( cwsRenderObj, blockObj )
             imgSyncIconTag.click( function(e) {
 
                 var bProcess = false;
+                var fetchItemData = DataManager.getItemFromData( me.storageName_RedeemList, itemData.id )
+                console.log( itemData);
+                console.log( fetchItemData);
+                console.log( itemData == fetchItemData);
 
-                if ( !itemData.networkAttempt ) // no counter exists for this item
+                if ( !fetchItemData.networkAttempt ) // no counter exists for this item
                 {
                     bProcess = true;
                 }
                 else
                 {   
                     //  counter exists for this item AND counter is below limit
-                    if ( itemData.networkAttempt < me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                    if ( fetchItemData.networkAttempt < me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                     {
                         bProcess = true;
                     }
@@ -466,7 +477,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                     mySyncIcon.rotate({ count:999, forceJS: true, startDeg: true });
 
-                    itemData.lastAttempt = dtmRedeemAttempt;
+                    fetchItemData.lastAttempt = dtmRedeemAttempt;
 
                     var myTag = mySyncIcon.parent().parent().parent().siblings();
                     var redeemID = myTag.attr( 'itemid' );
@@ -481,30 +492,30 @@ function BlockList( cwsRenderObj, blockObj )
                     if ( ConnManager.isOffline() )
                     {
                         alert( 'Currently in offline.  Need to be in online for this.' );
-                        myTag.html( itemData.title );
+                        myTag.html( fetchItemData.title );
                         $(this).stop();
                     }
                     else
                     {
                         //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
-                        FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, loadingTag, function( success, returnJson )
+                        FormUtil.submitRedeem( fetchItemData.data.url, fetchItemData.data.payloadJson, fetchItemData.data.actionJson, loadingTag, function( success, returnJson )
                         {
 
                             mySyncIcon.stop();
 
-                            itemData.returnJson = returnJson;
+                            fetchItemData.returnJson = returnJson;
 
                             // added by Greg (2019-01-14) > record network sync attempts (for limit management)
-                            if ( itemData.networkAttempt ) itemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
-                            else itemData.networkAttempt = 1;
+                            if ( fetchItemData.networkAttempt ) fetchItemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
+                            else fetchItemData.networkAttempt = 1;
 
                             // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
                             if ( success && ( returnJson.resultData.status != 'fail' ) )
                             {
                                 var dtmRedeemDate = (new Date() ).toISOString();
 
-                                itemData.redeemDate = dtmRedeemDate;
-                                itemData.status = me.status_redeem_submit;
+                                fetchItemData.redeemDate = dtmRedeemDate;
+                                fetchItemData.status = me.status_redeem_submit;
                                 //itemData.returnJson = returnJson;
                                 myTag.html( 'Success' );
                             }
@@ -514,13 +525,13 @@ function BlockList( cwsRenderObj, blockObj )
                                 {
                                     var msg = JSON.parse( returnJson.displayData[0].value ).msg;
 
-                                    itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                                    fetchItemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
                                 }
 
                                 /* only when sync-test exceeds limit do we mark item as FAIL */
-                                if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                                if ( fetchItemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                                 {
-                                    itemData.status = me.status_redeem_failed;
+                                    fetchItemData.status = me.status_redeem_failed;
                                 }
 
                                 myTag.html( 'Error redeeming' );
@@ -528,13 +539,13 @@ function BlockList( cwsRenderObj, blockObj )
 
                             //itemData.state = 0; //1=in use, 0=unused
 
-                            me.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), itemData ); 
+                            me.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), fetchItemData ); 
 
-                            DataManager.updateItemFromData( me.storageName_RedeemList, itemData.id, itemData );
+                            DataManager.updateItemFromData( me.storageName_RedeemList, fetchItemData.id, fetchItemData );
 
                             setTimeout( function() {
-                                myTag.html( itemData.title );
-                                me.appendStatusOptThemeIcon ( $( '#icon_' + itemData.id ), me.getStatusOpt ( itemData ) )
+                                myTag.html( fetchItemData.title );
+                                me.appendStatusOptThemeIcon ( $( '#icon_' + fetchItemData.id ), me.getStatusOpt ( fetchItemData ) )
                             }, 1000 );
 
                         } );

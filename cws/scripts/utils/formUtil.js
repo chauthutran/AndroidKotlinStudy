@@ -346,16 +346,15 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 
-			/* added by Greg (7 Jan 2019)*/
-			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeOut( 'fast', 'linear' );
-			//else subListIconsTag.hide();
-
-			//Greg: Strange behaviour on hamburger icon, not removing 'active' class when executing #focusRelegator.click() > forcibly removing this class
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) 
 			{
 				thisTag.removeClass( 'active' );
-				subListIconsTag.hide( 'slide', { direction: 'left' }, 250);
-				//subListIconsTag.hide();
+				//subListIconsTag.hide( 'slide', { direction: 'left' }, 150);
+				subListIconsTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+				setTimeout( function() {
+					subListIconsTag.hide(); 
+				}, 500 );
 			}
 			else
 			{
@@ -374,14 +373,12 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.css('zIndex',200);
 			subListIconsTag.css('zIndex',300);
 
-			/* added by Greg (7 Jan 2019)*/
-			//if ( thisTag.hasClass( 'floatListMenuIcon' ) ) subListIconsTag.fadeIn( 'fast', 'linear' );
-			//else subListIconsTag.show();
-
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
+				subListIconsTag.show();
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ));
-				subListIconsTag.show( 'slide', { direction: 'right' }, 250);
+				subListIconsTag.css( 'left', '0px' );
+				//subListIconsTag.show( 'slide', { direction: 'right' }, 150);
 			} 
 			else
 			{
