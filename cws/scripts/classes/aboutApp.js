@@ -139,6 +139,9 @@ function aboutApp( cwsRender, langTermObj )
         {
             $( '#loginFormDiv' ).hide();
         }
+
+        me.renderNonEssentialFields( FormUtil.checkLogin() );
+
         me.aboutFormDivTag.show( 'fast' );    
     }
 
@@ -158,6 +161,19 @@ function aboutApp( cwsRender, langTermObj )
     }
 
 
+    me.renderNonEssentialFields = function( userLoggedIn )
+    {
+        if ( userLoggedIn )
+        {
+            $( '#li_about_userLanguage' ).show();
+            $( '#li_about_theme' ).show();
+        }
+        else
+        {
+            $( '#li_about_userLanguage' ).hide();
+            $( '#li_about_theme' ).hide();
+        }
+    }
 
     me.populateAboutPageData = function( userConfig ) 
     {
