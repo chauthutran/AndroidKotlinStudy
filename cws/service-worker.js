@@ -44,7 +44,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "aa3e59e6273704149012d650bd00ef68"
+    "revision": "318a22b96c494a55d6ff4e1112fec34b"
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
@@ -216,7 +216,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5f45570aec3e3206b072a3876efff5f7"
+    "revision": "9ed0501cdae1f92836dadfd64e6e23f1"
   },
   {
     "url": "manifest.json",
@@ -232,7 +232,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "91a843a073470ad9a2a2a5abecdf1947"
+    "revision": "e863fef8b6c7f6d7824b0e988205f3dc"
   },
   {
     "url": "scripts/classes/action.js",
@@ -272,7 +272,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "39f943abe3494bcab7e10174f3bac504"
+    "revision": "2be406e0a530038feac64ace65967065"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -332,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "6f3f0f40715e1931ce4998c8bd8fb7e2"
+    "revision": "4ff6bcfe87ec9a6bc798cdacdae989d8"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -344,11 +344,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "6941f3efacf712c7acdf656625596789"
+    "revision": "76a72f17be2498ae2bbdc4302181cefa"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "6898dee065d125a43b4e88071767bb8c"
+    "revision": "4f5dc954e1f0888b7fe3447cbc72b3f0"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -388,11 +388,11 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "df27aff41e869d9a45755eacc469e1f0"
+    "revision": "d8410b83994992a0df4959027215a91b"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.networkFirst({ "cacheName":"v1.0.0.2", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/\.(html|css|js|gif|jpg|png|svg|json)/, workbox.strategies.cacheFirst(), 'GET');
 workbox.routing.registerRoute(/^https:\/\/use\.fontawesome\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"fontawesome", plugins: [] }), 'GET');
