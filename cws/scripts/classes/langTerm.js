@@ -42,14 +42,14 @@ function LangTerm( cwsRenderObj )
 
 	// Retrieve All Languages Term.
 	// MAIN METHOD 1.
-	me.retrieveAllLangTerm = function( returnFunc )
+	me.retrieveAllLangTerm = function( returnFunc, forceDownload )
 	{	
 		// No Reset?	
 		//me.allLangTerms = undefined;
 
 		// If exists in local storage, load it.
 		// Otherwise, retrieve it
-		var langTerms = DataManager.getData( DataManager.StorageName_langTerms );
+		var langTerms = ( forceDownload ) ? undefined : DataManager.getData( DataManager.StorageName_langTerms );
 		
 		if ( langTerms )
 		{

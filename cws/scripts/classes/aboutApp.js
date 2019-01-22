@@ -103,6 +103,21 @@ function aboutApp( cwsRender, langTermObj )
             me.hideAboutPage();        
         });
         
+
+        $( '#aboutInfo_newLangTermsDownload' ).click( () =>
+        {
+            var loadingTag = FormUtil.generateLoadingTag(  $( this ) );
+
+            //loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+            //btnTag.after( loadingTag );
+
+            me.langTermObj.retrieveAllLangTerm( function() {
+                loadingTag.remove();
+                //aboutInfo_langSelectTag.val( '' );
+                aboutInfo_langSelectTag.change();
+            }, true);
+        });
+
     }
 
 
