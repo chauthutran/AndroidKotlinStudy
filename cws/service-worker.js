@@ -276,7 +276,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "bf449039b0d82a01b4eca08f2eb71246"
+    "revision": "47f0adf87cafc6107894a11e2813fa09"
   },
   {
     "url": "scripts/classes/test.json",
@@ -288,7 +288,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "3350d92a25adb9600a58b7e212e5a03c"
+    "revision": "a454bff02b6e94aeeedaa63172695acb"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -349,18 +349,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/utils/util.js",
     "revision": "6898dee065d125a43b4e88071767bb8c"
-  },
-  {
-    "url": "scripts/z. Old Files/cwsRender_v0.js",
-    "revision": "190671a49009c2cc6caa80d022d71fe4"
-  },
-  {
-    "url": "scripts/z. Old Files/materialize.js",
-    "revision": "38de72592b09b35b61ac49ebf1eba54b"
-  },
-  {
-    "url": "scripts/z. Old Files/testSection.js",
-    "revision": "0e632d23fbb96b56bf389700041637dc"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",

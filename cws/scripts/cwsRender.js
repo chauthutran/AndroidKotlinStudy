@@ -203,7 +203,7 @@ function cwsRender()
 
 			// if menu is clicked,
 			// reload the block refresh?
-			if ( clicked_area.startBlockName )
+			if ( clicked_area && clicked_area.startBlockName )
 			{
 				// added by Greg (2018/12/10)
 				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
