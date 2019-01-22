@@ -227,6 +227,7 @@
 
     <div id="pulsatingCircle" style="display:none;"></div>
 
+
     <!-- ABOUT FORM DIV -->
     <div id="aboutFormDiv" style="display:none;">
 
@@ -244,12 +245,19 @@
               <br>
             </li>
 
+            <li id="aboutInfo_closeBtnLi" class="inputDiv" style="width: 97%;;margin:0;">
+              <div style="padding: 0px 10px 10px 20px;">
+                <button id="aboutInfo_CloseBtn" class="divBtn btnStyle1" term="about_closeBtn" style="padding: 10px; font-size: 14px; font-weight: bold;">Close</button>
+              </div>
+            </li>
+
+
             <li class="inputDiv" style="width: 97%;;margin:0;">
               <label class="from-string titleDiv">Application version</label>
               
               <div id="aboutInfo_AppVersion" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
                 <div id="aboutInfo_AppVersionInner" style="position:relative;text-align:left;width:30%;">
-                  <button value="" id="appShellUpdateBtn" class="divBtn" style="position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);">check
+                  <button value="" id="appShellUpdateBtn" class="divBtn btnStyle1" style="">check
                     for updates</button>
                 </div>
               </div>
@@ -260,8 +268,7 @@
 
               <div id="aboutInfo_dcdVersion" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
                 <div id="aboutInfo_dcdVersionInner"style="position:relative;text-align:left;width:30%;">
-                  <button value="" id="dcdUpdateBtn" class="divBtn" style="display:none;position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);">new
-                    version available</button>
+                  <button value="" id="dcdUpdateBtn" class="divBtn btnStyle1" style="display:none;">new version available</button>
                 </div>
               </div>
             </li>

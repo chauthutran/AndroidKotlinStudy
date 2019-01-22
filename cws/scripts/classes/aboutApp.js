@@ -94,6 +94,13 @@ function aboutApp( cwsRender, langTermObj )
 
             me.langTermObj.translatePage();
         }); 
+
+
+        $( '#aboutInfo_CloseBtn' ).click( () =>
+        {
+            me.hideAboutPage();        
+        });
+        
     }
 
 
@@ -108,6 +115,15 @@ function aboutApp( cwsRender, langTermObj )
     
         me.aboutFormDivTag.show( 'fast' );    
     }
+
+    me.hideAboutPage = function()
+    {
+        me.aboutFormDivTag.hide();    
+
+        $( 'div.mainDiv' ).show( 'fast' );    
+    }
+
+
 
     me.populateAboutPageData = function( userConfig ) 
     {
