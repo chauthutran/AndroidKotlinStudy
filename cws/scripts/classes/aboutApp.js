@@ -144,8 +144,8 @@ function aboutApp( cwsRender, langTermObj )
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
-        $( '#aboutInfo_Language' ).html( navigator.language );
-        $( '#aboutInfo_Language' ).html( dcdConfigSettingThemem );
+        $( '#aboutInfo_Language' ).html( FormUtil.defaultLanguage() );
+        $( '#aboutInfo_Theme' ).html( dcdConfigSettingThemem );
 
 
         // Dropdown Populate
@@ -166,6 +166,11 @@ function aboutApp( cwsRender, langTermObj )
     me.populateLangList_Show = function( langaugeList, defaultLangCode )
     {        
         Util.populateSelect( aboutInfo_langSelectTag, "Language", langaugeList );
+
+        if ( defaultLangCode )
+        {
+            Util.setSelectDefaultByName( aboutInfo_langSelectTag, defaultLangCode );
+        }
 
         $( '#aboutInfo_DivLangSelect' ).show();
     }
