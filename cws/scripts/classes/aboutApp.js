@@ -37,6 +37,8 @@ function aboutApp( cwsRender, langTermObj )
     me.render = function() 
     {       
         me.populateAboutPageData( DataManager.getUserConfigData() );
+        
+        me.langTermObj.translatePage();
 
         me.showAboutPage();
     }
@@ -147,6 +149,9 @@ function aboutApp( cwsRender, langTermObj )
 
 
         // Dropdown Populate
+        
+	    //me.getCurrentLangCode();
+
         //valueTag.append( '<select id="aboutInfo_langSelect"></select>' );
 
 
@@ -154,7 +159,7 @@ function aboutApp( cwsRender, langTermObj )
 
         me.syncMgr = new syncManager();
         me.syncMgr.appShellVersionTest( $( '#appShellUpdateBtn' ) );
-        me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );
+        me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
     }
 
 

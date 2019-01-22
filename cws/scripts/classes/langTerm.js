@@ -168,6 +168,12 @@ function LangTerm( cwsRenderObj )
 	}
 
 
+	me.getCurrentLangCode = function()
+	{
+		return me.currentLangcode;
+	}
+
+
 	me.getLangTerms = function( langCode )
 	{
 		var returnLangTerms = {};

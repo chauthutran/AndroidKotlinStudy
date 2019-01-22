@@ -523,8 +523,12 @@ function cwsRender()
 
 		var navMenuLogo = $( '<img src="img/logo_top.svg" />' );
 
+		
+		var userSessionJson = DataManager.getSessionData();
+		var userName = ( userSessionJson && userSessionJson.user ) ? userSessionJson.user : "";
+
 		tdLeft.append ( navMenuLogo );
-		tdRight.append ( $( '<div id="divNavDrawerOUName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;">' + JSON.parse( localStorage.getItem('session') ).user + '</div>') );
+		tdRight.append ( $( '<div id="divNavDrawerOUName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;">' + userName + '</div>') );
 		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;" />' ) );
 
 		var tr = $( '<tr />' );
@@ -543,7 +547,7 @@ function cwsRender()
 
 				var menuTag = $( '<div class="menu-mobile-row" areaId="' + area.id + '"><div>' + area.name + '</div></div>' );
 
-				if ( area.term ) menuTag.attr( 'term', area.term );
+				if ( area.term ) menuTag.find( 'div' ).attr( 'term', area.term );
 
 				me.setupMenuTagClick( menuTag );
 

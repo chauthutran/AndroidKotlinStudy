@@ -55,7 +55,9 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 
 			// Render Msg
 			if ( me.blockJson.message ) me.blockMsgObj.render( me.blockJson.message, me.blockTag, me.passedData );
-		}			
+		}
+
+		me.cwsRenderObj.langTermObj.translatePage();
 	}
 
 	// ------------------

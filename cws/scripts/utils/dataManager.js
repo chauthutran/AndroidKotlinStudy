@@ -128,21 +128,30 @@ DataManager.getUserConfigData = function()
 {
 	var userConfigJson;
 
-	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
+	var sessionJson = DataManager.getSessionData();
 
-	if ( sessionDataStr )
+	if ( sessionJson )	
 	{
-		var sessionJson = JSON.parse( sessionDataStr );
-
-		if ( sessionJson )	
+		if ( sessionJson.user )
 		{
-			if ( sessionJson.user )
-			{
-				var userDataStr = localStorage.getItem( sessionJson.user );
-				userConfigJson = JSON.parse( userDataStr );
-			}
+			var userDataStr = localStorage.getItem( sessionJson.user );
+			userConfigJson = JSON.parse( userDataStr );
 		}
 	}
 
 	return userConfigJson;
+}
+
+DataManager.getSessionData = function() 
+{
+	var sessionJson;
+
+	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
+
+	if ( sessionDataStr )
+	{
+		sessionJson = JSON.parse( sessionDataStr );
+	}
+
+	return sessionJson;
 }

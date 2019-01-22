@@ -44,7 +44,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "52d5495cfc5a7bf0e93a2afda140ec8f"
+    "revision": "aa3e59e6273704149012d650bd00ef68"
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
@@ -232,7 +232,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "f8eb1fc5b864477b558102aca8e6bec2"
+    "revision": "91a843a073470ad9a2a2a5abecdf1947"
   },
   {
     "url": "scripts/classes/action.js",
@@ -240,7 +240,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "79aa4b0d3028e3459be86322b61b43c5"
+    "revision": "72a68c72c718b414817ff64a8b173a83"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -268,11 +268,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "89814c143281a9b8a21144157c0bf09d"
+    "revision": "dd7f6b5d5a17b33141823aff5ccc9439"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "78ce37e06525fb92c9f3fbcdd4c95dd1"
+    "revision": "39f943abe3494bcab7e10174f3bac504"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -288,7 +288,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "fe59edea91df2bfcd301fa5d0fe9061a"
+    "revision": "3b7e3bc25a25910f09cb5a18abf46827"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "fac683adc3c63284f2b765d5a0251db6"
+    "revision": "9581d9f2cc41eeaafdc0926eaf8aa620"
   },
   {
     "url": "scripts/utils/formMsgManager.js",

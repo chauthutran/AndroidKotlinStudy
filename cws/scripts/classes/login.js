@@ -128,7 +128,7 @@ function Login( cwsRenderObj )
 		
 		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
-		$( '#loginImg' ).show();
+		//$( '#loginImg' ).show();
 
 
 		//divIcon.html( $( '<img src="img/logo_top.svg">' ) );
@@ -151,7 +151,7 @@ function Login( cwsRenderObj )
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
 
-		$( '#loginImg' ).hide();
+		//$( '#loginImg' ).hide();
 		//$( '#nav-toggle' ).show();
 		$( '#loggedInDiv' ).show();		
 
