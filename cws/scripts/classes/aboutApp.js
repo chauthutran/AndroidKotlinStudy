@@ -144,7 +144,7 @@ function aboutApp( cwsRender, langTermObj )
 
     me.populateLangList_Show = function( langaugeList, defaultLangCode )
     {        
-        Util.populateSelect( aboutInfo_langSelectTag, "Select Language", langaugeList );
+        Util.populateSelect( aboutInfo_langSelectTag, "Language", langaugeList );
 
         $( '#aboutInfo_DivLangSelect' ).show();
     }

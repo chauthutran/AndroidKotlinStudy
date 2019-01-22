@@ -141,11 +141,12 @@ function inputMonitor( cwsRenderObj )
                         else
                         {
                             $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
-                            $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                         }
 
-                        if (! $( '#navDrawerDiv' ).is(':visible') ) $( '#navDrawerDiv' ).show();
-
+                        if ( !navDrawerVisibleOnMove || (! $( '#navDrawerDiv' ).is(':visible') ) )
+                        {
+                            $( '#navDrawerDiv' ).show();
+                        }
                     }
                 }
                 else

@@ -126,7 +126,7 @@ function Login( cwsRenderObj )
 		/* START > Added by Greg (2018/12/10) */
 		var divIcon = $( 'div.logo_top' );
 		
-		$( '#nav-toggle' ).hide();
+		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
 		$( '#loginImg' ).show();
 
@@ -141,6 +141,9 @@ function Login( cwsRenderObj )
 		me.pageTitleDivTab.html ( 'CONNECT' );
 		/* END > Added by Greg (2018/12/10) */
 
+
+		// TODO: NEW JAMES - 2019/01/22
+		Menu.setInitialLogInMenu( me.cwsRenderObj );
 	}
 
 	me.closeForm = function()
@@ -149,7 +152,7 @@ function Login( cwsRenderObj )
 		me.pageDivTag.show( 'fast' );
 
 		$( '#loginImg' ).hide();
-		$( '#nav-toggle' ).show();
+		//$( '#nav-toggle' ).show();
 		$( '#loggedInDiv' ).show();		
 
 		//me.cwsRenderObj.configureMobileMenuIcon();

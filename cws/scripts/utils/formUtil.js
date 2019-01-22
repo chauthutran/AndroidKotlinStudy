@@ -354,7 +354,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) 
 			{
 				thisTag.removeClass( 'active' );
-				subListIconsTag.hide( 'slide', { direction: 'left' }, 150);
+				subListIconsTag.hide( 'slide', { direction: 'left' }, 250);
 				//subListIconsTag.hide();
 			}
 			else
@@ -381,7 +381,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ));
-				subListIconsTag.show( 'slide', { direction: 'right' }, 150);
+				subListIconsTag.show( 'slide', { direction: 'right' }, 250);
 			} 
 			else
 			{

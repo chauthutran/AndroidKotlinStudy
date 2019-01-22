@@ -126,7 +126,6 @@ function cwsRender()
 
 		var manageInputSwipe = inputMonitor( me );
 
-
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
 
 	}
@@ -419,7 +418,9 @@ function cwsRender()
 
 		if ( me.areaList )
 		{
-		  // Greg added: 2018/11/23 -- 'logOut' check
+			// TODO: MOVE THIS TO 'MENU' STATIC CLASS..
+
+		  	// Greg added: 2018/11/23 -- 'logOut' check
 			if (JSON.stringify(me.areaList).indexOf('logOut') < 0 )
 			{
 				// 
