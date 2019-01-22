@@ -216,7 +216,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "7a9467d01f474905fcb1fa3cac881894"
+    "revision": "2b0c0938f97f41ac7a903527e09ff660"
   },
   {
     "url": "manifest.json",
@@ -232,7 +232,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "9b7c91b3251e499ba9f0e08fc2ff7fe5"
+    "revision": "ba3b9fe20592661c9fc9f1c089e4cd51"
   },
   {
     "url": "scripts/classes/action.js",
@@ -268,7 +268,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "85329df80e8c856abad3bc9f3eddcd89"
+    "revision": "2e712403369871ba74c12473c14c0aa8"
   },
   {
     "url": "scripts/classes/login.js",

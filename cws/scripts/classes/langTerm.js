@@ -58,6 +58,8 @@ function LangTerm( cwsRenderObj )
 			me.allLangTerms = langTerms;
 			me.setLanguageList( me.allLangTerms );
 
+			console.log( me.allLangTerms );
+
 			returnFunc( langTerms );
 		}
 		else
@@ -67,6 +69,8 @@ function LangTerm( cwsRenderObj )
 			{				
 				me.allLangTerms = returnJson;
 				me.setLanguageList( me.allLangTerms );
+
+				console.log( me.allLangTerms );
 
 				if ( returnJson ) DataManager.saveData( DataManager.StorageName_langTerms, returnJson );
 				

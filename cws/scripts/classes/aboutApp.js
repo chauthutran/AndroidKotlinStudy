@@ -12,18 +12,12 @@ function aboutApp( cwsRender, langTermObj )
     me.langTermObj = langTermObj;
 
     // ----- Tags -----------
-    var aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
-
+    me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
 
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
-
-
-
-	// -----------------------------
-	// ---- Methods ----------------
 
 	me.initialize = function() {
 
@@ -90,9 +84,9 @@ function aboutApp( cwsRender, langTermObj )
         });     
         
         
-        aboutInfo_langSelectTag.change( () => 
+        me.aboutInfo_langSelectTag.change( () => 
         {    
-            me.langTermObj.setCurrentLang( aboutInfo_langSelectTag.val() );    
+            me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );    
 
             me.langTermObj.translatePage();
         }); 
@@ -104,20 +98,32 @@ function aboutApp( cwsRender, langTermObj )
         });
         
 
-        $( '#aboutInfo_newLangTermsDownload' ).click( () =>
+        $( '#aboutInfo_newLangTermsDownload' ).click( function() 
         {
-            var loadingTag = FormUtil.generateLoadingTag(  $( this ) );
+            var btnDownloadTag = $( this );
 
+            var langSelVal = me.aboutInfo_langSelectTag.val();
+
+            console.log( 'aboutInfo_newLangTermsDownload, create loading Tag' );
+
+            //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
+
+            var loadingTag = $( '#aboutInfo_newLangTermsDownload_loading' );
+            loadingTag.show();
             //loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
             //btnTag.after( loadingTag );
 
-            me.langTermObj.retrieveAllLangTerm( function() {
-                loadingTag.remove();
-                //aboutInfo_langSelectTag.val( '' );
-                aboutInfo_langSelectTag.change();
-            }, true);
-        });
+            me.langTermObj.retrieveAllLangTerm( function() 
+            {
+                loadingTag.hide();
 
+                me.populateLangList_Show( me.langTermObj.getLangList(), langSelVal );
+
+                me.aboutInfo_langSelectTag.val( langSelVal ).change();
+
+            }, true);
+
+        });
     }
 
 
@@ -191,11 +197,11 @@ function aboutApp( cwsRender, langTermObj )
 
     me.populateLangList_Show = function( langaugeList, defaultLangCode )
     {        
-        Util.populateSelect( aboutInfo_langSelectTag, "Language", langaugeList );
+        Util.populateSelect( me.aboutInfo_langSelectTag, "Language", langaugeList );
 
         if ( defaultLangCode )
         {
-            Util.setSelectDefaultByName( aboutInfo_langSelectTag, defaultLangCode );
+            Util.setSelectDefaultByName( me.aboutInfo_langSelectTag, defaultLangCode );
         }
 
         $( '#aboutInfo_DivLangSelect' ).show();
