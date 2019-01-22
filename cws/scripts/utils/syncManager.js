@@ -194,9 +194,9 @@ function syncManager()
                             }
                         }
 
-						/*if ( allJson.langauges )
+						/*if ( allJson.languages )
 						{
-							var enLang = Util.getFromList( allJson.langauges, "en", "code" );
+							var enLang = Util.getFromList( allJson.languages, "en", "code" );
 							if ( enLang ) enLangTerm = enLang.terms;
 						}*/
 

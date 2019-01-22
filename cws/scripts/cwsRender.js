@@ -127,17 +127,27 @@ function cwsRender()
 		var manageInputSwipe = inputMonitor( me );
 
 
-		if ( me._translateEnable )
+		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
+
+	}
+
+	me.retrieveAndSetUpTranslate = function()
+	{
+		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
+
+		// NOTE: Try language download here.
+		
+		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
 		{
-			var lang = FormUtil.defaultLanguage(); //"pt";
+			if ( allLangTerms )
+			{
+				// Enable the language switch dropdown
+				me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
 
-			// NOTE: Try language download here.
-			me.langTermObj.retrieveLangTerm( lang, function() {
-			
+				// Translate current page
 				me.langTermObj.translatePage();
-			});
-		}
-
+			}
+		});
 	}
 
 	// ------------------
@@ -155,9 +165,9 @@ function cwsRender()
 
 	me.createSubClasses = function()
 	{
-		me.loginObj = new Login( me );
-		me.aboutApp = new aboutApp( me );
 		me.langTermObj = new LangTerm( me );
+		me.loginObj = new Login( me );
+		me.aboutApp = new aboutApp( me, me.langTermObj );
 	}
 
 	// =============================================
@@ -235,6 +245,10 @@ function cwsRender()
 				}
 				else if ( clicked_areaId === 'aboutPage')
 				{
+
+					// ?? Why render if only clicked??
+					// ?? Render everytime it is clicked??
+
 					me.aboutApp.render();
 				}
 			}

@@ -5,6 +5,9 @@
 
 function DataManager() {}
 
+DataManager.StorageName_session = "session";
+DataManager.StorageName_langTerms = "langTerms";
+
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
@@ -119,3 +122,27 @@ DataManager.updateItemFromData = function( secName, id, jsonDataItem )
 	}
 };
 
+// =========================
+
+DataManager.getUserConfigData = function() 
+{
+	var userConfigJson;
+
+	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
+
+	if ( sessionDataStr )
+	{
+		var sessionJson = JSON.parse( sessionDataStr );
+
+		if ( sessionJson )	
+		{
+			if ( sessionJson.user )
+			{
+				var userDataStr = localStorage.getItem( sessionJson.user );
+				userConfigJson = JSON.parse( userDataStr );
+			}
+		}
+	}
+
+	return userConfigJson;
+}

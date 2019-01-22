@@ -6,9 +6,11 @@ function LangTerm( cwsRenderObj )
 
 	me.cwsRenderObj = cwsRenderObj;
 	
-	me.langTerms = [];
-	me.langTermsByLang = {};
-	me.currentLangTerm = {};
+	me.allLangTerms = {};
+	me.langList = [];
+	
+	me.currentLangTerms = {};
+	me.currentLangcode = "";
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -38,13 +40,48 @@ function LangTerm( cwsRenderObj )
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
+	// Retrieve All Languages Term.
 	// MAIN METHOD 1.
+	me.retrieveAllLangTerm = function( returnFunc )
+	{	
+		// No Reset?	
+		//me.allLangTerms = undefined;
+
+		// If exists in local storage, load it.
+		// Otherwise, retrieve it
+		var langTerms = DataManager.getData( DataManager.StorageName_langTerms );
+		
+		if ( langTerms )
+		{
+			console.log( '=== LANG TERMS ==> Local Storage Data Loaded' );
+
+			me.allLangTerms = langTerms;
+			me.setLanguageList( me.allLangTerms );
+
+			returnFunc( langTerms );
+		}
+		else
+		{
+			console.log( '=== LANG TERMS ==> Retrieving from Web Service' );
+			me.retrieveAllLangTermInner( function( returnJson )
+			{				
+				me.allLangTerms = returnJson;
+				me.setLanguageList( me.allLangTerms );
+
+				if ( returnJson ) DataManager.saveData( DataManager.StorageName_langTerms, returnJson );
+				
+				returnFunc( returnJson );
+			});
+		}
+	}
+
+
 	// Retrieve it from ws and put it on local storage or local store location
-	me.retrieveLangTermInner = function( lang, returnFunc )
+	me.retrieveAllLangTermInner = function( returnFunc )
 	{
 		//var lang = "en";
 
-		var queryLoc = '/api/langTerms?lang=' + lang;  // '/api/langTerms' for all lang..
+		var queryLoc = '/api/langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
 		var loadingTag = undefined;
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
@@ -61,6 +98,7 @@ function LangTerm( cwsRenderObj )
 			else
 			{
 				// Try retrieving all dailyCache on WebService..
+				console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
 				FormUtil.wsSubmitGeneral( '/api/dailyCache', { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
@@ -68,16 +106,8 @@ function LangTerm( cwsRenderObj )
 					{
 						console.log( 'all langTerm: ' );
 						console.log( allLangTermsJson );
-
-						var enLangTerm = {};
-
-						if ( allLangTermsJson.langauges )
-						{
-							var enLang = Util.getFromList( allLangTermsJson.langauges, "en", "code" );
-							if ( enLang ) enLangTerm = enLang.terms;
-						}
-
-						if ( returnFunc ) returnFunc( enLangTerm );
+						
+						if ( returnFunc ) returnFunc( allLangTermsJson );
 					}
 					else
 					{
@@ -87,15 +117,6 @@ function LangTerm( cwsRenderObj )
 					}
 				});			
 			}
-		});
-	}
-
-	me.retrieveLangTerm = function( lang, returnFunc )
-	{
-		me.retrieveLangTermInner( lang, function( returnJson )
-		{
-			me.currentLangTerm = returnJson;
-			returnFunc( returnJson );
 		});
 	}
 
@@ -123,7 +144,7 @@ function LangTerm( cwsRenderObj )
 		// go through the term and translate them through out the page
 		for ( var termName in termCollection )
 		{
-			var termVal = me.currentLangTerm[ termName ];
+			var termVal = me.currentLangTerms[ termName ];
 
 			if ( termVal )
 			{
@@ -133,6 +154,65 @@ function LangTerm( cwsRenderObj )
 			}
 		}
 	}
+
+
+	// ==================================================
+	// === Used Methods ======
+
+
+	me.setCurrentLang = function( langCode )
+	{
+		me.currentLangcode = langCode;
+
+		me.currentLangTerms = me.getLangTerms( langCode );
+	}
+
+
+	me.getLangTerms = function( langCode )
+	{
+		var returnLangTerms = {};
+
+		if ( me.allLangTerms && me.allLangTerms.languages )
+		{
+			var langTerms = Util.getFromList( me.allLangTerms.languages, langCode, "code" );
+			if ( langTerms ) returnLangTerms = langTerms.terms;
+		}
+
+		return returnLangTerms;
+	}
+
+
+	me.getLangList = function()
+	{
+		return me.langList;
+	}
+
+	me.setLanguageList = function( allLangTerms )
+	{
+		me.langList = [];
+
+		if ( allLangTerms && allLangTerms.languages )
+		{
+			//console.log( 'setLanguageList' );
+			for( i = 0; i < allLangTerms.languages.length; i++ )
+			{
+				var langJson = allLangTerms.languages[i];
+
+				console.log( langJson );
+
+				if ( langJson.code && langJson.name )
+				{
+					var addLangJson = {};
+					addLangJson.id = langJson.code;
+					addLangJson.name = langJson.name;
+
+					me.langList.push( addLangJson );
+				}
+			}
+		}
+	}
+
+
 
 	// 1. On config json, We need to populate 'term' & 'defaultTerm'
 	// 2. When rendering as HTML, we need to add 'term'='' on all the tags
