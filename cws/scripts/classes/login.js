@@ -125,7 +125,10 @@ function Login( cwsRenderObj )
 
 		/* START > Added by Greg (2018/12/10) */
 		var divIcon = $( 'div.logo_top' );
-		
+		if ( ! me.loginFormDivTag.is( ":visible" ) )
+        {
+            me.loginFormDivTag.show();
+        }
 		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
 		//$( '#loginImg' ).show();

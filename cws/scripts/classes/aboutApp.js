@@ -114,7 +114,10 @@ function aboutApp( cwsRender, langTermObj )
         {
             $( 'div.mainDiv' ).hide();
         }
-    
+        if ( $( '#loginFormDiv' ).is( ":visible" ) )
+        {
+            $( '#loginFormDiv' ).hide();
+        }
         me.aboutFormDivTag.show( 'fast' );    
     }
 
@@ -122,7 +125,15 @@ function aboutApp( cwsRender, langTermObj )
     {
         me.aboutFormDivTag.hide();    
 
-        $( 'div.mainDiv' ).show( 'fast' );    
+        if ( FormUtil.checkLogin() )
+        {
+            $( 'div.mainDiv' ).show( 'fast' );
+        }
+        else
+        {
+            $( '#loginFormDiv' ).show();
+        }
+
     }
 
 

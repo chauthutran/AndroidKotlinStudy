@@ -236,11 +236,11 @@
       <section class="wrapper">
         <main class="container">
 
-        <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;">
+        <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;height:100%;">
 
-          <ul class="aboutDivContainer" style="border-bottom:0;position:fixed;text-align:left;max-width:900px;min-width:250px;">
+          <ul class="aboutDivContainer" style="border-bottom:0;position:relative;text-align:left;max-width:900px;min-width:250px;">
 
-            <li class="inputDiv" style="width:250px;margin: 15px 0 0 0;">
+            <li class="inputDiv" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
               <label class="from-string titleDiv" term="about_title" style="max-width:250px;text-align: left;font-size: 1.1em;background-color: #fff;color:#000;padding:10px;">About</label>
               <br>
             </li>
@@ -260,8 +260,7 @@
                     <td><span id="aboutInfo_AppVersion">test</span></td>
                     <td>
                       <div id="aboutInfo_AppVersionInner" style="position:relative;text-align:left;">
-                        <button value="" term="about_checkForUpdates" id="appShellUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;">check
-                          for updates</button>
+                        <button value="" term="about_newVersionAvailable" id="appShellUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;display:none;">new version available</button>
                       </div>                      
                     </td>
                   </tr>
@@ -278,7 +277,7 @@
                     <td><span id="aboutInfo_dcdVersion"></span></td>
                     <td>
                       <div id="aboutInfo_dcdVersionInner"style="position:relative;text-align:left;">
-                        <button value="" term="about_newVersionAvailable" id="dcdUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;">new version available</button>
+                        <button value="" term="about_newVersionAvailable" id="dcdUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;display:none;">new version available</button>
                       </div>
                     </td>
                   </tr>

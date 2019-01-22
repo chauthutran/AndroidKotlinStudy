@@ -659,6 +659,8 @@ Util.decodeURI_ItemList = function( jsonItemList, propName )
 
 Util.setSelectDefaultByName = function( ctrlTag, name )
 {
+	console.log( 'looking for ' + name );
+	console.log( ctrlTag.find( "option:contains('" + name + "')" ) );
 	ctrlTag.find( "option:contains('" + name + "')" ).attr( 'selected', true );
 };
 
