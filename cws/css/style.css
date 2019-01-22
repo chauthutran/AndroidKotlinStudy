@@ -716,5 +716,5 @@ a.searchresultSelector:hover {
 }
 
 .btnStyle1:hover {
-  background-color: silver;
+  background-color: silver !important;
 }
