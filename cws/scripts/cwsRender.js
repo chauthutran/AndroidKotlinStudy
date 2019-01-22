@@ -543,6 +543,8 @@ function cwsRender()
 
 				var menuTag = $( '<div class="menu-mobile-row" areaId="' + area.id + '"><div>' + area.name + '</div></div>' );
 
+				if ( area.term ) menuTag.attr( 'term', area.term );
+
 				me.setupMenuTagClick( menuTag );
 
 				me.navDrawerDivTag.append( menuTag );
