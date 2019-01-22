@@ -456,6 +456,7 @@ input[type=text]:focus{
 .o-one > li.active {
   color: #50555a;
   background-color: #fff;
+  border-radius: 5px 5px 0 0;
 }
 .o-one > li.active:before {
   transition-duration: .5s;

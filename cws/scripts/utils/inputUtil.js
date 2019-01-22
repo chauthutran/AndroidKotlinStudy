@@ -177,7 +177,7 @@ function inputMonitor( cwsRenderObj )
             }
         }*/
 
-        e.preventDefault();
+        //e.preventDefault();
 
     };
 
@@ -210,6 +210,7 @@ function inputMonitor( cwsRenderObj )
             if ( currentX > thresholdNavDrawerWidth ) // menu dragged OPEN (LEFT-to-RIGHT) WIDER than minimum width threshold >> SHOW
             {
                 console.log ( 'showing menu ' );
+
                 $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
 
                 $( '#nav-toggle' ).click();
@@ -219,9 +220,12 @@ function inputMonitor( cwsRenderObj )
             {
                 console.log ( 'staying closed ' );
 
-                $( '#navDrawerDiv' ).css( 'width', '0px' );
+                $( '#navDrawerDiv' ).css( 'left', '-' + expectedNavDrawerWidth + 'px' );
+                $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
 
-                $( '#navDrawerDiv' ).hide();
+				setTimeout( function() {
+					$( '#navDrawerDiv' ).hide();
+				}, 500 );
 
                 if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
 
@@ -231,13 +235,12 @@ function inputMonitor( cwsRenderObj )
         {
             /* MENU ALREADY OPEN > CHECK SWIPE CLOSE THRESHOLDS */
             /* navDrawerVisibleOnStart = true */
-
             if ( currentX < thresholdNavDrawerWidth ) // menu dragged beyond minimum width threshold >> clicking HIDE
             {
-                console.log ( 'click closing menu ' );
+                console.log ( 'closing menu (called click event) ' );
 
                 if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
-                
+
                 $( '#nav-toggle' ).click(); //click close
             }
             else

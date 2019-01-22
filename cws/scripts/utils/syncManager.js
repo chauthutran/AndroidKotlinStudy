@@ -159,13 +159,13 @@ function syncManager()
                 //console.log( returnJson );
 
                 var appShellVersion = $( '#spanVersion' ).html().replace('v','');
-                
+
                 if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                 {
-                    MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
+                    //MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
                     if ( btnTag )
                     {
-                        btnTag.text( 'Update to v' +returnJson.version );
+                        //btnTag.text( 'Update to v' +returnJson.version );
                         btnTag.show();
                     }
                 }
@@ -186,12 +186,16 @@ function syncManager()
                         if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                         {
                             //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
-                            MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
+                            //MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
                             if ( btnTag )
                             {
-                                btnTag.text( 'Update to v' +returnJson.version );
+                                //btnTag.text( 'Update to v' +returnJson.version );
                                 btnTag.show();
                             }
+                        }
+                        else
+                        {
+                            btnTag.hide();
                         }
 
 						/*if ( allJson.languages )
@@ -204,7 +208,9 @@ function syncManager()
 					}
 					else
 					{
-						console.log( 'all appShellInfo FAILED: ' );
+                        console.log( 'all appShellInfo FAILED: ' );
+
+                        btnTag.hide();
 
 						//if ( returnFunc ) returnFunc( new Object() );
 					}
@@ -219,6 +225,8 @@ function syncManager()
         {
             if ( ConnManager.isOnline() )
             {
+                console.log( 'dcdConfigVersionTest' );
+
                 var loadingTag = undefined;
                 var userName = JSON.parse( localStorage.getItem('session') ).user;
                 var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
@@ -228,21 +236,26 @@ function syncManager()
                 {
                     if ( success )
                     {
+                        console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
                         if ( ( userConfig.dcdConfig.version ).toString() < ( loginData.dcdConfig.version ).toString() )
                         {
                             //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
-                            MsgManager.msgAreaShow( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
+                            //MsgManager.msgAreaShow( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
                             if ( btnTag )
                             {
-                                btnTag.text( 'Update to v' +loginData.dcdConfig.version );
+                                //btnTag.text( 'Update to v' +loginData.dcdConfig.version );
                                 btnTag.show();
                             }
+                        }
+                        else
+                        {
+                            btnTag.hide();
                         }
                     }
                     else
                     {
                         var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
-                        MsgManager.msgAreaShow( ' DCD Config SERVER not available: ' + errDetail );
+                        //MsgManager.msgAreaShow( ' DCD Config SERVER not available: ' + errDetail );
                         btnTag.hide();
                     }
                 } );
@@ -276,7 +289,7 @@ function syncManager()
                 }
                 else
                 {
-                    MsgManager.msgAreaShow( ' network TEST LIMIT exceeded: ' + me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
+                    //MsgManager.msgAreaShow( ' network TEST LIMIT exceeded: ' + me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
                 }
             }
         }
