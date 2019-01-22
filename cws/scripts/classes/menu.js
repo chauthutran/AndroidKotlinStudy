@@ -14,7 +14,7 @@ Menu.setInitialLogInMenu = function( cwsRenderObj )
 {
     var menuList = [];
     menuList.push( Menu.menuJson_About );
-    cwsRenderObj.populateMenuList();
+    cwsRenderObj.populateMenuList( menuList );
 }
 
 Menu.populateMenuList = function( menuItems )
