@@ -163,6 +163,10 @@ self.__precacheManifest = [
     "revision": "de3a2c52c81ddd7829b1d107e5ed5ee2"
   },
   {
+    "url": "img/logo_bg_header.svg",
+    "revision": "cabb7d89b64c17fd186561bc5b0daa2f"
+  },
+  {
     "url": "img/logo_log.svg",
     "revision": "0be80d63c398303a54a276fedffc2b22"
   },
@@ -216,7 +220,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "2b0c0938f97f41ac7a903527e09ff660"
+    "revision": "94b99594fde6463188b025f51045820f"
   },
   {
     "url": "manifest.json",
@@ -232,7 +236,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "ba3b9fe20592661c9fc9f1c089e4cd51"
+    "revision": "844f938f8d59fc145a63221a6134ef68"
   },
   {
     "url": "scripts/classes/action.js",
@@ -288,7 +292,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "3b7e3bc25a25910f09cb5a18abf46827"
+    "revision": "4a56aca9e2aa002fa1cc4aa706de8350"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",

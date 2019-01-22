@@ -105,7 +105,7 @@ function cwsRender()
 			me.loginObj.render(); // Open Log Form
 		}
 
-		$( '#loginImg' ).click( function() {
+		$( '#btnReset' ).click( function() {
 			if ( localStorage.getItem('session') )
 			{
 				var lastSession = JSON.parse( localStorage.getItem('session') );
