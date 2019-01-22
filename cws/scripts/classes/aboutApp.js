@@ -140,7 +140,7 @@ function aboutApp( cwsRender, langTermObj )
             $( '#loginFormDiv' ).hide();
         }
 
-        me.renderNonEssentialFields( FormUtil.checkLogin() );
+        //me.renderNonEssentialFields( FormUtil.checkLogin() );
 
         me.aboutFormDivTag.show( 'fast' );    
     }
