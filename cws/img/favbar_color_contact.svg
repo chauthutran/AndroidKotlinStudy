@@ -81,7 +81,7 @@
 	     x="3"
          y="294"
 	     text-anchor="start"
-		 id="tspan13140">{TEXT}</tspan>
+		 id="tspan13140" term="{TERM}">{TEXT}</tspan>
 	 </text>
     <g style="stroke-width:0.7043180466"
        transform="matrix(1.421085606,0,0,1.418541902,-869.7348156,1151.398532)"

@@ -10,9 +10,11 @@ function aboutApp( cwsRender, langTermObj )
     me.aboutData;
     me.syncMgr;
     me.langTermObj = langTermObj;
+    me.themeList;
 
     // ----- Tags -----------
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
+    me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
 
 
 	// TODO: NEED TO IMPLEMENT
@@ -30,7 +32,7 @@ function aboutApp( cwsRender, langTermObj )
     
     me.render = function() 
     {       
-        me.populateAboutPageData( DataManager.getUserConfigData() );
+        me.populateAboutPageData( me.cwsRenderObj.configJson ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -43,7 +45,7 @@ function aboutApp( cwsRender, langTermObj )
 	{		
         // --------------
         // BUTTON CLICKS
-        
+
         // check for App Version updates BUTTON
         var divButtonAppVersionTag = $( '#aboutInfo_AppVersionInner' );
         var btnAppShellTag = $( '#appShellUpdateBtn' );
@@ -82,17 +84,27 @@ function aboutApp( cwsRender, langTermObj )
                 }, 500 );
             }
         });     
-        
-        
+
         me.aboutInfo_langSelectTag.change( () => 
-        {    
-            me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );    
+        {
+            me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );
 
             me.langTermObj.translatePage();
-        }); 
+        });
+
+        me.aboutInfo_ThemeSelectTag.change ( () => 
+        {    
+            console.log( 'THEME changed: ' + me.aboutInfo_ThemeSelectTag.val() );
+            var thisConfig = me.cwsRenderObj.configJson;
+            console.log( thisConfig );
+            thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
+            me.cwsRenderObj.configJson = thisConfig;
+            me.cwsRenderObj.renderDefaultTheme(); 
+        });
 
 
-        $( '#aboutInfo_CloseBtn' ).click( () =>
+        //$( '#aboutInfo_CloseBtn' ).click( () =>
+        $( 'img.btnBack' ).click( () =>
         {
             me.hideAboutPage();        
         });
@@ -140,7 +152,7 @@ function aboutApp( cwsRender, langTermObj )
             $( '#loginFormDiv' ).hide();
         }
 
-        //me.renderNonEssentialFields( FormUtil.checkLogin() );
+        me.renderNonEssentialFields( FormUtil.checkLogin() );
 
         me.aboutFormDivTag.show( 'fast' );    
     }
@@ -165,26 +177,40 @@ function aboutApp( cwsRender, langTermObj )
     {
         if ( userLoggedIn )
         {
-            $( '#li_about_userLanguage' ).show();
+            //$( '#li_about_userLanguage' ).show();
             $( '#li_about_theme' ).show();
         }
         else
         {
-            $( '#li_about_userLanguage' ).hide();
+            //$( '#li_about_userLanguage' ).hide();
             $( '#li_about_theme' ).hide();
         }
     }
 
-    me.populateAboutPageData = function( userConfig ) 
+    me.populateAboutPageData = function( dcdConfig ) 
     {
         // Dcd Config related data set
         var dcdConfigVersion = "";
-        var dcdConfigSettingThemem = "";
 
-        if ( userConfig && userConfig.dcdConfig )
+        if ( dcdConfig )
         {
-            if ( userConfig.dcdConfig.version ) dcdConfigVersion = userConfig.dcdConfig.version;
-            if ( userConfig.dcdConfig.settings && userConfig.dcdConfig.settings.theme ) dcdConfigSettingThemem = userConfig.dcdConfig.settings.theme;
+            if ( dcdConfig.version ) dcdConfigVersion = dcdConfig.version;
+            if ( dcdConfig.settings && dcdConfig.settings.theme ) 
+            {
+                //dcdConfigSettingTheme = dcdConfig.settings.theme;
+                me.getThemeList( dcdConfig.themes );
+                me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
+
+            }
+
+
+            $( '#li_about_configVersion' ).show();
+            $( '#li_about_theme' ).show();
+        }
+        else
+        {
+            $( '#li_about_configVersion' ).hide();
+            $( '#li_about_theme' ).hide();
         }
 
 
@@ -192,9 +218,8 @@ function aboutApp( cwsRender, langTermObj )
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
-        $( '#aboutInfo_Language' ).html( FormUtil.defaultLanguage() );
-        $( '#aboutInfo_Theme' ).html( dcdConfigSettingThemem );
-
+        //$( '#aboutInfo_Language' ).html( FormUtil.defaultLanguage() );
+        //$( '#aboutInfo_Theme' ).html( dcdConfigSettingTheme );
 
         // Dropdown Populate
         
@@ -210,245 +235,77 @@ function aboutApp( cwsRender, langTermObj )
         me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
     }
 
+    me.getThemeList = function( jsonThemes )
+    {
+		if ( jsonThemes )
+		{
+            me.themeList = [];
+			//console.log( 'setLanguageList' );
+			for( i = 0; i < jsonThemes.length; i++ )
+			{
+				var themeJson = jsonThemes[i];
+
+				console.log( themeJson );
+
+				if ( themeJson.id || themeJson.name )
+				{
+                    var addthemeJson = {};
+                    
+                    if ( themeJson.id )
+                    {
+                        addthemeJson.id = themeJson.id;
+                    }
+                    else
+                    {
+                        addthemeJson.id = themeJson.name;
+                    }
+
+					addthemeJson.name = themeJson.name;
+
+					me.themeList.push( addthemeJson );
+				}
+            }
+            console.log( 'got theme list' );
+            console.log( me.themeList );
+		}
+    }
+
 
     me.populateLangList_Show = function( langaugeList, defaultLangCode )
-    {        
+    {   
         Util.populateSelect( me.aboutInfo_langSelectTag, "Language", langaugeList );
 
         if ( defaultLangCode )
         {
-            Util.setSelectDefaultByName( me.aboutInfo_langSelectTag, defaultLangCode );
+            me.setLanguageDropdownFromCode( langaugeList, defaultLangCode )
         }
 
         $( '#aboutInfo_DivLangSelect' ).show();
     }
 
-
-    /*
-    me.hide = function() {
-        me.aboutContentDivTag.empty();
-        me.aboutFormDivTag.hide()
+    me.setLanguageDropdownFromCode = function ( langaugeList, langCode )
+    {
+		$.each( langaugeList, function( i, item ) 
+		{
+            if ( item.id == langCode )
+            {
+                Util.setSelectDefaultByName( me.aboutInfo_langSelectTag, item.name );
+            }
+		});
     }
 
-    me.render = function() {
+    me.populateThemeList_Show = function( ThemeList, defaultTheme )
+    {   
+        Util.populateSelect( me.aboutInfo_ThemeSelectTag, "Theme", ThemeList );
 
-        //me.aboutData = me.getAboutInfo();
-        var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
-
-        if ( $( 'div.mainDiv' ).is( ":visible" ) )
+        if ( defaultTheme )
         {
-            $( 'div.mainDiv' ).hide();
+            Util.setSelectDefaultByName( me.aboutInfo_ThemeSelectTag, defaultTheme );
         }
 
-        me.aboutFormDivTag.show( 'fast' );
-
-            if (userConfig)
-            {
-
-                me.aboutContentDivTag.empty();
-
-                var divContainerTag = $( '<ul class="aboutDivContainer" style="border-bottom:0;position:fixed;text-align:left;max-width:900px;min-width:250px;" />' );
-                me.aboutContentDivTag.append( divContainerTag );
-
-                var divAttrTag = $( '<li class="inputDiv" style="width:250px;margin: 15px 0 0 0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var divHeaderLabelTag = $( '<label class="from-string titleDiv" style="max-width:250px;text-align: left;font-size: 1.1em;background-color: #fff;color:#000;padding:10px;" /><br>' );
-                divHeaderLabelTag.html( 'About' );
-                divAttrTag.append( divHeaderLabelTag );
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var labelTag = $( '<label class="from-string titleDiv" />' );
-                labelTag.html( 'Application version' );
-                divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_AppVersion" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px" />');
-                valueTag.html( $( '#spanVersion' ).html().replace('v','') );
-                divAttrTag.append( valueTag );
-
-                // check for App Version updates BUTTON
-                var divButtonAppVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
-                valueTag.append( divButtonAppVersionTag );
-                var btnAppShellTag = $( '<button value="" id="appShellUpdateBtn" class="divBtn" style="display:none;position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
-                btnAppShellTag.html( 'new version available' );
-                divButtonAppVersionTag.append( btnAppShellTag );
-
-                $( btnAppShellTag ).click( () => {
-
-                    if ( ConnManager.isOffline() )
-                    {
-                        alert( 'Only re-register service-worker while online, please.' );
-                    }
-                    else
-                    {
-                        FormUtil.showProgressBar();
-                        var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
-                        setTimeout( function() {
-                            me.cwsRenderObj.reGetAppShell(); 
-                        }, 500 );
-
-                    }
-
-                });
-
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var labelTag = $( '<label class="from-string titleDiv" />' );
-                labelTag.html( 'Config version' );
-                divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_dcdVersion" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"/>');
-                valueTag.html( userConfig.dcdConfig.version );
-                divAttrTag.append( valueTag );
-
-                // check for DCD Version updates BUTTON
-                var divButtonDcdVersionTag = $( '<div style="position:relative;text-align:left;width:30%;" />' );
-                valueTag.append( divButtonDcdVersionTag );
-                var btnDcdConfigTag = $( '<button value="" id="dcdUpdateBtn" class="divBtn" style="display:none;position:relative;top:5px;left:-3px;padding:1px 4px 1px 4px;border:1px solid #C0C0C0;color:#236EDE;border-radius:8px;font-size:calc(8px + 0.5vw);" />');
-                btnDcdConfigTag.html( 'new version available' );
-                divButtonDcdVersionTag.append( btnDcdConfigTag );
-
-                $( btnDcdConfigTag ).click( () => {
-                    if ( ConnManager.isOffline() )
-                    {
-                        msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
-                    }
-                    else
-                    {
-                        FormUtil.showProgressBar();
-                        var loadingTag = FormUtil.generateLoadingTag( divButtonDcdVersionTag );
-                        setTimeout( function() {
-                            me.cwsRenderObj.reGetDCDconfig(); 
-                        }, 500 );
-                    }
-                });
-
-
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var labelTag = $( '<label class="from-string titleDiv" />' );
-                labelTag.html( 'Browser' );
-                divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
-                valueTag.html( navigator.sayswho );
-                divAttrTag.append( valueTag );
-
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var labelTag = $( '<label term="User_Language" class="from-string titleDiv" />' );
-                labelTag.html( 'User language' );
-                divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"/>');
-                valueTag.html( navigator.language );
-                divAttrTag.append( valueTag );
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-                var labelTag = $( '<label class="from-string titleDiv" />' );
-                labelTag.html( 'Theme' );
-                divAttrTag.append( labelTag );
-                var valueTag = $( '<div id="aboutInfo_Language" class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px"/>');                
-                valueTag.html( userConfig.dcdConfig.settings.theme );
-                valueTag.append( '<select id="aboutInfo_langSelect"></select>' );
-                divAttrTag.append( valueTag );
-
-                var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-                divContainerTag.append( divAttrTag );
-
-
-
-                me.aboutFormDivTag.show();
-                me.cwsRenderObj.langTermObj.translatePage();
-
-                me.syncMgr = new syncManager();
-                me.syncMgr.appShellVersionTest( $( '#appShellUpdateBtn' ) );
-                me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );
-            }
-
+        $( '#aboutInfo_DivThemeSelect' ).show();
     }
-    */
-    
-    /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-    divContainerTag.append( divAttrTag );
 
-    var labelTag = $( '<label class="from-string titleDiv" />' );
-    labelTag.html( 'Country' );
-    divAttrTag.append( labelTag );
-    var valueTag = $( '<div id="aboutInfo_Country" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
-    valueTag.html( userConfig.dcdConfig.countryCode );
-    divAttrTag.append( valueTag );
-
-    
-    var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-    divContainerTag.append( divAttrTag );
-
-    var labelTag = $( '<label class="from-string titleDiv" />' );
-    labelTag.html( 'Data server' );
-    divAttrTag.append( labelTag );
-    var valueTag = $( '<div id="aboutInfo_dataServer" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
-    valueTag.html( userConfig.orgUnitData.dhisServer );
-    divAttrTag.append( valueTag );*/
-
-
-    /*var divAttrTag = $( '<li class="inputDiv" style="width: 97%;margin:0;" />' );
-    divContainerTag.append( divAttrTag );
-
-    var labelTag = $( '<label class="from-string titleDiv" />' );
-    labelTag.html( 'WS server' );
-    divAttrTag.append( labelTag );
-    var valueTag = $( '<div id="aboutInfo_WebServer" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"/>');
-    valueTag.html( FormUtil.staticWSName );
-    divAttrTag.append( valueTag );*/
-
-
-                    // James added: 2018/12/17 - BUT WE SHOULD SIMPLY HAVE STATIC TAGS IN index.html, not dynamic ones..
-    /*var spanConsoleOutConfig = $( '<span title="console out config" style="opacity: 0; cursor:pointer; margin-left: 15px;">v</span>');
-    divButtonTag.append( spanConsoleOutConfig );
-
-    spanConsoleOutConfig.click( function() {
-        console.log( me.cwsRenderObj.configJson );
-    });*/
-
-
-    /*
-    me.getAboutInfo = function()
-    {
-
-        var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
-        var retObj = {};
-        var aboutApp = [];
-        var aboutSession = [];
-        var aboutBrowser = [];
-
-        aboutApp.push ( { name: 'Application version', value: $( '#spanVersion' ).html().replace('v','') } );
-        aboutApp.push ( { name: 'Config version', value: userConfig.dcdConfig.version } );
-        aboutApp.push ( { name: 'Country', value: userConfig.dcdConfig.countryCode } );
-        //aboutApp.push ( { name: 'urlName', value: ( location.pathname ).replace('/','').replace('/','') } ); //FormUtil.appUrlName
-        //aboutApp.push ( { name: 'urlNameRAW', value: ( location.pathname ) } );
-        aboutApp.push ( { name: 'Data server', value: userConfig.orgUnitData.dhisServer } );
-        aboutApp.push ( { name: 'WS server', value: FormUtil.staticWSName } );
-        //aboutApp.push ( { name: 'currentUser', value: FormUtil.login_UserName } );
-
-        retObj.about = ( aboutApp );
-
-        //aboutBrowser.push ( { name: 'platform', value: navigator.platform } );
-        aboutBrowser.push ( { name: 'Browser', value: navigator.sayswho } );
-        aboutBrowser.push ( { name: 'User language', value: navigator.language } );
-
-        retObj.Browser = ( aboutBrowser );
-
-
-        return retObj;
-    }
-    */
-    // END > Added by Greg: 2018/12/04
 
     navigator.sayswho= (function(){
         var ua= navigator.userAgent, tem, 

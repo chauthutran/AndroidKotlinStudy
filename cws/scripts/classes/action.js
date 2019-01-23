@@ -288,7 +288,7 @@ function Action( cwsRenderObj, blockObj )
 						// Loading Tag part..
 						var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-						
+
 						// NOTE: This form data is saved in owner form block
 						// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
 						if ( clickActionJson.redeemListInsert === "true" )

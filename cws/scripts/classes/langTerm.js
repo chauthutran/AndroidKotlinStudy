@@ -136,13 +136,21 @@ function LangTerm( cwsRenderObj )
 		tagsWithTerm.each( function() 
 		{
 			var tag = $( this );
-
 			var termName = tag.attr( 'term' );
 
-			console.log( 'termName: ' + termName );
+			//if ( termName != "" && termName != '{TERM}' ) 
+			{
 
-			termCollection[ termName ] = "";
+				//if ( tag.prop("tagName") == 'tspan' )
+				{
+					console.log( 'termName: ' + termName + ' ( ' + tag.prop("tagName") + ' )');
+					console.log( tag );
+				}
+				termCollection[ termName ] = "";
+			}
 		});
+
+		console.log( termCollection );
 
 
 		// go through the term and translate them through out the page

@@ -116,7 +116,7 @@
 	     x="3"
          y="294.2"
 	     text-anchor="start"
-         id="tspan13047">{TEXT}</tspan>
+         id="tspan13047" term="{TERM}">{TEXT}</tspan>
 	 </text>
     <g
        style="stroke-width:0.704223454"

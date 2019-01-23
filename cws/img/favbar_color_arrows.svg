@@ -82,7 +82,7 @@
        y="6.4"
 	   text-anchor="start"
        font-size="5.0211px"
-       id="tspan13071">{TEXT}</tspan>
+       id="tspan13071" term="{TERM}">{TEXT}</tspan>
    </text>
   <circle
      style="fill:#b3b3b3;fill-rule:evenodd;filter:url(#filter3829-3-6)"

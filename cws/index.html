@@ -236,26 +236,38 @@
       <section class="wrapper">
         <main class="container">
 
-        <div id="aboutContentDiv" class="aboutListDiv" style="padding: 15px;height:100%;">
+        <div id="aboutContentDiv " class="aboutListDiv listDiv" style="position:relative;text-align:left;">
 
-          <ul class="aboutDivContainer" style="border-bottom:0;position:relative;text-align:left;max-width:900px;min-width:250px;">
-
-            <li class="inputDiv" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <label class="from-string titleDiv" term="about_title" style="max-width:250px;text-align: left;font-size: 1.1em;background-color: #fff;color:#000;padding:10px;">About</label>
+          <ul class="o-one " style="">
+            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
+              <img src="img/back_arrow_28px.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnBack">
+              <label term="menu_about" style="">About</label>
               <br>
             </li>
+          </ul>
 
+            <div class="title-act-mobile" style="padding: 8px 0 0 0">
+                <img src="img/back_arrow_28px.svg" style="position:absolute;left:14px;width:32px;top:5px""  class="btnBack">
+                <label term="menu_about">About</label>
+              </div>
+
+          <ul class="tab__content_act">
+
+            <!--
             <li id="aboutInfo_closeBtnLi" class="inputDiv" style="width: 97%;;margin:0;">
               <div style="padding: 0px 10px 10px 20px;">
                 <button id="aboutInfo_CloseBtn" class="divBtn btnStyle1" term="about_closeBtn" style="padding: 10px; font-size: 14px; font-weight: bold;">Close</button>
               </div>
             </li>
+            -->
+
+            <li class="inputDiv" style="width: 97%;margin:0;"></li>
 
             <li class="inputDiv" style="width: 97%;;margin:0;">
               <label term="about_applicationVersion" class="from-string titleDiv">Application version</label>
               
               <div class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
-                <table>
+                <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td><span id="aboutInfo_AppVersion"></span></td>
                     <td>
@@ -266,52 +278,52 @@
                     <td>
                         <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1" style="margin-left: 10px;">Reset</button>
                     </td>
+                    <td id='aboutInfo_AppVersion_More' style="width:10%">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                    </td>
                   </tr>
                 </table>                
               </div>
             </li>
 
-            <li class="inputDiv" style="width: 97%;;margin:0;">
+            <li class="inputDiv" id='li_about_configVersion' style="width: 97%;;margin:0;">
               <label term="about_configVersion" class="from-string titleDiv">Config version</label>
 
               <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
-                <table>
+                <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td><span id="aboutInfo_dcdVersion"></span></td>
                     <td>
                       <div id="aboutInfo_dcdVersionInner"style="position:relative;text-align:left;">
-                        <button value="" term="about_newVersionAvailable" id="dcdUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;">new version available</button>
+                        <button value="" term="about_newVersionAvailable" id="dcdUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;display:none;">new version available</button>
                       </div>
+                    </td>
+                    <td id='aboutInfo_dcdVersion_More' style="width:10%">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
                     </td>
                   </tr>
                 </table>                               
               </div>
             </li>
 
-            <li class="inputDiv" style="width: 97%;;margin:0;">
-              <label term="about_browser" class="from-string titleDiv">Browser</label>
-
-              <div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"></div>
-            </li>
-
             <li class="inputDiv" id='li_about_userLanguage' style="width: 97%;;margin:0;">
               <label term="about_userLanguage" class="from-string titleDiv">User language</label>
 
-              <div style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
-                <table>
+              <div style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
+                <table style="width:100%;border-spacing:0;">
                   <tr>
-                    <td>
-                      <div id="aboutInfo_Language" class="form-type-text"></div>
-                    </td>
-                    <td>
-                      <div id="aboutInfo_DivLangSelect" style="display:none; margin-left: 15px;"><select id="aboutInfo_langSelect"></select></div>
+                    <td style="max-width:280px">
+                      <div id="aboutInfo_DivLangSelect" style="display:none;" class="select"><select id="aboutInfo_langSelect" class="selector form-type-text" style="padding-left:0;"></select></div>
                     </td>
                     <td>
                       <button id="aboutInfo_newLangTermsDownload" term="about_newLangTermsDownload" class="divBtn btnStyle1" style="margin-left: 10px;">update languages</button>                        
                     </td>
                     <td>
                         <div id="aboutInfo_newLangTermsDownload_loading" class="loadingImg" style="display: none; margin-left: 8px;"><img src="images/loading.gif"></div>                      
-                    </td>                    
+                    </td>
+                    <td id='aboutInfo_userLanguage_More' style="width:10%">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                    </td>
                   </tr>
                 </table>
               </div>              
@@ -320,10 +332,29 @@
             <li class="inputDiv" id='li_about_theme' style="width: 97%;;margin:0;">
               <label term="about_theme" class="from-string titleDiv">Theme</label>
               
-              <div id="aboutInfo_Theme" class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">default</div>
+              <div id="aboutInfo_Theme" class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+                <table style="width:100%;border-spacing:0;">
+                  <tr>
+                    <td style="max-width:280px">
+                      <div id="aboutInfo_DivThemeSelect" style="display:none;" class="select"><select id="aboutInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;"></select></div>
+                    </td>
+                    <td id='aboutInfo_Theme_More' style="width:10%">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </li>
+
+
+            <li class="inputDiv" style="width: 97%;;margin:0;">
+              <label term="about_browser" class="from-string titleDiv">Browser</label>
+
+              <div id="aboutInfo_Browser" class="form-type-text" style="padding:10px 0 15px 10px"></div>
             </li>
 
             <li class="inputDiv" style="width: 97%;margin:0;"></li>
+
           </ul>
         </div>
 
@@ -340,13 +371,13 @@
         <ul class="o-one">
           <li class="active">
             <img src='img/active.svg' class="tab-image">
-            <label> Active</label>
+            <label term="menu_list"> Active</label>
           </li>
         </ul>
 
         <ul class="tab__content_act"></ul>
 
-        <div class="title-act-mobile"><img src='img/active.svg' class="tab-image"><label> Active</label></div>
+        <div class="title-act-mobile"><img src='img/active.svg' class="tab-image"><label term="menu_list"> Active</label></div>
         
         <div class="floatListMenuIcon fixed_father pointer off" onselectstart="return false">
           <img class="buttom-plus" src="img/plus.svg">

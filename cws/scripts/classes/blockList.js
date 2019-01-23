@@ -129,7 +129,8 @@ function BlockList( cwsRenderObj, blockObj )
             if ( me.redeemList === undefined || me.redeemList.length == 0 )
             {
                 var liTag = $( '<li class="emptyListLi"></li>' );
-                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;">List is empty.</a>' );
+                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;" term="">List is empty.</a>' );
+
                 liTag.append( spanTag );
                 listContentUlTag.append( liTag );
             }
@@ -179,7 +180,8 @@ function BlockList( cwsRenderObj, blockObj )
         {
 
             var liTag = $( '<li class="emptyListLi"></li>' );
-            var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;"><br>&nbsp;<label class="from-string titleDiv">List is empty.</label></a>' );
+            var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;"><br>&nbsp;<label class="from-string titleDiv" term="">List is empty.</label></a>' );
+
             liTag.append( spanTag );
             listContentUlTag.append( liTag );
 

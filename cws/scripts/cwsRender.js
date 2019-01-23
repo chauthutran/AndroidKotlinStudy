@@ -509,11 +509,15 @@ function cwsRender()
 		// clear the list first
 		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
-		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
+		var navMenuHead = $( '<div style="width:100%;height:120px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
 		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 		var tr = $( '<tr />' );
-		var tdLeft = $( '<td style="padding:10px;width:56px;" />' );
+		var tdLeft = $( '<td style="padding:0 10px 10px 10px;width:56px;" />' );
 		var tdRight = $( '<td  style="padding:2px 0 0 0;height:75px;" />' );
+
+		navMenuTbl.css( 'background-image', 'url( "img/logo_bg_header.svg" )' );
+		navMenuTbl.css( 'background-size', 'auto' );
+		navMenuTbl.css( 'background-repeat', 'no-repeat' );
 
 		me.navDrawerDivTag.append ( navMenuHead );
 		navMenuHead.append ( navMenuTbl );
@@ -523,13 +527,12 @@ function cwsRender()
 
 		var navMenuLogo = $( '<img src="img/logo_top.svg" />' );
 
-		
 		var userSessionJson = DataManager.getSessionData();
 		var userName = ( userSessionJson && userSessionJson.user ) ? userSessionJson.user : "";
 
 		tdLeft.append ( navMenuLogo );
-		tdRight.append ( $( '<div id="divNavDrawerOUName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;">' + userName + '</div>') );
-		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="navMenuHeader" style="font-size:.8rem;font-weight:400;text-align:left;" />' ) );
+		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:.8rem;font-weight:400;text-align:left;">' + userName + '</div>') );
+		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="font-size:.8rem;font-weight:400;text-align:left;" />' ) );
 
 		var tr = $( '<tr />' );
 		var td = $( '<td colspan=2 style="height:20px;" />' );
@@ -601,8 +604,8 @@ function cwsRender()
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
 			$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
 			$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );

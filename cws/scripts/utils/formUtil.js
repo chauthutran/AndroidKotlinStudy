@@ -369,6 +369,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
 
+			//if ( cwsRenderObj ) cwsRenderObj.langTermObj.translatePage();
+
 			$( '#focusRelegator').css('zIndex',100);
 			thisTag.css('zIndex',200);
 			subListIconsTag.css('zIndex',300);
@@ -802,6 +804,7 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 FormUtil.defaultLanguage = function()
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
+	//if ( FormUtil.dcdConfig && FormUtil.dcdConfig )
 	var navLang = (navigator.language).toString().substring(0,2);
 	console.log( ' FormUtil.defaultLanguage: ' + navLang)
 	return navLang;

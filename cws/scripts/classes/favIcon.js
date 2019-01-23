@@ -50,6 +50,7 @@ function favIcons( cwsRender )
 
             me.favIconsTag.empty();
 
+            console.log( favList[ networkStatus ] );
             me.createRecursiveFavIcons ( favList[ networkStatus ], 0 )
         }
 
@@ -70,6 +71,12 @@ function favIcons( cwsRender )
 
                 $( svgObject ).attr( 'id', 'svg_'+unqID );
                 $( svgObject ).find("tspan").html( favList[ favItm ].name );
+
+                if ( favList[ favItm ].term )
+                {
+                    $( svgObject ).html( $(svgObject).html().replace( /{TERM}/g, favList[ favItm ].term ) );
+                    $( svgObject ).attr( 'term', favList[ favItm ].term );
+                }
 
                 if ( favList[ favItm ].colors )
                 {
@@ -148,6 +155,8 @@ function favIcons( cwsRender )
                 divTag.append( svgObject );
                 me.favIconsTag.append( divTag );
 
+                console.log( svgObject );
+
                 if ( favList[ favItm ].target )
                 {
                     me.setFavIconClickTarget ( favList[ favItm ].target, unqID )
@@ -155,6 +164,12 @@ function favIcons( cwsRender )
                     if ( favList.length > (favItm+1) )
                     {
                         me.createRecursiveFavIcons( favList, (favItm+1)  )
+                    }
+                    else
+                    {
+                        setTimeout( function() { 
+                            me.cwsRenderObj.langTermObj.translatePage()
+                        }, 500 );
                     }
                 }
 
