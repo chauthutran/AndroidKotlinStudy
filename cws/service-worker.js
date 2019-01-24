@@ -139,20 +139,24 @@ self.__precacheManifest = [
     "revision": "3e3f227aa06dbfea700cb4ba587bf182"
   },
   {
+    "url": "img/back_arrow_28px.svg",
+    "revision": "d95d42e3edabd63d16306402c4444847"
+  },
+  {
     "url": "img/client.svg",
     "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
   },
   {
     "url": "img/favbar_color_act.svg",
-    "revision": "95f34a049890161cfb81d08a7f7978c1"
+    "revision": "13948d206be4212dfe153f189ad0f8be"
   },
   {
     "url": "img/favbar_color_arrows.svg",
-    "revision": "461d5e8b6ff37176a97a260954ed61ee"
+    "revision": "c3ce5d7be683c83729425f3b7f39d820"
   },
   {
     "url": "img/favbar_color_contact.svg",
-    "revision": "3a13ded0a18298b8dc62cda8b42e388e"
+    "revision": "6f045a1b801a41c223aa19852b0d6ebc"
   },
   {
     "url": "img/key.svg",
@@ -164,7 +168,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/logo_bg_header.svg",
-    "revision": "cabb7d89b64c17fd186561bc5b0daa2f"
+    "revision": "ffb7ee77a934be3654c693b51deed512"
   },
   {
     "url": "img/logo_log.svg",
@@ -220,7 +224,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "96b3afa81a1e2323004309ac844edff1"
+    "revision": "ad830da2090f8b1bac4a243da8fee035"
   },
   {
     "url": "manifest.json",
@@ -236,11 +240,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7eac92cb5f831d43b5561dab1c648992"
+    "revision": "578037404b04401de1affaf29487a913"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "0555e7fb53f65795fe93872df3948baf"
+    "revision": "e42120ea76193c9d40a74a0666f1f2df"
   },
   {
     "url": "scripts/classes/block.js",
@@ -248,15 +252,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "d6da8be86d24a6ee2a6c0347028d1679"
+    "revision": "7fd548f7afb555251a4c5af6a3969dee"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "8e5713b3538577a985455f08f8bf947a"
+    "revision": "fcd90d2c26adb24af15a5b74898a9706"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "dec2287e11b30b50317b342c69a34f13"
+    "revision": "45b4fffcdc2c7379c8023c0e255247eb"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -264,15 +268,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "522f3a2e91adf10379bbc67b82f5a22d"
+    "revision": "ae7cad901b6f1ca8fe2a3663cef827c6"
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "92ea67aa50d0b6392ac9d18d8bf0ca5b"
+    "revision": "799eb87181bc72b191233b3c849e3fef"
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "2e712403369871ba74c12473c14c0aa8"
+    "revision": "c0f6901dcf00a193270e1df1b2f885fd"
   },
   {
     "url": "scripts/classes/login.js",
@@ -292,7 +296,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "4a56aca9e2aa002fa1cc4aa706de8350"
+    "revision": "6995ce0fa26c4773f54bddf9d72a5604"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -332,7 +336,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "b9cdc752aaaa70e62f5c29d9b739bdbf"
+    "revision": "1707452f8c6360d54840f21b0cdf3a5b"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -352,7 +356,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "4f5dc954e1f0888b7fe3447cbc72b3f0"
+    "revision": "c8864d339307b5c07a6c607873fa2ef8"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -392,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "d8410b83994992a0df4959027215a91b"
+    "revision": "58144295eb0a627a5b38a6444595907d"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

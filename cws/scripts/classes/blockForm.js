@@ -77,8 +77,9 @@ function BlockForm( cwsRenderObj, blockObj )
 	{
 		var divInputTag = $( '<div class="inputDiv"></div>' );
 
-		var spanTitleTag = $( '<span class="titleSpan"></span>' );
+		var spanTitleTag = $( '<span ' + FormUtil.getTermAttr( formItemJson ) + ' class="titleSpan"></span>' );
 		spanTitleTag.text( formItemJson.defaultName );
+
 		var titleDivTag = $( '<div class="titleDiv"></div>' ).append( spanTitleTag );
 
 		divInputTag.append( titleDivTag );
@@ -89,13 +90,13 @@ function BlockForm( cwsRenderObj, blockObj )
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent= function( formItemJson, formDivSecTag, formFull_IdList, passedData )
+	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
 	{
 		//console.log( 'adding renderInput_TabContent' );
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
 
-		var spanTitleTag = $( '<label class="from-string titleDiv"></label>' );
+		var spanTitleTag = $( '<label ' + FormUtil.getTermAttr( formItemJson ) + ' class="from-string titleDiv"></label>' );
 		spanTitleTag.text( formItemJson.defaultName );
 		divInputTag.append( spanTitleTag );
 

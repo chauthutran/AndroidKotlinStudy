@@ -1,15 +1,16 @@
 // -------------------------------------------
 // -- BlockMsg Class/Methods
-function aboutApp( cwsRender, langTermObj )
+function aboutApp( cwsRender )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRender;
+    me.langTermObj = me.cwsRenderObj.langTermObj;
+
     me.aboutFormDivTag = $( '#aboutFormDiv' );
     me.aboutContentDivTag = $( '#aboutContentDiv' );
     me.aboutData;
     me.syncMgr;
-    me.langTermObj = langTermObj;
     me.themeList;
 
     // ----- Tags -----------

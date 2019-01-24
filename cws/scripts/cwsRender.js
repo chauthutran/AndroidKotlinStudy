@@ -105,21 +105,6 @@ function cwsRender()
 			me.loginObj.render(); // Open Log Form
 		}
 
-		$( '#btnReset' ).click( function() {
-			if ( localStorage.getItem('session') )
-			{
-				var lastSession = JSON.parse( localStorage.getItem('session') );
-				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
-				{
-					localStorage.removeItem( 'session' );
-					localStorage.removeItem( lastSession.user );
-				}
-
-			}
-			
-			me.reGetAppShell();
-		});
-
 		//var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
@@ -160,13 +145,29 @@ function cwsRender()
 	{		
 		// Set Body vs Set Header..
 		me.setPageHeaderEvents();
+
+
+		$( '#btnReset' ).click( function() {
+			if ( localStorage.getItem('session') )
+			{
+				var lastSession = JSON.parse( localStorage.getItem('session') );
+				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
+				{
+					localStorage.removeItem( 'session' );
+					localStorage.removeItem( lastSession.user );
+				}
+
+			}
+			
+			me.reGetAppShell();
+		});
 	}
 
 	me.createSubClasses = function()
 	{
 		me.langTermObj = new LangTerm( me );
 		me.loginObj = new Login( me );
-		me.aboutApp = new aboutApp( me, me.langTermObj );
+		me.aboutApp = new aboutApp( me );
 	}
 
 	// =============================================
@@ -548,9 +549,7 @@ function cwsRender()
 			{
 				var area = areaList[i];
 
-				var menuTag = $( '<div class="menu-mobile-row" areaId="' + area.id + '"><div>' + area.name + '</div></div>' );
-
-				if ( area.term ) menuTag.find( 'div' ).attr( 'term', area.term );
+				var menuTag = $( '<div class="menu-mobile-row" areaId="' + area.id + '"><div ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</div></div>' );				
 
 				me.setupMenuTagClick( menuTag );
 

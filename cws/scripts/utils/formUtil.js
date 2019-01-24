@@ -808,4 +808,15 @@ FormUtil.defaultLanguage = function()
 	var navLang = (navigator.language).toString().substring(0,2);
 	console.log( ' FormUtil.defaultLanguage: ' + navLang)
 	return navLang;
-}
+};
+
+FormUtil.getTermAttr = function( jsonItem )
+{
+	return ( jsonItem.term ) ? 'term="' + jsonItem.term + '"' : '';
+};
+
+FormUtil.addTag_TermAttr = function( tags, jsonItem )
+{
+	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
+};
+

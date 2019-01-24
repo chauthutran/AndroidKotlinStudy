@@ -155,7 +155,8 @@ function BlockButton( cwsRenderObj, blockObj )
 				}
 				else*/
 				{
-					btnTag = $( '<div style="padding:14px;" class=""><input type="radio" class="stayLoggedIn" style="width: 1.4em; height: 1.4em;"><span style="vertical-align: top; margin-left: 5px; ">'+btnJson.defaultLabel+'</span></div>' );
+					btnTag = $( '<div style="padding:14px;" class=""><input type="radio" class="stayLoggedIn" style="width: 1.4em; height: 1.4em;">'
+						+ '<span ' + FormUtil.getTermAttr( btnJson ) + ' style="vertical-align: top; margin-left: 5px; ">' + btnJson.defaultLabel + '</span></div>' );
 				}
 			}
 			else if ( btnJson.buttonType === 'imageButton' )
@@ -167,8 +168,8 @@ function BlockButton( cwsRenderObj, blockObj )
 					var liTabTag = divTag.find( 'ul.tabs li[tabId="' + btnNo + '"]' );
 					var aContentTag = divTag.find( 'ul.tab_content li[tabId="' + btnNo + '"] a.expandable' );
 
-					liTabTag.append( $('<img src="' + btnJson.imageSrc + '" class="tab-image"><label>' + btnJson.defaultLabel + '</label>' ) );
-					aContentTag.append( $('<div class="icon-row"><img src="' + btnJson.imageSrc + '">' + btnJson.defaultLabel + '</div>') );
+					liTabTag.append( $('<img src="' + btnJson.imageSrc + '" class="tab-image"><label ' + FormUtil.getTermAttr( btnJson ) + '>' + btnJson.defaultLabel + '</label>' ) );
+					aContentTag.append( $('<div class="icon-row"><img src="' + btnJson.imageSrc + '"><span ' + FormUtil.getTermAttr( btnJson ) + '>' + btnJson.defaultLabel + '</span></div>') );
 					aContentTag.append( $('<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>') );
 
 					// In 'li' vs 'anchor' click action sync, 'anchor' is the main one called - 'FormUtil.setUpTabAnchorUI( tag )'
@@ -184,11 +185,11 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					btnTag = $( '<div class="tb-content-buttom btn divBtn">' + btnJson.defaultLabel + '</div>' );
+					btnTag = $( '<div ' + FormUtil.getTermAttr( btnJson ) + ' class="tb-content-buttom btn divBtn">' + btnJson.defaultLabel + '</div>' );
 				}
 				else
 				{
-					btnTag = $( '<button ranid="' + Util.generateRandomId() + '" class="tb-content-buttom ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
+					btnTag = $( '<button ' + FormUtil.getTermAttr( btnJson ) + ' ranid="' + Util.generateRandomId() + '" class="tb-content-buttom ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' + btnJson.defaultLabel + '</button>' );
 				}
 			}
 			else if ( btnJson.buttonType === 'listRightImg' )

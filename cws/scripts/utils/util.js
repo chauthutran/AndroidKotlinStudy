@@ -4,6 +4,9 @@
 
 function Util() {}
 
+Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
+Util.termName_listEmpty = "common_listEmpty";
+
 Util.disableTag = function( tag, isDisable )
 {
 	tag.prop('disabled', isDisable);
@@ -483,7 +486,7 @@ Util.populateSelect_ByList = function( selectTag, listData, dataType )
 
 	$.each( listData, function( i, item ) 
 	{
-		var option = $( '<option></option>' );
+		var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 		if ( dataType !== undefined && dataType == "Array" )
 		{
@@ -504,7 +507,7 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 
 	$.each( json_Data, function( i, item ) 
 	{								
-		selectObj.append( '<option value="' + item.id + '">' + item.name + '</option>' );
+		selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
 	});
 };
 
@@ -513,7 +516,7 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 {
 	selectObj.empty();
 
-	selectObj.append( '<option value="">' + selectNoneName + '</option>' );
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>' );
 
 	var valuePropStr = "id";
 	var namePropStr = "name";
@@ -528,7 +531,7 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 	{
 		$.each( json_Data, function( i, item ) 
 		{
-			var optionTag = $( '<option></option>' );
+			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
 				
@@ -541,7 +544,7 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 {
 	selectObj.empty();
 
-	selectObj.append( '<option selected disabled="disabled">Choose an option</option>' );
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>' );
 	
 	var valuePropStr = "id";
 	var namePropStr = "name";
@@ -556,10 +559,10 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 	{
 		$.each( json_Data, function( i, item ) 
 		{
-			var optionTag = $( '<option></option>' );
+			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
-				
+
 			selectObj.append( optionTag );
 		});
 	}
@@ -569,13 +572,13 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 {
 	selectObj.empty();
 
-	selectObj.append( '<option value="">Select ' + selectName + '</option>' );
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' );
 
 	if ( json_Data !== undefined )
 	{
 		$.each( json_Data, function( i, item ) 
 		{
-			var option = $( '<option></option>' );
+			var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			if ( dataType !== undefined && dataType == "Array" )
 			{
@@ -587,7 +590,6 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 			}
 				
 			selectObj.append( option );
-
 		});
 	}
 };
@@ -596,17 +598,17 @@ Util.populateSelect_WithDefaultName = function( selectObj, selectName, json_Data
 {
 	selectObj.empty();
 
-	selectObj.append( $( '<option value="">Select ' + selectName + '</option>' ) );
+	selectObj.append( $( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' ) );
 
 	$.each( json_Data, function( i, item ) {
 
 		if( item.name == defaultName )
 		{
-			selectObj.append( $( '<option selected></option>' ).attr( "value", item.id ).text( item.name ) );
+			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + ' selected></option>' ).attr( "value", item.id ).text( item.name ) );
 		}
 		else
 		{
-			selectObj.append( $( '<option></option>' ).attr( "value", item.id ).text( item.name ) );
+			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", item.id ).text( item.name ) );
 		}
 	});
 };
@@ -629,13 +631,13 @@ Util.selectOption_WithOptionalInsert = function ( selectObj, id, list )
 
 			if ( item !== undefined )
 			{
-				selectObj.append( $( '<option></option>' ).attr( "value", item.id ).text( item.name ) );
+				selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", item.id ).text( item.name ) );
 			}
 		}
 		else
 		{
 			// If list is not provided, simply add this id - as value & name
-			selectObj.append( $( '<option></option>' ).attr( "value", id ).text( id ) );
+			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", id ).text( id ) );
 		}
 
 		selectObj.val( id );
