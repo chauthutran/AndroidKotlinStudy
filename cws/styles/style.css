@@ -232,8 +232,10 @@ a.brand-logo {
 
 .navDrawerTransitionNone
 {
-  -webkit-transition: none !important; /* Safari */ 
-  transition: none !important;
+  /*-webkit-transition: none !important;
+  transition: none !important;*/
+  -webkit-transition: all 50ms, -webkit-transform 50ms; /* Safari */ 
+  transition: all 50ms, transform 50ms;
   position: absolute;
 }
 

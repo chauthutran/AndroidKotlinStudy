@@ -346,22 +346,30 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 
-			if ( thisTag.attr( 'id' ) == 'nav-toggle' ) 
+			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
 				thisTag.removeClass( 'active' );
-				//subListIconsTag.hide( 'slide', { direction: 'left' }, 150);
+
 				subListIconsTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+
 				setTimeout( function() {
 					subListIconsTag.hide(); 
 				}, 500 );
+
+				$( '#focusRelegator').hide();
 			}
 			else
 			{
 				subListIconsTag.fadeOut( 'fast', 'linear' );
+
+				if ( ! $( '#navDrawerDiv' ).is( ':visible' ) )
+				{
+					$( '#focusRelegator').hide();
+				}
 			}
 
-			$( '#focusRelegator').hide();
+			subListIconsTag.css( 'zIndex', 1);
 
 		}
 		else 
@@ -372,15 +380,21 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			//if ( cwsRenderObj ) cwsRenderObj.langTermObj.translatePage();
 
 			$( '#focusRelegator').css('zIndex',100);
-			thisTag.css('zIndex',200);
-			subListIconsTag.css('zIndex',300);
+
+			thisTag.css('zIndex',199);
+			subListIconsTag.css('zIndex',200);
 
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
 				subListIconsTag.show();
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ));
 				subListIconsTag.css( 'left', '0px' );
-				//subListIconsTag.show( 'slide', { direction: 'right' }, 150);
+
+				if ( $( 'div.floatListMenuSubIcons' ).hasClass( className_Open ) )
+				{
+					$( 'div.floatListMenuIcon' ).css('zIndex',1);
+					$( 'div.floatListMenuIcon' ).click();
+				}
 			} 
 			else
 			{
@@ -391,7 +405,10 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			$( '#focusRelegator').on('click', function( event )
 			{
-				//console.log( 'focusRelegator Clicked ' );
+
+				console.log( thisTag.attr('id') );
+				thisTag.css('zIndex',1);
+
 				event.preventDefault();
 
 				thisTag.click();
