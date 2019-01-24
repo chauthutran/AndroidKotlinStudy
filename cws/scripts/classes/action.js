@@ -204,7 +204,8 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "topNotifyMsg" )
 			{
-				MsgManager.msgAreaShow( clickActionJson.message );
+				// If term exists, translate it before displaying
+				MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
 
 				if ( btnTag.hasClass( 'clicked' ) )
 				{ 

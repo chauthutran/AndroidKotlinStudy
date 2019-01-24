@@ -253,7 +253,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 					{
 						valid = false;
 						var startCommaStr = ( notFirstErr ) ? ", ": "";
-						divTag.append( me.getErrorSpanTag( startCommaStr + regxRuleJson.msg ) );
+						divTag.append( me.getErrorSpanTag( startCommaStr + regxRuleJson.msg, regxRuleJson.term ) );
 						notFirstErr = true;
 					}	
 				}
@@ -327,11 +327,13 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	// -----------------------------
 	// -- Others
 	
-	me.getErrorSpanTag = function( keyword, optionalStr )
+	//me.getErrorSpanTag = function( keyword, optionalStr )
+	me.getErrorSpanTag = function( keyword, term )
 	{
-		optionalStr = ( optionalStr ) ? optionalStr : '';
-		var text = keyword + optionalStr;
-		return  $( "<span class='errorMsg' keyword='" + keyword + "'> " + text + "</span>" );
+//		optionalStr = ( optionalStr ) ? optionalStr : '';
+		var text = me.cwsRenderObj.langTermObj.translateText( keyword, term ); // + optionalStr;
+
+		return  $( '<span ' + FormUtil.getTermAttrStr( term ) + ' class="errorMsg" keyword="' + keyword + '"> ' + text + '</span>' );
 	};
 	
 	me.clearTagValidations = function( tags )

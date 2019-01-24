@@ -77,7 +77,6 @@ function inputMonitor( cwsRenderObj )
         trackXtouchDistance += diffX;
         trackYtouchDistance += diffY;
 
-        //MsgManager.msgAreaShow( initialX.toFixed(0) + ' ' + ': diffX: ' + diffX.toFixed(0) + ' ' + ' currX: ' + currentX.toFixed(0) + '   ' + initialY.toFixed(0) + ', ' + ': diffY: ' + diffY.toFixed(0) + ', ' + ' currY: ' + currentY.toFixed(0) );
         navDrawerVisibleOnMove = $( '#navDrawerDiv' ).is( ':visible' );
 
         if ( $( '#navDrawerDiv' ).hasClass( 'navDrawerTransitionSmooth' ) ) 

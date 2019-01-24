@@ -52,6 +52,11 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
         }
 
         MsgManager.spanMsgAreaTextTag.text( msg );
+        FormUtil.addTag_TermAttr = function( tags, jsonItem )
+        {
+            if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
+        };
+        
 
         if ( ! $( '#divMsgArea' ).is( ':visible' ) )
         {

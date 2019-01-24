@@ -815,6 +815,11 @@ FormUtil.getTermAttr = function( jsonItem )
 	return ( jsonItem.term ) ? 'term="' + jsonItem.term + '"' : '';
 };
 
+FormUtil.getTermAttrStr = function( term )
+{
+	return ( term ) ? 'term="' + term + '"' : '';
+};
+
 FormUtil.addTag_TermAttr = function( tags, jsonItem )
 {
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );

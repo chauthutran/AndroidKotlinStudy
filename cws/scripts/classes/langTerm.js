@@ -138,20 +138,21 @@ function LangTerm( cwsRenderObj )
 			var tag = $( this );
 			var termName = tag.attr( 'term' );
 
-			//if ( termName != "" && termName != '{TERM}' ) 
+			if ( termName ) //&& termName != '{TERM}' ) 
 			{
 
 				//if ( tag.prop("tagName") == 'tspan' )
-				{
-					console.log( 'termName: ' + termName + ' ( ' + tag.prop("tagName") + ' )');
-					console.log( tag );
-				}
+				//{
+				//	console.log( 'termName: ' + termName + ' ( ' + tag.prop("tagName") + ' )');
+				//	console.log( tag );
+				//}
+
+				// Add to the term collection with termName
 				termCollection[ termName ] = "";
 			}
 		});
 
-		console.log( termCollection );
-
+		//console.log( termCollection );
 
 		// go through the term and translate them through out the page
 		for ( var termName in termCollection )
@@ -160,14 +161,19 @@ function LangTerm( cwsRenderObj )
 
 			if ( termVal )
 			{
-				console.log( 'translating term: ' + termName + ', val: ' + termVal );
+				//console.log( 'translating term: ' + termName + ', val: ' + termVal );
 				var tag = $( '[term="' + termName + '"]' );
 				tag.html( termVal );
 			}
 		}
 	}
 
-
+	// Translate single text by current LangTerms.
+	me.translateText = function( defaultText, termName )
+	{
+		if ( termName && me.currentLangTerms && me.currentLangTerms[ termName ] ) return me.currentLangTerms[ termName ];			
+		else return defaultText;
+	}
 	// ==================================================
 	// === Used Methods ======
 
