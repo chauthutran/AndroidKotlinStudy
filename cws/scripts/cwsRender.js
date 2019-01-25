@@ -69,7 +69,19 @@ function cwsRender()
 
 	me.render = function()
 	{
+
+		me.checkStayLoggedIn( function( lastSession, loginData ) {
+
+			me.processExistingloggedIn( lastSession, loginData );
+		},
+		function() {
+			me.showLoginForm();
+		});
+
+
+		/*
 		var initializeStartBlock = false;
+
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
 		if ( localStorage.length )
 		{
@@ -82,11 +94,10 @@ function cwsRender()
 				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
 				{
 					initializeStartBlock = true;
-				}
-			
+				}			
 			}
-
 		}
+
 
 		// If set to use saved data loading, set up the neccessary data
 		if ( initializeStartBlock )
@@ -104,36 +115,21 @@ function cwsRender()
 			me.loginObj.loginFormDivTag.show();
 			me.loginObj.render(); // Open Log Form
 		}
+		*/
+
 
 		//var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
 		//var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
-
 		var manageInputSwipe = inputMonitor( me );
 
+
+		// Translate terms setup
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
 
 	}
 
-	me.retrieveAndSetUpTranslate = function()
-	{
-		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
-
-		// NOTE: Try language download here.
-		
-		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
-		{
-			if ( allLangTerms )
-			{
-				// Enable the language switch dropdown
-				me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
-
-				// Translate current page
-				me.langTermObj.translatePage();
-			}
-		});
-	}
-
+	
 	// ------------------
 
 	me.setInitialData = function()
@@ -146,21 +142,7 @@ function cwsRender()
 		// Set Body vs Set Header..
 		me.setPageHeaderEvents();
 
-
-		$( '#btnReset' ).click( function() {
-			if ( localStorage.getItem('session') )
-			{
-				var lastSession = JSON.parse( localStorage.getItem('session') );
-				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
-				{
-					localStorage.removeItem( 'session' );
-					localStorage.removeItem( lastSession.user );
-				}
-
-			}
-			
-			me.reGetAppShell();
-		});
+		me.setOtherEvents();
 	}
 
 	me.createSubClasses = function()
@@ -186,6 +168,25 @@ function cwsRender()
 
 		me.configureMobileMenuIcon();
 		
+	}
+
+	me.setOtherEvents = function()
+	{		
+		$( '#btnReset' ).click( function() {
+
+			// TODO: GREG: Could move to 'dataManager'
+			if ( localStorage.getItem('session') )
+			{
+				var lastSession = JSON.parse( localStorage.getItem('session') );
+				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
+				{
+					localStorage.removeItem( 'session' );
+					localStorage.removeItem( lastSession.user );
+				}
+			}
+			
+			me.reGetAppShell();
+		});
 	}
 
 	// -------------------------
@@ -261,7 +262,7 @@ function cwsRender()
 	}
 
 
-	// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
+	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )
 	{
 		var lastSession = JSON.parse( localStorage.getItem('session') );
@@ -510,6 +511,7 @@ function cwsRender()
 		// clear the list first
 		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
+		// TODO: GREG: THIS COULD BE shortened or placed in html page?
 		var navMenuHead = $( '<div style="width:100%;height:120px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
 		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 		var tr = $( '<tr />' );
@@ -660,6 +662,81 @@ function cwsRender()
 		}
 
 	}
+
+
+	// --------------------------------------------------------
+	// ----------- Translate langTerm retrieval and do lang change -------------
+	
+	me.retrieveAndSetUpTranslate = function()
+	{
+		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
+		
+		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		{
+			if ( allLangTerms )
+			{
+				// Enable the language switch dropdown
+				me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+
+				// Translate current page
+				me.langTermObj.translatePage();
+			}
+		});
+	}
+
+
+	// ----------------------------------------------
+	// ----------- Render called method -------------
+
+	me.checkStayLoggedIn = function( stayedInFunc, notStayedInFunc )
+	{
+		var initializeStartBlock = false;
+
+		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
+		if ( localStorage.length )
+		{
+			var lastSession = JSON.parse( localStorage.getItem('session') );
+	
+			if ( lastSession )
+			{
+				var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
+	
+				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
+				{
+					initializeStartBlock = true;
+				}			
+			}
+		}	
+
+		if ( initializeStartBlock )
+		{
+			stayedInFunc( lastSession, loginData );
+		}
+		else
+		{
+			notStayedInFunc();
+		}
+	}
+
+	me.processExistingloggedIn = function( lastSession, loginData )
+	{
+		me.renderDefaultTheme();
+		me.loginObj.loginFormDivTag.hide();
+		me.loginObj._userName = lastSession.user;
+		FormUtil.login_UserName = lastSession.user;
+		FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
+		me.loginObj.loginSuccessProcess( loginData );
+	}
+		
+	me.showLoginForm = function()
+	{
+		// If 'initializeStartBlock' case, open the Login form.
+		me.loginObj.loginFormDivTag.show();
+		me.loginObj.render(); // Open Log Form
+	}
+
+	// ----------------------------------------------
+
 
 	// ======================================
 
