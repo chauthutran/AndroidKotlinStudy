@@ -275,11 +275,8 @@
                         <button value="" term="about_newVersionAvailable" id="appShellUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;">new version available</button>
                       </div>                      
                     </td>
-                    <td>
-                        <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1" style="margin-left: 10px;">Reset</button>
-                    </td>
                     <td id='aboutInfo_AppVersion_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
                     </td>
                   </tr>
                 </table>                
@@ -299,7 +296,7 @@
                       </div>
                     </td>
                     <td id='aboutInfo_dcdVersion_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
                     </td>
                   </tr>
                 </table>                               
@@ -313,7 +310,7 @@
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td style="max-width:280px">
-                      <div id="aboutInfo_DivLangSelect" style="display:none;" class="select"><select id="aboutInfo_langSelect" class="selector form-type-text" style="padding-left:0;"></select></div>
+                      <div id="aboutInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_langSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
                     </td>
                     <td>
                       <button id="aboutInfo_newLangTermsDownload" term="about_newLangTermsDownload" class="divBtn btnStyle1" style="margin-left: 10px;">update languages</button>                        
@@ -322,7 +319,7 @@
                         <div id="aboutInfo_newLangTermsDownload_loading" class="loadingImg" style="display: none; margin-left: 8px;"><img src="images/loading.gif"></div>                      
                     </td>
                     <td id='aboutInfo_userLanguage_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
                     </td>
                   </tr>
                 </table>
@@ -336,10 +333,10 @@
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td style="max-width:280px">
-                      <div id="aboutInfo_DivThemeSelect" style="display:none;" class="select"><select id="aboutInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;"></select></div>
+                      <div id="aboutInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
                     </td>
                     <td id='aboutInfo_Theme_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:none">
+                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
                     </td>
                   </tr>
                 </table>
@@ -350,8 +347,17 @@
             <li class="inputDiv" style="width: 97%;;margin:0;">
               <label term="about_browser" class="from-string titleDiv">Browser</label>
 
-              <div id="aboutInfo_Browser" class="form-type-text" style="padding:10px 0 15px 10px"></div>
+              <div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"></div>
             </li>
+
+            <li class="inputDiv" style="width: 97%;;margin:0;">
+              <label term="about_restore" class="from-string titleDiv">Application restore</label>
+
+              <div id="aboutInfo_Restore" class="form-type-text" style="padding:10px 0 15px 10px;text-align: center;">
+                <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1" style="margin-left: 10px;font-size:14px;padding:8px 14px 8px 14px;">Reset</button>
+              </div>
+            </li>
+
 
             <li class="inputDiv" style="width: 97%;margin:0;"></li>
 
