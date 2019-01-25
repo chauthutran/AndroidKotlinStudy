@@ -405,14 +405,11 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			$( '#focusRelegator').on('click', function( event )
 			{
-
-				console.log( thisTag.attr('id') );
 				thisTag.css('zIndex',1);
 
 				event.preventDefault();
 
 				thisTag.click();
-
 			});
 
 			$( '#focusRelegator').show();

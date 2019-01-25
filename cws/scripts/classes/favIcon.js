@@ -75,7 +75,7 @@ function favIcons( cwsRender )
                 if ( favList[ favItm ].term )
                 {
                     $( svgObject ).html( $(svgObject).html().replace( /{TERM}/g, favList[ favItm ].term ) );
-                    $( svgObject ).attr( 'term', favList[ favItm ].term );
+                    //$( svgObject ).attr( 'term', favList[ favItm ].term );
                 }
 
                 if ( favList[ favItm ].colors )
@@ -168,6 +168,7 @@ function favIcons( cwsRender )
                     else
                     {
                         setTimeout( function() { 
+                            console.log( 'translating favIcons' );
                             me.cwsRenderObj.langTermObj.translatePage()
                         }, 500 );
                     }
