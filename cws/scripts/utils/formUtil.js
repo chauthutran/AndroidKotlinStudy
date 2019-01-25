@@ -418,7 +418,6 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 	});	
 }
 
-
 FormUtil.setUpTabAnchorUI = function( tag )
 {	
 	var clickedTab = tag.find(".tabs > .active");

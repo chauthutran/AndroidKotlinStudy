@@ -611,7 +611,7 @@ div.fixed_father {
   box-sizing: border-box;
   font-family: Roboto,RobotoDraft,'Open Sans',Arial,sans-serif;
   font-size: .85rem;
-  text-shadow: 0 1px 1px rgba(250,250,250,.5);
+  /*text-shadow: 0 1px 1px rgba(250,250,250,.5);*/
   -webkit-font-smoothing: antialiased;
   padding: 3px 0 0 65px;
   overflow: hidden;

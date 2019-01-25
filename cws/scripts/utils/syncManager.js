@@ -156,18 +156,21 @@ function syncManager()
 			if ( returnJson && returnJson.version )
 			{
 				console.log( 'appShellVersionTest: ' + queryLoc );
-                //console.log( returnJson );
 
                 var appShellVersion = $( '#spanVersion' ).html().replace('v','');
 
                 if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                 {
-                    //MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
                     if ( btnTag )
                     {
                         //btnTag.text( 'Update to v' +returnJson.version );
-                        btnTag.show();
+                        $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                        btnTag.show( 'fast' );
                     }
+                }
+                else
+                {
+                    btnTag.hide( 'fast' );
                 }
 
 				//if ( returnFunc ) returnFunc( returnJson );
@@ -180,29 +183,20 @@ function syncManager()
 				FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
 					if ( success && allJson )
 					{
-						//console.log( 'all appShellInfo: ' );
-						//console.log( allJson );
 
                         if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                         {
                             //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
-                            //MsgManager.msgAreaShow( ' newer AppShell available: ' + returnJson.version + ', you currently use: ' + appShellVersion );
                             if ( btnTag )
                             {
-                                //btnTag.text( 'Update to v' +returnJson.version );
-                                btnTag.show();
+                                $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                                btnTag.show( 'fast' );
                             }
                         }
                         else
                         {
-                            btnTag.hide();
+                            btnTag.hide( 'fast' );
                         }
-
-						/*if ( allJson.languages )
-						{
-							var enLang = Util.getFromList( allJson.languages, "en", "code" );
-							if ( enLang ) enLangTerm = enLang.terms;
-						}*/
 
 						//if ( returnFunc ) returnFunc( enLangTerm );
 					}
@@ -240,16 +234,23 @@ function syncManager()
                         if ( ( userConfig.dcdConfig.version ).toString() < ( loginData.dcdConfig.version ).toString() )
                         {
                             //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
-                            //MsgManager.msgAreaShow( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
                             if ( btnTag )
                             {
                                 //btnTag.text( 'Update to v' +loginData.dcdConfig.version );
+                                $( '#aboutInfo_dcdNewVersion' ).html( loginData.dcdConfig.version );
+                                if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'disabled' );
+                                if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'enabled' );
+                                //$( '#imgaboutInfo_dcdVersion_Less' ).show();
                                 btnTag.show();
                             }
                         }
                         else
                         {
                             btnTag.hide();
+                            //$( '#imgaboutInfo_dcdVersion_Less' ).hide();
+                            if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
+                            if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
+
                         }
                     }
                     else
@@ -257,6 +258,9 @@ function syncManager()
                         var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
                         //MsgManager.msgAreaShow( ' DCD Config SERVER not available: ' + errDetail );
                         btnTag.hide();
+                        //$( '#imgaboutInfo_dcdVersion_Less' ).hide();
+                        if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
+                        if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                     }
                 } );
 

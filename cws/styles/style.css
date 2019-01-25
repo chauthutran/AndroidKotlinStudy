@@ -300,6 +300,15 @@ a.brand-logo {
   overflow-x:hidden;*/
 }
 
+img.enabled
+{
+  opacity:0.75;
+}
+
+img.disabled
+{
+  opacity:0.1;
+}
 /* START > HAMBURGER MENU 'ICON' */
 #nav-toggle { position: absolute; left: 15px; top: 15px; }
 

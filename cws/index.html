@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.0.28'; </script>
+    <script> var _ver = '1.0.0.27'; </script>
 
 
     <link rel="manifest" href="manifest.json">
@@ -238,16 +238,16 @@
 
         <div id="aboutContentDiv " class="aboutListDiv listDiv" style="position:relative;text-align:left;">
 
-          <ul class="o-one " style="">
+          <ul class="o-one ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="img/back_arrow_28px.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnBack">
-              <label term="menu_about" style="">About</label>
+              <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnBack">
+              <label term="menu_about">About</label>
               <br>
             </li>
           </ul>
 
             <div class="title-act-mobile" style="padding: 8px 0 0 0">
-                <img src="img/back_arrow_28px.svg" style="position:absolute;left:14px;width:32px;top:5px""  class="btnBack">
+                <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnBack">
                 <label term="menu_about">About</label>
               </div>
 
@@ -268,15 +268,42 @@
               
               <div class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
                 <table style="width:100%;border-spacing:0;">
-                  <tr>
+                  <tr id='aboutInfo_AppVersion_Less' style="-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;">
                     <td><span id="aboutInfo_AppVersion"></span></td>
-                    <td>
-                      <div id="aboutInfo_AppVersionInner" style="position:relative;text-align:left;">
-                        <button value="" term="about_newVersionAvailable" id="appShellUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;">new version available</button>
-                      </div>                      
+                    <td style="width:30px;">
+                        <img src='img/arrow_right.svg' class="imgMore enabled" id='imgaboutInfo_AppVersion_Less' style="display:block;width:28px;">
                     </td>
-                    <td id='aboutInfo_AppVersion_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
+                  </tr>
+                  <tr id='aboutInfo_AppVersion_More' class='about_more' style='display:none;-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;'>
+                    <td colspan="3">
+
+                      <div style="margin:20px 0 0 0;border-top: 1px solid #E8E8E8;">
+
+                        <table style="width:100%;border-spacing:0;margin:20px 0 0 0;">
+                          <tr id='aboutInfo_AppVersion_New' style='display:none;'>
+                            <td style="text-align:right;"><label class="from-string titleDiv" term="about_newVersionAvailable">new version available</label></td>
+                            <td style="width:120px;"><span id="aboutInfo_AppNewVersion"></span></td>
+                            <td style="width:120px;">
+                              <div id="aboutInfo_AppVersionInner">
+                                <button value="" id="appShellUpdateBtn" class="divBtn btnStyle1" term="label to be decided">update</button>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr id='aboutInfo_AppVersion_Reset'>
+                              <td style="text-align:right;">
+                                <label term="about_restore" class="from-string titleDiv">application cache</label>
+                              </td>
+                              <td style="width:120px;">&nbsp;</td>
+                              <td style="width:120px;">
+                                <div id="aboutInfo_Restore" class="form-type-text">
+                                  <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1">reset</button>
+                                </div>
+                            </td>
+                          </tr>
+                        </table>
+
+                      </div>
+
                     </td>
                   </tr>
                 </table>                
@@ -288,43 +315,84 @@
 
               <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
                 <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td><span id="aboutInfo_dcdVersion"></span></td>
-                    <td>
-                      <div id="aboutInfo_dcdVersionInner"style="position:relative;text-align:left;">
-                        <button value="" term="about_newVersionAvailable" id="dcdUpdateBtn" class="divBtn btnStyle1" style="margin-left: 10px;display:none;">new version available</button>
-                      </div>
-                    </td>
-                    <td id='aboutInfo_dcdVersion_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
-                    </td>
-                  </tr>
+                    <tr id='aboutInfo_dcdVersion_Less' style="-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;">
+                      <td><span id="aboutInfo_dcdVersion"></span></td>
+                      <td style="width:30px;">
+                          <img src='img/arrow_right.svg' class="imgMore disabled" id='imgaboutInfo_dcdVersion_Less' style="display:block;width:28px;">
+                      </td>
+                    </tr>
+                    <tr id='aboutInfo_dcdVersion_More' class='about_more' style='display:none;-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;'>
+                        <td colspan="3">
+    
+                          <div style="margin:20px 0 0 0;border-top: 1px solid #E8E8E8;">
+    
+                            <table style="width:100%;border-spacing:0;margin:20px 0 0 0;">
+                              <tr id='aboutInfo_dcdVersion_New' style='display:none;'>
+                                <td style="text-align:right;"><label class="from-string titleDiv" term="about_newVersionAvailable">new version available</label></td>
+                                <td style="width:120px;"><span id="aboutInfo_dcdNewVersion"></span></td>
+                                <td style="width:120px;">
+                                  <div id="aboutInfo_dcdVersionInner">
+                                    <button value="" id="dcdUpdateBtn" class="divBtn btnStyle1" term="label to be decided">update</button>
+                                  </div>
+                                </td>
+                              </tr>
+
+                            </table>
+    
+                          </div>
+    
+                        </td>
+                      </tr>
+                  
+
                 </table>                               
               </div>
             </li>
 
-            <li class="inputDiv" id='li_about_userLanguage' style="width: 97%;;margin:0;">
-              <label term="about_userLanguage" class="from-string titleDiv">User language</label>
 
-              <div style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td style="max-width:280px">
-                      <div id="aboutInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_langSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
-                    </td>
-                    <td>
-                      <button id="aboutInfo_newLangTermsDownload" term="about_newLangTermsDownload" class="divBtn btnStyle1" style="margin-left: 10px;">update languages</button>                        
-                    </td>
-                    <td>
-                        <div id="aboutInfo_newLangTermsDownload_loading" class="loadingImg" style="display: none; margin-left: 8px;"><img src="images/loading.gif"></div>                      
-                    </td>
-                    <td id='aboutInfo_userLanguage_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
-                    </td>
-                  </tr>
-                </table>
-              </div>              
-            </li>
+            <li class="inputDiv" id='li_about_userLanguage' style="width: 97%;;margin:0;">
+                <label term="about_userLanguage" class="from-string titleDiv">User language</label>
+  
+                <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+                  <table style="width:100%;border-spacing:0;">
+                      <tr id='aboutInfo_userLanguage_Less' style="-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;">
+                        <td>
+                            <div id="aboutInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_langSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
+                        </td>
+                        <td style="width:30px;">
+                            <img src='img/arrow_right.svg' class="imgMore disabled" id='imgaboutInfo_userLanguage_Less' style="display:block;width:28px;">
+                        </td>
+                      </tr>
+                      <tr id='aboutInfo_userLanguage_More' class='about_more' style='display:none;-webkit-transition: display 500ms, -webkit-transform 500ms;transition: display 250ms, transform 250ms;'>
+                          <td colspan="3">
+      
+                            <div style="margin:20px 0 0 0;border-top: 1px solid #E8E8E8;">
+      
+                              <table style="width:100%;border-spacing:0;margin:20px 0 0 0;">
+                                <tr id='aboutInfo_userLanguage_DBupdate' style='display:none;'>
+                                    <td style="text-align:right;">
+                                      <label term="about_restore" class="from-string titleDiv">translations cache</label>
+                                    </td>
+                                    <td style="width:120px;">&nbsp;</td>
+                                    <td style="width:120px;">
+                                      <div id="aboutInfo_Restore" class="form-type-text">
+                                        <button id="aboutInfo_newLangTermsDownload" term="" class="divBtn btnStyle1">update</button> <!-- /*sorry to change it */ term="about_newLangTermsDownload" -->
+                                      </div>
+                                  </td>
+                                </tr>
+  
+                              </table>
+      
+                            </div>
+      
+                          </td>
+                        </tr>
+                    
+  
+                  </table>                               
+                </div>
+              </li>
+
 
             <li class="inputDiv" id='li_about_theme' style="width: 97%;;margin:0;">
               <label term="about_theme" class="from-string titleDiv">Theme</label>
@@ -335,8 +403,8 @@
                     <td style="max-width:280px">
                       <div id="aboutInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
                     </td>
-                    <td id='aboutInfo_Theme_More' style="width:10%">
-                        <img src='img/arrow_right.svg' class="imgMore" style="display:block;opacity:0.1;">
+                    <td id='aboutInfo_Theme_More' style="width:30px;">
+                        <img src='img/arrow_right.svg' class="imgMore disabled" style="display:block;width:28px;">
                     </td>
                   </tr>
                 </table>
@@ -348,14 +416,6 @@
               <label term="about_browser" class="from-string titleDiv">Browser</label>
 
               <div id="aboutInfo_Browser" class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px"></div>
-            </li>
-
-            <li class="inputDiv" style="width: 97%;;margin:0;">
-              <label term="about_restore" class="from-string titleDiv">Application restore</label>
-
-              <div id="aboutInfo_Restore" class="form-type-text" style="padding:10px 0 15px 10px;text-align: center;">
-                <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1" style="margin-left: 10px;font-size:14px;padding:8px 14px 8px 14px;">Reset</button>
-              </div>
             </li>
 
 

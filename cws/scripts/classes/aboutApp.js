@@ -137,6 +137,68 @@ function aboutApp( cwsRender )
             }, true);
 
         });
+
+        $( '#imgaboutInfo_AppVersion_Less' ).click( function() 
+        {
+            if ( ! $( '#aboutInfo_AppVersion_More' ).is(':visible') )
+            {
+                $( '#aboutInfo_AppVersion_More' ).show( 'fast' );
+                $( this ).attr( 'src', 'img/arrow_left.svg' );
+            }
+            else
+            {
+                $( '#aboutInfo_AppVersion_More' ).hide( 'fast' );
+                $( this ).attr( 'src', 'img/arrow_right.svg' );
+            }
+            
+            //$( '#aboutInfo_AppVersion_Less' ).hide();     
+        });
+
+        $( '#imgaboutInfo_dcdVersion_Less' ).click( function() 
+        {
+            if ( $( this ).hasClass( 'enabled' ) )
+            {
+                if ( ! $( '#aboutInfo_dcdVersion_More' ).is(':visible') )
+                {
+                    $( '#aboutInfo_dcdVersion_More' ).show( 'fast' );
+                    $( this ).attr( 'src', 'img/arrow_left.svg' );
+                }
+                else
+                {
+                    $( '#aboutInfo_dcdVersion_More' ).hide( 'fast' );
+                    $( this ).attr( 'src', 'img/arrow_right.svg' );
+                }
+            }
+            //$( '#aboutInfo_AppVersion_Less' ).hide();     
+        });
+
+        $( '#imgaboutInfo_userLanguage_Less' ).click( function() 
+        {
+            if ( $( this ).hasClass( 'enabled' ) )
+            {
+                if ( ! $( '#aboutInfo_userLanguage_More' ).is(':visible') )
+                {
+                    $( '#aboutInfo_userLanguage_More' ).show( 'fast' );
+                    $( this ).attr( 'src', 'img/arrow_left.svg' );
+                }
+                else
+                {
+                    $( '#aboutInfo_userLanguage_More' ).hide( 'fast' );
+                    $( this ).attr( 'src', 'img/arrow_right.svg' );
+                }
+            }
+            //$( '#aboutInfo_AppVersion_Less' ).hide();     
+        });
+        
+
+        
+        
+        /*$( '#imgaboutInfo_AppVersion_More' ).click( function() 
+        {
+            //$( '#aboutInfo_AppVersion_Less' ).show();
+            $( '#aboutInfo_AppVersion_More' ).hide();     
+        });*/
+
     }
 
 
@@ -160,7 +222,7 @@ function aboutApp( cwsRender )
 
     me.hideAboutPage = function()
     {
-        me.aboutFormDivTag.hide();    
+        me.aboutFormDivTag.hide( 'fast' );    
 
         if ( FormUtil.checkLogin() )
         {
@@ -168,7 +230,7 @@ function aboutApp( cwsRender )
         }
         else
         {
-            $( '#loginFormDiv' ).show();
+            $( '#loginFormDiv' ).show( 'fast' );
         }
 
     }
@@ -223,17 +285,28 @@ function aboutApp( cwsRender )
         //$( '#aboutInfo_Theme' ).html( dcdConfigSettingTheme );
 
         // Dropdown Populate
-        
 	    //me.getCurrentLangCode();
-
         //valueTag.append( '<select id="aboutInfo_langSelect"></select>' );
-
-
         //me.cwsRenderObj.langTermObj.translatePage();
 
+        console.log( me.langTermObj.getLangList() );
+
+        if ( ! me.langTermObj.getLangList() )
+        {
+            $( '#aboutInfo_userLanguage_DBupdate' ).hide();
+            $( '#imgaboutInfo_userLanguage_Less' ).removeClass( 'enabled' );
+            $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'disabled' );
+        }
+        else
+        {
+            $( '#aboutInfo_userLanguage_DBupdate' ).show();
+            $( '#imgaboutInfo_userLanguage_Less' ).removeClass( 'disabled' );
+            $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
+        }
+
         me.syncMgr = new syncManager();
-        me.syncMgr.appShellVersionTest( $( '#appShellUpdateBtn' ) );
-        me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
+        me.syncMgr.appShellVersionTest( $( '#aboutInfo_AppVersion_New' ) );
+        me.syncMgr.dcdConfigVersionTest( $( '#aboutInfo_dcdVersion_New' ) );        
     }
 
     me.getThemeList = function( jsonThemes )
