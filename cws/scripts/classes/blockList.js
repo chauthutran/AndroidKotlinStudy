@@ -580,6 +580,10 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.status = status;
         tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
+        // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
+        tempJsonData.activityList = ActivityUtil.getActivityList();
+        console.log( 'tempJsonData.activityList' );
+        console.log( tempJsonData.activityList );
 
         DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );	
     }

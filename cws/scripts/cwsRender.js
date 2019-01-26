@@ -49,7 +49,9 @@ function cwsRender()
 
 	// Create separate class for this?
 	me.blocks = {};	// "blockId": blockObj..
-	
+
+	me.activityList = [];	// Move to FormUtil.activityList?
+
 	me._localConfigUse = false;
 	//me.syncManager;
  
@@ -193,149 +195,14 @@ function cwsRender()
 
 	me.setupMenuTagClick = function( menuTag )
 	{
-		menuTag.click( function() {
-
+		menuTag.click( function() 
+		{
 			var clicked_areaId = $( this ).attr( 'areaId' );
-			var clicked_area = Util.getFromList( me.areaList, clicked_areaId, "id" );
 
-			me.pulsatingProgress.hide();
-			$( '#divProgressBar' ).hide();
-			$( '#focusRelegator' ).hide();
-			$( '#aboutFormDiv' ).hide();
-
-			// if menu is clicked,
-			// reload the block refresh?
-			if ( clicked_area && clicked_area.startBlockName )
-			{
-				// added by Greg (2018/12/10)
-				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
-
-				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ clicked_area.startBlockName ], clicked_area.startBlockName, me.renderBlockTag );
-				startBlockObj.render();  // should been done/rendered automatically?
-
-				// Change start area mark based on last user info..
-				me.trackUserLocation( clicked_area );
-
-			}
-			else
-			{
-				if (clicked_areaId === 'logOut')
-				{
-
-					// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-					// set Log off
-					var lastSession = JSON.parse( localStorage.getItem('session') );
-
-					if (lastSession)
-					{
-						var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
-
-						if ( loginData.mySession && loginData.mySession.stayLoggedIn ) 
-						{
-							loginData.mySession.stayLoggedIn = false;
-							localStorage[ lastSession.user ] = JSON.stringify( loginData )
-						}
-					}
-
-					me.loginObj.spanOuNameTag.text( '' );
-					me.loginObj.spanOuNameTag.hide();
-					FormUtil.undoLogin();
-					me.renderDefaultTheme();
-					me.loginObj.openForm();
-
-				}
-				else if ( clicked_areaId === 'aboutPage')
-				{
-
-					// ?? Why render if only clicked??
-					// ?? Render everytime it is clicked??
-
-					me.aboutApp.render();
-				}
-			}
-
-			// hide the menu div if open
-			me.hidenavDrawerDiv();
-			$( '#focusRelegator' ).hide();
-
+			me.renderArea( clicked_areaId );
 		});
 	}
 
-
-	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
-	me.trackUserLocation = function( clicked_area )
-	{
-		var lastSession = JSON.parse( localStorage.getItem('session') );
-		var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
-		var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
-		var matchOn = [ "id", "startBlockName", "name" ];
-		var matchedOn, areaMatched;
-
-		if (lastSession)
-		{
-			var loginData = JSON.parse( localStorage.getItem( lastSession.user ) );
-
-			if (loginData)
-			{
-				for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
-				{
-					loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
-
-					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
-					{
-						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
-
-						// test if altNetworkMode value exists for current selected area and update to equivalent of 'lastActive' > startArea
-						// test on available matchOn values
-						/* GREG: MORE TESTING TO BE DONE 
-						for ( var m = 0; m < matchOn.length; m++ )
-						{
-							for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
-							{
-								// check if properties exist on both off+online areas
-								if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] && loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
-								{
-									if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] == loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
-									{
-										matchedOn = matchOn[m];
-										areaMatched = n;
-										loginData.dcdConfig.areas[altNetworkMode][n].startArea = true;
-
-									}
-								}
-							}
-						}
-						// 'reset' (deactivate) all other selectable areas 
-						for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
-						{
-							if ( loginData.dcdConfig.areas[altNetworkMode][areaMatched][matchedOn] != loginData.dcdConfig.areas[altNetworkMode][n][matchedOn] )
-							{
-								loginData.dcdConfig.areas[altNetworkMode][n].startArea = false;
-							}
-						} */
-
-					}
-
-				}
-	
-				//UPDATE lastStorage session for current user (based on last menu selection)
-				localStorage[ lastSession.user ] = JSON.stringify( loginData )
-	
-			}
-		}
-	}
-
-	me.hidenavDrawerDiv = function()
-	{
-		// hide the menu
-		if ( me.navDrawerDivTag.is( ":visible" ) )
-		{
-			me.menuAppMenuIconTag.click();
-			me.menuAppMenuIconTag.css( 'width', 0 );
-
-			$('#nav-toggle').removeClass('active');
-		}		
-	}
 	// =============================================
 
 
@@ -344,29 +211,39 @@ function cwsRender()
 	
 	me.renderArea = function( areaId )
 	{
-		// should close current tag/content?
-		if (areaId === 'logOut')
-		{
-			me.loginObj.openForm();
+		me.hideAreaRelatedParts();
 
-			// hide the menu div if open
-			me.hidenavDrawerDiv();			
-		}
+
+		// should close current tag/content?
+		if (areaId === 'logOut') me.logOutProcess();
+		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
 		{  
 			me.areaList = ConfigUtil.getAllAreaList( me.configJson );
 		
 			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
 	
+
+			// TODO: ACTIVITY ADDING
+			ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+
+
 			// if menu is clicked,
 			// reload the block refresh?
-			if ( selectedArea.startBlockName )
+			if ( selectedArea && selectedArea.startBlockName )
 			{
+				// added by Greg (2018/12/10)
+				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
+
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
-				startBlockObj.render();  // should been done/rendered automatically?  			
+				startBlockObj.render();  // should been done/rendered automatically?
+
+				// Change start area mark based on last user info..
+				me.trackUserLocation( selectedArea );				
 			}
 		}
 	}
+
 
 	me.renderBlock = function( blockName, options )
 	{
@@ -736,6 +613,121 @@ function cwsRender()
 	}
 
 	// ----------------------------------------------
+
+	// ----------------------------------------------
+	// ----------- Area Render called method -------------
+	
+	me.hideAreaRelatedParts = function()
+	{
+		me.pulsatingProgress.hide();
+		$( '#divProgressBar' ).hide();
+		$( '#focusRelegator' ).hide();
+		$( '#aboutFormDiv' ).hide();	
+
+		// hide the menu div if open
+		me.hidenavDrawerDiv();			
+	}
+
+
+	me.logOutProcess = function()
+	{
+		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
+		// set Log off
+		var lastSession = JSON.parse( localStorage.getItem('session') );
+
+		if (lastSession)
+		{
+			var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
+
+			if ( loginData.mySession && loginData.mySession.stayLoggedIn ) 
+			{
+				loginData.mySession.stayLoggedIn = false;
+				localStorage[ lastSession.user ] = JSON.stringify( loginData )
+			}
+		}
+
+		me.loginObj.spanOuNameTag.text( '' );
+		me.loginObj.spanOuNameTag.hide();
+		FormUtil.undoLogin();
+		me.renderDefaultTheme();
+		me.loginObj.openForm();
+	}
+
+
+	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
+	me.trackUserLocation = function( clicked_area )
+	{
+		var lastSession = JSON.parse( localStorage.getItem('session') );
+		var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
+		var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
+		var matchOn = [ "id", "startBlockName", "name" ];
+		var matchedOn, areaMatched;
+
+		if (lastSession)
+		{
+			var loginData = JSON.parse( localStorage.getItem( lastSession.user ) );
+
+			if (loginData)
+			{
+				for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
+				{
+					loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
+
+					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
+					{
+						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
+
+						// test if altNetworkMode value exists for current selected area and update to equivalent of 'lastActive' > startArea
+						// test on available matchOn values
+						/* GREG: MORE TESTING TO BE DONE 
+						for ( var m = 0; m < matchOn.length; m++ )
+						{
+							for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
+							{
+								// check if properties exist on both off+online areas
+								if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] && loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
+								{
+									if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] == loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
+									{
+										matchedOn = matchOn[m];
+										areaMatched = n;
+										loginData.dcdConfig.areas[altNetworkMode][n].startArea = true;
+
+									}
+								}
+							}
+						}
+						// 'reset' (deactivate) all other selectable areas 
+						for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
+						{
+							if ( loginData.dcdConfig.areas[altNetworkMode][areaMatched][matchedOn] != loginData.dcdConfig.areas[altNetworkMode][n][matchedOn] )
+							{
+								loginData.dcdConfig.areas[altNetworkMode][n].startArea = false;
+							}
+						} */
+
+					}
+
+				}
+	
+				//UPDATE lastStorage session for current user (based on last menu selection)
+				localStorage[ lastSession.user ] = JSON.stringify( loginData )
+	
+			}
+		}
+	}
+
+	me.hidenavDrawerDiv = function()
+	{
+		// hide the menu
+		if ( me.navDrawerDivTag.is( ":visible" ) )
+		{
+			me.menuAppMenuIconTag.click();
+			me.menuAppMenuIconTag.css( 'width', 0 );
+
+			$('#nav-toggle').removeClass('active');
+		}		
+	}
 
 
 	// ======================================

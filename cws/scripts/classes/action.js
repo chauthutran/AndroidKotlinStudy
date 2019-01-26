@@ -16,6 +16,7 @@ function Action( cwsRenderObj, blockObj )
 
 	// ------------------------------------
 
+	// Same level as 'render' in other type of class
 	me.handleClickActions = function( btnTag, btnOnClickActions )
 	{		
 		var blockDivTag = btnTag.closest( '.block' );
@@ -81,6 +82,11 @@ function Action( cwsRenderObj, blockObj )
 		var asyncCalled = false;
 
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
+
+
+		// TODO: ACTIVITY ADDING
+		ActivityUtil.addAsActivity( 'action', clickActionJson );
+
 
 		if ( clickActionJson !== undefined )
 		{

@@ -44,7 +44,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "318a22b96c494a55d6ff4e1112fec34b"
+    "revision": "f1f4542d6ba35eb09fb7ba7f4727fc77"
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
@@ -224,7 +224,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ad830da2090f8b1bac4a243da8fee035"
+    "revision": "4f4338f0b8e601a412e345491b8543ae"
   },
   {
     "url": "manifest.json",
@@ -244,15 +244,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "02cd915c2a68e23e90b3842a28f967ef"
+    "revision": "264705abffce53a098423764b9b27475"
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "72a68c72c718b414817ff64a8b173a83"
+    "revision": "88a83a8cb087542f9414d3d064845748"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "7fd548f7afb555251a4c5af6a3969dee"
+    "revision": "bac71ab0412c9011bd539aa0d3d546f7"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -260,7 +260,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "45b4fffcdc2c7379c8023c0e255247eb"
+    "revision": "7f3765958a0a946f9842c9cd2c1fcef9"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -272,7 +272,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "799eb87181bc72b191233b3c849e3fef"
+    "revision": "e85d4a8f75e3cf4135fa3337cc7f5aa1"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -296,7 +296,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "6995ce0fa26c4773f54bddf9d72a5604"
+    "revision": "fd798787d201f360e2b4abd5cd0d5a31"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -319,6 +319,10 @@ self.__precacheManifest = [
     "revision": "1473907211f50cb96aa2f2402af49d69"
   },
   {
+    "url": "scripts/utils/activityUtil.js",
+    "revision": "1b502f37db8cf7d973b4cb29ae112cf0"
+  },
+  {
     "url": "scripts/utils/configUtil.js",
     "revision": "b3d3f0be838558b42c01e3cc789572a7"
   },
@@ -336,11 +340,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "d3669dd249c35d5996f48990d3395f31"
+    "revision": "a15ce7747e8cfbdaaa39f0e31ba14d0b"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "0b0810d897e7e83e6793c45d80887bcf"
+    "revision": "366ee1d4f8281db3b85cd784f63de00f"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -396,7 +400,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "58144295eb0a627a5b38a6444595907d"
+    "revision": "eabdc84ca0bd40a1881eea797967fd39"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
