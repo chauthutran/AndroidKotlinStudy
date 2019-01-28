@@ -62,6 +62,7 @@ function aboutApp( cwsRender )
                 FormUtil.showProgressBar();
                 var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
                 setTimeout( function() {
+                    $( '#imgaboutInfo_dcdVersion_Less' ).click();
                     me.cwsRenderObj.reGetAppShell(); 
                 }, 500 );
             }
@@ -81,35 +82,69 @@ function aboutApp( cwsRender )
                 FormUtil.showProgressBar();
                 var loadingTag = FormUtil.generateLoadingTag( divButtonDcdVersionTag );
                 setTimeout( function() {
+                    $( '#imgaboutInfo_dcdVersion_Less' ).click();
                     me.cwsRenderObj.reGetDCDconfig(); 
+                    FormUtil.hideProgressBar();
                 }, 500 );
             }
         });     
 
         me.aboutInfo_langSelectTag.change( () => 
         {
-            me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );
+            FormUtil.showProgressBar();
 
+            me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );
             me.langTermObj.translatePage();
+
+            $( '#aboutInfo_userLanguage_Name' ).html( me.getLanguageName( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
+            $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
+
+            FormUtil.hideProgressBar();
+
         });
 
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
-            console.log( 'THEME changed: ' + me.aboutInfo_ThemeSelectTag.val() );
+            FormUtil.showProgressBar();
+
+            //console.log( 'THEME changed: ' + me.aboutInfo_ThemeSelectTag.val() );
             var thisConfig = me.cwsRenderObj.configJson;
-            console.log( thisConfig );
+            //console.log( thisConfig );
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
             me.cwsRenderObj.configJson = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
+            $( '#aboutInfo_theme_Text' ).html( me.aboutInfo_ThemeSelectTag.val() );
+
+            FormUtil.hideProgressBar();
         });
 
 
         //$( '#aboutInfo_CloseBtn' ).click( () =>
         $( 'img.btnBack' ).click( () =>
         {
-            me.hideAboutPage();        
+            if ( $( 'img.rotateImg' ).length  )
+            {
+                $( 'img.rotateImg' ).click();
+            }
+            else
+            {
+                me.hideAboutPage();
+            }
         });
-        
+
+        me.evalHideSections = function( excludeID )
+        {
+            $( 'li.aboutGroupDiv' ).each(function(i, obj) {
+
+                if ( $( obj ).attr( 'id' ) != excludeID && ! $( obj ).hasClass( 'byPassAboutMore' ) )
+                {
+                    if ( $( obj ).is(':visible') ) $( obj ).hide( 'fast' );
+                    else $( obj ).show( 'fast' );
+                }
+
+            });
+        }
+
 
         $( '#aboutInfo_newLangTermsDownload' ).click( function() 
         {
@@ -119,11 +154,13 @@ function aboutApp( cwsRender )
 
             console.log( 'aboutInfo_newLangTermsDownload, create loading Tag' );
 
-            //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
+            var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
 
-            var loadingTag = $( '#aboutInfo_newLangTermsDownload_loading' );
-            loadingTag.show();
-            //loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+            FormUtil.showProgressBar();
+
+            //var loadingTag = $( '#aboutInfo_newLangTermsDownload_loading' );
+            //loadingTag.show();
+            //var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
             //btnTag.after( loadingTag );
 
             me.langTermObj.retrieveAllLangTerm( function() 
@@ -134,70 +171,130 @@ function aboutApp( cwsRender )
 
                 me.aboutInfo_langSelectTag.val( langSelVal ).change();
 
+                FormUtil.hideProgressBar();
+
             }, true);
 
         });
 
         $( '#imgaboutInfo_AppVersion_Less' ).click( function() 
         {
+            if ( $( this ).hasClass( 'disabled' ) ) return;
+
+            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+
             if ( ! $( '#aboutInfo_AppVersion_More' ).is(':visible') )
             {
+                $( '#aboutInfo_AppVersion_Less' ).hide( 'fast' );
                 $( '#aboutInfo_AppVersion_More' ).show( 'fast' );
-                $( this ).attr( 'src', 'img/arrow_left.svg' );
+                $( 'label.aboutHeader' ).attr( 'backText', $( 'label.aboutHeader' ).html() );
+                $( 'label.aboutHeader' ).attr( 'backTerm', $( 'label.aboutHeader' ).attr( 'term' ) );
+                $( 'label.aboutHeader' ).html( $( '#lblabout_applicationVersion' ).html() );
+                $( 'label.aboutHeader' ).attr( 'term', $( '#lblabout_applicationVersion' ).attr( 'term' ) );
+
+                me.evalHideSections( 'aboutInfo_AppVersion_Less' );
             }
             else
             {
+                $( 'label.aboutHeader' ).html( me.langTermObj.translateText(  $( 'label.aboutHeader' ).attr( 'backText' ),  $( 'label.aboutHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.aboutHeader' ).attr( 'term', $( 'label.aboutHeader' ).attr( 'backTerm' ) );
                 $( '#aboutInfo_AppVersion_More' ).hide( 'fast' );
-                $( this ).attr( 'src', 'img/arrow_right.svg' );
+                $( '#aboutInfo_AppVersion_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'aboutInfo_AppVersion_Less' );
             }
-            
-            //$( '#aboutInfo_AppVersion_Less' ).hide();     
+
         });
 
         $( '#imgaboutInfo_dcdVersion_Less' ).click( function() 
         {
-            if ( $( this ).hasClass( 'enabled' ) )
+            if ( $( this ).hasClass( 'disabled' ) ) return;
+
+            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+
+            if ( ! $( '#aboutInfo_dcdVersion_More' ).is(':visible') )
             {
-                if ( ! $( '#aboutInfo_dcdVersion_More' ).is(':visible') )
-                {
-                    $( '#aboutInfo_dcdVersion_More' ).show( 'fast' );
-                    $( this ).attr( 'src', 'img/arrow_left.svg' );
-                }
-                else
-                {
-                    $( '#aboutInfo_dcdVersion_More' ).hide( 'fast' );
-                    $( this ).attr( 'src', 'img/arrow_right.svg' );
-                }
+                $( '#aboutInfo_dcdVersion_Less' ).hide( 'fast' );
+                $( '#aboutInfo_dcdVersion_More' ).show( 'fast' );
+                $( 'label.aboutHeader' ).attr( 'backText', $( 'label.aboutHeader' ).html() );
+                $( 'label.aboutHeader' ).attr( 'backTerm', $( 'label.aboutHeader' ).attr( 'term' ) );
+                $( 'label.aboutHeader' ).html( $( '#lblabout_configVersion' ).html() );
+                $( 'label.aboutHeader' ).attr( 'term', $( '#lblabout_configVersion' ).attr( 'term' ) );
+
+                me.evalHideSections( 'aboutInfo_dcdVersion_Less' );
             }
-            //$( '#aboutInfo_AppVersion_Less' ).hide();     
+            else
+            {
+                $( 'label.aboutHeader' ).html( me.langTermObj.translateText(  $( 'label.aboutHeader' ).attr( 'backText' ),  $( 'label.aboutHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.aboutHeader' ).attr( 'term', $( 'label.aboutHeader' ).attr( 'backTerm' ) );
+                $( '#aboutInfo_dcdVersion_More' ).hide( 'fast' );
+                $( '#aboutInfo_dcdVersion_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'aboutInfo_dcdVersion_Less' );
+            }
+
         });
 
         $( '#imgaboutInfo_userLanguage_Less' ).click( function() 
         {
-            if ( $( this ).hasClass( 'enabled' ) )
-            {
-                if ( ! $( '#aboutInfo_userLanguage_More' ).is(':visible') )
-                {
-                    $( '#aboutInfo_userLanguage_More' ).show( 'fast' );
-                    $( this ).attr( 'src', 'img/arrow_left.svg' );
-                }
-                else
-                {
-                    $( '#aboutInfo_userLanguage_More' ).hide( 'fast' );
-                    $( this ).attr( 'src', 'img/arrow_right.svg' );
-                }
-            }
-            //$( '#aboutInfo_AppVersion_Less' ).hide();     
-        });
-        
+            if ( $( this ).hasClass( 'disabled' ) ) return;
 
-        
-        
-        /*$( '#imgaboutInfo_AppVersion_More' ).click( function() 
+            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+
+            if ( ! $( '#aboutInfo_userLanguage_More' ).is(':visible') )
+            {
+                $( '#aboutInfo_userLanguage_Less' ).hide( 'fast' );
+                $( '#aboutInfo_userLanguage_More' ).show( 'fast' );
+                $( 'label.aboutHeader' ).attr( 'backText', $( 'label.aboutHeader' ).html() );
+                $( 'label.aboutHeader' ).attr( 'backTerm', $( 'label.aboutHeader' ).attr( 'term' ) );
+                $( 'label.aboutHeader' ).html( $( '#lblabout_userLanguage' ).html() );
+                $( 'label.aboutHeader' ).attr( 'term', $( '#lblabout_userLanguage' ).attr( 'term' ) );
+
+                me.evalHideSections( 'aboutInfo_userLanguage_Less' );
+            }
+            else
+            {
+                $( 'label.aboutHeader' ).html( me.langTermObj.translateText(  $( 'label.aboutHeader' ).attr( 'backText' ),  $( 'label.aboutHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.aboutHeader' ).attr( 'term', $( 'label.aboutHeader' ).attr( 'backTerm' ) );
+                $( '#aboutInfo_userLanguage_More' ).hide( 'fast' );
+                $( '#aboutInfo_userLanguage_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'aboutInfo_userLanguage_Less' );
+            }
+
+        });
+
+        $( '#imgaboutInfo_theme_Less' ).click( function() 
         {
-            //$( '#aboutInfo_AppVersion_Less' ).show();
-            $( '#aboutInfo_AppVersion_More' ).hide();     
-        });*/
+            if ( $( this ).hasClass( 'disabled' ) ) return;
+
+            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+
+            if ( ! $( '#aboutInfo_theme_More' ).is(':visible') )
+            {
+                $( '#aboutInfo_theme_Less' ).hide( 'fast' );
+                $( '#aboutInfo_theme_More' ).show( 'fast' );
+                $( 'label.aboutHeader' ).attr( 'backText', $( 'label.aboutHeader' ).html() );
+                $( 'label.aboutHeader' ).attr( 'backTerm', $( 'label.aboutHeader' ).attr( 'term' ) );
+                $( 'label.aboutHeader' ).html( $( '#lblabout_theme' ).html() );
+                $( 'label.aboutHeader' ).attr( 'term', $( '#lblabout_theme' ).attr( 'term' ) );
+
+                me.evalHideSections( 'aboutInfo_theme_Less' );
+            }
+            else
+            {
+                $( 'label.aboutHeader' ).html( me.langTermObj.translateText(  $( 'label.aboutHeader' ).attr( 'backText' ),  $( 'label.aboutHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.aboutHeader' ).attr( 'term', $( 'label.aboutHeader' ).attr( 'backTerm' ) );
+                $( '#aboutInfo_theme_More' ).hide( 'fast' );
+                $( '#aboutInfo_theme_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'aboutInfo_theme_Less' );
+            }
+
+        });
+
+        //
+
 
     }
 
@@ -241,12 +338,22 @@ function aboutApp( cwsRender )
         if ( userLoggedIn )
         {
             //$( '#li_about_userLanguage' ).show();
-            $( '#li_about_theme' ).show();
+
+            $( '#aboutInfo_dcdVersion_Less' ).show();
+            $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_theme_Less' ).show();
+            $( '#aboutInfo_theme_Less' ).removeClass( 'byPassAboutMore' )
         }
         else
         {
             //$( '#li_about_userLanguage' ).hide();
-            $( '#li_about_theme' ).hide();
+
+            $( '#aboutInfo_dcdVersion_Less' ).hide();
+            $( '#aboutInfo_dcdVersion_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_theme_Less' ).hide();
+            $( '#aboutInfo_theme_Less' ).addClass( 'byPassAboutMore' );
         }
     }
 
@@ -266,14 +373,13 @@ function aboutApp( cwsRender )
 
             }
 
-
-            $( '#li_about_configVersion' ).show();
-            $( '#li_about_theme' ).show();
+            $( '#aboutInfo_dcdVersion_Less' ).show();
+            $( '#aboutInfo_theme_Less' ).show();
         }
         else
         {
-            $( '#li_about_configVersion' ).hide();
-            $( '#li_about_theme' ).hide();
+            $( '#aboutInfo_dcdVersion_Less' ).hide();
+            $( '#aboutInfo_theme_Less' ).hide();
         }
 
 
@@ -281,15 +387,6 @@ function aboutApp( cwsRender )
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
-        //$( '#aboutInfo_Language' ).html( FormUtil.defaultLanguage() );
-        //$( '#aboutInfo_Theme' ).html( dcdConfigSettingTheme );
-
-        // Dropdown Populate
-	    //me.getCurrentLangCode();
-        //valueTag.append( '<select id="aboutInfo_langSelect"></select>' );
-        //me.cwsRenderObj.langTermObj.translatePage();
-
-        console.log( me.langTermObj.getLangList() );
 
         if ( ! me.langTermObj.getLangList() )
         {
@@ -305,8 +402,8 @@ function aboutApp( cwsRender )
         }
 
         me.syncMgr = new syncManager();
-        me.syncMgr.appShellVersionTest( $( '#aboutInfo_AppVersion_New' ) );
-        me.syncMgr.dcdConfigVersionTest( $( '#aboutInfo_dcdVersion_New' ) );        
+        me.syncMgr.appShellVersionTest( $( '#aboutInfo_AppNewVersion' ) );
+        me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
     }
 
     me.getThemeList = function( jsonThemes )
@@ -345,27 +442,60 @@ function aboutApp( cwsRender )
     }
 
 
-    me.populateLangList_Show = function( langaugeList, defaultLangCode )
+    me.populateLangList_Show = function( languageList, defaultLangCode )
     {   
-        Util.populateSelect( me.aboutInfo_langSelectTag, "Language", langaugeList );
+        Util.populateSelect( me.aboutInfo_langSelectTag, "Language", languageList );
 
         if ( defaultLangCode )
         {
-            me.setLanguageDropdownFromCode( langaugeList, defaultLangCode )
+            me.setLanguageDropdownFromCode( languageList, defaultLangCode )
         }
 
+        $( '#aboutInfo_userLanguage_Name' ).html( me.getLanguageName( languageList, defaultLangCode ) );
+        $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#aboutInfo_DivLangSelect' ).show();
+
+        console.log( languageList );
+        console.log( me.getLanguageUpdate( languageList, defaultLangCode ) );
     }
 
-    me.setLanguageDropdownFromCode = function ( langaugeList, langCode )
+    me.setLanguageDropdownFromCode = function ( languageList, langCode )
     {
-		$.each( langaugeList, function( i, item ) 
+		$.each( languageList, function( i, item ) 
 		{
             if ( item.id == langCode )
             {
                 Util.setSelectDefaultByName( me.aboutInfo_langSelectTag, item.name );
             }
 		});
+    }
+
+    me.getLanguageName = function( languageList, defaultLangCode )
+    {
+        var langList = me.langTermObj.getLangList();
+
+        for( i = 0; i < languageList.length; i++ )
+        {
+            if ( languageList[i].id == defaultLangCode )
+            {
+                return languageList[i].name;
+            }
+        }
+
+    }
+
+    me.getLanguageUpdate = function( languageList, defaultLangCode )
+    {
+        var langList = me.langTermObj.getLangList();
+
+        for( i = 0; i < languageList.length; i++ )
+        {
+            if ( languageList[i].id == defaultLangCode )
+            {
+                return languageList[i].updated;
+            }
+        }
+
     }
 
     me.populateThemeList_Show = function( ThemeList, defaultTheme )
@@ -377,6 +507,7 @@ function aboutApp( cwsRender )
             Util.setSelectDefaultByName( me.aboutInfo_ThemeSelectTag, defaultTheme );
         }
 
+        $( '#aboutInfo_theme_Text' ).html( defaultTheme );
         $( '#aboutInfo_DivThemeSelect' ).show();
     }
 

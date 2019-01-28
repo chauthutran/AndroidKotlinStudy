@@ -222,13 +222,14 @@ function LangTerm( cwsRenderObj )
 			{
 				var langJson = allLangTerms.languages[i];
 
-				console.log( langJson );
+				//console.log( langJson );
 
 				if ( langJson.code && langJson.name )
 				{
 					var addLangJson = {};
 					addLangJson.id = langJson.code;
 					addLangJson.name = langJson.name;
+					addLangJson.updated = langJson.updated;
 
 					me.langList.push( addLangJson );
 				}

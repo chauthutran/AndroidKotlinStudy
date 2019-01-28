@@ -307,7 +307,17 @@ img.enabled
 
 img.disabled
 {
-  opacity:0.1;
+  opacity:0;
+}
+
+img.rotateImg
+{
+  transform: rotate(180deg);
+}
+
+img.imgMore
+{
+  cursor: pointer;
 }
 /* START > HAMBURGER MENU 'ICON' */
 #nav-toggle { position: absolute; left: 15px; top: 15px; }

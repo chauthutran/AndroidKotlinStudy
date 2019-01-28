@@ -153,11 +153,11 @@ function syncManager()
 		// config should also note all the 'term' into tags..
 		FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
 		{
+            var appShellVersion = $( '#spanVersion' ).html().replace('v','');
+
 			if ( returnJson && returnJson.version )
 			{
-				console.log( 'appShellVersionTest: ' + queryLoc );
-
-                var appShellVersion = $( '#spanVersion' ).html().replace('v','');
+				console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                 if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                 {
@@ -165,12 +165,18 @@ function syncManager()
                     {
                         //btnTag.text( 'Update to v' +returnJson.version );
                         $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                        if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
+                        if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+
                         btnTag.show( 'fast' );
                     }
                 }
                 else
                 {
                     btnTag.hide( 'fast' );
+                    if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                    if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+
                 }
 
 				//if ( returnFunc ) returnFunc( returnJson );
@@ -183,6 +189,7 @@ function syncManager()
 				FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
 					if ( success && allJson )
 					{
+                        console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                         if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                         {
@@ -190,12 +197,18 @@ function syncManager()
                             if ( btnTag )
                             {
                                 $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
+                                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+
                                 btnTag.show( 'fast' );
                             }
                         }
                         else
                         {
                             btnTag.hide( 'fast' );
+                            if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                            if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+
                         }
 
 						//if ( returnFunc ) returnFunc( enLangTerm );
@@ -203,8 +216,9 @@ function syncManager()
 					else
 					{
                         console.log( 'all appShellInfo FAILED: ' );
-
                         btnTag.hide();
+                        if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                        if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
 
 						//if ( returnFunc ) returnFunc( new Object() );
 					}
@@ -219,7 +233,6 @@ function syncManager()
         {
             if ( ConnManager.isOnline() )
             {
-                console.log( 'dcdConfigVersionTest' );
 
                 var loadingTag = undefined;
                 var userName = JSON.parse( localStorage.getItem('session') ).user;
@@ -233,7 +246,6 @@ function syncManager()
                         console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
                         if ( ( userConfig.dcdConfig.version ).toString() < ( loginData.dcdConfig.version ).toString() )
                         {
-                            //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
                             if ( btnTag )
                             {
                                 //btnTag.text( 'Update to v' +loginData.dcdConfig.version );

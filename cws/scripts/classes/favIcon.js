@@ -155,8 +155,6 @@ function favIcons( cwsRender )
                 divTag.append( svgObject );
                 me.favIconsTag.append( divTag );
 
-                console.log( svgObject );
-
                 if ( favList[ favItm ].target )
                 {
                     me.setFavIconClickTarget ( favList[ favItm ].target, unqID )
@@ -168,7 +166,7 @@ function favIcons( cwsRender )
                     else
                     {
                         setTimeout( function() { 
-                            console.log( 'translating favIcons' );
+                            //console.log( 'translating favIcons' );
                             me.cwsRenderObj.langTermObj.translatePage()
                         }, 500 );
                     }
