@@ -264,9 +264,9 @@ function BlockList( cwsRenderObj, blockObj )
                 var tblObj = $( '<table style="width:100%;">' ); 
                 var trObj1 = $( '<tr>' );
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="overflow:hidden;" >' ); 
-                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:10pt;width:50%;" >' ); 
-                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:10pt;" >' ); 
-                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;" >' ); 
+                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(10px + 0.6vw);width:50%;" >' ); 
+                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(10px + 0.6vw);" >' ); 
+                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;position: relative;top: -4px;" >' ); 
 
                 var labelDtm = $( '<div>' + dateTimeStr + '</div>' );
 
@@ -293,7 +293,7 @@ function BlockList( cwsRenderObj, blockObj )
             var blockListItemTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         }
 
-        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;"></div>' );
+        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-8px;"></div>' );
 
         var trObj2 = $( '<tr>' );
         tblObj.append( trObj2 );
@@ -313,7 +313,7 @@ function BlockList( cwsRenderObj, blockObj )
         anchorTag.append( blockListItemTag );
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="position: relative;"></div>' );
+        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="position: relative;font-size:calc(10px + 0.6vw);"></div>' );
         contentDivTag.append( '<span ' + FormUtil.getTermAttr( itemData ) + '>' + itemData.title + '</span>' );
         //var itemActionButtonsDivTag = $( '<div class="listItemDetailActionButtons"></div>' );
         //itemActionButtonsDivTag.append( $( '<span>' + JSON.stringify( itemData.data.payloadJson ) + '</span>' ) );
@@ -604,8 +604,10 @@ function BlockList( cwsRenderObj, blockObj )
 
                     fetchItemData.lastAttempt = dtmRedeemAttempt;
 
-                    var myTag = mySyncIcon.parent().parent().parent().siblings();
-                    var redeemID = myTag.attr( 'itemid' );
+                    var redeemID = mySyncIcon.parent().parent().parent().attr( 'id' ).replace( 'listItem_action_sync_','' );
+                    console.log( redeemID );
+                    console.log( '#listItem_networkResults_' + redeemID );
+                    var myTag = $( '#listItem_networkResults_' + redeemID );
                     var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
 
                     myTag.empty();
