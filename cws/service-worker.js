@@ -23,10 +23,6 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "back_files/service-worker_back.js",
-    "revision": "de80056a12a74c2a49b1de762e295cb9"
-  },
-  {
     "url": "css/log.css",
     "revision": "528354822cf90529d81b97d1223f7114"
   },
@@ -40,11 +36,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "c7ed5a97b01d7b54f1ac855e33240220"
+    "revision": "7c5aa540795997ebfeeea4c327139182"
   },
   {
     "url": "css/style.css",
-    "revision": "f1f4542d6ba35eb09fb7ba7f4727fc77"
+    "revision": "ffbc939e503138959a4084db0c5ab568"
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
@@ -107,6 +103,14 @@ self.__precacheManifest = [
     "revision": "7ff516ae1c523351b09e2f4a8d46d7d3"
   },
   {
+    "url": "img/about - Copy.svg",
+    "revision": "d98c716caf92e402a55ac659d9a33aa9"
+  },
+  {
+    "url": "img/about.svg",
+    "revision": "c9ecbd55c7ef63e5a50df53f1e5e802d"
+  },
+  {
     "url": "img/act_col.svg",
     "revision": "d7397b5aabba1c795a8a77da2053a6c7"
   },
@@ -139,12 +143,20 @@ self.__precacheManifest = [
     "revision": "3e3f227aa06dbfea700cb4ba587bf182"
   },
   {
-    "url": "img/back_arrow_28px.svg",
-    "revision": "d95d42e3edabd63d16306402c4444847"
-  },
-  {
     "url": "img/client.svg",
     "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
+  },
+  {
+    "url": "img/completed.svg",
+    "revision": "a7b380eda5209454e70979287e95d3de"
+  },
+  {
+    "url": "img/entry.svg",
+    "revision": "a19649ec23fe1803d4dd9408740cb5c6"
+  },
+  {
+    "url": "img/failed.svg",
+    "revision": "326c874c1a622e31584da4957549b166"
   },
   {
     "url": "img/favbar_color_act.svg",
@@ -159,8 +171,16 @@ self.__precacheManifest = [
     "revision": "6f045a1b801a41c223aa19852b0d6ebc"
   },
   {
+    "url": "img/hold.svg",
+    "revision": "dab45199539b6cc6796551245483b105"
+  },
+  {
     "url": "img/key.svg",
     "revision": "20f1389ffe6ee7e237c300129b2dc370"
+  },
+  {
+    "url": "img/list.svg",
+    "revision": "f1f0b7462536227aace7de9f00aea4e8"
   },
   {
     "url": "img/lock.svg",
@@ -179,6 +199,14 @@ self.__precacheManifest = [
     "revision": "35e285c0cccf3fc660d9fa7b4aadefd5"
   },
   {
+    "url": "img/logo.svg",
+    "revision": "44b0c57dc046930b5f78026ad2eeb937"
+  },
+  {
+    "url": "img/logout.svg",
+    "revision": "d9d3a6f585f07fe0ac5a080f456f597d"
+  },
+  {
     "url": "img/mobile.svg",
     "revision": "56d9b808639a50927115cab90dd8e246"
   },
@@ -195,6 +223,14 @@ self.__precacheManifest = [
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
   {
+    "url": "img/outline-delete-24px.svg",
+    "revision": "d98e9b1007e5681f76032d72eb189d4c"
+  },
+  {
+    "url": "img/pending.svg",
+    "revision": "6f108defd2de408ad7956cb1b3538580"
+  },
+  {
     "url": "img/plus_on.svg",
     "revision": "1122c272c9085cf3f611902a4c879b28"
   },
@@ -207,16 +243,20 @@ self.__precacheManifest = [
     "revision": "7c8dcb4c9fce086566e3fe6414dccd08"
   },
   {
+    "url": "img/sync_error.svg",
+    "revision": "6345c6b90ad5dd60d639a18892c6f3d2"
+  },
+  {
     "url": "img/sync-banner.svg",
-    "revision": "406d8238e4a0a815172a2d39edd13db9"
+    "revision": "679bf57f11ff6a88d3a130486a65e2aa"
   },
   {
     "url": "img/sync-n.svg",
-    "revision": "74076b33f6af9ee62151ccb80ac9e2cf"
+    "revision": "bb5732a4e025d9baf31822b06d381366"
   },
   {
     "url": "img/sync.svg",
-    "revision": "3d9a12be6d7b5432ea8e9a55a67e39d0"
+    "revision": "4e359cd567fad995e2433e434c8c2b23"
   },
   {
     "url": "img/voucher.svg",
@@ -224,7 +264,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "4f4338f0b8e601a412e345491b8543ae"
+    "revision": "eeffce8a94c96c3bfd8182592a7d519e"
   },
   {
     "url": "manifest.json",
@@ -240,11 +280,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "578037404b04401de1affaf29487a913"
+    "revision": "7d8aa161438cfb6e230f03f7804450ef"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "264705abffce53a098423764b9b27475"
+    "revision": "91e16c21ab0fb0a04cbc35ab94ada229"
   },
   {
     "url": "scripts/classes/block.js",
@@ -252,7 +292,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "bac71ab0412c9011bd539aa0d3d546f7"
+    "revision": "257741fbf9ecb21996233c7dc1d76e03"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -260,7 +300,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "7f3765958a0a946f9842c9cd2c1fcef9"
+    "revision": "bcf4c019d5cf1282aab777f0a25de7ab"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -268,23 +308,23 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "ae7cad901b6f1ca8fe2a3663cef827c6"
+    "revision": "27315294713be5bd6f484887855b1332"
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "e85d4a8f75e3cf4135fa3337cc7f5aa1"
+    "revision": "e807bb6a599d1dbab3bbc1a557d3ce83"
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "5d04cc6814db4d763d3a714952980071"
+    "revision": "0a79fa108678fe9458eb3c94ed9b10e0"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "2be406e0a530038feac64ace65967065"
+    "revision": "92d5af51adc360383061d7b2467ca6d1"
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "47f0adf87cafc6107894a11e2813fa09"
+    "revision": "7c8280d32f3c8660ac808b820eedc76d"
   },
   {
     "url": "scripts/classes/test.json",
@@ -296,7 +336,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "fd798787d201f360e2b4abd5cd0d5a31"
+    "revision": "45656cc7c09813aee45fd1bedd72b4e9"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -332,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "9581d9f2cc41eeaafdc0926eaf8aa620"
+    "revision": "20277ead4f95f6143e283cef0bdbf630"
   },
   {
     "url": "scripts/utils/formMsgManager.js",
@@ -340,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "a15ce7747e8cfbdaaa39f0e31ba14d0b"
+    "revision": "4ad862d975d136326bb7d5f947b020e6"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -356,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "76a72f17be2498ae2bbdc4302181cefa"
+    "revision": "07be46be0f041eb6ea28741acc8a21cd"
   },
   {
     "url": "scripts/utils/util.js",
@@ -400,7 +440,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "eabdc84ca0bd40a1881eea797967fd39"
+    "revision": "6752a453d0adc91d504d70529835e9f3"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
