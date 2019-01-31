@@ -27,8 +27,12 @@ function Action( cwsRenderObj, blockObj )
 		{
 			var passData = [];
 
-			me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, passData, undefined, function( finalPassData ) {
-			} );
+			if ( !btnTag.hasClass( 'clicked' ) )
+			{
+				me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, passData, undefined, function( finalPassData ) {
+				} );
+			}
+
 		}
 	}
 
@@ -42,8 +46,12 @@ function Action( cwsRenderObj, blockObj )
 		{
 			var passData = [];
 
-			me.recurrsiveActions( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, passData, clickedItemData, function( finalPassData ) {
-			} );
+			if ( !btnTag.hasClass( 'clicked' ) )
+			{
+				me.recurrsiveActions( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, passData, clickedItemData, function( finalPassData ) {
+				} );
+			}
+
 		}
 	}
 

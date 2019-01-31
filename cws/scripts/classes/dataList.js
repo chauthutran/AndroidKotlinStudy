@@ -74,17 +74,31 @@ function DataList( cwsRenderObj, blockObj )
             {
                 var itemAttrDataList = jsonList[i];
                 var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
+                var validResultData = objResult.length;
 
-                if ( objResult.length )
+                var tblObjTag = $( '<table style="width:100%;" id="searchResult_'+i+'">' );
+                var trTopObjTag = $( '<tr class="itemBlock">' );
+                var tdLeftobjTag = $( '<td>' );
+
+                divFormContainerTag.append( tblObjTag );
+                tblObjTag.append( trTopObjTag );
+                trTopObjTag.append( tdLeftobjTag );
+
+                if ( !validResultData )
                 {
-                    var tblObjTag = $( '<table style="width:100%;" id="searchResult_'+i+'">' );
-                    var trTopObjTag = $( '<tr class="itemBlock">' );
-                    var tdLeftobjTag = $( '<td>' );
+                    var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
+                    var labelTag = $( '<label class="from-string titleDiv" />' );
+                    var valueTag = $( '<div class="form-type-text">');
 
-                    divFormContainerTag.append( tblObjTag );
-                    
-                    tblObjTag.append( trTopObjTag );
-                    trTopObjTag.append( tdLeftobjTag );
+                    tdLeftobjTag.append( divAttrTag );
+                    divAttrTag.append( labelTag );
+                    divAttrTag.append( valueTag );
+
+                    labelTag.html( 'dcd Config issue' );
+                    valueTag.html( 'no valid IDs for "displayResult":[]' );
+                }
+                else
+                {
 
                     // add search criteria to results field list > what if search criteria already part of output specification?
                     for(var k in searchPostPayload) 
@@ -125,7 +139,7 @@ function DataList( cwsRenderObj, blockObj )
 
                     if ( i < (jsonList.length - 1))
                     {
-                        /* START > LINE SEPARATOR */
+                        / START > LINE SEPARATOR /
                         var trBottomObjTag = $( '<tr>' );
                         var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
                         var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
@@ -133,7 +147,7 @@ function DataList( cwsRenderObj, blockObj )
                         tblObjTag.append( trBottomObjTag );
                         trBottomObjTag.append( tdBottomtobjTag );
                         tdBottomtobjTag.append( divObjTag );
-                        /* END > LINE SEPARATOR */
+                        / END > LINE SEPARATOR /
                     }
 
                     // Generate and append items
@@ -145,6 +159,7 @@ function DataList( cwsRenderObj, blockObj )
                     //me.renderButtons( divItemTag, blockJson.itemButtons );
 
                 }
+
             }	
         }
     }

@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Rubik', 'Open Sans', sans-serif;
   color: #50555a;
   padding: 80px 20px;
   box-sizing: border-box;
@@ -595,41 +595,55 @@ div.fixed_father {
   left: 0;
   /* width: 100%; */
   height: 100vh;
-  background-color: rgba(255, 218, 109, 0.938);
+  background-color: #F2F2F2; /*rgba(255, 218, 109, 0.938);*/
   z-index: 10;
   box-sizing: border-box;
   font-family: Roboto,RobotoDraft,'Open Sans',Arial,sans-serif;
 }
 
 .menu-mobile-row {
+  position: relative;
+  left: 0px;
+  top: 0px;
+
   width: 100%;
   cursor: pointer; 
   display: table;
   margin: 0 auto;
-  height: 56px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  height: 52px;
+
+  border-bottom: 1px solid #B1B1B1;
   box-sizing: border-box;
-  font-family: Roboto,RobotoDraft,'Open Sans',Arial,sans-serif;
-  font-size: .85rem;
-  /*text-shadow: 0 1px 1px rgba(250,250,250,.5);*/
-  -webkit-font-smoothing: antialiased;
+  font-family: Rubik,Roboto,RobotoDraft,'Open Sans',Arial,sans-serif;
+  font-size: 16px;
+
+  /*-webkit-font-smoothing: antialiased;
   padding: 3px 0 0 65px;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap;*/
 }
 
 .menu-mobile-row:hover {
   opacity: 0.75;
 }
 
-.menu-mobile-row div {
+.menu-mobile-row td {
   text-align: left;
-  margin-top: 16px;
-  width: 100%;
-  font-weight: 800;
+  margin-top: 14px;
+  font-weight: normal;
   box-sizing: border-box;
 }
 
+.menu-mobile-icon {
+  position: relative;
+  left: 16px;
+  width: 40px;
+}
+
+.menu-mobile-label{
+  top: 2px;
+  padding: 0 0 0 20px;
+}
 act {
   float: left;
   width: 100%;

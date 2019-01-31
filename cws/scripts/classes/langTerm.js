@@ -50,7 +50,7 @@ function LangTerm( cwsRenderObj )
 		// If exists in local storage, load it.
 		// Otherwise, retrieve it
 		var langTerms = ( forceDownload ) ? undefined : DataManager.getData( DataManager.StorageName_langTerms );
-		
+
 		if ( langTerms )
 		{
 			console.log( '=== LANG TERMS ==> Local Storage Data Loaded' );
@@ -58,7 +58,7 @@ function LangTerm( cwsRenderObj )
 			me.allLangTerms = langTerms;
 			me.setLanguageList( me.allLangTerms );
 
-			console.log( me.allLangTerms );
+			//console.log( me.allLangTerms );
 
 			returnFunc( langTerms );
 		}
@@ -70,10 +70,10 @@ function LangTerm( cwsRenderObj )
 				me.allLangTerms = returnJson;
 				me.setLanguageList( me.allLangTerms );
 
-				console.log( me.allLangTerms );
+				//console.log( me.allLangTerms );
 
 				if ( returnJson ) DataManager.saveData( DataManager.StorageName_langTerms, returnJson );
-				
+
 				returnFunc( returnJson );
 			});
 		}
@@ -95,7 +95,7 @@ function LangTerm( cwsRenderObj )
 			if ( returnJson )
 			{
 				console.log( 'langTerm: ' );
-				console.log( returnJson );
+				//console.log( returnJson );
 
 				if ( returnFunc ) returnFunc( returnJson );
 			}
@@ -109,7 +109,7 @@ function LangTerm( cwsRenderObj )
 					if ( success && allLangTermsJson )
 					{
 						console.log( 'all langTerm: ' );
-						console.log( allLangTermsJson );
+						//console.log( allLangTermsJson );
 						
 						if ( returnFunc ) returnFunc( allLangTermsJson );
 					}
@@ -128,6 +128,7 @@ function LangTerm( cwsRenderObj )
 	// MAIN METHOD 2.
 	me.translatePage = function()
 	{
+		console.log( 'translating page: ' + me.currentLangcode );
 		var termCollection = {};
 
 		// 1. Get the terms unique collection from site/page
@@ -138,15 +139,8 @@ function LangTerm( cwsRenderObj )
 			var tag = $( this );
 			var termName = tag.attr( 'term' );
 
-			if ( termName ) //&& termName != '{TERM}' ) 
+			if ( termName ) 
 			{
-
-				//if ( tag.prop("tagName") == 'tspan' )
-				//{
-				//	console.log( 'termName: ' + termName + ' ( ' + tag.prop("tagName") + ' )');
-				//	console.log( tag );
-				//}
-
 				// Add to the term collection with termName
 				termCollection[ termName ] = "";
 			}
@@ -183,6 +177,9 @@ function LangTerm( cwsRenderObj )
 		me.currentLangcode = langCode;
 
 		me.currentLangTerms = me.getLangTerms( langCode );
+
+		DataManager.setSessionData( 'language', langCode );
+
 	}
 
 

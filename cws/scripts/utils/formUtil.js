@@ -817,10 +817,18 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 FormUtil.defaultLanguage = function()
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	//if ( FormUtil.dcdConfig && FormUtil.dcdConfig )
-	var navLang = (navigator.language).toString().substring(0,2);
-	console.log( ' FormUtil.defaultLanguage: ' + navLang)
-	return navLang;
+	var sessData = DataManager.getSessionData();
+
+	if ( sessData && sessData.language )
+	{
+		return sessData.language;
+	}
+	else
+	{
+		//var navLang = (navigator.language).toString().substring(0,2);
+		return (navigator.language).toString().substring(0,2);
+	}
+
 };
 
 FormUtil.getTermAttr = function( jsonItem )

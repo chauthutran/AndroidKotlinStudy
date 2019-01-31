@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.0.28a'; </script>
+    <script> var _ver = '1.0.0.27d'; </script>
 
 
     <link rel="manifest" href="manifest.json">
@@ -47,6 +47,8 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
   
   </head>
   <body>
@@ -59,12 +61,12 @@
 
       <div class='logo_desc nav_child'>
         <div>
-          <div class="logo-desc-all" style='font-weight: 600;font-size: 18pt;position: absolute;top: 18px;left: 55px;'></div>
+          <div class="logo-desc-all" style='text-align:center;font-weight: 600;font-size: 18pt;width: 75%;position: fixed;left: 50%;top:14px;margin-left: -37.5%;'></div>
         </div>
         <div>
           <div style="display: none"><img src='images/baseline-cloud_off-24px.svg' class="tab-image"></div>
           <div id="loggedInDiv" style="display: none; cursor: pointer;">
-            <span id="spanOuName" style="color: darkseagreen;font-size: 20pt;position: absolute; top: 12px;left: 54px;">[LogIn]</span>
+            <span id="spanOuName" style="color: #000;font-size: 20pt;text-align:center;font-weight: 600;width: 75%;position: fixed;left: 50%;top:14px;margin-left: -37.5%;">[LogIn]</span>
           </div>      
         </div>
       </div>
@@ -72,21 +74,6 @@
       <div id="pwa_tools" style="float: right; margin-right: 3px; margin-top: 5px;">
         <table class="topIconsTbl" style="border-spacing: 0px;">
           <tr>
-            <!-- <td>
-                <div id="swRefresh2" class="reget" title="reGet" style="font-size: 12px; cursor:pointer; display: unset; opacity: 0;">
-                    <span title="reGet" style="font-size: 12px;">v</span>
-                </div>
-            </td>
-            <td>
-                <div id="swRefresh" title="reGet2" style="font-size: 12px; cursor:pointer; display: unset; opacity: 0;">
-                  <span title="reGet2" style="font-size: 12px;">z</span>
-                </div>
-            </td>-->
-            <td>
-              <!-- <div id='topRight_loadingDiv' style='display:none'>
-                <img src='images/loader-bar.gif'/>
-              </div> -->
-            </td>
             <td>
               <!-- <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div> -->
               <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="img/sync-banner.svg"></div>
@@ -142,7 +129,7 @@
               <li tabId="1" class="active">
                 <a class="expandable expanded" id="s-opt">
                   <div class="icon-row"><img term="login_title" src="img/key.svg"> Login </div>
-                  <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>
+                  <!-- <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div> -->
                 </a>
                 <div>
                   <ul class="content_log">
@@ -356,11 +343,11 @@
                 </table>
               </div>
 
-              <label term="" id="" class="from-string titleDiv">Translation pack date</label>
+              <label term="" id="" class="from-string titleDiv">Language pack date</label>
               <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
-                    <td><span id="aboutInfo_userLanguage_Update" style="color:#808080"></span></td>
+                    <td style="width:160px;"><span id="aboutInfo_userLanguage_Update" style="color:#808080"></span></td>
                     <td>
                       <div id="" class="form-type-text">
                           <button id="aboutInfo_newLangTermsDownload" term="" class="divBtn btnStyle1">update</button> <!-- /*sorry to change it */ term="about_newLangTermsDownload" -->
@@ -415,7 +402,7 @@
 
             <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;">
   
-              <label term="about_restore" class="from-string titleDiv">Application cache</label>
+              <label term="" class="from-string titleDiv">System</label>
               <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>

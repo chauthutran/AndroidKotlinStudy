@@ -12,6 +12,7 @@ function aboutApp( cwsRender )
     me.aboutData;
     me.syncMgr;
     me.themeList;
+    me.defaultsInitialised = 0;
 
     // ----- Tags -----------
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
@@ -30,14 +31,21 @@ function aboutApp( cwsRender )
     }
 
 	// ------------------
-    
+
     me.render = function() 
-    {       
+    {
+
         me.populateAboutPageData( me.cwsRenderObj.configJson ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
         me.showAboutPage();
+
+        if ( FormUtil.checkLogin() )
+        {
+            me.defaultsInitialised = 1;
+        }
+
     }
 
 	// ------------------
@@ -97,7 +105,7 @@ function aboutApp( cwsRender )
             me.langTermObj.translatePage();
 
             $( '#aboutInfo_userLanguage_Name' ).html( me.getLanguageName( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
-            $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
+            $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );            
 
             FormUtil.hideProgressBar();
 
@@ -109,10 +117,12 @@ function aboutApp( cwsRender )
 
             //console.log( 'THEME changed: ' + me.aboutInfo_ThemeSelectTag.val() );
             var thisConfig = me.cwsRenderObj.configJson;
-            //console.log( thisConfig );
+
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
+
             me.cwsRenderObj.configJson = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
+
             $( '#aboutInfo_theme_Text' ).html( me.aboutInfo_ThemeSelectTag.val() );
 
             FormUtil.hideProgressBar();
@@ -335,19 +345,47 @@ function aboutApp( cwsRender )
 
     me.renderNonEssentialFields = function( userLoggedIn )
     {
+        console.log( 'me.defaultsInitialised: ' + me.defaultsInitialised + ', userLoggedIn: ' + userLoggedIn);
+    
         if ( userLoggedIn )
         {
             //$( '#li_about_userLanguage' ).show();
 
-            $( '#aboutInfo_dcdVersion_Less' ).show();
-            $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
+            if ( me.defaultsInitialised == 0 )
+            {
 
-            $( '#aboutInfo_theme_Less' ).show();
-            $( '#aboutInfo_theme_Less' ).removeClass( 'byPassAboutMore' )
+                if ( me.langTermObj.getLangList() )
+                {
+                    $( '#aboutInfo_userLanguage_Less' ).show();
+                    $( '#aboutInfo_userLanguage_Less' ).removeClass( 'byPassAboutMore' );
+                }
+                else
+                {
+                    $( '#aboutInfo_userLanguage_Less' ).hide();
+                    $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
+                }
+
+                $( '#aboutInfo_dcdVersion_Less' ).show();
+                $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
+    
+                $( '#aboutInfo_theme_Less' ).show();
+                $( '#aboutInfo_theme_Less' ).removeClass( 'byPassAboutMore' )
+            }
         }
         else
         {
             //$( '#li_about_userLanguage' ).hide();
+
+            if ( me.langTermObj.getLangList() )
+            {
+                $( '#aboutInfo_userLanguage_Less' ).show();
+                $( '#aboutInfo_userLanguage_Less' ).removeClass( 'byPassAboutMore' );
+            }
+            else
+            {
+                $( '#aboutInfo_userLanguage_Less' ).hide();
+                $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
+            }
 
             $( '#aboutInfo_dcdVersion_Less' ).hide();
             $( '#aboutInfo_dcdVersion_Less' ).addClass( 'byPassAboutMore' );
@@ -355,6 +393,7 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_theme_Less' ).hide();
             $( '#aboutInfo_theme_Less' ).addClass( 'byPassAboutMore' );
         }
+    
     }
 
     me.populateAboutPageData = function( dcdConfig ) 
@@ -373,13 +412,13 @@ function aboutApp( cwsRender )
 
             }
 
-            $( '#aboutInfo_dcdVersion_Less' ).show();
-            $( '#aboutInfo_theme_Less' ).show();
+            //$( '#aboutInfo_dcdVersion_Less' ).show();
+            //$( '#aboutInfo_theme_Less' ).show();
         }
         else
         {
-            $( '#aboutInfo_dcdVersion_Less' ).hide();
-            $( '#aboutInfo_theme_Less' ).hide();
+            //$( '#aboutInfo_dcdVersion_Less' ).hide();
+            //$( '#aboutInfo_theme_Less' ).hide();
         }
 
 
@@ -411,12 +450,10 @@ function aboutApp( cwsRender )
 		if ( jsonThemes )
 		{
             me.themeList = [];
-			//console.log( 'setLanguageList' );
+
 			for( i = 0; i < jsonThemes.length; i++ )
 			{
 				var themeJson = jsonThemes[i];
-
-				console.log( themeJson );
 
 				if ( themeJson.id || themeJson.name )
 				{
@@ -436,8 +473,7 @@ function aboutApp( cwsRender )
 					me.themeList.push( addthemeJson );
 				}
             }
-            console.log( 'got theme list' );
-            console.log( me.themeList );
+
 		}
     }
 
@@ -455,8 +491,6 @@ function aboutApp( cwsRender )
         $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#aboutInfo_DivLangSelect' ).show();
 
-        console.log( languageList );
-        console.log( me.getLanguageUpdate( languageList, defaultLangCode ) );
     }
 
     me.setLanguageDropdownFromCode = function ( languageList, langCode )

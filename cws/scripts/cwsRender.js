@@ -37,7 +37,8 @@ function cwsRender()
 
 	me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
-    me.status_redeem_queued = "queued"; // initialize from dcd@XX ?
+	me.status_redeem_queued = "queued"; // initialize from dcd@XX ?
+	me.status_redeem_paused = "paused"; // initialize from dcd@XX ?
 	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
 
 	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
@@ -292,32 +293,20 @@ function cwsRender()
 
 	me.startBlockExecute = function( configJson )
 	{
-		//console.log( configJson );
+
 		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.getAppConnMode_Online(), configJson );
 
 		if ( me.areaList )
 		{
-			// TODO: MOVE THIS TO 'MENU' STATIC CLASS..
 
-		  	// Greg added: 2018/11/23 -- 'logOut' check
-			if (JSON.stringify(me.areaList).indexOf('logOut') < 0 )
-			{
-				// 
-				/*var newMenuData = { id: "about", name: "About" };
-				me.areaList.push ( newMenuData );*/
-				var newMenuData = { id: "logOut", name: "Log out" };
-				me.areaList.push ( newMenuData );
-			}
+			var finalAreaList = Menu.populateStandardMenuList( me.areaList );
 
-			var startMenuTag = me.populateMenuList( me.areaList );
+			var startMenuTag = me.populateMenuList( finalAreaList );
 
 			if ( startMenuTag ) startMenuTag.click();
 
-			
 			// initialise favIcons
 			me.favIconsObj = new favIcons( me );
-
-			//me.renderDefaultTheme();
 
 		}
 	} 
@@ -325,7 +314,6 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
 	me.startBlockExecuteAgain = function()
 	{
-		//me.startBlockExecute( me.configJson );
 		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).dcdConfig );
 	}
 
@@ -360,7 +348,10 @@ function cwsRender()
 			return;
 		}
 
-		$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
+		//if ( DataManager.getSessionData() )
+		{
+			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
+		}
 
 		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
 
@@ -368,14 +359,15 @@ function cwsRender()
 		{
 			var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 			var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
+			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
-			
-			$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+
+			$( '#divNavDrawerSummaryData' ).html ( 'Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
 		} 
 		else 
 		{
 			//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-			$( '#divNavDrawerSummaryData' ).html ( 'redeemed Confirmed: 0 ' );
+			$( '#divNavDrawerSummaryData' ).html ( 'Confirmed: 0 ' );
 		}
 	}
 
@@ -389,15 +381,15 @@ function cwsRender()
 		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 		// TODO: GREG: THIS COULD BE shortened or placed in html page?
-		var navMenuHead = $( '<div style="width:100%;height:120px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="tb-content-buttom" />' );
+		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
 		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 		var tr = $( '<tr />' );
-		var tdLeft = $( '<td style="padding:0 10px 10px 10px;width:56px;" />' );
-		var tdRight = $( '<td  style="padding:2px 0 0 0;height:75px;" />' );
+		var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
+		var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
 
-		navMenuTbl.css( 'background-image', 'url( "img/logo_bg_header.svg" )' );
+		/*navMenuTbl.css( 'background-image', 'url( "img/logo_bg_header.svg" )' );
 		navMenuTbl.css( 'background-size', 'auto' );
-		navMenuTbl.css( 'background-repeat', 'no-repeat' );
+		navMenuTbl.css( 'background-repeat', 'no-repeat' );*/
 
 		me.navDrawerDivTag.append ( navMenuHead );
 		navMenuHead.append ( navMenuTbl );
@@ -405,21 +397,21 @@ function cwsRender()
 		tr.append ( tdLeft );
 		tr.append ( tdRight );
 
-		var navMenuLogo = $( '<img src="img/logo_top.svg" />' );
+		var navMenuLogo = $( '<img src="img/logo.svg" />' );
 
 		var userSessionJson = DataManager.getSessionData();
 		var userName = ( userSessionJson && userSessionJson.user ) ? userSessionJson.user : "";
 
 		tdLeft.append ( navMenuLogo );
-		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:.8rem;font-weight:400;text-align:left;">' + userName + '</div>') );
-		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="font-size:.8rem;font-weight:400;text-align:left;" />' ) );
+		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
+		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: -0.02em;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
 
 		var tr = $( '<tr />' );
 		var td = $( '<td colspan=2 style="height:20px;" />' );
 
 		navMenuTbl.append ( tr );
 		tr.append ( td );
-		td.append ( $( '<div id="divNavDrawerSummaryData" class="navMenuHeader" style="position:relative;top:-5px;padding: 0 0 0 20px; font-size:.8rem;font-weight:400;text-align:left;justify-content:normal;background-Color:transparent" />') );
+		td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
 
 		// Add the menu rows
 		if ( areaList )
@@ -428,7 +420,7 @@ function cwsRender()
 			{
 				var area = areaList[i];
 
-				var menuTag = $( '<div class="menu-mobile-row" areaId="' + area.id + '"><div ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</div></div>' );				
+				var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="img/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
 				me.setupMenuTagClick( menuTag );
 
@@ -450,7 +442,6 @@ function cwsRender()
 
 	me.reGetAppShell = function()
 	{
-		//$( '#swRefresh2' ).click();
 		if ( me.registrationObj !== undefined )
 		{
 			console.log ( 'reloading + unregistering SW');
@@ -481,18 +472,18 @@ function cwsRender()
 			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
 			//$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
 			$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
-			$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( 'div.menu-mobile' ).css( 'background-color', defTheme.navDrawer.colors.background );
-			$( 'div.menu-mobile-row' ).css( 'background-color', defTheme.navDrawer.colors.background );
-			$( 'div.menu-mobile-row' ).css( 'color', defTheme.navDrawer.colors.foreground );
+			//$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( 'div.menu-mobile' ).css( 'background-color', defTheme.navDrawer.colors.background );
+			//$( 'div.menu-mobile-row' ).css( 'background-color', defTheme.navDrawer.colors.background );
+			//$( 'div.menu-mobile-row' ).css( 'color', defTheme.navDrawer.colors.foreground );
 
 
 			$('#styleCssMobileRow').remove();
@@ -547,7 +538,9 @@ function cwsRender()
 	me.retrieveAndSetUpTranslate = function()
 	{
 		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
-		
+
+		me.langTermObj.setCurrentLang( defaultLangCode )
+
 		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
 		{
 			if ( allLangTerms )
@@ -559,6 +552,7 @@ function cwsRender()
 				me.langTermObj.translatePage();
 			}
 		});
+
 	}
 
 

@@ -250,56 +250,74 @@ function BlockList( cwsRenderObj, blockObj )
 
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
-        var dateTimeStr = $.format.date( itemData.created, " yy-MM-dd HH:mm ");
+        var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm ");
 
-        if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusOptions )
+        if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
         {
+            var activityType = me.getActivityType ( itemData );
+            //console.log( activityType );
             var statusOpt = me.getStatusOpt ( itemData );
 
             if ( statusOpt )
             {
-                var dateTimeTag = $( '<div class="icon-row" />' );
+                var blockListItemTag = $( '<div class="icon-row listItem" />' );
                 var tblObj = $( '<table style="width:100%;">' ); 
-                var trObj = $( '<tr>' ); 
-                var tdLeftObj = $( '<td id="icon_' + itemData.id + '">' ); 
-                var tdRightObj = $( '<td>' ); 
+                var trObj1 = $( '<tr>' );
+                var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="overflow:hidden;" >' ); 
+                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:10pt;width:50%;" >' ); 
+                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:10pt;" >' ); 
+                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;" >' ); 
 
-                //var iconObj = $( '<div id="redeemListIcon_' + unqID + '" />' ); //img : changed from img to span as svg will be appended
                 var labelDtm = $( '<div>' + dateTimeStr + '</div>' );
 
-                tblObj.append( trObj );
-                trObj.append( tdLeftObj );
-                trObj.append( tdRightObj );
-                tblObj.append( trObj );
+                tblObj.append( trObj1 );
+                trObj1.append( tdIconObj );
+                trObj1.append( tdDataPreviewObj );
+                trObj1.append( tdVoucherIdObj );
+                trObj1.append( tdActionSyncObj );
 
-                dateTimeTag.append( tblObj );
-                tdRightObj.append( labelDtm );
+                tblObj.append( trObj1 );
 
-                me.appendStatusOptThemeIcon ( tdLeftObj, statusOpt );
+                blockListItemTag.append( tblObj );
+                tdDataPreviewObj.append( labelDtm );
+
+                me.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt );
             }
             else
             {
-                var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
+                var blockListItemTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
             }
         }
         else
         {
-            var dateTimeTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
+            var blockListItemTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         }
-        
-        var expandArrowTag = $( '<div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>' );
-        
-        //var statusSecDivTag = $( '<div class="icons-status"><small class="statusName" style="color: #7dd11f;">{status}</small><small class="statusIcon"><img src="img/open.svg"></small><small  class="syncIcon"><img src="img/sync.svg"></small><small  class="errorIcon"><img src="img/alert.svg"></small></div>' );
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg"></small></div>' );
-        var voucherTag = $( '<div class="act-r"><small>'+itemData.data.payloadJson.voucherCode+' - eVoucher</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
 
-        anchorTag.append( dateTimeTag, expandArrowTag, statusSecDivTag, voucherTag );
+        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;"></div>' );
+
+        var trObj2 = $( '<tr>' );
+        tblObj.append( trObj2 );
+        var tdExpandObj = $( '<td id="listItem_expand_' + itemData.id + '" rowspan=1 >' ); 
+        trObj2.append( tdExpandObj );
+        tdExpandObj.append( expandArrowTag );
+
+        var previewDivTag = me.getListDataPreview( itemData.data.payloadJson, activityType.previewData )
+        tdDataPreviewObj.append( previewDivTag );
+
+        var voucherTag = $( '<div class="act-r"><small>'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : itemData.id ) +'<br>' + itemData.activityType + '</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
+        tdVoucherIdObj.append( voucherTag );
+
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" style="width:28px;height:28px;"></small></div>' );
+        tdActionSyncObj.append( statusSecDivTag );
+
+        anchorTag.append( blockListItemTag );
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" ' + itemAttrStr + ' style="position: relative; background-color: rgba(255, 218, 109, 0.507);"></div>' );
+        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="position: relative;"></div>' );
         contentDivTag.append( '<span ' + FormUtil.getTermAttr( itemData ) + '>' + itemData.title + '</span>' );
-        var itemActionButtonsDivTag = $( '<div class="listItemDetailActionButtons"></div>' );
-        contentDivTag.append( itemActionButtonsDivTag );
+        //var itemActionButtonsDivTag = $( '<div class="listItemDetailActionButtons"></div>' );
+        //itemActionButtonsDivTag.append( $( '<span>' + JSON.stringify( itemData.data.payloadJson ) + '</span>' ) );
+        //contentDivTag.append( itemActionButtonsDivTag );
 
         // Click Events
         me.setContentDivClick( contentDivTag );
@@ -315,9 +333,22 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
+    me.getActivityType = function( itemData )
+    {
+        var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+
+        for ( var i=0; i< opts.length; i++ )
+        {
+            if ( opts[i].name == itemData.activityType )
+            {
+                return opts[i];
+            }
+        }
+
+    }
+
     me.getStatusOpt = function( itemData )
     {
-
         var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
 
         for ( var i=0; i< opts.length; i++ )
@@ -330,7 +361,107 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
-    me.appendStatusOptThemeIcon = function ( iconObj, statusOpt )
+
+    me.getListDataPreview = function( payloadJson, previewData )
+    {
+        if ( previewData )
+        {
+            var dataRet = $( '<div class="previewData" style="width:100%;float:left;font-weight:400;"></div>' );
+
+            for ( var i=0; i< previewData.length; i++ ) 
+            {
+                var dat = me.mergePreviewData( previewData[ i ], payloadJson );
+                dataRet.append ( $( '<div class="" style="">' + dat + '</div>' ) );
+            }
+
+        }
+
+        return dataRet;
+
+    }
+
+    me.mergePreviewData = function ( previewField, Json )
+    {
+        var ret = '';
+        var flds = previewField.split( ' ' );
+
+        if ( flds.length )
+        {
+            for ( var f=0; f < flds.length; f++ ) 
+            {
+                for ( var key in Json ) 
+                {
+                    if ( flds[f] == key && Json[ key ] )
+                    {
+                        ret += flds[ f ] + ' ';
+                        ret = ret.replace( flds[f] , Json[ key ] );
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ( previewField.length )
+            {
+                ret = previewField;
+
+                for ( var key in Json ) 
+                {
+                    if ( previewField == key && Json[ key ] )
+                    {
+                        ret = ret.replace( previewField , Json[ key ] );
+                    }
+                }
+            }
+        }
+
+        return ret;
+
+    }
+
+    me.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
+    {
+        // read local SVG xml structure, then replace appropriate content 'holders'
+        $.get( activityType.icon.path, function(data) {
+
+            var svgObject = ( $(data)[0].documentElement );
+
+            if ( activityType.icon.colors )
+            {
+                if ( activityType.icon.colors.background )
+                {
+                    $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
+                    $( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
+                }
+                if ( activityType.icon.colors.foreground )
+                {
+                    $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
+                    $( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
+                }
+
+            }
+
+            $( iconObj ).empty();
+            $( iconObj ).append( svgObject );
+
+            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize )
+            {
+                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
+                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
+
+            }
+
+            var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 3) + 'px;">&nbsp;</div>' );
+            $( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+
+            $( iconObj ).append( statusIconObj )
+
+            me.appendStatusIcon ( statusIconObj, statusOpt )
+        });
+
+    }
+
+    me.appendStatusIcon = function ( iconObj, statusOpt )
     {
 
         // read local SVG xml structure, then replace appropriate content 'holders'
@@ -356,12 +487,14 @@ function BlockList( cwsRenderObj, blockObj )
             $( iconObj ).empty();
             $( iconObj ).append( svgObject );
 
-            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.size )
+            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
             {
-                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.size.width ) );
-                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.size.height ) );
+                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
 
             }
+
+
         });
 
     }
@@ -381,45 +514,35 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.setStatusOnTag = function( statusSecDivTag, itemData ) 
     {
-        /*
-        var statusTag = $( '<div class="icons-status">
-                <small class="statusName open-color">open</small>
-                <small class="statusIcon"><img src="img/open.svg"></small>
-        */
 
-        //var smallStatusNameTag = statusSecDivTag.find( 'small.statusName' );
-        //var imgStatusIconTag = statusSecDivTag.find( 'small.statusIcon img' );
         var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-        //var imgErrIconTag = statusSecDivTag.find( 'small.errorIcon img' );
 
         if ( itemData.status === me.status_redeem_submit )
         {
-            //smallStatusNameTag.text( 'submitted' ).css( 'color', '#e48825' ); // Redeemed?
-            //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
-            //imgErrIconTag.css ( 'visibility', 'hidden' );
         }
         else if ( itemData.status === me.status_redeem_failed )
         {
-            //smallStatusNameTag.text( 'invalid' ).css( 'color', '#e48825' ); //Invalid?
-            //imgStatusIconTag.attr( 'src', 'img/lock.svg' );
+
             if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
             {
                 imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' ); // should show the 'active' icon: sync-banner.svg
             }
             else
             {
-                imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+                if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                {
+                    imgSyncIconTag.attr ( 'src', 'img/sync_error.svg' );
+                }
+                else
+                {
+                    imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+                }
             }
-            //imgErrIconTag.css ( 'visibility', 'visible' );
         }
         else
         {
-            //smallStatusNameTag.text( 'open' ).css( 'color', '#787878' ); //Unmatched?
-            //imgStatusIconTag.attr( 'src', 'img/open.svg' );
             imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
-            //imgErrIconTag.css ( 'visibility', 'hidden' );
-
         }
 
     }
@@ -547,7 +670,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                             setTimeout( function() {
                                 myTag.html( fetchItemData.title );
-                                me.appendStatusOptThemeIcon ( $( '#icon_' + fetchItemData.id ), me.getStatusOpt ( fetchItemData ) )
+                                me.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), me.getActivityType ( fetchItemData ), me.getStatusOpt ( fetchItemData ) )
                             }, 1000 );
 
                         } );
@@ -573,13 +696,14 @@ function BlockList( cwsRenderObj, blockObj )
         var dateTimeStr = (new Date() ).toISOString();
 
         var tempJsonData = {};
-        tempJsonData.title = "Voucher: " + submitJson.payloadJson.voucherCode + " - " + dateTimeStr;
+        tempJsonData.title = ( ( submitJson.payloadJson.voucherCode ) ? "Voucher: " + submitJson.payloadJson.voucherCode  + " - " : "") + dateTimeStr;
         tempJsonData.created = dateTimeStr;
         tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
         tempJsonData.id = Util.generateRandomId();
         tempJsonData.status = status;
         tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
+        tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList() ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
         // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
         tempJsonData.activityList = ActivityUtil.getActivityList();
         console.log( 'tempJsonData.activityList' );
@@ -605,6 +729,19 @@ function BlockList( cwsRenderObj, blockObj )
         else if ( status === me.status_redeem_failed ) divBgColor = 'Tomato';
                 
         if ( divBgColor != "" ) divTag.css( 'background-color', divBgColor );         
+    }
+
+    me.lastActivityType = function( json )
+    {
+        for ( var i = json.length; i--; )
+        {
+            console.log( 'eval lastActivityType: ' + json[ i ].defJson.activityType );
+            if ( json[ i ].defJson && json[ i ].defJson.activityType )
+            {
+                return json[ i ].defJson.activityType;
+            }
+        }
+        
     }
 	// =============================================
 

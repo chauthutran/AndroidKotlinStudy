@@ -221,22 +221,15 @@ function BlockButton( cwsRenderObj, blockObj )
 					//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
 					ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-
-					if ( !btnTag.hasClass( 'clicked' ) )
+					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+					if ( btnJson.buttonType === 'listRightImg' )
 					{
-						btnTag.addClass( 'clicked' );
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						btnTag.hide();
+						btnTag.parent().append( loadingTag );
+					} 
 
-						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-						if ( btnJson.buttonType === 'listRightImg' )
-						{
-							var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-							btnTag.hide();
-							btnTag.parent().append( loadingTag );
-						} 
-
-						me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
-
-					}
+					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
 
 				});
 			}
@@ -247,37 +240,30 @@ function BlockButton( cwsRenderObj, blockObj )
 					// TODO: ACTIVITY ADDING
 					ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-
-					if ( !btnTag.hasClass( 'clicked' ) )
+					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+					if ( btnJson.buttonType === 'listRightImg' )
 					{
-						btnTag.addClass( 'clicked' );
+						// TODO: GREG <-- You can use .closest( '.---' ) instead
+						var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
 
-						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-						if ( btnJson.buttonType === 'listRightImg' )
+						for( var i = 0; i < parentDiv.children.length; i++ )
 						{
-							// TODO: GREG <-- You can use .closest( '.---' ) instead
-							var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
+							let tbl = parentDiv.children[i];
 
-							for( var i = 0; i < parentDiv.children.length; i++ )
+							if ( tbl != btnTag.parent().parent().parent().parent()[0] )
 							{
-								let tbl = parentDiv.children[i];
-
-								if ( tbl != btnTag.parent().parent().parent().parent()[0] )
-								{
-									$( tbl ).css('opacity','0.4');
-								}
-
+								$( tbl ).css('opacity','0.4');
 							}
 
-							var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-							btnTag.hide();
-							btnTag.parent().append( loadingTag );
-						} 
+						}
 
-						var idx = $( this ).closest(".itemBlock").attr("idx");
-						me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						btnTag.hide();
+						btnTag.parent().append( loadingTag );
+					} 
 
-					}
+					var idx = $( this ).closest(".itemBlock").attr("idx");
+					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
 
 				});
 			}

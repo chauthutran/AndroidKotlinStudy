@@ -216,7 +216,7 @@ function Login( cwsRenderObj )
 			} );
 		}
 
-		var lastSession = { user: userName, lastUpdated: dtmNow }; //, networkOnline: ConnManager.getAppConnMode_Offline()
+		var lastSession = { user: userName, lastUpdated: dtmNow, language: FormUtil.defaultLanguage() }; //, networkOnline: ConnManager.getAppConnMode_Offline()
 		DataManager.saveData( 'session', lastSession );	
 
 	}
@@ -241,7 +241,7 @@ function Login( cwsRenderObj )
 		{
 			me.loggedInDivTag.show();
 			me.spanOuNameTag.show();
-			me.spanOuNameTag.text( '[' + loginData.orgUnitData.userName + ']' ).attr( 'title', loginData.orgUnitData.ouName );	
+			me.spanOuNameTag.text( ' ' + loginData.orgUnitData.userName + ' ' ).attr( 'title', loginData.orgUnitData.ouName );	
 		} 
 
 		// Load config and continue the CWS App process
@@ -267,7 +267,7 @@ function Login( cwsRenderObj )
 		{
 			var newSaveObj = Object.assign( {} , loginData);
 
-			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: me._staySignedIn };
+			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: me._staySignedIn, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
 
 			DataManager.saveData( me._userName, newSaveObj );
 
