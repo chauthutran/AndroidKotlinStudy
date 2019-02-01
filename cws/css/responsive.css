@@ -41,7 +41,7 @@
     ul li .expandable {
       background: #FFF;
       color: #333;
-      padding: 2px;
+      padding: 10px;
       text-decoration: none;
       display: inline-block;
       width: 100%;
@@ -58,6 +58,7 @@
     ul li .expandable.expanded {
       color: #333;
       font-weight: 800;
+      margin-bottom:5px;
     }
 
     ul li .expandable.expanded:after,
@@ -75,6 +76,13 @@
 
     ul li .expandable.expanded+div {
       display: block;
+    }
+
+    ul li .expandable .act-l {
+      display: none;
+    }
+    ul li .expandable.expanded .act-l {
+      display:block;
     }
 
     #color-theroy .pgcolor-theroy {
@@ -127,11 +135,12 @@
     }
 
     .act-l {
+      position: relative;
       width: 100%;
-      height: auto;
-      padding: 2%;
-      margin-bottom: 5px;
-      background-color: rgba(255, 218, 109, 0.507);
+      /*height: auto;*/
+      padding: 10px 4px 0 0;
+      /*margin-bottom: 5px;*/
+      /*background-color: #fff; rgba(255, 218, 109, 0.507);*/
       box-sizing: border-box;
       font-size: calc(12px + 0.2vw);
     }
@@ -217,6 +226,7 @@
         display: block;
         border-bottom: dotted 0.5px #333;
         box-sizing: border-box;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
       }
     }
 
@@ -265,7 +275,7 @@
 
       .icons-status {
         padding-right: 6%;
-        font-size: calc(12px + 0.6vw);
+        font-size: calc(10px + 0.4vw);
         box-sizing: border-box;
       }
       .icons-status img{
@@ -273,7 +283,7 @@
       }
       
       .icon-row {
-        font-size: calc(12px + 0.6vw);
+        font-size: calc(12px + 0.4vw);
         height: 60px;
       }
 
@@ -289,7 +299,7 @@
         float: right;
         /*width: 40%;*/
         text-align: right;
-        font-size: calc(12px + 0.6vw);
+        font-size: calc(9px + 0.4vw);
         /*padding-right: 20px;*/
         box-sizing: border-box;
       }

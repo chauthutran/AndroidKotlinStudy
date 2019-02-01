@@ -249,7 +249,7 @@ function BlockList( cwsRenderObj, blockObj )
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
-        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + '></a>' );
+        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style=""></a>' );
         var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm ");
 
         if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
@@ -264,11 +264,11 @@ function BlockList( cwsRenderObj, blockObj )
                 var tblObj = $( '<table style="width:100%;">' ); 
                 var trObj1 = $( '<tr>' );
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="overflow:hidden;" >' ); 
-                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(9px + 0.6vw);width:55%;" >' ); 
-                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(9px + 0.6vw);" >' ); 
+                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;width:55%;white-space:nowrap;" >' ); 
+                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;" >' ); 
                 var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;position: relative;top: -4px;" >' ); 
 
-                var labelDtm = $( '<div>' + dateTimeStr + '</div>' );
+                var labelDtm = $( '<div style="font-weight:400;">' + dateTimeStr + '</div>' );
 
                 tblObj.append( trObj1 );
                 trObj1.append( tdIconObj );
@@ -304,26 +304,25 @@ function BlockList( cwsRenderObj, blockObj )
         var previewDivTag = me.getListDataPreview( itemData.data.payloadJson, activityType.previewData )
         tdDataPreviewObj.append( previewDivTag );
 
-        var voucherTag = $( '<div class="act-r"><small>'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : itemData.id ) +'<br>' + itemData.activityType + '</small></div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
+        var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
         var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" style="width:28px;height:28px;"></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
-        anchorTag.append( blockListItemTag );
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="position: relative;font-size:calc(10px + 0.6vw);"></div>' );
+        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="font-weight:400;overflow:hidden"></div>' );
         contentDivTag.append( '<span ' + FormUtil.getTermAttr( itemData ) + '>' + itemData.title + '</span>' );
-        //var itemActionButtonsDivTag = $( '<div class="listItemDetailActionButtons"></div>' );
-        //itemActionButtonsDivTag.append( $( '<span>' + JSON.stringify( itemData.data.payloadJson ) + '</span>' ) );
-        //contentDivTag.append( itemActionButtonsDivTag );
 
         // Click Events
         me.setContentDivClick( contentDivTag );
 
+        anchorTag.append( blockListItemTag );
+        anchorTag.append( contentDivTag );
+
         // Append to 'li'
-        liContentTag.append( anchorTag, contentDivTag );
+        liContentTag.append( anchorTag ); //, contentDivTag
 
         // Append the liTag to ulTag
         listContentUlTag.append( liContentTag );
@@ -366,7 +365,7 @@ function BlockList( cwsRenderObj, blockObj )
     {
         if ( previewData )
         {
-            var dataRet = $( '<div class="previewData" style="width:100%;float:left;font-weight:400;"></div>' );
+            var dataRet = $( '<div class="previewData" style="width:100%;float:left;"></div>' );
 
             for ( var i=0; i< previewData.length; i++ ) 
             {
@@ -451,7 +450,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             }
 
-            var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 3) + 'px;">&nbsp;</div>' );
+            var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
             $( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 
             $( iconObj ).append( statusIconObj )

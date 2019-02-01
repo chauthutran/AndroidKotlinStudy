@@ -348,12 +348,15 @@ function cwsRender()
 			return;
 		}
 
-		//if ( DataManager.getSessionData() )
-		{
-			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).orgUnitData.orgUnit.name );
-		}
-
+		var mySessionData = DataManager.getSessionData();
 		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
+
+		console.log( mySessionData );
+
+		if ( mySessionData )
+		{
+			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );
+		}
 
 		if ( myData )
 		{

@@ -18,10 +18,10 @@ generateSW({
       handler: 'cacheFirst'
     },
     {
-      urlPattern: /^https:\/\/use\.fontawesome\.com.*/,
+      urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {
-        cacheName: 'fontawesome'
+        cacheName: 'googleFonts'
       }
     }
   ]

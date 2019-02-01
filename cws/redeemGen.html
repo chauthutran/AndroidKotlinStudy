@@ -148,6 +148,7 @@
             let rnd8 = generateRandomNumber(8);
             let rnd12 = generateRandomNumber(12);
             let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
+            let myactType = getRandomWord('eVoucher,WalkInA,WalkInB,PhoneVoucher',myUniqueItm);
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
             tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
@@ -156,6 +157,7 @@
             tmpRow = tmpRow.replace( /{TIMENOW}/g, myTime );
             tmpRow = tmpRow.replace( /{user}/g, $('input.user').val() );
             tmpRow = tmpRow.replace( /{status}/g, mystatus );
+            tmpRow = tmpRow.replace( /{activitytype}/g, myactType );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
@@ -175,7 +177,7 @@
 
     function template()
     {
-        return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "id":"{NUMERIC12}", "status":"{status}", "network":false, ' +
+        return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "network":false, ' +
              ' "data":{  "payloadJson":{  "countryType":"MZ", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
              ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"Cape Town", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
              ' }, ' +

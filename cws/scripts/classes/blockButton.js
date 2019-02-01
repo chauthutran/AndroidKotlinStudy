@@ -42,7 +42,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					var tabNo = i + 1;
 					
 					var liTabTag = $( '<li tabId="' + tabNo + '"></li>' );
-					var liContentTag = $( '<li tabId="' + tabNo + '"><a class="expandable"></a></li>' );
+					var liContentTag = $( '<li tabId="' + tabNo + '" class="list-item" style="display: list-item"><a class="expandable"></a></li>' );
 
 					ulTagTag.append( liTabTag );
 					ulContentTag.append( liContentTag );
