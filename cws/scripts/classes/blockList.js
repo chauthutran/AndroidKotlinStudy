@@ -264,8 +264,8 @@ function BlockList( cwsRenderObj, blockObj )
                 var tblObj = $( '<table style="width:100%;">' ); 
                 var trObj1 = $( '<tr>' );
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="overflow:hidden;" >' ); 
-                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(10px + 0.6vw);width:50%;" >' ); 
-                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(10px + 0.6vw);" >' ); 
+                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(9px + 0.6vw);width:55%;" >' ); 
+                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;font-size:calc(9px + 0.6vw);" >' ); 
                 var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;position: relative;top: -4px;" >' ); 
 
                 var labelDtm = $( '<div>' + dateTimeStr + '</div>' );
