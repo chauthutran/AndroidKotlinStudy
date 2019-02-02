@@ -142,7 +142,6 @@
       /*margin-bottom: 5px;*/
       /*background-color: #fff; rgba(255, 218, 109, 0.507);*/
       box-sizing: border-box;
-      font-size: calc(12px + 0.2vw);
     }
 
     .listItem {
@@ -214,7 +213,10 @@
         /*height: 60px;*/
         font-size: calc(9px + 0.4vw);
       }
-
+      .act-l {
+        font-size: calc(9px + 0.4vw);
+      }
+  
       .title-act-mobile {
         position: fixed;
         text-align: center;
@@ -291,6 +293,11 @@
       .icon-row img{
         height: 48px;
       }
+
+      .act-l {
+        font-size: calc(10px + 0.4vw);
+      }
+
       .icon-arrow {
         float: right;
         box-sizing: border-box;

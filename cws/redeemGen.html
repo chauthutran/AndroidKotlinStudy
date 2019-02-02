@@ -127,7 +127,7 @@
             $('input.user').val ( JSON.parse(localStorage.getItem ('session')).user )
         }
 
-        http://localhost:8080/eRefWSDev3/api/dc/redeem
+        //http://localhost:8080/eRefWSDev3/api/dc/redeem
     
     function generate()
     {
@@ -149,6 +149,7 @@
             let rnd12 = generateRandomNumber(12);
             let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
             let myactType = getRandomWord('eVoucher,WalkInA,WalkInB,PhoneVoucher',myUniqueItm);
+            let myTown = getRandomWord( getTownList(), myUniqueItm);
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
             tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
@@ -158,6 +159,7 @@
             tmpRow = tmpRow.replace( /{user}/g, $('input.user').val() );
             tmpRow = tmpRow.replace( /{status}/g, mystatus );
             tmpRow = tmpRow.replace( /{activitytype}/g, myactType );
+            tmpRow = tmpRow.replace( /{addressCity}/g, myTown );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
@@ -175,11 +177,16 @@
         return new Date(dtmSeed.getTime() + (min*60000));
     }
 
+    function getTownList()
+    {
+        return 'Angoche,Beira,Bilene,Catandica,Chibuto,Chicualacuala,Chimoio,Chinde,Chokwé,Cuamba,Dondo,Gurue,Inhambane,Lichinga,Manica,Maputo,Marracuene,Matola,Maxixe,Moatize,Mocambique,Mocimboa da Praia,Mocuba,Montepuez,Mueda,Naamcha,Nacala,Nampula,Palma,Pemba,Quelimane,Tete,Vilankulo,Xai-Xai,Zavala';
+    }
+
     function template()
     {
         return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "network":false, ' +
              ' "data":{  "payloadJson":{  "countryType":"MZ", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
-             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"Cape Town", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
+             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
              ' }, ' +
              ' "url":"{redeemURL}", ' +
              ' "actionJson":{   "actionType":"sendToWS", "payloadBody":["voucherCode" ], "payloadHeader":[  "usr","pwd" ], "alertResult":"true", "wsNACase":{  "note":"display message" },' +

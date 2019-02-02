@@ -353,9 +353,13 @@ function cwsRender()
 
 		console.log( mySessionData );
 
-		if ( mySessionData )
+		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData )
 		{
 			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );
+		}
+		else
+		{
+			$( '#divNavDrawerOUlongName' ).html( '' );
 		}
 
 		if ( myData )
