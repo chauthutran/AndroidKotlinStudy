@@ -41,7 +41,6 @@
     ul li .expandable {
       background: #FFF;
       color: #333;
-      padding: 10px;
       text-decoration: none;
       display: inline-block;
       width: 100%;
@@ -195,6 +194,10 @@
       {
         max-width: 280px;
       }
+      #spanOuName
+      {
+        width:62.5%;
+      }
       /* VERSION MOBILE */
       .tabs,
       .o-one {
@@ -215,8 +218,13 @@
       }
       .act-l {
         font-size: calc(9px + 0.4vw);
+        padding: 0 0 0 4px;
       }
   
+      ul li .expandable {
+        padding: 10px 1px 10px 1px;
+      }
+
       .title-act-mobile {
         position: fixed;
         text-align: center;
@@ -240,7 +248,10 @@
       {
         max-width: 400px;
       }
-
+      #spanOuName
+      {
+        width:70%;
+      }
       /*tab_content_act*/
       .tab_content a.expandable {
         display: none !important;
@@ -286,7 +297,7 @@
       }
       
       .icon-row {
-        font-size: calc(10px + 0.4vw);
+        font-size: calc(9px + 0.4vw);
         height: 60px;
       }
 
@@ -296,6 +307,11 @@
 
       .act-l {
         font-size: calc(10px + 0.4vw);
+        padding: 0px;
+      }
+  
+      ul li .expandable {
+        padding: 10px;
       }
 
       .icon-arrow {

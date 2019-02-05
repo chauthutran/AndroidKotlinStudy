@@ -150,6 +150,8 @@
             let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
             let myactType = getRandomWord('eVoucher,WalkInA,WalkInB,PhoneVoucher',myUniqueItm);
             let myTown = getRandomWord( getTownList(), myUniqueItm);
+            let myFirst = getRandomWord( getNameList(), myUniqueItm ).trim();
+            let myLast = getRandomWord( getNameList(), myUniqueItm ).trim();
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
             tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
@@ -160,6 +162,9 @@
             tmpRow = tmpRow.replace( /{status}/g, mystatus );
             tmpRow = tmpRow.replace( /{activitytype}/g, myactType );
             tmpRow = tmpRow.replace( /{addressCity}/g, myTown );
+            tmpRow = tmpRow.replace( /{FIRSTNAME}/g, myFirst.split(' ')[0] );
+            tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
+            tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
@@ -182,10 +187,15 @@
         return 'Angoche,Beira,Bilene,Catandica,Chibuto,Chicualacuala,Chimoio,Chinde,Chokwé,Cuamba,Dondo,Gurue,Inhambane,Lichinga,Manica,Maputo,Marracuene,Matola,Maxixe,Moatize,Mocambique,Mocimboa da Praia,Mocuba,Montepuez,Mueda,Naamcha,Nacala,Nampula,Palma,Pemba,Quelimane,Tete,Vilankulo,Xai-Xai,Zavala';
     }
 
+    function getNameList()
+    {
+        return 'Vickey Vire, Yuri Youngquist, Sherice Sharma, Ariane Albert, Heather Hillock, Taunya Tubb, Lawanda Lord, Quentin Quesenberry, Terrance Tennyson, Rosaria Romberger, Joann Julius, Doyle Dunker, Carolina Casterline, Sherly Shupe, Dorris Degner, Xuan Xu, Mercedez Matheney, Jacque Jamerson, Lillian Lefler, Derek Deegan, Berenice Barboza, Charlene Marriot, Mariam Malott, Cyndy Carrozza, Shaquana Smith, Kendall Kitterman, Reagan Riehle, Mittie Maez, Carry Carstarphen, Nelida Nakano, Christoper Compo, Sadie Shedd, Coleen Samsonite, Estella Eutsler, Pamula Pannone, Keenan Kerber, Tyisha Tisdale, Ashlyn Aguirre, Ashlie Albritton, Willy Wonka, Diann Yowzer, Asha Carpenter, Devin Dashiell, Arvilla Alers, Sheba Sherron, Richard Racca, Elba Early, Coretta Cossey, Brande Bushnell, Larraine Samsung, Greg Rowles, James Chang, Bruno Raimbault, Rodolfo Melia, Chris Purdy, Martin Dale, Smelly Sox, Joe Soap, Joan Sope';
+    }
+
     function template()
     {
-        return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "network":false, ' +
-             ' "data":{  "payloadJson":{  "countryType":"MZ", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
+        return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "network":false, "history": [], "syncActionStarted": 0, ' +
+             ' "data":{  "payloadJson":{  "countryType":"MZ", "walkIn_firstName":"{FIRSTNAME}", "walkIn_lastName":"{LASTNAME}", "walkIn_age":"{AGE}", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
              ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
              ' }, ' +
              ' "url":"{redeemURL}", ' +

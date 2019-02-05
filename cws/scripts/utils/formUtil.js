@@ -401,9 +401,9 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				subListIconsTag.fadeIn( 'fast', 'linear' );
 			}
 
-			$( '#focusRelegator').unbind();
+			$( '#focusRelegator').off( 'click' ); //clear existing click events
 
-			$( '#focusRelegator').on('click', function( event )
+			$( '#focusRelegator').on( 'click' , function( event )
 			{
 				thisTag.css('zIndex',1);
 
@@ -418,7 +418,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 	});	
 }
 
-FormUtil.setUpTabAnchorUI = function( tag )
+FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 {	
 	var clickedTab = tag.find(".tabs > .active");
 	var tabWrapper = tag.find(".tab_content");
@@ -450,12 +450,17 @@ FormUtil.setUpTabAnchorUI = function( tag )
 		activeTab.show();
 	});
 
+	// prevent multiple click events being created when listPage scrolling triggers append of new 'expandable' items
+	if ( targetOff && eventName ) 
+	{
+		tag.find( targetOff ).off( eventName ); 
+	}
+
 	// Mobile view 'Anchor' class ('.expandable') click event handler setup
-	tag.find('.expandable').on('click', function( event )
+	tag.find('.expandable').on('click', function( event ) //GREG here
 	{
 		event.preventDefault();
 
-		var tab_select = $(this).attr('tabId'); 
 		var liTag_Selected = $( this ).parent();
 		var tabId = liTag_Selected.attr( 'tabId' );
 		var matchingTabsTag = tag.find( ".tabs > li[tabId='" + tabId + "']");
@@ -464,14 +469,24 @@ FormUtil.setUpTabAnchorUI = function( tag )
 		FormUtil.setUserLastSelectedTab(tabId)
 		/* END > Added by Greg: 2018/11/24 */
 
+		var bThisExpanded = $( this ).hasClass( 'expanded' );
+
 		tag.find('.active').removeClass('active');
 		matchingTabsTag.addClass("active");
 
 		tag.find('.expanded').removeClass('expanded');
 		tag.find('.expandable-arrow').attr('src','./img/arrow_down.svg');
 
-		$(this).addClass('expanded');
-		$(this).find( ".expandable-arrow" ).attr('src','./img/arrow_up.svg');
+		if ( bThisExpanded )
+		{
+			//$( this ).removeClass('expanded');
+			$( this ).find( ".expandable-arrow" ).attr('src','./img/arrow_down.svg');
+		}
+		else
+		{
+			$(this).addClass('expanded');
+			$(this).find( ".expandable-arrow" ).attr('src','./img/arrow_up.svg');
+		}
 
 	});
 }
@@ -554,7 +569,7 @@ FormUtil.getUserLastSelectedTab = function() {
 	}
 
 }
-/* START > Added by Greg: 2018/11/26 */
+
 FormUtil.getUserSessionAttr = function( usr, attr ) {
 
 	var lastSessionAll = JSON.parse(localStorage.getItem(usr))
@@ -575,11 +590,17 @@ FormUtil.getRedeemPayload = function( id ) {
 	}
 
 }
-/* END > Added by Greg: 2018/11/26 */
 
 FormUtil.getAppInfo = function( returnFunc )
 {	
 	var url = FormUtil.getWsUrl( '/api/getPWAInfo' );
+
+	RESTUtil.retrieveJson( url, returnFunc );
+}
+
+FormUtil.getDataServerAvailable = function( returnFunc )
+{	
+	var url = FormUtil.getWsUrl( '/api/available' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
 }
@@ -846,3 +867,157 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
 };
 
+
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
+{
+	if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
+	{
+
+		// read local SVG xml structure, then replace appropriate content 'holders'
+		$.get( activityType.icon.path, function(data) {
+
+			var svgObject = ( $(data)[0].documentElement );
+
+			if ( activityType.icon.colors )
+			{
+				if ( activityType.icon.colors.background )
+				{
+					$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
+					$( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
+				}
+				if ( activityType.icon.colors.foreground )
+				{
+					$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
+					$( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
+				}
+
+			}
+
+			$( iconObj ).empty();
+			$( iconObj ).append( svgObject );
+
+			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize && $(iconObj).html() )
+			{
+				//console.log( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
+				//console.log( $(iconObj).html() );
+				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
+				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
+
+			}
+
+			if ( $(iconObj).html() )
+			{
+				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
+				$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+	
+				$( iconObj ).append( statusIconObj )	
+
+				FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
+			}
+
+		});
+
+	}
+
+}
+
+FormUtil.appendStatusIcon = function ( iconObj, statusOpt )
+{
+
+	// read local SVG xml structure, then replace appropriate content 'holders'
+	$.get( statusOpt.icon.path, function(data) {
+
+		var svgObject = ( $(data)[0].documentElement );
+
+		if ( statusOpt.icon.colors )
+		{
+			if ( statusOpt.icon.colors.background )
+			{
+				$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+				$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+			}
+			if ( statusOpt.icon.colors.foreground )
+			{
+				$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+				$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+			}
+
+		}
+
+		$( iconObj ).empty();
+		$( iconObj ).append( svgObject );
+
+		if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+		{
+			$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+			$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+
+		}
+
+	});
+
+}
+
+FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj ) 
+{
+
+	var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
+
+	if ( itemData.status === cwsRenderObj.status_redeem_submit )
+	{
+		imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+	}
+	else if ( itemData.status === cwsRenderObj.status_redeem_failed )
+	{
+
+		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
+		{
+			imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' ); // should show the 'active' icon: sync-banner.svg
+		}
+		else
+		{
+			if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+			{
+				imgSyncIconTag.attr ( 'src', 'img/sync_error.svg' );
+			}
+			else
+			{
+				imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+			}
+		}
+	}
+	else
+	{
+		imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
+	}
+
+}
+
+
+FormUtil.getActivityType = function( itemData )
+{
+	var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+
+	for ( var i=0; i< opts.length; i++ )
+	{
+		if ( opts[i].name == itemData.activityType )
+		{
+			return opts[i];
+		}
+	}
+
+}
+
+FormUtil.getStatusOpt = function( itemData )
+{
+	var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
+
+	for ( var i=0; i< opts.length; i++ )
+	{
+		if ( opts[i].name == itemData.status )
+		{
+			return opts[i];
+		}
+	}
+
+}

@@ -50,7 +50,7 @@ function favIcons( cwsRender )
 
             me.favIconsTag.empty();
 
-            console.log( favList[ networkStatus ] );
+            //console.log( favList[ networkStatus ] );
             me.createRecursiveFavIcons ( favList[ networkStatus ], 0 )
         }
 

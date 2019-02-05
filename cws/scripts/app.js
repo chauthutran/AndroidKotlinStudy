@@ -3,7 +3,8 @@
 
   let _registrationObj;
   const _cwsRenderObj = new cwsRender();
-  const _syncManager = new syncManager();
+  //const _syncManager = new syncManager();
+  window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
   
 
   //const _testSection = new testSection();
@@ -14,7 +15,7 @@
     updateOnlineStatus();
 
     window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);  
+    window.addEventListener('offline', updateOnlineStatus);
     
     // Set App Connection Mode
     ConnManager.setAppConnMode_Initial();
@@ -29,7 +30,7 @@
       // Create a class that represent the object..
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
-      _syncManager.initialize( _cwsRenderObj );
+      window._syncManager.initialize( _cwsRenderObj );
 
     });
 
@@ -48,7 +49,7 @@
   });
 
   $( '#imgAppDataSyncStatus' ).click ( () => {
-    _syncManager.syncOfflineData( this );
+    window._syncManager.syncOfflineData( this );
   });
 
   // App version check and return always..  
@@ -60,7 +61,7 @@
     // Only online mode and by app.psi-mis.org, check the version diff.
     if ( ConnManager.getAppConnMode_Online() && FormUtil.isAppsPsiServer() )
     {
-      
+
       FormMsgManager.appBlock( "Loading App Data..." );
 
       FormUtil.getAppInfo( function( success, jsonData ) 
@@ -129,18 +130,26 @@
 
     ConnManager.network_Online = navigator.onLine;
     connStatTagUpdate( ConnManager.network_Online );
+
     if ( _cwsRenderObj.initializeStartBlock )
-    _syncManager.initialize( _cwsRenderObj );
+    {
+      window._syncManager.initialize( _cwsRenderObj );
+    }
+
   };
 
+  function updateSyncManager( event ) {
+
+    window._syncManager.initialize( _cwsRenderObj );
+
+  }
 
   function connStatTagUpdate( bOnline ) {
 
     var imgSrc = ( bOnline ) ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg';
-    //var imgBg = ( bOnline ) ? '#33FF00': '#C0C0C0';
 
     $( '#imgNetworkStatus' ).css( 'transform', ( bOnline ) ? 'rotateY(180deg)' : '' );
-    //$( '#imgNetworkStatus' ).attr( 'src', imgSrc );
+
     setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)
         $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
     }, 500 );

@@ -351,8 +351,6 @@ function cwsRender()
 		var mySessionData = DataManager.getSessionData();
 		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
 
-		console.log( mySessionData );
-
 		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData )
 		{
 			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );

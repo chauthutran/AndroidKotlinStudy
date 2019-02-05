@@ -224,7 +224,7 @@ function BlockList( cwsRenderObj, blockObj )
             me.redeemListScrollCount += 1;
         }
 
-        FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') ); // add click event (expander to show voucher details) to newly created items
+        FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act'), '.expandable', 'click' ); // add click event (expander to show voucher details) to newly created items
 
         if ( parseInt( me.redeemListScrollCount ) == parseInt( me.redeemListScrollLimit ) )
         {
@@ -254,9 +254,9 @@ function BlockList( cwsRenderObj, blockObj )
 
         if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
         {
-            var activityType = me.getActivityType ( itemData );
+            var activityType = FormUtil.getActivityType ( itemData );
             //console.log( activityType );
-            var statusOpt = me.getStatusOpt ( itemData );
+            var statusOpt = FormUtil.getStatusOpt ( itemData );
 
             if ( statusOpt )
             {
@@ -281,7 +281,7 @@ function BlockList( cwsRenderObj, blockObj )
                 blockListItemTag.append( tblObj );
                 tdDataPreviewObj.append( labelDtm );
 
-                me.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt );
+                FormUtil.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt );
             }
             else
             {
@@ -307,7 +307,7 @@ function BlockList( cwsRenderObj, blockObj )
         var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" style="width:28px;height:28px;"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:28px;height:28px;"></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
 
@@ -331,35 +331,6 @@ function BlockList( cwsRenderObj, blockObj )
         me.populateData_RedeemItemTag( itemData, liContentTag );
 
     }
-
-    me.getActivityType = function( itemData )
-    {
-        var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
-
-        for ( var i=0; i< opts.length; i++ )
-        {
-            if ( opts[i].name == itemData.activityType )
-            {
-                return opts[i];
-            }
-        }
-
-    }
-
-    me.getStatusOpt = function( itemData )
-    {
-        var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
-
-        for ( var i=0; i< opts.length; i++ )
-        {
-            if ( opts[i].name == itemData.status )
-            {
-                return opts[i];
-            }
-        }
-
-    }
-
 
     me.getListDataPreview = function( payloadJson, previewData )
     {
@@ -418,91 +389,11 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
-    me.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
-    {
-        // read local SVG xml structure, then replace appropriate content 'holders'
-        $.get( activityType.icon.path, function(data) {
-
-            var svgObject = ( $(data)[0].documentElement );
-
-            if ( activityType.icon.colors )
-            {
-                if ( activityType.icon.colors.background )
-                {
-                    $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
-                    $( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
-                }
-                if ( activityType.icon.colors.foreground )
-                {
-                    $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
-                    $( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
-                }
-
-            }
-
-            $( iconObj ).empty();
-            $( iconObj ).append( svgObject );
-
-            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize )
-            {
-                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
-                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
-
-            }
-
-            var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
-            $( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
-
-            $( iconObj ).append( statusIconObj )
-
-            me.appendStatusIcon ( statusIconObj, statusOpt )
-        });
-
-    }
-
-    me.appendStatusIcon = function ( iconObj, statusOpt )
-    {
-
-        // read local SVG xml structure, then replace appropriate content 'holders'
-        $.get( statusOpt.icon.path, function(data) {
-
-            var svgObject = ( $(data)[0].documentElement );
-
-            if ( statusOpt.icon.colors )
-            {
-                if ( statusOpt.icon.colors.background )
-                {
-                    $( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
-                    $( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
-                }
-                if ( statusOpt.icon.colors.foreground )
-                {
-                    $( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
-                    $( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
-                }
-
-            }
-
-            $( iconObj ).empty();
-            $( iconObj ).append( svgObject );
-
-            if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
-            {
-                $( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-                $( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
-
-            }
-
-
-        });
-
-    }
-
     me.populateData_RedeemItemTag = function( itemData, itemLiTag )
     {    
         var statusSecDivTag = itemLiTag.find( 'div.icons-status' );
 
-        me.setStatusOnTag( statusSecDivTag, itemData ); 
+        FormUtil.setStatusOnTag( statusSecDivTag, itemData, me.cwsRenderObj ); 
 
         //var itemActionButtonsDivTag = itemLiTag.find( 'div.act-l div.listItemDetailActionButtons');
 
@@ -571,10 +462,10 @@ function BlockList( cwsRenderObj, blockObj )
             imgSyncIconTag.click( function(e) {
 
                 var bProcess = false;
-                var fetchItemData = DataManager.getItemFromData( me.storageName_RedeemList, itemData.id )
+                var fetchItemData = DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id )
                 console.log( itemData);
                 console.log( fetchItemData);
-                console.log( itemData == fetchItemData);
+                //console.log( itemData == fetchItemData);
 
                 if ( !fetchItemData.networkAttempt ) // no counter exists for this item
                 {
@@ -595,86 +486,101 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( bProcess )
                 {
-
-                    var mySyncIcon = $( this );
-                    var dtmRedeemAttempt = (new Date() ).toISOString();
-
-                    mySyncIcon.rotate({ count:999, forceJS: true, startDeg: true });
-
-                    fetchItemData.lastAttempt = dtmRedeemAttempt;
-
-                    var redeemID = mySyncIcon.parent().parent().parent().attr( 'id' ).replace( 'listItem_action_sync_','' );
-                    console.log( redeemID );
-                    console.log( '#listItem_networkResults_' + redeemID );
-                    var myTag = $( '#listItem_networkResults_' + redeemID );
-                    var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
-
-                    myTag.empty();
-                    myTag.append( loadingTag );
-
-                    e.stopPropagation();                
-
-                    // if offline, alert it!! OR data server unavailable
-                    if ( ConnManager.isOffline() )
+                    // CHECK IF ITEM ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
+                    if ( DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id ).syncActionStarted == 0 )
                     {
-                        alert( 'Currently in offline.  Need to be in online for this.' );
-                        myTag.html( fetchItemData.title );
-                        $(this).stop();
-                    }
-                    else
-                    {
-                        //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
-                        FormUtil.submitRedeem( fetchItemData.data.url, fetchItemData.data.payloadJson, fetchItemData.data.actionJson, loadingTag, function( success, returnJson )
+
+                        var mySyncIcon = $( this );
+                        var dtmRedeemAttempt = (new Date() ).toISOString();
+
+                        mySyncIcon.rotate({ count:999, forceJS: true, startDeg: 0 });
+
+                        fetchItemData.lastAttempt = dtmRedeemAttempt;
+
+                        var redeemID = mySyncIcon.attr( 'id' ).replace( 'listItem_icon_sync_','' );
+                        //console.log( redeemID );
+                        //console.log( '#listItem_networkResults_' + redeemID );
+                        var myTag = $( '#listItem_networkResults_' + redeemID );
+                        var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
+
+                        myTag.empty();
+                        myTag.append( loadingTag );
+
+                        e.stopPropagation();                
+
+                        // if offline, alert it!! OR data server unavailable
+                        if ( ConnManager.isOffline() )
                         {
-
-                            mySyncIcon.stop();
-
-                            fetchItemData.returnJson = returnJson;
-
-                            // added by Greg (2019-01-14) > record network sync attempts (for limit management)
-                            if ( fetchItemData.networkAttempt ) fetchItemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
-                            else fetchItemData.networkAttempt = 1;
-
-                            // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
-                            if ( success && ( returnJson.resultData.status != 'fail' ) )
+                            alert( 'Currently in offline.  Need to be in online for this.' );
+                            myTag.html( fetchItemData.title );
+                            $(this).stop();
+                        }
+                        else
+                        {
+                            //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
+                            FormUtil.submitRedeem( fetchItemData.data.url, fetchItemData.data.payloadJson, fetchItemData.data.actionJson, loadingTag, function( success, returnJson )
                             {
-                                var dtmRedeemDate = (new Date() ).toISOString();
+                                var itmHistory = fetchItemData.history;
 
-                                fetchItemData.redeemDate = dtmRedeemDate;
-                                fetchItemData.status = me.status_redeem_submit;
-                                //itemData.returnJson = returnJson;
-                                myTag.html( 'Success' );
-                            }
-                            else 
-                            {
-                                if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) ) 
+                                mySyncIcon.stop();
+
+                                fetchItemData.returnJson = returnJson;
+
+                                // added by Greg (2019-01-14) > record network sync attempts (for limit management)
+                                if ( fetchItemData.networkAttempt ) fetchItemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
+                                else fetchItemData.networkAttempt = 1;
+
+                                // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
+                                if ( success && ( returnJson.resultData.status != 'fail' ) )
                                 {
-                                    var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+                                    var dtmRedeemDate = (new Date() ).toISOString();
 
-                                    fetchItemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                                    fetchItemData.redeemDate = dtmRedeemDate;
+                                    fetchItemData.status = me.status_redeem_submit;
+                                    //itemData.returnJson = returnJson;
+                                    myTag.html( 'Success' );
+                                }
+                                else 
+                                {
+                                    if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) ) 
+                                    {
+                                        var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+
+                                        fetchItemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                                    }
+
+                                    /* only when sync-test exceeds limit do we mark item as FAIL */
+                                    if ( fetchItemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                                    {
+                                        fetchItemData.status = me.status_redeem_failed;
+                                    }
+
+                                    myTag.html( 'Error redeeming' );
                                 }
 
-                                /* only when sync-test exceeds limit do we mark item as FAIL */
-                                if ( fetchItemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                                if ( returnJson )
                                 {
-                                    fetchItemData.status = me.status_redeem_failed;
+                                    itmHistory.push ( { "syncType": "item-icon-Click", "syncAttempt": dtmRedeemAttempt, "success": success, "restultStatus": returnJson.resultData.status, "returnJson": returnJson } );
+                                }
+                                else
+                                {
+                                    itmHistory.push ( { "syncType": "item-icon-Click", "syncAttempt": dtmRedeemAttempt, "success": success } );
                                 }
 
-                                myTag.html( 'Error redeeming' );
-                            }
+                                FormUtil.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), fetchItemData, me.cwsRenderObj ); 
 
-                            //itemData.state = 0; //1=in use, 0=unused
+                                fetchItemData.history = itmHistory;
 
-                            me.setStatusOnTag( itemLiTag.find( 'div.icons-status' ), fetchItemData ); 
+                                DataManager.updateItemFromData( me.storageName_RedeemList, fetchItemData.id, fetchItemData );
 
-                            DataManager.updateItemFromData( me.storageName_RedeemList, fetchItemData.id, fetchItemData );
+                                setTimeout( function() {
+                                    myTag.html( fetchItemData.title + ' >> ' + fetchItemData.lastAttempt );
+                                    FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), FormUtil.getActivityType ( fetchItemData ), FormUtil.getStatusOpt ( fetchItemData ) )
+                                }, 1000 );
 
-                            setTimeout( function() {
-                                myTag.html( fetchItemData.title );
-                                me.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), me.getActivityType ( fetchItemData ), me.getStatusOpt ( fetchItemData ) )
-                            }, 1000 );
+                            } );
 
-                        } );
+                        }
 
                     }
 
@@ -707,8 +613,11 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList() ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
         // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
         tempJsonData.activityList = ActivityUtil.getActivityList();
-        console.log( 'tempJsonData.activityList' );
-        console.log( tempJsonData.activityList );
+        tempJsonData.syncActionStarted = 0;
+        tempJsonData.history = [];
+
+        //console.log( 'tempJsonData.activityList' );
+        //console.log( tempJsonData.activityList );
 
         DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );	
     }

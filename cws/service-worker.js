@@ -36,7 +36,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "972bff329c55bb04b24787b661e7b4a2"
+    "revision": "8a21bdf9e9a2340f15d3afc6d780420c"
   },
   {
     "url": "css/style.css",
@@ -264,7 +264,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b77dab7ef75c33947831b72f14b33d3d"
+    "revision": "2ab7ea5ee9e2092bc86900adb95755f0"
   },
   {
     "url": "manifest.json",
@@ -272,15 +272,15 @@ self.__precacheManifest = [
   },
   {
     "url": "redeemGen.html",
-    "revision": "48fa493b833936ee8bb67a8e9e834abb"
+    "revision": "f6fc8e59f150ff23926094f408e8e2ed"
   },
   {
     "url": "scripts/app.js",
-    "revision": "a6b201f9b6c21b16cad954161f270750"
+    "revision": "99dab2be31220b99e7d131c399d27aa3"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7d8aa161438cfb6e230f03f7804450ef"
+    "revision": "c8ef27354900af7068f25a4cf234637a"
   },
   {
     "url": "scripts/classes/action.js",
@@ -300,7 +300,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "3f07cb6dd2d1aee256a073bb0485184b"
+    "revision": "6fc7fffbf236cc6b7698b76d815fc3e2"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -312,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "e807bb6a599d1dbab3bbc1a557d3ce83"
+    "revision": "d51da7940c214d4b87cb488c9004acd2"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -336,7 +336,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "31121baa573197d467f3d4dbc06885bc"
+    "revision": "a0a55caf779818aa4d49e1cf29c5555d"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -368,7 +368,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "75e8f650eb794d200e2a11cb29230254"
+    "revision": "bc264ff0c48d2560859cf4f4fc6f734e"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -380,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "4ad862d975d136326bb7d5f947b020e6"
+    "revision": "9947cb5c1cd6bf9367ba75fce0d10e8c"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -396,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "07be46be0f041eb6ea28741acc8a21cd"
+    "revision": "0c72e2d31d29f52e46530d9690d4dea9"
   },
   {
     "url": "scripts/utils/util.js",

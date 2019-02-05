@@ -17,6 +17,7 @@ function aboutApp( cwsRender )
     // ----- Tags -----------
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
+    me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
 
 
 	// TODO: NEED TO IMPLEMENT
@@ -104,7 +105,7 @@ function aboutApp( cwsRender )
             me.langTermObj.setCurrentLang( me.aboutInfo_langSelectTag.val() );
             me.langTermObj.translatePage();
 
-            $( '#aboutInfo_userLanguage_Name' ).html( me.getLanguageName( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
+            $( '#aboutInfo_userLanguage_Name' ).html( me.getListNameFromID( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );
             $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( me.langTermObj.getLangList(), me.aboutInfo_langSelectTag.val() ) );            
 
             FormUtil.hideProgressBar();
@@ -128,6 +129,24 @@ function aboutApp( cwsRender )
             FormUtil.hideProgressBar();
         });
 
+        me.aboutInfo_NetworkSync.change ( () => 
+        {
+            me.cwsRenderObj.storage_offline_SyncTimerAutomationRun = me.aboutInfo_NetworkSync.val();
+
+            if ( me.aboutInfo_NetworkSync.val() <= 0 )
+            {
+                me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 0;
+            }
+            else
+            {
+                me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 10000;
+            }
+
+            $( '#aboutInfo_network_Text' ).html( 'Every' + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
+
+            window._syncManager.reinitialize ( me.cwsRenderObj );
+
+        });
 
         //$( '#aboutInfo_CloseBtn' ).click( () =>
         $( 'img.btnBack' ).click( () =>
@@ -303,6 +322,37 @@ function aboutApp( cwsRender )
 
         });
 
+        $( '#imgaboutInfo_network_Less' ).click( function() 
+        {
+            if ( $( this ).hasClass( 'disabled' ) ) return;
+
+            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+
+            if ( ! $( '#aboutInfo_network_More' ).is(':visible') )
+            {
+                $( '#aboutInfo_network_Less' ).hide( 'fast' );
+                $( '#aboutInfo_network_More' ).show( 'fast' );
+                $( 'label.aboutHeader' ).attr( 'backText', $( 'label.aboutHeader' ).html() );
+                $( 'label.aboutHeader' ).attr( 'backTerm', $( 'label.aboutHeader' ).attr( 'term' ) );
+                $( 'label.aboutHeader' ).html( $( '#lblabout_network' ).html() );
+                $( 'label.aboutHeader' ).attr( 'term', $( '#lblabout_network' ).attr( 'term' ) );
+
+                me.evalHideSections( 'aboutInfo_network_Less' );
+            }
+            else
+            {
+                $( 'label.aboutHeader' ).html( me.langTermObj.translateText(  $( 'label.aboutHeader' ).attr( 'backText' ),  $( 'label.aboutHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.aboutHeader' ).attr( 'term', $( 'label.aboutHeader' ).attr( 'backTerm' ) );
+                $( '#aboutInfo_network_More' ).hide( 'fast' );
+                $( '#aboutInfo_network_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'aboutInfo_network_Less' );
+            }
+
+        });
+
+        
+
         //
 
 
@@ -408,7 +458,9 @@ function aboutApp( cwsRender )
             {
                 //dcdConfigSettingTheme = dcdConfig.settings.theme;
                 me.getThemeList( dcdConfig.themes );
+                console.log(me.themeList);
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
+                me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncTimerAutomationRun )
 
             }
 
@@ -487,7 +539,7 @@ function aboutApp( cwsRender )
             me.setLanguageDropdownFromCode( languageList, defaultLangCode )
         }
 
-        $( '#aboutInfo_userLanguage_Name' ).html( me.getLanguageName( languageList, defaultLangCode ) );
+        $( '#aboutInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
         $( '#aboutInfo_userLanguage_Update' ).html( me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#aboutInfo_DivLangSelect' ).show();
 
@@ -504,15 +556,13 @@ function aboutApp( cwsRender )
 		});
     }
 
-    me.getLanguageName = function( languageList, defaultLangCode )
+    me.getListNameFromID = function( arrList, idVal )
     {
-        var langList = me.langTermObj.getLangList();
-
-        for( i = 0; i < languageList.length; i++ )
+        for( i = 0; i < arrList.length; i++ )
         {
-            if ( languageList[i].id == defaultLangCode )
+            if ( arrList[i].id == idVal )
             {
-                return languageList[i].name;
+                return arrList[i].name;
             }
         }
 
@@ -543,6 +593,49 @@ function aboutApp( cwsRender )
 
         $( '#aboutInfo_theme_Text' ).html( defaultTheme );
         $( '#aboutInfo_DivThemeSelect' ).show();
+    }
+
+    me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
+    {   
+        Util.populateSelect( me.aboutInfo_NetworkSync, "", syncEveryList );
+        Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );
+        me.aboutInfo_NetworkSync.val( syncTimer ); 
+
+        $( '#aboutInfo_network_Text' ).html( 'Every' + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
+        $( '#aboutInfo_DivnetworkSelect' ).show();
+    }
+
+    me.getSyncOptions = function()
+    {
+        var retOpts = []
+        var syncOpts = {};
+
+        syncOpts.id = 0;
+        syncOpts.name = 'off';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 60000;
+        syncOpts.name = '1 min';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 1800000;
+        syncOpts.name = '30 mins';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 3600000;
+        syncOpts.name = '60 mins';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 86400000;
+        syncOpts.name = '24 hrs';
+        retOpts.push( syncOpts );
+
+        return retOpts;
+
     }
 
 

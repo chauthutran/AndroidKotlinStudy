@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.0.29c'; </script>
+    <script> var _ver = '1.0.0.29d'; </script>
 
 
     <link rel="manifest" href="manifest.json">
@@ -66,7 +66,7 @@
         <div>
           <div style="display: none"><img src='images/baseline-cloud_off-24px.svg' class="tab-image"></div>
           <div id="loggedInDiv" style="display: none; cursor: pointer;">
-            <span id="spanOuName" style="color: #000;font-size: 20pt;text-align:center;font-weight: 600;width: 75%;position: fixed;left: 50%;top:14px;margin-left: -37.5%;">[LogIn]</span>
+            <span id="spanOuName" style="color: #000;font-size: 20pt;text-align:center;font-weight: 600;position: fixed;left: 50%;top:14px;margin-left: -37.5%;">[LogIn]</span>
           </div>      
         </div>
       </div>
@@ -392,6 +392,38 @@
 
               </li>
 
+
+
+              <li class="inputDiv aboutGroupDiv" id='aboutInfo_network_Less' style="width: 97%;margin:0;">
+                <label term="about_network" id="lblabout_network" class="from-string titleDiv">Network sync</label>
+  
+                <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+                  <table style="width:100%;border-spacing:0;">
+                      <tr  style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
+                        <td><span id="aboutInfo_network_Text"></span></td>
+                        <td style="width:30px;">
+                            <img src='img/arrow_right.svg' class="imgMore enabled" id='imgaboutInfo_network_Less' style="display:block;width:28px;">
+                        </td>
+                      </tr>
+                  </table>
+  
+                </div>
+              </li> 
+  
+              <li class="inputDiv aboutMoreDiv" id='aboutInfo_network_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
+  
+                <label term="about_network" id="" class="from-string titleDiv">Sync every</label>
+                <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+                  <table style="width:100%;border-spacing:0;">
+                    <tr>
+                      <td>
+                          <div id="aboutInfo_DivnetworkSelect" style="display:none;max-width: 250px;" class="select"><select id="aboutInfo_networkSync" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+              </li>
 
 
             <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;">
