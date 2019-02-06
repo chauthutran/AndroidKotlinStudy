@@ -736,7 +736,7 @@ FormUtil.performReget = function( regObj, option )
 			}
 			else
 			{
-				FormMsgManager.appBlock( "Reget App - restarting..." );
+				FormMsgManager.appBlock( "Updating App..." );
 
 				regObj.unregister().then(function(boolean) {
 					//console.log('Service Worker UnRegistered');
@@ -752,6 +752,28 @@ FormUtil.performReget = function( regObj, option )
 			alert( 'Reget Failed - service worker not found' );
 		}  
 	}
+}
+
+FormUtil.swCacheReset = function()
+{
+	caches.has( 'pwaShell' ).then(function(hasCache) {
+		if (!hasCache) {
+			caches.open( 'pwaShell' ).then(function(cache) {
+				return cache.addAll(myAssets);
+			  });
+		} else {
+			caches.delete( 'pwaShell' ).then(function(boolean) {
+				// your cache is now deleted
+				caches.open( 'pwaShell' ).then(function(cache) {
+					return cache.addAll(myAssets);
+				  });
+			  });
+		}
+	  }).catch(function() {
+		// Handle exception here.
+		console.log( 'cache reset error' );
+	  });
+
 }
 
 FormUtil.getMyListData = function( listName )
@@ -972,7 +994,7 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 
 		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
 		{
-			imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' ); // should show the 'active' icon: sync-banner.svg
+			imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
 		}
 		else
 		{

@@ -137,7 +137,7 @@
       position: relative;
       width: 100%;
       /*height: auto;*/
-      padding: 10px 4px 0 0;
+      /*padding: 10px 4px 0 0; */
       /*margin-bottom: 5px;*/
       /*background-color: #fff; rgba(255, 218, 109, 0.507);*/
       box-sizing: border-box;
@@ -297,7 +297,7 @@
       }
       
       .icon-row {
-        font-size: calc(9px + 0.4vw);
+        font-size: calc(9px + 0.3vw);
         height: 60px;
       }
 
@@ -306,8 +306,8 @@
       }
 
       .act-l {
-        font-size: calc(10px + 0.4vw);
-        padding: 0px;
+        font-size: calc(10px + 0.3vw);
+        padding: 10px 0 5px 10px;
       }
   
       ul li .expandable {

@@ -24,6 +24,9 @@ function syncManager()
     me.syncConditionCheckTimer = 0;
     me.syncAutomationRunTimeout = 0;
 
+    me.pauseProcess = false;
+    me.lastCompleted = -1; //hardcoded minus one, do not change
+
     var syncAutomationLastTimeout = 0;
     var progClass;
 
@@ -63,14 +66,14 @@ function syncManager()
             clearTimeout( me.syncAutomationRunTimeout );
             me.syncAutomationRunTimeout = undefined;
 
-            if ( $( '#divAppDataSyncStatus' ).is(':visible') )
+            /*if ( $( '#divAppDataSyncStatus' ).is(':visible') )
             {
                 $( '#divAppDataSyncStatus' ).hide();
                 $( '#imgAppDataSyncStatus' ).hide();    
-            }
+            }*/
         } 
 
-        if ( me.storage_offline_SyncTimerConditionsCheck > 0 )
+        if ( me.storage_offline_SyncTimerAutomationRun > 0 )
         {
             me.syncConditionCheckTimer = setInterval( function() {
                 me.scheduleSyncConditionsTest();
@@ -143,7 +146,7 @@ function syncManager()
             {
                 if ( !me.syncAutomationRunTimeout && !me.syncRunning ) me.scheduleSyncAutomationRun();
             }
-            console.log ( 'scheduleSyncConditionsTest.GOOD, me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
+            //console.log ( 'scheduleSyncConditionsTest.GOOD, me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
         }
         else
         {
@@ -158,20 +161,13 @@ function syncManager()
 
     me.scheduleSyncAutomationRun = function()
     {
-        console.log('got here');
         if ( me.evalSyncConditions() && !me.syncRunning )
         {
-            console.log('AND here');
             me.syncAutomationRunTimeout = setTimeout( function() {
                 //me.scheduleSyncAutomationRun();
-                console.log('syncOfflineData, running SYNC');
                 me.syncOfflineData();
             }, me.storage_offline_SyncTimerAutomationRun );
-            console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > created timer [' + me.syncAutomationRunTimeout + '] to run in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
-        }
-        else
-        {
-            console.log('evalSyncConditions = FALSE, skilling timer creation');
+            //console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > created timer [' + me.syncAutomationRunTimeout + '] to run in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
         }
 
     }
@@ -217,7 +213,7 @@ function syncManager()
 			}
 			else
 			{
-                console.log( 'error checking appShellInfo, trying again : ' + queryLoc );
+                //console.log( 'error checking appShellInfo, trying again : ' + queryLoc );
 
 				// try running the dailyCache
 				FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
@@ -249,7 +245,7 @@ function syncManager()
 					}
 					else
 					{
-                        console.log( 'all appShellInfo FAILED: ' );
+                        //console.log( 'all appShellInfo FAILED: ' );
                         btnTag.hide();
                         if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
                         if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
@@ -344,7 +340,17 @@ function syncManager()
             }
         }
 
-        if ( bProcess )
+        if ( ! ConnManager.isOnline() )
+        {
+            me.pauseSync();
+            bProcess = false;
+        }
+        else
+        {
+            me.pauseProcess = false;
+        }
+
+        if ( bProcess && !me.pauseProcess )
         {
             // SKIP ITEM IF ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
             if ( DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id ).syncActionStarted != 0 )
@@ -367,84 +373,126 @@ function syncManager()
                     myResultTag.append( loadingTag );
     
                 }
-    
+
                 console.log ( 'SyncItem > ' + (listItem+1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
                 FormUtil.updateProgressWidth( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) + '%' );
-    
+
                 var dtmRedeemAttempt = (new Date() ).toISOString();
-    
+
                 itemData.lastAttempt = dtmRedeemAttempt;
                 itemData.syncActionStarted = 1;
-    
+
                 DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData ); //ensure 'syncActionStarted' is set in event another sync process is attempted against current [itemData]
-    
+
                 //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
                 FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson )
                 {
-                    var itmHistory = itemData.history;
-                    var syncType = ( btnTag ) ? 'manual-Sync-Manager' : 'auto-Sync-Manager';
-                    var newTitle;
-    
-                    itemData.returnJson = returnJson;
-    
-                    // added by Greg (2019-01-14) > record network sync attempts (for limit management)
-                    if ( itemData.networkAttempt ) itemData.networkAttempt += 1; //this increments several fold?? e.g. jumps from 1 to 3, then 3 to 7??? 
-                    else itemData.networkAttempt = 1;
-    
-                    // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
-                    if ( success && ( returnJson.resultData.status != 'fail' ) )
+
+                    console.log( success, returnJson, ConnManager.isOnline() );
+
+                    // network conditions deteriorate during sync process run
+                    if ( !success && !returnJson && !ConnManager.isOnline() )
                     {
-                        var dtmRedeemDate = (new Date() ).toISOString();
-    
-                        itemData.redeemDate = dtmRedeemDate;
-                        itemData.status = me.cwsRenderObj.status_redeem_submit;
-                        newTitle = 'success > ' + dtmRedeemAttempt;
-    
-                    }
-                    else 
-                    {
-                        if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) ) 
+                        me.pauseSync();
+
+                        FormUtil.hideProgressBar();
+
+                        $( me.subProgressBar ).removeClass( 'determinate' );
+                        $( me.subProgressBar ).addClass( progClass );
+            
+                        $( '#imgAppDataSyncStatus' ).stop();
+
+                        if ( btnTag )
                         {
-                            var msg = JSON.parse( returnJson.displayData[0].value ).msg;
-    
-                            itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                            if ( btnTag.hasClass( 'clicked' ) )
+                            { 
+                                btnTag.removeClass( 'clicked' );
+                            }
                         }
-    
-                        /* only when sync-test exceeds limit do we mark item as FAIL */
-                        if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+            
+                        me.syncRunning = 0;
+            
+                        if ( me.pauseProcess )
                         {
-                            itemData.status = me.cwsRenderObj.status_redeem_failed;
+                            MsgManager.msgAreaShow ( 'Auto-Sync PAUSED > network conditions' )
                         }
-    
-                        newTitle = 'error > ' + msg.toString().replace(/--/g,'<br>');
-    
-                    }
-    
-                    if ( mySyncIcon )
-                    {
-                        mySyncIcon.stop();
-                        myResultTag.html( newTitle );
-                    }
-    
-                    if ( returnJson )
-                    {
-                        itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success, "restultStatus": returnJson.resultData.status, "returnJson": returnJson } );
+
                     }
                     else
                     {
-                        itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success } );
-                    }
-    
-                    itemData.history = itmHistory;
-                    itemData.syncActionStarted = 0;
-    
-                    DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
-    
-                    FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
 
-                    me.recursiveSyncItemData ( (listItem + 1), btnTag )
+                        var itmHistory = itemData.history;
+                        var syncType = ( btnTag ) ? 'manual-Sync-Manager' : 'auto-Sync-Manager';
+                        var newTitle;
+
+                        itemData.returnJson = returnJson;
+
+                        // added by Greg (2019-01-14) > record network sync attempts (for limit management)
+                        if ( itemData.networkAttempt ) itemData.networkAttempt += 1;
+                        else itemData.networkAttempt = 1;
+
+                        // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
+                        if ( success && ( returnJson.resultData.status != 'fail' ) )
+                        {
+                            var dtmRedeemDate = (new Date() ).toISOString();
+
+                            itemData.redeemDate = dtmRedeemDate;
+                            itemData.status = me.cwsRenderObj.status_redeem_submit;
+                            newTitle = 'success > ' + dtmRedeemAttempt;
+
+                        }
+                        else 
+                        {
+                            if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) ) 
+                            {
+                                var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+        
+                                itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+
+                                newTitle = 'error > ' + msg.toString().replace(/--/g,'<br>');
+                            }
+        
+                            /* only when sync-test exceeds limit do we mark item as FAIL */
+                            if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+                            {
+                                itemData.status = me.cwsRenderObj.status_redeem_failed;
+
+                                console.log( returnJson );
+                                newTitle = 'error occurred';
+                            }                       
+        
+                        }
+
+                        if ( mySyncIcon )
+                        {
+                            mySyncIcon.stop();
+                            myResultTag.html( newTitle );
+                        }
+
+                        if ( returnJson )
+                        {
+                            itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success, "restultStatus": returnJson.resultData.status, "returnJson": returnJson } );
+                        }
+                        else
+                        {
+                            itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success } );
+                        }
+        
+                        itemData.history = itmHistory;
+                        itemData.syncActionStarted = 0;
+        
+                        DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
+        
+                        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
+
+                        me.lastCompleted = listItem;
+                        me.recursiveSyncItemData ( (listItem + 1), btnTag )
+                        
+                    }
+                    
     
                 } );
+
             }
 
         }
@@ -456,8 +504,12 @@ function syncManager()
             $( me.subProgressBar ).addClass( progClass );
 
             $( '#imgAppDataSyncStatus' ).stop();
-            $( '#divAppDataSyncStatus' ).hide();
-            $( '#imgAppDataSyncStatus' ).hide();
+
+            if ( !me.pauseProcess )
+            {
+                $( '#divAppDataSyncStatus' ).hide();
+                $( '#imgAppDataSyncStatus' ).hide();    
+            }
 
             if ( btnTag )
             {
@@ -469,7 +521,15 @@ function syncManager()
 
             me.syncRunning = 0;
 
-            MsgManager.msgAreaShow ( 'Auto-Sync > processed ' + ( listItem -1 ) )
+            if ( me.pauseProcess )
+            {
+                MsgManager.msgAreaShow ( 'Auto-Sync PAUSED > network conditions' )
+            }
+            else
+            {
+                MsgManager.msgAreaShow ( 'Auto-Sync COMPLETED > processed ' + ( listItem -1 ) )
+                me.lastCompleted = -1;
+            }
 
         }
 
@@ -507,7 +567,6 @@ function syncManager()
                             me.evalDataListContent();
             
                             me.dataCombine = me.dataQueued.concat(me.dataFailed);
-                            console.log( me.dataCombine );
 
                             (me.dataCombine).sort(function (a, b) {
                                 var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
@@ -532,7 +591,16 @@ function syncManager()
                                 MsgManager.msgAreaShow( 'syncManager > reloading FormUtil.dcdConfig :(' );
                             } 
 
-                            me.recursiveSyncItemData ( 0, btnTag )
+                            if ( me.pauseProcess )
+                            {
+                                me.pauseProcess = 0;
+                                me.recursiveSyncItemData ( (me.lastCompleted +1), btnTag )
+                            }
+                            else
+                            {
+                                me.recursiveSyncItemData ( 0, btnTag )
+                            }
+                           
 
                         }
                     }
@@ -550,6 +618,12 @@ function syncManager()
 
         }
 
+    }
+
+    me.pauseSync = function()
+    {
+        console.log( 'PAUSING sync' );
+        me.pauseProcess = true;
     }
 
 }

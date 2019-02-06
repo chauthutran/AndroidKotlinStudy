@@ -402,42 +402,6 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
-    me.setStatusOnTag = function( statusSecDivTag, itemData ) 
-    {
-
-        var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-
-        if ( itemData.status === me.status_redeem_submit )
-        {
-            imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
-        }
-        else if ( itemData.status === me.status_redeem_failed )
-        {
-
-            if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
-            {
-                imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' ); // should show the 'active' icon: sync-banner.svg
-            }
-            else
-            {
-                if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
-                {
-                    imgSyncIconTag.attr ( 'src', 'img/sync_error.svg' );
-                }
-                else
-                {
-                    imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
-                }
-            }
-        }
-        else
-        {
-            imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
-        }
-
-    }
-
-
     me.setContentDivClick = function( contentDivTag )
     {
         contentDivTag.click( function() {
@@ -445,9 +409,8 @@ function BlockList( cwsRenderObj, blockObj )
             contentDivClickedTag = $( this );
 
             var itemId = contentDivClickedTag.attr( 'itemId' );
-
             var itemClicked = Util.getFromList( me.redeemList, itemId, "id" );
-            //console.log( 'itemDiv clicked - ' + JSON.stringify( itemClicked ) ); // + itemAnchorTag.outerHtml() );
+
         });        
     }
 
@@ -463,9 +426,6 @@ function BlockList( cwsRenderObj, blockObj )
 
                 var bProcess = false;
                 var fetchItemData = DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id )
-                console.log( itemData);
-                console.log( fetchItemData);
-                //console.log( itemData == fetchItemData);
 
                 if ( !fetchItemData.networkAttempt ) // no counter exists for this item
                 {
@@ -498,8 +458,6 @@ function BlockList( cwsRenderObj, blockObj )
                         fetchItemData.lastAttempt = dtmRedeemAttempt;
 
                         var redeemID = mySyncIcon.attr( 'id' ).replace( 'listItem_icon_sync_','' );
-                        //console.log( redeemID );
-                        //console.log( '#listItem_networkResults_' + redeemID );
                         var myTag = $( '#listItem_networkResults_' + redeemID );
                         var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
 
@@ -537,7 +495,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                                     fetchItemData.redeemDate = dtmRedeemDate;
                                     fetchItemData.status = me.status_redeem_submit;
-                                    //itemData.returnJson = returnJson;
+
                                     myTag.html( 'Success' );
                                 }
                                 else 
@@ -608,6 +566,7 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
         tempJsonData.id = Util.generateRandomId();
         tempJsonData.status = status;
+        tempJsonData.archived = 0;
         tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
         tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList() ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)

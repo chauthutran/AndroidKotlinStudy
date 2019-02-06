@@ -97,11 +97,13 @@
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
-      if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) {
-
-        $( '.reget' ).click();
-
-      } else {
+      if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) 
+      {
+        //$( '.reget' ).click();
+        FormUtil.performReget( _registrationObj );
+      }
+      else 
+      {
         console.log( 'Using old version.  This app version: ' + _ver + ', latestVersion: ' + latestVersionStr );
       }
     }

@@ -187,8 +187,12 @@ function cwsRender()
 					localStorage.removeItem( lastSession.user );
 				}
 			}
-			
+
+			//FormUtil.performReget( _registrationObj, "update" );
+			FormUtil.swCacheReset();
+
 			me.reGetAppShell();
+
 		});
 	}
 

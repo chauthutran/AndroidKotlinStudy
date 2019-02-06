@@ -133,16 +133,16 @@ function aboutApp( cwsRender )
         {
             me.cwsRenderObj.storage_offline_SyncTimerAutomationRun = me.aboutInfo_NetworkSync.val();
 
-            if ( me.aboutInfo_NetworkSync.val() <= 0 )
+            /*if ( me.aboutInfo_NetworkSync.val() <= 0 )
             {
                 me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 0;
             }
             else
             {
                 me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 10000;
-            }
+            }*/
 
-            $( '#aboutInfo_network_Text' ).html( 'Every' + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
+            $( '#aboutInfo_network_Text' ).html( ( me.aboutInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
 
             window._syncManager.reinitialize ( me.cwsRenderObj );
 
@@ -420,6 +420,10 @@ function aboutApp( cwsRender )
     
                 $( '#aboutInfo_theme_Less' ).show();
                 $( '#aboutInfo_theme_Less' ).removeClass( 'byPassAboutMore' )
+
+                $( '#aboutInfo_network_Less' ).show();
+                $( '#aboutInfo_network_Less' ).removeClass( 'byPassAboutMore' )
+
             }
         }
         else
@@ -442,6 +446,10 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_theme_Less' ).hide();
             $( '#aboutInfo_theme_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_network_Less' ).hide();
+            $( '#aboutInfo_network_Less' ).addClass( 'byPassAboutMore' )
+
         }
     
     }
@@ -601,7 +609,7 @@ function aboutApp( cwsRender )
         Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );
         me.aboutInfo_NetworkSync.val( syncTimer ); 
 
-        $( '#aboutInfo_network_Text' ).html( 'Every' + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
+        $( '#aboutInfo_network_Text' ).html( ( syncTimer > 0 ? 'every' : '') + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
         $( '#aboutInfo_DivnetworkSelect' ).show();
     }
 
