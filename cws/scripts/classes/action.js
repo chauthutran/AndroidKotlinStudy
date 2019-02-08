@@ -25,78 +25,87 @@ function Action( cwsRenderObj, blockObj )
 		// NOTE: TRAN VALIDATION
 		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
 		{
-			var passData = [];
-
-			if ( !btnTag.hasClass( 'clicked' ) )
+			var dataPass = {};
+			
+			if ( !me.btnClickedAlready( btnTag ) )
 			{
-				me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, passData, undefined, function( finalPassData ) {
+				me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+					me.clearBtn_ClickedMark( btnTag );					
 				} );
 			}
-
+			else
+			{
+				console.log( 'Btn already clicked/in process' );
+			}
 		}
 	}
 
-	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, clickedItemData )
+	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx )
 	{		
+		// NOTE: 'clickedItemData' will be passed to block as 'passedData'
+
 		var blockDivTag = btnTag.closest( 'div.block' );
 		var itemBlockTag = btnTag.closest( '.itemBlock' );
 
 		// NOTE: TRAN VALIDATION
 		if( me.blockObj.validationObj.checkFormEntryTagsData( itemBlockTag ) )
 		{
-			var passData = [];
+			var dataPass = {};
 
-			if ( !btnTag.hasClass( 'clicked' ) )
+			if ( !me.btnClickedAlready( btnTag ) )
 			{
-				me.recurrsiveActions( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, passData, clickedItemData, function( finalPassData ) {
+				me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+					me.clearBtn_ClickedMark( btnTag );					
 				} );
 			}
-
-		}
-	}
-
-	me.recurrsiveActions = function( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc )
-	{
-		// If 'recurr' reached the end, call 'returnFunc' with data accumulated?  or last one package..
-		if ( actionIndex >= actions.length )
-		{
-			returnFunc( passData );
-		}
-		else
-		{			
-			var asyncCalled = me.clickActionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );
-
-			if ( !asyncCalled )	
+			else
 			{
-				// If not already added, add blank object.
-				var existingPassData = passData[actionIndex];
-				if ( existingPassData === undefined ) passData.push( {} );
-				else 
-				{
-					console.log( 'already added passData case: ' );
-					console.log( existingPassData );
-				}
-
-				actionIndex++;
-				me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );
+				console.log( 'Btn already clicked/in process' );
 			}
 		}
 	}
 
-	me.clickActionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc, passedData )
+	// ------------------------------------
+
+	// Create a process to call actions one by one with waiting for each one to finish and proceed to next one
+	// me.recurrsiveActions
+	me.handleActionsInSync = function( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc )
+	{
+		if ( actionIndex >= actions.length ) endOfActionsFunc( dataPass );
+		else
+		{
+			// me.clickActionPerform
+			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( resultStr )
+			{				
+				if ( resultStr !== "actionFailed" )
+				{
+					actionIndex++;
+	
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );	
+				}
+				else
+				{
+					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
+					endOfActionsFunc( dataPass );
+				}
+				
+			});
+		}
+	}
+
+	
+	// me.clickActionPerform 
+	me.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
 		// TODO: all the blockDivTag related should be done by 'block' class method
 		
-		var asyncCalled = false;
-
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
 
+		// ACTIVITY ADDING
+		ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
 
-		// TODO: ACTIVITY ADDING
-		ActivityUtil.addAsActivity( 'action', clickActionJson );
 
-
-		if ( clickActionJson !== undefined )
+		if ( clickActionJson )
 		{
 			if ( clickActionJson.actionType === "clearOtherBlocks" )
 			{
@@ -104,10 +113,7 @@ function Action( cwsRenderObj, blockObj )
 
 				me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "closeBlock" )
 			{
@@ -137,20 +143,14 @@ function Action( cwsRenderObj, blockObj )
 					me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 				}
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "hideBlock" )
 			{
 				//blockDivTag.hide();
 				me.blockObj.hideBlock();
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "openBlock" )
 			{
@@ -158,37 +158,28 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
 				
-					if ( passedData === undefined ) passedData = {};
-					passedData.showCase = clickActionJson.showCase;
-					passedData.hideCase = clickActionJson.hideCase;
+					// 'blockPassingData' exists is called from 'processWSResult' actions
+					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
+					blockPassingData.showCase = clickActionJson.showCase;
+					blockPassingData.hideCase = clickActionJson.hideCase;
 					
 					// Hide block if action is doing 'openBlock'
 					me.blockObj.hideBlock();
 
-					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, passedData, { 'notClear': true } );	
-					//var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.renderBlockTag, passedData, { 'notClear': true } );	
+					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true } );	
 					newBlockObj.render();
-
-					if ( btnTag.hasClass( 'clicked' ) )
-					{ 
-						btnTag.removeClass( 'clicked' );
-					}
 				}
+
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "openArea" )
-			{
-				console.log( 'openArea: ' );
-				console.log( clickActionJson.areaId );
-				
+			{				
 				if ( clickActionJson.areaId )
 				{					
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "filledData" )
 			{
@@ -202,49 +193,53 @@ function Action( cwsRenderObj, blockObj )
 					dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
 				}
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "alertMsg" )
 			{
 				alert( clickActionJson.message );
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "topNotifyMsg" )
 			{
 				// If term exists, translate it before displaying
 				MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
 
-				if ( btnTag.hasClass( 'clicked' ) )
-				{ 
-					btnTag.removeClass( 'clicked' );
-				}
+				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "processWSResult" ) 
 			{
-				// 1. Match the case..
-				var passedData_Temp = passData[actionIndex - 1];
+				var statusActionsCalled = false;
+				
+				// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
+				var wsReplyData = dataPass.prevWsReplyData;
 
-				if ( passedData_Temp.resultData !== undefined && clickActionJson.resultCase !== undefined )
+				if ( wsReplyData && wsReplyData.resultData && clickActionJson.resultCase )
 				{
-					var statusActions = clickActionJson.resultCase[ passedData_Temp.resultData.status ];
+					var statusActions = clickActionJson.resultCase[ wsReplyData.resultData.status ];
 
 					if ( statusActions && statusActions.length > 0 )
 					{
+						statusActionsCalled = true;
+						var wsReplyDataCollection_Status = [];
+
+						// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
+						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, wsReplyDataCollection_Status, wsReplyData, function( finalPassData ) {
+							if ( afterActionFunc ) afterActionFunc();
+						} );
+								
 						// For now, loop these actions..  rather than recursive calls..
-						for ( var i = 0; i < statusActions.length; i++ )
-						{
-							// NOTE: this should not call 'async' calls?  to webservice?
-							me.clickActionPerform( statusActions[i], blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc, passedData_Temp );
-						}
+						//for ( var i = 0; i < statusActions.length; i++ )
+						//{
+							// NOTE: These do not support Async calls...  If added, we need to 
+						//	me.actionPerform( statusActions[i], blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, passedData_Temp );
+						//}
 					}
 				}
+
+				// If statusActions did not get started for some reason, return as this action finished
+				if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "sendToWS" ) 
 			{
@@ -253,21 +248,19 @@ function Action( cwsRenderObj, blockObj )
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 
-				FormUtil.setLastPayload ( inputsJson )
+				FormUtil.setLastPayload( inputsJson )
 
 				// Voucher Status add to payload
 				if ( clickActionJson.voucherStatus )
 				{
 					inputsJson.voucherStatus = clickActionJson.voucherStatus;
 				}
-
 				
 				// generate url
 				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
 
 				if ( url !== undefined )
 				{
-
 					var submitJson = {};
 					submitJson.payloadJson = inputsJson;
 					submitJson.url = url;
@@ -281,25 +274,16 @@ function Action( cwsRenderObj, blockObj )
 						{
 							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued );
 						}
-
-						// PUT IT INSIDE OF ABOVE IF CASE?
-						var passedData_Temp = passData[actionIndex - 1];
 						
-						var returnJson = { 'resultData': { 'status': 'offline' } };					
-						passData.push( returnJson );
+						dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
 
-						if ( btnTag.hasClass( 'clicked' ) )
-						{ 
-							btnTag.removeClass( 'clicked' );
-						}
+						if ( afterActionFunc ) afterActionFunc();
 					}
 					else if ( clickActionJson.url !== undefined )
 					{					
 						// generate url
 						var url = FormUtil.generateUrl( inputsJson, clickActionJson );
 						
-						asyncCalled = true;
-
 						// Loading Tag part..
 						var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
@@ -311,45 +295,50 @@ function Action( cwsRenderObj, blockObj )
 							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
 						}
 
-						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, returnJson ) {
+						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
 							// final call..
-							actionIndex++;
-							if ( !returnJson ) returnJson = {};
+							//actionIndex++;
+							if ( !redeemReturnJson ) redeemReturnJson = {};
 
-							//console.log( 'FormUtil.submitRedeem returnJson - ' + JSON.stringify( returnJson ) + ", success - " + success );
+							var resultStr = "success";
 
 							if ( success )
 							{
-								passData.push( returnJson );
-								me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
+								dataPass.prevWsReplyData = redeemReturnJson;
+
+								// This will be picked up by 'processWSResult' action (next action to this one)
+
+								//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
 								//localStorage.setItem( 'lastPayload', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 							}
 							else
 							{
-								console.log( returnJson );
+								console.log( redeemReturnJson );
 								alert( 'Process Failed!!' );
+								// Should we stop at here?  Or continue with subActions?
+
+								var resultStr = "actionFailed";
 							}
 
-							if ( btnTag.hasClass( 'clicked' ) )
-							{ 
-								btnTag.removeClass( 'clicked' );
-							}
+							if ( afterActionFunc ) afterActionFunc( resultStr );
 
 						});
-						/*, function() {
-							actionIndex++;
-							passData.push( {} );
-							me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, passData, clickedItemData, returnFunc );	
-						});*/
 					}
 				}
 			}
 		}
-
-		return asyncCalled;
 	}
 
 	// ========================================================
 	
+	me.btnClickedAlready = function( btnTag )
+	{
+		return btnTag.hasClass( 'clicked' );
+	}
+
+	me.clearBtn_ClickedMark = function( btnTag )
+	{
+		btnTag.removeClass( 'clicked' );
+	}
 
 }

@@ -263,7 +263,9 @@ function BlockButton( cwsRenderObj, blockObj )
 					} 
 
 					var idx = $( this ).closest(".itemBlock").attr("idx");
-					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx, passedData );
+					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx );
+					// , passedData ); <-- 'passedData' is not used anymore.
+					//	It retrieves from DHIS/WebService (making retrieveByClientId call) (using clientId again..)
 
 				});
 			}

@@ -41,12 +41,6 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 
 	me.render = function()
 	{
-
-		// TODO: ACTIVITY ADDING <-- Rather than collecting activity here, we should collect it
-		//			on buton click.
-		// ActivityUtil.addAsActivity( 'block', me.blockJson, me.blockId );
-			
-			
 		if ( me.blockJson )
 		{			
 			// Render Form
