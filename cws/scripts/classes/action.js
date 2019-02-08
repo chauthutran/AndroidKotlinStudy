@@ -222,10 +222,10 @@ function Action( cwsRenderObj, blockObj )
 					if ( statusActions && statusActions.length > 0 )
 					{
 						statusActionsCalled = true;
-						var wsReplyDataCollection_Status = [];
+						var dataPass_Status = {};
 
 						// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
-						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, wsReplyDataCollection_Status, wsReplyData, function( finalPassData ) {
+						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
 							if ( afterActionFunc ) afterActionFunc();
 						} );
 								
