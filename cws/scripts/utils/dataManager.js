@@ -156,7 +156,7 @@ DataManager.getSessionData = function()
 	return sessionJson;
 }
 
-DataManager.setSessionData = function( prop, val ) 
+DataManager.setSessionDataValue = function( prop, val ) 
 {
 	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
 
@@ -169,6 +169,30 @@ DataManager.setSessionData = function( prop, val )
 		DataManager.saveData( DataManager.StorageName_session, sessionJson )
 
 		return true;
+	}
+
+}
+
+DataManager.getSessionDataValue = function( prop, defval ) 
+{
+	console.log( DataManager.StorageName_session );
+	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
+	var ret;
+
+	if ( sessionDataStr )
+	{
+		var sessionJson = JSON.parse( sessionDataStr );
+
+		if ( sessionJson[ prop ] )
+		{
+			ret = sessionJson[ prop ];
+		}
+		else
+		{
+			ret = defval;
+		}
+
+		return ret;
 	}
 
 }

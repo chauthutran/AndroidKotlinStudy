@@ -1484,30 +1484,15 @@ $.fn.rotate=function(options) {
   /* END: Added by Greg: 2018/11/26 */
 
   
-  /* START: Added by Greg: 2019/01/10 */
-  Util.ping = function ( host /*, pong*/ ) {
-
-	var started = new Date().getTime();
-	var http = new XMLHttpRequest();
-	var milliseconds;
-  
-	//http.open("GET", "http://" + host + ":" + port, /*async*/true);
-	http.open("GET", host, /*async*/true);
-	http.onreadystatechange = function() {
-	  if (http.readyState == 4) {
-		var ended = new Date().getTime();
-		milliseconds = ended - started;
-		/*if (pong != null) {
-		  pong(milliseconds);
-		}*/
-	  }
-	};
-	try {
-	  http.send(null);
-	} catch(exception) {
-	  // this is expected
-	}
-	
+  Util.isMobi = function ( ) 
+  {
+	return (/Mobi/.test(navigator.userAgent));
   }
   
-  /* END: Added by Greg: 2019/01/10 */
+  Util.getPeriodName = function( pe )
+  {
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+	var peM = parseInt(pe.substring(4,6));
+	var peF = parseInt(pe.substring(0,4));
+	return ( months[ ( peM - 1) ] + ' ' + peF);
+  }

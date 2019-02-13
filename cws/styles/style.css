@@ -226,14 +226,14 @@ a.brand-logo {
   white-space: nowrap;
 }
 
-.navDrawerTransitionSmooth
+.transitionSmooth
 {
   -webkit-transition: all 250ms, -webkit-transform 250ms; /* Safari */ 
   transition: all 250ms, transform 250ms;
   position: fixed;
 }
 
-.navDrawerTransitionNone
+.transitionRapid
 {
   /*-webkit-transition: none !important;
   transition: none !important;*/
@@ -242,14 +242,98 @@ a.brand-logo {
   position: absolute;
 }
 
-.navDrawerTransitionNone .menu-mobile-row
+.transitionRapid .menu-mobile-row
 {
   opacity: 0.75;
 }
 
-.navDrawerTransitionSmooth .menu-mobile-row
+.transitionSmooth .menu-mobile-row
 {
   opacity: 1;
+}
+
+
+.cardShadow
+{
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.5);
+}
+/* START > Background Patterns for ListPage item drag selector */ 
+.crosshatch 
+{ 
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgogIDxyZWN0IHdpZHRoPSc4JyBoZWlnaHQ9JzgnIGZpbGw9JyNmZmYnLz4KICA8cGF0aCBkPSdNMCAwTDggOFpNOCAwTDAgOFonIHN0cm9rZS13aWR0aD0nMC41JyBzdHJva2U9JyNhYWEnLz4KPC9zdmc+Cg=="); 
+    background-repeat: repeat;
+}
+.whitecarbon 
+{ 
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg=="); 
+    background-repeat: repeat; 
+}
+.smalldot 
+{ 
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgo8cmVjdCB3aWR0aD0nNScgaGVpZ2h0PSc1JyBmaWxsPScjZmZmJy8+CjxyZWN0IHdpZHRoPScxJyBoZWlnaHQ9JzEnIGZpbGw9JyNjY2MnLz4KPC9zdmc+"); 
+    background-repeat: repeat; 
+}
+/* END > Background Patterns for ListPage item drag selector */ 
+
+.rounded{
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+}
+.roundedLeft{
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.roundedRight{
+  -webkit-border-radius: 0px 4px 4px 4px;
+  -moz-border-radius: 0px 4px 4px 4px;
+  border-radius: 0px 4px 4px 4px;
+}
+.roundedTop{
+  -webkit-border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
+}
+.soft_rounded{
+  -webkit-border-radius: 2px 2px 2px 2px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
+}
+
+.tableStats
+{
+  width:97%;
+  margin:0;
+  padding:5px;
+  background-Color:#fff;
+  border-collapse: separate;
+  border-spacing: 0px;
+  color: #50555a;
+}
+.tableStats > thead > tr > th
+{
+  padding: 8px 8px 12px 8px;
+  line-height: 1.2;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+}
+
+.tableStats > tbody > tr 
+{
+  background-Color: #F5F5F5;
+  -webkit-border-radius: 4px 0px 0px 4px;
+  -moz-border-radius: 4px 0px 0px 4px;
+  border-radius: 4px 0px 0px 4px;
+}
+.tableStats > tbody > tr > td
+{
+  border-bottom: 6px solid #fff;
+  padding: 4px;
+  line-height: 1.2;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  text-align: center;
 }
 
 #divMsgAreaWrap

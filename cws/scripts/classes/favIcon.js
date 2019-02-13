@@ -167,6 +167,7 @@ function favIcons( cwsRender )
                     {
                         setTimeout( function() { 
                             //console.log( 'translating favIcons' );
+                            me.cwsRenderObj.updateFromSession();
                             me.cwsRenderObj.langTermObj.translatePage()
                         }, 500 );
                     }

@@ -139,13 +139,6 @@ function BlockList( cwsRenderObj, blockObj )
                 me.cwsRenderObj.pulsatingProgress.show();
                 me.redeemListScrollLimit = me.redeemList.length;
 
-                /*for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize) ) ) ; i++ )
-                {
-                    me.lastRedeemDate =  me.redeemList[i].created;
-                    me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
-                    me.redeemListScrollCount += 1;
-                }*/
-
                 if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
                 {
                     //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
@@ -206,7 +199,7 @@ function BlockList( cwsRenderObj, blockObj )
                     }, 500 );
 
                 }
-                
+
             }
         }
        
@@ -245,6 +238,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.renderRedeemListItemTag = function( itemData, listContentUlTag )
     {   
 
+        var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '"';
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
@@ -255,22 +249,24 @@ function BlockList( cwsRenderObj, blockObj )
         if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
         {
             var activityType = FormUtil.getActivityType ( itemData );
-            //console.log( activityType );
             var statusOpt = FormUtil.getStatusOpt ( itemData );
 
             if ( statusOpt )
             {
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );
-                var tblObj = $( '<table style="width:100%;">' ); 
+                var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? 'padding:4px;' : '' ) + '">' ); 
                 var trObj1 = $( '<tr>' );
-                var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="overflow:hidden;" >' ); 
-                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;width:55%;white-space:nowrap;" >' ); 
-                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:2px;" >' ); 
-                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;position: relative;top: -4px;" >' ); 
+                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="width:15px;opacity:0.65;vertical-align:top;" ><div style="height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;overflow-y:hidden;" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + '">&nbsp;</div></td>' ); 
 
-                var labelDtm = $( '<div style="font-weight:400;">' + dateTimeStr + '</div>' );
+                var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
+                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px;white-space:nowrap;" >' ); 
+                var tdVoucherIdObj = $( '<td id="listItem_voucher_code_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px 0 0;" >' ); 
+                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" style="width:50px;position:relative;top:-2px;" >' ); 
+
+                var labelDtm = $( '<div style="font-weight:400;padding:0 2px">' + dateTimeStr + '</div>' );
 
                 tblObj.append( trObj1 );
+                trObj1.append( tdDragObj );
                 trObj1.append( tdIconObj );
                 trObj1.append( tdDataPreviewObj );
                 trObj1.append( tdVoucherIdObj );
@@ -282,6 +278,7 @@ function BlockList( cwsRenderObj, blockObj )
                 tdDataPreviewObj.append( labelDtm );
 
                 FormUtil.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt );
+
             }
             else
             {
@@ -295,7 +292,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-8px;"></div>' );
 
-        var trObj2 = $( '<tr>' );
+        var trObj2 = $( '<tr id="listItem_trExpander_' + itemData.id + '">' );
         tblObj.append( trObj2 );
         var tdExpandObj = $( '<td id="listItem_expand_' + itemData.id + '" rowspan=1 >' ); 
         trObj2.append( tdExpandObj );
@@ -312,7 +309,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="font-weight:400;overflow:hidden"></div>' );
+        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="font-weight:400;"></div>' );
         contentDivTag.append( '<span ' + FormUtil.getTermAttr( itemData ) + '>' + itemData.title + '</span>' );
 
         // Click Events
@@ -336,12 +333,12 @@ function BlockList( cwsRenderObj, blockObj )
     {
         if ( previewData )
         {
-            var dataRet = $( '<div class="previewData" style="width:100%;float:left;"></div>' );
+            var dataRet = $( '<div class="previewData" style="float:left;padding:4px;"></div>' );
 
             for ( var i=0; i< previewData.length; i++ ) 
             {
                 var dat = me.mergePreviewData( previewData[ i ], payloadJson );
-                dataRet.append ( $( '<div class="" style="">' + dat + '</div>' ) );
+                dataRet.append ( $( '<div class="" style="padding-right: 2px;">' + dat + '</div>' ) );
             }
 
         }
@@ -580,7 +577,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );	
     }
-    
+
     me.redeemList_Reload = function( listItemTag )
     {
         var blockTag = listItemTag.closest( 'div.block' );

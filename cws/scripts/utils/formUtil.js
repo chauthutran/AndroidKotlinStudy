@@ -756,7 +756,7 @@ FormUtil.performReget = function( regObj, option )
 
 FormUtil.swCacheReset = function()
 {
-	caches.has( 'pwaShell' ).then(function(hasCache) {
+	/*caches.has( 'pwaShell' ).then(function(hasCache) {
 		if (!hasCache) {
 			caches.open( 'pwaShell' ).then(function(cache) {
 				return cache.addAll(myAssets);
@@ -772,7 +772,13 @@ FormUtil.swCacheReset = function()
 	  }).catch(function() {
 		// Handle exception here.
 		console.log( 'cache reset error' );
-	  });
+	  });*/
+
+	caches.keys().then(function(names) {
+		for (let name of names)
+			console.log( 'deleting cache: ' + names );
+			caches.delete(name);
+	});
 
 }
 
@@ -1041,5 +1047,12 @@ FormUtil.getStatusOpt = function( itemData )
 			return opts[i];
 		}
 	}
+
+}
+
+FormUtil.listItemActionUpdate = function( itemID, prop, value )
+{
+
+	
 
 }

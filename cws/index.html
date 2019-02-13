@@ -87,7 +87,7 @@
 
     </nav>
     
-    <div id="navDrawerDiv" class="menu-mobile navDrawerTransitionSmooth"></div>
+    <div id="navDrawerDiv" class="menu-mobile transitionSmooth"></div>
 
     <div id="divProgressBar" class="progress"><div class="indeterminate"></div></div>
 
@@ -215,7 +215,7 @@
     <div id="pulsatingCircle" style="display:none;"></div>
 
 
-    <!-- ABOUT FORM DIV -->
+    <!-- START > ABOUT FORM DIV -->
     <div id="aboutFormDiv" style="display:none;">
 
       <div name="top-body" class="bodytop bg-color-program-son"></div>
@@ -227,14 +227,14 @@
 
           <ul class="o-one ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnBack">
+              <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnAboutBack">
               <label class="aboutHeader" term="menu_about">About</label>
               <br>
             </li>
           </ul>
 
             <div class="title-act-mobile" style="padding: 8px 0 0 0">
-                <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnBack">
+                <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnAboutBack">
                 <label class="aboutHeader" term="menu_about">About</label>
               </div>
 
@@ -459,6 +459,77 @@
 
     </div>
 
+    <!-- END > ABOUT FORM DIV -->
+
+
+
+    <!--  START > STATISTICS REPORT --> 
+
+    <div id="statisticsFormDiv" class="formStyle mainContent" style="display:none;">
+
+      <div name="top-body" class="bodytop bg-color-program-son"></div>
+
+        <section class="wrapper">
+          <main class="container">
+
+          <div id="statisticsContentDiv " class="statisticsDiv listDiv" style="position:relative;text-align:left;">
+      
+            <ul class="o-one ">
+              <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
+                <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnStatsBack">
+                <label class="aboutHeader" term="menu_statistics">Statistics</label>
+                <br>
+              </li>
+            </ul>
+  
+              <div class="title-act-mobile" style="padding: 8px 0 0 0">
+                  <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnStatsBack">
+                  <label class="statisticsHeader" term="menu_statistics">Statistics</label>
+                </div>
+  
+            <ul class="tab__content_act">
+  
+              <li class="inputDiv" style="width: 97%;margin:0;"></li>
+
+              <table class="tableStats">
+                <thead>
+                  <tr>
+                    <th>&nbsp;</th>
+                    <th period="period1">Dec 2018</th>
+                    <th period="period2">Jan 2019</th>
+                    <th period="period3">Feb 2019</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="" term="">Issued</td>
+                    <td percent="false" dataId=""><span class="value"></span></td>
+                    <td percent="false" dataId=""><span class="value"></span></td>
+                    <td class=""><span class="value"></span></td>
+                  </tr>
+                </table>
+
+                <li class="inputDiv" style="width: 97%;margin:0;">
+
+                  <div style="text-align: right; font-size:0.7em; margin-right: 12px; margin-top: 5px; color: #555;">
+                    <span term="common_statistics_footer_InformationLastCalculated">Information last calculated</span>
+                    <span id="analyticTime"></span> 
+                    <span term="common_statistics_footer_Ago">ago</span>
+                  </div>
+
+                </li>
+
+              </ul>
+          
+
+        </div>
+
+      </main>
+    </section>
+
+    </div>
+    <!-- END > STATISTICS REPORT --> 
+
     <!-- LIST, FLOATING ICON TEMPLATE DIV -->
     <div id="listTemplateDiv" style="display:none;">
 
@@ -502,7 +573,8 @@
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
-    <script type="text/javascript" src="scripts/classes/aboutApp.js"></script>	
+    <script type="text/javascript" src="scripts/classes/statistics.js"></script>
+    <script type="text/javascript" src="scripts/classes/aboutApp.js"></script>
     <script type="text/javascript" src="scripts/classes/menu.js"></script>	
     <script type="text/javascript" src="scripts/classes/favIcon.js"></script>	
     <script type="text/javascript" src="scripts/classes/validation.js"></script>	

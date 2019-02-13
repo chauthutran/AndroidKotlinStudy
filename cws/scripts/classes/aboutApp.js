@@ -133,6 +133,8 @@ function aboutApp( cwsRender )
         {
             me.cwsRenderObj.storage_offline_SyncTimerAutomationRun = me.aboutInfo_NetworkSync.val();
 
+            DataManager.setSessionDataValue( 'networkSync', me.aboutInfo_NetworkSync.val() );
+
             /*if ( me.aboutInfo_NetworkSync.val() <= 0 )
             {
                 me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 0;
@@ -148,8 +150,8 @@ function aboutApp( cwsRender )
 
         });
 
-        //$( '#aboutInfo_CloseBtn' ).click( () =>
-        $( 'img.btnBack' ).click( () =>
+
+        $( 'img.btnAboutBack' ).click( () =>
         {
             if ( $( 'img.rotateImg' ).length  )
             {
@@ -206,11 +208,11 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_AppVersion_Less' ).click( function() 
+        $( '#imgaboutInfo_AppVersion_Less' ).parent().parent().parent().parent().parent().click( function() 
         {
-            if ( $( this ).hasClass( 'disabled' ) ) return;
+            if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) return;
 
-            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+            $( '#imgaboutInfo_AppVersion_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
 
             if ( ! $( '#aboutInfo_AppVersion_More' ).is(':visible') )
             {
@@ -235,11 +237,11 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_dcdVersion_Less' ).click( function() 
+        $( '#imgaboutInfo_dcdVersion_Less' ).parent().parent().parent().parent().parent().click( function() 
         {
-            if ( $( this ).hasClass( 'disabled' ) ) return;
+            if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) return;
 
-            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+            $( '#imgaboutInfo_dcdVersion_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
 
             if ( ! $( '#aboutInfo_dcdVersion_More' ).is(':visible') )
             {
@@ -264,11 +266,11 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_userLanguage_Less' ).click( function() 
+        $( '#imgaboutInfo_userLanguage_Less' ).parent().parent().parent().parent().parent().click( function() 
         {
-            if ( $( this ).hasClass( 'disabled' ) ) return;
+            if ( $( '#imgaboutInfo_userLanguage_Less' ).hasClass( 'disabled' ) ) return;
 
-            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+            $( '#imgaboutInfo_userLanguage_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
 
             if ( ! $( '#aboutInfo_userLanguage_More' ).is(':visible') )
             {
@@ -293,11 +295,11 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_theme_Less' ).click( function() 
+        $( '#imgaboutInfo_theme_Less' ).parent().parent().parent().parent().parent().click( function() 
         {
-            if ( $( this ).hasClass( 'disabled' ) ) return;
+            if ( $( '#imgaboutInfo_theme_Less' ).hasClass( 'disabled' ) ) return;
 
-            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+            $( '#imgaboutInfo_theme_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
 
             if ( ! $( '#aboutInfo_theme_More' ).is(':visible') )
             {
@@ -322,11 +324,11 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_network_Less' ).click( function() 
+        $( '#imgaboutInfo_network_Less' ).parent().parent().parent().parent().parent().click( function() 
         {
-            if ( $( this ).hasClass( 'disabled' ) ) return;
+            if ( $( '#imgaboutInfo_network_Less' ).hasClass( 'disabled' ) ) return;
 
-            this.classList.toggle( "rotateImg" ); //find this class to call img click event
+            $( '#imgaboutInfo_network_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
 
             if ( ! $( '#aboutInfo_network_More' ).is(':visible') )
             {

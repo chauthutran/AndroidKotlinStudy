@@ -23,6 +23,7 @@
 
     ul li .expandable {
       position: relative;
+      border-left-width: 6;
     }
 
     ul li .expandable:after,
@@ -129,12 +130,13 @@
       /*width: 40%;*/
       text-align: right;
       /*padding-right: 20px;*/
-      font-size: 11.5px;
+      font-size: 10px;
       box-sizing: border-box;
     }
 
     .act-l {
       position: relative;
+      /*float: left;*/
       width: 100%;
       /*height: auto;*/
       /*padding: 10px 4px 0 0; */
@@ -218,11 +220,11 @@
       }
       .act-l {
         font-size: calc(9px + 0.4vw);
-        padding: 0 0 0 4px;
+        padding: 5px 0 5px 25px;
       }
   
       ul li .expandable {
-        padding: 10px 1px 10px 1px;
+        padding: 0 1px 1px 0px;
       }
 
       .title-act-mobile {
@@ -297,7 +299,7 @@
       }
       
       .icon-row {
-        font-size: calc(9px + 0.3vw);
+        font-size: calc(9px + 0.2vw);
         height: 60px;
       }
 
@@ -306,12 +308,12 @@
       }
 
       .act-l {
-        font-size: calc(10px + 0.3vw);
-        padding: 10px 0 5px 10px;
+        font-size: calc(9px + 0.2vw);
+        padding: 8px 0 5px 25px;
       }
   
       ul li .expandable {
-        padding: 10px;
+        /* padding: 10px; */
       }
 
       .icon-arrow {
@@ -323,7 +325,7 @@
         float: right;
         /*width: 40%;*/
         text-align: right;
-        font-size: calc(9px + 0.4vw);
+        font-size: calc(9px + 0.2vw);
         /*padding-right: 20px;*/
         box-sizing: border-box;
       }

@@ -29,6 +29,7 @@ function cwsRender()
 	me.manifest;
 	me.favIconsObj;
 	me.aboutApp;
+	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
 	me.langTermObj;
@@ -138,6 +139,8 @@ function cwsRender()
 	me.setInitialData = function()
 	{
 		me.manifest = FormUtil.getManifest();
+
+		me.updateFromSession();
 	}
 
 	me.setEvents_OnInit = function()
@@ -153,6 +156,7 @@ function cwsRender()
 		me.langTermObj = new LangTerm( me );
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
+		me.statisticsObj = new statistics( me );
 	}
 
 	// =============================================
@@ -160,6 +164,15 @@ function cwsRender()
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
+
+	me.updateFromSession = function()
+	{
+		if ( DataManager.getSessionDataValue( 'networkSync') )
+		{
+			me.storage_offline_SyncTimerAutomationRun = DataManager.getSessionDataValue( 'networkSync' ); 
+		}
+
+	}
 
 	me.setPageHeaderEvents = function()
 	{
@@ -218,9 +231,9 @@ function cwsRender()
 	{
 		me.hideAreaRelatedParts();
 
-
 		// should close current tag/content?
 		if (areaId === 'logOut') me.logOutProcess();
+		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
 		{  
@@ -389,16 +402,12 @@ function cwsRender()
 		// clear the list first
 		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
-		// TODO: GREG: THIS COULD BE shortened or placed in html page?
+		// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
 		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
 		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 		var tr = $( '<tr />' );
 		var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
 		var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
-
-		/*navMenuTbl.css( 'background-image', 'url( "img/logo_bg_header.svg" )' );
-		navMenuTbl.css( 'background-size', 'auto' );
-		navMenuTbl.css( 'background-repeat', 'no-repeat' );*/
 
 		me.navDrawerDivTag.append ( navMenuHead );
 		navMenuHead.append ( navMenuTbl );
@@ -456,7 +465,7 @@ function cwsRender()
 			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
 				location.reload(true);
-				FormUtil.hideProgressBar();
+				//FormUtil.hideProgressBar();
 			});
 		}
 	}
@@ -625,7 +634,8 @@ function cwsRender()
 		me.pulsatingProgress.hide();
 		$( '#divProgressBar' ).hide();
 		$( '#focusRelegator' ).hide();
-		$( '#aboutFormDiv' ).hide();	
+		$( '#statisticsFormDiv' ).hide();
+		$( '#aboutFormDiv' ).hide();
 
 		// hide the menu div if open
 		me.hidenavDrawerDiv();			
@@ -679,36 +689,6 @@ function cwsRender()
 					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
 					{
 						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
-
-						// test if altNetworkMode value exists for current selected area and update to equivalent of 'lastActive' > startArea
-						// test on available matchOn values
-						/* GREG: MORE TESTING TO BE DONE 
-						for ( var m = 0; m < matchOn.length; m++ )
-						{
-							for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
-							{
-								// check if properties exist on both off+online areas
-								if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] && loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
-								{
-									if ( loginData.dcdConfig.areas[altNetworkMode][n][matchOn[m]] == loginData.dcdConfig.areas[thisNetworkMode][i][matchOn[m]] )
-									{
-										matchedOn = matchOn[m];
-										areaMatched = n;
-										loginData.dcdConfig.areas[altNetworkMode][n].startArea = true;
-
-									}
-								}
-							}
-						}
-						// 'reset' (deactivate) all other selectable areas 
-						for ( var n = 0; n < loginData.dcdConfig.areas[altNetworkMode].length; n++ )
-						{
-							if ( loginData.dcdConfig.areas[altNetworkMode][areaMatched][matchedOn] != loginData.dcdConfig.areas[altNetworkMode][n][matchedOn] )
-							{
-								loginData.dcdConfig.areas[altNetworkMode][n].startArea = false;
-							}
-						} */
-
 					}
 
 				}

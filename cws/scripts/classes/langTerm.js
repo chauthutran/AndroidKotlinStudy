@@ -178,7 +178,7 @@ function LangTerm( cwsRenderObj )
 
 		me.currentLangTerms = me.getLangTerms( langCode );
 
-		DataManager.setSessionData( 'language', langCode );
+		DataManager.setSessionDataValue( 'language', langCode );
 
 	}
 
