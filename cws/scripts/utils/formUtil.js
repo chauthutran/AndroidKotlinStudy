@@ -377,8 +377,6 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
 
-			//if ( cwsRenderObj ) cwsRenderObj.langTermObj.translatePage();
-
 			$( '#focusRelegator').css('zIndex',100);
 
 			thisTag.css('zIndex',199);

@@ -5,10 +5,10 @@ function LangTerm( cwsRenderObj )
 	var me = this;
 
 	me.cwsRenderObj = cwsRenderObj;
-	
+
 	me.allLangTerms = {};
 	me.langList = [];
-	
+
 	me.currentLangTerms = {};
 	me.currentLangcode = "";
 

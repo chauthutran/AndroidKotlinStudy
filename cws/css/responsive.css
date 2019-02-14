@@ -118,6 +118,7 @@
     .icon-row {
       float: left;
       box-sizing: border-box;
+      padding: 0 0 0 2px;
     }
 
     .icon-arrow {

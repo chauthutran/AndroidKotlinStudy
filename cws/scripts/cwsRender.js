@@ -615,6 +615,7 @@ function cwsRender()
 		FormUtil.login_UserName = lastSession.user;
 		FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
 		me.loginObj.loginSuccessProcess( loginData );
+		me.retrieveAndSetUpTranslate();
 	}
 		
 	me.showLoginForm = function()

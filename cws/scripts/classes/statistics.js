@@ -62,7 +62,16 @@ function statistics( cwsRender )
 
 		me.emptyTable();
 		me.statisticsFormDiv.show( 'fast' );
-		me.getReport();
+
+		if ( ConnManager.isOnline() )
+		{
+			me.getReport();
+		}
+		else
+		{
+			me.getOfflineReport();
+		}
+			
 
 	}
 
@@ -134,6 +143,7 @@ function statistics( cwsRender )
             ,beforeSend: function( xhr ) {
 				me.cwsRenderObj.pulsatingProgress.show();
 				me.cwsRenderObj.pulsatingProgress.css( 'zIndex', 1000 );
+				$( '#statsFooterSpecialNote' ).hide();
             }
 			,success: function( response ) 
 			{
@@ -142,8 +152,11 @@ function statistics( cwsRender )
 				me.createDataPlaceholders( me.periodOpts, response.data )
 
 				$( '#analyticTime' ).html( response.analyticsTime );
-
+				$( '#statsFooterSpecialNote' ).hide();
+				$( '#statsFooterLastCalc' ).show();
+	
 				me.populatePlaceholderData();
+				me.updateLocalStatistics( response );
 				me.cwsRenderObj.pulsatingProgress.hide();
 			}
 			,error: function( response, textStatus )
@@ -155,10 +168,48 @@ function statistics( cwsRender )
 		}).always( function( data ) {
 			me.cwsRenderObj.pulsatingProgress.hide();
 		});
-	};
-	
+	}
 
-    
+	me.getOfflineReport = function()
+	{
+		var jsonData = DataManager.getUserConfigData();
+
+		if ( jsonData && jsonData.mySession && jsonData.mySession.statistics )
+		{
+			me.cwsRenderObj.pulsatingProgress.show();
+			me.cwsRenderObj.pulsatingProgress.css( 'zIndex', 1000 );
+			me.periodOpts = me.getMonthlyPeriods(3);
+			me.dataResults = jsonData.mySession.statistics.data.rows;
+
+			me.createColumnHeaders( me.periodOpts )
+			me.createDataPlaceholders( me.periodOpts, jsonData.mySession.statistics.data )
+
+			$( '#statsFooterSpecialNote' ).show();
+			$( '#statsFooterLastCalc' ).hide();
+
+			if ( jsonData.mySession.statistics.lastFetch )
+			{
+				$( '#statsSpecialNoteMessage' ).html( 'WARNING: network offline > last retrieved: ' + jsonData.mySession.statistics.lastFetch );
+			}
+			else
+			{
+				$( '#statsSpecialNoteMessage' ).html( 'WARNING: network offline > viewing offline copy' );
+			}
+
+			me.populatePlaceholderData();
+			me.updateLocalStatistics( jsonData.mySession.statistics.data );
+
+			me.cwsRenderObj.pulsatingProgress.hide();
+
+		}
+		else
+		{
+			$( '#statsFooterLastCalc' ).hide();
+			$( '#statsFooterSpecialNote' ).show();
+			$( '#statsSpecialNoteMessage' ).html( 'Stats cannot be retrieved while OFFLINE' );
+		}
+
+	}
 	
 	me.createDataPlaceholders = function( periodOpts, jsonData )
 	{
@@ -174,6 +225,7 @@ function statistics( cwsRender )
 
 			var td = $( '<td>');
 			td.css( 'text-align', 'left' );
+			td.attr( 'class', 'roundedLeft' );
 			tR.append( td );
 			td.html( jsonData.metaData.items[ dxArr[d] ].name )
 
@@ -181,6 +233,11 @@ function statistics( cwsRender )
 			{
 				var tD = $( '<td>');
 				tD.attr( 'dataId', dxArr[d] + '-' + periodOpts[p] );
+
+				if ( p == (periodOpts.length-1) )
+				{
+					tD.attr( 'class', 'roundedRight' );
+				}
 				tR.append( tD );
 
 				me.valueCombination.push( dxArr[d] + '-' + periodOpts[p] );
@@ -189,6 +246,17 @@ function statistics( cwsRender )
 		}
 
 	};
+
+	me.updateLocalStatistics = function( data )
+	{
+		var newSaveObj = DataManager.getUserConfigData();
+		var newData = JSON.parse( JSON.stringify( data ) );
+
+		newData.lastFetch = (new Date() ).toISOString();
+		newSaveObj.mySession.statistics = newData;
+
+		DataManager.saveData( FormUtil.login_UserName, newSaveObj );
+	}
 
 	me.populatePlaceholderData = function()
 	{
