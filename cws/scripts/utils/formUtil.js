@@ -603,6 +603,7 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	var url = FormUtil.getWsUrl( '/api/available' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
+	//returnFunc( true, { "msg": "Server available", "available": false} );
 }
 
 

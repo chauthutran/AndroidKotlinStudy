@@ -8,14 +8,12 @@ ConnManager.appConnMode_Online = true; // app mode: Online / Offline
 ConnManager.appShellServer_Online = true;
 
 ConnManager.currIntv_Online = true;
-ConnManager.prevIntv_Online = true;
+ConnManager.prevIntv_Online = true; 
 ConnManager.IntvCountBuildUp = 0;
 ConnManager.IntvCountCheckPoint = 5;
 ConnManager.IntvTime = 500;	// milliseconds - each is .5 sec..
 
 ConnManager.dataServer_Online = true;
-ConnManager.dataServer_curr_Online = true;
-ConnManager.dataServer_prev_Online = true;
 ConnManager.dataServer_timerIntv = 30000;	// milliseconds - each is 30 sec..
 
 ConnManager.connChangeAsked = false;  // For asking AppConnMode change only once per mode change
@@ -186,47 +184,35 @@ ConnManager.setUp_dataServerModeDetection = function() {
 
 	setInterval( function() 
 	{
+		//console.log( 'detecting ConnManager.setUp_dataServerModeDetection ')
 		var bNetworkOnline = ConnManager.isOnline();
-		
-		ConnManager.currIntv_Online = bNetworkOnline;
 
-		var connStateChanged = ( ConnManager.currIntv_Online != ConnManager.prevIntv_Online );
-
-		ConnManager.dataServer_Online = true;
-		ConnManager.dataServer_curr_Online = true;
-		ConnManager.dataServer_prev_Online = true;
-
-		// Network Connection Changed - continueous counter build up check
-		if ( connStateChanged ) ConnManager.IntvCountBuildUp = 0;
-		else ConnManager.IntvCountBuildUp++;
-
-
-		// Switched mode wait - Manual 'AppConnMode' switched after count check..
-		if ( ConnManager.switchActionStarted ) 
+		if ( ! bNetworkOnline )
 		{
-			ConnManager.switchBuildUp++;
-			if ( ConnManager.switchBuildUp >= ConnManager.switch_waitMaxCount ) ConnManager.switchActionStarted = false;
+			ConnManager.dataServer_Online = false;
 		}
-
-
-		// If during switched(manual) mode, wait for it..
-		if ( !ConnManager.switchActionStarted )
+		else
 		{
-			// If already asked for AppConnMode change, do not ask.
-			if ( !ConnManager.connChangeAsked )
-			{
-				// Check continuous network counter - to the limit/check point.
-				if ( ConnManager.IntvCountBuildUp == ConnManager.IntvCountCheckPoint )
+
+			FormUtil.getDataServerAvailable( function( success, jsonData ) 
+			{			  
+				if ( success && jsonData )
 				{
-					// Ask for the appConnMode Change..
-					if ( ConnManager.appConnMode_Online != ConnManager.currIntv_Online )
-					{
-						ConnManager.connChangeAsked = true;
-						ConnManager.change_AppConnMode( "interval", ConnManager.currIntv_Online );
-					}
-				}	
-			}
+					ConnManager.dataServer_Online = jsonData.available;
+				}
+			});
+
 		}
 
 	}, ConnManager.dataServer_timerIntv );
+}
+
+ConnManager.dataServerOnline = function()
+{
+	return ConnManager.dataServer_Online;
+}
+
+ConnManager.networkSyncConditions = function()
+{
+	return (ConnManager.isOnline() && ConnManager.dataServer_Online);
 }

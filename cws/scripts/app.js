@@ -20,7 +20,7 @@
     // Set App Connection Mode
     ConnManager.setAppConnMode_Initial();
     ConnManager.setUp_AppConnModeDetection();
-
+    ConnManager.setUp_dataServerModeDetection();
 
     // 2. Do 'appInfoOperation' that does app Version Check & action first
     //  & set web service type for the app
@@ -131,7 +131,7 @@
   function updateOnlineStatus( event ) {
 
     ConnManager.network_Online = navigator.onLine;
-    connStatTagUpdate( ConnManager.network_Online );
+    connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
 
     if ( _cwsRenderObj.initializeStartBlock )
     {
@@ -146,9 +146,9 @@
 
   }
 
-  function connStatTagUpdate( bOnline ) {
+  function connStatTagUpdate( bOnline, bDataServerOnline ) {
 
-    var imgSrc = ( bOnline ) ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg';
+    var imgSrc = ( bOnline && bDataServerOnline ) ? 'images/sharp-cloud_queue-24px.svg': ( ( bDataServerOnline ) ? 'images/baseline-cloud_off-24px.svg' : 'images/baseline-cloud_off-24px-unavailable.svg' );
 
     $( '#imgNetworkStatus' ).css( 'transform', ( bOnline ) ? 'rotateY(180deg)' : '' );
 

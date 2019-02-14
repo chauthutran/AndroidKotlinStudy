@@ -397,7 +397,7 @@ function aboutApp( cwsRender )
 
     me.renderNonEssentialFields = function( userLoggedIn )
     {
-        console.log( 'me.defaultsInitialised: ' + me.defaultsInitialised + ', userLoggedIn: ' + userLoggedIn);
+        //console.log( 'me.defaultsInitialised: ' + me.defaultsInitialised + ', userLoggedIn: ' + userLoggedIn);
     
         if ( userLoggedIn )
         {
@@ -468,12 +468,10 @@ function aboutApp( cwsRender )
             {
                 //dcdConfigSettingTheme = dcdConfig.settings.theme;
                 me.getThemeList( dcdConfig.themes );
-                console.log(me.themeList);
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncTimerAutomationRun )
 
             }
-
             //$( '#aboutInfo_dcdVersion_Less' ).show();
             //$( '#aboutInfo_theme_Less' ).show();
         }

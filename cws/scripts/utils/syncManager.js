@@ -112,7 +112,7 @@ function syncManager()
     {
         if ( FormUtil.checkLogin() ) // correct valid-login test?
         {
-            if ( ConnManager.isOnline() )
+            if ( ConnManager.networkSyncConditions() )
             {
                 if ( me.dataQueued.length + me.dataFailed.length )
                 {
@@ -179,84 +179,90 @@ function syncManager()
 		// api/dataStore/Connect_config/pwa_info
 
 		var queryLoc = FormUtil.getWsUrl( '/api/getPWAInfo' ); 
-		var loadingTag = undefined;
+        var loadingTag = undefined;
+        
+        if ( ConnManager.isOnline() )
+        {
+            // Do silently?  translate it afterwards?  <-- how do we do this?
+            // config should also note all the 'term' into tags..
+            FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
+            {
+                var appShellVersion = $( '#spanVersion' ).html().replace('v','');
 
-		// Do silently?  translate it afterwards?  <-- how do we do this?
-		// config should also note all the 'term' into tags..
-		FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
-		{
-            var appShellVersion = $( '#spanVersion' ).html().replace('v','');
-
-			if ( returnJson && returnJson.version )
-			{
-				console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
-
-                if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                if ( returnJson && returnJson.version )
                 {
-                    if ( btnTag )
-                    {
-                        //btnTag.text( 'Update to v' +returnJson.version );
-                        $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
-                        if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
-                        if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+                    console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
-                        btnTag.show( 'fast' );
+                    if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                    {
+                        if ( btnTag )
+                        {
+                            //btnTag.text( 'Update to v' +returnJson.version );
+                            $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                            if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
+                            if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+
+                            btnTag.show( 'fast' );
+                        }
                     }
+                    else
+                    {
+                        btnTag.hide( 'fast' );
+                        if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                        if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+
+                    }
+
                 }
                 else
                 {
-                    btnTag.hide( 'fast' );
-                    if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
-                    if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
-
-                }
-
-				//if ( returnFunc ) returnFunc( returnJson );
-			}
-			else
-			{
-                //console.log( 'error checking appShellInfo, trying again : ' + queryLoc );
-
-				// try running the dailyCache
-				FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
-					if ( success && allJson )
-					{
-                        console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
-
-                        if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                    // try running the dailyCache
+                    FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
+                        if ( success && allJson )
                         {
-                            //console.log( ' newer DCD Config available: ' + loginData.dcdConfig.version + ', you currently use: ' + userConfig.dcdConfig.version );
-                            if ( btnTag )
-                            {
-                                $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
-                                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
-                                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+                            console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
-                                btnTag.show( 'fast' );
+                            if ( appShellVersion.toString() < ( returnJson.version ).toString() )
+                            {
+                                if ( btnTag )
+                                {
+                                    $( '#aboutInfo_AppNewVersion ' ).html( returnJson.version );
+                                    if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
+                                    if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+
+                                    btnTag.show( 'fast' );
+                                }
                             }
+                            else
+                            {
+                                btnTag.hide( 'fast' );
+                                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+
+                            }
+
                         }
                         else
                         {
-                            btnTag.hide( 'fast' );
+                            //console.log( 'all appShellInfo FAILED: ' );
+                            btnTag.hide();
                             if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
                             if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
 
                         }
+                    });			
+                }
+            });
 
-						//if ( returnFunc ) returnFunc( enLangTerm );
-					}
-					else
-					{
-                        //console.log( 'all appShellInfo FAILED: ' );
-                        btnTag.hide();
-                        if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
-                        if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+        }
+        else
+        {
+            btnTag.hide();
+            if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+            if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
 
-						//if ( returnFunc ) returnFunc( new Object() );
-					}
-				});			
-			}
-		});
+        }
+
     }
 
     me.dcdConfigVersionTest = function( btnTag )
@@ -345,14 +351,14 @@ function syncManager()
             }
         }
 
-        if ( ! ConnManager.isOnline() )
+        if ( ! ConnManager.networkSyncConditions() )
         {
             me.pauseSync( itemData, itemClone);
             bProcess = false;
         }
         else
         {
-            if ( !me.pauseProcess && ConnManager.isOnline() )
+            if ( !me.pauseProcess && ConnManager.networkSyncConditions() )
             {
                 me.pauseProcess = false;
             }
@@ -401,11 +407,10 @@ function syncManager()
                 FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson )
                 {
 
-                    //console.log( success, returnJson, ConnManager.isOnline() );
-                    console.log( '1. Response: ' + success );
+                    //console.log( '1. Response: ' + success );
 
                     // network conditions deteriorate during sync process run
-                    if ( !success && !returnJson && !ConnManager.isOnline() )
+                    if ( !success && !returnJson && !ConnManager.networkSyncConditions() )
                     {
                         me.pauseSync( itemData, itemClone);
 
@@ -457,7 +462,7 @@ function syncManager()
                         }
                         else 
                         {
-                            if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) && ConnManager.isOnline() & !me.pauseProcess ) 
+                            if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) && ConnManager.networkSyncConditions() & !me.pauseProcess ) 
                             {
                                 var msg = JSON.parse( returnJson.displayData[0].value ).msg;
         
@@ -467,7 +472,7 @@ function syncManager()
                             }
 
                             /* only when sync-test exceeds limit do we mark item as FAIL */
-                            if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.isOnline() & !me.pauseProcess )
+                            if ( itemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.networkSyncConditions() & !me.pauseProcess )
                             {
                                 itemData.status = me.cwsRenderObj.status_redeem_failed;
                                 newTitle = 'error occurred > exceeded network attempt limit';
@@ -493,7 +498,7 @@ function syncManager()
                         itemData.history = itmHistory;
                         itemData.syncActionStarted = 0;
 
-                        if ( ConnManager.isOnline() & !me.pauseProcess )
+                        if ( ConnManager.networkSyncConditions() & !me.pauseProcess )
                         {
                             DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
                             FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
@@ -587,11 +592,10 @@ function syncManager()
 
                 if ( FormUtil.checkLogin() ) // correct valid-login test?
                 {
-                    if ( ConnManager.isOnline() )
+                    if ( ConnManager.networkSyncConditions() )
                     {
                         if ( me.dataQueued.length + me.dataFailed.length )
                         {
-
                             me.evalDataListContent();
             
                             me.dataCombine = me.dataQueued.concat(me.dataFailed);

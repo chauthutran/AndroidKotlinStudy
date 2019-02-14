@@ -175,7 +175,7 @@ DataManager.setSessionDataValue = function( prop, val )
 
 DataManager.getSessionDataValue = function( prop, defval ) 
 {
-	console.log( DataManager.StorageName_session );
+	//console.log( DataManager.StorageName_session );
 	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
 	var ret;
 

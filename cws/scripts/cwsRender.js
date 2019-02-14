@@ -422,7 +422,7 @@ function cwsRender()
 
 		tdLeft.append ( navMenuLogo );
 		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
-		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: -0.02em;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
+		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
 
 		var tr = $( '<tr />' );
 		var td = $( '<td colspan=2 style="height:20px;" />' );

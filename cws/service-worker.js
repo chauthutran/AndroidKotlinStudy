@@ -23,6 +23,10 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "images/baseline-cloud_off-24px-unavailable.svg",
+    "revision": "38d47e1cacd389927849f03eddb4f4c8"
+  },
+  {
     "url": "images/baseline-cloud_off-24px.svg",
     "revision": "bc7f6d61a42dc641790bb96a6c381dfb"
   },
