@@ -7,7 +7,7 @@ generateSW({
   swDest: 'cws/service-worker.js',
   globDirectory: 'cws',
   globPatterns: [
-    '**/*.{html|css|js|gif,jpg,png,svg}'
+    '**/*.{html,css,js,gif,jpg,png,svg}'
   ],
   skipWaiting: true,
   clientsClaim: true,
@@ -22,7 +22,7 @@ generateSW({
       }
     },
     {
-      urlPattern: /\.(gif,jpg,png,svg)/,
+      urlPattern: /\.(gif|jpg|png|svg)/,
       handler: 'cacheFirst',
       options: {
         cacheName: 'pwaShell'
