@@ -40,7 +40,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "ffbc939e503138959a4084db0c5ab568"
+    "revision": "328c2bcc805cc45f9a10dd677e3ee0a0"
   },
   {
     "url": "images/baseline-cloud_off-24px-unavailable.svg",
@@ -103,10 +103,6 @@ self.__precacheManifest = [
     "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
-    "url": "images/listInQueue.jpg",
-    "revision": "ea75664670f5ec9d4a5c4790bf35f549"
-  },
-  {
     "url": "images/loader-bar.gif",
     "revision": "1b99adaad537086965a046dc3e04487d"
   },
@@ -127,32 +123,8 @@ self.__precacheManifest = [
     "revision": "6334d3fb9d2884cf47c16aaea13bff03"
   },
   {
-    "url": "images/offline.jpg",
-    "revision": "607ea3a3094fb6195aee6f5f3fc5f35a"
-  },
-  {
-    "url": "images/online.jpg",
-    "revision": "d399f85bd9589fe3cacabcce42724c5f"
-  },
-  {
-    "url": "images/online.png",
-    "revision": "f5116eda23db64949149b7b5942b211d"
-  },
-  {
     "url": "images/reload.png",
     "revision": "2e4a452051d63dbc6c9fc1ffaed53d68"
-  },
-  {
-    "url": "images/searchByPhone.jpg",
-    "revision": "6b03314aac5c4cd769a1958c843af1d8"
-  },
-  {
-    "url": "images/searchByVoucher.jpg",
-    "revision": "ed34ebf1c0b9af335a77030ebe291dd9"
-  },
-  {
-    "url": "images/searchByWalkIn.jpg",
-    "revision": "444a5b20edb9dec94c4036b14fb2e1ae"
   },
   {
     "url": "images/sharp-cloud_queue-24px.svg",
@@ -340,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "bff5be50695da63351c495ae5733a946"
+    "revision": "5d0e54e180d01395562e1a99a0680c53"
   },
   {
     "url": "redeemGen.html",
@@ -400,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "41a23df744e47cc854aacb665da6d66f"
+    "revision": "6cb0a234fa70f67d6c144ecbe6c5e181"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -408,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "7a9cb9ec1a182b8226140bc95a0eb359"
+    "revision": "70fb5b9821b19254ae8e73d972375b34"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -476,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "f36df0c91ba99dd4020a7597a4de0f85"
+    "revision": "96710aeb0541222da08fb3164aea9d87"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -516,7 +488,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "4711eb58551238ca276ee9c1a9dff5d4"
+    "revision": "944b4821a340b23d0ea7d93cd3fd7bf6"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

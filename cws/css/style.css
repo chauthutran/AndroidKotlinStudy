@@ -625,6 +625,7 @@ div.fixed_father {
 
 .menu-mobile-row:hover {
   opacity: 0.75;
+  background-color: #F2F2F2;
 }
 
 .menu-mobile-row td {

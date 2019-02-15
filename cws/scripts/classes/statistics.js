@@ -144,6 +144,7 @@ function statistics( cwsRender )
 				me.cwsRenderObj.pulsatingProgress.show();
 				me.cwsRenderObj.pulsatingProgress.css( 'zIndex', 1000 );
 				$( '#statsFooterSpecialNote' ).hide();
+				$( '#statsFooterLastCalc' ).hide();
             }
 			,success: function( response ) 
 			{
@@ -184,6 +185,7 @@ function statistics( cwsRender )
 			me.createColumnHeaders( me.periodOpts )
 			me.createDataPlaceholders( me.periodOpts, jsonData.mySession.statistics.data )
 
+			$( '#analyticTime' ).html( '' );
 			$( '#statsFooterSpecialNote' ).show();
 			$( '#statsFooterLastCalc' ).hide();
 

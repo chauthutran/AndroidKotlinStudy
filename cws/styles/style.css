@@ -207,7 +207,7 @@ a.brand-logo {
   /*transition: width 250ms, transform 250ms;*/
   overflow-y: hidden;
   border-right: 3px solid inherit;
-  background-color: #F2F2F2;
+  background-color: #FFF;
 }
 
 #navDrawerHeader

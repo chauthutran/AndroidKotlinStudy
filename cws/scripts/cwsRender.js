@@ -237,6 +237,8 @@ function cwsRender()
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
 		{  
+			me.clearMenuClickStyles();
+
 			me.areaList = ConfigUtil.getAllAreaList( me.configJson );
 		
 			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
@@ -259,7 +261,11 @@ function cwsRender()
 				// Change start area mark based on last user info..
 				me.trackUserLocation( selectedArea );				
 			}
+
+			me.updateMenuClickStyles( areaId );
+
 		}
+
 	}
 
 
@@ -384,12 +390,12 @@ function cwsRender()
 			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
 
-			$( '#divNavDrawerSummaryData' ).html ( 'Confirmed: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (offline: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+			$( '#divNavDrawerSummaryData' ).html ( '<span term="">Confirmed</span>: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (<span term="">offline</span>: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
 		} 
 		else 
 		{
 			//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-			$( '#divNavDrawerSummaryData' ).html ( 'Confirmed: 0 ' );
+			$( '#divNavDrawerSummaryData' ).html ( '<span term="">Confirmed</span>: 0 ' );
 		}
 	}
 
@@ -642,6 +648,17 @@ function cwsRender()
 		me.hidenavDrawerDiv();			
 	}
 
+	me.clearMenuClickStyles = function()
+	{
+		$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
+	}
+
+	me.updateMenuClickStyles = function( areaId )
+	{
+		//$( '[area]' ).css( 'background-color', 'none' );
+		var tag = $( '[areaid="' + areaId + '"]' ).css( 'background-color', '#F2F2F2' );
+
+	}
 
 	me.logOutProcess = function()
 	{
@@ -665,8 +682,8 @@ function cwsRender()
 		FormUtil.undoLogin();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
-	}
 
+	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )

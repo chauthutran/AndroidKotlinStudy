@@ -6,6 +6,7 @@ function Util() {}
 
 Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
+//Util.termName_confirmed = ""; // 
 
 Util.disableTag = function( tag, isDisable )
 {
