@@ -208,7 +208,7 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_AppVersion_Less' ).parent().parent().parent().parent().parent().click( function() 
+        $( '#imgaboutInfo_AppVersion_Less' ).closest( 'div' ).click( function() 
         {
             if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) return;
 
@@ -237,7 +237,7 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_dcdVersion_Less' ).parent().parent().parent().parent().parent().click( function() 
+        $( '#imgaboutInfo_dcdVersion_Less' ).closest( 'div' ).click( function()
         {
             if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) return;
 
@@ -266,7 +266,7 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_userLanguage_Less' ).parent().parent().parent().parent().parent().click( function() 
+        $( '#imgaboutInfo_userLanguage_Less' ).closest( 'div' ).click( function() 
         {
             if ( $( '#imgaboutInfo_userLanguage_Less' ).hasClass( 'disabled' ) ) return;
 
@@ -295,7 +295,7 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_theme_Less' ).parent().parent().parent().parent().parent().click( function() 
+        $( '#imgaboutInfo_theme_Less' ).closest( 'div' ).click( function()
         {
             if ( $( '#imgaboutInfo_theme_Less' ).hasClass( 'disabled' ) ) return;
 
@@ -324,7 +324,7 @@ function aboutApp( cwsRender )
 
         });
 
-        $( '#imgaboutInfo_network_Less' ).parent().parent().parent().parent().parent().click( function() 
+        $( '#imgaboutInfo_network_Less' ).closest( 'div' ).click( function()
         {
             if ( $( '#imgaboutInfo_network_Less' ).hasClass( 'disabled' ) ) return;
 

@@ -200,6 +200,10 @@ ConnManager.setUp_dataServerModeDetection = function() {
 				{
 					ConnManager.dataServer_Online = jsonData.available;
 				}
+				else
+				{
+					ConnManager.dataServer_Online = false;
+				}
 			});
 
 		}
