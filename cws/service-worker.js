@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "92d5af51adc360383061d7b2467ca6d1"
+    "revision": "545acdf5066582c057ed60b7737c9b1e"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -456,7 +456,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "c1d9ec187cbad2f373a69ad77f352a24"
+    "revision": "0028f79e3c50192c55b051dcdb73f080"
   },
   {
     "url": "scripts/utils/inputUtil.js",

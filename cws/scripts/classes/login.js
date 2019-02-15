@@ -172,7 +172,10 @@ function Login( cwsRenderObj )
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
-		FormUtil.login_server = server;
+
+		// Greg - Disabled this for now.
+		//FormUtil._serverUrlOverride = server;
+
 
 		// ONLINE vs OFFLINE HANDLING
 		if ( ConnManager.getAppConnMode_Offline() )

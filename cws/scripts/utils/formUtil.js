@@ -13,9 +13,9 @@ FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
-FormUtil._serverUrl = location.protocol + '//' + location.host;
-
-// 'https://apps.psi-mis.org';  <-- white listing try
+//FormUtil._serverUrl = location.protocol + '//' + location.host;  // Local WebService version
+FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
+FormUtil._serverUrlOverride = "";
 
 // ==== Methods ======================
 
@@ -35,18 +35,25 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 	return objJson;
 }
 
+
 FormUtil.getServerUrl = function()
 {
-	if (FormUtil.login_server)
+	var serverUrl = "";
+
+	if ( FormUtil._serverUrlOverride )
 	{
-		return FormUtil.login_server; 
-	} 
+		serverUrl = FormUtil._serverUrlOverride; 
+	}
 	else
 	{
-		return location.protocol + '//' + location.host;
+		serverUrl = FormUtil._serverUrl;
 	}
-	
+
+	console.log( 'FormUtil.getServerUrl: ' + serverUrl );
+
+	return serverUrl;
 };
+
 
 FormUtil.isAppsPsiServer = function()
 {
@@ -212,22 +219,22 @@ FormUtil.getFetchWSJson = function( payloadJson )
 {
 	var fetchJson = {
 		method: 'POST'
-		,headers: { 'usr': '', 'pwd': '' }
+		//,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
 		,body: '{}'
 	};
 
 
 	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
 	{
-		fetchJson.headers.usr = payloadJson.submitLogin_usr;
-		fetchJson.headers.pwd = payloadJson.submitLogin_pwd;	
+		payloadJson.userName = payloadJson.submitLogin_usr;
+		payloadJson.password = payloadJson.submitLogin_pwd;	
 	}
 	else
 	{
-		fetchJson.headers.usr = FormUtil.login_UserName;
-		fetchJson.headers.pwd = FormUtil.login_Password;	
+		payloadJson.userName = FormUtil.login_UserName;
+		payloadJson.password = FormUtil.login_Password;
 	}
-		
+
 	if ( payloadJson ) fetchJson.body = JSON.stringify( payloadJson );
 	
 	return fetchJson;
