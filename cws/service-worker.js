@@ -312,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ad89d862e99053292760ac1249b1c6b1"
+    "revision": "ce46e09e176a70a2cfc17489c458d45f"
   },
   {
     "url": "redeemGen.html",
@@ -328,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "4df4bb83666ac628fc9af024bd09a5b0"
+    "revision": "b5d45369ab4865902992fe4dad438df7"
   },
   {
     "url": "scripts/classes/block.js",
@@ -344,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "c06d5ec98d0aba026ca07ae1c681491a"
+    "revision": "e8bd1fb4a0d4bc48d54df65a220e98e5"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -380,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "12d9f78e44c6fade87013da5d69a1266"
+    "revision": "983d97382ecd2d90aece602d0bb497f1"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -428,7 +428,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "f1ff3025790dda95b6e43e79e11d401a"
+    "revision": "1a634142af626a1f61bece0013dec049"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -440,11 +440,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "ca1ba49a625aabd6ec22abb3021edc11"
+    "revision": "4602d38331ea511aa30cb8a1407f2981"
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "3107a40f1f7db4b13fd7e2ee34c87d1b"
+    "revision": "34c8131b37219d7fa03da78e8bb63fa8"
   },
   {
     "url": "scripts/utils/util.js",

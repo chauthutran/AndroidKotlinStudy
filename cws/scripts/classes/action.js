@@ -29,6 +29,7 @@ function Action( cwsRenderObj, blockObj )
 			
 			if ( !me.btnClickedAlready( btnTag ) )
 			{
+				me.btnClickMarked( btnTag );
 				me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
 					me.clearBtn_ClickedMark( btnTag );					
 				} );
@@ -266,16 +267,17 @@ function Action( cwsRenderObj, blockObj )
 					submitJson.url = url;
 					submitJson.actionJson = clickActionJson;	
 
-
-					if ( !ConnManager.getAppConnMode_Online() )
+					//if ( !ConnManager.getAppConnMode_Online() )
+					if ( clickActionJson.redeemListInsert === "true" )
 					{
 						// Offline Submission Handling..
-						if ( clickActionJson.redeemListInsert === "true" )
+						//if ( clickActionJson.redeemListInsert === "true" )
 						{
 							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued );
 						}
-						
-						dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
+
+						//dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
+						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
 
 						if ( afterActionFunc ) afterActionFunc();
 					}
@@ -283,7 +285,7 @@ function Action( cwsRenderObj, blockObj )
 					{					
 						// generate url
 						var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-						
+
 						// Loading Tag part..
 						var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
@@ -334,6 +336,11 @@ function Action( cwsRenderObj, blockObj )
 	me.btnClickedAlready = function( btnTag )
 	{
 		return btnTag.hasClass( 'clicked' );
+	}
+
+	me.btnClickMarked = function( btnTag )
+	{
+		btnTag.addClass( 'clicked' );
 	}
 
 	me.clearBtn_ClickedMark = function( btnTag )

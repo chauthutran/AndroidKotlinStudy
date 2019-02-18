@@ -1060,7 +1060,24 @@ FormUtil.getStatusOpt = function( itemData )
 
 FormUtil.listItemActionUpdate = function( itemID, prop, value )
 {
-
 	
+}
 
+FormUtil.gAnalyticsEventAction = function()
+{
+	var dcd = DataManager.getUserConfigData();
+	if ( dcd && dcd.orgUnitData )
+	{
+		//CUSTOMIZE AS REQUIRED
+		return  dcd.orgUnitData.countryOuCode + ':' + FormUtil.login_UserName + ':' + ConnManager.connStatusStr( ConnManager.isOnline() ); //+ ':' + (new Date() ).toISOString();
+	}
+	else
+	{
+		return 'user: ' + FormUtil.login_UserName;
+	}
+}
+
+FormUtil.gAnalyticsEventLabel = function()
+{
+	return 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline()
 }

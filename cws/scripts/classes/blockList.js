@@ -566,14 +566,14 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.archived = 0;
         tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
-        tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList() ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
+        tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList(), 'eVoucher' ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
         // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
         tempJsonData.activityList = ActivityUtil.getActivityList();
         tempJsonData.syncActionStarted = 0;
         tempJsonData.history = [];
 
-        //console.log( 'tempJsonData.activityList' );
-        //console.log( tempJsonData.activityList );
+        // added by Greg (2019-02-18) > test track googleAnalytics
+        ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
         DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );	
     }
@@ -597,17 +597,24 @@ function BlockList( cwsRenderObj, blockObj )
         if ( divBgColor != "" ) divTag.css( 'background-color', divBgColor );         
     }
 
-    me.lastActivityType = function( json )
+    me.lastActivityType = function( json, defVal )
     {
-        for ( var i = json.length; i--; )
+        if ( json )
         {
-            console.log( 'eval lastActivityType: ' + json[ i ].defJson.activityType );
-            if ( json[ i ].defJson && json[ i ].defJson.activityType )
+            for ( var i = json.length; i--; )
             {
-                return json[ i ].defJson.activityType;
+                //console.log( 'eval lastActivityType: ' + json[ i ].defJson.activityType );
+                if ( json[ i ].defJson && json[ i ].defJson.activityType )
+                {
+                    return json[ i ].defJson.activityType;
+                }
             }
+            
         }
-        
+        else
+        {
+            return defVal;
+        }
     }
 	// =============================================
 

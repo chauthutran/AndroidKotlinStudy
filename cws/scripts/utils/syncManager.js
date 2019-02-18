@@ -28,6 +28,7 @@ function syncManager()
 
     var syncAutomationLastTimeout = 0;
     var progClass;
+    var showMessaging = true;
 
 	// -----------------------------
     // syncManager: uses timerInterval for 'conditionCheck', then uses timeOut to call automated Sync (unless already clicked by user)
@@ -36,7 +37,7 @@ function syncManager()
     me.initialize = function( cwsRenderObj ) 
     {
 
-        //console.log( 'initialize syncManager' );
+        if ( showMessaging ) console.log( 'initialize syncManager' );
 
         me.cwsRenderObj = cwsRenderObj;
         me.cwsRenderObj.updateFromSession();
@@ -56,7 +57,7 @@ function syncManager()
 
     me.reinitialize = function( cwsRenderObj )
     {
-        //console.log( 'syncManager.reinitialize');
+        if ( showMessaging ) console.log( 'syncManager.reinitialize');
         me.cwsRenderObj = cwsRenderObj;
         me.cwsRenderObj.updateFromSession();
 
@@ -68,12 +69,6 @@ function syncManager()
         {
             clearTimeout( me.syncAutomationRunTimeout );
             me.syncAutomationRunTimeout = undefined;
-
-            /*if ( $( '#divAppDataSyncStatus' ).is(':visible') )
-            {
-                $( '#divAppDataSyncStatus' ).hide();
-                $( '#imgAppDataSyncStatus' ).hide();    
-            }*/
         } 
 
         if ( me.storage_offline_SyncTimerConditionsCheck > 0 )
@@ -83,7 +78,7 @@ function syncManager()
             }, me.storage_offline_SyncTimerConditionsCheck );
         }
 
-        //console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncTimerConditionsCheck: ' + me.storage_offline_SyncTimerConditionsCheck + ' me.storage_offline_SyncTimerAutomationRun: ' + me.storage_offline_SyncTimerAutomationRun + ' {syncConditionCheckTimer}: ' + me.syncConditionCheckTimer);
+        if ( showMessaging ) console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncTimerConditionsCheck: ' + me.storage_offline_SyncTimerConditionsCheck + ' me.storage_offline_SyncTimerAutomationRun: ' + me.storage_offline_SyncTimerAutomationRun + ' {syncConditionCheckTimer}: ' + me.syncConditionCheckTimer);
 
     }
 
@@ -149,7 +144,7 @@ function syncManager()
             {
                 if ( !me.syncAutomationRunTimeout && !me.syncRunning ) me.scheduleSyncAutomationRun();
             }
-            //console.log ( 'scheduledSyncConditionsTest.GOOD, me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
+            if ( showMessaging ) console.log ( 'scheduledSyncConditionsTest.GOOD, me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
         }
         else
         {
@@ -164,13 +159,18 @@ function syncManager()
 
     me.scheduleSyncAutomationRun = function()
     {
-        if ( me.evalSyncConditions() && !me.syncRunning && me.syncAutomationRunTimeout > 0 )
+        // check if conditions correct for Sync + NOT already running + timerAlreadySet
+        //if ( ( me.evalSyncConditions() && (!me.syncRunning && me.syncAutomationRunTimeout > 0 && me.pauseProcess) ) || ( me.evalSyncConditions() && !me.pauseProcess ) )
+        if ( showMessaging ) console.log( 'me.syncRunning: ' + me.syncRunning + ', me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
+        if ( me.evalSyncConditions() && (!me.syncRunning && me.syncAutomationRunTimeout > 0) )
         {
             me.syncAutomationRunTimeout = setTimeout( function() {
                 me.syncOfflineData();
             }, me.storage_offline_SyncTimerAutomationRun );
-            //console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > created timer [' + me.syncAutomationRunTimeout + '] to run in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
+            if ( showMessaging ) console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > created timer [' + me.syncAutomationRunTimeout + '] to run in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
         }
+
+        if ( showMessaging ) console.log( 'scheduleSyncAutomationRun me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout + ', me.storage_offline_SyncTimerAutomationRun: ' + me.storage_offline_SyncTimerAutomationRun );
 
     }
 
@@ -191,7 +191,7 @@ function syncManager()
 
                 if ( returnJson && returnJson.version )
                 {
-                    console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
+                    if ( showMessaging ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                     if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                     {
@@ -220,7 +220,7 @@ function syncManager()
                     FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
                         if ( success && allJson )
                         {
-                            console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
+                            if ( showMessaging ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                             if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                             {
@@ -244,7 +244,7 @@ function syncManager()
                         }
                         else
                         {
-                            //console.log( 'all appShellInfo FAILED: ' );
+                            if ( showMessaging ) console.log( 'all appShellInfo FAILED: ' );
                             btnTag.hide();
                             if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
                             if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
@@ -281,7 +281,7 @@ function syncManager()
                 {
                     if ( success )
                     {
-                        console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
+                        if ( showMessaging ) console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
                         if ( ( userConfig.dcdConfig.version ).toString() < ( loginData.dcdConfig.version ).toString() )
                         {
                             if ( btnTag )
@@ -390,7 +390,7 @@ function syncManager()
 
                 me.lastSyncAttempt = listItem;
 
-                console.log ( 'SyncItem > ' + (listItem+1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
+                if ( showMessaging ) console.log ( 'SyncItem > ' + (listItem+1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
                 FormUtil.updateProgressWidth( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) + '%' );
 
                 var dtmRedeemAttempt = (new Date() ).toISOString();
@@ -537,6 +537,7 @@ function syncManager()
 
     me.endSync = function( btnTag )
     {
+        if ( showMessaging ) console.log( 'ending sync' );
         FormUtil.hideProgressBar();
 
         $( me.subProgressBar ).removeClass( 'determinate' );
@@ -567,7 +568,7 @@ function syncManager()
         else
         {
             // added by Greg (2019-02-18) > test track googleAnalytics
-            ga('send', { 'hitType': 'event', 'eventCategory': ( btnTag ? 'manual-Sync' : 'auto-Sync' ), 'eventAction': 'user: ' + FormUtil.login_UserName, 'eventLabel': 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline() });
+            ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
             MsgManager.msgAreaShow ( 'Auto-Sync COMPLETED > processed ' + ( me.lastSyncAttempt + 1) )
             me.lastSyncAttempt = 0;
@@ -578,6 +579,7 @@ function syncManager()
     {
         var Proceed = false;
 
+        if ( showMessaging ) console.log( 'syncOfflineData' );
         if ( me.syncRunning == 0 )
         {
             if ( btnTag ) //called from click_event
@@ -656,6 +658,7 @@ function syncManager()
 
     me.pauseSync = function(  itmObj, itmClone )
     {
+        if ( showMessaging ) console.log( 'pause Sync' );
         DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itmObj.id, itmClone ); //ensure 'syncActionStarted' is set in event another sync process is attempted against current [itemData]
         me.pauseProcess = true;
     }

@@ -232,7 +232,7 @@ function cwsRender()
 		me.hideAreaRelatedParts();
 
 		// added by Greg (2019-02-18) > test track googleAnalytics
-		ga('send', { 'hitType': 'event', 'eventCategory': areaId, 'eventAction': 'user: ' + FormUtil.login_UserName, 'eventLabel': 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline() });
+		ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
 		// should close current tag/content?
 		if (areaId === 'logOut') me.logOutProcess();
