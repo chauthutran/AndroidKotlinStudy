@@ -36,7 +36,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "fa852df9703c2b3d51c5d1c8fc0a117b"
+    "revision": "570b8ba8364fad2de2ec43e3f7075cad"
   },
   {
     "url": "css/style.css",
@@ -312,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5d0e54e180d01395562e1a99a0680c53"
+    "revision": "ad89d862e99053292760ac1249b1c6b1"
   },
   {
     "url": "redeemGen.html",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "e6bd3539f8790d3a6b7e0c4cee77add4"
+    "revision": "c89e23fa98307db7060c4d9c6244093b"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -364,7 +364,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "545acdf5066582c057ed60b7737c9b1e"
+    "revision": "24b9b0cbb1c3e8dd58edf55d8221faa0"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -380,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "70fb5b9821b19254ae8e73d972375b34"
+    "revision": "12d9f78e44c6fade87013da5d69a1266"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -412,7 +412,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "a87dcd623f0e92f703a96ecd0ad2bf33"
+    "revision": "2b7a8c8476811d8ae68f5bcd109f13c1"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -428,7 +428,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "0028f79e3c50192c55b051dcdb73f080"
+    "revision": "f1ff3025790dda95b6e43e79e11d401a"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -440,11 +440,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "4602d38331ea511aa30cb8a1407f2981"
+    "revision": "ca1ba49a625aabd6ec22abb3021edc11"
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "4078b7187dcd044c5e5ec7209d2d0cf8"
+    "revision": "3107a40f1f7db4b13fd7e2ee34c87d1b"
   },
   {
     "url": "scripts/utils/util.js",

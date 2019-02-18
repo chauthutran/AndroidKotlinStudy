@@ -231,6 +231,9 @@ function cwsRender()
 	{
 		me.hideAreaRelatedParts();
 
+		// added by Greg (2019-02-18) > test track googleAnalytics
+		ga('send', { 'hitType': 'event', 'eventCategory': areaId, 'eventAction': 'user: ' + FormUtil.login_UserName, 'eventLabel': 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline() });
+
 		// should close current tag/content?
 		if (areaId === 'logOut') me.logOutProcess();
 		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
@@ -322,11 +325,11 @@ function cwsRender()
 		if ( me.areaList )
 		{
 
-			var finalAreaList = Menu.populateStandardMenuList( me.areaList );
+			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
 
 			var startMenuTag = me.populateMenuList( finalAreaList );
 
-			if ( startMenuTag ) startMenuTag.click();
+			if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
 
 			// initialise favIcons
 			me.favIconsObj = new favIcons( me );
@@ -373,8 +376,8 @@ function cwsRender()
 
 		var mySessionData = DataManager.getSessionData();
 		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
-
-		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData )
+ 
+		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData && FormUtil.checkLogin() )
 		{
 			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );
 		}
@@ -383,7 +386,7 @@ function cwsRender()
 			$( '#divNavDrawerOUlongName' ).html( '' );
 		}
 
-		if ( myData )
+		if ( myData && FormUtil.checkLogin() )
 		{
 			var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 			var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
@@ -424,7 +427,7 @@ function cwsRender()
 		var navMenuLogo = $( '<img src="img/logo.svg" />' );
 
 		var userSessionJson = DataManager.getSessionData();
-		var userName = ( userSessionJson && userSessionJson.user ) ? userSessionJson.user : "";
+		var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
 
 		tdLeft.append ( navMenuLogo );
 		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
@@ -679,10 +682,19 @@ function cwsRender()
 
 		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
+		me.clearMenuPlaceholders();
+		me.navDrawerDivTag.empty();
 		FormUtil.undoLogin();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
 
+	}
+
+	me.clearMenuPlaceholders = function()
+	{
+		$( '#divNavDrawerOUName' ).html( '' );
+		$( '#divNavDrawerOUlongName' ).html( '' );
+		$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...

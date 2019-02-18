@@ -15,6 +15,7 @@ ConnManager.IntvTime = 500;	// milliseconds - each is .5 sec..
 
 ConnManager.dataServer_Online = true;
 ConnManager.dataServer_timerIntv = 30000;	// milliseconds - each is 30 sec..
+ConnManager.dataServer_timerID;
 
 ConnManager.connChangeAsked = false;  // For asking AppConnMode change only once per mode change
 
@@ -154,12 +155,13 @@ ConnManager.change_AppConnMode = function( modeStr, requestConnMode )
 		questionStr = "App Connection Mode is '" + currConnStr + "'.  Do you want to switch to '" + changeConnStr + "'?";
 	}
 
-	var reply = confirm( questionStr );
+	var reply = ( FormUtil.checkLogin() ? confirm( questionStr ) : true ); //@JAMES: should we ignore this question if user not logged in (and assume 'Y')? I think so
 
 	if ( reply )
 	{
 		// Switch the mode to ...
 		ConnManager.setAppConnMode( changeConnModeTo );
+		ConnManager.setUp_dataServerModeDetection();
 
 		// This is not being called..
 		if ( ConnManager._cwsRenderObj ) 
@@ -180,35 +182,47 @@ ConnManager.change_AppConnMode = function( modeStr, requestConnMode )
 // ----------------------------------
 // --- Mode Detection and Switch ----
 
-ConnManager.setUp_dataServerModeDetection = function() {
-
-	setInterval( function() 
+ConnManager.setUp_dataServerModeDetection = function() 
+{
+	if ( ConnManager.dataServer_timerID )
 	{
-		//console.log( 'detecting ConnManager.setUp_dataServerModeDetection ')
-		var bNetworkOnline = ConnManager.isOnline();
+		clearInterval(  ConnManager.dataServer_timerID );
+	}
 
-		if ( ! bNetworkOnline )
-		{
-			ConnManager.dataServer_Online = false;
-		}
-		else
-		{
+	ConnManager.detectDataServerOnline();
 
-			FormUtil.getDataServerAvailable( function( success, jsonData ) 
-			{			  
-				if ( success && jsonData )
-				{
-					ConnManager.dataServer_Online = jsonData.available;
-				}
-				else
-				{
-					ConnManager.dataServer_Online = false;
-				}
-			});
-
-		}
+	ConnManager.dataServer_timerID = setInterval( function() 
+	{
+		ConnManager.detectDataServerOnline();
 
 	}, ConnManager.dataServer_timerIntv );
+}
+
+ConnManager.detectDataServerOnline = function()
+{
+	var bNetworkOnline = ConnManager.isOnline();
+
+	if ( ! bNetworkOnline )
+	{
+		ConnManager.dataServer_Online = false;
+	}
+	else
+	{
+
+		FormUtil.getDataServerAvailable( function( success, jsonData ) 
+		{			  
+			if ( success && jsonData )
+			{
+				ConnManager.dataServer_Online = jsonData.available;
+			}
+			else
+			{
+				ConnManager.dataServer_Online = false;
+			}
+			ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
+		});
+
+	}
 }
 
 ConnManager.dataServerOnline = function()
@@ -219,4 +233,18 @@ ConnManager.dataServerOnline = function()
 ConnManager.networkSyncConditions = function()
 {
 	return (ConnManager.isOnline() && ConnManager.dataServer_Online);
+}
+
+ConnManager.connStatTagUpdate = function( bOnline, bDataServerOnline ) 
+{
+  var imgSrc = ( bOnline && bDataServerOnline ) ? 'images/sharp-cloud_queue-24px.svg': ( ( bDataServerOnline ) ? 'images/baseline-cloud_off-24px.svg' : 'images/baseline-cloud_off-24px-unavailable.svg' );
+
+  $( '#imgNetworkStatus' ).css( 'transform', ( bOnline ) ? 'rotateY(180deg)' : '' );
+
+  setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)
+	  $( '#imgNetworkStatus' ).attr( 'src', imgSrc );
+  }, 500 );
+
+  $( '#divNetworkStatus' ).css( 'display', 'block' );
+
 }

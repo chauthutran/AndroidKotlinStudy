@@ -16,6 +16,7 @@ FormUtil.blockType_MainTabContent = 'mainTabContent';
 //FormUtil._serverUrl = location.protocol + '//' + location.host;  // Local WebService version
 FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
+FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 
 // ==== Methods ======================
 
@@ -48,8 +49,6 @@ FormUtil.getServerUrl = function()
 	{
 		serverUrl = FormUtil._serverUrl;
 	}
-
-	console.log( 'FormUtil.getServerUrl: ' + serverUrl );
 
 	return serverUrl;
 };
@@ -333,6 +332,9 @@ FormUtil.undoLogin = function()
 {
 	FormUtil.login_UserName = '';
 	FormUtil.login_Password = '';	
+	FormUtil.login_server = '';
+	FormUtil.dcdConfig = undefined;
+	FormUtil.orgUnitData = undefined;
 }
 
 // ---------------------------------------------------------

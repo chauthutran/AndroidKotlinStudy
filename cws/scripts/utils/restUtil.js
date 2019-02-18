@@ -6,6 +6,8 @@ function RESTUtil() {}
 // ==== Methods ======================
 RESTUtil.retrieveJson = function( url, returnFunc )
 {
+    console.log( url );
+    console.log( 'ConnManager.isOnline(): ' + ConnManager.isOnline() );
    RESTUtil.performREST( url, undefined, returnFunc );
 };
 

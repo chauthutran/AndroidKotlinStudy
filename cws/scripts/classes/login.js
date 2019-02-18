@@ -178,7 +178,8 @@ function Login( cwsRenderObj )
 
 
 		// ONLINE vs OFFLINE HANDLING
-		if ( ConnManager.getAppConnMode_Offline() )
+		//if ( ConnManager.getAppConnMode_Offline() )
+		if ( ! ConnManager.networkSyncConditions() )
 		{
 			/* START > Added by Greg: 2018/11/26 */
 			// validate encrypted pwd against already stored+encrypted pwd

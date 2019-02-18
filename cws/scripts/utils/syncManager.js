@@ -507,15 +507,18 @@ function syncManager()
                         }
                         else
                         {
-                            if ( !me.pauseProcess )
+                            if ( me.pauseProcess )
                             {
                                 me.pauseSync( itemData, itemClone);
+                            }
+                            else
+                            {
+                                me.endSync( btnTag );
                             }
 
                             DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemClone.id, itemClone );
                             FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemClone.id ), FormUtil.getActivityType ( itemClone ), FormUtil.getStatusOpt ( itemClone ) )
 
-                            me.endSync( btnTag );
                         }
 
                     }
@@ -563,6 +566,9 @@ function syncManager()
         }
         else
         {
+            // added by Greg (2019-02-18) > test track googleAnalytics
+            ga('send', { 'hitType': 'event', 'eventCategory': ( btnTag ? 'manual-Sync' : 'auto-Sync' ), 'eventAction': 'user: ' + FormUtil.login_UserName, 'eventLabel': 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline() });
+
             MsgManager.msgAreaShow ( 'Auto-Sync COMPLETED > processed ' + ( me.lastSyncAttempt + 1) )
             me.lastSyncAttempt = 0;
         }
