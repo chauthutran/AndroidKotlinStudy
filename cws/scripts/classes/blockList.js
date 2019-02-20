@@ -237,13 +237,12 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.renderRedeemListItemTag = function( itemData, listContentUlTag )
     {   
-
         var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '"';
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
-        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style=""></a>' );
+        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style="' + ( !bIsMobile ? 'padding:4px;' : '' ) + '"></a>' );
         var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm ");
 
         if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
@@ -256,7 +255,9 @@ function BlockList( cwsRenderObj, blockObj )
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );
                 var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? 'padding:4px;' : '' ) + '">' ); 
                 var trObj1 = $( '<tr>' );
-                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="width:15px;opacity:0.65;vertical-align:top;" ><div style="height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;overflow-y:hidden;" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + '">&nbsp;</div></td>' ); 
+
+                //height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;
+                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'height:60px;width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
 
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
                 var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px;white-space:nowrap;" >' ); 
@@ -290,7 +291,7 @@ function BlockList( cwsRenderObj, blockObj )
             var blockListItemTag = $( '<div class="icon-row"><img src="img/act.svg">' + dateTimeStr + '</div>' );
         }
 
-        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-8px;"></div>' );
+        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="img/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-2px;"></div>' );
 
         var trObj2 = $( '<tr id="listItem_trExpander_' + itemData.id + '">' );
         tblObj.append( trObj2 );

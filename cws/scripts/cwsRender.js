@@ -43,8 +43,8 @@ function cwsRender()
 	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
 
 	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
-    me.storage_offline_SyncTimerAutomationRun = 60000; // make 60 seconds?
-    me.storage_offline_SyncTimerConditionsCheck = 10000; // make 10 seconds?
+    me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?
+    me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds?
 
 	me._globalMsg = "";
 	me._globalJsonData = undefined;
@@ -169,7 +169,7 @@ function cwsRender()
 	{
 		if ( DataManager.getSessionDataValue( 'networkSync') )
 		{
-			me.storage_offline_SyncTimerAutomationRun = DataManager.getSessionDataValue( 'networkSync' ); 
+			me.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' ); 
 		}
 
 	}
@@ -190,16 +190,8 @@ function cwsRender()
 	{		
 		$( '#btnReset' ).click( function() {
 
-			// TODO: GREG: Could move to 'dataManager'
-			if ( localStorage.getItem('session') )
-			{
-				var lastSession = JSON.parse( localStorage.getItem('session') );
-				if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
-				{
-					localStorage.removeItem( 'session' );
-					localStorage.removeItem( lastSession.user );
-				}
-			}
+			// DONE > TODO: GREG: Could move to 'dataManager'
+			DataManager.clearSessionStorage();
 
 			//FormUtil.performReget( _registrationObj, "update" );
 			FormUtil.swCacheReset();

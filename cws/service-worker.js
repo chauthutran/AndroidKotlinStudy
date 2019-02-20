@@ -63,14 +63,6 @@ self.__precacheManifest = [
     "revision": "325472601571f31e1bf00674c368d335"
   },
   {
-    "url": "images/captureByDetail.jpg",
-    "revision": "67ad72f0fe6c2616271044832eb02176"
-  },
-  {
-    "url": "images/captureByVoucher.jpg",
-    "revision": "4e6c2f569dabd33ff4c8720113b19587"
-  },
-  {
     "url": "images/CwS_light.gif",
     "revision": "de156a12911462a168c4404517a094d3"
   },
@@ -103,28 +95,8 @@ self.__precacheManifest = [
     "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
-    "url": "images/loader-bar.gif",
-    "revision": "1b99adaad537086965a046dc3e04487d"
-  },
-  {
-    "url": "images/loader-bigCircle.gif",
-    "revision": "13a5354a3663d119a9918cf83c5c41df"
-  },
-  {
-    "url": "images/loading_basic.gif",
-    "revision": "03ce3dcc84af110e9da8699a841e5200"
-  },
-  {
-    "url": "images/loading_big_black.gif",
-    "revision": "a51c5608d01acf32df728f299767f82b"
-  },
-  {
     "url": "images/loading.gif",
     "revision": "6334d3fb9d2884cf47c16aaea13bff03"
-  },
-  {
-    "url": "images/reload.png",
-    "revision": "2e4a452051d63dbc6c9fc1ffaed53d68"
   },
   {
     "url": "images/sharp-cloud_queue-24px.svg",
@@ -312,7 +284,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ce46e09e176a70a2cfc17489c458d45f"
+    "revision": "b7fca066cc130ee52819b542df9dd598"
+  },
+  {
+    "url": "manifest.json",
+    "revision": "e06076330152adb98516bbe5c388c456"
   },
   {
     "url": "redeemGen.html",
@@ -320,11 +296,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "c89e23fa98307db7060c4d9c6244093b"
+    "revision": "2b710314806a0c347cb0c1ae2544f5cd"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7ddf33395a04bef28a0d1787fa7ffbc9"
+    "revision": "333492abfe3cd30e0a1a5644f027022b"
   },
   {
     "url": "scripts/classes/action.js",
@@ -344,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "e8bd1fb4a0d4bc48d54df65a220e98e5"
+    "revision": "cae57a09ac4735769198e4282b46ef59"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -375,12 +351,16 @@ self.__precacheManifest = [
     "revision": "6cb0a234fa70f67d6c144ecbe6c5e181"
   },
   {
+    "url": "scripts/classes/test.json",
+    "revision": "5913fe915fb2c58661c81f84840bcce8"
+  },
+  {
     "url": "scripts/classes/validation.js",
     "revision": "b1e3594640c2659e54048d834c0b2b78"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "983d97382ecd2d90aece602d0bb497f1"
+    "revision": "7856137d9828eb76d860cfb271a48f64"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -416,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "2d03b1ec728177ae88c4106bc1c803a6"
+    "revision": "912abf656d1cadeaa645346d0d29464e"
   },
   {
     "url": "scripts/utils/db.js",
@@ -428,11 +408,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "1a634142af626a1f61bece0013dec049"
+    "revision": "072da2d9be015d3f14a331a23676560c"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "bc9bbf1376e3d4bc44269724eb949913"
+    "revision": "98a2d53289a4263b6de72ebb7affc59b"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -444,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "34c8131b37219d7fa03da78e8bb63fa8"
+    "revision": "29c90542da1a18d934906fc35002ee5a"
   },
   {
     "url": "scripts/utils/util.js",
@@ -494,8 +474,7 @@ self.__precacheManifest = [
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(html|css|js)/, workbox.strategies.cacheFirst({ "cacheName":"pwaCore", plugins: [] }), 'GET');
-workbox.routing.registerRoute(/\.(gif|jpg|png|svg)/, workbox.strategies.cacheFirst({ "cacheName":"pwaShell", plugins: [] }), 'GET');
-workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"googleFonts", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/\.(js|json|css|html|svg|gif|png)/, workbox.strategies.cacheFirst({ "cacheName":"appShell", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"gFonts", plugins: [] }), 'GET');
 
 workbox.googleAnalytics.initialize({});

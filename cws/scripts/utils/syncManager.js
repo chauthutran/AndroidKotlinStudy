@@ -4,8 +4,8 @@ function syncManager()
 {
     var me = this;
 
-    me.storage_offline_SyncTimerAutomationRun;      //uses setTimeout
-    me.storage_offline_SyncTimerConditionsCheck;    //uses setInterval
+    me.storage_offline_SyncExecutionTimerInterval;          //uses setTimeout
+    me.storage_offline_SyncConditionsTimerInterval;    //uses setInterval
     me.syncTimer;
 
     me.appShell;
@@ -20,15 +20,15 @@ function syncManager()
     me.syncRunning = 0;
     me.subProgressBar;
 
-    me.syncConditionCheckTimer = 0;
-    me.syncAutomationRunTimeout = 0;
+    me.conditionsCheckTimer = 0;
+    me.syncAutomationRunTimer = 0;
 
     me.pauseProcess = false;
     me.lastSyncAttempt = 0;
 
-    var syncAutomationLastTimeout = 0;
+    var syncAutomationInteruptedTimer = 0;
     var progClass;
-    var showMessaging = true;
+    var showMessaging = false;
 
 	// -----------------------------
     // syncManager: uses timerInterval for 'conditionCheck', then uses timeOut to call automated Sync (unless already clicked by user)
@@ -36,49 +36,59 @@ function syncManager()
 
     me.initialize = function( cwsRenderObj ) 
     {
-
-        if ( showMessaging ) console.log( 'initialize syncManager' );
-
         me.cwsRenderObj = cwsRenderObj;
-        me.cwsRenderObj.updateFromSession();
-
-        me.storage_offline_SyncTimerAutomationRun = cwsRenderObj.storage_offline_SyncTimerAutomationRun;
-        me.storage_offline_SyncTimerConditionsCheck = cwsRenderObj.storage_offline_SyncTimerConditionsCheck;
-
-        /* store progress bar class - to be upgraded to it's own class later */
-        me.subProgressBar = $( '#divProgressBar' ).children()[0];
+        me.updateInitVars();
+        me.subProgressBar = $( '#divProgressBar' ).children()[0]; /* store progress bar class - to be upgraded to it's own class later */
         progClass = me.subProgressBar.className;
 
-        me.syncConditionCheckTimer = setInterval( function() {
-            me.scheduledSyncConditionsTest();
-        }, me.storage_offline_SyncTimerConditionsCheck );
-
+        if ( showMessaging ) console.log( 'initialize syncManager >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
     }
 
     me.reinitialize = function( cwsRenderObj )
     {
-        if ( showMessaging ) console.log( 'syncManager.reinitialize');
-        me.cwsRenderObj = cwsRenderObj;
-        me.cwsRenderObj.updateFromSession();
-
-        me.storage_offline_SyncTimerConditionsCheck = cwsRenderObj.storage_offline_SyncTimerConditionsCheck;
-        me.storage_offline_SyncTimerAutomationRun = cwsRenderObj.storage_offline_SyncTimerAutomationRun;
-
-        if ( me.syncConditionCheckTimer ) clearTimeout( me.syncConditionCheckTimer );
-        if ( me.syncAutomationRunTimeout )
+        if ( me.conditionsCheckTimer )
         {
-            clearTimeout( me.syncAutomationRunTimeout );
-            me.syncAutomationRunTimeout = undefined;
-        } 
-
-        if ( me.storage_offline_SyncTimerConditionsCheck > 0 )
-        {
-            me.syncConditionCheckTimer = setInterval( function() {
-                me.scheduledSyncConditionsTest();
-            }, me.storage_offline_SyncTimerConditionsCheck );
+             clearTimeout( me.conditionsCheckTimer );
+             me.conditionsCheckTimer = 0;
         }
 
-        if ( showMessaging ) console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncTimerConditionsCheck: ' + me.storage_offline_SyncTimerConditionsCheck + ' me.storage_offline_SyncTimerAutomationRun: ' + me.storage_offline_SyncTimerAutomationRun + ' {syncConditionCheckTimer}: ' + me.syncConditionCheckTimer);
+        if ( me.syncAutomationRunTimer )
+        {
+            clearTimeout( me.syncAutomationRunTimer );
+            me.syncAutomationRunTimer = 0;
+        }
+
+        me.cwsRenderObj = cwsRenderObj;
+        me.updateInitVars();
+
+        if ( showMessaging ) console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
+
+    }
+
+    me.updateInitVars = function()
+    {
+        me.cwsRenderObj.updateFromSession();
+
+        if ( showMessaging ) console.log( '>> me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval + ', me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval);
+
+        me.storage_offline_SyncConditionsTimerInterval = me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval;
+        me.storage_offline_SyncExecutionTimerInterval = me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval;
+
+        /*if ( DataManager.getSessionDataValue( 'networkSync') )
+        {
+            me.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' );
+        }
+        else
+        {
+            me.storage_offline_SyncExecutionTimerInterval = me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval;
+        }*/
+
+        if ( me.storage_offline_SyncConditionsTimerInterval > 0 )
+        {
+            me.conditionsCheckTimer = setInterval( function() {
+                me.scheduledSyncConditionsTest();
+            }, me.storage_offline_SyncConditionsTimerInterval );
+        }
 
     }
 
@@ -120,12 +130,16 @@ function syncManager()
                 {
                     $( '#divAppDataSyncStatus' ).hide();
                     $( '#imgAppDataSyncStatus' ).hide();
+
+                    return false;
                 }
             }
             else
             {
                 $( '#divAppDataSyncStatus' ).hide();
                 $( '#imgAppDataSyncStatus' ).hide();
+
+                return false;
             }
         }
     }
@@ -136,22 +150,37 @@ function syncManager()
 
         if ( me.evalSyncConditions() )
         {
-            if ( ( syncAutomationLastTimeout && me.syncAutomationRunTimeout ) && ( syncAutomationLastTimeout == me.syncAutomationRunTimeout ) )
+            if ( showMessaging ) console.log ( 'STARTING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
+            // NO interupted timer exists AND NO existing timer AND syncProcess NOT CURRENTLY RUNNING (clicked icon)
+            if ( ( !syncAutomationInteruptedTimer && !me.syncAutomationRunTimer && me.syncAutomationRunTimer == 0 ) && ( !me.syncRunning ) )
             {
-                if ( !me.syncRunning ) me.scheduleSyncAutomationRun();
+                me.scheduleSyncAutomationRun();
+                if ( showMessaging ) console.log( 'if test 1' );
+            }
+            // interupted timer exists AND equal to existing timer AND syncProcess NOT CURRENTLY RUNNING
+            else if ( ( syncAutomationInteruptedTimer && me.syncAutomationRunTimer ) && ( syncAutomationInteruptedTimer == me.syncAutomationRunTimer ) && ( !me.syncRunning ) )
+            {
+                me.scheduleSyncAutomationRun();
+                if ( showMessaging ) console.log( 'if test 2' );
+            }
+            // no timer exists (sync = OFF) AND no existing timer AND syncProcess NOT CURRENTLY RUNNING (i.e. manual sync clicked)
+            else if ( me.storage_offline_SyncConditionsTimerInterval ==0 && !me.syncAutomationRunTimer && !me.syncRunning ) 
+            {
+                me.scheduleSyncAutomationRun();
+                if ( showMessaging ) console.log( 'if test 3' );
             }
             else
             {
-                if ( !me.syncAutomationRunTimeout && !me.syncRunning ) me.scheduleSyncAutomationRun();
+
             }
-            if ( showMessaging ) console.log ( 'scheduledSyncConditionsTest.GOOD, me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
+            if ( showMessaging ) console.log ( 'ENDING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
         }
         else
         {
-            if ( me.syncAutomationRunTimeout )
+            if ( me.syncAutomationRunTimer )
             {
-                clearTimeout( me.syncAutomationRunTimeout );
-                syncAutomationLastTimeout = me.syncAutomationRunTimeout;
+                clearTimeout( me.syncAutomationRunTimer );
+                syncAutomationInteruptedTimer = me.syncAutomationRunTimer;
             }
         }
 
@@ -159,19 +188,14 @@ function syncManager()
 
     me.scheduleSyncAutomationRun = function()
     {
-        // check if conditions correct for Sync + NOT already running + timerAlreadySet
-        //if ( ( me.evalSyncConditions() && (!me.syncRunning && me.syncAutomationRunTimeout > 0 && me.pauseProcess) ) || ( me.evalSyncConditions() && !me.pauseProcess ) )
-        if ( showMessaging ) console.log( 'me.syncRunning: ' + me.syncRunning + ', me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout );
-        if ( me.evalSyncConditions() && (!me.syncRunning && me.syncAutomationRunTimeout > 0) )
+        if ( me.storage_offline_SyncExecutionTimerInterval > 0 )
         {
-            me.syncAutomationRunTimeout = setTimeout( function() {
+            me.syncAutomationRunTimer = setTimeout( function() {
                 me.syncOfflineData();
-            }, me.storage_offline_SyncTimerAutomationRun );
-            if ( showMessaging ) console.log ( 'scheduleSyncAutomationRun.evalSyncConditions.GOOD > created timer [' + me.syncAutomationRunTimeout + '] to run in ' +me.storage_offline_SyncTimerAutomationRun+'ms : ' + (new Date() ).toISOString() );
+            }, me.storage_offline_SyncExecutionTimerInterval );
         }
 
-        if ( showMessaging ) console.log( 'scheduleSyncAutomationRun me.syncAutomationRunTimeout: ' + me.syncAutomationRunTimeout + ', me.storage_offline_SyncTimerAutomationRun: ' + me.storage_offline_SyncTimerAutomationRun );
-
+        if ( showMessaging ) console.log ( 'syncAutomationRunTimer [' + me.syncAutomationRunTimer + '] to run in ' +me.storage_offline_SyncExecutionTimerInterval+'ms : ' + (new Date() ).toISOString() );
     }
 
     me.appShellVersionTest = function( btnTag )
@@ -433,7 +457,7 @@ function syncManager()
             
                         if ( me.pauseProcess )
                         {
-                            MsgManager.msgAreaShow ( 'Auto-Sync PAUSED > network conditions' )
+                            MsgManager.msgAreaShow ( 'dataSync PAUSED > network conditions' )
                         }
 
                     }
@@ -502,6 +526,7 @@ function syncManager()
                         {
                             DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
                             FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
+                            FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, me.cwsRenderObj );
 
                             me.recursiveSyncItemData ( (listItem + 1), btnTag )
                         }
@@ -518,6 +543,7 @@ function syncManager()
 
                             DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemClone.id, itemClone );
                             FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemClone.id ), FormUtil.getActivityType ( itemClone ), FormUtil.getStatusOpt ( itemClone ) )
+                            FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemClone.id ).find( 'div.icons-status' ), itemClone, me.cwsRenderObj );
 
                         }
 
@@ -563,14 +589,14 @@ function syncManager()
 
         if ( me.pauseProcess )
         {
-            MsgManager.msgAreaShow ( 'Auto-Sync PAUSED > network conditions' )
+            MsgManager.msgAreaShow ( 'dataSync PAUSED > network conditions' )
         }
         else
         {
             // added by Greg (2019-02-18) > test track googleAnalytics
             ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            MsgManager.msgAreaShow ( 'Auto-Sync COMPLETED > processed ' + ( me.lastSyncAttempt + 1) )
+            MsgManager.msgAreaShow ( 'dataSync COMPLETED > processed ' + ( me.lastSyncAttempt + 1) )
             me.lastSyncAttempt = 0;
         }
     }
@@ -620,7 +646,7 @@ function syncManager()
                             $( me.subProgressBar ).removeClass( progClass );
                             $( me.subProgressBar ).addClass( 'determinate' );
 
-                            syncAutomationLastTimeout = me.syncAutomationRunTimeout;
+                            syncAutomationInteruptedTimer = me.syncAutomationRunTimer;
 
                             FormUtil.updateProgressWidth( 0 );
                             FormUtil.showProgressBar( 0 );

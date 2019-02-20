@@ -16,6 +16,7 @@ FormUtil.blockType_MainTabContent = 'mainTabContent';
 //FormUtil._serverUrl = location.protocol + '//' + location.host;  // Local WebService version
 FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
+
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 
 // ==== Methods ======================
@@ -1027,6 +1028,8 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 		imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
 	}
 
+	imgSyncIconTag.css ( 'transform', '' );
+
 }
 
 
@@ -1069,15 +1072,29 @@ FormUtil.gAnalyticsEventAction = function()
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
-		return  dcd.orgUnitData.countryOuCode + ':' + FormUtil.login_UserName + ':' + ConnManager.connStatusStr( ConnManager.isOnline() ); //+ ':' + (new Date() ).toISOString();
+		return  'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 	else
 	{
-		return 'user: ' + FormUtil.login_UserName;
+		return  'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 }
 
 FormUtil.gAnalyticsEventLabel = function()
 {
-	return 'networkisOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline()
+	return 'networkOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline()
+}
+
+FormUtil.PWAlaunchFrom = function()
+{
+	if ( (matchMedia('(display-mode: standalone)').matches) || ('standalone' in navigator) )
+	{
+		// Android and iOS 11.3+
+		return 'homeScreen';
+   	} 
+   else
+   {
+		// useful for iOS < 11.3
+		return 'browser';
+   }
 }

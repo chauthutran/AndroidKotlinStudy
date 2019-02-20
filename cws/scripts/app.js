@@ -33,6 +33,13 @@
 
     });
 
+    window.addEventListener('appinstalled', function(event) 
+    {
+        // Track event: The app was installed (banner or manual installation)
+        ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+
+    });
+
   }
 
   // ----------------------------------------------------
@@ -145,7 +152,6 @@
     window._syncManager.initialize( _cwsRenderObj );
 
   }
-
 
   // ----------------------------------------------------
 

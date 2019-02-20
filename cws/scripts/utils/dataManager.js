@@ -196,3 +196,18 @@ DataManager.getSessionDataValue = function( prop, defval )
 	}
 
 }
+
+DataManager.clearSessionStorage = function()
+{
+	if ( localStorage.getItem('session') )
+	{
+		var lastSession = JSON.parse( localStorage.getItem('session') );
+		if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
+		{
+			localStorage.removeItem( 'session' );
+			localStorage.removeItem( lastSession.user );
+
+			return true;
+		}
+	}
+}

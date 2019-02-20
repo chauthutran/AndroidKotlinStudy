@@ -215,7 +215,7 @@ function inputMonitor( cwsRenderObj )
         $( startTouchTargetTag ).css( 'background-color', '#fff' );
 
         $( startTouchTargetTag ).parent().append( listItemFillerBlock );
-        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + startTouchTargetTag.attr( 'itemid' ) + '">archive<br>hold?</td><td style="border-left:1px solid #F5F5F5;padding-left:5px;width:40px;" id="filler_archive_action_response_' + startTouchTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="img/entry.svg" id="filler_icon_' + startTouchTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
+        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + startTouchTargetTag.attr( 'itemid' ) + '"><!--archive<br>hold?--></td><td style="border-left:0px solid #F5F5F5;padding-left:5px;width:40px;" id="filler_archive_action_response_' + startTouchTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="img/entry.svg" id="filler_icon_' + startTouchTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
 
         $( 'body' ).append(  $( startTouchTargetTag ).detach() );
 
@@ -223,7 +223,7 @@ function inputMonitor( cwsRenderObj )
         $( startTouchTargetTag ).css( 'left', (initialX) + 'px' );
         $( startTouchTargetTag ).css( 'top', $( startTouchTargetTag ).attr( 'initTop' ) + 'px' );
 
-        
+
         $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'width', '' );
         //$( startTouchTargetTag ).css( 'width', $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).width() + 'px' );
         $( '#listItem_voucher_code_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
@@ -237,7 +237,7 @@ function inputMonitor( cwsRenderObj )
             $( '#listItem_networkResults_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
         }
 
-        startTouchTargetTag.find( 'div.listItem' ).css( 'width', 'fit-content' );
+        startTouchTargetTag.find( 'div.whitecarbon' ).css( 'width', '15px' );
 
         $( startTouchTargetTag ).css( 'width', 'fit-content' );
 
@@ -307,14 +307,14 @@ function inputMonitor( cwsRenderObj )
         $( listItemFillerBlock ).css( 'background-color', 'rgba(0, 0, 0, ' + ( ( ((currentX - dragXoffsetLimit) / startTouchTargetWidth ) <= 0.5) ? ((currentX - dragXoffsetLimit) / startTouchTargetWidth ) : 0.5 ) + ')' );
         $( listItemFillerBlock ).css( 'border-bottom-color', 'none' );
 
-        if ( currentX > ( dragXoffsetLimit + ( startTouchTargetWidth / 3 ) ) )
+        /*if ( currentX > ( dragXoffsetLimit + ( startTouchTargetWidth / 3 ) ) )
         {
             $( '#filler_archive_action_response_' + startTouchTargetTag.attr( 'itemid' ) ).html( 'Y' );
         }
         else
         {
             $( '#filler_archive_action_response_' + startTouchTargetTag.attr( 'itemid' ) ).html( 'N' );
-        }
+        }*/
     }
 
 

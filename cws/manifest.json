@@ -6,7 +6,7 @@
   "background_color": "#ffc61d",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "start_url": "/cws/?utm_source=homescreen",
+  "start_url": "/cws/?utm_source=standalone&utm_medium=pwa",
   "scope": "/cws/",  
   "icons": [{
     "src": "images/icons/icon-128x128.png",

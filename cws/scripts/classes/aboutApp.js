@@ -131,18 +131,9 @@ function aboutApp( cwsRender )
 
         me.aboutInfo_NetworkSync.change ( () => 
         {
-            me.cwsRenderObj.storage_offline_SyncTimerAutomationRun = me.aboutInfo_NetworkSync.val();
+            me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.aboutInfo_NetworkSync.val();
 
             DataManager.setSessionDataValue( 'networkSync', me.aboutInfo_NetworkSync.val() );
-
-            /*if ( me.aboutInfo_NetworkSync.val() <= 0 )
-            {
-                me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 0;
-            }
-            else
-            {
-                me.cwsRenderObj.storage_offline_SyncTimerConditionsCheck = 10000;
-            }*/
 
             $( '#aboutInfo_network_Text' ).html( ( me.aboutInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
 
@@ -469,7 +460,7 @@ function aboutApp( cwsRender )
                 //dcdConfigSettingTheme = dcdConfig.settings.theme;
                 me.getThemeList( dcdConfig.themes );
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
-                me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncTimerAutomationRun )
+                me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
 
             }
             //$( '#aboutInfo_dcdVersion_Less' ).show();
