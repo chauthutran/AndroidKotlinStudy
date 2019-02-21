@@ -732,12 +732,12 @@ FormUtil.performReget = function( regObj, option )
 		alert( 'Only re-register service-worker while online, please.' );
 	}
 	else
-	{      
+	{
 		if ( regObj !== undefined )
 		{
 			if ( option === "update" )
 			{
-				FormMsgManager.appBlock( "Service Worker Updating and App restart.." );
+				FormMsgManager.appBlock( "Service Worker Updating.." );
 				regObj.update().then( function( ){
 					location.reload( true );
 				});
@@ -765,30 +765,11 @@ FormUtil.performReget = function( regObj, option )
 
 FormUtil.swCacheReset = function()
 {
-	/*caches.has( 'pwaShell' ).then(function(hasCache) {
-		if (!hasCache) {
-			caches.open( 'pwaShell' ).then(function(cache) {
-				return cache.addAll(myAssets);
-			  });
-		} else {
-			caches.delete( 'pwaShell' ).then(function(boolean) {
-				// your cache is now deleted
-				caches.open( 'pwaShell' ).then(function(cache) {
-					return cache.addAll(myAssets);
-				  });
-			  });
-		}
-	  }).catch(function() {
-		// Handle exception here.
-		console.log( 'cache reset error' );
-	  });*/
-
 	caches.keys().then(function(names) {
 		for (let name of names)
 			console.log( 'deleting cache: ' + names );
 			caches.delete(name);
 	});
-
 }
 
 FormUtil.getMyListData = function( listName )
@@ -1097,4 +1078,17 @@ FormUtil.PWAlaunchFrom = function()
 		// useful for iOS < 11.3
 		return 'browser';
    }
+}
+FormUtil.shareApp = function() {
+    var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
+    if ('share' in navigator) {
+        navigator.share({
+            title: 'CwS: Connect App',
+            text: text,
+            url: location.href,
+        })
+    } else {
+        // Here we use the WhatsApp API as fallback; remember to encode your text for URI
+        location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + ' - ') + location.href
+    }
 }

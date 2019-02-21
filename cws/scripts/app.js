@@ -50,10 +50,6 @@
     FormUtil.performReget( _registrationObj );
   });
 
-  $( '#swRefresh' ).click( () => {
-    FormUtil.performReget( _registrationObj, "update" );
-  });
-
   $( '#imgAppDataSyncStatus' ).click ( () => {
     window._syncManager.syncOfflineData( this );
   });
@@ -79,7 +75,7 @@
           console.log( 'AppInfo Retrieved: ' + JSON.stringify( jsonData ) );
 
           // App version check and possibly reload into the new version
-          appVersionCheckAndReload( jsonData.version );
+          appVersionCheckAndReload( jsonData );
 
           // get proper web service - Should not implement this due to offline possibility
           webServiceSet( jsonData.appWS );
@@ -96,16 +92,25 @@
   };
 
 
-  function appVersionCheckAndReload( version ) 
+  function appVersionCheckAndReload( jsonData ) 
   {
-    var latestVersionStr = ( version ) ? version : '';
+    var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
 
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
       if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) 
       {
-        //$( '.reget' ).click();
+        if ( jsonData.reloadInstructions && jsonData.reloadInstructions.session )
+        {
+          DataManager.clearSessionStorage();
+        }
+
+        if ( jsonData.reloadInstructions && jsonData.reloadInstructions.allCaches )
+        {
+          FormUtil.swCacheReset();
+        }
+  
         FormUtil.performReget( _registrationObj );
       }
       else 
@@ -148,9 +153,7 @@
 
   function updateSyncManager( event ) 
   {
-
     window._syncManager.initialize( _cwsRenderObj );
-
   }
 
   // ----------------------------------------------------
@@ -161,12 +164,9 @@
       .then(function( registration ) 
       { 
         _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
-        
-        // '_cwsRenderObj' is available at this time?
-        //console.log( _cwsRenderObj );
-
         _registrationObj = registration;
         console.log('Service Worker Registered'); 
+
       });
   };
 })();

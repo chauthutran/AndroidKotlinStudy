@@ -82,51 +82,7 @@ function cwsRender()
 			me.showLoginForm();
 		});
 
-
-		/*
-		var initializeStartBlock = false;
-
-		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		if ( localStorage.length )
-		{
-			var lastSession = JSON.parse( localStorage.getItem('session') );
-
-			if ( lastSession )
-			{
-				var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
-
-				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
-				{
-					initializeStartBlock = true;
-				}			
-			}
-		}
-
-
-		// If set to use saved data loading, set up the neccessary data
-		if ( initializeStartBlock )
-		{
-			me.renderDefaultTheme();
-			me.loginObj.loginFormDivTag.hide();
-			me.loginObj._userName = lastSession.user;
-			FormUtil.login_UserName = lastSession.user;
-			FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
-			me.loginObj.loginSuccessProcess( loginData );
-		}
-		else
-		{
-			// If 'initializeStartBlock' case, open the Login form.
-			me.loginObj.loginFormDivTag.show();
-			me.loginObj.render(); // Open Log Form
-		}
-		*/
-
-
-		//var inputUtilFocRel = inputMonitor( '#focusRelegator' ); //detect swipe for android
-		//var inputUtilMenu = inputMonitor( '#navDrawerDiv' ); //detect swipe for android
-		//var inputUtilMenu = inputMonitor( '#pageDiv' ); //detect swipe for android
 		var manageInputSwipe = inputMonitor( me );
-
 
 		// Translate terms setup
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
@@ -187,18 +143,28 @@ function cwsRender()
 	}
 
 	me.setOtherEvents = function()
-	{		
+	{
 		$( '#btnReset' ).click( function() {
 
 			// DONE > TODO: GREG: Could move to 'dataManager'
 			DataManager.clearSessionStorage();
 
-			//FormUtil.performReget( _registrationObj, "update" );
 			FormUtil.swCacheReset();
 
 			me.reGetAppShell();
 
 		});
+
+		if ('share' in navigator)
+		{
+			$( '#appShare' ).show();
+
+			$( '#appShare' ).click( function() {
+				FormUtil.shareApp();
+			});
+
+		} 
+
 	}
 
 	// -------------------------

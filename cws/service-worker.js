@@ -48,7 +48,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
-    "revision": "bc7f6d61a42dc641790bb96a6c381dfb"
+    "revision": "520521bfa31c7dd2d930e07c15ed8884"
   },
   {
     "url": "images/baseline-cloud-24px_green.svg",
@@ -100,7 +100,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/sharp-cloud_queue-24px.svg",
-    "revision": "7ff516ae1c523351b09e2f4a8d46d7d3"
+    "revision": "a4cbccc08adcc4a00bdb043e7e3c80b3"
   },
   {
     "url": "img/about - Copy.svg",
@@ -243,6 +243,10 @@ self.__precacheManifest = [
     "revision": "d98e9b1007e5681f76032d72eb189d4c"
   },
   {
+    "url": "img/outline-share-24px.svg",
+    "revision": "3312f4c3a989b0146198cdddc09678aa"
+  },
+  {
     "url": "img/pending.svg",
     "revision": "bba859eb0f377048681488ef1a62b9c4"
   },
@@ -284,7 +288,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b7fca066cc130ee52819b542df9dd598"
+    "revision": "df8cc69f12286409d12465bcae654d5a"
   },
   {
     "url": "manifest.json",
@@ -296,7 +300,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "2b710314806a0c347cb0c1ae2544f5cd"
+    "revision": "d47ff848cfa63c20116deb0b8069c9b9"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -304,7 +308,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "b5d45369ab4865902992fe4dad438df7"
+    "revision": "e583f202322ce0e27b4066290e3f8a8a"
   },
   {
     "url": "scripts/classes/block.js",
@@ -360,7 +364,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "7856137d9828eb76d860cfb271a48f64"
+    "revision": "caf8c3736598d1f4ddf4a00a49d9d92a"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -408,7 +412,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "072da2d9be015d3f14a331a23676560c"
+    "revision": "6b88b6ebf190e733d800b36c177ddf38"
   },
   {
     "url": "scripts/utils/inputUtil.js",
