@@ -431,7 +431,14 @@ function cwsRender()
 		{
 			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
-				location.reload(true);
+				if ( FormUtil.PWAlaunchFrom == 'homeScreen')
+				{
+					location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+				}
+				else
+				{
+					location.reload( true );
+				}
 				//FormUtil.hideProgressBar();
 			});
 		}

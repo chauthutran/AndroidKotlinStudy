@@ -18,6 +18,7 @@ FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
 
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
+FormUtil._getPWAInfo;
 
 // ==== Methods ======================
 
@@ -739,7 +740,14 @@ FormUtil.performReget = function( regObj, option )
 			{
 				FormMsgManager.appBlock( "Service Worker Updating.." );
 				regObj.update().then( function( ){
-					location.reload( true );
+					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
+					{
+						location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+					}
+					else
+					{
+						location.reload( true );
+					}
 				});
 				FormMsgManager.appUnblock();	
 			}
@@ -750,7 +758,15 @@ FormUtil.performReget = function( regObj, option )
 				regObj.unregister().then(function(boolean) {
 					//console.log('Service Worker UnRegistered');
 					// if boolean = true, unregister is successful
-					location.reload( true );
+					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
+					{
+						location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+					}
+					else
+					{
+						location.reload( true );
+					}
+
 				});
 	
 				FormMsgManager.appUnblock();	

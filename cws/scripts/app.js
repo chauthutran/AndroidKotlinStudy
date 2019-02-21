@@ -3,9 +3,8 @@
 
   let _registrationObj;
   const _cwsRenderObj = new cwsRender();
-  //const _syncManager = new syncManager();
-  window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
   
+  window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
 
   //const _testSection = new testSection();
 
@@ -54,12 +53,40 @@
     window._syncManager.syncOfflineData( this );
   });
 
+  // move to cwsRender 
+  $( '#btnUpgrade' ).click ( () => {
+
+    if ( FormUtil._getPWAInfo )
+    {
+      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session )
+      {
+        DataManager.clearSessionStorage();
+      }
+  
+      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
+      {
+        FormUtil.swCacheReset();
+      }
+  
+      FormUtil.performReget( _registrationObj );
+    }
+
+  });
+
+  // move to cwsRender 
+  $( '#hidenotificationUpgrade' ).click ( () => {
+
+    $( '#notificationUpgrade' ).hide( 'slow' );
+
+  });
+
+  
+
   // App version check and return always..  
   //  (Unless version is outdated and agreed to perform 'reget' for new service worker
   //    - which leads to app reload with new version of service worker.
   function appInfoOperation( returnFunc ) 
   {
-
     // Only online mode and by app.psi-mis.org, check the version diff.
     if ( ConnManager.getAppConnMode_Online() && FormUtil.isAppsPsiServer() )
     {
@@ -72,10 +99,13 @@
 
         if ( jsonData )
         {
-          console.log( 'AppInfo Retrieved: ' + JSON.stringify( jsonData ) );
+
+          FormUtil._getPWAInfo = jsonData;
+
+          console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
 
           // App version check and possibly reload into the new version
-          appVersionCheckAndReload( jsonData );
+          appVersionUpgradeReview( jsonData );
 
           // get proper web service - Should not implement this due to offline possibility
           webServiceSet( jsonData.appWS );
@@ -85,38 +115,37 @@
       });
     }
     else
-    {      
+    {
+
+      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": "1.0.0.100"};
+      appVersionUpgradeReview(FormUtil._getPWAInfo );
       returnFunc();
     }
 
   };
 
 
-  function appVersionCheckAndReload( jsonData ) 
+  function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
 
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
-      if ( confirm( 'Version Outdated. ' + _ver + ' --> ' + latestVersionStr + '  Do you want to update App?' ) ) 
-      {
-        if ( jsonData.reloadInstructions && jsonData.reloadInstructions.session )
-        {
-          DataManager.clearSessionStorage();
-        }
+      $( '#notificationUpgrade').show( 'slow' );
 
-        if ( jsonData.reloadInstructions && jsonData.reloadInstructions.allCaches )
+      // hide automatically after 30seconds of no action
+      setTimeout( function() {
+        if ( $( '#notificationUpgrade').is(':visible') )
         {
-          FormUtil.swCacheReset();
+          $( '#notificationUpgrade').hide( 'slow' );
         }
-  
-        FormUtil.performReget( _registrationObj );
-      }
-      else 
-      {
-        console.log( 'Using old version.  This app version: ' + _ver + ', latestVersion: ' + latestVersionStr );
-      }
+      }, 15000 ); 
+
+    }
+    else
+    {
+      $( '#notificationUpgrade').hide( 'slow' );
     }
   };
 

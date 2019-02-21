@@ -318,6 +318,7 @@ a.brand-logo {
   padding: 8px 8px 12px 8px;
   line-height: 1.2;
   font-size: calc(11px + 0.2vw);; /*0.8em;*/
+  text-align: center;
 }
 
 .tableStats > tbody > tr 
@@ -334,6 +335,40 @@ a.brand-logo {
   line-height: 1.2;
   font-size: calc(12px + 0.2vw);; /*0.8em;*/
   text-align: center;
+}
+
+#notificationUpgrade
+{
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 4%;
+  right: 4%;
+  height: 40px;
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  padding: 10px 10px 10px 18px;
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #404040;
+  color: #fff;
+  white-space: nowrap;
+}
+
+#btnUpgrade
+{
+  font-size: calc(14px + 0.2vw);; /*0.8em;*/
+  color: #A1C2FA;
+  padding: 10px 4px 10px 4px;
+  cursor: pointer;
+}
+
+#hidenotificationUpgrade
+{
+  position: relative;
+  left: 4px;
+  top: -4px;
+  cursor: pointer;
 }
 
 #divMsgAreaWrap

@@ -63,6 +63,10 @@ self.__precacheManifest = [
     "revision": "325472601571f31e1bf00674c368d335"
   },
   {
+    "url": "images/close_white.svg",
+    "revision": "317be0df51698e9db7a05c4778719f1d"
+  },
+  {
     "url": "images/CwS_light.gif",
     "revision": "de156a12911462a168c4404517a094d3"
   },
@@ -113,6 +117,18 @@ self.__precacheManifest = [
   {
     "url": "img/act_col.svg",
     "revision": "78353bdf9dccfc06acb8927eb6695536"
+  },
+  {
+    "url": "img/act_fpl-fu.svg",
+    "revision": "b18ca960206b1675d135b01655ea6c57"
+  },
+  {
+    "url": "img/act_fpl-sp.svg",
+    "revision": "391d86831342cdb469e50b55a8d22b6a"
+  },
+  {
+    "url": "img/act_sas.svg",
+    "revision": "bae8dc42013c60622f76ab3ad96a0967"
   },
   {
     "url": "img/act.svg",
@@ -168,7 +184,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/favbar_color_act.svg",
-    "revision": "13948d206be4212dfe153f189ad0f8be"
+    "revision": "4bc3606fec5c13e524c07faec581f418"
   },
   {
     "url": "img/favbar_color_arrows.svg",
@@ -177,6 +193,18 @@ self.__precacheManifest = [
   {
     "url": "img/favbar_color_contact.svg",
     "revision": "6f045a1b801a41c223aa19852b0d6ebc"
+  },
+  {
+    "url": "img/favbar_color_fpl-fu.svg",
+    "revision": "fad14262b353f577d28795d065cf7813"
+  },
+  {
+    "url": "img/favbar_color_fpl-sp.svg",
+    "revision": "2f3947984b6bef5c80fdf5c0e416940c"
+  },
+  {
+    "url": "img/favbar_color_sas.svg",
+    "revision": "14ceca1978fb6a3aafe8c71f59b5572c"
   },
   {
     "url": "img/hold.svg",
@@ -288,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "df8cc69f12286409d12465bcae654d5a"
+    "revision": "3580f1d03bc872abfd27a0dd1fbfe8c7"
   },
   {
     "url": "manifest.json",
@@ -300,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "d47ff848cfa63c20116deb0b8069c9b9"
+    "revision": "7a5076d0e50d8bc6d5ad5c1967ef2594"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -364,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "caf8c3736598d1f4ddf4a00a49d9d92a"
+    "revision": "ea08c88ce4de96bfcb86027090922a5b"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -400,7 +428,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "912abf656d1cadeaa645346d0d29464e"
+    "revision": "70bbaca1902a1b7f56e3203c6d8c5313"
   },
   {
     "url": "scripts/utils/db.js",
@@ -412,7 +440,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "6b88b6ebf190e733d800b36c177ddf38"
+    "revision": "0c3e7a8cbbc58c130085b82efcbd2812"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -472,7 +500,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "944b4821a340b23d0ea7d93cd3fd7bf6"
+    "revision": "eff6d7ef2451bb51d6a7b55a33254802"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

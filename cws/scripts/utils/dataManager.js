@@ -210,4 +210,5 @@ DataManager.clearSessionStorage = function()
 			return true;
 		}
 	}
+
 }
