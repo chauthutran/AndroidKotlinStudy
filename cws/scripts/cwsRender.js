@@ -155,7 +155,7 @@ function cwsRender()
 
 		});
 
-		if ('share' in navigator)
+		/*if ('share' in navigator)
 		{
 			$( '#appShare' ).show();
 
@@ -163,7 +163,14 @@ function cwsRender()
 				FormUtil.shareApp();
 			});
 
-		} 
+		}
+		else
+		{
+			if ( ! FormUtil.isAppsPsiServer() )
+			{
+				$( '#appShare' ).show();
+			}
+		}*/
 
 	}
 

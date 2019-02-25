@@ -15,7 +15,7 @@ ConnManager.IntvTime = 500;	// milliseconds - each is .5 sec..
 
 ConnManager.dataServer_Online = true;
 ConnManager.dataServer_timerIntv = 30000;	// milliseconds - each is 30 sec..
-ConnManager.dataServer_timerID;
+ConnManager.dataServer_timerID = 0;
 
 ConnManager.connChangeAsked = false;  // For asking AppConnMode change only once per mode change
 
@@ -24,6 +24,8 @@ ConnManager.switchActionStarted = false;
 ConnManager.switchBuildUp = 0;
 
 ConnManager._cwsRenderObj;
+ConnManager.changeConnModeTo;
+ConnManager.changeConnModeStr;
 
 // TODO:
 //		- Need to summarize and put into a document about the current logic
@@ -137,31 +139,56 @@ ConnManager.change_AppConnMode = function( modeStr, requestConnMode )
 	var changeConnModeTo = false;
 	var questionStr = "Unknown Mode";
 
-	if ( modeStr === "interval" ) 
+	ConnManager.changeConnModeStr = modeStr;
+
+	if ( FormUtil.checkLogin() )
 	{
-		if ( requestConnMode !== undefined ) changeConnModeTo = requestConnMode;
-		var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
+		if ( modeStr === "interval" ) 
+		{
+			if ( requestConnMode !== undefined )
+			{
+				ConnManager.changeConnModeTo = requestConnMode;
+				changeConnModeTo = requestConnMode;
+			}
 	
-		questionStr = "Network changed to '" + changeConnStr + "'.  Do  you want to switch App Mode to '" + changeConnStr + "'?";
+			var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
+
+			//questionStr = "Network changed to '" + changeConnStr + "'.  Do  you want to switch App Mode to '" + changeConnStr + "'?";
+			questionStr = "Network changed: switch to '" + changeConnStr.toUpperCase() + "' mode?";
+
+		}
+		else if ( modeStr === "switch" ) 
+		{
+			var currConnStat = ConnManager.appConnMode_Online;
+			//var currConnStr = ConnManager.connStatusStr( currConnStat );
+
+			changeConnModeTo = !currConnStat;
+			ConnManager.changeConnModeTo = !currConnStat;
+
+			var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
+
+			//questionStr = "App Connection Mode is '" + currConnStr + "'.  Do you want to switch to '" + changeConnStr + "'?";
+			questionStr = "Network mode: switch to '" + changeConnStr + "'?";
+
+		}
+		console.log( 'ConnManager.change_AppConnMode: ' + ConnManager.changeConnModeStr + ', ' + ConnManager.changeConnModeTo )
+		var btnSwitch = $( '<a term="" class="notifBtn">SWITCH</a>' );
+
+		$( btnSwitch ).click( () => {
+			ConnManager.switchPreDeterminedConnMode();
+		});
+
+		MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 0 );
 	}
-	else if ( modeStr === "switch" ) 
-	{
-		var currConnStat = ConnManager.appConnMode_Online;
-		var currConnStr = ConnManager.connStatusStr( currConnStat );
-	
-		changeConnModeTo = !currConnStat;	
-		var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
 
-		questionStr = "App Connection Mode is '" + currConnStr + "'.  Do you want to switch to '" + changeConnStr + "'?";
-	}
+};
 
-	var reply = ( FormUtil.checkLogin() ? confirm( questionStr ) : true ); //@JAMES: should we ignore this question if user not logged in (and assume 'Y')? I think so
-
-	if ( reply )
+ConnManager.switchPreDeterminedConnMode = function()
+{
+	if ( FormUtil.checkLogin() )
 	{
 		// Switch the mode to ...
-		ConnManager.setAppConnMode( changeConnModeTo );
-		ConnManager.setUp_dataServerModeDetection();
+		ConnManager.setAppConnMode( ConnManager.changeConnModeTo );
 
 		// This is not being called..
 		if ( ConnManager._cwsRenderObj ) 
@@ -170,29 +197,39 @@ ConnManager.change_AppConnMode = function( modeStr, requestConnMode )
 			ConnManager._cwsRenderObj.startBlockExecuteAgain();
 		}
 
-		if ( modeStr === "interval" ) ConnManager.IntvCountBuildUp = 0;
-		else if ( modeStr === "switch" ) 
+		if ( ConnManager.changeConnModeStr === "interval" ) ConnManager.IntvCountBuildUp = 0;
+		else if ( ConnManager.changeConnModeStr === "switch" ) 
 		{
 			ConnManager.switchActionStarted = true;
 			ConnManager.switchBuildUp = 0;
 		}
-	}	
-};
+
+		console.log( 'switchPreDeterminedConnMode: ' + ConnManager.changeConnModeTo)
+
+		ConnManager.setUp_dataServerModeDetection();
+
+		ConnManager.changeConnModeStr = '';
+
+	}
+}
 
 // ----------------------------------
 // --- Mode Detection and Switch ----
 
 ConnManager.setUp_dataServerModeDetection = function() 
 {
+	console.log( 'initiate setUp_dataServerModeDetection' );
 	if ( ConnManager.dataServer_timerID )
 	{
 		clearInterval(  ConnManager.dataServer_timerID );
+		ConnManager.dataServer_timerID = 0;
 	}
 
 	ConnManager.detectDataServerOnline();
 
 	ConnManager.dataServer_timerID = setInterval( function() 
 	{
+		console.log( 'timer: ' + ConnManager.dataServer_timerID );
 		ConnManager.detectDataServerOnline();
 
 	}, ConnManager.dataServer_timerIntv );
@@ -200,15 +237,16 @@ ConnManager.setUp_dataServerModeDetection = function()
 
 ConnManager.detectDataServerOnline = function()
 {
+	console.log( 'detectDataServerOnline' );
 	var bNetworkOnline = ConnManager.isOnline();
 
 	if ( ! bNetworkOnline )
 	{
 		ConnManager.dataServer_Online = false;
+		ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
 	}
 	else
 	{
-
 		FormUtil.getDataServerAvailable( function( success, jsonData ) 
 		{			  
 			if ( success && jsonData )
@@ -239,7 +277,7 @@ ConnManager.connStatTagUpdate = function( bOnline, bDataServerOnline )
 {
   var imgSrc = ( bOnline && bDataServerOnline ) ? 'images/sharp-cloud_queue-24px.svg': ( ( bDataServerOnline ) ? 'images/baseline-cloud_off-24px.svg' : 'images/baseline-cloud_off-24px-unavailable.svg' );
 
-  $( '#imgNetworkStatus' ).css( 'transform', ( bOnline ) ? 'rotateY(180deg)' : '' );
+  $( '#imgNetworkStatus' ).css( 'transform', ( bOnline && bDataServerOnline ) ? '' : 'rotateY(180deg)' );
 
   setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)
 	  $( '#imgNetworkStatus' ).attr( 'src', imgSrc );

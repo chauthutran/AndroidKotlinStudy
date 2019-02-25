@@ -45,6 +45,19 @@
 
   $( '#spanVersion' ).text( 'v' + _ver );
   
+/*
+  $( '#spanVersion' ).click( () => {
+
+    var btn = $( '<a class="notifBtn">CLICK HERE</a>' );
+
+    $( btn ).click( () => {
+      MsgManager.notificationMessage( 'you clicked here', 'notificationDark', undefined,'background-Color: blue;color:#fff', 'left', 'top' );
+    });
+
+    MsgManager.notificationMessage( 'gregs first test notification', 'notificationDark', btn,'backgroundColor: #404040;color:#fff', 'right', 'top' );
+
+});
+*/
   $( '.reget' ).click( () => {
     FormUtil.performReget( _registrationObj );
   });
@@ -117,7 +130,7 @@
     else
     {
 
-      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": "1.0.0.100"};
+      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": "1.0.0.400"};
       appVersionUpgradeReview(FormUtil._getPWAInfo );
       returnFunc();
     }
@@ -172,6 +185,8 @@
   {
     ConnManager.network_Online = navigator.onLine;
     ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
+
+    if ( ConnManager.dataServer_timerID == 0) ConnManager.setUp_dataServerModeDetection();
 
     if ( _cwsRenderObj.initializeStartBlock )
     {

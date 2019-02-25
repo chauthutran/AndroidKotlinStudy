@@ -198,7 +198,8 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "alertMsg" )
 			{
-				alert( clickActionJson.message );
+				//alert( clickActionJson.message );
+				MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
 
 				if ( afterActionFunc ) afterActionFunc();
 			}
@@ -317,7 +318,8 @@ function Action( cwsRenderObj, blockObj )
 							else
 							{
 								console.log( redeemReturnJson );
-								alert( 'Process Failed!!' );
+								//alert( 'Process Failed!!' );
+								MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
 								// Should we stop at here?  Or continue with subActions?
 
 								var resultStr = "actionFailed";

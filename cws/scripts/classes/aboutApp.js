@@ -64,7 +64,8 @@ function aboutApp( cwsRender )
 
             if ( ConnManager.isOffline() )
             {
-                alert( 'Only re-register service-worker while online, please.' );
+                //alert( 'Only re-register service-worker while online, please.' );
+                MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
             }
             else
             {

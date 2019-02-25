@@ -183,20 +183,29 @@ function Login( cwsRenderObj )
 		{
 			/* START > Added by Greg: 2018/11/26 */
 			// validate encrypted pwd against already stored+encrypted pwd
-			if ( password == Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
+			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
 			{
-				var loginData = DataManager.getData( userName );
-
-				if ( loginData ) 
+				if ( password == Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
-					if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
-					FormUtil.setLogin( userName, password ); /* Added by Greg: 2018/11/27 */
-					me.loginSuccessProcess( loginData );
+					var loginData = DataManager.getData( userName );
+	
+					if ( loginData ) 
+					{
+						if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
+						FormUtil.setLogin( userName, password ); /* Added by Greg: 2018/11/27 */
+						me.loginSuccessProcess( loginData );
+					}
+				}
+				else
+				{
+					//alert( 'Offline Login Failed - userName/pin does not match' );
+					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			}
 			else
 			{
-				alert( 'Offline Login Failed - userName/pin does not match' );
+				//alert( 'Offline Login Failed - userName/pin does not match' );
+				MsgManager.notificationMessage ( 'No network connection > cannot login', 'notificationDark', undefined, '', 'right', 'top' );
 			}
 			/* END > Added by Greg: 2018/11/26 */
 		}
@@ -215,7 +224,8 @@ function Login( cwsRenderObj )
 				{
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 					
-					alert( 'Login Failed' + errDetail );
+					//alert( 'Login Failed' + errDetail );
+					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			} );
 		}

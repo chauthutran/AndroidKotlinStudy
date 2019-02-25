@@ -467,7 +467,8 @@ function BlockList( cwsRenderObj, blockObj )
                         // if offline, alert it!! OR data server unavailable
                         if ( ConnManager.isOffline() )
                         {
-                            alert( 'Currently in offline.  Need to be in online for this.' );
+                            //alert( 'Currently in offline.  Need to be in online for this.' );
+                            MsgManager.notificationMessage ( 'Currently in offline.  Need to be in online for this.', 'notificationDark', undefined, '', 'right', 'top' );
                             myTag.html( fetchItemData.title );
                             $(this).stop();
                         }

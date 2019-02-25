@@ -38,7 +38,11 @@ MsgManager.initialSetup = function()
 
 MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRefresh )
 {
-    if ( msg )
+    if ( 1==1)
+    {
+        MsgManager.notificationMessage ( msg, 'notificationDark', undefined, '', 'right', 'top' );
+    }
+    else    if ( msg )
     {
         if ( !MsgManager._autoHide )
         {
@@ -85,8 +89,7 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
                 {
                     MsgManager.progressBarUpdateTimer = 25;
                 }
-                //MsgManager.progressBar = $('<div style="background-Color:#3FFF02;width:0;height:10px;"/>'); //&nbsp;</div>
-                //MsgManager.divProgressAreaTag.append( MsgManager.progressBar );
+
                 MsgManager.divProgressAreaTag.append( $('<div style="background-Color:#50555a;width:0;height:10px;"/>') );
                 MsgManager.divProgressAreaTag.show();
 
@@ -107,50 +110,6 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
     }
 }
 
-/* START > added by Greg (2018/12/06) */
-MsgManager.updateProgressbar = function(  )
-{
-    MsgManager.progressCheckCount += 1;
-    //console.log ( 'progressBar timer check ('+MsgManager.progressCheckCount+') : ' + MsgManager.countDownNumerator + ' / ' + MsgManager.countDownDenominator );
-
-    if ( MsgManager.countDownNumerator === MsgManager.countDownDenominator )
-    {
-        MsgManager.msgAreaClear( );
-    }
-    else
-    {
-        MsgManager.divProgressAreaTag.empty();
-        MsgManager.divProgressAreaTag.append( $('<div style="background-Color:#50555a;width:'+( (MsgManager.countDownNumerator / MsgManager.countDownDenominator) * 100).toFixed(0) + '%'+';height:10px;"/>') );
-
-        /*setTimeout( function() {                
-            MsgManager.updateProgressbar();
-        }, MsgManager.progressBarUpdateTimer );*/
-    }
-}
-
-MsgManager.incrementCounter = function( newMsg, incrementCounter )
-{
-    if ( newMsg ) MsgManager.spanMsgAreaTextTag.text( newMsg );
-
-    MsgManager.countDownNumerator += incrementCounter;
-    //console.log ( 'MsgManager.countDownNumerator: ' + MsgManager.countDownNumerator);
-
-    // initialise progressBar update() timer
-    //if (MsgManager.countDownNumerator == 1)
-    {   
-        MsgManager.updateProgressbar();
-
-    }
-    //MsgManager.progressBar.css( 'width', ( (MsgManager.countDownNumerator / MsgManager.countDownDenominator) * 100).toFixed(0) + '%' );
-
-    //MsgManager.divProgressAreaTag.empty();
-    //MsgManager.divProgressAreaTag.append( $('<div style="background-Color:#3FFF02;width:'+( (MsgManager.countDownNumerator / MsgManager.countDownDenominator) * 100).toFixed(0) + '%'+';height:10px;"/>') );
-
-    //if ( MsgManager.countDownNumerator === MsgManager.countDownDenominator )  MsgManager.msgAreaClear( );
-
-}
-/* END > added by Greg (2018/12/06) */
-
 MsgManager.msgAreaClear = function( speed )
 {
     if ( speed ) MsgManager.divMsgAreaTag.hide( speed );
@@ -162,6 +121,92 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
+MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide )
+{
+    var unqID = Util.generateRandomId();
+    var notifDiv = $( '<div id="notif_' + unqID + '" class="'+messageType+' rounded" >' );
+    var delayTimer;
+
+    if ( Xpos )
+    {
+        notifDiv.css( Xpos, '4%' );
+    }
+
+    if ( Ypos )
+    {
+        notifDiv.css( Ypos, '4%' );
+    }
+
+    if ( styles )
+    {
+        var arrStyles = styles.split(';')
+        for (var i = 0; i < arrStyles.length; i++)
+        {
+            if ( arrStyles[ i ] )
+            {
+                var thisStyle = (arrStyles[ i ]).split( ':' );
+                notifDiv.css( thisStyle[0], thisStyle[1] );
+            }
+        }
+    }
+
+    var Tbl = $( '<table>' );
+    var tBody = $( '<tbody>' );
+    var trBody = $( '<tr>' );
+    var tdMessage = $( '<td>' );
+
+    notifDiv.append ( Tbl );
+    Tbl.append ( tBody );
+    tBody.append ( trBody );
+    trBody.append ( tdMessage );
+    tdMessage.html( '<span>&nbsp;</span>' + bodyMessage + '<span>&nbsp;</span>' );
+
+    if ( actionButton )
+    {
+        var tdAction = $( '<td>' );
+        trBody.append ( tdAction );
+        tdAction.append ( '<span>&nbsp;</span>' );
+        tdAction.append ( actionButton );
+        tdAction.append ( '<span>&nbsp;</span>' );
+
+        $( tdAction ).click ( () => {
+            $( '#notif_' + unqID ).remove();
+        });
+
+    }
+
+    var tdClose = $( '<td>' );
+    var notifClose = $( '<img class="" src="images/close_white.svg" >' );
+    $( notifClose ).click ( () => {
+        console.log( 'removing ' + '#notif_' + unqID  );
+        $( '#notif_' + unqID ).remove();
+    });
+
+    $( 'nav.bg-color-program' ).append( notifDiv )
+    trBody.append ( tdClose );
+    tdClose.append ( notifClose );
+
+    if ( delayHide || delayHide == 0 )
+    {
+        delayTimer = delayHide;
+    }
+    else
+    {
+        delayTimer = MsgManager._autoHideDelay;
+    }
+
+    if ( delayTimer > 0 )
+    {
+        setTimeout( function() {
+            if ( $( '#notif_' + unqID ).is(':visible') )
+            {
+              $( '#notif_' + unqID ).remove();
+            }
+          }, delayTimer );
+    }
+
+
+}
 
 MsgManager.initialSetup();
 

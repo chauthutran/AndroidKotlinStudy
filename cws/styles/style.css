@@ -353,9 +353,13 @@ a.brand-logo {
   background-color: #404040;
   color: #fff;
   white-space: nowrap;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
 }
 
-#btnUpgrade
+.notifBtn
 {
   font-size: calc(14px + 0.2vw);; /*0.8em;*/
   color: #A1C2FA;
@@ -363,12 +367,34 @@ a.brand-logo {
   cursor: pointer;
 }
 
-#hidenotificationUpgrade
+.notifClose
 {
   position: relative;
   left: 4px;
   top: -4px;
   cursor: pointer;
+}
+
+.notificationDark
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  padding: 6px;
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #404040;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+
 }
 
 #divMsgAreaWrap

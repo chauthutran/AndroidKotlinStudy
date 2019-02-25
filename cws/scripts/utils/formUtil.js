@@ -730,7 +730,8 @@ FormUtil.performReget = function( regObj, option )
 {		
 	if ( ConnManager.isOffline() )
 	{
-		alert( 'Only re-register service-worker while online, please.' );
+		//alert( 'Only re-register service-worker while online, please.' );
+		MsgManager.notificationMessage ( 'Cannot re-register service worker when Network Offline', 'notificationDark', undefined, '', 'right', 'top' );
 	}
 	else
 	{
@@ -774,7 +775,8 @@ FormUtil.performReget = function( regObj, option )
 		}
 		else
 		{
-			alert( 'Reget Failed - service worker not found' );
+			//alert( 'Reget Failed - service worker not found' );
+			MsgManager.notificationMessage ( 'Reget Failed - service worker not found', 'notificationDark', undefined, '', 'right', 'top' );
 		}  
 	}
 }

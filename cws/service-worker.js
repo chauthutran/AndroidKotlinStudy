@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "3580f1d03bc872abfd27a0dd1fbfe8c7"
+    "revision": "e2bf2d39fe418c8bb64566374b7a1d7e"
   },
   {
     "url": "manifest.json",
@@ -328,15 +328,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "7a5076d0e50d8bc6d5ad5c1967ef2594"
+    "revision": "457b551c31e768ab235bdf12f7b0627b"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "333492abfe3cd30e0a1a5644f027022b"
+    "revision": "ae182d5990ac16c20990f3d2453c343d"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "e583f202322ce0e27b4066290e3f8a8a"
+    "revision": "0f58fe5d600965f430118a32163b6317"
   },
   {
     "url": "scripts/classes/block.js",
@@ -352,7 +352,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "cae57a09ac4735769198e4282b46ef59"
+    "revision": "679b5681999d6e2df4927d870e1cd967"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "24b9b0cbb1c3e8dd58edf55d8221faa0"
+    "revision": "c593be8b3b4c58a208be05b3c55a2a8e"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "ea08c88ce4de96bfcb86027090922a5b"
+    "revision": "afba44573ce738ddd92221d7c4b27d60"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "2b7a8c8476811d8ae68f5bcd109f13c1"
+    "revision": "1189dc66154d9ccc3f3d9c23d72090ef"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -440,7 +440,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "0c3e7a8cbbc58c130085b82efcbd2812"
+    "revision": "b5e35c85e991dd6d46c437fc73274084"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -448,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "45ecd9402cf0dfa6972fbebea8503dca"
+    "revision": "a9705303d87d999fc7c2d421c63768e7"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -500,7 +500,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "eff6d7ef2451bb51d6a7b55a33254802"
+    "revision": "253344008b1a396853a3da305f748461"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
