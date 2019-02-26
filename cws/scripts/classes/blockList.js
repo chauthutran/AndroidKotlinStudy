@@ -257,7 +257,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var trObj1 = $( '<tr>' );
 
                 //height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;
-                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'height:60px;width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
+                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'height:57px;width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
 
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
                 var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px;white-space:nowrap;" >' ); 

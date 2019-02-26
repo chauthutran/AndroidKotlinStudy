@@ -18,6 +18,7 @@ MsgManager.progressCheckCount = 0;
 MsgManager._autoHide = true;
 MsgManager._autoHideDelay = 5000; //changed to 5 sec by James (2018/12/17)
 MsgManager.timer = 0;
+MsgManager.clicktimer = 0;
 
 
 MsgManager.initialSetup = function()
@@ -121,20 +122,24 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide )
+MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick )
 {
     var unqID = Util.generateRandomId();
-    var notifDiv = $( '<div id="notif_' + unqID + '" class="'+messageType+' rounded" >' );
     var delayTimer;
+    var screenWidth = document.body.clientWidth; 
+    var screenHeight = document.body.clientHeight; 
+    var offsetPosition = ( screenWidth < 480 ? '0' : '4%' );
+    var optStyle = ( screenWidth < 480 ? 'style="width:100%;height:50px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ); //93% = 97% - 4% (offsetPosition)
+    var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="'+messageType+( screenWidth < 480 ? '' : ' rounded' )+'" >' );
 
     if ( Xpos )
     {
-        notifDiv.css( Xpos, '4%' );
+        notifDiv.css( Xpos, offsetPosition );
     }
 
     if ( Ypos )
     {
-        notifDiv.css( Ypos, '4%' );
+        notifDiv.css( Ypos, offsetPosition );
     }
 
     if ( styles )
@@ -150,7 +155,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
         }
     }
 
-    var Tbl = $( '<table>' );
+    var Tbl = $( '<table style="width:100%;padding:6px;">' );
     var tBody = $( '<tbody>' );
     var trBody = $( '<tr>' );
     var tdMessage = $( '<td>' );
@@ -170,12 +175,17 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
         tdAction.append ( '<span>&nbsp;</span>' );
 
         $( tdAction ).click ( () => {
+            if ( autoClick && MsgManager.clicktimer )
+            {
+                clearInterval( MsgManager.clicktimer );
+                MsgManager.clicktimer = 0;
+            }
             $( '#notif_' + unqID ).remove();
         });
 
     }
 
-    var tdClose = $( '<td>' );
+    var tdClose = $( '<td style="width:24px;">' );
     var notifClose = $( '<img class="" src="images/close_white.svg" >' );
     $( notifClose ).click ( () => {
         console.log( 'removing ' + '#notif_' + unqID  );
@@ -193,6 +203,42 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     else
     {
         delayTimer = MsgManager._autoHideDelay;
+    }
+
+    if ( actionButton && autoClick )
+    {
+        var stepCount = 100;
+
+        var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
+        $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
+
+        /* calculate+set smooth transition for progress */
+        $( dvTmr ).css( '-webkit-transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
+        $( dvTmr ).css( 'transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
+
+        notifDiv.append ( dvTmr );
+
+        $( actionButton ).css( 'text-decoration', 'underline' );
+        $( actionButton ).css( 'text-decoration-style', 'dotted' );
+
+        MsgManager.clicktimer = setInterval( function() {
+
+            var step = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'step') );
+            var steps = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'steps') );
+
+            step += 1;
+
+            $( '#notifClickProgress_' + unqID ).css( 'width', (( step / steps ) * 100) + '%' );
+            $( '#notifClickProgress_' + unqID ).attr( 'step', step );
+
+            if ( step >= stepCount )
+            {
+                $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
+                clearInterval( MsgManager.clicktimer );
+                MsgManager.clicktimer = 0;
+            }
+        }, (delayTimer / stepCount) );
+
     }
 
     if ( delayTimer > 0 )

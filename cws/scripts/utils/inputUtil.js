@@ -423,8 +423,11 @@ function inputMonitor( cwsRenderObj )
         $( startTouchTargetTag ).removeClass( 'rounded' );
         $( startTouchTargetTag ).addClass( 'transitionSmooth' );
 
+        //console.log( startTouchParentTag );
+
+        $( startTouchTargetTag ).detach();
         //reset: snap back to left position with other defaults
-        $( startTouchParentTag ).append(  $( startTouchTargetTag ).detach() );          
+        $( startTouchParentTag ).append( startTouchTargetTag );          
 
         $( startTouchTargetTag ).css( 'left', 'auto' );
         $( startTouchTargetTag ).css( 'top', 'initial' );

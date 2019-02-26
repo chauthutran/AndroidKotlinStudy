@@ -75,7 +75,6 @@ function cwsRender()
 	{
 
 		me.checkStayLoggedIn( function( lastSession, loginData ) {
-
 			me.processExistingloggedIn( lastSession, loginData );
 		},
 		function() {
@@ -132,11 +131,6 @@ function cwsRender()
 
 	me.setPageHeaderEvents = function()
 	{
-		// Connection manual change click event: ask first and manually change it.
-		/*me.divAppModeConnStatusTag.click( function() {
-			ConnManager.change_AppConnMode( "switch" );
-			return false;
-		});*/
 
 		me.configureMobileMenuIcon();
 		
@@ -285,7 +279,7 @@ function cwsRender()
 	me.startBlockExecute = function( configJson )
 	{
 
-		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.getAppConnMode_Online(), configJson );
+		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.networkSyncConditions(), configJson );
 
 		if ( me.areaList )
 		{

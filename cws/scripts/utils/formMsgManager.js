@@ -11,7 +11,11 @@ FormMsgManager.cssBlock_Body = {
     ,'-moz-border-radius': '10px'
     ,opacity: .4
     ,color: '#fff'
-    ,width: '200px'
+    ,width: ''
+    ,'white-space': 'nowrap'
+    ,'min-width': '35%'
+    ,'max-width': '300px'
+    ,overflow: 'display'
 };
 
 // basic 'block' with library '.blockUI'

@@ -45,19 +45,15 @@
 
   $( '#spanVersion' ).text( 'v' + _ver );
   
-/*
-  $( '#spanVersion' ).click( () => {
-
-    var btn = $( '<a class="notifBtn">CLICK HERE</a>' );
-
+  /*$( '#spanVersion' ).click( () => {
+    var btn = $('<a class="notifBtn">click me</a>');
     $( btn ).click( () => {
-      MsgManager.notificationMessage( 'you clicked here', 'notificationDark', undefined,'background-Color: blue;color:#fff', 'left', 'top' );
+     alert ('something');
     });
+    MsgManager.notificationMessage ( 'bodyMessage', 'notificationDark', btn, '', 'left', 'top', 10000, true )
 
-    MsgManager.notificationMessage( 'gregs first test notification', 'notificationDark', btn,'backgroundColor: #404040;color:#fff', 'right', 'top' );
-
-});
-*/
+  });*/
+  
   $( '.reget' ).click( () => {
     FormUtil.performReget( _registrationObj );
   });
@@ -67,7 +63,7 @@
   });
 
   // move to cwsRender 
-  $( '#btnUpgrade' ).click ( () => {
+ /* $( '#btnUpgrade' ).click ( () => {
 
     if ( FormUtil._getPWAInfo )
     {
@@ -84,7 +80,7 @@
       FormUtil.performReget( _registrationObj );
     }
 
-  });
+  });*/
 
   // move to cwsRender 
   $( '#hidenotificationUpgrade' ).click ( () => {
@@ -145,6 +141,45 @@
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
+
+      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+      // move to cwsRender 
+      $( btnUpgrade ).click ( () => {
+
+        if ( FormUtil._getPWAInfo )
+        {
+          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session )
+          {
+            DataManager.clearSessionStorage();
+          }
+      
+          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
+          {
+            FormUtil.swCacheReset();
+          }
+      
+          FormUtil.performReget( _registrationObj );
+        }
+
+      });
+
+      MsgManager.notificationMessage ( 'A new version of this app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+
+      /*
+      if ( document.body.clientWidth < 480 )
+      {
+        $( '#notificationUpgrade').css( 'width', '100%' );
+        $( '#notificationUpgrade').css( 'bottom', '0' );
+        $( '#notificationUpgrade').css( 'right', '0' );
+
+        $( '#notificationUpgrade').removeClass ( 'rounded' );
+      }
+      else
+      {
+        $( '#notificationUpgrade').addClass ( 'rounded' );
+      }
+
       $( '#notificationUpgrade').show( 'slow' );
 
       // hide automatically after 30seconds of no action
@@ -153,13 +188,14 @@
         {
           $( '#notificationUpgrade').hide( 'slow' );
         }
-      }, 15000 ); 
+      }, 15000 );
+      */
 
     }
-    else
+    /*else
     {
       $( '#notificationUpgrade').hide( 'slow' );
-    }
+    }*/
   };
 
   
