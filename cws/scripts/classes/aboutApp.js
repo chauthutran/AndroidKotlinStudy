@@ -46,6 +46,10 @@ function aboutApp( cwsRender )
         {
             me.defaultsInitialised = 1;
         }
+        else
+        {
+            me.defaultsInitialised = 0;
+        }
 
     }
 
@@ -409,6 +413,9 @@ function aboutApp( cwsRender )
                     $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
                 }
 
+                $( '#aboutInfo_networkMode_Less' ).show();
+                $( '#aboutInfo_networkMode_Less' ).removeClass( 'byPassAboutMore' );
+
                 $( '#aboutInfo_dcdVersion_Less' ).show();
                 $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
     
@@ -434,6 +441,9 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_userLanguage_Less' ).hide();
                 $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
             }
+
+            $( '#aboutInfo_networkMode_Less' ).hide();
+            $( '#aboutInfo_networkMode_Less' ).addClass( 'byPassAboutMore' );
 
             $( '#aboutInfo_dcdVersion_Less' ).hide();
             $( '#aboutInfo_dcdVersion_Less' ).addClass( 'byPassAboutMore' );
@@ -477,7 +487,7 @@ function aboutApp( cwsRender )
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
-        $( '#aboutInfo_networkMode' ).html( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) );
+        $( '#aboutInfo_networkMode' ).html( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
 
         if ( ! me.langTermObj.getLangList() )

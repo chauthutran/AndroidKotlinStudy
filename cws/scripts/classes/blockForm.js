@@ -221,6 +221,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if( formItemJson.rules !== undefined )
 		{
+
 			for( var i in formItemJson.rules )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
@@ -235,8 +236,8 @@ function BlockForm( cwsRenderObj, blockObj )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
 						titleTag.append("<span style='color:red;'> * </span>")
-					}	
-				}	
+					}
+				}
 				else if ( ruleJson.pattern )
 				{
 					var regxRuleJson = {};
@@ -244,13 +245,19 @@ function BlockForm( cwsRenderObj, blockObj )
 					regxRuleJson.msg = ruleJson.msg;
 					
 					regxRules.push( regxRuleJson );
-				} 
+				}
+				else
+				{
+					// all other custom attributes
+					var keys = Object.keys( ruleJson );
+					entryTag.attr( keys[ 0 ], ruleJson[ keys[ 0 ] ] );
+				}
 			}
 
 			if ( regxRules.length > 0 )
 			{
 				entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
-			} 
+			}
 		}
 
 	}

@@ -171,7 +171,6 @@ ConnManager.setUp_AppConnModeDetection = function() {
 			}
 			else
 			{
-				
 				/* USER CURRENTLY PROMPTED */
 				if ( ConnManager.IntvCountBuildUp == 60 ) //ConnManager.IntvCountBuildUp >= ConnManager.IntvCountCheckPoint && 
 				{
@@ -191,13 +190,13 @@ ConnManager.setUp_AppConnModeDetection = function() {
 
 					if ( debugMode ) console.log( 'Interval:setUp_AppConnModeDetection DIFFERENT network MODE vs actual ' + bNetworkOnline + '('+ConnManager.isOnline()+'), ConnManager.dataServer_Online: ' + ConnManager.dataServer_Online + ', ConnManager.appConnMode_Online: ' + ConnManager.appConnMode_Online + ', IntvCountBuildUp: ' + ConnManager.IntvCountBuildUp + ', ConnManager.dataServerDetect: ' + ConnManager.dataServerDetect + ', ConnManager.dataServer_timerID: ' + ConnManager.dataServer_timerID );
 				}
-				else
+				/*else
 				{
 					if ( ConnManager.IntvCountBuildUp > 60 )
 					{
 						ConnManager.cancelSwitchPrompt();
 					}
-				}
+				}*/
 			}
 		}
 
@@ -252,7 +251,7 @@ ConnManager.change_AppConnModePrompt = function( modeStr, requestConnMode )
 			ConnManager.switchPreDeterminedConnMode();
 		});
 
-		MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true );
+		MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManager.cancelSwitchPrompt );
 		ConnManager.connChangeAsked = true;
 	}
 
@@ -290,9 +289,11 @@ ConnManager.switchPreDeterminedConnMode = function()
 
 ConnManager.cancelSwitchPrompt = function()
 {
+	if ( debugMode ) console.log( 'ConnManager.cancelSwitchPrompt > ConnManager.connChangeAsked: ' + ConnManager.connChangeAsked );
+
 	ConnManager.changeConnModeStr = '';
 	ConnManager.connChangeAsked = false;
-	if ( debugMode ) console.log( 'ConnManager.cancelSwitchPrompt > ConnManager.connChangeAsked: ' + ConnManager.connChangeAsked );
+	ConnManager.IntvCountBuildUp = 0;
 }
 
 // ----------------------------------

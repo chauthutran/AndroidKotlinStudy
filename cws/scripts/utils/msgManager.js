@@ -122,12 +122,12 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick )
+MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick )
 {
     var unqID = Util.generateRandomId();
     var delayTimer;
-    var screenWidth = document.body.clientWidth; 
-    var screenHeight = document.body.clientHeight; 
+    var screenWidth = document.body.clientWidth;
+    var screenHeight = document.body.clientHeight;
     var offsetPosition = ( screenWidth < 480 ? '0' : '4%' );
     var optStyle = ( screenWidth < 480 ? 'style="width:100%;height:50px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ); //93% = 97% - 4% (offsetPosition)
     var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="'+messageType+( screenWidth < 480 ? '' : ' rounded' )+'" >' );
@@ -188,7 +188,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var tdClose = $( '<td style="width:24px;">' );
     var notifClose = $( '<img class="" src="images/close_white.svg" >' );
     $( notifClose ).click ( () => {
-        console.log( 'removing ' + '#notif_' + unqID  );
+        //console.log( 'removing ' + '#notif_' + unqID  );
+        if ( addtoCloseClick ) addtoCloseClick();
         $( '#notif_' + unqID ).remove();
     });
 

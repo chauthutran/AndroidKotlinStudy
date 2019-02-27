@@ -776,7 +776,16 @@ FormUtil.performReget = function( regObj, option )
 		else
 		{
 			//alert( 'Reget Failed - service worker not found' );
-			MsgManager.notificationMessage ( 'Reget Failed - service worker not found', 'notificationDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'Service worker not found, reloading app', 'notificationDark', undefined, '', 'right', 'top' );
+
+			if ( FormUtil.PWAlaunchFrom == 'homeScreen')
+			{
+				location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+			}
+			else
+			{
+				location.reload( true );
+			}
 		}  
 	}
 }

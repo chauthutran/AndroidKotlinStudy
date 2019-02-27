@@ -141,7 +141,7 @@
   function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-    console.log( _ver , latestVersionStr);
+    //console.log( _ver , latestVersionStr);
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
@@ -164,6 +164,7 @@
           }
       
           FormUtil.performReget( _registrationObj );
+
         }
 
       });
