@@ -204,8 +204,15 @@ function Login( cwsRenderObj )
 			}
 			else
 			{
-				//alert( 'Offline Login Failed - userName/pin does not match' );
-				MsgManager.notificationMessage ( 'No network connection > cannot login', 'notificationDark', undefined, '', 'right', 'top' );
+				if ( !ConnManager.isOnline() )
+				{
+					//alert( 'Offline Login Failed - userName/pin does not match' );
+					MsgManager.notificationMessage ( 'No network connection > cannot login', 'notificationDark', undefined, '', 'right', 'top' );
+				}
+				else
+				{
+					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationDark', undefined, '', 'right', 'top' );
+				}
 			}
 			/* END > Added by Greg: 2018/11/26 */
 		}

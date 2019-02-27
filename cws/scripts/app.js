@@ -5,6 +5,7 @@
   const _cwsRenderObj = new cwsRender();
   
   window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
+  var debugMode = true;
 
   //const _testSection = new testSection();
 
@@ -29,6 +30,7 @@
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
       window._syncManager.initialize( _cwsRenderObj );
+      
 
     });
 
@@ -105,13 +107,14 @@
       FormUtil.getAppInfo( function( success, jsonData ) 
       {
         FormMsgManager.appUnblock();
+        if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
 
         if ( jsonData )
         {
 
           FormUtil._getPWAInfo = jsonData;
 
-          console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
+          if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
 
           // App version check and possibly reload into the new version
           appVersionUpgradeReview( jsonData );
@@ -125,9 +128,10 @@
     }
     else
     {
-
-      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": "1.0.0.400"};
+      if ( debugMode ) console.log('not PSI server')
+      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
       appVersionUpgradeReview(FormUtil._getPWAInfo );
+      FormMsgManager.appUnblock();
       returnFunc();
     }
 
@@ -137,7 +141,7 @@
   function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-
+    console.log( _ver , latestVersionStr);
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {

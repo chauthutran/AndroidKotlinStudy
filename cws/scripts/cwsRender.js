@@ -59,6 +59,8 @@ function cwsRender()
  
 	me._translateEnable = true;
 
+	var debugMode = false;
+
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
@@ -73,11 +75,13 @@ function cwsRender()
 
 	me.render = function()
 	{
-
+		if ( debugMode ) console.log( 'cwsRender.render()' );
 		me.checkStayLoggedIn( function( lastSession, loginData ) {
 			me.processExistingloggedIn( lastSession, loginData );
+			if ( debugMode ) console.log( 'cwsRender.render() > processExistingLoggedIn' );
 		},
 		function() {
+			if ( debugMode ) console.log( 'cwsRender.render() > showLoginForm' );
 			me.showLoginForm();
 		});
 

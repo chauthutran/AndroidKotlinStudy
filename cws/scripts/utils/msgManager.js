@@ -211,6 +211,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
         var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
         $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
+        $( dvTmr ).css( 'top', ( screenWidth < 480 ? '-2px' : '2px' ) );
 
         /* calculate+set smooth transition for progress */
         $( dvTmr ).css( '-webkit-transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );

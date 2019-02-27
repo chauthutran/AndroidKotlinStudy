@@ -402,7 +402,6 @@ a.brand-logo {
   height:2px;
   width:0px;
   position:relative;
-  top:2px;
   opacity:0.75;
   /*-webkit-transition: width 50ms; /* For Safari 3.1 to 6.0 */
   /*transition: width 50ms;*/

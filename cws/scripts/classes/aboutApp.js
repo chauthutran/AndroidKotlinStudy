@@ -477,6 +477,7 @@ function aboutApp( cwsRender )
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
+        $( '#aboutInfo_networkMode' ).html( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
 
         if ( ! me.langTermObj.getLangList() )

@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "060fc18ac6ab4a52eb9841c2ae8e84cc"
+    "revision": "83ca4f93f3823558e65acbfcece87ebb"
   },
   {
     "url": "manifest.json",
@@ -328,11 +328,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "7a4392f1c563016207d7ef9202d8226d"
+    "revision": "45844a324c1620438abab5876bbddbb8"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "ae182d5990ac16c20990f3d2453c343d"
+    "revision": "8e6d475791e231e50f4beb40547bdd86"
   },
   {
     "url": "scripts/classes/action.js",
@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "c593be8b3b4c58a208be05b3c55a2a8e"
+    "revision": "3fad189a612073aee53c390fc460d1dd"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1a0a1a0e6c6db0e9a78d0c26b30956f6"
+    "revision": "e7a4240ce308956fe9916bde0dfb1588"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "ac7b7a63ce79515f4b894682071b57b2"
+    "revision": "3647f5b6131c3a7d9ebb4028140959e1"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -448,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "2a064574ea1fe6f57b2a02a157405536"
+    "revision": "42cc4b28daa23c401d4775f5525b1df8"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -500,7 +500,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "aca16199dd8ff75af98eb6ec1da82638"
+    "revision": "048db8c73643532e502db25aee590776"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
