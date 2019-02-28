@@ -351,8 +351,9 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 				ConnManager.dataServer_Online = false;
 			}
 
-			if ( forceDataServerOnline != undefined ) ConnManager.dataServer_Online = forceDataServerOnline;
-			if ( debugMode ) console.log( 'DataServerOnline > dataServer_Online:' + ConnManager.dataServer_Online );
+			if ( debugMode ) console.log( jsonData );
+			//if ( forceDataServerOnline != undefined ) ConnManager.dataServer_Online = forceDataServerOnline;
+			if ( debugMode ) console.log( 'DataServerOnline > dataServer_Online:' + ConnManager.dataServer_Online + ', ConnManager.network_Online:' + ConnManager.network_Online );
 
 			if ( ConnManager.network_Online != ConnManager.dataServer_Online )
 			{
@@ -376,14 +377,14 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 			else
 			{
 				//if ( debugMode ) console.log( 'got here: ' + ConnManager.dataServer_Online  );
-				if ( debugMode ) console.log( FormUtil.checkLogin() );
+				//if ( debugMode ) console.log( FormUtil.checkLogin() );
 				if ( FormUtil.checkLogin() && ConnManager.dataServer_Online && !ConnManager.getAppConnMode_Online() && !ConnManager.connChangeAsked )
 				{
 					ConnManager.changeConnModeTo = "online";
 					ConnManager.changeConnModeStr = "interval";
 					//ConnManager.switchPreDeterminedConnMode();
 					ConnManager.change_AppConnModePrompt( "interval", true );
-			}
+				}
 			}
 
 			ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );

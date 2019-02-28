@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "04b1f236d5005b996b4ea940fb89bb93"
+    "revision": "9da54c6bfbeb09bc2f7ff4d50b67c681"
   },
   {
     "url": "manifest.json",
@@ -348,7 +348,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "c739d819b5b799c2a8f02ea2d2ef6281"
+    "revision": "e20cd636e4fbb574a3ad4ee5f76c4849"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "741ce30896327db8519841332eff4707"
+    "revision": "c03668b46cabd21880c875ea29626a1b"
   },
   {
     "url": "scripts/utils/dataManager.js",

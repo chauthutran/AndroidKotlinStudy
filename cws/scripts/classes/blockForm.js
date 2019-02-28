@@ -221,23 +221,23 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if( formItemJson.rules !== undefined )
 		{
-
+			console.log( formItemJson.rules );
 			for( var i in formItemJson.rules )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
-
+				console.log( ruleDef );
 				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, me.cwsRenderObj.configJson.definitionRules );
 
 				if ( ruleJson.name )
 				{
 					entryTag.attr( ruleJson.name, ruleJson.value );
-					
+
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
 						titleTag.append("<span style='color:red;'> * </span>")
-					}
-				}
+					}	
+				}	
 				else if ( ruleJson.pattern )
 				{
 					var regxRuleJson = {};
@@ -246,18 +246,22 @@ function BlockForm( cwsRenderObj, blockObj )
 					
 					regxRules.push( regxRuleJson );
 				}
-				else
+
+				if ( ruleJson.type )
 				{
 					// all other custom attributes
-					var keys = Object.keys( ruleJson );
-					entryTag.attr( keys[ 0 ], ruleJson[ keys[ 0 ] ] );
+					//var keys = Object.keys( ruleJson );
+					//entryTag.attr( keys[ 0 ], ruleJson[ keys[ 0 ] ] );
+
+					entryTag.attr( "type", ruleJson.type );
+
 				}
 			}
 
 			if ( regxRules.length > 0 )
 			{
 				entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
-			}
+			} 
 		}
 
 	}
