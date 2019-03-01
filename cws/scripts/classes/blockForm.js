@@ -221,11 +221,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if( formItemJson.rules !== undefined )
 		{
-			console.log( formItemJson.rules );
+			//console.log( formItemJson.rules );
 			for( var i in formItemJson.rules )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
-				console.log( ruleDef );
+				//console.log( ruleDef );
 				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, me.cwsRenderObj.configJson.definitionRules );
 
 				if ( ruleJson.name )
@@ -243,7 +243,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					var regxRuleJson = {};
 					regxRuleJson.pattern = ruleJson.pattern;
 					regxRuleJson.msg = ruleJson.msg;
-					
+
 					regxRules.push( regxRuleJson );
 				}
 

@@ -296,6 +296,7 @@ function Login( cwsRenderObj )
 		}
 
 		me.cwsRenderObj.renderDefaultTheme();
+		ConnManager.setUp_dataServerModeDetection();
 
 		FormUtil.hideProgressBar();
 

@@ -186,7 +186,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     }
 
     var tdClose = $( '<td style="width:24px;">' );
-    var notifClose = $( '<img class="" src="images/close_white.svg" >' );
+    var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
     $( notifClose ).click ( () => {
         //console.log( 'removing ' + '#notif_' + unqID  );
         if ( addtoCloseClick ) addtoCloseClick();
@@ -209,12 +209,15 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     if ( actionButton && autoClick )
     {
         var stepCount = 100;
-
+        var notifProgressOpacInitial = 0.5;
         var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
+
         $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
         $( dvTmr ).css( 'top', ( screenWidth < 480 ? '-2px' : '2px' ) );
+        $( dvTmr ).css( 'opacity', notifProgressOpacInitial );
+        $( dvTmr ).attr( 'hot', 0 );
 
-        /* calculate+set smooth transition for progress */
+        /* calculate+set smooth transition for progress expansion */
         $( dvTmr ).css( '-webkit-transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
         $( dvTmr ).css( 'transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
 
@@ -225,20 +228,58 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
         MsgManager.clicktimer = setInterval( function() {
 
-            var step = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'step') );
-            var steps = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'steps') );
-
-            step += 1;
-
-            $( '#notifClickProgress_' + unqID ).css( 'width', (( step / steps ) * 100) + '%' );
-            $( '#notifClickProgress_' + unqID ).attr( 'step', step );
-
-            if ( step >= stepCount )
+            if ( step > stepCount )
             {
-                $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
-                clearInterval( MsgManager.clicktimer );
-                MsgManager.clicktimer = 0;
+                //do nothing, do not increment width, do not change this line of code
             }
+            else
+            {
+                var step = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'step') );
+                var steps = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'steps') );
+
+                step += 1;
+
+                $( '#notifClickProgress_' + unqID ).css( 'width', ( ( step / steps ).toFixed(2) * 100) + '%' );
+                $( '#notifClickProgress_' + unqID ).attr( 'step', step );
+
+                if ( ( step / steps ).toFixed(2) > notifProgressOpacInitial )
+                {
+                    /*if ( ( step / steps ).toFixed(2) > 0.85 )
+                    {
+                        if ( $( '#notifClickProgress_' + unqID ).attr( 'hot' ) > 0 )
+                        {
+                            $( '#notifClickProgress_' + unqID ).attr( 'hot', 0)
+                            //$( '#notifClickProgress_' + unqID ).attr( 'background', '-webkit-linear-gradient(top,' + $( '#notifClickProgress_' + unqID ).css( 'background-color' ) + ',' + $( actionButton ).css( 'color' ) + ')' );
+                            $( '#notifClickProgress_' + unqID ).css( 'opacity', ( ( step / steps ).toFixed(2) / 1.5 ) );
+                        }
+                        else
+                        {
+                            $( '#notifClickProgress_' + unqID ).attr( 'hot', 1)
+                            $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
+                        }
+                    }
+                    else*/
+                    {
+                        $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
+                    }
+                }
+
+                if ( step >= stepCount )
+                {
+                    $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
+                    clearInterval( MsgManager.clicktimer );
+                    MsgManager.clicktimer = 0;
+
+                    /*console.log( 'creating timeOut: step > stepCount: ' + (new Date() ).toISOString() );
+                    setTimeout( function() {
+                        console.log( 'running timeOut: step > stepCount: ' + (new Date() ).toISOString() );
+                        $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
+                        clearInterval( MsgManager.clicktimer );
+                        MsgManager.clicktimer = 0;
+                      }, 500 );*/
+                }
+            }
+            
         }, (delayTimer / stepCount) );
 
     }

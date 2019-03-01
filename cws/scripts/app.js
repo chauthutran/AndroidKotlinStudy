@@ -129,7 +129,10 @@
     else
     {
       if ( debugMode ) console.log('not PSI server')
-      FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
+      if ( ! FormUtil._getPWAInfo )
+      {
+        FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
+      }
       appVersionUpgradeReview(FormUtil._getPWAInfo );
       FormMsgManager.appUnblock();
       returnFunc();
@@ -153,54 +156,36 @@
 
         if ( FormUtil._getPWAInfo )
         {
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session )
+          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session && FormUtil._getPWAInfo.reloadInstructions.session == "true" )
           {
+            if ( debugMode ) console.log( 'btnRefresh > DataManager.clearSessionStorage() ' );
             DataManager.clearSessionStorage();
           }
-      
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
+
+          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches && FormUtil._getPWAInfo.reloadInstructions.allCaches == "true" )
           {
+            if ( debugMode ) console.log( 'btnRefresh > FormUtil.swCacheReset() ' );
             FormUtil.swCacheReset();
           }
-      
-          FormUtil.performReget( _registrationObj );
 
+          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.serviceWorker && FormUtil._getPWAInfo.reloadInstructions.serviceWorker == "true" )
+          {
+            if ( debugMode ) console.log( 'btnRefresh > _cwsRenderObj.reGetAppShell() ' );
+            _cwsRenderObj.reGetAppShell();
+          }
+          else
+          {
+            if ( debugMode ) console.log( 'btnRefresh > FormUtil.performReget( _registrationObj ) ' );
+            FormUtil.performReget( _registrationObj );
+          }
         }
 
       });
 
       MsgManager.notificationMessage ( 'A new version of this app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
 
-      /*
-      if ( document.body.clientWidth < 480 )
-      {
-        $( '#notificationUpgrade').css( 'width', '100%' );
-        $( '#notificationUpgrade').css( 'bottom', '0' );
-        $( '#notificationUpgrade').css( 'right', '0' );
-
-        $( '#notificationUpgrade').removeClass ( 'rounded' );
-      }
-      else
-      {
-        $( '#notificationUpgrade').addClass ( 'rounded' );
-      }
-
-      $( '#notificationUpgrade').show( 'slow' );
-
-      // hide automatically after 30seconds of no action
-      setTimeout( function() {
-        if ( $( '#notificationUpgrade').is(':visible') )
-        {
-          $( '#notificationUpgrade').hide( 'slow' );
-        }
-      }, 15000 );
-      */
-
     }
-    /*else
-    {
-      $( '#notificationUpgrade').hide( 'slow' );
-    }*/
+    
   };
 
   

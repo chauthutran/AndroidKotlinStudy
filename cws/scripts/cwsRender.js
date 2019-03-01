@@ -130,7 +130,6 @@ function cwsRender()
 		{
 			me.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' ); 
 		}
-
 	}
 
 	me.setPageHeaderEvents = function()

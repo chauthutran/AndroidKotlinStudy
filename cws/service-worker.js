@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "9da54c6bfbeb09bc2f7ff4d50b67c681"
+    "revision": "397fefaccd8e637332e524037c17723b"
   },
   {
     "url": "manifest.json",
@@ -328,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "3ff357d07641f7be816c9774186d85a6"
+    "revision": "8eb5e9a080c6180aea12b982e206fdad"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -348,7 +348,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "e20cd636e4fbb574a3ad4ee5f76c4849"
+    "revision": "0a26285440d155c5424f18f50226a106"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "3fad189a612073aee53c390fc460d1dd"
+    "revision": "cf6b54021465c2bc0fd9f77aff8a8b5a"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -380,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "6cb0a234fa70f67d6c144ecbe6c5e181"
+    "revision": "1c3b5bfec2865fdd976945acea9a9d3f"
   },
   {
     "url": "scripts/classes/test.json",
@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "e7a4240ce308956fe9916bde0dfb1588"
+    "revision": "07762c76511f90f3faf5bb33ed9307fe"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "c03668b46cabd21880c875ea29626a1b"
+    "revision": "b71db89d39f558cc555881d10a9aa034"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -448,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "569f4f1d8a19a7d23f995b9eb0cab208"
+    "revision": "0fe36f8f07f5954002bf4dc32133a886"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -500,13 +500,12 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "048db8c73643532e502db25aee590776"
+    "revision": "8aea9860fca42031e8506ac4b095f73f"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/\.(js|json|css|html|svg|gif|png)/, workbox.strategies.cacheFirst({ "cacheName":"appShell", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"gFonts", plugins: [] }), 'GET');
 
 workbox.googleAnalytics.initialize({});

@@ -163,6 +163,7 @@ function statistics( cwsRender )
 			,error: function( response, textStatus )
 			{
 				console.log( 'Failed to retrieve report.' );
+				MsgManager.notificationMessage ( 'Failed to retrieve report > error connecting', 'notificationDark', undefined, '', 'left', 'top' )
 				me.cwsRenderObj.pulsatingProgress.hide();
 				// if ( textStatus !== "abort" )					
 			}		
