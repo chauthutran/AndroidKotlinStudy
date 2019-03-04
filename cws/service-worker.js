@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "397fefaccd8e637332e524037c17723b"
+    "revision": "15ebf8cf69e85c2414a6131a7dd674a7"
   },
   {
     "url": "manifest.json",
@@ -328,11 +328,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "8eb5e9a080c6180aea12b982e206fdad"
+    "revision": "386121dbcfae946bb08314bc7e91700b"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7944a0b4556e5f341b5ff02f5e6bfbb7"
+    "revision": "e319120d49aa1ca3bb364ffba7a40ab5"
   },
   {
     "url": "scripts/classes/action.js",
@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "07762c76511f90f3faf5bb33ed9307fe"
+    "revision": "cf0eee8ab778dac00fc20f87cda8aad3"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "b71db89d39f558cc555881d10a9aa034"
+    "revision": "3ef7976c0f180a23999d28f290d04bb7"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -444,11 +444,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "0a6c665d7201026a61e714530444ea9b"
+    "revision": "9aa1966de7cd2fc172e5962fb90b9494"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "0fe36f8f07f5954002bf4dc32133a886"
+    "revision": "b8eb54b292a7eac851c053a568937016"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -456,7 +456,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "1d6d79dd4b91b8fd90a3c3af96b3ba07"
+    "revision": "ebd6d183344a9c4788bc0d8ac2a60678"
   },
   {
     "url": "scripts/utils/util.js",
@@ -500,7 +500,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "8aea9860fca42031e8506ac4b095f73f"
+    "revision": "64e225ddc6eb4822e304147e17a959d3"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

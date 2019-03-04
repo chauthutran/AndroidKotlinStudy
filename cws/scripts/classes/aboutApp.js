@@ -514,7 +514,7 @@ function aboutApp( cwsRender )
                         });
 
                         questionStr = "Force network mode switch?";
-                        MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true, 10000 );
+                        MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
 
                     }
 
