@@ -19,7 +19,7 @@ function aboutApp( cwsRender )
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
     me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
 
-
+    me.easterEgg1Timer = 0;
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -393,14 +393,18 @@ function aboutApp( cwsRender )
 
     me.renderNonEssentialFields = function( userLoggedIn )
     {
-        //console.log( 'me.defaultsInitialised: ' + me.defaultsInitialised + ', userLoggedIn: ' + userLoggedIn);
-    
+
         if ( userLoggedIn )
         {
-            //$( '#li_about_userLanguage' ).show();
 
             if ( me.defaultsInitialised == 0 )
             {
+
+                $( '#aboutInfo_dcdVersion_Less' ).show();
+                $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
+    
+                $( '#aboutInfo_network_Less' ).show();
+                $( '#aboutInfo_network_Less' ).removeClass( 'byPassAboutMore' )
 
                 if ( me.langTermObj.getLangList() )
                 {
@@ -413,23 +417,22 @@ function aboutApp( cwsRender )
                     $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
                 }
 
-                $( '#aboutInfo_networkMode_Less' ).show();
-                $( '#aboutInfo_networkMode_Less' ).removeClass( 'byPassAboutMore' );
-
-                $( '#aboutInfo_dcdVersion_Less' ).show();
-                $( '#aboutInfo_dcdVersion_Less' ).removeClass( 'byPassAboutMore' );
-    
                 $( '#aboutInfo_theme_Less' ).show();
                 $( '#aboutInfo_theme_Less' ).removeClass( 'byPassAboutMore' )
 
-                $( '#aboutInfo_network_Less' ).show();
-                $( '#aboutInfo_network_Less' ).removeClass( 'byPassAboutMore' )
+                $( '#aboutInfo_networkMode_Less' ).show();
+                $( '#aboutInfo_networkMode_Less' ).removeClass( 'byPassAboutMore' );
 
             }
         }
         else
         {
-            //$( '#li_about_userLanguage' ).hide();
+
+            $( '#aboutInfo_dcdVersion_Less' ).hide();
+            $( '#aboutInfo_dcdVersion_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_networkMode_Less' ).hide();
+            $( '#aboutInfo_networkMode_Less' ).addClass( 'byPassAboutMore' );
 
             if ( me.langTermObj.getLangList() )
             {
@@ -442,12 +445,6 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_userLanguage_Less' ).addClass( 'byPassAboutMore' );
             }
 
-            $( '#aboutInfo_networkMode_Less' ).hide();
-            $( '#aboutInfo_networkMode_Less' ).addClass( 'byPassAboutMore' );
-
-            $( '#aboutInfo_dcdVersion_Less' ).hide();
-            $( '#aboutInfo_dcdVersion_Less' ).addClass( 'byPassAboutMore' );
-
             $( '#aboutInfo_theme_Less' ).hide();
             $( '#aboutInfo_theme_Less' ).addClass( 'byPassAboutMore' );
 
@@ -455,7 +452,86 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_network_Less' ).addClass( 'byPassAboutMore' )
 
         }
-    
+
+        if ( ! $( '#aboutInfo_networkMode' ).attr( 'unselectable' )  )
+        {
+            $( '#aboutInfo_networkMode' ).attr( 'unselectable', 'on' );
+            $( '#aboutInfo_networkMode' ).css( 'user-select', 'none' );
+            $( '#aboutInfo_networkMode' ).on( 'selectstart', false );
+
+            $( '#aboutInfo_networkMode' ).click( () => {
+
+                if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) )
+                {
+
+                    if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) < 4 )
+                    {
+                        console.log( ConnManager.getAppConnMode_Online() );
+                        console.log( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) );
+                        var incr = parseInt( $( '#aboutInfo_networkMode' ).attr( 'counter' ) );
+                        incr ++;
+                        $( '#aboutInfo_networkMode' ).attr( 'counter', incr );
+
+                        if ( me.easterEgg1Timer )
+                        {
+                            clearTimeout( me.easterEgg1Timer );
+                        }
+                        me.easterEgg1Timer = setTimeout( function() {
+                            $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
+                        }, 3000 );
+                    }
+                    else
+                    {
+                        if ( me.easterEgg1Timer )
+                        {
+                            clearTimeout( me.easterEgg1Timer );
+                        }
+
+                        $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
+
+                        var requestConnMode;
+
+                        if ( $( '#aboutInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() )
+                        {
+                            // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
+                            requestConnMode = ! ConnManager.getAppConnMode_Online();
+                        }
+                        else
+                        {
+                            // current setting is NOT actual network condition setting > prompt to change back
+                            requestConnMode = ConnManager.getAppConnMode_Online();
+                        }
+
+                        ConnManager.changeConnModeTo = requestConnMode;
+                        ConnManager.changeConnModeStr = "switch";
+                        ConnManager.setUserNetworkMode( requestConnMode );
+
+                        var btnSwitch = $( '<a class="notifBtn" term=""> ' + ConnManager.connStatusStr( requestConnMode ).toUpperCase() + ' </a>');
+
+                        $( btnSwitch ).click ( () => {
+                            ConnManager.userNetworkMode = true;
+                            ConnManager.switchPreDeterminedConnMode();
+                        });
+
+                        questionStr = "Force network mode switch?";
+                        MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true, 10000 );
+
+                    }
+
+                }
+                else
+                {
+                    $( '#aboutInfo_networkMode' ).attr( 'counter', 1 )
+
+                    me.easterEgg1Timer = setTimeout( function() {
+                        $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
+                    }, 3000 );
+                }
+
+            });
+
+        }
+
     }
 
     me.populateAboutPageData = function( dcdConfig ) 
@@ -483,11 +559,10 @@ function aboutApp( cwsRender )
             //$( '#aboutInfo_theme_Less' ).hide();
         }
 
-
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
-        $( '#aboutInfo_networkMode' ).html( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() );
+        $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
 
         if ( ! me.langTermObj.getLangList() )

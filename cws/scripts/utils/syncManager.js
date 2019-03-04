@@ -204,7 +204,7 @@ function syncManager()
 
 		var queryLoc = FormUtil.getWsUrl( '/api/getPWAInfo' ); 
         var loadingTag = undefined;
-        
+
         if ( ConnManager.isOnline() )
         {
             // Do silently?  translate it afterwards?  <-- how do we do this?

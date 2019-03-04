@@ -99,7 +99,7 @@
   function appInfoOperation( returnFunc ) 
   {
     // Only online mode and by app.psi-mis.org, check the version diff.
-    if ( ConnManager.getAppConnMode_Online() && FormUtil.isAppsPsiServer() )
+    if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
 
       FormMsgManager.appBlock( "Loading App Data..." );
@@ -126,7 +126,7 @@
         returnFunc();
       });
     }
-    else
+    /*else
     {
       if ( debugMode ) console.log('not PSI server')
       if ( ! FormUtil._getPWAInfo )
@@ -136,7 +136,7 @@
       appVersionUpgradeReview(FormUtil._getPWAInfo );
       FormMsgManager.appUnblock();
       returnFunc();
-    }
+    }*/
 
   };
 
@@ -144,7 +144,7 @@
   function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-    //console.log( _ver , latestVersionStr);
+    console.log( _ver , latestVersionStr);
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
@@ -168,16 +168,16 @@
             FormUtil.swCacheReset();
           }
 
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.serviceWorker && FormUtil._getPWAInfo.reloadInstructions.serviceWorker == "true" )
+          //if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.serviceWorker && FormUtil._getPWAInfo.reloadInstructions.serviceWorker == "true" )
           {
             if ( debugMode ) console.log( 'btnRefresh > _cwsRenderObj.reGetAppShell() ' );
             _cwsRenderObj.reGetAppShell();
           }
-          else
+          /*else
           {
             if ( debugMode ) console.log( 'btnRefresh > FormUtil.performReget( _registrationObj ) ' );
             FormUtil.performReget( _registrationObj );
-          }
+          }*/
         }
 
       });

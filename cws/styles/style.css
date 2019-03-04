@@ -312,6 +312,19 @@ img.round:hover{
   background-color: #666666;
 }
 
+.flipVertical {
+  /* Safari */
+  -webkit-transform: rotate(-180deg);
+  /* Firefox */
+  -moz-transform: rotate(-180deg);
+  /* IE */
+  -ms-transform: rotate(-180deg);
+  /* Opera */
+  -o-transform: rotate(-180deg);
+  /* Internet Explorer */
+  /*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);*/
+  }
+
 .tableStats
 {
   width:97%;
@@ -371,7 +384,7 @@ img.round:hover{
 .notifBtn
 {
   font-size: calc(14px + 0.2vw);; /*0.8em;*/
-  color: #A1C2FA;
+  color: #8AB4F8;
   padding: 10px 4px 10px 4px;
   cursor: pointer;
 }

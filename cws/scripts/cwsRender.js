@@ -281,8 +281,8 @@ function cwsRender()
 
 	me.startBlockExecute = function( configJson )
 	{
-
-		me.areaList = ConfigUtil.getAreaListByStatus( ConnManager.networkSyncConditions(), configJson );
+		console.log( 'menu prep: ' + ConnManager.userNetworkMode_Online + ' vs ' + ConnManager.networkSyncConditions() + ' = ' + ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ) );
+		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
 
 		if ( me.areaList )
 		{
@@ -419,6 +419,11 @@ function cwsRender()
 			}	
 		}
 
+		if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
+		{
+			me.navDrawerDivTag.append( '<div style="padding:10px;font-size:11px;color:#A0A0A0"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+		}
+
 		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
 		return startMenuTag;
@@ -435,11 +440,11 @@ function cwsRender()
 		{
 			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
-				if ( FormUtil.PWAlaunchFrom == 'homeScreen')
+				/*if ( FormUtil.PWAlaunchFrom == 'homeScreen')
 				{
 					location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
 				}
-				else
+				else*/
 				{
 					location.reload( true );
 				}

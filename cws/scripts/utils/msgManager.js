@@ -210,6 +210,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     {
         var stepCount = 100;
         var notifProgressOpacInitial = 0.5;
+        var thresholdFlash = 0.85;
         var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
 
         $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
@@ -244,13 +245,12 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
                 if ( ( step / steps ).toFixed(2) > notifProgressOpacInitial )
                 {
-                    /*if ( ( step / steps ).toFixed(2) > 0.85 )
+                    if ( ( step / steps ).toFixed(2) > thresholdFlash )
                     {
                         if ( $( '#notifClickProgress_' + unqID ).attr( 'hot' ) > 0 )
                         {
                             $( '#notifClickProgress_' + unqID ).attr( 'hot', 0)
-                            //$( '#notifClickProgress_' + unqID ).attr( 'background', '-webkit-linear-gradient(top,' + $( '#notifClickProgress_' + unqID ).css( 'background-color' ) + ',' + $( actionButton ).css( 'color' ) + ')' );
-                            $( '#notifClickProgress_' + unqID ).css( 'opacity', ( ( step / steps ).toFixed(2) / 1.5 ) );
+                            $( '#notifClickProgress_' + unqID ).css( 'opacity', notifProgressOpacInitial );
                         }
                         else
                         {
@@ -258,7 +258,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
                             $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
                         }
                     }
-                    else*/
+                    else
                     {
                         $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
                     }
