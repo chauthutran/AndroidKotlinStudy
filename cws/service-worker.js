@@ -36,7 +36,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "0b8bf8eaaeba806babe1c84dbab0bed1"
+    "revision": "1a86491ed8d4563d42552b5bfa0ecef1"
   },
   {
     "url": "css/style.css",
@@ -316,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "15ebf8cf69e85c2414a6131a7dd674a7"
+    "revision": "a05876b4057605b9c091e34a926cac85"
   },
   {
     "url": "manifest.json",
@@ -324,11 +324,11 @@ self.__precacheManifest = [
   },
   {
     "url": "redeemGen.html",
-    "revision": "52b753260a5cf099e49977576b2870f1"
+    "revision": "6fe2857de0696862303e812d23518bac"
   },
   {
     "url": "scripts/app.js",
-    "revision": "386121dbcfae946bb08314bc7e91700b"
+    "revision": "a3f62a3cd6b70c69fa8b38e262ddd644"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -352,7 +352,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "58e010e8ae7d45e74f9f38c8c0bf6092"
+    "revision": "1f45e8850e493145bdefb973bf355d7b"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -392,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "cf0eee8ab778dac00fc20f87cda8aad3"
+    "revision": "0ebbe3adf50a97f7772c8e848ad7f9f1"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "3ef7976c0f180a23999d28f290d04bb7"
+    "revision": "6142444449477c7a61c8c9cc40a8ebcc"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -440,11 +440,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "d620b9c61e39a79f4d16d63fc9ee8245"
+    "revision": "9d86c04fd8d930f5ab01f8e070363900"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "9aa1966de7cd2fc172e5962fb90b9494"
+    "revision": "641b59301d3283b003fab1e5181b9ca6"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -456,7 +456,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "ebd6d183344a9c4788bc0d8ac2a60678"
+    "revision": "2c22cabcdfe3583e3593df0310afb84a"
   },
   {
     "url": "scripts/utils/util.js",

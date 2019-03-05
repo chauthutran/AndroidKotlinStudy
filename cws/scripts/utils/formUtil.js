@@ -1119,3 +1119,24 @@ FormUtil.shareApp = function() {
         location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + ' - ') + location.href
     }
 }
+
+FormUtil.testNewSWavailable = function()
+{
+	console.log( 'testing new SW available ');
+	window['isUpdateAvailable']
+	.then(isAvailable => {
+		console.log( ' ~ SW isUpdateAvailable: ' + isAvailable );
+	  if (isAvailable) {
+  
+		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+  
+		// move to cwsRender 
+		$( btnUpgrade ).click ( () => {
+		  location.reload( true );
+		});
+  
+		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
+	  }
+	});
+
+}

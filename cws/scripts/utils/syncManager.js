@@ -25,6 +25,7 @@ function syncManager()
 
     me.pauseProcess = false;
     me.lastSyncAttempt = 0;
+    me.lastSyncSuccess = 0;
 
     var syncAutomationInteruptedTimer = 0;
     var progClass;
@@ -353,6 +354,8 @@ function syncManager()
         var itemData = me.dataCombine[ listItem ];
         var itemClone;
 
+        if ( debugMode ) console.log( itemData );
+
         if ( itemData )
         {
             itemClone = JSON.parse( JSON.stringify( itemData ) );
@@ -371,6 +374,7 @@ function syncManager()
                 else
                 {
                     //MsgManager.msgAreaShow( ' network TEST LIMIT exceeded: ' + me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
+                    if ( debugMode ) console.log( 'itemData.networkAttempt: ' + itemData.networkAttempt );
                 }
             }
         }
@@ -384,15 +388,19 @@ function syncManager()
         {
             if ( !me.pauseProcess && ConnManager.networkSyncConditions() )
             {
+                if ( debugMode ) console.log( bProcess + ',' + me.pauseProcess );
                 me.pauseProcess = false;
             }
         }
+
+        if ( debugMode ) console.log( (ConnManager.networkSyncConditions()) + ': ' + bProcess + ', ' + (!me.pauseProcess) );
 
         if ( bProcess && !me.pauseProcess )
         {
             // SKIP ITEM IF ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
             if ( DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id ).syncActionStarted != 0 )
             {
+                if ( debugMode ) console.log( 'SKIPPING item, already being synchronized by another process' );
                 // MOVE TO NEXT ITEM
                 me.recursiveSyncItemData ( (listItem + 1), btnTag )
             }
@@ -414,7 +422,7 @@ function syncManager()
 
                 me.lastSyncAttempt = listItem;
 
-                if ( debugMode ) console.log ( 'SyncItem > ' + (listItem+1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) );
+                if ( debugMode ) console.log ( 'current SyncItem > ' + (listItem +1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem) / me.dataCombine.length) * 100).toFixed(0) );
                 FormUtil.updateProgressWidth( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) + '%' );
 
                 var dtmRedeemAttempt = (new Date() ).toISOString();
@@ -457,7 +465,7 @@ function syncManager()
             
                         if ( me.pauseProcess )
                         {
-                            MsgManager.msgAreaShow ( 'dataSync PAUSED > network conditions' )
+                            MsgManager.msgAreaShow ( 'Sync PAUSED > network conditions' )
                         }
 
                     }
@@ -481,6 +489,7 @@ function syncManager()
 
                             itemData.redeemDate = dtmRedeemDate;
                             itemData.status = me.cwsRenderObj.status_redeem_submit;
+                            me.lastSyncSuccess ++;
                             newTitle = 'success > ' + dtmRedeemAttempt;
 
                         }
@@ -522,11 +531,12 @@ function syncManager()
                         itemData.history = itmHistory;
                         itemData.syncActionStarted = 0;
 
+                        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, me.cwsRenderObj );
+                        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
+
                         if ( ConnManager.networkSyncConditions() & !me.pauseProcess )
                         {
                             DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, itemData );
-                            FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
-                            FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, me.cwsRenderObj );
 
                             me.recursiveSyncItemData ( (listItem + 1), btnTag )
                         }
@@ -538,6 +548,7 @@ function syncManager()
                             }
                             else
                             {
+                                if ( debugMode ) console.log( 'ending becuase of sync Conditions: ' + ConnManager.networkSyncConditions() );
                                 me.endSync( btnTag );
                             }
 
@@ -556,6 +567,7 @@ function syncManager()
         }
         else
         {
+            if ( debugMode ) console.log( ' ending HERE [' + ( bProcess && !me.pauseProcess ) + '] >> sync Conditions: ' + ConnManager.networkSyncConditions() + ' AND ! me.pauseProcess: ' + me.pauseProcess );
             me.endSync( btnTag );
         }
 
@@ -589,21 +601,27 @@ function syncManager()
 
         if ( me.pauseProcess )
         {
-            MsgManager.msgAreaShow ( 'dataSync PAUSED > network conditions' )
+            MsgManager.msgAreaShow ( 'Sync PAUSED > network conditions' )
         }
         else
         {
-            // added by Greg (2019-02-18) > test track googleAnalytics
-            ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+            if ( me.lastSyncSuccess > 0 )
+            {
+                // added by Greg (2019-02-18) > test track googleAnalytics
+                ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            MsgManager.msgAreaShow ( 'dataSync COMPLETED > processed ' + ( me.lastSyncAttempt + 1) )
+                MsgManager.msgAreaShow ( 'Sync COMPLETED [' + me.lastSyncSuccess + ']' );
+            }
+
             me.lastSyncAttempt = 0;
+            me.lastSyncSuccess = 0;
         }
     }
 
     me.syncOfflineData = function( btnTag )
     {
         var Proceed = false;
+        me.lastSyncSuccess = 0;
 
         if ( debugMode ) console.log( 'syncOfflineData' );
         if ( me.syncRunning == 0 )
@@ -631,7 +649,6 @@ function syncManager()
                         if ( me.dataQueued.length + me.dataFailed.length )
                         {
                             me.evalDataListContent();
-            
                             me.dataCombine = me.dataQueued.concat(me.dataFailed);
 
                             (me.dataCombine).sort(function (a, b) {
@@ -662,6 +679,13 @@ function syncManager()
                                 me.pauseProcess = 0;
                             }
 
+                            if ( debugMode ) 
+                            { 
+                                console.log( me.dataCombine );
+                                console.log( 'me.lastSyncAttempt: ' + me.lastSyncAttempt + ', me.pauseProcess: ' + me.pauseProcess + ', ConnManager.networkSyncConditions(): ' + ConnManager.networkSyncConditions() );
+                            }
+
+                            me.lastSyncSuccess = 0;
                             me.recursiveSyncItemData ( (me.lastSyncAttempt), btnTag )
 
                         }

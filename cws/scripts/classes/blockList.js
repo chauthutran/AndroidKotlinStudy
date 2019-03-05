@@ -257,7 +257,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var trObj1 = $( '<tr>' );
 
                 //height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;
-                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'height:57px;width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
+                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
 
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
                 var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px;white-space:nowrap;" >' ); 
@@ -305,7 +305,7 @@ function BlockList( cwsRenderObj, blockObj )
         var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:28px;height:28px;"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="img/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:24px;height:24px;"></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
 

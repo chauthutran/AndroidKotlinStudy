@@ -5,7 +5,7 @@
   const _cwsRenderObj = new cwsRender();
   
   window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
-  var debugMode = true;
+  var debugMode = false;
 
   //const _testSection = new testSection();
 
@@ -186,7 +186,7 @@
 
     }
     
-  };
+  }
 
   
   function webServiceSet( appWS )
@@ -203,8 +203,9 @@
         console.log( 'setting staticWSName: ' + wsName );
         FormUtil.staticWSName = wsName;
       }
+
     }
-  };
+  }
 
 
   function updateOnlineStatus( event ) 
@@ -227,16 +228,62 @@
   }
 
   // ----------------------------------------------------
+  
+  window.isUpdateAvailable = new Promise(function(resolve, reject) {
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-      .register('./service-worker.js')
-      .then(function( registration ) 
-      { 
-        _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
-        _registrationObj = registration;
-        console.log('Service Worker Registered'); 
+    if ('serviceWorker' in navigator) {
 
+      navigator.serviceWorker.register('./service-worker.js').then(registration=> {
+
+          registration.onupdatefound = () => {
+
+            const installingWorker = registration.installing;
+
+            installingWorker.onstatechange = () => {
+
+              switch (installingWorker.state) {
+                case 'installed':
+                  if (navigator.serviceWorker.controller) {
+                    // new update available
+                    resolve(true);
+                    //MsgManager.notificationMessage ( 'Service worker state change: new update available ', 'notificationDark', undefined, '', 'right', 'bottom', 5000 );
+                  } else {
+                    // no update available
+                    resolve(false);
+                  }
+                  break;
+              }
+
+            };
+
+          };
+
+          _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
+          _registrationObj = registration;
+          console.log('Service Worker Registered');
+
+        })
+        .catch(err => 
+          MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 )
+        );
+
+    }
+
+	});
+
+  window['isUpdateAvailable']
+  .then(isAvailable => {
+    if (isAvailable) {
+
+      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+      // move to cwsRender 
+      $( btnUpgrade ).click ( () => {
+        location.reload( true );
       });
-  };
+
+      MsgManager.notificationMessage ( 'New updates applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
+    }
+  });
+
 })();

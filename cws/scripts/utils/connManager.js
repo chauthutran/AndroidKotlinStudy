@@ -35,7 +35,7 @@ ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 ConnManager.userNetworkMode_TestExempt = false;
 
-var debugMode = true;
+var debugMode = false;
 
 // TODO:ConnManager.switchActionStarted
 //		- Need to summarize and put into a document about the current logic

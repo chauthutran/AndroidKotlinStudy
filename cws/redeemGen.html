@@ -165,7 +165,7 @@
             tmpRow = tmpRow.replace( /{FIRSTNAME}/g, myFirst.split(' ')[0] );
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
-            tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,3).toFixed(0) );
+            tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
             
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 

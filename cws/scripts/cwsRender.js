@@ -152,6 +152,27 @@ function cwsRender()
 
 		});
 
+		/*$( '#btnCheckSW' ).click( function() {
+
+			window['isUpdateAvailable']
+			.then(isAvailable => {
+			  if (isAvailable) {
+
+				var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+				// move to cwsRender 
+				$( btnUpgrade ).click ( () => {
+				  location.reload( true );
+				});
+
+				MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
+			  }
+			});
+
+		});*/
+
+
+
 		/*if ('share' in navigator)
 		{
 			$( '#appShare' ).show();
@@ -421,7 +442,7 @@ function cwsRender()
 
 		if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
 		{
-			me.navDrawerDivTag.append( '<div style="padding:10px;font-size:11px;color:#A0A0A0"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+			me.navDrawerDivTag.append( '<div style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
 		}
 
 		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
