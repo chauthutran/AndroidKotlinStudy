@@ -229,7 +229,7 @@
 
   // ----------------------------------------------------
   
-  window.isUpdateAvailable = new Promise(function(resolve, reject) {
+  //window.isUpdateAvailable = new Promise(function(resolve, reject) {
 
     if ('serviceWorker' in navigator) {
 
@@ -245,11 +245,11 @@
                 case 'installed':
                   if (navigator.serviceWorker.controller) {
                     // new update available
-                    resolve(true);
-                    //MsgManager.notificationMessage ( 'Service worker state change: new update available ', 'notificationDark', undefined, '', 'right', 'bottom', 5000 );
+                    //resolve(true);
+                    //MsgManager.notificationMessage ( 'new updates available: installing', 'notificationDark', undefined, '', 'right', 'bottom', 5000 );
                   } else {
                     // no update available
-                    resolve(false);
+                    //resolve(false);
                   }
                   break;
               }
@@ -269,9 +269,9 @@
 
     }
 
-	});
+	//});
 
-  window['isUpdateAvailable']
+  /*window['isUpdateAvailable']
   .then(isAvailable => {
     if (isAvailable) {
 
@@ -279,11 +279,12 @@
 
       // move to cwsRender 
       $( btnUpgrade ).click ( () => {
+        //_registrationObj.update();
         location.reload( true );
       });
 
       MsgManager.notificationMessage ( 'New updates applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
     }
-  });
+  });*/
 
 })();

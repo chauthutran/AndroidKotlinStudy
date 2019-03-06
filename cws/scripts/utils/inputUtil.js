@@ -128,8 +128,8 @@ function inputMonitor( cwsRenderObj )
 
         startTouchTargetTag = undefined; 
         startTouchParentTag = undefined;
-        startTagRedeemListItem = undefined;
         listItemFillerBlock = undefined;
+
         startTouchTargetWidth = 0;
         listItemDragEnabled = false;
         startTagRedeemListItem = false;

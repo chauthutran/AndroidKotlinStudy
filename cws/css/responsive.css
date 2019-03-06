@@ -220,7 +220,7 @@
       }
   
       .icon-row {
-        height: 60px;
+        /*height: 60px;*/
         font-size: calc(9px + 0.4vw);
       }
       .whitecarbon {

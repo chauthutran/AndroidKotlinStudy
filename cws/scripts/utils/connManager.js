@@ -30,7 +30,7 @@ ConnManager.changeConnModeStr;
 
 ConnManager.userNetworkMode = false;
 ConnManager.userNetworkMode_Online = true;
-ConnManager.userNetworkMode_TimerPrompt = 60000;	// 1800000 milliseconds = 30min > only prompt to switch back to actual network conditions again after 30min..
+ConnManager.userNetworkMode_TimerPrompt = 1800000;	// 1800000 milliseconds = 30min > only prompt to switch back to actual network conditions again after 30min..
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 ConnManager.userNetworkMode_TestExempt = false;
@@ -408,15 +408,12 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 			if ( success && jsonData )
 			{
 				ConnManager.dataServer_Online = jsonData.available;
+				DataManager.setSessionDataValue( 'dataServerLastRequest', JSON.stringify( jsonData ) );
 			}
 			else
 			{
 				ConnManager.dataServer_Online = false;
 			}
-
-			var lastServerRequestResults = JSON.parse( JSON.stringify( jsonData ) );
-
-			DataManager.setSessionDataValue( 'dataServerLastRequest', JSON.stringify( lastServerRequestResults ) );
 
 			if ( ConnManager.dataServer_Online )
 			{

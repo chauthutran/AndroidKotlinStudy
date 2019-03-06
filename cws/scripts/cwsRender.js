@@ -302,7 +302,7 @@ function cwsRender()
 
 	me.startBlockExecute = function( configJson )
 	{
-		console.log( 'menu prep: ' + ConnManager.userNetworkMode_Online + ' vs ' + ConnManager.networkSyncConditions() + ' = ' + ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ) );
+		//console.log( 'menu prep: ' + ConnManager.userNetworkMode_Online + ' vs ' + ConnManager.networkSyncConditions() + ' = ' + ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ) );
 		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
 
 		if ( me.areaList )
@@ -470,6 +470,13 @@ function cwsRender()
 					location.reload( true );
 				}
 				//FormUtil.hideProgressBar();
+			})
+			.catch(err => {
+				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+				setTimeout( function() {
+					location.reload( true );
+				  }, 100 )		
+			
 			});
 		}
 	}
