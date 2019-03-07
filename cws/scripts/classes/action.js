@@ -198,15 +198,29 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "alertMsg" )
 			{
-				//alert( clickActionJson.message );
-				MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
+				if ( clickActionJson.messageClass )
+				{
+					MsgManager.notificationMessage ( clickActionJson.message, clickActionJson.messageClass, undefined, '', 'right', 'top' );
+				}
+				else
+				{
+					MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
+				}
 
 				if ( afterActionFunc ) afterActionFunc();
 			}
 			else if ( clickActionJson.actionType === "topNotifyMsg" )
 			{
+				if ( clickActionJson.messageClass )
+				{
+					MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
+				}
+				else
+				{
+					MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
+				}
 				// If term exists, translate it before displaying
-				MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
+				//MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
 
 				if ( afterActionFunc ) afterActionFunc();
 			}

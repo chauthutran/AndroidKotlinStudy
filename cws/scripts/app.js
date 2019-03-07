@@ -144,7 +144,7 @@
   function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-    console.log( _ver , latestVersionStr);
+    if ( debugMode ) console.log( _ver , ' vs ', latestVersionStr);
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
@@ -200,7 +200,7 @@
 
       if ( wsName ) 
       {
-        console.log( 'setting staticWSName: ' + wsName );
+        if ( debugMode ) console.log( 'setting staticWSName: ' + wsName );
         FormUtil.staticWSName = wsName;
       }
 
@@ -260,7 +260,7 @@
 
           _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
           _registrationObj = registration;
-          console.log('Service Worker Registered');
+          if ( debugMode ) console.log('Service Worker Registered');
 
         })
         .catch(err => 

@@ -189,7 +189,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
     $( notifClose ).click ( () => {
         //console.log( 'removing ' + '#notif_' + unqID  );
-        if ( addtoCloseClick ) addtoCloseClick();
+        if ( addtoCloseClick != undefined ) addtoCloseClick();
         $( '#notif_' + unqID ).remove();
     });
 
@@ -197,7 +197,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     trBody.append ( tdClose );
     tdClose.append ( notifClose );
 
-    if ( delayHide || delayHide == 0 )
+    if ( delayHide != undefined || delayHide == 0 )
     {
         delayTimer = delayHide;
     }
@@ -279,7 +279,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
                       }, 500 );*/
                 }
             }
-            
+
         }, (delayTimer / stepCount) );
 
     }
@@ -287,10 +287,16 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     if ( delayTimer > 0 )
     {
         setTimeout( function() {
+
             if ( $( '#notif_' + unqID ).is(':visible') )
             {
-              $( '#notif_' + unqID ).remove();
+              $( '#notif_' + unqID ).fadeOut( 750 );
+
+                setTimeout( function() {
+                    $( '#notif_' + unqID ).remove();
+                }, 1000 );
             }
+
           }, delayTimer );
     }
 

@@ -29,7 +29,7 @@ function syncManager()
 
     var syncAutomationInteruptedTimer = 0;
     var progClass;
-    var debugMode = false;
+    me.debugMode = false;
 
 	// -----------------------------
     // syncManager: uses timerInterval for 'conditionCheck', then uses timeOut to call automated Sync (unless already clicked by user)
@@ -42,7 +42,7 @@ function syncManager()
         me.subProgressBar = $( '#divProgressBar' ).children()[0]; /* store progress bar class - to be upgraded to it's own class later */
         progClass = me.subProgressBar.className;
 
-        if ( debugMode ) console.log( 'initialize syncManager >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
+        if ( me.debugMode ) console.log( 'initialize syncManager >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
     }
 
     me.reinitialize = function( cwsRenderObj )
@@ -62,7 +62,7 @@ function syncManager()
         me.cwsRenderObj = cwsRenderObj;
         me.updateInitVars();
 
-        if ( debugMode ) console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
+        if ( me.debugMode ) console.log( 'restarted syncManager.scheduledSyncConditionsTest >> me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ' me.storage_offline_SyncExecutionTimerInterval: ' + me.storage_offline_SyncExecutionTimerInterval + ' {me.conditionsCheckTimer: ' + me.conditionsCheckTimer + '}');
 
     }
 
@@ -70,7 +70,7 @@ function syncManager()
     {
         me.cwsRenderObj.updateFromSession();
 
-        if ( debugMode ) console.log( '>> me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval + ', me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval);
+        if ( me.debugMode ) console.log( '>> me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval + ', me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval: ' + me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval);
 
         me.storage_offline_SyncConditionsTimerInterval = me.cwsRenderObj.storage_offline_SyncConditionsTimerInterval;
         me.storage_offline_SyncExecutionTimerInterval = me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval;
@@ -143,6 +143,13 @@ function syncManager()
                 return false;
             }
         }
+        else
+        {
+            $( '#divAppDataSyncStatus' ).hide();
+            $( '#imgAppDataSyncStatus' ).hide();
+
+            return false;  
+        }
     }
 
     me.scheduledSyncConditionsTest = function()
@@ -151,30 +158,30 @@ function syncManager()
 
         if ( me.evalSyncConditions() )
         {
-            if ( debugMode ) console.log ( 'STARTING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
+            if ( me.debugMode ) console.log ( 'STARTING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
             // NO interupted timer exists AND NO existing timer AND syncProcess NOT CURRENTLY RUNNING (clicked icon)
             if ( ( !syncAutomationInteruptedTimer && !me.syncAutomationRunTimer && me.syncAutomationRunTimer == 0 ) && ( !me.syncRunning ) )
             {
                 me.scheduleSyncAutomationRun();
-                if ( debugMode ) console.log( 'if test 1' );
+                if ( me.debugMode ) console.log( 'if test 1' );
             }
             // interupted timer exists AND equal to existing timer AND syncProcess NOT CURRENTLY RUNNING
             else if ( ( syncAutomationInteruptedTimer && me.syncAutomationRunTimer ) && ( syncAutomationInteruptedTimer == me.syncAutomationRunTimer ) && ( !me.syncRunning ) )
             {
                 me.scheduleSyncAutomationRun();
-                if ( debugMode ) console.log( 'if test 2' );
+                if ( me.debugMode ) console.log( 'if test 2' );
             }
             // no timer exists (sync = OFF) AND no existing timer AND syncProcess NOT CURRENTLY RUNNING (i.e. manual sync clicked)
             else if ( me.storage_offline_SyncConditionsTimerInterval ==0 && !me.syncAutomationRunTimer && !me.syncRunning ) 
             {
                 me.scheduleSyncAutomationRun();
-                if ( debugMode ) console.log( 'if test 3' );
+                if ( me.debugMode ) console.log( 'if test 3' );
             }
             else
             {
 
             }
-            if ( debugMode ) console.log ( 'ENDING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
+            if ( me.debugMode ) console.log ( 'ENDING >> scheduledSyncConditionsTest.GOOD, syncAutomationInteruptedTimer: ' + syncAutomationInteruptedTimer + ', me.syncAutomationRunTimer: ' + me.syncAutomationRunTimer + ', me.syncRunning: ' + me.syncRunning + ', me.storage_offline_SyncConditionsTimerInterval: ' + me.storage_offline_SyncConditionsTimerInterval + ', me.lastSyncAttempt: ' + me.lastSyncAttempt );
         }
         else
         {
@@ -196,7 +203,7 @@ function syncManager()
             }, me.storage_offline_SyncExecutionTimerInterval );
         }
 
-        if ( debugMode ) console.log ( 'syncAutomationRunTimer [' + me.syncAutomationRunTimer + '] to run in ' +me.storage_offline_SyncExecutionTimerInterval+'ms : ' + (new Date() ).toISOString() );
+        if ( me.debugMode ) console.log ( 'syncAutomationRunTimer [' + me.syncAutomationRunTimer + '] to run in ' +me.storage_offline_SyncExecutionTimerInterval+'ms : ' + (new Date() ).toISOString() );
     }
 
     me.appShellVersionTest = function( btnTag )
@@ -216,7 +223,7 @@ function syncManager()
 
                 if ( returnJson && returnJson.version )
                 {
-                    if ( debugMode ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
+                    if ( me.debugMode ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                     if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                     {
@@ -245,7 +252,7 @@ function syncManager()
                     FormUtil.wsSubmitGeneral( queryLoc, new Object(), loadingTag, function( success, allJson ) {
                         if ( success && allJson )
                         {
-                            if ( debugMode ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
+                            if ( me.debugMode ) console.log ( appShellVersion.toString() + ' vs ' + returnJson.version );
 
                             if ( appShellVersion.toString() < ( returnJson.version ).toString() )
                             {
@@ -269,7 +276,7 @@ function syncManager()
                         }
                         else
                         {
-                            if ( debugMode ) console.log( 'all appShellInfo FAILED: ' );
+                            if ( me.debugMode ) console.log( 'all appShellInfo FAILED: ' );
                             btnTag.hide();
                             if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
                             if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
@@ -306,7 +313,7 @@ function syncManager()
                 {
                     if ( success )
                     {
-                        if ( debugMode ) console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
+                        if ( me.debugMode ) console.log ( userConfig.dcdConfig.version + ' vs ' + loginData.dcdConfig.version );
                         if ( ( userConfig.dcdConfig.version ).toString() < ( loginData.dcdConfig.version ).toString() )
                         {
                             if ( btnTag )
@@ -354,7 +361,7 @@ function syncManager()
         var itemData = me.dataCombine[ listItem ];
         var itemClone;
 
-        if ( debugMode ) console.log( itemData );
+        if ( me.debugMode ) console.log( itemData );
 
         if ( itemData )
         {
@@ -374,7 +381,7 @@ function syncManager()
                 else
                 {
                     //MsgManager.msgAreaShow( ' network TEST LIMIT exceeded: ' + me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
-                    if ( debugMode ) console.log( 'itemData.networkAttempt: ' + itemData.networkAttempt );
+                    if ( me.debugMode ) console.log( 'itemData.networkAttempt: ' + itemData.networkAttempt );
                 }
             }
         }
@@ -388,19 +395,19 @@ function syncManager()
         {
             if ( !me.pauseProcess && ConnManager.networkSyncConditions() )
             {
-                if ( debugMode ) console.log( bProcess + ',' + me.pauseProcess );
+                if ( me.debugMode ) console.log( bProcess + ',' + me.pauseProcess );
                 me.pauseProcess = false;
             }
         }
 
-        if ( debugMode ) console.log( (ConnManager.networkSyncConditions()) + ': ' + bProcess + ', ' + (!me.pauseProcess) );
+        if ( me.debugMode ) console.log( (ConnManager.networkSyncConditions()) + ': ' + bProcess + ', ' + (!me.pauseProcess) );
 
         if ( bProcess && !me.pauseProcess )
         {
             // SKIP ITEM IF ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
             if ( DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id ).syncActionStarted != 0 )
             {
-                if ( debugMode ) console.log( 'SKIPPING item, already being synchronized by another process' );
+                if ( me.debugMode ) console.log( 'SKIPPING item, already being synchronized by another process' );
                 // MOVE TO NEXT ITEM
                 me.recursiveSyncItemData ( (listItem + 1), btnTag )
             }
@@ -422,7 +429,7 @@ function syncManager()
 
                 me.lastSyncAttempt = listItem;
 
-                if ( debugMode ) console.log ( 'current SyncItem > ' + (listItem +1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem) / me.dataCombine.length) * 100).toFixed(0) );
+                if ( me.debugMode ) console.log ( 'current SyncItem > ' + (listItem +1) + ' / ' + me.dataCombine.length + ' = ' + parseFloat( ( (listItem) / me.dataCombine.length) * 100).toFixed(0) );
                 FormUtil.updateProgressWidth( parseFloat( ( (listItem+1) / me.dataCombine.length) * 100).toFixed(0) + '%' );
 
                 var dtmRedeemAttempt = (new Date() ).toISOString();
@@ -548,7 +555,7 @@ function syncManager()
                             }
                             else
                             {
-                                if ( debugMode ) console.log( 'ending becuase of sync Conditions: ' + ConnManager.networkSyncConditions() );
+                                if ( me.debugMode ) console.log( 'ending becuase of sync Conditions: ' + ConnManager.networkSyncConditions() );
                                 me.endSync( btnTag );
                             }
 
@@ -567,7 +574,7 @@ function syncManager()
         }
         else
         {
-            if ( debugMode ) console.log( ' ending HERE [' + ( bProcess && !me.pauseProcess ) + '] >> sync Conditions: ' + ConnManager.networkSyncConditions() + ' AND ! me.pauseProcess: ' + me.pauseProcess );
+            if ( me.debugMode ) console.log( ' ending HERE [' + ( bProcess && !me.pauseProcess ) + '] >> sync Conditions: ' + ConnManager.networkSyncConditions() + ' AND ! me.pauseProcess: ' + me.pauseProcess );
             me.endSync( btnTag );
         }
 
@@ -575,7 +582,7 @@ function syncManager()
 
     me.endSync = function( btnTag )
     {
-        if ( debugMode ) console.log( 'ending sync' );
+        if ( me.debugMode ) console.log( 'ending sync' );
         FormUtil.hideProgressBar();
 
         $( me.subProgressBar ).removeClass( 'determinate' );
@@ -623,7 +630,7 @@ function syncManager()
         var Proceed = false;
         me.lastSyncSuccess = 0;
 
-        if ( debugMode ) console.log( 'syncOfflineData' );
+        if ( me.debugMode ) console.log( 'syncOfflineData' );
         if ( me.syncRunning == 0 )
         {
             if ( btnTag ) //called from click_event
@@ -679,7 +686,7 @@ function syncManager()
                                 me.pauseProcess = 0;
                             }
 
-                            if ( debugMode ) 
+                            if ( me.debugMode ) 
                             { 
                                 console.log( me.dataCombine );
                                 console.log( 'me.lastSyncAttempt: ' + me.lastSyncAttempt + ', me.pauseProcess: ' + me.pauseProcess + ', ConnManager.networkSyncConditions(): ' + ConnManager.networkSyncConditions() );
@@ -708,7 +715,7 @@ function syncManager()
 
     me.pauseSync = function(  itmObj, itmClone )
     {
-        if ( debugMode ) console.log( 'pause Sync' );
+        if ( me.debugMode ) console.log( 'pause Sync' );
         DataManager.updateItemFromData( me.cwsRenderObj.storageName_RedeemList, itmObj.id, itmClone ); //ensure 'syncActionStarted' is set in event another sync process is attempted against current [itemData]
         me.pauseProcess = true;
     }

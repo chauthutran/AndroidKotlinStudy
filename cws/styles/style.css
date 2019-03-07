@@ -244,7 +244,7 @@ a.brand-logo {
 
 .transitionRapid .menu-mobile-row
 {
-  opacity: 0.75;
+  opacity: 1;
 }
 
 .transitionSmooth .menu-mobile-row
@@ -359,6 +359,32 @@ img.round:hover{
   text-align: center;
 }
 
+.tblMenuStatSummary
+{
+  /*width: 100%;*/
+}
+.statFiller
+{
+  width: 53px;
+}
+.menuStat
+{
+  /*min-width: 25.6%;
+  max-width: 50%;*/
+  padding: 0 4px 0 4px;
+  font-size: 12px;
+}
+.lblStatSubmit, .lblStatQueue, .lblStatFailed
+{
+  opacity:0.75;
+}
+.menuDataStat
+{
+  position: relative; 
+  top:-5px; 
+  left: 4px;
+}
+
 #notificationUpgrade
 {
   box-sizing: border-box;
@@ -418,6 +444,131 @@ img.round:hover{
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
 }
 
+.notificationGreen
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #31B031;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationRed
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #B30000;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationYellow
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #FFC800;
+  color: #000;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationOrange
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #B34A00;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationBlue
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #0048FF;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationPurple
+{
+  box-sizing: border-box;
+  position: fixed;
+  /*height: 40px;*/
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  /*padding: 6px;*/
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; /*0.8em;*/
+  background-color: #46209B;
+  color: #fff;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
 .notifProgress
 {
   background-Color:#202020;
@@ -429,6 +580,29 @@ img.round:hover{
   /*transition: width 50ms;*/
 }
 
+.searchResultTable
+{
+  width:100%;
+  border-bottom: 10px solid #F5F5F5;
+}
+
+.groupBysortTable
+{
+  width:100%;
+  /*border-left: 2px solid #fff;
+  border-top: 2px solid #fff;
+  border-right: 2px solid #fff;
+  border-bottom: 10px solid #F5F5F5;
+  padding:8px 8px 0px 8px;*/
+  padding:8px;
+  -webkit-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+}
+.groupByFieldName
+{
+  color: #101010; /*#C41A16;*/
+}
 
 #divMsgAreaWrap
 {

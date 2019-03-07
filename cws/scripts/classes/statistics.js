@@ -71,22 +71,24 @@ function statistics( cwsRender )
 		{
 			me.getOfflineReport();
 		}
-			
 
 	}
 
     me.hideStatsPage = function()
     {
-        me.statisticsFormDiv.hide( 'fast' );    
+        me.statisticsFormDiv.fadeOut( 500 );
 
-        if ( FormUtil.checkLogin() )
-        {
-            $( 'div.mainDiv' ).show( 'fast' );
-        }
-        else
-        {
-            $( '#loginFormDiv' ).show( 'fast' );
-        }
+        setTimeout( function() {
+            if ( FormUtil.checkLogin() )
+            {
+                $( 'div.mainDiv' ).show( 'fast' );
+            }
+            else
+            {
+                $( '#loginFormDiv' ).show( 'fast' );
+            }
+            me.statisticsFormDiv.hide();
+		}, 250 );
 
 	}
 

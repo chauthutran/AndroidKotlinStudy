@@ -641,6 +641,10 @@ div.fixed_father {
   width: 40px;
 }
 
+.menu-mobile-icon > img {
+  opacity: 0.7;
+}
+
 .menu-mobile-label{
   top: 2px;
   padding: 0 0 0 20px;

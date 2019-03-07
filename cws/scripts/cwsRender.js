@@ -376,13 +376,67 @@ function cwsRender()
 			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
 
-			$( '#divNavDrawerSummaryData' ).html ( '<span term="">Confirmed</span>: ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (<span term="">offline</span>: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+			//$( '#divNavDrawerSummaryData' ).html ( '<span term="" id="menu_icon_submit" style="opacity:0.85">Confirmed</span> ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (<span term="">offline</span>: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+			$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+
 		} 
 		else 
 		{
 			//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-			$( '#divNavDrawerSummaryData' ).html ( '<span term="">Confirmed</span>: 0 ' );
+			//$( '#divNavDrawerSummaryData' ).html ( '<span term="" id="menu_icon_submit" style="opacity:0.85">Confirmed</span> 0 ' );
 		}
+
+		//FormUtil.appendStatusIcon ( $( '#menu_icon_submit' ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ) )
+
+	}
+
+	me.menuStatSummary = function( submitList, queueList, failedList )
+	{
+		var statTbl = $( '<table class="tblMenuStatSummary" />');
+		var tr = $( '<tr>' );
+		var tdFiller = $( '<td class="statFiller" />' );
+		var tdSubmit = $( '<td class="menuStat" />' );
+		var tdQueue  = $( '<td class="menuStat" />' );
+		var tdFailed = $( '<td class="menuStat" />' );
+
+		statTbl.append( tr );
+		tr.append( tdFiller );
+
+		var lblSubmit = $( '<span class="lblStatSubmit" />' );
+		var lblQueue  = $( '<span class="lblStatQueue" />' );
+		var lblFailed = $( '<span class="lblStatFailed" />' );
+
+		var dataSubmit = $( '<span class="menuDataStat" />' );
+		var dataQueue  = $( '<span class="menuDataStat" />' );
+		var dataFailed = $( '<span class="menuDataStat" />' );
+
+		if ( submitList && submitList.length )
+		{
+			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ) );
+			dataSubmit.append( submitList.length );
+			tr.append( tdSubmit );	
+		}
+
+		if ( queueList && queueList.length )
+		{
+			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": me.status_redeem_queued } ) );
+			dataQueue.append( queueList.length );
+			tr.append( tdQueue );
+		}
+
+		if ( failedList && failedList.length )
+		{
+			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": me.status_redeem_failed } ) );
+			dataFailed.append( failedList.length );
+			tr.append( tdFailed );
+
+		}
+
+		tdSubmit.append( lblSubmit, dataSubmit );
+		tdQueue.append( lblQueue, dataQueue );
+		tdFailed.append( lblFailed, dataFailed );
+
+		return statTbl;
 	}
 
 	me.populateMenuList = function( areaList )
@@ -689,6 +743,7 @@ function cwsRender()
 		FormUtil.undoLogin();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
+		window._syncManager.evalSyncConditions();
 
 	}
 

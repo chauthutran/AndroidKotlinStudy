@@ -232,7 +232,7 @@
       }
   
       ul li .expandable {
-        padding: 0 1px 1px 0px;
+        padding: 8px; /*0 1px 1px 0px;*/
       }
 
       .title-act-mobile {

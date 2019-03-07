@@ -377,16 +377,20 @@ function aboutApp( cwsRender )
 
     me.hideAboutPage = function()
     {
-        me.aboutFormDivTag.hide( 'fast' );    
+        //me.aboutFormDivTag.hide( 'fast' );
+        me.aboutFormDivTag.fadeOut( 500 );
 
-        if ( FormUtil.checkLogin() )
-        {
-            $( 'div.mainDiv' ).show( 'fast' );
-        }
-        else
-        {
-            $( '#loginFormDiv' ).show( 'fast' );
-        }
+        setTimeout( function() {
+            if ( FormUtil.checkLogin() )
+            {
+                $( 'div.mainDiv' ).show( 'fast' );
+            }
+            else
+            {
+                $( '#loginFormDiv' ).show( 'fast' );
+            }
+            me.aboutFormDivTag.hide();
+        }, 250 );
 
     }
 

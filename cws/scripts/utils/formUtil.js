@@ -966,40 +966,43 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
 
 }
 
-FormUtil.appendStatusIcon = function ( iconObj, statusOpt )
+FormUtil.appendStatusIcon = function ( targetObj, statusOpt )
 {
 
-	// read local SVG xml structure, then replace appropriate content 'holders'
-	$.get( statusOpt.icon.path, function(data) {
+	if ( FormUtil.dcdConfig )
+	{
+		// read local SVG xml structure, then replace appropriate content 'holders'
+		$.get( statusOpt.icon.path, function(data) {
 
-		var svgObject = ( $(data)[0].documentElement );
+			var svgObject = ( $(data)[0].documentElement );
 
-		if ( statusOpt.icon.colors )
-		{
-			if ( statusOpt.icon.colors.background )
+			if ( statusOpt.icon.colors )
 			{
-				$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
-				$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+				if ( statusOpt.icon.colors.background )
+				{
+					$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+					$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+				}
+				if ( statusOpt.icon.colors.foreground )
+				{
+					$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+					$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+				}
+
 			}
-			if ( statusOpt.icon.colors.foreground )
+
+			$( targetObj ).empty();
+			$( targetObj ).append( svgObject );
+
+			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 			{
-				$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
-				$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+				$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+				$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+
 			}
 
-		}
-
-		$( iconObj ).empty();
-		$( iconObj ).append( svgObject );
-
-		if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
-		{
-			$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-			$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
-
-		}
-
-	});
+		});
+	}
 
 }
 
