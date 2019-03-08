@@ -59,7 +59,7 @@ function cwsRender()
  
 	me._translateEnable = true;
 
-	var debugMode = false;
+	me.debugMode = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -75,13 +75,13 @@ function cwsRender()
 
 	me.render = function()
 	{
-		if ( debugMode ) console.log( 'cwsRender.render()' );
+		if ( me.debugMode ) console.log( 'cwsRender.render()' );
 		me.checkStayLoggedIn( function( lastSession, loginData ) {
 			me.processExistingloggedIn( lastSession, loginData );
-			if ( debugMode ) console.log( 'cwsRender.render() > processExistingLoggedIn' );
+			if ( me.debugMode ) console.log( 'cwsRender.render() > processExistingLoggedIn' );
 		},
 		function() {
-			if ( debugMode ) console.log( 'cwsRender.render() > showLoginForm' );
+			if ( me.debugMode ) console.log( 'cwsRender.render() > showLoginForm' );
 			me.showLoginForm();
 		});
 
@@ -376,17 +376,11 @@ function cwsRender()
 			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
 
-			//$( '#divNavDrawerSummaryData' ).html ( '<span term="" id="menu_icon_submit" style="opacity:0.85">Confirmed</span> ' + mySubmit.length + ( ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) ? ' (<span term="">offline</span>: ' + ( parseFloat( myQueue.length) + parseFloat( myFailed.length ) ) + ')' : '') );
+			if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
+
 			$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
 
-		} 
-		else 
-		{
-			//$( '#divNavDrawerSummaryData' ).html ( 'offline Data : ' + 0 );
-			//$( '#divNavDrawerSummaryData' ).html ( '<span term="" id="menu_icon_submit" style="opacity:0.85">Confirmed</span> 0 ' );
 		}
-
-		//FormUtil.appendStatusIcon ( $( '#menu_icon_submit' ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ) )
 
 	}
 
@@ -412,21 +406,21 @@ function cwsRender()
 
 		if ( submitList && submitList.length )
 		{
-			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ) );
+			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ), true );
 			dataSubmit.append( submitList.length );
 			tr.append( tdSubmit );	
 		}
 
 		if ( queueList && queueList.length )
 		{
-			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": me.status_redeem_queued } ) );
+			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": me.status_redeem_queued } ), true );
 			dataQueue.append( queueList.length );
 			tr.append( tdQueue );
 		}
 
 		if ( failedList && failedList.length )
 		{
-			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": me.status_redeem_failed } ) );
+			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": me.status_redeem_failed } ), true );
 			dataFailed.append( failedList.length );
 			tr.append( tdFailed );
 
@@ -442,7 +436,7 @@ function cwsRender()
 	me.populateMenuList = function( areaList )
 	{
 		var startMenuTag;
-
+		if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
 		$( '#navDrawerDiv' ).empty();
 
 		// clear the list first
@@ -743,7 +737,7 @@ function cwsRender()
 		FormUtil.undoLogin();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
-		window._syncManager.evalSyncConditions();
+		syncManager.evalSyncConditions();
 
 	}
 

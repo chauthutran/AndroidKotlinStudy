@@ -10,7 +10,6 @@ function aboutApp( cwsRender )
     me.aboutFormDivTag = $( '#aboutFormDiv' );
     me.aboutContentDivTag = $( '#aboutContentDiv' );
     me.aboutData;
-    me.syncMgr;
     me.themeList;
     me.defaultsInitialised = 0;
 
@@ -142,7 +141,7 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_network_Text' ).html( ( me.aboutInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
 
-            window._syncManager.reinitialize ( me.cwsRenderObj );
+            syncManager.reinitialize ( me.cwsRenderObj );
 
         });
 
@@ -515,6 +514,7 @@ function aboutApp( cwsRender )
                         $( btnSwitch ).click ( () => {
                             ConnManager.userNetworkMode = true;
                             ConnManager.switchPreDeterminedConnMode();
+                            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
                         });
 
                         questionStr = "Force network mode switch?";
@@ -582,9 +582,8 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        me.syncMgr = new syncManager();
-        me.syncMgr.appShellVersionTest( $( '#aboutInfo_AppNewVersion' ) );
-        me.syncMgr.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
+        syncManager.appShellVersionTest( $( '#aboutInfo_AppNewVersion' ) );
+        syncManager.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
     }
 
     me.getThemeList = function( jsonThemes )

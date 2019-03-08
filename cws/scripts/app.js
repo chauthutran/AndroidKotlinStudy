@@ -4,7 +4,7 @@
   let _registrationObj;
   const _cwsRenderObj = new cwsRender();
   
-  window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
+  //window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
   var debugMode = false;
 
   //const _testSection = new testSection();
@@ -16,7 +16,7 @@
 
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
-    
+
     // Set App Connection Mode
     ConnManager.setAppConnMode_Initial();
     ConnManager.setUp_AppConnModeDetection();
@@ -29,8 +29,7 @@
       // Create a class that represent the object..
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
-      window._syncManager.initialize( _cwsRenderObj );
-      
+      syncManager.initialize( _cwsRenderObj );
 
     });
 
@@ -61,7 +60,7 @@
   });
 
   $( '#imgAppDataSyncStatus' ).click ( () => {
-    window._syncManager.syncOfflineData( this );
+    syncManager.syncOfflineData( this );
   });
 
   // move to cwsRender 
@@ -217,14 +216,14 @@
 
     if ( _cwsRenderObj.initializeStartBlock )
     {
-      window._syncManager.initialize( _cwsRenderObj );
+      syncManager.initialize( _cwsRenderObj );
     }
 
   };
 
   function updateSyncManager( event ) 
   {
-    window._syncManager.initialize( _cwsRenderObj );
+    syncManager.initialize( _cwsRenderObj );
   }
 
   // ----------------------------------------------------

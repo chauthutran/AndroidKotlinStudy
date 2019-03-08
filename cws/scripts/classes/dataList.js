@@ -12,7 +12,7 @@ function DataList( cwsRenderObj, blockObj )
 
     me.jsonListData;
 	
-	me.debugMode = true;
+	me.debugMode = false;
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -40,16 +40,8 @@ function DataList( cwsRenderObj, blockObj )
 		if ( blockJson && blockJson.list === 'dataList' && jsonListData )
         {
             me.renderDataList( jsonListData.displayData, me.itemDisplayAttrList, newBlockTag, blockJson );	
-            //me.dataList_Display( newBlockTag );
         }
 	}
-
-    /*
-    me.dataList_Display = function( blockTag )
-    {
-        me.renderDataList( me.jsonListData.displayData, blockTag );	
-    }
-    */
 
     me.renderDataList = function( jsonList, itemDisplayAttrList, blockTag, blockJson )
     {
@@ -65,244 +57,235 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
+
+            var searchPostPayload = FormUtil.getLastPayload();
             var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
             blockTag.append( divFormContainerTag );
 
-            if ( me.blockJson.groupBy && me.blockJson.groupBy.length )
+            var dvgrpBySearchSummary = $( '<div class="groupBySearchResults" />' );
+            dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + 'results for' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
+            divFormContainerTag.append( dvgrpBySearchSummary );
+
+            if ( blockJson.groupBy && blockJson.groupBy.length )
             {
-                //jsonList.sort
-                if ( me.debugMode ) console.log( me.blockJson.groupBy );
-
-                var lookup = {};
-                var result = [];
-                var filter = [];
-
-                for( var i = 0; i < jsonList.length; i++ )
+                for( var g = 0; g < blockJson.groupBy.length; g++ )
                 {
-                    for( var p = 0; p < jsonList[ i ].length; p++ )
+                    var lookup = {};
+                    var result = [];
+                    var filter = [];
+
+                    for( var i = 0; i < jsonList.length; i++ )
                     {
-                        if ( jsonList[ i ][ p ].id == me.blockJson.groupBy[0] )
+                        for( var p = 0; p < jsonList[ i ].length; p++ )
                         {
-                            var unqVal = jsonList[ i ][ p ].value;
-                            if (! result.includes( unqVal ) ) 
+                            if ( jsonList[ i ][ p ].id == blockJson.groupBy[g] )
                             {
-                                if ( lookup[unqVal] == undefined) lookup[unqVal] = 1;
-                                else lookup[unqVal] += 1;
-                                result.push( unqVal );
-                                filter.push( { "id": me.blockJson.groupBy[0], "value": unqVal } );
+                                var unqVal = jsonList[ i ][ p ].value;
+                                if (! result.includes( unqVal ) ) 
+                                {
+                                    lookup[unqVal] = 1;
+                                    result.push( unqVal );
+                                    filter.push( { "id": blockJson.groupBy[g], "value": unqVal } );
+                                }
+                                else
+                                {
+                                    lookup[unqVal] += 1;
+                                }
                             }
                         }
                     }
+
+                    var grpByArr = [];
+                    for (grp in lookup) {
+                        var count = lookup[grp];
+                        grpByArr.push({"group": grp, "count": count});
+                    }
+
+                    if ( me.debugMode ) console.log( lookup );
+                    if ( me.debugMode ) console.log( grpByArr );
+                    if ( me.debugMode ) console.log( result );
+                    if ( me.debugMode ) console.log( filter );
+
+                    result.sort();
+
+                    grpByArr.sort(function(a, b)
+                    {
+                        if (a.count < b.count) { return -1; }
+                        if (b.count < a.count) return 1;
+                        else return 0;
+                    });
+
+                    if ( result.length )
+                    {
+
+                        var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
+                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td style="width:18px;height:18px;"><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="">' +me.resolvedefinitionField( { "id": blockJson.groupBy[g], "name": blockJson.groupBy[g] } ) + '</span></td></tr></table> </div>' ) );
+                        divFormContainerTag.append( dvgrpByFieldHeader );
+
+                        var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
+                        divFormContainerTag.append( dvgrpByFieldBlock );
+
+                        for( var r = 0; r < grpByArr.length; r++ )
+                        {
+                            var tblGrpBy = $( '<table id="groupByFieldBlock_' + g + '_' + r + '"  />' );
+                            var trGrpBy = $( '<tr />' );
+                            var tdGrpBy = $( '<td colspan=2 />' );                    
+                            var dvGrpByTitle = $( '<div class="groupByField" />' );
+
+                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td style="width:18px;height:18px;"><div id="imggroupBy_' + g + '_' + r + '" class="imggroupByCollapsed" /> </td> <td> <span class="groupByFieldName">' + me.resolvedefinitionOptionValue( grpByArr[ r ].group ) + '</span>: <span class="">' + grpByArr[ r ].count + '</span></td></tr></table> </div>' );
+                            dvGrpByTitle.attr( 'title', blockJson.groupBy[g] );
+
+                            var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="display:none;" />' );
+
+                            dvgrpByFieldBlock.append( tblGrpBy );
+                            tblGrpBy.append( trGrpBy );
+                            trGrpBy.append( tdGrpBy );
+                            tdGrpBy.append( dvGrpByTitle );
+                            dvGrpByTitle.append( dvGrpByRows );
+
+                            me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, blockJson.groupBy[g], grpByArr[ r ].group, jsonList, blockJson )
+
+                            FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+
+                        }
+
+                        FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+
+                    }
+
                 }
 
-                if ( me.debugMode ) console.log( lookup );
-                if ( me.debugMode ) console.log( result );
-                if ( me.debugMode ) console.log( filter );
-
-                result.sort();
-
-                for( var r = 0; r < result.length; r++ )
-                {
-                    var tblSort = $( '<table class="groupBysortTable" >' );
-                    var trSort = $( '<tr>' );
-                    var tdSort = $( '<td colspan=2>' );
-    
-                    tdSort.html( '<span>' + me.resolvedefinitionField( { "id": me.blockJson.groupBy[0], "name": me.blockJson.groupBy[0] } ) + '</span> &gt; <strong class="groupByFieldName">' + me.resolvedefinitionOptionValue( result[ r ] ) + '</strong>' );
-                    tdSort.attr( 'title', me.blockJson.groupBy[0] );
-    
-                    divFormContainerTag.append( tblSort );
-                    tblSort.append( trSort );
-                    trSort.append( tdSort );
-    
-                    me.renderDataListGroupBy( divFormContainerTag, itemDisplayAttrList, me.blockJson.groupBy[0], result[ r ], jsonList, blockJson )
-                }
-
+                var dvgrpBySearchFooter = $( '<div class="groupBySearchResults" />' );
+                divFormContainerTag.append( dvgrpBySearchFooter );
 
             }
             else
             {
 
-                var searchPostPayload = FormUtil.getLastPayload(); 
+                me.renderSearchResultBlocks( divFormContainerTag, itemDisplayAttrList, undefined, undefined, jsonList, blockJson )
 
-                for( var i = 0; i < jsonList.length; i++ )
-                {
-                    var itemAttrDataList = jsonList[i];
-                    var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
-                    var validResultData = objResult.length;
-
-                    var tblObjTag = $( '<table class="searchResultTable" id="searchResult_'+i+'">' );
-                    var trTopObjTag = $( '<tr class="itemBlock">' );
-                    var tdLeftobjTag = $( '<td>' );
-
-                    divFormContainerTag.append( tblObjTag );
-                    tblObjTag.append( trTopObjTag );
-                    trTopObjTag.append( tdLeftobjTag );
-
-                    if ( !validResultData )
-                    {
-                        var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
-                        var labelTag = $( '<label class="from-string titleDiv" />' );
-                        var valueTag = $( '<div class="form-type-text">');
-
-                        tdLeftobjTag.append( divAttrTag );
-                        divAttrTag.append( labelTag );
-                        divAttrTag.append( valueTag );
-
-                        labelTag.html( 'dcd Config issue' );
-                        valueTag.html( 'no valid IDs for "displayResult":[]' );
-                    }
-                    else
-                    {
-
-                        // add search criteria to results field list > what if search criteria already part of output specification?
-                        for(var k in searchPostPayload) 
-                        {
-                            objResult.push ( { 'id': '', 'name': k, 'value': searchPostPayload[k] } );
-                        }
-
-                        for( var o = 0; o < objResult.length; o++ )
-                        {
-                            var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
-                            var labelTag = $( '<label class="from-string titleDiv" />' );
-                            var valueTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
-
-                            tdLeftobjTag.append( divAttrTag );
-                            divAttrTag.append( labelTag );
-                            divAttrTag.append( valueTag );
-
-                            labelTag.html( me.resolvedefinitionField( objResult[o] ) );
-                            valueTag.html( me.resolvedefinitionOptionValue( objResult[o].value ) );
-
-                            if ( objResult[o].id == '' ) //added from search criteria
-                            {
-                                //labelTag.css('font-weight',"600");
-                                valueTag.css('color','#909090');
-
-                                //labelTag.css('color',"#8F5959");
-                                //valueTag.css('color',"#612A2A");
-                            }
-
-                        };
-
-                        var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
-                        trTopObjTag.append( tdRightobjTag );
-
-                        me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
-                        me.renderButtons( tdRightobjTag, blockJson.itemButtons );
-
-                        /*if ( i < (jsonList.length - 1))
-                        {
-                            / START > LINE SEPARATOR /
-                            var trBottomObjTag = $( '<tr>' );
-                            var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
-                            var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
-
-                            tblObjTag.append( trBottomObjTag );
-                            trBottomObjTag.append( tdBottomtobjTag );
-                            tdBottomtobjTag.append( divObjTag );
-                            / END > LINE SEPARATOR /
-                        }*/
-
-                    }
-                }
             }
         }
     }
 
-    me.renderDataListGroupBy = function( divFormContainerTag, itemDisplayAttrList, fieldId, lookupVal, jsonList, blockJson )
+    me.renderSearchResultBlocks = function( divFormContainerTag, itemDisplayAttrList, fieldId, lookupVal, jsonList, blockJson )
     {
         var searchPostPayload = FormUtil.getLastPayload();
+        var newjsonList = [];
 
         for( var i = 0; i < jsonList.length; i++ )
         {
-            var itemAttrDataFiltered = ( jsonList[i] ).filter(a=>a.id==fieldId&&a.value==lookupVal);
-
-            if ( itemAttrDataFiltered.length )
+            if ( fieldId && lookupVal )
+            { 
+                var itemAttrDataFiltered = ( jsonList[i] ).filter(a=>a.id==fieldId&&a.value==lookupVal);
+                if ( itemAttrDataFiltered.length ) newjsonList.push ( jsonList[i] );
+            }
+            else
             {
-                var itemAttrDataList = ( jsonList[i] );
-                var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
-                var validResultData = objResult.length;
+                newjsonList.push ( jsonList[i] );
+            }
+        }
 
-                var tblObjTag = $( '<table style="width:100%;border-bottom: 10px solid #F5F5F5;" id="searchResult_'+i+'">' );
-                var trTopObjTag = $( '<tr class="itemBlock">' );
-                var tdLeftobjTag = $( '<td>' );
+        for( var i = 0; i < newjsonList.length; i++ )
+        {
+            if ( i > 0 )
+            {
+                var divSpacerTag = $( '<div class="searchResultTableSpacer" />' );
+                divFormContainerTag.append( divSpacerTag );
+            }
 
-                divFormContainerTag.append( tblObjTag );
-                tblObjTag.append( trTopObjTag );
-                trTopObjTag.append( tdLeftobjTag );
+            var itemAttrDataList = ( newjsonList[i] );
+            var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
+            var validResultData = objResult.length;
+            var tblObjTag = $( '<table class="searchResultTable" id="searchResult_'+i+'">' );
 
-                if ( !validResultData )
+            divFormContainerTag.append( tblObjTag );
+            if ( me.debugMode ) console.log( itemAttrDataList );
+
+            if ( blockJson.displayHeader )
+            {
+                if ( me.debugMode ) console.log( blockJson.displayHeader );
+
+                var tritemHeaderTag = $( '<tr>' );
+                var tditemHeaderTag = $( '<td class="groupByResultHeader">' );
+
+                tblObjTag.append( tritemHeaderTag );
+                tritemHeaderTag.append( tditemHeaderTag );
+
+                var imginfoTag = $( '<img src="img/about.svg" style="opacity:0.5;width:18px;height:18px;">' );
+                var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
+                var labelTag = $( '<span>' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
+
+                tditemHeaderTag.append( imginfoTag );
+                tditemHeaderTag.append( lblSpacer );
+                tditemHeaderTag.append( labelTag );
+
+            }
+
+            var trTopObjTag = $( '<tr class="itemBlock">' );
+            var tdLeftobjTag = $( '<td>' );
+
+            tblObjTag.append( trTopObjTag );
+            trTopObjTag.append( tdLeftobjTag );
+
+            if ( !validResultData )
+            {
+                var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
+                var labelTag = $( '<label class="from-string titleDiv" />' );
+                var valueTag = $( '<div class="form-type-text">');
+
+                tdLeftobjTag.append( divAttrTag );
+                divAttrTag.append( labelTag );
+                divAttrTag.append( valueTag );
+
+                labelTag.html( 'dcd Config issue' );
+                valueTag.html( 'no valid IDs for "displayResult":[]' );
+            }
+            else
+            {
+
+                // add search criteria to results field list > what if search criteria already part of output specification?
+                for(var k in searchPostPayload) 
+                {
+                    objResult.push ( { 'id': '', 'name': k, 'value': searchPostPayload[k] } );
+                }
+
+                for( var o = 0; o < objResult.length; o++ )
                 {
                     var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
                     var labelTag = $( '<label class="from-string titleDiv" />' );
-                    var valueTag = $( '<div class="form-type-text">');
+                    var valueTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
 
                     tdLeftobjTag.append( divAttrTag );
                     divAttrTag.append( labelTag );
                     divAttrTag.append( valueTag );
 
-                    labelTag.html( 'dcd Config issue' );
-                    valueTag.html( 'no valid IDs for "displayResult":[]' );
-                }
-                else
-                {
+                    labelTag.html( me.resolvedefinitionField( objResult[o] ) );
+                    valueTag.html( me.resolvedefinitionOptionValue( objResult[o].value ) );
 
-                    // add search criteria to results field list > what if search criteria already part of output specification?
-                    for(var k in searchPostPayload) 
+                    if ( objResult[o].id == '' ) //added from search criteria
                     {
-                        objResult.push ( { 'id': '', 'name': k, 'value': searchPostPayload[k] } );
+                        //labelTag.css('font-weight',"600");
+                        valueTag.css('color','#909090');
+
+                        //labelTag.css('color',"#8F5959");
+                        //valueTag.css('color',"#612A2A");
                     }
 
-                    for( var o = 0; o < objResult.length; o++ )
-                    {
-                        var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
-                        var labelTag = $( '<label class="from-string titleDiv" />' );
-                        var valueTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
+                };
 
-                        tdLeftobjTag.append( divAttrTag );
-                        divAttrTag.append( labelTag );
-                        divAttrTag.append( valueTag );
+                var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
+                trTopObjTag.append( tdRightobjTag );
 
-                        labelTag.html( me.resolvedefinitionField( objResult[o] ) );
-                        valueTag.html( me.resolvedefinitionOptionValue( objResult[o].value ) );
-
-                        if ( objResult[o].id == '' ) //added from search criteria
-                        {
-                            //labelTag.css('font-weight',"600");
-                            valueTag.css('color','#909090');
-
-                            //labelTag.css('color',"#8F5959");
-                            //valueTag.css('color',"#612A2A");
-                        }
-
-                    };
-
-                    var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
-                    trTopObjTag.append( tdRightobjTag );
-
-                    me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
-                    me.renderButtons( tdRightobjTag, blockJson.itemButtons );
-
-                    /*if ( i < (jsonList.length - 1))
-                    {
-                        / START > LINE SEPARATOR /
-                        var trBottomObjTag = $( '<tr>' );
-                        var tdBottomtobjTag = $( '<td colspan=2 style="padding:0 10px 0 10px;">' );
-                        var divObjTag = $( '<div style="height:10px;width:100%;border-bottom:2px solid #808080" />' );
-
-                        tblObjTag.append( trBottomObjTag );
-                        trBottomObjTag.append( tdBottomtobjTag );
-                        tdBottomtobjTag.append( divObjTag );
-                        / END > LINE SEPARATOR /
-                    }*/
-
-                }
+                me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
+                me.renderButtons( tdRightobjTag, blockJson.itemButtons );
 
             }
 
         }
 
     }
+
 
     me.blockDataValidResultArray = function( itemAttrList, searchResults )
     {
@@ -394,8 +377,6 @@ function DataList( cwsRenderObj, blockObj )
         var dcd = FormUtil.dcdConfig;
         var retName = '';
 
-        //console.log( objFieldData );
-
         if ( dcd && dcd.definitionFields )
         {
             for( var i = 0; i < dcd.definitionFields.length; i++ )
@@ -460,6 +441,7 @@ function DataList( cwsRenderObj, blockObj )
         }
 
     }
+
 	// -------------------------------
 	
 	// me.initialize();

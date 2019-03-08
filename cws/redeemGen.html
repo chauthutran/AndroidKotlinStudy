@@ -54,6 +54,14 @@
                     </tr>
                     <tr>
                         <td style="text-align:right">
+                            <div class="label">Activity types</div>
+                        </td>
+                        <td>
+                            <input type="text" class="activityType" value="eVoucher,WalkInA,WalkInB,PhoneVoucher"> &nbsp; NP > FPL-SP,FPL-FU,SAS
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
                             <div class="label">rows</div>
                         </td>
                         <td>
@@ -137,18 +145,19 @@
 
         for (var i = 1; i <= $('input.rows').val(); i++) 
         {
-            myDateTimeSeed = getCalcTime(myDateTimeSeed,$('input.minSpread').val () * -1)
+            myDateTimeSeed = getCalcTime(myDateTimeSeed,$('input.minSpread').val () * -1);
+
             var myDate = getTodayDate(myDateTimeSeed);
             var myTime = getTimeNow(myDateTimeSeed);
             var myUniqueItm = (new Date() ).toISOString();
-    
+
             tmpRow = myTemplate;
 
             let newID = generateRandomString(8);
             let rnd8 = generateRandomNumber(8);
             let rnd12 = generateRandomNumber(12);
             let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
-            let myactType = getRandomWord('eVoucher,WalkInA,WalkInB,PhoneVoucher',myUniqueItm);
+            let myactType = getRandomWord( $('input.activityType').val () ,myUniqueItm);
             let myTown = getRandomWord( getTownList(), myUniqueItm);
             let myFirst = getRandomWord( getNameList(), myUniqueItm ).trim();
             let myLast = getRandomWord( getNameList(), myUniqueItm ).trim();
@@ -166,7 +175,7 @@
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
-            
+
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';

@@ -370,7 +370,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 				$( '#focusRelegator').hide();
 			}
-			else
+			else //if ( className_Open.indexOf( 'imggroupBy' ) < 0 )
 			{
 				subListIconsTag.fadeOut( 'fast', 'linear' );
 
@@ -410,18 +410,23 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				subListIconsTag.fadeIn( 'fast', 'linear' );
 			}
 
-			$( '#focusRelegator').off( 'click' ); //clear existing click events
-
-			$( '#focusRelegator').on( 'click' , function( event )
+			if ( className_Open.indexOf( 'imggroupBy' ) < 0 )
 			{
-				thisTag.css('zIndex',1);
 
-				event.preventDefault();
+				$( '#focusRelegator').off( 'click' ); //clear existing click events
 
-				thisTag.click();
-			});
-
-			$( '#focusRelegator').show();
+				$( '#focusRelegator').on( 'click' , function( event )
+				{
+					thisTag.css('zIndex',1);
+	
+					event.preventDefault();
+	
+					thisTag.click();
+				});
+	
+				$( '#focusRelegator').show();
+	
+			}
 
 		} 
 	});	
@@ -966,42 +971,58 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
 
 }
 
-FormUtil.appendStatusIcon = function ( targetObj, statusOpt )
+FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
 
 	if ( FormUtil.dcdConfig )
 	{
-		// read local SVG xml structure, then replace appropriate content 'holders'
-		$.get( statusOpt.icon.path, function(data) {
-
-			var svgObject = ( $(data)[0].documentElement );
-
-			if ( statusOpt.icon.colors )
-			{
-				if ( statusOpt.icon.colors.background )
-				{
-					$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
-					$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
-				}
-				if ( statusOpt.icon.colors.foreground )
-				{
-					$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
-					$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
-				}
-
-			}
-
-			$( targetObj ).empty();
-			$( targetObj ).append( svgObject );
-
+		if ( skipGet != undefined && skipGet == true )
+		{
+			var iW, iH, sStyle = '';
 			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 			{
-				$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-				$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
-
+				iW = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
+				iH = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
+				sStyle = 'width:' + iW + 'px;height:' + iH + 'px;';
 			}
+			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
+		}
+		else
+		{
+		// read local SVG xml structure, then replace appropriate content 'holders'
+			$.get( statusOpt.icon.path, function(data) {
 
-		});
+				var svgObject = ( $(data)[0].documentElement );
+
+				if ( statusOpt.icon.colors )
+				{
+					if ( statusOpt.icon.colors.background )
+					{
+						$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+						$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+					}
+					if ( statusOpt.icon.colors.foreground )
+					{
+						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+						$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+					}
+
+				}
+
+				$( targetObj ).empty();
+				$( targetObj ).append( svgObject );
+
+				if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+				{
+					$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+					$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+
+				}
+
+			});
+			
+		}
+
 	}
 
 }
@@ -1109,6 +1130,27 @@ FormUtil.PWAlaunchFrom = function()
 		return 'browser';
    }
 }
+
+
+FormUtil.jsonReadFormat = function( jsonData )
+{
+	console.log( JSON.stringify( jsonData ) );
+	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,' = ');
+	else return '';
+}
+
+FormUtil.lookupJsonArr = function( jsonData, fldSearch, fldValue, searchValue )
+{
+	for ( var i=0; i< jsonData.length; i++ )
+	{
+		if ( jsonData[ i ][ fldSearch ] == searchValue )
+		{
+			return jsonData[ i ][ fldValue ];
+		}
+
+	}
+}
+
 FormUtil.shareApp = function() {
     var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
     if ('share' in navigator) {

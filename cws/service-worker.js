@@ -291,6 +291,14 @@ self.__precacheManifest = [
     "revision": "7c8dcb4c9fce086566e3fe6414dccd08"
   },
   {
+    "url": "img/sharp-add_circle_outline-24px.svg",
+    "revision": "1077ca24d36bc60af3f7fd25a8c9e686"
+  },
+  {
+    "url": "img/sharp-remove_circle_outline-24px.svg",
+    "revision": "c3fd40fc3ea16901dc5e3b2e5296c56c"
+  },
+  {
     "url": "img/statistics.svg",
     "revision": "49fd0bf0201f931b915bd2eaed777ea1"
   },
@@ -316,7 +324,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "19c66ff6ee7a77f1637a680ce4cff397"
+    "revision": "716d8ce5fd152f6dd4fb8b349fb527fe"
   },
   {
     "url": "manifest.json",
@@ -324,15 +332,15 @@ self.__precacheManifest = [
   },
   {
     "url": "redeemGen.html",
-    "revision": "cadbcfc72c0b14d3db064be54944c3bf"
+    "revision": "71def79cf4963dfd784038923024f76c"
   },
   {
     "url": "scripts/app.js",
-    "revision": "586bdae1ba15861d23d97282ceb9735d"
+    "revision": "288e2748fd679317ca26efc93c5c62f4"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7e25443b762c05331cce3367a6fc7e43"
+    "revision": "bd7db6a01548897bec400333d8128ac4"
   },
   {
     "url": "scripts/classes/action.js",
@@ -360,7 +368,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "653cffa5a35bbcd5cf95d2edd19e05db"
+    "revision": "a6e9083fad85167bee357c0a6649212a"
   },
   {
     "url": "scripts/classes/favIcon.js",
@@ -392,7 +400,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "8867f41427579c2868700a9660ba6c39"
+    "revision": "11e3701aa8001539d53e33769a1fb108"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -440,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "2df718957488497116e50ccd5966fdb0"
+    "revision": "9b65981ce034841d566df6e1dd527f5f"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -456,7 +464,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "7ebe90bfdb0bd701cc7c5f3005e19b7a"
+    "revision": "2daf71c01ac6492face5db02c38a82c7"
   },
   {
     "url": "scripts/utils/util.js",
@@ -500,7 +508,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "911b8bd960b640553daceced2f7dfa26"
+    "revision": "c188285b293518a6845bf04185dfc3d5"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
