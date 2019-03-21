@@ -131,7 +131,6 @@ function Login( cwsRenderObj )
         }
 		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
-		//$( '#loginImg' ).show();
 
 
 		//divIcon.html( $( '<img src="img/logo_top.svg">' ) );
@@ -154,8 +153,6 @@ function Login( cwsRenderObj )
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
 
-		//$( '#loginImg' ).hide();
-		//$( '#nav-toggle' ).show();
 		$( '#loggedInDiv' ).show();		
 
 		//me.cwsRenderObj.configureMobileMenuIcon();
@@ -185,7 +182,7 @@ function Login( cwsRenderObj )
 			// validate encrypted pwd against already stored+encrypted pwd
 			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
 			{
-				if ( password == Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
+				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
 					var loginData = DataManager.getData( userName );
 	
@@ -246,7 +243,8 @@ function Login( cwsRenderObj )
 	{
 		var userName = JSON.parse( localStorage.getItem('session') ).user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
-
+		console.log(userName, userPin );
+		alert ('login.js: ');
 		// greg: use location.origin for server parameter? Always records server location
 		me.processLogin( userName, userPin, location.origin, $( this ) );
 	}

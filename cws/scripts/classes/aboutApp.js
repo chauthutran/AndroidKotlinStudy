@@ -120,7 +120,6 @@ function aboutApp( cwsRender )
         {    
             FormUtil.showProgressBar();
 
-            //console.log( 'THEME changed: ' + me.aboutInfo_ThemeSelectTag.val() );
             var thisConfig = me.cwsRenderObj.configJson;
 
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
@@ -349,6 +348,21 @@ function aboutApp( cwsRender )
         });
 
         
+        $( '#btnReset' ).click( function() {
+
+			// DONE > TODO: GREG: Could move to 'dataManager'
+			DataManager.clearSessionStorage();
+
+            //FormUtil.deleteCacheKeys( me.cwsRenderObj.reGetAppShell );
+
+            if ( cacheManager.clearCacheKeys() )
+            {
+                me.cwsRenderObj.reGetAppShell();
+            }
+
+        });
+
+        cacheManager.initialise();
 
         //
 
@@ -469,8 +483,6 @@ function aboutApp( cwsRender )
 
                     if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) < 4 )
                     {
-                        console.log( ConnManager.getAppConnMode_Online() );
-                        console.log( ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) );
                         var incr = parseInt( $( '#aboutInfo_networkMode' ).attr( 'counter' ) );
                         incr ++;
                         $( '#aboutInfo_networkMode' ).attr( 'counter', incr );
@@ -548,19 +560,10 @@ function aboutApp( cwsRender )
             if ( dcdConfig.version ) dcdConfigVersion = dcdConfig.version;
             if ( dcdConfig.settings && dcdConfig.settings.theme ) 
             {
-                //dcdConfigSettingTheme = dcdConfig.settings.theme;
                 me.getThemeList( dcdConfig.themes );
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
-
             }
-            //$( '#aboutInfo_dcdVersion_Less' ).show();
-            //$( '#aboutInfo_theme_Less' ).show();
-        }
-        else
-        {
-            //$( '#aboutInfo_dcdVersion_Less' ).hide();
-            //$( '#aboutInfo_theme_Less' ).hide();
         }
 
         // Populate data
@@ -582,8 +585,48 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        syncManager.appShellVersionTest( $( '#aboutInfo_AppNewVersion' ) );
-        syncManager.dcdConfigVersionTest( $( '#dcdUpdateBtn' ) );        
+        ConnManager.getAppShellVersion( function( retVersion ) 
+        {
+            var appShellVersion = $( '#spanVersion' ).html().replace('v','');
+
+            if ( appShellVersion.toString() < retVersion.toString() )
+            {
+                $( '#aboutInfo_AppNewVersion ' ).html( retVersion );
+                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
+                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
+                $( '#aboutInfo_AppNewVersion' ).show( 'fast' );
+            }
+            else
+            {
+                $( '#aboutInfo_AppNewVersion' ).hide( 'fast' );
+                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
+                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
+            }
+        });
+
+        if ( FormUtil.checkLogin() )
+        {
+
+            ConnManager.getDcdConfigVersion( function( retVersion ) 
+            {
+                var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+    
+                if ( ( userConfig.dcdConfig.version ).toString() < retVersion.toString() )
+                {
+                    $( '#aboutInfo_dcdNewVersion' ).html( retVersion );
+                    if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'disabled' );
+                    if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'enabled' );	
+                    $( '#aboutInfo_dcdNewVersion' ).show();
+                }
+                else
+                {
+                    $( '#aboutInfo_dcdNewVersion' ).hide();
+                    if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
+                    if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
+                }
+            });
+        }
+
     }
 
     me.getThemeList = function( jsonThemes )

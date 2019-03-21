@@ -56,7 +56,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			else
 			{
 				// Normal Block case..
-				console.log( 'Normal Block case..' );
+				//console.log( 'Normal Block case..' );
 			}
 
 
@@ -131,7 +131,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 				me.renderBlockTabContent( liContentTag, btnJson.onClick );	
 
-				console.log( 'tab clicked - content block (re)created' );
+				//console.log( 'tab clicked - content block (re)created' );
 			});
 			
 

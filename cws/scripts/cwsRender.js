@@ -141,16 +141,6 @@ function cwsRender()
 
 	me.setOtherEvents = function()
 	{
-		$( '#btnReset' ).click( function() {
-
-			// DONE > TODO: GREG: Could move to 'dataManager'
-			DataManager.clearSessionStorage();
-
-			FormUtil.swCacheReset();
-
-			me.reGetAppShell();
-
-		});
 
 		/*$( '#btnCheckSW' ).click( function() {
 
@@ -490,7 +480,11 @@ function cwsRender()
 
 		if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
 		{
-			me.navDrawerDivTag.append( '<div style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+			me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+		}
+		else
+		{
+			$( '#menu_userNetworkMode' ).remove();
 		}
 
 		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
@@ -523,9 +517,16 @@ function cwsRender()
 				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
 				setTimeout( function() {
 					location.reload( true );
-				  }, 100 )		
+				}, 100 )		
 			
 			});
+		}
+		else
+		{
+			MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+			setTimeout( function() {
+				location.reload( true );
+			}, 100 )		
 		}
 	}
 
@@ -549,7 +550,7 @@ function cwsRender()
 			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
 			//$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -676,7 +677,7 @@ function cwsRender()
 		me.loginObj.loginSuccessProcess( loginData );
 		me.retrieveAndSetUpTranslate();
 	}
-		
+
 	me.showLoginForm = function()
 	{
 		// If 'initializeStartBlock' case, open the Login form.

@@ -36,7 +36,7 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else
 			{
-				console.log( 'Btn already clicked/in process' );
+				//console.log( 'Btn already clicked/in process' );
 			}
 		}
 	}
@@ -94,21 +94,28 @@ function Action( cwsRenderObj, blockObj )
 		}
 	}
 
-	
+
 	// me.clickActionPerform 
 	me.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
 		// TODO: all the blockDivTag related should be done by 'block' class method
-		
+
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
 
 		// ACTIVITY ADDING
 		ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
 
-
 		if ( clickActionJson )
 		{
-			if ( clickActionJson.actionType === "clearOtherBlocks" )
+			if ( clickActionJson.actionType === "evaluation" )
+			{
+				//console.log( blockPassingData.displayData );
+				blockPassingData.displayData = me.blockObj.dataListObj.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
+				//console.log( blockPassingData.displayData );
+
+				if ( afterActionFunc ) afterActionFunc();
+			}
+			else if ( clickActionJson.actionType === "clearOtherBlocks" )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );
 

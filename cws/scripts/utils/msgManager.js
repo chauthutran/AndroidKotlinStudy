@@ -19,7 +19,10 @@ MsgManager._autoHide = true;
 MsgManager._autoHideDelay = 5000; //changed to 5 sec by James (2018/12/17)
 MsgManager.timer = 0;
 MsgManager.clicktimer = 0;
+MsgManager.reservedIDs = []; //COMING SOON: collection of predefined COMMON identifiable notification messages (if match exists in this array, do not create)
+MsgManager.reservedMsgBlocks = [];
 
+MsgManager.debugMode = false;
 
 MsgManager.initialSetup = function()
 {
@@ -122,9 +125,28 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick )
+MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID )
 {
     var unqID = Util.generateRandomId();
+
+    if ( ReserveMsgID != undefined )
+    {
+        if ( MsgManager.reservedIDs.length > 0 ) 
+        {
+            if ( MsgManager.reservedIDs.indexOf( ReserveMsgID ) >= 0 )  return false;
+            else 
+            {
+                MsgManager.reservedIDs.push ( ReserveMsgID.toString() );
+                MsgManager.reservedMsgBlocks.push( { "msgid": ReserveMsgID.toString(), "blockid": unqID } );
+            }
+        }
+        else
+        {
+            MsgManager.reservedIDs.push ( ReserveMsgID.toString() );
+            MsgManager.reservedMsgBlocks.push( { "msgid": ReserveMsgID.toString(), "blockid": unqID } );
+        }
+    }
+
     var delayTimer;
     var screenWidth = document.body.clientWidth;
     var screenHeight = document.body.clientHeight;
@@ -175,36 +197,40 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
         tdAction.append ( '<span>&nbsp;</span>' );
 
         $( tdAction ).click ( () => {
+
             if ( autoClick && MsgManager.clicktimer )
             {
                 clearInterval( MsgManager.clicktimer );
                 MsgManager.clicktimer = 0;
             }
+
+            if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
+
             $( '#notif_' + unqID ).remove();
+
         });
 
     }
 
     var tdClose = $( '<td style="width:24px;">' );
     var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
+
     $( notifClose ).click ( () => {
-        //console.log( 'removing ' + '#notif_' + unqID  );
+
         if ( addtoCloseClick != undefined ) addtoCloseClick();
+
+        if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
+
         $( '#notif_' + unqID ).remove();
+
     });
 
     $( 'nav.bg-color-program' ).append( notifDiv )
     trBody.append ( tdClose );
     tdClose.append ( notifClose );
 
-    if ( delayHide != undefined || delayHide == 0 )
-    {
-        delayTimer = delayHide;
-    }
-    else
-    {
-        delayTimer = MsgManager._autoHideDelay;
-    }
+    if ( delayHide != undefined || delayHide == 0 ) delayTimer = delayHide;
+    else delayTimer = MsgManager._autoHideDelay;
 
     if ( actionButton && autoClick )
     {
@@ -269,15 +295,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
                     $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
                     clearInterval( MsgManager.clicktimer );
                     MsgManager.clicktimer = 0;
-
-                    /*console.log( 'creating timeOut: step > stepCount: ' + (new Date() ).toISOString() );
-                    setTimeout( function() {
-                        console.log( 'running timeOut: step > stepCount: ' + (new Date() ).toISOString() );
-                        $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
-                        clearInterval( MsgManager.clicktimer );
-                        MsgManager.clicktimer = 0;
-                      }, 500 );*/
                 }
+
             }
 
         }, (delayTimer / stepCount) );
@@ -300,6 +319,28 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
           }, delayTimer );
     }
 
+    if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
+}
+
+MsgManager.clearReservedMessage = function( reservedID )
+{
+
+    if ( reservedID != undefined )
+    {
+        if ( MsgManager.reservedIDs.length > 0 ) 
+        {
+            for (var i = 0; i < MsgManager.reservedIDs.length; i++)
+            {
+                if ( MsgManager.reservedIDs[i] === reservedID )
+                {
+                    $( '#notif_' + MsgManager.reservedMsgBlocks[ i ].blockid ).remove();
+                    MsgManager.reservedMsgBlocks.splice( MsgManager.reservedIDs.indexOf( reservedID ), 1 );
+                    MsgManager.reservedIDs.splice( MsgManager.reservedIDs.indexOf( reservedID ), 1 );
+                    return true;
+                }
+            }
+        }
+    }
 
 }
 

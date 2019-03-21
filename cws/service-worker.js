@@ -36,11 +36,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "c8604df6347b0b69a29a8af4a32a34c8"
+    "revision": "5fb9e3c9cdabcc833a3caa7efd5e31d8"
   },
   {
     "url": "css/style.css",
-    "revision": "681ad39716d219010ee12ec8f15726d7"
+    "revision": "f51bfbcd347f05f3127f5148b83e32c0"
   },
   {
     "url": "images/baseline-cloud_off-24px-unavailable.svg",
@@ -107,10 +107,6 @@ self.__precacheManifest = [
     "revision": "a4cbccc08adcc4a00bdb043e7e3c80b3"
   },
   {
-    "url": "img/about - Copy.svg",
-    "revision": "dcc4d07c517ccf3505f9a18289f92d19"
-  },
-  {
     "url": "img/about.svg",
     "revision": "15b2f8e409f6a038f54ab20b993bd249"
   },
@@ -175,6 +171,10 @@ self.__precacheManifest = [
     "revision": "320afcbc50ae25dedf9fcce641664680"
   },
   {
+    "url": "img/Connect.svg",
+    "revision": "bd02a90569ddf4ee0b544fc2f1847ebd"
+  },
+  {
     "url": "img/entry.svg",
     "revision": "82f5db78e62a0278b8e4904af9535842"
   },
@@ -216,7 +216,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/list.svg",
-    "revision": "5a33761261b500b12c84cf1fa80239f8"
+    "revision": "a6bac0e4f5a9dbe41cdfd1f87f35d4f0"
   },
   {
     "url": "img/lock.svg",
@@ -229,10 +229,6 @@ self.__precacheManifest = [
   {
     "url": "img/logo_log.svg",
     "revision": "0be80d63c398303a54a276fedffc2b22"
-  },
-  {
-    "url": "img/logo_top.svg",
-    "revision": "35e285c0cccf3fc660d9fa7b4aadefd5"
   },
   {
     "url": "img/logo.svg",
@@ -324,11 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "716d8ce5fd152f6dd4fb8b349fb527fe"
-  },
-  {
-    "url": "manifest.json",
-    "revision": "e06076330152adb98516bbe5c388c456"
+    "revision": "c19291aed7e09d1c30e1eeadeeae06b1"
   },
   {
     "url": "redeemGen.html",
@@ -336,15 +328,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "288e2748fd679317ca26efc93c5c62f4"
+    "revision": "f442592b64be1753718052669083af59"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "bd7db6a01548897bec400333d8128ac4"
+    "revision": "2061699519d7e00bf90f30ff9ea65d9c"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "2a39a1e4fe6db5289872a48fb81df904"
+    "revision": "33df2fb42389b9f92a0c1c4c8b04f5d9"
   },
   {
     "url": "scripts/classes/block.js",
@@ -352,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "33950578022d2f93288dd9dd4305a64a"
+    "revision": "51d77550ba4046aa98e6932636e4552c"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -368,7 +360,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "a6e9083fad85167bee357c0a6649212a"
+    "revision": "8b2f785d8c70b01f802793e6feae6aec"
   },
   {
     "url": "scripts/classes/favIcon.js",
@@ -380,19 +372,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "cf6b54021465c2bc0fd9f77aff8a8b5a"
+    "revision": "5299b43d428edb8bba0f573ded4d100e"
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "4abcafec8241262b2a48a54a5209044b"
+    "revision": "63f75b6c90baa0679b3dea8192f05cbf"
   },
   {
     "url": "scripts/classes/statistics.js",
     "revision": "573e6a5869f463b342483ac556ee82ad"
-  },
-  {
-    "url": "scripts/classes/test.json",
-    "revision": "5913fe915fb2c58661c81f84840bcce8"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -400,7 +388,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "11e3701aa8001539d53e33769a1fb108"
+    "revision": "46d20d709c053806cbc30d8d6a44a06a"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -427,12 +415,16 @@ self.__precacheManifest = [
     "revision": "34b37025b968199c5d6adc5a6689f8ec"
   },
   {
+    "url": "scripts/utils/cacheManager.js",
+    "revision": "683c716c7699aa4e149f3a77a153c6e5"
+  },
+  {
     "url": "scripts/utils/configUtil.js",
     "revision": "b3d3f0be838558b42c01e3cc789572a7"
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "85d6e95bdc910214b505ac4b776603b5"
+    "revision": "2383c399241eae30d3120f281ee790bb"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -444,19 +436,19 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formMsgManager.js",
-    "revision": "daa1e836fe42cd07318bfcd8dd6ae6d7"
+    "revision": "cdeda7b7cd5c5124b74154f3a19e6168"
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "9b65981ce034841d566df6e1dd527f5f"
+    "revision": "1bdb72c805a19a20661c7d76c835f6fd"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "596e6d0481b7321040b3676a92baa21b"
+    "revision": "ad92296075fce22d1bb4f96acd75f073"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "5b146af05406c885d36858d42e52082a"
+    "revision": "656c3154e24165ebbc5788cdbc75fcd2"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -464,11 +456,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "2daf71c01ac6492face5db02c38a82c7"
+    "revision": "0ed04c11433cf8764b115890e2cd6bc0"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "96710aeb0541222da08fb3164aea9d87"
+    "revision": "ff8e2d500866e976e78277c50893cb25"
   },
   {
     "url": "styles/images/ui-icons_444444_256x240.png",
@@ -508,12 +500,12 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "c188285b293518a6845bf04185dfc3d5"
+    "revision": "f084d9da535ec4e7b9f0dd8fc05f67c0"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"gFonts", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, workbox.strategies.staleWhileRevalidate({ "cacheName":"googleFonts", plugins: [] }), 'GET');
 
 workbox.googleAnalytics.initialize({});

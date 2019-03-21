@@ -5,11 +5,21 @@
   const _cwsRenderObj = new cwsRender();
   
   //window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
-  var debugMode = false;
+  var debugMode = true;
 
   //const _testSection = new testSection();
 
+
   window.onload = function() {
+
+
+    //startApp();
+  }
+
+  function startApp() 
+  {
+    //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
+    FormMsgManager.appBlock( "<img src='img/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
 
     // 1. Online/Offline related event setup
     updateOnlineStatus();
@@ -30,6 +40,7 @@
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
       syncManager.initialize( _cwsRenderObj );
+      FormMsgManager.appUnblock();
 
     });
 
@@ -39,9 +50,8 @@
         ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
     });
-
   }
-
+  
   // ----------------------------------------------------
 
   $( '#spanVersion' ).text( 'v' + _ver );
@@ -55,9 +65,9 @@
 
   });*/
   
-  $( '.reget' ).click( () => {
+  /*$( '.reget' ).click( () => {
     FormUtil.performReget( _registrationObj );
-  });
+  });*/
 
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
@@ -75,7 +85,7 @@
   
       if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
       {
-        FormUtil.swCacheReset();
+        FormUtil.deleteCacheKeys();
       }
   
       FormUtil.performReget( _registrationObj );
@@ -101,11 +111,9 @@
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
 
-      FormMsgManager.appBlock( "Loading App Data..." );
-
       FormUtil.getAppInfo( function( success, jsonData ) 
       {
-        FormMsgManager.appUnblock();
+        
         if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
 
         if ( jsonData )
@@ -119,13 +127,25 @@
           appVersionUpgradeReview( jsonData );
 
           // get proper web service - Should not implement this due to offline possibility
-          webServiceSet( jsonData.appWS );
+          
+          if ( ! FormUtil.isAppsPsiServer() )
+          {
+            webServiceSet( jsonData.appWS.cwsDev );
+          }
+          else
+          {
+            webServiceSet( jsonData.appWS.cws );
+          }
+
         }
 
+        FormMsgManager.appUnblock();
         returnFunc();
+
       });
+
     }
-    /*else
+    else
     {
       if ( debugMode ) console.log('not PSI server')
       if ( ! FormUtil._getPWAInfo )
@@ -135,7 +155,7 @@
       appVersionUpgradeReview(FormUtil._getPWAInfo );
       FormMsgManager.appUnblock();
       returnFunc();
-    }*/
+    }
 
   };
 
@@ -147,7 +167,6 @@
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
-
       var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
       // move to cwsRender 
@@ -163,36 +182,30 @@
 
           if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches && FormUtil._getPWAInfo.reloadInstructions.allCaches == "true" )
           {
-            if ( debugMode ) console.log( 'btnRefresh > FormUtil.swCacheReset() ' );
-            FormUtil.swCacheReset();
-          }
-
-          //if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.serviceWorker && FormUtil._getPWAInfo.reloadInstructions.serviceWorker == "true" )
-          {
-            if ( debugMode ) console.log( 'btnRefresh > _cwsRenderObj.reGetAppShell() ' );
-            _cwsRenderObj.reGetAppShell();
+            if ( debugMode ) console.log( 'btnRefresh > FormUtil.deleteCacheKeys() ' );
+            FormUtil.deleteCacheKeys( ); //( _cwsRenderObj.reGetAppShell )
           }
           /*else
           {
-            if ( debugMode ) console.log( 'btnRefresh > FormUtil.performReget( _registrationObj ) ' );
-            FormUtil.performReget( _registrationObj );
+            _cwsRenderObj.reGetAppShell();
           }*/
+
         }
 
       });
 
-      MsgManager.notificationMessage ( 'A new version of this app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+      MsgManager.notificationMessage ( 'New version of this app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
 
     }
     
   }
 
   
-  function webServiceSet( appWS )
+  function webServiceSet( wsName )
   {
-    if ( appWS )
+    if ( wsName )
     {
-      var appUrlName = FormUtil.appUrlName;
+      /*var appUrlName = FormUtil.appUrlName;
       var wsName = '';
       try { wsName = appWS[ appUrlName ]; }
       catch(err) {}
@@ -201,7 +214,10 @@
       {
         if ( debugMode ) console.log( 'setting staticWSName: ' + wsName );
         FormUtil.staticWSName = wsName;
-      }
+      }*/
+
+      FormUtil.staticWSName = wsName;
+      //console.log( 'working against: ' + wsName );
 
     }
   }
@@ -245,7 +261,13 @@
                   if (navigator.serviceWorker.controller) {
                     // new update available
                     //resolve(true);
-                    //MsgManager.notificationMessage ( 'new updates available: installing', 'notificationDark', undefined, '', 'right', 'bottom', 5000 );
+                    //var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+                    // move to cwsRender ?
+                    /*$( btnUpgrade ).click ( () => {
+                      location.reload( true );
+                    });
+
+                    MsgManager.notificationMessage ( 'New updates found and installed', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );*/
                   } else {
                     // no update available
                     //resolve(false);
@@ -260,6 +282,12 @@
           _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
           _registrationObj = registration;
           if ( debugMode ) console.log('Service Worker Registered');
+
+        })
+        .then(function() {
+
+          // Start the app after service worker is ready.
+          startApp();
 
         })
         .catch(err => 

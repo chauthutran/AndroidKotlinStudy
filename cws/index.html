@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.0.44'; </script>
+    <script> var _ver = '1.0.0.50'; </script>
 
     <!-- Google Analytics -->
     <script>
@@ -65,7 +65,6 @@
 
   <nav class="bg-color-program">
       <div class='logo_top nav_child headerLogo'>
-        <img id="loginImg" src="img/logo_top.svg" style="display: none;">
         <a id="nav-toggle" href="#"><span></span></a>      
       </div>
 
@@ -74,7 +73,7 @@
           <div class="logo-desc-all" style='text-align:center;font-weight: 600;font-size: 18pt;width: 75%;position: fixed;left: 50%;top:14px;margin-left: -37.5%;'></div>
         </div>
         <div>
-          <div style="display: none"><img src='images/baseline-cloud_off-24px.svg' class="tab-image"></div>
+          <div id="preload" style="display: none"><img src='images/baseline-cloud_off-24px.svg' ><img src='img/Connect.svg' ></div>
           <div id="loggedInDiv" style="display: none; cursor: pointer;">
             <span id="spanOuName" style="color: #000;font-size: 20pt;text-align:center;font-weight: 600;position: fixed;left: 50%;top:14px;margin-left: -37.5%;">[LogIn]</span>
           </div>      
@@ -85,43 +84,28 @@
         <table class="topIconsTbl" style="border-spacing: 0px;">
           <tr>
             <td>
-              <!-- <div id="divAppModeConnStatus" style="cursor:pointer;"><span id="appModeConnStatus" connStat="" style="font-size: 11px;display:none;"></span></div> -->
               <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="img/sync-banner.svg"></div>
             </td>
             <td>
-              <div id="divNetworkStatus" style="padding: 3px;display: none;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
+              <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
             </td>
           </tr>
         </table>
       </div>
 
-      <div id="notificationUpgrade" term="" class="" style="display:none"> A new version of this app is available <a id="btnUpgrade" class="notifBtn">REFRESH</a> <img id="hidenotificationUpgrade" class="notifClose" src='images/close_white.svg' ></div>
-
     </nav>
-    
-    <div id="navDrawerDiv" class="menu-mobile transitionSmooth"></div>
+
+    <div id="navDrawerDiv" class="menu-mobile transitionSmooth" style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
 
     <div id="divProgressBar" class="progress"><div class="indeterminate"></div></div>
-
-    <div id="divMsgAreaWrap">
-      <div id="divMsgArea" style="display:none;">
-        <span id="spanMsgAreaText"></span>
-        <span id="spanMsgAreaClose">
-          <img src="images/hide.png" title="Close" id="btnMsgAreaClose">
-        </span>
-        <div id="divMsgProgress" style="display:none;position: relative;left:-8px;top:2px;height:10px;"></div>
-      </div>
-    </div>
 
     <!-- LOGIN FORM DIV -->
     <div id="loginFormDiv" style="display:none;">
 
-        <div class='logo_log reget'>
-          <img src='img/logo_log.svg'>
-        </div>
 
         <div name="top-body" class="bodytop bg-color-program-son"></div>
         <section class="wrapper-log">
+
 
           <!-- LARGE WIDTH MODE DISPLAY -->
           <ul class="tabs">
@@ -129,10 +113,6 @@
               <img src='img/key.svg' class="tab-image">
               <label> Login </label>
             </li>
-            <!-- <li tabId="2">
-              <img src='img/settings.svg' class="tab-image">
-              <label> Advanced options(X)</label>
-            </li> -->
           </ul>
 
 
@@ -156,8 +136,8 @@
                           <input autocomplete="off" class="form-type-text loginUserPin" type="password">
                         </div>
                         <div class="tb-content-d-log" style="border: none; background-color: unset;">
-                          <input type="checkbox" class="stayLoggedIn" checked style="width: 1.4em; height: 1.4em;">
-                          <span term="login_staysignedin" style="vertical-align: top; margin-left: 5px; font-size: 1.1em;"> Stay signed in </span>
+                          <input type="checkbox" class="stayLoggedIn" checked style="width: 1.1em;height: 1.1em;">
+                          <span term="login_staysignedin" style="vertical-align: top; margin-left: 5px; font-size: 12px;"> Stay signed in </span>
                         </div>
                         <div term="login_btn_login" class="tb-content-buttom btn divBtn loginBtn" style="width:96%;">LOG IN</div>
                         <div style="text-align: center; margin:0 0 6px 0;">
@@ -176,32 +156,6 @@
 
                         </div>
                       </div>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li tabId="2" style="display:none;">
-                <a class="expandable" id="a-opt">
-                  <div class="icon-row"><img src="img/settings.svg"> Advanced options</div>
-                  <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div>
-                </a>
-                <div>
-                  <ul>
-                    <li>
-                      <div class="tb-content-d-log">
-                        <label class="from-string">Server URL</label>
-                        <input autocomplete="off" readonly class="form-type-text loginServerAdv" type="text">
-                      </div>
-                      <div class="tb-content-d-log">
-                        <label class="from-string">User name</label>
-                        <input autocomplete="off" class="form-type-text loginUserNameAdv" type="text">
-                      </div>
-                      <div class="tb-content-d-log">
-                        <label class="from-string">PIN</label>
-                        <input autocomplete="off" class="form-type-text loginUserPinAdv" type="password">
-                      </div>
-                      <div class="tb-content-buttom-log divBtn loginBtnAdv">LOG IN</div>
-                      <div class="tb-content-buttom-log-out divBtn loginBtnClear">CLEAR AND LOG OUT</div>
                     </li>
                   </ul>
                 </div>
@@ -291,7 +245,7 @@
                     <td><span id="aboutInfo_AppNewVersion"></span></td>
                     <td>
                       <div id="aboutInfo_AppVersionInner">
-                        <button value="" id="appShellUpdateBtn" class="divBtn btnStyle1" term="label to be decided">update</button>
+                        <button value="" id="appShellUpdateBtn" class="btnStyle1" term="label to be decided">update</button>
                       </div>
                     </td>
                     <td></td>
@@ -328,7 +282,7 @@
                     <td><span id="aboutInfo_dcdNewVersion"></span></td>
                     <td>
                       <div id="aboutInfo_dcdVersionInner">
-                        <button value="" id="dcdUpdateBtn" class="divBtn btnStyle1" term="label to be decided">update</button>
+                        <button value="" id="dcdUpdateBtn" class="btnStyle1" term="label to be decided">update</button>
                       </div>
                     </td>
                   </tr>
@@ -408,7 +362,7 @@
                     <td style="width:160px;"><span id="aboutInfo_userLanguage_Update" style="color:#808080"></span></td>
                     <td>
                       <div id="" class="form-type-text">
-                          <button id="aboutInfo_newLangTermsDownload" term="" class="divBtn btnStyle1">update</button> <!-- /*sorry to change it */ term="about_newLangTermsDownload" -->
+                          <button id="aboutInfo_newLangTermsDownload" term="" class="btnStyle1">update</button> <!-- /*sorry to change it */ term="about_newLangTermsDownload" -->
                         </div>
                     </td>
                     <td></td>
@@ -472,8 +426,7 @@
                   <tr>
                     <td style="width:120px;">
                       <div id="">
-                        <button id="btnReset" term="aboutInfo_Reset" class="divBtn btnStyle1">reset</button>
-                        <!-- <button id="btnCheckSW" term="" class="divBtn btnStyle1">check for Updates</button> -->
+                        <button id="btnReset" term="aboutInfo_Reset" class="btnStyle1">reset</button>
                       </div>
                     </td>
                   </tr>
@@ -481,8 +434,6 @@
               </div>
 
             </li>
-
-            <!-- <li class="inputDiv" style="width: 97%;margin:0;"></li> -->
 
           </ul>
         </div>
@@ -609,6 +560,7 @@
     <script type="text/javascript" src="scripts/utils/dataManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
+    <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>

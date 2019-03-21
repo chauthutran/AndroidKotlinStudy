@@ -295,7 +295,6 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 		{
 			// Check the login success message in content.. ..			
 			var loginStatus = ( returnJson && returnJson.loginStatus );
-			//var orgUnitData = ( returnJson.orgUnitData ) ? returnJson.orgUnitData : undefined;
 
 			if ( loginStatus )
 			{		
@@ -327,7 +326,7 @@ FormUtil.checkLoginSubmitCase = function( payloadJson )
 
 FormUtil.checkLogin = function()
 {
-	return ( FormUtil.login_UserName && FormUtil.login_Password );
+	return ( FormUtil.login_UserName.toString().length && FormUtil.login_Password.toString().length );
 }
 
 FormUtil.undoLogin = function()
@@ -378,6 +377,10 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				{
 					$( '#focusRelegator').hide();
 				}
+				else
+				{
+					subListIconsTag.css( 'opacity', '0' );
+				}
 			}
 
 			subListIconsTag.css( 'zIndex', 1);
@@ -396,7 +399,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
 				subListIconsTag.show();
-				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ));
+				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth + 'px' ));
 				subListIconsTag.css( 'left', '0px' );
 
 				if ( $( 'div.floatListMenuSubIcons' ).hasClass( className_Open ) )
@@ -795,13 +798,74 @@ FormUtil.performReget = function( regObj, option )
 	}
 }
 
-FormUtil.swCacheReset = function()
+FormUtil.deleteCacheKeys = function( thenFunc )
 {
-	caches.keys().then(function(names) {
-		for (let name of names)
-			console.log( 'deleting cache: ' + names );
-			caches.delete(name);
-	});
+	if ( caches )
+	{
+		caches.keys().then(function(names) 
+		{
+			for (let name of names)
+			{
+				//console.log( 'eval cache obj [' + name + ']');
+				if ( name.toString().indexOf( 'google' ) >= 0 || name.toString().indexOf( 'workbox' ) >= 0 )
+				{
+					//console.log( 'skipping cache obj ' + name );
+				}
+				else
+				{
+					console.log( 'deleting cacheStorage obj: ' + name );
+					caches.delete(name);
+				}
+			}
+
+			if ( thenFunc )
+			{
+				//setTimeout( function() {
+					thenFunc();
+				//}, 1000 );
+			}
+
+		});
+	}
+}
+
+FormUtil.swCacheReset = function( returnFunc )
+{
+	if ( caches )
+	{
+		var cachesCount = 0;
+		var deteteLeft = 0;
+
+		caches.keys().then(function(names) {
+
+			cachesCount = names.length;
+			deteteLeft = cachesCount;
+
+			for ( let name of names )
+			{
+				console.log( 'deleting cache: ' + name );
+
+				caches.delete(name).then( function( status ) {
+
+					console.log( 'Delete Status: ' + status );
+
+					cachesCount--;
+					if ( status ) deteteLeft--;
+
+					if ( cachesCount <= 0 )
+					{
+						var allDeleted = ( deteteLeft <= 0 );
+						returnFunc( allDeleted );
+					} 
+				});
+			}
+		});	
+	}
+	else
+	{
+		// Browser not supporting Service Worker Caches
+		returnFunc( false );
+	}
 }
 
 FormUtil.getMyListData = function( listName )
@@ -1134,7 +1198,7 @@ FormUtil.PWAlaunchFrom = function()
 
 FormUtil.jsonReadFormat = function( jsonData )
 {
-	console.log( JSON.stringify( jsonData ) );
+	//console.log( JSON.stringify( jsonData ) );
 	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,' = ');
 	else return '';
 }

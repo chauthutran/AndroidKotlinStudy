@@ -19,6 +19,7 @@ ConnManager.dataServer_timerID = 0;
 ConnManager.dataServerDetect = 0;
 
 ConnManager.connChangeAsked = false;  // For asking AppConnMode change only once per mode change
+ConnManager.connChangeAskedMode = false;  // For asking AppConnMode change only once per mode change
 
 ConnManager.switch_waitMaxCount = 20;	// After manually switching AppConnMode, let it not botter(ask) for this count..
 ConnManager.switchActionStarted = false;
@@ -35,6 +36,8 @@ ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 ConnManager.userNetworkMode_TestExempt = false;
 ConnManager.userNetworkMode_Override = false;
+
+ConnManager.speedMode = 'normal'; //slow,normal,fast
 
 ConnManager.debugMode = false;
 
@@ -75,14 +78,9 @@ ConnManager.setAppConnMode_Initial = function()
 	// 1. 1st status when coming is the starting status
 	if ( ConnManager.isOnline() )
 	{
-		FormMsgManager.appBlock( "Contacting data server" + "..." );
-
 		FormUtil.getDataServerAvailable( function( success, jsonData ) 
 		{
-			//if ( FormUtil.isAppsPsiServer()) 
-			FormMsgManager.appUnblock();
-
-			if ( success && jsonData )
+			if ( success && jsonData && jsonData.available != undefined )
 			{
 				ConnManager.dataServer_Online = jsonData.available;
 			}
@@ -105,7 +103,7 @@ ConnManager.setAppConnMode_Initial = function()
 ConnManager.setAppConnMode = function( bOnline ) 
 {
 
-	ConnManager.appConnMode_Online = bOnline;
+	ConnManager.appConnMode_Online = ( bOnline != undefined ? bOnline : false);
 
 	ConnManager.connChangeAsked = false;
 
@@ -132,7 +130,7 @@ ConnManager.setUp_AppConnModeDetection = function()
 	setInterval( function() 
 	{
 		var bNetworkOnline = ConnManager.isOnline() && ConnManager.dataServer_Online;
-		ConnManager.currIntv_Online = bNetworkOnline;
+		ConnManager.currIntv_Online = ( bNetworkOnline != undefined ? bNetworkOnline : false);
 
 		if ( !ConnManager.userNetworkMode )
 		{
@@ -173,15 +171,17 @@ ConnManager.setUp_AppConnModeDetection = function()
 								ConnManager.dataServer_timerID = 0;
 								ConnManager.dataServerDetect = 0;
 							}
-							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 1' );
-							ConnManager.connChangeAsked = true;
+
+							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 1: ' + ConnManager.currIntv_Online );
+							//ConnManager.connChangeAsked = true;
+							ConnManager.connChangeAskedMode = ConnManager.currIntv_Online;
 							ConnManager.change_AppConnModePrompt( "interval", ConnManager.currIntv_Online );
 						}
 						else
 						{
 							if ( ConnManager.isOnline() && !ConnManager.dataServer_Online )
 							{
-								ConnManager.setUp_dataServerModeDetection();
+								if ( ! ConnManager.dataServer_timerID ) ConnManager.setUp_dataServerModeDetection();
 							}
 						}
 						ConnManager.IntvCountBuildUp = 0;
@@ -190,24 +190,43 @@ ConnManager.setUp_AppConnModeDetection = function()
 				else
 				{
 					/* USER CURRENTLY PROMPTED */
-					if ( ConnManager.IntvCountBuildUp == 60 ) //ConnManager.IntvCountBuildUp >= ConnManager.IntvCountCheckPoint && 
+					if ( ConnManager.IntvCountBuildUp == 60 ) // 60 = 30000ms / 500ms ( dataServerTimer / networkOnlineTimer )
 					{
 						if ( ConnManager.isOnline() && !ConnManager.dataServer_Online && !ConnManager.connChangeAsked )
 						{
 							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 2' );
-							ConnManager.connChangeAsked = true;
+							//ConnManager.connChangeAsked = true;
+							ConnManager.connChangeAskedMode = ConnManager.currIntv_Online;
 							ConnManager.change_AppConnModePrompt( "interval", ConnManager.currIntv_Online );
 							ConnManager.IntvCountBuildUp = 0;
 						}
 						else if ( bNetworkOnline != ConnManager.appConnMode_Online && !ConnManager.connChangeAsked )
 						{
 							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 3' );
-							ConnManager.connChangeAsked = true;
+							//ConnManager.connChangeAsked = true;
+							ConnManager.connChangeAskedMode = ConnManager.currIntv_Online;
 							ConnManager.change_AppConnModePrompt( "interval", ConnManager.currIntv_Online );
 							ConnManager.IntvCountBuildUp = 0;
 						}
 
 						if ( ConnManager.debugMode ) console.log( 'Interval:setUp_AppConnModeDetection DIFFERENT network MODE vs actual ' + bNetworkOnline + '('+ConnManager.isOnline()+'), ConnManager.dataServer_Online: ' + ConnManager.dataServer_Online + ', ConnManager.appConnMode_Online: ' + ConnManager.appConnMode_Online + ', IntvCountBuildUp: ' + ConnManager.IntvCountBuildUp + ', ConnManager.dataServerDetect: ' + ConnManager.dataServerDetect + ', ConnManager.dataServer_timerID: ' + ConnManager.dataServer_timerID );
+					}
+					else
+					{
+						//Cancel an existing prompt to switch network (e.g. if in offline mode, network comes on, a prompt to switch modes will show; before it auto-clicks the network changes back to offline; this next step will cancel the prompt)
+						if ( ConnManager.connChangeAsked && ConnManager.currIntv_Online != ConnManager.connChangeAskedMode )
+						{
+							MsgManager.clearReservedMessage( ConnManager.changeConnModeStr.toUpperCase() + '_' + ConnManager.connStatusStr( ConnManager.connChangeAskedMode ).toUpperCase() );
+
+							ConnManager.IntvCountBuildUp = 0;
+							ConnManager.userNetworkMode = false;
+							ConnManager.switchActionStarted = false;
+							ConnManager.switchBuildUp = 0;
+							ConnManager.changeConnModeStr = '';
+							ConnManager.connChangeAsked = false;
+							ConnManager.userNetworkMode_Override = false;
+							ConnManager.userNetworkMode_TestExempt = false;
+						}
 					}
 
 				}
@@ -222,6 +241,7 @@ ConnManager.setUp_AppConnModeDetection = function()
 				if ( ConnManager.userNetworkMode_Online != bNetworkOnline )	
 				{
 					ConnManager.userNetworkMode_TestExempt = true;
+					//ConnManager.userNetworkMode_dtmPrompt = (new Date() ).toISOString();
 				}
 				else
 				{
@@ -251,7 +271,7 @@ ConnManager.change_AppConnModePrompt = function( modeStr, requestConnMode )
 	ConnManager.changeConnModeStr = modeStr;
 	ConnManager.userNetworkMode_dtmPrompt = (new Date() ).toISOString();
 
-	if ( ConnManager.debugMode ) console.log( 'ConnManager.change_AppConnModePrompt > modeStr: '+modeStr+', requestConnMode:'+requestConnMode + ', userNetworkMode_Override:' + ConnManager.userNetworkMode_Override);
+	//if ( ConnManager.debugMode ) console.log( 'ConnManager.change_AppConnModePrompt > modeStr: '+modeStr+', requestConnMode:'+requestConnMode + ', userNetworkMode_Override:' + ConnManager.userNetworkMode_Override);
 
 	if ( FormUtil.checkLogin() )
 	{
@@ -262,24 +282,21 @@ ConnManager.change_AppConnModePrompt = function( modeStr, requestConnMode )
 				ConnManager.changeConnModeTo = requestConnMode;
 				changeConnModeTo = requestConnMode;
 			}
-	
+
 			var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
 
-			//questionStr = "Network changed to '" + changeConnStr + "'.  Do  you want to switch App Mode to '" + changeConnStr + "'?";
 			questionStr = "Network changed: switch to '" + changeConnStr.toUpperCase() + "' mode?";
 
 		}
 		else if ( modeStr === "switch" ) 
 		{
 			var currConnStat = ConnManager.appConnMode_Online;
-			//var currConnStr = ConnManager.connStatusStr( currConnStat );
 
 			changeConnModeTo = !currConnStat;
 			ConnManager.changeConnModeTo = !currConnStat;
 
 			var changeConnStr = ConnManager.connStatusStr( changeConnModeTo );
 
-			//questionStr = "App Connection Mode is '" + currConnStr + "'.  Do you want to switch to '" + changeConnStr + "'?";
 			questionStr = "Network mode: switch to '" + changeConnStr + "'?";
 
 		}
@@ -296,8 +313,10 @@ ConnManager.change_AppConnModePrompt = function( modeStr, requestConnMode )
 			ConnManager.switchPreDeterminedConnMode();
 		});
 
-		MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManager.cancelSwitchPrompt );
+		MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManager.cancelSwitchPrompt, modeStr.toUpperCase() + '_' + changeConnStr.toUpperCase() );
+		if ( ConnManager.debugMode ) console.log( 'created notifPrompt "supposedly" : ' + questionStr );
 		ConnManager.connChangeAsked = true;
+		ConnManager.connChangeAskedMode = ConnManager.changeConnModeTo;
 		ConnManager.userNetworkMode_dtmPrompt = (new Date() ).toISOString();
 	}
 
@@ -373,6 +392,7 @@ ConnManager.setUp_dataServerModeDetection = function()
 
 	if ( ConnManager.dataServer_timerID )
 	{
+		if ( ConnManager.debugMode ) console.log( ' 1st clearing TIMER [ConnManager.dataServer_timerID] :' + ConnManager.dataServer_timerID );
 		clearInterval(  ConnManager.dataServer_timerID );
 		ConnManager.dataServer_timerID = 0;
 		ConnManager.dataServerDetect = 0;
@@ -392,7 +412,7 @@ ConnManager.setUp_dataServerModeDetection = function()
 
 ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 {
-	if ( ConnManager.debugMode ) console.log( 'detecting DataServerOnline' );
+	if ( ConnManager.debugMode ) console.log( 'detecting DataServerOnline > ' + (new Date() ).toISOString() );
 	if ( forceDataServerOnline != undefined ) ConnManager.dataServer_Online = forceDataServerOnline;
 
 	var bNetworkOnline = ConnManager.isOnline();
@@ -406,7 +426,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 		{
 			if ( ConnManager.debugMode ) console.log( 'skipped exemption test 5' );
 			ConnManager.changeConnModeTo = "offline";
-			ConnManager.changeConnModeStr = "interval";
+			//ConnManager.changeConnModeStr = "interval";
 			ConnManager.change_AppConnModePrompt( "interval", false );	
 		}
 	}
@@ -421,9 +441,9 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 			{
 				if ( !ConnManager.dataServer_Online && ConnManager.dataServer_timerID > 0 && !ConnManager.connChangeAsked )
 				{
-					if ( ConnManager.debugMode ) console.log( 'skipped exemption test 6' );
+					if ( ConnManager.debugMode ) console.log( 'skipped exemption test 6: ' + forceDataServerOnline );
 					ConnManager.changeConnModeTo = "offline";
-					ConnManager.changeConnModeStr = "interval";
+					//ConnManager.changeConnModeStr = "interval";
 					ConnManager.change_AppConnModePrompt( "interval", false );
 				}
 				else
@@ -432,7 +452,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 					{
 						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 7' );
 						ConnManager.changeConnModeTo = "online";
-						ConnManager.changeConnModeStr = "interval";
+						//ConnManager.changeConnModeStr = "interval";
 						ConnManager.change_AppConnModePrompt( "interval", true );
 					}
 				}
@@ -443,7 +463,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 				{
 					if ( ConnManager.debugMode ) console.log( 'skipped exemption test 8' );
 					ConnManager.changeConnModeTo = "online";
-					ConnManager.changeConnModeStr = "interval";
+					//ConnManager.changeConnModeStr = "interval";
 					ConnManager.change_AppConnModePrompt( "interval", true );
 				}
 			}
@@ -456,7 +476,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 			{
 				if ( ConnManager.debugMode ) console.log( 'DataServerOnline > success:' + success + ' > ' + ConnManager.dataServer_timerID);
 
-				if ( success && jsonData )
+				if ( success && jsonData && jsonData.available != undefined )
 				{
 					ConnManager.dataServer_Online = jsonData.available;
 					DataManager.setSessionDataValue( 'dataServerLastRequest', JSON.stringify( jsonData ) );
@@ -474,25 +494,25 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 				if ( ConnManager.debugMode ) 
 				{
 					console.log( jsonData );
-					console.log( 'DataServerOnline > dataServer_Online:' + ConnManager.dataServer_Online + ', ConnManager.network_Online:' + ConnManager.network_Online );
+					console.log( 'DataServerOnline > dataServer_Online:' + ConnManager.dataServer_Online + ', ConnManager.network_Online:' + ConnManager.network_Online + ' {existing ConnManager.dataServer_timerID}: ' + ConnManager.dataServer_timerID);
 				}
 
-				if ( ConnManager.network_Online != ConnManager.dataServer_Online )
+				if ( ConnManager.network_Online != ConnManager.dataServer_Online && ConnManager.appConnMode_Online )
 				{
 					if ( !ConnManager.dataServer_Online && ConnManager.dataServer_timerID > 0 && !ConnManager.connChangeAsked )
 					{
-						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 6' );
+						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 9' );
 						ConnManager.changeConnModeTo = "offline";
-						ConnManager.changeConnModeStr = "interval";
+						//ConnManager.changeConnModeStr = "interval";
 						ConnManager.change_AppConnModePrompt( "interval", false );
 					}
 					else
 					{
 						if ( ConnManager.dataServer_Online && !ConnManager.appConnMode_Online && !ConnManager.connChangeAsked )
 						{
-							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 7' );
+							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 10' );
 							ConnManager.changeConnModeTo = "online";
-							ConnManager.changeConnModeStr = "interval";
+							//ConnManager.changeConnModeStr = "interval";
 							ConnManager.change_AppConnModePrompt( "interval", true );
 						}
 					}
@@ -501,14 +521,103 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 				{
 					if ( FormUtil.checkLogin() && ConnManager.dataServer_Online && !ConnManager.getAppConnMode_Online() && !ConnManager.connChangeAsked && !ConnManager.userNetworkMode )
 					{
-						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 8' );
+						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 11' );
 						ConnManager.changeConnModeTo = "online";
-						ConnManager.changeConnModeStr = "interval";
+						//ConnManager.changeConnModeStr = "interval";
 						ConnManager.change_AppConnModePrompt( "interval", true );
 					}
 				}
 
 				ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
+
+				if ( ConnManager.dataServer_timerID > 0 )
+				{
+					//run App + Dcd version tests: which is more likely to change more frequently? App?
+					ConnManager.getAppShellVersion( function( retVersion ) 
+					{
+						var appShellVersion = $( '#spanVersion' ).html().replace('v','');
+						if ( ConnManager.debugMode ) console.log( ' ~ CHECKING APP VERSION' );
+						if ( ConnManager.debugMode ) console.log( retVersion );
+						if ( ConnManager.debugMode ) console.log( appShellVersion.toString() + ' vs ' + retVersion.toString() );
+
+						if ( appShellVersion.toString() < retVersion.toString() )
+						{
+							var btnAppShellTag = $( '<a term="" class="notifBtn">UPDATE</a>' );
+
+							$( btnAppShellTag ).click( () => {
+
+								if ( ConnManager.isOffline() )
+								{
+									//alert( 'Only re-register service-worker while online, please.' );
+									MsgManager.notificationMessage ( 'Cannot update when offline, please.', 'notificationDark', undefined, '', 'right', 'top' );
+								}
+								else
+								{
+									FormUtil.showProgressBar();
+									setTimeout( function() {
+										ConnManager._cwsRenderObj.reGetAppShell(); 
+									}, 500 );
+								}
+							});
+
+							MsgManager.notificationMessage( 'New app version available: ' + retVersion.toString(), 'notificationDark', btnAppShellTag,'', 'right', 'bottom', 20000, false, undefined, 'newAPPversion' );
+
+						}
+						else
+						{
+							ConnManager.getDcdConfig( function( retVersion ) 
+							{
+								var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+								if ( ConnManager.debugMode ) console.log( ' ~ CHECKING DCD VERSION' );
+								if ( ConnManager.debugMode ) console.log( retVersion );
+								if ( ConnManager.debugMode ) console.log( userConfig.dcdConfig.version + ' vs ' + retVersion.dcdConfig.version.toString() );
+
+								if ( ( userConfig.dcdConfig.version ).toString() < retVersion.dcdConfig.version.toString() )
+								{
+									DataManager.setSessionDataValue( 'dcdUpgrade', JSON.stringify( retVersion ) );
+									var btnDcdConfigTag = $( '<a term="" class="notifBtn">UPDATE</a>' );
+
+									$( btnDcdConfigTag ).click( () => {
+
+										if ( ConnManager.isOffline() )
+										{
+											msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
+										}
+										else
+										{
+											FormUtil.showProgressBar();
+
+											setTimeout( function() {
+
+												var newConfig = DataManager.getSessionData().dcdUpgrade;
+												console.log( userConfig );
+												//var userName = JSON.parse( localStorage.getItem('session') ).user;
+
+												//DataManager.saveData( userName, JSON.parse( newConfig ) );
+												DataManager.setSessionDataValue( 'dcdUpgrade', '' );
+
+												ConnManager._cwsRenderObj.loginObj._pHash = userConfig.mySession.pin ;
+												ConnManager._cwsRenderObj.loginObj._staySignedIn = userConfig.mySession.stayLoggedIn;
+												ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
+
+												//ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
+												FormUtil.hideProgressBar();
+
+											}, 500 );
+										}
+
+									}); 
+
+									MsgManager.notificationMessage( 'New config version available: ' + retVersion.dcdConfig.version.toString(), 'notificationDark', btnDcdConfigTag,'', 'right', 'bottom', 20000, false, undefined, 'newDCDversion' );
+
+								}
+
+							});
+						}
+					});
+				}
+				
+
 			});
 		}
 		
@@ -545,4 +654,76 @@ ConnManager.setUserNetworkMode = function( requestConnMode )
 	ConnManager.userNetworkMode_dtmSet = (new Date() ).toISOString();
 	ConnManager.userNetworkMode_dtmPrompt = (new Date() ).toISOString();
 	ConnManager.userNetworkMode_Online = requestConnMode;
+}
+
+ConnManager.getAppShellVersion = function( returnFunc )
+{
+	var loadingTag = undefined;
+	var queryLoc = FormUtil.getWsUrl( '/api/getPWAInfo' ); 
+
+	if ( ConnManager.isOnline() )
+	{
+		FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
+		{
+			if ( returnFunc )
+			{
+				if ( returnJson == undefined) returnFunc( 0 );
+				else returnFunc( returnJson.version );
+			}
+			else return false;
+		});
+	}
+
+}
+
+ConnManager.getDcdConfigVersion = function( returnFunc )
+{
+	if ( localStorage.getItem('session') !== null )
+	{
+		var loadingTag = undefined;
+		var userName = JSON.parse( localStorage.getItem('session') ).user;
+		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+
+		FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
+		{
+			if ( success )
+			{
+				if ( returnFunc ) returnFunc( loginData.dcdConfig.version );
+				else return success;
+			}
+			else
+			{
+				if ( returnFunc ) returnFunc( undefined );
+				else return undefined;
+			}
+		});
+
+	}
+	else return undefined;
+}
+
+ConnManager.getDcdConfig = function( returnFunc )
+{
+	if ( localStorage.getItem('session') !== null )
+	{
+		var loadingTag = undefined;
+		var userName = JSON.parse( localStorage.getItem('session') ).user;
+		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+
+		FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
+		{
+			if ( success )
+			{
+				if ( returnFunc ) returnFunc( loginData );
+				else return success;
+			}
+			else
+			{
+				if ( returnFunc ) returnFunc( undefined );
+				else return undefined;
+			}
+		});
+
+	}
+	else return undefined;
 }

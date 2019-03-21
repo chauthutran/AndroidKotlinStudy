@@ -461,11 +461,6 @@ function inputMonitor( cwsRenderObj )
     me.toucheEndNavDrawer = function( e )
     {
 
-        if ( !loggedIn || ( Math.abs(trackX) <= 2) || ( !navDrawerVisibleOnStart && !navDrawerVisibleOnMove ) )
-        {
-            trackX = 0;
-            return;
-        }
 
         if ( $( '#navDrawerDiv' ).hasClass( 'transitionRapid' ) )
         {
@@ -475,6 +470,12 @@ function inputMonitor( cwsRenderObj )
         {
             $( '#navDrawerDiv' ).addClass( 'transitionSmooth' );
         } 
+
+        if ( !loggedIn || ( Math.abs(trackX) <= 2) || ( !navDrawerVisibleOnStart && !navDrawerVisibleOnMove ) )
+        {
+            trackX = 0;
+            return;
+        }
 
         $( '#navDrawerDiv' ).css( 'left', '0px' );
         $( '#focusRelegator').css( 'opacity', 0.5 );

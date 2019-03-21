@@ -7,19 +7,18 @@ generateSW({
   swDest: 'cws/service-worker.js',
   globDirectory: 'cws',
   globPatterns: [
-    '**/*.{svg,js,json,css,html,gif,png}'
+    '**/*.{html,css,js,gif,jpg,png,svg}'
   ],
   skipWaiting: true,
   clientsClaim: true,
   offlineGoogleAnalytics: true,
 
-  runtimeCaching: 
-  [
+  runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {
-        cacheName: 'gFonts'
+        cacheName: 'googleFonts'
       }
     }
   ]
