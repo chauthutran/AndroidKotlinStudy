@@ -597,7 +597,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 												DataManager.setSessionDataValue( 'dcdUpgrade', '' );
 
 												ConnManager._cwsRenderObj.loginObj._pHash = userConfig.mySession.pin ;
-												ConnManager._cwsRenderObj.loginObj._staySignedIn = userConfig.mySession.stayLoggedIn;
+												ConnManager._cwsRenderObj.loginObj._staySignedIn = false; //userConfig.mySession.stayLoggedIn;
 												ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
 
 												//ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );

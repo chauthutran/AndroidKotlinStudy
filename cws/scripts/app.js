@@ -34,13 +34,12 @@
     // 2. Do 'appInfoOperation' that does app Version Check & action first
     //  & set web service type for the app
     // , then, proceed with 'cwsRenderObj' rendering.
-    appInfoOperation( function() {
 
+    appInfoOperation( function() {
       // Create a class that represent the object..
       ConnManager._cwsRenderObj = _cwsRenderObj;
       _cwsRenderObj.render();
       syncManager.initialize( _cwsRenderObj );
-      FormMsgManager.appUnblock();
 
     });
 
@@ -50,6 +49,44 @@
         ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
     });
+
+    if ( Util.isMobi() )
+    {
+
+      // added by Greg (1 Apr 2019): 'soft hack' numeric keyboard for mobile entry
+      $('#passReal').css( 'top', $('#pass').position().top + 8 );
+
+      $( "#passReal" ).keydown(function( event ) {
+
+        if ( event.keyCode == 8 || event.keyCode == 46 )
+        {
+          $( "#passReal" ).val( '' );
+          $( "#pass" ).val( '' );
+        }
+
+      });
+
+      $( "#passReal" ).keyup(function( event ) {
+
+          $('#pass').val( $('#passReal').val() );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+
+          console.log( $(':focus') );
+
+      });
+
+      $( "#pass" ).focus(function() {
+
+          $( "#passReal" ).val( '' );
+          $( "#pass" ).val( '' );
+
+          $('#passReal').focus();
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+          $('#passReal').css( 'top', $('#pass').position().top + 8 );
+
+      });
+    }
+
   }
   
   // ----------------------------------------------------

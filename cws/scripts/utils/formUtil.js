@@ -982,11 +982,10 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 };
 
 
-FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj)
 {
 	if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
 	{
-
 		// read local SVG xml structure, then replace appropriate content 'holders'
 		$.get( activityType.icon.path, function(data) {
 
@@ -1007,6 +1006,15 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
 
 			}
 
+			if ( statusOpt && statusOpt.name == cwsRenderObj.status_redeem_submit )
+			{
+				$( svgObject ).css( 'opacity', '1' );
+			}
+			else
+			{
+				$( svgObject ).css( 'opacity', '0.4' );
+			}
+
 			$( iconObj ).empty();
 			$( iconObj ).append( svgObject );
 
@@ -1022,8 +1030,8 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt )
 			if ( $(iconObj).html() )
 			{
 				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
+
 				$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
-	
 				$( iconObj ).append( statusIconObj )	
 
 				FormUtil.appendStatusIcon ( statusIconObj, statusOpt )

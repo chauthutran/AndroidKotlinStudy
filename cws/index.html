@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
 
 
-    <script> var _ver = '1.0.0.50'; </script>
+    <script> var _ver = '1.0.0.51'; </script>
 
     <!-- Google Analytics -->
     <script>
@@ -129,16 +129,18 @@
                       <div>
                         <div class="tb-content-d-log">
                           <label term="login_userName" class="from-string">User name</label>
-                          <input autocomplete="off" class="form-type-text loginUserName" type="text">
+                          <input autocomplete="off" class="form-type-text loginUserName" type="text" tabindex="1" >
                         </div>
                         <div class="tb-content-d-log">
                           <label term="login_password" class="from-string">PIN</label>
-                          <input autocomplete="off" class="form-type-text loginUserPin" type="password">
+                          <!-- <input autocomplete="off" class="form-type-text loginUserPin" type="password" pattern="[0-9]*" inputmode="numeric" style="-webkit-text-security: disc;" autofocus> -->
+                          <input type="password" class="form-type-text loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" tabindex="2" style="">
+                          <input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required="" data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone" style="position:absolute;width:0px !important;height:18px !important;padding:0 !important;margin:0 !important;">
                         </div>
-                        <div class="tb-content-d-log" style="border: none; background-color: unset;">
+                        <!-- <div class="tb-content-d-log" style="border: none; background-color: unset;">
                           <input type="checkbox" class="stayLoggedIn" checked style="width: 1.1em;height: 1.1em;">
                           <span term="login_staysignedin" style="vertical-align: top; margin-left: 5px; font-size: 12px;"> Stay signed in </span>
-                        </div>
+                        </div> -->
                         <div term="login_btn_login" class="tb-content-buttom btn divBtn loginBtn" style="width:96%;">LOG IN</div>
                         <div style="text-align: center; margin:0 0 6px 0;">
 
@@ -561,6 +563,7 @@
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/sounds.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>

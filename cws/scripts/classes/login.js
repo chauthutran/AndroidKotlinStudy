@@ -164,15 +164,13 @@ function Login( cwsRenderObj )
 
     	// Greg added: 2018/11/23
 		var dtmNow = ( new Date() ).toISOString();
-		me._staySignedIn = ( btnTag.parent().find( 'input.stayLoggedIn' ). prop("checked") == true );
+		me._staySignedIn = false; //( btnTag.parent().find( 'input.stayLoggedIn' ). prop("checked") == true );
 		me._userName = userName;
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
-
 		// Greg - Disabled this for now.
 		//FormUtil._serverUrlOverride = server;
-
 
 		// ONLINE vs OFFLINE HANDLING
 		//if ( ConnManager.getAppConnMode_Offline() )
@@ -278,7 +276,7 @@ function Login( cwsRenderObj )
 		if ( loginData.mySession ) 
 		{
 			loginData.mySession.lastUpdated = dtmNow;
-			loginData.mySession.stayLoggedIn = me._staySignedIn;
+			loginData.mySession.stayLoggedIn = false; //me._staySignedIn;
 
 			DataManager.saveData( me._userName, loginData );	
 		}
@@ -286,7 +284,7 @@ function Login( cwsRenderObj )
 		{
 			var newSaveObj = Object.assign( {} , loginData);
 
-			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: me._staySignedIn, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
+			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
 
 			DataManager.saveData( me._userName, newSaveObj );
 

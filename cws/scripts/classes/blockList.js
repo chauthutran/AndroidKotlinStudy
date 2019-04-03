@@ -278,7 +278,7 @@ function BlockList( cwsRenderObj, blockObj )
                 blockListItemTag.append( tblObj );
                 tdDataPreviewObj.append( labelDtm );
 
-                FormUtil.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt );
+                FormUtil.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt, me.cwsRenderObj );
 
             }
             else
@@ -427,7 +427,14 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( !fetchItemData.networkAttempt ) // no counter exists for this item
                 {
-                    bProcess = true;
+                    if ( ! ConnManager.networkSyncConditions )
+                    {
+                        MsgManager.notificationMessage ( 'Currently offline. Network must be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
+                    }
+                    else
+                    {
+                        bProcess = true;
+                    }
                 }
                 else
                 {   
@@ -468,7 +475,7 @@ function BlockList( cwsRenderObj, blockObj )
                         if ( ConnManager.isOffline() )
                         {
                             //alert( 'Currently in offline.  Need to be in online for this.' );
-                            MsgManager.notificationMessage ( 'Currently in offline.  Need to be in online for this.', 'notificationDark', undefined, '', 'right', 'top' );
+                            MsgManager.notificationMessage ( 'Currently in offline.  Need to be in online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
                             myTag.html( fetchItemData.title );
                             $(this).stop();
                         }
@@ -532,7 +539,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                                 setTimeout( function() {
                                     myTag.html( fetchItemData.title + ' >> ' + fetchItemData.lastAttempt );
-                                    FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), FormUtil.getActivityType ( fetchItemData ), FormUtil.getStatusOpt ( fetchItemData ) )
+                                    FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), FormUtil.getActivityType ( fetchItemData ), FormUtil.getStatusOpt ( fetchItemData ), me.cwsRenderObj )
                                 }, 1000 );
 
                             } );

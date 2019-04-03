@@ -312,7 +312,9 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
               $( '#notif_' + unqID ).fadeOut( 750 );
 
                 setTimeout( function() {
-                    $( '#notif_' + unqID ).remove();
+                    
+                    if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
+                    else $( '#notif_' + unqID ).remove();
                 }, 1000 );
             }
 
@@ -320,11 +322,16 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     }
 
     if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
+
+    if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
+    {
+        playSound("ping");
+    }
+
 }
 
 MsgManager.clearReservedMessage = function( reservedID )
 {
-
     if ( reservedID != undefined )
     {
         if ( MsgManager.reservedIDs.length > 0 ) 

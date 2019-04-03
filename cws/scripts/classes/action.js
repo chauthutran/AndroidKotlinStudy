@@ -278,7 +278,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					inputsJson.voucherStatus = clickActionJson.voucherStatus;
 				}
-				
+
 				// generate url
 				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
 
@@ -288,7 +288,7 @@ function Action( cwsRenderObj, blockObj )
 					submitJson.payloadJson = inputsJson;
 					submitJson.url = url;
 					submitJson.actionJson = clickActionJson;	
-					
+
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 					//if ( !ConnManager.getAppConnMode_Online() )
 					if ( clickActionJson.redeemListInsert === "true" )

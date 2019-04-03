@@ -354,6 +354,12 @@ function syncManager()  {}
                             syncManager.lastSyncSuccess ++;
                             newTitle = 'success > ' + dtmRedeemAttempt;
 
+                            if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
+                            {
+                                playSound("coin");
+                            }
+                            
+
                         }
                         else 
                         {
@@ -394,7 +400,7 @@ function syncManager()  {}
                         itemData.syncActionStarted = 0;
 
                         FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, syncManager.cwsRenderObj );
-                        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ) )
+                        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ), syncManager.cwsRenderObj )
 
                         if ( ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
                         {
@@ -415,7 +421,7 @@ function syncManager()  {}
                             }
 
                             DataManager.updateItemFromData( syncManager.cwsRenderObj.storageName_RedeemList, itemClone.id, itemClone );
-                            FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemClone.id ), FormUtil.getActivityType ( itemClone ), FormUtil.getStatusOpt ( itemClone ) )
+                            FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemClone.id ), FormUtil.getActivityType ( itemClone ), FormUtil.getStatusOpt ( itemClone ), syncManager.cwsRenderObj )
                             FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemClone.id ).find( 'div.icons-status' ), itemClone, syncManager.cwsRenderObj );
 
                         }

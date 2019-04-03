@@ -642,7 +642,7 @@ function cwsRender()
 		var initializeStartBlock = false;
 
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		if ( localStorage.length )
+		/*if ( localStorage.length )
 		{
 			var lastSession = JSON.parse( localStorage.getItem('session') );
 	
@@ -655,7 +655,7 @@ function cwsRender()
 					initializeStartBlock = true;
 				}			
 			}
-		}	
+		}*/
 
 		if ( initializeStartBlock )
 		{
@@ -718,7 +718,7 @@ function cwsRender()
 	{
 		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
 		// set Log off
-		var lastSession = JSON.parse( localStorage.getItem('session') );
+		/*var lastSession = JSON.parse( localStorage.getItem('session') );
 
 		if (lastSession)
 		{
@@ -729,7 +729,7 @@ function cwsRender()
 				loginData.mySession.stayLoggedIn = false;
 				localStorage[ lastSession.user ] = JSON.stringify( loginData )
 			}
-		}
+		}*/
 
 		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();

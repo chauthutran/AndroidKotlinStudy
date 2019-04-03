@@ -34,6 +34,59 @@
 @-webkit-keyframes  expandFavIcons {  }
 @keyframes          expandFavIcons {  0% {  } 20% {  } 40% {  } 60% {  } 80% {  } 100% {  } }*/
 
+input.loginUserPinNumeric
+{
+  background-color: none !important;
+  border-left:1px solid #fff !important;
+  border-right:1px solid #fff !important;
+  border-top:0 !important;
+  border-bottom:0 !important;
+  width:0px !important;
+  outline: none !important;
+}
+/*input.loginUserPinNumeric:active
+{
+  outline:1px solid #fff;
+}*/
+
+input.loginUserPinNumeric:focus
+{
+  border-left:0px solid #fff !important;
+  border-right:0.5px solid #333 !important;
+
+  animation: blink-input-focus 1000ms infinite ;
+
+}
+
+@-webkit-keyframes blink-input-focus {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+
+@keyframes blink-input-focus {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+}
 
 .card {
   margin: 15px;
