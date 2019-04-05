@@ -336,6 +336,9 @@ FormUtil.undoLogin = function()
 	FormUtil.login_server = '';
 	FormUtil.dcdConfig = undefined;
 	FormUtil.orgUnitData = undefined;
+
+	$( 'input.loginUserPin' ).val( '' );
+	$( 'input.loginUserPinNumeric' ).val( '' );
 }
 
 // ---------------------------------------------------------

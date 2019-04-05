@@ -168,7 +168,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/completed.svg",
-    "revision": "320afcbc50ae25dedf9fcce641664680"
+    "revision": "484c511a0417b487c41c17e1a8428b69"
   },
   {
     "url": "img/Connect.svg",
@@ -180,7 +180,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/failed.svg",
-    "revision": "f00aad90e742760bc92adcec2e057556"
+    "revision": "9b63f0a96f4f1fcda79ea150f09fad1e"
   },
   {
     "url": "img/favbar_color_act.svg",
@@ -208,7 +208,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/hold.svg",
-    "revision": "4fd7c216aa649d3321168fb92b536d28"
+    "revision": "373d2944a1b43261304cde50c5905c18"
   },
   {
     "url": "img/key.svg",
@@ -272,7 +272,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/pending.svg",
-    "revision": "bba859eb0f377048681488ef1a62b9c4"
+    "revision": "3ca8bd1b85955b7015872d039658e4c4"
   },
   {
     "url": "img/plus_on.svg",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "54aaf879fdedb8e49fb44a21387fd4df"
+    "revision": "bd4e8b2b05c31e661b254b240362e8b8"
   },
   {
     "url": "redeemGen.html",
@@ -328,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "9484e950e1b0834ee4dd9e3a1db9d1c1"
+    "revision": "6485d55b67a36c46ebe2082d9a132f13"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -388,7 +388,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "f58b169a88a27e61d3b5ea63267281e7"
+    "revision": "a467d513ca4ca66f0591c51f2d899f65"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -424,7 +424,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "fba07e76a26f974c1b39d2bca0a2d0b4"
+    "revision": "cf69cea1b2adc088deabf0969b26bbad"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -440,7 +440,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "bd2a5cc3f0baa1f5fc24905b01692c4a"
+    "revision": "443511f3e0489aad7bf5f4a04102c0d6"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -512,7 +512,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "6769126cbb2ea15ee344a2a7a7aee135"
+    "revision": "b8c6d2eebe61f7d9aa6507b5c49ee55c"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

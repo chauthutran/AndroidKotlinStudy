@@ -680,24 +680,27 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 {
 	if ( localStorage.getItem('session') !== null )
 	{
-		var loadingTag = undefined;
-		var userName = JSON.parse( localStorage.getItem('session') ).user;
-		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
-
-		FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
+		if ( localStorage.getItem('session') && localStorage.getItem('session').user && (localStorage.getItem('session').user).length )
 		{
-			if ( success )
+			var loadingTag = undefined;
+			var userName = JSON.parse( localStorage.getItem('session') ).user;
+			var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+	
+			FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
 			{
-				if ( returnFunc ) returnFunc( loginData.dcdConfig.version );
-				else return success;
-			}
-			else
-			{
-				if ( returnFunc ) returnFunc( undefined );
-				else return undefined;
-			}
-		});
-
+				if ( success )
+				{
+					if ( returnFunc ) returnFunc( loginData.dcdConfig.version );
+					else return success;
+				}
+				else
+				{
+					if ( returnFunc ) returnFunc( undefined );
+					else return undefined;
+				}
+			});
+		}
+		else return undefined;
 	}
 	else return undefined;
 }

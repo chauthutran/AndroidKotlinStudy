@@ -5,7 +5,7 @@
   const _cwsRenderObj = new cwsRender();
   
   //window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
-  var debugMode = true;
+  var debugMode = false;
 
   //const _testSection = new testSection();
 
@@ -50,11 +50,11 @@
 
     });
 
-    if ( Util.isMobi() )
+    //if ( Util.isMobi() )
     {
-
       // added by Greg (1 Apr 2019): 'soft hack' numeric keyboard for mobile entry
-      $('#passReal').css( 'top', $('#pass').position().top + 8 );
+      //$('#passReal').hide();
+      //console.log('hiding it');
 
       $( "#passReal" ).keydown(function( event ) {
 
@@ -71,20 +71,28 @@
           $('#pass').val( $('#passReal').val() );
           $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
 
-          console.log( $(':focus') );
+          //console.log( $(':focus') );
 
       });
 
       $( "#pass" ).focus(function() {
 
-          $( "#passReal" ).val( '' );
-          $( "#pass" ).val( '' );
+          //$( "#passReal" ).val( '' );
+          //$( "#pass" ).val( '' );
 
           $('#passReal').focus();
           $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
           $('#passReal').css( 'top', $('#pass').position().top + 8 );
 
       });
+
+      setTimeout( function() {
+          $('#passReal').css( 'top', $('#pass').position().top + 12 );
+          $('#passReal').css( 'left', $('#pass').position().left + 20 + 'px' );
+          //$('#passReal').show();
+          //console.log('showing it');
+      }, 500 );
+
     }
 
   }

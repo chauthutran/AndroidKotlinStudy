@@ -731,11 +731,12 @@ function cwsRender()
 			}
 		}*/
 
+		FormUtil.undoLogin();
+
 		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
 		me.clearMenuPlaceholders();
 		me.navDrawerDivTag.empty();
-		FormUtil.undoLogin();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
 		syncManager.evalSyncConditions();
