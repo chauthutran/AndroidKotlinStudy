@@ -6,8 +6,8 @@
   "background_color": "#98fb98",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "start_url": "/cws-train/",
-  "scope": "/cws-train/",  
+  "start_url": "/",
+  "scope": "/",  
   "icons": [{
     "src": "images/icons/icon-128x128.png",
       "sizes": "128x128",
