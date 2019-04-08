@@ -1,0 +1,129 @@
+{
+    "resultData": {
+        "clientId": "WVTvNQrv6Ym",
+        "voucherId": "wnDP6Hc491f",
+        "status": "foundOne"
+    },
+    "displayData": [
+        {
+            "displayName": "cbdEnrollOuId",
+            "id": "cbdEnrollOuId",
+            "value": ""
+        },
+        {
+            "displayName": "CwS - STD - *Issuing Date",
+            "id": "XBTcG9aXwak",
+            "value": "2018-11-11T11:11:11.000Z"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Code",
+            "id": "RJO3VHQVIvh",
+            "value": "24751672"
+        },
+        {
+            "displayName": "CwS - STD - #Phone number",
+            "id": "uwjJhJ6kjN6",
+            "value": "+258832462992"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Client ID",
+            "id": "L34MRrwU2g0",
+            "value": "wnDP6Hc491f"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Expiry date",
+            "id": "Ky6tDzaFH1T",
+            "value": "2019-01-10"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Status",
+            "id": "KRdnyGwNZyW",
+            "value": "ISS"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Type (Electronic/Paper)",
+            "id": "SWfQZGMnQ5I",
+            "value": "Electronic"
+        },
+        {
+            "displayName": "CwS - VOUCHER - *Program",
+            "id": "Hq7B5uDZRwi",
+            "value": "FPL"
+        },
+        {
+            "displayName": "CwS - STD - #Full name",
+            "id": "kvX6wGkhagZ",
+            "value": "Greg1812132 Rowles1812132"
+        },
+        {
+            "displayName": "CwS - STD - #Last name",
+            "id": "RsvOTmR2DjO",
+            "value": "Rowles1812132"
+        },
+        {
+            "displayName": "CwS - STD - *Consent to service-related calls/texts",
+            "id": "OdKxvdYZXMU",
+            "value": "YESP"
+        },
+        {
+            "displayName": "CORE - Gender",
+            "id": "JcGai6pHG1M",
+            "value": "F"
+        },
+        {
+            "displayName": "CORE - Client ID (CIC) [not-unique]",
+            "id": "rw3W9pDCPb2",
+            "value": "78Gr3210F1"
+        },
+        {
+            "displayName": "CwS - STD - #Phone number",
+            "id": "uwjJhJ6kjN6",
+            "value": "+258832462992"
+        },
+        {
+            "displayName": "CwS - STD - #First name",
+            "id": "nR9d9xZ5TRJ",
+            "value": "Greg1812132"
+        },
+        {
+            "displayName": "CORE - Age",
+            "id": "JM9qqwDihBV",
+            "value": "40"
+        },
+        {
+            "displayName": "CwS - MZ - *Household delivery",
+            "id": "wxAMVtMTUtp",
+            "value": "YES-Microlut"
+        },
+        {
+            "displayName": "CwS - STD - *District of birth",
+            "id": "pL3gzBBWOhh",
+            "value": "MZ10"
+        },
+        {
+            "displayName": "CORE - Date of Birth",
+            "id": "wSp6Q7QDMsk",
+            "value": "1978-01-01"
+        },
+        {
+            "displayName": "CwS - STD - *Phone ownership",
+            "id": "P01PEz2ikrY",
+            "value": "HER"
+        },
+        {
+            "displayName": "CwS - FPL - *Current method",
+            "id": "VVsw6EFkmiX",
+            "value": "PIL"
+        },
+        {
+            "displayName": "CwS - STD - *Birth order",
+            "id": "sUu9QuzgS1Y",
+            "value": "1"
+        },
+        {
+            "displayName": "CwS - STD - *Channel of referral",
+            "id": "K5PX96b7e5l",
+            "value": "HF"
+        }
+    ]
+}

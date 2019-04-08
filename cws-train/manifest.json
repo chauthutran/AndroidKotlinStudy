@@ -1,13 +1,13 @@
 {
-  "name": "CwS PWA Train",
-  "short_name": "CwS_Train",
+  "name": "CwS Connect Train",
+  "short_name": "ConnectTrain",
   "description": "CwS PWA Train",  
   "theme_color": "#00ff00",
   "background_color": "#98fb98",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "start_url": "/cws-train/",
-  "scope": "/cws-train/",
+  "scope": "/cws-train/",  
   "icons": [{
     "src": "images/icons/icon-128x128.png",
       "sizes": "128x128",
