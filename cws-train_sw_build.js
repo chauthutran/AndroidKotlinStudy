@@ -5,23 +5,20 @@ const {generateSW} = require('workbox-build');
 generateSW({
 
   swDest: 'cws-train/service-worker.js',
-  globDirectory: 'cws-train',
+  globDirectory: 'cws',
   globPatterns: [
-    '**/*.{html,css,js,gif,jpg,png,svg,json}'
+    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav}'
   ],
   skipWaiting: true,
   clientsClaim: true,
+  offlineGoogleAnalytics: true,
 
   runtimeCaching: [
     {
-      urlPattern: /\.(html|css|js|gif|jpg|png|svg|json)/,
-      handler: 'cacheFirst'
-    },
-    {
-      urlPattern: /^https:\/\/use\.fontawesome\.com.*/,
+      urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {
-        cacheName: 'fontawesome'
+        cacheName: 'googleFonts'
       }
     }
   ]
