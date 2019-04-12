@@ -141,6 +141,127 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	return inputsJson;
 }
 
+FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
+{
+	// Input Tag values
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTargets = [];
+	var uniqTargs = [];
+
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);	
+		var attrDataTargets = inputTag.attr( 'datatargets' );
+
+		if ( attrDataTargets )
+		{
+			var val = FormUtil.getTagVal( inputTag );
+			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+			inputTargets.push ( newPayLoad );
+
+			for ( var t = 0; t < dataTargs.length; t++ )
+			{
+				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
+				{
+					uniqTargs.push( dataTargs[ t ].targetName );
+				}
+			}
+
+		}
+
+	});
+
+	var targetDef = {};
+
+	// create new template payload (based on named target values)
+	for ( var t = 0; t < uniqTargs.length; t++ )
+	{
+		var refObjectArr = ( uniqTargs[ t ] ).toString().split( '.' );
+
+		FormUtil.recursiveJSONbuild( targetDef, refObjectArr, 0 );
+
+	}
+
+	console.log ( targetDef );
+	console.log ( inputTargets );
+
+	for ( var t = 0; t < inputTargets.length; t++ )
+	{
+		for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
+		{
+			var fillValue = '{ "' + inputTargets[ t ].dataTargets[ e ].uid + '": "' + inputTargets[ t ].value + '" }';
+			var refObjectItemArr = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+
+			FormUtil.recursiveJSONapply( targetDef, refObjectItemArr, 0, fillValue );
+		}
+
+	}
+
+	console.log ( targetDef );
+	console.log ( 'test 1' );
+	console.log ( 'hello ' + JSON.stringify( targetDef ) );
+	console.log ( JSON.stringify( targetDef.client ) );
+	console.log ( 'test 2' );
+
+	return inputsJson;
+}
+
+FormUtil.recursiveJSONbuild = function( targetDef, refObjectArr, itm)
+{
+	if ( refObjectArr[ itm ] )
+	{
+		if (! targetDef.hasOwnProperty( refObjectArr[ itm ] ) ) 
+		{
+			targetDef[ refObjectArr[ itm ] ] = [];
+		}
+		FormUtil.recursiveJSONbuild( targetDef[ refObjectArr[ itm ] ], refObjectArr, parseInt( itm ) + 1 )
+	}
+	else
+	{
+		return targetDef;
+	}
+
+}
+
+
+FormUtil.recursiveJSONapply = function( targetDef, refObjectArr, itm, fillValue)
+{
+	if ( itm < ( refObjectArr.length -1) )
+	{
+		FormUtil.recursiveJSONapply( targetDef[ refObjectArr[ itm ] ], refObjectArr, parseInt( itm ) + 1, fillValue )
+	}
+	else
+	{
+		console.log( itm + ' = ' + ( refObjectArr.length -1) + ' checking for ~ ' + refObjectArr[ itm ] + ' ( ' + targetDef.hasOwnProperty( refObjectArr[ itm ] ) + ' )');
+		if (targetDef.hasOwnProperty( refObjectArr[ itm ] ) ) 
+		{
+			targetDef[ refObjectArr[ itm ] ].push ( JSON.parse( fillValue ) );
+		}
+	}
+}
+
+FormUtil.getDataTargetJson = function( dataTargetJson, inputDataJson )
+{
+	/*for( var i in formItemJson.dataTargets )
+	{
+		var targetDef = formItemJson.dataTargets[i];  // could be string name of def or rule object itself.
+		console.log( targetDef );
+
+		if ( targetDef.targetName )
+		{
+			entryTag.attr( 'target-def', escape( targetDef.targetName ) );
+		}
+
+		if ( targetDef.uid )
+		{
+			entryTag.attr( 'target-uid', escape( targetDef.uid ) );
+		}
+
+	}*/
+}
+
 // Temp use by 'dataList' for now - might populate it fully for more common use
 FormUtil.renderInputTag = function( dataJson, containerDivTag )
 {

@@ -175,6 +175,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		// NOTE: TRAN VALIDATION
 		// Add rules for IMPUT fields
 		me.addRuleForField( divInputTag, formItemJson );
+		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 
 
 		// Set Tag Visibility
@@ -266,11 +267,23 @@ function BlockForm( cwsRenderObj, blockObj )
 
 	}
 
+	me.addDataTargets = function( divInputTag, formItemJson )
+	{
+		var entryTag = divInputTag.find( "select,input" );
+
+		if( formItemJson.dataTargets !== undefined )
+		{
+			entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.dataTargets ) ) );
+		}
+
+	}
+
+
 	// ----------------------------------------------------
 	// ---- EVAL Actions Related --------------------------
 
 	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
-	{		
+	{
 		var tagVal = FormUtil.getTagVal( tag );
 
 		if ( tagVal )

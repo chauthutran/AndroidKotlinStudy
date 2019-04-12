@@ -533,14 +533,14 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 				if ( ConnManager.dataServer_timerID > 0 )
 				{
 					//run App + Dcd version tests: which is more likely to change more frequently? App?
-					ConnManager.getAppShellVersion( function( retVersion ) 
+					ConnManager.getAppShellVersion( function( appRetVersion ) 
 					{
 						var appShellVersion = $( '#spanVersion' ).html().replace('v','');
 						if ( ConnManager.debugMode ) console.log( ' ~ CHECKING APP VERSION' );
-						if ( ConnManager.debugMode ) console.log( retVersion );
-						if ( ConnManager.debugMode ) console.log( appShellVersion.toString() + ' vs ' + retVersion.toString() );
+						if ( ConnManager.debugMode ) console.log( appRetVersion );
+						if ( ConnManager.debugMode ) console.log( appShellVersion.toString() + ' vs ' + appRetVersion.toString() );
 
-						if ( appShellVersion.toString() < retVersion.toString() )
+						if ( appShellVersion.toString() < appRetVersion.toString() )
 						{
 							var btnAppShellTag = $( '<a term="" class="notifBtn">UPDATE</a>' );
 
@@ -560,55 +560,60 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 								}
 							});
 
-							MsgManager.notificationMessage( 'New app version available: ' + retVersion.toString(), 'notificationDark', btnAppShellTag,'', 'right', 'bottom', 20000, false, undefined, 'newAPPversion' );
+							MsgManager.notificationMessage( 'New app version available: ' + appRetVersion.toString(), 'notificationDark', btnAppShellTag,'', 'right', 'bottom', 20000, false, undefined, 'newAPPversion' );
 
 						}
 						else
 						{
-							ConnManager.getDcdConfig( function( retVersion ) 
+
+							ConnManager.getDcdConfig( function( dcdRetVersion ) 
 							{
-								var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
-								if ( ConnManager.debugMode ) console.log( ' ~ CHECKING DCD VERSION' );
-								if ( ConnManager.debugMode ) console.log( retVersion );
-								if ( ConnManager.debugMode ) console.log( userConfig.dcdConfig.version + ' vs ' + retVersion.dcdConfig.version.toString() );
-
-								if ( ( userConfig.dcdConfig.version ).toString() < retVersion.dcdConfig.version.toString() )
+								if ( dcdRetVersion )
 								{
-									DataManager.setSessionDataValue( 'dcdUpgrade', JSON.stringify( retVersion ) );
-									var btnDcdConfigTag = $( '<a term="" class="notifBtn">UPDATE</a>' );
-
-									$( btnDcdConfigTag ).click( () => {
-
-										if ( ConnManager.isOffline() )
-										{
-											msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
-										}
-										else
-										{
-											FormUtil.showProgressBar();
-
-											setTimeout( function() {
-
-												var newConfig = DataManager.getSessionData().dcdUpgrade;
-												console.log( userConfig );
-												//var userName = JSON.parse( localStorage.getItem('session') ).user;
-
-												//DataManager.saveData( userName, JSON.parse( newConfig ) );
-												DataManager.setSessionDataValue( 'dcdUpgrade', '' );
-
-												ConnManager._cwsRenderObj.loginObj._pHash = userConfig.mySession.pin ;
-												ConnManager._cwsRenderObj.loginObj._staySignedIn = false; //userConfig.mySession.stayLoggedIn;
-												ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
-
-												//ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
-												FormUtil.hideProgressBar();
-
-											}, 500 );
-										}
-
-									}); 
-
-									MsgManager.notificationMessage( 'New config version available: ' + retVersion.dcdConfig.version.toString(), 'notificationDark', btnDcdConfigTag,'', 'right', 'bottom', 20000, false, undefined, 'newDCDversion' );
+									var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+									if ( ConnManager.debugMode ) console.log( ' ~ CHECKING DCD VERSION' );
+									if ( ConnManager.debugMode ) console.log( dcdRetVersion );
+									if ( ConnManager.debugMode ) console.log( userConfig.dcdConfig.version + ' vs ' + dcdRetVersion.dcdConfig.version.toString() );
+	
+									if ( ( userConfig.dcdConfig.version ).toString() < dcdRetVersion.dcdConfig.version.toString() )
+									{
+										DataManager.setSessionDataValue( 'dcdUpgrade', JSON.stringify( dcdRetVersion ) );
+										var btnDcdConfigTag = $( '<a term="" class="notifBtn">UPDATE</a>' );
+	
+										$( btnDcdConfigTag ).click( () => {
+	
+											if ( ConnManager.isOffline() )
+											{
+												msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
+											}
+											else
+											{
+												FormUtil.showProgressBar();
+	
+												setTimeout( function() {
+	
+													var newConfig = DataManager.getSessionData().dcdUpgrade;
+													console.log( userConfig );
+													//var userName = JSON.parse( localStorage.getItem('session') ).user;
+	
+													//DataManager.saveData( userName, JSON.parse( newConfig ) );
+													DataManager.setSessionDataValue( 'dcdUpgrade', '' );
+	
+													ConnManager._cwsRenderObj.loginObj._pHash = userConfig.mySession.pin ;
+													ConnManager._cwsRenderObj.loginObj._staySignedIn = false; //userConfig.mySession.stayLoggedIn;
+													ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
+	
+													//ConnManager._cwsRenderObj.loginObj.loginSuccessProcess( JSON.parse( newConfig ) );
+													FormUtil.hideProgressBar();
+	
+												}, 500 );
+											}
+	
+										}); 
+	
+										MsgManager.notificationMessage( 'New config version available: ' + dcdRetVersion.dcdConfig.version.toString(), 'notificationDark', btnDcdConfigTag,'', 'right', 'bottom', 20000, false, undefined, 'newDCDversion' );
+	
+									}
 
 								}
 

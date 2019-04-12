@@ -101,42 +101,9 @@
 
   $( '#spanVersion' ).text( 'v' + _ver );
   
-  /*$( '#spanVersion' ).click( () => {
-    var btn = $('<a class="notifBtn">click me</a>');
-    $( btn ).click( () => {
-     alert ('something');
-    });
-    MsgManager.notificationMessage ( 'bodyMessage', 'notificationDark', btn, '', 'left', 'top', 10000, true )
-
-  });*/
-  
-  /*$( '.reget' ).click( () => {
-    FormUtil.performReget( _registrationObj );
-  });*/
-
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
   });
-
-  // move to cwsRender 
- /* $( '#btnUpgrade' ).click ( () => {
-
-    if ( FormUtil._getPWAInfo )
-    {
-      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session )
-      {
-        DataManager.clearSessionStorage();
-      }
-  
-      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
-      {
-        FormUtil.deleteCacheKeys();
-      }
-  
-      FormUtil.performReget( _registrationObj );
-    }
-
-  });*/
 
   // move to cwsRender 
   $( '#hidenotificationUpgrade' ).click ( () => {
@@ -156,38 +123,47 @@
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
 
-      FormUtil.getAppInfo( function( success, jsonData ) 
+      FormUtil.getConfigInfo( function( result, data ) 
       {
-        
-        if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
 
-        if ( jsonData )
+        //console.log( result );
+        console.log( data );
+
+        FormUtil.getAppInfo( function( success, jsonData ) 
         {
-
-          FormUtil._getPWAInfo = jsonData;
-
-          if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
-
-          // App version check and possibly reload into the new version
-          appVersionUpgradeReview( jsonData );
-
-          // get proper web service - Should not implement this due to offline possibility
           
-          if ( ! FormUtil.isAppsPsiServer() )
+          if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
+  
+          if ( jsonData )
           {
-            webServiceSet( jsonData.appWS.cwsDev );
+  
+            FormUtil._getPWAInfo = jsonData;
+  
+            if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
+  
+            // App version check and possibly reload into the new version
+            appVersionUpgradeReview( jsonData );
+  
+            // get proper web service - Should not implement this due to offline possibility
+            
+            if ( ! FormUtil.isAppsPsiServer() )
+            {
+              webServiceSet( jsonData.appWS.cwsDev );
+            }
+            else
+            {
+              webServiceSet( jsonData.appWS.cws );
+            }
+  
           }
-          else
-          {
-            webServiceSet( jsonData.appWS.cws );
-          }
-
-        }
-
-        FormMsgManager.appUnblock();
-        returnFunc();
+  
+          FormMsgManager.appUnblock();
+          returnFunc();
+  
+        });
 
       });
+
 
     }
     else

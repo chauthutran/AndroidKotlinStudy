@@ -75,28 +75,20 @@ self.__precacheManifest = [
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
   {
-    "url": "images/icons/icon-128x128.png",
-    "revision": "663516616720d1107c5621f326b899e8"
+    "url": "images/icons/Connect_train_144px.png",
+    "revision": "2387bfe20f9c3ec5feeb489de8e18400"
   },
   {
-    "url": "images/icons/icon-144x144.png",
-    "revision": "4cf8223442d2fbf91653b6ebb5dad779"
+    "url": "images/icons/Connect_train_152px.png",
+    "revision": "2c3a3c33a05b34d8fc5d654a6e79d2f2"
   },
   {
-    "url": "images/icons/icon-152x152.png",
-    "revision": "982f5ccc626f58ca9f099457a0240c47"
+    "url": "images/icons/Connect_train_192px.png",
+    "revision": "29f6958ea0c832c4fb030e8cfd822fd0"
   },
   {
-    "url": "images/icons/icon-192x192.png",
-    "revision": "997013800576eb8bb6ced2572e16ec7b"
-  },
-  {
-    "url": "images/icons/icon-256x256.png",
-    "revision": "f845c1b014e454d73a1d62215a9f4d84"
-  },
-  {
-    "url": "images/icons/logo-44x44.png",
-    "revision": "005da4b33808af9639249421b7c4f16f"
+    "url": "images/icons/Connect_train_512px.png",
+    "revision": "494f1035ba5978b23b74bf0702a4e17d"
   },
   {
     "url": "images/loading.gif",

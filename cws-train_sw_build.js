@@ -5,7 +5,7 @@ const {generateSW} = require('workbox-build');
 generateSW({
 
   swDest: 'cws-train/service-worker.js',
-  globDirectory: 'cws',
+  globDirectory: 'cws-train',
   globPatterns: [
     '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav}'
   ],

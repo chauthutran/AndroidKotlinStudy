@@ -1,0 +1,29 @@
+{
+  "name": "CwS Connect Stage",
+  "short_name": "ConnectStage",
+  "description": "CwS PWA Stage",  
+  "theme_color": "#bbc65d",
+  "background_color": "#bbc65d",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/?utm_source=standalone&utm_medium=pwa",
+  "scope": "/",  
+  "icons": [{
+      "src": "images/icons/Connect_stage_144px.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }, {
+      "src": "images/icons/Connect_stage_152px.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    }, {
+      "src": "images/icons/Connect_stage_192px.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },{
+      "src": "images/icons/Connect_stage_512px.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }],
+  "splash_pages": null
+}

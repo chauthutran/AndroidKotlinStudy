@@ -268,8 +268,12 @@ function Action( cwsRenderObj, blockObj )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );
 
+				console.log( formDivSecTag );
+				console.log( clickActionJson.payloadBody );
+
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+				var inputTargJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
 
 				FormUtil.setLastPayload( inputsJson )
 

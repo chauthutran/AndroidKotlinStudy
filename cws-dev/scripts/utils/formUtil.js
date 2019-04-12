@@ -62,6 +62,12 @@ FormUtil.isAppsPsiServer = function()
 	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
 }
 
+FormUtil.isPsiServer = function()
+{
+	//return true;
+	return ( location.host.indexOf( 'psi-mis.org' ) >= 0 );
+}
+
 FormUtil.generateUrl = function( inputsJson, actionJson )
 {
 	var url;
@@ -139,6 +145,142 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	});		
 
 	return inputsJson;
+}
+
+FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
+{
+	// Input Tag values
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTargets = [];
+	var uniqTargs = [];
+
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);	
+		var attrDataTargets = inputTag.attr( 'datatargets' );
+
+		if ( attrDataTargets )
+		{
+			var val = FormUtil.getTagVal( inputTag );
+			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+
+			inputTargets.push ( newPayLoad );
+
+			Object.keys( dataTargs ).forEach(function( key ) {
+
+				if ( ! uniqTargs.includes( key ) )
+				{
+					uniqTargs.push( key );
+				}
+
+			});
+
+			/* OLD METHOD: for ( var t = 0; t < dataTargs.length; t++ )
+			{
+				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
+				{
+					uniqTargs.push( dataTargs[ t ].targetName );
+				}
+			} OLD METHOD */
+
+		}
+
+	});
+
+	uniqTargs.sort();
+	uniqTargs.reverse();
+
+	//var targetDef = {  "clientA": { "ipcEventA": [ { "test": "this" } ] } }; // "info": { "host": (location.host).replace('.psi-mis.org','') } }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
+
+	// BUILD new template payload structure (based on named target values)
+	for ( var t = 0; t < uniqTargs.length; t++ )
+	{
+		var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
+
+		// initialize with item at position zero [0]
+		FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
+	}
+
+	// FILL/populate new template payload structure (according to named inputTarget destinations)
+	for ( var t = 0; t < inputTargets.length; t++ )
+	{
+		Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
+
+			var dataTargetHierarchy = ( key ).toString().split( '.' );
+
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
+
+		});
+
+		/* OLD METHOD: for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
+		{
+			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
+		} OLD METHOD */
+
+	}
+
+	console.log ( inputsJson );
+	console.log ( JSON.stringify( inputsJson, null, 4) );
+
+	return inputsJson;
+}
+
+FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
+{
+	// construct the payload 'layout'
+	if ( dataTargetHierarchy[ itm ] )
+	{
+		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		{
+			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
+			if ( dataTargetHierarchy[ itm + 1 ] )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = [];
+			}
+		}
+		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
+	}
+	else
+	{
+		return targetDef;
+	}
+
+}
+
+FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fillKey,fillValue)
+{
+	// fill/populate the payload
+	if ( itm < ( dataTargetHierarchy.length -1) )
+	{
+		FormUtil.recursiveJSONfill( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1, fillKey, fillValue )
+	}
+	else
+	{
+		if ( ( dataTargetHierarchy[ itm ] ).length && targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		{
+			if ( Array.isArray( targetDef[ dataTargetHierarchy[ itm ] ] ) )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] [fillKey] = fillValue;
+			}
+		}
+		else if ( ( dataTargetHierarchy[ itm ] ).length == 0 )
+		{
+			targetDef[fillKey] = fillValue;
+		}
+	}
 }
 
 // Temp use by 'dataList' for now - might populate it fully for more common use
@@ -287,7 +429,14 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 	var apiPath = '/api/loginCheck';
 
 	// FormUtil.orgUnitData <-- Reset before?
-	var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+	if ( (location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || (location.href).indexOf('localhost') >= 0 ) //last 4 chars of url
+	{
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+	}
+	else
+	{
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: (location.host).replace('.psi-mis.org','') };
+	}
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
@@ -609,6 +758,42 @@ FormUtil.getRedeemPayload = function( id ) {
 		return redPay;
 	}
 
+}
+
+FormUtil.getConfigInfo = function( returnFunc )
+{	
+	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
+
+	//RESTUtil.retrieveJson( url, returnFunc );
+
+	var jsonData = {
+		"cws": {
+		"note": "CwS PWA production version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+		"configs": {
+			"MZ": "dcd@MZ",
+			"T_MZ": "dcd@MZ",
+			"NP": "dcd@NP",
+			"T_NP": "dcd@NP"
+			}
+		},
+		"cws-train": {
+		"note": "CwS PWA train version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
+		"inherit": "cws",
+		"configs": {}
+		},
+		"cws-dev": {
+		"note": "CwS PWA dev version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+		"inherit": "cws",
+		"configs": {
+			"T_MZ": "dcd@MZ@v1"
+			}
+		}
+	};
+
+	returnFunc( true, jsonData );
 }
 
 FormUtil.getAppInfo = function( returnFunc )

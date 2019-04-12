@@ -75,28 +75,20 @@ self.__precacheManifest = [
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
   {
-    "url": "images/icons/icon-128x128.png",
-    "revision": "663516616720d1107c5621f326b899e8"
+    "url": "images/icons/Connect_prod_144px.png",
+    "revision": "ecb902321906751311c38d53b70904a6"
   },
   {
-    "url": "images/icons/icon-144x144.png",
-    "revision": "4cf8223442d2fbf91653b6ebb5dad779"
+    "url": "images/icons/Connect_prod_152px.png",
+    "revision": "cff1c90fc5a84fc754cfeb370ab91f76"
   },
   {
-    "url": "images/icons/icon-152x152.png",
-    "revision": "982f5ccc626f58ca9f099457a0240c47"
+    "url": "images/icons/Connect_prod_192px.png",
+    "revision": "5a7abcbe1bf0565a8a1096a80acab0dd"
   },
   {
-    "url": "images/icons/icon-192x192.png",
-    "revision": "997013800576eb8bb6ced2572e16ec7b"
-  },
-  {
-    "url": "images/icons/icon-256x256.png",
-    "revision": "f845c1b014e454d73a1d62215a9f4d84"
-  },
-  {
-    "url": "images/icons/logo-44x44.png",
-    "revision": "005da4b33808af9639249421b7c4f16f"
+    "url": "images/icons/Connect_prod_512px.png",
+    "revision": "b0295abf0af75702c5ebbca617a93620"
   },
   {
     "url": "images/loading.gif",
@@ -152,7 +144,7 @@ self.__precacheManifest = [
   },
   {
     "url": "img/arrow_right.svg",
-    "revision": "c28938e7b34a8960636a13b992739f16"
+    "revision": "a788d930585e3ee893d10b7e85614339"
   },
   {
     "url": "img/arrow_up.svg",
@@ -320,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "bd4e8b2b05c31e661b254b240362e8b8"
+    "revision": "e985c4ded34ddf0407bd231aaf9c0b9b"
   },
   {
     "url": "redeemGen.html",
@@ -336,7 +328,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "1d277e4f71bccf007dbeac5c82a7430a"
+    "revision": "b48c3ac7948a3704e85e11b189cbbef4"
   },
   {
     "url": "scripts/classes/block.js",
@@ -348,7 +340,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "0a26285440d155c5424f18f50226a106"
+    "revision": "40553aaab23abe02a9f96f92ee8ff6f0"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -424,7 +416,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "cf69cea1b2adc088deabf0969b26bbad"
+    "revision": "820ffabc375d29c95cfa3f5c8301ab62"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -440,7 +432,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "443511f3e0489aad7bf5f4a04102c0d6"
+    "revision": "49667666ec223ef4d1fd40dcad10e76a"
   },
   {
     "url": "scripts/utils/inputUtil.js",
