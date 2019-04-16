@@ -71,14 +71,9 @@
           $('#pass').val( $('#passReal').val() );
           $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
 
-          //console.log( $(':focus') );
-
       });
 
       $( "#pass" ).focus(function() {
-
-          //$( "#passReal" ).val( '' );
-          //$( "#pass" ).val( '' );
 
           $('#passReal').focus();
           $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
@@ -89,54 +84,19 @@
       setTimeout( function() {
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
           $('#passReal').css( 'left', $('#pass').position().left + 20 + 'px' );
-          //$('#passReal').show();
-          //console.log('showing it');
       }, 500 );
 
     }
 
   }
-  
+
   // ----------------------------------------------------
 
   $( '#spanVersion' ).text( 'v' + _ver );
-  
-  /*$( '#spanVersion' ).click( () => {
-    var btn = $('<a class="notifBtn">click me</a>');
-    $( btn ).click( () => {
-     alert ('something');
-    });
-    MsgManager.notificationMessage ( 'bodyMessage', 'notificationDark', btn, '', 'left', 'top', 10000, true )
-
-  });*/
-  
-  /*$( '.reget' ).click( () => {
-    FormUtil.performReget( _registrationObj );
-  });*/
 
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
   });
-
-  // move to cwsRender 
- /* $( '#btnUpgrade' ).click ( () => {
-
-    if ( FormUtil._getPWAInfo )
-    {
-      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session )
-      {
-        DataManager.clearSessionStorage();
-      }
-  
-      if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches )
-      {
-        FormUtil.deleteCacheKeys();
-      }
-  
-      FormUtil.performReget( _registrationObj );
-    }
-
-  });*/
 
   // move to cwsRender 
   $( '#hidenotificationUpgrade' ).click ( () => {
@@ -145,7 +105,6 @@
 
   });
 
-  
 
   // App version check and return always..  
   //  (Unless version is outdated and agreed to perform 'reget' for new service worker
@@ -156,36 +115,70 @@
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
 
-      FormUtil.getAppInfo( function( success, jsonData ) 
+      FormUtil.getConfigInfo( function( result, data ) 
       {
-        
-        if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
-
-        if ( jsonData )
-        {
-
-          FormUtil._getPWAInfo = jsonData;
-
-          if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
-
-          // App version check and possibly reload into the new version
-          appVersionUpgradeReview( jsonData );
-
-          // get proper web service - Should not implement this due to offline possibility
-          
-          if ( ! FormUtil.isAppsPsiServer() )
-          {
-            webServiceSet( jsonData.appWS.cwsDev );
-          }
+        console.log( data );
+        try {
+          if ( (location.href).indexOf('.psi-mis.org') >= 0 )
+            FormUtil.dynamicWS = data[ (location.host).replace('.psi-mis.org','') ];
           else
-          {
-            webServiceSet( jsonData.appWS.cws );
+            FormUtil.dynamicWS = data[ "cws-dev" ];
+        }
+        catch(err) {
+          try {
+            FormUtil.dynamicWS = data[ "cws-dev" ];
           }
-
+          catch(err) {
+            console.log( err.message );
+          }
         }
 
-        FormMsgManager.appUnblock();
-        returnFunc();
+        console.log( FormUtil.dynamicWS );
+
+        //FormUtil.staticWSName = FormUtil.dynamicWS.targetWS;
+        FormUtil.staticWSName = ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ ( FormUtil.dynamicWS.targetWS ).toString().split('/').length-1 ];
+        FormUtil._serverUrlOverride = '';
+
+        for (var i = 0; i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -1; i++)
+        {
+          FormUtil._serverUrlOverride = FormUtil._serverUrlOverride + ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ i ];
+          if ( i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
+        }
+
+        console.log( FormUtil._serverUrlOverride );
+
+        FormUtil.getAppInfo( function( success, jsonData ) 
+        {
+
+          if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
+
+          if ( jsonData )
+          {
+
+            FormUtil._getPWAInfo = jsonData;
+
+            if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
+
+            // App version check and possibly reload into the new version
+            appVersionUpgradeReview( jsonData );
+
+            // get proper web service - Should not implement this due to offline possibility
+
+            if ( ! FormUtil.isAppsPsiServer() )
+            {
+              webServiceSet( jsonData.appWS.cwsDev );
+            }
+            else
+            {
+              webServiceSet( jsonData.appWS.cws );
+            }
+
+          }
+
+          FormMsgManager.appUnblock();
+          returnFunc();
+
+        });
 
       });
 

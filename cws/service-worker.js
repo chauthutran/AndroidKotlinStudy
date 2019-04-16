@@ -67,10 +67,6 @@ self.__precacheManifest = [
     "revision": "317be0df51698e9db7a05c4778719f1d"
   },
   {
-    "url": "images/CwS_light.gif",
-    "revision": "de156a12911462a168c4404517a094d3"
-  },
-  {
     "url": "images/hide.png",
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
@@ -89,6 +85,14 @@ self.__precacheManifest = [
   {
     "url": "images/icons/Connect_prod_512px.png",
     "revision": "b0295abf0af75702c5ebbca617a93620"
+  },
+  {
+    "url": "images/icons/icon-144x144.png",
+    "revision": "4cf8223442d2fbf91653b6ebb5dad779"
+  },
+  {
+    "url": "images/icons/icon-152x152.png",
+    "revision": "982f5ccc626f58ca9f099457a0240c47"
   },
   {
     "url": "images/loading.gif",
@@ -312,7 +316,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "e985c4ded34ddf0407bd231aaf9c0b9b"
+    "revision": "35f9de57842d61e1f50b334958bc10a2"
   },
   {
     "url": "redeemGen.html",
@@ -320,7 +324,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "6485d55b67a36c46ebe2082d9a132f13"
+    "revision": "a6f1c3272c0b5c79dabb7a51061c2b95"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -328,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "b48c3ac7948a3704e85e11b189cbbef4"
+    "revision": "00e7ee29ced21c1bda149b625960748a"
   },
   {
     "url": "scripts/classes/block.js",
@@ -340,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "40553aaab23abe02a9f96f92ee8ff6f0"
+    "revision": "abb00fd0d6095311adbb3e691f1ab6b6"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -372,7 +376,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "573e6a5869f463b342483ac556ee82ad"
+    "revision": "cc23470f8dda4b7b7b51f92e83c2ff23"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -380,7 +384,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "a467d513ca4ca66f0591c51f2d899f65"
+    "revision": "51c90949d1f0724d8156323cddf4c68d"
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
@@ -432,7 +436,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "49667666ec223ef4d1fd40dcad10e76a"
+    "revision": "fc067b9f43256dd0fe4d808b9adafda6"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -440,11 +444,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "d059c832f75493aab4323bde1b4c63b7"
+    "revision": "5f11a2ef6d8dfb1d3c1a087f63c9275c"
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "4602d38331ea511aa30cb8a1407f2981"
+    "revision": "63452313113d3ab1988b6dbee37e46a5"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -461,6 +465,10 @@ self.__precacheManifest = [
   {
     "url": "sounds/coin.mp3",
     "revision": "c761219440ee324746a6348130948f64"
+  },
+  {
+    "url": "sounds/notify.mp3",
+    "revision": "55342729bd838d323e62cd653754b56e"
   },
   {
     "url": "sounds/ping.mp3",

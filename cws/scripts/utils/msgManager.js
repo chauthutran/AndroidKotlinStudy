@@ -325,7 +325,14 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
     if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
     {
-        playSound("ping");
+        if ( actionButton && autoClick )
+        {
+            playSound("notify");
+        }
+        else
+        {
+            playSound("ping");
+        }
     }
 
 }

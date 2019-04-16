@@ -5,6 +5,10 @@ function FormUtil() {}
 
 FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
 FormUtil.appUrlName = 'cws';			// App name - Part of the url
+
+FormUtil.dynamicWS = '';
+FormUtil.staticWSpath = '';
+
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
@@ -165,21 +169,34 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 			var val = FormUtil.getTagVal( inputTag );
 			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
 			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+
 			inputTargets.push ( newPayLoad );
 
-			for ( var t = 0; t < dataTargs.length; t++ )
+			Object.keys( dataTargs ).forEach(function( key ) {
+
+				if ( ! uniqTargs.includes( key ) )
+				{
+					uniqTargs.push( key );
+				}
+
+			});
+
+			/* OLD METHOD: for ( var t = 0; t < dataTargs.length; t++ )
 			{
 				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
 				{
 					uniqTargs.push( dataTargs[ t ].targetName );
 				}
-			}
+			} OLD METHOD */
 
 		}
 
 	});
 
-	var targetDef = { }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
+	uniqTargs.sort();
+	uniqTargs.reverse();
+
+	//var targetDef = {  "clientA": { "ipcEventA": [ { "test": "this" } ] } }; // "info": { "host": (location.host).replace('.psi-mis.org','') } }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
 
 	// BUILD new template payload structure (based on named target values)
 	for ( var t = 0; t < uniqTargs.length; t++ )
@@ -187,38 +204,52 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
 
 		// initialize with item at position zero [0]
-		FormUtil.recursiveJSONbuild( targetDef, dataTargetHierarchy, 0 );
+		FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
 	}
 
 	// FILL/populate new template payload structure (according to named inputTarget destinations)
 	for ( var t = 0; t < inputTargets.length; t++ )
 	{
-		for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
-		{
-			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+		Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
+
+			var dataTargetHierarchy = ( key ).toString().split( '.' );
 
 			// initialize with item at position zero [0]
-			FormUtil.recursiveJSONfill( targetDef, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
-		}
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
+
+		});
+
+		/* OLD METHOD: for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
+		{
+			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
+		} OLD METHOD */
 
 	}
 
-	console.log ( targetDef );
-	console.log ( JSON.stringify( targetDef ) );
-	//console.log ( JSON.stringify( targetDef, null, 4) );
+	console.log ( inputsJson );
+	console.log ( JSON.stringify( inputsJson, null, 4) );
 
 	return inputsJson;
 }
 
 FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 {
+	// construct the payload 'layout'
 	if ( dataTargetHierarchy[ itm ] )
 	{
-		if (! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
-			//targetDef[ dataTargetHierarchy[ itm ] ] = [];
-			//targetDef.push( JSON.parse( '{ "' + dataTargetHierarchy[ itm ] + '": [] }' )  );
-			targetDef[ dataTargetHierarchy[ itm ] ] = [];
+			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
+			if ( dataTargetHierarchy[ itm + 1 ] )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = [];
+			}
 		}
 		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
 	}
@@ -229,45 +260,31 @@ FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 
 }
 
-
 FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fillKey,fillValue)
 {
+	// fill/populate the payload
 	if ( itm < ( dataTargetHierarchy.length -1) )
 	{
 		FormUtil.recursiveJSONfill( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1, fillKey, fillValue )
 	}
 	else
 	{
-		if (targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		if ( ( dataTargetHierarchy[ itm ] ).length && targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
-			targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
-			//console.log( targetDef[ dataTargetHierarchy[ itm ] ].length );
-			//console.log( targetDef[ dataTargetHierarchy[ itm ] ].length - 1 );
-			//targetDef[ dataTargetHierarchy[ itm ] ][ targetDef[ dataTargetHierarchy[ itm ] ].length -1 ][ fillKey ] = fillValue;
-			//targetDef[ dataTargetHierarchy[ itm ] ][ targetDef[ dataTargetHierarchy[ itm ] ].length -1 ] = JSON.parse( '{ "' + fillKey + '": "' + fillValue + '" }' );
-			//targetDef[ dataTargetHierarchy[ itm ] ].push ( fillValue );
+			if ( Array.isArray( targetDef[ dataTargetHierarchy[ itm ] ] ) )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] [fillKey] = fillValue;
+			}
+		}
+		else if ( ( dataTargetHierarchy[ itm ] ).length == 0 )
+		{
+			targetDef[fillKey] = fillValue;
 		}
 	}
-}
-
-FormUtil.getDataTargetJson = function( dataTargetJson, inputDataJson )
-{
-	/*for( var i in formItemJson.dataTargets )
-	{
-		var targetDef = formItemJson.dataTargets[i];  // could be string name of def or rule object itself.
-		console.log( targetDef );
-
-		if ( targetDef.targetName )
-		{
-			entryTag.attr( 'target-def', escape( targetDef.targetName ) );
-		}
-
-		if ( targetDef.uid )
-		{
-			entryTag.attr( 'target-uid', escape( targetDef.uid ) );
-		}
-
-	}*/
 }
 
 // Temp use by 'dataList' for now - might populate it fully for more common use
@@ -278,7 +295,7 @@ FormUtil.renderInputTag = function( dataJson, containerDivTag )
 
 	// If 'defaultValue' exists, set val
 	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
-	
+
 	// If containerDivTag was passed in, append to it.
 	if ( containerDivTag )
 	{
@@ -370,7 +387,6 @@ FormUtil.getFetchWSJson = function( payloadJson )
 	return fetchJson;
 }
 
-
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {		
@@ -388,7 +404,9 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
 	var url = FormUtil.getWsUrl( apiPath );
-		
+
+	//console.log( url );
+	//console.log( FormUtil.getFetchWSJson( payloadJson ) );
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -823,11 +841,47 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		}
 		else
 		{
-			tag.val( val );
+
+			if ( val.toString().length )
+			{
+				if ( val.indexOf( '{' ) && val.indexOf( '}' ) )
+				{
+					tag.val( FormUtil.evalReservedField( val ) );
+				}
+				else
+				{
+					tag.val( val );
+				}
+			}
+			else
+			{
+				tag.val( val );
+			}
+			
 		}
 
 		if ( returnFunc ) returnFunc();
 	}
+}
+
+FormUtil.evalReservedField = function( val )
+{
+	var newValue = '';
+	if ( val.indexOf( '$${' ) )
+	{
+		// do something
+	}
+	else if ( val.indexOf( '##{' ) )
+	{
+		if ( val.indexOf( 'getCoordinates()' ) )
+		{
+			newValue = val.toString().replace( '' )
+		}
+	}
+	else
+	{
+	}
+	return newValue;
 }
 
 FormUtil.getTagVal = function( tag )

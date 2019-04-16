@@ -19,7 +19,7 @@ RESTUtil.performREST = function( url, payloadData, returnFunc )
     fetch( url, payloadData )
     .then( response => {
         if ( response.ok ) return response.json();
-        else throw Error( response.statusText );
+        else if ( response.statusText ) throw Error( response.statusText )
     })
     .then( jsonData => {
         returnFunc( true, jsonData );

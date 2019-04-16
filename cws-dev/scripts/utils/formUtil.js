@@ -5,6 +5,10 @@ function FormUtil() {}
 
 FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
 FormUtil.appUrlName = 'cws';			// App name - Part of the url
+
+FormUtil.dynamicWS = '';
+FormUtil.staticWSpath = '';
+
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
@@ -291,7 +295,7 @@ FormUtil.renderInputTag = function( dataJson, containerDivTag )
 
 	// If 'defaultValue' exists, set val
 	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
-	
+
 	// If containerDivTag was passed in, append to it.
 	if ( containerDivTag )
 	{
@@ -383,7 +387,6 @@ FormUtil.getFetchWSJson = function( payloadJson )
 	return fetchJson;
 }
 
-
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {		
@@ -401,7 +404,9 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
 	var url = FormUtil.getWsUrl( apiPath );
-		
+
+	//console.log( url );
+	//console.log( FormUtil.getFetchWSJson( payloadJson ) );
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -836,11 +841,47 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		}
 		else
 		{
-			tag.val( val );
+
+			if ( val.toString().length )
+			{
+				if ( val.indexOf( '{' ) && val.indexOf( '}' ) )
+				{
+					tag.val( FormUtil.evalReservedField( val ) );
+				}
+				else
+				{
+					tag.val( val );
+				}
+			}
+			else
+			{
+				tag.val( val );
+			}
+			
 		}
 
 		if ( returnFunc ) returnFunc();
 	}
+}
+
+FormUtil.evalReservedField = function( val )
+{
+	var newValue = '';
+	if ( val.indexOf( '$${' ) )
+	{
+		// do something
+	}
+	else if ( val.indexOf( '##{' ) )
+	{
+		if ( val.indexOf( 'getCoordinates()' ) )
+		{
+			newValue = val.toString().replace( '' )
+		}
+	}
+	else
+	{
+	}
+	return newValue;
 }
 
 FormUtil.getTagVal = function( tag )

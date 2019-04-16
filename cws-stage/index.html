@@ -59,7 +59,7 @@
     <link rel="stylesheet" href="css/responsive.css">
 
     <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
-  
+
   </head>
   <body>
 
@@ -84,7 +84,7 @@
         <table class="topIconsTbl" style="border-spacing: 0px;">
           <tr>
             <td>
-              <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="img/sync-banner.svg"></div>
+              <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="img/sync-banner.svg" alt="sync banner"></div>
             </td>
             <td>
               <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
@@ -102,10 +102,8 @@
     <!-- LOGIN FORM DIV -->
     <div id="loginFormDiv" style="display:none;">
 
-
         <div name="top-body" class="bodytop bg-color-program-son"></div>
         <section class="wrapper-log">
-
 
           <!-- LARGE WIDTH MODE DISPLAY -->
           <ul class="tabs">
@@ -115,12 +113,11 @@
             </li>
           </ul>
 
-
           <div class="menu-wrapper">
             <ul class="tab_content">
               <li tabId="1" class="active" style="display: list-item;">
                 <a class="expandable expanded" id="s-opt">
-                  <div class="icon-row"><img term="login_title" src="img/key.svg"> Login </div>
+                  <div class="icon-row"><img term="login_title" src="img/key.svg" alt="key"> Login </div>
                   <!-- <div class="icon-arrow"><img class="expandable-arrow" src="img/arrow_down.svg"></div> -->
                 </a>
                 <div>
@@ -129,12 +126,12 @@
                       <div>
                         <div class="tb-content-d-log">
                           <label term="login_userName" class="from-string">User name</label>
-                          <input autocomplete="off" class="form-type-text loginUserName" type="text" tabindex="1" >
+                          <input autocomplete="off" class="form-type-text loginUserName" type="text" tabindex="0" >
                         </div>
                         <div class="tb-content-d-log">
                           <label term="login_password" class="from-string">PIN</label>
                           <!-- <input autocomplete="off" class="form-type-text loginUserPin" type="password" pattern="[0-9]*" inputmode="numeric" style="-webkit-text-security: disc;" autofocus> -->
-                          <input type="password" class="form-type-text loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" tabindex="2" autocomplete="off" >
+                          <input type="password" class="form-type-text loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" tabindex="0" autocomplete="off" >
                           <input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required="" data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone" autocomplete="off" style="position:absolute;width:0px !important;height:18px !important;padding:0 !important;margin:0 !important;">
                         </div>
                         <!-- <div class="tb-content-d-log" style="border: none; background-color: unset;">
@@ -164,27 +161,22 @@
               </li>
             </ul>
 
-
-
           </div>
-      
+
         </section>
 
     </div>
 
-
     <!-- AFTER LOGIN - MAIN APP CONTENT DIV -->
     <div id="pageDiv" style="display:none;">
-      <div name="top-body" class="bodytop bg-color-program-son"></div>
 
+      <div name="top-body" class="bodytop bg-color-program-son"></div>
 
       <section class="wrapper">
 
         <main class="container">
           <div class="mainDiv">
-
             <div id="renderBlock" style="margin-top: 15px;" class="renderBlock"></div>
-
           </div>
         </main>
 
@@ -194,29 +186,29 @@
 
     <div id="pulsatingCircle" style="display:none;"></div>
 
-
     <!-- START > ABOUT FORM DIV -->
     <div id="aboutFormDiv" style="display:none;">
 
       <div name="top-body" class="bodytop bg-color-program-son"></div>
 
       <section class="wrapper">
+
         <main class="container">
 
         <div id="aboutContentDiv " class="aboutListDiv listDiv" style="position:relative;text-align:left;">
 
           <ul class="o-one ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnAboutBack">
+              <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnAboutBack" alt="arrowLeft">
               <label class="aboutHeader" term="menu_about">About</label>
               <br>
             </li>
           </ul>
 
-            <div class="title-act-mobile" style="padding: 8px 0 0 0">
-                <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnAboutBack">
-                <label class="aboutHeader" term="menu_about">About</label>
-              </div>
+          <div class="title-act-mobile" style="padding: 8px 0 0 0">
+            <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnAboutBack" alt="arrowLeft">
+            <label class="aboutHeader" term="menu_about">About</label>
+          </div>
 
           <ul class="tab__content_act">
 
@@ -257,8 +249,6 @@
 
             </li>
 
-
-
             <li class="inputDiv aboutGroupDiv" id='aboutInfo_dcdVersion_Less' style="width: 97%;margin:0;">
               <label term="about_configVersion" id="lblabout_configVersion" class="from-string titleDiv">Config version</label>
 
@@ -293,8 +283,6 @@
 
             </li>
 
-
-
             <li class="inputDiv aboutGroupDiv" id='aboutInfo_network_Less' style="width: 97%;margin:0;">
               <label term="about_network" id="lblabout_network" class="from-string titleDiv">Network sync</label>
 
@@ -325,8 +313,6 @@
               </div>
 
             </li>
-
-
 
             <li class="inputDiv aboutGroupDiv" id='aboutInfo_userLanguage_Less' style="width: 97%;margin:0;">
               <label term="about_userLanguage" id="lblabout_userLanguage" class="from-string titleDiv">User language</label>
@@ -374,7 +360,6 @@
 
             </li>
 
-
             <li class="inputDiv aboutGroupDiv" id='aboutInfo_theme_Less' style="width: 97%;margin:0;">
                 <label term="about_theme" id="lblabout_theme" class="from-string titleDiv">Theme</label>
   
@@ -406,14 +391,11 @@
 
               </li>
 
-
-
               <li class="inputDiv aboutGroupDiv" id='aboutInfo_networkMode_Less' style="width: 97%;margin:0;">
                 <label term="about_networkMode" class="from-string titleDiv">Network mode</label>
                 <div id="aboutInfo_networkMode"  class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"></div>
               </li>
   
-
             <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;">
               <label term="about_browser" class="from-string titleDiv">Browser</label>
               <div id="aboutInfo_Browser"  class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"></div>
@@ -447,8 +429,6 @@
 
     <!-- END > ABOUT FORM DIV -->
 
-
-
     <!--  START > STATISTICS REPORT --> 
 
     <div id="statisticsFormDiv" class="formStyle mainContent" style="display:none;">
@@ -462,14 +442,14 @@
       
             <ul class="o-one ">
               <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-                <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnStatsBack">
+                <img src="img/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnStatsBack" alt="arrowLeft">
                 <label class="aboutHeader" term="menu_statistics">Statistics</label>
                 <br>
               </li>
             </ul>
   
               <div class="title-act-mobile" style="padding: 8px 0 0 0">
-                  <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnStatsBack">
+                  <img src="img/arrow_left.svg" style="position:absolute;left:14px;width:32px;top:5px"  class="btnStatsBack" alt="arrowLeft">
                   <label class="statisticsHeader" term="menu_statistics">Statistics</label>
                 </div>
   
@@ -481,9 +461,9 @@
                 <thead>
                   <tr>
                     <th>&nbsp;</th>
-                    <th period="period1">Dec 2018</th>
-                    <th period="period2">Jan 2019</th>
-                    <th period="period3">Feb 2019</th>
+                    <th period="period1"></th>
+                    <th period="period2"></th>
+                    <th period="period3"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -512,7 +492,6 @@
                 </li>
 
               </ul>
-          
 
         </div>
 
@@ -539,7 +518,7 @@
         <div class="title-act-mobile"><img src='img/active.svg' class="tab-image"><label term="menu_list"> Active</label></div>
         
         <div class="floatListMenuIcon fixed_father pointer off" onselectstart="return false">
-          <img class="buttom-plus" src="img/plus.svg">
+          <img class="buttom-plus" src="img/plus.svg" alt="plus">
         </div>
 
         <div class="floatListMenuSubIcons fixed_child" onselectstart="return false"></div>
@@ -547,7 +526,6 @@
       </div>
 
     </div>
-
 
     <div id="focusRelegator" style="background-color: #000;opacity: 0.5;position: fixed;top:0;left:0;width: 100%;height: 100%;display: none;"></div>
 
@@ -583,6 +561,5 @@
     <script type="text/javascript" src="scripts/cwsRender.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>
 
-    <!-- script> document.write("<script src='scripts/utils/util.js?v=" + _ver + "'><\/script>"); </script-->
   </body>
 </html>

@@ -119,7 +119,6 @@ function statistics( cwsRender )
 
 	me.emptyTable = function()
 	{
-
 		$( 'table.tableStats thead' ).remove();
 		$( 'table.tableStats tbody' ).remove();
 	}
@@ -127,13 +126,26 @@ function statistics( cwsRender )
 	me.getReport = function()
 	{	
 		me.periodOpts = me.getMonthlyPeriods(3);
-		var jsonData = {};
 
-		jsonData.url = "../" + FormUtil.staticWSName + "/client/reportProv?pe=" + me.periodOpts.join(";");
-		jsonData.action = "POST";
-		jsonData.data = {};		
+		var apiPath = "/client/reportProv?pe=" + me.periodOpts.join(";");
+		var payloadJson = { 'userName': $( 'input.loginUserName' ).val(), 'password': $( 'input.loginUserPin' ).val() };
 
-		me.ajaxInProcess = $.ajax({
+		console.log( payloadJson );
+
+		FormUtil.wsSubmitGeneral( apiPath, payloadJson, undefined, function( success, returnJson )
+		{
+
+			console.log( success );
+			console.log( returnJson );
+
+			if ( success )
+			{
+				// do something
+			}
+
+		});
+
+		/*me.ajaxInProcess = $.ajax({
 			type: "POST"
 			,headers: {
 				'usr':FormUtil.login_UserName,
@@ -171,7 +183,7 @@ function statistics( cwsRender )
 			}		
 		}).always( function( data ) {
 			me.cwsRenderObj.pulsatingProgress.hide();
-		});
+		});*/
 	}
 
 	me.getOfflineReport = function()

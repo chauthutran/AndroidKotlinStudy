@@ -275,7 +275,7 @@ function Action( cwsRenderObj, blockObj )
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 				var inputTargJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
 
-				FormUtil.setLastPayload( inputsJson )
+				FormUtil.setLastPayload( inputTargJson )
 
 				// Voucher Status add to payload
 				if ( clickActionJson.voucherStatus )

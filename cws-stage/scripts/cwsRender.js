@@ -230,7 +230,7 @@ function cwsRender()
 			{
 				// added by Greg (2018/12/10)
 				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
-
+				console.log( ' new old block ');
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 				startBlockObj.render();  // should been done/rendered automatically?
 
@@ -247,6 +247,7 @@ function cwsRender()
 
 	me.renderBlock = function( blockName, options )
 	{
+		console.log( ' new block ');
 		if ( options )
 		{
 			console.log('options: ' + JSON.stringify( options ));

@@ -5,6 +5,10 @@ function FormUtil() {}
 
 FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
 FormUtil.appUrlName = 'cws';			// App name - Part of the url
+
+FormUtil.dynamicWS = '';
+FormUtil.staticWSpath = '';
+
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
@@ -60,6 +64,12 @@ FormUtil.isAppsPsiServer = function()
 {
 	//return true;
 	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
+}
+
+FormUtil.isPsiServer = function()
+{
+	//return true;
+	return ( location.host.indexOf( 'psi-mis.org' ) >= 0 );
 }
 
 FormUtil.generateUrl = function( inputsJson, actionJson )
@@ -159,64 +169,89 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 			var val = FormUtil.getTagVal( inputTag );
 			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
 			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+
 			inputTargets.push ( newPayLoad );
 
-			for ( var t = 0; t < dataTargs.length; t++ )
+			Object.keys( dataTargs ).forEach(function( key ) {
+
+				if ( ! uniqTargs.includes( key ) )
+				{
+					uniqTargs.push( key );
+				}
+
+			});
+
+			/* OLD METHOD: for ( var t = 0; t < dataTargs.length; t++ )
 			{
 				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
 				{
 					uniqTargs.push( dataTargs[ t ].targetName );
 				}
-			}
+			} OLD METHOD */
 
 		}
 
 	});
 
-	var targetDef = {};
+	uniqTargs.sort();
+	uniqTargs.reverse();
 
-	// create new template payload (based on named target values)
+	//var targetDef = {  "clientA": { "ipcEventA": [ { "test": "this" } ] } }; // "info": { "host": (location.host).replace('.psi-mis.org','') } }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
+
+	// BUILD new template payload structure (based on named target values)
 	for ( var t = 0; t < uniqTargs.length; t++ )
 	{
-		var refObjectArr = ( uniqTargs[ t ] ).toString().split( '.' );
+		var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
 
-		FormUtil.recursiveJSONbuild( targetDef, refObjectArr, 0 );
-
+		// initialize with item at position zero [0]
+		FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
 	}
 
-	console.log ( targetDef );
-	console.log ( inputTargets );
-
+	// FILL/populate new template payload structure (according to named inputTarget destinations)
 	for ( var t = 0; t < inputTargets.length; t++ )
 	{
-		for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
-		{
-			var fillValue = '{ "' + inputTargets[ t ].dataTargets[ e ].uid + '": "' + inputTargets[ t ].value + '" }';
-			var refObjectItemArr = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+		Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
 
-			FormUtil.recursiveJSONapply( targetDef, refObjectItemArr, 0, fillValue );
-		}
+			var dataTargetHierarchy = ( key ).toString().split( '.' );
+
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
+
+		});
+
+		/* OLD METHOD: for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
+		{
+			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
+		} OLD METHOD */
 
 	}
 
-	console.log ( targetDef );
-	console.log ( 'test 1' );
-	console.log ( 'hello ' + JSON.stringify( targetDef ) );
-	console.log ( JSON.stringify( targetDef.client ) );
-	console.log ( 'test 2' );
+	console.log ( inputsJson );
+	console.log ( JSON.stringify( inputsJson, null, 4) );
 
 	return inputsJson;
 }
 
-FormUtil.recursiveJSONbuild = function( targetDef, refObjectArr, itm)
+FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 {
-	if ( refObjectArr[ itm ] )
+	// construct the payload 'layout'
+	if ( dataTargetHierarchy[ itm ] )
 	{
-		if (! targetDef.hasOwnProperty( refObjectArr[ itm ] ) ) 
+		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
-			targetDef[ refObjectArr[ itm ] ] = [];
+			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
+			if ( dataTargetHierarchy[ itm + 1 ] )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] = [];
+			}
 		}
-		FormUtil.recursiveJSONbuild( targetDef[ refObjectArr[ itm ] ], refObjectArr, parseInt( itm ) + 1 )
+		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
 	}
 	else
 	{
@@ -225,41 +260,31 @@ FormUtil.recursiveJSONbuild = function( targetDef, refObjectArr, itm)
 
 }
 
-
-FormUtil.recursiveJSONapply = function( targetDef, refObjectArr, itm, fillValue)
+FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fillKey,fillValue)
 {
-	if ( itm < ( refObjectArr.length -1) )
+	// fill/populate the payload
+	if ( itm < ( dataTargetHierarchy.length -1) )
 	{
-		FormUtil.recursiveJSONapply( targetDef[ refObjectArr[ itm ] ], refObjectArr, parseInt( itm ) + 1, fillValue )
+		FormUtil.recursiveJSONfill( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1, fillKey, fillValue )
 	}
 	else
 	{
-		console.log( itm + ' = ' + ( refObjectArr.length -1) + ' checking for ~ ' + refObjectArr[ itm ] + ' ( ' + targetDef.hasOwnProperty( refObjectArr[ itm ] ) + ' )');
-		if (targetDef.hasOwnProperty( refObjectArr[ itm ] ) ) 
+		if ( ( dataTargetHierarchy[ itm ] ).length && targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
-			targetDef[ refObjectArr[ itm ] ].push ( JSON.parse( fillValue ) );
+			if ( Array.isArray( targetDef[ dataTargetHierarchy[ itm ] ] ) )
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
+			}
+			else
+			{
+				targetDef[ dataTargetHierarchy[ itm ] ] [fillKey] = fillValue;
+			}
+		}
+		else if ( ( dataTargetHierarchy[ itm ] ).length == 0 )
+		{
+			targetDef[fillKey] = fillValue;
 		}
 	}
-}
-
-FormUtil.getDataTargetJson = function( dataTargetJson, inputDataJson )
-{
-	/*for( var i in formItemJson.dataTargets )
-	{
-		var targetDef = formItemJson.dataTargets[i];  // could be string name of def or rule object itself.
-		console.log( targetDef );
-
-		if ( targetDef.targetName )
-		{
-			entryTag.attr( 'target-def', escape( targetDef.targetName ) );
-		}
-
-		if ( targetDef.uid )
-		{
-			entryTag.attr( 'target-uid', escape( targetDef.uid ) );
-		}
-
-	}*/
 }
 
 // Temp use by 'dataList' for now - might populate it fully for more common use
@@ -270,7 +295,7 @@ FormUtil.renderInputTag = function( dataJson, containerDivTag )
 
 	// If 'defaultValue' exists, set val
 	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
-	
+
 	// If containerDivTag was passed in, append to it.
 	if ( containerDivTag )
 	{
@@ -362,7 +387,6 @@ FormUtil.getFetchWSJson = function( payloadJson )
 	return fetchJson;
 }
 
-
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {		
@@ -380,7 +404,9 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
 	var url = FormUtil.getWsUrl( apiPath );
-		
+
+	//console.log( url );
+	//console.log( FormUtil.getFetchWSJson( payloadJson ) );
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -408,7 +434,14 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 	var apiPath = '/api/loginCheck';
 
 	// FormUtil.orgUnitData <-- Reset before?
-	var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+	if ( (location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || (location.href).indexOf('localhost') >= 0 ) //last 4 chars of url
+	{
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+	}
+	else
+	{
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: (location.host).replace('.psi-mis.org','') };
+	}
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
@@ -732,6 +765,42 @@ FormUtil.getRedeemPayload = function( id ) {
 
 }
 
+FormUtil.getConfigInfo = function( returnFunc )
+{	
+	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
+
+	//RESTUtil.retrieveJson( url, returnFunc );
+
+	var jsonData = {
+		"cws": {
+		"note": "CwS PWA production version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+		"configs": {
+			"MZ": "dcd@MZ",
+			"T_MZ": "dcd@MZ",
+			"NP": "dcd@NP",
+			"T_NP": "dcd@NP"
+			}
+		},
+		"cws-train": {
+		"note": "CwS PWA train version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
+		"inherit": "cws",
+		"configs": {}
+		},
+		"cws-dev": {
+		"note": "CwS PWA dev version",
+		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+		"inherit": "cws",
+		"configs": {
+			"T_MZ": "dcd@MZ@v1"
+			}
+		}
+	};
+
+	returnFunc( true, jsonData );
+}
+
 FormUtil.getAppInfo = function( returnFunc )
 {	
 	var url = FormUtil.getWsUrl( '/api/getPWAInfo' );
@@ -772,11 +841,47 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		}
 		else
 		{
-			tag.val( val );
+
+			if ( val.toString().length )
+			{
+				if ( val.indexOf( '{' ) && val.indexOf( '}' ) )
+				{
+					tag.val( FormUtil.evalReservedField( val ) );
+				}
+				else
+				{
+					tag.val( val );
+				}
+			}
+			else
+			{
+				tag.val( val );
+			}
+			
 		}
 
 		if ( returnFunc ) returnFunc();
 	}
+}
+
+FormUtil.evalReservedField = function( val )
+{
+	var newValue = '';
+	if ( val.indexOf( '$${' ) )
+	{
+		// do something
+	}
+	else if ( val.indexOf( '##{' ) )
+	{
+		if ( val.indexOf( 'getCoordinates()' ) )
+		{
+			newValue = val.toString().replace( '' )
+		}
+	}
+	else
+	{
+	}
+	return newValue;
 }
 
 FormUtil.getTagVal = function( tag )

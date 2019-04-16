@@ -269,16 +269,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 	me.addDataTargets = function( divInputTag, formItemJson )
 	{
-		//console.log( 'addRuleForField: ' + divInputTag.html() );
-		//console.log( formItemJson );
 		var entryTag = divInputTag.find( "select,input" );
 
 		if( formItemJson.dataTargets !== undefined )
 		{
-			console.log( formItemJson.dataTargets );
-
 			entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.dataTargets ) ) );
-
 		}
 
 	}
@@ -288,7 +283,7 @@ function BlockForm( cwsRenderObj, blockObj )
 	// ---- EVAL Actions Related --------------------------
 
 	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
-	{		
+	{
 		var tagVal = FormUtil.getTagVal( tag );
 
 		if ( tagVal )
