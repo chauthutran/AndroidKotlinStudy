@@ -23,24 +23,12 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "css/log.css",
-    "revision": "528354822cf90529d81b97d1223f7114"
-  },
-  {
-    "url": "css/media.css",
-    "revision": "9b34f53d6b7dcb1a476e74a34517370a"
-  },
-  {
-    "url": "css/mobile.css",
-    "revision": "2b9f8b2d9d342d4d3152bf3086b3f59a"
-  },
-  {
     "url": "css/responsive.css",
-    "revision": "5fb9e3c9cdabcc833a3caa7efd5e31d8"
+    "revision": "3f081dfee5ad235164e98bcfa0d4d364"
   },
   {
     "url": "css/style.css",
-    "revision": "f51bfbcd347f05f3127f5148b83e32c0"
+    "revision": "f8d05fccd9fc499607a55f6afda672fc"
   },
   {
     "url": "images/baseline-cloud_off-24px-unavailable.svg",
@@ -316,11 +304,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "35f9de57842d61e1f50b334958bc10a2"
+    "revision": "dac6d9fa7fdc11518b3583b4300ac1af"
   },
   {
     "url": "scripts/app.js",
-    "revision": "a6f1c3272c0b5c79dabb7a51061c2b95"
+    "revision": "7b6dd90ca959d8922f75bd608f691da0"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -384,11 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/jquery-3.3.1.js",
-    "revision": "b0e8755b0ab71a0a4aea47c3b589b47e"
-  },
-  {
-    "url": "scripts/libraries/jquery-3.3.1.min.js",
-    "revision": "378087a64e1394fc51f300bb9c11878c"
+    "revision": "6d7d2165861722c4c97494cc48856fb6"
   },
   {
     "url": "scripts/libraries/jquery-dateformat.min.js",
@@ -396,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/jquery-ui.js",
-    "revision": "e0e5b130995dffab378d011fcd4f06d6"
+    "revision": "497a38cd2673fd2262ea97ff63258c3d"
   },
   {
     "url": "scripts/libraries/jquery.blockUI.js",
@@ -508,7 +492,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "b8c6d2eebe61f7d9aa6507b5c49ee55c"
+    "revision": "2ccfe034b52b2bc24d20173cc1240fe2"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

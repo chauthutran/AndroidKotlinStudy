@@ -11,8 +11,6 @@
 
 
   window.onload = function() {
-
-
     //startApp();
   }
 
@@ -52,9 +50,6 @@
 
     //if ( Util.isMobi() )
     {
-      // added by Greg (1 Apr 2019): 'soft hack' numeric keyboard for mobile entry
-      //$('#passReal').hide();
-      //console.log('hiding it');
 
       $( "#passReal" ).keydown(function( event ) {
 
@@ -135,7 +130,6 @@
 
         console.log( FormUtil.dynamicWS );
 
-        //FormUtil.staticWSName = FormUtil.dynamicWS.targetWS;
         FormUtil.staticWSName = ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ ( FormUtil.dynamicWS.targetWS ).toString().split('/').length-1 ];
         FormUtil._serverUrlOverride = '';
 
