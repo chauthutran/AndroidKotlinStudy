@@ -229,13 +229,14 @@ FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
 			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
-			if ( dataTargetHierarchy[ itm + 1 ] || ( dataTargetHierarchy[ itm ] ).toString().indexOf('[]') < 0 )
+			if ( dataTargetHierarchy[ itm + 1 ] || ( dataTargetHierarchy[ itm ] ).toString().indexOf('[') < 0 )
 			{
 				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
 			}
 			else
 			{
-				targetDef[ ( dataTargetHierarchy[ itm ] ).toString().replace( '[]','' ) ] = [];
+				var arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
+				targetDef[ ( dataTargetHierarchy[ itm ] ).toString().replace( '['+ arrSpecRaw +']','' ) ] = [];
 			}
 		}
 		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
@@ -256,20 +257,55 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 	}
 	else
 	{
-		if ( ( dataTargetHierarchy[ itm ] ).length && targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		var arrSpecRaw = '';
+		var arrSpecArr = [];
+		if ( ( dataTargetHierarchy[ itm ] ).toString().indexOf('[') >= 0 )
 		{
-			if ( Array.isArray( targetDef[ dataTargetHierarchy[ itm ] ] ) )
+			arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
+			arrSpecArr = arrSpecRaw.split( ':' );
+			if ( arrSpecArr.length == 0 || arrSpecArr.length > 2 ) arrSpecArr = [];
+		}
+
+		if ( arrSpecRaw.length ) console.log( arrSpecArr);
+		
+		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
+
+		if ( ( dataTargetKeyItem ).length && targetDef.hasOwnProperty( dataTargetKeyItem ) ) 
+		{
+			if ( Array.isArray( targetDef[ dataTargetKeyItem ] ) )
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
+				if ( arrSpecArr.length )
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+				}
+				else
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+				}
 			}
 			else
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ] [fillKey] = fillValue;
+				targetDef[ dataTargetKeyItem ] [fillKey] = fillValue;
 			}
 		}
-		else if ( ( dataTargetHierarchy[ itm ] ).length == 0 )
+		else if ( ( dataTargetKeyItem ).length == 0 )
 		{
-			targetDef[fillKey] = fillValue;
+			if ( Array.isArray( targetDef[ dataTargetKeyItem ] ) )
+			{
+				if ( arrSpecArr.length )
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+				}
+				else
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+				}
+			}
+			else
+			{
+				targetDef[ fillKey ] = fillValue;
+			}
+			
 		}
 	}
 }
@@ -417,9 +453,9 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 	var apiPath = '/api/loginCheck';
 
 	// FormUtil.orgUnitData <-- Reset before?
-	if ( (location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || (location.href).indexOf('localhost') >= 0 ) //last 4 chars of url
+	if ( (location.href).indexOf('localhost') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
 	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
 	}
 	else
 	{
