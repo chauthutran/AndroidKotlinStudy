@@ -263,10 +263,8 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 		{
 			arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
 			arrSpecArr = arrSpecRaw.split( ':' );
-			if ( arrSpecArr.length == 0 || arrSpecArr.length > 2 ) arrSpecArr = [];
+			if ( ( arrSpecRaw.indexOf( ':' ) < 0 ) || ( arrSpecRaw.length > 0 && arrSpecArr.length > 2 ) ) arrSpecArr = [];
 		}
-
-		if ( arrSpecRaw.length ) console.log( arrSpecArr);
 		
 		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
 
@@ -786,7 +784,6 @@ FormUtil.getRedeemPayload = function( id ) {
 FormUtil.getConfigInfo = function( returnFunc )
 {	
 	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
-
 	//RESTUtil.retrieveJson( url, returnFunc );
 
 	var jsonData = {
@@ -799,19 +796,22 @@ FormUtil.getConfigInfo = function( returnFunc )
 				"NP": "dcd@NP",
 				"T_NP": "dcd@NP",
 				"M_TE": "dcd@TE"
-			}
+			},
+		"version": "1.0.0.52"
 		},
 		"cws-train": {
 			"note": "CwS PWA training version",
 			"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
 			"inherit": "cws",
-			"configs": {}
+			"configs": {},
+			"version": "1.0.0.52"
 		},
 		"cws-stage": {
 			"note": "CwS PWA staging version",
 			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
 			"inherit": "cws",
-			"configs": {}
+			"configs": {},
+			"version": "1.0.0.52"
 		},
 		"cws-dev": {
 			"note": "CwS PWA development version",
@@ -819,7 +819,8 @@ FormUtil.getConfigInfo = function( returnFunc )
 			"inherit": "cws",
 			"configs": {
 				"T_MZ": "dcd@MZ@v1"
-			}
+			},
+			"version": "1.0.0.52"
 		}
 	};
 
