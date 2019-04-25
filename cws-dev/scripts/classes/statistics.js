@@ -124,43 +124,23 @@ function statistics( cwsRender )
 	}
 
 	me.getReport = function()
-	{	
+	{
+
+		me.cwsRenderObj.pulsatingProgress.show();
+		me.cwsRenderObj.pulsatingProgress.css( 'zIndex', 1000 );
+
+		$( '#statsFooterSpecialNote' ).hide();
+		$( '#statsFooterLastCalc' ).hide();
+
 		me.periodOpts = me.getMonthlyPeriods(3);
 
 		var apiPath = "/client/reportProv?pe=" + me.periodOpts.join(";");
 		var payloadJson = { 'userName': $( 'input.loginUserName' ).val(), 'password': $( 'input.loginUserPin' ).val() };
 
-		console.log( payloadJson );
-
-		FormUtil.wsSubmitGeneral( apiPath, payloadJson, undefined, function( success, returnJson )
+		FormUtil.wsSubmitGeneral( apiPath, payloadJson, undefined, function( success, response )
 		{
 
-			console.log( success );
-			console.log( returnJson );
-
 			if ( success )
-			{
-				// do something
-			}
-
-		});
-
-		/*me.ajaxInProcess = $.ajax({
-			type: "POST"
-			,headers: {
-				'usr':FormUtil.login_UserName,
-				'pwd':FormUtil.login_Password
-			}
-			,url: jsonData.url 
-			,dataType: "json"
-			,contentType: "application/json"
-            ,beforeSend: function( xhr ) {
-				me.cwsRenderObj.pulsatingProgress.show();
-				me.cwsRenderObj.pulsatingProgress.css( 'zIndex', 1000 );
-				$( '#statsFooterSpecialNote' ).hide();
-				$( '#statsFooterLastCalc' ).hide();
-            }
-			,success: function( response ) 
 			{
 				me.dataResults = response.data.rows;
 				me.createColumnHeaders( me.periodOpts )
@@ -174,16 +154,13 @@ function statistics( cwsRender )
 				me.updateLocalStatistics( response );
 				me.cwsRenderObj.pulsatingProgress.hide();
 			}
-			,error: function( response, textStatus )
+			else
 			{
-				console.log( 'Failed to retrieve report.' );
 				MsgManager.notificationMessage ( 'Failed to retrieve report > error connecting', 'notificationDark', undefined, '', 'left', 'top' )
 				me.cwsRenderObj.pulsatingProgress.hide();
-				// if ( textStatus !== "abort" )					
-			}		
-		}).always( function( data ) {
-			me.cwsRenderObj.pulsatingProgress.hide();
-		});*/
+			}
+
+		}); 
 	}
 
 	me.getOfflineReport = function()

@@ -17,12 +17,17 @@ FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
-//FormUtil._serverUrl = location.protocol + '//' + location.host;  // Local WebService version
+
 FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
-
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
+
+FormUtil.geoLocationTrackingEnabled = false;  // --> move to geolocation.js class
+FormUtil.geoLocationTrackedCoordinates;  // --> move to geolocation.js class
+FormUtil.geoLocationState;  // --> move to geolocation.js class
+FormUtil.geoLocationError;  // --> move to geolocation.js class
+FormUtil.geoLocationCoordsObj;  // --> move to geolocation.js class
 
 // ==== Methods ======================
 
@@ -153,7 +158,6 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	// Input Tag values
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -181,22 +185,12 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 			});
 
-			/* OLD METHOD: for ( var t = 0; t < dataTargs.length; t++ )
-			{
-				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
-				{
-					uniqTargs.push( dataTargs[ t ].targetName );
-				}
-			} OLD METHOD */
-
 		}
 
 	});
 
 	uniqTargs.sort();
 	uniqTargs.reverse();
-
-	//var targetDef = {  "clientA": { "ipcEventA": [ { "test": "this" } ] } }; // "info": { "host": (location.host).replace('.psi-mis.org','') } }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
 
 	// BUILD new template payload structure (based on named target values)
 	for ( var t = 0; t < uniqTargs.length; t++ )
@@ -219,13 +213,6 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 		});
 
-		/* OLD METHOD: for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
-		{
-			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
-			// initialize with item at position zero [0]
-			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
-		} OLD METHOD */
-
 	}
 
 	console.log ( inputsJson );
@@ -242,13 +229,13 @@ FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
 			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
-			if ( dataTargetHierarchy[ itm + 1 ] )
+			if ( dataTargetHierarchy[ itm + 1 ] || ( dataTargetHierarchy[ itm ] ).toString().indexOf('[]') < 0 )
 			{
 				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
 			}
 			else
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ] = [];
+				targetDef[ ( dataTargetHierarchy[ itm ] ).toString().replace( '[]','' ) ] = [];
 			}
 		}
 		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
@@ -362,14 +349,12 @@ FormUtil.getWsUrl = function( subUrl )
 
 
 // POST Request required json prepare
-FormUtil.getFetchWSJson = function( payloadJson )
-{
+FormUtil.getFetchWSJson = function( payloadJson, headerJson )
+{	
 	var fetchJson = {
-		method: 'POST'
-		//,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
+		 method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
 		,body: '{}'
 	};
-
 
 	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
 	{
@@ -405,8 +390,6 @@ FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFun
 {	
 	var url = FormUtil.getWsUrl( apiPath );
 
-	//console.log( url );
-	//console.log( FormUtil.getFetchWSJson( payloadJson ) );
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -451,7 +434,7 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 			var loginStatus = ( returnJson && returnJson.loginStatus );
 
 			if ( loginStatus )
-			{		
+			{
 				FormUtil.login_UserName = userName;
 				FormUtil.login_Password = password;
 				FormUtil.orgUnitData = returnJson.orgUnitData;
@@ -480,7 +463,7 @@ FormUtil.checkLoginSubmitCase = function( payloadJson )
 
 FormUtil.checkLogin = function()
 {
-	return ( FormUtil.login_UserName.toString().length && FormUtil.login_Password.toString().length );
+	return ( FormUtil.login_UserName.toString().length * FormUtil.login_Password.toString().length );
 }
 
 FormUtil.undoLogin = function()
@@ -501,7 +484,6 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 {
 	mainIconTag.on('click', function( event )
 	{
-		//console.log( 'mainIconTag Clicked' );
 		event.preventDefault();
 
 		var thisTag = $(this);
@@ -776,24 +758,31 @@ FormUtil.getConfigInfo = function( returnFunc )
 		"note": "CwS PWA production version",
 		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
 		"configs": {
-			"MZ": "dcd@MZ",
-			"T_MZ": "dcd@MZ",
-			"NP": "dcd@NP",
-			"T_NP": "dcd@NP"
+				"MZ": "dcd@MZ",
+				"T_MZ": "dcd@MZ",
+				"NP": "dcd@NP",
+				"T_NP": "dcd@NP",
+				"M_TE": "dcd@TE"
 			}
 		},
 		"cws-train": {
-		"note": "CwS PWA train version",
-		"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
-		"inherit": "cws",
-		"configs": {}
+			"note": "CwS PWA training version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
+			"inherit": "cws",
+			"configs": {}
+		},
+		"cws-stage": {
+			"note": "CwS PWA staging version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+			"inherit": "cws",
+			"configs": {}
 		},
 		"cws-dev": {
-		"note": "CwS PWA dev version",
-		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
-		"inherit": "cws",
-		"configs": {
-			"T_MZ": "dcd@MZ@v1"
+			"note": "CwS PWA development version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+			"inherit": "cws",
+			"configs": {
+				"T_MZ": "dcd@MZ@v1"
 			}
 		}
 	};
@@ -867,20 +856,27 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 FormUtil.evalReservedField = function( val )
 {
 	var newValue = '';
-	if ( val.indexOf( '$${' ) )
+
+	if ( val.indexOf( '$${' ) >= 0 )
 	{
-		// do something
+		// do something ?
 	}
-	else if ( val.indexOf( '##{' ) )
+	else if ( val.indexOf( '##{' ) >= 0)
 	{
-		if ( val.indexOf( 'getCoordinates()' ) )
+		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			newValue = val.toString().replace( '' )
+			newValue = FormUtil.getGeoLocation();
+		}
+		if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
+		{
+			newValue = (new Date() ).toISOString();
 		}
 	}
 	else
 	{
+		newValue = val;
 	}
+
 	return newValue;
 }
 
@@ -919,34 +915,44 @@ FormUtil.getManifest = function()
 }
 /* END > Added by Greg: 2018/12/10 */
 
-/* START > Added by Greg: 2018/12/103 */
-
-FormUtil.setLastPayload = function( jsonData )
+FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 {
+	var traceData = sessionStorage.getItem('WSexchange');
+	var traceObj;
 
-	var sessionData = localStorage.getItem('session');
+	if ( !traceData ) traceObj = {};
+	else traceObj = JSON.parse( traceData );
 
-	if ( sessionData )
+	if ( traceData )
 	{
+		traceObj[ payloadName ] = jsonData;
 
-		var SessionObj = JSON.parse( sessionData );
-		//var payload = JSON.stringify( jsonData );
-
-		if ( SessionObj.last && SessionObj.last.payload )
+		if ( optClear)
 		{
-			SessionObj.last.payload = jsonData;
+			traceObj[ optClear ] = '';
+		}
+	}
+	else
+	{
+		if ( optClear)
+		{
+			traceObj = { [payloadName]: jsonData, [optClear]: '', history: [] };
 		}
 		else
 		{
-			SessionObj.last = { 'payload': jsonData };
+			traceObj = { [payloadName]: jsonData, history: [] };
 		}
-
-		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
-
 	}
+
+	traceObj.history.push ( { "actionType": payloadName, "actionDef": actDefName, "created": (new Date() ).toISOString(), "data": jsonData } );
+
+	sessionStorage.setItem( 'WSexchange', JSON.stringify( traceObj ) );
+
 }
 
-FormUtil.getLastPayload = function()
+/* START > Added by Greg: 2018/12/103 */
+
+FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
 	var sessionData = localStorage.getItem('session');
 
@@ -954,9 +960,42 @@ FormUtil.getLastPayload = function()
 	{
 		var SessionObj = JSON.parse( sessionData );
 
-		if ( SessionObj.last && SessionObj.last.payload )
+		if ( SessionObj.last )
 		{
-			return SessionObj.last.payload;
+			SessionObj.last[ payloadName ] = jsonData;
+
+			if ( optClear)
+			{
+				SessionObj.last[ optClear ] = '';
+			}
+		}
+		else
+		{
+			if ( optClear)
+			{
+				SessionObj.last = { [payloadName]: jsonData, [optClear]: '' };
+			}
+			else
+			{
+				SessionObj.last = { [payloadName]: jsonData };
+			}
+		}
+
+		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
+	}
+}
+
+FormUtil.getLastPayload = function( namedPayload )
+{
+	var sessionData = localStorage.getItem('session');
+
+	if ( sessionData )
+	{
+		var SessionObj = JSON.parse( sessionData );
+
+		if ( namedPayload && SessionObj.last && SessionObj.last[ namedPayload ] )
+		{
+			return SessionObj.last[ namedPayload ];
 		}
 
 	}
@@ -1249,8 +1288,6 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize && $(iconObj).html() )
 			{
-				//console.log( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
-				//console.log( $(iconObj).html() );
 				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
 				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
 
@@ -1483,6 +1520,90 @@ FormUtil.testNewSWavailable = function()
   
 		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
 	  }
+	});
+
+}
+
+FormUtil.getGeoLocation = function()
+{ // --> move to geolocation.js class
+	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationTrackedCoordinates;
+	else return '';
+}
+
+FormUtil.refreshGeoLocation = function()
+{ // --> move to geolocation.js class
+	var error_PERMISSION_DENIED = 1;
+
+	if ( navigator.geolocation )
+	{
+		navigator.geolocation.getCurrentPosition( function(position) 
+		{
+
+			var lat = position.coords.latitude;
+			var lon = position.coords.longitude;
+			var userLocation;
+
+			if ( lat == null)
+			{
+				userLocation = ''; //GPS not activated
+			}
+			else
+			{
+				userLocation = parseFloat( lat ).toFixed( 6 ) + ', ' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
+			}
+
+			FormUtil.geoLocationTrackedCoordinates = userLocation;
+			FormUtil.geoLocationCoordsObj =  position.coords;
+			FormUtil.geoLocationError = '';
+
+		},  function ( error ) 
+			{
+				FormUtil.geoLocationError = error.code; //Error locating your device
+
+				if (error.code == error.PERMISSION_DENIED)
+				{
+					FormUtil.geoLocationTrackedCoordinates = '';
+				}
+				else
+				{
+					FormUtil.geoLocationTrackedCoordinates = '';
+				}
+			},
+			{enableHighAccuracy: false} // if 'true' may result in slower response times or increased power consumption
+		);
+	}
+	else
+	{
+		FormUtil.geoLocationTrackedCoordinates = '';
+		FormUtil.geoLocationError = -1;
+		FormUtil.geoLocationTrackedCoordinates = {};
+	}
+
+}
+
+FormUtil.geolocationAllowed = function()
+{
+	navigator.permissions.query({
+		name: 'geolocation'
+	}).then(function(result) {
+
+		FormUtil.geoLocationState = result.state;
+
+		/*if (result.state == 'granted') {
+			report(result.state);
+			geoBtn.style.display = 'none';
+		} else if (result.state == 'prompt') {
+			report(result.state);
+			geoBtn.style.display = 'none';
+			navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
+		} else if (result.state == 'denied') {
+			report(result.state);
+			geoBtn.style.display = 'inline';
+		}*/
+
+		result.onchange = function() {
+			FormUtil.geoLocationState = result.state;
+		}
 	});
 
 }

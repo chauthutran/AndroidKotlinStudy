@@ -4,7 +4,7 @@ function inputMonitor( cwsRenderObj )
 {
     var me = this;
     var cwsRenderInputMon = cwsRenderObj;
-    //var container = document.querySelector( destObj );
+    var InputMonLogoutTimer = 0;
 
     document.addEventListener("touchstart", startTouch, false);
     document.addEventListener("touchmove", moveTouch, false);
@@ -51,16 +51,39 @@ function inputMonitor( cwsRenderObj )
         {
             me.initialiseListItemVars();
         }
-        
 
         me.detectFocusRelegatorInitialState();
 
         cwsRenderInputMon.updateNavDrawerHeaderContent();
 
+        updateLogoutTimer();
+
     };
+
+    function updateLogoutTimer()
+    {
+
+        //console.log( InputMonLogoutTimer );
+        if ( InputMonLogoutTimer > 0 )
+        {
+            clearInterval(  InputMonLogoutTimer );
+        }
+
+        InputMonLogoutTimer = setInterval( function() 
+        {
+            if ( FormUtil.checkLogin() )
+            {
+                cwsRenderInputMon.logOutProcess();
+            }
+
+        }, 60 * 60 * 1000 );
+        //console.log( InputMonLogoutTimer );
+
+    }
 
     function moveTouch(e) 
     {
+
         if ( !loggedIn || (initialX === null ) || (initialY === null) || ( e.touches[0].clientX == null) )
         {
             return;
@@ -70,28 +93,21 @@ function inputMonitor( cwsRenderObj )
 
         if ( startTouchTargetTag && startTagRedeemListItem )
         {
-            // redeemList item is target object
-            me.moveListItem();
+            me.moveListItem(); // redeemList item is target object
         }
         else
         {
-            // navDrawer is target object
-            me.moveNavDrawer();
+            me.moveNavDrawer(); // navDrawer is target object
         }
-
-        // IGNORE UP+DOWN INPUT SWIPE FOR NOW (NB: DO NOT REMOVE CODE)
-        /*else
+        /*else  // IGNORE UP+DOWN INPUT SWIPE FOR NOW (NB: DO NOT REMOVE CODE)
         {
-            // sliding vertically
-            if (diffY > 0) 
+            if (diffY > 0)  // sliding vertically
             {
-                // swiping up
-                console.log("swiping up");
+                console.log("swiping up");  // swiping up
             } 
             else 
             {
-                // swiping down
-                console.log("swiping down");
+                console.log("swiping down"); // swiping down
             }
         }*/
 
@@ -173,7 +189,6 @@ function inputMonitor( cwsRenderObj )
 
             if ( startTagRedeemListItem )
             {
-                // console.log( $( e.touches[0].target ).closest( 'a') ) ;
                 startTouchTargetTag = $( e.touches[0].target ).closest( 'a');
                 startTouchTargetWidth = $( startTouchTargetTag ).width();    
             }

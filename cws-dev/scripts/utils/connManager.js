@@ -14,14 +14,14 @@ ConnManager.IntvCountCheckPoint = 5;
 ConnManager.IntvTime = 500;	// milliseconds - each is .5 sec..
 
 ConnManager.dataServer_Online = true;
-ConnManager.dataServer_timerIntv = 30000;	// milliseconds - each is 30 sec..
+ConnManager.dataServer_timerIntv = 30000;	// 30,000 milliseconds = 30 sec; 1,800,000 = 30min; 3,600,000 = 1hour
 ConnManager.dataServer_timerID = 0;
 ConnManager.dataServerDetect = 0;
 
 ConnManager.connChangeAsked = false;  // For asking AppConnMode change only once per mode change
 ConnManager.connChangeAskedMode = false;  // For asking AppConnMode change only once per mode change
 
-ConnManager.switch_waitMaxCount = 20;	// After manually switching AppConnMode, let it not botter(ask) for this count..
+ConnManager.switch_waitMaxCount = 20;	// After manually switching AppConnMode, let it not for this count..
 ConnManager.switchActionStarted = false;
 ConnManager.switchBuildUp = 0;
 
@@ -122,7 +122,6 @@ ConnManager.setAppConnMode = function( bOnline )
 
 ConnManager.setUp_AppConnModeDetection = function() 
 {
-
 	// In the beginning, match it as current status.
 	ConnManager.currIntv_Online = ConnManager.network_Online;
 	ConnManager.prevIntv_Online = ConnManager.network_Online;
@@ -141,7 +140,6 @@ ConnManager.setUp_AppConnModeDetection = function()
 
 		if ( !ConnManager.userNetworkMode || ( ConnManager.userNetworkMode && ConnManager.userNetworkMode_TestExempt)  )
 		{
-
 			// Network Connection Changed - continueous counter build up check
 			if ( connStateChanged ) ConnManager.IntvCountBuildUp = 0;
 			else ConnManager.IntvCountBuildUp++;
@@ -162,6 +160,7 @@ ConnManager.setUp_AppConnModeDetection = function()
 					// Check continuous network counter - to the limit/check point.
 					if ( ConnManager.IntvCountBuildUp >= ConnManager.IntvCountCheckPoint )
 					{
+						//console.log( 'ConnManager.IntvCountBuildUp >= ConnManager.IntvCountCheckPoint: ' + ConnManager.IntvCountCheckPoint );
 						// Ask for the appConnMode Change..
 						if ( ConnManager.appConnMode_Online != ConnManager.currIntv_Online )
 						{
@@ -512,7 +511,6 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 						{
 							if ( ConnManager.debugMode ) console.log( 'skipped exemption test 10' );
 							ConnManager.changeConnModeTo = "online";
-							//ConnManager.changeConnModeStr = "interval";
 							ConnManager.change_AppConnModePrompt( "interval", true );
 						}
 					}
@@ -523,7 +521,6 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 					{
 						if ( ConnManager.debugMode ) console.log( 'skipped exemption test 11' );
 						ConnManager.changeConnModeTo = "online";
-						//ConnManager.changeConnModeStr = "interval";
 						ConnManager.change_AppConnModePrompt( "interval", true );
 					}
 				}
@@ -536,9 +533,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 					ConnManager.getAppShellVersion( function( appRetVersion ) 
 					{
 						var appShellVersion = $( '#spanVersion' ).html().replace('v','');
-						if ( ConnManager.debugMode ) console.log( ' ~ CHECKING APP VERSION' );
-						if ( ConnManager.debugMode ) console.log( appRetVersion );
-						if ( ConnManager.debugMode ) console.log( appShellVersion.toString() + ' vs ' + appRetVersion.toString() );
+						if ( ConnManager.debugMode ) console.log( ' ~ CHECKING APP VERSION > ' + appShellVersion.toString() + ' vs ' + appRetVersion.toString() );
 
 						if ( appShellVersion.toString() < appRetVersion.toString() )
 						{
@@ -566,7 +561,8 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 						else
 						{
 
-							ConnManager.getDcdConfig( function( dcdRetVersion ) 
+							// disable DCD version check ~ users are now auto-logged out after 60min
+							/*ConnManager.getDcdConfig( function( dcdRetVersion ) 
 							{
 								if ( dcdRetVersion )
 								{
@@ -617,7 +613,7 @@ ConnManager.detectDataServerOnline = function( forceDataServerOnline )
 
 								}
 
-							});
+							});*/
 						}
 					});
 				}
@@ -683,14 +679,14 @@ ConnManager.getAppShellVersion = function( returnFunc )
 
 ConnManager.getDcdConfigVersion = function( returnFunc )
 {
-	if ( localStorage.getItem('session') !== null )
+	if ( localStorage.getItem('session') !== null && FormUtil.checkLogin() )
 	{
-		if ( localStorage.getItem('session') && localStorage.getItem('session').user && (localStorage.getItem('session').user).length )
+		//if ( localStorage.getItem('session') && localStorage.getItem('session').user && (localStorage.getItem('session').user).length )
 		{
 			var loadingTag = undefined;
-			var userName = JSON.parse( localStorage.getItem('session') ).user;
-			var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
-	
+			var userName = FormUtil.login_UserName; //JSON.parse( localStorage.getItem('session') ).user;
+			var userPin = FormUtil.login_Password; //Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+
 			FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
 			{
 				if ( success )
@@ -705,7 +701,7 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 				}
 			});
 		}
-		else return undefined;
+		//else return undefined;
 	}
 	else return undefined;
 }
@@ -715,23 +711,31 @@ ConnManager.getDcdConfig = function( returnFunc )
 	if ( localStorage.getItem('session') !== null )
 	{
 		var loadingTag = undefined;
-		var userName = JSON.parse( localStorage.getItem('session') ).user;
-		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+		var userName = FormUtil.login_UserName; //JSON.parse( localStorage.getItem('session') ).user;
+		var userPin = FormUtil.login_Password;
 
-		FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
+		if ( userName.length * userPin.length ) //FormUtil.getUserSessionAttr( userName,'pin' )
 		{
-			if ( success )
+			//var userPin = FormUtil.login_Password; //Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+
+			FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
 			{
-				if ( returnFunc ) returnFunc( loginData );
-				else return success;
-			}
-			else
-			{
-				if ( returnFunc ) returnFunc( undefined );
-				else return undefined;
-			}
-		});
+				if ( success )
+				{
+					if ( returnFunc ) returnFunc( loginData );
+					else return success;
+				}
+				else
+				{
+					if ( returnFunc ) returnFunc( undefined );
+					else return undefined;
+				}
+			});
+
+		}
+		else return undefined;
 
 	}
 	else return undefined;
+
 }

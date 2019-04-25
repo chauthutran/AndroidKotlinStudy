@@ -17,7 +17,7 @@ function Login( cwsRenderObj )
   	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
 	me._pHash = '';
-	me._staySignedIn = true;
+	me._staySignedIn = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -235,14 +235,27 @@ function Login( cwsRenderObj )
 		var lastSession = { user: userName, lastUpdated: dtmNow, language: FormUtil.defaultLanguage() }; //, networkOnline: ConnManager.getAppConnMode_Offline()
 		DataManager.saveData( 'session', lastSession );	
 
+
+		// hardcoded test for presence of word 'Coordinates' until we have a solid solution
+		/*if ( FormUtil.dcdConfig && JSON.stringify( FormUtil.dcdConfig ).toString().indexOf( 'Coordinates' ) > 0 )
+		{
+			FormUtil.geolocationAllowed();
+			FormUtil.refreshGeoLocation(); //@Greg2Implement: navigator.geolocation.watchPosition
+		}
+		else
+		{
+			console.log( ' ~ no Coordiates in dcd ' );
+			console.log( FormUtil.dcdConfig );
+		}*/
+
 	}
 
 	me.regetDCDconfig = function()
 	{
 		var userName = JSON.parse( localStorage.getItem('session') ).user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
-		console.log(userName, userPin );
-		alert ('login.js: ');
+		//console.log(userName, userPin );
+		//alert ('login.js: ');
 		// greg: use location.origin for server parameter? Always records server location
 		me.processLogin( userName, userPin, location.origin, $( this ) );
 	}
@@ -269,7 +282,6 @@ function Login( cwsRenderObj )
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 		}
 
-
 		var dtmNow = ( new Date() ).toISOString();
 
 		// if session data exists, update the lastUpdated date else create new session data
@@ -289,6 +301,19 @@ function Login( cwsRenderObj )
 			DataManager.saveData( me._userName, newSaveObj );
 
 			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+		}
+
+		FormUtil.geolocationAllowed();
+
+		// hardcoded test for presence of word 'Coordinates' until we have a solid solution
+		if ( loginData.dcdConfig && JSON.stringify( loginData.dcdConfig ).toString().indexOf( 'Coordinates' ) > 0 )
+		{
+			FormUtil.refreshGeoLocation(); //@Greg2Implement: navigator.geolocation.watchPosition
+		}
+		else
+		{
+			console.log( ' ~ no Coordiates in dcd ' );
+			//console.log( loginData.dcdConfig );
 		}
 
 		me.cwsRenderObj.renderDefaultTheme();

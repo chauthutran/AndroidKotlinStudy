@@ -112,7 +112,7 @@
 
       FormUtil.getConfigInfo( function( result, data ) 
       {
-        console.log( data );
+        //console.log( data );
         try {
           if ( (location.href).indexOf('.psi-mis.org') >= 0 )
             FormUtil.dynamicWS = data[ (location.host).replace('.psi-mis.org','') ];
@@ -128,7 +128,7 @@
           }
         }
 
-        console.log( FormUtil.dynamicWS );
+        //console.log( FormUtil.dynamicWS );
 
         FormUtil.staticWSName = ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ ( FormUtil.dynamicWS.targetWS ).toString().split('/').length-1 ];
         FormUtil._serverUrlOverride = '';
@@ -139,7 +139,7 @@
           if ( i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
         }
 
-        console.log( FormUtil._serverUrlOverride );
+        //console.log( FormUtil._serverUrlOverride );
 
         FormUtil.getAppInfo( function( success, jsonData ) 
         {

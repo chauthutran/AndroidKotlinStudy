@@ -142,44 +142,6 @@ function cwsRender()
 	me.setOtherEvents = function()
 	{
 
-		/*$( '#btnCheckSW' ).click( function() {
-
-			window['isUpdateAvailable']
-			.then(isAvailable => {
-			  if (isAvailable) {
-
-				var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-				// move to cwsRender 
-				$( btnUpgrade ).click ( () => {
-				  location.reload( true );
-				});
-
-				MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
-			  }
-			});
-
-		});*/
-
-
-
-		/*if ('share' in navigator)
-		{
-			$( '#appShare' ).show();
-
-			$( '#appShare' ).click( function() {
-				FormUtil.shareApp();
-			});
-
-		}
-		else
-		{
-			if ( ! FormUtil.isAppsPsiServer() )
-			{
-				$( '#appShare' ).show();
-			}
-		}*/
-
 	}
 
 	// -------------------------

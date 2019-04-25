@@ -17,10 +17,9 @@ FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
-//FormUtil._serverUrl = location.protocol + '//' + location.host;  // Local WebService version
+
 FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
-
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
@@ -153,7 +152,6 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	// Input Tag values
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -181,22 +179,12 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 			});
 
-			/* OLD METHOD: for ( var t = 0; t < dataTargs.length; t++ )
-			{
-				if ( ! uniqTargs.includes( dataTargs[ t ].targetName ) )
-				{
-					uniqTargs.push( dataTargs[ t ].targetName );
-				}
-			} OLD METHOD */
-
 		}
 
 	});
 
 	uniqTargs.sort();
 	uniqTargs.reverse();
-
-	//var targetDef = {  "clientA": { "ipcEventA": [ { "test": "this" } ] } }; // "info": { "host": (location.host).replace('.psi-mis.org','') } }; // info: { host: (location.host).replace('.psi-mis.org','') } ;
 
 	// BUILD new template payload structure (based on named target values)
 	for ( var t = 0; t < uniqTargs.length; t++ )
@@ -218,13 +206,6 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
 
 		});
-
-		/* OLD METHOD: for ( var e = 0; e < inputTargets[ t ].dataTargets.length; e++ )
-		{
-			var dataTargetHierarchy = ( inputTargets[ t ].dataTargets[ e ].targetName ).toString().split( '.' );
-			// initialize with item at position zero [0]
-			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ e ].uid, inputTargets[ t ].value );
-		} OLD METHOD */
 
 	}
 
@@ -362,14 +343,12 @@ FormUtil.getWsUrl = function( subUrl )
 
 
 // POST Request required json prepare
-FormUtil.getFetchWSJson = function( payloadJson )
-{
+FormUtil.getFetchWSJson = function( payloadJson, headerJson )
+{	
 	var fetchJson = {
-		method: 'POST'
-		//,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
+		 method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
 		,body: '{}'
 	};
-
 
 	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
 	{

@@ -122,6 +122,8 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+
+				//console.log( ' ~ blockForm.renderInputTag: ' + JSON.stringify( formItemJson ) );
 				
 				divInputTag.append( entryTag );
 			}			
@@ -184,6 +186,10 @@ function BlockForm( cwsRenderObj, blockObj )
 			divInputTag.hide();
 			entryTag.attr( 'display', 'hiddenVal' );
 			//console.log( 'tag.hide() - hiddenVal' );
+			if ( formItemJson.display === "hiddenVal" )
+			{
+
+			}
 		}
 		else if ( formItemJson.display === "none" )
 		{
