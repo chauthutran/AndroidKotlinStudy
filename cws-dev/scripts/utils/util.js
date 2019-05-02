@@ -982,18 +982,6 @@ Util.getDate_FromYYYYMMDD = function( strDate )
 	return date;
 };
 
-
-Util.getDateStrYYYYMMDD_FromDate = function( date )
-{
-	return $.format.date( date, _dateFormat_YYYYMMDD);
-};
-
-
-Util.formatDate_LongDesc = function( date )
-{
-	return $.format.date( date, _dateFormat_DDMMMYYYY );
-};
-
 Util.dateToString = function( date )
 {
 	var month = eval( date.getMonth() ) + 1;
@@ -1005,6 +993,34 @@ Util.dateToString = function( date )
 	return date.getFullYear() + "-" + month + "-" + day;
 };
 
+Util.dateToMyFormat = function( date, myFormat )
+{
+	console.log( date, myFormat )
+	var y = date.getFullYear();
+	var month = eval( date.getMonth() ) + 1;
+	var day = eval( date.getDate() );
+	var year = ( (myFormat.match(new RegExp("YY", "g")) || []).length ? ( ( (myFormat.match(new RegExp("YY", "g")) || []).length > 1 ) ? y : y.toString().slice( -2 ) ) : '' );
+
+	month = ( month < 10 ) ? "0" + month : month;	
+	day = ( day < 10 ) ? "0" + day : day;
+
+	if ( myFormat.indexOf('YYMMDD') >= 0 )
+	{
+		return year + '' + month + '' + day;
+	}
+	else if ( myFormat.indexOf('DDMMYY') >= 0 )
+	{
+		return day + '' + month + '' + year;
+	}
+	else if ( myFormat.indexOf('DDMM') >= 0 )
+	{
+		return day + '' + month;
+	}
+	else if ( myFormat.indexOf('MMDD') >= 0 )
+	{
+		return month + '' + day;
+	}
+};
 
 // Date Formatting Related
 // ----------------------------------
@@ -1089,11 +1105,13 @@ Util.showDiv = function( tag, show )
 	}
 };
 
-Util.generateRandomId = function() 
+Util.generateRandomId = function( len ) 
 {
 	var id = '';
 	var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     var id_size = 12;
+
+	if ( len ) id_size = len;
 
 	for (var i = 1; i <= id_size; i++) 
 	{
@@ -1109,7 +1127,6 @@ Util.generateTimedUid = function()
 	return ( new Date().getTime() ).toString( 36 );
 }
 
-
 Util.getParameterByName = function( name ) 
 {
 	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -1118,6 +1135,68 @@ Util.getParameterByName = function( name )
 	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
+Util.getParameterInside = function( value, openClose )
+{
+	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
+	var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
+	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
+}
+
+Util.getValueFromPattern = function( pattern )
+{
+	var patternPart = pattern.split( '-' );
+	var ret = '';
+
+	for (var i = 0; i < patternPart.length; i++)
+	{
+		var returnPart = '';
+
+		if ( isNaN( patternPart[ i ] ) )
+		{
+			if ( ( patternPart[ i ] ).indexOf( 'YYYYMMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 8 )
+			{
+				returnPart = Util.dateToMyFormat( new Date(), 'YYYYMMDD' );
+			}
+			else if ( ( patternPart[ i ] ).indexOf( 'YYMMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 6 )
+			{
+				console.log( patternPart[ i ] + ' = ' + returnPart);
+				returnPart = Util.dateToMyFormat( new Date(), 'YYMMDD' );
+			}
+			else if ( ( patternPart[ i ] ).indexOf( 'MMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 4 )
+			{
+				returnPart = Util.dateToMyFormat( new Date(), 'MMDD' );
+			}
+			else if ( (( patternPart[ i ] ).match(new RegExp("X", "g")) || []).length == ( patternPart[ i ] ).toString().length )
+			{
+				returnPart = Util.generateRandomAnything( ( patternPart[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+			}
+			else
+			{
+				returnPart = patternPart[ i ];
+			}
+
+		}
+		else
+		{
+			if ( parseFloat( patternPart[ i ] ) == 0 )
+			{
+				returnPart = ( Util.generateRandomNumberRange( 0, Math.pow(10, ( patternPart[ i ] ).toString().length ) -1 ) ).toFixed(0);
+			}
+
+		}
+		
+		if ( returnPart.length )
+		{
+			ret += returnPart + '-';
+		}
+	}
+
+	if ( ret.length )
+	{
+		return ( ret.substring( 0, ret.length -1 ) );
+	}
+
+}
 
 Util.parseInt = function( input )
 {
@@ -1131,6 +1210,49 @@ Util.parseInt = function( input )
 	}
 };
 
+Util.generateRandomNumberRange = function(min_value , max_value) 
+{
+	return Math.random() * ( max_value - min_value ) + min_value;
+}
+
+Util.getRandomWord = function( slist, anythingRandom )
+{
+	var arrL = slist.split(',');
+	var i = generateRandomNumberRange( 0, arrL.length -1 ).toFixed(0);
+	return arrL[i];
+}
+
+Util.generateRandomAnything = function( len, possible ) 
+{
+	var text = "";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
+
+Util.generateRandomString = function( len ) 
+{
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
+
+Util.generateRandomNumber = function( len ) 
+{
+	var text = "";
+	var possible = "0123456789";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
 
 Util.getServerUrl = function()
 {

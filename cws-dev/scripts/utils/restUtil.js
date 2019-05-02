@@ -28,6 +28,6 @@ RESTUtil.performREST = function( url, payloadData, returnFunc )
         console.log( 'Failed to retrieve url - ' + url );
         console.log( error );  
         //alert( 'Failed to load the config file' );
-        returnFunc( false );
+        returnFunc( false, { "response": error.toString() } );
     });
 };

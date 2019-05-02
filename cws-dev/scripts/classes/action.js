@@ -292,7 +292,6 @@ function Action( cwsRenderObj, blockObj )
 					submitJson.actionJson = clickActionJson;	
 
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					//if ( !ConnManager.getAppConnMode_Online() )
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
 						// Offline Submission Handling..

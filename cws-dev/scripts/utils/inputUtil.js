@@ -5,10 +5,12 @@ function inputMonitor( cwsRenderObj )
     var me = this;
     var cwsRenderInputMon = cwsRenderObj;
     var InputMonLogoutTimer = 0;
+    var InputMonAutoLogoutTime;
 
     document.addEventListener("touchstart", startTouch, false);
     document.addEventListener("touchmove", moveTouch, false);
     document.addEventListener("touchend", touchEnd, false);
+    document.addEventListener("click", updateLogoutTimer, false);
 
     var screenWidth = document.body.clientWidth; //container.offsetWidth;
     var screenHeight = document.body.clientHeight; //container.offsetHeight;
@@ -62,11 +64,12 @@ function inputMonitor( cwsRenderObj )
 
     function updateLogoutTimer()
     {
-        //console.log( InputMonLogoutTimer );
         if ( InputMonLogoutTimer > 0 )
         {
             clearInterval(  InputMonLogoutTimer );
         }
+
+        InputMonAutoLogoutTime = new Date( ( new Date ).getTime() + 60 * 60 * 1000 )
 
         InputMonLogoutTimer = setInterval( function() 
         {
@@ -76,7 +79,8 @@ function inputMonitor( cwsRenderObj )
             }
 
         }, 60 * 60 * 1000 );
-        //console.log( InputMonLogoutTimer );
+
+        console.log( ' ~ auto Logout time: ' + InputMonAutoLogoutTime + ' {' + InputMonLogoutTimer + '}');
 
     }
 
@@ -135,6 +139,11 @@ function inputMonitor( cwsRenderObj )
         trackY = 0;
 
     };
+
+    me.autoLogoutTime = function()
+    {
+        return InputMonAutoLogoutTime;
+    }
 
     me.initialiseTouchDefaults = function( e )
     {

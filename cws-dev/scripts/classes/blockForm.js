@@ -173,7 +173,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			});
 		}
 
-		
+
 		// NOTE: TRAN VALIDATION
 		// Add rules for IMPUT fields
 		me.addRuleForField( divInputTag, formItemJson );

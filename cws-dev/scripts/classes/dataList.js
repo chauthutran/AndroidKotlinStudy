@@ -21,7 +21,7 @@ function DataList( cwsRenderObj, blockObj )
 
 	// -----------------------------
 	// ---- Methods ----------------
-	
+
 	me.initialize = function() // jsonListData, blockJson ) 
     {
         //me.jsonListData = jsonListData;
@@ -58,24 +58,18 @@ function DataList( cwsRenderObj, blockObj )
         {
 
             var dataJson = jsonList;
-            var searchPostPayload = FormUtil.getLastPayload();
+            var searchPostPayload = FormUtil.getLastPayload( 'sent' );
             var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
             blockTag.append( divFormContainerTag );
 
+            var dvgrpBySearchContainer = $( '<div class="groupBySearchContainer" />' );
             var dvgrpBySearchSummary = $( '<div class="groupBySearchResults" />' );
             dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + 'results for' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
-            divFormContainerTag.append( dvgrpBySearchSummary );
+            divFormContainerTag.append( dvgrpBySearchContainer );
+            dvgrpBySearchContainer.append( dvgrpBySearchSummary );
 
             if ( blockJson.groupBy )
             {
-
-                //if ( blockJson.groupBy.order )
-                /*grpByArr.sort(function(a, b)
-                {
-                    if (a.order < b.order) { return -1; }
-                    if (b.order < a.order) return 1;
-                    else return 0;
-                });*/
 
                 for( var g = 0; g < blockJson.groupBy.length; g++ )
                 {
@@ -187,11 +181,11 @@ function DataList( cwsRenderObj, blockObj )
                         // build layout
 
                         var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
-                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td style="width:18px;height:18px;"><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
-                        divFormContainerTag.append( dvgrpByFieldHeader );
+                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td style="width:24px;height:24px;"><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
+                        dvgrpBySearchContainer.append( dvgrpByFieldHeader );
 
                         var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
-                        divFormContainerTag.append( dvgrpByFieldBlock );
+                        dvgrpBySearchContainer.append( dvgrpByFieldBlock );
 
                         for( var r = 0; r < grpByArr.length; r++ )
                         {
@@ -203,7 +197,7 @@ function DataList( cwsRenderObj, blockObj )
                             var tdGrpBy = $( '<td colspan=2 />' );                    
                             var dvGrpByTitle = $( '<div class="groupByField" />' );
 
-                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td style="width:18px;height:18px;"><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td> <span class="groupByFieldName">' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
+                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td style="width:24px;height:24px;"><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
                             dvGrpByTitle.attr( 'title', fldGroupByID );
 
                             var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
@@ -349,7 +343,7 @@ function DataList( cwsRenderObj, blockObj )
                 tblObjTag.append( tritemHeaderTag );
                 tritemHeaderTag.append( tditemHeaderTag );
 
-                var imginfoTag = $( '<img src="img/about.svg" style="opacity:0.5;width:18px;height:18px;">' );
+                var imginfoTag = $( '<img src="img/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
                 var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
                 var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
 

@@ -613,9 +613,13 @@ img.round:hover{
 {
   padding:6px;
 }
+.groupBySearchContainer
+{
+  margin-bottom: 10px;
+}
 .groupBySearchResults
 {
-  font-size: 0.9em;
+  font-size: 1em;
   color:#777;
   padding: 20px 4px 14px 14px;
 }
@@ -636,7 +640,7 @@ img.round:hover{
 }
 .groupByResultBlock
 {
-  margin: 8px 8px 8px 24px;
+  margin: 8px 8px 8px 34px;
 }
 .groupByFieldResultTable
 {
@@ -656,13 +660,15 @@ img.round:hover{
 }
 .groupByHeaderValue
 {
-  color: #4D0808;
+  padding: 0 0 0 4px;
   vertical-align: middle;
 }
 .groupByFieldName
 {
-  color: #50555a; 
+  color: #50555a;
+  padding: 0 0 0 4px;
 }
+
 
 .imggroupByExpanded
 {

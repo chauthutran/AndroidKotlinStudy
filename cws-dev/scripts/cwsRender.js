@@ -59,6 +59,8 @@ function cwsRender()
  
 	me._translateEnable = true;
 
+	me._manageInputSwipe;
+
 	me.debugMode = false;
 
 	// =============================================
@@ -81,7 +83,7 @@ function cwsRender()
 			me.showLoginForm();
 		});
 
-		var manageInputSwipe = inputMonitor( me );
+		me._manageInputSwipe = inputMonitor( me );
 
 		// Translate terms setup
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();

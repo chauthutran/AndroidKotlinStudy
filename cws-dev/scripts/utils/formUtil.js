@@ -171,19 +171,24 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		if ( attrDataTargets )
 		{
 			var val = FormUtil.getTagVal( inputTag );
-			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
-			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
 
-			inputTargets.push ( newPayLoad );
-
-			Object.keys( dataTargs ).forEach(function( key ) {
-
-				if ( ! uniqTargs.includes( key ) )
-				{
-					uniqTargs.push( key );
-				}
-
-			});
+			if ( val != null && val != '' )
+			{
+				var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+				var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+	
+				inputTargets.push ( newPayLoad );
+	
+				Object.keys( dataTargs ).forEach(function( key ) {
+	
+					if ( ! uniqTargs.includes( key ) )
+					{
+						uniqTargs.push( key );
+					}
+	
+				});
+			}
+			
 
 		}
 
@@ -214,6 +219,9 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		});
 
 	}
+
+	inputsJson[ 'userName' ] = FormUtil.login_UserName;
+	inputsJson[ 'password' ] = FormUtil.login_Password;
 
 	console.log ( inputsJson );
 	console.log ( JSON.stringify( inputsJson, null, 4) );
@@ -259,10 +267,12 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 	{
 		var arrSpecRaw = '';
 		var arrSpecArr = [];
+
 		if ( ( dataTargetHierarchy[ itm ] ).toString().indexOf('[') >= 0 )
 		{
 			arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
 			arrSpecArr = arrSpecRaw.split( ':' );
+
 			if ( ( arrSpecRaw.indexOf( ':' ) < 0 ) || ( arrSpecRaw.length > 0 && arrSpecArr.length > 2 ) ) arrSpecArr = [];
 		}
 		
@@ -842,7 +852,6 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	//returnFunc( true, { "msg": "Server available", "available": false} );
 }
 
-
 // ======================================
 
 FormUtil.checkTag_CheckBox = function( tag )
@@ -902,19 +911,29 @@ FormUtil.evalReservedField = function( val )
 	{
 		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			newValue = FormUtil.getGeoLocation();
+			FormUtil.refreshGeoLocation( function() {
+				newValue = FormUtil.geoLocationCoordsObj.toString();
+				return ( FormUtil.geoLocationCoordsObj.toString() );
+			});
 		}
-		if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
+		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
 		{
 			newValue = (new Date() ).toISOString();
+			return newValue;
+		}
+		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
+		{
+			var pattern = Util.getParameterInside( val, '()' );
+			newValue = Util.getValueFromPattern( pattern );
+			return newValue;
 		}
 	}
 	else
 	{
 		newValue = val;
+		return newValue;
 	}
 
-	return newValue;
 }
 
 FormUtil.getTagVal = function( tag )
@@ -1024,15 +1043,15 @@ FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 
 FormUtil.getLastPayload = function( namedPayload )
 {
-	var sessionData = localStorage.getItem('session');
+	var sessionData = sessionStorage.getItem('WSexchange');
 
 	if ( sessionData )
 	{
 		var SessionObj = JSON.parse( sessionData );
 
-		if ( namedPayload && SessionObj.last && SessionObj.last[ namedPayload ] )
+		if ( SessionObj && SessionObj[ namedPayload ] )
 		{
-			return SessionObj.last[ namedPayload ];
+			return SessionObj[ namedPayload ];
 		}
 
 	}
@@ -1353,13 +1372,13 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
-			var iW, iH, sStyle = '';
-			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+			var iW, iH, sStyle = 'width:' + 18 + 'px;height:' + 18 + 'px;';
+			/*if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 			{
 				iW = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
 				iH = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
 				sStyle = 'width:' + iW + 'px;height:' + iH + 'px;';
-			}
+			}*/
 			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
 		}
 		else
@@ -1509,8 +1528,7 @@ FormUtil.PWAlaunchFrom = function()
 
 FormUtil.jsonReadFormat = function( jsonData )
 {
-	//console.log( JSON.stringify( jsonData ) );
-	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,' = ');
+	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,': ');
 	else return '';
 }
 
@@ -1567,7 +1585,7 @@ FormUtil.getGeoLocation = function()
 	else return '';
 }
 
-FormUtil.refreshGeoLocation = function()
+FormUtil.refreshGeoLocation = function( returnFunc )
 { // --> move to geolocation.js class
 	var error_PERMISSION_DENIED = 1;
 
@@ -1593,6 +1611,8 @@ FormUtil.refreshGeoLocation = function()
 			FormUtil.geoLocationCoordsObj =  position.coords;
 			FormUtil.geoLocationError = '';
 
+			if ( returnFunc ) returnFunc();
+
 		},  function ( error ) 
 			{
 				FormUtil.geoLocationError = error.code; //Error locating your device
@@ -1605,6 +1625,9 @@ FormUtil.refreshGeoLocation = function()
 				{
 					FormUtil.geoLocationTrackedCoordinates = '';
 				}
+
+				if ( returnFunc ) returnFunc();
+
 			},
 			{enableHighAccuracy: false} // if 'true' may result in slower response times or increased power consumption
 		);

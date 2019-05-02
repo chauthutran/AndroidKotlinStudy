@@ -26,8 +26,10 @@
     window.addEventListener('offline', updateOnlineStatus);
 
     // Set App Connection Mode
-    ConnManager.setAppConnMode_Initial();
-    ConnManager.setUp_AppConnModeDetection();
+    //ConnManager.setAppConnMode_Initial();
+    //ConnManager.setUp_AppConnModeDetection(); //renamed to setUp_ScheduledTimer_Checks()
+    ConnManager.initialize();
+
 
     // 2. Do 'appInfoOperation' that does app Version Check & action first
     //  & set web service type for the app
@@ -139,9 +141,17 @@
           if ( i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
         }
 
-        //console.log( FormUtil._serverUrlOverride );
+        appVersionUpgradeReview( FormUtil.dynamicWS );
+        FormUtil._getPWAInfo = FormUtil.dynamicWS;
 
-        FormUtil.getAppInfo( function( success, jsonData ) 
+        webServiceSet( FormUtil.staticWSName );
+        FormMsgManager.appUnblock();
+        returnFunc();
+
+        //console.log( FormUtil._serverUrlOverride );
+        
+
+        /*FormUtil.getAppInfo( function( success, jsonData ) 
         {
 
           if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
@@ -157,7 +167,6 @@
             appVersionUpgradeReview( jsonData );
 
             // get proper web service - Should not implement this due to offline possibility
-
             if ( ! FormUtil.isAppsPsiServer() )
             {
               webServiceSet( jsonData.appWS.cwsDev );
@@ -172,7 +181,7 @@
           FormMsgManager.appUnblock();
           returnFunc();
 
-        });
+        });*/
 
       });
 
@@ -257,10 +266,11 @@
 
   function updateOnlineStatus( event ) 
   {
-    ConnManager.network_Online = navigator.onLine;
-    ConnManager.connStatTagUpdate( ConnManager.network_Online, ConnManager.dataServer_Online );
 
-    if ( ConnManager.dataServer_timerID == 0) ConnManager.setUp_dataServerModeDetection();
+    ConnManager.network_Online = navigator.onLine;
+    //ConnManager.setScreen_NetworkIcons( ConnManager.network_Online, ConnManager.dataServer_Online );
+
+    //if ( ConnManager.dataServer_timerID == 0) ConnManager.setUp_dataServerModeDetection();
 
     if ( _cwsRenderObj.initializeStartBlock )
     {
