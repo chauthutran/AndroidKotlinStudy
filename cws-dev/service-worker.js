@@ -51,19 +51,19 @@ self.__precacheManifest = [
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
   {
-    "url": "images/icons/Connect_dev_144px.png",
+    "url": "images/icons/Connect_144px.png",
     "revision": "6b9407c411ec5966405f3790a2809828"
   },
   {
-    "url": "images/icons/Connect_dev_152px.png",
+    "url": "images/icons/Connect_152px.png",
     "revision": "90015f77a9f9c6b2d5c159a4280d5326"
   },
   {
-    "url": "images/icons/Connect_dev_192px.png",
+    "url": "images/icons/Connect_192px.png",
     "revision": "25573985326ca03fd13fc3a2b3974674"
   },
   {
-    "url": "images/icons/Connect_dev_512px.png",
+    "url": "images/icons/Connect_512px.png",
     "revision": "8a2f57e980f4552be708f1d85c2e8cbb"
   },
   {
@@ -360,7 +360,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "cfc90145b58e46dfc3251eb4ab285b6c"
+    "revision": "29a9a51b3b86a4d275a8e80288e6d7cc"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -412,7 +412,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "d927f50da78a5c7c3e10b8eaede24957"
+    "revision": "0c134581e42b75e7c9bc70ca8182f4d5"
   },
   {
     "url": "scripts/utils/msgManager.js",

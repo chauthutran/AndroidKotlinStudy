@@ -51,19 +51,19 @@ self.__precacheManifest = [
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
   {
-    "url": "images/icons/Connect_prod_144px.png",
+    "url": "images/icons/Connect_144px.png",
     "revision": "ecb902321906751311c38d53b70904a6"
   },
   {
-    "url": "images/icons/Connect_prod_152px.png",
+    "url": "images/icons/Connect_152px.png",
     "revision": "cff1c90fc5a84fc754cfeb370ab91f76"
   },
   {
-    "url": "images/icons/Connect_prod_192px.png",
+    "url": "images/icons/Connect_192px.png",
     "revision": "5a7abcbe1bf0565a8a1096a80acab0dd"
   },
   {
-    "url": "images/icons/Connect_prod_512px.png",
+    "url": "images/icons/Connect_512px.png",
     "revision": "b0295abf0af75702c5ebbca617a93620"
   },
   {
@@ -272,19 +272,19 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "c27c90d250a0ae4b299132dfd503fe0a"
+    "revision": "d75b2f627e8837176afad5a02db45dee"
   },
   {
     "url": "scripts/app.js",
-    "revision": "7b6dd90ca959d8922f75bd608f691da0"
+    "revision": "76ce023788be4b8df1dd6667f77049ab"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "2061699519d7e00bf90f30ff9ea65d9c"
+    "revision": "eb6b9c09318e8ac9ac8edc752c7b4b0f"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "00e7ee29ced21c1bda149b625960748a"
+    "revision": "6443a6ea666d1f4f8020e61b0ea3795d"
   },
   {
     "url": "scripts/classes/block.js",
@@ -296,7 +296,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "abb00fd0d6095311adbb3e691f1ab6b6"
+    "revision": "af21eb8d8baa420a0b78b553004e267c"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -308,7 +308,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "8b2f785d8c70b01f802793e6feae6aec"
+    "revision": "096448fe07b234907831866bbf1e460f"
   },
   {
     "url": "scripts/classes/favIcon.js",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "d1d76960508248d3ef044b23984966d7"
+    "revision": "9836a431998dcef22fb5e0881c4428a7"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -336,7 +336,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "6269ba9c3a903cfcd310a1bb5c8a7389"
+    "revision": "29a9a51b3b86a4d275a8e80288e6d7cc"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -368,7 +368,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "820ffabc375d29c95cfa3f5c8301ab62"
+    "revision": "398e3bdfebae22917f6048da04d4165f"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -384,23 +384,23 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "8c8cca386c922593d41b66d7b3112282"
+    "revision": "7f55942cd0b385794cd2eb23616d13a9"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "afa47cf89e250021822d6cb4ae6d4c33"
+    "revision": "0c134581e42b75e7c9bc70ca8182f4d5"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "5f11a2ef6d8dfb1d3c1a087f63c9275c"
+    "revision": "474a9168bc6900e8010ba2042812787f"
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "63452313113d3ab1988b6dbee37e46a5"
+    "revision": "38487a287a8706f7e25368bb7ec8030f"
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "ec35b3a2217cca962955a1ede4963dae"
+    "revision": "497b024118888bed9708c0a5cc885f11"
   },
   {
     "url": "scripts/utils/syncManager.js",
@@ -408,7 +408,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ff8e2d500866e976e78277c50893cb25"
+    "revision": "ae8649ad879a0d438e6fbc32c59950df"
   },
   {
     "url": "sounds/coin.mp3",
@@ -460,7 +460,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "2ccfe034b52b2bc24d20173cc1240fe2"
+    "revision": "ff0b5d7958ed6ee2c4c63a0cff21a07c"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
