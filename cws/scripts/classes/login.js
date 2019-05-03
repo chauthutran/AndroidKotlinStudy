@@ -17,7 +17,7 @@ function Login( cwsRenderObj )
   	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
 	me._pHash = '';
-	me._staySignedIn = true;
+	me._staySignedIn = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -57,7 +57,7 @@ function Login( cwsRenderObj )
 
 		//me.setSkipLoginBtnClick();
 
-		me.setloginBtnClearClick();
+		//me.setloginBtnClearClick();
 
 		//me.setUpEnterKeyLogin(); // Not working, thus, disabled for now
 	}
@@ -77,17 +77,17 @@ function Login( cwsRenderObj )
 		});
 
 		// New UI Button click
-		$( '.loginBtnAdv' ).click( function() {
+		/*$( '.loginBtnAdv' ).click( function() {
 			var parentTag = $( this ).parent();
 			var loginServer = parentTag.find( 'input.loginServerAdv' ).val();
 			var loginUserNameVal = parentTag.find( 'input.loginUserNameAdv' ).val();
 			var loginUserPinVal = parentTag.find( 'input.loginUserPinAdv' ).val();
 
 			me.processLogin( loginUserNameVal, loginUserPinVal, loginServer, $( this ) );
-		});
+		});*/
 	}
 
-	me.setloginBtnClearClick = function()
+	/*me.setloginBtnClearClick = function()
 	{
 		$( '.loginBtnClear' ).click( function() {
 	
@@ -99,7 +99,7 @@ function Login( cwsRenderObj )
 			me.openForm();
  
 		} );	
-	}
+	}*/
 	
 	me.setUpEnterKeyLogin = function()
 	{
@@ -161,10 +161,8 @@ function Login( cwsRenderObj )
 	me.processLogin = function( userName, password, server, btnTag )
 	{
 		var parentTag = btnTag.parent();
-
-    	// Greg added: 2018/11/23
 		var dtmNow = ( new Date() ).toISOString();
-		me._staySignedIn = false; //( btnTag.parent().find( 'input.stayLoggedIn' ). prop("checked") == true );
+
 		me._userName = userName;
 
 		parentTag.find( 'div.loadingImg' ).remove();
@@ -241,8 +239,7 @@ function Login( cwsRenderObj )
 	{
 		var userName = JSON.parse( localStorage.getItem('session') ).user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
-		console.log(userName, userPin );
-		alert ('login.js: ');
+
 		// greg: use location.origin for server parameter? Always records server location
 		me.processLogin( userName, userPin, location.origin, $( this ) );
 	}
@@ -269,14 +266,13 @@ function Login( cwsRenderObj )
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 		}
 
-
 		var dtmNow = ( new Date() ).toISOString();
 
 		// if session data exists, update the lastUpdated date else create new session data
 		if ( loginData.mySession ) 
 		{
 			loginData.mySession.lastUpdated = dtmNow;
-			loginData.mySession.stayLoggedIn = false; //me._staySignedIn;
+			loginData.mySession.stayLoggedIn = me._staySignedIn;
 
 			DataManager.saveData( me._userName, loginData );	
 		}
@@ -291,8 +287,10 @@ function Login( cwsRenderObj )
 			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
 		}
 
+		FormUtil.geolocationAllowed();
+
 		me.cwsRenderObj.renderDefaultTheme();
-		ConnManager.setUp_dataServerModeDetection();
+		//ConnManager.setUp_dataServerModeDetection();
 
 		FormUtil.hideProgressBar();
 

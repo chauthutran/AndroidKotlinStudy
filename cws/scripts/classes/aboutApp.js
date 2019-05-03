@@ -174,11 +174,7 @@ function aboutApp( cwsRender )
         $( '#aboutInfo_newLangTermsDownload' ).click( function() 
         {
             var btnDownloadTag = $( this );
-
             var langSelVal = me.aboutInfo_langSelectTag.val();
-
-            console.log( 'aboutInfo_newLangTermsDownload, create loading Tag' );
-
             var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
 
             FormUtil.showProgressBar();
@@ -394,7 +390,7 @@ function aboutApp( cwsRender )
         me.aboutFormDivTag.fadeOut( 500 );
 
         setTimeout( function() {
-            if ( FormUtil.checkLogin() )
+            if ( FormUtil.checkLogin() > 0 )
             {
                 $( 'div.mainDiv' ).show( 'fast' );
             }
@@ -440,6 +436,9 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_networkMode_Less' ).show();
                 $( '#aboutInfo_networkMode_Less' ).removeClass( 'byPassAboutMore' );
 
+                $( '#aboutInfo_geoLocation_Less' ).show();
+                $( '#aboutInfo_geoLocation_Less' ).removeClass( 'byPassAboutMore' );
+
             }
         }
         else
@@ -450,6 +449,9 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_networkMode_Less' ).hide();
             $( '#aboutInfo_networkMode_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_geoLocation_Less' ).hide();
+            $( '#aboutInfo_geoLocation_Less' ).addClass( 'byPassAboutMore' );
 
             if ( me.langTermObj.getLangList() )
             {
@@ -568,8 +570,6 @@ function aboutApp( cwsRender )
 
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
-        $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
-        $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
 
         if ( ! me.langTermObj.getLangList() )
@@ -606,6 +606,10 @@ function aboutApp( cwsRender )
 
         if ( FormUtil.checkLogin() )
         {
+
+            $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
+            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
+            $( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
             ConnManager.getDcdConfigVersion( function( retVersion ) 
             {
@@ -735,6 +739,19 @@ function aboutApp( cwsRender )
 
         $( '#aboutInfo_network_Text' ).html( ( syncTimer > 0 ? 'every' : '') + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
         $( '#aboutInfo_DivnetworkSelect' ).show();
+    }
+
+    me.getCoordinatesForPresentation = function()
+    {
+        var ret = ''; //'<div term="">not required by PWA</div>';
+        if ( FormUtil.geoLocationLatLon )
+        {
+            if ( FormUtil.geoLocationLatLon.toString().length )
+            {
+                ret = '[' + FormUtil.geoLocationLatLon.toString() + ']'
+            }
+        }
+        return ret;
     }
 
     me.getSyncOptions = function()

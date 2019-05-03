@@ -125,7 +125,7 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID )
+MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID, disableClose )
 {
     var unqID = Util.generateRandomId();
 
@@ -153,6 +153,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var offsetPosition = ( screenWidth < 480 ? '0' : '4%' );
     var optStyle = ( screenWidth < 480 ? 'style="width:100%;height:50px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ); //93% = 97% - 4% (offsetPosition)
     var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="'+messageType+( screenWidth < 480 ? '' : ' rounded' )+'" >' );
+
+    $( 'nav.bg-color-program' ).append( notifDiv )
 
     if ( Xpos )
     {
@@ -212,22 +214,25 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
     }
 
-    var tdClose = $( '<td style="width:24px;">' );
-    var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
+    if ( disableClose == undefined || disableClose === false )
+    {
+        var tdClose = $( '<td style="width:24px;">' );
+        var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
 
-    $( notifClose ).click ( () => {
+        $( notifClose ).click ( () => {
 
-        if ( addtoCloseClick != undefined ) addtoCloseClick();
+            if ( addtoCloseClick != undefined ) addtoCloseClick();
 
-        if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
+            if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
 
-        $( '#notif_' + unqID ).remove();
+            $( '#notif_' + unqID ).remove();
 
-    });
+        });
 
-    $( 'nav.bg-color-program' ).append( notifDiv )
-    trBody.append ( tdClose );
-    tdClose.append ( notifClose );
+        trBody.append ( tdClose );
+        tdClose.append ( notifClose );
+
+    }
 
     if ( delayHide != undefined || delayHide == 0 ) delayTimer = delayHide;
     else delayTimer = MsgManager._autoHideDelay;

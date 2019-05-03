@@ -60,6 +60,8 @@ function cwsRender()
 	me._translateEnable = true;
 
 	me._manageInputSwipe;
+	me.autoLogoutDelayMins = 60; //auto logout after X mins
+	me.autoLogoutDateTime;
 
 	me.debugMode = false;
 
@@ -667,19 +669,6 @@ function cwsRender()
 	me.logOutProcess = function()
 	{
 		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-		// set Log off
-		/*var lastSession = JSON.parse( localStorage.getItem('session') );
-
-		if (lastSession)
-		{
-			var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
-
-			if ( loginData.mySession && loginData.mySession.stayLoggedIn ) 
-			{
-				loginData.mySession.stayLoggedIn = false;
-				localStorage[ lastSession.user ] = JSON.stringify( loginData )
-			}
-		}*/
 
 		FormUtil.undoLogin();
 		sessionStorage.clear();
@@ -691,6 +680,16 @@ function cwsRender()
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
 		syncManager.evalSyncConditions();
+
+		if ( $( 'div.aboutListDiv' ).is(':visible') )
+		{
+			me.aboutApp.hideAboutPage();
+		} //$( 'div.aboutListDiv' ).hide();
+		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
+		{
+			me.statisticsObj.hideStatsPage();
+			//$( 'div.statisticsDiv' ).hide();
+		}
 
 	}
 

@@ -40,12 +40,23 @@ function BlockForm( cwsRenderObj, blockObj )
 				}
 			}
 
-
 			me.populateFormData( passedData, formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
 		}
+
+		if ( JSON.stringify( formJsonArr ).indexOf( 'getCoordinates(' ) >= 0 )
+		{
+			//console.log( formJsonArr );
+			FormUtil.refreshGeoLocation( function() {
+				if ( FormUtil.geoLocationLatLon.length )
+				{
+					MsgManager.notificationMessage ( '<img src="img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true );
+				}
+			});
+		}
+
 	}
 	
 	// =============================================
@@ -112,7 +123,6 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			var entryTag;
 
-
 			// TEMP DROPDOWN --> CHECKBOX
 			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
 
@@ -171,7 +181,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			});
 		}
 
-		
+
 		// NOTE: TRAN VALIDATION
 		// Add rules for IMPUT fields
 		me.addRuleForField( divInputTag, formItemJson );
@@ -184,6 +194,10 @@ function BlockForm( cwsRenderObj, blockObj )
 			divInputTag.hide();
 			entryTag.attr( 'display', 'hiddenVal' );
 			//console.log( 'tag.hide() - hiddenVal' );
+			if ( formItemJson.display === "hiddenVal" )
+			{
+
+			}
 		}
 		else if ( formItemJson.display === "none" )
 		{

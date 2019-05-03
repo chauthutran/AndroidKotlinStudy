@@ -483,6 +483,44 @@ img.round:hover{
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
 }
 
+.notificationLight
+{
+  box-sizing: border-box;
+  position: fixed;
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; 
+  background-color: #F5F5F5;
+  color: #404040;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.notificationGray
+{
+  box-sizing: border-box;
+  position: fixed;
+  vertical-align: middle;
+  z-index: 100000; 
+  text-align: center; 
+  cursor: default;
+  font-size: calc(12px + 0.2vw);; 
+  background-color: #F1F3F4;
+  color: #404040;
+  white-space: normal;
+  opacity:1;
+
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
 .notificationGreen
 {
   box-sizing: border-box;
@@ -587,7 +625,7 @@ img.round:hover{
   text-align: center; 
   cursor: default;
   font-size: calc(12px + 0.2vw);; 
-  background-color: #46209B;
+  background-color: #9B7FE6;
   color: #fff;
   white-space: normal;
   opacity:1;

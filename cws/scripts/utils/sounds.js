@@ -1,30 +1,24 @@
 var sounds = {
-  /*"dead" : {
-    url : "sounds/dead.wav"
+  "notify" : {
+    url : "sounds/notify.mp3"
   },
-  "smash" : {
-    url : "sounds/smash.mp3",
-  },*/
   "ping" : {
     url : "sounds/ping.mp3"
   },
-  /*"bump" : {
-    url : "sounds/bump.mp3"
-  },
-  "jump" : {
-    url : "sounds/jump.wav"
-  },*/
   "coin" : {
     url : "sounds/coin.mp3"
   }
 };
 
+if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+{
+  var soundContext = new AudioContext();
 
-var soundContext = new AudioContext();
-
-for(var key in sounds) {
-  loadSound(key);
+  for(var key in sounds) {
+    loadSound(key);
+  }
 }
+
 
 function loadSound(name){
   var sound = sounds[name];

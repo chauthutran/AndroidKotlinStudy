@@ -5,7 +5,6 @@ function inputMonitor( cwsRenderObj )
     var me = this;
     var cwsRenderInputMon = cwsRenderObj;
     var InputMonLogoutTimer = 0;
-    var InputMonAutoLogoutTime;
 
     document.addEventListener("touchstart", startTouch, false);
     document.addEventListener("touchmove", moveTouch, false);
@@ -67,20 +66,25 @@ function inputMonitor( cwsRenderObj )
         if ( InputMonLogoutTimer > 0 )
         {
             clearInterval(  InputMonLogoutTimer );
+            cwsRenderInputMon.autoLogoutDateTime = '';
         }
 
-        InputMonAutoLogoutTime = new Date( ( new Date ).getTime() + 60 * 60 * 1000 )
-
-        InputMonLogoutTimer = setInterval( function() 
+        if ( FormUtil.checkLogin() )
         {
-            if ( FormUtil.checkLogin() )
+            cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 )
+
+            InputMonLogoutTimer = setInterval( function() 
             {
-                cwsRenderInputMon.logOutProcess();
-            }
-
-        }, 60 * 60 * 1000 );
-
-        console.log( ' ~ auto Logout time: ' + InputMonAutoLogoutTime + ' {' + InputMonLogoutTimer + '}');
+                if ( FormUtil.checkLogin() )
+                {
+                    cwsRenderInputMon.logOutProcess();
+                }
+    
+            }, parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 ); //60 * 60 * 1000
+    
+            console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+        }
+        
 
     }
 
@@ -139,11 +143,6 @@ function inputMonitor( cwsRenderObj )
         trackY = 0;
 
     };
-
-    me.autoLogoutTime = function()
-    {
-        return InputMonAutoLogoutTime;
-    }
 
     me.initialiseTouchDefaults = function( e )
     {

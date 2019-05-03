@@ -234,7 +234,7 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "processWSResult" ) 
 			{
 				var statusActionsCalled = false;
-				
+
 				// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
 				var wsReplyData = dataPass.prevWsReplyData;
 
@@ -251,7 +251,7 @@ function Action( cwsRenderObj, blockObj )
 						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
 							if ( afterActionFunc ) afterActionFunc();
 						} );
-								
+
 						// For now, loop these actions..  rather than recursive calls..
 						//for ( var i = 0; i < statusActions.length; i++ )
 						//{
@@ -268,14 +268,12 @@ function Action( cwsRenderObj, blockObj )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );
 
-				//console.log( formDivSecTag );
-				//console.log( clickActionJson.payloadBody );
-
 				// generate inputsJson - with value assigned...
 				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 				var inputTargJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
 
-				FormUtil.setLastPayload( inputTargJson )
+				//FormUtil.setLastPayload( 'sendToWS', inputsJson, 'receivedFromWS' )
+				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
 
 				// Voucher Status add to payload
 				if ( clickActionJson.voucherStatus )
@@ -294,7 +292,6 @@ function Action( cwsRenderObj, blockObj )
 					submitJson.actionJson = clickActionJson;	
 
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					//if ( !ConnManager.getAppConnMode_Online() )
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
 						// Offline Submission Handling..
@@ -316,7 +313,6 @@ function Action( cwsRenderObj, blockObj )
 						// Loading Tag part..
 						var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-
 						// NOTE: This form data is saved in owner form block
 						// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
 						if ( clickActionJson.redeemListInsert === "true" )
@@ -329,6 +325,8 @@ function Action( cwsRenderObj, blockObj )
 							//actionIndex++;
 							if ( !redeemReturnJson ) redeemReturnJson = {};
 
+							FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
+
 							var resultStr = "success";
 
 							if ( success )
@@ -338,11 +336,10 @@ function Action( cwsRenderObj, blockObj )
 								// This will be picked up by 'processWSResult' action (next action to this one)
 
 								//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
-								//localStorage.setItem( 'lastPayload', '{"data": ' + JSON.stringify( inputsJson ) + ' } ' ); // added by Greg (2018/12/05)
 							}
 							else
 							{
-								console.log( redeemReturnJson );
+								//console.log( redeemReturnJson );
 								//alert( 'Process Failed!!' );
 								MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
 								// Should we stop at here?  Or continue with subActions?

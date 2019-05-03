@@ -130,8 +130,6 @@
           }
         }
 
-        //console.log( FormUtil.dynamicWS );
-
         FormUtil.staticWSName = ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ ( FormUtil.dynamicWS.targetWS ).toString().split('/').length-1 ];
         FormUtil._serverUrlOverride = '';
 

@@ -9,6 +9,7 @@ function inputMonitor( cwsRenderObj )
     document.addEventListener("touchstart", startTouch, false);
     document.addEventListener("touchmove", moveTouch, false);
     document.addEventListener("touchend", touchEnd, false);
+    document.addEventListener("click", updateLogoutTimer, false);
 
     var screenWidth = document.body.clientWidth; //container.offsetWidth;
     var screenHeight = document.body.clientHeight; //container.offsetHeight;
@@ -54,7 +55,7 @@ function inputMonitor( cwsRenderObj )
 
         me.detectFocusRelegatorInitialState();
 
-        cwsRenderInputMon.updateNavDrawerHeaderContent();
+        if ( FormUtil.checkLogin() ) cwsRenderInputMon.updateNavDrawerHeaderContent();
 
         updateLogoutTimer();
 
@@ -62,22 +63,28 @@ function inputMonitor( cwsRenderObj )
 
     function updateLogoutTimer()
     {
-
-        //console.log( InputMonLogoutTimer );
         if ( InputMonLogoutTimer > 0 )
         {
             clearInterval(  InputMonLogoutTimer );
+            cwsRenderInputMon.autoLogoutDateTime = '';
         }
 
-        InputMonLogoutTimer = setInterval( function() 
+        if ( FormUtil.checkLogin() )
         {
-            if ( FormUtil.checkLogin() )
-            {
-                cwsRenderInputMon.logOutProcess();
-            }
+            cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 )
 
-        }, 60 * 60 * 1000 );
-        //console.log( InputMonLogoutTimer );
+            InputMonLogoutTimer = setInterval( function() 
+            {
+                if ( FormUtil.checkLogin() )
+                {
+                    cwsRenderInputMon.logOutProcess();
+                }
+    
+            }, parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 ); //60 * 60 * 1000
+    
+            console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+        }
+        
 
     }
 

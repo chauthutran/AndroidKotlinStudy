@@ -23,6 +23,12 @@ FormUtil._serverUrlOverride = "";
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
+FormUtil.geoLocationTrackingEnabled = false;  // --> move to geolocation.js class
+FormUtil.geoLocationLatLon;  // --> move to geolocation.js class
+FormUtil.geoLocationState;  // --> move to geolocation.js class
+FormUtil.geoLocationError;  // --> move to geolocation.js class
+FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
+
 // ==== Methods ======================
 
 FormUtil.getObjFromDefinition = function( def, definitions )
@@ -165,19 +171,24 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		if ( attrDataTargets )
 		{
 			var val = FormUtil.getTagVal( inputTag );
-			var dataTargs = JSON.parse( unescape( attrDataTargets ) );
-			var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
 
-			inputTargets.push ( newPayLoad );
-
-			Object.keys( dataTargs ).forEach(function( key ) {
-
-				if ( ! uniqTargs.includes( key ) )
-				{
-					uniqTargs.push( key );
-				}
-
-			});
+			if ( val != null && val != '' )
+			{
+				var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+				var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+	
+				inputTargets.push ( newPayLoad );
+	
+				Object.keys( dataTargs ).forEach(function( key ) {
+	
+					if ( ! uniqTargs.includes( key ) )
+					{
+						uniqTargs.push( key );
+					}
+	
+				});
+			}
+			
 
 		}
 
@@ -209,6 +220,9 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 	}
 
+	inputsJson[ 'userName' ] = FormUtil.login_UserName;
+	inputsJson[ 'password' ] = FormUtil.login_Password;
+
 	console.log ( inputsJson );
 	console.log ( JSON.stringify( inputsJson, null, 4) );
 
@@ -223,13 +237,14 @@ FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
 		{
 			// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
-			if ( dataTargetHierarchy[ itm + 1 ] )
+			if ( dataTargetHierarchy[ itm + 1 ] || ( dataTargetHierarchy[ itm ] ).toString().indexOf('[') < 0 )
 			{
 				targetDef[ dataTargetHierarchy[ itm ] ] = {}; 
 			}
 			else
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ] = [];
+				var arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
+				targetDef[ ( dataTargetHierarchy[ itm ] ).toString().replace( '['+ arrSpecRaw +']','' ) ] = [];
 			}
 		}
 		FormUtil.recursiveJSONbuild( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1 )
@@ -250,20 +265,55 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 	}
 	else
 	{
-		if ( ( dataTargetHierarchy[ itm ] ).length && targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
+		var arrSpecRaw = '';
+		var arrSpecArr = [];
+
+		if ( ( dataTargetHierarchy[ itm ] ).toString().indexOf('[') >= 0 )
 		{
-			if ( Array.isArray( targetDef[ dataTargetHierarchy[ itm ] ] ) )
+			arrSpecRaw = ( ( dataTargetHierarchy[ itm ] ).toString().split( '[' ) [ 1 ] ).replace( ']' ,'' );
+			arrSpecArr = arrSpecRaw.split( ':' );
+
+			if ( ( arrSpecRaw.indexOf( ':' ) < 0 ) || ( arrSpecRaw.length > 0 && arrSpecArr.length > 2 ) ) arrSpecArr = [];
+		}
+		
+		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
+
+		if ( ( dataTargetKeyItem ).length && targetDef.hasOwnProperty( dataTargetKeyItem ) ) 
+		{
+			if ( Array.isArray( targetDef[ dataTargetKeyItem ] ) )
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ].push ( { [fillKey]: fillValue } );
+				if ( arrSpecArr.length )
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+				}
+				else
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+				}
 			}
 			else
 			{
-				targetDef[ dataTargetHierarchy[ itm ] ] [fillKey] = fillValue;
+				targetDef[ dataTargetKeyItem ] [fillKey] = fillValue;
 			}
 		}
-		else if ( ( dataTargetHierarchy[ itm ] ).length == 0 )
+		else if ( ( dataTargetKeyItem ).length == 0 )
 		{
-			targetDef[fillKey] = fillValue;
+			if ( Array.isArray( targetDef[ dataTargetKeyItem ] ) )
+			{
+				if ( arrSpecArr.length )
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+				}
+				else
+				{
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+				}
+			}
+			else
+			{
+				targetDef[ fillKey ] = fillValue;
+			}
+			
 		}
 	}
 }
@@ -384,8 +434,6 @@ FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFun
 {	
 	var url = FormUtil.getWsUrl( apiPath );
 
-	//console.log( url );
-	//console.log( FormUtil.getFetchWSJson( payloadJson ) );
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
 	{
@@ -413,9 +461,9 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 	var apiPath = '/api/loginCheck';
 
 	// FormUtil.orgUnitData <-- Reset before?
-	if ( (location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || (location.href).indexOf('localhost') >= 0 ) //last 4 chars of url
+	if ( (location.href).indexOf('localhost') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
 	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y' };
+		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
 	}
 	else
 	{
@@ -430,7 +478,7 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 			var loginStatus = ( returnJson && returnJson.loginStatus );
 
 			if ( loginStatus )
-			{		
+			{
 				FormUtil.login_UserName = userName;
 				FormUtil.login_Password = password;
 				FormUtil.orgUnitData = returnJson.orgUnitData;
@@ -459,7 +507,7 @@ FormUtil.checkLoginSubmitCase = function( payloadJson )
 
 FormUtil.checkLogin = function()
 {
-	return ( FormUtil.login_UserName.toString().length && FormUtil.login_Password.toString().length );
+	return ( FormUtil.login_UserName.toString().length * FormUtil.login_Password.toString().length );
 }
 
 FormUtil.undoLogin = function()
@@ -480,7 +528,6 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 {
 	mainIconTag.on('click', function( event )
 	{
-		//console.log( 'mainIconTag Clicked' );
 		event.preventDefault();
 
 		var thisTag = $(this);
@@ -747,7 +794,6 @@ FormUtil.getRedeemPayload = function( id ) {
 FormUtil.getConfigInfo = function( returnFunc )
 {	
 	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
-
 	//RESTUtil.retrieveJson( url, returnFunc );
 
 	var jsonData = {
@@ -755,25 +801,36 @@ FormUtil.getConfigInfo = function( returnFunc )
 		"note": "CwS PWA production version",
 		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
 		"configs": {
-			"MZ": "dcd@MZ",
-			"T_MZ": "dcd@MZ",
-			"NP": "dcd@NP",
-			"T_NP": "dcd@NP"
-			}
+				"MZ": "dcd@MZ",
+				"T_MZ": "dcd@MZ",
+				"NP": "dcd@NP",
+				"T_NP": "dcd@NP",
+				"M_TE": "dcd@TE"
+			},
+		"version": "1.0.0.52"
 		},
 		"cws-train": {
-		"note": "CwS PWA train version",
-		"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
-		"inherit": "cws",
-		"configs": {}
+			"note": "CwS PWA training version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
+			"inherit": "cws",
+			"configs": {},
+			"version": "1.0.0.52"
+		},
+		"cws-stage": {
+			"note": "CwS PWA staging version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+			"inherit": "cws",
+			"configs": {},
+			"version": "1.0.0.52"
 		},
 		"cws-dev": {
-		"note": "CwS PWA dev version",
-		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
-		"inherit": "cws",
-		"configs": {
-			"T_MZ": "dcd@MZ@v1"
-			}
+			"note": "CwS PWA development version",
+			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
+			"inherit": "cws",
+			"configs": {
+				"T_MZ": "dcd@MZ@v1"
+			},
+			"version": "1.0.0.53"
 		}
 	};
 
@@ -794,7 +851,6 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	RESTUtil.retrieveJson( url, returnFunc );
 	//returnFunc( true, { "msg": "Server available", "available": false} );
 }
-
 
 // ======================================
 
@@ -846,21 +902,38 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 FormUtil.evalReservedField = function( val )
 {
 	var newValue = '';
-	if ( val.indexOf( '$${' ) )
+
+	if ( val.indexOf( '$${' ) >= 0 )
 	{
-		// do something
+		// do something ?
 	}
-	else if ( val.indexOf( '##{' ) )
+	else if ( val.indexOf( '##{' ) >= 0)
 	{
-		if ( val.indexOf( 'getCoordinates()' ) )
+		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			newValue = val.toString().replace( '' )
+			//FormUtil.refreshGeoLocation( function() {
+			//	newValue = FormUtil.geoLocationCoordinates.toString();
+				return FormUtil.geoLocationLatLon;
+			//});
+		}
+		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
+		{
+			newValue = (new Date() ).toISOString();
+			return newValue;
+		}
+		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
+		{
+			var pattern = Util.getParameterInside( val, '()' );
+			newValue = Util.getValueFromPattern( pattern );
+			return newValue;
 		}
 	}
 	else
 	{
+		newValue = val;
+		return newValue;
 	}
-	return newValue;
+
 }
 
 FormUtil.getTagVal = function( tag )
@@ -898,34 +971,44 @@ FormUtil.getManifest = function()
 }
 /* END > Added by Greg: 2018/12/10 */
 
-/* START > Added by Greg: 2018/12/103 */
-
-FormUtil.setLastPayload = function( jsonData )
+FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 {
+	var traceData = sessionStorage.getItem('WSexchange');
+	var traceObj;
 
-	var sessionData = localStorage.getItem('session');
+	if ( !traceData ) traceObj = {};
+	else traceObj = JSON.parse( traceData );
 
-	if ( sessionData )
+	if ( traceData )
 	{
+		traceObj[ payloadName ] = jsonData;
 
-		var SessionObj = JSON.parse( sessionData );
-		//var payload = JSON.stringify( jsonData );
-
-		if ( SessionObj.last && SessionObj.last.payload )
+		if ( optClear)
 		{
-			SessionObj.last.payload = jsonData;
+			traceObj[ optClear ] = '';
+		}
+	}
+	else
+	{
+		if ( optClear)
+		{
+			traceObj = { [payloadName]: jsonData, [optClear]: '', history: [] };
 		}
 		else
 		{
-			SessionObj.last = { 'payload': jsonData };
+			traceObj = { [payloadName]: jsonData, history: [] };
 		}
-
-		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
-
 	}
+
+	traceObj.history.push ( { "actionType": payloadName, "actionDef": actDefName, "created": (new Date() ).toISOString(), "data": jsonData } );
+
+	sessionStorage.setItem( 'WSexchange', JSON.stringify( traceObj ) );
+
 }
 
-FormUtil.getLastPayload = function()
+/* START > Added by Greg: 2018/12/103 */
+
+FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
 	var sessionData = localStorage.getItem('session');
 
@@ -933,9 +1016,42 @@ FormUtil.getLastPayload = function()
 	{
 		var SessionObj = JSON.parse( sessionData );
 
-		if ( SessionObj.last && SessionObj.last.payload )
+		if ( SessionObj.last )
 		{
-			return SessionObj.last.payload;
+			SessionObj.last[ payloadName ] = jsonData;
+
+			if ( optClear)
+			{
+				SessionObj.last[ optClear ] = '';
+			}
+		}
+		else
+		{
+			if ( optClear)
+			{
+				SessionObj.last = { [payloadName]: jsonData, [optClear]: '' };
+			}
+			else
+			{
+				SessionObj.last = { [payloadName]: jsonData };
+			}
+		}
+
+		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
+	}
+}
+
+FormUtil.getLastPayload = function( namedPayload )
+{
+	var sessionData = sessionStorage.getItem('WSexchange');
+
+	if ( sessionData )
+	{
+		var SessionObj = JSON.parse( sessionData );
+
+		if ( SessionObj && SessionObj[ namedPayload ] )
+		{
+			return SessionObj[ namedPayload ];
 		}
 
 	}
@@ -1228,8 +1344,6 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize && $(iconObj).html() )
 			{
-				//console.log( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
-				//console.log( $(iconObj).html() );
 				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
 				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
 
@@ -1258,13 +1372,13 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
-			var iW, iH, sStyle = '';
-			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+			var iW, iH, sStyle = 'width:' + 18 + 'px;height:' + 18 + 'px;';
+			/*if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 			{
 				iW = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
 				iH = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
 				sStyle = 'width:' + iW + 'px;height:' + iH + 'px;';
-			}
+			}*/
 			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
 		}
 		else
@@ -1414,8 +1528,7 @@ FormUtil.PWAlaunchFrom = function()
 
 FormUtil.jsonReadFormat = function( jsonData )
 {
-	//console.log( JSON.stringify( jsonData ) );
-	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,' = ');
+	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,': ');
 	else return '';
 }
 
@@ -1462,6 +1575,95 @@ FormUtil.testNewSWavailable = function()
   
 		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
 	  }
+	});
+
+}
+
+FormUtil.getGeoLocation = function()
+{ // --> move to geolocation.js class
+	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationLatLon;
+	else return '';
+}
+
+FormUtil.refreshGeoLocation = function( returnFunc )
+{ // --> move to geolocation.js class
+	var error_PERMISSION_DENIED = 1;
+
+	if ( navigator.geolocation )
+	{
+		navigator.geolocation.getCurrentPosition( function(position) 
+		{
+
+			var lat = position.coords.latitude;
+			var lon = position.coords.longitude;
+			var userLocation;
+
+			if ( lat == null)
+			{
+				userLocation = ''; //GPS not activated
+			}
+			else
+			{
+				userLocation = parseFloat( lat ).toFixed( 6 ) + ', ' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
+			}
+
+			FormUtil.geoLocationLatLon = userLocation;
+			FormUtil.geoLocationCoordinates =  position.coords;
+			FormUtil.geoLocationError = '';
+
+			if ( returnFunc ) returnFunc();
+
+		},  function ( error ) 
+			{
+				FormUtil.geoLocationError = error.code; //Error locating your device
+
+				if (error.code == error.PERMISSION_DENIED)
+				{
+					FormUtil.geoLocationLatLon = '';
+				}
+				else
+				{
+					FormUtil.geoLocationLatLon = '';
+				}
+
+				if ( returnFunc ) returnFunc();
+
+			},
+			{enableHighAccuracy: false} // set to FALSE by Greg: if 'true' may result in slower response times or increased power consumption
+		);
+	}
+	else
+	{
+		FormUtil.geoLocationLatLon = '';
+		FormUtil.geoLocationError = -1;
+		FormUtil.geoLocationCoordinates = {};
+	}
+
+}
+
+FormUtil.geolocationAllowed = function()
+{
+	navigator.permissions.query({
+		name: 'geolocation'
+	}).then(function(result) {
+
+		FormUtil.geoLocationState = result.state;
+
+		/*if (result.state == 'granted') {
+			report(result.state);
+			geoBtn.style.display = 'none';
+		} else if (result.state == 'prompt') {
+			report(result.state);
+			geoBtn.style.display = 'none';
+			navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
+		} else if (result.state == 'denied') {
+			report(result.state);
+			geoBtn.style.display = 'inline';
+		}*/
+
+		result.onchange = function() {
+			FormUtil.geoLocationState = result.state;
+		}
 	});
 
 }

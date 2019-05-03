@@ -59,6 +59,10 @@ function cwsRender()
  
 	me._translateEnable = true;
 
+	me._manageInputSwipe;
+	me.autoLogoutDelayMins = 60; //auto logout after X mins
+	me.autoLogoutDateTime;
+
 	me.debugMode = false;
 
 	// =============================================
@@ -76,16 +80,12 @@ function cwsRender()
 	me.render = function()
 	{
 		if ( me.debugMode ) console.log( 'cwsRender.render()' );
-		me.checkStayLoggedIn( function( lastSession, loginData ) {
-			me.processExistingloggedIn( lastSession, loginData );
-			if ( me.debugMode ) console.log( 'cwsRender.render() > processExistingLoggedIn' );
-		},
-		function() {
-			if ( me.debugMode ) console.log( 'cwsRender.render() > showLoginForm' );
+
+		me.handleLastSession( function() {
 			me.showLoginForm();
 		});
 
-		var manageInputSwipe = inputMonitor( me );
+		me._manageInputSwipe = inputMonitor( me );
 
 		// Translate terms setup
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
@@ -192,7 +192,7 @@ function cwsRender()
 			{
 				// added by Greg (2018/12/10)
 				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
-				console.log( ' new old block ');
+
 				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 				startBlockObj.render();  // should been done/rendered automatically?
 
@@ -305,7 +305,7 @@ function cwsRender()
 	me.updateNavDrawerHeaderContent = function()
 	{
 
-		if ( !localStorage.getItem('session') )
+		if ( !localStorage.getItem('session') || ( ! FormUtil.checkLogin() ) )
 		{
 			return;
 		}
@@ -600,37 +600,26 @@ function cwsRender()
 	// ----------------------------------------------
 	// ----------- Render called method -------------
 
-	me.checkStayLoggedIn = function( stayedInFunc, notStayedInFunc )
+	me.handleLastSession = function( nextFunc )
 	{
-		var initializeStartBlock = false;
-
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		/*if ( localStorage.length )
+		if ( localStorage.length )
 		{
 			var lastSession = JSON.parse( localStorage.getItem('session') );
 	
 			if ( lastSession )
 			{
-				var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
-	
-				if ( loginData && loginData.mySession && loginData.mySession.stayLoggedIn ) 
-				{
-					initializeStartBlock = true;
-				}			
+				$( 'input.loginUserName' ).val( lastSession.user );	
 			}
-		}*/
-
-		if ( initializeStartBlock )
-		{
-			stayedInFunc( lastSession, loginData );
 		}
-		else
+
+		if ( nextFunc )
 		{
-			notStayedInFunc();
+			nextFunc();
 		}
 	}
 
-	me.processExistingloggedIn = function( lastSession, loginData )
+	/*me.processExistingloggedIn = function( lastSession, loginData )
 	{
 		me.renderDefaultTheme();
 		me.loginObj.loginFormDivTag.hide();
@@ -639,7 +628,7 @@ function cwsRender()
 		FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
 		me.loginObj.loginSuccessProcess( loginData );
 		me.retrieveAndSetUpTranslate();
-	}
+	}*/
 
 	me.showLoginForm = function()
 	{
@@ -680,21 +669,9 @@ function cwsRender()
 	me.logOutProcess = function()
 	{
 		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-		// set Log off
-		/*var lastSession = JSON.parse( localStorage.getItem('session') );
-
-		if (lastSession)
-		{
-			var loginData = JSON.parse( localStorage.getItem(lastSession.user) );
-
-			if ( loginData.mySession && loginData.mySession.stayLoggedIn ) 
-			{
-				loginData.mySession.stayLoggedIn = false;
-				localStorage[ lastSession.user ] = JSON.stringify( loginData )
-			}
-		}*/
 
 		FormUtil.undoLogin();
+		sessionStorage.clear();
 
 		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
@@ -703,6 +680,16 @@ function cwsRender()
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
 		syncManager.evalSyncConditions();
+
+		if ( $( 'div.aboutListDiv' ).is(':visible') )
+		{
+			me.aboutApp.hideAboutPage();
+		} //$( 'div.aboutListDiv' ).hide();
+		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
+		{
+			me.statisticsObj.hideStatsPage();
+			//$( 'div.statisticsDiv' ).hide();
+		}
 
 	}
 

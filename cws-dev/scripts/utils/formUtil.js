@@ -24,10 +24,10 @@ FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
 FormUtil.geoLocationTrackingEnabled = false;  // --> move to geolocation.js class
-FormUtil.geoLocationTrackedCoordinates;  // --> move to geolocation.js class
+FormUtil.geoLocationLatLon;  // --> move to geolocation.js class
 FormUtil.geoLocationState;  // --> move to geolocation.js class
 FormUtil.geoLocationError;  // --> move to geolocation.js class
-FormUtil.geoLocationCoordsObj;  // --> move to geolocation.js class
+FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
 
 // ==== Methods ======================
 
@@ -830,7 +830,7 @@ FormUtil.getConfigInfo = function( returnFunc )
 			"configs": {
 				"T_MZ": "dcd@MZ@v1"
 			},
-			"version": "1.0.0.52"
+			"version": "1.0.0.53"
 		}
 	};
 
@@ -911,10 +911,10 @@ FormUtil.evalReservedField = function( val )
 	{
 		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			FormUtil.refreshGeoLocation( function() {
-				newValue = FormUtil.geoLocationCoordsObj.toString();
-				return ( FormUtil.geoLocationCoordsObj.toString() );
-			});
+			//FormUtil.refreshGeoLocation( function() {
+			//	newValue = FormUtil.geoLocationCoordinates.toString();
+				return FormUtil.geoLocationLatLon;
+			//});
 		}
 		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
 		{
@@ -1581,7 +1581,7 @@ FormUtil.testNewSWavailable = function()
 
 FormUtil.getGeoLocation = function()
 { // --> move to geolocation.js class
-	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationTrackedCoordinates;
+	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationLatLon;
 	else return '';
 }
 
@@ -1607,8 +1607,8 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 				userLocation = parseFloat( lat ).toFixed( 6 ) + ', ' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
 			}
 
-			FormUtil.geoLocationTrackedCoordinates = userLocation;
-			FormUtil.geoLocationCoordsObj =  position.coords;
+			FormUtil.geoLocationLatLon = userLocation;
+			FormUtil.geoLocationCoordinates =  position.coords;
 			FormUtil.geoLocationError = '';
 
 			if ( returnFunc ) returnFunc();
@@ -1619,24 +1619,24 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 
 				if (error.code == error.PERMISSION_DENIED)
 				{
-					FormUtil.geoLocationTrackedCoordinates = '';
+					FormUtil.geoLocationLatLon = '';
 				}
 				else
 				{
-					FormUtil.geoLocationTrackedCoordinates = '';
+					FormUtil.geoLocationLatLon = '';
 				}
 
 				if ( returnFunc ) returnFunc();
 
 			},
-			{enableHighAccuracy: false} // if 'true' may result in slower response times or increased power consumption
+			{enableHighAccuracy: false} // set to FALSE by Greg: if 'true' may result in slower response times or increased power consumption
 		);
 	}
 	else
 	{
-		FormUtil.geoLocationTrackedCoordinates = '';
+		FormUtil.geoLocationLatLon = '';
 		FormUtil.geoLocationError = -1;
-		FormUtil.geoLocationTrackedCoordinates = {};
+		FormUtil.geoLocationCoordinates = {};
 	}
 
 }

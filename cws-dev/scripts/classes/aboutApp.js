@@ -744,11 +744,11 @@ function aboutApp( cwsRender )
     me.getCoordinatesForPresentation = function()
     {
         var ret = ''; //'<div term="">not required by PWA</div>';
-        if ( FormUtil.geoLocationTrackedCoordinates )
+        if ( FormUtil.geoLocationLatLon )
         {
-            if ( FormUtil.geoLocationTrackedCoordinates.toString().length )
+            if ( FormUtil.geoLocationLatLon.toString().length )
             {
-                ret = '[' + FormUtil.geoLocationTrackedCoordinates.toString() + ']'
+                ret = '[' + FormUtil.geoLocationLatLon.toString() + ']'
             }
         }
         return ret;
