@@ -46,17 +46,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
 		}
 
-		if ( JSON.stringify( formJsonArr ).indexOf( 'getCoordinates(' ) >= 0 )
-		{
-			//console.log( formJsonArr );
-			FormUtil.refreshGeoLocation( function() {
-				if ( FormUtil.geoLocationLatLon.length )
-				{
-					MsgManager.notificationMessage ( '<img src="img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true );
-				}
-			});
-		}
-
 	}
 	
 	// =============================================

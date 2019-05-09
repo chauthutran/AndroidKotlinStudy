@@ -277,6 +277,7 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 		}
 		
 		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
+		var dataValue = ( ( fillValue.toString().indexOf( '{' ) >= 0 ) && ( fillValue.toString().indexOf( '}' ) >= 0 ) ? JSON.parse( fillValue ) : fillValue );
 
 		if ( ( dataTargetKeyItem ).length && targetDef.hasOwnProperty( dataTargetKeyItem ) ) 
 		{
@@ -284,16 +285,16 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
 				}
 			}
 			else
 			{
-				targetDef[ dataTargetKeyItem ] [fillKey] = fillValue;
+				targetDef[ dataTargetKeyItem ] [fillKey] = dataValue;
 			}
 		}
 		else if ( ( dataTargetKeyItem ).length == 0 )
@@ -302,16 +303,16 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: fillValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: fillValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
 				}
 			}
 			else
 			{
-				targetDef[ fillKey ] = fillValue;
+				targetDef[ fillKey ] = dataValue;
 			}
 			
 		}
@@ -881,7 +882,7 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 			{
 				if ( val.indexOf( '{' ) && val.indexOf( '}' ) )
 				{
-					tag.val( FormUtil.evalReservedField( val ) );
+					FormUtil.evalReservedField( tag, val );
 				}
 				else
 				{
@@ -899,10 +900,8 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 	}
 }
 
-FormUtil.evalReservedField = function( val )
+FormUtil.evalReservedField = function( tagTarget, val )
 {
-	var newValue = '';
-
 	if ( val.indexOf( '$${' ) >= 0 )
 	{
 		// do something ?
@@ -911,27 +910,27 @@ FormUtil.evalReservedField = function( val )
 	{
 		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			//FormUtil.refreshGeoLocation( function() {
-			//	newValue = FormUtil.geoLocationCoordinates.toString();
-				return FormUtil.geoLocationLatLon;
-			//});
+			FormUtil.refreshGeoLocation( function() {
+				if ( FormUtil.geoLocationLatLon.length )
+				{
+					MsgManager.notificationMessage ( '<img src="img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true );
+				}
+				tagTarget.val( FormUtil.geoLocationCoordinates );
+			});
 		}
 		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
 		{
-			newValue = (new Date() ).toISOString();
-			return newValue;
+			tagTarget.val( (new Date() ).toISOString() );
 		}
 		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			newValue = Util.getValueFromPattern( pattern );
-			return newValue;
+			tagTarget.val( Util.getValueFromPattern( pattern ) );
 		}
 	}
 	else
 	{
-		newValue = val;
-		return newValue;
+		tagTarget.val( val );
 	}
 
 }
@@ -1585,6 +1584,18 @@ FormUtil.getGeoLocation = function()
 	else return '';
 }
 
+FormUtil.getPositionObjectJSON = function( pos )
+{
+	var retJSON = {};
+
+	for(var propt in pos.coords)
+	{
+		retJSON[ propt ] = pos.coords[propt];
+	}
+
+	return retJSON;
+}
+
 FormUtil.refreshGeoLocation = function( returnFunc )
 { // --> move to geolocation.js class
 	var error_PERMISSION_DENIED = 1;
@@ -1593,23 +1604,24 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 	{
 		navigator.geolocation.getCurrentPosition( function(position) 
 		{
-
-			var lat = position.coords.latitude;
-			var lon = position.coords.longitude;
+			var myPosition = FormUtil.getPositionObjectJSON( position );
+			var lat = myPosition.latitude;
+			var lon = myPosition.longitude;
 			var userLocation;
 
 			if ( lat == null)
 			{
 				userLocation = ''; //GPS not activated
+				FormUtil.geoLocationError = 'GPS not activated';
 			}
 			else
 			{
 				userLocation = parseFloat( lat ).toFixed( 6 ) + ', ' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
+				FormUtil.geoLocationError = '';
 			}
 
 			FormUtil.geoLocationLatLon = userLocation;
-			FormUtil.geoLocationCoordinates =  position.coords;
-			FormUtil.geoLocationError = '';
+			FormUtil.geoLocationCoordinates = JSON.stringify( myPosition );
 
 			if ( returnFunc ) returnFunc();
 
@@ -1629,14 +1641,14 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 				if ( returnFunc ) returnFunc();
 
 			},
-			{enableHighAccuracy: false} // set to FALSE by Greg: if 'true' may result in slower response times or increased power consumption
+			{enableHighAccuracy: false, timeout: 20000 } // enableHighAccuracy set to FALSE by Greg: if 'true' may result in slower response times or increased power consumption
 		);
 	}
 	else
 	{
 		FormUtil.geoLocationLatLon = '';
 		FormUtil.geoLocationError = -1;
-		FormUtil.geoLocationCoordinates = {};
+		FormUtil.geoLocationCoordinates = '';
 	}
 
 }

@@ -215,18 +215,6 @@ self.__precacheManifest = [
     "revision": "56d9b808639a50927115cab90dd8e246"
   },
   {
-    "url": "img/net-green.svg",
-    "revision": "0aafa33a6beeca84d37679273ad059d7"
-  },
-  {
-    "url": "img/net-sync.svg",
-    "revision": "ca8591a7226c1592fedda68b4d1efa1f"
-  },
-  {
-    "url": "img/net.svg",
-    "revision": "2144acb467584dffbf59e6798923bd2b"
-  },
-  {
     "url": "img/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
@@ -308,7 +296,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "6443a6ea666d1f4f8020e61b0ea3795d"
+    "revision": "ac92201ba18cc60653ae0bc6a87fb75c"
   },
   {
     "url": "scripts/classes/block.js",
@@ -320,7 +308,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "af21eb8d8baa420a0b78b553004e267c"
+    "revision": "2ff3a85fe441085a9593c2f2bd7c85a6"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -408,7 +396,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "7f55942cd0b385794cd2eb23616d13a9"
+    "revision": "7f3fe2b2048eb2291667d1707d1810e7"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -432,7 +420,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ae8649ad879a0d438e6fbc32c59950df"
+    "revision": "a0cce26b7d273837123a8ae56c1255f4"
   },
   {
     "url": "sounds/coin.mp3",

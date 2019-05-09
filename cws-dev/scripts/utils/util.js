@@ -995,14 +995,13 @@ Util.dateToString = function( date )
 
 Util.dateToMyFormat = function( date, myFormat )
 {
-	console.log( date, myFormat )
 	var y = date.getFullYear();
-	var month = eval( date.getMonth() ) + 1;
-	var day = eval( date.getDate() );
+	var month = ( (myFormat.match(new RegExp("MM", "g")) || []).length ? eval( date.getMonth() ) + 1 : '' );
+	var day = ( (myFormat.match(new RegExp("DD", "g")) || []).length ? eval( date.getDate() ) : '' );
 	var year = ( (myFormat.match(new RegExp("YY", "g")) || []).length ? ( ( (myFormat.match(new RegExp("YY", "g")) || []).length > 1 ) ? y : y.toString().slice( -2 ) ) : '' );
 
-	month = ( month < 10 ) ? "0" + month : month;	
-	day = ( day < 10 ) ? "0" + day : day;
+	if ( month.length ) month = ( month < 10 ) ? "0" + (month).toString() : month;	
+	if ( day.length ) day = ( day < 10 ) ? "0" + (day).toString() : day;
 
 	if ( myFormat.indexOf('YYMMDD') >= 0 )
 	{

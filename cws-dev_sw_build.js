@@ -21,6 +21,16 @@ generateSW({
         cacheName: 'googleFonts'
       }
     }
+  ],
+
+  runtimeCaching: [
+    {
+      urlPattern: /eRefWS/,
+      handler: 'staleWhileRevalidate',
+      options: {
+        cacheName: 'eRef-WebService'
+      }
+    }
   ]
 
 }).then(({count, size}) => {
