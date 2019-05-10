@@ -128,17 +128,11 @@ function Login( cwsRenderObj )
 		if ( ! me.loginFormDivTag.is( ":visible" ) )
         {
             me.loginFormDivTag.show();
-        }
+		}
+
 		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
 
-
-		//divIcon.html( $( '<img src="img/logo_top.svg">' ) );
-		/*if ( me.cwsRenderObj.manifest )
-		{
-			me.pageTitleDivTab.show();
-			me.pageTitleDivTab.html ( JSON.parse(me.cwsRenderObj.manifest).short_name );
-		}*/
 		me.pageTitleDivTab.show();
 		me.pageTitleDivTab.html ( 'CONNECT' );
 		/* END > Added by Greg (2018/12/10) */

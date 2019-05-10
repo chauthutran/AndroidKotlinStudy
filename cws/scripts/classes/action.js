@@ -267,10 +267,17 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "sendToWS" ) 
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );
+				var inputsJson;
 
 				// generate inputsJson - with value assigned...
-				var inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
-				var inputTargJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
+				if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
+				{
+					inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
+				}
+				else
+				{
+					inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+				}
 
 				//FormUtil.setLastPayload( 'sendToWS', inputsJson, 'receivedFromWS' )
 				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );

@@ -580,10 +580,10 @@ div.fixed_father {
 }
 
 .off{
-  content:url("../img/plus.svg");
+  content:url("../images/img/plus.svg");
 }
 .on{
-  content:url("../img/plus_on.svg");
+  content:url("../images/img/plus_on.svg");
 }
 .pointer {
   cursor: pointer;

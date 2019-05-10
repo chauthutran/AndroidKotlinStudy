@@ -2,6 +2,7 @@
   "name": "CwS Connect Dev",
   "short_name": "ConnectDev",
   "description": "CwS PWA Dev",  
+  "version": "1.0.1",
   "theme_color": "#bbc65d",
   "background_color": "#bbc65d",
   "display": "standalone",

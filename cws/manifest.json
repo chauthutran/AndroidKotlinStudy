@@ -2,6 +2,7 @@
   "name": "CwS Connect",
   "short_name": "Connect",
   "description": "CwS PWA",  
+  "version": "1.0.1",
   "theme_color": "#ffc61d",
   "background_color": "#ffc61d",
   "display": "standalone",
