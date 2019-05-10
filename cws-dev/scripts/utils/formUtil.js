@@ -419,7 +419,7 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
-{		
+{
 	var url = FormUtil.getWsUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
 
 	RESTUtil.retrieveJson( url, function( success, returnJson )
@@ -676,17 +676,17 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		matchingTabsTag.addClass("active");
 
 		tag.find('.expanded').removeClass('expanded');
-		tag.find('.expandable-arrow').attr('src','./img/arrow_down.svg');
+		tag.find('.expandable-arrow').attr('src','./images/img/arrow_down.svg');
 
 		if ( bThisExpanded )
 		{
 			//$( this ).removeClass('expanded');
-			$( this ).find( ".expandable-arrow" ).attr('src','./img/arrow_down.svg');
+			$( this ).find( ".expandable-arrow" ).attr('src','./images/img/arrow_down.svg');
 		}
 		else
 		{
 			$(this).addClass('expanded');
-			$(this).find( ".expandable-arrow" ).attr('src','./img/arrow_up.svg');
+			$(this).find( ".expandable-arrow" ).attr('src','./images/img/arrow_up.svg');
 		}
 
 	});
@@ -793,46 +793,15 @@ FormUtil.getRedeemPayload = function( id ) {
 }
 
 FormUtil.getConfigInfo = function( returnFunc )
-{	
+{
 	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
 	//RESTUtil.retrieveJson( url, returnFunc );
 
 	var jsonData = {
-		"cws": {
-		"note": "CwS PWA production version",
-		"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
-		"configs": {
-				"MZ": "dcd@MZ",
-				"T_MZ": "dcd@MZ",
-				"NP": "dcd@NP",
-				"T_NP": "dcd@NP",
-				"M_TE": "dcd@TE"
-			},
-		"version": "1.0.0.52"
-		},
-		"cws-train": {
-			"note": "CwS PWA training version",
-			"targetWS": "https://apps.psi-mis.org/eRefWSTrain",
-			"inherit": "cws",
-			"configs": {},
-			"version": "1.0.0.52"
-		},
-		"cws-stage": {
-			"note": "CwS PWA staging version",
-			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
-			"inherit": "cws",
-			"configs": {},
-			"version": "1.0.0.52"
-		},
-		"cws-dev": {
-			"note": "CwS PWA development version",
-			"targetWS": "https://apps.psi-mis.org/eRefWSDev3",
-			"inherit": "cws",
-			"configs": {
-				"T_MZ": "dcd@MZ@v1"
-			},
-			"version": "1.0.0.53"
-		}
+		"cws": "https://cws.psi-mis.org/ws/eRefWSDev3",
+		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
+		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSDev3",
+		"cws-dev": "https://apps.psi-mis.org/eRefWSDev3" //https://cws-dev.psi-mis.org/ws/eRefWSDev3
 	};
 
 	returnFunc( true, jsonData );
@@ -913,7 +882,7 @@ FormUtil.evalReservedField = function( tagTarget, val )
 			FormUtil.refreshGeoLocation( function() {
 				if ( FormUtil.geoLocationLatLon.length )
 				{
-					MsgManager.notificationMessage ( '<img src="img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true );
+					MsgManager.notificationMessage ( '<img src="images/img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true, true );
 				}
 				tagTarget.val( FormUtil.geoLocationCoordinates );
 			});
@@ -1427,30 +1396,30 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 
 	if ( itemData.status === cwsRenderObj.status_redeem_submit )
 	{
-		imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+		imgSyncIconTag.attr ( 'src', 'images/img/sync-n.svg' );
 	}
 	else if ( itemData.status === cwsRenderObj.status_redeem_failed )
 	{
 
 		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
 		{
-			imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
+			imgSyncIconTag.attr ( 'src', 'images/img/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
 		}
 		else
 		{
 			if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
 			{
-				imgSyncIconTag.attr ( 'src', 'img/sync_error.svg' );
+				imgSyncIconTag.attr ( 'src', 'images/img/sync_error.svg' );
 			}
 			else
 			{
-				imgSyncIconTag.attr ( 'src', 'img/sync-n.svg' );
+				imgSyncIconTag.attr ( 'src', 'images/img/sync-n.svg' );
 			}
 		}
 	}
 	else
 	{
-		imgSyncIconTag.attr ( 'src', 'img/sync-banner.svg' );
+		imgSyncIconTag.attr ( 'src', 'images/img/sync-banner.svg' );
 	}
 
 	imgSyncIconTag.css ( 'transform', '' );

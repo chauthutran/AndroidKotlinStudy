@@ -966,21 +966,6 @@ Util.formatDateBack = function( strDate )
 };
 
 
-Util.getDate_FromYYYYMMDD = function( strDate )
-{
-	var date;
-
-	if ( Util.checkValue( strDate ) )
-	{
-		var year = strDate.substring(0, 4);
-		var month = strDate.substring(5, 7);
-		var date = strDate.substring(8, 10);
-
-		date = new Date( year, month - 1, date );
-	}
-
-	return date;
-};
 
 Util.dateToString = function( date )
 {
@@ -995,29 +980,42 @@ Util.dateToString = function( date )
 
 Util.dateToMyFormat = function( date, myFormat )
 {
-	var y = date.getFullYear();
+	var y = ( date.getFullYear() ).toString();
 	var month = ( (myFormat.match(new RegExp("MM", "g")) || []).length ? eval( date.getMonth() ) + 1 : '' );
 	var day = ( (myFormat.match(new RegExp("DD", "g")) || []).length ? eval( date.getDate() ) : '' );
-	var year = ( (myFormat.match(new RegExp("YY", "g")) || []).length ? ( ( (myFormat.match(new RegExp("YY", "g")) || []).length > 1 ) ? y : y.toString().slice( -2 ) ) : '' );
+	var year = y.toString(); // = ( (myFormat.match(new RegExp("YY", "g")) || []).length ? ( ( (myFormat.match(new RegExp("YY", "g")) || []).length > 1 ) ? y.toString() : y.toString().slice( -2 ) ) : '' );
 
-	if ( month.length ) month = ( month < 10 ) ? "0" + (month).toString() : month;	
-	if ( day.length ) day = ( day < 10 ) ? "0" + (day).toString() : day;
+	if ( ( (myFormat.match(new RegExp("YY", "g")) || []).length == 1 ) ) year = y.toString().slice( -2 );
+	if ( month.toString().length ) month = ( parseInt( month ) < 10 ) ? "0" + ( month ).toString() : ( month ).toString();
+	if ( day.toString().length ) day = ( parseInt( day ) < 10 ) ? "0" + ( day ).toString() : ( day ).toString();
 
 	if ( myFormat.indexOf('YYMMDD') >= 0 )
 	{
-		return year + '' + month + '' + day;
+		return year.toString() + '' + month.toString() + '' + day.toString();
 	}
 	else if ( myFormat.indexOf('DDMMYY') >= 0 )
 	{
-		return day + '' + month + '' + year;
+		return day.toString() + '' + month.toString() + '' + year.toString();
 	}
 	else if ( myFormat.indexOf('DDMM') >= 0 )
 	{
-		return day + '' + month;
+		return day.toString() + '' + month.toString();
 	}
 	else if ( myFormat.indexOf('MMDD') >= 0 )
 	{
-		return month + '' + day;
+		return month.toString() + '' + day.toString();
+	}
+	else if ( myFormat.indexOf('YY') >= 0 )
+	{
+		return year.toString();
+	}
+	else if ( myFormat.indexOf('MM') >= 0 )
+	{
+		return month.toString();
+	}
+	else if ( myFormat.indexOf('DD') >= 0 )
+	{
+		return day.toString();
 	}
 };
 
@@ -1141,52 +1139,212 @@ Util.getParameterInside = function( value, openClose )
 	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
 }
 
-Util.getValueFromPattern = function( pattern )
+Util.newLocalSequence = function( pattern )
 {
-	var patternPart = pattern.split( '-' );
-	var ret = '';
+	var jsonStorageData = DataManager.getOrCreateData( 'seqIncr' );
+	var ret;
 
-	for (var i = 0; i < patternPart.length; i++)
+	if ( JSON.stringify( jsonStorageData ) == '{}' )
 	{
-		var returnPart = '';
+		jsonStorageData = { "D": Util.dateToMyFormat( new Date(), 'DD' ), "M": Util.dateToMyFormat( new Date(), 'MM' ), "Y": Util.dateToMyFormat( new Date(), 'YY' ), "DD": 0, "MM": 0, "YY": 0 };
+	}
 
-		if ( isNaN( patternPart[ i ] ) )
+	if ( pattern.indexOf('[') > 0 )
+	{
+		var parms = Util.getParameterInside( pattern, '[]' );
+
+		if ( parms.length )
 		{
-			if ( ( patternPart[ i ] ).indexOf( 'YYYYMMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 8 )
+			if ( parms.indexOf(':') )
 			{
-				returnPart = Util.dateToMyFormat( new Date(), 'YYYYMMDD' );
-			}
-			else if ( ( patternPart[ i ] ).indexOf( 'YYMMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 6 )
-			{
-				console.log( patternPart[ i ] + ' = ' + returnPart);
-				returnPart = Util.dateToMyFormat( new Date(), 'YYMMDD' );
-			}
-			else if ( ( patternPart[ i ] ).indexOf( 'MMDD' ) >= 0 && ( patternPart[ i ] ).toString().length == 4 )
-			{
-				returnPart = Util.dateToMyFormat( new Date(), 'MMDD' );
-			}
-			else if ( (( patternPart[ i ] ).match(new RegExp("X", "g")) || []).length == ( patternPart[ i ] ).toString().length )
-			{
-				returnPart = Util.generateRandomAnything( ( patternPart[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+				var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
+
+				if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ (arrParm[0]).slice(1) ] )
+				{
+					// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
+					ret = 1;
+					jsonStorageData[ (arrParm[0]).slice(1) ] = Util.dateToMyFormat( new Date(), arrParm[0] );
+				}
+				else
+				{
+					var last = jsonStorageData[ arrParm[0] ];
+
+					if ( last )
+					{
+						ret = ( parseInt( last ) + 1 );
+					}
+					else
+					{
+						ret = 1;
+					}
+
+				}
+
+				jsonStorageData[ arrParm[0] ] = ret;
+
+				DataManager.saveData( 'seqIncr', jsonStorageData );
+
+				return Util.paddNumeric( ret, arrParm[1] );
+
 			}
 			else
 			{
-				returnPart = patternPart[ i ];
+				console.log( ' ~ no newLocalSequence comma separator');
+			}
+		}
+		else
+		{
+			console.log( ' ~ no localSequence parms');
+		}
+
+	}
+
+}
+
+Util.paddNumeric = function( val, padding )
+{
+	var ret = '';
+	if ( val && padding )
+	{
+		for (var i = 0; i < ( parseInt( padding ) - val.toString().length ); i++)
+		{
+			ret += '0';
+		}
+		ret += val.toString();
+		return ret;
+	}
+	else
+	{
+		if ( val ) return val.toString();
+	}
+}
+
+Util.getLocalStorageObjectValue = function( objKeyVal )
+{
+	var lastSession = DataManager.getSessionData(); //JSON.parse( localStorage.getItem( 'session' ) );
+	var arrKeys;
+	
+	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
+	{
+		console.log( ' exiting getLocalStorageObjectValue ');
+		return;
+	}
+	else
+	{
+		if ( lastSession )
+		{
+			var localData = JSON.parse( localStorage.getItem( lastSession.user ) );
+
+			arrKeys = objKeyVal.toString().split( '.' );
+
+			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
+
+		}
+		
+	}
+
+}
+
+Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
+{
+	if ( objArr[ (itm + 1) ] && objJson[ objArr[ (itm + 1) ] ] )
+	{
+		return Util.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
+	}
+	else 	
+	{
+		return objJson.toString();
+	}
+}
+
+Util.getValueFromPattern = function( pattern )
+{
+	var arrPattern;
+	var patternSeparator;
+	var removeSeparator = false;
+	var arrParms;
+	var ret = '';
+
+	if ( pattern.indexOf( ',' ) )
+	{
+		arrParms = pattern.split( ',' );
+		patternSeparator = ( arrParms[ 1 ] ).trim();
+		arrPattern = ( arrParms[ 0 ] ).split( patternSeparator );
+
+		if ( arrParms[ 2 ] != undefined )
+		{
+			if ( isNaN( arrParms[ 2 ] ) )
+			{
+				if ( ( arrParms[ 2 ] ).toLowerCase() == 'true' )
+				{
+					removeSeparator = true;
+				}
+			}
+			else
+			{
+				removeSeparator = ( parseFloat( arrParms[ 2 ] ) > 0 )
+			}
+		}
+	}
+	else
+	{
+		if ( pattern.indexOf('-') ) patternSeparator = '-';
+		if ( pattern.indexOf('_') ) patternSeparator = '_';
+		if ( pattern.indexOf(' ') ) patternSeparator = ' ';
+		if ( pattern.indexOf('/') ) patternSeparator = '/';
+		if ( pattern.indexOf('*') ) patternSeparator = '*';
+
+		arrPattern = pattern.split( patternSeparator );
+	}
+
+	for (var i = 0; i < arrPattern.length; i++)
+	{
+		var returnPart = '';
+
+		if ( isNaN( arrPattern[ i ] ) )
+		{
+			if ( ( arrPattern[ i ] ).indexOf( 'YYYYMMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 8 )
+			{
+				returnPart = Util.dateToMyFormat( new Date(), 'YYYYMMDD' );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( 'YYMMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 6 )
+			{
+				returnPart = Util.dateToMyFormat( new Date(), 'YYMMDD' );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( 'MMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 4 )
+			{
+				returnPart = Util.dateToMyFormat( new Date(), 'MMDD' );
+			}
+			else if ( (( arrPattern[ i ] ).match(new RegExp("X", "g")) || []).length == ( arrPattern[ i ] ).toString().length )
+			{
+				returnPart = Util.generateRandomAnything( ( arrPattern[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( 'SEQ[' ) >= 0 )
+			{
+				returnPart = Util.newLocalSequence( arrPattern[ i ] );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( '.' ) > 0 )
+			{
+				returnPart = Util.getLocalStorageObjectValue( arrPattern[ i ] );
+			}
+			else
+			{
+				returnPart = ( arrPattern[ i ] );
 			}
 
 		}
 		else
 		{
-			if ( parseFloat( patternPart[ i ] ) == 0 )
+			if ( parseFloat( arrPattern[ i ] ) == 0 )
 			{
-				returnPart = ( Util.generateRandomNumberRange( 0, Math.pow(10, ( patternPart[ i ] ).toString().length ) -1 ) ).toFixed(0);
+				returnPart = Util.paddNumeric( ( Util.generateRandomNumberRange( 0, Math.pow(10, ( arrPattern[ i ] ).toString().length ) -1 ) ).toFixed(0), (arrPattern[ i ]).toString().length );
 			}
 
 		}
 		
-		if ( returnPart.length )
+		if ( returnPart && returnPart.length )
 		{
-			ret += returnPart + '-';
+			ret += returnPart + ( removeSeparator ? '' : patternSeparator );
 		}
 	}
 
