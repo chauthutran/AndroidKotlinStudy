@@ -237,7 +237,7 @@ function inputMonitor( cwsRenderObj )
         $( startTouchTargetTag ).css( 'background-color', '#fff' );
 
         $( startTouchTargetTag ).parent().append( listItemFillerBlock );
-        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + startTouchTargetTag.attr( 'itemid' ) + '"><!-- send to<br>nearby<br>device? --></td><td style="border-left:0px solid #F5F5F5;padding-left:5px;width:40px;" id="dragItem_action_response_' + startTouchTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="images/img/entry.svg" id="filler_icon_' + startTouchTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
+        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + startTouchTargetTag.attr( 'itemid' ) + '"><!-- send to<br>nearby<br>device? --></td><td style="border-left:0px solid #F5F5F5;padding-left:5px;width:40px;" id="dragItem_action_response_' + startTouchTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="images/entry.svg" id="filler_icon_' + startTouchTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
 
         $( 'body' ).append(  $( startTouchTargetTag ).detach() );
 

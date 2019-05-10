@@ -17,7 +17,7 @@
   function startApp() 
   {
     //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
-    FormMsgManager.appBlock( "<img src='img/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
+    FormMsgManager.appBlock( "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
 
     // 1. Online/Offline related event setup
     updateOnlineStatus();
@@ -47,6 +47,7 @@
     {
         // Track event: The app was installed (banner or manual installation)
         ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+        playSound("coin");
 
     });
 
@@ -114,10 +115,10 @@
 
       FormUtil.getConfigInfo( function( result, data ) 
       {
-        //console.log( data );
+
         try {
-          if ( (location.href).indexOf('.psi-mis.org') >= 0 )
-            FormUtil.dynamicWS = data[ (location.host).replace('.psi-mis.org','') ];
+          if ( ( location.href ).indexOf( '.psi-mis.org' ) >= 0 )
+            FormUtil.dynamicWS = data[ ( location.host ).replace( '.psi-mis.org', '' ) ];
           else
             FormUtil.dynamicWS = data[ "cws-dev" ];
         }
@@ -130,56 +131,24 @@
           }
         }
 
-        FormUtil.staticWSName = ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ ( FormUtil.dynamicWS.targetWS ).toString().split('/').length-1 ];
+        FormUtil.staticWSName = ( FormUtil.dynamicWS ).toString().split('/')[ ( FormUtil.dynamicWS ).toString().split('/').length-1 ];
         FormUtil._serverUrlOverride = '';
 
-        for (var i = 0; i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -1; i++)
+        for (var i = 0; i < ( FormUtil.dynamicWS ).toString().split('/').length -1; i++)
         {
-          FormUtil._serverUrlOverride = FormUtil._serverUrlOverride + ( FormUtil.dynamicWS.targetWS ).toString().split('/')[ i ];
-          if ( i < ( FormUtil.dynamicWS.targetWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
+          FormUtil._serverUrlOverride = FormUtil._serverUrlOverride + ( FormUtil.dynamicWS ).toString().split('/')[ i ];
+          if ( i < ( FormUtil.dynamicWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
         }
 
         appVersionUpgradeReview( FormUtil.dynamicWS );
+
         FormUtil._getPWAInfo = FormUtil.dynamicWS;
 
         webServiceSet( FormUtil.staticWSName );
+
         FormMsgManager.appUnblock();
-        returnFunc();
 
-        //console.log( FormUtil._serverUrlOverride );
-        
-
-        /*FormUtil.getAppInfo( function( success, jsonData ) 
-        {
-
-          if ( debugMode ) console.log( 'AppInfoOperation: ' + success )
-
-          if ( jsonData )
-          {
-
-            FormUtil._getPWAInfo = jsonData;
-
-            if ( debugMode ) console.log( 'AppInfo Retrieved: ' + FormUtil._getPWAInfo );
-
-            // App version check and possibly reload into the new version
-            appVersionUpgradeReview( jsonData );
-
-            // get proper web service - Should not implement this due to offline possibility
-            if ( ! FormUtil.isAppsPsiServer() )
-            {
-              webServiceSet( jsonData.appWS.cwsDev );
-            }
-            else
-            {
-              webServiceSet( jsonData.appWS.cws );
-            }
-
-          }
-
-          FormMsgManager.appUnblock();
-          returnFunc();
-
-        });*/
+        if (returnFunc) returnFunc();
 
       });
 
@@ -187,13 +156,17 @@
     else
     {
       if ( debugMode ) console.log('not PSI server')
+
       if ( ! FormUtil._getPWAInfo )
       {
         FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
       }
+
       appVersionUpgradeReview(FormUtil._getPWAInfo );
+
       FormMsgManager.appUnblock();
-      returnFunc();
+
+      if (returnFunc) returnFunc();
     }
 
   };
@@ -301,13 +274,13 @@
                   if (navigator.serviceWorker.controller) {
                     // new update available
                     //resolve(true);
-                    //var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+                    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
                     // move to cwsRender ?
-                    /*$( btnUpgrade ).click ( () => {
+                    $( btnUpgrade ).click ( () => {
                       location.reload( true );
                     });
 
-                    MsgManager.notificationMessage ( 'New updates found and installed', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );*/
+                    MsgManager.notificationMessage ( 'New updates installed. Click refresh to view changes', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
                   } else {
                     // no update available
                     //resolve(false);

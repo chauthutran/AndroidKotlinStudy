@@ -713,7 +713,7 @@ img.round:hover{
   display: block;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  background: url("../img/sharp-remove_circle_outline-24px.svg") no-repeat;
+  background: url("../images/sharp-remove_circle_outline-24px.svg") no-repeat;
   opacity: 0.6;
   width:inherit;
   height: inherit;
@@ -724,7 +724,7 @@ img.round:hover{
   display: block;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  background: url("../img/sharp-add_circle_outline-24px.svg") no-repeat;
+  background: url("../images/sharp-add_circle_outline-24px.svg") no-repeat;
   opacity: 0.6;
   width:inherit;
   height: inherit;

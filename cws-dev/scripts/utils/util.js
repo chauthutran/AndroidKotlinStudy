@@ -1141,10 +1141,12 @@ Util.getParameterInside = function( value, openClose )
 
 Util.newLocalSequence = function( pattern )
 {
-	var jsonStorageData = DataManager.getOrCreateData( 'seqIncr' );
+	//var jsonStorageData = DataManager.getOrCreateData( 'seqIncr' );
+	var jsonUserData = DataManager.getData( FormUtil.login_UserName );
+	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
 	var ret;
 
-	if ( JSON.stringify( jsonStorageData ) == '{}' )
+	if ( jsonStorageData == undefined ) 
 	{
 		jsonStorageData = { "D": Util.dateToMyFormat( new Date(), 'DD' ), "M": Util.dateToMyFormat( new Date(), 'MM' ), "Y": Util.dateToMyFormat( new Date(), 'YY' ), "DD": 0, "MM": 0, "YY": 0 };
 	}
@@ -1181,8 +1183,12 @@ Util.newLocalSequence = function( pattern )
 				}
 
 				jsonStorageData[ arrParm[0] ] = ret;
+				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
 
-				DataManager.saveData( 'seqIncr', jsonStorageData );
+				//DataManager.saveData( 'seqIncr', jsonStorageData );
+
+				DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+				
 
 				return Util.paddNumeric( ret, arrParm[1] );
 
@@ -1223,7 +1229,7 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 {
 	var lastSession = DataManager.getSessionData(); //JSON.parse( localStorage.getItem( 'session' ) );
 	var arrKeys;
-	
+
 	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
 	{
 		console.log( ' exiting getLocalStorageObjectValue ');
@@ -1240,7 +1246,7 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
 
 		}
-		
+
 	}
 
 }

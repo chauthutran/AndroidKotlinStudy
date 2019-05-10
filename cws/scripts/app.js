@@ -17,7 +17,7 @@
   function startApp() 
   {
     //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
-    FormMsgManager.appBlock( "<img src='images/img/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
+    FormMsgManager.appBlock( "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
 
     // 1. Online/Offline related event setup
     updateOnlineStatus();

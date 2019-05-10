@@ -343,7 +343,7 @@ function DataList( cwsRenderObj, blockObj )
                 tblObjTag.append( tritemHeaderTag );
                 tritemHeaderTag.append( tditemHeaderTag );
 
-                var imginfoTag = $( '<img src="images/img/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
+                var imginfoTag = $( '<img src="images/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
                 var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
                 var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
 

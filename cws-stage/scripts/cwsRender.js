@@ -408,7 +408,7 @@ function cwsRender()
 		tr.append ( tdLeft );
 		tr.append ( tdRight );
 
-		var navMenuLogo = $( '<img src="img/logo.svg" />' );
+		var navMenuLogo = $( '<img src="images/logo.svg" />' );
 
 		var userSessionJson = DataManager.getSessionData();
 		var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
@@ -431,7 +431,7 @@ function cwsRender()
 			{
 				var area = areaList[i];
 
-				var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="img/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+				var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
 				me.setupMenuTagClick( menuTag );
 

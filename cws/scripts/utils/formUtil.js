@@ -676,17 +676,17 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		matchingTabsTag.addClass("active");
 
 		tag.find('.expanded').removeClass('expanded');
-		tag.find('.expandable-arrow').attr('src','./images/img/arrow_down.svg');
+		tag.find('.expandable-arrow').attr('src','./images/arrow_down.svg');
 
 		if ( bThisExpanded )
 		{
 			//$( this ).removeClass('expanded');
-			$( this ).find( ".expandable-arrow" ).attr('src','./images/img/arrow_down.svg');
+			$( this ).find( ".expandable-arrow" ).attr('src','./images/arrow_down.svg');
 		}
 		else
 		{
 			$(this).addClass('expanded');
-			$(this).find( ".expandable-arrow" ).attr('src','./images/img/arrow_up.svg');
+			$(this).find( ".expandable-arrow" ).attr('src','./images/arrow_up.svg');
 		}
 
 	});
@@ -882,7 +882,7 @@ FormUtil.evalReservedField = function( tagTarget, val )
 			FormUtil.refreshGeoLocation( function() {
 				if ( FormUtil.geoLocationLatLon.length )
 				{
-					MsgManager.notificationMessage ( '<img src="images/img/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true, true );
+					MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true, true );
 				}
 				tagTarget.val( FormUtil.geoLocationCoordinates );
 			});
@@ -1396,30 +1396,30 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 
 	if ( itemData.status === cwsRenderObj.status_redeem_submit )
 	{
-		imgSyncIconTag.attr ( 'src', 'images/img/sync-n.svg' );
+		imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
 	}
 	else if ( itemData.status === cwsRenderObj.status_redeem_failed )
 	{
 
 		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
 		{
-			imgSyncIconTag.attr ( 'src', 'images/img/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
+			imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
 		}
 		else
 		{
 			if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
 			{
-				imgSyncIconTag.attr ( 'src', 'images/img/sync_error.svg' );
+				imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
 			}
 			else
 			{
-				imgSyncIconTag.attr ( 'src', 'images/img/sync-n.svg' );
+				imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
 			}
 		}
 	}
 	else
 	{
-		imgSyncIconTag.attr ( 'src', 'images/img/sync-banner.svg' );
+		imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
 	}
 
 	imgSyncIconTag.css ( 'transform', '' );

@@ -283,15 +283,15 @@ function BlockList( cwsRenderObj, blockObj )
             }
             else
             {
-                var blockListItemTag = $( '<div class="icon-row"><img src="images/img/act.svg">' + dateTimeStr + '</div>' );
+                var blockListItemTag = $( '<div class="icon-row"><img src="images/act.svg">' + dateTimeStr + '</div>' );
             }
         }
         else
         {
-            var blockListItemTag = $( '<div class="icon-row"><img src="images/img/act.svg">' + dateTimeStr + '</div>' );
+            var blockListItemTag = $( '<div class="icon-row"><img src="images/act.svg">' + dateTimeStr + '</div>' );
         }
 
-        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="images/img/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-2px;"></div>' );
+        var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="images/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-2px;"></div>' );
 
         var trObj2 = $( '<tr id="listItem_trExpander_' + itemData.id + '">' );
         tblObj.append( trObj2 );
@@ -305,7 +305,7 @@ function BlockList( cwsRenderObj, blockObj )
         var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/img/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:24px;height:24px;"></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:24px;height:24px;"></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
 
