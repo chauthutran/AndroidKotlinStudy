@@ -132,7 +132,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 		if ( ConnManager.scheduledTimer_intvCounter >= ConnManager.scheduledTimer_intvActLimit )
 		{
 			ConnManager.scheduledTimer_intvCounter = 0;
-			console.log( ' ~ here 1st');
+			//console.log( ' ~ here 1st');
 
 			if ( ! ConnManager.network_Online )
 			{
@@ -149,7 +149,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 			}
 			else
 			{
-				console.log( ' ~ FormUtil.getDataServerAvailable ' + ConnManager.network_Online );
+				//console.log( ' ~ FormUtil.getDataServerAvailable ' + ConnManager.network_Online );
 				FormUtil.getDataServerAvailable( function( success, jsonData ) 
 				{
 					if ( success && jsonData && jsonData.available != undefined )
@@ -263,12 +263,13 @@ ConnManager.createScheduledConnTests = function()
 
 	ConnManager.scheduledTimer_ID = setInterval( function() 
 	{
+		//console.log( ConnManager.scheduledTestBusy );
 		if ( ConnManager.scheduledTestBusy == 0 )
 		{
 
 			ConnManager.runScheduledConnTest( function( jsonData ) {
 
-				//console.log( jsonData );
+				////console.log( jsonData );
 				ConnManager.setScreen_NetworkIcons( jsonData.networkOnline, jsonData.serverOnline );
 
 				if ( ( jsonData.promptSwitchNetworkMode && ! ConnManager.connChangeAsked && ! ConnManager.userNetworkMode ) || jsonData.promptSwitchUserNetworkMode )
@@ -286,18 +287,18 @@ ConnManager.createScheduledConnTests = function()
 
 					/*if ( ConnManager.connChangeAsked )
 					{
-						console.log( ' ~ prompted already')
+						//console.log( ' ~ prompted already')
 					}*/
 				}
 
-				//console.log( ' ~ finish runScheduledConnTest ' + (new Date).toISOString() + ', networkOnline_CurrStatus: ' + ConnManager.networkOnline_CurrStatus + ', networkOnline_PrevStatus: ' + ConnManager.networkOnline_PrevStatus + ', appConnMode_Online: ' + ConnManager.appConnMode_Online );
+				////console.log( ' ~ finish runScheduledConnTest ' + (new Date).toISOString() + ', networkOnline_CurrStatus: ' + ConnManager.networkOnline_CurrStatus + ', networkOnline_PrevStatus: ' + ConnManager.networkOnline_PrevStatus + ', appConnMode_Online: ' + ConnManager.appConnMode_Online );
 				//ConnManager.scheduledTestBusy = 0;
 
 			});
 		}
 		else
 		{
-			//console.log( 'timer busy');
+			////console.log( 'timer busy');
 		}
 
 
@@ -327,7 +328,7 @@ ConnManager.createScheduledConnTests = function()
 					// Check continuous network counter - to the limit/check point.
 					if ( ConnManager.scheduledTimer_intvCounter >= ConnManager.scheduledTimer_intvActLimit )
 					{
-						//console.log( 'ConnManager.scheduledTimer_intvCounter >= ConnManager.scheduledTimer_intvActLimit: ' + ConnManager.scheduledTimer_intvActLimit );
+						////console.log( 'ConnManager.scheduledTimer_intvCounter >= ConnManager.scheduledTimer_intvActLimit: ' + ConnManager.scheduledTimer_intvActLimit );
 						// Ask for the appConnMode Change..
 						if ( ConnManager.appConnMode_Online != ConnManager.networkOnline_CurrStatus )
 						{
@@ -576,7 +577,7 @@ ConnManager.setUp_dataServerModeDetection = function()
 ConnManager.setScreen_NetworkIcons = function( bOnline, bDataServerOnline ) 
 {
   	var imgSrc = ( bOnline && bDataServerOnline ) ? 'images/sharp-cloud_queue-24px.svg': ( ( bOnline ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
-	//console.log( ' setScreen_NetworkIcons: ' + ( bOnline && bDataServerOnline ), bOnline , bDataServerOnline );
+	////console.log( ' setScreen_NetworkIcons: ' + ( bOnline && bDataServerOnline ), bOnline , bDataServerOnline );
 	$( '#imgNetworkStatus' ).css( 'transform', ( bOnline && bDataServerOnline ) ? '' : 'rotateY(180deg)' );
 
 	setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)

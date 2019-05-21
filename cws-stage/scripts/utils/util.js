@@ -1148,7 +1148,7 @@ Util.newLocalSequence = function( pattern )
 
 	if ( jsonStorageData == undefined ) 
 	{
-		jsonStorageData = { "D": Util.dateToMyFormat( new Date(), 'DD' ), "M": Util.dateToMyFormat( new Date(), 'MM' ), "Y": Util.dateToMyFormat( new Date(), 'YY' ), "DD": 0, "MM": 0, "YY": 0 };
+		jsonStorageData = { "DD": Util.dateToMyFormat( new Date(), 'DD' ), "MM": Util.dateToMyFormat( new Date(), 'MM' ), "YY": Util.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
 	}
 
 	if ( pattern.indexOf('[') > 0 )
@@ -1161,15 +1161,15 @@ Util.newLocalSequence = function( pattern )
 			{
 				var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
 
-				if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ (arrParm[0]).slice(1) ] )
+				if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
 				{
 					// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
 					ret = 1;
-					jsonStorageData[ (arrParm[0]).slice(1) ] = Util.dateToMyFormat( new Date(), arrParm[0] );
+					jsonStorageData[ arrParm[0] ] = Util.dateToMyFormat( new Date(), arrParm[0] );
 				}
 				else
 				{
-					var last = jsonStorageData[ arrParm[0] ];
+					var last = jsonStorageData[ (arrParm[0]).slice(1) ];
 
 					if ( last )
 					{
@@ -1182,9 +1182,9 @@ Util.newLocalSequence = function( pattern )
 
 				}
 
-				jsonStorageData[ arrParm[0] ] = ret;
+				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
 				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-
+				//console.log( jsonStorageData );
 				//DataManager.saveData( 'seqIncr', jsonStorageData );
 
 				DataManager.saveData( FormUtil.login_UserName, jsonUserData );
@@ -1356,7 +1356,7 @@ Util.getValueFromPattern = function( pattern )
 
 	if ( ret.length )
 	{
-		return ( ret.substring( 0, ret.length -1 ) );
+		return ( removeSeparator ? ret : ret.substring( 0, ret.length -1 ) );
 	}
 
 }

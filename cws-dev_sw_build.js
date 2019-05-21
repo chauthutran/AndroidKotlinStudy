@@ -15,6 +15,15 @@ generateSW({
 
   runtimeCaching: [
     {
+      urlPattern: /.js|.html|.css/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'appShell'
+      }
+    }
+  ],
+  runtimeCaching: [
+    {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {
@@ -22,14 +31,13 @@ generateSW({
       }
     }
   ],
-
   runtimeCaching: [
     {
-      urlPattern: /eRefWS/,
-      handler: 'staleWhileRevalidate',
-      options: {
-        cacheName: 'eRef-WebService'
-      }
+        urlPattern: /eRefWS/,
+        handler: 'staleWhileRevalidate',
+        options: {
+          cacheName: 'eRef-WebService'
+        }
     }
   ]
 

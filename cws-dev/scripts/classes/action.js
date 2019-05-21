@@ -101,7 +101,7 @@ function Action( cwsRenderObj, blockObj )
 		// TODO: all the blockDivTag related should be done by 'block' class method
 
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
-
+		console.log( clickActionJson.actionType );
 		// ACTIVITY ADDING
 		ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
 
@@ -164,13 +164,16 @@ function Action( cwsRenderObj, blockObj )
 			{
 				if ( clickActionJson.blockId !== undefined )
 				{
+					console.log( clickActionJson );
+					console.log( blockPassingData );
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
-				
+
 					// 'blockPassingData' exists is called from 'processWSResult' actions
 					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
 					blockPassingData.showCase = clickActionJson.showCase;
 					blockPassingData.hideCase = clickActionJson.hideCase;
-					
+					if ( clickActionJson.showCase ) console.log( clickActionJson.showCase );
+					if ( clickActionJson.hideCase ) console.log( clickActionJson.hideCase );
 					// Hide block if action is doing 'openBlock'
 					me.blockObj.hideBlock();
 
@@ -194,7 +197,7 @@ function Action( cwsRenderObj, blockObj )
 				var dataFromDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
 				var dataToDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
 				var dataItems = clickActionJson.dataItems;
-				
+
 				for ( var i = 0; i < dataItems.length; i++ )
 				{
 					var value = dataFromDivTag.find("[name='" + dataItems[i] + "']").val()
@@ -264,7 +267,7 @@ function Action( cwsRenderObj, blockObj )
 				// If statusActions did not get started for some reason, return as this action finished
 				if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
 			}
-			else if ( clickActionJson.actionType === "sendToWS" ) 
+			else if ( clickActionJson.actionType === "sendToWS" )
 			{
 				var currBlockId = blockDivTag.attr( 'blockId' );
 				var inputsJson;

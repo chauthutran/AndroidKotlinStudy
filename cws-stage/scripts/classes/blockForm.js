@@ -93,6 +93,7 @@ function BlockForm( cwsRenderObj, blockObj )
 	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
 	{
 		//console.log( 'adding renderInput_TabContent' );
+		//console.log( formItemJson );
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
 
@@ -193,7 +194,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			divInputTag.hide();
 			//console.log( 'tag.hide() - none' );
 		}
-		
 
 		if ( passedData !== undefined 
 			&& passedData.hideCase !== undefined 
@@ -212,7 +212,10 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			//console.log( 'showCase - by passedData' );
 			divInputTag.show();
-		}		
+		}
+
+		//if ( formItemJson.hideCase || formItemJson.showCase ) console.log( formItemJson );
+
 	}
 
 
