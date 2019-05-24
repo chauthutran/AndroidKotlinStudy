@@ -1,4 +1,9 @@
 /* Compatible with Leaflet 0.7 */
+.leaflet-control-locate
+{
+  /* margin-top: 80px !important; */
+  margin-left: 16px !important;
+}
 .leaflet-control-locate a {
   font-size: 1.4em;
   color: #444;
@@ -12,10 +17,10 @@
 }
 
 .leaflet-control-locate-location circle {
-  animation: leaflet-control-locate-throb 4s ease infinite;
+  animation: leaflet-control-locate-pulse 4s ease infinite;
 }
 
-@keyframes leaflet-control-locate-throb {
+@keyframes leaflet-control-locate-pulse {
   0% {
     r: 9;
     stroke-width: 1;

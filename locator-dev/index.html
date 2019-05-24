@@ -32,7 +32,7 @@
 
     <link rel="icon" type="image/png" href="images/icons/icon-144x144.png">
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=ABCDEFG&libraries=places" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places" async defer></script>
 
     <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js" ></script>
@@ -41,6 +41,7 @@
     <script type="text/javascript" src="scripts/libraries/leaflet.js" ></script>
     <script type="text/javascript" src="scripts/libraries/leaflet.awesome-markers.js" ></script>
     <script type="text/javascript" src="scripts/libraries/L.Control.Locate.min.js" ></script>
+    <script type="text/javascript" src="scripts/libraries/leaflet.customsearchbox.js" ></script>
 
     <script type="text/javascript" src="scripts/libraries/Leaflet.GoogleMutant.js"></script>
 
@@ -69,9 +70,11 @@
     <link rel="stylesheet" type="text/css" href="css/leaflet.css" >
     <link rel="stylesheet" type="text/css" href="css/leaflet.awesome-markers.css" >
     <link rel="stylesheet" type="text/css" href="css/L.Control.Locate.css" >
+    <link rel="stylesheet" type="text/css" href="css/searchbox.css" >
+
 
     <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Rubik' >
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
 
   </head>
   <body>
@@ -80,20 +83,16 @@
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
 
-    <div class='nav-burger-container'>
+<!--    <div class='nav-burger-container'>
       <a id="nav-toggle" href="#" aria-label="MENU"><span></span></a>      
-    </div>
+    </div>  -->
+
+    <div id="divProgressBar" class="progress"><div class="indeterminate"></div></div>
 
     <!-- MAP FORM DIV -->
     <div id="mapApp" style="display:none;"></div>
 
-    <div id="divProgressBar" class="progress"><div class="indeterminate"></div></div>
-
-    <div id="mapData" style="display:none;">
-      <div class="mapDataClose">
-        <img src='images/close_white.svg'>
-      </div>
-    </div>
+    <div id="panelBottom" style="display:none;"></div>
 
     <div id="pulsatingCircle" style="display:none;"></div>
 
@@ -104,8 +103,8 @@
 
     <script type="text/javascript" src="scripts/utils/util.js"></script>
     <script type="text/javascript" src="scripts/utils/inputUtil.js"></script>
-    <script type="text/javascript" src="scripts/utils/syncManager.js"></script>
-    <script type="text/javascript" src="scripts/utils/activityUtil.js"></script>
+<!--     <script type="text/javascript" src="scripts/utils/syncManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/activityUtil.js"></script> -->
     <script type="text/javascript" src="scripts/utils/msgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>

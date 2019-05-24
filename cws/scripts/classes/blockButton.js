@@ -289,7 +289,7 @@ function BlockButton( cwsRenderObj, blockObj )
 				// and create 'delete' method that deletes object as well as hides the area
 	
 				// Create the block and render it.
-				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag );	
+				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );	
 				newBlockObj.render();
 
 				// Get array of showCase + hideCase inputs > then action results of array

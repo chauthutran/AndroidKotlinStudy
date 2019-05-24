@@ -12,9 +12,15 @@ function cwsRender()
 
 	me.initialize = function()
 	{
-		me.mapObj.initialise( me );
 
-		me.setEvents_OnInit();
+		FormUtil.geolocationAllowed();
+
+		//FormUtil.geolocationAllowed( function() {
+
+			me.mapObj.initialise( me );
+			me.setEvents_OnInit();
+
+		//});
 
 	}
 

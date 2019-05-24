@@ -1196,13 +1196,13 @@ FormUtil.showProgressBar = function( width )
 	}
 	$( '#divProgressBar' ).css( 'display', 'block' );
 	$( '#divProgressBar' ).show();
-	$( '#divProgressBar' ).css( 'zIndex', '100' );
+	$( '#divProgressBar' ).css( 'zIndex', '200' );
 }
 
 FormUtil.hideProgressBar = function()
 {
-	//$( '#divProgressBar' ).css( 'display', 'none' );
 	$( '#divProgressBar' ).hide();
+	$( '#divProgressBar' ).css( 'zIndex', '0' );
 }
 
 
@@ -1622,11 +1622,11 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 
 }
 
-FormUtil.geolocationAllowed = function()
+FormUtil.geolocationAllowed = function( returnFunc )
 {
 	navigator.permissions.query({
 		name: 'geolocation'
-	}).then(function(result) {
+	}).then( function(result) {
 
 		FormUtil.geoLocationState = result.state;
 
@@ -1645,6 +1645,9 @@ FormUtil.geolocationAllowed = function()
 		result.onchange = function() {
 			FormUtil.geoLocationState = result.state;
 		}
+
+		if ( returnFunc ) returnFunc();
+
 	});
 
 }

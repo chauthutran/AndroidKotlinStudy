@@ -794,14 +794,14 @@ FormUtil.getRedeemPayload = function( id ) {
 
 FormUtil.getConfigInfo = function( returnFunc )
 {
-	//var url = FormUtil.getServerUrl() + '/pwaConfig.json';
+	//var url = FormUtil.getServerUrl() + '/pwaConfig.json'; //file resource to be deleted (23 May 2019: Greg + Bruno)
 	//RESTUtil.retrieveJson( url, returnFunc );
 
 	var jsonData = {
-		"cws": "https://cws.psi-mis.org/ws/eRefWSDev3",
+		"cws": 		 "https://cws.psi-mis.org/ws/eRefWSProd",
 		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
-		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSDev3",
-		"cws-dev": "https://apps.psi-mis.org/eRefWSDev3" //https://cws-dev.psi-mis.org/ws/eRefWSDev3
+		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSStage",
+		"cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" 
 	};
 
 	returnFunc( true, jsonData );

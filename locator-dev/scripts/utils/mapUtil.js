@@ -8,7 +8,7 @@ MapUtil.toDegreesMinutesAndSeconds = function(coordinate)
     var minutes = Math.floor(minutesNotTruncated);
     var seconds = Math.floor((minutesNotTruncated - minutes) * 60);
 
-    return degrees + "°" + minutes + "'" + seconds + '"';
+    return degrees + "°" + Util.paddNumeric( minutes, 2 ) + "'" + Util.paddNumeric( seconds, 2 ) + '"';
 }
 
 MapUtil.convertDMS = function(lat, lng) 
@@ -20,4 +20,18 @@ MapUtil.convertDMS = function(lat, lng)
     var longitudeCardinal = lng >= 0 ? "E" : "W";
 
     return latitude + " " + latitudeCardinal + "\n" + longitude + " " + longitudeCardinal;
+}
+
+MapUtil.transformIncomingCoordinates = function( incoming )
+{
+    //console.log( incoming.constructor );
+    if (Array.isArray ( incoming ) )
+    {
+
+    }
+    else if ( incoming.constructor == "string" )
+    {
+        //assume JSON?
+    }
+    return incoming;
 }

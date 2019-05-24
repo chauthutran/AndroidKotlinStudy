@@ -1,0 +1,462 @@
+[
+  {
+    "id": "xxxxx00001",
+    "provider": {
+      "name": "Ambe Judith",
+      "sex": "F",
+      "yob": 1980,
+      "phone1": "+237677233108",
+      "phone2": "",
+      "certif_name": "Nurse Assistant",
+      "certif_std": "Nurse Assistant"
+    },
+    "outlet": {
+      "name": "Providence Polyclinic",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 6.12633,
+      "long": 10.7085,
+      "region": "North West",
+      "district": "Bamenda",
+      "area": "Nkwen Urban",
+      "quarter": "Nkwen Foncha Street",
+      "mun": "Bamenda",
+      "munsub": "Nkwen",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00002",
+    "provider": {
+      "name": "Laghmboh Pamela",
+      "sex": "F",
+      "yob": 1981,
+      "phone1": "+237676378429",
+      "phone2": "",
+      "certif_name": "Midwife",
+      "certif_std": "Midwife"
+    },
+    "outlet": {
+      "name": "Providence Polyclinic",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 6.12633,
+      "long": 10.7085,
+      "region": "North West",
+      "district": "Bamenda",
+      "area": "Nkwen Urban",
+      "quarter": "Nkwen Foncha Street",
+      "mun": "Bamenda",
+      "munsub": "Nkwen",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00003",
+    "provider": {
+      "name": "Ngassa Leonelle",
+      "sex": "F",
+      "yob": 1982,
+      "phone1": "+23769113792",
+      "phone2": "",
+      "certif_name": "Masters in SRH",
+      "certif_std": "Non-Medical"
+    },
+    "outlet": {
+      "name": "CS Bon Secours ",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.4205,
+      "long": 11.7985,
+      "region": "Centre",
+      "district": "Biyem Assi",
+      "area": "Mvog Beti",
+      "quarter": "Etoug Be",
+      "mun": "Etoug Be",
+      "munsub": "",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00004",
+    "provider": {
+      "name": "Tchinda Miscael",
+      "sex": "M",
+      "yob": 1983,
+      "phone1": "+237655706349",
+      "phone2": "",
+      "certif_name": "Nurse",
+      "certif_std": "Nurse"
+    },
+    "outlet": {
+      "name": "CM Rois Mage",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.49333,
+      "long": 11.8655,
+      "region": "Centre",
+      "district": "Mfou",
+      "area": "Mfou",
+      "quarter": "Mfou",
+      "mun": "Mfou",
+      "munsub": "Rue Prison",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00005",
+    "provider": {
+      "name": "Essomba Ename",
+      "sex": "M",
+      "yob": 1984,
+      "phone1": "+237699095862",
+      "phone2": "",
+      "certif_name": "Nurse",
+      "certif_std": "Nurse"
+    },
+    "outlet": {
+      "name": "CS Providence",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.498,
+      "long": 11.9355,
+      "region": "Center",
+      "district": "Djoungolo",
+      "area": "Djoungolo",
+      "quarter": "Eleveur",
+      "mun": "Yaounde",
+      "munsub": "Eleveur",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00006",
+    "provider": {
+      "name": "Charles Tchakounkieu",
+      "sex": "M",
+      "yob": 1985,
+      "phone1": "+237699857093",
+      "phone2": "",
+      "certif_name": "Nurse",
+      "certif_std": "Nurse"
+    },
+    "outlet": {
+      "name": "CS Premiers Secours",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 3.906,
+      "long": 11.9425,
+      "region": "Center",
+      "district": "Djoungolo",
+      "area": "Djoungolo",
+      "quarter": "Ngoulmekong",
+      "mun": "Yaounde",
+      "munsub": "Fougerol",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00007",
+    "provider": {
+      "name": "Tchoumyeu Virginie",
+      "sex": "F",
+      "yob": 1986,
+      "phone1": "+237655010019",
+      "phone2": "",
+      "certif_name": "Nurse",
+      "certif_std": "Nurse"
+    },
+    "outlet": {
+      "name": "CS Perseverance",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.49717,
+      "long": 11.937,
+      "region": "Center",
+      "district": "Nkoldongo",
+      "area": "Ekounou",
+      "quarter": "Carrefour Ekie",
+      "mun": "Yaounde",
+      "munsub": "Ekie",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00008",
+    "provider": {
+      "name": "Dibongue Chantal",
+      "sex": "F",
+      "yob": 1987,
+      "phone1": "+237699446910",
+      "phone2": "",
+      "certif_name": "Midwife",
+      "certif_std": "Midwife"
+    },
+    "outlet": {
+      "name": "Centre Medico-Obsterical Ngodi-Akwa",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.03,
+      "long": 9.7085,
+      "region": "Littoral",
+      "district": "Deido",
+      "area": "Akwa",
+      "quarter": "Akwa",
+      "mun": "Douala",
+      "munsub": "Ngodi Akwa",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00009",
+    "provider": {
+      "name": "Lontsi Hélène",
+      "sex": "F",
+      "yob": 1988,
+      "phone1": "+237699764243",
+      "phone2": "",
+      "certif_name": "Nurse Assistant",
+      "certif_std": "Nurse Assistant"
+    },
+    "outlet": {
+      "name": "Clinique Des Soins Pour Tous",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 6.725,
+      "long": 9.73733,
+      "region": "Littoral",
+      "district": "Bangue",
+      "area": "Makèpè Missokè",
+      "quarter": "Dépôt Bananes",
+      "mun": "Bangue",
+      "munsub": "Dépôt Bananes",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  },
+  {
+    "id": "xxxxx00010",
+    "provider": {
+      "name": "Badjeck Daniel",
+      "sex": "M",
+      "yob": 1990,
+      "phone1": "+237699574690",
+      "phone2": "",
+      "certif_name": "Nurse",
+      "certif_std": "Nurse"
+    },
+    "outlet": {
+      "name": "CS Espérance Oyomabang",
+      "owntype": "Private",
+      "channel": "Franchise"
+    },
+    "location": {
+      "lat": 4.51033,
+      "long": 11.941,
+      "region": "Centre",
+      "district": "Nkolbisson",
+      "area": "Oyomabang",
+      "quarter": "Oyomabang Petit Marché",
+      "mun": "Yaounde",
+      "munsub": "Oyomabang Petit Marché",
+      "address1": "address1",
+      "address2": "address2"
+    },
+    "opening": {
+      "mon": "9:00,17:00",
+      "tue": "11:00,13:00;15:00,18:00",
+      "wed": "9:00,17:00",
+      "thu": "9:00,17:00",
+      "fri": "9:00,17:00",
+      "sat": "9:00,13:00",
+      "sun": ""
+    },
+    "service": {
+      "contraception": true,
+      "pacmiso": true,
+      "pacmva": true,
+      "ma": true,
+      "hrc": true,
+      "safea": true
+    }
+  }
+ ]

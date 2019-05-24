@@ -4,8 +4,10 @@
   margin: 0;
 }
 
-body {
+body,div,span,td {
   font-family: 'Rubik', 'Open Sans', sans-serif;
+}
+body{
   color: #50555a;
   padding: 80px 20px;
   box-sizing: border-box;
@@ -26,7 +28,6 @@ nav {
 }
 
 #mapApp { 
-  width: 100%;
   height: 100%;
   position: fixed;
   top:0; /* 56px */ 
@@ -51,14 +52,25 @@ nav {
   background-image:-webkit-linear-gradient(top, #ffffff 0%, #ffffff 100%);
   cursor: default;
 }
-div.mapDataClose{
-  position: fixed;
-  width: 100%;
-  left:0; 
-  height: 20px;
-  background-color: #f5f5f5;
-  text-align: right;
+
+#panelBottom{
+  background-image:-webkit-linear-gradient(top, #C0C0C0 0%, #ffffff 100%);
+  position: absolute;
+  width:100%;
+  left:0;
 }
+
+.panelBottom-close{
+  position: absolute;
+  top: 1px;
+  color: #808080;
+  border-radius: 6px;
+  background-color: #FFF;
+  right: 1px;
+  padding: 0 2px 0 2px;
+  font-size: 14px;
+}
+
 .bg-color {
   background-color: #f5f5f5;
   /*transition-duration: .5s;*/
@@ -77,6 +89,23 @@ div.mapDataClose{
 .text-color {
   color: #46a1de;
   /*transition-duration: .5s;*/
+}
+
+.gmnoprint {
+  margin-right: 15px;
+  display: inline;
+  white-space: normal;
+  line-height: 13px;
+  font-size: 10px;
+
+}
+.searchOpt
+{
+  border:1px solid #F5F5F5;
+  border-radius:6px;
+  padding:4px;
+  margin:4px;
+  font-size:20pt;
 }
 
 footer {
@@ -1017,19 +1046,6 @@ a.brand-logo {
 
 /* =========================== */
 
-#divProgressBar
-{
-  position: absolute;
-  /*top: 0px;*/
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-  text-align: center;
-  padding: 0;
-  cursor: default;
-  display: none;
-}
 
 #navDrawerDiv
 {
@@ -1681,15 +1697,30 @@ div.nav-burger-container
 
 
 /* START > PROGRESS BAR */
+
+#divProgressBar
+{
+  position: absolute;
+  background-color: #FFF;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  text-align: center;
+  padding: 0;
+  cursor: default;
+  display: none;
+}
+
 .progress {
 	position: fixed;
 	height: 3px;
 	display: block;
 	width: inherit;
 	background-color: transparent;
-	border-radius: 2px;
+	border-radius: 1px;
 	background-clip: padding-box;
-	margin: 4px 0 4px 0;
+	margin: 0;
   overflow: hidden;
   -webkit-transition: width 100ms; /* For Safari 3.1 to 6.0 */
   transition: width 100ms;
@@ -1697,9 +1728,13 @@ div.nav-burger-container
 .progress .determinate {
   position: fixed;
   width: 100%;
-  height: 4px;
+  height: 3px;
   -webkit-transition: width 100ms; /* For Safari 3.1 to 6.0 */
   transition: width 100ms;
+  background-color: #00b5e1;
+}
+.progress .indeterminate {
+  background-color: #00b5e1;
 }
 
 .progress .indeterminate:before {

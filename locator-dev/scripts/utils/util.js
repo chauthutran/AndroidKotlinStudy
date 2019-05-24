@@ -1210,7 +1210,7 @@ Util.newLocalSequence = function( pattern )
 Util.paddNumeric = function( val, padding )
 {
 	var ret = '';
-	if ( val && padding )
+	if ( val && padding || val == 0 && padding )
 	{
 		for (var i = 0; i < ( parseInt( padding ) - val.toString().length ); i++)
 		{

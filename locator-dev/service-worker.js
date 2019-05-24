@@ -23,6 +23,50 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "css/images/arrow_down.svg",
+    "revision": "d7742c7c0c773ad2f3d7c86393cc1326"
+  },
+  {
+    "url": "css/images/ic_dehaze_black_24dp_2x.png",
+    "revision": "963eec15715815b33d670f19eff4369e"
+  },
+  {
+    "url": "css/images/ic_directions_bike_black_24dp_2x.png",
+    "revision": "cef48ec6c86fa80fd129e14ce3941f5d"
+  },
+  {
+    "url": "css/images/ic_folder_black_24dp_2x.png",
+    "revision": "3e91a6bb9d5ba9664e3fe90450415230"
+  },
+  {
+    "url": "css/images/ic_local_car_wash_black_24dp_2x.png",
+    "revision": "2e81470975aaea866283df3987306a40"
+  },
+  {
+    "url": "css/images/ic_local_dining_black_24dp_2x.png",
+    "revision": "4935f98d2754146bce94506de7b961cc"
+  },
+  {
+    "url": "css/images/ic_navigate_before_black_24dp_2x.png",
+    "revision": "f55b0f8e648d030e90199c38eb1da6c5"
+  },
+  {
+    "url": "css/images/ic_navigate_down.png",
+    "revision": "a61a8205c01ffba2d0c1bdde781e3863"
+  },
+  {
+    "url": "css/images/ic_portrait_black_24dp_2x.png",
+    "revision": "54f85af1435e9bc852c69764e45d77f2"
+  },
+  {
+    "url": "css/images/ic_search_black_24dp_2x.png",
+    "revision": "2b6c859b5b3344bc725ca9cbf9e42b1f"
+  },
+  {
+    "url": "css/images/ic_wb_cloudy_black_24dp_2x.png",
+    "revision": "958d91683352770c1aa1a8cb67fc27b6"
+  },
+  {
     "url": "css/images/layers-2x.png",
     "revision": "4f0283c6ce28e888000e978e537a6a56"
   },
@@ -43,18 +87,6 @@ self.__precacheManifest = [
     "revision": "44a526eed258222515aa21eaffd14a96"
   },
   {
-    "url": "css/images/markers-matte.png",
-    "revision": "e35e51d1f5e5f18c5920134efee5b84c"
-  },
-  {
-    "url": "css/images/markers-matte@2x.png",
-    "revision": "bd650ab26794c44b00a30aaad3d49f01"
-  },
-  {
-    "url": "css/images/markers-plain.png",
-    "revision": "91b578f06b6acc021842aba01ddccbbf"
-  },
-  {
     "url": "css/images/markers-shadow.png",
     "revision": "9e9c77db241e8a58da99bf28694c907d"
   },
@@ -64,11 +96,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/images/markers-soft.png",
-    "revision": "02f9178c83e02bb868e961f151b7ed50"
+    "revision": "4baf5ae455d65cc3bfc0c2b50da9c804"
   },
   {
     "url": "css/images/markers-soft@2x.png",
-    "revision": "ad459aeb4ab160be9949504c2b36023d"
+    "revision": "08c63160f40c8573380d406d9b553938"
   },
   {
     "url": "css/jquery-ui.css",
@@ -88,7 +120,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/leaflet.css",
-    "revision": "c4555048a86096495d07f0775b11cf23"
+    "revision": "525b7daea55253c12ea4191362743688"
   },
   {
     "url": "css/materialize.css",
@@ -99,8 +131,12 @@ self.__precacheManifest = [
     "revision": "5fb9e3c9cdabcc833a3caa7efd5e31d8"
   },
   {
+    "url": "css/searchbox.css",
+    "revision": "25ccab061e67c8af010eebcc064ddf8c"
+  },
+  {
     "url": "css/style.css",
-    "revision": "f8cccd7de218a6210df5aa163c0490b4"
+    "revision": "5c8aa34d78674a1a59a10432674a1227"
   },
   {
     "url": "images/arrow_left.svg",
@@ -143,20 +179,12 @@ self.__precacheManifest = [
     "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
+    "url": "images/list.svg",
+    "revision": "c317fa9a4621a15ba6c721f0f727aee4"
+  },
+  {
     "url": "images/loading.gif",
     "revision": "6334d3fb9d2884cf47c16aaea13bff03"
-  },
-  {
-    "url": "images/markers-matte.png",
-    "revision": "e35e51d1f5e5f18c5920134efee5b84c"
-  },
-  {
-    "url": "images/markers-matte@2x.png",
-    "revision": "bd650ab26794c44b00a30aaad3d49f01"
-  },
-  {
-    "url": "images/markers-plain.png",
-    "revision": "91b578f06b6acc021842aba01ddccbbf"
   },
   {
     "url": "images/markers-shadow.png",
@@ -165,14 +193,6 @@ self.__precacheManifest = [
   {
     "url": "images/markers-shadow@2x.png",
     "revision": "d3a5d64a8534322988a4bed1b7dbc8b0"
-  },
-  {
-    "url": "images/markers-soft.png",
-    "revision": "02f9178c83e02bb868e961f151b7ed50"
-  },
-  {
-    "url": "images/markers-soft@2x.png",
-    "revision": "ad459aeb4ab160be9949504c2b36023d"
   },
   {
     "url": "images/mockup_SearchResults.png",
@@ -192,7 +212,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "e0d58024fb89179a75302ee2b9f0dba9"
+    "revision": "ed93be727aa67c5bae482e448f5057ea"
   },
   {
     "url": "scripts/app.js",
@@ -204,7 +224,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/map.js",
-    "revision": "d5392efd11fdff25c8b350ebee6fafdf"
+    "revision": "7c6609410350288b566ad6beb0377acf"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -212,7 +232,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1524992796f851429ccf0dd86fdd65a3"
+    "revision": "541a47ba3c39ae03c32c0bb49d55fe82"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -240,11 +260,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/leaflet.awesome-markers.js",
-    "revision": "7c7b0444d266a6f959f1c29b56c132db"
+    "revision": "b34f10b4d24c4e845bf0a26585bb03a7"
+  },
+  {
+    "url": "scripts/libraries/leaflet.customsearchbox.js",
+    "revision": "8321a3315ad49c3ae36320b75fc003ac"
   },
   {
     "url": "scripts/libraries/Leaflet.GoogleMutant.js",
-    "revision": "7f210d761e79dbe22576d6a316e0a66a"
+    "revision": "080e36795220ab4eb3018fffecc1256c"
   },
   {
     "url": "scripts/libraries/leaflet.js",
@@ -280,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "a26501f1d81a7bebe365a981cc2accb8"
+    "revision": "71c2766b49d36582194266b340b12d82"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -288,7 +312,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/mapUtil.js",
-    "revision": "855184d459c42ce337c5e5712309c8b8"
+    "revision": "922bf7927bfed7b093806699903d1c6a"
   },
   {
     "url": "scripts/utils/msgManager.js",

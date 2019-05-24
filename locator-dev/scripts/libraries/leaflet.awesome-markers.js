@@ -43,7 +43,7 @@
             var div = document.createElement('div'),
                 options = this.options;
 
-            if (options.icon) {
+            if (options.icon || options.html != '' ) {
                 div.innerHTML = this._createInner();
             }
 
@@ -80,7 +80,7 @@
                 }
             }
 
-            return "<i " + iconColorStyle + "class='" + options.extraClasses + " " + options.prefix + " " + iconClass + " " + iconSpinClass + " " + iconColorClass + "'>" + options.html + "</i>";
+            return "<i " + iconColorStyle + "class='" + options.extraClasses + " " + options.prefix + " " + iconClass + " " + iconSpinClass + " " + iconColorClass + "'><span class=''>" + options.html + "</span></i>";
         },
 
         _setIconStyles: function (img, name) {
