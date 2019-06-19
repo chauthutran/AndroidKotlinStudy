@@ -114,10 +114,14 @@ select option {
 }
 
 .itemBlock{
-  margin: 5px;
-  padding: 3px;
   text-align: left;
-} 
+  margin: 5px;
+  padding: 3px 3px 3px 5px;
+}
+
+.itemBlock div span {
+  color:#000;
+}
 
 .testSec {
   margin: 5px;
@@ -147,6 +151,10 @@ select option {
   margin: 3px;
   padding: 5px;
   background-color: white;  
+}
+
+.titleLabel {
+  display: inline-block;
 }
 
 .titleDiv {
@@ -286,8 +294,8 @@ a.brand-logo {
 
 .transitionRapid
 {
-  -webkit-transition: all 50ms, -webkit-transform 50ms; /* Safari */ 
-  transition: all 50ms, transform 50ms;
+  -webkit-transition: all 25ms, -webkit-transform 25ms; /* Safari */ 
+  transition: all 25ms, transform 25ms;
   position: absolute;
 }
 
@@ -422,8 +430,9 @@ img.round:hover{
 .menuDataStat
 {
   position: relative; 
-  top:0px; 
+  top:4px; 
   left: 4px;
+  color:#ddd;
 }
 
 #notificationUpgrade
@@ -643,9 +652,19 @@ img.round:hover{
   left:1px;
 }
 
-.searchResultTable
+.resultsImgContainer
 {
-  border: 2px solid rgba(0,0,0,0.1);
+  margin: 8px;
+  max-width: 56px;
+  min-width: 56px;
+  width: 56px;
+}
+.searchResultTable td
+{
+  font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: calc(12px + 0.2vw);
 }
 .searchResultTableSpacer
 {
@@ -670,16 +689,13 @@ img.round:hover{
 .groupByFieldHeader
 {
   width:auto;
-  color:#101010;
+  /*color:#101010;*/
   padding:8px 4px 4px 0px;
   margin: 0 0 0 6px;
   font-weight: 600;
   border-top: 1px solid #F0F0F0;
 }
-.groupByResultBlock
-{
-  margin: 8px 8px 8px 34px;
-}
+
 .groupByFieldResultTable
 {
   width: 100%;
@@ -705,6 +721,7 @@ img.round:hover{
 {
   color: #50555a;
   padding: 0 0 0 4px;
+  font-size: calc(12px + 0.2vw);
 }
 
 
@@ -921,6 +938,7 @@ img.imgMore
   top: 0;
   left: 0;
   bottom: 0;
+  height:3px;
   will-change: left, right;
   -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
       animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; 
@@ -933,6 +951,7 @@ img.imgMore
   top: 0;
   left: 0;
   bottom: 0;
+  height:3px;
   will-change: left, right;
   -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
       animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;

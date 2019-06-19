@@ -1195,8 +1195,8 @@ FormUtil.showProgressBar = function( width )
 		$( 'div.determinate' ).css('width', width );
 	}
 	$( '#divProgressBar' ).css( 'display', 'block' );
-	$( '#divProgressBar' ).show();
 	$( '#divProgressBar' ).css( 'zIndex', '200' );
+	$( '#divProgressBar' ).show();
 }
 
 FormUtil.hideProgressBar = function()
@@ -1512,17 +1512,17 @@ FormUtil.lookupJsonArr = function( jsonData, fldSearch, fldValue, searchValue )
 	}
 }
 
-FormUtil.shareApp = function() {
-    var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
+FormUtil.shareApp = function( text, myLocation, emphasizePOI ) {
+	var text = "I found an Outlet/Provider you may be interested in. Connecting with Sara";
     if ('share' in navigator) {
         navigator.share({
-            title: 'CwS: Connect App',
+            title: 'CwS: Outlet/Provider',
             text: text,
-            url: location.href,
+            url: (window.location.href).split( '?' )[0] + '?c=' + myLocation + ( emphasizePOI ? '&poi=1' : '' )
         })
     } else {
         // Here we use the WhatsApp API as fallback; remember to encode your text for URI
-        location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + ' - ') + location.href
+        location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + ' - ') + (window.location.href).split( '?' )[0] + '?c=' + myLocation + ( emphasizePOI ? '&poi=1' : '' )
     }
 }
 

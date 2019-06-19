@@ -4,11 +4,7 @@
   let _registrationObj;
   const _cwsRenderObj = new cwsRender();
   
-  //window._syncManager = new syncManager(); //i realise this is bad practice > but I need access to _syncManager object from aboutApp.js
   var debugMode = false;
-
-  //const _testSection = new testSection();
-
 
   window.onload = function() {
     //startApp();
@@ -24,67 +20,25 @@
 
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('appinstalled', recordInstallEvent);
 
     // Set App Connection Mode
-    //ConnManager.setAppConnMode_Initial();
-    //ConnManager.setUp_AppConnModeDetection(); //renamed to setUp_ScheduledTimer_Checks()
     ConnManager.initialize();
-
 
     // 2. Do 'appInfoOperation' that does app Version Check & action first
     //  & set web service type for the app
     // , then, proceed with 'cwsRenderObj' rendering.
 
     appInfoOperation( function() {
-      // Create a class that represent the object..
       ConnManager._cwsRenderObj = _cwsRenderObj;
-      _cwsRenderObj.render();
+      _cwsRenderObj.render();  
       syncManager.initialize( _cwsRenderObj );
-
     });
 
-    window.addEventListener('appinstalled', function(event) 
-    {
-        // Track event: The app was installed (banner or manual installation)
-        ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-        playSound("coin");
 
-    });
-
+    // create numeric input keypad > untidy implementation but it works
     //if ( Util.isMobi() )
-    {
-
-      $( "#passReal" ).keydown(function( event ) {
-
-        if ( event.keyCode == 8 || event.keyCode == 46 )
-        {
-          $( "#passReal" ).val( '' );
-          $( "#pass" ).val( '' );
-        }
-
-      });
-
-      $( "#passReal" ).keyup(function( event ) {
-
-          $('#pass').val( $('#passReal').val() );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-
-      });
-
-      $( "#pass" ).focus(function() {
-
-          $('#passReal').focus();
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-          $('#passReal').css( 'top', $('#pass').position().top + 8 );
-
-      });
-
-      setTimeout( function() {
-          $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + 20 + 'px' );
-      }, 500 );
-
-    }
+    createNumberLoginPinPad();
 
   }
 
@@ -92,9 +46,11 @@
 
   $( '#spanVersion' ).text( 'v' + _ver );
 
+
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
   });
+
 
   // move to cwsRender 
   $( '#hidenotificationUpgrade' ).click ( () => {
@@ -175,7 +131,9 @@
   function appVersionUpgradeReview( jsonData ) 
   {
     var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
+
     if ( debugMode ) console.log( _ver , ' vs ', latestVersionStr);
+
     // compare the version..  true if online version (retrieved one) is higher..
     if ( _ver < latestVersionStr )
     {
@@ -195,18 +153,15 @@
           if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches && FormUtil._getPWAInfo.reloadInstructions.allCaches == "true" )
           {
             if ( debugMode ) console.log( 'btnRefresh > FormUtil.deleteCacheKeys() ' );
-            FormUtil.deleteCacheKeys( ); //( _cwsRenderObj.reGetAppShell )
+            FormUtil.deleteCacheKeys( );
           }
-          /*else
-          {
-            _cwsRenderObj.reGetAppShell();
-          }*/
 
         }
 
       });
 
-      MsgManager.notificationMessage ( 'New version of this app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+      // MISSING TRANSLATION
+      MsgManager.notificationMessage ( 'New version of app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
 
     }
     
@@ -215,33 +170,19 @@
   
   function webServiceSet( wsName )
   {
-    if ( wsName )
-    {
-      /*var appUrlName = FormUtil.appUrlName;
-      var wsName = '';
-      try { wsName = appWS[ appUrlName ]; }
-      catch(err) {}
-
-      if ( wsName ) 
-      {
-        if ( debugMode ) console.log( 'setting staticWSName: ' + wsName );
-        FormUtil.staticWSName = wsName;
-      }*/
-
-      FormUtil.staticWSName = wsName;
-      //console.log( 'working against: ' + wsName );
-
-    }
+    if ( wsName ) FormUtil.staticWSName = wsName;
   }
 
+  function recordInstallEvent( event )
+  {
+      // Track event: The app was installed (banner or manual installation)
+      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+      playSound("coin");
+  }
 
   function updateOnlineStatus( event ) 
   {
-
     ConnManager.network_Online = navigator.onLine;
-    //ConnManager.setScreen_NetworkIcons( ConnManager.network_Online, ConnManager.dataServer_Online );
-
-    //if ( ConnManager.dataServer_timerID == 0) ConnManager.setUp_dataServerModeDetection();
 
     if ( _cwsRenderObj.initializeStartBlock )
     {
@@ -249,6 +190,38 @@
     }
 
   };
+
+  function createNumberLoginPinPad()
+  {
+
+      $( "#passReal" ).keydown(function( event ) 
+      {
+        if ( event.keyCode == 8 || event.keyCode == 46 )
+        {
+          $( "#passReal" ).val( '' );
+          $( "#pass" ).val( '' );
+        }
+      });
+
+      $( "#passReal" ).keyup(function( event ) 
+      {
+          $('#pass').val( $('#passReal').val() );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+      });
+
+      $( "#pass" ).focus(function() 
+      {
+          $('#passReal').focus();
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+          $('#passReal').css( 'top', $('#pass').position().top + 8 );
+      });
+
+      setTimeout( function() {
+          $('#passReal').css( 'top', $('#pass').position().top + 12 );
+          $('#passReal').css( 'left', $('#pass').position().left + 20 + 'px' );
+      }, 500 );
+
+  }
 
   function updateSyncManager( event ) 
   {
@@ -269,9 +242,12 @@
 
             installingWorker.onstatechange = () => {
 
+              console.log( ' ~ sw_state: ' + installingWorker.state );
+
               switch (installingWorker.state) {
                 case 'installed':
-                  if (navigator.serviceWorker.controller) {
+                  if (navigator.serviceWorker.controller) 
+                  {
                     // new update available
                     //resolve(true);
                     var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
@@ -280,8 +256,11 @@
                       location.reload( true );
                     });
 
+                    // MISSING TRANSLATION
                     MsgManager.notificationMessage ( 'New updates installed. Click refresh to view changes', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-                  } else {
+                  } 
+                  else 
+                  {
                     // no update available
                     //resolve(false);
                   }
@@ -304,6 +283,7 @@
 
         })
         .catch(err => 
+          // MISSING TRANSLATION
           MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 )
         );
 

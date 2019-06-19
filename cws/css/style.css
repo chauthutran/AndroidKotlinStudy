@@ -604,7 +604,7 @@ div.fixed_father {
   background-color: #F2F2F2; /*rgba(255, 218, 109, 0.938);*/
   z-index: 10;
   box-sizing: border-box;
-  font-family: Roboto,RobotoDraft,'Open Sans',Arial,sans-serif;
+  font-family: 'Roboto','RobotoDraft','Open Sans',Arial,sans-serif;
 }
 
 .menu-mobile-row {

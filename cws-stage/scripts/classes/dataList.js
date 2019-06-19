@@ -354,6 +354,140 @@ function DataList( cwsRenderObj, blockObj )
             }
 
             var trTopObjTag = $( '<tr class="itemBlock">' );
+            var tdLeftIconTag = $( '<td rowspan=2 class="resultsImgContainer">' );
+            var tdIconTag = $( '<img src="images/user.svg" style="width:56px;height:56px;">' );
+            var tdLeftobjTag =  $( '<td class="">' );
+
+            tblObjTag.append( trTopObjTag );
+            trTopObjTag.append( tdLeftIconTag );
+            tdLeftIconTag.append( tdIconTag );
+            trTopObjTag.append( tdLeftobjTag );
+
+            if ( !validResultData )
+            {
+                var divAttrTag = $( '<div class="" />' );
+                var labelTag = $( '<label class="titleLabel" />' );
+                var valueTag = $( '<span class="">');
+
+                tdLeftobjTag.append( divAttrTag );
+                divAttrTag.append( labelTag );
+                divAttrTag.append( valueTag );
+
+                labelTag.html( 'dcd Config issue' );
+                valueTag.html( 'no valid IDs for "displayResult":[]' );
+            }
+            else
+            {
+
+                var condObj;
+
+                for( var i = 0; i < newjsonList.length; i++ )
+                {
+                    for( var p = 0; p < newjsonList[ i ].length; p++ )
+                    {
+                        if ( newjsonList[ i ][ p ].id == 'condition' )
+                        {
+                            condObj = newjsonList[ i ][ p ];
+                        }
+                    }
+                }
+
+                for( var o = 0; o < objResult.length; o++ )
+                {
+                    var divAttrTag = $( '<div class="" />' );
+                    var labelTag = $( '<label class="titleLabel" />' );
+                    var valueTag = $( '<span id="'+objResult[o].id+'" class="">');
+
+                    tdLeftobjTag.append( divAttrTag );
+                    divAttrTag.append( labelTag );
+                    divAttrTag.append( valueTag );
+
+                    labelTag.html( me.resolvedefinitionField( objResult[o] ) +':');
+                    valueTag.html( me.resolvedefinitionOptionValue( objResult[o].value ) );
+
+                    if ( objResult[o].id == '' ) //added from search criteria
+                    {
+                        //labelTag.css('font-weight',"600");
+                        valueTag.css('color','#909090');
+                    }
+
+                };
+
+                var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
+                trTopObjTag.append( tdRightobjTag );
+
+                me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
+
+                if ( itemButtons != undefined )
+                {
+                    me.renderButtons( tdRightobjTag, itemButtons );
+                }
+                else
+                {
+                    me.renderButtons( tdRightobjTag, blockJson.itemButtons );
+                }
+
+            }
+
+        }
+
+    }
+
+    me.renderSearchResultBlocksOld = function( divFormContainerTag, itemDisplayAttrList, fieldId, lookupVal, jsonList, blockJson, itemButtons )
+    {
+        var searchPostPayload = FormUtil.getLastPayload();
+        var newjsonList = [];
+
+        if ( me.debugMode ) console.log( itemButtons );
+
+        for( var i = 0; i < jsonList.length; i++ )
+        {
+            if ( fieldId && lookupVal )
+            { 
+                var itemAttrDataFiltered = ( jsonList[i] ).filter(a=>a.id==fieldId&&a.value==lookupVal);
+                if ( itemAttrDataFiltered.length ) newjsonList.push ( jsonList[i] );
+            }
+            else
+            {
+                newjsonList.push ( jsonList[i] );
+            }
+        }
+
+        for( var r = 0; r < newjsonList.length; r++ )
+        {
+            if ( r > 0 )
+            {
+                var divSpacerTag = $( '<div class="searchResultTableSpacer" />' );
+                divFormContainerTag.append( divSpacerTag );
+            }
+
+            var itemAttrDataList = ( newjsonList[r] );
+            var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
+            var validResultData = objResult.length;
+            var tblObjTag = $( '<table class="searchResultTable" id="searchResult_'+r+'">' );
+
+            divFormContainerTag.append( tblObjTag );
+
+            if ( blockJson.displayHeader )
+            {
+
+                var tritemHeaderTag = $( '<tr>' );
+                var tditemHeaderTag = $( '<td class="groupByResultHeader">' );
+
+                tblObjTag.append( tritemHeaderTag );
+                tritemHeaderTag.append( tditemHeaderTag );
+
+                var imginfoTag = $( '<img src="images/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
+                var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
+                var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
+
+                tditemHeaderTag.append( imginfoTag );
+                tditemHeaderTag.append( lblSpacer );
+                tditemHeaderTag.append( labelTag );
+
+            }
+
+            var trTopObjTag = $( '<tr class="itemBlock">' );
             var tdLeftobjTag = $( '<td>' );
 
             tblObjTag.append( trTopObjTag );
@@ -405,9 +539,6 @@ function DataList( cwsRenderObj, blockObj )
                     {
                         //labelTag.css('font-weight',"600");
                         valueTag.css('color','#909090');
-
-                        //labelTag.css('color',"#8F5959");
-                        //valueTag.css('color',"#612A2A");
                     }
 
                 };
@@ -431,7 +562,6 @@ function DataList( cwsRenderObj, blockObj )
         }
 
     }
-
 
     me.blockDataValidResultArray = function( itemAttrList, searchResults )
     {

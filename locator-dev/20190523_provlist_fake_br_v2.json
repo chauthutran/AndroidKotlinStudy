@@ -11,13 +11,13 @@
       "certif_std": "Nurse Assistant"
     },
     "outlet": {
-      "name": "Providence Polyclinic",
+      "name": "Providence Polyclinic A",
       "owntype": "Private",
       "channel": "Franchise"
     },
     "location": {
-      "lat": 6.12633,
-      "long": 10.7085,
+      "lat": 6.72633,
+      "long": 10.579,
       "region": "North West",
       "district": "Bamenda",
       "area": "Nkwen Urban",
@@ -38,10 +38,10 @@
     },
     "service": {
       "contraception": true,
-      "pacmiso": true,
+      "pacmiso": false,
       "pacmva": true,
-      "ma": true,
-      "hrc": true,
+      "ma": false,
+      "hrc": false,
       "safea": true
     }
   },
@@ -57,13 +57,13 @@
       "certif_std": "Midwife"
     },
     "outlet": {
-      "name": "Providence Polyclinic",
+      "name": "Providence Polyclinic B",
       "owntype": "Private",
       "channel": "Franchise"
     },
     "location": {
-      "lat": 6.12633,
-      "long": 10.7085,
+      "lat": 6.2491,
+      "long": 10.2811,
       "region": "North West",
       "district": "Bamenda",
       "area": "Nkwen Urban",
@@ -84,10 +84,10 @@
     },
     "service": {
       "contraception": true,
-      "pacmiso": true,
-      "pacmva": true,
+      "pacmiso": false,
+      "pacmva": false,
       "ma": true,
-      "hrc": true,
+      "hrc": false,
       "safea": true
     }
   },
@@ -109,7 +109,7 @@
     },
     "location": {
       "lat": 4.4205,
-      "long": 11.7985,
+      "long": 11.1985,
       "region": "Centre",
       "district": "Biyem Assi",
       "area": "Mvog Beti",
@@ -129,10 +129,10 @@
       "sun": ""
     },
     "service": {
-      "contraception": true,
-      "pacmiso": true,
-      "pacmva": true,
-      "ma": true,
+      "contraception": false,
+      "pacmiso": false,
+      "pacmva": false,
+      "ma": false,
       "hrc": true,
       "safea": true
     }
@@ -166,20 +166,20 @@
       "address2": "address2"
     },
     "opening": {
-      "mon": "9:00,17:00",
-      "tue": "11:00,13:00;15:00,18:00",
-      "wed": "9:00,17:00",
-      "thu": "9:00,17:00",
-      "fri": "9:00,17:00",
-      "sat": "9:00,13:00",
+      "mon": "8:00,13:00",
+      "tue": "11:00,13:00",
+      "wed": "8:00,13:00",
+      "thu": "8:00,13:00",
+      "fri": "8:00,13:00",
+      "sat": "8:00,13:00",
       "sun": ""
     },
     "service": {
-      "contraception": true,
+      "contraception": false,
       "pacmiso": true,
-      "pacmva": true,
-      "ma": true,
-      "hrc": true,
+      "pacmva": false,
+      "ma": false,
+      "hrc": false,
       "safea": true
     }
   },
@@ -212,21 +212,21 @@
       "address2": "address2"
     },
     "opening": {
-      "mon": "9:00,17:00",
-      "tue": "11:00,13:00;15:00,18:00",
-      "wed": "9:00,17:00",
+      "mon": "8:00,17:00",
+      "tue": "8:00,17:00",
+      "wed": "8:00,17:00",
       "thu": "9:00,17:00",
       "fri": "9:00,17:00",
       "sat": "9:00,13:00",
       "sun": ""
     },
     "service": {
-      "contraception": true,
+      "contraception": false,
       "pacmiso": true,
-      "pacmva": true,
+      "pacmva": false,
       "ma": true,
       "hrc": true,
-      "safea": true
+      "safea": false
     }
   },
   {
@@ -292,8 +292,8 @@
       "channel": "Franchise"
     },
     "location": {
-      "lat": 4.49717,
-      "long": 11.937,
+      "lat": 5.4717,
+      "long": 12.37,
       "region": "Center",
       "district": "Nkoldongo",
       "area": "Ekounou",
@@ -305,17 +305,17 @@
     },
     "opening": {
       "mon": "9:00,17:00",
-      "tue": "11:00,13:00;15:00,18:00",
+      "tue": "9:00,15:00",
       "wed": "9:00,17:00",
       "thu": "9:00,17:00",
       "fri": "9:00,17:00",
-      "sat": "9:00,13:00",
+      "sat": "9:00,17:00",
       "sun": ""
     },
     "service": {
       "contraception": true,
-      "pacmiso": true,
-      "pacmva": true,
+      "pacmiso": false,
+      "pacmva": false,
       "ma": true,
       "hrc": true,
       "safea": true
@@ -350,21 +350,21 @@
       "address2": "address2"
     },
     "opening": {
-      "mon": "9:00,17:00",
-      "tue": "11:00,13:00;15:00,18:00",
-      "wed": "9:00,17:00",
+      "mon": "9:00,13:00",
+      "tue": "9:00,13:00",
+      "wed": "8:00,16:00",
       "thu": "9:00,17:00",
       "fri": "9:00,17:00",
-      "sat": "9:00,13:00",
+      "sat": "9:00,17:00",
       "sun": ""
     },
     "service": {
       "contraception": true,
-      "pacmiso": true,
-      "pacmva": true,
-      "ma": true,
+      "pacmiso": false,
+      "pacmva": false,
+      "ma": false,
       "hrc": true,
-      "safea": true
+      "safea": false
     }
   },
   {
@@ -406,11 +406,11 @@
     },
     "service": {
       "contraception": true,
-      "pacmiso": true,
-      "pacmva": true,
+      "pacmiso": false,
+      "pacmva": false,
       "ma": true,
       "hrc": true,
-      "safea": true
+      "safea": false
     }
   },
   {
@@ -430,8 +430,8 @@
       "channel": "Franchise"
     },
     "location": {
-      "lat": 4.51033,
-      "long": 11.941,
+      "lat": 4.21033,
+      "long": 12.2341,
       "region": "Centre",
       "district": "Nkolbisson",
       "area": "Oyomabang",
@@ -453,10 +453,10 @@
     "service": {
       "contraception": true,
       "pacmiso": true,
-      "pacmva": true,
+      "pacmva": false,
       "ma": true,
       "hrc": true,
-      "safea": true
+      "safea": false
     }
   }
  ]

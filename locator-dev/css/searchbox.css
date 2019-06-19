@@ -7,7 +7,7 @@
     transition: left 0.5s;
     -webkit-transform: translateX(0px);
     transform: translateX(0px);
-    transition-property: -webkit-transform,transform,visibility,opacity;
+    transition-property: -webkit-transform,transform,visibility,opacity,width;
     transition-duration: 200ms;
     transition-timing-function: cubic-bezier(0.0,0.0,0.2,1);
 }
@@ -29,7 +29,7 @@
 
 #searchboxinput
 {
-    font-size:12pt;
+    font-size:11pt;
     /* border:1px solid #F5F5F5; */
     color:#50555a;
     width:90%;
@@ -96,11 +96,15 @@
     padding: 11px 16px;
 }
 
+.searchbox-input-container
+{
+    padding:2px 0 0 0;
+}
 .searchbox-searchbutton
 {
 
     display: block;
-    padding: 2px 9px 2px 10px;
+    padding: 2px 20px 2px 10px;
     cursor:pointer;
     opacity:0.61;
 }
@@ -112,18 +116,19 @@
 {
     content: "";
     position: absolute;
-    right: 50px;
+    right: 5px;
     top: 10px;
-    /* border-left: 1px solid #ddd; */
+    border-left: 1px solid #ddd;
     height: 28px;
+    padding: 0 0 0 5px;
 }
 .searchbox-searchbutton-container
 {
     content: "";
     position: absolute;
-    right: 0;
+    right: 35px;
     top: 10px;
-    border-left: 1px solid #ddd;
+    /* border-left: 1px solid #ddd; */
     height: 28px;
 }
 
@@ -151,11 +156,14 @@
 .searchbox-searchoptions::before {
     content: '';
     display: block;
-    width: 24px;
+    width: 34px;
     height: 24px;
-    background: url('images/arrow_down.svg');
-    background-size: 100%;
-    opacity:.5
+    /* background: url(images/arrow_down.svg); */
+    /* background-size: 100%; */
+    opacity: .95;
+    font-size: 14pt;
+    padding: 4px 2px 2px 0;
+    /* color:#2C98F0 !important; */
 }
 
 
@@ -272,7 +280,7 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
     color:#777;
     cursor:pointer;
     font-size: 14px;
-    line-height:22px;
+    /*line-height:22px;*/
     vertical-align:top;
     
 }
@@ -281,7 +289,8 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 }
 .panel-content a:hover,button:hover
 {
-    color:blue;
+    /* color:blue; */
+    color: #000;
 }
 
 .icon-folder
@@ -341,9 +350,10 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 
 .search-words-container
 {
-    background-color: #fff;
+    background-color: #F5F5F5; /* #fff; */
+    border-radius:10px;
     padding: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02); */
     display:none;
     position: relative;
     top: -1px;
@@ -370,7 +380,7 @@ a.search-word-close-button
     padding: 2px 6px 2px 6px;
     background-Color: #5C5C5C;
     color: #E0E0E0;
-    margin: 2px 0 2px 2px;
+    margin: 3px 0 2px 2px;
     border-radius: 16px;
     cursor: pointer;
     position: relative;
@@ -394,19 +404,36 @@ a.search-word-close-button:hover
     display:none;
     position: relative;
     top: -1px;
+    margin: 8px 0 0 0;
+    overflow-y: auto;
 }
+.search-results-container::-webkit-scrollbar {
+    width: 1em;
+}
+ 
+.search-results-container::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+ 
+.search-results-container::-webkit-scrollbar-thumb {
+  background-color: #F5F5F5;
+  outline: 1px solid #fff;
+}
+
 .search-results-inner
 {
-    display:flex;
+    display:grid;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .listview-toggle
 {
-    /* background-image: url("../images/list.svg"); */
     background-color: #fff;
+    /* background-image: url("../images/list.svg");
     background-size: 28px 28px;
     background-position: center center;
-    background-repeat: no-repeat;
-    margin: 20px 14px 0 0 !important;
+    background-repeat: no-repeat;*/
+    margin: 20px 14px 0 0 !important; 
     border-radius: 20px;
     width: 40px;
     height: 40px;
@@ -426,25 +453,241 @@ a.search-word-close-button:hover
 .searchbox-hidebutton-container
 {
     position: absolute;
-    right: -3px;
-    top: 32px;
+    right: -4px;
+    top: 14px;
     /* border-left: 1px solid #ddd; */
     height: 28px;
 }
 
 .searchbox-hide-toggle {
-    font-size: 10pt;
+    font-size: 12pt;
     position: relative;
-    padding: 2px;
-    background-color: #F5F5F5 !important;
-    color: #00b5e1 !important;
+    padding: 0;
+    background-color: #777 !important;
+    color: #fff !important;
     position: relative;
-    top: -18px;
-    border-radius: 8px;
-    left: 6px;
-    opacity: 0.15;
+    top: 2px;
+    /* border-radius: 8px; */
+    left: 8px;
+    opacity: 0.4;
+    margin: 0 !important;
+    line-height: 0.75 !important;
 }
 .searchbox-hide-toggle:hover
 {
-    opacity: 0.8;
+    opacity: 1;
+}
+.circleSearchResult
+{
+    background: #FF0000; 
+    width: 30px;
+    height: 30px; 
+    border-radius: 17px; 
+    border: 2px solid #FFF;
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+}
+
+
+.previewCard
+{
+    margin:2px;
+    border:0;
+    padding:2px;
+    font-size:8pt;
+    border-spacing:0;
+    cursor:default;
+    width:100%;
+}
+.panelBottom-contents table
+{
+    width:100%;
+}
+    /* ======================= */
+    /* 1A. Smallest Anchor Mode */
+    @media screen and (max-width: 559px) {
+        .circleSearchResult div
+        {
+            position:relative; 
+            left: -2px; 
+            top: 0px; 
+            width: 30px; 
+            height: 30px; 
+            color: white; 
+            text-align:center;
+            font-size:17px;
+            font-weight:800;
+            -webkit-font-smoothing: antialiased;
+        }
+        .searchResultMainName div
+        {
+            font-size:9pt;
+            padding:0 8px 0 2px;
+            font-weight:800;
+            overflow: hidden;
+            min-width:140px;
+            max-width:150px;
+        }
+        .operatingHours table
+        {
+            font-size:9px;
+            font-weight:400;
+            padding:0;
+            width: 100%;
+            border-spacing:0;
+        }
+        .openHoursLabelRow
+        {
+            font-size:10px;
+            font-weight:600;
+            border-bottom:1px solid #BDBDBD;
+            vertical-align:bottom;
+            padding: 0 0 2px 0
+        }
+        .phoneRow
+        {
+            font-size:8pt;
+            font-weight:400;
+            padding:0 0 0 6px;
+        }
+        .servicesRow
+        {
+            font-size:8pt;
+            padding:0 0 0 6px;
+            border-top:1px solid #BDBDBD;
+        }
+        .providerRow
+        {
+            padding: 0;
+            margin: 0;
+            line-height: 8px;
+            position:relative;
+            top:0;
+            /*top:-3px;*/
+        }
+    }
+
+    
+    /* 1B. Tab content mode - hide Anchor */
+    @media screen and (min-width: 560px) {
+        .circleSearchResult div
+        {
+            position:relative; 
+            left: -2px; 
+            top: 2px; 
+            width: 30px; 
+            height: 30px; 
+            color: white; 
+            text-align:center;
+            font-size:17px;
+            font-weight:800;
+            -webkit-font-smoothing: antialiased;
+        }
+        .searchResultMainName div
+        {
+            font-size:11pt;
+            padding:0 8px 0 2px;
+            font-weight:800;
+            overflow: hidden;
+            min-width:200px;
+            max-width:300px;
+        }
+
+        .operatingHours table
+        {
+            font-size:12px;
+            font-weight:400;
+            padding:1px;
+            width: 100%;
+            border-spacing:0;
+        }
+        .openHoursLabelRow
+        {
+            font-size:12px;
+            font-weight:600;
+            border-bottom:1px solid #BDBDBD;
+            vertical-align:bottom;
+            padding: 1px 0 2px 0
+        }
+        .phoneRow
+        {
+            font-size:8pt;
+            font-weight:400;
+            padding:0 0 3px 6px;
+        }
+        .servicesRow
+        {
+            font-size:9pt;
+            padding: 2px 0 0 6px;
+            border-top:1px solid #BDBDBD;
+        }
+        .providerRow
+        {
+            padding: 1px;
+            margin: 0;
+            line-height: 9px;
+            position:relative;
+            top:0;
+            /*top:-3px;*/
+        }
+    }
+
+    .searchResultMainName
+    {
+        padding: 10px 0 0 0;
+        vertical-align: top;
+    }
+    .operatingHours .openDay
+    {
+        font-weight: 800;
+        white-space: nowrap;
+        vertical-align:top;
+    }
+
+
+.distSummary
+{
+    color: rgba(80,85,90,0.5);
+    text-align:center;
+    font-size:12px;
+    font-weight:800;
+    padding: 0 0 4px 0;
+}
+i.rating
+{
+    letter-spacing:2px;
+}
+i.tiny
+{
+    font-size:6px;
+}
+i.small
+{
+    font-size:10px;
+}
+i.gold
+{
+    color: gold;
+}
+i.gray
+{
+    color: #C0C0C0;
+}
+
+.cwsOutlet
+{
+    text-shadow: 1px 1px #DEDEDE;
+}
+.cwsProvider
+{
+    text-shadow: 1px 1px #DEDEDE;
+}
+.cwsService
+{
+    text-shadow: 1px 1px #DEDEDE;
+}
+
+.search-Opt-Select
+{
+    width: inherit;
 }

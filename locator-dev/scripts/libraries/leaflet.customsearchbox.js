@@ -10,25 +10,25 @@ function getControlHtmlContent()
                             "    <div class=\"searchbox-input-container\">" + 
                             "      <input id=\"searchboxinput\" type=\"text\" style=\"position: relative;\"\/>" +
                             "    <\/div>" +
-                            "    <div class=\"searchbox-searchoptions-container\">" +
-                            "      <button aria-label=\"searchOptions\" id=\"searchbox-searchoptions\" class=\"searchbox-searchoptions\"><\/button>" +
-                            "    </div>" +
                             "    <div class=\"searchbox-searchbutton-container\">" + 
                             "      <button aria-label=\"search\" id=\"searchbox-searchbutton\" class=\"searchbox-searchbutton\"><\/button>" + 
                             "      <span aria-hidden=\"true\" style=\"display:none;\">search<\/span>" + 
-                            "     <!-- <a class=\"searchbox-hide-toggle fas fa-angle-left\"><\/a> --> " + 
+                            "     <!-- <a class=\"fa-caret-square-left fas fa-angle-left\"><\/a> --> " + 
                             "    <\/div>" + 
+                            "    <div class=\"searchbox-searchoptions-container\">" +
+                            "      <button aria-label=\"searchOptions\" id=\"searchbox-searchoptions\" class=\"searchbox-searchoptions\"><\/button>" +
+                            "    </div>" +
                             "    <div class=\"searchbox-hidebutton-container\">" + 
-                            "      <a aria-label=\"search\" id=\"searchbox-hidebutton\" class=\"searchbox-hidebutton searchbox-hide-toggle fas fa-chevron-circle-left\"><\/a>" + 
+                            "      <a aria-label=\"search\" id=\"searchbox-hidebutton\" class=\"searchbox-hide-toggle fa-caret-square-left fas fa-caret-square-left\"><\/a>" + 
                             "    <\/div>" + 
                             "  <\/div>" + 
-                            "  <div class='search-words-container'>" + 
-                            "    <div class='search-words-inner'></div>" + 
-                            "  </div>" + 
                             "  <div class='search-options-container'>" + 
                             "    <div class='search-options-inner'></div>" + 
                             "  </div>" + 
                             "  <div class='search-results-container'>" + 
+                            "    <div class='search-words-container'>" + 
+                            "      <div class='search-words-inner'></div>" + 
+                            "    </div>" + 
                             "    <div class='search-results-inner'></div>" + 
                             "  </div>" + 
                             "<\/div>" + 
@@ -176,16 +176,6 @@ var searchboxControl = L.Control.extend({
 
         setTimeout(function () {
 
-            $("#searchboxinput").click(function () {
-                if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
-                if ( $(".search-options-container").is( ':visible') )  $(".search-options-container").toggle("slide", { direction: "up" }, 250);
-            });
-
-            $("#searchbox-searchoptions").click(function () {
-                if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
-                $(".search-options-container").toggle("slide", { direction: "up" }, 250);
-            });
-
             $("#searchbox-searchbutton").click(function () {
                 if ( $(".search-options-container").is( ':visible') )  $(".search-options-container").toggle("slide", { direction: "up" }, 250);
                 else
@@ -210,8 +200,8 @@ var searchboxControl = L.Control.extend({
                     $( 'div.searchbox-searchoptions-container' ).css( 'display', 'none' );
                     $( 'div.searchbox-searchbutton-container' ).css( 'display', 'none' );
                     $( "#boxcontainer" ).css( "width", $( 'div.searchbox-menu-container' ).css( 'width' ) );
-                    $( "#searchbox-hidebutton" ).removeClass( 'fa-chevron-circle-left' );
-                    $( "#searchbox-hidebutton" ).addClass( 'fa-chevron-circle-right' );
+                    $( "#searchbox-hidebutton" ).removeClass( 'fa-caret-square-left' );
+                    $( "#searchbox-hidebutton" ).addClass( 'fa-caret-square-right' );
                     $( "#searchbox-hidebutton" ).css( 'z-index', 1010 );
                 } 
                 else
@@ -221,8 +211,8 @@ var searchboxControl = L.Control.extend({
                     $( 'div.searchbox-searchoptions-container' ).css( 'display', 'block' );
                     $( 'div.searchbox-searchbutton-container' ).css( 'display', 'block' );
                     $( "#boxcontainer" ).css( "width", $( "#boxcontainer" ).attr( 'expand-width' ) );
-                    $( "#searchbox-hidebutton" ).removeClass( 'fa-chevron-circle-right' );
-                    $( "#searchbox-hidebutton" ).addClass( 'fa-chevron-circle-left' );
+                    $( "#searchbox-hidebutton" ).removeClass( 'fa-caret-square-right' );
+                    $( "#searchbox-hidebutton" ).addClass( 'fa-caret-square-left' );
                     $( "#searchbox-hidebutton" ).css( 'z-index', 'auto' );
                 }
 
@@ -235,7 +225,9 @@ var searchboxControl = L.Control.extend({
 
 
             $("#searchbox-menubutton").click(function () {
-                $(".panel").css( "height", ( screen.height + 1) + 'px' );
+                //$(".panel").css( "height", ( $( window ).height() - ( $( '#panelBottom' ).is( ':visible') ? parseFloat( $('#panelBottom').css('height').replace('px','') ) + 1 : 0 ) + 1) + 'px' );
+                if ( $( '#panelBottom' ).is( ':visible' ) ) $( '#panelBottom' ).toggle("slide", { direction: "down" }, 200);
+                $(".panel").css( "height", $( window ).height() + 'px' );
                 $(".panel").toggle("slide", { direction: "left" }, 500);
             });
 
@@ -244,17 +236,16 @@ var searchboxControl = L.Control.extend({
                 $(".panel").toggle("slide", { direction: "left" }, 500);
             });
 
-            $(".panel-header-title").text(headerTitle);
+            $(".panel-header-title").text( headerTitle );
+            $(".panel-content").append( generateHtmlContent(menuItems) );
 
-
-            var htmlContent = generateHtmlContent(menuItems);
-            //$(".panel-content").html(htmlContent);
-            $(".panel-content").append( htmlContent );
         }, 1);
 
 
          L.DomEvent.disableClickPropagation(container);
+
         return container;
+
     }
 
 });

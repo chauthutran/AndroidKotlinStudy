@@ -270,7 +270,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* general typography */
 .leaflet-container {
-	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: 12px/1.5 Rubik,Roboto,RobotoDraft,'Open Sans',Arial,sans-serif, "Helvetica Neue", Helvetica;
 	}
 
 

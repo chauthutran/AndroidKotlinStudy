@@ -6,11 +6,13 @@ function LangTerm( cwsRenderObj )
 
 	me.cwsRenderObj = cwsRenderObj;
 
-	me.allLangTerms = {};
-	me.langList = [];
-
-	me.currentLangTerms = {};
 	me.currentLangcode = "";
+
+	me.langList = [];
+	me.allLangTerms = {};
+	me.currentLangTerms;
+
+	me.debugMode = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -25,7 +27,11 @@ function LangTerm( cwsRenderObj )
 	me.render = function() { }
 	// ------------------
 
-	me.setInitialData = function() {}
+	me.setInitialData = function() 
+	{
+		me.currentLangcode = FormUtil.defaultLanguage();
+	}
+
 	me.createSubClasses = function() {}
 	//me.setEvents_OnInit = function() { }
 
@@ -43,7 +49,7 @@ function LangTerm( cwsRenderObj )
 	// Retrieve All Languages Term.
 	// MAIN METHOD 1.
 	me.retrieveAllLangTerm = function( returnFunc, forceDownload )
-	{	
+	{
 		// No Reset?	
 		//me.allLangTerms = undefined;
 
@@ -53,24 +59,21 @@ function LangTerm( cwsRenderObj )
 
 		if ( langTerms )
 		{
-			console.log( '=== LANG TERMS ==> Local Storage Data Loaded' );
-
+			if ( me.debugMode ) console.log( '=== LANG TERMS ==> Local Storage Data Loaded' );
 			me.allLangTerms = langTerms;
 			me.setLanguageList( me.allLangTerms );
-
-			//console.log( me.allLangTerms );
+			me.currentLangTerms = me.getLangTerms( me.currentLangcode );
 
 			returnFunc( langTerms );
 		}
 		else
 		{
-			console.log( '=== LANG TERMS ==> Retrieving from Web Service' );
+			if ( me.debugMode ) console.log( '=== LANG TERMS ==> Retrieving from Web Service' );
 			me.retrieveAllLangTermInner( function( returnJson )
-			{				
-				me.allLangTerms = returnJson;
+			{
+				me.allLangTerms = returnJson; 
 				me.setLanguageList( me.allLangTerms );
-
-				//console.log( me.allLangTerms );
+				me.currentLangTerms = me.getLangTerms( me.currentLangcode );
 
 				if ( returnJson ) DataManager.saveData( DataManager.StorageName_langTerms, returnJson );
 
@@ -83,8 +86,6 @@ function LangTerm( cwsRenderObj )
 	// Retrieve it from ws and put it on local storage or local store location
 	me.retrieveAllLangTermInner = function( returnFunc )
 	{
-		//var lang = "en";
-
 		var queryLoc = '/api/langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
 		var loadingTag = undefined;
 
@@ -94,28 +95,22 @@ function LangTerm( cwsRenderObj )
 		{
 			if ( returnJson )
 			{
-				console.log( 'langTerm: ' );
-				//console.log( returnJson );
-
 				if ( returnFunc ) returnFunc( returnJson );
 			}
 			else
 			{
 				// Try retrieving all dailyCache on WebService..
-				console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
+				if ( me.debugMode ) console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
 				FormUtil.wsSubmitGeneral( '/api/dailyCache', { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
 					if ( success && allLangTermsJson )
 					{
-						console.log( 'all langTerm: ' );
-						//console.log( allLangTermsJson );
 						
 						if ( returnFunc ) returnFunc( allLangTermsJson );
 					}
 					else
 					{
-						console.log( 'all langTerm FAILED: ' );
 
 						if ( returnFunc ) returnFunc( new Object() );
 					}
@@ -128,7 +123,13 @@ function LangTerm( cwsRenderObj )
 	// MAIN METHOD 2.
 	me.translatePage = function()
 	{
-		console.log( 'translating page: ' + me.currentLangcode );
+		if ( me.debugMode ) console.log( 'translating page: ' + me.currentLangcode );
+
+		if ( me.allLangTerms && !me.currentLangTerms )
+		{
+			me.currentLangTerms = me.getLangTerms( me.currentLangcode );
+		}
+
 		var termCollection = {};
 
 		// 1. Get the terms unique collection from site/page
@@ -146,8 +147,6 @@ function LangTerm( cwsRenderObj )
 			}
 		});
 
-		//console.log( termCollection );
-
 		// go through the term and translate them through out the page
 		for ( var termName in termCollection )
 		{
@@ -155,9 +154,13 @@ function LangTerm( cwsRenderObj )
 
 			if ( termVal )
 			{
-				//console.log( 'translating term: ' + termName + ', val: ' + termVal );
 				var tag = $( '[term="' + termName + '"]' );
 				tag.html( termVal );
+				if ( me.debugMode ) console.log( ' ~ found term [' + me.currentLangcode + ']: ' + termName);
+			}
+			else
+			{
+				if ( me.debugMode ) console.log( ' ~ missing term [' + me.currentLangcode + ']: ' + termName);
 			}
 		}
 	}
@@ -174,12 +177,15 @@ function LangTerm( cwsRenderObj )
 
 	me.setCurrentLang = function( langCode )
 	{
+
 		me.currentLangcode = langCode;
 
-		me.currentLangTerms = me.getLangTerms( langCode );
+		if ( me.allLangTerms )
+		{
+			me.currentLangTerms = me.getLangTerms( langCode );
+		}
 
 		DataManager.setSessionDataValue( 'language', langCode );
-
 	}
 
 
@@ -214,12 +220,10 @@ function LangTerm( cwsRenderObj )
 
 		if ( allLangTerms && allLangTerms.languages )
 		{
-			//console.log( 'setLanguageList' );
+
 			for( i = 0; i < allLangTerms.languages.length; i++ )
 			{
 				var langJson = allLangTerms.languages[i];
-
-				//console.log( langJson );
 
 				if ( langJson.code && langJson.name )
 				{
@@ -231,7 +235,9 @@ function LangTerm( cwsRenderObj )
 					me.langList.push( addLangJson );
 				}
 			}
+
 		}
+
 	}
 
 

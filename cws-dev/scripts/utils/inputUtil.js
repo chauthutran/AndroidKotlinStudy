@@ -50,7 +50,8 @@ function inputMonitor( cwsRenderObj )
 
         if ( startTagRedeemListItem )
         {
-            me.initialiseListItemVars();
+            //DO NOT REMOVE: temp disabled (2019/06/13)
+            //me.initialiseListItemVars();
         }
 
         me.detectFocusRelegatorInitialState();
@@ -100,7 +101,8 @@ function inputMonitor( cwsRenderObj )
 
         if ( startTouchTargetTag && startTagRedeemListItem )
         {
-            me.moveListItem(); // redeemList item is target object
+            //DO NOT REMOVE: temp disabled (2019/06/13)
+            //me.moveListItem(); // redeemList item is target object
         }
         else
         {
@@ -127,7 +129,8 @@ function inputMonitor( cwsRenderObj )
 
         if ( startTagRedeemListItem )
         {
-            me.touchEndListItem( e );
+            //DO NOT REMOVE: temp disabled (2019/06/13)
+            //me.touchEndListItem( e );
         }
         else
         {
@@ -214,7 +217,8 @@ function inputMonitor( cwsRenderObj )
     {
         if ( $( '#focusRelegator' ).is( ':visible' ) && $( '#navDrawerDiv' ).css( 'zIndex' ) < $( '#focusRelegator' ).css( 'zIndex' ) )
         {
-            $( '#navDrawerDiv' ).css( 'zIndex', $( '#focusRelegator' ).css( 'zIndex' ) );
+            //$( '#navDrawerDiv' ).css( 'zIndex', $( '#focusRelegator' ).css( 'zIndex' ) );
+            $( '#navDrawerDiv' ).css( 'zIndex', FormUtil.screenMaxZindex() +1 );
             $( '#focusRelegator' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
         }
     }

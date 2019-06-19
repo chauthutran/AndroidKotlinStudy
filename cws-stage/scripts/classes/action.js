@@ -26,7 +26,7 @@ function Action( cwsRenderObj, blockObj )
 		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
 		{
 			var dataPass = {};
-			
+
 			if ( !me.btnClickedAlready( btnTag ) )
 			{
 				me.btnClickMarked( btnTag );
@@ -101,7 +101,7 @@ function Action( cwsRenderObj, blockObj )
 		// TODO: all the blockDivTag related should be done by 'block' class method
 
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
-		console.log( clickActionJson.actionType );
+
 		// ACTIVITY ADDING
 		ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
 
@@ -164,16 +164,18 @@ function Action( cwsRenderObj, blockObj )
 			{
 				if ( clickActionJson.blockId !== undefined )
 				{
-					console.log( clickActionJson );
-					console.log( blockPassingData );
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
 
 					// 'blockPassingData' exists is called from 'processWSResult' actions
 					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
 					blockPassingData.showCase = clickActionJson.showCase;
 					blockPassingData.hideCase = clickActionJson.hideCase;
-					if ( clickActionJson.showCase ) console.log( clickActionJson.showCase );
-					if ( clickActionJson.hideCase ) console.log( clickActionJson.hideCase );
+
+					if ( clickActionJson.evalCase )
+					{
+						blockPassingData = FormUtil.evalCase( clickActionJson.evalCase, blockPassingData );
+					}
+
 					// Hide block if action is doing 'openBlock'
 					me.blockObj.hideBlock();
 
@@ -282,6 +284,8 @@ function Action( cwsRenderObj, blockObj )
 					inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 				}
 
+				var previewJson = FormUtil.generateInputJson( formDivSecTag );
+
 				//FormUtil.setLastPayload( 'sendToWS', inputsJson, 'receivedFromWS' )
 				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
 
@@ -298,8 +302,9 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var submitJson = {};
 					submitJson.payloadJson = inputsJson;
-					submitJson.url = url;
+					submitJson.previewJson = previewJson;
 					submitJson.actionJson = clickActionJson;	
+					submitJson.url = url;
 
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 					if ( clickActionJson.redeemListInsert === "true" )
@@ -349,8 +354,7 @@ function Action( cwsRenderObj, blockObj )
 							}
 							else
 							{
-								//console.log( redeemReturnJson );
-								//alert( 'Process Failed!!' );
+								// MISSING TRANSLATION
 								MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
 								// Should we stop at here?  Or continue with subActions?
 

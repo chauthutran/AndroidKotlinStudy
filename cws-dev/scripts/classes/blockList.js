@@ -253,11 +253,13 @@ function BlockList( cwsRenderObj, blockObj )
             if ( statusOpt )
             {
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );
-                var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? 'padding:4px;' : '' ) + '">' ); 
+                //var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? 'padding:4px;' : '' ) + '">' );
+                var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? '' : '' ) + '">' );
                 var trObj1 = $( '<tr>' );
 
                 //height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;
-                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' ); 
+                //var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' );
+                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:2px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? '' : '' ) + '" class="' + ( bIsMobile ? '' : '' ) + ' listItem">&nbsp;</div></td>' );
 
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
                 var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 style="vertical-align:top;padding:6px 2px;white-space:nowrap;" >' ); 
@@ -299,7 +301,8 @@ function BlockList( cwsRenderObj, blockObj )
         trObj2.append( tdExpandObj );
         tdExpandObj.append( expandArrowTag );
 
-        var previewDivTag = me.getListDataPreview( itemData.data.payloadJson, activityType.previewData )
+        //var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData ) //Greg: create [previewJson] block when sendToWS
+        var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData )
         tdDataPreviewObj.append( previewDivTag );
 
         var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
@@ -429,6 +432,7 @@ function BlockList( cwsRenderObj, blockObj )
                 {
                     if ( ! ConnManager.networkSyncConditions )
                     {
+                        // MISSING TRANSLATION
                         MsgManager.notificationMessage ( 'Currently offline. Network must be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
                     }
                     else
@@ -474,8 +478,8 @@ function BlockList( cwsRenderObj, blockObj )
                         // if offline, alert it!! OR data server unavailable
                         if ( ConnManager.isOffline() )
                         {
-                            //alert( 'Currently in offline.  Need to be in online for this.' );
-                            MsgManager.notificationMessage ( 'Currently in offline.  Need to be in online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
+                            // MISSING TRANSLATION
+                            MsgManager.notificationMessage ( 'Currently mode: offline.  Need to be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
                             myTag.html( fetchItemData.title );
                             $(this).stop();
                         }

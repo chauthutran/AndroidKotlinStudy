@@ -158,6 +158,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
+	console.log( formDivSecTag );
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -578,10 +579,10 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			$( '#focusRelegator').css('zIndex',100);
 
 			thisTag.css('zIndex',199);
-			subListIconsTag.css('zIndex',200);
 
 			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
 			{
+				subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
 				subListIconsTag.show();
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth + 'px' ));
 				subListIconsTag.css( 'left', '0px' );
@@ -594,6 +595,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			} 
 			else
 			{
+				subListIconsTag.css('zIndex',200);
 				subListIconsTag.fadeIn( 'fast', 'linear' );
 			}
 
@@ -801,7 +803,7 @@ FormUtil.getConfigInfo = function( returnFunc )
 		"cws": 		 "https://cws.psi-mis.org/ws/eRefWSProd",
 		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
 		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSStage",
-		"cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" 
+		"cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" //use 'eRefWSDev4' (4) when server issues exist
 	};
 
 	returnFunc( true, jsonData );
@@ -1030,7 +1032,7 @@ FormUtil.performReget = function( regObj, option )
 {		
 	if ( ConnManager.isOffline() )
 	{
-		//alert( 'Only re-register service-worker while online, please.' );
+		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'Cannot re-register service worker when Network Offline', 'notificationDark', undefined, '', 'right', 'top' );
 	}
 	else
@@ -1075,7 +1077,7 @@ FormUtil.performReget = function( regObj, option )
 		}
 		else
 		{
-			//alert( 'Reget Failed - service worker not found' );
+			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'Service worker not found, reloading app', 'notificationDark', undefined, '', 'right', 'top' );
 
 			if ( FormUtil.PWAlaunchFrom == 'homeScreen')
@@ -1190,19 +1192,18 @@ FormUtil.showProgressBar = function( width )
 {
 	if ( width )
 	{
-		//$( '#divProgressBar' ).css('width', width );
 		$( 'div.indeterminate' ).css('width', width );
 		$( 'div.determinate' ).css('width', width );
 	}
 	$( '#divProgressBar' ).css( 'display', 'block' );
+	$( '#divProgressBar' ).css( 'zIndex', '200' );
 	$( '#divProgressBar' ).show();
-	$( '#divProgressBar' ).css( 'zIndex', '100' );
 }
 
 FormUtil.hideProgressBar = function()
 {
-	//$( '#divProgressBar' ).css( 'display', 'none' );
 	$( '#divProgressBar' ).hide();
+	$( '#divProgressBar' ).css( 'zIndex', '0' );
 }
 
 
@@ -1536,11 +1537,12 @@ FormUtil.testNewSWavailable = function()
   
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
   
-		// move to cwsRender 
+		// move to cwsRender ?
 		$( btnUpgrade ).click ( () => {
 		  location.reload( true );
 		});
   
+		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
 	  }
 	});
@@ -1646,5 +1648,88 @@ FormUtil.geolocationAllowed = function()
 			FormUtil.geoLocationState = result.state;
 		}
 	});
+
+}
+
+FormUtil.screenMaxZindex = function(parent, limit)
+{
+
+	limit = limit || Infinity;
+    parent = parent || document.body;
+    var who, temp, max= 1, opacity, i= 0;
+    var children = parent.childNodes, length = children.length;
+
+	function deepCss(who, css) {
+		var sty, val, dv= document.defaultView || window;
+		if (who.nodeType == 1) {
+			sty = css.replace(/\-([a-z])/g, function(a, b){
+				return b.toUpperCase();
+			});
+			if ( sty && who && who.style[sty] )
+			{
+				val = who.style[sty];
+				if (!val) {
+					if(who.currentStyle) val= who.currentStyle[sty];
+					else if (dv.getComputedStyle) {
+						val= dv.getComputedStyle(who,"").getPropertyValue(css);
+					}
+				}
+			}
+		}
+		return val || "";
+	}
+
+    while(i<length){
+        who = children[i++];
+        if (who.nodeType != 1) continue; // element nodes only
+        opacity = deepCss(who,"opacity");
+        if (deepCss(who,"position") !== "static") {
+            temp = deepCss(who,"z-index");
+            if (temp == "auto") { // positioned and z-index is auto, a new stacking context for opacity < 0. Further When zindex is auto ,it shall be treated as zindex = 0 within stacking context.
+                (opacity < 1)? temp=0:temp = FormUtil.screenMaxZindex(who);
+            } else {
+                temp = parseInt(temp, 10) || 0;
+            }
+        } else { // non-positioned element, a new stacking context for opacity < 1 and zindex shall be treated as if 0
+            (opacity < 1)? temp=0:temp = FormUtil.screenMaxZindex(who);
+        }
+        if (temp > max && temp <= limit) max = temp;                
+    }
+	return max;
+
+}
+
+FormUtil.evalCase = function( evalCond, jsonData )
+{
+	var json = jsonData;
+
+	console.log( json );
+	console.log( evalCond );
+	console.log( evalCond.toString().indexOf('##setData') );
+
+	if ( evalCond.toString().indexOf('##setData') >= 0 )
+	{
+		console.log( evalCond );
+		var arrRule  = evalCond.toString().split( '##setData{' )[ 1 ].split( '}' )[ 0 ];
+		var arrTasks = arrRule.split( ';' );
+
+		console.log( arrRule );
+		console.log( arrTasks );
+
+		for ( var i=0; i< arrTasks.length; i++ )
+		{
+			console.log( ' ~ ' + arrTasks[ i ] );
+			eval( arrTasks[ i ] );
+		}
+
+		console.log( json );
+
+	}
+	else
+	{
+
+	}
+
+	return json;
 
 }

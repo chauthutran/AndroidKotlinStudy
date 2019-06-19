@@ -9,7 +9,7 @@ function BlockButton( cwsRenderObj, blockObj )
 		
 	// =============================================
 	// === TEMPLATE METHODS ========================
-	
+
 	me.initialize = function() {}
 
 	me.render = function( buttonsJson, blockTag, passedData )
@@ -65,7 +65,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				me.renderBlockButton( i + 1, buttonsJson[i], btnHolderTag, passedData );
 			}
-			
+
 
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
 			{
@@ -95,7 +95,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 		}
 	}
-	
+
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 

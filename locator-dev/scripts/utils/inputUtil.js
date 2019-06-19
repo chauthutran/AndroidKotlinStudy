@@ -146,6 +146,7 @@ function inputMonitor( cwsRenderObj )
 
     me.initialiseTouchDefaults = function( e )
     {
+        console.log( e );
         initialX = e.touches[0].clientX;
         initialY = e.touches[0].clientY;
 

@@ -16,7 +16,7 @@ cacheManager.initialise = function()
 			for (let name of names)
 			{
 				myArr.push( name );
-				console.log( ' ~ found cache obj: ' + name);
+				//console.log( ' ~ found cache obj: ' + name);
 			}
 
 			cacheManager.cacheKeys = myArr;
@@ -66,8 +66,6 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 				}
 			}
 
-			//MsgManager.notificationMessage( '<h5>clear results</h5>' + JSON.stringify( results ), 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
-			console.log( ' RESULTS ');
 			console.log( results );
 
 			if ( returnFunc ) returnFunc( results );

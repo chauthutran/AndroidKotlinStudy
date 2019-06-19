@@ -11,6 +11,7 @@ body{
   color: #50555a;
   padding: 80px 20px;
   box-sizing: border-box;
+  overflow:hidden;
 }
 
 nav {
@@ -36,9 +37,10 @@ nav {
   margin:0; 
   border: 0; /* 4px solid #f5f5f5; */
   border-radius: 0; /*4;*/ 
-  background-image:-webkit-linear-gradient(top, #ffffff 0%, #C0C0C0 100%);
+  background-image:-webkit-linear-gradient(top, #ffffff 0%, #F5F5F5 100%);
   cursor: default;
   transition-duration: .4s;
+  overflow:hidden;
 }
 
 #mapData {
@@ -51,6 +53,7 @@ nav {
   border-radius:0; 
   background-image:-webkit-linear-gradient(top, #ffffff 0%, #ffffff 100%);
   cursor: default;
+  overflow:hidden;
 }
 
 #panelBottom{
@@ -58,17 +61,55 @@ nav {
   position: absolute;
   width:100%;
   left:0;
+  /*overflow:hidden;*/
 }
 
 .panelBottom-close{
   position: absolute;
-  top: 1px;
-  color: #808080;
-  border-radius: 6px;
-  background-color: #FFF;
-  right: 1px;
-  padding: 0 2px 0 2px;
-  font-size: 14px;
+  top: 0;
+  color: #5C5C5C !important;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.15);
+  right: 0;
+  padding: 2px 6px 4px 6px;
+  font-size: 10pt;
+}
+
+.panelBottom-close:hover{
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.searchResults-close{
+  position: fixed;
+  bottom: -10px;
+  color: #5C5C5C !important;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.15);
+  right: 47%;
+  padding: 4px 6px 4px 6px;
+  font-size: 10pt;
+}
+.searchResults-close:hover{
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.countryOptTable
+{
+  opacity: 0.25;
+  font-weight: 600;
+  cursor: pointer;
+}
+.countrySelect
+{
+  border-radius:6px;
+}
+tr.countryRow
+{
+   
+}
+
+tr.countryRow:hover
+{
+  opacity: 0.75;
 }
 
 .bg-color {
@@ -107,7 +148,42 @@ nav {
   margin:4px;
   font-size:20pt;
 }
-
+.myPin
+{
+  font-size:18px !important;
+  color:#fff !important;
+  position: relative !important;
+  top: -11px !important;
+  -webkit-font-smoothing: antialiased;
+}
+.cwsPin
+{
+  text-decoration: none;
+  color: #fff !important;
+  font-style: normal;
+  position: relative !important;
+  top: -11px !important;
+  font-size: 14pt !important;
+  -webkit-font-smoothing: antialiased;
+}
+.textShadow
+{
+  text-shadow: 1px 1px #808080;
+}
+.iconShadow
+{
+  text-shadow: 1px 1px #E6E6E6;
+}
+.searchIconFilter
+{
+  color:#fff;
+  font-size: 15px;
+  width:42px;
+  max-width:40px;
+  height:40px;
+  padding:12px;
+  margin: 0 10px 0 10px;
+}
 footer {
   padding: 40px 0;
   text-align: center;
@@ -732,8 +808,8 @@ act {
 div.select {
   position: relative;
   display: block;
-  /*width: 90%;
-  margin: 10px;*/
+  width: 90%;
+  /*margin: 10px;*/
   height: 3em;
   line-height: 3;
   /*border: 1px solid #95989A;*/
@@ -746,7 +822,7 @@ div.select {
 div.select::before {
   content: '\25BC';
   position: absolute;
-  top: 0;
+  top: 2px;
   right: 0;
   bottom: 0;
   padding: 0 1em;
@@ -783,6 +859,13 @@ img.rotate90 {
 
 div.formDivSec{
   background-color: #fff;
+}
+a.telNo{
+  color:#7CBEF6 !important;
+  letter-spacing: .5px;
+}
+a.telNo:hover{
+  text-decoration: none !important;
 }
 
 a.searchresultSelector {
@@ -1717,7 +1800,7 @@ div.nav-burger-container
 	height: 3px;
 	display: block;
 	width: inherit;
-	background-color: transparent;
+	background: transparent;
 	border-radius: 1px;
 	background-clip: padding-box;
 	margin: 0;
@@ -1744,6 +1827,7 @@ div.nav-burger-container
   top: 0;
   left: 0;
   bottom: 0;
+  height:3px;
   will-change: left, right;
   -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
       animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; 
@@ -1756,13 +1840,14 @@ div.nav-burger-container
   top: 0;
   left: 0;
   bottom: 0;
+  height:3px;
   will-change: left, right;
   -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
       animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
   -webkit-animation-delay: 1.15s;
       animation-delay: 1.15s; 
 }
-  
+
 		  @-webkit-keyframes indeterminate {
 			0% {
 			  left: -35%;

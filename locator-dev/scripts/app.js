@@ -100,6 +100,8 @@
 
             installingWorker.onstatechange = () => {
 
+              console.log( 'SW state changing: ' + installingWorker.state );
+
               switch (installingWorker.state) {
                 case 'installed':
                   if (navigator.serviceWorker.controller) {
@@ -111,7 +113,7 @@
                       location.reload( true );
                     });
 
-                    MsgManager.notificationMessage ( 'New updates installed. Click refresh to view changes', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+                    MsgManager.notificationMessage ( 'Updates installed. Click refresh to view', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
                   } else {
                     // no update available
                     //resolve(false);

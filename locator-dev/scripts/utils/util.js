@@ -1782,3 +1782,8 @@ $.fn.rotate=function(options) {
 	var peF = parseInt(pe.substring(0,4));
 	return ( months[ ( peM - 1) ] + ' ' + peF);
   }
+
+  Util.capitalizeFirstLetter = function(string) 
+  {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+  }

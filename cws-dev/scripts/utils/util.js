@@ -1184,7 +1184,6 @@ Util.newLocalSequence = function( pattern )
 
 				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
 				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-				//console.log( jsonStorageData );
 				//DataManager.saveData( 'seqIncr', jsonStorageData );
 
 				DataManager.saveData( FormUtil.login_UserName, jsonUserData );

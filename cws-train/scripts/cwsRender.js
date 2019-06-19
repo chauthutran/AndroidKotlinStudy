@@ -464,19 +464,11 @@ function cwsRender()
 	{
 		if ( me.registrationObj !== undefined )
 		{
-			console.log ( 'reloading + unregistering SW');
 			me.registrationObj.unregister().then(function(boolean) {
-				/*if ( FormUtil.PWAlaunchFrom == 'homeScreen')
-				{
-					location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
-				}
-				else*/
-				{
-					location.reload( true );
-				}
-				//FormUtil.hideProgressBar();
+				location.reload( true );
 			})
 			.catch(err => {
+				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
 				setTimeout( function() {
 					location.reload( true );
@@ -486,6 +478,7 @@ function cwsRender()
 		}
 		else
 		{
+			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
 			setTimeout( function() {
 				location.reload( true );

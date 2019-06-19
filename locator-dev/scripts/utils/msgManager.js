@@ -155,7 +155,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var className = ( disableAutoWidth != undefined && disableAutoWidth ? ' rounded' : ( screenWidth < 480 ? '' : ' rounded' ) );
     var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="' + messageType + className + '" >' );
 
-    $( 'nav.bg-color-program' ).append( notifDiv )
+    $( 'body' ).append( notifDiv )
 
     if ( Xpos )
     {

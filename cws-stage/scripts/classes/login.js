@@ -185,7 +185,7 @@ function Login( cwsRenderObj )
 				}
 				else
 				{
-					//alert( 'Offline Login Failed - userName/pin does not match' );
+					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			}
@@ -193,11 +193,12 @@ function Login( cwsRenderObj )
 			{
 				if ( !ConnManager.isOnline() )
 				{
-					//alert( 'Offline Login Failed - userName/pin does not match' );
+					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'No network connection > cannot login', 'notificationDark', undefined, '', 'right', 'top' );
 				}
 				else
 				{
+					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			}
@@ -218,7 +219,7 @@ function Login( cwsRenderObj )
 				{
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 					
-					//alert( 'Login Failed' + errDetail );
+					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			} );
@@ -239,7 +240,8 @@ function Login( cwsRenderObj )
 	}
 
 	me.loginSuccessProcess = function( loginData ) 
-	{		
+	{
+		var dtmNow = ( new Date() ).toISOString();
 
 		me.closeForm();
 		me.pageTitleDivTab.hide(); 
@@ -258,33 +260,36 @@ function Login( cwsRenderObj )
 			FormUtil.dcdConfig = loginData.dcdConfig; 
 			// call CWS start with this config data..
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
-		}
 
-		var dtmNow = ( new Date() ).toISOString();
+			// if session data exists, update the lastUpdated date else create new session data
+			if ( loginData.mySession ) 
+			{
+				loginData.mySession.lastUpdated = dtmNow;
+				loginData.mySession.stayLoggedIn = me._staySignedIn;
 
-		// if session data exists, update the lastUpdated date else create new session data
-		if ( loginData.mySession ) 
-		{
-			loginData.mySession.lastUpdated = dtmNow;
-			loginData.mySession.stayLoggedIn = me._staySignedIn;
+				DataManager.saveData( me._userName, loginData );	
+			}
+			else
+			{
+				var newSaveObj = Object.assign( {} , loginData);
 
-			DataManager.saveData( me._userName, loginData );	
+				newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
+
+				DataManager.saveData( me._userName, newSaveObj );
+
+				FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+			}
+
+			FormUtil.geolocationAllowed();
+
+			me.cwsRenderObj.renderDefaultTheme();
+
 		}
 		else
 		{
-			var newSaveObj = Object.assign( {} , loginData);
-
-			newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
-
-			DataManager.saveData( me._userName, newSaveObj );
-
-			FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+			// MISSING TRANSLATION
+			MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 		}
-
-		FormUtil.geolocationAllowed();
-
-		me.cwsRenderObj.renderDefaultTheme();
-		//ConnManager.setUp_dataServerModeDetection();
 
 		FormUtil.hideProgressBar();
 

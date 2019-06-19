@@ -18,7 +18,9 @@ function aboutApp( cwsRender )
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
     me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
 
-    me.easterEgg1Timer = 0;
+    me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
+    me.easterEgg2Timer = 0; // activate Translations debugging
+
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -68,6 +70,7 @@ function aboutApp( cwsRender )
             if ( ConnManager.isOffline() )
             {
                 //alert( 'Only re-register service-worker while online, please.' );
+                // MISSING TRANSLATION
                 MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
             }
             else
@@ -343,6 +346,62 @@ function aboutApp( cwsRender )
 
         });
 
+        $( '#lblabout_userLanguage' ).css( 'user-select', 'none' );
+        $( '#lblabout_userLanguage' ).on( 'selectstart dragstart', false );
+
+        $( '#lblabout_userLanguage' ).click( () => {
+
+            if ( $( '#lblabout_userLanguage' ).attr( 'counter' ) )
+            {
+
+                if ( $( '#lblabout_userLanguage' ).attr( 'counter' ) < 4 )
+                {
+                    var incr = parseInt( $( '#lblabout_userLanguage' ).attr( 'counter' ) );
+                    incr ++;
+                    $( '#lblabout_userLanguage' ).attr( 'counter', incr );
+
+                    if ( me.easterEgg2Timer )
+                    {
+                        clearTimeout( me.easterEgg2Timer );
+                    }
+                    me.easterEgg2Timer = setTimeout( function() {
+                        $( '#lblabout_userLanguage' ).attr( 'counter', 0 );
+                    }, 3000 );
+                }
+                else
+                {
+                    if ( me.easterEgg2Timer )
+                    {
+                        clearTimeout( me.easterEgg2Timer );
+                    }
+
+                    $( '#lblabout_userLanguage' ).attr( 'counter', 0 );
+
+                    me.langTermObj.debugMode = ( me.langTermObj.debugMode ? false : true );
+                    me.langTermObj.translatePage();
+
+                }
+
+            }
+            else
+            {
+                $( '#lblabout_userLanguage' ).attr( 'counter', 1 )
+
+                me.easterEgg2Timer = setTimeout( function() {
+                    $( '#lblabout_userLanguage' ).attr( 'counter', 0 );
+                }, 3000 );
+            }
+
+            if ( me.langTermObj.debugMode )
+            {
+                $( '#lblabout_userLanguage' ).css( 'text-decoration', 'underline' );
+            }
+            else
+            {
+                $( '#lblabout_userLanguage' ).css( 'text-decoration', 'none' );
+            }
+
+        });
         
         $( '#btnReset' ).click( function() {
 
@@ -531,6 +590,7 @@ function aboutApp( cwsRender )
                             $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
                         });
 
+                        // MISSING TRANSLATION
                         questionStr = "Force network mode switch?";
                         MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
 
@@ -548,6 +608,15 @@ function aboutApp( cwsRender )
 
             });
 
+        }
+
+        if ( me.langTermObj.debugMode )
+        {
+            $( '#lblabout_userLanguage' ).css( 'text-decoration', 'underline' );
+        }
+        else
+        {
+            $( '#lblabout_userLanguage' ).css( 'text-decoration', 'none' );
         }
 
     }
@@ -585,7 +654,7 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        ConnManager.getAppShellVersion( function( retVersion ) 
+        /*ConnManager.getAppShellVersion( function( retVersion ) 
         {
             var appShellVersion = $( '#spanVersion' ).html().replace('v','');
 
@@ -602,7 +671,7 @@ function aboutApp( cwsRender )
                 if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
                 if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
             }
-        });
+        });*/
 
         if ( FormUtil.checkLogin() )
         {

@@ -112,7 +112,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/L.Control.Locate.css",
-    "revision": "d4372eed75d137c331a4baca28da0310"
+    "revision": "15576f3939d5a73e8ae7ceab583fcded"
   },
   {
     "url": "css/leaflet.awesome-markers.css",
@@ -120,7 +120,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/leaflet.css",
-    "revision": "525b7daea55253c12ea4191362743688"
+    "revision": "8b2f4cb3e92411a751da3afb4f35ab94"
   },
   {
     "url": "css/materialize.css",
@@ -132,11 +132,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/searchbox.css",
-    "revision": "25ccab061e67c8af010eebcc064ddf8c"
+    "revision": "bea5e8fb1f20657b6efda07f8a658189"
   },
   {
     "url": "css/style.css",
-    "revision": "5c8aa34d78674a1a59a10432674a1227"
+    "revision": "c78106109d41e09300e74f5d888fa2cb"
   },
   {
     "url": "images/arrow_left.svg",
@@ -212,19 +212,19 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ed93be727aa67c5bae482e448f5057ea"
+    "revision": "65bedd11ffcdd2e7d3df800d3f7985f4"
   },
   {
     "url": "scripts/app.js",
-    "revision": "40b7e9aa0e5449a51ef75b4725eb7342"
+    "revision": "aa5c56f327410f0c3cc6166189ec6375"
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "bbd783284f47f7df4970a126dfdef460"
+    "revision": "08a9d6d7981784a0872459d1ea04126e"
   },
   {
     "url": "scripts/classes/map.js",
-    "revision": "7c6609410350288b566ad6beb0377acf"
+    "revision": "2d711af0f48ea286a61cd58593e47fcf"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -232,7 +232,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "541a47ba3c39ae03c32c0bb49d55fe82"
+    "revision": "61d0e0c4c33ae376aeba5021f2e87fb6"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -264,7 +264,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/leaflet.customsearchbox.js",
-    "revision": "8321a3315ad49c3ae36320b75fc003ac"
+    "revision": "e01e6398f358f3e3ebcccbc6ae99353b"
   },
   {
     "url": "scripts/libraries/Leaflet.GoogleMutant.js",
@@ -304,19 +304,19 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "71c2766b49d36582194266b340b12d82"
+    "revision": "cc0874d111d425733868f368a0c81ba4"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "d2c565d991921f65987cb94afcf1935a"
+    "revision": "66ccbdbf30e55125a7d0bc8fb17ef77c"
   },
   {
     "url": "scripts/utils/mapUtil.js",
-    "revision": "922bf7927bfed7b093806699903d1c6a"
+    "revision": "e86c99b1f1b507b382b3c6124ba7a45a"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "e81e581f55fa3eebf21f2f614e4c86a5"
+    "revision": "6805b1308f1381dbb95d08bbbdad5b27"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -332,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "3888416c5fba9446975361040ea08f61"
+    "revision": "cb35616c275110faa03b6514b2f628f1"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

@@ -15,6 +15,15 @@ generateSW({
 
   runtimeCaching: [
     {
+        urlPattern: /maps.googleapis/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'googleMaps'
+        }
+    }
+  ],
+  runtimeCaching: [
+    {
       urlPattern: /.js|.html|.css|.jpeg|.jpg|.png/,
       handler: 'CacheFirst',
       options: {

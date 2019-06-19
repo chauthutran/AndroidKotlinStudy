@@ -156,6 +156,7 @@ function statistics( cwsRender )
 			}
 			else
 			{
+				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'Failed to retrieve report > error connecting', 'notificationDark', undefined, '', 'left', 'top' )
 				me.cwsRenderObj.pulsatingProgress.hide();
 			}
