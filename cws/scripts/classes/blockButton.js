@@ -269,7 +269,6 @@ function BlockButton( cwsRenderObj, blockObj )
 				});
 			}
 		}
-
 	}
 
 
@@ -284,16 +283,12 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				var blockJson = FormUtil.getObjFromDefinition( actionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
 
-				// TODO: Since this is 'Tab' content, we should remove the previous same content div
-				// We could keep the block in this 'blockButton' object
-				// and create 'delete' method that deletes object as well as hides the area
-	
 				// Create the block and render it.
 				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );	
 				newBlockObj.render();
 
 				// Get array of showCase + hideCase inputs > then action results of array
-				var actionCases = me.getActionCases( onClick );
+				/*var actionCases = me.getActionCases( onClick );
 
 				if ( actionCases.show.length || actionCases.hide.length )
 				{
@@ -308,7 +303,7 @@ function BlockButton( cwsRenderObj, blockObj )
 						if ( $('input[name="' + actionCases.hide[ i ] + '"]') ) ( $('input[name="' + actionCases.hide[ i ] + '"]') ).parent().hide();
 					}
 
-				}
+				}*/
 
 			}
 		}
