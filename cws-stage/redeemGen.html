@@ -3,7 +3,7 @@
 
   <head>
     <title>CwS - Provider: redeemGen</title>
-    <script type="text/javascript" src="scripts/libraries/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.js" ></script>
     <style>
         div.label {
             width:150px;
@@ -57,7 +57,7 @@
                             <div class="label">Activity types</div>
                         </td>
                         <td>
-                            <input type="text" class="activityType" value="eVoucher,WalkInA,WalkInB,PhoneVoucher"> &nbsp; NP > FPL-SP,FPL-FU,SAS
+                            <input type="text" class="activityType" value="">
                         </td>
                     </tr>
                     <tr>
@@ -130,6 +130,8 @@
 
         $('input.redeemURL').val ( location.origin + '/eRefWSDev3/api/dc/redeem')
 
+        $('input.activityType').val( (getRedeemDefs()) );
+
         if ( localStorage.getItem ('session') )
         {
             $('input.user').val ( JSON.parse(localStorage.getItem ('session')).user )
@@ -186,6 +188,31 @@
 
         $('textarea.output').val( (myResult) );
 
+    }
+
+    function getRedeemDefs()
+    {
+        var ret = 'eVoucher,WalkInA,WalkInB,PhoneVoucher';
+
+        if ( localStorage.getItem('session') )
+        {
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+
+            if ( itms.length )
+            {
+                ret = '';
+                for (var i = 0; i < itms.length; i++) 
+                {
+                    ret += itms[ i ].name +',';
+                }
+                ret = ret.substring( 0, ret.length -1 );
+            }
+
+        }
+
+        console.log( ret );
+        
+        return ret;
     }
 
     function getCalcTime(dtmSeed,min)
@@ -332,19 +359,6 @@
     background-color: #fff;
     }
     </style>
-
-<!--
-    <div id="f1_container">
-        <div id="f1_card" class="shadow">
-            <div class="front face">
-                <img src="img/net.svg"/>
-            </div>
-            <div class="back face center">
-                    <img src="img/net-sync.svg"/>
-            </div>
-        </div>
-    </div>
--->
 
   </body>
 

@@ -435,7 +435,7 @@ img.round:hover{
   color:#ddd;
 }
 
-#notificationUpgrade
+/*#notificationUpgrade
 {
   box-sizing: border-box;
   position: fixed;
@@ -455,7 +455,7 @@ img.round:hover{
   -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-}
+}*/
 
 .notifBtn
 {
@@ -487,9 +487,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationLight
@@ -506,9 +506,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationGray
@@ -525,9 +525,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationGreen
@@ -544,9 +544,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationRed
@@ -563,9 +563,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationYellow
@@ -582,9 +582,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationOrange
@@ -601,9 +601,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationBlue
@@ -620,9 +620,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
 .notificationPurple
@@ -639,9 +639,9 @@ img.round:hover{
   white-space: normal;
   opacity:1;
 
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 .notifProgress
 {

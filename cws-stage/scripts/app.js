@@ -53,11 +53,11 @@
 
 
   // move to cwsRender 
-  $( '#hidenotificationUpgrade' ).click ( () => {
+  /*$( '#hidenotificationUpgrade' ).click ( () => {
 
     $( '#notificationUpgrade' ).hide( 'slow' );
 
-  });
+  });*/
 
 
   // App version check and return always..  

@@ -22,8 +22,10 @@ function BlockList( cwsRenderObj, blockObj )
     me.storageName_RedeemList = cwsRenderObj.storageName_RedeemList; // "redeemList";
     me.status_redeem_submit = cwsRenderObj.status_redeem_submit; //"submit"; 
     me.status_redeem_queued = cwsRenderObj.status_redeem_queued; //"queued"; 
-    me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed"; 
+    me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed";
 
+    me.redeemListDateGroups;
+    me.showredeemListDateGroups = true;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -40,6 +42,8 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.render = function( list, newBlockTag, passedData, options )
 	{
+        me.redeemListDateGroups = [ { name: "Today", hours: 24, created: 0 }, { name: "Past week", hours: 168, created: 0 }, { name: "Past month", hours: 720, created: 0 }, { name: "Older", hours: 2160, created: 0 } ];
+
 		if ( list === 'redeemList' )
         {
             if ( options )
@@ -108,7 +112,6 @@ function BlockList( cwsRenderObj, blockObj )
 
                     me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
                 }
-                //listUlLiActiveTag.find( 'label' ).html('List');
             }
 
             (me.redeemList).sort(function (a, b) {
@@ -184,7 +187,6 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.evalScrollOnBottom = function()
     {
-
         if ( !me.redeemListLimit && $( 'div.listDiv' ).is(':visible') )
         {
             if ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() )
@@ -199,21 +201,74 @@ function BlockList( cwsRenderObj, blockObj )
                     }, 500 );
 
                 }
-
             }
         }
-       
+    }
+
+    me.evalCreateDateGroup = function( ageHours, targTag )
+    {
+        var retGroup = '';
+        for ( var g=0; g < me.redeemListDateGroups.length; g++ )
+        {
+            if ( ( parseInt( ageHours ) < parseInt( me.redeemListDateGroups[ g ].hours ) ) )
+            {
+                retGroup = me.redeemListDateGroups[ g ].hours;
+
+                if ( me.redeemListDateGroups[ g ].created == 0 )
+                {
+                    var liContentTag = $( '<li class="dateGroup"></li>' );
+                    var anchorTag = $( '<a class="dateGroupSection" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.redeemListDateGroups[ g ].name + '</a>' );
+
+                    targTag.append( liContentTag );
+                    liContentTag.append( anchorTag );
+
+                    anchorTag.click( function() {
+
+                        var imgTag = this.children[ 0 ];
+                        var calendardGroupClickedTag = $( this );
+
+                        me.evalToggleCalGroupCards( calendardGroupClickedTag.parent().parent(), 'calGroup', retGroup );
+                        imgTag.classList.toggle( "rotateImg" );
+
+                    });    
+
+                    me.redeemListDateGroups[ g ].created = 1;
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return retGroup;
+    }
+
+    me.evalToggleCalGroupCards = function( parentTag, attrName, attrVal )
+    {        
+        var liArr = parentTag.find( 'li' );
+
+        for( var i = 0; i < liArr.length ; i++ )
+        {
+            if ( liArr[ i ] && $( liArr[ i ] ).attr( attrName ) && $( liArr[ i ] ).attr( attrName ) == attrVal )
+            {
+                $( liArr[ i ] ).css( 'display', ( $( liArr[ i ] ).css( 'display' ) == 'none' ) ? 'block' : 'none' );
+            }
+        }
     }
 
     me.appendRedeemListOnScrollBottom = function()
     {
-
         if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
         for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
         {
             me.lastRedeemDate =  me.redeemList[i].created;
-            me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag );
+            me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
+
+            var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+
+            me.renderRedeemListItemTag( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
             me.redeemListScrollCount += 1;
         }
 
@@ -235,15 +290,21 @@ function BlockList( cwsRenderObj, blockObj )
     // TODO: Split into HTML frame create and content populate?
     // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
 
-    me.renderRedeemListItemTag = function( itemData, listContentUlTag )
+    me.renderRedeemListItemTag = function( itemData, listContentUlTag, calGroup )
     {   
         var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '"';
+
+        if ( calGroup )
+        {
+            itemAttrStr += ' calGroup="' + calGroup + '" ';
+        }
+
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style="' + ( !bIsMobile ? 'padding:4px;' : '' ) + '"></a>' );
-        var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm ");
+        var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm" );
 
         if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
         {
@@ -253,12 +314,8 @@ function BlockList( cwsRenderObj, blockObj )
             if ( statusOpt )
             {
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );
-                //var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? 'padding:4px;' : '' ) + '">' );
                 var tblObj = $( '<table id="listItem_table_' + itemData.id + '" style="width:100%;border-spacing:0;' + ( !bIsMobile ? '' : '' ) + '">' );
                 var trObj1 = $( '<tr>' );
-
-                //height:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height + 4) + 'px;
-                //var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:15px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? 'width:15px;' : '' ) + '" class="' + ( bIsMobile ? 'dragSelector whitecarbon' : '' ) + ' listItem">&nbsp;</div></td>' );
                 var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:2px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? '' : '' ) + '" class="' + ( bIsMobile ? '' : '' ) + ' listItem">&nbsp;</div></td>' );
 
                 var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 style="" >' ); 
@@ -296,16 +353,16 @@ function BlockList( cwsRenderObj, blockObj )
         var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="images/arrow_down.svg" style="width:24px;height:24px;position:relative;top:-2px;"></div>' );
 
         var trObj2 = $( '<tr id="listItem_trExpander_' + itemData.id + '">' );
-        tblObj.append( trObj2 );
         var tdExpandObj = $( '<td id="listItem_expand_' + itemData.id + '" rowspan=1 >' ); 
+
+        tblObj.append( trObj2 );
         trObj2.append( tdExpandObj );
         tdExpandObj.append( expandArrowTag );
 
-        //var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData ) //Greg: create [previewJson] block when sendToWS
         var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData )
         tdDataPreviewObj.append( previewDivTag );
 
-        var voucherTag = $( '<div class="act-r">'+ ( ( itemData.data.payloadJson.voucherCode ) ? itemData.data.payloadJson.voucherCode : '~ pending' ) +'<br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
+        var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span><br>' + itemData.activityType + '</div>' ); //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
         var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" style="width:24px;height:24px;"></small></div>' );
@@ -313,7 +370,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
         // Content that gets collapsed/expanded 
-        var contentDivTag = $( '<div class="act-l" id="listItem_networkResults_' + itemData.id + '" style="font-weight:400;"></div>' );
+        var contentDivTag = $( '<div class="act-l " id="listItem_networkResults_' + itemData.id + '" ></div>' );
         contentDivTag.append( '<span ' + FormUtil.getTermAttr( itemData ) + '>' + itemData.title + '</span>' );
 
         // Click Events
@@ -358,7 +415,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         if ( flds.length )
         {
-            for ( var f=0; f < flds.length; f++ ) 
+            for ( var f=0; f < flds.length; f++ )
             {
                 for ( var key in Json ) 
                 {
@@ -395,8 +452,6 @@ function BlockList( cwsRenderObj, blockObj )
         var statusSecDivTag = itemLiTag.find( 'div.icons-status' );
 
         FormUtil.setStatusOnTag( statusSecDivTag, itemData, me.cwsRenderObj ); 
-
-        //var itemActionButtonsDivTag = itemLiTag.find( 'div.act-l div.listItemDetailActionButtons');
 
         // Click Events
         me.submitButtonListUpdate( statusSecDivTag, itemLiTag, itemData );
@@ -455,6 +510,14 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( bProcess )
                 {
+                    if ( fetchItemData.status == me.status_redeem_submit )
+                    {
+                        bProcess = false;
+                    }
+                }
+
+                if ( bProcess )
+                {
                     // CHECK IF ITEM ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
                     if ( DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id ).syncActionStarted == 0 )
                     {
@@ -468,7 +531,8 @@ function BlockList( cwsRenderObj, blockObj )
 
                         var redeemID = mySyncIcon.attr( 'id' ).replace( 'listItem_icon_sync_','' );
                         var myTag = $( '#listItem_networkResults_' + redeemID );
-                        var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
+                        var myQueueStatus = $( '#listItem_queueStatus_' + itemData.id );
+                        var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting to network... </div>' ); //MISSING TRANSLATION
 
                         myTag.empty();
                         myTag.append( loadingTag );
@@ -504,9 +568,15 @@ function BlockList( cwsRenderObj, blockObj )
                                     var dtmRedeemDate = (new Date() ).toISOString();
 
                                     fetchItemData.redeemDate = dtmRedeemDate;
+                                    fetchItemData.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
                                     fetchItemData.status = me.status_redeem_submit;
+                                    fetchItemData.queueStatus = 'success'; // MISSING TRANSLATION
 
-                                    myTag.html( 'Success' );
+                                    if ( fetchItemData.activityList ) delete fetchItemData.activityList;
+
+                                    myQueueStatus.html( fetchItemData.queueStatus )
+                                    myTag.html( fetchItemData.title );
+
                                 }
                                 else 
                                 {
@@ -521,6 +591,11 @@ function BlockList( cwsRenderObj, blockObj )
                                     if ( fetchItemData.networkAttempt >= me.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                                     {
                                         fetchItemData.status = me.status_redeem_failed;
+                                        fetchItemData.queueStatus = me.status_redeem_failed;
+                                    }
+                                    else
+                                    {
+                                        fetchItemData.queueStatus = 'retry'; // MISSING TRANSLATION
                                     }
 
                                     myTag.html( 'Error redeeming' );
@@ -528,7 +603,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                                 if ( returnJson )
                                 {
-                                    itmHistory.push ( { "syncType": "item-icon-Click", "syncAttempt": dtmRedeemAttempt, "success": success, "restultStatus": returnJson.resultData.status, "returnJson": returnJson } );
+                                    itmHistory.push ( { "syncType": "item-icon-Click", "syncAttempt": dtmRedeemAttempt, "success": success, "returnJson": returnJson } );
                                 }
                                 else
                                 {
@@ -542,7 +617,7 @@ function BlockList( cwsRenderObj, blockObj )
                                 DataManager.updateItemFromData( me.storageName_RedeemList, fetchItemData.id, fetchItemData );
 
                                 setTimeout( function() {
-                                    myTag.html( fetchItemData.title + ' >> ' + fetchItemData.lastAttempt );
+                                    //myTag.html( fetchItemData.title );
                                     FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + fetchItemData.id ), FormUtil.getActivityType ( fetchItemData ), FormUtil.getStatusOpt ( fetchItemData ), me.cwsRenderObj )
                                 }, 1000 );
 
@@ -569,17 +644,19 @@ function BlockList( cwsRenderObj, blockObj )
     me.redeemList_Add = function( submitJson, status )
     {
         var dateTimeStr = (new Date() ).toISOString();
-
         var tempJsonData = {};
-        tempJsonData.title = ( ( submitJson.payloadJson.voucherCode ) ? "Voucher: " + submitJson.payloadJson.voucherCode  + " - " : "") + dateTimeStr;
+
+        tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; //( ( submitJson.payloadJson.voucherCode ) ? "Voucher: " + submitJson.payloadJson.voucherCode  + " - " : "") + dateTimeStr;
         tempJsonData.created = dateTimeStr;
         tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
         tempJsonData.id = Util.generateRandomId();
         tempJsonData.status = status;
+        tempJsonData.queueStatus = 'pending'; //DO NOT TRANSLATE?
         tempJsonData.archived = 0;
         tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
         tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList(), 'eVoucher' ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
+
         // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
         tempJsonData.activityList = ActivityUtil.getActivityList();
         tempJsonData.syncActionStarted = 0;
