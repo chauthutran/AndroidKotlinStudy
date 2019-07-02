@@ -44,14 +44,13 @@ function BlockForm( cwsRenderObj, blockObj )
 				formDivSecTag.css( 'display', 'block' );
 			}
 
-			//for( var i = 0; i < formJsonArr.length; i++ )
 			for( var i = 0; i < formFieldGroups.length; i++ )
 			{
 				if ( ( formFieldGroups[ i ].group ).toString().length )
 				{
 					if ( ! groupsCreated.includes( formFieldGroups[ i ].group ) )
 					{
-						var controlGroup = $( '<div style="" class="inputDiv active formGroupSection"><div><label class="formGroupSection">' + formFieldGroups[ i ].group + '</label></div></div>' );
+						var controlGroup = $( '<div style="" class="inputDiv active formGroupSection" name="' + formFieldGroups[ i ].group + '"><div><label class="formGroupSection">' + formFieldGroups[ i ].group + '</label></div></div>' );
 						formDivSecTag.append( controlGroup );
 						groupsCreated.push( formFieldGroups[ i ].group );
 					}
@@ -66,7 +65,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					{
 						if ( ! groupsCreated.includes( "zzzEmpty" ) )
 						{
-							var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection"></div>' );
+							var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection" name="zzzEmpty"></div>' );
 							formDivSecTag.append( controlGroup );	
 							groupsCreated.push( "zzzEmpty" );
 						}
@@ -87,19 +86,45 @@ function BlockForm( cwsRenderObj, blockObj )
 					//me.renderInput( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
 					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
 				}
+
 			}
 
+			
 			me.populateFormData( passedData, formDivSecTag );
+			me.evalFormGroupDisplayStatus( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
 		}
 
 	}
-	
+
+	me.evalFormGroupDisplayStatus = function( formDivSecTag )
+	{
+		var dvGroups = formDivSecTag.find( 'div.formGroupSection' );
+
+		for( var i = 0; i < dvGroups.length; i++ )
+		{
+			var inpCtls  = $( dvGroups[ i ] ).find("div.inputDiv");
+			var sumDisplay = 0;
+
+			for( var c = 0; c < inpCtls.length; c++ )
+			{
+				if ( $( inpCtls[ c ]).css( 'display' ) != 'none' )
+				{
+					sumDisplay += 1;
+				}
+			}
+			if ( sumDisplay == 0 )
+			{
+				$( dvGroups[ i ] ).css( 'display', 'none' );
+			}
+		}
+	}
+
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-	
+
 	me.getIdList_FormJson = function( formJsonArr )
 	{
 		var idList = [];

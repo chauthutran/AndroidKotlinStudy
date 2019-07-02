@@ -28,7 +28,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "27993e735499f1e576b6f8be961e9c84"
+    "revision": "65839cb10b9be89135281a0e4ae91757"
   },
   {
     "url": "images/about.svg",
@@ -219,6 +219,18 @@ self.__precacheManifest = [
     "revision": "56d9b808639a50927115cab90dd8e246"
   },
   {
+    "url": "images/net-green.svg",
+    "revision": "7267a1c85f97b8d8f2b1d8e84c3baed2"
+  },
+  {
+    "url": "images/net-sync.svg",
+    "revision": "ca8591a7226c1592fedda68b4d1efa1f"
+  },
+  {
+    "url": "images/net.svg",
+    "revision": "2144acb467584dffbf59e6798923bd2b"
+  },
+  {
     "url": "images/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
@@ -283,6 +295,10 @@ self.__precacheManifest = [
     "revision": "a3c479b6e15274e6accbd7bab30da020"
   },
   {
+    "url": "images/user.svg",
+    "revision": "60862197c3b1a2989278571db358709a"
+  },
+  {
     "url": "images/voucher.svg",
     "revision": "cdf69e2c81e75c8c92afa19870e62a9c"
   },
@@ -316,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "8f121000dacf82b3dd49f44aac96952d"
+    "revision": "eeb024853263a8c5f1d2d0e84940c28e"
   },
   {
     "url": "scripts/classes/blockList.js",
