@@ -322,12 +322,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	line-height: 30px;
 	}
 .leaflet-touch .leaflet-bar a:first-child {
-	border-top-left-radius: 16px; /*2px*/
-	border-top-right-radius: 16px; /*2px*/
+	/*border-top-left-radius: 16px; /*2px*/
+	/*border-top-right-radius: 16px; /*2px*/
+	box-shadow: 0 6px 6px rgba(0,0,0,0.2), 0 -2px 0px rgba(0,0,0,0.02);
 	}
 .leaflet-touch .leaflet-bar a:last-child {
-	border-bottom-left-radius: 16px;
-	border-bottom-right-radius: 16px;
+	/*border-bottom-left-radius: 16px;
+	border-bottom-right-radius: 16px;*/
+	box-shadow: 0 6px 6px rgba(0,0,0,0.2), 0 -2px 0px rgba(0,0,0,0.02);
 	}
 
 /* zoom control */

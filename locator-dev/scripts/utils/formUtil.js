@@ -1666,3 +1666,49 @@ FormUtil.findHighestZIndex = function(elem)
   }
   return highest;
 }
+
+FormUtil.showAbout = function()
+{
+	$( 'div.info-floating-container' ).show();
+	$( 'div.info-contents-container' ).html( FormUtil.getAboutContents() );
+}
+
+FormUtil.getAboutContents = function()
+{
+	return '<div style="font-size:14pt;"> <img src="images/Connect.svg" style="width:18px;height:18px;"> <br> <strong>This is</strong> <br> <span>the about</span> <br> <i> BOX </i> <br> should we <br> choose to use it </div>';
+}
+
+
+FormUtil.circleMarker = function( sText )
+{
+    var w = 36, h = 36, r = 16, offX = 17, offY = 23;
+
+	var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svgElement.setAttribute("width", w);
+	svgElement.setAttribute("height", h);
+	svgElement.width = w;
+	svgElement.height = h;
+
+	var svgGroup;
+	svgGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+	svgElement.appendChild(svgGroup);
+
+    var symbol = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    symbol.setAttribute( "cx", ( w / 2 ) -1 ); // x-dimension
+    symbol.setAttribute( "cy", ( h / 2 ) -1 ); // y-dimension
+    symbol.setAttribute("style", "stroke-width:1;stroke:#FF0000;fill:#FF0000;opacity: 1;");
+	symbol.setAttribute("r", r ); // radius
+	svgGroup.appendChild(symbol);
+
+    var xLabel;
+    xLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    xLabel.setAttribute("x", offX );
+    xLabel.setAttribute("y", offY );
+    xLabel.textContent = sText;
+	xLabel.setAttribute("style", "font-size: 16pt;text-shadow:1px 1px #202020;font-family: 'Rubik', 'Open Sans', sans-serif;fill:#fff;font-weight: 600;");
+	xLabel.setAttribute("text-anchor", "middle" );
+    svgGroup.appendChild(xLabel);
+
+    return (svgElement.outerHTML);
+
+}

@@ -158,7 +158,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	console.log( formDivSecTag );
+	//console.log( formDivSecTag );
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -1242,20 +1242,22 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 
 };
 
-FormUtil.defaultLanguage = function()
+FormUtil.defaultLanguage = function( exeFunc )
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	var sessData = DataManager.getSessionData();
 
-	if ( sessData && sessData.language )
-	{
-		return sessData.language;
-	}
-	else
-	{
-		//var navLang = (navigator.language).toString().substring(0,2);
-		return (navigator.language).toString().substring(0,2);
-	}
+	DataManager.getSessionData( function( sessData){
+	
+		if ( sessData && sessData.language )
+		{
+			exeFunc( sessData.language );
+		}
+		else
+		{
+			//var navLang = (navigator.language).toString().substring(0,2);
+			exeFunc( (navigator.language).toString().substring(0,2) );
+		}
+	});
 
 };
 
@@ -1461,18 +1463,19 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 	
 }
 
-FormUtil.gAnalyticsEventAction = function()
+FormUtil.gAnalyticsEventAction = function( exeFunc )
 {
-	var dcd = DataManager.getUserConfigData();
-	if ( dcd && dcd.orgUnitData )
-	{
-		//CUSTOMIZE AS REQUIRED
-		return  'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
-	}
-	else
-	{
-		return  'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
-	}
+	DataManager.getUserConfigData( function( dcd ) {
+		if ( dcd && dcd.orgUnitData )
+		{
+			//CUSTOMIZE AS REQUIRED
+			exeFunc( 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom() );
+		}
+		else
+		{
+			exeFunc( 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom() );
+		}
+	});
 }
 
 FormUtil.gAnalyticsEventLabel = function()
@@ -1699,37 +1702,159 @@ FormUtil.screenMaxZindex = function(parent, limit)
 
 }
 
-FormUtil.evalCase = function( evalCond, jsonData )
+FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResource )
 {
-	var json = jsonData;
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( 'input,select' );
+	var arrPayStructure = localResource.split( '.' );
+	var WSexchangeData = JSON.parse( sessionStorage.getItem( 'WSexchange' ) );
+	var lastPayload = WSexchangeData[ arrPayStructure[ 0 ] ];
 
-	console.log( json );
-	console.log( evalCond );
-	console.log( evalCond.toString().indexOf('##setData') );
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);	
+		var attrDisplay = inputTag.attr( 'display' );
+		var nameVal = inputTag.attr( 'name' );
+		var getVal_visible = false;
+		var getVal = false;
 
-	if ( evalCond.toString().indexOf('##setData') >= 0 )
-	{
-		console.log( evalCond );
-		var arrRule  = evalCond.toString().split( '##setData{' )[ 1 ].split( '}' )[ 0 ];
-		var arrTasks = arrRule.split( ';' );
+		if ( attrDisplay === 'hiddenVal' ) getVal_visible = true;
+		else if ( inputTag.is( ':visible' ) ) getVal_visible = true;
 
-		console.log( arrRule );
-		console.log( arrTasks );
-
-		for ( var i=0; i< arrTasks.length; i++ )
+		if ( getVal_visible )
 		{
-			console.log( ' ~ ' + arrTasks[ i ] );
-			eval( arrTasks[ i ] );
+			// Check if the submit var list exists (from config).  If so, only items on that list are added.
+			if ( recordIDlist === undefined )
+			{			
+				getVal = true;
+			}
+			else
+			{
+				if ( recordIDlist.indexOf( nameVal ) >= 0 ) getVal = true;
+			}
 		}
 
-		console.log( json );
+		if ( getVal )
+		{
+			var val = FormUtil.getTagVal( inputTag );
+			if ( val === null || val === undefined ) val = '';
 
-	}
-	else
+			//inputsJson[ FormUtil.getTagValPair( getUIDPairList, nameVal ) ] = val;
+			inputsJson[ nameVal ] = val;
+		}
+	});
+
+	//console.log( WSexchangeData );
+	//console.log( lastPayload );
+
+	var retData = FormUtil.recursiveWSexchangeGet( WSexchangeData, arrPayStructure, 0, recordIDlist[ 0 ], inputsJson[ recordIDlist[ 0 ] ] );
+	lastPayload[ 'displayData' ] = retData;
+
+	if ( retData && lastPayload[ 'resultData' ] )
 	{
+		lastPayload[ 'resultData' ][ 'status' ] = "foundOne";
+	}
+
+	return lastPayload;
+
+}
+
+FormUtil.getTagValPair = function( getUIDPairList, nameVal )
+{
+	var ret = nameVal;
+
+	for ( var t=0; t< getUIDPairList.length; t++ )
+	{
+		var arrPair = getUIDPairList[ t ].toString().split( ':' );
+
+		if ( arrPair[ 0] == nameVal )
+		{
+			ret = arrPair[ 1 ];
+			break;
+		}
+	}
+
+	return ret;
+
+}
+
+FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm, keyFind, keyValue)
+{
+	var targetArr;
+
+	if ( dataTargetHierarchy[ itm ] )
+	{
+		// check if next item exists > if true then current item is object ELSE it is array (destination array for values)
+		if ( dataTargetHierarchy[ itm + 1 ] )
+		{
+			return FormUtil.recursiveWSexchangeGet( targetDef[ dataTargetHierarchy[ itm ] ], dataTargetHierarchy, parseInt( itm ) + 1, keyFind, keyValue )
+		}
+		else
+		{
+			var arrSpecRaw = ( dataTargetHierarchy[ itm ] ).toString().replace( '[', '' ).replace( ']' ,'' );
+			var targetArr = targetDef[ arrSpecRaw ]; //always returns 2-level array (array of arrays)
+
+			for ( var i=0; i< targetDef[ arrSpecRaw ].length; i++ )
+			{
+
+				for ( var t=0; t< targetArr[ i ].length; t++ )
+				{
+
+					if ( targetArr[ i ][ t ].id == keyFind && targetArr[ i ][ t ].value == keyValue )
+					{
+						return targetArr[ i ];
+					}
+
+				}
+
+			}
+
+		}
 
 	}
 
-	return json;
+
+}
+
+FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
+{
+	var formDivSecTag = blockObj.parentTag;
+	var inputTags = formDivSecTag.find( 'input,select' );
+
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);
+		var dataTarg = FormUtil.getFormFieldPayloadConfigDataTarget( payloadConfig, inputTag.attr( 'name' ), formDefinition )
+
+		if ( dataTarg )
+		{
+			if ( dataTarg.dataTargets )
+			{
+				inputTag.attr( 'dataTargets', escape( JSON.stringify( dataTarg.dataTargets ) ) );
+			}
+			if ( dataTarg.defaultValue )
+			{
+				inputTag.val( dataTarg.defaultValue );
+			}
+		}
+
+	});
+
+}
+
+FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldId, formDefArr )
+{
+	// fetches payloadConfiguration dataTarget for formDefinition's field/control
+
+	for ( var i=0; i< formDefArr.length; i++ )
+	{
+		if ( formDefArr[ i ].id == fldId )
+		{
+			if ( formDefArr[ i ].payload && formDefArr[ i ].payload[ payloadConfigName ] )
+			{
+				return formDefArr[ i ].payload[ payloadConfigName ];
+			}
+		}
+	}
 
 }

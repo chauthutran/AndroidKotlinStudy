@@ -13,7 +13,9 @@
 
   function startApp() 
   {
-    //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
+
+    $( '#appVersion' ).text( 'v' + _ver );
+
     FormMsgManager.appBlock( "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
 
     // 1. Online/Offline related event setup
@@ -22,9 +24,7 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-
     ConnManager.initialize();
-
 
     appInfoOperation( function() {
       // Create a class that represent the object..
@@ -54,7 +54,6 @@
     // Only online mode and by app.psi-mis.org, check the version diff.
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
-
       setTimeout( function() 
       {
         FormMsgManager.appUnblock();
@@ -62,7 +61,6 @@
         if (returnFunc) returnFunc();
 
       }, loadLogoDelay );
-
     }
     else
     {
@@ -87,62 +85,59 @@
   };
 
   // ----------------------------------------------------
-  
-  //window.isUpdateAvailable = new Promise(function(resolve, reject) {
 
-    if ('serviceWorker' in navigator ) {
+  if ('serviceWorker' in navigator ) {
 
-      navigator.serviceWorker.register('./service-worker.js').then(registration=> {
+    navigator.serviceWorker.register('./service-worker.js').then(registration=> {
 
-          registration.onupdatefound = () => {
+        registration.onupdatefound = () => {
 
-            const installingWorker = registration.installing;
+          const installingWorker = registration.installing;
 
-            installingWorker.onstatechange = () => {
+          installingWorker.onstatechange = () => {
 
-              console.log( 'SW state changing: ' + installingWorker.state );
+            //console.log( 'SW state changing: ' + installingWorker.state );
 
-              switch (installingWorker.state) {
-                case 'installed':
-                  if (navigator.serviceWorker.controller) {
-                    // new update available
-                    //resolve(true);
-                    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-                    // move to cwsRender ?
-                    $( btnUpgrade ).click ( () => {
-                      location.reload( true );
-                    });
+            switch (installingWorker.state) {
+              case 'installed':
+                if (navigator.serviceWorker.controller) {
+                  // new update available
+                  //resolve(true);
+                  var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
-                    MsgManager.notificationMessage ( 'Updates installed. Click refresh to view', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-                  } else {
-                    // no update available
-                    //resolve(false);
-                  }
-                  break;
-              }
+                  // move to cwsRender ?
+                  $( btnUpgrade ).click ( () => {
+                    location.reload( true );
+                  });
 
-            };
+                  MsgManager.notificationMessage ( 'Updates installed. Click refresh', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+                } else {
+                  // no update available
+                  //resolve(false);
+                }
+                break;
+            }
 
           };
 
-          //_cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
-          _registrationObj = registration;
-          if ( debugMode ) console.log('Service Worker Registered');
+        };
 
-        })
-        .then(function() {
+        //_cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
+        _registrationObj = registration;
+        if ( debugMode ) console.log('Service Worker Registered');
 
-          // Start the app after service worker is ready.
-          startApp();
+      })
+      .then(function() {
 
-        })
-        .catch(err => 
-          MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 )
-        );
+        // Start the app after service worker is ready.
+        startApp();
 
-    }
+      })
+      .catch(err => 
+        MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 )
+      );
 
-	//});
+  }
 
 
 })();

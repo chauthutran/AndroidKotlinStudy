@@ -93,6 +93,44 @@
       display: none;
     }
 
+    li.dateGroup {
+      margin-bottom: 4px;
+    }
+    li.dateGroup > a {
+      position: relative;
+      border-left-width: 6;
+      background: #f5f5f5;
+      padding: 10px 8px 8px 8px;
+      font-size:10pt;
+      color: #333;
+      text-decoration: none;
+      display: inline-block;
+      width: 100%;
+      height:auto;
+      border-top: #FFF .5px solid;
+      border-bottom: #CCC .5px solid;
+      box-sizing: border-box;
+      font-weight: 400;
+    }
+
+    li.dateGroup > a:after,
+    li.dateGroup > a:before {
+      top: 40%;
+      left: 88%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+
+    a.dateGroupSection
+    {
+
+    }
+
     .icons-status {
       clear: both;
       float: right;
@@ -141,13 +179,15 @@
 
     .act-l {
       position: relative;
-      /*float: left;*/
+      float:left;
       width: 100%;
       /*height: auto;*/
       /*padding: 10px 4px 0 0; */
       /*margin-bottom: 5px;*/
       /*background-color: #fff; rgba(255, 218, 109, 0.507);*/
       box-sizing: border-box;
+      font-weight:400;
+      top: -6px;
     }
 
     .listItem {
@@ -237,7 +277,7 @@
       }
       .act-l {
         font-size: calc(9px + 0.4vw);
-        padding: 5px 0 5px 25px;
+        padding: 5px 0 5px 15px;
       }
   
       ul li .expandable {
@@ -326,7 +366,7 @@
       
       .icon-row {
         font-size: calc(9px + 0.2vw);
-        height: 70px;
+        height: 60px;
       }
       .whitecarbon {
         height: 66px;
@@ -337,7 +377,7 @@
 
       .act-l {
         font-size: calc(9px + 0.2vw);
-        padding: 8px 0 5px 25px;
+        padding: 8px 0 5px 15px;
       }
   
       ul li .expandable {

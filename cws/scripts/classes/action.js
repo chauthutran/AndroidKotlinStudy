@@ -81,7 +81,7 @@ function Action( cwsRenderObj, blockObj )
 				if ( resultStr !== "actionFailed" )
 				{
 					actionIndex++;
-	
+
 					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );	
 				}
 				else
@@ -89,7 +89,7 @@ function Action( cwsRenderObj, blockObj )
 					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
 					endOfActionsFunc( dataPass );
 				}
-				
+
 			});
 		}
 	}
@@ -171,16 +171,18 @@ function Action( cwsRenderObj, blockObj )
 					blockPassingData.showCase = clickActionJson.showCase;
 					blockPassingData.hideCase = clickActionJson.hideCase;
 
-					if ( clickActionJson.evalCase )
-					{
-						blockPassingData = FormUtil.evalCase( clickActionJson.evalCase, blockPassingData );
-					}
 
 					// Hide block if action is doing 'openBlock'
 					me.blockObj.hideBlock();
 
 					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true } );	
 					newBlockObj.render();
+
+					if ( clickActionJson.payloadConfig )
+					{
+						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
+					}
+
 				}
 
 				if ( afterActionFunc ) afterActionFunc();
@@ -257,17 +259,41 @@ function Action( cwsRenderObj, blockObj )
 							if ( afterActionFunc ) afterActionFunc();
 						} );
 
-						// For now, loop these actions..  rather than recursive calls..
-						//for ( var i = 0; i < statusActions.length; i++ )
-						//{
-							// NOTE: These do not support Async calls...  If added, we need to 
-						//	me.actionPerform( statusActions[i], blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, passedData_Temp );
-						//}
 					}
 				}
 
 				// If statusActions did not get started for some reason, return as this action finished
 				if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
+			}
+			else if ( clickActionJson.actionType === "WSlocalData" )
+			{
+				var statusActionsCalled = false;
+
+				if ( clickActionJson.localResource )
+				{
+					var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
+
+					//if ( wsExchangeData && wsExchangeData.resultData && wsExchangeData.displayData )
+					{
+						var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
+						var dataPass_Status = {};
+						statusActionsCalled = true;
+
+						//console.log( wsExchangeData );
+
+						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
+							if ( afterActionFunc ) afterActionFunc();
+						} );
+
+					}
+
+				}
+				else
+				{
+					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc(); 
+				}
+
+				// If statusActions did not get started for some reason, return as this action finished
 			}
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
@@ -286,7 +312,6 @@ function Action( cwsRenderObj, blockObj )
 
 				var previewJson = FormUtil.generateInputJson( formDivSecTag );
 
-				//FormUtil.setLastPayload( 'sendToWS', inputsJson, 'receivedFromWS' )
 				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
 
 				// Voucher Status add to payload
@@ -303,7 +328,7 @@ function Action( cwsRenderObj, blockObj )
 					var submitJson = {};
 					submitJson.payloadJson = inputsJson;
 					submitJson.previewJson = previewJson;
-					submitJson.actionJson = clickActionJson;	
+					submitJson.actionJson = clickActionJson;
 					submitJson.url = url;
 
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)

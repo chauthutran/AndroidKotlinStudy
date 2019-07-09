@@ -1785,5 +1785,37 @@ $.fn.rotate=function(options) {
 
   Util.capitalizeFirstLetter = function(string) 
   {
-	return string.charAt(0).toUpperCase() + string.slice(1);
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+  
+  Util.capitalizeAllFirstLetters = function(string) 
+  {
+	  var arrStr = string.split(' ');
+	  var ret = '';
+
+	  for ( var j = 0; j < arrStr.length; j++) 
+	  {
+		ret += Util.capitalizeFirstLetter( arrStr[ j ] ) + ' ';
+	  }
+	return ret.substring(0, ret.length - 1);
+  }
+
+  Util.sortNumberReverse = function( a, b )
+  {
+	return b - a;
+  }
+
+  Util.commaDelimitArray = function( arrObj )
+  {
+	var returnVal = '';
+
+	for ( var j = 0; j < arrObj.length; j++)
+	{
+		if ( ( arrObj[ j ] ).length > 0 ) returnVal += arrObj[ j ] + ',';
+	}
+	if ( returnVal.length )
+	{
+		returnVal = returnVal.substring( 0, returnVal.length - 1 );
+	}
+	return returnVal;
   }

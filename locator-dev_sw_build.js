@@ -24,6 +24,15 @@ generateSW({
   ],
   runtimeCaching: [
     {
+        urlPattern: /osm.org/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'openStreetMaps'
+        }
+    }
+  ],
+  runtimeCaching: [
+    {
       urlPattern: /.js|.html|.css|.jpeg|.jpg|.png/,
       handler: 'CacheFirst',
       options: {

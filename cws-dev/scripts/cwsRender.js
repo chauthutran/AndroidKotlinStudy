@@ -9,10 +9,7 @@ function cwsRender()
 
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
-	//me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
-	//me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	//me.menuTopRightIconTag = $( '#menu_e' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
 	// This get cloned..  Thus, we should use it as icon class name?
@@ -126,10 +123,10 @@ function cwsRender()
 
 	me.updateFromSession = function()
 	{
-		if ( DataManager.getSessionDataValue( 'networkSync') )
-		{
-			me.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' ); 
-		}
+		DataManager.getSessionDataValue( 'networkSync', null,  function(data){
+			me.storage_offline_SyncExecutionTimerInterval = data;
+			// DataManager.saveData(  'networkSync',  data );
+		});
 	}
 
 	me.setPageHeaderEvents = function()
@@ -164,45 +161,45 @@ function cwsRender()
 	
 	me.renderArea = function( areaId )
 	{
-		me.hideAreaRelatedParts();
 
-		// added by Greg (2019-02-18) > test track googleAnalytics
-		ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+			me.hideAreaRelatedParts();
 
-		// should close current tag/content?
-		if (areaId === 'logOut') me.logOutProcess();
-		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
-		else if ( areaId === 'aboutPage') me.aboutApp.render();
-		else
-		{  
-			me.clearMenuClickStyles();
+			// added by Greg (2019-02-18) > test track googleAnalytics
+			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-			me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-		
-			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-	
+			// should close current tag/content?
+			if (areaId === 'logOut') me.logOutProcess();
+			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+			else if ( areaId === 'aboutPage') me.aboutApp.render();
+			else
+			{  
+				me.clearMenuClickStyles();
+				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
 
-			// TODO: ACTIVITY ADDING
-			ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
 
+				// TODO: ACTIVITY ADDING
+				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
-			// if menu is clicked,
-			// reload the block refresh?
-			if ( selectedArea && selectedArea.startBlockName )
-			{
-				// added by Greg (2018/12/10)
-				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
+				// if menu is clicked,
+				// reload the block refresh?
+				if ( selectedArea && selectedArea.startBlockName )
+				{
+					// added by Greg (2018/12/10)
+					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
-				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
-				startBlockObj.render();  // should been done/rendered automatically?
+					var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+					startBlockObj.render();  // should been done/rendered automatically?
 
-				// Change start area mark based on last user info..
-				me.trackUserLocation( selectedArea );				
+					// Change start area mark based on last user info..
+					me.trackUserLocation( selectedArea );				
+				}
+
+				me.updateMenuClickStyles( areaId );
+
 			}
-
-			me.updateMenuClickStyles( areaId );
-
-		}
+		});
 
 	}
 
@@ -386,73 +383,76 @@ function cwsRender()
 		return statTbl;
 	}
 
-	me.populateMenuList = function( areaList )
+	me.populateMenuList = function( areaList, exeFunc )
 	{
-		var startMenuTag;
-		if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
-		$( '#navDrawerDiv' ).empty();
+		
+		DataManager.getSessionData( function(userSessionJson) {
+			var userSessionJson = DataManager.getSessionData();
+			var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
+			var startMenuTag;
+			if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
+			$( '#navDrawerDiv' ).empty();
 
-		// clear the list first
-		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
+			// clear the list first
+			me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
-		// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
-		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
-		var tr = $( '<tr />' );
-		var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
-		var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
+			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
+			var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
+			var navMenuTbl = $( '<table id="navDrawerHeader" />' );
+			var tr = $( '<tr />' );
+			var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
+			var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
 
-		me.navDrawerDivTag.append ( navMenuHead );
-		navMenuHead.append ( navMenuTbl );
-		navMenuTbl.append ( tr );
-		tr.append ( tdLeft );
-		tr.append ( tdRight );
+			me.navDrawerDivTag.append ( navMenuHead );
+			navMenuHead.append ( navMenuTbl );
+			navMenuTbl.append ( tr );
+			tr.append ( tdLeft );
+			tr.append ( tdRight );
 
-		var navMenuLogo = $( '<img src="images/logo.svg" />' );
+			var navMenuLogo = $( '<img src="images/logo.svg" />' );
 
-		var userSessionJson = DataManager.getSessionData();
-		var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
+			tdLeft.append ( navMenuLogo );
+			tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
+			tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
 
-		tdLeft.append ( navMenuLogo );
-		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
-		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
+			var tr = $( '<tr />' );
+			var td = $( '<td colspan=2 style="height:20px;" />' );
 
-		var tr = $( '<tr />' );
-		var td = $( '<td colspan=2 style="height:20px;" />' );
+			navMenuTbl.append ( tr );
+			tr.append ( td );
+			td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
 
-		navMenuTbl.append ( tr );
-		tr.append ( td );
-		td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
-
-		// Add the menu rows
-		if ( areaList )
-		{
-			for ( var i = 0; i < areaList.length; i++ )
+			// Add the menu rows
+			if ( areaList )
 			{
-				var area = areaList[i];
+				for ( var i = 0; i < areaList.length; i++ )
+				{
+					var area = areaList[i];
 
-				var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
-				me.setupMenuTagClick( menuTag );
+					me.setupMenuTagClick( menuTag );
 
-				me.navDrawerDivTag.append( menuTag );
+					me.navDrawerDivTag.append( menuTag );
 
-				if ( area.startArea ) startMenuTag = menuTag;
-			}	
-		}
+					if ( area.startArea ) startMenuTag = menuTag;
+				}	
+			}
 
-		if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
-		{
-			me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
-		}
-		else
-		{
-			$( '#menu_userNetworkMode' ).remove();
-		}
+			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
+			{
+				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+			}
+			else
+			{
+				$( '#menu_userNetworkMode' ).remove();
+			}
 
-		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
+			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
-		return startMenuTag;
+			if ( exeFunc ) exeFunc( startMenuTag );
+		});
+	
 	}
 
 	me.setRegistrationObject = function( registrationObj )
@@ -571,21 +571,23 @@ function cwsRender()
 	
 	me.retrieveAndSetUpTranslate = function()
 	{
-		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
+		FormUtil.defaultLanguage(function( defaultLangCode ){
+			//"pt";
 
-		me.langTermObj.setCurrentLang( defaultLangCode )
+			me.langTermObj.setCurrentLang( defaultLangCode )
 
-		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
-		{
-			if ( allLangTerms )
+			me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
 			{
-				// Enable the language switch dropdown
-				me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+				if ( allLangTerms )
+				{
+					// Enable the language switch dropdown
+					me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
 
-				// Translate current page
-				me.langTermObj.translatePage();
-			}
-		});
+					// Translate current page
+					me.langTermObj.translatePage();
+				}
+			});
+		}); 
 
 	}
 

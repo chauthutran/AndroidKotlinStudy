@@ -31,10 +31,17 @@ function getControlHtmlContent()
                             "    </div>" + 
                             "    <div class='search-results-inner'></div>" + 
                             "  </div>" + 
+                            "  <div class='info-floating-container'>" + 
+                            "    <div class='info-contents-container'></div>" + 
+                            "  </div>" + 
                             "<\/div>" + 
+                            "  <div class='selection-country-container'>" + 
+                            "    <div class='selection-country-inner'></div>" + 
+                            "  </div>" + 
                             "<div class=\"panel\">" + 
                             "  <div class=\"panel-header\">" + 
                             "    <div class=\"panel-header-container\">" + 
+                            "      <div class=\"panel-header-icon\"><\/div>" + 
                             "      <div class=\"panel-header-title\"><\/div>" + 
                             "    <\/div>" + 
                             "  <\/div>" + 
@@ -44,6 +51,36 @@ function getControlHtmlContent()
 }
 
 function generateHtmlContent(menuItems)
+{
+    var content = $( '<ul class="panel-list">' );
+
+    for (var i = 0; i < menuItems.Items.length;i++)
+    {
+        var item = menuItems.Items[i];
+
+        var li = $( '<li class="panel-list-item aboutGroupDiv">' );
+        var lbl = $( '<label class="from-string titleDiv">' );
+        var dv = $( '<div class="form-type-text">' );
+
+        lbl.html( item.name );
+        dv.html( item.value );
+
+        /* remove click? */
+        dv.attr( 'clickAction', escape( item.onclick ) );
+        dv.click( function() { 
+            eval ( unescape( this.getAttribute( 'clickAction' ) ) ); 
+            if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
+        } );
+
+        content.append( li );
+        li.append( lbl );
+        li.append( dv );
+    }
+
+    return content;
+}
+
+function generateHtmlContentOld(menuItems)
 {
     var content = $( '<ul class="panel-list">' );
 
@@ -133,6 +170,7 @@ function createSearchboxControl()
 
 var searchboxControl = L.Control.extend({
     
+    _sideBarHeaderIcon: '',
     _sideBarHeaderTitle: 'Sample Title',
     _sideBarMenuItems: {
         Items: [
@@ -152,6 +190,10 @@ var searchboxControl = L.Control.extend({
     },
     initialize: function(options) {
         L.Util.setOptions(this, options);
+        if(options.sidebarTitleIcon)
+        {
+            this._sideBarHeaderIcon = options.sidebarTitleIcon;
+        }
         if(options.sidebarTitleText)
         {
             this._sideBarHeaderTitle = options.sidebarTitleText;
@@ -168,11 +210,12 @@ var searchboxControl = L.Control.extend({
 
         var container = L.DomUtil.create('div');
         container.id = "controlcontainer";
+        var headerImgIcon = this._sideBarHeaderIcon;
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
         var searchCallBack = this._searchfunctionCallBack;
 
-        $(container).html(getControlHtmlContent());
+        $( container ).html( getControlHtmlContent() );
 
         setTimeout(function () {
 
@@ -181,7 +224,7 @@ var searchboxControl = L.Control.extend({
                 else
                 {
                     var searchkeywords = $("#searchboxinput").val();
-                    searchCallBack(searchkeywords);
+                    searchCallBack( searchkeywords );
                 }
             });
 
@@ -197,8 +240,13 @@ var searchboxControl = L.Control.extend({
                 {
                     $( '#boxcontainer' ).css( 'padding', '0' );
                     $( 'div.searchbox-input-container' ).css( 'display', 'none' );
-                    $( 'div.searchbox-searchoptions-container' ).css( 'display', 'none' );
-                    $( 'div.searchbox-searchbutton-container' ).css( 'display', 'none' );
+
+                    if ( $( 'div.searchbox-searchoptions-container' ).attr( 'adv-show' ).toString() == 'true' )
+                    {
+                        $( 'div.searchbox-searchoptions-container' ).css( 'display', 'none' );
+                        $( 'div.searchbox-searchbutton-container' ).css( 'display', 'none' );
+                    }
+
                     $( "#boxcontainer" ).css( "width", $( 'div.searchbox-menu-container' ).css( 'width' ) );
                     $( "#searchbox-hidebutton" ).removeClass( 'fa-caret-square-left' );
                     $( "#searchbox-hidebutton" ).addClass( 'fa-caret-square-right' );
@@ -208,8 +256,13 @@ var searchboxControl = L.Control.extend({
                 {
                     $( '#boxcontainer' ).css( 'padding', $( "#boxcontainer" ).attr( 'initial-padding' ) );
                     $( 'div.searchbox-input-container' ).css( 'display', 'block' );
-                    $( 'div.searchbox-searchoptions-container' ).css( 'display', 'block' );
-                    $( 'div.searchbox-searchbutton-container' ).css( 'display', 'block' );
+
+                    if ( $( 'div.searchbox-searchoptions-container' ).attr( 'adv-show' ).toString() == 'true' )
+                    {
+                        $( 'div.searchbox-searchoptions-container' ).css( 'display', 'block' );
+                        $( 'div.searchbox-searchbutton-container' ).css( 'display', 'block' );    
+                    }
+
                     $( "#boxcontainer" ).css( "width", $( "#boxcontainer" ).attr( 'expand-width' ) );
                     $( "#searchbox-hidebutton" ).removeClass( 'fa-caret-square-right' );
                     $( "#searchbox-hidebutton" ).addClass( 'fa-caret-square-left' );
@@ -235,6 +288,16 @@ var searchboxControl = L.Control.extend({
 
                 $(".panel").toggle("slide", { direction: "left" }, 500);
             });
+
+            if ( headerImgIcon && headerImgIcon.length ) 
+            {
+                $(".panel-header-icon").html( "<img src='" + headerImgIcon + "' style='width:24px;height:24px;' >" );
+                $(".panel-header-icon").show();
+            }
+            else
+            {
+                $(".panel-header-icon").hide();
+            }
 
             $(".panel-header-title").text( headerTitle );
             $(".panel-content").append( generateHtmlContent(menuItems) );

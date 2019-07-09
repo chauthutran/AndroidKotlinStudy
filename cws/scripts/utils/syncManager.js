@@ -75,15 +75,6 @@ function syncManager()  {}
         syncManager.storage_offline_SyncConditionsTimerInterval = syncManager.cwsRenderObj.storage_offline_SyncConditionsTimerInterval;
         syncManager.storage_offline_SyncExecutionTimerInterval = syncManager.cwsRenderObj.storage_offline_SyncExecutionTimerInterval;
 
-        /*if ( DataManager.getSessionDataValue( 'networkSync') )
-        {
-            syncManager.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' );
-        }
-        else
-        {
-            syncManager.storage_offline_SyncExecutionTimerInterval = syncManager.cwsRenderObj.storage_offline_SyncExecutionTimerInterval;
-        }*/
-
         if ( syncManager.storage_offline_SyncConditionsTimerInterval > 0 )
         {
             syncManager.conditionsCheckTimer = setInterval( function() {
@@ -269,13 +260,14 @@ function syncManager()  {}
             else
             {
                 var mySyncIcon = $( '#listItem_icon_sync_' + itemData.id );
+                var myQueueStatus = $( '#listItem_queueStatus_' + itemData.id );
 
                 if ( mySyncIcon )
                 {
                     mySyncIcon.rotate({ count:999, forceJS: true, startDeg: 0 });
     
                     var myResultTag = $( '#listItem_networkResults_' + itemData.id );
-                    var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting... </div>' );
+                    var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting to network... </div>' ); //MISSING TRANSLATION
     
                     myResultTag.empty();
                     myResultTag.append( loadingTag );
@@ -300,8 +292,6 @@ function syncManager()  {}
                 //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
                 FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson )
                 {
-
-                    //console.log( '1. Response: ' + success );
 
                     // network conditions deteriorate during sync process run
                     if ( !success && !returnJson && !ConnManager.networkSyncConditions() )
@@ -349,16 +339,23 @@ function syncManager()  {}
                         {
                             var dtmRedeemDate = (new Date() ).toISOString();
 
-                            itemData.redeemDate = dtmRedeemDate;
-                            itemData.status = syncManager.cwsRenderObj.status_redeem_submit;
                             syncManager.lastSyncSuccess ++;
-                            newTitle = 'success > ' + dtmRedeemAttempt;
+
+                            itemData.redeemDate = dtmRedeemDate;
+                            itemData.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
+                            itemData.status = syncManager.cwsRenderObj.status_redeem_submit;
+                            itemData.queueStatus = 'success'; // MISSING TRANSLATION
+
+                            if ( itemData.activityList ) delete itemData.activityList;
+
+                            myQueueStatus.html( itemData.queueStatus )
 
                             if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
                             {
                                 playSound("coin");
                             }
-                            
+
+                            newTitle = itemData.title; 
 
                         }
                         else 
@@ -368,7 +365,6 @@ function syncManager()  {}
                                 var msg = JSON.parse( returnJson.displayData[0].value ).msg;
         
                                 itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
-
                                 newTitle = 'error > ' + msg.toString().replace(/--/g,'<br>');
                             }
 
@@ -376,9 +372,14 @@ function syncManager()  {}
                             if ( itemData.networkAttempt >= syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
                             {
                                 itemData.status = syncManager.cwsRenderObj.status_redeem_failed;
+                                itemData.queueStatus = syncManager.cwsRenderObj.status_redeem_failed;
                                 newTitle = 'error occurred > exceeded network attempt limit';
-                            }                       
-
+                            }
+                            else
+                            {
+                                itemData.queueStatus = 'retry'; // MISSING TRANSLATION
+                            }
+                            myQueueStatus.html( itemData.queueStatus )
                         }
 
                         if ( mySyncIcon )
@@ -389,7 +390,7 @@ function syncManager()  {}
 
                         if ( returnJson )
                         {
-                            itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success, "restultStatus": returnJson.resultData.status, "returnJson": returnJson } );
+                            itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmRedeemAttempt, "success": success, "returnJson": returnJson } );
                         }
                         else
                         {

@@ -15,13 +15,6 @@ function cwsRender()
 
 		//FormUtil.geolocationAllowed();
 
-		FormUtil.geolocationAllowed( function() {
-
-			me.mapObj.initialise( me );
-			me.setEvents_OnInit();
-
-		});
-
 	}
 
 	me.setEvents_OnInit = function()
@@ -35,8 +28,7 @@ function cwsRender()
 			event.preventDefault();
 
 			me.focusRelegator.hide();
-			me.mapObj.restoreMapDefaults();
-			
+			me.mapObj.initialiseMapsDefaults();
 
 		});
 
@@ -48,21 +40,31 @@ function cwsRender()
 		var POI = 0;
 		var isoCountry = '';
 
-		if ( Util.getURLParameterByName( window.location.href,'c' ).length )
-		{
-			arrLocation = Util.getURLParameterByName( window.location.href,'c' ).split( ',' );
-		}
-		if ( Util.getURLParameterByName( window.location.href,'poi' ).length )
-		{
-			POI = Util.getURLParameterByName( window.location.href, 'poi' );
-		}
-		if ( Util.getURLParameterByName( window.location.href,'isoc' ).length )
-		{
-			isoCountry = Util.getURLParameterByName( window.location.href, 'isoc' );
-			me.mapObj.countryCode = isoCountry;
-		}
+		FormUtil.geolocationAllowed( function() {
 
-		me.mapObj.render( arrLocation, POI );
+			me.mapObj.initialise( me );
+			me.setEvents_OnInit();
+
+			if ( Util.getURLParameterByName( window.location.href,'isoc' ).length )
+			{
+				isoCountry = Util.getURLParameterByName( window.location.href, 'isoc' );
+				arrLocation = me.mapObj.setCountryCode( isoCountry.toLowerCase() );
+			}
+			if ( Util.getURLParameterByName( window.location.href,'c' ).length )
+			{
+				arrLocation = Util.getURLParameterByName( window.location.href,'c' ).split( ',' );
+			}
+			if ( Util.getURLParameterByName( window.location.href,'poi' ).length )
+			{
+				POI = Util.getURLParameterByName( window.location.href, 'poi' );
+
+				if ( POI.length ) POI = Boolean( POI );
+			}
+	
+			me.mapObj.render( arrLocation, POI );
+
+		});
+
 
 	}
 

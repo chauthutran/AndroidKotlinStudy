@@ -38,7 +38,7 @@
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js" ></script>
 
 
-    <script> var _ver = '1.0.1'; </script>
+    <script> var _ver = '1.0.3'; </script>
 
 
     <!-- Google Analytics -->
@@ -153,6 +153,14 @@
                                 <img id='appShare' src='images/outline-share-24px.svg' style='display:none;width:20px;height:20px;display:none' alt="appShare">
                               </td>
                             </tr>
+                            <tr>
+                              <td colspan=2 style="text-align: right;">
+                                <select id='dbStorageSelector' style='max-width:150px'>
+                                  <option value='localStorage'>Local Storage</option>
+                                  <option value='indexdb'>IndexDB</option>
+                                </select>
+                            </td>
+                            </tr>
                           </table>
 
                         </div>
@@ -201,7 +209,7 @@
 
           <ul class="o-one ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnAboutBack" alt="arrowLeft">
+              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;" class="btnAboutBack" alt="arrowLeft">
               <label class="aboutHeader" term="menu_about">About</label>
               <br>
             </li>
@@ -216,10 +224,10 @@
 
             <li class="inputDiv" style="width: 97%;margin:0;"></li>
 
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_AppVersion_Less' style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" id='aboutInfo_AppVersion_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_applicationVersion" id="lblabout_applicationVersion" class="from-string titleDiv">Application version</label>
 
-              <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
                     <td><span id="aboutInfo_AppVersion"></span></td>
@@ -235,7 +243,7 @@
             <li class="inputDiv aboutMoreDiv" id='aboutInfo_AppVersion_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
 
               <label term="about_newVersionAvailable" class="from-string titleDiv">new version available</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td><span id="aboutInfo_AppNewVersion"></span></td>
@@ -251,10 +259,10 @@
 
             </li>
 
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_dcdVersion_Less' style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" id='aboutInfo_dcdVersion_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_configVersion" id="lblabout_configVersion" class="from-string titleDiv">Config version</label>
 
-              <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                     <tr  style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
                       <td><span id="aboutInfo_dcdVersion"></span></td>
@@ -270,7 +278,7 @@
             <li class="inputDiv aboutMoreDiv" id='aboutInfo_dcdVersion_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
 
               <label term="about_newVersionAvailable" class="from-string titleDiv">new version available</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td><span id="aboutInfo_dcdNewVersion"></span></td>
@@ -285,10 +293,10 @@
 
             </li>
 
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_network_Less' style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" id='aboutInfo_network_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_network" id="lblabout_network" class="from-string titleDiv">Network sync</label>
 
-              <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                     <tr  style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
                       <td><span id="aboutInfo_network_Text"></span></td>
@@ -304,7 +312,7 @@
             <li class="inputDiv aboutMoreDiv" id='aboutInfo_network_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
 
               <label term="about_autosync" id="" class="from-string titleDiv">Auto sync</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td>
@@ -316,10 +324,10 @@
 
             </li>
 
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_userLanguage_Less' style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" id='aboutInfo_userLanguage_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_userLanguage" id="lblabout_userLanguage" class="from-string titleDiv">User language</label>
 
-              <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                     <tr  style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
                       <td><span id="aboutInfo_userLanguage_Name"></span></td>
@@ -335,7 +343,7 @@
             <li class="inputDiv aboutMoreDiv" id='aboutInfo_userLanguage_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
 
               <label term="about_userLanguage" id="" class="from-string titleDiv">User language</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #E8E8E8;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="border-bottom: 2px solid #F5F5F5;padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td>
@@ -346,7 +354,7 @@
               </div>
 
               <label term="about_Language_pack_date" id="" class="from-string titleDiv">Language pack date</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td style="width:160px;"><span id="aboutInfo_userLanguage_Update" style="color:#808080"></span></td>
@@ -362,10 +370,10 @@
 
             </li>
 
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_theme_Less' style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" id='aboutInfo_theme_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
                 <label term="about_theme" id="lblabout_theme" class="from-string titleDiv">Theme</label>
   
-                <div class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px">
+                <div class="form-type-text" style="padding:10px 0 5px 10px">
                   <table style="width:100%;border-spacing:0;">
                       <tr  style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
                         <td><span id="aboutInfo_theme_Text"></span></td>
@@ -381,7 +389,7 @@
               <li class="inputDiv aboutMoreDiv" id='aboutInfo_theme_More' style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
 
                 <label term="about_theme" id="" class="from-string titleDiv">Theme</label>
-                <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+                <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
@@ -393,26 +401,26 @@
 
               </li>
 
-              <li class="inputDiv aboutGroupDiv" id='aboutInfo_networkMode_Less' style="width: 97%;margin:0;">
+              <li class="inputDiv aboutGroupDiv" id='aboutInfo_networkMode_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
                 <label term="about_networkMode" class="from-string titleDiv">Network mode</label>
-                <div id="aboutInfo_networkMode"  class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"></div>
+                <div id="aboutInfo_networkMode"  class="form-type-text" style="padding:10px 0 5px 10px"></div>
               </li>
   
-              <li class="inputDiv aboutGroupDiv" id='aboutInfo_geoLocation_Less' style="width: 97%;margin:0;">
+              <li class="inputDiv aboutGroupDiv" id='aboutInfo_geoLocation_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
                 <label term="about_geoLocation" class="from-string titleDiv">geoLocation</label>
-                <div id="aboutInfo_geoLocation"  class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"></div>
+                <div id="aboutInfo_geoLocation"  class="form-type-text" style="padding:10px 0 5px 10px"></div>
               </li>
 
-            <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_browser" class="from-string titleDiv">Browser</label>
-              <div id="aboutInfo_Browser"  class="form-type-text" style="border-bottom: 6px solid #F5F5F5;padding:10px 0 15px 10px"></div>
+              <div id="aboutInfo_Browser"  class="form-type-text" style="padding:10px 0 5px 10px"></div>
             </li>
 
 
-            <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;">
+            <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
 
               <label term="about_system" class="from-string titleDiv">System</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 15px 10px">
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
                 <table style="width:100%;border-spacing:0;">
                   <tr>
                     <td style="width:120px;">
@@ -449,7 +457,7 @@
 
             <ul class="o-one ">
               <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-                <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:16px;" class="btnStatsBack" alt="arrowLeft">
+                <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;" class="btnStatsBack" alt="arrowLeft">
                 <label class="aboutHeader" term="menu_statistics">Statistics</label>
                 <br>
               </li>
@@ -544,11 +552,16 @@
     <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/connManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbStorage.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/localStorageDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/dbStorageSelector.js"></script>
     <script type="text/javascript" src="scripts/utils/dataManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
+    <script type="text/javascript" src="scripts/utils/moveLocalStorageData.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>
@@ -569,4 +582,10 @@
     <script type="text/javascript" src="scripts/app.js"></script>
 
   </body>
+
+  <script>
+    MoveLocalStorageData.moveData();
+    new DBStorageSelector();  
+  </script>
+
 </html>

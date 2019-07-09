@@ -53,11 +53,11 @@
 
 
   // move to cwsRender 
-  $( '#hidenotificationUpgrade' ).click ( () => {
+  /*$( '#hidenotificationUpgrade' ).click ( () => {
 
     $( '#notificationUpgrade' ).hide( 'slow' );
 
-  });
+  });*/
 
 
   // App version check and return always..  
@@ -176,8 +176,12 @@
   function recordInstallEvent( event )
   {
       // Track event: The app was installed (banner or manual installation)
-      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-      playSound("coin");
+      FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+          // Track event: The app was installed (banner or manual installation)
+          ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+          playSound("coin");
+      });
+    
   }
 
   function updateOnlineStatus( event ) 

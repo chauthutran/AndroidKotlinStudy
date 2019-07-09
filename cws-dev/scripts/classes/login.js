@@ -225,9 +225,10 @@ function Login( cwsRenderObj )
 			} );
 		}
 
-		var lastSession = { user: userName, lastUpdated: dtmNow, language: FormUtil.defaultLanguage() }; //, networkOnline: ConnManager.getAppConnMode_Offline()
-		DataManager.saveData( 'session', lastSession );	
-
+		FormUtil.defaultLanguage( function( defaultLang ){
+			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang }; //, networkOnline: ConnManager.getAppConnMode_Offline()
+			DataManager.saveData( 'session', lastSession );	
+		});
 	}
 
 	me.regetDCDconfig = function()
@@ -261,38 +262,55 @@ function Login( cwsRenderObj )
 			// call CWS start with this config data..
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 
+			var dtmNow = ( new Date() ).toISOString();
+
 			// if session data exists, update the lastUpdated date else create new session data
 			if ( loginData.mySession ) 
 			{
 				loginData.mySession.lastUpdated = dtmNow;
 				loginData.mySession.stayLoggedIn = me._staySignedIn;
-
+	
 				DataManager.saveData( me._userName, loginData );	
+	
+				me.loginAfter();
 			}
 			else
 			{
 				var newSaveObj = Object.assign( {} , loginData);
-
-				newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
-
-				DataManager.saveData( me._userName, newSaveObj );
-
-				FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+	
+				FormUtil.defaultLanguage( function( defaultLang ){
+					newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
+	
+					DataManager.saveData( me._userName, newSaveObj );
+		
+					FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+	
+					me.loginAfter();
+				});
+				
 			}
-
-			FormUtil.geolocationAllowed();
-
-			me.cwsRenderObj.renderDefaultTheme();
 
 		}
 		else
 		{
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
+
+			me.loginAfter();
+
 		}
 
-		FormUtil.hideProgressBar();
+	}
 
+	me.loginAfter = function()
+	{
+		
+		FormUtil.geolocationAllowed();
+
+		me.cwsRenderObj.renderDefaultTheme();
+		//ConnManager.setUp_dataServerModeDetection();
+
+		FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------

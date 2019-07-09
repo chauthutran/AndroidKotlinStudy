@@ -31,32 +31,12 @@ self.__precacheManifest = [
     "revision": "963eec15715815b33d670f19eff4369e"
   },
   {
-    "url": "css/images/ic_directions_bike_black_24dp_2x.png",
-    "revision": "cef48ec6c86fa80fd129e14ce3941f5d"
-  },
-  {
-    "url": "css/images/ic_folder_black_24dp_2x.png",
-    "revision": "3e91a6bb9d5ba9664e3fe90450415230"
-  },
-  {
-    "url": "css/images/ic_local_car_wash_black_24dp_2x.png",
-    "revision": "2e81470975aaea866283df3987306a40"
-  },
-  {
-    "url": "css/images/ic_local_dining_black_24dp_2x.png",
-    "revision": "4935f98d2754146bce94506de7b961cc"
-  },
-  {
     "url": "css/images/ic_navigate_before_black_24dp_2x.png",
     "revision": "f55b0f8e648d030e90199c38eb1da6c5"
   },
   {
     "url": "css/images/ic_navigate_down.png",
     "revision": "a61a8205c01ffba2d0c1bdde781e3863"
-  },
-  {
-    "url": "css/images/ic_portrait_black_24dp_2x.png",
-    "revision": "54f85af1435e9bc852c69764e45d77f2"
   },
   {
     "url": "css/images/ic_search_black_24dp_2x.png",
@@ -120,7 +100,15 @@ self.__precacheManifest = [
   },
   {
     "url": "css/leaflet.css",
-    "revision": "8b2f4cb3e92411a751da3afb4f35ab94"
+    "revision": "9e0c19b62feec758dd6fc25f81aef0e3"
+  },
+  {
+    "url": "css/MarkerCluster.css",
+    "revision": "7bc4f5bc3ef97f61a122253681687894"
+  },
+  {
+    "url": "css/MarkerCluster.Default.css",
+    "revision": "3c642fec620b1d89c26ff5222a28b78c"
   },
   {
     "url": "css/materialize.css",
@@ -132,11 +120,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/searchbox.css",
-    "revision": "bea5e8fb1f20657b6efda07f8a658189"
+    "revision": "8860424c7a131f247fb83504e8a054e8"
   },
   {
     "url": "css/style.css",
-    "revision": "c78106109d41e09300e74f5d888fa2cb"
+    "revision": "10a7508b3b226908ac220282dde0fad6"
   },
   {
     "url": "images/arrow_left.svg",
@@ -159,8 +147,16 @@ self.__precacheManifest = [
     "revision": "317be0df51698e9db7a05c4778719f1d"
   },
   {
+    "url": "images/completed.svg",
+    "revision": "484c511a0417b487c41c17e1a8428b69"
+  },
+  {
     "url": "images/Connect.svg",
     "revision": "bd02a90569ddf4ee0b544fc2f1847ebd"
+  },
+  {
+    "url": "images/gmaps.svg",
+    "revision": "e56bfd16211d6382661efc2164c69de4"
   },
   {
     "url": "images/icons/icon-128x128.png",
@@ -212,11 +208,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "65bedd11ffcdd2e7d3df800d3f7985f4"
+    "revision": "fc9f4e9c87829051e52ca5d363b3df88"
   },
   {
     "url": "scripts/app.js",
-    "revision": "aa5c56f327410f0c3cc6166189ec6375"
+    "revision": "6b516e7d4c4d2da4ccf9c53af8203267"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -224,7 +220,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/map.js",
-    "revision": "2d711af0f48ea286a61cd58593e47fcf"
+    "revision": "f48689f0211e62eaa8ba815fec2c0f6b"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -232,7 +228,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "61d0e0c4c33ae376aeba5021f2e87fb6"
+    "revision": "74ec1bbc7da8b387c99b51eb791d3882"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -264,7 +260,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/leaflet.customsearchbox.js",
-    "revision": "e01e6398f358f3e3ebcccbc6ae99353b"
+    "revision": "4644a7295f572c8bea955e505c1d14e0"
   },
   {
     "url": "scripts/libraries/Leaflet.GoogleMutant.js",
@@ -272,7 +268,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/leaflet.js",
-    "revision": "45675a2ede6269370d4356a41b11afbb"
+    "revision": "fbfac26cb5c4f26741289720ff77af16"
+  },
+  {
+    "url": "scripts/libraries/leaflet.markercluster.js",
+    "revision": "ee8d78836d0d718b2b6d39ef60e03181"
   },
   {
     "url": "scripts/utils/activityUtil.js",
@@ -304,7 +304,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "cc0874d111d425733868f368a0c81ba4"
+    "revision": "a5ae23096bdc88f82948865e7f3ed9e2"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -332,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "cb35616c275110faa03b6514b2f628f1"
+    "revision": "dc6ebf31660ef9bf0e63f601de06b1d8"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

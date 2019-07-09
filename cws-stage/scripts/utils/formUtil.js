@@ -669,7 +669,7 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		var matchingTabsTag = tag.find( ".tabs > li[tabId='" + tabId + "']");
 
 		/* START > Greg added: 2018/11/23 */
-		FormUtil.setUserLastSelectedTab(tabId)
+		//FormUtil.setUserLastSelectedTab(tabId) //disabled 2019/07/04 (no longer need to set user to last page visited after refresh > logins always required)
 		/* END > Added by Greg: 2018/11/24 */
 
 		var bThisExpanded = $( this ).hasClass( 'expanded' );

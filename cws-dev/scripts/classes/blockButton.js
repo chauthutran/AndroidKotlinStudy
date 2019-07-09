@@ -286,8 +286,61 @@ function BlockButton( cwsRenderObj, blockObj )
 				// Create the block and render it.
 				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );	
 				newBlockObj.render();
+
+				// Get array of showCase + hideCase inputs > then action results of array
+				/*var actionCases = me.getActionCases( onClick );
+
+				if ( actionCases.show.length || actionCases.hide.length )
+				{
+
+					for( var i = 0; i < actionCases.show.length; i++ )
+					{
+						if ( $('input[name="' + actionCases.show[ i ] + '"]') ) ( $('input[name="' + actionCases.show[ i ] + '"]') ).parent().show();
+					}
+
+					for( var i = 0; i < actionCases.hide.length; i++ )
+					{
+						if ( $('input[name="' + actionCases.hide[ i ] + '"]') ) ( $('input[name="' + actionCases.hide[ i ] + '"]') ).parent().hide();
+					}
+
+				}*/
+
 			}
 		}
+	}
+
+	me.getActionCases = function( objClick )
+	{
+		var ret = { show: [], hide: [] };
+
+		for( var o = 0; o < objClick.length; o++ )
+		{
+			if ( objClick[ o].showCase )
+			{
+				for( var i = 0; i < objClick[ o].showCase.length; i++ )
+				{
+					if ( ! ( ret.show ).includes( objClick[ o].showCase[ i ] ) )
+					{
+						ret.show.push( objClick[ o].showCase[ i ] );
+					}
+				}
+			}
+
+			if ( objClick[ o].hideCase )
+			{
+				for( var i = 0; i < objClick[ o].hideCase.length; i++ )
+				{
+					if ( ! ( ret.hide ).includes( objClick[ o].hideCase[ i ] ) )
+					{
+						ret.hide.push( objClick[ o].hideCase[ i ] );
+					}
+				}
+
+			}
+		}
+
+		return ret;
+
 	}
 
 	// -------------------------------

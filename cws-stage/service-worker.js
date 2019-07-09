@@ -336,7 +336,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "6693f455c3b764548f25c9db7fec8b2a"
+    "revision": "350e26bb31f0c1c174f6a15624920ada"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -420,7 +420,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "1f69ea3e78503928301c9a29e1d16b1a"
+    "revision": "25fbb03f5f71bb7783f8671959bbd176"
   },
   {
     "url": "scripts/utils/inputUtil.js",

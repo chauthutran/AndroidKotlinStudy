@@ -5,20 +5,46 @@ function CwSMap() {
 
     var me = this;
 
-    me.googleStreets = false;
-
     me.cwsRenderObj;
     me.mapLibObj;
     me.mappedData;
 
-    me.mapTargetDiv = 'mapApp'; //$( '#mapApp' );
+    me.mapTargetDiv = 'mapApp';
     me.mapDiv = $( '#mapApp' );
     me.panelBottom = $( '#panelBottom' );
+    me.panelFloat; //= $( 'div.info-floating-container' );
 
     me.mapPadding = 100;
-    me.mapFlyAnimationDelay = .4;
+    me.mapFlyAnimationDelay = 2;
     me.defaultCoordinatePoint;
     me.defaultZoomlevel = 3;
+    me.pointOverZoomlevel = 12;
+
+    me.viewSet = false;
+
+    me.googleStreets = true;    //obtained from QueryString: 'google=1' / 'google=true'
+    me.advancedMode = false;    //obtained from QueryString: 'advanced=1' / 'advanced=true' / 'adv=1' / 'adv=true'
+    me.useClusterGroups = true; //obtained from QueryString: 'cluster=1' / 'cluster=false'
+
+    /* 
+      QueryString options:
+        'c=' { COORDINATES, e.g. -33.916999,18.4167 } > optional but directs app to predefined position
+
+        'poi=' { NUMERIC, e.g. 1 } > map should find provider at coordinates (c) and display summary information 
+
+        'isoc=' { TEXT, e.g. 'cm' } > ISO country code for map (runs a search against variable 'countryOpts' to locate default coordinate points ) for map positioning 
+
+        'service=' + 'serv=' { TEXT } > serice code(s) [comma delimited] to include in output
+ 
+        'advanced=' + 'adv=' { NUMERIC/BOOLEAN, e.g. '1' or 'true' } > show advanced selector options in search bar (change number of search points or bubble search area)
+
+        'top=' { NUMERIC, e.g. 3 } > number of provider points to show on map; defaults to 10;
+
+        'google=' { NUMERIC/BOOLEAN } > use google map layer; default = true, so 'false' or '0' switches to open street maps
+
+        'cluster=' { NUMERIC/BOOLEAN } > use clusterGroups; default = true
+
+    */
 
     me.mapDownIntvCounter;
 
@@ -31,10 +57,10 @@ function CwSMap() {
     me.controlPOCsearch;
 
     me.displayControlLocateUser = false;
-    me.displayControlScale = true;
+    me.displayControlScaleDistance = false;
     me.displayControlListViewRound = false;
 
-    me.defaultBaseLayer; // loaded in baseLayer fetch call "me.getBaseLayers()" // 'Open.StreetMap'; //'Roadmap'; //'Open.StreetMap';
+    me.defaultBaseLayer;
     me.baseLayers;
 
     me.searchControlOpts = [];
@@ -42,18 +68,18 @@ function CwSMap() {
     me.searchWords = [];
     me.mapOptions = { zoomControl: false, tap: true, renderer: L.svg({ padding: me.mapPadding }) };
     me.countryCode = '';
+    me.serviceFilter = '';
 
     me.viewMode = {};
-    //me.distanceScale = { '< 500m': 500, '< 1km': 1000, 'walk/car': 2000, 'car/walk': 3000, '< 5km': 5000, '< 10km': 10000, '< 20km': 20000, '< 50km': 50000, '> 50km': 10000000 }; //examples of predefined distance options for later use
-    me.distanceScale2 = [ { name: ' < 1km', distance: 1000, faIcon: 'fas fa-walking'}, { name: ' < 5km', distance: 5000, faIcon: 'fas fa-taxi' }, { name: '< 10km', distance: 10000, faIcon: 'fas fa-taxi' }, { name: '< 50km', distance: 50000, faIcon: 'fas fa-taxi' }, { name: '< 100km', distance: 100000, faIcon: 'fas fa-taxi' }, { name: '>  100km', distance: 10000000, faIcon: 'fas fa-plane' } ]; //examples of predefined distance options for later use
-    me.distanceThreshold = { 'limitSearchCount': 3,'countIncrements': 3, 'limitSearchDistance': 5000 };
+    me.distanceScale = [ { name: ' < 1km', distance: 1000, faIcon: 'fas fa-walking'}, { name: ' < 5km', distance: 5000, faIcon: 'fas fa-taxi' }, { name: '< 10km', distance: 10000, faIcon: 'fas fa-taxi' }, { name: '< 50km', distance: 50000, faIcon: 'fas fa-taxi' }, { name: '< 100km', distance: 100000, faIcon: 'fas fa-taxi' }, { name: '>  100km', distance: 10000000, faIcon: 'fas fa-plane' } ]; //examples of predefined distance options for later use
+    me.distanceThreshold = { 'limitSearchCount': 10, 'limitSearchDistance': 5000 };
 
     me.markerGroup;
+    me.clusterGroup;
     me.mapMarkerIdx;
     me.lastMarker;
 
     me.circleRadiusMarker;
-    me.circleFeatGroup; //GREG remove?
 
     me.lastPositionClicked;
     me.iconPositionCycler;
@@ -80,7 +106,7 @@ me.initialise = function( cwsRender)
 
 me.render = function( defCoords, poi )
 {
-    me.restoreMapDefaults();
+    me.initialiseMapsDefaults();
 
     if ( defCoords )
     {
@@ -101,14 +127,21 @@ me.render = function( defCoords, poi )
     {
         me.mapLibObj.setView( me.defaultCoordinatePoint, me.defaultZoomlevel, { animate: true, duration: me.mapFlyAnimationDelay } ); //flyTo
         me.mapLibObj.locate( { setView: true, maxZoom: 16 } );
+        me.viewSet = true;
 
         if ( me.countryCode.length )
         {
-            me.evalCountryCodeStartup();
+            console.log( ' ~ start up path 1 (iso country in querystring) ');
+            setTimeout( function() {
+
+                me.evalCountryCodeStartup();
+
+            }, ( me.mapFlyAnimationDelay * 1000 ) );
         }
         else
         {
-            me.createPositionPrompt();
+            console.log( ' ~ start up path 2 (country selector) ');
+            me.promptCountryOptions();
         }
 
     }
@@ -116,38 +149,49 @@ me.render = function( defCoords, poi )
     {
         if ( me.countryCode.length == 0 )
         {
+            // required for both POI and non-POI
             me.countryCode = me.nearestCountryAttr( 'iso' );
         }
 
-        if ( poi && poi.toString() == '1' )
+        me.mapLibObj.setView( me.defaultCoordinatePoint, me.defaultZoomlevel );
+        me.viewSet = true;
+
+        if ( poi && poi == true )
         {
-            console.log( 'finding POI' );
+            console.log( ' ~ start up path 3 (poi > from shared link) ');
+
             me.runSearch( true, true, true );
-            me.mapLibObj.setView( me.defaultCoordinatePoint, 8, { animate: true, duration: me.mapFlyAnimationDelay } ); 
 
             setTimeout( function() {
 
-                me.mapLibObj.flyTo( [ me.defaultCoordinatePoint[0], me.defaultCoordinatePoint[1] ], 12 );
+                me.mapLibObj.flyTo( [ me.defaultCoordinatePoint[0], me.defaultCoordinatePoint[1] ], me.pointOverZoomlevel, { animate: true, duration: me.mapFlyAnimationDelay } ); //
+                me.getMapDataPreviewFromID( undefined, me.mappedData[ 0 ] )
 
-                me.showPanelWithContents( me.getMapDataPreviewFromID( undefined, me.mappedData[ 0 ] ) );
-
-            }, 5000 );
+            }, ( me.mapFlyAnimationDelay * 1000 ) );
         }
         else
         {
-            me.createMyCoordinateMarker();
-            me.runSearch( true );
+            console.log( ' ~ start up path 4 (my coordinate in querystring) ');
+
+            me.createMyCoordinateMarker( false );
+            me.mapLibObj.flyTo( [ me.defaultCoordinatePoint[0], me.defaultCoordinatePoint[1] ], ( me.pointOverZoomlevel / 2), { animate: true, duration: me.mapFlyAnimationDelay } ); //
+
+            setTimeout( function() {
+
+                me.runSearch( true, false );
+
+            }, ( me.mapFlyAnimationDelay * 1000 ) );
+
         }
+
     }
 
     $( "div.search-options-inner" ).empty();
     $( "div.search-options-inner" ).append( me.returnSearchOptionsContent() );
 
     //me.unhighlightSearchOptions();
-    
+
     me.setMapDefaults();
-
-
 
 }
 
@@ -159,14 +203,64 @@ me.initialiseDefaults = function()
     //me.viewMode = { "listView": { "active": "false", "controls": [ {"#controlbox": [ { "width": "{screen.width}" }, { "margin": "20px 0 20px 0" } ] }, {".searchbox": [ { "height": "58px" } ] }, {".search-results-inner": [ { "box-shadow": "none" } ] }, { "#boxcontainer": [ { "width": "{screen.width} - 80" }, { "box-shadow": "rgba(0, 0, 0, 0.1) 0px 1px 0px 0px, rgba(0, 0, 0, 0.02) 0px 1px 0px 0px" } ] }, { ".searchbox-hidebutton-container": [ { "display": "none" } ] }, { ".listview-toggle": [ { "margin": "30px 20px 0 0 !important" } ] }, { ".search-results-container": [ { "margin": "0" } ] }, { ".leaflet-tile-pane": [ {"display": "none"} ] }, { ".leaflet-marker-pane": [ {"display": "none"} ] }, { ".leaflet-shadow-pane": [ {"display": "none"} ] } ] }, "mapView": { "active": "true", "controls": [ {"#controlbox": [ { "width": "" }, { "margin": "" } ] }, {".searchbox": [ { "height": "" } ] }, {".search-results-inner": [ { "box-shadow": "" } ] }, { "#boxcontainer": [ { "width": "" }, { "box-shadow": "" } ] }, { ".searchbox-hidebutton-container": [ { "display": "" } ] }, { ".listview-toggle": [ { "margin": "" }, { "margin-top": "" } ] },  { ".search-results-container": [ { "margin": "" }, { "height": "" } ] }, { ".leaflet-tile-pane": [ {"display": ""} ] }, { ".leaflet-marker-pane": [ {"display": ""} ] }, { ".leaflet-shadow-pane": [ {"display": ""} ] } ] }  };
     //me.viewMode = { "listView": { "active": "false", "controls": [ {"#controlbox": [ { "width": "{screen.width}" }, { "margin": "20px 0 20px 0" } ] }, {".searchFooter-collapser": [ { "color": "#000" } ] }, {".searchbox": [ { "height": "58px" } ] }, {".search-results-inner": [ { "box-shadow": "none" } ] }, { "#boxcontainer": [ { "width": "{screen.width} - 80" }, { "box-shadow": "rgba(0, 0, 0, 0.1) 0px 1px 0px 0px, rgba(0, 0, 0, 0.02) 0px 1px 0px 0px" } ] }, { ".searchbox-hidebutton-container": [ { "display": "none" } ] }, { ".listview-toggle": [ { "margin": "30px 20px 0 0 !important" } ] }, { ".search-results-container": [ { "margin": "0" }, { "margin": "" } ] }, { ".leaflet-tile-pane": [ {"display": "none"} ] }, { ".leaflet-marker-pane": [ {"display": "none"} ] }, { ".leaflet-shadow-pane": [ {"display": "none"} ] } ] }, "mapView": { "active": "true", "controls": [ {"#controlbox": [ { "width": "" }, { "margin": "" } ] }, {".searchbox": [ { "height": "" } ] }, {".search-results-inner": [ { "box-shadow": "" } ] }, {".searchFooter-collapser": [ { "color": "" } ] }, { "#boxcontainer": [ { "width": "" }, { "box-shadow": "" } ] }, { ".searchbox-hidebutton-container": [ { "display": "" } ] }, { ".listview-toggle": [ { "margin": "" }, { "margin-top": "" } ] },  { ".search-results-container": [ { "margin": "" }, { "height": "" } ] }, { ".leaflet-tile-pane": [ {"display": ""} ] }, { ".leaflet-marker-pane": [ {"display": ""} ] }, { ".leaflet-shadow-pane": [ {"display": ""} ] } ] }  };
 
+
+    /* google Maps enabled ? */
     if ( Util.getParameterByName('google').length )
     {
-        if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "false" || (Util.getParameterByName('google')).toString().toLowerCase() == "0" ) )
+        if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "false" || (Util.getParameterByName('google')).toString() == "0" ) )
         {
             me.googleStreets = false;
         }
+        else if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "true" || (Util.getParameterByName('google')).toString() == "1" ) )
+        {
+            me.googleStreets = true;
+        }
     }
-    
+
+    /* display advanced Option in searchbox ? */
+    if ( Util.getParameterByName('advanced').length || Util.getParameterByName('adv').length )
+    {
+        var advM = Util.getParameterByName('advanced') || Util.getParameterByName('adv');
+
+        if ( ( ( advM ).toString().toLowerCase() == "true" || ( advM ).toString() == "1" ) )
+        {
+            me.advancedMode = true;
+        }
+        else
+        {
+            me.advancedMode = false;
+        }
+    }
+    else
+    {
+        me.advancedMode = false;
+    }
+
+    /* cluster markers enabled/disabled ? */
+    if ( Util.getParameterByName('cluster').length )
+    {
+        if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "false" || (Util.getParameterByName('cluster')).toString() == "0" || (Util.getParameterByName('cluster')).toString() == "no" ) )
+        {
+            me.useClusterGroups = false;
+        }
+        else if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "true" || (Util.getParameterByName('cluster')).toString() == "1" || (Util.getParameterByName('cluster')).toString() == "yes" ) )
+        {
+            me.useClusterGroups = true;
+        }
+    }
+
+    /* use custom count value for number of markers ? */
+    if ( Util.getParameterByName('top').length && ! isNaN( Util.getParameterByName('top') ) )
+    {
+        me.distanceThreshold.limitSearchCount = Util.getParameterByName('top');
+    }
+
+    /* apply a service filter ? */
+    if ( Util.getParameterByName('service').length || Util.getParameterByName('serv').length )
+    {
+        me.serviceFilter = Util.getParameterByName('service') || Util.getParameterByName('serv');
+    }
+
 
 }
 
@@ -190,6 +284,7 @@ me.initialiseEvents = function()
 
         if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
         if ( me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+        if ( me.panelFloat.is( ':visible' ) ) me.panelFloat.toggle("slide", { direction: "up" }, 200);
 
         if ( $(".search-options-container").is( ':visible') )
         {
@@ -204,6 +299,8 @@ me.initialiseEvents = function()
         me.cycleIcons( '#searchbox-searchoptions', 'fa-caret-down', 'fa-caret-up' );
 
         if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
+        if ( me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+        if ( me.panelFloat.is( ':visible' ) ) me.panelFloat.toggle("slide", { direction: "up" }, 200);
 
         $(".search-options-container").toggle("slide", { direction: "up" }, 250);
 
@@ -215,6 +312,7 @@ me.initialiseEvents = function()
     $( '.searchResults-close' ).click( function () {
 
         if ( me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+        if ( me.panelFloat.is( ':visible' ) ) me.panelFloat.toggle("slide", { direction: "up" }, 200);
 
         setTimeout(function(){ 
 
@@ -235,7 +333,6 @@ me.initialiseMapEvents = function()
     // dblclick = dblTab for mobile
     me.mapLibObj.on( 'dblclick', function(e) 
     {
-
         me.defaultCoordinatePoint = [ e.latlng.lat,e.latlng.lng ];
 
         //me.updateOtherMarkers();
@@ -271,19 +368,19 @@ me.initialiseMapEvents = function()
 
     });
 
-    me.mapLibObj.on('zoomend', function (e) 
+    me.mapLibObj.on( 'zoomend', function (e) 
     {
-        console.log( me.mapLibObj.getZoom() );
+        //console.log( 'map zoomLevel: ' + me.mapLibObj.getZoom() );
     });
 
     me.mapLibObj.on( 'click', function(e) 
     { 
         if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
         if ( me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+        if ( me.panelFloat.is( ':visible' ) ) me.panelFloat.toggle("slide", { direction: "up" }, 200);
 
         if ( $( 'div.search-options-container' ).is( ':visible') )
         {
-
             me.cycleIcons( '#searchbox-searchoptions', 'fa-caret-down', 'fa-caret-up' );
 
             $(".search-options-container").toggle("slide", { direction: "up" }, 200);
@@ -297,10 +394,15 @@ me.initialiseMapEvents = function()
         if ( $( "div.search-words-container" ).is( ':visible' ) )
         {
             $( '.searchResults-close' ).click();
-        } 
+        }
+
+        /*if ( $( 'div.info-floating-container' ).is( ':visible') )
+        {
+            $( "div.info-floating-container" ).toggle("slide", { direction: "up" }, 200)
+        }*/
 
         me.lastPositionClicked = [ e.latlng.lat,e.latlng.lng ];
-        //console.log( me.lastPositionClicked );
+        console.log( me.lastPositionClicked );
 
     });
 
@@ -308,10 +410,11 @@ me.initialiseMapEvents = function()
 
 me.initialiseMapControls = function()
 {
-
     me.markerGroup = L.FeatureGroup;
 
-    if ( ! Util.isMobi() )
+    if ( me.useClusterGroups ) me.clusterGroup = L.markerClusterGroup();
+
+    if ( ! Util.isMobi() || screen.width > 540 )
     {
         me.controlZoom = L.control.zoom( { position: 'bottomright' } ).addTo( me.mapLibObj );
     }
@@ -322,7 +425,6 @@ me.initialiseMapControls = function()
             // round 'List' floating icon
             me.controlListViewRound = me.createListviewControl();
         }
-
     }
 
     // show miles/kilometers
@@ -333,21 +435,26 @@ me.initialiseMapControls = function()
     me.baseLayers = me.getBaseLayers();
     me.baseLayers[ me.defaultBaseLayer ].addTo( me.mapLibObj ); // load default base layer
 
-
     // custom text search floating control 
     var searchboxControl = createSearchboxControl ();
     me.controlSearchbox = new searchboxControl({
-        sidebarTitleText: 'Provider Locator',
+        sidebarTitleIcon: 'images/Connect.svg',
+        sidebarTitleText: 'Outlet Locator',
         sidebarMenuItems: {
             Items: [
+                { type: "button", name: "Application version", href: '#', icon: "fas fa-info-circle", onclick: "FormUtil.showAbout();", group: 0, value: $( '#appVersion').html() },
+                { type: "button", name: "Map layer", href: '#', icon: "fas fa-info-circle", onclick: "", group: 0, value: ( me.googleStreets ) ? 'Google maps' : 'Open streets' },
+                { type: "button", name: "Geolocation", href: '#', icon: "fas fa-crosshairs", onclick: "", group: 0, value: FormUtil.geoLocationState }
+            ]
+        }
+    });
+    /*  DO NOT REMOVE > reuse  
                 { type: "button", name: "My Location", onclick: "document.getElementsByClassName('leaflet-control-locate')[0].children[0].click();", icon: "fas fa-map-marker-alt", group: 0 },
                 { type: "link", name: "My Appointments", href: "#", icon: "icon-cloudy", group: 1 },
                 { type: "button", name: "My Ratings", onclick: "alert('button 1 clicked !')", icon: "icon-potrait", group: 0 },
                 { type: "button", name: "Find Beer", onclick: "button2_click();", icon: "icon-local-dining", group: 1 },
-                { type: "link", name: "Refer Someone", href: '#', icon: "icon-bike", group: 0 },
-            ]
-        }
-    });
+                { type: "link", name: "Refer Someone", href: '#', icon: "icon-bike", group: 0 },    */
+
     me.controlSearchbox._searchfunctionCallBack = function (searchkeywords)
     {
         if (!searchkeywords) {
@@ -358,9 +465,8 @@ me.initialiseMapControls = function()
             me.refreshSearchWordsContainer();
             me.addAllSearchWords();
             me.addSearchWord ( searchkeywords );
-            
-            $( ".search-results-inner" ).html( me.loadingIcon() );
 
+            $( ".search-results-inner" ).html( me.loadingIcon() );
             $( '.search-results-container').css( 'minHeight', '20px' ); //$( '.search-words-container').css( 'height' ) );
             $( '.search-results-container').css( 'maxHeight', ( $(window).height() - $( '.search-results-container').position().top - ( me.panelBottom.is( ':visible' ) ? me.panelBottom.height() : 0 ) - ( me.viewMode.listView.active == "true" ? 20 : ( 16 * 2.5) ) ) );
 
@@ -368,6 +474,7 @@ me.initialiseMapControls = function()
             if ( ! $( ".search-results-container" ).is( ':visible' ) ) $( ".search-results-container" ).toggle("slide", { direction: "up" }, 200);
             if ( $( '.searchFooter-collapser' ).is( ':visible') ) $( '.searchFooter-collapser' ).hide();
             if ( me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+            if ( me.panelFloat.is( ':visible' ) ) me.panelFloat.toggle("slide", { direction: "up" }, 200);
 
             FormUtil.showProgressBar('100%');
 
@@ -380,13 +487,25 @@ me.initialiseMapControls = function()
                 $( '.search-results-container').css( 'minHeight', '20px' ); //$( '.search-words-container').css( 'height' ) );
                 $( '.search-results-container').css( 'maxHeight', ( $(window).height() - $( '.search-results-container').position().top - ( me.panelBottom.is( ':visible' ) ? me.panelBottom.height() : 0 ) - ( me.viewMode.listView.active == "true" ? 20 : ( 16 * 2.5) ) ) );
 
-            }, 2000);
+            }, ( me.mapFlyAnimationDelay * 1000) );
 
         }
 
     }
     me.mapLibObj.addControl( me.controlSearchbox );
 
+    if ( me.advancedMode )
+    {
+        $( 'div.searchbox-searchoptions-container' ).show();
+        $( 'div.searchbox-searchbutton-container' ).css( 'right', '35px' );
+    }
+    else
+    {
+        $( 'div.searchbox-searchoptions-container' ).hide();
+        $( 'div.searchbox-searchbutton-container' ).css( 'right', '0px' );
+    }
+
+    $( 'div.searchbox-searchoptions-container' ).attr( 'adv-show', me.advancedMode );
 
     // add locate-button > custom control for auto finding user's geoLocation
     me.controlLocateUser = L.control.locate( { position: 'topright' } ).addTo( me.mapLibObj );
@@ -434,8 +553,6 @@ me.createMyCoordinateMarker = function( skipGetBounds )
 
         me.lastMarker.on('dragend', function( e ) {
 
-            console.log( me.countryCode );
-
             if ( ! me.countryOptionIsValid() )
             {
                 return false;
@@ -449,15 +566,11 @@ me.createMyCoordinateMarker = function( skipGetBounds )
             if ( me.searchWords.length == 0 )
             {
                 me.clearMarkerSearchResultLayer( 'searchPin' );
-
                 me.runSearch( true, true )
-
             }
             else
             {
-
                 //me.runSearch();
-
             }
 
             if ( me.searchType.name == 'distanceRadius' )
@@ -487,7 +600,17 @@ me.createMyCoordinateMarker = function( skipGetBounds )
     }
     else
     {
-        me.mapLibObj.setView( me.defaultCoordinatePoint, me.defaultZoomlevel, { animate: true, duration: me.mapFlyAnimationDelay } ); 
+        if ( ! me.viewSet)
+        {
+            me.mapLibObj.setView( me.defaultCoordinatePoint, me.defaultZoomlevel, { animate: true, duration: me.mapFlyAnimationDelay } ); 
+            me.viewSet = true;
+        }
+
+        setTimeout( function() {
+
+            me.mapLibObj.flyTo( me.defaultCoordinatePoint, me.pointOverZoomlevel, { animate: true, duration: me.mapFlyAnimationDelay } ); 
+
+        }, ( me.mapFlyAnimationDelay * 1000 ) );
     }
 
 }
@@ -507,48 +630,42 @@ me.evalCountryCodeStartup = function()
 
     if ( found )
     {
+
         me.defaultCoordinatePoint = [ found.lat, found.lng ];
-
-        //$( '.search-results-inner').empty();
-        //$( ".search-results-container" ).toggle("slide", { direction: "up" }, 200)
-
-        me.mapLibObj.setView( me.defaultCoordinatePoint, found.zoom, { animate: true, duration: me.mapFlyAnimationDelay } ); 
+        me.mapLibObj.flyTo( me.defaultCoordinatePoint, found.zoom, { animate: true, duration: me.mapFlyAnimationDelay } ); //, { animate: true, duration: me.mapFlyAnimationDelay }
 
         me.createMyCoordinateMarker();
-        me.runSearch( true );
+        me.runSearch( true, false );
+
     }
     else
     {
-        me.createPositionPrompt();
+        me.promptCountryOptions();
     }
-}
-
-me.createPositionPrompt = function()
-{
-    $( '.search-results-inner').empty();
-    $( '.search-results-inner').append( me.promptCountryOptions() );
-    $( ".search-results-container" ).toggle("slide", { direction: "up" }, 200)
-
-    //$( '.search-results-inner' ).toggle("slide", { direction: "up" }, 100);
-
 }
 
 me.promptCountryOptions = function()
 {
+    $( '.selection-country-inner').empty();
+    $( '.selection-country-inner').append( me.getCountryPromptLayout() );
+    $( ".selection-country-container" ).toggle("slide", { direction: "up" }, 200);
+}
+
+me.getCountryPromptLayout = function()
+{
     var countries = me.countryOptions();
-    console.log( countries );
     var ret = document.createElement('div');
     var tbl = document.createElement('table');
     var tr  = document.createElement('tr');
     var td1  = document.createElement('td');
     var iFA  = document.createElement('i');
     var td2  = document.createElement('td');
-    var txt = document.createTextNode( 'Country' );
+    var txt = document.createTextNode( 'Select country' );
 
     tbl.setAttribute( 'class', 'countrySelect' );
-    td1.setAttribute( 'style', 'text-align:center;padding:8px 2px 8px 2px;width:38px;font-size:20px;color:#136AEC' );
+    td1.setAttribute( 'style', 'text-align:center;padding:8px 2px 8px 2px;width:28px;font-size:16px;color:#136AEC' );
     iFA.setAttribute( 'class', 'fas fa-globe-africa');
-    td2.setAttribute( 'style', 'text-align:left;padding:8px 2px 8px 2px;font-size:12pt;font-weight:800;' );
+    td2.setAttribute( 'style', 'text-align:left;padding:8px 2px 8px 2px;font-size:11pt;font-weight:800;opacity:1' );
     td2.setAttribute( 'term', '');
 
     tbl.appendChild( tr );
@@ -561,64 +678,74 @@ me.promptCountryOptions = function()
 
     for ( var i = 0; i < countries.length; i++ )
     {
-
-        var tblStyle = 'width:100%;';
-
-        //DO NOT REMOVE: reuse later
-        if ( countries[ i ].selected )
+        if ( countries[ i ].enabled )
         {
-            tblStyle += 'opacity: 1;';
+
+            var tblStyle = 'width:100%;';
+
+            //DO NOT REMOVE: reuse later
+            if ( countries[ i ].selected )
+            {
+                tblStyle += 'opacity: 1;';
+            }
+            else
+            {
+                tblStyle += ''; //opacity: 0.25;';
+            }
+    
+            var tbl = document.createElement('table');
+            tbl.setAttribute( 'id', 'countryOpt_' + countries[ i ].iso );
+            tbl.setAttribute( 'class', 'countryOptTable' );
+            tbl.setAttribute( 'style', tblStyle );
+    
+            var tr  = document.createElement('tr');
+            var td1  = document.createElement('td');
+            var td2  = document.createElement('td');
+            var txt = document.createTextNode( countries[ i ].name + ' ' );
+    
+            tr.setAttribute( 'id', 'countryOptIcon_' + countries[ i ].iso );
+            tr.setAttribute( 'class', 'countryRow' );
+            tr.setAttribute( 'datatargets', escape( JSON.stringify( countries[ i ] ) ) );
+            td1.setAttribute( 'style', 'text-align:center;padding:8px 2px 8px 2px;width:38px;' );
+            td2.setAttribute( 'style', 'text-align:left;padding:8px 2px 8px 2px;font-size:10pt;color:#000;' );
+    
+            tr.onmousedown = function () {
+                $( this ).parent().css( 'opacity', 1 );
+            }
+
+            tr.onclick = function () {
+
+                var thisData = JSON.parse( unescape( this.getAttribute( 'datatargets' ) ) );
+                var succImg = "<img src='images/completed.svg' style='width:24px;height:24px;'>";
+
+                me.defaultCoordinatePoint = [ thisData.lat, thisData.lng ];
+                me.countryCode = thisData.iso;
+
+                $( '.selection-country-inner').empty();
+                $( ".selection-country-container" ).toggle("slide", { direction: "up" }, 200)
+
+                me.clearMarkerSearchResultLayer( 'myPin' );
+                me.createMyCoordinateMarker();
+
+                me.mapLibObj.flyTo( me.defaultCoordinatePoint, thisData.zoom, { animate: true, duration: me.mapFlyAnimationDelay }  ); //, { animate: true, duration: me.mapFlyAnimationDelay } 
+
+                setTimeout( function(){ 
+
+                    me.runSearch( true, false ); //true
+
+                }, ( me.mapFlyAnimationDelay * 1000 ) );
+
+                MsgManager.notificationMessage( thisData.name + ' ' + succImg, 'notificationDark', undefined,'font-size:14pt;opacity:0.75;', 'right', 'bottom', 2500, true )
+
+            }
+
+            tbl.appendChild( tr );
+            tr.appendChild( td1 );
+            tr.appendChild( td2 );
+            td2.appendChild( txt );
+            ret.appendChild( tbl );
+
         }
-        else
-        {
-            tblStyle += ''; //opacity: 0.25;';
-        }
-
-        var tbl = document.createElement('table');
-        tbl.setAttribute( 'id', 'countryOpt_' + countries[ i ].iso );
-        tbl.setAttribute( 'class', 'countryOptTable' );
-        tbl.setAttribute( 'style', tblStyle );
-
-        var tr  = document.createElement('tr');
-        var td1  = document.createElement('td');
-        var td2  = document.createElement('td');
-        var txt = document.createTextNode( countries[ i ].name );
-
-        tr.setAttribute( 'id', 'countryOptIcon_' + countries[ i ].iso );
-        tr.setAttribute( 'class', 'countryRow' );
-        tr.setAttribute( 'datatargets', escape( JSON.stringify( countries[ i ] ) ) );
-        td1.setAttribute( 'style', 'text-align:center;padding:8px 2px 8px 2px;width:38px;' );
-        td2.setAttribute( 'style', 'text-align:left;padding:8px 2px 8px 2px;font-size:11pt;' );
-
-        tr.onmousedown = function () {
-            $( this ).parent().css( 'opacity', 1 );
-        }
-
-        tr.onclick = function () {
-
-            var thisData = JSON.parse( unescape( this.getAttribute( 'datatargets' ) ) );
-
-            me.defaultCoordinatePoint = [ thisData.lat, thisData.lng ];
-            me.countryCode = thisData.iso;
-
-            $( '.search-results-inner').empty();
-            $( ".search-results-container" ).toggle("slide", { direction: "up" }, 200)
-
-            me.mapLibObj.setView( me.defaultCoordinatePoint, thisData.zoom, { animate: true, duration: me.mapFlyAnimationDelay } ); 
-
-            me.clearMarkerSearchResultLayer( 'myPin' );
-            me.createMyCoordinateMarker();
-            me.runSearch( true );
-
-        }
-
-        tbl.appendChild( tr );
-        tr.appendChild( td1 );
-        tr.appendChild( td2 );
-        td2.appendChild( txt );
-
-
-        ret.appendChild( tbl );
 
     }
 
@@ -774,6 +901,11 @@ me.toggleShowPanelBottom = function()
 
 }
 
+me.resizePanelSide = function()
+{
+    //
+}
+
 me.resizePanelBottom = function()
 {
     var panelTop = ($( window ).height() / 1.5); //( $( window ).height() < 600 ) ? 200 : ($( window ).height() / 1.5);
@@ -811,7 +943,6 @@ me.onLocationFound = function(e)
     me.defaultCoordinatePoint = [ e.latlng.lat, e.latlng.lng ];
 
     me.clearMarkerSearchResultLayer( 'myPin' );
-
     me.createMyCoordinateMarker( true );
 
 }
@@ -826,7 +957,7 @@ me.setMapDefaults = function()
     {
         $( 'div.listview-toggle' ).hide();
     }
-    if ( me.displayControlScale )
+    if ( me.displayControlScaleDistance )
     {
         $( 'div.leaflet-control-scale' ).show();
     }
@@ -867,7 +998,7 @@ me.floatingSearchLayout = function()
     return '<div style="padding:5px;border-radius: 5px;background-Color:#fff;width:100%;"><i style="font-size:18px" class="fa">&#xf002;</i>&nbsp;<input type=text style="font-size:12pt;border:1px solid #F5F5F5;color:#C0C0C0;" value="Clinic Name" onclick="this.value=null;this.style.color=0"></div>';
 }
 
-me.restoreMapDefaults = function()
+me.initialiseMapsDefaults = function()
 {
     me.mapDiv.css( 'height', '100%' ); //$( window ).height() + 'px'
     me.mapDiv.css( 'zIndex', '100' );
@@ -878,10 +1009,10 @@ me.restoreMapDefaults = function()
     {
         me.mapLibObj.setView( me.defaultCoordinatePoint );
         me.mapLibObj.invalidateSize();
+        me.viewSet = true;
     }
 
     me.resizeSearchBox();
-    
     me.setMapDefaults();
 
 }
@@ -983,7 +1114,7 @@ me.initialisePageControls = function()
 
 me.createPanelBottomDefaults = function()
 {
-    var dvPanelFrame = $( '<div id="panelBottomFrame" style="width:100%;height:100%;border:2px solid #F5F5F5;background-Color:#fff;"></div>' );
+    var dvPanelFrame = $( '<div id="panelBottomFrame" style=""></div>' );
     var dvPanelCloser = $( '<div style="width:100%;right:0;height:1px" ></div>' ); //<a class="panelBottom-close">X</a> //fas fa-angle-down 
     var dvPanelContents = $( '<div id="panelBottomContents" class="panelBottom-contents"></div>' );
     
@@ -1003,14 +1134,17 @@ me.initialiseSearchControlOptions = function()
     me.searchControlOpts.push( { label: 'Google Places', name: 'googlePlaces', class: 'fas fa-globe', textStyle: 'color:#2C98F0;', iconStyle: 'color:#2C98F0;', eventHandler: 'Util.checkDataExists', parm: 2, selected: 0, type: 'filter', enabled: false, group: 0 } );*/
     //me.searchControlOpts.push( { label: 'search Distance', name: 'distanceRadius', class: 'fas fa-route sliderControl', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchDistanceLimit, control: me.getSlider, defaultValue: me.distanceThreshold.limitSearchDistance, parm: { min: 1, max: 1000, step: 1 }, scale: { unit: 100, label: 'm' }, enabled: true, group: 0 } );
 
-    me.searchControlOpts.push( { label: 'nearest', name: 'distanceCount', class: 'fas fa-map-marker-alt', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchCountLimit, control: me.getSelector, defaultValue: me.distanceThreshold.limitSearchCount, parm: { 3: ' 3 outlets', 5: ' 5 outlets', 10: '10 outlets', 50: '50 outlets' }, enabled: true, selected: true, group: 0 } );
-    me.searchControlOpts.push( { label: 'distance', name: 'distanceRadius', class: 'fas fa-route sliderControl', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchDistanceLimit, control: me.getSelector, defaultValue: me.distanceThreshold.limitSearchDistance, parm: { 1000: '1km', 5000: '5km', 10000: '10km', 50000: '50km', 100000: '100km', 250000: '250km' }, enabled: true, selected: false, group: 0 } );
+    me.searchControlOpts.push( { label: 'nearest', name: 'distanceCount', class: 'fas fa-map-marker-alt', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchCountLimit, control: me.getSelector, defaultValue: me.distanceThreshold.limitSearchCount, parm: { 3: ' 3 outlets', 5: ' 5 outlets', 10: '10 outlets', 50: '50 outlets' }, enabled: true, selected: true, group: 0, alwaysOn: false } );
+    me.searchControlOpts.push( { label: 'distance', name: 'distanceRadius', class: 'fas fa-route sliderControl', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchDistanceLimit, control: me.getSelector, defaultValue: me.distanceThreshold.limitSearchDistance, parm: { 1000: '1km', 5000: '5km', 10000: '10km', 50000: '50km', 100000: '100km', 250000: '250km' }, enabled: true, selected: false, group: 0, alwaysOn: false } );
+    me.searchControlOpts.push( { label: 'services', name: 'filter.services', class: 'fas fa-heartbeat', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateServiceCriteria, control: me.getSliderSwitches, defaultValue: '', parm: me.getServiceParms(), enabled: true, selected: false, group: 0, alwaysOn: true } );
 
     //me.searchType = me.searchControlOpts[ 0 ];
     me.setSearchType( me.searchControlOpts[ 0 ] );
 
     $( '#searchbox-searchoptions').attr( 'class', 'searchbox-searchoptions' );
     $( '#searchbox-searchoptions').addClass( 'fas fa-caret-down' ); //me.searchType.class );
+
+    me.panelFloat = $( 'div.info-floating-container' );
 
     //$( '#searchbox-searchoptions').attr( 'style', me.searchType.iconStyle );
 
@@ -1029,9 +1163,14 @@ me.returnSearchOptionsContent = function()
             var tdIconStyle = me.searchControlOpts[ i ].iconStyle;
 
             //DO NOT REMOVE: reuse later
-            if ( me.searchControlOpts[ i ].selected )
+            if ( me.searchControlOpts[ i ].selected || me.searchControlOpts[ i ].alwaysOn )
             {
-                tblStyle += 'opacity:1;background-Color:#F5F5F5;border-radius:6px;';
+                tblStyle += 'opacity:1;border-radius:6px;';
+
+                if ( me.searchControlOpts[ i ].selected )
+                {
+                    tblStyle += 'background-Color:#F5F5F5;';
+                }
             }
             else
             {
@@ -1046,7 +1185,7 @@ me.returnSearchOptionsContent = function()
             var tr  = document.createElement('tr');
             var td1  = document.createElement('td');
             td1.setAttribute( 'id', 'searchOptIcon_' + me.searchControlOpts[ i ].name );
-            td1.setAttribute( 'style', 'text-align:center;padding:8px 2px 8px 2px;width:38px;' + tdIconStyle );
+            td1.setAttribute( 'style', 'text-align:center;padding:12px 2px 8px 2px;width:38px;vertical-align:top;' + tdIconStyle );
 
             var spanStyle = 'font-size:12pt;';
             var faSpan  = document.createElement('span');
@@ -1090,15 +1229,22 @@ me.returnSearchOptionsContent = function()
 
             tr.onclick = function () {
 
-                me.unhighlightSearchOptions();
-                me.setSearchType( JSON.parse( unescape( $( this ).attr( 'datatargets' ) ) ) );
+                if ( ! JSON.parse( unescape( $( this ).attr( 'datatargets' ) ) ).alwaysOn )
+                {
+                    me.unhighlightSearchOptions();
+                    me.setSearchType( JSON.parse( unescape( $( this ).attr( 'datatargets' ) ) ) );
+                }
+
 
                 //me.setSearchOptionActive();
                 $( this.parentElement ).css( 'opacity', '1' );
-                $( this.parentElement ).css( 'background-color', '#F5F5F5' );
-                $( this.parentElement ).css( 'border-radius', '6px' );
+                
+                if ( ! JSON.parse( unescape( $( this ).attr( 'datatargets' ) ) ).alwaysOn )
+                {
+                    $( this.parentElement ).css( 'background-color', '#F5F5F5' );
+                }
 
-                console.log( me.searchType.name );
+                $( this.parentElement ).css( 'border-radius', '6px' );
 
                 if ( me.searchType.name == 'distanceRadius' )
                 {
@@ -1109,25 +1255,19 @@ me.returnSearchOptionsContent = function()
                     me.clearRadiusMarker();
                 }
 
-                me.clearMarkerSearchResultLayer( 'searchPin' ); // not efficient --> there should be a smarter way to remove a single marker instead of clearing ALL and re-adding
-
-                me.runSearch( ( me.searchWords.length == 0 ), ( me.searchWords.length == 0 ) );
+                if ( ! JSON.parse( unescape( $( this ).attr( 'datatargets' ) ) ).alwaysOn )
+                {
+                    me.clearMarkerSearchResultLayer( 'searchPin' ); // not efficient --> there should be a smarter way to remove a single marker instead of clearing ALL and re-adding
+                    me.runSearch( ( me.searchWords.length == 0 ), ( me.searchWords.length == 0 ) );                        
+                }
 
             }
-
-            /*tr.onmouseover = function () {
-                $( this.parentElement ).css( 'opacity', '0.75' );
-            }
-
-            tr.onmouseout = function () {
-                me.unhighlightSearchOptions();
-            };*/
 
             faSpan.setAttribute( 'class', me.searchControlOpts[ i ].class + '');
             faSpan.setAttribute( 'style', spanStyle );
 
             var td2  = document.createElement('td');
-            td2.setAttribute( 'style', 'padding:8px;width:110px;' + spanStyle); //font-size:12pt;
+            td2.setAttribute( 'style', 'padding:8px;width:110px;vertical-align:top;' + spanStyle); //font-size:12pt;
 
             var txt = document.createTextNode( me.searchControlOpts[ i ].label );
 
@@ -1178,17 +1318,17 @@ me.unhighlightSearchOptions = function()
     }
 }
 
-/*me.setSearchOptionActive = function()
+me.getServiceParms = function()
 {
-
-    for ( var i = 0; i < me.searchControlOpts.length; i++ )
-    {
-        if ( me.searchType.name == me.searchControlOpts[ i ].name )
-        {
-            $( '#searchOpt_' + me.searchControlOpts[ i ].name ).css( 'opacity', '1'); //0.25
-        }
-    }
-}*/
+    // fetch from JSON / API
+   return [ { id: 'contraception', name: 'contraception', filter: false },
+            { id: 'pacmiso', name: 'pacmiso', filter: false },
+            { id: 'macmva', name: 'macmva', filter: false },
+            { id: 'ma', name: 'ma', filter: false },
+            { id: 'hrc', name: 'hrc', filter: false },
+            { id: 'safea', name: 'safea', filter: false }
+         ];
+}
 
 
 me.addRadiusMarker = function()
@@ -1213,7 +1353,7 @@ me.showHideSearchResultsPanel = function()
             $( '.searchResults-close' ).removeClass( 'fa-angle-up' );
             $( '.searchResults-close' ).addClass( 'fa-angle-down' );
             $( '.searchResults-close' ).css( 'bottom', '9px' );
-            $( '.search-results-container' ).css( 'top', '-9px' );
+            $( '.search-results-container' ).css( 'top', '-19px' );
             $( '.search-words-container' ).hide( 'fast' );
         } 
         else 
@@ -1234,11 +1374,8 @@ me.createListviewControl = function()
     L.Control.Listview = L.Control.extend({
         onAdd: function(map) {
             var dv = L.DomUtil.create('div');
-            //dv.classList.add( 'leaflet-control' );
             dv.classList.add( 'searchbox-shadow' );
             dv.classList.add( 'listview-toggle' );
-            //dv.classList.add( 'listview-toggle-Map-List-view' );
-            //dv.setAttribute( 'style', 'margin: 20px 14px 0 0 !important;' );
             dv.innerHTML = ( ( '<a id="float-control-ListOrMap" class="fas fa-map offset-listview-toggle"></a>' ) );
             return dv;
         },
@@ -1267,12 +1404,11 @@ me.resizeSearchBox = function()
         $( '.searchbox' ).css( 'width', (screen.width < 500 ? ( screen.width - ( 16 * 2 ) ) : 450 ) ); //16 = margin (x3 left+middle+right), 40 = list icon width
     }
 
-    //if ( $( '.search-results-container' ).is( ':visible' ) )
-    {
-        $( '.search-results-container').css( 'minHeight', '20px' ); //$( '.search-words-container').css( 'height' ) );
-        //$( '.search-results-container').css( 'maxHeight', ( $(window).height() - $( '.search-results-container').position().top - ( 16 * 2.5) ) );
-        $( '.search-results-container').css( 'maxHeight', ( $(window).height() - $( '.search-results-container').position().top - ( me.panelBottom.is( ':visible' ) ? me.panelBottom.height() : 0 ) - ( me.viewMode.listView.active == "true" ? 20 : ( 16 * 2.5) ) ) );
-    }
+    $( '.search-results-container').css( 'minHeight', '20px' );
+    $( '.search-results-container').css( 'maxHeight', ( $(window).height() - $( '.search-results-container').position().top - ( me.panelBottom.is( ':visible' ) ? me.panelBottom.height() : 0 ) - ( me.viewMode.listView.active == "true" ? 20 : ( 16 * 2.5) ) ) );
+
+    // also resize 'country selector' box
+    $( '.selection-country-container' ).css( 'width', parseFloat( $( '.searchbox' ).css( 'width' ).replace('px','') ) + 14 + 'px' );
 
 }
 
@@ -1307,10 +1443,6 @@ me.clearSearchWords = function()
 }
 me.refreshSearchWordsContainer = function()
 {
-
-    //$( '#searchbox-searchoptions').attr( 'class', 'searchbox-searchoptions iconShadow' );
-    //$( '#searchbox-searchoptions').addClass( me.searchType.class );
-    //$( '#searchbox-searchoptions').attr( 'style', me.searchType.iconStyle );
 
     var wordsContainer = $( ".search-words-inner" );
     wordsContainer.empty();
@@ -1400,7 +1532,10 @@ me.createSearchWord = function( word )
         me.removeSearchWord( this.getAttribute( 'data' ) );
         me.refreshSearchWordsContainer();
         me.clearMarkerSearchResultLayer( 'searchPin' ); // not efficient --> there should be a smarter way to remove a single marker instead of clearing ALL and readding
-
+        if ( me.circleRadiusMarker )
+        {
+            me.mapLibObj.removeLayer( me.circleRadiusMarker );
+        }
         if ( me.searchWords.length )
         {
             me.addAllSearchWords();
@@ -1431,7 +1566,7 @@ me.runWordSearch = function()
 
 me.runSearch = function( mapOnly, skipGetBounds, poi )
 {
-    RESTUtil.retrieveJson( '20190523_provlist_fake_br_v2.json', function( response, data ){
+    RESTUtil.retrieveJson( 'countryData/' + me.countryCode + '.json', function( response, data ){
 
         var iCounter = 0;
         var foundKeysIdx = [];
@@ -1439,11 +1574,9 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
         var newData = [];
         var iconArr = [];
 
-        console.log( data );
-
         $( '.search-results-inner').empty();
 
-        if ( poi && poi.toString() == '1' )
+        if ( poi && poi == true )
         {
             for ( var i = 0; i < data.length; i++ )
             {
@@ -1462,6 +1595,7 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
             {
                 var found = false;
                 var searchString = me.newSearchString( data[i] ).toLowerCase();
+                var servFound = false;
     
                 if ( me.searchWords.length > 0 )
                 {
@@ -1481,7 +1615,19 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
                         found = true;
                     }
                 }
-    
+
+                if ( me.serviceFilter.length )
+                {
+                    if ( data[i].serviceMatches != undefined ) delete data[i].serviceMatches;
+                }
+
+                if ( found && me.serviceFilter.length )
+                {
+                    var serviceMatches = me.searchServiceAtProvider( me.serviceFilter, data[i] );
+                    data[i].serviceMatches = parseFloat( serviceMatches );
+                    found = ( parseFloat( serviceMatches ) > 0 );
+                }
+
                 // get array index of found matches
                 if ( found )
                 {
@@ -1494,7 +1640,7 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
 
         if ( foundKeysIdx.length )
         {
-            if ( poi && poi.toString() == '1' )
+            if ( poi && poi == true )
             {
                 data[ foundKeysIdx[i] ].location.distance = 0;
                 newData.push( data[ foundKeysIdx[i] ] );
@@ -1517,43 +1663,51 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
 
             if ( mapOnly ) // autoPlot-nearby-outlets {mode}: do not display searchResults in left-panel
             {
-
-                if ( me.searchType.name == 'distanceRadius' )
+                if ( poi && poi.toString() == '1' )
                 {
-
-                    for ( var i = 0; i < newData.length; i++ )
-                    {   // for remove all outlet locations > search-distance-limit
-
-                        if ( parseFloat( newData[ i ].location.distance ) > parseFloat( me.distanceThreshold.limitSearchDistance ) )
-                        {
-                            dropKeysIdx.push( i );
+                    // do nothing
+                }
+                else
+                {
+                    if ( me.searchType.name == 'distanceRadius' )
+                    {
+    
+                        for ( var i = 0; i < newData.length; i++ )
+                        {   // for remove all outlet locations > search-distance-limit
+    
+                            if ( parseFloat( newData[ i ].location.distance ) > parseFloat( me.distanceThreshold.limitSearchDistance ) )
+                            {
+                                dropKeysIdx.push( i );
+                            }
+    
                         }
-
+                    }
+                    else if ( me.searchType.name == 'distanceCount' )
+                    {
+    
+                        if ( newData.length > me.distanceThreshold.limitSearchCount )
+                        {
+                            // for remove all outlet locations exceeding 'show-closest-count' limit
+                            for (var i = newData.length - 1; i >= parseInt( me.distanceThreshold.limitSearchCount ); i--)
+                            {
+                                dropKeysIdx.push( parseFloat( i ).toFixed( 0 ) );
+                            }
+                        }    
                     }
                 }
-
-                if ( me.searchType.name == 'distanceCount' )
-                {
-
-                    if ( newData.length > me.distanceThreshold.limitSearchCount )
-                    {
-                        // for remove all outlet locations exceeding 'show-closest-count' limit
-                        for (var i = newData.length - 1; i >= parseInt( me.distanceThreshold.limitSearchCount ); i--)
-                        {
-                            dropKeysIdx.push( i );
-                        }
-                    }    
-                }
-
+                
             }
 
-            dropKeysIdx.sort();        // First sort all elements before reverse  
-            dropKeysIdx.reverse();
-
-            for ( var i = 0; i < dropKeysIdx.length; i++ )
+            if ( dropKeysIdx.length > 0 )
             {
-                newData.splice( dropKeysIdx [ i ], 1);
+                dropKeysIdx.sort( Util.sortNumberReverse );
+
+                for ( var i = 0; i < dropKeysIdx.length; i++ )
+                {
+                    newData.splice( dropKeysIdx [ i ], 1);
+                }
             }
+
 
             // DO NOT REMOVE > icons for distance filtering
             /*for ( var i = 0; i < newData.length; i++ )
@@ -1571,79 +1725,69 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
             var arrMarkers = [];
             me.mapMarkerIdx = [];
 
+            if ( me.useClusterGroups )
+            {
+                me.mapLibObj.removeLayer( me.clusterGroup );
+                me.clusterGroup = L.markerClusterGroup();
+            }
+
             // write out search results
             for ( var i = 0; i < newData.length; i++ )
             {
-
                 // create 'SUMMARY CARD' for Outlet
-                me.createPreviewCard( newData[ i ], $( '.search-results-inner'), ( iCounter + 10 ).toString( 36 ).toUpperCase(), i, function( rndID ){
+                me.createPreviewCard( newData[ i ], $( '.search-results-inner'), ( iCounter + 10 ).toString( 36 ).toUpperCase(), i, function( rndID, cardTag, dataJson ){
 
                     $( '#flyTo_' + rndID ).click( function()
                     { 
-
                         var coord = ( $( this ).attr( 'location' ) ).split( ',' );
 
-                        me.mapLibObj.setView ( [ coord[0], coord[1] ], 12, { animate: true, duration: me.mapFlyAnimationDelay } )
+                        me.mapLibObj.flyTo ( [ coord[0], coord[1] ], me.pointOverZoomlevel ); //, { animate: true, duration: me.mapFlyAnimationDelay }
 
                         if ( $( '.search-results-inner' ).is( ':visible') ) 
                         {
                             me.showHideSearchResultsPanel();
                         }
 
-                        me.showPanelWithContents( me.getMapDataPreviewFromID( $( this ) ) );
+                        me.getMapDataPreviewFromID( $( this ) );
 
                     } );
 
                     if ( Util.isMobi() )
                     {
-                        console.log( 'creating share icon+clickEvent: #share_' + rndID);
-                        $( '#share_' + rndID ).click( function(){ 
-
-                            var myLocation = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.location' ) ) );
-                            var myOutlet = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.outlet' ) ) );
-
-                            console.log(' ~ sharing ' + myOutlet.name, myLocation.lat + ',' + myLocation.long );
-
-                            FormUtil.shareApp( myOutlet.name, myLocation.lat + ',' + myLocation.long, true );
-
-                        } );
+                        me.createShareIconClick( rndID );
                     }
 
+                    // move to it's own function (e.g. me.createSearchPin() )
+                    var rndID = 'pin' + Util.generateRandomString( i+1 );
 
-                } );
+                    // create 'MAP MARKER' for Outlet
+                    var myMarkerIcon = L.AwesomeMarkers.icon({
+                        icon: 'searchPin',
+                        markerColor: 'red',
+                        prefix: 'fa',
+                        html: '<i id="pin_' + rndID + '" mapped-data="' + escape( JSON.stringify( newData[i] ) ) + '" mapped-data-text="' + ( iCounter + 10 ).toString( 36 ).toUpperCase() + '" mapped-data-idx="' + i + '" class="cwsPin textShadow">' +( iCounter + 10 ).toString( 36 ).toUpperCase() + '</i>'
+                    });
 
-
-                var rndID = 'pin' + Util.generateRandomString( i+1 );
-
-                // create 'MAP MARKER' for Outlet
-                var myMarkerIcon = L.AwesomeMarkers.icon({
-                    icon: 'searchPin',
-                    markerColor: 'red',
-                    prefix: 'fa',
-                    html: '<i id="pin_' + rndID + '" mapped-data="' + escape( JSON.stringify( newData[i] ) ) + '" mapped-data-text="' + ( iCounter + 10 ).toString( 36 ).toUpperCase() + '" mapped-data-idx="' + i + '" class="cwsPin textShadow">' +( iCounter + 10 ).toString( 36 ).toUpperCase() + '</i>'
-                });
-
-                var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ).addTo( me.mapLibObj );
-                    //.bindPopup( '<b>' + newData[i].outlet.name + '</b><br>text goes here' ); //.openPopup();
-
-                newMarker.setZIndexOffset( 500 - i );
-
-                arrMarkers.push( newMarker );
-                me.mapMarkerIdx.push( { idx: i, id: rndID } );
-
-                $( '#pin_' + rndID ).click( function( e )
-                {
-        
-                    if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
-
-                    if ( $( '.search-results-inner' ).is( ':visible') ) 
+                    if ( me.useClusterGroups )
                     {
-                        me.showHideSearchResultsPanel();
+                        var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ); //.addTo( me.mapLibObj ); //not added to map, that is handled by cluster plugin
+                    }
+                    else
+                    {
+                        var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ).addTo( me.mapLibObj );
                     }
 
-                    me.showPanelWithContents( me.getMapDataPreviewFromID( $( this ) ) );
-                    e.stopPropagation();
-        
+                    if ( dataJson.serviceMatches )
+                    {
+                        $( newMarker._icon ).css( 'opacity', parseFloat( dataJson.serviceMatches ).toFixed( 1 ) );
+                    } 
+
+                    newMarker.setZIndexOffset( 500 - i );
+                    arrMarkers.push( newMarker );
+                    me.mapMarkerIdx.push( { idx: i, id: rndID } );
+
+                    if ( me.useClusterGroups ) me.clusterGroup.addLayer( newMarker );
+
                 } );
 
                 iCounter += 1;
@@ -1665,29 +1809,51 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
                 } 
             }
 
-            if ( ! skipGetBounds )
+
+            if ( me.useClusterGroups )
+            {
+                me.mapLibObj.addLayer( me.clusterGroup );
+
+                me.clusterGroup.on('click', function (a) {
+                    me.pinClickEvent( $( a.layer._icon ).find( '.cwsPin' ) );
+                });
+            }
+
+
+            if ( skipGetBounds != undefined && skipGetBounds == false )
             {
                 me.markerGroup = L.featureGroup( arrMarkers );
-                me.mapLibObj.fitBounds( me.markerGroup.getBounds() );
+                me.mapLibObj.flyToBounds( me.markerGroup.getBounds() );
             }
 
         }
         else
         {
-
             $( ".search-results-inner" ).html( '<div style="padding:10px;" term="">No matches found</div>' );
-            //if ( $( '.searchFooter-collapser' ).is( ':visible') ) $( '.searchFooter-collapser' ).hide();
         }
 
-        if ( me.lastMarker)
-        {
-            me.lastMarker.setZIndexOffset( 1000 );
-        }
+        //if ( me.lastMarker)
+        //{
+        //    me.lastMarker.setZIndexOffset( 1000 );
+        //}
 
         FormUtil.hideProgressBar();
 
     } );
 
+}
+
+me.pinClickEvent = function( pin )
+{
+    if ( $( 'div.panel' ).is( ':visible') ) $("div.panel").toggle("slide", { direction: "left" }, 500);
+    
+    if ( $( '.search-results-inner' ).is( ':visible') ) 
+    {
+        me.showHideSearchResultsPanel();
+    }
+
+    //me.showPanelWithContents( me.getMapDataPreviewFromID( $( pin ) ) );
+    me.getMapDataPreviewFromID( $( pin ) );
 }
 
 me.getSearchDistanceIcons = function( arrList )
@@ -1714,7 +1880,6 @@ me.clearMarkerSearchResultLayer = function( iconClass )
 
         if ( ml.options && ml.options.icon && ml.options.icon.options && ml.options.icon.options.icon )
         {
-            console.log( ml.options.icon.options.icon );
             if  ( ml.options.icon.options.icon == iconClass ) 
             {
                 me.mapLibObj.removeLayer( ml );
@@ -1738,27 +1903,52 @@ me.clearMarkerAgainstSearchResultTest = function( iconClass )
     })
 }
 
-me.createDistanceAttr = function( dataObj )
+me.createDistanceAttr = function( dataJson )
 {
     var mapCoord = me.defaultCoordinatePoint; //me.mapLibObj.getCenter();
 
-    dataObj.location.distance = parseFloat( MapUtil.crowDistance( parseFloat( mapCoord[0] ), parseFloat( mapCoord[1] ), dataObj.location.lat, dataObj.location.long ) ) * 1000;
+    dataJson.location.distance = parseFloat( MapUtil.crowDistance( parseFloat( mapCoord[0] ), parseFloat( mapCoord[1] ), dataJson.location.lat, dataJson.location.long ) ) * 1000;
 
-    return dataObj;
+    return dataJson;
 }
 
-me.newSearchString = function( dataObj )
+
+me.searchServiceAtProvider = function( services, dataJson )
+{
+    var arrSvc = services.split(',');
+    var svcMatches = 0;
+
+    for ( var key in dataJson.service )
+    {
+        if ( ( dataJson.service[ key ] ).toString().toUpperCase() == "TRUE" )
+        {
+            for ( var i = 0; i < arrSvc.length; i++ )
+            {
+                if ( key.toString().toLowerCase() == ( arrSvc[ i ] ).toLowerCase() )
+                {
+                    svcMatches += 1;
+                }
+            }
+            
+        }
+    }
+
+    return parseFloat( svcMatches / arrSvc.length );
+
+}
+
+me.newSearchString = function( dataJson )
 {
     var ret = '';
 
     //DO NOT REMOVE: for now default to always search everything
     //if ( me.searchType.name == 'cwsOutlet' )
     {
-        ret = dataObj.outlet.name + ' ' + dataObj.provider.name + ' ' + dataObj.provider.address1 + ' ' + dataObj.provider.address2; //address1, address2
+        ret = dataJson.outlet.name + ' ' + dataJson.provider.name + ' ' + dataJson.provider.address1 + ' ' + dataJson.provider.address2; //address1, address2
 
-        for ( var key in dataObj.service )
+        for ( var key in dataJson.service )
         {
-            if ( ( dataObj.service[ key ] ).toString().toUpperCase() == "TRUE" )
+            if ( ( dataJson.service[ key ] ).toString().toUpperCase() == "TRUE" )
             {
                 ret += ' ' + key;
             }
@@ -1770,56 +1960,58 @@ me.newSearchString = function( dataObj )
 
 }
 
-me.createPreviewCard = function( dataObj, tagItm, iconText, dataIdx, returnFunc )
+me.createPreviewCard = function( dataJson, tagItm, iconText, dataIdx, returnFunc )
 {
-    var allPhoneNums = me.getDisplayPhoneNums( dataObj );
-    var ArrRating    = me.getOutletRatingRow( dataObj );
-    var ArrOpenTimes = me.getOpenTimesArray( dataObj );
-    var allServices  = me.getDisplayServices( dataObj );
-    var allProviders = me.getDisplayProviders( dataObj );
-    var distance     = dataObj.location.distance; // me.getDistance( dataObj );
+    var allPhoneNums = me.getDisplayPhoneNums( dataJson );
+    var ArrRating    = me.getOutletRatingRow( dataJson );
+    var ArrOpenTimes = me.getOpenTimesArray( dataJson );
+    var allServices  = me.getDisplayServices( dataJson );
+    var allProviders = me.getDisplayProviders( dataJson );
+    var distance     = dataJson.location.distance; // me.getDistance( dataJson );
     var rndID        = Util.generateTimedUid();
+    var svgCircle    = FormUtil.circleMarker( iconText );
 
+    //'      <td style="padding:2px;vertical-align:top;" ><div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" location="' + (dataJson.location.lat+','+dataJson.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class=""><div class="textShadow">' + iconText + '</div></div></td>' +
 
-    var prvCard = $( '  <table class="previewCard" id="tblData_' + rndID + '" data.outlet="' + escape( JSON.stringify(dataObj.outlet) ) + '" data.location="' + escape( JSON.stringify(dataObj.location) ) + '" >' +
+    var prvCard = $( '  <table class="previewCard" id="tblData_' + rndID + '" data.outlet="' + escape( JSON.stringify(dataJson.outlet) ) + '" data.location="' + escape( JSON.stringify(dataJson.location) ) + '" >' +
                    '    <tr>' +
-                   '      <td style="padding:2px;vertical-align:top;" ><div mapped-data="' + escape( JSON.stringify( dataObj ) ) + '" location="' + (dataObj.location.lat+','+dataObj.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class="circleSearchResult"><div class="textShadow">' + iconText + '</div></div></td>' +
-                   '      <td class="searchResultMainName"><div>' + dataObj.outlet.name + '</div></td>' +
-                   '      <td rowspan=4 class="operatingHours"><table style="">' + me.writeArray(ArrRating) + me.writeArray( ArrOpenTimes ) + '</table></td>' +
-                   '      <td style="font-size:8pt;font-weight:400;border-left:1px solid #BDBDBD;color:#215E8C;font-size:14pt;padding:2px 4px 2px 4px;text-align:center;width:80px;overflow:hidden;" rowspan=4>' + me.formatDisplayedDistanceOptions( distance ) + 
-                   '      ' + ( Util.isMobi() ? '<div><i style="color:#2C98F0;font-size:12pt" id="share_' + rndID + '" dataIdx="' + rndID + '" class="fas fa-share-alt shareThisOutlet"></i></div>' : '' ) + 
+                   '      <td rowspan=3 style="padding:2px;vertical-align:top;text-align:center;" ><div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" location="' + (dataJson.location.lat+','+dataJson.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class="">' + svgCircle + '</div></td>' +
+                   '      <td colspan=2 class="searchResultMainName"><div>' + Util.capitalizeAllFirstLetters( dataJson.outlet.name ) + '</div></td>' +
+                   '      <td rowspan=3 style="font-size:8pt;font-weight:400;border-left:1px solid #BDBDBD;color:#215E8C;font-size:14pt;padding:2px 4px 2px 4px;text-align:center;width:80px;overflow:hidden;" rowspan=4>' + me.formatDisplayedDistanceOptions( distance ) + 
+                   '         <div style="padding:2px;margin-top:4px;" ><i id="share_' + rndID + '" dataIdx="' + rndID + '" class="fas fa-share-alt shareThisOutlet" style="color:#2C98F0;font-size:14pt;' + ( Util.isMobi() ? '' : 'display:none;' ) + '" ></i>&nbsp;<img src="images/gmaps.svg" id="googleMaplink_' + rndID + '" class="googleMapIcon" style="position:relative;top:-2px;margin-left:' + ( Util.isMobi() ? '3px' : '0' ) + ';"></div>' +
                    '      </td>' +
                    '    </tr>' +
                    '    <tr>' +
-                   '      <td colspan=2 style="font-size:8pt;font-weight:400;padding:0 0 0 6px"><span>' + dataObj.location.address1 + '</span></td>' +
+                   '      <td colspan=2 class="previewCardAddress"><span>' + Util.capitalizeAllFirstLetters( dataJson.location.address1 ) + '&nbsp;</span></td>' +
                    '    </tr>' +
                    '    <tr>' +
-                   '      <td colspan=2 style="font-size:8pt;font-weight:400;padding:0 0 0 6px"><span>' + dataObj.location.address2 + '</span></td>' +
+                   '      <td colspan=2 class="previewCardAddress"><span>' + Util.capitalizeAllFirstLetters( dataJson.location.address2 ) + '&nbsp;</span></td>' +
                    '    </tr>' +
                    '    <tr>' +
-                   '      <td colspan=2 class="phoneRow">Phone:<span> ' + allPhoneNums + '</span></td>' +
+                   '      <td colspan=2 class="previewCardOperatingHours"><table style="">' + me.writeArray(ArrRating) + me.writeArray( ArrOpenTimes ) + '</table></td>' +
+                   '      <td colspan=2 class="previewCardPhoneNumberBlock" style=""><div style="padding:2px 0 2px 2px;">Phone:<span> ' + allPhoneNums + '</span></div></td>' +
                    '    </tr>' +
                    '    <tr>' +
-                   '      <td colspan=4 class="servicesRow"><strong>Services</strong>: <span>' + allServices + '</span></td>' +
+                   '      <td colspan=4 class="previewCardProviderBlock"><table><tr><td style="width:20px;"><li class="fas fa-user-md" style="color:rgb(80,85,90,0.75);font-size:12pt;"></li></td><td>' + allProviders + '</td></tr></table> </td>' +
                    '    </tr>' +
                    '    <tr>' +
-                   '      <td colspan=4 style="font-size:8pt;font-weight:400;padding:0 0 0 4px;border-top:1px solid #fff;"><span>' + allProviders + '</span></td>' +
+                   '      <td colspan=4 class="servicesRow" style="padding:8px 0 4px 6px !important;"><strong>Services</strong>: <span>' + allServices + '</span></td>' +
                    '    </tr>' +
                    '  </table>' );
 
     tagItm.append( prvCard );
 
-    if ( returnFunc ) returnFunc( rndID, prvCard );
+    if ( returnFunc ) returnFunc( rndID, prvCard, dataJson, tagItm );
 
 }
 
 me.getDistanceFAicon = function( dist )
 {
-    for ( var i = 0; i < me.distanceScale2.length; i++ )
+    for ( var i = 0; i < me.distanceScale.length; i++ )
    {
-        if ( parseFloat( dist ) < ( parseFloat( me.distanceScale2[ i ].distance ) / 1000 ) )
+        if ( parseFloat( dist ) < ( parseFloat( me.distanceScale[ i ].distance ) / 1000 ) )
         {
-            return me.distanceScale2[ i ].faIcon
+            return me.distanceScale[ i ].faIcon
         }
 
     }
@@ -1829,9 +2021,9 @@ me.formatDisplayedDistanceOptions = function( dist )
     var unit;
     var newDist;
 
-   for ( var i = 0; i < me.distanceScale2.length; i++ )
+   for ( var i = 0; i < me.distanceScale.length; i++ )
    {
-        if ( parseFloat( dist ) < ( parseFloat( me.distanceScale2[ i ].distance ) ) )
+        if ( parseFloat( dist ) < ( parseFloat( me.distanceScale[ i ].distance ) ) )
         {
             if ( parseFloat( dist ) < 1 )
             {
@@ -1860,14 +2052,14 @@ me.writeArray = function(arr)
     }
     return ret;
 }
-me.getDisplayPhoneNums = function( dataObj )
+me.getDisplayPhoneNums = function( dataJson )
 {
     var ret = '';
-    if ( dataObj && dataObj.provider && dataObj.provider.phone1 ) ret += '<a class="telNo" href="tel:' + dataObj.provider.phone1 + '">' + dataObj.provider.phone1 + '</a>';
-    if ( dataObj && dataObj.provider && dataObj.provider.phone2 ) ret += ( ( ret.length ) ? ',' : '') + dataObj.provider.phone2;
+    if ( dataJson && dataJson.provider && dataJson.provider.phone1 ) ret += ( ( dataJson.provider.phone1 ) ? '<div class="previewCardPhoneNumber"><a class="previewCardTelNo" href="tel:' + dataJson.provider.phone1 + '">' + dataJson.provider.phone1 + '</a></div>' : '' );
+    if ( dataJson && dataJson.provider && dataJson.provider.phone2 ) ret += ( ( dataJson.provider.phone2 ) ? '<div class="previewCardPhoneNumber"><a class="previewCardTelNo" href="tel:' + dataJson.provider.phone2 + '">' + dataJson.provider.phone2 + '</a></div>' : '' );
     return ret;
 }
-me.getOutletRatingRow = function( dataObj )
+me.getOutletRatingRow = function( dataJson )
 {    
     var arrRet = [];
 
@@ -1875,7 +2067,7 @@ me.getOutletRatingRow = function( dataObj )
 
     return arrRet;
 }
-me.getOpenTimesArray = function( dataObj )
+me.getOpenTimesArray = function( dataJson )
 {
     var arrRet = [];
     var jsonTemp = { dayFrom: '', dayTo: '', times: '' };
@@ -1886,9 +2078,9 @@ me.getOpenTimesArray = function( dataObj )
 
     for ( var i = 0; i < expectedKeys.length; i++ )
     {
-        if ( dataObj.opening [ expectedKeys[i] ] ) 
+        if ( dataJson.opening [ expectedKeys[i] ] ) 
         {
-            if ( jsonTemp.times != dataObj.opening [ expectedKeys[i] ] )
+            if ( jsonTemp.times != dataJson.opening [ expectedKeys[i] ] )
             {
                 if ( jsonTemp.times.length )
                 {
@@ -1899,14 +2091,14 @@ me.getOpenTimesArray = function( dataObj )
                 {
                     jsonTemp.dayFrom = expectedKeys[i];
                     jsonTemp.dayTo = expectedKeys[i];
-                    jsonTemp.times = dataObj.opening [ expectedKeys[i] ];
+                    jsonTemp.times = dataJson.opening [ expectedKeys[i] ];
                 }
             }
             else
             {
                 jsonTemp.dayTo = expectedKeys[i];
             }
-            lastOpenHrs = dataObj.opening [ expectedKeys[i] ];
+            lastOpenHrs = dataJson.opening [ expectedKeys[i] ];
             lastDay = expectedKeys[i];
         }
     }
@@ -1922,7 +2114,7 @@ me.getOpenTimesArray = function( dataObj )
 me.getCalendarTimes = function( jsonData )
 {
     //return '<b>'+jsonData.dayFrom + ( jsonData.dayFrom == jsonData.dayTo ? '' : '-' + jsonData.dayTo ) +'</b> ' + jsonData.times.toString().replace( ',', '-' );
-    return '<tr><td class="openDay">'+ Util.capitalizeFirstLetter( jsonData.dayFrom ) + ( jsonData.dayFrom == jsonData.dayTo ? '' : '-' + Util.capitalizeFirstLetter( jsonData.dayTo ) ) +'</td><td> ' + me.timeToAbbr( jsonData.times ) + '</td></tr>';
+    return '<tr><td class="openDay">'+ Util.capitalizeFirstLetter( jsonData.dayFrom ) + ( jsonData.dayFrom == jsonData.dayTo ? '' : '-' + Util.capitalizeFirstLetter( jsonData.dayTo ) ) +'</td><td class="openHours"> ' + me.timeToAbbr( jsonData.times ) + '</td></tr>';
 }
 
 me.timeToAbbr = function( timeAllText )
@@ -1934,34 +2126,42 @@ me.timeToAbbr = function( timeAllText )
 
         for ( var t = 0; t < arrTimes.length; t++ )
         {
-            var arrTimeBlock = arrTimes[t].split(',');
-
-            for ( var i = 0; i < arrTimeBlock.length; i++ )
+            if ( arrTimes[t] == '0:00,24:00' )
             {
-                ret += me.timePartToAbbr( arrTimeBlock[i]) + ' to ';
+                ret = '24 hrs' + ', ';
             }
-            
-            ret = ret.substring(0, ret.length - 4) + ', ';
+            else
+            {
+                var arrTimeBlock = arrTimes[t].split(',');
+
+                for ( var i = 0; i < arrTimeBlock.length; i++ )
+                {
+                    ret += me.timePartToAbbr( arrTimeBlock[i]) + ' to ';
+                }
+                ret = ret.substring(0, ret.length - 4) + ', ';
+            }
         }
     }
     ret = ret.substring(0, ret.length - 2);
     return ret;
 }
+
 me.timePartToAbbr = function(timeBlock)
 {
     var arrT = timeBlock.split(':');
     var suff = parseInt( arrT[0] ) < 12 ? 'am' : 'pm';
-    var sec = parseInt( arrT[1] ) == 0 ? '' : ':' + arrT[0];
+    var sec = parseInt( arrT[1] ) == 0 ? '' : ':' + arrT[1];
 
     return ( parseInt( arrT[0] ) < 12 ? arrT[0] : (arrT[0] - 12) ) + '' + sec + '' + suff;
 }
-me.getDisplayServices = function( dataObj )
+
+me.getDisplayServices = function( dataJson )
 {
     var ret = '';
 
-    for ( var key in dataObj.service )
+    for ( var key in dataJson.service )
     {
-        if ( ( dataObj.service[ key ] ).toString().toUpperCase() == "TRUE" )
+        if ( ( dataJson.service[ key ] ).toString().toUpperCase() == "TRUE" )
         {
             ret += key + ', ';
         }
@@ -1970,22 +2170,11 @@ me.getDisplayServices = function( dataObj )
     if ( ret.length > 0 )  return ret.substring(0, ret.length - 2);
     else return ret;
 }
-me.getDisplayProviders = function( dataObj )
+me.getDisplayProviders = function( dataJson )
 {
     var ret = '';
 
-    /*for ( var key in dataObj.providers )
-    {
-        if ( ( dataObj.providers[ key ] ).toString().toUpperCase() == "TRUE" )
-        {
-            ret += key + ', ';
-        }
-    }
-
-    if ( ret.length > 0 )  return ret.substring(0, ret.length - 2);
-    else return ret;*/
-
-    var templateWithRatings = '<table style="providerRow">'+
+    var templateWithRatings = '<table class="providerRow">'+
                               '  <tr>'+
                               '    <td>{PROVIDER}</td>'+
                               '  </tr>'+
@@ -1997,17 +2186,17 @@ me.getDisplayProviders = function( dataObj )
                                      me.getRandomRatings( 'tiny' ) +
                               '    </td>'+
                               '  </tr>'+        */
-    if ( dataObj && dataObj.provider && dataObj.provider.name )
+    if ( dataJson && dataJson.provider && dataJson.provider.name )
     {
         if ( 1 == 1 ) //boolean : include option to display Y/N provider ratings
         {
-            return templateWithRatings.replace( '{PROVIDER}',dataObj.provider.name );
+            return templateWithRatings.replace( '{PROVIDER}',Util.capitalizeAllFirstLetters( dataJson.provider.name ) );
         }
         else
         {
 
         }
-        return dataObj.provider.name;
+        return dataJson.provider.name;
     }
     else
     {
@@ -2030,19 +2219,18 @@ me.getRandomRatings = function( classSize )
     }
     return ret;
 }
-me.getDistance = function( dataObj )
+me.getDistance = function( dataJson )
 {
-    if ( dataObj.location && dataObj.location.lat && dataObj.location.long )
+    if ( dataJson.location && dataJson.location.lat && dataJson.location.long )
     {
         var mapCoord = me.mapLibObj.getCenter();
-        return parseFloat( MapUtil.crowDistance( mapCoord.lat, mapCoord.lng, dataObj.location.lat, dataObj.location.long ) ).toFixed(1);
+        return parseFloat( MapUtil.crowDistance( mapCoord.lat, mapCoord.lng, dataJson.location.lat, dataJson.location.long ) ).toFixed(1);
     }
 
 }
 
 me.updateSearchDistanceLimit = function( e )
 {
-    //console.log( e );
     me.distanceThreshold.limitSearchDistance = e.value;
 
     me.addRadiusMarker();
@@ -2053,15 +2241,40 @@ me.updateSearchDistanceLimit = function( e )
 
 me.updateSearchCountLimit = function( e )
 {
-    //console.log( e );
     me.distanceThreshold.limitSearchCount = e.value;
+    me.clearMarkerSearchResultLayer( 'searchPin' );
+    me.runSearch( true, true );
+}
+
+me.updateServiceCriteria = function( e )
+{
+    var myFilter = me.serviceFilter;
+    var arrFilter = me.serviceFilter.split(',');
+
+    if ( e.checked )
+    {
+        //add to filter
+        arrFilter.push( e.value );
+    }
+    else
+    {
+        //remove from filter
+        for ( var o = 0; o < arrFilter.length; o++ )
+        {
+            if ( arrFilter[o] == e.value )
+            {
+                arrFilter.splice( o, 1 );
+            }
+        }
+    }
+
+    me.serviceFilter = Util.commaDelimitArray( arrFilter );
     me.clearMarkerSearchResultLayer( 'searchPin' );
     me.runSearch( true, true );
 }
 
 me.getSlider = function( defaultValue, optionsJson, updateEvent )
 {
-
     var newSl = document.createElement('input');
 
     newSl.type = 'range', newSl.min = optionsJson.min, newSl.max = optionsJson.max, newSl.step = optionsJson.stepIncr, newSl.value = defaultValue; //,newSl.className='leaflet-control-layers-sliderControl';
@@ -2072,6 +2285,61 @@ me.getSlider = function( defaultValue, optionsJson, updateEvent )
     }
 
     return newSl;
+}
+
+me.getSliderSwitches = function( defaultValue, optionsJson, updateEvent )
+{
+    var dv = document.createElement('div');
+
+    for ( var o = 0; o < optionsJson.length; o++ )
+    {
+        var dvSlider = document.createElement('div');
+        var tbl = document.createElement('table');
+
+        tbl.setAttribute('class', 'rounded');
+        tbl.setAttribute('style', 'background-Color:#fff;width:100%;padding:8px 0;vertical-align:top;font-size:14px;');
+
+        dv.appendChild(dvSlider);
+        dvSlider.appendChild(tbl);
+
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        var txt = document.createTextNode( ( optionsJson[ o ].name ) );
+        var td2 = document.createElement('td');
+        var lbl = document.createElement('label');
+
+        td2.setAttribute('style', 'width:45px;');
+        lbl.setAttribute('class', 'switch');
+
+        var inp = document.createElement('input');
+        inp.setAttribute('type', 'checkbox');
+        inp.setAttribute('value', optionsJson[ o ].id);
+        inp.setAttribute('id', 'service_' + optionsJson[ o ].id );
+
+        var sp = document.createElement('span');
+        sp.setAttribute('class', 'slider round');
+
+        if ( updateEvent )
+        {
+            inp.addEventListener("change", function(){
+                updateEvent( this );
+            });
+        }
+
+        tbl.appendChild(tr);
+        tr.appendChild(td1);
+        td1.appendChild(txt);
+        tr.appendChild(td2);
+        td2.appendChild(lbl);
+
+        lbl.appendChild(inp);
+        lbl.appendChild(sp);
+
+    }
+
+    dv.setAttribute('style', 'width:99% !important');
+
+    return dv;
 }
 
 me.getSelector = function( defaultValue, optionsJson, updateEvent )
@@ -2113,22 +2381,15 @@ me.getSelector = function( defaultValue, optionsJson, updateEvent )
     return dv;
 }
 
-me.getMapDataPreviewFromID = function( thisObj, dataObj ) //id
+me.getMapDataPreviewFromID = function( thisObj, dataJson ) //id
 {
-    //console.log( me.mapMarkerIdx );
-    //console.log( id );
-    //console.log( me.mapMarkerIdx[ id ] );
-
     var virtObj;
     var virtTag;
 
-    console.log( thisObj );
-    console.log( dataObj );
-
-    if ( dataObj )
+    if ( dataJson )
     {
-        virtObj = dataObj;
-        virtTag = $( '<div mapped-data="' + escape( JSON.stringify( dataObj ) ) + '" mapped-data-text="A" mapped-data-idx="0"></div>');
+        virtObj = dataJson;
+        virtTag = $( '<div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" mapped-data-text="A" mapped-data-idx="0"></div>');
     }
     else
     {
@@ -2136,34 +2397,64 @@ me.getMapDataPreviewFromID = function( thisObj, dataObj ) //id
         virtTag = thisObj;
     }
 
-    console.log( virtObj );
-    console.log( virtTag );
+    if ( Util.isMobi() && screen.width < 540 )
+    {
+        var targ = $( '#panelBottomContents' );
+    }
+    else
+    {
+        var targ = $( 'div.info-contents-container' );
+    }
 
-    $( '#panelBottomContents' ).empty();
+    targ.empty();
 
-    me.createPreviewCard( virtObj, $( '#panelBottomContents' ), unescape( virtTag.attr( 'mapped-data-text' ) ), unescape( virtTag.attr( 'mapped-data-idx' ) ), function( rndID ){
+    me.createPreviewCard( virtObj, targ, unescape( virtTag.attr( 'mapped-data-text' ) ), unescape( virtTag.attr( 'mapped-data-idx' ) ), function( rndID, prvCard, dataJson, tagObj ){
 
-        if ( Util.isMobi() )
+
+        if ( Util.isMobi() && screen.width < 540 )
         {
-            $( '#share_' + rndID ).click( function()
-            {
+            me.createShareIconClick( rndID );
+            me.resizePanelBottom();
 
-                var myLocation = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.location' ) ) );
-                var myOutlet = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.outlet' ) ) );
+            if ( ! $( '#panelBottom' ).is( ':visible' ) ) $( '#panelBottom' ).toggle("slide", { direction: "down" }, 200);
 
-                console.log(' ~ sharing ' + myOutlet.name, myLocation.lat + ',' + myLocation.long );
-
-                FormUtil.shareApp( myOutlet.name, myLocation.lat + ',' + myLocation.long, true );
-
-            } );
         }
-    
-        me.resizePanelBottom();
+        else
+        {
+            me.resizePanelSide();
+            if ( ! $( 'div.info-floating-container' ).is( ':visible' ) ) $( 'div.info-floating-container' ).toggle("slide", { direction: "up" }, 200);
+        }
 
-        if ( ! me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
+        me.createGoogleMapsIconClick( rndID );
+        //if ( ! me.panelBottom.is( ':visible' ) ) me.panelBottom.toggle("slide", { direction: "down" }, 200);
 
     });
 
+}
+
+me.createShareIconClick = function( rndID )
+{
+    $( '#share_' + rndID ).click( function() {
+
+        var myLocation = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.location' ) ) );
+        var myOutlet = JSON.parse( unescape( $( '#tblData_' + $( this ).attr( 'dataIdx' ) ).attr( 'data.outlet' ) ) );
+
+        FormUtil.shareApp( myOutlet.name, myLocation.lat + ',' + myLocation.long, true );
+
+    } );
+}
+
+me.createGoogleMapsIconClick = function( rndID )
+{
+    $( '#googleMaplink_' + rndID ).click( function() {
+
+        var myLocation = JSON.parse( unescape( $( '#tblData_' + $( '#share_' + rndID ).attr( 'dataIdx' ) ).attr( 'data.location' ) ) );
+        var myOutlet = JSON.parse( unescape( $( '#tblData_' + $( '#share_' + rndID ).attr( 'dataIdx' ) ).attr( 'data.outlet' ) ) );
+        var url = 'https://www.google.com/maps?ie=UTF8&q=' + myOutlet.name + '@' + myLocation.lat + ',' + myLocation.long;
+
+        window.open(url, '_blank');
+
+    } );
 }
 
 me.showPanelWithContents = function( success ) //innerTag
@@ -2184,9 +2475,9 @@ me.countryOptions = function()
     var countryOpts = [];
 
     //countryOpts.push( { iso: '', name: 'none', lat: 28.3949, lng: 84.1240, zoom: 5, selected: ( me.countryCode == '' ? 1 : 0 ) } );
-    countryOpts.push( { iso: 'cm', name: 'Cameroon', lat: 5.0252, lng: 12.5134, zoom: 7, selected: ( me.countryCode == 'cm' ? 1 : 0 ) } );
-    countryOpts.push( { iso: 'ken', name: 'Kenya', lat: 0.0236, lng: 37.9062, zoom: 7, selected: ( me.countryCode == 'ken' ? 1 : 0 ) } );
-    countryOpts.push( { iso: 'np', name: 'Nepal', lat: 28.3949, lng: 84.1240, zoom: 7, selected: ( me.countryCode == 'np' ? 1 : 0 ) } );
+    countryOpts.push( { iso: 'cm', name: 'Cameroon', lat: 5.0252, lng: 12.5134, zoom: 7, selected: ( me.countryCode == 'cm' ? 1 : 0 ), enabled: 1 } );
+    countryOpts.push( { iso: 'ken', name: 'Kenya', lat: 0.0236, lng: 37.9062, zoom: 7, selected: ( me.countryCode == 'ken' ? 1 : 0 ), enabled: 0 } );
+    countryOpts.push( { iso: 'np', name: 'Nepal', lat: 28.21486, lng: 83.98086, zoom: 7, selected: ( me.countryCode == 'np' ? 1 : 0 ), enabled: 1 } );
 
     return countryOpts;
 }
@@ -2231,5 +2522,21 @@ me.countryOptionIsValid = function()
     return false;
 
 }
+
+me.setCountryCode = function( isoc )
+{   
+    var countries = me.countryOptions();
+
+    for ( var i = 0; i < countries.length; i++ )
+    {
+        if ( countries[ i ].iso == isoc )
+        {
+            me.countryCode = isoc;
+            return [ countries[ i ].lat, countries[ i ].lng ];
+        }
+    }
+
+}
+
 
 }

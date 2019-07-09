@@ -9,10 +9,7 @@ function cwsRender()
 
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
-	//me.divAppModeConnStatusTag = $( '#divAppModeConnStatus' );
-	//me.imgAppDataSyncStatusTag = $( '#imgAppDataSyncStatus' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	//me.menuTopRightIconTag = $( '#menu_e' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
 	// This get cloned..  Thus, we should use it as icon class name?

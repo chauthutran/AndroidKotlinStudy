@@ -719,6 +719,24 @@ img.rotate90 {
 
 div.formDivSec{
   background-color: #fff;
+  display: grid;
+  flex-direction: row;
+  flex-wrap:wrap;
+  margin: 10px 0 0 0;
+}
+div.formGroupSection {
+  display:list-item;
+  flex-direction:row;
+  flex-wrap:wrap;
+  /*margin: 10px 0 0 0;*/
+}
+div.formGroupSection > div > label.formGroupSection { 
+  margin: 0 4px 0 10px;
+  font-weight:600;
+}
+div.emptyFormGroupSection
+{
+  margin: 0 4px 0 10px;
 }
 
 a.searchresultSelector {
@@ -741,4 +759,8 @@ a.searchresultSelector:hover {
 
 .btnStyle1:hover {
   background-color: silver !important;
+}
+
+.aboutHeader {
+   padding: 0 0 0 20px;
 }

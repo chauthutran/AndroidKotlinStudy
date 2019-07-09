@@ -1781,3 +1781,8 @@ $.fn.rotate=function(options) {
 	var peF = parseInt(pe.substring(0,4));
 	return ( months[ ( peM - 1) ] + ' ' + peF);
   }
+  Util.ageHours = function( dtm ) 
+  {
+	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
+	return Math.abs( Math.round( ageHr ) );
+  }

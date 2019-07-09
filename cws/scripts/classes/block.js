@@ -42,7 +42,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	me.render = function()
 	{
 		if ( me.blockJson )
-		{			
+		{
 			// Render Form
 			if ( me.blockJson.form ) me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
 

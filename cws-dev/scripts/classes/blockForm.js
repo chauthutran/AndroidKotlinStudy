@@ -19,6 +19,8 @@ function BlockForm( cwsRenderObj, blockObj )
 	me.render = function( formDef, blockTag, passedData )
 	{
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, me.cwsRenderObj.configJson.definitionForms );
+		var formGrps = me.cwsRenderObj.configJson.definitionFormGroups;
+
 		me.formJsonArr = formJsonArr;
 
 		if ( formJsonArr !== undefined )
@@ -27,30 +29,102 @@ function BlockForm( cwsRenderObj, blockObj )
 			blockTag.append( formDivSecTag );
 
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
+			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
+			var formUniqueGroups = me.getFormUniqueGroups( formFieldGroups );
+			var groupsCreated = [];
 
-			for( var i = 0; i < formJsonArr.length; i++ )
+			if ( formUniqueGroups.length > 1 ) //minimum of 1 = 'no groups defined'
 			{
+				//set grid layout
+				formDivSecTag.css( 'display', 'grid' );
+			}
+			else
+			{
+				//set block layout
+				formDivSecTag.css( 'display', 'block' );
+			}
+
+			for( var i = 0; i < formFieldGroups.length; i++ )
+			{
+				if ( ( formFieldGroups[ i ].group ).toString().length )
+				{
+					if ( ! groupsCreated.includes( formFieldGroups[ i ].group ) )
+					{
+						var controlGroup = $( '<div style="" class="inputDiv active formGroupSection" name="' + formFieldGroups[ i ].group + '"><div><label class="formGroupSection">' + formFieldGroups[ i ].group + '</label></div></div>' );
+						formDivSecTag.append( controlGroup );
+						groupsCreated.push( formFieldGroups[ i ].group );
+					}
+					else
+					{
+						//do nothing: group already exists
+					}
+				}
+				else 
+				{
+					if ( ( formFieldGroups[ i ].group ).toString().length == 0 )
+					{
+						if ( ! groupsCreated.includes( "zzzEmpty" ) )
+						{
+							var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection" name="zzzEmpty"></div>' );
+							formDivSecTag.append( controlGroup );	
+							groupsCreated.push( "zzzEmpty" );
+						}
+					}
+					else
+					{
+						var controlGroup = formDivSecTag;
+					}
+				}
+
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{					
-					me.renderInput_TabContent( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
+					//me.renderInput_TabContent( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
+					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
 				}
 				else
 				{
-					me.renderInput( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
+					//me.renderInput( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
+					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
 				}
+
 			}
 
+			
 			me.populateFormData( passedData, formDivSecTag );
+			me.evalFormGroupDisplayStatus( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
 		}
 
 	}
-	
+
+	me.evalFormGroupDisplayStatus = function( formDivSecTag )
+	{
+		var dvGroups = formDivSecTag.find( 'div.formGroupSection' );
+
+		for( var i = 0; i < dvGroups.length; i++ )
+		{
+			var inpCtls  = $( dvGroups[ i ] ).find("div.inputDiv");
+			var sumDisplay = 0;
+
+			for( var c = 0; c < inpCtls.length; c++ )
+			{
+				if ( $( inpCtls[ c ]).css( 'display' ) != 'none' )
+				{
+					sumDisplay += 1;
+				}
+			}
+			if ( sumDisplay == 0 )
+			{
+				$( dvGroups[ i ] ).css( 'display', 'none' );
+			}
+		}
+	}
+
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-	
+
 	me.getIdList_FormJson = function( formJsonArr )
 	{
 		var idList = [];
@@ -65,6 +139,57 @@ function BlockForm( cwsRenderObj, blockObj )
 		return idList;
 	}
 
+	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
+	{
+		var groupNone = 'zzzNone';
+		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
+		var retGrpArr = [];
+
+		for( var i = 0; i < newArr.length; i++ )
+		{
+			if ( newArr[ i ].formGroup == undefined || newArr[ i ].formGroup == '' )
+			{
+				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
+			}
+			else
+			{
+				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': frmGroupJson[ newArr[ i ].formGroup ].defaultName, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: frmGroupJson[ newArr[ i ].formGroup ].order } );
+			}
+		}
+
+		// SORTING should be inherited from preconfigured 'Group' object sort value
+		retGrpArr.sort(function(a, b)
+		{
+			if (a.order < b.order) { return -1; }
+			if (b.order < a.order) return 1;
+			else return 0;
+		});
+
+		for( var i = 0; i < retGrpArr.length; i++ )
+		{
+			if ( retGrpArr[ i ].group == groupNone )
+			{
+				retGrpArr[ i ].group = '';
+			}
+		}
+
+		return retGrpArr;
+	}
+
+	me.getFormUniqueGroups = function( JsonArr )
+	{
+		var ArrFound = [];
+
+		for( var i = 0; i < JsonArr.length; i++ )
+		{
+			if ( ! ArrFound.includes( JsonArr[ i ].group ) )
+			{
+				ArrFound.push( JsonArr[ i ].group );
+			}
+		}
+
+		return ArrFound;
+	}
 
 	me.getFormItemJson_FromId = function( formJsonArr, id )
 	{
@@ -92,8 +217,6 @@ function BlockForm( cwsRenderObj, blockObj )
 	// New UI Used Method
 	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
 	{
-		//console.log( 'adding renderInput_TabContent' );
-		//console.log( formItemJson );
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
 
@@ -183,7 +306,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			divInputTag.hide();
 			entryTag.attr( 'display', 'hiddenVal' );
-			//console.log( 'tag.hide() - hiddenVal' );
+
 			if ( formItemJson.display === "hiddenVal" )
 			{
 
@@ -192,7 +315,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		else if ( formItemJson.display === "none" )
 		{
 			divInputTag.hide();
-			//console.log( 'tag.hide() - none' );
+
 		}
 
 		if ( passedData !== undefined 
@@ -200,7 +323,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			&& formItemJson.hideCase !== undefined
 			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
-			//console.log( 'hideCase - by passedData' );
 			//divInputTag.find("input,select").remove();
 			divInputTag.hide();
 		}
@@ -535,8 +657,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			walkInClientCase = "3";
 		}
 
-		console.log( 'set Walk In Clint case: ' + walkInClientCase );
-		
 		return walkInClientCase;
 	}
 
