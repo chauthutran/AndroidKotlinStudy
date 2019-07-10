@@ -46,8 +46,9 @@ MapUtil.getInfoContents = function()
             ' <table>' + 
             '  <tr>' + 
             '   <td style="width:20px;padding:0 3px 0 3px;vertical-align:top"><img src="images/Connect.svg" style="width:18px;height:18px;"></td>' + 
-            '   <td term="">Your current position is designated by an animated place marker. Move to a new position by dragging this marker. ' +
-            '    <li class="fas fa-arrows-alt"></li>' +
+            '   <td term="">Your current position is designated by an animated place marker. ' +
+            '   <li class="fas fa-arrows-alt"></li> move to a new position by dragging this marker. ' +
+            '    ' +
             '   </td>' + 
             '  </tr>' + 
             ' </table>' + 

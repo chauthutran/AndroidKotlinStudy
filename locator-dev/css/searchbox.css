@@ -583,7 +583,7 @@ a.search-word-close-button:hover
             font-weight:800;
             overflow: hidden;
             min-width:240px;
-            max-width:255px;
+            max-width:250px;
         }
         .previewCardOperatingHours table
         {

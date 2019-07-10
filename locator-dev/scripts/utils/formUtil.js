@@ -1585,7 +1585,7 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 			}
 			else
 			{
-				userLocation = parseFloat( lat ).toFixed( 6 ) + ', ' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
+				userLocation = parseFloat( lat ).toFixed( 6 ) + ',' + parseFloat( lon ).toFixed( 6 ); //6 decimals is crazy accurate, don't waste time with more (greg)
 				FormUtil.geoLocationError = '';
 			}
 
@@ -1630,10 +1630,14 @@ FormUtil.geolocationAllowed = function( returnFunc )
 
 		FormUtil.geoLocationState = result.state;
 
-		/*if (result.state == 'granted') {
-			report(result.state);
-			geoBtn.style.display = 'none';
-		} else if (result.state == 'prompt') {
+		if (result.state == 'granted') {
+
+			//FormUtil.refreshGeoLocation();
+
+			//report(result.state);
+			//geoBtn.style.display = 'none';
+
+		}/* else if (result.state == 'prompt') {
 			report(result.state);
 			geoBtn.style.display = 'none';
 			navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);

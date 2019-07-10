@@ -45,11 +45,18 @@ function cwsRender()
 			me.mapObj.initialise( me );
 			me.setEvents_OnInit();
 
-			if ( Util.getURLParameterByName( window.location.href,'isoc' ).length )
+			/*if ( FormUtil.geoLocationState != 'granted' )
 			{
-				isoCountry = Util.getURLParameterByName( window.location.href, 'isoc' );
-				arrLocation = me.mapObj.setCountryCode( isoCountry.toLowerCase() );
+				if ( Util.getURLParameterByName( window.location.href,'isoc' ).length )
+				{
+					isoCountry = Util.getURLParameterByName( window.location.href, 'isoc' );
+					arrLocation = me.mapObj.setCountryCode( isoCountry.toLowerCase() );
+				}
 			}
+			else
+			{
+				arrLocation = FormUtil.geoLocationLatLon.split( ',' );
+			}*/
 			if ( Util.getURLParameterByName( window.location.href,'c' ).length )
 			{
 				arrLocation = Util.getURLParameterByName( window.location.href,'c' ).split( ',' );

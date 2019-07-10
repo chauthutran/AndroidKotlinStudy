@@ -18,13 +18,16 @@ function CwSMap() {
     me.mapFlyAnimationDelay = 2;
     me.defaultCoordinatePoint;
     me.defaultZoomlevel = 3;
-    me.pointOverZoomlevel = 12;
+    me.pointOverZoomlevel = 14;
 
     me.viewSet = false;
 
     me.googleStreets = true;    //obtained from QueryString: 'google=1' / 'google=true'
     me.advancedMode = false;    //obtained from QueryString: 'advanced=1' / 'advanced=true' / 'adv=1' / 'adv=true'
     me.useClusterGroups = true; //obtained from QueryString: 'cluster=1' / 'cluster=false'
+
+    me.offlineMode = false;     // * NEW / ADD
+    me.radiusDistance = 1000;   // * NEW / ADD
 
     /* 
       QueryString options:
@@ -212,11 +215,11 @@ me.initialiseDefaults = function()
     /* google Maps enabled ? */
     if ( Util.getParameterByName('google').length )
     {
-        if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "false" || (Util.getParameterByName('google')).toString() == "0" ) )
+        if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "no" || (Util.getParameterByName('google')).toString().toLowerCase() == "false" || (Util.getParameterByName('google')).toString() == "0" ) )
         {
             me.googleStreets = false;
         }
-        else if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "true" || (Util.getParameterByName('google')).toString() == "1" ) )
+        else if ( ( (Util.getParameterByName('google')).toString().toLowerCase() == "yes" || (Util.getParameterByName('google')).toString().toLowerCase() == "true" || (Util.getParameterByName('google')).toString() == "1" ) )
         {
             me.googleStreets = true;
         }
@@ -227,7 +230,7 @@ me.initialiseDefaults = function()
     {
         var advM = Util.getParameterByName('advanced') || Util.getParameterByName('adv');
 
-        if ( ( ( advM ).toString().toLowerCase() == "true" || ( advM ).toString() == "1" ) )
+        if ( ( ( advM ).toString().toLowerCase() == "yes" || ( advM ).toString().toLowerCase() == "true" || ( advM ).toString() == "1" ) )
         {
             me.advancedMode = true;
         }
@@ -242,22 +245,28 @@ me.initialiseDefaults = function()
     }
 
     /* cluster markers enabled/disabled ? */
-    /*if ( Util.getParameterByName('cluster').length )
+    if ( Util.getParameterByName('cluster').length )
     {
-        if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "false" || (Util.getParameterByName('cluster')).toString() == "0" || (Util.getParameterByName('cluster')).toString() == "no" ) )
+        if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "no" || (Util.getParameterByName('cluster')).toString().toLowerCase() == "false" || (Util.getParameterByName('cluster')).toString() == "0" || (Util.getParameterByName('cluster')).toString() == "no" ) )
         {
             me.useClusterGroups = false;
         }
-        else if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "true" || (Util.getParameterByName('cluster')).toString() == "1" || (Util.getParameterByName('cluster')).toString() == "yes" ) )
+        else if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "yes" || (Util.getParameterByName('cluster')).toString().toLowerCase() == "true" || (Util.getParameterByName('cluster')).toString() == "1" || (Util.getParameterByName('cluster')).toString() == "yes" ) )
         {
             me.useClusterGroups = true;
         }
-    }*/
+    }
 
     /* use custom count value for number of markers ? */
     if ( Util.getParameterByName('top').length && ! isNaN( Util.getParameterByName('top') ) )
     {
         me.distanceThreshold.limitSearchCount = Util.getParameterByName('top');
+    }
+
+    /* use custom count value for number of markers ? */
+    if ( Util.getParameterByName('radius').length && ! isNaN( Util.getParameterByName('radius') ) )
+    {
+        me.distanceThreshold.limitSearchDistance = Util.getParameterByName('radius');
     }
 
     /* apply a service filter ? */
@@ -1377,24 +1386,27 @@ me.clearRadiusMarker = function()
 me.showHideSearchResultsPanel = function()
 {
     if ( $( '.search-results-inner' ).is( ':visible') ) 
-        {
-            // run shrink/hide logic
-            $( '.searchResults-close' ).removeClass( 'fa-angle-up' );
-            $( '.searchResults-close' ).addClass( 'fa-angle-down' );
-            $( '.searchResults-close' ).css( 'bottom', '9px' );
-            $( '.search-results-container' ).css( 'top', '-19px' );
-            $( '.search-words-container' ).hide( 'fast' );
-        } 
-        else 
-        {
-            // run expand/show logic
-            $( '.searchResults-close' ).removeClass( 'fa-angle-down' );
-            $( '.searchResults-close' ).addClass( 'fa-angle-up' );
-            $( '.searchResults-close' ).css( 'bottom', '-10px' );
-            $( '.search-results-container' ).css( 'top', '-1px' );
-            $( '.search-words-container' ).show( 'fast' );
-        }
-        $( '.search-results-inner' ).toggle("slide", { direction: "up" }, 100);
+    {
+        // run shrink/hide logic
+        $( '.searchResults-close' ).removeClass( 'fa-angle-up' );
+        $( '.searchResults-close' ).addClass( 'fa-angle-down' );
+        $( '.searchResults-close' ).css( 'bottom', '9px' );
+        $( '.search-results-container' ).css( 'top', '-19px' );
+        $( '.search-words-container' ).hide( 'slow' );
+        $( '.search-results-container' ).css( 'overflow-y', 'hidden' );
+    } 
+    else 
+    {
+        // run expand/show logic
+        $( '.searchResults-close' ).removeClass( 'fa-angle-down' );
+        $( '.searchResults-close' ).addClass( 'fa-angle-up' );
+        $( '.searchResults-close' ).css( 'bottom', '-10px' );
+        $( '.search-results-container' ).css( 'top', '-1px' );
+        $( '.search-words-container' ).show( 'slow' );
+        $( '.search-results-container' ).css( 'overflow-y', 'auto' );
+    }
+
+    $( '.search-results-inner' ).toggle("slide", { direction: "up" }, 200);
 }
 
 me.createListviewControl = function()
@@ -1784,14 +1796,19 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
                         html: '<i id="pin_' + rndID + '" mapped-data="' + escape( JSON.stringify( newData[i] ) ) + '" mapped-data-text="' + ( iCounter + 10 ).toString( 36 ).toUpperCase() + '" mapped-data-idx="' + i + '" class="cwsPin textShadow">' +( iCounter + 10 ).toString( 36 ).toUpperCase() + '</i>'
                     });
 
-                    //if ( me.useClusterGroups )
+                    if ( me.useClusterGroups )
                     {
                         var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ); //.addTo( me.mapLibObj ); //not added to map, that is handled by cluster plugin
                     }
-                    /*else
+                    else
                     {
                         var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ).addTo( me.mapLibObj );
-                    }*/
+
+                        $( '#pin_' + rndID ).on('click', function () {
+                            me.pinClickEvent( $( this ) );
+                        });
+
+                    }
 
                     if ( dataJson.serviceMatches )
                     {
@@ -2011,7 +2028,7 @@ me.createPreviewCard = function( dataJson, tagItm, iconText, dataIdx, returnFunc
                    '    <tr>' +
                    '      <td rowspan=3 style="padding:2px;vertical-align:top;text-align:center;width:50px;" ><div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" location="' + (dataJson.location.lat+','+dataJson.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class="">' + svgCircle + '</div></td>' +
                    '      <td colspan=2 class="searchResultMainName"><div>' + Util.capitalizeAllFirstLetters( dataJson.outlet.name ) + '</div></td>' +
-                   '      <td rowspan=3 style="font-size:8pt;font-weight:400;border-left:1px solid #BDBDBD;color:#215E8C;font-size:14pt;padding:2px 4px 2px 4px;text-align:center;width:80px;overflow:hidden;" rowspan=4>' + me.formatDisplayedDistanceOptions( distance ) + 
+                   '      <td rowspan=3 style="font-size:8pt;font-weight:400;border-left:1px solid #BDBDBD;color:#215E8C;font-size:14pt;padding:2px 4px 2px 4px;text-align:center;overflow:hidden;min-width:70px;" rowspan=4>' + me.formatDisplayedDistanceOptions( distance ) + 
                    '         <div style="padding:2px;margin-top:4px;" ><i id="share_' + rndID + '" dataIdx="' + rndID + '" class="fas fa-share-alt shareThisOutlet" style="color:#2C98F0;font-size:14pt;' + ( Util.isMobi() ? '' : 'display:none;' ) + '" ></i>&nbsp;<img src="images/gmaps.svg" id="googleMaplink_' + rndID + '" class="googleMapIcon" style="position:relative;top:-2px;margin-left:' + ( Util.isMobi() ? '3px' : '0' ) + ';"></div>' +
                    '      </td>' +
                    '    </tr>' +
