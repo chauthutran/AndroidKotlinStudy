@@ -180,6 +180,10 @@ me.render = function( defCoords, poi )
 
                 me.runSearch( true, false );
 
+                setTimeout( function() {
+                    MapUtil.showInfo()
+                }, ( me.mapFlyAnimationDelay * 1000 ) );
+
             }, ( me.mapFlyAnimationDelay * 1000 ) );
 
         }
@@ -442,7 +446,7 @@ me.initialiseMapControls = function()
         sidebarTitleText: 'Outlet Locator',
         sidebarMenuItems: {
             Items: [
-                { type: "button", name: "Application version", href: '#', icon: "fas fa-info-circle", onclick: "FormUtil.showAbout();", group: 0, value: $( '#appVersion').html() },
+                { type: "button", name: "Application version", href: '#', icon: "fas fa-info-circle", onclick: "MapUtil.showAbout();", group: 0, value: $( '#appVersion').html() },
                 { type: "button", name: "Map layer", href: '#', icon: "fas fa-info-circle", onclick: "", group: 0, value: ( me.googleStreets ) ? 'Google maps' : 'Open streets' },
                 { type: "button", name: "Geolocation", href: '#', icon: "fas fa-crosshairs", onclick: "", group: 0, value: FormUtil.geoLocationState }
             ]
@@ -1709,19 +1713,6 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
             }
 
 
-            // DO NOT REMOVE > icons for distance filtering
-            /*for ( var i = 0; i < newData.length; i++ )
-            {
-                var faIcon = me.getDistanceFAicon ( newData[ i ].location.distance ) ;
-                if ( ! iconArr.includes( faIcon ) )
-                {
-                    iconArr.push( faIcon );
-                }
-            }*/
-
-            // DO NOT REMOVE > icons for distance filtering
-            //$( '.search-results-inner').append( me.getSearchDistanceIcons( iconArr ) );
-
             var arrMarkers = [];
             me.mapMarkerIdx = [];
 
@@ -1852,8 +1843,19 @@ me.pinClickEvent = function( pin )
         me.showHideSearchResultsPanel();
     }
 
-    //me.showPanelWithContents( me.getMapDataPreviewFromID( $( pin ) ) );
-    me.getMapDataPreviewFromID( $( pin ) );
+
+    if ( $( 'div.search-options-container' ).is( ':visible') )
+    {
+        me.cycleIcons( '#searchbox-searchoptions', 'fa-caret-down', 'fa-caret-up' );
+
+        $(".search-options-container").toggle("slide", { direction: "up" }, 200);
+
+    }
+
+    setTimeout( function() { 
+        me.getMapDataPreviewFromID( $( pin ) );
+    }, 210 );
+
 }
 
 me.getSearchDistanceIcons = function( arrList )
@@ -1975,7 +1977,7 @@ me.createPreviewCard = function( dataJson, tagItm, iconText, dataIdx, returnFunc
 
     var prvCard = $( '  <table class="previewCard" id="tblData_' + rndID + '" data.outlet="' + escape( JSON.stringify(dataJson.outlet) ) + '" data.location="' + escape( JSON.stringify(dataJson.location) ) + '" >' +
                    '    <tr>' +
-                   '      <td rowspan=3 style="padding:2px;vertical-align:top;text-align:center;" ><div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" location="' + (dataJson.location.lat+','+dataJson.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class="">' + svgCircle + '</div></td>' +
+                   '      <td rowspan=3 style="padding:2px;vertical-align:top;text-align:center;width:50px;" ><div mapped-data="' + escape( JSON.stringify( dataJson ) ) + '" location="' + (dataJson.location.lat+','+dataJson.location.long) +'" mapped-data-idx="' + dataIdx + '" mapped-data-text="' + iconText + '" id="flyTo_' + rndID + '" class="">' + svgCircle + '</div></td>' +
                    '      <td colspan=2 class="searchResultMainName"><div>' + Util.capitalizeAllFirstLetters( dataJson.outlet.name ) + '</div></td>' +
                    '      <td rowspan=3 style="font-size:8pt;font-weight:400;border-left:1px solid #BDBDBD;color:#215E8C;font-size:14pt;padding:2px 4px 2px 4px;text-align:center;width:80px;overflow:hidden;" rowspan=4>' + me.formatDisplayedDistanceOptions( distance ) + 
                    '         <div style="padding:2px;margin-top:4px;" ><i id="share_' + rndID + '" dataIdx="' + rndID + '" class="fas fa-share-alt shareThisOutlet" style="color:#2C98F0;font-size:14pt;' + ( Util.isMobi() ? '' : 'display:none;' ) + '" ></i>&nbsp;<img src="images/gmaps.svg" id="googleMaplink_' + rndID + '" class="googleMapIcon" style="position:relative;top:-2px;margin-left:' + ( Util.isMobi() ? '3px' : '0' ) + ';"></div>' +
@@ -2152,7 +2154,7 @@ me.timePartToAbbr = function(timeBlock)
     var suff = parseInt( arrT[0] ) < 12 ? 'am' : 'pm';
     var sec = parseInt( arrT[1] ) == 0 ? '' : ':' + arrT[1];
 
-    return ( parseInt( arrT[0] ) < 12 ? arrT[0] : (arrT[0] - 12) ) + '' + sec + '' + suff;
+    return ( parseInt( arrT[0] ) < 12 ? ( parseInt( arrT[0] ) == 0 ? 12 : arrT[0] ) : ( parseInt( arrT[0] ) - 12) ) + '' + sec + '' + suff;
 }
 
 me.getDisplayServices = function( dataJson )
@@ -2163,7 +2165,36 @@ me.getDisplayServices = function( dataJson )
     {
         if ( ( dataJson.service[ key ] ).toString().toUpperCase() == "TRUE" )
         {
-            ret += key + ', ';
+            if ( me.serviceFilter && me.serviceFilter.length )
+            {
+                var arrFilter = me.serviceFilter.split(',');
+                var bFound = false;
+                for ( var o = 0; o < arrFilter.length; o++ )
+                {
+                    if ( arrFilter[o] == key )
+                    {
+                        bFound = true;
+                        break;
+                    }
+                    /*else
+                    {
+                        ret += '<span class="rounded" style="margin-left:2px;padding:2px;background-Color:#fff;border:1px solid #fff;">' + key + '</span>' ;
+                    }*/
+                }
+                if ( bFound )
+                {
+                    ret += '<span class="rounded" style="margin-left:2px;padding:2px;background-Color: rgb( 0, 181, 225, 0.15 ); border:1px solid #00b5e1;">' + key + '</span>';
+                }
+                else
+                {
+                    ret += '<span class="rounded" style="margin-left:2px;background-Color:#fff;border:1px solid #fff;">' + key + '</span>' ;    
+                }
+            }
+            else
+            {
+                ret += '<span class="rounded" style="margin-left:2px;background-Color:#fff;border:1px solid #fff;">' + key + '</span>' ;
+            }
+            
         }
     }
 
@@ -2409,7 +2440,6 @@ me.getMapDataPreviewFromID = function( thisObj, dataJson ) //id
     targ.empty();
 
     me.createPreviewCard( virtObj, targ, unescape( virtTag.attr( 'mapped-data-text' ) ), unescape( virtTag.attr( 'mapped-data-idx' ) ), function( rndID, prvCard, dataJson, tagObj ){
-
 
         if ( Util.isMobi() && screen.width < 540 )
         {

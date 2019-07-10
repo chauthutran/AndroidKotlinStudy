@@ -2,7 +2,7 @@
   "name": "CwS Provider Locator",
   "short_name": "Prov Locator",
   "description": "CwS Provider Locator",  
-  "version": "1.0.1",
+  "version": "0.2.0",
   "theme_color": "#00b5e1",
   "background_color": "#00b5e1",
   "display": "standalone",

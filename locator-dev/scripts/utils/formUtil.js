@@ -1667,18 +1667,6 @@ FormUtil.findHighestZIndex = function(elem)
   return highest;
 }
 
-FormUtil.showAbout = function()
-{
-	$( 'div.info-floating-container' ).show();
-	$( 'div.info-contents-container' ).html( FormUtil.getAboutContents() );
-}
-
-FormUtil.getAboutContents = function()
-{
-	return '<div style="font-size:14pt;"> <img src="images/Connect.svg" style="width:18px;height:18px;"> <br> <strong>This is</strong> <br> <span>the about</span> <br> <i> BOX </i> <br> should we <br> choose to use it </div>';
-}
-
-
 FormUtil.circleMarker = function( sText )
 {
     var w = 36, h = 36, r = 16, offX = 17, offY = 23;
