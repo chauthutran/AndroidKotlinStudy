@@ -220,7 +220,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/map.js",
-    "revision": "932c97b7483b49d7705dda00f05b649f"
+    "revision": "824dab5b066497e5d854abe685bce743"
   },
   {
     "url": "scripts/classes/menu.js",

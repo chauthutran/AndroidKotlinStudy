@@ -42,7 +42,8 @@ function CwSMap() {
 
         'google=' { NUMERIC/BOOLEAN } > use google map layer; default = true, so 'false' or '0' switches to open street maps
 
-        'cluster=' { NUMERIC/BOOLEAN } > use clusterGroups; default = true
+        * DISABLED: marker click-events not working due to recent click-event creation changes to ensure clustering works correcty; discuss if this parm is even necessary
+        'cluster=' { NUMERIC/BOOLEAN } > use clusterGroups; (default = true)
 
     */
 
@@ -241,7 +242,7 @@ me.initialiseDefaults = function()
     }
 
     /* cluster markers enabled/disabled ? */
-    if ( Util.getParameterByName('cluster').length )
+    /*if ( Util.getParameterByName('cluster').length )
     {
         if ( ( (Util.getParameterByName('cluster')).toString().toLowerCase() == "false" || (Util.getParameterByName('cluster')).toString() == "0" || (Util.getParameterByName('cluster')).toString() == "no" ) )
         {
@@ -251,7 +252,7 @@ me.initialiseDefaults = function()
         {
             me.useClusterGroups = true;
         }
-    }
+    }*/
 
     /* use custom count value for number of markers ? */
     if ( Util.getParameterByName('top').length && ! isNaN( Util.getParameterByName('top') ) )
@@ -1142,7 +1143,6 @@ me.initialiseSearchControlOptions = function()
     me.searchControlOpts.push( { label: 'distance', name: 'distanceRadius', class: 'fas fa-route sliderControl', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateSearchDistanceLimit, control: me.getSelector, defaultValue: me.distanceThreshold.limitSearchDistance, parm: { 1000: '1km', 5000: '5km', 10000: '10km', 50000: '50km', 100000: '100km', 250000: '250km' }, enabled: true, selected: false, group: 0, alwaysOn: false } );
     me.searchControlOpts.push( { label: 'services', name: 'filter.services', class: 'fas fa-heartbeat', textStyle: 'color:#50555a;font-size:12px;', iconStyle: '', updateEvent: me.updateServiceCriteria, control: me.getSliderSwitches, defaultValue: '', parm: me.getServiceParms(), enabled: true, selected: false, group: 0, alwaysOn: true } );
 
-    //me.searchType = me.searchControlOpts[ 0 ];
     me.setSearchType( me.searchControlOpts[ 0 ] );
 
     $( '#searchbox-searchoptions').attr( 'class', 'searchbox-searchoptions' );
@@ -1325,15 +1325,40 @@ me.unhighlightSearchOptions = function()
 me.getServiceParms = function()
 {
     // fetch from JSON / API
-   return [ { id: 'contraception', name: 'contraception', filter: false },
-            { id: 'pacmiso', name: 'pacmiso', filter: false },
-            { id: 'macmva', name: 'macmva', filter: false },
-            { id: 'ma', name: 'ma', filter: false },
-            { id: 'hrc', name: 'hrc', filter: false },
-            { id: 'safea', name: 'safea', filter: false }
+   return [ { id: 'contraception', name: 'contraception', filter: me.serviceParmExists( 'contraception' ) },
+            { id: 'pacmiso', name: 'pacmiso', filter: me.serviceParmExists( 'pacmiso' ) },
+            { id: 'macmva', name: 'macmva', filter: me.serviceParmExists( 'macmva' ) },
+            { id: 'ma', name: 'ma', filter: me.serviceParmExists( 'ma' ) },
+            { id: 'hrc', name: 'hrc', filter: me.serviceParmExists( 'hrc' ) },
+            { id: 'safea', name: 'safea', filter: me.serviceParmExists( 'safea' ) }
          ];
 }
 
+me.serviceParmExists = function( svc )
+{
+    var ret = false;
+
+    if ( me.serviceFilter.length )
+    {
+        var arrSvc = me.serviceFilter.split( ',' );
+
+        for ( var i = 0; i < arrSvc.length; i++ )
+        {
+            if ( arrSvc[ i ] == svc )
+            {
+                ret = true;
+                break
+            }
+        }
+
+    }
+    else
+    {
+        ret = false;
+    }
+
+    return ret;
+}
 
 me.addRadiusMarker = function()
 {
@@ -1759,14 +1784,14 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
                         html: '<i id="pin_' + rndID + '" mapped-data="' + escape( JSON.stringify( newData[i] ) ) + '" mapped-data-text="' + ( iCounter + 10 ).toString( 36 ).toUpperCase() + '" mapped-data-idx="' + i + '" class="cwsPin textShadow">' +( iCounter + 10 ).toString( 36 ).toUpperCase() + '</i>'
                     });
 
-                    if ( me.useClusterGroups )
+                    //if ( me.useClusterGroups )
                     {
                         var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ); //.addTo( me.mapLibObj ); //not added to map, that is handled by cluster plugin
                     }
-                    else
+                    /*else
                     {
                         var newMarker = L.marker( [ newData[i].location.lat, newData[i].location.long ], {icon: myMarkerIcon } ).addTo( me.mapLibObj );
-                    }
+                    }*/
 
                     if ( dataJson.serviceMatches )
                     {
@@ -1815,6 +1840,13 @@ me.runSearch = function( mapOnly, skipGetBounds, poi )
             {
                 me.markerGroup = L.featureGroup( arrMarkers );
                 me.mapLibObj.flyToBounds( me.markerGroup.getBounds() );
+
+                /*if ( ! me.useClusterGroups )
+                {
+                    me.markerGroup.on('click', function (a) {
+                        me.pinClickEvent( $( a.layer._icon ).find( '.cwsPin' ) );
+                    });
+                }*/
             }
 
         }
@@ -2346,6 +2378,11 @@ me.getSliderSwitches = function( defaultValue, optionsJson, updateEvent )
         inp.setAttribute('type', 'checkbox');
         inp.setAttribute('value', optionsJson[ o ].id);
         inp.setAttribute('id', 'service_' + optionsJson[ o ].id );
+
+        if ( optionsJson[ o ].filter == true )
+        {
+            inp.setAttribute('checked', 'check');
+        }
 
         var sp = document.createElement('span');
         sp.setAttribute('class', 'slider round');
