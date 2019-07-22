@@ -89,7 +89,6 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			}
 
-			
 			me.populateFormData( passedData, formDivSecTag );
 			me.evalFormGroupDisplayStatus( formDivSecTag );
 
@@ -336,25 +335,20 @@ function BlockForm( cwsRenderObj, blockObj )
 			divInputTag.show();
 		}
 
-		//if ( formItemJson.hideCase || formItemJson.showCase ) console.log( formItemJson );
-
 	}
 
 
 	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-		//console.log( 'addRuleForField: ' + divInputTag.html() );
-		//console.log( formItemJson );
+
 		var entryTag = divInputTag.find( "select,input" );
 		var regxRules = [];
 
 		if( formItemJson.rules !== undefined )
 		{
-			//console.log( formItemJson.rules );
 			for( var i in formItemJson.rules )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
-				//console.log( ruleDef );
 				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, me.cwsRenderObj.configJson.definitionRules );
 
 				if ( ruleJson.name )
@@ -364,8 +358,8 @@ function BlockForm( cwsRenderObj, blockObj )
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
-						titleTag.append("<span style='color:red;'> * </span>")
-					}	
+						titleTag.after( $( "<span style='color:red;'> * </span>" ) );
+					}
 				}	
 				else if ( ruleJson.pattern )
 				{
