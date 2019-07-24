@@ -77,20 +77,21 @@ function BlockForm( cwsRenderObj, blockObj )
 				}
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
-				{					
-					//me.renderInput_TabContent( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
+				{
 					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
 				}
 				else
 				{
-					//me.renderInput( formJsonArr[i], formDivSecTag, formFull_IdList, passedData );
 					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
 				}
 
 			}
 
+			formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) );
+
 			me.populateFormData( passedData, formDivSecTag );
 			me.evalFormGroupDisplayStatus( formDivSecTag );
+			me.evalFormInputPatterns( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
@@ -281,7 +282,32 @@ function BlockForm( cwsRenderObj, blockObj )
 		}
 	}
 
+	me.evalFormInputPatterns = function( formDivSecTag )
+	{
+		if ( formDivSecTag )
+		{
+			var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
 	
+			for( var i = 0; i < jData.length; i++ )
+			{
+				if ( jData[ i ].defaultValue )
+				{
+					if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+					{
+						var tagTarget = $( 'input[name="' + jData[ i ].id + '"]' );
+						var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+
+						tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
+
+					}
+				}
+			}
+
+		}
+
+	}
+
+
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData)
 	{
 		if ( entryTag )
@@ -289,6 +315,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
+				me.evalFormInputPatterns( formDivSecTag.parent() )
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -298,7 +325,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		// Add rules for IMPUT fields
 		me.addRuleForField( divInputTag, formItemJson );
 		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
-
+		me.addStylesForField( divInputTag, formItemJson );
 
 		// Set Tag Visibility
 		if ( formItemJson.display === "hiddenVal" )
@@ -331,16 +358,28 @@ function BlockForm( cwsRenderObj, blockObj )
 			&& formItemJson.showCase !== undefined
 			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
 		{
-			//console.log( 'showCase - by passedData' );
 			divInputTag.show();
 		}
 
 	}
 
+	me.addStylesForField = function( divInputTag, formItemJson )
+	{
+		var entryTag = divInputTag.find( "select,input" );
+
+		if( formItemJson.styles !== undefined )
+		{
+			for( var i in formItemJson.styles )
+			{
+				var styleDef = formItemJson.styles[i];
+				entryTag.css( styleDef.name, styleDef.value );
+			}
+		}
+
+	}
 
 	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-
 		var entryTag = divInputTag.find( "select,input" );
 		var regxRules = [];
 
@@ -412,8 +451,6 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			if ( formItemJson.evalActions !== undefined )
 			{
-				//console.log( 'performEvalActions, tag: ' + tag.attr( 'name ' ) );
-
 				for ( var i = 0; i < formItemJson.evalActions.length; i++ )
 				{
 					me.performEvalAction( formItemJson.evalActions[i], tagVal, formDivSecTag, formFull_IdList );
@@ -428,8 +465,6 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, formFull_IdList ) )
 			{
-				//console.log( 'performEvalAction, tagVal: ' + tagVal );
-
 				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
 				me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
 

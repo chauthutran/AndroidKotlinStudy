@@ -35,6 +35,30 @@ self.__precacheManifest = [
     "revision": "15b2f8e409f6a038f54ab20b993bd249"
   },
   {
+    "url": "images/act_col_fpl-fu_arrow_right_24.svg",
+    "revision": "d61e5ac96aea37ecbd9e17af41331646"
+  },
+  {
+    "url": "images/act_col_fpl-fu_arrow_right_36.svg",
+    "revision": "3548996447d506757a911c674a23ea13"
+  },
+  {
+    "url": "images/act_col_fpl-sp_arrow_right_24.svg",
+    "revision": "6726e1e050cacf293fd93974ed84e7dd"
+  },
+  {
+    "url": "images/act_col_fpl-sp_arrow_right_36.svg",
+    "revision": "f450400c101b20fab8b4f442105da1d0"
+  },
+  {
+    "url": "images/act_col_sas_arrow_right_24.svg",
+    "revision": "07ca0d29a883b607be0eace1a1528248"
+  },
+  {
+    "url": "images/act_col_sas_arrow_right_36.svg",
+    "revision": "7e68ec661b73b8651b49f8a679d287fe"
+  },
+  {
     "url": "images/act_col.svg",
     "revision": "78353bdf9dccfc06acb8927eb6695536"
   },
@@ -320,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "57a9bd9b2d0bc884e2f35bd8d6f60aae"
+    "revision": "43120bf0130975227036cd936217c99f"
   },
   {
     "url": "scripts/classes/block.js",
@@ -332,7 +356,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "eeb024853263a8c5f1d2d0e84940c28e"
+    "revision": "c0829ad1df05724347f8fdc1716beaee"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -368,7 +392,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "b1e3594640c2659e54048d834c0b2b78"
+    "revision": "dc67cf417c2e421865413fe7f7c4cc4a"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -420,7 +444,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "25fbb03f5f71bb7783f8671959bbd176"
+    "revision": "3d681d8502521bfdc002c51ac1adc512"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -444,7 +468,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "b194b2731053d15cd832bf73776066f9"
+    "revision": "0df61c67b6436a636be0d783bc34bb08"
   },
   {
     "url": "sounds/coin.mp3",

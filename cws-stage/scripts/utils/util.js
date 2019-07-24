@@ -1139,9 +1139,8 @@ Util.getParameterInside = function( value, openClose )
 	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
 }
 
-Util.newLocalSequence = function( pattern )
+Util.newLocalSequence = function( pattern, commitSEQIncr )
 {
-	//var jsonStorageData = DataManager.getOrCreateData( 'seqIncr' );
 	var jsonUserData = DataManager.getData( FormUtil.login_UserName );
 	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
 	var ret;
@@ -1184,10 +1183,11 @@ Util.newLocalSequence = function( pattern )
 
 				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
 				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-				//DataManager.saveData( 'seqIncr', jsonStorageData );
 
-				DataManager.saveData( FormUtil.login_UserName, jsonUserData );
-				
+				if ( commitSEQIncr != undefined && commitSEQIncr == true )
+				{
+					DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+				}
 
 				return Util.paddNumeric( ret, arrParm[1] );
 
@@ -1262,7 +1262,71 @@ Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 	}
 }
 
-Util.getValueFromPattern = function( pattern )
+Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
+{
+
+	var formTarg = tagTarget.closest( 'div.formDivSec' );
+	var arrPattern;
+	var ret = '';
+
+	arrPattern = formInputPattern.split( '+' );
+
+	for (var i = 0; i < arrPattern.length; i++)
+	{
+		var InpVal = '';
+		var formInpFld = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 0 ];
+		var formInpOpr = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 1 ].replace( ']', '' );
+//console.log( '~ ' + formInpFld );
+		if ( formInpFld.length )
+		{
+			var InpTarg = formTarg.find( "input[name='" + formInpFld + "']" );
+//console.log( InpTarg );
+			if ( InpTarg )
+			{
+				InpVal = InpTarg.val();
+
+				if ( InpVal && InpVal.length )
+				{
+//console.log( '~ ' + formInpFld + ': ' + InpVal );
+					if ( formInpOpr.length )
+					{
+						var oper = formInpOpr.split( ':' );
+
+						if ( oper[ 0 ] == 'RIGHT' )
+						{
+							ret += InpVal.substring( InpVal.length - parseInt( oper[ 1 ] ), InpVal.length )
+						}
+						else if ( oper[ 0 ] == 'LEFT' )
+						{
+							ret += InpVal.substring( 0, parseInt( oper[ 1 ] ) )
+						}
+					}
+					else
+					{
+						ret += InpVal;
+					}
+				}
+				else
+				{
+					// do nothing
+					console.log( ' no corresponding value [' + formInpFld + ']' );
+				}
+			}
+			else
+			{
+				console.log( ' no corresponding field [' + formInpFld + ']' );
+			}
+
+		}
+
+	}
+
+	//console.log( formInputPattern + ': ' + ret );
+	return ret;
+
+}
+
+Util.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 {
 	var arrPattern;
 	var patternSeparator;
@@ -1326,11 +1390,15 @@ Util.getValueFromPattern = function( pattern )
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( 'SEQ[' ) >= 0 )
 			{
-				returnPart = Util.newLocalSequence( arrPattern[ i ] );
+				returnPart = Util.newLocalSequence( arrPattern[ i ], commitSEQIncr );
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( '.' ) > 0 )
 			{
 				returnPart = Util.getLocalStorageObjectValue( arrPattern[ i ] );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( 'form:' ) >= 0 )
+			{
+				returnPart = Util.getFormInputValuePattern( tagTarget, arrPattern[ i ] );
 			}
 			else
 			{

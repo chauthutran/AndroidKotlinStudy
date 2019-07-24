@@ -158,7 +158,6 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	//console.log( formDivSecTag );
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -896,7 +895,7 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.getValueFromPattern( pattern ) );
+			tagTarget.val( Util.getValueFromPattern( tagTarget, pattern, false ) );
 		}
 	}
 	else
@@ -1740,9 +1739,6 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 			inputsJson[ nameVal ] = val;
 		}
 	});
-
-	//console.log( WSexchangeData );
-	//console.log( lastPayload );
 
 	var retData = FormUtil.recursiveWSexchangeGet( WSexchangeData, arrPayStructure, 0, recordIDlist[ 0 ], inputsJson[ recordIDlist[ 0 ] ] );
 	lastPayload[ 'displayData' ] = retData;
