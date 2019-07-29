@@ -91,10 +91,15 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			me.populateFormData( passedData, formDivSecTag );
 			me.evalFormGroupDisplayStatus( formDivSecTag );
-			me.evalFormInputPatterns( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
 			me.blockObj.validationObj.setUp_Events( formDivSecTag );
+
+			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
+			setTimeout( function(){
+				me.evalFormInputPatterns( formDivSecTag );
+			}, 500 );
+
 		}
 
 	}
@@ -245,7 +250,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-				
+
 				divInputTag.append( entryTag );
 			}			
 			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
@@ -276,7 +281,6 @@ function BlockForm( cwsRenderObj, blockObj )
 				divInputTag.find( 'label.titleDiv' ).css( 'color', 'white' );
 			}
 
-
 			// Setup events and visibility and rules
 			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData );
 		}
@@ -294,10 +298,14 @@ function BlockForm( cwsRenderObj, blockObj )
 				{
 					if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
 					{
-						var tagTarget = $( 'input[name="' + jData[ i ].id + '"]' );
-						var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-						tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
+						if ( tagTarget )
+						{
+							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+
+							tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
+						}
 
 					}
 				}

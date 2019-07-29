@@ -49,16 +49,16 @@ function Action( cwsRenderObj, blockObj )
 	me.handleSequenceIncrCommits = function( formDivSecTag )
 	{
 		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-	
+
 		for( var i = 0; i < jData.length; i++ )
 		{
 			if ( jData[ i ].defaultValue )
 			{
-				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 )
+				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 )
 				{
-					var tagTarget = $( 'input[name="' + jData[ i ].id + '"]' );
+					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-					var calcVal = Util.getValueFromPattern( tagTarget, pattern, true );
+					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
 
 					if ( tagTarget.css( 'text-transform' ) != undefined )
 					{
@@ -70,6 +70,10 @@ function Action( cwsRenderObj, blockObj )
 						{
 							calcVal = calcVal.toLowerCase()
 						}
+					}
+					else
+					{
+						console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
 					}
 
 					tagTarget.val( calcVal );

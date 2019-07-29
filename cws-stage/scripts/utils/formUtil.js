@@ -121,7 +121,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	var inputTags = formDivSecTag.find( 'input,select' );
 
 	inputTags.each( function()
-	{		
+	{
 		var inputTag = $(this);	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
@@ -323,7 +323,8 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 FormUtil.renderInputTag = function( dataJson, containerDivTag )
 {
 	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
-	entryTag.attr( 'display', dataJson.display );
+
+	if ( dataJson.display ) entryTag.attr( 'display', dataJson.display );
 
 	// If 'defaultValue' exists, set val
 	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
@@ -896,6 +897,11 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
 			tagTarget.val( Util.getValueFromPattern( tagTarget, pattern, false ) );
+		}
+		else if ( val.indexOf( 'getAge(' ) >= 0 )
+		{
+			var pattern = Util.getParameterInside( val, '()' );
+			tagTarget.val( Util.getAgeValueFromPattern( tagTarget, pattern ) );
 		}
 	}
 	else
@@ -1827,7 +1833,22 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 			}
 			if ( dataTarg.defaultValue )
 			{
-				inputTag.val( dataTarg.defaultValue );
+				if ( dataTarg.defaultValue.length && dataTarg.defaultValue.indexOf( 'generatePattern(' ) > 0 && dataTarg.defaultValue.indexOf( 'form:' ) > 0 )
+				{
+					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
+
+					if ( tagTarget )
+					{
+						var pattern = Util.getParameterInside( dataTarg.defaultValue, '()' );
+
+						inputTag.val( Util.getValueFromPattern( inputTag, pattern ) );
+					}
+
+				}
+				else
+				{
+					inputTag.val( dataTarg.defaultValue );
+				}
 			}
 		}
 

@@ -1264,7 +1264,6 @@ Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 
 Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
 {
-
 	var formTarg = tagTarget.closest( 'div.formDivSec' );
 	var arrPattern;
 	var ret = '';
@@ -1275,55 +1274,94 @@ Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
 	{
 		var InpVal = '';
 		var formInpFld = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 0 ];
-		var formInpOpr = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 1 ].replace( ']', '' );
-//console.log( '~ ' + formInpFld );
+
 		if ( formInpFld.length )
 		{
-			var InpTarg = formTarg.find( "input[name='" + formInpFld + "']" );
-//console.log( InpTarg );
+			var InpTarg = formTarg.find( "[name='" + formInpFld + "']" );
+
 			if ( InpTarg )
 			{
 				InpVal = InpTarg.val();
 
 				if ( InpVal && InpVal.length )
 				{
-//console.log( '~ ' + formInpFld + ': ' + InpVal );
-					if ( formInpOpr.length )
+
+					for (var p = 1; p < arrPattern[ i ].replace( 'form:', '' ).split( '[' ).length; p++) 
 					{
-						var oper = formInpOpr.split( ':' );
+						var pattEnum = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ p ].replace( ']', '' );
+						var oper = pattEnum.split( ':' );
 
 						if ( oper[ 0 ] == 'RIGHT' )
 						{
-							ret += InpVal.substring( InpVal.length - parseInt( oper[ 1 ] ), InpVal.length )
+							InpVal = InpVal.substring( InpVal.length - parseInt( oper[ 1 ] ), InpVal.length )
 						}
 						else if ( oper[ 0 ] == 'LEFT' )
 						{
-							ret += InpVal.substring( 0, parseInt( oper[ 1 ] ) )
+							InpVal = InpVal.substring( 0, parseInt( oper[ 1 ] ) )
+						}
+						else if ( oper[ 0 ] == 'PADDNUMERIC' )
+						{
+							InpVal = Util.paddNumeric( InpVal, oper[ 1 ] );
 						}
 					}
-					else
-					{
-						ret += InpVal;
-					}
+
+					ret += InpVal;
 				}
-				else
-				{
-					// do nothing
-					console.log( ' no corresponding value [' + formInpFld + ']' );
-				}
+
 			}
 			else
 			{
-				console.log( ' no corresponding field [' + formInpFld + ']' );
+				console.log( ' no corresponding value [' + formInpFld + ']' );
+			}
+		}
+		else
+		{
+			console.log( ' no corresponding field [' + formInpFld + ']' );
+		}
+	}
+
+	return ret;
+
+}
+
+Util.getAgeValueFromPattern = function( tagTarget, pattern )
+{
+	var formTarg = tagTarget.closest( 'div.formDivSec' );
+	var ret = '';
+
+	if ( pattern.indexOf( 'form:' ) >= 0 )
+	{
+		var targFld = pattern.split( 'form:' )[ 1 ];
+		var targTag = formTarg.find( "[name='" + targFld + "']" );
+
+		if ( targTag )
+		{
+			var InpVal = targTag.val();
+
+			if ( InpVal && InpVal.length )
+			{
+				var today = new Date();
+				var birthDate = new Date( InpVal );
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age = age - 1;
+				}
+			
+				return age;
+			}
+			else
+			{
+				return '';
 			}
 
 		}
+		else
+		{
+			return '';
+		}
 
 	}
-
-	//console.log( formInputPattern + ': ' + ret );
-	return ret;
-
 }
 
 Util.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
@@ -1414,7 +1452,7 @@ Util.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 			}
 
 		}
-		
+
 		if ( returnPart && returnPart.length )
 		{
 			ret += returnPart + ( removeSeparator ? '' : patternSeparator );
