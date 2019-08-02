@@ -69,6 +69,28 @@ function BlockList( cwsRenderObj, blockObj )
             //  - To Enable click
             FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
+            /*if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+            {
+                me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
+            }
+            else
+            {
+                me.newBlockTag.find( '.floatListMenuIcon' ).hide();
+            }*/
+
+        }
+    }
+
+
+    me.redeemList_Display = function( blockTag )
+    {
+        //var jsonStorageData = DataManager.getOrCreateData( me.storageName_RedeemList );
+        DataManager.getOrCreateData( me.storageName_RedeemList, function( jsonStorageData ){
+
+            //console.log( jsonStorageData );
+            me.renderRedeemList( jsonStorageData, blockTag );
+
+
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
             {
                 me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
@@ -78,36 +100,32 @@ function BlockList( cwsRenderObj, blockObj )
                 me.newBlockTag.find( '.floatListMenuIcon' ).hide();
             }
 
-        }
+        } );
+
+
     }
 
-
-    me.redeemList_Display = function( blockTag )
-    {
-        var jsonStorageData = DataManager.getOrCreateData( me.storageName_RedeemList );
-        console.log( jsonStorageData );
-        me.renderRedeemList( jsonStorageData.list, blockTag );	
-    }
-
-    me.renderRedeemList = function( redeemList, blockTag )
+    me.renderRedeemList = function( redeemObj, blockTag )
     {
 
-        $(window).scrollTop(0);
+        $( window ).scrollTop(0);
 
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
 
+        console.log( $( 'div.floatListMenuSubIcons' ) );
         // Copy from list html template
         $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
+        console.log( $( 'div.floatListMenuSubIcons' ) );
 
         var listUlLiActiveTag = blockTag.find( 'li.active' );
         var listContentUlTag = blockTag.find( '.tab__content_act' );
 
         me.redeemListTargetTag = listContentUlTag;
 
-        if ( redeemList )
+        if ( redeemObj && redeemObj.list )
         {
-            me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName);
+            me.redeemList = redeemObj.list.filter( a=> a.owner == FormUtil.login_UserName );
 
             if ( me.options && me.options.filter )
             {
@@ -117,11 +135,11 @@ function BlockList( cwsRenderObj, blockObj )
                     var keys = Object.keys(filterObj);
                     var keyValue = filterObj[keys[0]];
 
-                    me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
+                    me.redeemList = redeemObj.list.filter( a=> a[keys[0]] == keyValue );
                 }
             }
 
-            (me.redeemList).sort(function (a, b) {
+            ( me.redeemList ).sort(function (a, b) {
                 var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
                 if (b.created > a.created) {
                     return b1st;
@@ -134,7 +152,7 @@ function BlockList( cwsRenderObj, blockObj )
                 }
             });
 
-            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
 
             if ( me.redeemList === undefined || me.redeemList.length == 0 )
             {
@@ -163,7 +181,6 @@ function BlockList( cwsRenderObj, blockObj )
                         me.evalScrollOnBottom();
 
                     }
-
                 }
                 else
                 {
@@ -648,7 +665,7 @@ function BlockList( cwsRenderObj, blockObj )
 	// === OTHER METHODS ========================
 
 
-    me.redeemList_Add = function( submitJson, status )
+    me.redeemList_Add = function( submitJson, status, retFunc )
     {
         var dateTimeStr = (new Date() ).toISOString();
         var tempJsonData = {};
@@ -669,10 +686,13 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.syncActionStarted = 0;
         tempJsonData.history = [];
 
-        // added by Greg (2019-02-18) > test track googleAnalytics
-        ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+        FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
-        DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );
+            // added by Greg (2019-02-18) > test track googleAnalytics
+            ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+
+            DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData, retFunc );
+        });
     }
 
     me.redeemList_Reload = function( listItemTag )

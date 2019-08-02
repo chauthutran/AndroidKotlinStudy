@@ -97,7 +97,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 			setTimeout( function(){
-				me.evalFormInputPatterns( formDivSecTag );
+				me.evalFormInputFunctions( formDivSecTag );
 			}, 500 );
 
 		}
@@ -286,7 +286,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		}
 	}
 
-	me.evalFormInputPatterns = function( formDivSecTag )
+	me.evalFormInputFunctions = function( formDivSecTag )
 	{
 		if ( formDivSecTag )
 		{
@@ -308,6 +308,27 @@ function BlockForm( cwsRenderObj, blockObj )
 						}
 
 					}
+					else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+					{
+						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+						console.log( jData[ i ] );
+						if ( tagTarget )
+						{
+							console.log( tagTarget );
+							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+							var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
+							console.log( ageCal && ageCal.length );
+							console.log( ageCal );
+							console.log( ageCal.length );
+							if ( ageCal != undefined && ageCal > 0 )
+							{
+								console.log( 'setting value: ' + ageCal );
+								tagTarget.val( ageCal );
+							}
+						}
+
+					}
+
 				}
 			}
 
@@ -323,7 +344,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputPatterns( formDivSecTag.parent() )
+				me.evalFormInputFunctions( formDivSecTag.parent() )
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}

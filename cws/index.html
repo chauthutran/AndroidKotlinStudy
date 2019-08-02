@@ -153,6 +153,14 @@
                                 <img id='appShare' src='images/outline-share-24px.svg' style='display:none;width:20px;height:20px;display:none' alt="appShare">
                               </td>
                             </tr>
+                            <tr>
+                              <td colspan=2 style="text-align: right;">
+                                <select id='dbStorageSelector' style='max-width:150px'>
+                                  <option value='localStorage'>Local Storage</option>
+                                  <option value='indexdb' selected>IndexDB</option>
+                                </select>
+                            </td>
+                            </tr>
                           </table>
 
                         </div>
@@ -544,11 +552,16 @@
     <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/connManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbStorage.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/localStorageDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/dbStorageSelector.js"></script>
     <script type="text/javascript" src="scripts/utils/dataManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
+    <script type="text/javascript" src="scripts/utils/moveLocalStorageData.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>
@@ -569,4 +582,13 @@
     <script type="text/javascript" src="scripts/app.js"></script>
 
   </body>
+
+  <script>
+    //setTimeout( function(){
+      MoveLocalStorageData.moveData();
+      new DBStorageSelector();  
+    //}, 500 ); 
+
+  </script>
+
 </html>

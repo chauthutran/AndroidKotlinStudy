@@ -190,7 +190,8 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "openArea" )
 			{				
 				if ( clickActionJson.areaId )
-				{					
+				{
+					if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
@@ -335,15 +336,15 @@ function Action( cwsRenderObj, blockObj )
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
 						// Offline Submission Handling..
-						//if ( clickActionJson.redeemListInsert === "true" )
-						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued );
-						}
 
-						//dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
-						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
+						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
 
-						if ( afterActionFunc ) afterActionFunc();
+							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
+
+							if ( afterActionFunc ) afterActionFunc();
+
+						} );
+
 					}
 					else if ( clickActionJson.url !== undefined )
 					{					

@@ -90,16 +90,21 @@ function syncManager()  {}
         {
             if ( syncManager.cwsRenderObj )
             {
-                var myData = FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList );
+                //var myData = FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList );
 
-                if ( myData )
-                {
-                    var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
-                    var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+                FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList, function( myData ){
 
-                    syncManager.dataQueued = myQueue;
-                    syncManager.dataFailed = myFailed;
-                }
+                    if ( myData )
+                    {
+                        var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+                        var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+    
+                        syncManager.dataQueued = myQueue;
+                        syncManager.dataFailed = myFailed;
+                    }
+
+                } );
+
             }
         }
 
@@ -474,16 +479,19 @@ function syncManager()  {}
         }
         else
         {
-            if ( syncManager.lastSyncSuccess > 0 )
-            {
-                // added by Greg (2019-02-18) > test track googleAnalytics
-                ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+            FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
-                MsgManager.msgAreaShow ( 'Sync COMPLETED [' + syncManager.lastSyncSuccess + ']' );
-            }
+                if ( syncManager.lastSyncSuccess > 0 )
+                {
+                    // added by Greg (2019-02-18) > test track googleAnalytics
+                    ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            syncManager.lastSyncAttempt = 0;
-            syncManager.lastSyncSuccess = 0;
+                    MsgManager.msgAreaShow ( 'Sync COMPLETED [' + syncManager.lastSyncSuccess + ']' );
+                }
+
+                syncManager.lastSyncAttempt = 0;
+                syncManager.lastSyncSuccess = 0;
+            });
         }
     }
 

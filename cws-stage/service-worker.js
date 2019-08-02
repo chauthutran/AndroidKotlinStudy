@@ -344,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "43120bf0130975227036cd936217c99f"
+    "revision": "328df0fcfe4e6b033037473606c4abe4"
   },
   {
     "url": "scripts/classes/block.js",
@@ -356,7 +356,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "c0829ad1df05724347f8fdc1716beaee"
+    "revision": "3f684802b02eafae0c84216f3eae3529"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -444,7 +444,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "3d681d8502521bfdc002c51ac1adc512"
+    "revision": "28103fc19e726bf7d94dbb0fce74ae2f"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -468,7 +468,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "0df61c67b6436a636be0d783bc34bb08"
+    "revision": "1394e6afe86366b63dddb20b9a095511"
   },
   {
     "url": "sounds/coin.mp3",

@@ -8,32 +8,47 @@ function DataManager() {}
 DataManager.StorageName_session = "session";
 DataManager.StorageName_langTerms = "langTerms";
 
+DataManager.dbStorageType_localStorage = "localStorage";
+DataManager.dbStorageType_indexdb = "indexdb";
+DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. Will be set from databaseSelector.js
+
+
+
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
-DataManager.saveData = function( secName, jsonData ) {
-	localStorage[ secName ] = JSON.stringify( jsonData );
+DataManager.saveData = function( secName, jsonData, retFunc ) {
+	LocalStorageDataManager.saveData( secName, jsonData );
+	IndexdbDataManager.saveData( secName, jsonData, retFunc );
 };
 
-DataManager.getData = function( secName ) {
-	var jsonData;
-
-	var dataStr = localStorage[ secName ];
-	if ( dataStr ) jsonData = JSON.parse( dataStr );
-	//else jsonData = {}; // "list": [] };		// This 'list' should be more generic?  '{}'..  
-	// Create 'list' type get?
-
-	return jsonData;
+DataManager.getData = function( secName, callBack ) {
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	{
+		LocalStorageDataManager.getData( secName, callBack );
+	}
+	else
+	{
+		IndexdbDataManager.getData( secName, callBack );
+	}
 };
 
-DataManager.getOrCreateData = function( secName ) {
-	var jsonData = DataManager.getData( secName );
-	if ( !jsonData ) jsonData = {};
-	return jsonData;
+DataManager.getOrCreateData = function( secName, callBack ) {
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	{
+		//console.log( ' LocalStorageDataManager.getOrCreateData' );
+		LocalStorageDataManager.getOrCreateData( secName, callBack );
+	}
+	else
+	{
+		//console.log( ' IndexdbDataManager.getOrCreateData' );
+		IndexdbDataManager.getOrCreateData( secName, callBack );
+	}
 };
 
 DataManager.deleteData = function( secName ) {
-	localStorage.removeItem( secName );
+	LocalStorageDataManager.deleteData( secName );
+	IndexdbDataManager.deleteData( secName );
 };
 
 // -------------------------------------
@@ -50,165 +65,115 @@ DataManager.getListData = function( secName ) {
 }
 */
 
-DataManager.insertDataItem = function( secName, jsonInsertData ) {
+DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
 
-	var jsonMainData = DataManager.getOrCreateData( secName );
-
-	// We assume that this has 'list' as jsonArray (of data)
-	if ( jsonMainData.list === undefined ) jsonMainData.list = [];
-	jsonMainData.list.push( jsonInsertData );
-
-	DataManager.saveData( secName, jsonMainData );
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	{
+		LocalStorageDataManager.insertDataItem( secName, jsonInsertData );
+	}
+	else
+	{
+		IndexdbDataManager.insertDataItem( secName, jsonInsertData, retFunc );
+	}
 };
 
 DataManager.removeItemFromData = function( secName, id ) {
 
-	if ( secName && id )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var jsonMainData = DataManager.getOrCreateData( secName );
-
-		// We assume that this has 'list' as jsonArray (of data)
-		if ( jsonMainData.list !== undefined ) 
-		{
-			Util.RemoveFromArray( jsonMainData.list, "id", id )
-		}
-
-		DataManager.saveData( secName, jsonMainData );
+		LocalStorageDataManager.insertDataItem( secName, jsonInsertData );
+	}
+	else
+	{
+		IndexdbDataManager.insertDataItem( secName, jsonInsertData );
 	}
 };
 
 DataManager.getItemFromData = function( secName, id ) 
 {
-	var itemData;
-
-	if ( secName && id )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var jsonMainData = DataManager.getOrCreateData( secName );
-
-		// We assume that this has 'list' as jsonArray (of data)
-		if ( jsonMainData.list !== undefined ) 
-		{			
-			itemData = Util.getFromList( jsonMainData.list, id, "id" );			
-		}
+		return LocalStorageDataManager.getItemFromData( secName, id );
 	}
-
-	return itemData;
+	else
+	{
+		return IndexdbDataManager.getItemFromData( secName, id );
+	}
 };
 
 
 DataManager.updateItemFromData = function( secName, id, jsonDataItem ) 
 {
-	if ( secName && id )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var jsonMainData = DataManager.getOrCreateData( secName );
-
-		// We assume that this has 'list' as jsonArray (of data)
-		if ( jsonMainData.list !== undefined ) 
-		{			
-			itemData = Util.getFromList( jsonMainData.list, id, "id" );
-
-			Util.copyProperties( jsonDataItem, itemData );
-
-			DataManager.saveData( secName, jsonMainData );			
-		}
-		else
-		{
-			console.log ( 'failed `jsonMainData.list !== undefined`: ' + secName + ' ' + id  );
-		}
+		LocalStorageDataManager.updateItemFromData( secName, id, jsonDataItem );
 	}
 	else
 	{
-		console.log ( 'failed `DataManager.updateItemFromData` on secName && id: ' + secName + ' ' + id  );
+		IndexdbDataManager.updateItemFromData( secName, id, jsonDataItem );
 	}
 };
 
 // =========================
 
-DataManager.getUserConfigData = function() 
+DataManager.getUserConfigData = function( callBack ) 
 {
-	var userConfigJson;
-
-	var sessionJson = DataManager.getSessionData();
-
-	if ( sessionJson )	
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		if ( sessionJson.user )
-		{
-			var userDataStr = localStorage.getItem( sessionJson.user );
-			userConfigJson = JSON.parse( userDataStr );
-		}
+		LocalStorageDataManager.getUserConfigData( callBack );
 	}
-
-	return userConfigJson;
+	else
+	{
+		IndexdbDataManager.getUserConfigData( callBack );
+	}
+	
 }
 
-DataManager.getSessionData = function() 
+DataManager.getSessionData = function( callBack ) 
 {
-	var sessionJson;
-
-	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
-
-	if ( sessionDataStr )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		sessionJson = JSON.parse( sessionDataStr );
+		LocalStorageDataManager.getSessionData( callBack );
 	}
-
-	return sessionJson;
+	else
+	{
+		IndexdbDataManager.getSessionData( callBack );
+	}
 }
 
 DataManager.setSessionDataValue = function( prop, val ) 
 {
-	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
-
-	if ( sessionDataStr )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var sessionJson = JSON.parse( sessionDataStr );
-
-		sessionJson[ prop ] = val;
-
-		DataManager.saveData( DataManager.StorageName_session, sessionJson )
-
-		return true;
+	 	LocalStorageDataManager.setSessionDataValue( prop, val );
 	}
-
+	else
+	{
+		IndexdbDataManager.setSessionDataValue( prop, val );
+	}
 }
 
-DataManager.getSessionDataValue = function( prop, defval ) 
+DataManager.getSessionDataValue = function( prop, defval, callBack ) 
 {
-	//console.log( DataManager.StorageName_session );
-	var sessionDataStr = localStorage.getItem( DataManager.StorageName_session );
-	var ret;
-
-	if ( sessionDataStr )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var sessionJson = JSON.parse( sessionDataStr );
-
-		if ( sessionJson[ prop ] )
-		{
-			ret = sessionJson[ prop ];
-		}
-		else
-		{
-			ret = defval;
-		}
-
-		return ret;
+	 	LocalStorageDataManager.getSessionDataValue( prop, defval, callBack  );
 	}
-
+	else
+	{
+		IndexdbDataManager.getSessionDataValue( prop, defval, callBack  );
+	}
 }
+
 
 DataManager.clearSessionStorage = function()
 {
-	if ( localStorage.getItem('session') )
+	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		var lastSession = JSON.parse( localStorage.getItem('session') );
-		if ( JSON.parse( localStorage.getItem(lastSession.user) ) )
-		{
-			localStorage.removeItem( 'session' );
-			localStorage.removeItem( lastSession.user );
-
-			return true;
-		}
+	 	LocalStorageDataManager.clearSessionStorage();
 	}
-
+	else
+	{
+		IndexdbDataManager.clearSessionStorage();
+	}
 }

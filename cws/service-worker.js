@@ -36,27 +36,27 @@ self.__precacheManifest = [
   },
   {
     "url": "images/act_col_fpl-fu_arrow_right_24.svg",
-    "revision": "b1d595818ce504983c0e74c71c2caa4d"
+    "revision": "d61e5ac96aea37ecbd9e17af41331646"
   },
   {
     "url": "images/act_col_fpl-fu_arrow_right_36.svg",
-    "revision": "cc7011f0f59e4146844e36aecfd18cec"
+    "revision": "3548996447d506757a911c674a23ea13"
   },
   {
     "url": "images/act_col_fpl-sp_arrow_right_24.svg",
-    "revision": "07f47639fc66b3575b84fc3da6ffeb11"
+    "revision": "6726e1e050cacf293fd93974ed84e7dd"
   },
   {
     "url": "images/act_col_fpl-sp_arrow_right_36.svg",
-    "revision": "54a2c53ef66ea08284fe635d5f8e7868"
+    "revision": "f450400c101b20fab8b4f442105da1d0"
   },
   {
     "url": "images/act_col_sas_arrow_right_24.svg",
-    "revision": "a6d8fb99ddf7fc8feda1da4970489add"
+    "revision": "07ca0d29a883b607be0eace1a1528248"
   },
   {
     "url": "images/act_col_sas_arrow_right_36.svg",
-    "revision": "aa3e1f27755f90ac02fc5321731fb857"
+    "revision": "7e68ec661b73b8651b49f8a679d287fe"
   },
   {
     "url": "images/act_col.svg",
@@ -132,7 +132,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/client.svg",
-    "revision": "06fbcb3609cbd6c246ac69ebe007ad1b"
+    "revision": "b44e4e98e1665413e1d6299c832db99f"
   },
   {
     "url": "images/close_white.svg",
@@ -203,12 +203,52 @@ self.__precacheManifest = [
     "revision": "b0295abf0af75702c5ebbca617a93620"
   },
   {
+    "url": "images/icons/Connect_dev_152px.png",
+    "revision": "90015f77a9f9c6b2d5c159a4280d5326"
+  },
+  {
+    "url": "images/icons/Connect_dev_192px.png",
+    "revision": "25573985326ca03fd13fc3a2b3974674"
+  },
+  {
+    "url": "images/icons/Connect_prod_152px.png",
+    "revision": "cff1c90fc5a84fc754cfeb370ab91f76"
+  },
+  {
+    "url": "images/icons/Connect_prod_192px.png",
+    "revision": "5a7abcbe1bf0565a8a1096a80acab0dd"
+  },
+  {
+    "url": "images/icons/Connect_stage_152px.png",
+    "revision": "e8121b1dc38add1a04b809ccf81a5d97"
+  },
+  {
+    "url": "images/icons/Connect_stage_192px.png",
+    "revision": "66c9d16e1139ecbb2c03ac5438ac2a08"
+  },
+  {
+    "url": "images/icons/Connect_train_152px.png",
+    "revision": "2c3a3c33a05b34d8fc5d654a6e79d2f2"
+  },
+  {
+    "url": "images/icons/Connect_train_192px.png",
+    "revision": "29f6958ea0c832c4fb030e8cfd822fd0"
+  },
+  {
+    "url": "images/icons/icon-128x128.png",
+    "revision": "663516616720d1107c5621f326b899e8"
+  },
+  {
     "url": "images/icons/icon-144x144.png",
     "revision": "4cf8223442d2fbf91653b6ebb5dad779"
   },
   {
     "url": "images/icons/icon-152x152.png",
     "revision": "982f5ccc626f58ca9f099457a0240c47"
+  },
+  {
+    "url": "images/icons/logo-44x44.png",
+    "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
     "url": "images/key.svg",
@@ -240,11 +280,11 @@ self.__precacheManifest = [
   },
   {
     "url": "images/mobile.svg",
-    "revision": "56d9b808639a50927115cab90dd8e246"
+    "revision": "0fb7b04a2651bfb60e59ae3289d4e2f6"
   },
   {
     "url": "images/net-green.svg",
-    "revision": "7267a1c85f97b8d8f2b1d8e84c3baed2"
+    "revision": "0aafa33a6beeca84d37679273ad059d7"
   },
   {
     "url": "images/net-sync.svg",
@@ -324,11 +364,11 @@ self.__precacheManifest = [
   },
   {
     "url": "images/voucher.svg",
-    "revision": "cdf69e2c81e75c8c92afa19870e62a9c"
+    "revision": "3a6f173fc310230cc6b091bc5ba7cc8d"
   },
   {
     "url": "index.html",
-    "revision": "b6f359b22be1153e98deecdda3d5e86c"
+    "revision": "b512e9f30f6029a80e8cfc993388df4c"
   },
   {
     "url": "redeemGen.html",
@@ -336,15 +376,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "f91b1af15281982066edbdae4ce28b31"
+    "revision": "e34e59d4ab7c7d2c3e774a41e9ffc398"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "56d11d8b881f088afb535ca4d005406d"
+    "revision": "4676d7e5b84ba13c6e7abc545f6ec5d5"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "57a9bd9b2d0bc884e2f35bd8d6f60aae"
+    "revision": "68dfdf46af62bfb423f4b500664aa311"
   },
   {
     "url": "scripts/classes/block.js",
@@ -356,11 +396,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "eeb024853263a8c5f1d2d0e84940c28e"
+    "revision": "fc96753dc9be88c4cbc2dbf0035a6c7c"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "350e26bb31f0c1c174f6a15624920ada"
+    "revision": "bc2e74ee9e9f6cd197dc53adac2c08eb"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -372,15 +412,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "70c29c1be3b296106b4c7ed8acc1f298"
+    "revision": "eccb3b9476e0cc2618f5c01b897a2d62"
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "08a9d6d7981784a0872459d1ea04126e"
+    "revision": "13f0c9c4442a55db1bd7df3fc1af409d"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "18f07d36c332576e823577bf446b6135"
+    "revision": "5cd3f586d2f9b22be6cf40d9d4b2e5ff"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -396,7 +436,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "72818a55b42096130e7f9c01d6c9bf3b"
+    "revision": "abacb65bb4c2dc214c63dea58243d67b"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
@@ -432,11 +472,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "70bbaca1902a1b7f56e3203c6d8c5313"
+    "revision": "6559716eeed8d465b1abe7272c359a26"
   },
   {
     "url": "scripts/utils/db.js",
     "revision": "2ff209db4071a438bbcea9cac07dd925"
+  },
+  {
+    "url": "scripts/utils/dbStorageSelector.js",
+    "revision": "2441da8b0e47aa0da2b244c6c91aeccb"
   },
   {
     "url": "scripts/utils/formMsgManager.js",
@@ -444,11 +488,31 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "25fbb03f5f71bb7783f8671959bbd176"
+    "revision": "cab42dc75013fe1cda21fb3ca11c5a09"
+  },
+  {
+    "url": "scripts/utils/indexdbDataManager.js",
+    "revision": "3e0716bf44fcd9052d85be8d3c948f77"
+  },
+  {
+    "url": "scripts/utils/indexdbStorage - Copy.js",
+    "revision": "adeaba1d4c026601c789bd3095602315"
+  },
+  {
+    "url": "scripts/utils/indexdbStorage.js",
+    "revision": "75ddf4ec596376fce33ab74f8a9feafc"
   },
   {
     "url": "scripts/utils/inputUtil.js",
     "revision": "46e13dc056470ae04d778d24af9106d3"
+  },
+  {
+    "url": "scripts/utils/localStorageDataManager.js",
+    "revision": "4360947661bd6f73d45bc64a26c9ca8f"
+  },
+  {
+    "url": "scripts/utils/moveLocalStorageData.js",
+    "revision": "84c7e81b119535a3ae83e02acf528d16"
   },
   {
     "url": "scripts/utils/msgManager.js",
@@ -464,11 +528,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "491721a8b186d7d418457eab1d5137b7"
+    "revision": "2e2ac69f82e7c467ab62716f254ce389"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "b194b2731053d15cd832bf73776066f9"
+    "revision": "1394e6afe86366b63dddb20b9a095511"
   },
   {
     "url": "sounds/coin.mp3",
