@@ -90,16 +90,21 @@ function syncManager()  {}
         {
             if ( syncManager.cwsRenderObj )
             {
-                var myData = FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList );
+                //var myData = FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList );
 
-                if ( myData )
-                {
-                    var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
-                    var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+                FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList, function( myData ){
 
-                    syncManager.dataQueued = myQueue;
-                    syncManager.dataFailed = myFailed;
-                }
+                    if ( myData )
+                    {
+                        var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+                        var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+    
+                        syncManager.dataQueued = myQueue;
+                        syncManager.dataFailed = myFailed;
+                    }
+
+                } );
+
             }
         }
 

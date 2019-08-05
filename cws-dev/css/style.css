@@ -764,3 +764,7 @@ a.searchresultSelector:hover {
 .aboutHeader {
    padding: 0 0 0 20px;
 }
+#dbStorageSelector
+{
+  display: none;
+}

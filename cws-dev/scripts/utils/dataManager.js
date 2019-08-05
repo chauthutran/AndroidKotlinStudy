@@ -10,18 +10,16 @@ DataManager.StorageName_langTerms = "langTerms";
 
 DataManager.dbStorageType_localStorage = "localStorage";
 DataManager.dbStorageType_indexdb = "indexdb";
-DataManager.dbStorageType = DataManager.dbStorageType_localStorage; // Defaut value. Will be set from databaseSelector.js
-
-
+DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. Will be set from databaseSelector.js
 
 
 
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
-DataManager.saveData = function( secName, jsonData ) {
+DataManager.saveData = function( secName, jsonData, retFunc ) {
 	LocalStorageDataManager.saveData( secName, jsonData );
-	IndexdbDataManager.saveData( secName, jsonData );
+	IndexdbDataManager.saveData( secName, jsonData, retFunc );
 };
 
 DataManager.getData = function( secName, callBack ) {
@@ -38,12 +36,12 @@ DataManager.getData = function( secName, callBack ) {
 DataManager.getOrCreateData = function( secName, callBack ) {
 	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		console.log( secName );
-		console.log( callBack );
+		//console.log( ' LocalStorageDataManager.getOrCreateData' );
 		LocalStorageDataManager.getOrCreateData( secName, callBack );
 	}
 	else
 	{
+		//console.log( ' IndexdbDataManager.getOrCreateData' );
 		IndexdbDataManager.getOrCreateData( secName, callBack );
 	}
 };
@@ -67,7 +65,7 @@ DataManager.getListData = function( secName ) {
 }
 */
 
-DataManager.insertDataItem = function( secName, jsonInsertData ) {
+DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
 
 	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
@@ -75,7 +73,7 @@ DataManager.insertDataItem = function( secName, jsonInsertData ) {
 	}
 	else
 	{
-		IndexdbDataManager.insertDataItem( secName, jsonInsertData );
+		IndexdbDataManager.insertDataItem( secName, jsonInsertData, retFunc );
 	}
 };
 

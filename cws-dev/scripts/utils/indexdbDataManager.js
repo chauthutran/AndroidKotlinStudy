@@ -8,16 +8,17 @@ function IndexdbDataManager() {}
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
-IndexdbDataManager.saveData = function( secName, jsonData ) {
+IndexdbDataManager.saveData = function( secName, jsonData, retFunc ) {
 	var dbStorage = new DBStorage();
 	dbStorage.addData( secName, JSON.stringify( jsonData ) );
-	// localStorage[ secName ] = JSON.stringify( jsonData );
+	if ( retFunc ) retFunc();
 };
 
 IndexdbDataManager.getData = function( secName, callBack ) {
 	if( secName !== undefined )
 	{
 		var dbStorage = new DBStorage();
+
 		dbStorage.getData( secName, function( data ){
 			var jsonData;
 			if ( data ) 
@@ -31,10 +32,6 @@ IndexdbDataManager.getData = function( secName, callBack ) {
 		if ( callBack ) callBack();
 	}
 
-	//else jsonData = {}; // "list": [] };		// This 'list' should be more generic?  '{}'..  
-	// Create 'list' type get?
-
-	// return jsonData;
 };
 
 IndexdbDataManager.getOrCreateData = function( secName, callBack ) {
@@ -64,14 +61,14 @@ IndexdbDataManager.getListData = function( secName ) {
 }
 */
 
-IndexdbDataManager.insertDataItem = function( secName, jsonInsertData ) {
+IndexdbDataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
 
 	IndexdbDataManager.getOrCreateData( secName, function( jsonMainData ){
 		// We assume that this has 'list' as jsonArray (of data)
 		if ( jsonMainData.list === undefined ) jsonMainData.list = [];
 		jsonMainData.list.push( jsonInsertData );
 
-		IndexdbDataManager.saveData( secName, jsonMainData );
+		IndexdbDataManager.saveData( secName, jsonMainData, retFunc );
 	} );
 };
 
@@ -143,16 +140,16 @@ IndexdbDataManager.updateItemFromData = function( secName, id, jsonDataItem )
 
 IndexdbDataManager.getUserConfigData = function( callBack ) 
 {
-	IndexdbDataManager.getSessionData(function( sessionJson ){
+	IndexdbDataManager.getSessionData( function( sessionJson ){
 		if ( sessionJson && sessionJson.user )	
 		{
 			IndexdbDataManager.getData( sessionJson.user, function( userConfigJson ){
-				callBack( userConfigJson );
+				if ( callBack ) callBack( userConfigJson );
 			} );
 		}
 		else
 		{
-			callBack();
+			if ( callBack ) callBack();
 		}
 	});
 

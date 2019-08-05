@@ -364,7 +364,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
-						titleTag.append("<span style='color:red;'> * </span>")
+						titleTag.after("<span style='color:red;'> * </span>")
 					}	
 				}	
 				else if ( ruleJson.pattern )

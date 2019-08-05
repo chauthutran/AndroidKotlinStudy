@@ -18,11 +18,11 @@ MoveLocalStorageData.moveData = function(){
 
                 LocalStorageDataManager.saveData("movedData", "true");
 
-                console.log("All data from localStorage is moved to IndexDb.");
+                //console.log("All data from localStorage is moved to IndexDb.");
             }
             else
             {
-                console.log("All data from localStorage was moved to IndexDb alreadly.");
+                //console.log("All data from localStorage was moved to IndexDb alreadly.");
             }
         } );
         
@@ -35,7 +35,7 @@ MoveLocalStorageData.moveOneData = function( key, value )
     dbStorage.getData( key, function( searched ){
         if( searched === undefined )
         {
-            console.log(' --saving  key : ' + key );
+            //console.log(' --saving  key : ' + key );
             var dbStorage1 = new DBStorage();
             dbStorage1.addData( key, key );
         }

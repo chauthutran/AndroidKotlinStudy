@@ -155,9 +155,9 @@
                             </tr>
                             <tr>
                               <td colspan=2 style="text-align: right;">
-                                <select id='dbStorageSelector' style='max-width:150px'>
+                                <select id='dbStorageSelector' style='max-width:150px;'>
                                   <option value='localStorage'>Local Storage</option>
-                                  <option value='indexdb'>IndexDB</option>
+                                  <option value='indexdb' selected>IndexDB</option>
                                 </select>
                             </td>
                             </tr>
@@ -584,8 +584,11 @@
   </body>
 
   <script>
-    MoveLocalStorageData.moveData();
-    new DBStorageSelector();  
+    //setTimeout( function(){
+      MoveLocalStorageData.moveData();
+      new DBStorageSelector();  
+    //}, 500 ); 
+
   </script>
 
 </html>

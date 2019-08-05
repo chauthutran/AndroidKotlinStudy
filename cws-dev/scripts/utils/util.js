@@ -1139,9 +1139,8 @@ Util.getParameterInside = function( value, openClose )
 	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
 }
 
-Util.newLocalSequence = function( pattern )
+Util.newLocalSequence = function( pattern, commitSEQIncr )
 {
-	//var jsonStorageData = DataManager.getOrCreateData( 'seqIncr' );
 	var jsonUserData = DataManager.getData( FormUtil.login_UserName );
 	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
 	var ret;
@@ -1184,10 +1183,11 @@ Util.newLocalSequence = function( pattern )
 
 				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
 				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-				//DataManager.saveData( 'seqIncr', jsonStorageData );
 
-				DataManager.saveData( FormUtil.login_UserName, jsonUserData );
-				
+				if ( commitSEQIncr != undefined && commitSEQIncr == true )
+				{
+					DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+				}
 
 				return Util.paddNumeric( ret, arrParm[1] );
 
@@ -1262,7 +1262,109 @@ Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 	}
 }
 
-Util.getValueFromPattern = function( pattern )
+Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
+{
+	var formTarg = tagTarget.closest( 'div.formDivSec' );
+	var arrPattern;
+	var ret = '';
+
+	arrPattern = formInputPattern.split( '+' );
+
+	for (var i = 0; i < arrPattern.length; i++)
+	{
+		var InpVal = '';
+		var formInpFld = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 0 ];
+
+		if ( formInpFld.length )
+		{
+			var InpTarg = formTarg.find( "[name='" + formInpFld + "']" );
+
+			if ( InpTarg )
+			{
+				InpVal = InpTarg.val();
+
+				if ( InpVal && InpVal.length )
+				{
+
+					for (var p = 1; p < arrPattern[ i ].replace( 'form:', '' ).split( '[' ).length; p++) 
+					{
+						var pattEnum = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ p ].replace( ']', '' );
+						var oper = pattEnum.split( ':' );
+
+						if ( oper[ 0 ] == 'RIGHT' )
+						{
+							InpVal = InpVal.substring( InpVal.length - parseInt( oper[ 1 ] ), InpVal.length )
+						}
+						else if ( oper[ 0 ] == 'LEFT' )
+						{
+							InpVal = InpVal.substring( 0, parseInt( oper[ 1 ] ) )
+						}
+						else if ( oper[ 0 ] == 'PADDNUMERIC' )
+						{
+							InpVal = Util.paddNumeric( InpVal, oper[ 1 ] );
+						}
+					}
+
+					ret += InpVal;
+				}
+
+			}
+			else
+			{
+				console.log( ' no corresponding value [' + formInpFld + ']' );
+			}
+		}
+		else
+		{
+			console.log( ' no corresponding field [' + formInpFld + ']' );
+		}
+	}
+
+	return ret;
+
+}
+
+Util.getAgeValueFromPattern = function( tagTarget, pattern )
+{
+	var formTarg = tagTarget.closest( 'div.formDivSec' );
+	var ret = '';
+
+	if ( pattern.indexOf( 'form:' ) >= 0 )
+	{
+		var targFld = pattern.split( 'form:' )[ 1 ];
+		var targTag = formTarg.find( "[name='" + targFld + "']" );
+
+		if ( targTag )
+		{
+			var InpVal = targTag.val();
+
+			if ( InpVal && InpVal.length )
+			{
+				var today = new Date();
+				var birthDate = new Date( InpVal );
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age = age - 1;
+				}
+			
+				return age;
+			}
+			else
+			{
+				return '';
+			}
+
+		}
+		else
+		{
+			return '';
+		}
+
+	}
+}
+
+Util.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 {
 	var arrPattern;
 	var patternSeparator;
@@ -1326,11 +1428,15 @@ Util.getValueFromPattern = function( pattern )
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( 'SEQ[' ) >= 0 )
 			{
-				returnPart = Util.newLocalSequence( arrPattern[ i ] );
+				returnPart = Util.newLocalSequence( arrPattern[ i ], commitSEQIncr );
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( '.' ) > 0 )
 			{
 				returnPart = Util.getLocalStorageObjectValue( arrPattern[ i ] );
+			}
+			else if ( ( arrPattern[ i ] ).indexOf( 'form:' ) >= 0 )
+			{
+				returnPart = Util.getFormInputValuePattern( tagTarget, arrPattern[ i ] );
 			}
 			else
 			{
@@ -1346,7 +1452,7 @@ Util.getValueFromPattern = function( pattern )
 			}
 
 		}
-		
+
 		if ( returnPart && returnPart.length )
 		{
 			ret += returnPart + ( removeSeparator ? '' : patternSeparator );

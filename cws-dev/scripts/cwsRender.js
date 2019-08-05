@@ -124,9 +124,10 @@ function cwsRender()
 	me.updateFromSession = function()
 	{
 		DataManager.getSessionDataValue( 'networkSync', null,  function(data){
-			me.storage_offline_SyncExecutionTimerInterval = data;
+			if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
 			// DataManager.saveData(  'networkSync',  data );
 		});
+
 	}
 
 	me.setPageHeaderEvents = function()
@@ -158,16 +159,16 @@ function cwsRender()
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-	
+
 	me.renderArea = function( areaId )
 	{
-
 		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+
 			me.hideAreaRelatedParts();
 
 			// added by Greg (2019-02-18) > test track googleAnalytics
 			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-
+			//console.log( areaId );
 			// should close current tag/content?
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
@@ -176,9 +177,9 @@ function cwsRender()
 			{  
 				me.clearMenuClickStyles();
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-
+				//console.log( me.areaList );
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-
+				//console.log( selectedArea );
 				// TODO: ACTIVITY ADDING
 				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
@@ -226,7 +227,9 @@ function cwsRender()
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function( configJson )
 	{
-		if ( me._localConfigUse )
+		//console.log( configJson );
+
+		/*if ( me._localConfigUse )
 		{
 			ConfigUtil.getDsConfigJson( me.dsConfigLoc, function( success, configDataFile ) {
 
@@ -238,7 +241,7 @@ function cwsRender()
 				me.startBlockExecute( me.configJson );
 			});		
 		}
-		else
+		else*/
 		{
 			//console.log( 'network config' );
 
@@ -260,12 +263,16 @@ function cwsRender()
 
 			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
 
-			var startMenuTag = me.populateMenuList( finalAreaList );
+			me.populateMenuList( finalAreaList, function( startMenuTag ){
 
-			if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+				if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
 
-			// initialise favIcons
-			me.favIconsObj = new favIcons( me );
+				// initialise favIcons
+				me.favIconsObj = new favIcons( me );
+
+			} );
+
+			
 
 		}
 	} 
@@ -273,7 +280,9 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
 	me.startBlockExecuteAgain = function()
 	{
-		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).dcdConfig );
+		DataManager.getUserConfigData( function( userData ){
+			me.startBlockExecute( userData.dcdConfig );
+		});
 	}
 
 	// ----------------------------------
@@ -301,36 +310,53 @@ function cwsRender()
 
 	me.updateNavDrawerHeaderContent = function()
 	{
-
-		if ( !localStorage.getItem('session') || ( ! FormUtil.checkLogin() ) )
+		if( !FormUtil.checkLogin() )
 		{
 			return;
 		}
 
-		var mySessionData = DataManager.getSessionData();
-		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
- 
-		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData && FormUtil.checkLogin() )
-		{
-			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );
-		}
-		else
-		{
-			$( '#divNavDrawerOUlongName' ).html( '' );
-		}
+		DataManager.getSessionData( function( mySessionData ) {
 
-		if ( myData && FormUtil.checkLogin() )
-		{
-			var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
-			var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
-			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
-			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+			if( mySessionData == undefined )
+			{
+				return;
+			}
 
-			if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
+			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
 
-			$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+				DataManager.getUserConfigData( function( userData ){
 
-		}
+					if( userData != undefined && userData.orgUnitData != undefined )
+					{
+						$( '#divNavDrawerOUlongName' ).html( userData.orgUnitData.orgUnit.name );
+					}
+					else
+					{
+						$( '#divNavDrawerOUlongName' ).html( '' );
+					}
+
+				});
+	
+				
+				if ( myData && FormUtil.checkLogin() )
+				{
+					var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
+					var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
+					//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
+					var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+	
+					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
+	
+					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+	
+				}
+
+			} );
+			
+		});
+
+
+		
 
 	}
 
@@ -387,8 +413,8 @@ function cwsRender()
 	{
 		
 		DataManager.getSessionData( function(userSessionJson) {
-			var userSessionJson = DataManager.getSessionData();
-			var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
+			//var userSessionJson = DataManager.getSessionData();
+			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
 			var startMenuTag;
 			if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
 			$( '#navDrawerDiv' ).empty();
@@ -571,6 +597,7 @@ function cwsRender()
 	
 	me.retrieveAndSetUpTranslate = function()
 	{
+		
 		FormUtil.defaultLanguage(function( defaultLangCode ){
 			//"pt";
 
@@ -598,15 +625,12 @@ function cwsRender()
 	me.handleLastSession = function( nextFunc )
 	{
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		if ( localStorage.length )
-		{
-			var lastSession = JSON.parse( localStorage.getItem('session') );
-	
+		DataManager.getSessionData( function(lastSession) {
 			if ( lastSession )
 			{
 				$( 'input.loginUserName' ).val( lastSession.user );	
 			}
-		}
+		});
 
 		if ( nextFunc )
 		{
@@ -698,34 +722,36 @@ function cwsRender()
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )
 	{
-		var lastSession = JSON.parse( localStorage.getItem('session') );
-		var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
-		var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
-		var matchOn = [ "id", "startBlockName", "name" ];
-		var matchedOn, areaMatched;
+		DataManager.getSessionData( function(lastSession){
+			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
+			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
+			var matchOn = [ "id", "startBlockName", "name" ];
+			var matchedOn, areaMatched;
 
-		if (lastSession)
-		{
-			var loginData = JSON.parse( localStorage.getItem( lastSession.user ) );
-
-			if (loginData)
+			if (lastSession)
 			{
-				for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
-				{
-					loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
 
-					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
+				DataManager.getUserConfigData( function( loginData ){
+					if (loginData)
 					{
-						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
-					}
+						for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
+						{
+							loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
 
-				}
-	
-				//UPDATE lastStorage session for current user (based on last menu selection)
-				localStorage[ lastSession.user ] = JSON.stringify( loginData )
-	
+							if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
+							{
+								loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
+							}
+
+						}
+			
+						//UPDATE lastStorage session for current user (based on last menu selection)
+						DataManager.saveData( lastSession.user, loginData );
+					}
+				});
+				
 			}
-		}
+		});
 	}
 
 	me.hidenavDrawerDiv = function()

@@ -42,7 +42,14 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.render = function( list, newBlockTag, passedData, options )
 	{
-        me.redeemListDateGroups = [ { name: "Today", hours: 24, created: 0 }, { name: "Past week", hours: 168, created: 0 }, { name: "Past month", hours: 720, created: 0 }, { name: "Older", hours: 2160, created: 0 } ];
+        me.redeemListDateGroups = [ 
+            { name: "Last 24 hours", hours: 24, created: 0 },
+            { name: "Last 3 days", hours: 72 , created: 0 },
+            { name: "Last 7 days", hours: 168, created: 0 },
+            { name: "Last 30 days", hours: 720, created: 0 },
+            { name: "Last 3 months", hours: 2160, created: 0 },
+            { name: "Last 6 months", hours: 4320, created: 0 } 
+        ];
 
 		if ( list === 'redeemList' )
         {
@@ -62,6 +69,26 @@ function BlockList( cwsRenderObj, blockObj )
             //  - To Enable click
             FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
+            /*if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+            {
+                me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
+            }
+            else
+            {
+                me.newBlockTag.find( '.floatListMenuIcon' ).hide();
+            }*/
+
+        }
+    }
+
+
+    me.redeemList_Display = function( blockTag )
+    {
+        //var jsonStorageData = DataManager.getOrCreateData( me.storageName_RedeemList );
+        DataManager.getOrCreateData( me.storageName_RedeemList, function( jsonStorageData ){
+
+            me.renderRedeemList( jsonStorageData, blockTag );
+
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
             {
                 me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
@@ -71,21 +98,15 @@ function BlockList( cwsRenderObj, blockObj )
                 me.newBlockTag.find( '.floatListMenuIcon' ).hide();
             }
 
-        }
+        } );
+
+
     }
 
-
-    me.redeemList_Display = function( blockTag )
-    {
-        var jsonStorageData = DataManager.getOrCreateData( me.storageName_RedeemList );
-console.log( jsonStorageData );
-        me.renderRedeemList( jsonStorageData.list, blockTag );	
-    }
-
-    me.renderRedeemList = function( redeemList, blockTag )
+    me.renderRedeemList = function( redeemObj, blockTag )
     {
 
-        $(window).scrollTop(0);
+        $( window ).scrollTop(0);
 
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
@@ -98,9 +119,9 @@ console.log( jsonStorageData );
 
         me.redeemListTargetTag = listContentUlTag;
 
-        if ( redeemList )
+        if ( redeemObj && redeemObj.list )
         {
-            me.redeemList = redeemList.filter(a=>a.owner==FormUtil.login_UserName);
+            me.redeemList = redeemObj.list.filter( a=> a.owner == FormUtil.login_UserName );
 
             if ( me.options && me.options.filter )
             {
@@ -110,11 +131,11 @@ console.log( jsonStorageData );
                     var keys = Object.keys(filterObj);
                     var keyValue = filterObj[keys[0]];
 
-                    me.redeemList = redeemList.filter(a=>a[keys[0]]==keyValue);
+                    me.redeemList = redeemObj.list.filter( a=> a[keys[0]] == keyValue );
                 }
             }
 
-            (me.redeemList).sort(function (a, b) {
+            ( me.redeemList ).sort(function (a, b) {
                 var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
                 if (b.created > a.created) {
                     return b1st;
@@ -127,7 +148,7 @@ console.log( jsonStorageData );
                 }
             });
 
-            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
 
             if ( me.redeemList === undefined || me.redeemList.length == 0 )
             {
@@ -156,7 +177,6 @@ console.log( jsonStorageData );
                         me.evalScrollOnBottom();
 
                     }
-
                 }
                 else
                 {
@@ -641,7 +661,7 @@ console.log( jsonStorageData );
 	// === OTHER METHODS ========================
 
 
-    me.redeemList_Add = function( submitJson, status )
+    me.redeemList_Add = function( submitJson, status, retFunc )
     {
         var dateTimeStr = (new Date() ).toISOString();
         var tempJsonData = {};
@@ -663,11 +683,11 @@ console.log( jsonStorageData );
         tempJsonData.history = [];
 
         FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
-            
+
             // added by Greg (2019-02-18) > test track googleAnalytics
             ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData );
+            DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData, retFunc );
         });
     }
 
@@ -696,7 +716,6 @@ console.log( jsonStorageData );
         {
             for ( var i = json.length; i--; )
             {
-                //console.log( 'eval lastActivityType: ' + json[ i ].defJson.activityType );
                 if ( json[ i ].defJson && json[ i ].defJson.activityType )
                 {
                     return json[ i ].defJson.activityType;

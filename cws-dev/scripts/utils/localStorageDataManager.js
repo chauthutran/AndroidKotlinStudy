@@ -25,7 +25,7 @@ LocalStorageDataManager.getData = function( secName, callBack ) {
 LocalStorageDataManager.getOrCreateData = function( secName, callBack ) {
 	LocalStorageDataManager.getData( secName, function( lastSessionAll ){
 		if ( !lastSessionAll ) lastSessionAll = {};
-		if ( callBack ) callBack( lastSessionAll );
+		callBack( lastSessionAll );
 	});
 	
 };
@@ -128,15 +128,16 @@ LocalStorageDataManager.updateItemFromData = function( secName, id, jsonDataItem
 LocalStorageDataManager.getUserConfigData = function( callBack ) 
 {
 	LocalStorageDataManager.getSessionData(function( sessionJson ){
+		console.log( sessionJson );
 		if ( sessionJson && sessionJson.user )	
 		{
 			LocalStorageDataManager.getData( sessionJson.user, function( userConfigJson ){
-				if ( callBack ) callBack( userConfigJson );
+				callBack( userConfigJson );
 			} );
 		}
 		else
 		{
-			if ( callBack ) callBack();
+			callBack();
 		}
 	});
 
@@ -176,7 +177,7 @@ LocalStorageDataManager.getSessionDataValue = function( prop, defval, callBack )
 				ret = defval;
 			}
 		}	
-		if ( callBack ) callBack( ret );
+		callBack( ret );
 	} );
 }
 

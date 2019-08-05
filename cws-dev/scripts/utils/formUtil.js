@@ -324,7 +324,8 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 FormUtil.renderInputTag = function( dataJson, containerDivTag )
 {
 	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
-	entryTag.attr( 'display', dataJson.display );
+
+	if ( dataJson.display ) entryTag.attr( 'display', dataJson.display );
 
 	// If 'defaultValue' exists, set val
 	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
@@ -612,9 +613,9 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 	
 					thisTag.click();
 				});
-	
+
 				$( '#focusRelegator').show();
-	
+
 			}
 
 		} 
@@ -669,7 +670,7 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		var matchingTabsTag = tag.find( ".tabs > li[tabId='" + tabId + "']");
 
 		/* START > Greg added: 2018/11/23 */
-		FormUtil.setUserLastSelectedTab(tabId)
+		//FormUtil.setUserLastSelectedTab(tabId) //disabled 2019/07/04 (no longer need to set user to last page visited after refresh > logins always required)
 		/* END > Added by Greg: 2018/11/24 */
 
 		var bThisExpanded = $( this ).hasClass( 'expanded' );
@@ -896,7 +897,12 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.getValueFromPattern( pattern ) );
+			tagTarget.val( Util.getValueFromPattern( tagTarget, pattern, false ) );
+		}
+		else if ( val.indexOf( 'getAge(' ) >= 0 )
+		{
+			var pattern = Util.getParameterInside( val, '()' );
+			tagTarget.val( Util.getAgeValueFromPattern( tagTarget, pattern ) );
 		}
 	}
 	else
@@ -1162,21 +1168,24 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName )
+FormUtil.getMyListData = function( listName, retFunc )
 {
 	var redList = {}, returnList = {};
 
-	if ( localStorage.getItem( listName ) )
-	{
-		redList = JSON.parse( localStorage.getItem( listName ) );
+	DataManager.getData( listName, function( redList ) {
 
 		if ( redList )
 		{
 			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
-			return returnList;
+			//return returnList;
+			if ( retFunc ) retFunc( returnList );
+		}
+		else
+		{
+			if ( retFunc ) retFunc( undefined );
 		}
 
-	}
+	});
 }
 
 FormUtil.updateProgressWidth = function( W )
@@ -1245,17 +1254,15 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 FormUtil.defaultLanguage = function( exeFunc )
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-
 	DataManager.getSessionData( function( sessData){
-	
+
 		if ( sessData && sessData.language )
 		{
-			exeFunc( sessData.language );
+			if ( exeFunc ) exeFunc( sessData.language );
 		}
 		else
 		{
-			//var navLang = (navigator.language).toString().substring(0,2);
-			exeFunc( (navigator.language).toString().substring(0,2) );
+			if ( exeFunc ) exeFunc( (navigator.language).toString().substring(0,2) );
 		}
 	});
 
@@ -1338,23 +1345,18 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
-
 	if ( FormUtil.dcdConfig )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
 			var iW, iH, sStyle = 'width:' + 18 + 'px;height:' + 18 + 'px;';
-			/*if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
-			{
-				iW = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
-				iH = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
-				sStyle = 'width:' + iW + 'px;height:' + iH + 'px;';
-			}*/
+
 			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
 		}
 		else
 		{
 		// read local SVG xml structure, then replace appropriate content 'holders'
+
 			$.get( statusOpt.icon.path, function(data) {
 
 				var svgObject = ( $(data)[0].documentElement );
@@ -1371,7 +1373,6 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
 						$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
 					}
-
 				}
 
 				$( targetObj ).empty();
@@ -1381,7 +1382,6 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 				{
 					$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
 					$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
-
 				}
 
 			});
@@ -1463,19 +1463,22 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 	
 }
 
-FormUtil.gAnalyticsEventAction = function( exeFunc )
+FormUtil.gAnalyticsEventAction = function( returnFunc )
 {
-	DataManager.getUserConfigData( function( dcd ) {
-		if ( dcd && dcd.orgUnitData )
-		{
-			//CUSTOMIZE AS REQUIRED
-			exeFunc( 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom() );
-		}
-		else
-		{
-			exeFunc( 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom() );
-		}
-	});
+	var dcd = DataManager.getUserConfigData();
+	var ret = '';
+	if ( dcd && dcd.orgUnitData )
+	{
+		//CUSTOMIZE AS REQUIRED
+		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+	}
+	else
+	{
+		ret = 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+	}
+
+	if ( returnFunc ) returnFunc( ret );
+
 }
 
 FormUtil.gAnalyticsEventLabel = function()
@@ -1834,7 +1837,22 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 			}
 			if ( dataTarg.defaultValue )
 			{
-				inputTag.val( dataTarg.defaultValue );
+				if ( dataTarg.defaultValue.length && dataTarg.defaultValue.indexOf( 'generatePattern(' ) > 0 && dataTarg.defaultValue.indexOf( 'form:' ) > 0 )
+				{
+					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
+
+					if ( tagTarget )
+					{
+						var pattern = Util.getParameterInside( dataTarg.defaultValue, '()' );
+
+						inputTag.val( Util.getValueFromPattern( inputTag, pattern ) );
+					}
+
+				}
+				else
+				{
+					inputTag.val( dataTarg.defaultValue );
+				}
 			}
 		}
 
