@@ -121,7 +121,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	var inputTags = formDivSecTag.find( 'input,select' );
 
 	inputTags.each( function()
-	{		
+	{
 		var inputTag = $(this);	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
@@ -158,7 +158,6 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	//console.log( formDivSecTag );
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -1168,24 +1167,21 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, retFunc )
+FormUtil.getMyListData = function( listName )
 {
 	var redList = {}, returnList = {};
 
-	DataManager.getData( listName, function( redList ) {
+	if ( localStorage.getItem( listName ) )
+	{
+		redList = JSON.parse( localStorage.getItem( listName ) );
 
 		if ( redList )
 		{
 			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
-			//return returnList;
-			if ( retFunc ) retFunc( returnList );
-		}
-		else
-		{
-			if ( retFunc ) retFunc( undefined );
+			return returnList;
 		}
 
-	});
+	}
 }
 
 FormUtil.updateProgressWidth = function( W )
@@ -1251,20 +1247,20 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 
 };
 
-FormUtil.defaultLanguage = function( exeFunc )
+FormUtil.defaultLanguage = function()
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	DataManager.getSessionData( function( sessData){
+	var sessData = DataManager.getSessionData();
 
-		if ( sessData && sessData.language )
-		{
-			if ( exeFunc ) exeFunc( sessData.language );
-		}
-		else
-		{
-			if ( exeFunc ) exeFunc( (navigator.language).toString().substring(0,2) );
-		}
-	});
+	if ( sessData && sessData.language )
+	{
+		return sessData.language;
+	}
+	else
+	{
+		//var navLang = (navigator.language).toString().substring(0,2);
+		return (navigator.language).toString().substring(0,2);
+	}
 
 };
 
@@ -1345,18 +1341,23 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
+
 	if ( FormUtil.dcdConfig )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
 			var iW, iH, sStyle = 'width:' + 18 + 'px;height:' + 18 + 'px;';
-
+			/*if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+			{
+				iW = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
+				iH = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
+				sStyle = 'width:' + iW + 'px;height:' + iH + 'px;';
+			}*/
 			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
 		}
 		else
 		{
 		// read local SVG xml structure, then replace appropriate content 'holders'
-
 			$.get( statusOpt.icon.path, function(data) {
 
 				var svgObject = ( $(data)[0].documentElement );
@@ -1373,6 +1374,7 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
 						$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
 					}
+
 				}
 
 				$( targetObj ).empty();
@@ -1382,6 +1384,7 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 				{
 					$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
 					$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+
 				}
 
 			});
@@ -1463,22 +1466,18 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 	
 }
 
-FormUtil.gAnalyticsEventAction = function( returnFunc )
+FormUtil.gAnalyticsEventAction = function()
 {
 	var dcd = DataManager.getUserConfigData();
-	var ret = '';
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
-		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		return  'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 	else
 	{
-		ret = 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		return  'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
-
-	if ( returnFunc ) returnFunc( ret );
-
 }
 
 FormUtil.gAnalyticsEventLabel = function()
@@ -1746,9 +1745,6 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 			inputsJson[ nameVal ] = val;
 		}
 	});
-
-	//console.log( WSexchangeData );
-	//console.log( lastPayload );
 
 	var retData = FormUtil.recursiveWSexchangeGet( WSexchangeData, arrPayStructure, 0, recordIDlist[ 0 ], inputsJson[ recordIDlist[ 0 ] ] );
 	lastPayload[ 'displayData' ] = retData;

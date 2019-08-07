@@ -801,11 +801,7 @@ function aboutApp( cwsRender )
     }
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
-    {
-
-        console.log( syncEveryList );
-        console.log( syncTimer );
-
+    {   
         Util.populateSelect( me.aboutInfo_NetworkSync, "", syncEveryList );
         Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );
         me.aboutInfo_NetworkSync.val( syncTimer ); 

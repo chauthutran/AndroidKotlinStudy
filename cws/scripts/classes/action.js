@@ -22,6 +22,11 @@ function Action( cwsRenderObj, blockObj )
 		var blockDivTag = btnTag.closest( '.block' );
 		var formDivSecTag = blockDivTag.find( '.formDivSec' );
 
+		if ( formDivSecTag.attr( 'data-fields') != undefined )
+		{
+			me.handleSequenceIncrCommits( formDivSecTag );
+		}
+
 		// NOTE: TRAN VALIDATION
 		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
 		{
@@ -37,6 +42,43 @@ function Action( cwsRenderObj, blockObj )
 			else
 			{
 				//console.log( 'Btn already clicked/in process' );
+			}
+		}
+	}
+
+	me.handleSequenceIncrCommits = function( formDivSecTag )
+	{
+		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+
+		for( var i = 0; i < jData.length; i++ )
+		{
+			if ( jData[ i ].defaultValue )
+			{
+				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 )
+				{
+					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
+
+					if ( tagTarget.css( 'text-transform' ) != undefined )
+					{
+						if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
+						{
+							calcVal = calcVal.toUpperCase()
+						}
+						else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
+						{
+							calcVal = calcVal.toLowerCase()
+						}
+					}
+					else
+					{
+						console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
+					}
+
+					tagTarget.val( calcVal );
+
+				}
 			}
 		}
 	}
@@ -190,8 +232,7 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "openArea" )
 			{				
 				if ( clickActionJson.areaId )
-				{
-					if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
+				{					
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
@@ -336,15 +377,15 @@ function Action( cwsRenderObj, blockObj )
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
 						// Offline Submission Handling..
+						//if ( clickActionJson.redeemListInsert === "true" )
+						{
+							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued );
+						}
 
-						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
+						//dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
+						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
 
-							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
-
-							if ( afterActionFunc ) afterActionFunc();
-
-						} );
-
+						if ( afterActionFunc ) afterActionFunc();
 					}
 					else if ( clickActionJson.url !== undefined )
 					{					

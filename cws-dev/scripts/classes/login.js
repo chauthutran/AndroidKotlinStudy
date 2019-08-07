@@ -76,41 +76,17 @@ function Login( cwsRenderObj )
 			me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
 		});
 
-		// New UI Button click
-		/*$( '.loginBtnAdv' ).click( function() {
-			var parentTag = $( this ).parent();
-			var loginServer = parentTag.find( 'input.loginServerAdv' ).val();
-			var loginUserNameVal = parentTag.find( 'input.loginUserNameAdv' ).val();
-			var loginUserPinVal = parentTag.find( 'input.loginUserPinAdv' ).val();
+		// dev/test code for Pilar (Greg: 2019/08/06)
+		$( '#loginFormDiv' ).find( '.icon-row' ).click( function() {
+			playSound("notify");
+			console.log( 'attempted to play sound: notify (for Pilar)' );
+		});
 
-			me.processLogin( loginUserNameVal, loginUserPinVal, loginServer, $( this ) );
-		});*/
 	}
-
-	/*me.setloginBtnClearClick = function()
-	{
-		$( '.loginBtnClear' ).click( function() {
-	
-			$( 'input.loginUserName' ).val('');
-			$( 'input.loginUserPin' ).val('');
-			$( 'input.loginUserNameAdv' ).val('');
-			$( 'input.loginUserPinAdv' ).val('');
-
-			me.openForm();
- 
-		} );	
-	}*/
 	
 	me.setUpEnterKeyLogin = function()
 	{
-		/*
-		me.setUpEnterKeyExecute( me.loginPasswordTag, me.loginBtnTag );
-		
-		me.getInputBtnPairTags( 'div.loginFormDiv', 'input.loginUserPin', '.loginBtn', function( loginUserPinTag, loginBtnTag )
-		{
-			me.setUpEnterKeyExecute( loginUserPinTag, loginBtnTag );			
-		});
-		*/
+
 	}
 	// =============================================
 

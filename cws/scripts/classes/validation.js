@@ -84,11 +84,11 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		// , and if not valid, set the tag as '"valid"=false' in the attribute
 		var valid = true;
 		var validationAttr = tag.attr( type );
-		
+
 		// If the validation attribute is present in the tag and not empty string or set to false
 		if ( validationAttr && validationAttr !== 'false' )
 		{									
-			
+
 			if ( type == 'mandatory' ) valid = me.checkRequiredValue( tag, divTag, type );
 			else if ( type == 'minlength' ) valid = me.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
 			else if ( type == 'maxlength' ) valid = me.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
@@ -99,7 +99,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			else if ( type == 'patterns' ) valid = me.checkValue_RegxRules( tag, divTag, type );
 
 			if ( !valid ) tag.attr( 'valid', false );
-		}		
+		}
 	};
 	
 	

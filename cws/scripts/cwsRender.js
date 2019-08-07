@@ -123,11 +123,10 @@ function cwsRender()
 
 	me.updateFromSession = function()
 	{
-		DataManager.getSessionDataValue( 'networkSync', null,  function(data){
-			if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
-			// DataManager.saveData(  'networkSync',  data );
-		});
-
+		if ( DataManager.getSessionDataValue( 'networkSync') )
+		{
+			me.storage_offline_SyncExecutionTimerInterval = DataManager.getSessionDataValue( 'networkSync' ); 
+		}
 	}
 
 	me.setPageHeaderEvents = function()
@@ -159,48 +158,48 @@ function cwsRender()
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-
+	
 	me.renderArea = function( areaId )
 	{
-		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+		me.hideAreaRelatedParts();
 
-			me.hideAreaRelatedParts();
+		// added by Greg (2019-02-18) > test track googleAnalytics
+		ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-			// added by Greg (2019-02-18) > test track googleAnalytics
-			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-			//console.log( areaId );
-			// should close current tag/content?
-			if (areaId === 'logOut') me.logOutProcess();
-			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
-			else if ( areaId === 'aboutPage') me.aboutApp.render();
-			else
-			{  
-				me.clearMenuClickStyles();
-				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-				//console.log( me.areaList );
-				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-				//console.log( selectedArea );
-				// TODO: ACTIVITY ADDING
-				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+		// should close current tag/content?
+		if (areaId === 'logOut') me.logOutProcess();
+		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+		else if ( areaId === 'aboutPage') me.aboutApp.render();
+		else
+		{  
+			me.clearMenuClickStyles();
 
-				// if menu is clicked,
-				// reload the block refresh?
-				if ( selectedArea && selectedArea.startBlockName )
-				{
-					// added by Greg (2018/12/10)
-					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
+			me.areaList = ConfigUtil.getAllAreaList( me.configJson );
+		
+			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
+	
 
-					var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
-					startBlockObj.render();  // should been done/rendered automatically?
+			// TODO: ACTIVITY ADDING
+			ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
-					// Change start area mark based on last user info..
-					me.trackUserLocation( selectedArea );				
-				}
 
-				me.updateMenuClickStyles( areaId );
+			// if menu is clicked,
+			// reload the block refresh?
+			if ( selectedArea && selectedArea.startBlockName )
+			{
+				// added by Greg (2018/12/10)
+				if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
+				var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+				startBlockObj.render();  // should been done/rendered automatically?
+
+				// Change start area mark based on last user info..
+				me.trackUserLocation( selectedArea );				
 			}
-		});
+
+			me.updateMenuClickStyles( areaId );
+
+		}
 
 	}
 
@@ -261,16 +260,12 @@ function cwsRender()
 
 			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
 
-			me.populateMenuList( finalAreaList, function( startMenuTag ){
+			var startMenuTag = me.populateMenuList( finalAreaList );
 
-				if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+			if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
 
-				// initialise favIcons
-				me.favIconsObj = new favIcons( me );
-
-			} );
-
-			
+			// initialise favIcons
+			me.favIconsObj = new favIcons( me );
 
 		}
 	} 
@@ -278,9 +273,7 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
 	me.startBlockExecuteAgain = function()
 	{
-		DataManager.getUserConfigData( function( userData ){
-			me.startBlockExecute( userData.dcdConfig );
-		});
+		me.startBlockExecute ( JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) ).dcdConfig );
 	}
 
 	// ----------------------------------
@@ -308,53 +301,36 @@ function cwsRender()
 
 	me.updateNavDrawerHeaderContent = function()
 	{
-		if( !FormUtil.checkLogin() )
+
+		if ( !localStorage.getItem('session') || ( ! FormUtil.checkLogin() ) )
 		{
 			return;
 		}
 
-		DataManager.getSessionData( function( mySessionData ) {
+		var mySessionData = DataManager.getSessionData();
+		var myData = FormUtil.getMyListData( me.storageName_RedeemList );
+ 
+		if ( mySessionData && JSON.parse( localStorage.getItem( mySessionData.user ) ) && JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData && FormUtil.checkLogin() )
+		{
+			$( '#divNavDrawerOUlongName' ).html( JSON.parse( localStorage.getItem( mySessionData.user ) ).orgUnitData.orgUnit.name );
+		}
+		else
+		{
+			$( '#divNavDrawerOUlongName' ).html( '' );
+		}
 
-			if( mySessionData == undefined )
-			{
-				return;
-			}
+		if ( myData && FormUtil.checkLogin() )
+		{
+			var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
+			var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
+			//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
+			var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
 
-			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
+			if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
-				DataManager.getUserConfigData( function( userData ){
+			$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
 
-					if( userData != undefined && userData.orgUnitData != undefined )
-					{
-						$( '#divNavDrawerOUlongName' ).html( userData.orgUnitData.orgUnit.name );
-					}
-					else
-					{
-						$( '#divNavDrawerOUlongName' ).html( '' );
-					}
-
-				});
-	
-				
-				if ( myData && FormUtil.checkLogin() )
-				{
-					var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
-					var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
-					//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
-					var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
-	
-					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
-	
-					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
-	
-				}
-
-			} );
-			
-		});
-
-
-		
+		}
 
 	}
 
@@ -407,76 +383,73 @@ function cwsRender()
 		return statTbl;
 	}
 
-	me.populateMenuList = function( areaList, exeFunc )
+	me.populateMenuList = function( areaList )
 	{
-		
-		DataManager.getSessionData( function(userSessionJson) {
-			//var userSessionJson = DataManager.getSessionData();
-			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
-			var startMenuTag;
-			if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
-			$( '#navDrawerDiv' ).empty();
+		var startMenuTag;
+		if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
+		$( '#navDrawerDiv' ).empty();
 
-			// clear the list first
-			me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
+		// clear the list first
+		me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
-			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-			var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
-			var navMenuTbl = $( '<table id="navDrawerHeader" />' );
-			var tr = $( '<tr />' );
-			var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
-			var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
+		// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
+		var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
+		var navMenuTbl = $( '<table id="navDrawerHeader" />' );
+		var tr = $( '<tr />' );
+		var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
+		var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
 
-			me.navDrawerDivTag.append ( navMenuHead );
-			navMenuHead.append ( navMenuTbl );
-			navMenuTbl.append ( tr );
-			tr.append ( tdLeft );
-			tr.append ( tdRight );
+		me.navDrawerDivTag.append ( navMenuHead );
+		navMenuHead.append ( navMenuTbl );
+		navMenuTbl.append ( tr );
+		tr.append ( tdLeft );
+		tr.append ( tdRight );
 
-			var navMenuLogo = $( '<img src="images/logo.svg" />' );
+		var navMenuLogo = $( '<img src="images/logo.svg" />' );
 
-			tdLeft.append ( navMenuLogo );
-			tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
-			tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
+		var userSessionJson = DataManager.getSessionData();
+		var userName = ( userSessionJson && userSessionJson.user && FormUtil.checkLogin() ) ? userSessionJson.user : "";
 
-			var tr = $( '<tr />' );
-			var td = $( '<td colspan=2 style="height:20px;" />' );
+		tdLeft.append ( navMenuLogo );
+		tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
+		tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
 
-			navMenuTbl.append ( tr );
-			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
+		var tr = $( '<tr />' );
+		var td = $( '<td colspan=2 style="height:20px;" />' );
 
-			// Add the menu rows
-			if ( areaList )
+		navMenuTbl.append ( tr );
+		tr.append ( td );
+		td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
+
+		// Add the menu rows
+		if ( areaList )
+		{
+			for ( var i = 0; i < areaList.length; i++ )
 			{
-				for ( var i = 0; i < areaList.length; i++ )
-				{
-					var area = areaList[i];
+				var area = areaList[i];
 
-					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+				var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
-					me.setupMenuTagClick( menuTag );
+				me.setupMenuTagClick( menuTag );
 
-					me.navDrawerDivTag.append( menuTag );
+				me.navDrawerDivTag.append( menuTag );
 
-					if ( area.startArea ) startMenuTag = menuTag;
-				}	
-			}
+				if ( area.startArea ) startMenuTag = menuTag;
+			}	
+		}
 
-			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
-			{
-				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
-			}
-			else
-			{
-				$( '#menu_userNetworkMode' ).remove();
-			}
+		if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
+		{
+			me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+		}
+		else
+		{
+			$( '#menu_userNetworkMode' ).remove();
+		}
 
-			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
+		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
-			if ( exeFunc ) exeFunc( startMenuTag );
-		});
-	
+		return startMenuTag;
 	}
 
 	me.setRegistrationObject = function( registrationObj )
@@ -595,24 +568,21 @@ function cwsRender()
 	
 	me.retrieveAndSetUpTranslate = function()
 	{
-		
-		FormUtil.defaultLanguage(function( defaultLangCode ){
-			//"pt";
+		var defaultLangCode = FormUtil.defaultLanguage(); //"pt";
 
-			me.langTermObj.setCurrentLang( defaultLangCode )
+		me.langTermObj.setCurrentLang( defaultLangCode )
 
-			me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		{
+			if ( allLangTerms )
 			{
-				if ( allLangTerms )
-				{
-					// Enable the language switch dropdown
-					me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+				// Enable the language switch dropdown
+				me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
 
-					// Translate current page
-					me.langTermObj.translatePage();
-				}
-			});
-		}); 
+				// Translate current page
+				me.langTermObj.translatePage();
+			}
+		});
 
 	}
 
@@ -623,12 +593,15 @@ function cwsRender()
 	me.handleLastSession = function( nextFunc )
 	{
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		DataManager.getSessionData( function(lastSession) {
+		if ( localStorage.length )
+		{
+			var lastSession = JSON.parse( localStorage.getItem('session') );
+	
 			if ( lastSession )
 			{
 				$( 'input.loginUserName' ).val( lastSession.user );	
 			}
-		});
+		}
 
 		if ( nextFunc )
 		{
@@ -720,36 +693,34 @@ function cwsRender()
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )
 	{
-		DataManager.getSessionData( function(lastSession){
-			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
-			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
-			var matchOn = [ "id", "startBlockName", "name" ];
-			var matchedOn, areaMatched;
+		var lastSession = JSON.parse( localStorage.getItem('session') );
+		var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
+		var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
+		var matchOn = [ "id", "startBlockName", "name" ];
+		var matchedOn, areaMatched;
 
-			if (lastSession)
+		if (lastSession)
+		{
+			var loginData = JSON.parse( localStorage.getItem( lastSession.user ) );
+
+			if (loginData)
 			{
+				for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
+				{
+					loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
 
-				DataManager.getUserConfigData( function( loginData ){
-					if (loginData)
+					if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
 					{
-						for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
-						{
-							loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
-
-							if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
-							{
-								loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
-							}
-
-						}
-			
-						//UPDATE lastStorage session for current user (based on last menu selection)
-						DataManager.saveData( lastSession.user, loginData );
+						loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
 					}
-				});
-				
+
+				}
+	
+				//UPDATE lastStorage session for current user (based on last menu selection)
+				localStorage[ lastSession.user ] = JSON.stringify( loginData )
+	
 			}
-		});
+		}
 	}
 
 	me.hidenavDrawerDiv = function()
