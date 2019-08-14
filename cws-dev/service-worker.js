@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "a197fc35b974affb3be21df892d2661c"
+    "revision": "d541591d7c59ffb7b793952d9d63fabe"
   },
   {
     "url": "redeemGen.html",
@@ -332,7 +332,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "9964e6896b74d8540bd08aec768cad84"
+    "revision": "b3ce936e23facdfa7359c77ec594be20"
   },
   {
     "url": "scripts/classes/action.js",
@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "7f246328270c257419c10c537f94ccec"
+    "revision": "ed7dd79571bfdf3f1f7c58e219bce31f"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -472,7 +472,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "c9a0592e89d523e0671ef0b03de10245"
+    "revision": "730b1f399e393c8e69308aa3e776d19b"
   },
   {
     "url": "scripts/utils/syncManager.js",
@@ -532,7 +532,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "c5e9f6e29656f44a9523ec1ebb575259"
+    "revision": "02a4f33754ddb15e76a1e030b906768d"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

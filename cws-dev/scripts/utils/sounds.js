@@ -11,7 +11,7 @@ var sounds = {
 };
 
 // soundContext only available when application launched as 'installed PWA'
-if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+//if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
 {
   var soundContext = new AudioContext();
 

@@ -73,9 +73,10 @@ function Login( cwsRenderObj )
 		// dev/test code for Pilar (Greg: 2019/08/06)
 		$( '#loginFormDiv' ).find( '.icon-row' ).click( function() {
 			playSound("notify");
-			//console.log( 'attempted to play sound: notify (for Pilar)' );
 		});
-
+		$( '#loginFormDiv' ).find( 'ul.tabs' ).click( function() {
+			playSound("notify");
+		});
 	}
 	
 	me.setUpEnterKeyLogin = function()

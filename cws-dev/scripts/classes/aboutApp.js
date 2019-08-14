@@ -17,6 +17,7 @@ function aboutApp( cwsRender )
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
     me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
+    me.aboutInfo_SoundSwitchInput = $( '#soundSwitchInput' );
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
@@ -116,6 +117,21 @@ function aboutApp( cwsRender )
 
         });
 
+
+
+        me.aboutInfo_SoundSwitchInput.change(() => {
+          var soundSetting = me.aboutInfo_SoundSwitchInput.is( ":checked" ); // load from input checkbox
+          var sessData = JSON.parse(localStorage.getItem( "session" ));
+
+          sessData.soundEffects = soundSetting; //add
+          DataManager.saveData("session", sessData);
+
+          if(soundSetting)playSound("notify");
+          console.log(DataManager, sessData, soundSetting);
+        });
+
+
+
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
             FormUtil.showProgressBar();
@@ -143,6 +159,7 @@ function aboutApp( cwsRender )
             syncManager.reinitialize ( me.cwsRenderObj );
 
         });
+
 
         $( 'img.btnAboutBack' ).click( () =>
         {
@@ -482,6 +499,17 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_geoLocation_Less' ).show();
                 $( '#aboutInfo_geoLocation_Less' ).removeClass( 'byPassAboutMore' );
 
+                if ( Util.isMobi() )
+                {
+                    $( '#aboutInfo_soundEffects_Less' ).show();
+                    $( '#aboutInfo_soundEffects_Less' ).removeClass( 'byPassAboutMore' );
+                }
+                else
+                {
+                    $( '#aboutInfo_soundEffects_Less' ).hide();
+                    $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
+                }
+
             }
         }
         else
@@ -495,6 +523,9 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_geoLocation_Less' ).hide();
             $( '#aboutInfo_geoLocation_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_soundEffects_Less' ).hide();
+            $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
 
             if ( me.langTermObj.getLangList() )
             {
@@ -663,16 +694,8 @@ function aboutApp( cwsRender )
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
             });
-
-            me.setToggleSoundEffects();
-
         }
 
-    }
-
-    me.setToggleSoundEffects = function()
-    {
-        $( '#soundEffects_Less_Slider' ).val(  JSON.parse( localStorage.getItem('session') ).soundEffects  )
     }
 
     me.getThemeList = function( jsonThemes )
@@ -776,8 +799,6 @@ function aboutApp( cwsRender )
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
     {
 
-        //console.log( syncEveryList );
-        //console.log( syncTimer );
 
         Util.populateSelect( me.aboutInfo_NetworkSync, "", syncEveryList );
         Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );
