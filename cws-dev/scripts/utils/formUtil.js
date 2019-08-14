@@ -67,13 +67,11 @@ FormUtil.getServerUrl = function()
 
 FormUtil.isAppsPsiServer = function()
 {
-	//return true;
 	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
 }
 
 FormUtil.isPsiServer = function()
 {
-	//return true;
 	return ( location.host.indexOf( 'psi-mis.org' ) >= 0 );
 }
 
@@ -158,7 +156,6 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
-	//console.log( formDivSecTag );
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( 'input,select' );
 	var inputTargets = [];
@@ -224,15 +221,18 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	inputsJson[ 'userName' ] = FormUtil.login_UserName;
 	inputsJson[ 'password' ] = FormUtil.login_Password;
 
-	console.log ( inputsJson );
-	console.log ( JSON.stringify( inputsJson, null, 4) );
+	if ( (location.href).indexOf('localhost') >= 0 )
+	{
+		console.log ( inputsJson );
+		console.log ( JSON.stringify( inputsJson, null, 4) );	
+	}
 
 	return inputsJson;
 }
 
 FormUtil.recursiveJSONbuild = function( targetDef, dataTargetHierarchy, itm)
 {
-	// construct the payload 'layout'
+	// construct empty 'shell' of payload design structure
 	if ( dataTargetHierarchy[ itm ] )
 	{
 		if ( ( dataTargetHierarchy[ itm ] ).length && ! targetDef.hasOwnProperty( dataTargetHierarchy[ itm ] ) ) 
@@ -463,7 +463,6 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
 
-	// FormUtil.orgUnitData <-- Reset before?
 	if ( (location.href).indexOf('localhost') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
 	{
 		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
@@ -555,7 +554,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 				$( '#focusRelegator').hide();
 			}
-			else //if ( className_Open.indexOf( 'imggroupBy' ) < 0 )
+			else 
 			{
 				subListIconsTag.fadeOut( 'fast', 'linear' );
 
@@ -628,12 +627,10 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 	var tabWrapper = tag.find(".tab_content");
 	var activeTab = tabWrapper.find(".active");
 	var activeTabHeight = activeTab.outerHeight();
-	//var tab_select;
 	var tabContentLiTags = tabWrapper.children( 'li' );
 
 	activeTab.show();
 	tabWrapper.height(activeTabHeight);
-
 	
 	// Tab view (Larger view) 'ul'/'li' click event handler setup
 	tag.find(".tabs > li").on("click", function() 
@@ -649,8 +646,6 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		activeTab.addClass("active");
 		activeTab.children('.expandable').click();
 		activeTabHeight = activeTab.outerHeight();
-		
-
 		activeTab.show();
 	});
 
@@ -668,11 +663,6 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		var liTag_Selected = $( this ).parent();
 		var tabId = liTag_Selected.attr( 'tabId' );
 		var matchingTabsTag = tag.find( ".tabs > li[tabId='" + tabId + "']");
-
-		/* START > Greg added: 2018/11/23 */
-		//FormUtil.setUserLastSelectedTab(tabId) //disabled 2019/07/04 (no longer need to set user to last page visited after refresh > logins always required)
-		/* END > Added by Greg: 2018/11/24 */
-
 		var bThisExpanded = $( this ).hasClass( 'expanded' );
 
 		tag.find('.active').removeClass('active');
@@ -683,7 +673,6 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 
 		if ( bThisExpanded )
 		{
-			//$( this ).removeClass('expanded');
 			$( this ).find( ".expandable-arrow" ).attr('src','./images/arrow_down.svg');
 		}
 		else
@@ -693,85 +682,6 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		}
 
 	});
-}
-
-FormUtil.setUserLastSelectedTab = function(tabId) {
-
-	var lastSession = JSON.parse(localStorage.getItem('session'));
-
-	if (lastSession)
-	{
-		var loginData = JSON.parse(localStorage.getItem(lastSession.user));
-
-		if (loginData)
-		{
-
-			if ( ConnManager.getAppConnMode_Online() )
-			{
-				// for ONLINE > update dcd config for last menu action (default to this page on refresh)
-				for ( var i = 0; i < loginData.dcdConfig.areas.online.length; i++ )
-				{
-					if ( loginData.dcdConfig.areas.online[i].startArea )
-					{
-						loginData.dcdConfig.areas.online[i].defaultTab = tabId;
-					}
-				}
-			}
-			else
-			{
-				// for OFFLINE > update dcd config for last menu action (default to this page on refresh)
-				for ( var i = 0; i < loginData.dcdConfig.areas.offline.length; i++ )
-				{
-					if ( loginData.dcdConfig.areas.offline[i].startArea )
-					{
-						loginData.dcdConfig.areas.offline[i].defaultTab = tabId;
-					}
-				}
-			}
-			localStorage[ lastSession.user ] = JSON.stringify( loginData )
-		}
-	}
-
-}
-
-FormUtil.getUserLastSelectedTab = function() {
-
-	var lastSession = JSON.parse(localStorage.getItem('session'));
-	var tabId;
-
-	if (lastSession)
-	{
-		var loginData = JSON.parse(localStorage.getItem(lastSession.user));
-
-		if (loginData)
-		{
-
-			if ( ConnManager.getAppConnMode_Online() )
-			{
-				// for ONLINE > update dcd config for last menu action (default to this page on refresh)
-				for ( var i = 0; i < loginData.dcdConfig.areas.online.length; i++ )
-				{
-					if ( loginData.dcdConfig.areas.online[i].startArea )
-					{
-						tabId = loginData.dcdConfig.areas.online[i].defaultTab;
-					}
-				}
-			}
-			else
-			{
-				// for OFFLINE > update dcd config for last menu action (default to this page on refresh)
-				for ( var i = 0; i < loginData.dcdConfig.areas.offline.length; i++ )
-				{
-					if ( loginData.dcdConfig.areas.offline[i].startArea )
-					{
-						tabId = loginData.dcdConfig.areas.offline[i].defaultTab;
-					}
-				}
-			}
-			return tabId;
-		}
-	}
-
 }
 
 FormUtil.getUserSessionAttr = function( usr, attr ) {
@@ -797,9 +707,6 @@ FormUtil.getRedeemPayload = function( id ) {
 
 FormUtil.getConfigInfo = function( returnFunc )
 {
-	//var url = FormUtil.getServerUrl() + '/pwaConfig.json'; //file resource to be deleted (23 May 2019: Greg + Bruno)
-	//RESTUtil.retrieveJson( url, returnFunc );
-
 	var jsonData = {
 		"cws": 		 "https://cws.psi-mis.org/ws/eRefWSProd",
 		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
@@ -822,7 +729,6 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	var url = FormUtil.getWsUrl( '/api/available' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
-	//returnFunc( true, { "msg": "Server available", "available": false} );
 }
 
 // ======================================
@@ -876,7 +782,7 @@ FormUtil.evalReservedField = function( tagTarget, val )
 {
 	if ( val.indexOf( '$${' ) >= 0 )
 	{
-		// do something ?
+		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
 	}
 	else if ( val.indexOf( '##{' ) >= 0)
 	{
@@ -931,21 +837,18 @@ FormUtil.getTagVal = function( tag )
 	return val;
 }
 
-/* START > Added by Greg: 2018/12/10 */
 FormUtil.getManifest = function()	
 {
 	$.get( 'manifest.json', function( jsonData, status )
+	{
+		if ( status == 'success' )
 		{
-			if ( status == 'success' )
-			{
-				return jsonData
-			}
-
+			return jsonData
 		}
+	}
 	);
 
 }
-/* END > Added by Greg: 2018/12/10 */
 
 FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 {
@@ -981,8 +884,6 @@ FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 	sessionStorage.setItem( 'WSexchange', JSON.stringify( traceObj ) );
 
 }
-
-/* START > Added by Greg: 2018/12/103 */
 
 FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
@@ -1032,7 +933,6 @@ FormUtil.getLastPayload = function( namedPayload )
 
 	}
 }
-/* END > Added by Greg: 2018/12/13 */
 
 FormUtil.performReget = function( regObj, option )
 {		
@@ -1065,8 +965,7 @@ FormUtil.performReget = function( regObj, option )
 				FormMsgManager.appBlock( "Updating App..." );
 
 				regObj.unregister().then(function(boolean) {
-					//console.log('Service Worker UnRegistered');
-					// if boolean = true, unregister is successful
+
 					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
 					{
 						location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
@@ -1106,7 +1005,6 @@ FormUtil.deleteCacheKeys = function( thenFunc )
 		{
 			for (let name of names)
 			{
-				//console.log( 'eval cache obj [' + name + ']');
 				if ( name.toString().indexOf( 'google' ) >= 0 || name.toString().indexOf( 'workbox' ) >= 0 )
 				{
 					//console.log( 'skipping cache obj ' + name );
@@ -1118,12 +1016,7 @@ FormUtil.deleteCacheKeys = function( thenFunc )
 				}
 			}
 
-			if ( thenFunc )
-			{
-				//setTimeout( function() {
-					thenFunc();
-				//}, 1000 );
-			}
+			if ( thenFunc ) thenFunc();
 
 		});
 	}
@@ -1168,7 +1061,7 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, retFunc )
+FormUtil.getMyListData = function( listName, decrypt, retFunc )
 {
 	var redList = {}, returnList = {};
 
@@ -1177,7 +1070,7 @@ FormUtil.getMyListData = function( listName, retFunc )
 		if ( redList )
 		{
 			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
-			//return returnList;
+
 			if ( retFunc ) retFunc( returnList );
 		}
 		else
@@ -1556,7 +1449,7 @@ FormUtil.testNewSWavailable = function()
 }
 
 FormUtil.getGeoLocation = function()
-{ // --> move to geolocation.js class
+{ // --> move to new geolocation.js class
 	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationLatLon;
 	else return '';
 }
@@ -1574,7 +1467,7 @@ FormUtil.getPositionObjectJSON = function( pos )
 }
 
 FormUtil.refreshGeoLocation = function( returnFunc )
-{ // --> move to geolocation.js class
+{ // --> move to new geolocation.js class
 	var error_PERMISSION_DENIED = 1;
 
 	if ( navigator.geolocation )
@@ -1740,17 +1633,16 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 		if ( getVal )
 		{
 			var val = FormUtil.getTagVal( inputTag );
+
 			if ( val === null || val === undefined ) val = '';
 
-			//inputsJson[ FormUtil.getTagValPair( getUIDPairList, nameVal ) ] = val;
 			inputsJson[ nameVal ] = val;
 		}
+
 	});
 
-	//console.log( WSexchangeData );
-	//console.log( lastPayload );
-
 	var retData = FormUtil.recursiveWSexchangeGet( WSexchangeData, arrPayStructure, 0, recordIDlist[ 0 ], inputsJson[ recordIDlist[ 0 ] ] );
+
 	lastPayload[ 'displayData' ] = retData;
 
 	if ( retData && lastPayload[ 'resultData' ] )
@@ -1862,7 +1754,7 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 
 FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldId, formDefArr )
 {
-	// fetches payloadConfiguration dataTarget for formDefinition's field/control
+	// fetch payloadConfiguration dataTarget for formDefinition's field/control
 
 	for ( var i=0; i< formDefArr.length; i++ )
 	{

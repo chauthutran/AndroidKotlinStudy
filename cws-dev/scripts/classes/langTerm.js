@@ -30,13 +30,8 @@ function LangTerm( cwsRenderObj )
 
 	me.setInitialData = function() {}
 
-	/*me.setInitialData = function() 
-	{
-		me.currentLangcode = FormUtil.defaultLanguage();
-	}*/
-
 	me.createSubClasses = function() {}
-	//me.setEvents_OnInit = function() { }
+
 
 	// =============================================
 

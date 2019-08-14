@@ -54,12 +54,6 @@ function Login( cwsRenderObj )
 	me.setLoginFormEvents = function()
 	{
 		me.setLoginBtnClick();
-
-		//me.setSkipLoginBtnClick();
-
-		//me.setloginBtnClearClick();
-
-		//me.setUpEnterKeyLogin(); // Not working, thus, disabled for now
 	}
 
 	// ---------------------------
@@ -79,7 +73,7 @@ function Login( cwsRenderObj )
 		// dev/test code for Pilar (Greg: 2019/08/06)
 		$( '#loginFormDiv' ).find( '.icon-row' ).click( function() {
 			playSound("notify");
-			console.log( 'attempted to play sound: notify (for Pilar)' );
+			//console.log( 'attempted to play sound: notify (for Pilar)' );
 		});
 
 	}
@@ -194,7 +188,7 @@ function Login( cwsRenderObj )
 				else
 				{
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
-					
+
 					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
 				}
@@ -202,8 +196,8 @@ function Login( cwsRenderObj )
 		}
 
 		FormUtil.defaultLanguage( function( defaultLang ){
-			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang }; //, networkOnline: ConnManager.getAppConnMode_Offline()
-			DataManager.saveData( 'session', lastSession );	
+			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( FormUtil.PWAlaunchFrom() == "homeScreen" ) };
+			DataManager.saveData( 'session', lastSession );
 		});
 	}
 
@@ -273,18 +267,15 @@ function Login( cwsRenderObj )
 			MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 
 			me.loginAfter();
-
 		}
 
 	}
 
 	me.loginAfter = function()
 	{
-		
 		FormUtil.geolocationAllowed();
 
 		me.cwsRenderObj.renderDefaultTheme();
-		//ConnManager.setUp_dataServerModeDetection();
 
 		FormUtil.hideProgressBar();
 	}
@@ -294,12 +285,13 @@ function Login( cwsRenderObj )
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )
 	{
 		$( formDivStr ).each( function( i ) {
-			var formDivTag = $( this );
 
+			var formDivTag = $( this );
 			var loginUserPinTag = formDivTag.find( pwdInputStr );
 			var loginBtnTag = formDivTag.find( btnStr );
 
 			returnFunc( loginUserPinTag, loginBtnTag );
+
 		});	
 	}
 

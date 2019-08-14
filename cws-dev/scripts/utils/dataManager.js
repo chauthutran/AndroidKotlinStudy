@@ -12,6 +12,7 @@ DataManager.dbStorageType_localStorage = "localStorage";
 DataManager.dbStorageType_indexdb = "indexdb";
 DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. Will be set from databaseSelector.js
 
+DataManager.securedContainers = [ 'redeemList' ];
 
 
 // -------------------------------------
@@ -36,12 +37,10 @@ DataManager.getData = function( secName, callBack ) {
 DataManager.getOrCreateData = function( secName, callBack ) {
 	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
-		//console.log( ' LocalStorageDataManager.getOrCreateData' );
 		LocalStorageDataManager.getOrCreateData( secName, callBack );
 	}
 	else
 	{
-		//console.log( ' IndexdbDataManager.getOrCreateData' );
 		IndexdbDataManager.getOrCreateData( secName, callBack );
 	}
 };
@@ -53,17 +52,6 @@ DataManager.deleteData = function( secName ) {
 
 // -------------------------------------
 // ---- List Item Data Save/Get/Delete ---
-
-/*
-DataManager.getListData = function( secName ) {
-
-	var jsonMainData = DataManager.getData( secName );
-
-	if ( !jsonMainData.list ) jsonMainData.list = [];
-
-	return jsonMainData;
-}
-*/
 
 DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
 
@@ -89,7 +77,7 @@ DataManager.removeItemFromData = function( secName, id ) {
 	}
 };
 
-DataManager.getItemFromData = function( secName, id ) 
+DataManager.getItemFromData = function( secName, id, callBack ) 
 {
 	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
@@ -97,7 +85,7 @@ DataManager.getItemFromData = function( secName, id )
 	}
 	else
 	{
-		return IndexdbDataManager.getItemFromData( secName, id );
+		return IndexdbDataManager.getItemFromData( secName, id, callBack );
 	}
 };
 
@@ -176,4 +164,19 @@ DataManager.clearSessionStorage = function()
 	{
 		IndexdbDataManager.clearSessionStorage();
 	}
+}
+
+DataManager.protectedContainer = function( secName )
+{
+	var ret = false;
+	for ( var i = 0; i < DataManager.securedContainers.length; i++ )
+	{
+		if ( secName == DataManager.securedContainers[ i ] )
+		{
+			ret = true;
+			break;
+		} 
+	}
+	return ret;
+
 }

@@ -4,7 +4,6 @@
 function Menu() {}
 
 Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
-
 Menu.menuJson_LogOut = { id: "logOut", name: "Log out", term: "menu_logout", icon: "logout" };
 Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "", icon: "statistics" };
 Menu.menuJson_About = { id: "aboutPage", name: "About", term: "", icon: "about" };

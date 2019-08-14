@@ -4,21 +4,10 @@ function DBStorageSelector()
 
     me.init = function()
     {
-        //me.handleChange( 'indexdb' );
-        //document.getElementById("dbStorageSelector").onchange = me.handleChange;
         setTimeout( function(){
             me.setDefaultDataHandler();
           }, 2500 ); 
     }
-
-    /*me.handleChange = function(event) {
-        var selectedValue = this.value;
-
-        LocalStorageDataManager.saveData( "dbStorageType", selectedValue );
-        IndexdbDataManager.saveData( "dbStorageType", selectedValue );
-
-        DataManager.dbStorageType = selectedValue;
-    };*/
 
     me.setDefaultDataHandler = function() {
         var selectedValue = 'indexdb';

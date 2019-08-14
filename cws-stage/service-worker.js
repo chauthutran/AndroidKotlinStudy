@@ -344,7 +344,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "328df0fcfe4e6b033037473606c4abe4"
+    "revision": "a4dcf20e339bbc2ffeb6fbc246c8bef6"
   },
   {
     "url": "scripts/classes/block.js",

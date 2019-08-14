@@ -19,7 +19,7 @@ MsgManager._autoHide = true;
 MsgManager._autoHideDelay = 5000; //changed to 5 sec by James (2018/12/17)
 MsgManager.timer = 0;
 MsgManager.clicktimer = 0;
-MsgManager.reservedIDs = []; //COMING SOON: collection of predefined COMMON identifiable notification messages (if match exists in this array, do not create)
+MsgManager.reservedIDs = []; //collection of predefined COMMON identifiable notification messages (if match exists in this array, do not create)
 MsgManager.reservedMsgBlocks = [];
 
 MsgManager.debugMode = false;

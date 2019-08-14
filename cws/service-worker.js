@@ -371,10 +371,6 @@ self.__precacheManifest = [
     "revision": "b6f359b22be1153e98deecdda3d5e86c"
   },
   {
-    "url": "redeemGen.html",
-    "revision": "e2da8dfe1d4e4fe58dfccd2e6f6b70b9"
-  },
-  {
     "url": "scripts/app.js",
     "revision": "f91b1af15281982066edbdae4ce28b31"
   },
@@ -384,7 +380,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "328df0fcfe4e6b033037473606c4abe4"
+    "revision": "a4dcf20e339bbc2ffeb6fbc246c8bef6"
   },
   {
     "url": "scripts/classes/block.js",
@@ -493,10 +489,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/utils/indexdbDataManager.js",
     "revision": "3e0716bf44fcd9052d85be8d3c948f77"
-  },
-  {
-    "url": "scripts/utils/indexdbStorage - Copy.js",
-    "revision": "adeaba1d4c026601c789bd3095602315"
   },
   {
     "url": "scripts/utils/indexdbStorage.js",

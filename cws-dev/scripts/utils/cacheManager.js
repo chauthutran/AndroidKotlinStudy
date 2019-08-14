@@ -1,3 +1,6 @@
+// -------------------------------------------
+// -- cacheManager Class/Methods
+
 function cacheManager() {}
 
 cacheManager.cacheKeys = [];
@@ -16,7 +19,6 @@ cacheManager.initialise = function()
 			for (let name of names)
 			{
 				myArr.push( name );
-				//console.log( ' ~ found cache obj: ' + name);
 			}
 
 			cacheManager.cacheKeys = myArr;
@@ -53,7 +55,6 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 						console.log( 'deleting {non-matching} cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
 						let result = await promise;
 						results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
-						//caches.delete(name);
 					}
 				}
 				else
@@ -62,11 +63,8 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 					console.log( 'deleting cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
 					let result = await promise;
 					results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
-					//caches.delete(name);
 				}
 			}
-
-			console.log( results );
 
 			if ( returnFunc ) returnFunc( results );
 		}

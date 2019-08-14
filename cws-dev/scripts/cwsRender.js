@@ -322,7 +322,7 @@ function cwsRender()
 				return;
 			}
 
-			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
+			FormUtil.getMyListData( me.storageName_RedeemList, true, function( myData ){
 
 				DataManager.getUserConfigData( function( userData ){
 

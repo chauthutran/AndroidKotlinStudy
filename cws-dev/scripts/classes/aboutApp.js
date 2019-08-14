@@ -25,10 +25,8 @@ function aboutApp( cwsRender )
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
-	me.initialize = function() {
-
-        //me.aboutContentDivTag.empty();
-        // me.resetValues();
+    me.initialize = function() 
+    {
         me.setEvents_OnInit();
     }
 
@@ -69,7 +67,6 @@ function aboutApp( cwsRender )
 
             if ( ConnManager.isOffline() )
             {
-                //alert( 'Only re-register service-worker while online, please.' );
                 // MISSING TRANSLATION
                 MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
             }
@@ -147,7 +144,6 @@ function aboutApp( cwsRender )
 
         });
 
-
         $( 'img.btnAboutBack' ).click( () =>
         {
             if ( $( 'img.rotateImg' ).length  )
@@ -181,11 +177,6 @@ function aboutApp( cwsRender )
             var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
 
             FormUtil.showProgressBar();
-
-            //var loadingTag = $( '#aboutInfo_newLangTermsDownload_loading' );
-            //loadingTag.show();
-            //var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-            //btnTag.after( loadingTag );
 
             me.langTermObj.retrieveAllLangTerm( function() 
             {
@@ -405,10 +396,7 @@ function aboutApp( cwsRender )
         
         $( '#btnReset' ).click( function() {
 
-			// DONE > TODO: GREG: Could move to 'dataManager'
 			DataManager.clearSessionStorage();
-
-            //FormUtil.deleteCacheKeys( me.cwsRenderObj.reGetAppShell );
 
             if ( cacheManager.clearCacheKeys() )
             {
@@ -418,9 +406,6 @@ function aboutApp( cwsRender )
         });
 
         cacheManager.initialise();
-
-        //
-
 
     }
 
@@ -445,7 +430,6 @@ function aboutApp( cwsRender )
 
     me.hideAboutPage = function()
     {
-        //me.aboutFormDivTag.hide( 'fast' );
         me.aboutFormDivTag.fadeOut( 500 );
 
         setTimeout( function() {
@@ -654,25 +638,6 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        /*ConnManager.getAppShellVersion( function( retVersion ) 
-        {
-            var appShellVersion = $( '#spanVersion' ).html().replace('v','');
-
-            if ( appShellVersion.toString() < retVersion.toString() )
-            {
-                $( '#aboutInfo_AppNewVersion ' ).html( retVersion );
-                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
-                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
-                $( '#aboutInfo_AppNewVersion' ).show( 'fast' );
-            }
-            else
-            {
-                $( '#aboutInfo_AppNewVersion' ).hide( 'fast' );
-                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
-                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
-            }
-        });*/
-
         if ( FormUtil.checkLogin() )
         {
 
@@ -698,8 +663,16 @@ function aboutApp( cwsRender )
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
             });
+
+            me.setToggleSoundEffects();
+
         }
 
+    }
+
+    me.setToggleSoundEffects = function()
+    {
+        $( '#soundEffects_Less_Slider' ).val(  JSON.parse( localStorage.getItem('session') ).soundEffects  )
     }
 
     me.getThemeList = function( jsonThemes )
@@ -803,8 +776,8 @@ function aboutApp( cwsRender )
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
     {
 
-        console.log( syncEveryList );
-        console.log( syncTimer );
+        //console.log( syncEveryList );
+        //console.log( syncTimer );
 
         Util.populateSelect( me.aboutInfo_NetworkSync, "", syncEveryList );
         Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );

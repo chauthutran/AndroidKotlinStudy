@@ -21,15 +21,6 @@ ConfigUtil.setConfigJson = function ( configJson )
 ConfigUtil.setSettingsJson = function( configJson )
 {
     ConfigUtil.configSetting = configJson.settings;
-    /*
-        "settings": {
-            "message": {
-                "autoHide": true,
-                "autoHideTime": "5000",
-                "networkFailedMsgType": "alertMsg"
-            }
-        },
-    */
 };
 
 ConfigUtil.getSettings = function( settingName )
@@ -48,15 +39,6 @@ ConfigUtil.getSettings = function( settingName )
 ConfigUtil.getMsgAutoHide = function( configJson )
 {
     ConfigUtil.configSetting = configJson.settings;
-    /*
-        "settings": {
-            "message": {
-                "autoHide": true,
-                "autoHideTime": "5000",
-                "networkFailedMsgType": "alertMsg"
-            }
-        },
-    */
 };
 
 

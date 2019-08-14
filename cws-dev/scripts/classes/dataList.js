@@ -48,10 +48,10 @@ function DataList( cwsRenderObj, blockObj )
         if ( jsonList === undefined || jsonList.length == 0 )
         {
             // Emmpty case
-            var divTag = $( '<div class="emptyListDiv" style="min-height: 40px; margin: 10px;"></div>' );
-            var spanTag = $( '<a style="min-height: 60px; padding: 10px; color: #888;" term="">List is empty.</a>' );
+            var divTag = $( '<div class="emptyListDiv" ></div>' );
+            var aTag = $( '<a term="">List is empty.</a>' ); // MISSING TRANSLATION
 
-            divTag.append( spanTag );
+            divTag.append( aTag );
             blockTag.append( divTag );
         }
         else
@@ -181,7 +181,7 @@ function DataList( cwsRenderObj, blockObj )
                         // build layout
 
                         var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
-                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td style="width:24px;height:24px;"><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
+                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td class="imggroupByFldHeader" ><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
                         dvgrpBySearchContainer.append( dvgrpByFieldHeader );
 
                         var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
@@ -197,7 +197,7 @@ function DataList( cwsRenderObj, blockObj )
                             var tdGrpBy = $( '<td colspan=2 />' );                    
                             var dvGrpByTitle = $( '<div class="groupByField" />' );
 
-                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td style="width:24px;height:24px;"><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
+                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
                             dvGrpByTitle.attr( 'title', fldGroupByID );
 
                             var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
@@ -343,7 +343,7 @@ function DataList( cwsRenderObj, blockObj )
                 tblObjTag.append( tritemHeaderTag );
                 tritemHeaderTag.append( tditemHeaderTag );
 
-                var imginfoTag = $( '<img src="images/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
+                var imginfoTag = $( '<img src="images/about.svg" class="imgSearchResultAbout" >' );
                 var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
                 var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
 
@@ -355,7 +355,7 @@ function DataList( cwsRenderObj, blockObj )
 
             var trTopObjTag = $( '<tr class="itemBlock">' );
             var tdLeftIconTag = $( '<td rowspan=2 class="resultsImgContainer">' );
-            var tdIconTag = $( '<img src="images/user.svg" style="width:56px;height:56px;">' );
+            var tdIconTag = $( '<img src="images/user.svg" class="imgSearchResultUser" >' );
             var tdLeftobjTag =  $( '<td class="">' );
 
             tblObjTag.append( trTopObjTag );
@@ -413,137 +413,7 @@ function DataList( cwsRenderObj, blockObj )
 
                 };
 
-                var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
-                trTopObjTag.append( tdRightobjTag );
-
-                me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
-
-                if ( itemButtons != undefined )
-                {
-                    me.renderButtons( tdRightobjTag, itemButtons );
-                }
-                else
-                {
-                    me.renderButtons( tdRightobjTag, blockJson.itemButtons );
-                }
-
-            }
-
-        }
-
-    }
-
-    me.renderSearchResultBlocksOld = function( divFormContainerTag, itemDisplayAttrList, fieldId, lookupVal, jsonList, blockJson, itemButtons )
-    {
-        var searchPostPayload = FormUtil.getLastPayload();
-        var newjsonList = [];
-
-        if ( me.debugMode ) console.log( itemButtons );
-
-        for( var i = 0; i < jsonList.length; i++ )
-        {
-            if ( fieldId && lookupVal )
-            { 
-                var itemAttrDataFiltered = ( jsonList[i] ).filter(a=>a.id==fieldId&&a.value==lookupVal);
-                if ( itemAttrDataFiltered.length ) newjsonList.push ( jsonList[i] );
-            }
-            else
-            {
-                newjsonList.push ( jsonList[i] );
-            }
-        }
-
-        for( var r = 0; r < newjsonList.length; r++ )
-        {
-            if ( r > 0 )
-            {
-                var divSpacerTag = $( '<div class="searchResultTableSpacer" />' );
-                divFormContainerTag.append( divSpacerTag );
-            }
-
-            var itemAttrDataList = ( newjsonList[r] );
-            var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
-            var validResultData = objResult.length;
-            var tblObjTag = $( '<table class="searchResultTable" id="searchResult_'+r+'">' );
-
-            divFormContainerTag.append( tblObjTag );
-
-            if ( blockJson.displayHeader )
-            {
-
-                var tritemHeaderTag = $( '<tr>' );
-                var tditemHeaderTag = $( '<td class="groupByResultHeader">' );
-
-                tblObjTag.append( tritemHeaderTag );
-                tritemHeaderTag.append( tditemHeaderTag );
-
-                var imginfoTag = $( '<img src="images/about.svg" style="opacity:0.5;width:24px;height:24px;">' );
-                var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
-                var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
-
-                tditemHeaderTag.append( imginfoTag );
-                tditemHeaderTag.append( lblSpacer );
-                tditemHeaderTag.append( labelTag );
-
-            }
-
-            var trTopObjTag = $( '<tr class="itemBlock">' );
-            var tdLeftobjTag = $( '<td>' );
-
-            tblObjTag.append( trTopObjTag );
-            trTopObjTag.append( tdLeftobjTag );
-
-            if ( !validResultData )
-            {
-                var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
-                var labelTag = $( '<label class="from-string titleDiv" />' );
-                var valueTag = $( '<div class="form-type-text">');
-
-                tdLeftobjTag.append( divAttrTag );
-                divAttrTag.append( labelTag );
-                divAttrTag.append( valueTag );
-
-                labelTag.html( 'dcd Config issue' );
-                valueTag.html( 'no valid IDs for "displayResult":[]' );
-            }
-            else
-            {
-
-                var condObj;
-
-                for( var i = 0; i < newjsonList.length; i++ )
-                {
-                    for( var p = 0; p < newjsonList[ i ].length; p++ )
-                    {
-                        if ( newjsonList[ i ][ p ].id == 'condition' )
-                        {
-                            condObj = newjsonList[ i ][ p ];
-                        }
-                    }
-                }
-
-                for( var o = 0; o < objResult.length; o++ )
-                {
-                    var divAttrTag = $( '<div class="tb-content-result inputDiv" />' );
-                    var labelTag = $( '<label class="from-string titleDiv" />' );
-                    var valueTag = $( '<div id="'+objResult[o].id+'" class="form-type-text">');
-
-                    tdLeftobjTag.append( divAttrTag );
-                    divAttrTag.append( labelTag );
-                    divAttrTag.append( valueTag );
-
-                    labelTag.html( me.resolvedefinitionField( objResult[o] ) );
-                    valueTag.html( me.resolvedefinitionOptionValue( objResult[o].value ) );
-
-                    if ( objResult[o].id == '' ) //added from search criteria
-                    {
-                        //labelTag.css('font-weight',"600");
-                        valueTag.css('color','#909090');
-                    }
-
-                };
-
-                var tdRightobjTag = $( '<td style="text-align:left;vertical-align:middle;width:40px;">' );
+                var tdRightobjTag = $( '<td class="searchResultGroupByButtons" >' );
                 trTopObjTag.append( tdRightobjTag );
 
                 me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
@@ -635,8 +505,7 @@ function DataList( cwsRenderObj, blockObj )
     me.renderDataValueTag = function( attrData, divItemTag )
     {    
         // Set Text..
-        var spanDivTag = $( '<div style="margin:0 0 0 14px">' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
-        //var spanDivTag = $( '<div style="margin:0 0 0 45px"> ' + attrData.value + '</div>' );
+        var spanDivTag = $( '<div class="searchResultDisplayValue" >' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
         divItemTag.append( spanDivTag );
     }
 
@@ -719,6 +588,5 @@ function DataList( cwsRenderObj, blockObj )
     }
 
 	// -------------------------------
-	
-	// me.initialize();
+
 }

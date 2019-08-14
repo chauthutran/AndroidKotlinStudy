@@ -11,10 +11,6 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	
 	// ------------------------------------
 
-	/* me.init = function() {
-		me.setUp_isNumberOnly_OlderBrowserSupport( me.pageTag );
-	} */
-	
     me.setUp_Events = function( formTag )
     {
         formTag.find( "input,select,textarea" ).each( function() {
@@ -42,15 +38,6 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 				
 		return allValid;
 	};
-	
-
-   /* me.setUp_isNumberOnly_OlderBrowserSupport = function( formTag ) {
-
-		// Support for older browser number only keypress
-		formTag.find("[isNumber='true']").keypress( function(e) {
-			return e.charCode >= 48 && e.charCode <= 57;
-		});		
-	}; */
 
 	me.checkValidations = function( tag )
 	{	
@@ -326,11 +313,9 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 
 	// -----------------------------
 	// -- Others
-	
-	//me.getErrorSpanTag = function( keyword, optionalStr )
+
 	me.getErrorSpanTag = function( keyword, term )
 	{
-//		optionalStr = ( optionalStr ) ? optionalStr : '';
 		var text = me.cwsRenderObj.langTermObj.translateText( keyword, term ); // + optionalStr;
 
 		return  $( '<span ' + FormUtil.getTermAttrStr( term ) + ' class="errorMsg" keyword="' + keyword + '"> ' + text + '</span>' );
@@ -349,13 +334,5 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	me.checkFalseEvalSpecialCase = function( value ) {
 		return ( value !== undefined && value != null && value.length > 0 );
 	};
-		
-	// -----------------------------------------------------------------------
-	// RUN Init method
-	// -----------------------------------------------------------------------
-	
-	// me.init();
-	
 
-	// test 6
 }

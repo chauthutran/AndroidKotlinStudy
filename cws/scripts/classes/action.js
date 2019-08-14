@@ -60,21 +60,29 @@ function Action( cwsRenderObj, blockObj )
 					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
 					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
 
-					if ( tagTarget.css( 'text-transform' ) != undefined )
+					if ( calcVal != undefined )
 					{
-						if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
+						if ( tagTarget.css( 'text-transform' ) != undefined )
 						{
-							calcVal = calcVal.toUpperCase()
+							if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
+							{
+								calcVal = calcVal.toUpperCase()
+							}
+							else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
+							{
+								calcVal = calcVal.toLowerCase()
+							}
 						}
-						else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
+						else
 						{
-							calcVal = calcVal.toLowerCase()
+							console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
 						}
 					}
 					else
 					{
-						console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
+						calcVal = '';
 					}
+
 
 					tagTarget.val( calcVal );
 

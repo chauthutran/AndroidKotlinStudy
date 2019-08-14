@@ -10,10 +10,6 @@ RESTUtil.retrieveJson = function( url, returnFunc )
 };
 
 
-// RESTUtil.postJson operation, use 'FormUtil.wsSubmitGeneral'
-//FormUtil.wsSubmitGeneral = function( url, payloadJson, loadingTag, returnFunc )
-
-
 RESTUtil.performREST = function( url, payloadData, returnFunc )
 {
     fetch( url, payloadData )

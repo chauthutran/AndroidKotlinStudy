@@ -10,6 +10,7 @@ var sounds = {
   }
 };
 
+// soundContext only available when application launched as 'installed PWA'
 if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
 {
   var soundContext = new AudioContext();
@@ -17,6 +18,7 @@ if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
   for(var key in sounds) {
     loadSound(key);
   }
+
 }
 
 
@@ -40,6 +42,7 @@ function loadSound(name){
 }
 
 function playSound(name, options){
+
   var sound = sounds[name];
   var soundVolume = sounds[name].volume || 1;
 
@@ -61,5 +64,6 @@ function playSound(name, options){
     volume.connect(soundContext.destination);
     source.connect(volume);
     source.start(0);
+
   }
 }

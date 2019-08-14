@@ -8,7 +8,6 @@ MoveLocalStorageData.moveData = function(){
             if( movedData == undefined )
             {
                 // Get all items in localStorage
-                // var archive = [];
                 var keys = Object.keys( localStorage );
 
                 for ( var key in keys ) {

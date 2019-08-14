@@ -271,7 +271,7 @@ function statistics( cwsRender )
 			colTag.html( value );
 
 			// Set the color point for % value
-			var isPercent = 0; //eval( colTag.attr("percent") );
+			var isPercent = 0;
 
 			if( isPercent )
 			{
@@ -290,8 +290,7 @@ function statistics( cwsRender )
 				trafficLightTag.css( "color", color );
 				trafficLightTag.html("&#9679;");
 			}
-			
-			//value = Util.formatNumber( value, " ");
+
 			value = ( isPercent ) ? value + "%" : value;
 			
 			colTag.find("span.value").html( value );

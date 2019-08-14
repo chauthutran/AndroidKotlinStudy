@@ -1,16 +1,8 @@
 
-/* https://latest-data.ippf.org/api/dataStore/Connect_config/secret_passphrase ( POST )
- {
-	"secretPassphrase": "secretPassphrase"
-}
-
-*/
-
 function DBStorage() {
 
   var me = this;
 
- //  me.query_url_secretPassphrase = "api/dataStore/Connect_config/secret_passphrase";
   me.dbName = "cwsdb";
   me.dbStorageObject = "cwsStorageObject";
   me.dbVersion = 1;
@@ -19,6 +11,7 @@ function DBStorage() {
   me.connect = function()
   {
        return new Promise((resolve, reject) => {
+
           // In the following line, you should include the prefixes of implementations you want to test.
          var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
@@ -28,10 +21,11 @@ function DBStorage() {
          indexedDB.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
          // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
 
-
          // Let us open our database
          const request = indexedDB.open( me.dbName, me.dbVersion );
+
          request.onupgradeneeded = function(event) {
+
              var db = event.target.result;
 
              db.onerror = function(event) {
@@ -44,7 +38,6 @@ function DBStorage() {
              // define what data items the objectStore will contain
              objectStore.createIndex("value", "value", { unique: false });
 
-             // console.log( 'Object store created.' );
            };
 
          request.onsuccess = function() {
@@ -141,11 +134,11 @@ function DBStorage() {
    {
      let conn;
      try {
-       //console.log('connect - waiting');
+       //console.log('connecting');
        conn = await me.connect();
-       //console.log('connect - done');
+       //console.log('connected');
        var data = await me.retrieveData( conn, key );
-       //console.log('connect - retrieving data');
+       //console.log('retrieving data');
        data = ( data === undefined || data === null ) ? undefined : data;
        //console.log( data );
        if ( exeFunc ) exeFunc( data );

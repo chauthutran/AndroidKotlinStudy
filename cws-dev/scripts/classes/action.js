@@ -22,6 +22,11 @@ function Action( cwsRenderObj, blockObj )
 		var blockDivTag = btnTag.closest( '.block' );
 		var formDivSecTag = blockDivTag.find( '.formDivSec' );
 
+		if ( formDivSecTag.attr( 'data-fields') != undefined )
+		{
+			me.handleSequenceIncrCommits( formDivSecTag );
+		}
+
 		// NOTE: TRAN VALIDATION
 		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
 		{
@@ -37,6 +42,51 @@ function Action( cwsRenderObj, blockObj )
 			else
 			{
 				//console.log( 'Btn already clicked/in process' );
+			}
+		}
+	}
+
+	me.handleSequenceIncrCommits = function( formDivSecTag )
+	{
+		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+
+		for( var i = 0; i < jData.length; i++ )
+		{
+			if ( jData[ i ].defaultValue )
+			{
+				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 )
+				{
+					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
+
+					if ( calcVal != undefined )
+					{
+						if ( tagTarget.css( 'text-transform' ) != undefined )
+						{
+							if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
+							{
+								calcVal = calcVal.toUpperCase()
+							}
+							else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
+							{
+								calcVal = calcVal.toLowerCase()
+							}
+						}
+						else
+						{
+							console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
+						}
+					}
+					else
+					{
+						calcVal = '';
+					}
+
+
+					tagTarget.val( calcVal );
+
+				}
 			}
 		}
 	}
@@ -191,7 +241,7 @@ function Action( cwsRenderObj, blockObj )
 			{				
 				if ( clickActionJson.areaId )
 				{
-					if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
+					//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
@@ -273,20 +323,14 @@ function Action( cwsRenderObj, blockObj )
 				if ( clickActionJson.localResource )
 				{
 					var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
+					var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
+					var dataPass_Status = {};
 
-					//if ( wsExchangeData && wsExchangeData.resultData && wsExchangeData.displayData )
-					{
-						var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
-						var dataPass_Status = {};
-						statusActionsCalled = true;
+					statusActionsCalled = true;
 
-						//console.log( wsExchangeData );
-
-						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
-							if ( afterActionFunc ) afterActionFunc();
-						} );
-
-					}
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
+						if ( afterActionFunc ) afterActionFunc();
+					} );
 
 				}
 				else
@@ -335,8 +379,6 @@ function Action( cwsRenderObj, blockObj )
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
-						// Offline Submission Handling..
-
 						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
 
 							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };

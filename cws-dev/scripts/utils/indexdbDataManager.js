@@ -8,22 +8,59 @@ function IndexdbDataManager() {}
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
-IndexdbDataManager.saveData = function( secName, jsonData, retFunc ) {
+IndexdbDataManager.saveData = function( secName, jsonData, callBack ) 
+{
 	var dbStorage = new DBStorage();
-	dbStorage.addData( secName, JSON.stringify( jsonData ) );
-	if ( retFunc ) retFunc();
+	var pushData;
+
+	if ( DataManager.protectedContainer( secName ) )
+	{
+		var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), FormUtil.login_Password,
+		{
+		   keySize: 128 / 8,
+		   iv: FormUtil.login_Password,
+		   mode: CryptoJS.mode.CBC,
+		   padding: CryptoJS.pad.Pkcs7
+		 }).toString();
+	}
+	else
+	{
+		pushData = JSON.stringify( jsonData )
+	}
+
+	dbStorage.addData( secName, pushData );
+
+	if ( callBack ) callBack();
 };
 
-IndexdbDataManager.getData = function( secName, callBack ) {
+IndexdbDataManager.getData = function( secName, callBack ) 
+{
 	if( secName !== undefined )
 	{
 		var dbStorage = new DBStorage();
 
 		dbStorage.getData( secName, function( data ){
+
 			var jsonData;
+
 			if ( data ) 
 			{
-				jsonData = JSON.parse( data.value );
+				if ( DataManager.protectedContainer( secName ) )
+				{
+
+					jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.value.toString(), FormUtil.login_Password, 
+					{
+						keySize: 128 / 8,
+						iv: FormUtil.login_Password,
+						mode: CryptoJS.mode.CBC,
+						padding: CryptoJS.pad.Pkcs7
+					} ) ) );
+
+				}
+				else
+				{
+					jsonData = JSON.parse( data.value );
+				}
 			}
 			if ( callBack ) callBack( jsonData );
 		} );
@@ -37,7 +74,7 @@ IndexdbDataManager.getData = function( secName, callBack ) {
 IndexdbDataManager.getOrCreateData = function( secName, callBack ) {
 	IndexdbDataManager.getData( secName, function( lastSessionAll ){
 		if ( !lastSessionAll ) lastSessionAll = {};
-		callBack( lastSessionAll );
+		if ( callBack ) callBack( lastSessionAll );
 	});
 	
 };
@@ -50,25 +87,15 @@ IndexdbDataManager.deleteData = function( secName ) {
 // -------------------------------------
 // ---- List Item Data Save/Get/Delete ---
 
-/*
-IndexdbDataManager.getListData = function( secName ) {
 
-	var jsonMainData = IndexdbDataManager.getData( secName );
-
-	if ( !jsonMainData.list ) jsonMainData.list = [];
-
-	return jsonMainData;
-}
-*/
-
-IndexdbDataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
+IndexdbDataManager.insertDataItem = function( secName, jsonInsertData, callBack ) {
 
 	IndexdbDataManager.getOrCreateData( secName, function( jsonMainData ){
 		// We assume that this has 'list' as jsonArray (of data)
 		if ( jsonMainData.list === undefined ) jsonMainData.list = [];
 		jsonMainData.list.push( jsonInsertData );
 
-		IndexdbDataManager.saveData( secName, jsonMainData, retFunc );
+		IndexdbDataManager.saveData( secName, jsonMainData, callBack );
 	} );
 };
 
@@ -90,22 +117,45 @@ IndexdbDataManager.removeItemFromData = function( secName, id ) {
 	}
 };
 
-IndexdbDataManager.getItemFromData = function( secName, id ) 
+IndexdbDataManager.getItemFromData = function( secName, id, callBack ) 
 {
 	var itemData;
 
 	if ( secName && id )
 	{
 		IndexdbDataManager.getOrCreateData( secName, function( jsonMainData ){
-			// We assume that this has 'list' as jsonArray (of data)
-			if ( jsonMainData.list !== undefined ) 
-			{			
-				itemData = Util.getFromList( jsonMainData.list, id, "id" );			
+
+			if ( DataManager.protectedContainer( secName ) )
+			{
+				var decrData = jsonMainData; 
+
+				itemData = Util.getFromList( decrData.list, id, "id" );
+
+				if ( callBack ) callBack( itemData );
+
 			}
+			else
+			{
+				if ( jsonMainData.list !== undefined ) 
+				{			
+					itemData = Util.getFromList( jsonMainData.list, id, "id" );
+
+					if ( callBack ) callBack( itemData );
+
+				}
+				else
+				{
+					if ( callBack ) callBack();
+				}
+			}
+
 		} );
 	}
+	else
+	{
+		if ( callBack ) callBack();
+	}
 
-	return itemData;
 };
 
 

@@ -34,19 +34,6 @@ LocalStorageDataManager.deleteData = function( secName ) {
 	localStorage.removeItem( secName );
 };
 
-// -------------------------------------
-// ---- List Item Data Save/Get/Delete ---
-
-/*
-LocalStorageDataManager.getListData = function( secName ) {
-
-	var jsonMainData = LocalStorageDataManager.getData( secName );
-
-	if ( !jsonMainData.list ) jsonMainData.list = [];
-
-	return jsonMainData;
-}
-*/
 
 LocalStorageDataManager.insertDataItem = function( secName, jsonInsertData ) {
 
