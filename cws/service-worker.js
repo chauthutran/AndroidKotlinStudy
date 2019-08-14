@@ -203,12 +203,8 @@ self.__precacheManifest = [
     "revision": "b0295abf0af75702c5ebbca617a93620"
   },
   {
-    "url": "images/icons/Connect_dev_152px.png",
-    "revision": "90015f77a9f9c6b2d5c159a4280d5326"
-  },
-  {
-    "url": "images/icons/Connect_dev_192px.png",
-    "revision": "25573985326ca03fd13fc3a2b3974674"
+    "url": "images/icons/Connect_prod_144px.png",
+    "revision": "ecb902321906751311c38d53b70904a6"
   },
   {
     "url": "images/icons/Connect_prod_152px.png",
@@ -219,24 +215,8 @@ self.__precacheManifest = [
     "revision": "5a7abcbe1bf0565a8a1096a80acab0dd"
   },
   {
-    "url": "images/icons/Connect_stage_152px.png",
-    "revision": "e8121b1dc38add1a04b809ccf81a5d97"
-  },
-  {
-    "url": "images/icons/Connect_stage_192px.png",
-    "revision": "66c9d16e1139ecbb2c03ac5438ac2a08"
-  },
-  {
-    "url": "images/icons/Connect_train_152px.png",
-    "revision": "2c3a3c33a05b34d8fc5d654a6e79d2f2"
-  },
-  {
-    "url": "images/icons/Connect_train_192px.png",
-    "revision": "29f6958ea0c832c4fb030e8cfd822fd0"
-  },
-  {
-    "url": "images/icons/icon-128x128.png",
-    "revision": "663516616720d1107c5621f326b899e8"
+    "url": "images/icons/Connect_prod_512px.png",
+    "revision": "b0295abf0af75702c5ebbca617a93620"
   },
   {
     "url": "images/icons/icon-144x144.png",
@@ -245,10 +225,6 @@ self.__precacheManifest = [
   {
     "url": "images/icons/icon-152x152.png",
     "revision": "982f5ccc626f58ca9f099457a0240c47"
-  },
-  {
-    "url": "images/icons/logo-44x44.png",
-    "revision": "005da4b33808af9639249421b7c4f16f"
   },
   {
     "url": "images/key.svg",
@@ -469,10 +445,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/utils/dataManager.js",
     "revision": "70bbaca1902a1b7f56e3203c6d8c5313"
-  },
-  {
-    "url": "scripts/utils/db.js",
-    "revision": "2ff209db4071a438bbcea9cac07dd925"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",

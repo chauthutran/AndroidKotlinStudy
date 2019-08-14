@@ -431,10 +431,6 @@ self.__precacheManifest = [
     "revision": "b59bed45dace3f2481194bc5801de20d"
   },
   {
-    "url": "scripts/utils/db.js",
-    "revision": "2ff209db4071a438bbcea9cac07dd925"
-  },
-  {
     "url": "scripts/utils/dbStorageSelector.js",
     "revision": "df0728534fea8003f81e7583eea6b6b2"
   },
