@@ -197,8 +197,26 @@ function Login( cwsRenderObj )
 		}
 
 		FormUtil.defaultLanguage( function( defaultLang ){
-			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( FormUtil.PWAlaunchFrom() == "homeScreen" ) };
+
+			var sessRaw = localStorage.getItem( 'session' );
+
+			if ( sessRaw != undefined && sessRaw != null )
+			{
+				var lastSession = JSON.parse( sessRaw );
+
+				if ( lastSession.soundEffects == undefined )
+				{
+					lastSession.soundEffects = Util.isMobi();
+				}
+
+			}
+			else
+			{
+				var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
+			}
+
 			DataManager.saveData( 'session', lastSession );
+
 		});
 	}
 

@@ -10,7 +10,7 @@ var sounds = {
   }
 };
 
-// soundContext only available when application launched as 'installed PWA'
+// soundContext only available when application launched as 'installed PWA' >> removed: audio option only available for 'mobile devices'
 //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
 {
   var soundContext = new AudioContext();
@@ -22,13 +22,13 @@ var sounds = {
 }
 
 
-function loadSound(name){
+function loadSound(name)
+{
   var sound = sounds[name];
-
   var url = sound.url;
   var buffer = sound.buffer;
-
   var request = new XMLHttpRequest();
+
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
 
@@ -43,27 +43,39 @@ function loadSound(name){
 
 function playSound(name, options){
 
-  var sound = sounds[name];
-  var soundVolume = sounds[name].volume || 1;
+  var sessData = JSON.parse( localStorage.getItem('session') );
+  var play = ( sessData.soundEffects != undefined ? sessData.soundEffects : false );
 
-  var buffer = sound.buffer;
-  if(buffer){
-    var source = soundContext.createBufferSource();
-    source.buffer = buffer;
+  if ( play )
+  {
+    var sound = sounds[name];
+    var soundVolume = sounds[name].volume || 1;
+    var buffer = sound.buffer;
 
-    var volume = soundContext.createGain();
+    if ( buffer )
+    {
+      var source = soundContext.createBufferSource();
+      var volume = soundContext.createGain();
 
-    if(options) {
-      if(options.volume) {
-        volume.gain.value = soundVolume * options.volume;
+      source.buffer = buffer;
+  
+      if ( options ) 
+      {
+        if ( options.volume ) 
+        {
+            volume.gain.value = soundVolume * options.volume;
+        }
+      } 
+      else 
+      {
+        volume.gain.value = soundVolume;
       }
-    } else {
-      volume.gain.value = soundVolume;
+  
+      volume.connect(soundContext.destination);
+      source.connect(volume);
+      source.start(0);
+  
     }
-
-    volume.connect(soundContext.destination);
-    source.connect(volume);
-    source.start(0);
-
   }
+  
 }

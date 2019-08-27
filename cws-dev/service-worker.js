@@ -24,11 +24,11 @@ workbox.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/responsive.css",
-    "revision": "7a5f40522420bc923b4b3c1e3d67b993"
+    "revision": "80c2fefb8d75dd94ce1b8db8c5f8d0bb"
   },
   {
     "url": "css/style.css",
-    "revision": "1c06499570cad9c304725d30fbdf7a87"
+    "revision": "7970b36b59e70fc30c4e7ca5553c745a"
   },
   {
     "url": "images/about.svg",
@@ -320,7 +320,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "d541591d7c59ffb7b793952d9d63fabe"
+    "revision": "399940bd4c1feae5916b3af309399d60"
   },
   {
     "url": "redeemGen.html",
@@ -328,11 +328,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "e34e59d4ab7c7d2c3e774a41e9ffc398"
+    "revision": "838f6c443b9966c1b7d7d0a4294452b7"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "b3ce936e23facdfa7359c77ec594be20"
+    "revision": "2ea26c4f77b8c68f99d82ea132e0d923"
   },
   {
     "url": "scripts/classes/action.js",
@@ -352,7 +352,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "677660ea461e187f80a1793baa0d2c24"
+    "revision": "ca8f3d6415b53874705267e103380778"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -364,7 +364,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "ae16829829affc428597ed6e7adc65fa"
+    "revision": "14287e7f4c6be79f68cee5e71ba51cec"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "ed7dd79571bfdf3f1f7c58e219bce31f"
+    "revision": "43d0a02ef5eb9a70aef8e7f506f805c7"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -440,7 +440,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "279ee6eeb8c926cff7309aab5ada9db6"
+    "revision": "ef77db325cb45b10e711686af8f227e3"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -464,7 +464,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "306b9ddf5ebec6271bea1707a1f70223"
+    "revision": "24824176a40cf42eb6d3bbe1604d4602"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -472,7 +472,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "730b1f399e393c8e69308aa3e776d19b"
+    "revision": "2c1d6ba980c329e2aea72b56dc84dd4b"
   },
   {
     "url": "scripts/utils/syncManager.js",
@@ -532,7 +532,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "02a4f33754ddb15e76a1e030b906768d"
+    "revision": "87c7204d756607a7d4bc30a9d7a57dd9"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();

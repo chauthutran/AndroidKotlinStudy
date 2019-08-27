@@ -693,6 +693,11 @@ function aboutApp( cwsRender )
                     if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
+
+                var sessData = JSON.parse( localStorage.getItem('session') );
+
+                me.aboutInfo_SoundSwitchInput.prop( 'checked', ( sessData.soundEffects ? 'checked' : '' ) );
+
             });
         }
 

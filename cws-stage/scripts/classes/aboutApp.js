@@ -17,6 +17,7 @@ function aboutApp( cwsRender )
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
     me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
+    me.aboutInfo_SoundSwitchInput = $( '#soundSwitchInput' );
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
@@ -25,10 +26,8 @@ function aboutApp( cwsRender )
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
-	me.initialize = function() {
-
-        //me.aboutContentDivTag.empty();
-        // me.resetValues();
+    me.initialize = function() 
+    {
         me.setEvents_OnInit();
     }
 
@@ -69,7 +68,6 @@ function aboutApp( cwsRender )
 
             if ( ConnManager.isOffline() )
             {
-                //alert( 'Only re-register service-worker while online, please.' );
                 // MISSING TRANSLATION
                 MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
             }
@@ -118,6 +116,21 @@ function aboutApp( cwsRender )
             FormUtil.hideProgressBar();
 
         });
+
+
+
+        me.aboutInfo_SoundSwitchInput.change(() => {
+          var soundSetting = me.aboutInfo_SoundSwitchInput.is( ":checked" ); // load from input checkbox
+          var sessData = JSON.parse(localStorage.getItem( "session" ));
+
+          sessData.soundEffects = soundSetting; //add
+          DataManager.saveData("session", sessData);
+
+          if(soundSetting)playSound("notify");
+          console.log(DataManager, sessData, soundSetting);
+        });
+
+
 
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
@@ -181,11 +194,6 @@ function aboutApp( cwsRender )
             var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
 
             FormUtil.showProgressBar();
-
-            //var loadingTag = $( '#aboutInfo_newLangTermsDownload_loading' );
-            //loadingTag.show();
-            //var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
-            //btnTag.after( loadingTag );
 
             me.langTermObj.retrieveAllLangTerm( function() 
             {
@@ -405,10 +413,7 @@ function aboutApp( cwsRender )
         
         $( '#btnReset' ).click( function() {
 
-			// DONE > TODO: GREG: Could move to 'dataManager'
 			DataManager.clearSessionStorage();
-
-            //FormUtil.deleteCacheKeys( me.cwsRenderObj.reGetAppShell );
 
             if ( cacheManager.clearCacheKeys() )
             {
@@ -418,9 +423,6 @@ function aboutApp( cwsRender )
         });
 
         cacheManager.initialise();
-
-        //
-
 
     }
 
@@ -445,7 +447,6 @@ function aboutApp( cwsRender )
 
     me.hideAboutPage = function()
     {
-        //me.aboutFormDivTag.hide( 'fast' );
         me.aboutFormDivTag.fadeOut( 500 );
 
         setTimeout( function() {
@@ -498,6 +499,17 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_geoLocation_Less' ).show();
                 $( '#aboutInfo_geoLocation_Less' ).removeClass( 'byPassAboutMore' );
 
+                if ( Util.isMobi() )
+                {
+                    $( '#aboutInfo_soundEffects_Less' ).show();
+                    $( '#aboutInfo_soundEffects_Less' ).removeClass( 'byPassAboutMore' );
+                }
+                else
+                {
+                    $( '#aboutInfo_soundEffects_Less' ).hide();
+                    $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
+                }
+
             }
         }
         else
@@ -511,6 +523,9 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_geoLocation_Less' ).hide();
             $( '#aboutInfo_geoLocation_Less' ).addClass( 'byPassAboutMore' );
+
+            $( '#aboutInfo_soundEffects_Less' ).hide();
+            $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
 
             if ( me.langTermObj.getLangList() )
             {
@@ -654,25 +669,6 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        /*ConnManager.getAppShellVersion( function( retVersion ) 
-        {
-            var appShellVersion = $( '#spanVersion' ).html().replace('v','');
-
-            if ( appShellVersion.toString() < retVersion.toString() )
-            {
-                $( '#aboutInfo_AppNewVersion ' ).html( retVersion );
-                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'disabled' );
-                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'enabled' );
-                $( '#aboutInfo_AppNewVersion' ).show( 'fast' );
-            }
-            else
-            {
-                $( '#aboutInfo_AppNewVersion' ).hide( 'fast' );
-                if ( ! $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).addClass( 'disabled' );
-                if ( $( '#imgaboutInfo_AppVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_AppVersion_Less' ).removeClass( 'enabled' );
-            }
-        });*/
-
         if ( FormUtil.checkLogin() )
         {
 
@@ -697,6 +693,11 @@ function aboutApp( cwsRender )
                     if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
+
+                var sessData = JSON.parse( localStorage.getItem('session') );
+
+                me.aboutInfo_SoundSwitchInput.prop( 'checked', ( sessData.soundEffects ? 'checked' : '' ) );
+
             });
         }
 
@@ -801,7 +802,9 @@ function aboutApp( cwsRender )
     }
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
-    {   
+    {
+
+
         Util.populateSelect( me.aboutInfo_NetworkSync, "", syncEveryList );
         Util.setSelectDefaultByName( me.aboutInfo_NetworkSync, syncTimer );
         me.aboutInfo_NetworkSync.val( syncTimer ); 

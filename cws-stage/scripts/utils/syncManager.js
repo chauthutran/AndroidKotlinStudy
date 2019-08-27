@@ -2,8 +2,6 @@
 
 function syncManager()  {}
 
-    //var me = this;
-
     syncManager.storage_offline_SyncExecutionTimerInterval;          //uses setTimeout
     syncManager.storage_offline_SyncConditionsTimerInterval;    //uses setInterval
     syncManager.syncTimer;
@@ -31,6 +29,7 @@ function syncManager()  {}
 
     var syncAutomationInteruptedTimer = 0;
     var progClass;
+
 	// -----------------------------
     // syncManager: uses timerInterval for 'conditionCheck', then uses timeOut to call automated Sync (unless already clicked by user)
     // -----------------------------
@@ -90,16 +89,19 @@ function syncManager()  {}
         {
             if ( syncManager.cwsRenderObj )
             {
-                var myData = FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList );
+                FormUtil.getMyListData( syncManager.cwsRenderObj.storageName_RedeemList, function( myData ){
 
-                if ( myData )
-                {
-                    var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
-                    var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+                    if ( myData )
+                    {
+                        var myQueue = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+                        var myFailed = myData.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+    
+                        syncManager.dataQueued = myQueue;
+                        syncManager.dataFailed = myFailed;
+                    }
 
-                    syncManager.dataQueued = myQueue;
-                    syncManager.dataFailed = myFailed;
-                }
+                } );
+
             }
         }
 
@@ -330,11 +332,11 @@ function syncManager()  {}
 
                         itemData.returnJson = returnJson;
 
-                        // added by Greg (2019-01-14) > record network sync attempts (for limit management)
+                        // record network sync attempts (for limit management)
                         if ( itemData.networkAttempt ) itemData.networkAttempt += 1;
                         else itemData.networkAttempt = 1;
 
-                        // Added 2019-01-08 > check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
+                        // check returnJson.resultData.status != 'fail' value as SUCCESS == true always occurring
                         if ( success && ( returnJson.resultData.status != 'fail' ) )
                         {
                             var dtmRedeemDate = (new Date() ).toISOString();
@@ -474,16 +476,19 @@ function syncManager()  {}
         }
         else
         {
-            if ( syncManager.lastSyncSuccess > 0 )
-            {
-                // added by Greg (2019-02-18) > test track googleAnalytics
-                ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': FormUtil.gAnalyticsEventAction(), 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+            FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
-                MsgManager.msgAreaShow ( 'Sync COMPLETED [' + syncManager.lastSyncSuccess + ']' );
-            }
+                if ( syncManager.lastSyncSuccess > 0 )
+                {
+                    // added by Greg (2019-02-18) > test track googleAnalytics
+                    ga('send', { 'hitType': 'event', 'eventCategory': 'data-Sync', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            syncManager.lastSyncAttempt = 0;
-            syncManager.lastSyncSuccess = 0;
+                    MsgManager.msgAreaShow ( 'Sync COMPLETED [' + syncManager.lastSyncSuccess + ']' );
+                }
+
+                syncManager.lastSyncAttempt = 0;
+                syncManager.lastSyncSuccess = 0;
+            });
         }
     }
 

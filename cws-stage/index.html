@@ -36,9 +36,10 @@
     <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery-ui.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js" ></script>
+    <script type="text/javascript" src="scripts/libraries/aes.js" ></script>
 
 
-    <script> var _ver = '1.0.3'; </script>
+    <script> var _ver = '1.1.0'; </script>
 
 
     <!-- Google Analytics -->
@@ -152,6 +153,14 @@
                               <td style='width:22px;text-align:center;'>
                                 <img id='appShare' src='images/outline-share-24px.svg' style='display:none;width:20px;height:20px;display:none' alt="appShare">
                               </td>
+                            </tr>
+                            <tr>
+                              <td colspan=2 style="text-align: right;">
+                                <select id='dbStorageSelector' style='max-width:150px;'>
+                                  <option value='localStorage'>Local Storage</option>
+                                  <option value='indexdb' selected>IndexDB</option>
+                                </select>
+                            </td>
                             </tr>
                           </table>
 
@@ -402,6 +411,22 @@
                 <label term="about_geoLocation" class="from-string titleDiv">geoLocation</label>
                 <div id="aboutInfo_geoLocation"  class="form-type-text" style="padding:10px 0 5px 10px"></div>
               </li>
+              
+              <li class="inputDiv aboutGroupDiv" id='aboutInfo_soundEffects_Less' style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;display:none;">
+                <label term="about_soundEffects" class="from-string titleDiv">Sound Effects </label>
+                <div id="aboutInfo_soundEffects" class="form-type-text" style="padding:10px 0 5px 10px">
+                  <!-- Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input id="soundSwitchInput" type="checkbox">
+                      <span id="soundSwitchSlider" class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                </div>
+              </li>
+
 
             <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
               <label term="about_browser" class="from-string titleDiv">Browser</label>
@@ -544,11 +569,16 @@
     <script type="text/javascript" src="scripts/utils/formMsgManager.js"></script>
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/connManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbStorage.js"></script>
+    <script type="text/javascript" src="scripts/utils/indexdbDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/localStorageDataManager.js"></script>
+    <script type="text/javascript" src="scripts/utils/dbStorageSelector.js"></script>
     <script type="text/javascript" src="scripts/utils/dataManager.js"></script>
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
+    <script type="text/javascript" src="scripts/utils/moveLocalStorageData.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>
@@ -569,4 +599,13 @@
     <script type="text/javascript" src="scripts/app.js"></script>
 
   </body>
+
+  <script>
+    //setTimeout( function(){
+      MoveLocalStorageData.moveData();
+      new DBStorageSelector();  
+    //}, 500 ); 
+
+  </script>
+
 </html>

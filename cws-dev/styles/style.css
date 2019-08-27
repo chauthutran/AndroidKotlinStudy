@@ -202,6 +202,27 @@ select option {
   color: darkblue;
   font-size: 13px;
 }
+
+.listItem_icon_activityType {
+  vertical-align: top;
+}
+
+.act-r {
+  float: right;
+  text-align: right;
+  font-size: 10px;
+  box-sizing: border-box;
+}
+
+.act-l {
+  position: relative;
+  float:left;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight:400;
+  top: -6px;
+}
+
 /* =========================== */
 
 /* =========================== */
@@ -622,7 +643,7 @@ img.round:hover{
 .notifProgress
 {
   background-Color:#202020;
-  height:2px;
+  height:4px;
   width:0px;
   position:relative;
   left:1px;

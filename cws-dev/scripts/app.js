@@ -222,7 +222,7 @@
 
       setTimeout( function() {
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + 20 + 'px' );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
       }, 500 );
 
   }

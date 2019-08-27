@@ -5,7 +5,7 @@ function favIcons( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.favIconsTag = $( 'div.floatListMenuSubIcons' );
+    me.favIconsTag = $( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
     me.incr = 0;
 
 	// TODO: NEED TO IMPLEMENT
@@ -17,8 +17,8 @@ function favIcons( cwsRender )
 	// -----------------------------
 	// ---- Methods ----------------
 
-	me.initialize = function() {
-
+    me.initialize = function() 
+    {
         if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList )
         {
             me.createIconButtons( FormUtil.dcdConfig.favList );
@@ -50,284 +50,78 @@ function favIcons( cwsRender )
 
             me.favIconsTag.empty();
 
-            //console.log( favList[ networkStatus ] );
-            me.createRecursiveFavIcons ( favList[ networkStatus ], 0 )
+            me.createRecursiveFavIcons ( favList[ networkStatus ], 0, false )
         }
 
     }
 
-	me.createRecursiveFavIcons = function( favList, favItm )
+	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )
 	{
 
         if ( favList[ favItm ] )
         {
 
-            // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
-            $.get( favList[ favItm ].img, function(data) {
-
+            if ( bAppend && bAppend == true )
+            {
                 var unqID = Util.generateRandomId();
                 var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[ favItm ].id + '" name="' + (favList[ favItm ].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                var svgObject = ( $(data)[0].documentElement );
+                var svgObject = me.fetchFavIcon( favList[ favItm ].id );
 
                 $( svgObject ).attr( 'id', 'svg_'+unqID );
-                $( svgObject ).find("tspan").html( favList[ favItm ].name );
-
-                if ( favList[ favItm ].term )
-                {
-                    $( svgObject ).html( $(svgObject).html().replace( /{TERM}/g, favList[ favItm ].term ) );
-                    //$( svgObject ).attr( 'term', favList[ favItm ].term );
-                }
-
-                if ( favList[ favItm ].colors )
-                {
-                    if ( favList[ favItm ].colors.background )
-                    {
-                        $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, favList[ favItm ].colors.background ) );
-                        $( svgObject ).attr( 'colors.background', favList[ favItm ].colors.background );
-                    }
-                    else
-                    {
-                        $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, '#CCCCCC' ) );
-                        $( svgObject ).attr( 'colors.background', '#CCCCCC' );
-                    }
-                    if ( favList[ favItm ].colors.foreground )
-                    {
-                        $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, favList[ favItm ].colors.foreground ) );
-                        $( svgObject ).attr( 'colors.foreground', favList[ favItm ].colors.foreground );
-                    }
-                    else
-                    {
-                        $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, '#333333' ) );
-                        $( svgObject ).attr( 'colors.foreground', '#333333' );
-
-                    }
-                }
-                if ( favList[ favItm ].style )
-                {
-                    if ( favList[ favItm ].style.icon )
-                    {
-                        if (favList[ favItm ].style.icon.colors.background )
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, favList[ favItm ].style.icon.colors.background ) );
-                            $( svgObject ).attr( 'icon.colors.background', favList[ favItm ].style.icon.colors.background );
-                        }
-                        else
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCCCCC' ) );
-                            $( svgObject ).attr( 'icon.colors.background', '#CCCCCC' );
-                        }
-                        if ( favList[ favItm ].style.icon.colors.foreground )
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, favList[ favItm ].style.icon.colors.foreground ) );
-                            $( svgObject ).attr( 'icon.colors.foreground', favList[ favItm ].style.icon.colors.foreground );
-                        }
-                        else
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, '#333333' ) );
-                            $( svgObject ).attr( 'icon.colors.foreground', '#333333' );                                
-                        }
-                    }
-                    if ( favList[ favItm ].style.label)
-                    {
-                        if (favList[ favItm ].style.label.colors.background )
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
-                            $( svgObject ).attr( 'label.colors.background', favList[ favItm ].style.label.colors.background );
-                        }
-                        else
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#CCCCCC' ) );
-                            $( svgObject ).attr( 'label.colors.background', '#CCCCCC' );
-                        }
-                        if ( favList[ favItm ].style.label.colors.foreground )
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, favList[ favItm ].style.label.colors.foreground ) );
-                            $( svgObject ).attr( 'label.colors.foreground', favList[ favItm ].style.label.colors.foreground );
-                        }
-                        else
-                        {
-                            $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, '#333333' ) );
-                            $( svgObject ).attr( 'label.colors.foreground', '#333333' );
-                        }
-                    }
-                }
 
                 divTag.append( svgObject );
                 me.favIconsTag.append( divTag );
 
                 if ( favList[ favItm ].target )
                 {
-                    me.setFavIconClickTarget ( favList[ favItm ].target, unqID )
+                    me.setFavIconClickTarget ( favList[ favItm ].target, unqID );
 
-                    if ( favList.length > (favItm+1) )
+                    if ( favList.length > ( parseInt(favItm) +1  ) && favList[ parseInt(favItm) +1  ] )
                     {
-                        me.createRecursiveFavIcons( favList, (favItm+1)  )
+                        me.createRecursiveFavIcons( favList, ( parseInt(favItm) +1 ), bAppend );
                     }
                     else
                     {
-                        me.cwsRenderObj.langTermObj.translatePage()
+                        me.cwsRenderObj.langTermObj.translatePage();
                     }
-                }
-
-            });
-
-        }
-
-
-        /*
-        if ( favList[favItm] )
-        {
-            var favObj = favList[favItm];
-            var networkStatus = ( ConnManager.getAppConnMode_Online() ) ? 'online' : 'offline';
-
-            // 1st test > Current favIcon object supports network connection-status OPTIONS
-            if ( favObj.areas )
-            {
-                // 2nd test > Current favIcon object supports CURRENT network connection-status 
-                if ( favObj.areas[ networkStatus ] )
-                {
-                    //me.recursiveCreateIcon(favObj, )
-                    // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
-                    $.get( favList[favItm].img, function(data) {
-
-                        console.log( 'FavIcon WITH online/offline areas defined ' );
-
-                        var unqID = Util.generateRandomId();
-                        var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                        var svgObject = ( $(data)[0].documentElement );
-
-                        $( svgObject ).attr( 'id', 'svg_'+unqID );
-                        $( svgObject ).find("tspan").html( favList[favItm].name );
-
-                        if ( favList[favItm].colors )
-                        {
-                            if ( favList[favItm].colors.background )
-                            {
-                                $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, favList[favItm].colors.background ).replace( /{ICON.BGFILL}/g, favList[favItm].colors.background ) );
-                                $( svgObject ).attr( 'colors.background', favList[favItm].colors.background );
-                            }
-                            else
-                            {
-                                $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, '#CCCCCC' ).replace( /{ICON.BGFILL}/g, '#CCCCCC' ) );
-                                $( svgObject ).attr( 'colors.background', '#CCCCCC' );
-                            }
-                            if ( favList[favItm].colors.foreground )
-                            {
-                                $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, favList[favItm].colors.foreground ).replace( /{ICON.COLOR}/g, favList[favItm].colors.foreground ) );
-                                $( svgObject ).attr( 'colors.foreground', favList[favItm].colors.foreground );
-                            }
-                            else
-                            {
-                                $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, '#333333' ).replace( /{ICON.COLOR}/g, '#333333' ) );
-                                $( svgObject ).attr( 'colors.foreground', '#333333' );
-                            }
-                        }
-                        if ( favList[favItm].style )
-                        {
-                            if ( favList[favItm].style.icon)
-                            {
-                                if (favList[favItm].style.icon.colors.background )
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, favList[favItm].style.icon.colors.background ) );
-                                    $( svgObject ).attr( 'icon.colors.background', favList[favItm].style.icon.colors.background );
-                                }
-                                else
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCCCCC' ) );
-                                    $( svgObject ).attr( 'icon.colors.background', '#CCCCCC' );
-                                }
-                                if ( favList[favItm].style.icon.colors.foreground )
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, favList[favItm].style.icon.colors.foreground ) );
-                                    $( svgObject ).attr( 'icon.colors.foreground', favList[favItm].style.icon.colors.foreground );
-                                }
-                                else
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, '#333333' ) );
-                                    $( svgObject ).attr( 'icon.colors.foreground', '#333333' );
-                                }
-                            }
-                            if ( favList[favItm].style.label)
-                            {
-                                if (favList[favItm].style.label.colors.background )
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[favItm].style.label.colors.background ) );
-                                    $( svgObject ).attr( 'label.colors.background', favList[favItm].style.label.colors.background );
-                                }
-                                else
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#CCCCCC' ) );
-                                    $( svgObject ).attr( 'label.colors.background', '#CCCCCC' );
-                                }
-                                if ( favList[favItm].style.label.colors.foreground )
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, favList[favItm].style.label.colors.foreground ) );
-                                    $( svgObject ).attr( 'label.colors.foreground', favList[favItm].style.label.colors.foreground );
-                                }
-                                else
-                                {
-                                    $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, '#333333' ) );
-                                    $( svgObject ).attr( 'label.colors.foreground', '#333333' );
-                                }
-                            }
-                        }
-
-                        divTag.append( svgObject );
-                        me.favIconsTag.append( divTag );
-
-                        if ( favObj.areas[ networkStatus ].target )
-                        {
-                            me.setFavIconClickTarget ( favObj.areas[ networkStatus ].target, unqID )
-
-                            if ( favList.length > (favItm+1) )
-                            {
-                                me.createRecursiveFavIcons( favList, (favItm+1)  )
-                            }
-                        }
-        
-                    });
-
                 }
                 else
                 {
-                    if ( favList.length > (favItm+1) )
-                    {
-                        me.createRecursiveFavIcons( favList, (favItm+1)  )
-                    }
+                    me.cwsRenderObj.langTermObj.translatePage();
                 }
-
             }
             else
             {
-                // no online/offline options defined for favIcon - display regardless of network mode/status
                 // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
-                $.get( favList[favItm].img, function(data) {
-
-                    console.log( 'FavIcon withOUT online/offline areas defined ' );
+                $.get( favList[ favItm ].img, function(data) {
 
                     var unqID = Util.generateRandomId();
-                    var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[favItm].id + '" name="' + (favList[favItm].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
+                    var svgTemplate = ( $(data)[0].documentElement );
                     var svgObject = ( $(data)[0].documentElement );
 
-                    $( svgObject ).attr( 'id', 'svg_'+unqID );
-                    $( svgObject ).find("tspan").html( favList[favItm].name );
+                    $( svgObject ).find("tspan").html( favList[ favItm ].name );
 
-                    if ( favList[favItm].colors )
+                    if ( favList[ favItm ].term )
                     {
-                        if ( favList[favItm].colors.background )
+                        $( svgObject ).html( $(svgObject).html().replace( /{TERM}/g, favList[ favItm ].term ) );
+                    }
+
+                    if ( favList[ favItm ].colors )
+                    {
+                        if ( favList[ favItm ].colors.background )
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, favList[favItm].colors.background ) );
-                            $( svgObject ).attr( 'colors.background', favList[favItm].colors.background );
+                            $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, favList[ favItm ].colors.background ) );
+                            $( svgObject ).attr( 'colors.background', favList[ favItm ].colors.background );
                         }
                         else
                         {
                             $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, '#CCCCCC' ) );
                             $( svgObject ).attr( 'colors.background', '#CCCCCC' );
                         }
-                        if ( favList[favItm].colors.foreground )
+                        if ( favList[ favItm ].colors.foreground )
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, favList[favItm].colors.foreground ) );
-                            $( svgObject ).attr( 'colors.foreground', favList[favItm].colors.foreground );
+                            $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, favList[ favItm ].colors.foreground ) );
+                            $( svgObject ).attr( 'colors.foreground', favList[ favItm ].colors.foreground );
                         }
                         else
                         {
@@ -336,24 +130,24 @@ function favIcons( cwsRender )
 
                         }
                     }
-                    if ( favList[favItm].style )
+                    if ( favList[ favItm ].style )
                     {
-                        if ( favList[favItm].style.icon )
+                        if ( favList[ favItm ].style.icon )
                         {
-                            if (favList[favItm].style.icon.colors.background )
+                            if (favList[ favItm ].style.icon.colors.background )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, favList[favItm].style.icon.colors.background ) );
-                                $( svgObject ).attr( 'icon.colors.background', favList[favItm].style.icon.colors.background );
+                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, favList[ favItm ].style.icon.colors.background ) );
+                                $( svgObject ).attr( 'icon.colors.background', favList[ favItm ].style.icon.colors.background );
                             }
                             else
                             {
                                 $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCCCCC' ) );
                                 $( svgObject ).attr( 'icon.colors.background', '#CCCCCC' );
                             }
-                            if ( favList[favItm].style.icon.colors.foreground )
+                            if ( favList[ favItm ].style.icon.colors.foreground )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, favList[favItm].style.icon.colors.foreground ) );
-                                $( svgObject ).attr( 'icon.colors.foreground', favList[favItm].style.icon.colors.foreground );
+                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, favList[ favItm ].style.icon.colors.foreground ) );
+                                $( svgObject ).attr( 'icon.colors.foreground', favList[ favItm ].style.icon.colors.foreground );
                             }
                             else
                             {
@@ -361,22 +155,22 @@ function favIcons( cwsRender )
                                 $( svgObject ).attr( 'icon.colors.foreground', '#333333' );                                
                             }
                         }
-                        if ( favList[favItm].style.label)
+                        if ( favList[ favItm ].style.label)
                         {
-                            if (favList[favItm].style.label.colors.background )
+                            if (favList[ favItm ].style.label.colors.background )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[favItm].style.label.colors.background ) );
-                                $( svgObject ).attr( 'label.colors.background', favList[favItm].style.label.colors.background );
+                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
+                                $( svgObject ).attr( 'label.colors.background', favList[ favItm ].style.label.colors.background );
                             }
                             else
                             {
                                 $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#CCCCCC' ) );
                                 $( svgObject ).attr( 'label.colors.background', '#CCCCCC' );
                             }
-                            if ( favList[favItm].style.label.colors.foreground )
+                            if ( favList[ favItm ].style.label.colors.foreground )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, favList[favItm].style.label.colors.foreground ) );
-                                $( svgObject ).attr( 'label.colors.foreground', favList[favItm].style.label.colors.foreground );
+                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, favList[ favItm ].style.label.colors.foreground ) );
+                                $( svgObject ).attr( 'label.colors.foreground', favList[ favItm ].style.label.colors.foreground );
                             }
                             else
                             {
@@ -386,24 +180,23 @@ function favIcons( cwsRender )
                         }
                     }
 
-                    divTag.append( svgObject );
-                    me.favIconsTag.append( divTag );
+                    me.storeFavIcon( svgObject.outerHTML, favList[ favItm ].id, favList[ favItm ].name, function(){
 
-                    if ( favList[favItm].target )
-                    {
-                        me.setFavIconClickTarget ( favList[favItm].target, unqID )
-    
-                        if ( favList.length > (favItm+1) )
+                        if ( favList.length > ( parseInt(favItm) +1 ) && favList[ ( parseInt(favItm) +1 ) ] )
                         {
-                            me.createRecursiveFavIcons( favList, (favItm+1)  )
+                            me.createRecursiveFavIcons( favList, ( parseInt(favItm) +1 ), bAppend )
                         }
-                    }
+                        else
+                        {
+                            me.createRecursiveFavIcons ( favList, 0, true )
+                        }
+
+                    } );
 
                 });
-
             }
 
-        }*/
+        }
 
     }
 
@@ -418,6 +211,46 @@ function favIcons( cwsRender )
             }
 
         });
+    }
+
+    me.storeFavIcon = function( svgObjectCode, iconID, iconName, callBack )
+    {
+
+        if ( localStorage.getItem( 'favIcons' ) )
+        {
+            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
+        }
+        else
+        {
+            var favIconObj = [];
+        }
+
+        favIconObj.push ( { id: iconID, name: iconName, svg: encodeURI( svgObjectCode ) } );
+
+        localStorage.setItem( 'favIcons', JSON.stringify( favIconObj ) );
+
+        if ( callBack ) callBack();
+
+    }
+
+    me.fetchFavIcon = function( iconID )
+    {
+        if ( localStorage.getItem( 'favIcons' ) )
+        {
+            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
+
+            for ( var i = 0; i < favIconObj.length; i++ )
+            {
+                var favItm = ( favIconObj[ i ] );
+
+                if ( favItm.id == iconID )
+                {
+                    //if ( iconID == 1) 
+                    return $( decodeURI( favItm.svg ) );
+                }
+            }
+
+        }
     }
 
 	// ------------------------------------

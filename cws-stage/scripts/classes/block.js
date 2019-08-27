@@ -70,7 +70,6 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 
 		if ( me.blockJson ) me.blockType = me.blockJson.blockType;
 
-		
 		// Form BlockTag generate/assign
 		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
 	}

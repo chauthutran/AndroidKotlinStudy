@@ -76,13 +76,13 @@ function BlockButton( cwsRenderObj, blockObj )
 				setTimeout( function() 
 				{
 					/* START > Edited by Greg: 2018/11/26 */
-					var lastTab = FormUtil.getUserLastSelectedTab();
+					/*var lastTab = FormUtil.getUserLastSelectedTab();
 
 					if ( lastTab )
 					{
 						btnHolderTag.find( 'li' )[ lastTab-1 ].click();
 					}
-					else
+					else*/
 					{
 						btnHolderTag.find( 'li:first-child' ).click();
 					}

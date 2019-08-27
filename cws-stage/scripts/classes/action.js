@@ -240,7 +240,8 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "openArea" )
 			{				
 				if ( clickActionJson.areaId )
-				{					
+				{
+					//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
 					me.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
@@ -322,20 +323,14 @@ function Action( cwsRenderObj, blockObj )
 				if ( clickActionJson.localResource )
 				{
 					var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
+					var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
+					var dataPass_Status = {};
 
-					//if ( wsExchangeData && wsExchangeData.resultData && wsExchangeData.displayData )
-					{
-						var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
-						var dataPass_Status = {};
-						statusActionsCalled = true;
+					statusActionsCalled = true;
 
-						//console.log( wsExchangeData );
-
-						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
-							if ( afterActionFunc ) afterActionFunc();
-						} );
-
-					}
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
+						if ( afterActionFunc ) afterActionFunc();
+					} );
 
 				}
 				else
@@ -384,16 +379,14 @@ function Action( cwsRenderObj, blockObj )
 					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 					if ( clickActionJson.redeemListInsert === "true" )
 					{
-						// Offline Submission Handling..
-						//if ( clickActionJson.redeemListInsert === "true" )
-						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued );
-						}
+						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
 
-						//dataPass.prevWsReplyData = { 'resultData': { 'status': 'offline' } };
-						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
+							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
 
-						if ( afterActionFunc ) afterActionFunc();
+							if ( afterActionFunc ) afterActionFunc();
+
+						} );
+
 					}
 					else if ( clickActionJson.url !== undefined )
 					{					

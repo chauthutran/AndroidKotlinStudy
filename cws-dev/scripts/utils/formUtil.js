@@ -221,7 +221,7 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	inputsJson[ 'userName' ] = FormUtil.login_UserName;
 	inputsJson[ 'password' ] = FormUtil.login_Password;
 
-	if ( (location.href).indexOf('localhost') >= 0 )
+	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
 	{
 		console.log ( inputsJson );
 		console.log ( JSON.stringify( inputsJson, null, 4) );	
@@ -463,7 +463,7 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
 
-	if ( (location.href).indexOf('localhost') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
+	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
 	{
 		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
 	}
@@ -1222,7 +1222,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 			if ( $(iconObj).html() )
 			{
-				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
+				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="vertical-align:top;position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
 
 				$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 				$( iconObj ).append( statusIconObj )	

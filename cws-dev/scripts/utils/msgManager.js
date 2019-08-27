@@ -246,8 +246,11 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
         var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
 
         $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
-        $( dvTmr ).css( 'top', ( screenWidth < 480 ? '-2px' : '2px' ) );
+        $( dvTmr ).css( 'top', ( screenWidth < 480 ? '1px' : '0' ) ); //GREG: Pay more attention to this styling, looks terrible at times
+        $( dvTmr ).css( 'left', ( screenWidth < 480 ? '-2px' : '0' ) ); //GREG: Pay more attention to this styling, looks terrible at times
         $( dvTmr ).css( 'opacity', notifProgressOpacInitial );
+        $( dvTmr ).css( 'border-radius', screenWidth < 480 ? '4px 0px 0px 4px' : '' );
+        
         $( dvTmr ).attr( 'hot', 0 );
 
         /* calculate+set smooth transition for progress expansion */

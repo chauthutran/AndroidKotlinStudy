@@ -6,9 +6,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
-	
 	me.formJsonArr;
-
 	me._childTargetActionDelay = 400;
 
 	// =============================================
@@ -311,18 +309,14 @@ function BlockForm( cwsRenderObj, blockObj )
 					else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
 					{
 						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-						console.log( jData[ i ] );
+
 						if ( tagTarget )
 						{
-							console.log( tagTarget );
 							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
 							var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
-							console.log( ageCal && ageCal.length );
-							console.log( ageCal );
-							console.log( ageCal.length );
+
 							if ( ageCal != undefined && ageCal > 0 )
 							{
-								console.log( 'setting value: ' + ageCal );
 								tagTarget.val( ageCal );
 							}
 						}
@@ -349,9 +343,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			});
 		}
 
-
-		// NOTE: TRAN VALIDATION
-		// Add rules for IMPUT fields
 		me.addRuleForField( divInputTag, formItemJson );
 		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 		me.addStylesForField( divInputTag, formItemJson );
@@ -378,8 +369,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			&& formItemJson.hideCase !== undefined
 			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
-			//divInputTag.find("input,select").remove();
-			divInputTag.hide();
+			divInputTag.hide(); //divInputTag.find("input,select").remove();
 		}
 
 		if ( passedData !== undefined 
@@ -441,9 +431,6 @@ function BlockForm( cwsRenderObj, blockObj )
 				if ( ruleJson.type )
 				{
 					// all other custom attributes
-					//var keys = Object.keys( ruleJson );
-					//entryTag.attr( keys[ 0 ], ruleJson[ keys[ 0 ] ] );
-
 					entryTag.attr( "type", ruleJson.type );
 
 				}
@@ -496,7 +483,6 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
 				me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
-
 				me.performCondiAction( evalAction.actions, formDivSecTag, false );
 			}
 			else
@@ -519,7 +505,6 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			try
 			{
-				// var afterCondStr = evalCondition.replace( '$$(this)', tagVal );
 				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
 				result = eval( afterCondStr );	
@@ -646,14 +631,8 @@ function BlockForm( cwsRenderObj, blockObj )
 			var clientId = Util.getNotEmpty( passedData.resultData.clientId );
 			var voucherId = Util.getNotEmpty( passedData.resultData.voucherId );
 
-			// formDivSecTag.find( '#countryType' ).val( "MZ" );
-			// formDivSecTag.find( '#cbdCase' ).val( "Y" );
 			if ( clientId ) formDivSecTag.find( '[name="clientId"]' ).val( clientId );
 			if ( voucherId ) formDivSecTag.find( '[name="voucherId"]' ).val( voucherId );
-			// NOTE: But these coudl also be populated by below data..
-
-			// formDivSecTag.find( '#cbdEnrollOuId' ).val( passedData.data.relationships[0].cbdEnrollOu );
-
 
 			try 
 			{

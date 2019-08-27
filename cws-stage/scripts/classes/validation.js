@@ -11,10 +11,6 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	
 	// ------------------------------------
 
-	/* me.init = function() {
-		me.setUp_isNumberOnly_OlderBrowserSupport( me.pageTag );
-	} */
-	
     me.setUp_Events = function( formTag )
     {
         formTag.find( "input,select,textarea" ).each( function() {
@@ -42,15 +38,6 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 				
 		return allValid;
 	};
-	
-
-   /* me.setUp_isNumberOnly_OlderBrowserSupport = function( formTag ) {
-
-		// Support for older browser number only keypress
-		formTag.find("[isNumber='true']").keypress( function(e) {
-			return e.charCode >= 48 && e.charCode <= 57;
-		});		
-	}; */
 
 	me.checkValidations = function( tag )
 	{	
@@ -84,11 +71,11 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		// , and if not valid, set the tag as '"valid"=false' in the attribute
 		var valid = true;
 		var validationAttr = tag.attr( type );
-
+		
 		// If the validation attribute is present in the tag and not empty string or set to false
 		if ( validationAttr && validationAttr !== 'false' )
 		{									
-
+			
 			if ( type == 'mandatory' ) valid = me.checkRequiredValue( tag, divTag, type );
 			else if ( type == 'minlength' ) valid = me.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
 			else if ( type == 'maxlength' ) valid = me.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
@@ -99,7 +86,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			else if ( type == 'patterns' ) valid = me.checkValue_RegxRules( tag, divTag, type );
 
 			if ( !valid ) tag.attr( 'valid', false );
-		}
+		}		
 	};
 	
 	
@@ -326,11 +313,9 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 
 	// -----------------------------
 	// -- Others
-	
-	//me.getErrorSpanTag = function( keyword, optionalStr )
+
 	me.getErrorSpanTag = function( keyword, term )
 	{
-//		optionalStr = ( optionalStr ) ? optionalStr : '';
 		var text = me.cwsRenderObj.langTermObj.translateText( keyword, term ); // + optionalStr;
 
 		return  $( '<span ' + FormUtil.getTermAttrStr( term ) + ' class="errorMsg" keyword="' + keyword + '"> ' + text + '</span>' );
@@ -349,13 +334,5 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	me.checkFalseEvalSpecialCase = function( value ) {
 		return ( value !== undefined && value != null && value.length > 0 );
 	};
-		
-	// -----------------------------------------------------------------------
-	// RUN Init method
-	// -----------------------------------------------------------------------
-	
-	// me.init();
-	
 
-	// test 6
 }

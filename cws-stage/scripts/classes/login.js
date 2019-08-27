@@ -54,12 +54,6 @@ function Login( cwsRenderObj )
 	me.setLoginFormEvents = function()
 	{
 		me.setLoginBtnClick();
-
-		//me.setSkipLoginBtnClick();
-
-		//me.setloginBtnClearClick();
-
-		//me.setUpEnterKeyLogin(); // Not working, thus, disabled for now
 	}
 
 	// ---------------------------
@@ -76,41 +70,18 @@ function Login( cwsRenderObj )
 			me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
 		});
 
-		// New UI Button click
-		/*$( '.loginBtnAdv' ).click( function() {
-			var parentTag = $( this ).parent();
-			var loginServer = parentTag.find( 'input.loginServerAdv' ).val();
-			var loginUserNameVal = parentTag.find( 'input.loginUserNameAdv' ).val();
-			var loginUserPinVal = parentTag.find( 'input.loginUserPinAdv' ).val();
-
-			me.processLogin( loginUserNameVal, loginUserPinVal, loginServer, $( this ) );
-		});*/
+		// dev/test code for Pilar (Greg: 2019/08/06)
+		$( '#loginFormDiv' ).find( '.icon-row' ).click( function() {
+			playSound("notify");
+		});
+		$( '#loginFormDiv' ).find( 'ul.tabs' ).click( function() {
+			playSound("notify");
+		});
 	}
-
-	/*me.setloginBtnClearClick = function()
-	{
-		$( '.loginBtnClear' ).click( function() {
-	
-			$( 'input.loginUserName' ).val('');
-			$( 'input.loginUserPin' ).val('');
-			$( 'input.loginUserNameAdv' ).val('');
-			$( 'input.loginUserPinAdv' ).val('');
-
-			me.openForm();
- 
-		} );	
-	}*/
 	
 	me.setUpEnterKeyLogin = function()
 	{
-		/*
-		me.setUpEnterKeyExecute( me.loginPasswordTag, me.loginBtnTag );
-		
-		me.getInputBtnPairTags( 'div.loginFormDiv', 'input.loginUserPin', '.loginBtn', function( loginUserPinTag, loginBtnTag )
-		{
-			me.setUpEnterKeyExecute( loginUserPinTag, loginBtnTag );			
-		});
-		*/
+
 	}
 	// =============================================
 
@@ -218,16 +189,35 @@ function Login( cwsRenderObj )
 				else
 				{
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
-					
+
 					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
 				}
 			} );
 		}
 
-		var lastSession = { user: userName, lastUpdated: dtmNow, language: FormUtil.defaultLanguage() }; //, networkOnline: ConnManager.getAppConnMode_Offline()
-		DataManager.saveData( 'session', lastSession );	
+		FormUtil.defaultLanguage( function( defaultLang ){
 
+			var sessRaw = localStorage.getItem( 'session' );
+
+			if ( sessRaw != undefined && sessRaw != null )
+			{
+				var lastSession = JSON.parse( sessRaw );
+
+				if ( lastSession.soundEffects == undefined )
+				{
+					lastSession.soundEffects = Util.isMobi();
+				}
+
+			}
+			else
+			{
+				var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
+			}
+
+			DataManager.saveData( 'session', lastSession );
+
+		});
 	}
 
 	me.regetDCDconfig = function()
@@ -261,38 +251,52 @@ function Login( cwsRenderObj )
 			// call CWS start with this config data..
 			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 
+			var dtmNow = ( new Date() ).toISOString();
+
 			// if session data exists, update the lastUpdated date else create new session data
 			if ( loginData.mySession ) 
 			{
 				loginData.mySession.lastUpdated = dtmNow;
 				loginData.mySession.stayLoggedIn = me._staySignedIn;
-
+	
 				DataManager.saveData( me._userName, loginData );	
+	
+				me.loginAfter();
 			}
 			else
 			{
 				var newSaveObj = Object.assign( {} , loginData);
-
-				newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: FormUtil.defaultLanguage() };
-
-				DataManager.saveData( me._userName, newSaveObj );
-
-				FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+	
+				FormUtil.defaultLanguage( function( defaultLang ){
+					newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
+	
+					DataManager.saveData( me._userName, newSaveObj );
+		
+					FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+	
+					me.loginAfter();
+				});
+				
 			}
-
-			FormUtil.geolocationAllowed();
-
-			me.cwsRenderObj.renderDefaultTheme();
 
 		}
 		else
 		{
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
+
+			me.loginAfter();
 		}
 
-		FormUtil.hideProgressBar();
+	}
 
+	me.loginAfter = function()
+	{
+		FormUtil.geolocationAllowed();
+
+		me.cwsRenderObj.renderDefaultTheme();
+
+		FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------
@@ -300,12 +304,13 @@ function Login( cwsRenderObj )
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )
 	{
 		$( formDivStr ).each( function( i ) {
-			var formDivTag = $( this );
 
+			var formDivTag = $( this );
 			var loginUserPinTag = formDivTag.find( pwdInputStr );
 			var loginBtnTag = formDivTag.find( btnStr );
 
 			returnFunc( loginUserPinTag, loginBtnTag );
+
 		});	
 	}
 

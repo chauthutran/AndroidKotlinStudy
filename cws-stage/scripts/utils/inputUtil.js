@@ -134,7 +134,6 @@ function inputMonitor( cwsRenderObj )
         }
         else
         {
-            //console.log( getSessionSummary() );
             me.toucheEndNavDrawer( e );
         }
         
@@ -294,6 +293,7 @@ function inputMonitor( cwsRenderObj )
         trackX += diffX;
         trackY += diffY;
 
+        // for debugging
         //console.log( 'initialX: ' + initialX + ', currentX: ' + currentX + ', trackX: ' + trackX);
     }
 
@@ -380,40 +380,37 @@ function inputMonitor( cwsRenderObj )
             /* run navDrawer slide-expand (eval) for right-swipe ONLY if starting Xposition < 50px */
             if ( initialX < dragXoffsetLimit )
             {
-                //if ( ! navDrawerVisibleOnStart )
+
+                if ( ! $( '#focusRelegator').is(':visible') )
                 {
-
-                    if ( ! $( '#focusRelegator').is(':visible') )
-                    {
-                        $( '#focusRelegator').show();
-                        $( '#focusRelegator' ).css( 'zIndex',100 );
-                        $( '#navDrawerDiv' ).css('zIndex',200 );
-                    }
-                    else
-                    {
-                        if ( $( '#focusRelegator' ).css( 'zIndex' ) != 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
-                        if ( $( '#navDrawerDiv' ).css( 'zIndex' ) != 200 ) $( '#focusRelegator' ).css( 'zIndex',200 );
-                    }
-
-                    if ( navDrawerVisibleOnMove )
-                    {
-                        $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
-                    }
-
-                    if ( currentX > expectedNavDrawerWidth )
-                    {
-                        if ( ! $( '#navDrawerDiv' ).css( 'left' ) != '0px' ) $( '#navDrawerDiv' ).css( 'left', '0px' );
-                        $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                    }
-                    else
-                    {
-                        $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
-                        if ( ! $( '#navDrawerDiv' ).css( 'width' ) != expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                    }
-
-                    if (! $( '#navDrawerDiv' ).is(':visible') ) $( '#navDrawerDiv' ).show();
-
+                    $( '#focusRelegator').show();
+                    $( '#focusRelegator' ).css( 'zIndex',100 );
+                    $( '#navDrawerDiv' ).css('zIndex',200 );
                 }
+                else
+                {
+                    if ( $( '#focusRelegator' ).css( 'zIndex' ) != 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
+                    if ( $( '#navDrawerDiv' ).css( 'zIndex' ) != 200 ) $( '#focusRelegator' ).css( 'zIndex',200 );
+                }
+
+                if ( navDrawerVisibleOnMove )
+                {
+                    $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                }
+
+                if ( currentX > expectedNavDrawerWidth )
+                {
+                    if ( ! $( '#navDrawerDiv' ).css( 'left' ) != '0px' ) $( '#navDrawerDiv' ).css( 'left', '0px' );
+                    $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                }
+                else
+                {
+                    $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                    if ( ! $( '#navDrawerDiv' ).css( 'width' ) != expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                }
+
+                if (! $( '#navDrawerDiv' ).is(':visible') ) $( '#navDrawerDiv' ).show();
+
             }
             else
             {
@@ -448,10 +445,8 @@ function inputMonitor( cwsRenderObj )
         $( startTouchTargetTag ).removeClass( 'cardShadow' );
         $( startTouchTargetTag ).removeClass( 'rounded' );
         $( startTouchTargetTag ).addClass( 'transitionSmooth' );
-
-        //console.log( startTouchParentTag );
-
         $( startTouchTargetTag ).detach();
+
         //reset: snap back to left position with other defaults
         $( startTouchParentTag ).append( startTouchTargetTag );          
 
@@ -486,7 +481,6 @@ function inputMonitor( cwsRenderObj )
 
     me.toucheEndNavDrawer = function( e )
     {
-
 
         if ( $( '#navDrawerDiv' ).hasClass( 'transitionRapid' ) )
         {
