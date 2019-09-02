@@ -5,16 +5,16 @@
   const _cwsRenderObj = new cwsRender();
   
   var debugMode = false;
+  var SWStateChangeStartup = false;
 
   window.onload = function() {
-    //startApp();
+
+    // see service worker registration/update handler below
+
   }
 
   function startApp() 
   {
-    //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
-    FormMsgManager.appBlock( "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
-
     // 1. Online/Offline related event setup
     updateOnlineStatus();
 
@@ -30,34 +30,33 @@
     // , then, proceed with 'cwsRenderObj' rendering.
 
     appInfoOperation( function() {
+
+      $( '#spanVersion' ).text( 'v' + _ver );
+
       ConnManager._cwsRenderObj = _cwsRenderObj;
+    
       _cwsRenderObj.render();  
+
       syncManager.initialize( _cwsRenderObj );
+
+      FormUtil.createNumberLoginPinPad(); //if ( Util.isMobi() )
+
+      setTimeout(function(){
+
+        FormMsgManager.appUnblock();
+
+      },500)
+
     });
 
-
-    // create numeric input keypad > untidy implementation but it works
-    //if ( Util.isMobi() )
-    createNumberLoginPinPad();
 
   }
 
   // ----------------------------------------------------
 
-  $( '#spanVersion' ).text( 'v' + _ver );
-
-
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
   });
-
-
-  // move to cwsRender 
-  /*$( '#hidenotificationUpgrade' ).click ( () => {
-
-    $( '#notificationUpgrade' ).hide( 'slow' );
-
-  });*/
 
 
   // App version check and return always..  
@@ -71,7 +70,6 @@
 
       FormUtil.getConfigInfo( function( result, data ) 
       {
-
         try {
           if ( ( location.href ).indexOf( '.psi-mis.org' ) >= 0 )
             FormUtil.dynamicWS = data[ ( location.host ).replace( '.psi-mis.org', '' ) ];
@@ -102,8 +100,6 @@
 
         webServiceSet( FormUtil.staticWSName );
 
-        FormMsgManager.appUnblock();
-
         if (returnFunc) returnFunc();
 
       });
@@ -119,8 +115,6 @@
       }
 
       appVersionUpgradeReview(FormUtil._getPWAInfo );
-
-      FormMsgManager.appUnblock();
 
       if (returnFunc) returnFunc();
     }
@@ -164,10 +158,9 @@
       MsgManager.notificationMessage ( 'New version of app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
 
     }
-    
+
   }
 
-  
   function webServiceSet( wsName )
   {
     if ( wsName ) FormUtil.staticWSName = wsName;
@@ -181,7 +174,6 @@
           ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
           playSound("coin");
       });
-    
   }
 
   function updateOnlineStatus( event ) 
@@ -195,50 +187,20 @@
 
   };
 
-  function createNumberLoginPinPad()
-  {
-
-      $( "#passReal" ).keydown(function( event ) 
-      {
-        if ( event.keyCode == 8 || event.keyCode == 46 )
-        {
-          $( "#passReal" ).val( '' );
-          $( "#pass" ).val( '' );
-        }
-      });
-
-      $( "#passReal" ).keyup(function( event ) 
-      {
-          $('#pass').val( $('#passReal').val() );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-      });
-
-      $( "#pass" ).focus(function() 
-      {
-          $('#passReal').focus();
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-          $('#passReal').css( 'top', $('#pass').position().top + 8 );
-      });
-
-      setTimeout( function() {
-          $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
-      }, 500 );
-
-  }
-
   function updateSyncManager( event ) 
   {
     syncManager.initialize( _cwsRenderObj );
   }
 
   // ----------------------------------------------------
-  
-  //window.isUpdateAvailable = new Promise(function(resolve, reject) {
+
+    FormMsgManager.appBlockTemplate( 'appLoad' );
 
     if ('serviceWorker' in navigator) {
 
-      navigator.serviceWorker.register('./service-worker.js').then(registration=> {
+      navigator.serviceWorker.register( './service-worker.js' ).then( registration => {
+
+        if ( registration.active == null ) SWStateChangeStartup = true;
 
           registration.onupdatefound = () => {
 
@@ -250,24 +212,25 @@
 
               switch (installingWorker.state) {
                 case 'installed':
-                  if (navigator.serviceWorker.controller) 
-                  {
-                    // new update available
-                    //resolve(true);
-                    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-                    // move to cwsRender ?
-                    $( btnUpgrade ).click ( () => {
-                      location.reload( true );
-                    });
+                    if (navigator.serviceWorker.controller) 
+                    {
+                      // new update available
+                      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
-                    // MISSING TRANSLATION
-                    MsgManager.notificationMessage ( 'New updates installed. Click refresh to view changes', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-                  } 
-                  else 
-                  {
-                    // no update available
-                    //resolve(false);
-                  }
+                      // move to cwsRender ?
+                      $( btnUpgrade ).click ( () => {
+                        location.reload( true );
+                      });
+
+                      // MISSING TRANSLATION
+                      MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+
+                    }
+                    break;
+                case 'activating':
+                    break;
+                case 'activated':
+                    if ( SWStateChangeStartup ) startApp();
                   break;
               }
 
@@ -277,13 +240,17 @@
 
           _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
           _registrationObj = registration;
+
           if ( debugMode ) console.log('Service Worker Registered');
 
         })
         .then(function() {
 
-          // Start the app after service worker is ready.
-          startApp();
+          // Start the app after service worker is ready && not a new install/upgrade.
+          if ( SWStateChangeStartup == false )
+          {
+            startApp();
+          } 
 
         })
         .catch(err => 
@@ -292,23 +259,5 @@
         );
 
     }
-
-	//});
-
-  /*window['isUpdateAvailable']
-  .then(isAvailable => {
-    if (isAvailable) {
-
-      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-      // move to cwsRender 
-      $( btnUpgrade ).click ( () => {
-        //_registrationObj.update();
-        location.reload( true );
-      });
-
-      MsgManager.notificationMessage ( 'New updates applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
-    }
-  });*/
 
 })();

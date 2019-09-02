@@ -27,8 +27,6 @@ FormMsgManager.cssBlock_Body = {
 // basic 'block' with library '.blockUI'
 FormMsgManager.block = function( block, msg, cssSetting, tag )
 {
-    //console.log( ( $('nav.bg-color-program').width() ) );
-    //console.log( ( $(document).height() ) );
 	var msgAndStyle = { message: msg, css: cssSetting };
 
 	if ( tag === undefined )
@@ -41,6 +39,28 @@ FormMsgManager.block = function( block, msg, cssSetting, tag )
 		if ( block ) tag.block( msgAndStyle );
 		else tag.unblock();
 	}
+}
+
+FormMsgManager.appBlockTemplate = function( template )
+{
+    var block;
+
+    if ( template == 'appLoad' )
+    {
+        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>";
+    }
+    else if ( template == 'appLoadProgress' )
+    {
+        block = "<div style='text-align:center;'><img src='images/Connect.svg' class='cwsLogoRotateSpin rotate' style='width:44px;height:44px;'>" +
+                "<div term='' style='font-size:7pt;'>installing</div></div>";
+    }
+    else
+    {
+        block = template;
+    }
+
+    FormMsgManager.appBlock( block );
+
 }
 
 // Actual calling method (to be used) 'appBlock/appUnblock'

@@ -17,7 +17,7 @@ function aboutApp( cwsRender )
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
     me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
     me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
-    me.aboutInfo_SoundSwitchInput = $( '#soundSwitchInput' );
+    
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
@@ -119,19 +119,7 @@ function aboutApp( cwsRender )
 
 
 
-        me.aboutInfo_SoundSwitchInput.change(() => {
-          var soundSetting = me.aboutInfo_SoundSwitchInput.is( ":checked" ); // load from input checkbox
-          var sessData = JSON.parse(localStorage.getItem( "session" ));
-
-          sessData.soundEffects = soundSetting; //add
-          DataManager.saveData("session", sessData);
-
-          if(soundSetting)playSound("notify");
-          console.log(DataManager, sessData, soundSetting);
-        });
-
-
-
+  
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
             FormUtil.showProgressBar();
@@ -693,11 +681,6 @@ function aboutApp( cwsRender )
                     if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
-
-                var sessData = JSON.parse( localStorage.getItem('session') );
-
-                me.aboutInfo_SoundSwitchInput.prop( 'checked', ( sessData.soundEffects ? 'checked' : '' ) );
-
             });
         }
 

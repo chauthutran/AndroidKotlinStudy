@@ -372,7 +372,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "14287e7f4c6be79f68cee5e71ba51cec"
+    "revision": "75be068b42e3e513a3c13fe961195877"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -448,7 +448,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "36bd5d390f7f103eb73bb2d639e48a5e"
+    "revision": "0d4b5935fb902f020fc34b300d081c6b"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",

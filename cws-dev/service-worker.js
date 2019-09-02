@@ -11,10 +11,11 @@
  * See https://goo.gl/2aRDsh
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
-workbox.skipWaiting();
-workbox.clientsClaim();
+workbox.core.skipWaiting();
+
+workbox.core.clientsClaim();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
@@ -24,11 +25,11 @@ workbox.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/responsive.css",
-    "revision": "80c2fefb8d75dd94ce1b8db8c5f8d0bb"
+    "revision": "6b3a2d63e8dda4a459dd1e9f523c6a16"
   },
   {
     "url": "css/style.css",
-    "revision": "7970b36b59e70fc30c4e7ca5553c745a"
+    "revision": "ffce70f83547d9a782a0542bfe5c7d13"
   },
   {
     "url": "images/about.svg",
@@ -116,7 +117,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/baseline-cloud_off-24px.svg",
-    "revision": "520521bfa31c7dd2d930e07c15ed8884"
+    "revision": "eff905818e6014ee2797d4def1431e6f"
   },
   {
     "url": "images/blank.gif",
@@ -148,27 +149,27 @@ self.__precacheManifest = [
   },
   {
     "url": "images/favbar_color_act.svg",
-    "revision": "4bc3606fec5c13e524c07faec581f418"
+    "revision": "eb3e662b4f7f4ddcbc9bca7cc6880e00"
   },
   {
     "url": "images/favbar_color_arrows.svg",
-    "revision": "c3ce5d7be683c83729425f3b7f39d820"
+    "revision": "28517371f20710f97ae7b9d1e4ee5fd1"
   },
   {
     "url": "images/favbar_color_contact.svg",
-    "revision": "6f045a1b801a41c223aa19852b0d6ebc"
+    "revision": "6b01236ce1540091308f7e5a285d0528"
   },
   {
     "url": "images/favbar_color_fpl-fu.svg",
-    "revision": "fad14262b353f577d28795d065cf7813"
+    "revision": "563134d74b6a5afaef196e0269501bfb"
   },
   {
     "url": "images/favbar_color_fpl-sp.svg",
-    "revision": "2f3947984b6bef5c80fdf5c0e416940c"
+    "revision": "db597511bf8e707794a431332a14f00f"
   },
   {
     "url": "images/favbar_color_sas.svg",
-    "revision": "14ceca1978fb6a3aafe8c71f59b5572c"
+    "revision": "f473cc5a6d3959639ea00e5d518e4818"
   },
   {
     "url": "images/hide.png",
@@ -280,7 +281,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/sharp-cloud_queue-24px.svg",
-    "revision": "a4cbccc08adcc4a00bdb043e7e3c80b3"
+    "revision": "78da91674ff292a59c084a77cf4b6a74"
   },
   {
     "url": "images/sharp-my_location-24px.svg",
@@ -320,7 +321,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "399940bd4c1feae5916b3af309399d60"
+    "revision": "f771a08f1f50cce93e34854537f2204d"
   },
   {
     "url": "redeemGen.html",
@@ -328,11 +329,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "838f6c443b9966c1b7d7d0a4294452b7"
+    "revision": "a21961722cb55c8e05939339d1b6426d"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "2ea26c4f77b8c68f99d82ea132e0d923"
+    "revision": "2ea62aead544c3bb229c69215475c774"
   },
   {
     "url": "scripts/classes/action.js",
@@ -340,7 +341,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "202ece1b3c93c587ca722cd4645af959"
+    "revision": "1d4e68598e5ff32e9e1089de4192c803"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -348,11 +349,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "bdfb7e83b0485788a7c865ac10d35d55"
+    "revision": "17f834e065cd45fe1be9a3cee60a850d"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "ca8f3d6415b53874705267e103380778"
+    "revision": "ef5d4a4010ffa098c9c6f463fecd6bc4"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -364,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "14287e7f4c6be79f68cee5e71ba51cec"
+    "revision": "75d1ba8e78206a28d34ad621018a520a"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -372,11 +373,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "43d0a02ef5eb9a70aef8e7f506f805c7"
+    "revision": "51f04407c24c0b89929115809ffb9d9c"
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "c1d8e945be37409908fd032edbc709cb"
+    "revision": "b5b74c5a3cca8cdbb0e823532a50c94b"
+  },
+  {
+    "url": "scripts/classes/settingsApp.js",
+    "revision": "7055fece201884bbcf0c5da5a391ce8c"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -388,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "610b8af4ea8967076a4bcbaebd443046"
+    "revision": "fa9f6c113cd639a73facd8193c38754a"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -436,11 +441,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formMsgManager.js",
-    "revision": "cdeda7b7cd5c5124b74154f3a19e6168"
+    "revision": "1800f751175640c1978ad3a9a074980f"
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "ef77db325cb45b10e711686af8f227e3"
+    "revision": "f98469fbd45f00ad59caf879ea4010e7"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -464,7 +469,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "24824176a40cf42eb6d3bbe1604d4602"
+    "revision": "31d12fceb83c48cf2d1f1c10fbd6c3a2"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -532,12 +537,11 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "87c7204d756607a7d4bc30a9d7a57dd9"
+    "revision": "e0033ea168c8f8d09313767056a75a31"
   }
 ].concat(self.__precacheManifest || []);
-workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/eRefWS/, workbox.strategies.staleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
 
 workbox.googleAnalytics.initialize({});

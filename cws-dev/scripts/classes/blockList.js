@@ -61,13 +61,15 @@ function BlockList( cwsRenderObj, blockObj )
             if ( newBlockTag )
             {
                 me.newBlockTag = newBlockTag;
+
+                me.redeemList_Display( me.newBlockTag );
+
+                // Add Event from 'FormUtil'
+                //  - To Enable click
+                FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
+
             }
 
-            me.redeemList_Display( me.newBlockTag );
-
-            // Add Event from 'FormUtil'
-            //  - To Enable click
-            FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
 
         }
     }
@@ -82,7 +84,16 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
                 {
-                    me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
+                    me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
+                    /*if ( me.newBlockTag.length > 1 )
+                    {
+                        //console.log( me.newBlockTag[ me.newBlockTag.length -1 ] );
+                        me.setFloatingListMenuIconEvents( me.newBlockTag[ me.newBlockTag.length -1 ].find( '.floatListMenuIcon' ), me.newBlockTag[ me.newBlockTag.length -1 ].find( '.floatListMenuSubIcons' ) );
+                    }
+                    else
+                    {
+                        me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
+                    }*/
                 }
                 else
                 {

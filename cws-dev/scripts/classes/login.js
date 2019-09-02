@@ -132,14 +132,9 @@ function Login( cwsRenderObj )
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
-		// Greg - Disabled this for now.
-		//FormUtil._serverUrlOverride = server;
-
 		// ONLINE vs OFFLINE HANDLING
-		//if ( ConnManager.getAppConnMode_Offline() )
 		if ( ! ConnManager.networkSyncConditions() )
 		{
-			/* START > Added by Greg: 2018/11/26 */
 			// validate encrypted pwd against already stored+encrypted pwd
 			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
 			{
@@ -197,24 +192,7 @@ function Login( cwsRenderObj )
 		}
 
 		FormUtil.defaultLanguage( function( defaultLang ){
-
-			var sessRaw = localStorage.getItem( 'session' );
-
-			if ( sessRaw != undefined && sessRaw != null )
-			{
-				var lastSession = JSON.parse( sessRaw );
-
-				if ( lastSession.soundEffects == undefined )
-				{
-					lastSession.soundEffects = Util.isMobi();
-				}
-
-			}
-			else
-			{
-				var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
-			}
-
+			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
 			DataManager.saveData( 'session', lastSession );
 
 		});
@@ -288,6 +266,8 @@ function Login( cwsRenderObj )
 			me.loginAfter();
 		}
 
+		$( 'nav' ).show();
+
 	}
 
 	me.loginAfter = function()
@@ -295,6 +275,8 @@ function Login( cwsRenderObj )
 		FormUtil.geolocationAllowed();
 
 		me.cwsRenderObj.renderDefaultTheme();
+
+		MsgManager.initialSetup();
 
 		FormUtil.hideProgressBar();
 	}

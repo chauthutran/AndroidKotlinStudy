@@ -1768,3 +1768,30 @@ FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldI
 	}
 
 }
+
+FormUtil.createNumberLoginPinPad = function()
+{
+	// create numeric input keypad > untidy implementation but it works
+	$( "#passReal" ).keydown( function( event ) {
+        if ( event.keyCode == 8 || event.keyCode == 46 ) {
+          $( "#passReal" ).val( '' );
+          $( "#pass" ).val( '' );
+        }
+      });
+
+      $( "#passReal" ).keyup( function( event ) {
+          $('#pass').val( $('#passReal').val() );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+      });
+
+      $( "#pass" ).focus( function() {
+          $('#passReal').focus();
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+          $('#passReal').css( 'top', $('#pass').position().top + 8 );
+      });
+
+      setTimeout( function() {
+          $('#passReal').css( 'top', $('#pass').position().top + 12 );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
+      }, 500 );
+}

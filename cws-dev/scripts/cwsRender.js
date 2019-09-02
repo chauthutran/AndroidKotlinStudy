@@ -13,8 +13,8 @@ function cwsRender()
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
 	// This get cloned..  Thus, we should use it as icon class name?
-	me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
-	me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
+	//me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
+	//me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.headerLogoTag = $( '.headerLogo' );
@@ -26,6 +26,7 @@ function cwsRender()
 	me.manifest;
 	me.favIconsObj;
 	me.aboutApp;
+	me.settingsApp;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
@@ -112,6 +113,7 @@ function cwsRender()
 		me.langTermObj = new LangTerm( me );
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
+		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new statistics( me );
 	}
 
@@ -168,14 +170,16 @@ function cwsRender()
 
 			// added by Greg (2019-02-18) > test track googleAnalytics
 			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-			//console.log( areaId );
+
 			// should close current tag/content?
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+			else if ( areaId === 'settingsPage') me.settingsApp.render();
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{  
 				me.clearMenuClickStyles();
+				
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
 				//console.log( me.areaList );
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
@@ -411,12 +415,12 @@ function cwsRender()
 
 	me.populateMenuList = function( areaList, exeFunc )
 	{
-		
+
 		DataManager.getSessionData( function(userSessionJson) {
 			//var userSessionJson = DataManager.getSessionData();
 			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
 			var startMenuTag;
-			if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
+
 			$( '#navDrawerDiv' ).empty();
 
 			// clear the list first
@@ -454,8 +458,8 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
-
-					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+					var menuStyle = (( area.group != undefined ) ? ( area.group == false ? 'border-bottom: 0;' : '' ) : 'border-bottom: 0;' );
+					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '" style="' + menuStyle + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
 					me.setupMenuTagClick( menuTag );
 
@@ -608,7 +612,7 @@ function cwsRender()
 				if ( allLangTerms )
 				{
 					// Enable the language switch dropdown
-					me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+					me.settingsApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
 
 					// Translate current page
 					me.langTermObj.translatePage();
@@ -638,17 +642,6 @@ function cwsRender()
 		}
 	}
 
-	/*me.processExistingloggedIn = function( lastSession, loginData )
-	{
-		me.renderDefaultTheme();
-		me.loginObj.loginFormDivTag.hide();
-		me.loginObj._userName = lastSession.user;
-		FormUtil.login_UserName = lastSession.user;
-		FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
-		me.loginObj.loginSuccessProcess( loginData );
-		me.retrieveAndSetUpTranslate();
-	}*/
-
 	me.showLoginForm = function()
 	{
 		// If 'initializeStartBlock' case, open the Login form.
@@ -668,6 +661,7 @@ function cwsRender()
 		$( '#focusRelegator' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
+		$( '#settingsFormDiv' ).hide();
 
 		// hide the menu div if open
 		me.hidenavDrawerDiv();			
@@ -676,13 +670,14 @@ function cwsRender()
 	me.clearMenuClickStyles = function()
 	{
 		$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
+		$( 'table.menu-mobile-row' ).css( 'opacity', '0.7' );
 	}
 
 	me.updateMenuClickStyles = function( areaId )
 	{
-		//$( '[area]' ).css( 'background-color', 'none' );
-		var tag = $( '[areaid="' + areaId + '"]' ).css( 'background-color', '#F2F2F2' );
-
+		//var tag = 
+		$( '[areaid="' + areaId + '"]' ).css( 'background-color', 'rgb(235,235,235,1)' ); //as per FIGMA
+		$( '[areaid="' + areaId + '"]' ).css( 'opacity', '1' );
 	}
 
 	me.logOutProcess = function()
@@ -704,9 +699,15 @@ function cwsRender()
 		{
 			me.aboutApp.hideAboutPage();
 		} //$( 'div.aboutListDiv' ).hide();
+		
 		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
 		{
 			me.statisticsObj.hideStatsPage();
+			//$( 'div.statisticsDiv' ).hide();
+		}
+		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
+		{
+			me.settingsApp.hideSettingsPage();
 			//$( 'div.statisticsDiv' ).hide();
 		}
 

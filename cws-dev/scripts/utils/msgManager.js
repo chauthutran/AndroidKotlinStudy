@@ -37,6 +37,18 @@ MsgManager.initialSetup = function()
         MsgManager.msgAreaClear( 'fast' );
         MsgManager.divProgressAreaTag.empty();
     });
+
+    if ( localStorage.getItem('session') )
+    {
+        var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+
+        if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
+        {
+            MsgManager._autoHide = dcdConf.dcdConfig.settings.message.autoHide;
+            MsgManager._autoHideDelay = dcdConf.dcdConfig.settings.message.autoHideTime;
+        }
+    }
+
 }
 
 

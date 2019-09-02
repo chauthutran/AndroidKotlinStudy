@@ -23,7 +23,10 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if ( formJsonArr !== undefined )
 		{
-			formDivSecTag = $( '<div class="formDivSec"></div>' );
+			var formDivSecTag = $( '<div class="formDivSec"></div>' );
+			var formTag = $( '<form autocomplete=""></form>' );
+
+			formDivSecTag.append( formTag );
 			blockTag.append( formDivSecTag );
 
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
@@ -49,7 +52,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					if ( ! groupsCreated.includes( formFieldGroups[ i ].group ) )
 					{
 						var controlGroup = $( '<div style="" class="inputDiv active formGroupSection" name="' + formFieldGroups[ i ].group + '"><div><label class="formGroupSection">' + formFieldGroups[ i ].group + '</label></div></div>' );
-						formDivSecTag.append( controlGroup );
+						formTag.append( controlGroup );
 						groupsCreated.push( formFieldGroups[ i ].group );
 					}
 					else
@@ -64,7 +67,7 @@ function BlockForm( cwsRenderObj, blockObj )
 						if ( ! groupsCreated.includes( "zzzEmpty" ) )
 						{
 							var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection" name="zzzEmpty"></div>' );
-							formDivSecTag.append( controlGroup );	
+							formTag.append( controlGroup );	
 							groupsCreated.push( "zzzEmpty" );
 						}
 					}

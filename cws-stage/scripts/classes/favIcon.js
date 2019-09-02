@@ -49,7 +49,7 @@ function favIcons( cwsRender )
             });
 
             me.favIconsTag.empty();
-
+            localStorage.removeItem( 'favIcons' );
             me.createRecursiveFavIcons ( favList[ networkStatus ], 0, false )
         }
 

@@ -6,8 +6,8 @@
   "scripts": {
     "build": "node cws_sw_build.js"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "workbox-build": "^3.6.3"
-  }
+  "dependencies": {
+    "workbox-build": "^4.3.1"
+  },
+  "devDependencies": {}
 }

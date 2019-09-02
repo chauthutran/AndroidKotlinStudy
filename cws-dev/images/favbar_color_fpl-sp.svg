@@ -10,8 +10,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg20037"
-   height="36"
-   width="199.5"
+   height="40"
+   width="200"
    version="1.1"
    viewBox="0 0 52.78437378 9.52500027"
    sodipodi:docname="favbar_color_fpl-sp.svg"
@@ -65,7 +65,7 @@
   <path
      style="fill:{LABEL.BGFILL};fill-rule:evenodd;stroke-width:3.7795276642"
      d="M 15.12109375 3.814453125 C 7.262356914 3.814453125 0.935546875 10.14126316 0.935546875 18 C 0.935546875 25.85873684 7.262356914 32.18554688 15.12109375 32.18554688 L 172.7441406 32.22070312 C 180.6224916 32.22070312 186.9648437 25.87824665 186.9648438 18 C 186.9648438 10.12175335 180.6224916 3.779296875 172.7441406 3.779296875 L 89.46679688 3.779296875 z "
-     transform="scale(0.264583334)"
+     transform="scale(0.26)"
      id="rect923" />
   <text
      x="3"
@@ -77,9 +77,9 @@
      style="font-size:5.7388124466px;line-height:1.25;font-family:Rubik;letter-spacing:0px;word-spacing:0px;stroke-width:1.0000196695"
      id="text13073">
 	 <tspan
-   style="font-size:5px;font-family:Roboto,'Open Sans',sans-serif;fill:{LABEL.COLOR};stroke-width:0.264585197"
+   style="font-size:4px;font-family:Roboto,'Open Sans',sans-serif;fill:{LABEL.COLOR};stroke-width:0.264585197"
    x="3"
-   y="6.4"
+   y="6"
    text-anchor="start"
    font-size="5.0211px"
    id="tspan13071"
@@ -87,17 +87,17 @@
    </text>
   <circle
      style="fill:#b3b3b3;fill-rule:evenodd;filter:url(#filter3829-3-6)"
-     r="5.225500107"
-     cx="135.9499969"
-     cy="651.0700073"
+     r="5"
+     cx="136"
+     cy="651"
      transform="matrix(0.82564,0,0,0.82466,-64.191,-532.1)"
      id="circle13075" />
   <ellipse
      id="circle13077"
      cx="47.70294571"
      cy="4.455571175"
-     rx="4.522853851"
-     ry="4.51523447"
+     rx="5"
+     ry="5"
      style="fill:{ICON.BGFILL};fill-rule:evenodd;stroke-width:1.000020504" />
   <rect
      style="fill:none"

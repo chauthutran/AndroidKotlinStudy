@@ -463,7 +463,7 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
 
-	if ( (location.href).indexOf('localhost') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
+	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
 	{
 		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
 	}

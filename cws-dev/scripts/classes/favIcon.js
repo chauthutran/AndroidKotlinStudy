@@ -49,7 +49,7 @@ function favIcons( cwsRender )
             });
 
             me.favIconsTag.empty();
-
+            localStorage.removeItem( 'favIcons' );
             me.createRecursiveFavIcons ( favList[ networkStatus ], 0, false )
         }
 
@@ -188,7 +188,7 @@ function favIcons( cwsRender )
                         }
                         else
                         {
-                            me.createRecursiveFavIcons ( favList, 0, true )
+                            me.createRecursiveFavIcons ( favList, 0, true );
                         }
 
                     } );
@@ -245,7 +245,7 @@ function favIcons( cwsRender )
 
                 if ( favItm.id == iconID )
                 {
-                    //if ( iconID == 1) 
+                    //console.log( decodeURI( favItm.svg ) );
                     return $( decodeURI( favItm.svg ) );
                 }
             }
