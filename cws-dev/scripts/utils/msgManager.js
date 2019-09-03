@@ -163,7 +163,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var screenWidth = document.body.clientWidth;
     var screenHeight = document.body.clientHeight;
     var offsetPosition = ( disableAutoWidth != undefined ? ( disableAutoWidth ? '4%' : ( screenWidth < 480 ? '0' : '4%' ) ) : ( screenWidth < 480 ? '0' : '4%' ) );
-    var optStyle = ( disableAutoWidth != undefined ? 'style="max-width:93%;"' : ( screenWidth < 480 ? 'style="width:100%;height:50px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ) ); //93% = 97% - 4% (offsetPosition)
+    var optStyle = ( disableAutoWidth != undefined ? 'style="max-width:93%;"' : ( screenWidth < 480 ? 'style="width:100%;height:55px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ) ); //93% = 97% - 4% (offsetPosition)
     var className = ( disableAutoWidth != undefined && disableAutoWidth ? ' rounded' : ( screenWidth < 480 ? '' : ' rounded' ) );
     var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="' + messageType + className + '" >' );
 

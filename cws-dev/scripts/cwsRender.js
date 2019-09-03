@@ -427,11 +427,11 @@ function cwsRender()
 			me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-			var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
+			var navMenuHead = $( '<div id="navMenuHead" />' );
 			var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 			var tr = $( '<tr />' );
-			var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
-			var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
+			var tdLeft = $( '<td class="menuHeadLeft" />' );
+			var tdRight = $( '<td class="menuHeadRight" />' );
 
 			me.navDrawerDivTag.append ( navMenuHead );
 			navMenuHead.append ( navMenuTbl );
@@ -442,15 +442,15 @@ function cwsRender()
 			var navMenuLogo = $( '<img src="images/logo.svg" />' );
 
 			tdLeft.append ( navMenuLogo );
-			tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
-			tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
+			tdRight.append ( $( '<div id="divNavDrawerOUName" >' + userName + '</div>') );
+			tdRight.append ( $( '<div id="divNavDrawerOUlongName" />' ) );
 
 			var tr = $( '<tr />' );
 			var td = $( '<td colspan=2 style="height:20px;" />' );
 
 			navMenuTbl.append ( tr );
 			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
+			td.append ( $( '<div id="divNavDrawerSummaryData" />') );
 
 			// Add the menu rows
 			if ( areaList )
@@ -687,7 +687,10 @@ function cwsRender()
 		FormUtil.undoLogin();
 		sessionStorage.clear();
 
-		me.loginObj.spanOuNameTag.text( '' );
+		// change to session Management process > forced reload of app (detect new version + forced login)
+		location.reload( true );
+
+		/* me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
 		me.clearMenuPlaceholders();
 		me.navDrawerDivTag.empty();
@@ -698,18 +701,18 @@ function cwsRender()
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
 		{
 			me.aboutApp.hideAboutPage();
-		} //$( 'div.aboutListDiv' ).hide();
+		}
 		
 		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
 		{
 			me.statisticsObj.hideStatsPage();
-			//$( 'div.statisticsDiv' ).hide();
 		}
 		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
 		{
 			me.settingsApp.hideSettingsPage();
-			//$( 'div.statisticsDiv' ).hide();
 		}
+
+		$( 'nav' ).hide(); */
 
 	}
 

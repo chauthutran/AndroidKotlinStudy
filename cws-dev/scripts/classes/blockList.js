@@ -124,6 +124,10 @@ function BlockList( cwsRenderObj, blockObj )
 
         if ( redeemObj && redeemObj.list )
         {
+            var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
+
+            listContentUlTag.append( lidateGroupPaddTop );
+    
             me.redeemList = redeemObj.list.filter( a=> a.owner == FormUtil.login_UserName );
 
             if ( me.options && me.options.filter )
@@ -203,7 +207,7 @@ function BlockList( cwsRenderObj, blockObj )
         {
 
             var liTag = $( '<li class="emptyListLi"></li>' );
-            var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;"><br>&nbsp;<label class="from-string titleDiv" term="' + Util.termName_listEmpty + '">List is empty.</label></a>' );
+            var spanTag = $( '<a class="expandable" style="padding: 19px 5px 15px 19px; color: #888;"><img src="images/unavail.svg" class="tab-image" alt="active"><label class="from-string titleDiv" style="padding:0 0 0 16px;" term="' + Util.termName_listEmpty + '">List is empty.</label></a>' );
 
             liTag.append( spanTag );
             listContentUlTag.append( liTag );

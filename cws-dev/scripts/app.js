@@ -223,7 +223,7 @@
                       });
 
                       // MISSING TRANSLATION
-                      MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
+                      MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationBlue', btnUpgrade, '', 'right', 'bottom', 15000 );
 
                     }
                     break;

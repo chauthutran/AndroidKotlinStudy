@@ -208,7 +208,46 @@ header {
   cursor: pointer;  
   box-sizing: border-box;
 }
-
+#divNavDrawerOUName {
+  font-size:12pt;
+  font-weight:500;
+  letter-spacing: -0.02em;
+  line-height: 28px;
+}
+#divNavDrawerOUlongName {
+  display: none;
+  letter-spacing: 0.5px;
+  font-size:12px;
+  font-weight:normal;
+  font-style: normal;
+  padding: 4px 0 0 0;
+}
+#divNavDrawerSummaryData {
+  position:relative;
+  top:-7px;
+  padding: 0 0 0 14px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 16px;
+  font-size: 14px;
+  color:#fff;
+}
+#navMenuHead {
+  width:100%;
+  height:100px;
+  margin:0;
+  padding:0;
+  border-radius:0;
+  border-bottom:1px solid rgb(0, 0, 0, 0.1);
+}
+.menuHeadLeft {
+  padding: 14px;
+  width:76px;
+}
+.menuHeadRight {
+  padding:0;
+  height:52px;
+}
 .tb-content-d-log {
   float: left;
   width: 95%;
@@ -218,6 +257,7 @@ header {
   background-color: #fff;
   text-align: left;
   box-sizing: border-box;
+  height: 48px;
 }
 .tb-content-d {
   float: left;
@@ -313,6 +353,10 @@ header {
 }
 .btn {
 
+}
+
+.iconClicker {
+  padding: 6px 0 0 0;
 }
 
 .divBtn {
@@ -733,7 +777,7 @@ div.select {
   position: relative;
   display: block;
   /*height: 3em; */
-  line-height: 2.3; /* 3 */
+  line-height: 2.8; /* 3 */
   border-radius: 4px;
   background-color: #fff;
   overflow: hidden;
@@ -786,7 +830,7 @@ div.formDivSec{
   margin: 10px 0 0 0;
 }
 div.formGroupSection {
-  display:list-item;
+  display:flow-root;
   flex-direction:row;
   flex-wrap:wrap;
 }

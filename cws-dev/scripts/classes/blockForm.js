@@ -291,42 +291,46 @@ function BlockForm( cwsRenderObj, blockObj )
 	{
 		if ( formDivSecTag )
 		{
-			var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-	
-			for( var i = 0; i < jData.length; i++ )
+			if ( formDivSecTag.attr( 'data-fields') != undefined )
 			{
-				if ( jData[ i ].defaultValue )
+				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		
+				for( var i = 0; i < jData.length; i++ )
 				{
-					if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+					if ( jData[ i ].defaultValue )
 					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						if ( tagTarget )
+						if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
 						{
-							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-							tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
-						}
-
-					}
-					else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
-					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						if ( tagTarget )
-						{
-							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-							var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
-
-							if ( ageCal != undefined && ageCal > 0 )
+							if ( tagTarget )
 							{
-								tagTarget.val( ageCal );
+								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+
+								tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
 							}
+
+						}
+						else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+						{
+							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+
+							if ( tagTarget )
+							{
+								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+								var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
+
+								if ( ageCal != undefined && ageCal > 0 )
+								{
+									tagTarget.val( ageCal );
+								}
+							}
+
 						}
 
 					}
-
 				}
+
 			}
 
 		}
@@ -341,7 +345,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag.parent() )
+				me.evalFormInputFunctions( formDivSecTag.parent().parent() )
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -419,7 +423,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
-						titleTag.after( $( "<span style='color:red;'> * </span>" ) );
+						titleTag.after( $( "<span class='redStar'> * </span>" ) );
 					}
 				}	
 				else if ( ruleJson.pattern )

@@ -5,6 +5,7 @@ function inputMonitor( cwsRenderObj )
     var me = this;
     var cwsRenderInputMon = cwsRenderObj;
     var InputMonLogoutTimer = 0;
+    var inputMonLogoutDelay = 0;
 
     document.addEventListener("touchstart", startTouch, false);
     document.addEventListener("touchmove", moveTouch, false);
@@ -44,6 +45,8 @@ function inputMonitor( cwsRenderObj )
     var startTagRedeemListItem = false;
     var listItemWasExpanded = false;
 
+    inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins;
+
     function startTouch(e) 
     {
         me.initialiseTouchDefaults( e );
@@ -72,7 +75,7 @@ function inputMonitor( cwsRenderObj )
 
         if ( FormUtil.checkLogin() )
         {
-            cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 )
+            cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
 
             InputMonLogoutTimer = setInterval( function() 
             {
@@ -81,7 +84,7 @@ function inputMonitor( cwsRenderObj )
                     cwsRenderInputMon.logOutProcess();
                 }
     
-            }, parseInt( cwsRenderInputMon.autoLogoutDelayMins ) * 60 * 1000 ); //60 * 60 * 1000
+            }, parseInt( inputMonLogoutDelay ) * 60 * 1000 ); //60 * 60 * 1000
     
             console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
         }
@@ -194,7 +197,7 @@ function inputMonitor( cwsRenderObj )
 
         if ( listItemDragEnabled && initialX >= dragXoffsetLimit )
         {
-            startTagRedeemListItem = $( e.touches[0].target ).hasClass( 'dragSelector' );
+            startTagRedeemListItem = $( e.touches[0].target ).hasClass( 'dragSelector' ) || ( $( e.touches[0].target ).is( 'HTML') && $( e.touches[0].target ).hasClass( 'bg-color' ) ) ;
 
             if ( startTagRedeemListItem )
             {
@@ -543,6 +546,11 @@ function inputMonitor( cwsRenderObj )
             }
         }
 
+    }
+
+    me.updateTimer = function( cwsRenderObj )
+    {
+        inputMonLogoutDelay = cwsRenderObj.autoLogoutDelayMins;
     }
 
 }
