@@ -1,7 +1,7 @@
 {
-  "name": "CwS Connect",
-  "short_name": "Connect",
-  "description": "CwS PWA",  
+  "name": "CwS Connect DEV",
+  "short_name": "Connect DEV",
+  "description": "CwS PWA DEV",  
   "version": "1.0.1",
   "theme_color": "#ffc61d",
   "background_color": "#ffc61d",
@@ -14,15 +14,15 @@
       "sizes": "128x128",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-144x144.png",
+      "src": "images/icons/Connect_144px.png",
       "sizes": "144x144",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-152x152.png",
+      "src": "images/icons/Connect_152px.png",
       "sizes": "152x152",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-192x192.png",
+      "src": "images/icons/Connect_192px.png",
       "sizes": "192x192",
       "type": "image/png"
     }, {

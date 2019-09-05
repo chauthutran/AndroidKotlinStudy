@@ -84,20 +84,13 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
                 {
+                    me.cwsRenderObj.favIconsObj.initialize();
+
                     me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
-                    /*if ( me.newBlockTag.length > 1 )
-                    {
-                        //console.log( me.newBlockTag[ me.newBlockTag.length -1 ] );
-                        me.setFloatingListMenuIconEvents( me.newBlockTag[ me.newBlockTag.length -1 ].find( '.floatListMenuIcon' ), me.newBlockTag[ me.newBlockTag.length -1 ].find( '.floatListMenuSubIcons' ) );
-                    }
-                    else
-                    {
-                        me.setFloatingListMenuIconEvents( me.newBlockTag.find( '.floatListMenuIcon' ), me.newBlockTag.find( '.floatListMenuSubIcons' ) );
-                    }*/
                 }
                 else
                 {
-                    me.newBlockTag.find( '.floatListMenuIcon' ).hide();
+                    $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
                 }
 
             } );
@@ -559,7 +552,7 @@ function BlockList( cwsRenderObj, blockObj )
                                 myTag.empty();
                                 myTag.append( loadingTag );
         
-                                e.stopPropagation();                
+                                e.stopPropagation();
         
                                 // if offline, alert it!! OR data server unavailable
                                 if ( ConnManager.isOffline() )

@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "93b2786b9e47b1301080de75dacab26b"
+    "revision": "2cb79e0ac2c0249b6f42c837263b9dab"
   },
   {
     "url": "images/about.svg",
@@ -325,7 +325,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "dfc6854352e731b94fe4fde2782027d7"
+    "revision": "92c461acb6b8bab98eb3d75171252e08"
   },
   {
     "url": "redeemGen.html",
@@ -333,7 +333,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "c16c434419f2227c794c2d65ddc036bc"
+    "revision": "098e2cef6d867fb81ace6d28b9da1f07"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "d9df5e94e4243eab1e18f0dc03d2c20e"
+    "revision": "f9b59ace9be3e7a7e6e2dd45b7748b44"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "75d1ba8e78206a28d34ad621018a520a"
+    "revision": "f2fd3858cf7a9014720c040c06728c61"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -381,7 +381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "b5b74c5a3cca8cdbb0e823532a50c94b"
+    "revision": "304b91f23b8699fe8473692af2294659"
   },
   {
     "url": "scripts/classes/settingsApp.js",
@@ -397,7 +397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "9e8d724fc3a28afe2010c099c77b5c65"
+    "revision": "70e1a233ed666c035e497b8474a9960b"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -461,7 +461,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "2487e4f3b1090cff1e61e1b95a50cde1"
+    "revision": "0f2d4e3ca78fa12655cb43c41783a97c"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -473,7 +473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "5578d39668cc75473246580b1a8f43f3"
+    "revision": "9d9c1aeb37cc9b1020a2c9c5a3a6b640"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -541,7 +541,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "dfca377eb2f0f0296b1e5808f2a12d6f"
+    "revision": "1517715e563f4ff44f70e98411b20bf4"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

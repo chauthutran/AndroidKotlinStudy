@@ -213,6 +213,8 @@ header {
   font-weight:500;
   letter-spacing: -0.02em;
   line-height: 28px;
+  position: relative;
+  top: -12px;
 }
 #divNavDrawerOUlongName {
   display: none;
@@ -355,8 +357,14 @@ header {
 
 }
 
+.floatListMenuIcon {
+  
+}
+
 .iconClicker {
   padding: 6px 0 0 0;
+  -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4));
+  filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4)); 
 }
 
 .divBtn {

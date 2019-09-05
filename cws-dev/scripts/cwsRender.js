@@ -58,7 +58,7 @@ function cwsRender()
 	me._translateEnable = true;
 
 	me._manageInputSwipe;
-	me.autoLogoutDelayMins = 60; //auto logout after X mins
+	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 
 	me.debugMode = false;
@@ -211,10 +211,8 @@ function cwsRender()
 
 	me.renderBlock = function( blockName, options )
 	{
-		console.log( ' new block ');
 		if ( options )
 		{
-			console.log('options: ' + JSON.stringify( options ));
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
 		}
 		else
@@ -222,7 +220,7 @@ function cwsRender()
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
-		blockObj.render();  // should been done/rendered automatically?  			
+		blockObj.render();			
 
 		return blockObj;
 	}
@@ -231,35 +229,18 @@ function cwsRender()
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function( configJson )
 	{
-		//console.log( configJson );
 
-		/*if ( me._localConfigUse )
-		{
-			ConfigUtil.getDsConfigJson( me.dsConfigLoc, function( success, configDataFile ) {
+		me.configJson = configJson;
+		ConfigUtil.setConfigJson( me.configJson );
 
-				//console.log( 'local config' );
-
-				me.configJson = configDataFile;
-				ConfigUtil.setConfigJson( me.configJson );
-
-				me.startBlockExecute( me.configJson );
-			});		
-		}
-		else*/
-		{
-			//console.log( 'network config' );
-
-			me.configJson = configJson;
-			ConfigUtil.setConfigJson( me.configJson );
-
+		//setTimeout( function(){
 			me.startBlockExecute( me.configJson );
-		}
+		//}, 500 )
 
 	}
 
 	me.startBlockExecute = function( configJson )
 	{
-		//console.log( 'menu prep: ' + ConnManager.userNetworkMode_Online + ' vs ' + ConnManager.networkSyncConditions() + ' = ' + ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ) );
 		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
 
 		if ( me.areaList )
@@ -670,7 +651,7 @@ function cwsRender()
 	me.clearMenuClickStyles = function()
 	{
 		$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
-		$( 'table.menu-mobile-row' ).css( 'opacity', '0.7' );
+		$( 'table.menu-mobile-row' ).css( 'opacity', '0.8' );
 	}
 
 	me.updateMenuClickStyles = function( areaId )
@@ -688,9 +669,31 @@ function cwsRender()
 		sessionStorage.clear();
 
 		// change to session Management process > forced reload of app (detect new version + forced login)
-		location.reload( true );
+		var SWinfoObj = localStorage.getItem( 'swInfo' );
 
-		/* me.loginObj.spanOuNameTag.text( '' );
+		if ( SWinfoObj )
+		{
+			SWinfoObj = JSON.parse( SWinfoObj );
+			
+			if ( SWinfoObj.reloadRequired )
+			{ 
+				location.reload( true );
+			}
+			else
+			{
+				me.closeLoginSession();
+			}
+		}
+		else
+		{
+			me.closeLoginSession();
+		}
+
+	}
+
+	me.closeLoginSession = function()
+	{
+		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
 		me.clearMenuPlaceholders();
 		me.navDrawerDivTag.empty();
@@ -712,8 +715,7 @@ function cwsRender()
 			me.settingsApp.hideSettingsPage();
 		}
 
-		$( 'nav' ).hide(); */
-
+		$( 'nav' ).hide();
 	}
 
 	me.clearMenuPlaceholders = function()
@@ -727,6 +729,7 @@ function cwsRender()
 	me.trackUserLocation = function( clicked_area )
 	{
 		DataManager.getSessionData( function(lastSession){
+
 			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
 			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
 			var matchOn = [ "id", "startBlockName", "name" ];
@@ -736,6 +739,7 @@ function cwsRender()
 			{
 
 				DataManager.getUserConfigData( function( loginData ){
+
 					if (loginData)
 					{
 						for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
@@ -751,6 +755,7 @@ function cwsRender()
 			
 						//UPDATE lastStorage session for current user (based on last menu selection)
 						DataManager.saveData( lastSession.user, loginData );
+
 					}
 				});
 				
@@ -770,6 +775,55 @@ function cwsRender()
 		}		
 	}
 
+	me.createRefreshIntervalTimer = function( ver )
+	{
+		var bDev = ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 );
+
+		me.newSWrefreshNotification( ver );
+
+		var refreshIntV = setInterval( function() {
+
+			me.newSWrefreshNotification( ver );
+
+			// if running on DEV/Local server, run repeat notification every 2.5min until user refreshes
+		}, ( ( ( ( bDev ) ? 1 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) ); //60 * 60 * 1000 = 3600,000 = 60mins
+
+		console.log( ' ~ auto REFRESH interval timer: ' + refreshIntV + ' {' + ( ( ( ( bDev ) ? 5 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) + '}');
+
+	}
+
+	me.newSWrefreshNotification = function( ver )
+	{
+
+		// new update available
+		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+		// move to cwsRender ?
+		$( btnUpgrade ).click ( () => {
+
+			var SWinfoObj = localStorage.getItem( 'swInfo' );
+
+			if ( SWinfoObj )
+			{
+				//do nothing
+			}
+			else
+			{
+				localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': (new Date() ).toISOString() } ) );
+			}
+
+			location.reload( true );
+
+		});
+
+		// MISSING TRANSLATION
+		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationBlue', btnUpgrade, '', 'right', 'bottom', 25000 );
+
+		console.log( ' ~ REFRESH notification' );
+
+		localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': true, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': '' } ) );
+
+	}
 
 	// ======================================
 

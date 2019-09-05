@@ -462,8 +462,7 @@ img.round:hover{
 
 .notifBtn
 {
-  font-size: calc(14px + 0.2vw);; 
-  color: #8AB4F8;
+  font-size: calc(14px + 0.2vw);
   padding: 10px 4px 10px 4px;
   cursor: pointer;
 }
@@ -495,6 +494,10 @@ img.round:hover{
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
+.notificationDark a {
+  color: #8AB4F8 !important;
+}
+
 .notificationLight
 {
   box-sizing: border-box;
@@ -512,6 +515,10 @@ img.round:hover{
   -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+}
+
+.notificationLight a {
+  color: #8AB4F8 !important;
 }
 
 .notificationGray
@@ -533,6 +540,10 @@ img.round:hover{
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
+.notificationGray a {
+  color: #8AB4F8 !important;
+}
+
 .notificationGreen
 {
   box-sizing: border-box;
@@ -550,6 +561,10 @@ img.round:hover{
   -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+}
+
+.notificationGreen a {
+  color: #FFC800 !important;
 }
 
 .notificationRed
@@ -571,6 +586,10 @@ img.round:hover{
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
+.notificationRed a {
+  color: #FFA500 !important;
+}
+
 .notificationYellow
 {
   box-sizing: border-box;
@@ -588,6 +607,10 @@ img.round:hover{
   -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+}
+
+.notificationYellow a {
+  color: #000 !important;
 }
 
 .notificationOrange
@@ -609,6 +632,10 @@ img.round:hover{
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
 
+.notificationYellow a {
+  color: #fff !important;
+}
+
 .notificationBlue
 {
   box-sizing: border-box;
@@ -626,6 +653,10 @@ img.round:hover{
   -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
+}
+
+.notificationBlue a {
+  color: #fff !important;
 }
 
 .notificationPurple
@@ -646,6 +677,11 @@ img.round:hover{
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
+
+.notificationPurple a {
+  color: #FFC800 !important;
+}
+
 .notifProgress
 {
   background-Color:#202020;
@@ -786,7 +822,6 @@ img.round:hover{
   font-size: 0.8em;
 }
 
-/* =========================== */
 
 img.enabled
 {
@@ -808,16 +843,18 @@ img.imgMore
   cursor: pointer;
   padding: 15%;
 }
+
+
 /* START > HAMBURGER MENU 'ICON' */
 #nav-toggle { position: absolute; left: 15px; top: 15px; }
 
-#nav-toggle { cursor: pointer; padding: 10px 35px 16px 0px; }
+#nav-toggle { cursor: pointer; padding: 10px 35px 16px 2px; }
 #nav-toggle span, #nav-toggle span:before, #nav-toggle span:after {
   cursor: pointer;
   border-radius: 1px;
   height: 3px;
   width: 22px;
-  background: rgba(51, 51, 51, 0.8);
+  background: #000; /* rgba(51, 51, 51, 0.8); */
   position: absolute;
   display: block;
   content: '';

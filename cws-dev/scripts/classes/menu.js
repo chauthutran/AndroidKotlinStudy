@@ -4,10 +4,10 @@
 function Menu() {}
 
 Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
-Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "", icon: "statistics", group: true };
-Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "", icon: "settings", group: false };
-Menu.menuJson_About = { id: "aboutPage", name: "About", term: "", icon: "about", group: true };
-Menu.menuJson_LogOut = { id: "logOut", name: "Log out", term: "menu_logout", icon: "logout", group: true };
+Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "", icon: "statistics", group: true, groupHeader: false };
+Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "", icon: "settings", group: false, groupHeader: false };
+Menu.menuJson_About = { id: "aboutPage", name: "About", term: "", icon: "about", group: true, groupHeader: false };
+Menu.menuJson_LogOut = { id: "logOut", name: "Log out", term: "menu_logout", icon: "logout", group: true, groupHeader: false };
 
 // ==== Methods ======================
 

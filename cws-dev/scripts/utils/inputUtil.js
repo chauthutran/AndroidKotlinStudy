@@ -7,10 +7,17 @@ function inputMonitor( cwsRenderObj )
     var InputMonLogoutTimer = 0;
     var inputMonLogoutDelay = 0;
 
-    document.addEventListener("touchstart", startTouch, false);
-    document.addEventListener("touchmove", moveTouch, false);
-    document.addEventListener("touchend", touchEnd, false);
-    document.addEventListener("click", updateLogoutTimer, false);
+    if ( Util.isMobi() )
+    {
+        document.addEventListener("touchstart", startTouch, false);
+        document.addEventListener("touchmove", moveTouch, false);
+        document.addEventListener("touchend", touchEnd, false);
+    }
+    else
+    {
+        document.addEventListener("click", updateLogoutTimer, false);
+    }
+
 
     var screenWidth = document.body.clientWidth; //container.offsetWidth;
     var screenHeight = document.body.clientHeight; //container.offsetHeight;
@@ -49,6 +56,7 @@ function inputMonitor( cwsRenderObj )
 
     function startTouch(e) 
     {
+        //console.log( $( e.touches[0].target ) );
         me.initialiseTouchDefaults( e );
 
         if ( startTagRedeemListItem )
@@ -168,31 +176,50 @@ function inputMonitor( cwsRenderObj )
         expectedNavDrawerWidth  = FormUtil.navDrawerWidthLimit( screenWidth );
         navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
         thresholdNavDrawerWidth = ( expectedNavDrawerWidth / 2 ).toFixed( 0 );
+        dragXoffsetLimit = 50; // touch zone (up to left 50px for start of menu-open swipe)
 
         // listPage (containing redeemList) is currently visible
-        if ( $( 'div.floatListMenuIcon' ).is( ':visible' ) )
+        if ( $( 'div.listDiv' ).is( ':visible' ) ) //div.floatListMenuSubIcons
         {
-            dragXoffsetLimit = $( 'ul.tab__content_act' ).offset().left;
+            //dragXoffsetLimit = 50; // touch zone (up to left 50px for start of menu-open swipe)
 
-            if ( initialX < dragXoffsetLimit && !navDrawerVisibleOnStart )
+            //if ( Util.isMobi() )
+            /*{
+                $( 'ul.tab__content_act' ).offset().left;
+            }
+            else
+            {
+                dragXoffsetLimit = $( 'ul.tab__content_act' ).offset().left;
+            }*/
+
+            // disabled for now - no redeemList "card" swiping into 'archive' state
+            /*if ( initialX < dragXoffsetLimit && !navDrawerVisibleOnStart )
             {
                 listItemDragEnabled = false;
             }
             else
             {
-                listItemDragEnabled = true;
-            }
+                listItemDragEnabled = true; 
+            }*/
         }
         else
         {
-            dragXoffsetLimit = 50;
             listItemDragEnabled = false;
         }
 
-        if ( !listItemDragEnabled && $( 'div.floatListMenuSubIcons' ).is( ':visible' ) )
+        if ( !listItemDragEnabled && $( 'div.floatListMenuSubIcons' ).is( ':visible' ) ) //div.floatListMenuSubIcons
         {
             $( 'div.floatListMenuIcon' ).css('zIndex',1);
-            $( 'div.floatListMenuIcon' ).click();
+
+            if ( ! $( e.touches[0].target ).hasClass( 'floatListMenuIcon' ) )
+            {
+                $( 'div.floatListMenuIcon' ).click();
+            }
+            else
+            {
+                e.stopPropagation();
+            }
+
         }
 
         if ( listItemDragEnabled && initialX >= dragXoffsetLimit )
@@ -358,7 +385,7 @@ function inputMonitor( cwsRenderObj )
 
             if ( navDrawerVisibleOnStart )
             {
-                $( '#focusRelegator' ).css( 'opacity', 0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                $( '#focusRelegator' ).css( 'opacity', 0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                 if ( currentX <= expectedNavDrawerWidth )
                 {
@@ -398,7 +425,7 @@ function inputMonitor( cwsRenderObj )
 
                 if ( navDrawerVisibleOnMove )
                 {
-                    $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                    $( '#focusRelegator' ).css( 'opacity',0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
                 }
 
                 if ( currentX > expectedNavDrawerWidth )
@@ -419,7 +446,7 @@ function inputMonitor( cwsRenderObj )
             {
                 if ( navDrawerVisibleOnStart )
                 {
-                    $( '#focusRelegator' ).css( 'opacity',0.5 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                    $( '#focusRelegator' ).css( 'opacity',0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                     if ( currentX > expectedNavDrawerWidth )
                     {
@@ -501,7 +528,7 @@ function inputMonitor( cwsRenderObj )
         }
 
         $( '#navDrawerDiv' ).css( 'left', '0px' );
-        $( '#focusRelegator').css( 'opacity', 0.5 );
+        $( '#focusRelegator').css( 'opacity', 0.4 );
 
         /* MENU HIDDEN/CLOSED > CHECK SWIPE OPEN THRESHOLDS */
         if ( ! navDrawerVisibleOnStart && ( initialX < dragXoffsetLimit ) ) // wasn't shown at start of swipe + swipe started within 50px of left part of screen
