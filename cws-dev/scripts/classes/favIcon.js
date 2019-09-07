@@ -195,7 +195,6 @@ function favIcons( cwsRender )
                         }
                         else
                         {
-                            console.log( 'recursive append > favIcons ' );
                             me.createRecursiveFavIcons ( favList, 0, true );
                         }
 

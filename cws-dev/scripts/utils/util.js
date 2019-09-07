@@ -1141,68 +1141,72 @@ Util.getParameterInside = function( value, openClose )
 
 Util.newLocalSequence = function( pattern, commitSEQIncr )
 {
-	var jsonUserData = DataManager.getData( FormUtil.login_UserName );
-	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
-	var ret;
+	//var jsonUserData = DataManager.getData( FormUtil.login_UserName );
+	DataManager.getData( FormUtil.login_UserName, function( jsonUserData ){
 
-	if ( jsonStorageData == undefined ) 
-	{
-		jsonStorageData = { "DD": Util.dateToMyFormat( new Date(), 'DD' ), "MM": Util.dateToMyFormat( new Date(), 'MM' ), "YY": Util.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
-	}
-
-	if ( pattern.indexOf('[') > 0 )
-	{
-		var parms = Util.getParameterInside( pattern, '[]' );
-
-		if ( parms.length )
+		var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
+		var ret;
+	
+		if ( jsonStorageData == undefined ) 
 		{
-			if ( parms.indexOf(':') )
+			jsonStorageData = { "DD": Util.dateToMyFormat( new Date(), 'DD' ), "MM": Util.dateToMyFormat( new Date(), 'MM' ), "YY": Util.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
+		}
+	
+		if ( pattern.indexOf('[') > 0 )
+		{
+			var parms = Util.getParameterInside( pattern, '[]' );
+	
+			if ( parms.length )
 			{
-				var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
-
-				if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
+				if ( parms.indexOf(':') )
 				{
-					// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
-					ret = 1;
-					jsonStorageData[ arrParm[0] ] = Util.dateToMyFormat( new Date(), arrParm[0] );
-				}
-				else
-				{
-					var last = jsonStorageData[ (arrParm[0]).slice(1) ];
-
-					if ( last )
+					var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
+	
+					if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
 					{
-						ret = ( parseInt( last ) + 1 );
+						// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
+						ret = 1;
+						jsonStorageData[ arrParm[0] ] = Util.dateToMyFormat( new Date(), arrParm[0] );
 					}
 					else
 					{
-						ret = 1;
+						var last = jsonStorageData[ (arrParm[0]).slice(1) ];
+	
+						if ( last )
+						{
+							ret = ( parseInt( last ) + 1 );
+						}
+						else
+						{
+							ret = 1;
+						}
+	
 					}
-
+	
+					jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
+					jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
+	
+					if ( commitSEQIncr != undefined && commitSEQIncr == true )
+					{
+						DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+					}
+	
+					return Util.paddNumeric( ret, arrParm[1] );
+	
 				}
-
-				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
-				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-
-				if ( commitSEQIncr != undefined && commitSEQIncr == true )
+				else
 				{
-					DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+					console.log( ' ~ no newLocalSequence comma separator');
 				}
-
-				return Util.paddNumeric( ret, arrParm[1] );
-
 			}
 			else
 			{
-				console.log( ' ~ no newLocalSequence comma separator');
+				console.log( ' ~ no localSequence parms');
 			}
+	
 		}
-		else
-		{
-			console.log( ' ~ no localSequence parms');
-		}
-
-	}
+	} );
+	
 
 }
 

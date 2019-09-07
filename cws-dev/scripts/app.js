@@ -5,7 +5,7 @@
 
   const _cwsRenderObj = new cwsRender();
   
-  var debugMode = false;
+  var debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
   var SWinfoObj;
   var swStateChanges = false;
   var swNewInstallStartup = false;
@@ -58,8 +58,6 @@
           if ( i < ( FormUtil.dynamicWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
         }
 
-        appVersionUpgradeReview( FormUtil.dynamicWS );
-
         FormUtil._getPWAInfo = FormUtil.dynamicWS;
 
         webServiceSet( FormUtil.staticWSName );
@@ -78,52 +76,11 @@
         FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
       }
 
-      appVersionUpgradeReview(FormUtil._getPWAInfo );
-
       if (returnFunc) returnFunc();
     }
 
   };
 
-
-  function appVersionUpgradeReview( jsonData ) 
-  {
-    var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-
-    if ( debugMode ) console.log( _ver , ' vs ', latestVersionStr);
-
-    // compare the version..  true if online version (retrieved one) is higher..
-    if ( _ver < latestVersionStr )
-    {
-      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-      // move to cwsRender 
-      $( btnUpgrade ).click ( () => {
-
-        if ( FormUtil._getPWAInfo )
-        {
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session && FormUtil._getPWAInfo.reloadInstructions.session == "true" )
-          {
-            if ( debugMode ) console.log( 'btnRefresh > DataManager.clearSessionStorage() ' );
-            DataManager.clearSessionStorage();
-          }
-
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches && FormUtil._getPWAInfo.reloadInstructions.allCaches == "true" )
-          {
-            if ( debugMode ) console.log( 'btnRefresh > FormUtil.deleteCacheKeys() ' );
-            FormUtil.deleteCacheKeys( );
-          }
-
-        }
-
-      });
-
-      // MISSING TRANSLATION
-      MsgManager.notificationMessage ( 'New version of app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-
-    }
-
-  }
 
   function webServiceSet( wsName )
   {
@@ -204,7 +161,7 @@
 
           localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
 
-          console.log( ' - sw_state: ' + installingWorker.state );
+          if ( debugMode ) console.log( ' - sw_state: ' + installingWorker.state );
 
 
           installingWorker.onstatechange = () => {
@@ -212,7 +169,7 @@
             SWinfoObj = JSON.parse( localStorage.getItem( 'swInfo' ) );
             swStateChanges = true;
 
-            console.log( ' ~ sw_state: ' + installingWorker.state );
+            if ( debugMode ) console.log( ' ~ sw_state: ' + installingWorker.state );
             SWinfoObj[ 'lastState' ] = installingWorker.state;
 
             switch (installingWorker.state) 
@@ -278,8 +235,8 @@
       })
         .then(function() {
 
-          console.log( 'swStateChanges: ' + swStateChanges );
-          console.log( 'swNewInstallStartup: ' + swNewInstallStartup );
+          if ( debugMode ) console.log( 'swStateChanges: ' + swStateChanges );
+          if ( debugMode ) console.log( 'swNewInstallStartup: ' + swNewInstallStartup );
 
           localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
 
@@ -324,7 +281,8 @@
 
       FormUtil.createNumberLoginPinPad(); //if ( Util.isMobi() )
 
-      console.log( 'swPromptRefresh: ' + swPromptRefresh );
+      if ( debugMode )  console.log( 'swPromptRefresh: ' + swPromptRefresh );
+
       if ( swPromptRefresh )
       {
         _cwsRenderObj.createRefreshIntervalTimer( _ver );

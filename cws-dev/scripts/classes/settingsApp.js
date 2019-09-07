@@ -18,6 +18,7 @@ function settingsApp( cwsRender )
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
+    me.settingsInfo_autoCompleteInput = $( '#autoCompleteInput' );
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
@@ -124,10 +125,21 @@ function settingsApp( cwsRender )
           var sessData = JSON.parse(localStorage.getItem( "session" ));
 
           sessData.soundEffects = soundSetting; //add
-          DataManager.saveData("session", sessData);
+          DataManager.saveData( "session", sessData );
 
-          if(soundSetting)playSound("notify");
-          //console.log(DataManager, sessData, soundSetting);
+          if(soundSetting) playSound( "notify") ;
+
+        });
+
+        me.settingsInfo_autoCompleteInput.change(() => {
+            var autoComplete = me.settingsInfo_autoCompleteInput.is( ":checked" ); // load from input checkbox
+            var sessData = JSON.parse(localStorage.getItem( "session" ));
+  
+            sessData.autoComplete = autoComplete; //add
+            DataManager.saveData( "session", sessData );
+
+            me.updateAutoComplete( ( autoComplete ? 'on' : 'off' ) );
+
         });
 
 
@@ -510,6 +522,8 @@ function settingsApp( cwsRender )
                     $( '#settingsInfo_soundEffects_Less' ).addClass( 'byPassSettingsMore' );
                 }
 
+                $( '#settingsInfo_autoComplete_Less' ).show();
+                $( '#settingsInfo_autoComplete_Less' ).removeClass( 'byPassSettingsMore' );
             }
         }
         else
@@ -526,6 +540,9 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_soundEffects_Less' ).hide();
             $( '#settingsInfo_soundEffects_Less' ).addClass( 'byPassSettingsMore' );
+
+            $( '#settingsInfo_autoComplete_Less' ).hide();
+            $( '#settingsInfo_autoComplete_Less' ).addClass( 'byPassSettingsMore' );
 
             if ( me.langTermObj.getLangList() )
             {
@@ -675,6 +692,11 @@ function settingsApp( cwsRender )
             $( '#settingsInfo_dcdVersion' ).html( dcdConfigVersion );
             $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
             $( '#settingsInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
+
+            var sessData = JSON.parse( localStorage.getItem( "session" ) );
+
+            me.settingsInfo_SoundSwitchInput.prop( 'checked', sessData.soundEffects );
+            me.settingsInfo_autoCompleteInput.prop( 'checked', sessData.autoComplete );
 
             ConnManager.getDcdConfigVersion( function( retVersion ) 
             {
@@ -851,6 +873,18 @@ function settingsApp( cwsRender )
         retOpts.push( syncOpts );
 
         return retOpts;
+
+    }
+
+    me.updateAutoComplete = function( newValue )
+    {
+		var tagsWithAutoCompl = $( '[autocomplete]' );
+
+		tagsWithAutoCompl.each( function() 
+		{
+            var tag = $( this );
+            tag.attr( 'autocomplete', newValue );
+        });
 
     }
 

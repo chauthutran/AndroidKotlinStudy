@@ -266,7 +266,24 @@ function cwsRender()
 	me.startBlockExecuteAgain = function()
 	{
 		DataManager.getUserConfigData( function( userData ){
-			me.startBlockExecute( userData.dcdConfig );
+
+			if ( userData != undefined )
+			{
+				me.startBlockExecute( userData.dcdConfig );
+			}
+			else
+			{
+				var sessData = localStorage.getItem( 'session' );
+
+				if ( sessData )
+				{
+					var dcdData = localStorage.getItem( JSON.parse( sessData ).user );
+
+					me.startBlockExecute( JSON.parse( dcdData ).dcdConfig );
+				}
+				
+			}
+
 		});
 	}
 
@@ -302,12 +319,12 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			if( mySessionData == undefined )
+			/*if( mySessionData == undefined )
 			{
 				return;
-			}
+			}*/
 
-			FormUtil.getMyListData( me.storageName_RedeemList, true, function( myData ){
+			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
 
 				DataManager.getUserConfigData( function( userData ){
 
@@ -728,14 +745,14 @@ function cwsRender()
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )
 	{
-		DataManager.getSessionData( function(lastSession){
+		DataManager.getSessionData( function( lastSession ){
 
 			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
 			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
 			var matchOn = [ "id", "startBlockName", "name" ];
 			var matchedOn, areaMatched;
 
-			if (lastSession)
+			if ( lastSession )
 			{
 
 				DataManager.getUserConfigData( function( loginData ){

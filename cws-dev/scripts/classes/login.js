@@ -140,19 +140,21 @@ function Login( cwsRenderObj )
 			{
 				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
-					var loginData = DataManager.getData( userName );
-	
-					if ( loginData ) 
-					{
+					//var loginData = DataManager.getData( userName );
+					DataManager.getData( userName, function( loginData ) {
+
 						if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
+
 						FormUtil.setLogin( userName, password ); /* Added by Greg: 2018/11/27 */
+
 						me.loginSuccessProcess( loginData );
-					}
+
+					});
 				}
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationRed', undefined, '', 'right', 'top' );
 				}
 			}
 			else
@@ -165,7 +167,7 @@ function Login( cwsRenderObj )
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationPurple', undefined, '', 'right', 'top' );
 				}
 			}
 			/* END > Added by Greg: 2018/11/26 */
@@ -186,14 +188,21 @@ function Login( cwsRenderObj )
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
 				}
 			} );
 		}
 
 		FormUtil.defaultLanguage( function( defaultLang ){
-			var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
-			DataManager.saveData( 'session', lastSession );
+
+			var lastSession = localStorage.getItem( 'session' );
+
+			if ( lastSession == undefined || lastSession == null )
+			{
+				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true };
+				localStorage.setItem( 'session', JSON.stringify( lastSession ) );
+			}
+			//DataManager.saveData( 'session', lastSession );
 
 		});
 	}

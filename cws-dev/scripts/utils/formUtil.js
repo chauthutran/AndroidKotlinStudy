@@ -1061,7 +1061,7 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, decrypt, retFunc )
+FormUtil.getMyListData = function( listName, retFunc )
 {
 	var redList = {}, returnList = {};
 
@@ -1069,7 +1069,7 @@ FormUtil.getMyListData = function( listName, decrypt, retFunc )
 
 		if ( redList )
 		{
-			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
+			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
 			if ( retFunc ) retFunc( returnList );
 		}
