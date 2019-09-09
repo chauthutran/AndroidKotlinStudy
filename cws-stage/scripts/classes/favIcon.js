@@ -5,7 +5,7 @@ function favIcons( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.favIconsTag = $( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
+    me.favIconsTag; //= $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
     me.incr = 0;
 
 	// TODO: NEED TO IMPLEMENT
@@ -48,9 +48,13 @@ function favIcons( cwsRender )
                 }
             });
 
+            me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
             me.favIconsTag.empty();
-            localStorage.removeItem( 'favIcons' );
-            me.createRecursiveFavIcons ( favList[ networkStatus ], 0, false )
+
+            var favItems = localStorage.getItem( 'favIcons' );
+
+            //console.log ( favItems != undefined && favItems.length > 0 );
+            me.createRecursiveFavIcons ( favList[ networkStatus ], 0, ( favItems != undefined && favItems.length > 0 ) )
         }
 
     }
@@ -141,8 +145,8 @@ function favIcons( cwsRender )
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCCCCC' ) );
-                                $( svgObject ).attr( 'icon.colors.background', '#CCCCCC' );
+                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCC' ) );
+                                $( svgObject ).attr( 'icon.colors.background', '#CCC' );
                             }
                             if ( favList[ favItm ].style.icon.colors.foreground )
                             {
@@ -159,13 +163,16 @@ function favIcons( cwsRender )
                         {
                             if (favList[ favItm ].style.label.colors.background )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
+                                // edited: 2019/09/05 >> FIGMA Concept v1.0.3 suggested we use permanent 'light' backgrounds for labels... 
+                                //$( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
+                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
                                 $( svgObject ).attr( 'label.colors.background', favList[ favItm ].style.label.colors.background );
+
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#CCCCCC' ) );
-                                $( svgObject ).attr( 'label.colors.background', '#CCCCCC' );
+                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
+                                $( svgObject ).attr( 'label.colors.background', '#F5F5F5' );
                             }
                             if ( favList[ favItm ].style.label.colors.foreground )
                             {
@@ -188,7 +195,7 @@ function favIcons( cwsRender )
                         }
                         else
                         {
-                            me.createRecursiveFavIcons ( favList, 0, true )
+                            me.createRecursiveFavIcons ( favList, 0, true );
                         }
 
                     } );
@@ -245,7 +252,7 @@ function favIcons( cwsRender )
 
                 if ( favItm.id == iconID )
                 {
-                    //if ( iconID == 1) 
+                    //console.log( decodeURI( favItm.svg ) );
                     return $( decodeURI( favItm.svg ) );
                 }
             }
@@ -253,7 +260,10 @@ function favIcons( cwsRender )
         }
     }
 
+    // empty existing container - force a recreate of SVG content
+    localStorage.removeItem( 'favIcons' );
+
 	// ------------------------------------
 
-	me.initialize();
+	//me.initialize();
 }

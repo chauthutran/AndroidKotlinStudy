@@ -132,32 +132,29 @@ function Login( cwsRenderObj )
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
-		// Greg - Disabled this for now.
-		//FormUtil._serverUrlOverride = server;
-
 		// ONLINE vs OFFLINE HANDLING
-		//if ( ConnManager.getAppConnMode_Offline() )
 		if ( ! ConnManager.networkSyncConditions() )
 		{
-			/* START > Added by Greg: 2018/11/26 */
 			// validate encrypted pwd against already stored+encrypted pwd
 			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
 			{
 				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
-					var loginData = DataManager.getData( userName );
-	
-					if ( loginData ) 
-					{
+					//var loginData = DataManager.getData( userName );
+					DataManager.getData( userName, function( loginData ) {
+
 						if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
+
 						FormUtil.setLogin( userName, password ); /* Added by Greg: 2018/11/27 */
+
 						me.loginSuccessProcess( loginData );
-					}
+
+					});
 				}
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationRed', undefined, '', 'right', 'top' );
 				}
 			}
 			else
@@ -170,7 +167,7 @@ function Login( cwsRenderObj )
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationPurple', undefined, '', 'right', 'top' );
 				}
 			}
 			/* END > Added by Greg: 2018/11/26 */
@@ -191,31 +188,21 @@ function Login( cwsRenderObj )
 					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
 				}
 			} );
 		}
 
 		FormUtil.defaultLanguage( function( defaultLang ){
 
-			var sessRaw = localStorage.getItem( 'session' );
+			var lastSession = localStorage.getItem( 'session' );
 
-			if ( sessRaw != undefined && sessRaw != null )
+			if ( lastSession == undefined || lastSession == null )
 			{
-				var lastSession = JSON.parse( sessRaw );
-
-				if ( lastSession.soundEffects == undefined )
-				{
-					lastSession.soundEffects = Util.isMobi();
-				}
-
+				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true };
+				localStorage.setItem( 'session', JSON.stringify( lastSession ) );
 			}
-			else
-			{
-				var lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ) };
-			}
-
-			DataManager.saveData( 'session', lastSession );
+			//DataManager.saveData( 'session', lastSession );
 
 		});
 	}
@@ -276,7 +263,7 @@ function Login( cwsRenderObj )
 	
 					me.loginAfter();
 				});
-				
+
 			}
 
 		}
@@ -288,6 +275,8 @@ function Login( cwsRenderObj )
 			me.loginAfter();
 		}
 
+		$( 'nav' ).show();
+
 	}
 
 	me.loginAfter = function()
@@ -295,6 +284,8 @@ function Login( cwsRenderObj )
 		FormUtil.geolocationAllowed();
 
 		me.cwsRenderObj.renderDefaultTheme();
+
+		MsgManager.initialSetup();
 
 		FormUtil.hideProgressBar();
 	}

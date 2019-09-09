@@ -114,19 +114,19 @@ DataManager.getUserConfigData = function( callBack )
 	{
 		IndexdbDataManager.getUserConfigData( callBack );
 	}
-	
+
 }
 
 DataManager.getSessionData = function( callBack ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	//if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
 		LocalStorageDataManager.getSessionData( callBack );
 	}
-	else
+	/*else
 	{
 		IndexdbDataManager.getSessionData( callBack );
-	}
+	}*/
 }
 
 DataManager.setSessionDataValue = function( prop, val ) 

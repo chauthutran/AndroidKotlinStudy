@@ -221,7 +221,7 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	inputsJson[ 'userName' ] = FormUtil.login_UserName;
 	inputsJson[ 'password' ] = FormUtil.login_Password;
 
-	if ( (location.href).indexOf('localhost') >= 0 )
+	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
 	{
 		console.log ( inputsJson );
 		console.log ( JSON.stringify( inputsJson, null, 4) );	
@@ -1061,7 +1061,7 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, decrypt, retFunc )
+FormUtil.getMyListData = function( listName, retFunc )
 {
 	var redList = {}, returnList = {};
 
@@ -1069,7 +1069,7 @@ FormUtil.getMyListData = function( listName, decrypt, retFunc )
 
 		if ( redList )
 		{
-			returnList = redList.list.filter(a=>a.owner==FormUtil.login_UserName);
+			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
 			if ( retFunc ) retFunc( returnList );
 		}
@@ -1767,4 +1767,31 @@ FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldI
 		}
 	}
 
+}
+
+FormUtil.createNumberLoginPinPad = function()
+{
+	// create numeric input keypad > untidy implementation but it works
+	$( "#passReal" ).keydown( function( event ) {
+        if ( event.keyCode == 8 || event.keyCode == 46 ) {
+          $( "#passReal" ).val( '' );
+          $( "#pass" ).val( '' );
+        }
+      });
+
+      $( "#passReal" ).keyup( function( event ) {
+          $('#pass').val( $('#passReal').val() );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+      });
+
+      $( "#pass" ).focus( function() {
+          $('#passReal').focus();
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+          $('#passReal').css( 'top', $('#pass').position().top + 8 );
+      });
+
+      setTimeout( function() {
+          $('#passReal').css( 'top', $('#pass').position().top + 12 );
+          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
+      }, 500 );
 }

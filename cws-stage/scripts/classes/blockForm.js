@@ -23,7 +23,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if ( formJsonArr !== undefined )
 		{
-			formDivSecTag = $( '<div class="formDivSec"></div>' );
+            var sessData = JSON.parse( localStorage.getItem( "session" ) );
+			var formDivSecTag = $( '<div class="formDivSec"></div>' );
+			var formTag = $( '<form autocomplete="' + ( sessData.autoComplete ? 'on' : 'off' ) + '"></form>' );
+
+			formDivSecTag.append( formTag );
 			blockTag.append( formDivSecTag );
 
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
@@ -49,7 +53,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					if ( ! groupsCreated.includes( formFieldGroups[ i ].group ) )
 					{
 						var controlGroup = $( '<div style="" class="inputDiv active formGroupSection" name="' + formFieldGroups[ i ].group + '"><div><label class="formGroupSection">' + formFieldGroups[ i ].group + '</label></div></div>' );
-						formDivSecTag.append( controlGroup );
+						formTag.append( controlGroup );
 						groupsCreated.push( formFieldGroups[ i ].group );
 					}
 					else
@@ -64,7 +68,7 @@ function BlockForm( cwsRenderObj, blockObj )
 						if ( ! groupsCreated.includes( "zzzEmpty" ) )
 						{
 							var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection" name="zzzEmpty"></div>' );
-							formDivSecTag.append( controlGroup );	
+							formTag.append( controlGroup );	
 							groupsCreated.push( "zzzEmpty" );
 						}
 					}
@@ -288,42 +292,46 @@ function BlockForm( cwsRenderObj, blockObj )
 	{
 		if ( formDivSecTag )
 		{
-			var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-	
-			for( var i = 0; i < jData.length; i++ )
+			if ( formDivSecTag.attr( 'data-fields') != undefined )
 			{
-				if ( jData[ i ].defaultValue )
+				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		
+				for( var i = 0; i < jData.length; i++ )
 				{
-					if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+					if ( jData[ i ].defaultValue )
 					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						if ( tagTarget )
+						if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
 						{
-							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-							tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
-						}
-
-					}
-					else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
-					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						if ( tagTarget )
-						{
-							var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-							var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
-
-							if ( ageCal != undefined && ageCal > 0 )
+							if ( tagTarget )
 							{
-								tagTarget.val( ageCal );
+								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+
+								tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
 							}
+
+						}
+						else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+						{
+							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+
+							if ( tagTarget )
+							{
+								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+								var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
+
+								if ( ageCal != undefined && ageCal > 0 )
+								{
+									tagTarget.val( ageCal );
+								}
+							}
+
 						}
 
 					}
-
 				}
+
 			}
 
 		}
@@ -338,7 +346,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag.parent() )
+				me.evalFormInputFunctions( formDivSecTag.parent().parent() )
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -416,7 +424,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						var titleTag = divInputTag.find( ".titleDiv" );
-						titleTag.after( $( "<span style='color:red;'> * </span>" ) );
+						titleTag.after( $( "<span class='redStar'> * </span>" ) );
 					}
 				}	
 				else if ( ruleJson.pattern )

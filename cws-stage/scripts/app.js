@@ -2,62 +2,25 @@
   'use strict';
 
   let _registrationObj;
+
   const _cwsRenderObj = new cwsRender();
   
-  var debugMode = false;
+  var debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
+  var SWinfoObj;
+  var swStateChanges = false;
+  var swNewInstallStartup = false;
+  var swPromptRefresh = false;
+
 
   window.onload = function() {
-    //startApp();
-  }
-
-  function startApp() 
-  {
-    //FormMsgManager.appBlock( "<br><br><img src='images/icons/logo-44x44.png' class='cwsLogo' style='width:44px;height:44px;'><br><br><br>Connecting with SARA...<br><br>" );
-    FormMsgManager.appBlock( "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>" );
-
-    // 1. Online/Offline related event setup
-    updateOnlineStatus();
-
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-    window.addEventListener('appinstalled', recordInstallEvent);
-
-    // Set App Connection Mode
-    ConnManager.initialize();
-
-    // 2. Do 'appInfoOperation' that does app Version Check & action first
-    //  & set web service type for the app
-    // , then, proceed with 'cwsRenderObj' rendering.
-
-    appInfoOperation( function() {
-      ConnManager._cwsRenderObj = _cwsRenderObj;
-      _cwsRenderObj.render();  
-      syncManager.initialize( _cwsRenderObj );
-    });
-
-
-    // create numeric input keypad > untidy implementation but it works
-    //if ( Util.isMobi() )
-    createNumberLoginPinPad();
-
+    // see service worker registration/update handler below
   }
 
   // ----------------------------------------------------
 
-  $( '#spanVersion' ).text( 'v' + _ver );
-
-
   $( '#imgAppDataSyncStatus' ).click ( () => {
     syncManager.syncOfflineData( this );
   });
-
-
-  // move to cwsRender 
-  /*$( '#hidenotificationUpgrade' ).click ( () => {
-
-    $( '#notificationUpgrade' ).hide( 'slow' );
-
-  });*/
 
 
   // App version check and return always..  
@@ -71,7 +34,6 @@
 
       FormUtil.getConfigInfo( function( result, data ) 
       {
-
         try {
           if ( ( location.href ).indexOf( '.psi-mis.org' ) >= 0 )
             FormUtil.dynamicWS = data[ ( location.host ).replace( '.psi-mis.org', '' ) ];
@@ -96,13 +58,9 @@
           if ( i < ( FormUtil.dynamicWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
         }
 
-        appVersionUpgradeReview( FormUtil.dynamicWS );
-
         FormUtil._getPWAInfo = FormUtil.dynamicWS;
 
         webServiceSet( FormUtil.staticWSName );
-
-        FormMsgManager.appUnblock();
 
         if (returnFunc) returnFunc();
 
@@ -118,56 +76,12 @@
         FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
       }
 
-      appVersionUpgradeReview(FormUtil._getPWAInfo );
-
-      FormMsgManager.appUnblock();
-
       if (returnFunc) returnFunc();
     }
 
   };
 
 
-  function appVersionUpgradeReview( jsonData ) 
-  {
-    var latestVersionStr = ( jsonData.version ) ? jsonData.version : '';
-
-    if ( debugMode ) console.log( _ver , ' vs ', latestVersionStr);
-
-    // compare the version..  true if online version (retrieved one) is higher..
-    if ( _ver < latestVersionStr )
-    {
-      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-      // move to cwsRender 
-      $( btnUpgrade ).click ( () => {
-
-        if ( FormUtil._getPWAInfo )
-        {
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.session && FormUtil._getPWAInfo.reloadInstructions.session == "true" )
-          {
-            if ( debugMode ) console.log( 'btnRefresh > DataManager.clearSessionStorage() ' );
-            DataManager.clearSessionStorage();
-          }
-
-          if ( FormUtil._getPWAInfo.reloadInstructions && FormUtil._getPWAInfo.reloadInstructions.allCaches && FormUtil._getPWAInfo.reloadInstructions.allCaches == "true" )
-          {
-            if ( debugMode ) console.log( 'btnRefresh > FormUtil.deleteCacheKeys() ' );
-            FormUtil.deleteCacheKeys( );
-          }
-
-        }
-
-      });
-
-      // MISSING TRANSLATION
-      MsgManager.notificationMessage ( 'New version of app is available', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-
-    }
-    
-  }
-
-  
   function webServiceSet( wsName )
   {
     if ( wsName ) FormUtil.staticWSName = wsName;
@@ -181,7 +95,6 @@
           ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
           playSound("coin");
       });
-    
   }
 
   function updateOnlineStatus( event ) 
@@ -195,95 +108,140 @@
 
   };
 
-  function createNumberLoginPinPad()
-  {
-
-      $( "#passReal" ).keydown(function( event ) 
-      {
-        if ( event.keyCode == 8 || event.keyCode == 46 )
-        {
-          $( "#passReal" ).val( '' );
-          $( "#pass" ).val( '' );
-        }
-      });
-
-      $( "#passReal" ).keyup(function( event ) 
-      {
-          $('#pass').val( $('#passReal').val() );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-      });
-
-      $( "#pass" ).focus(function() 
-      {
-          $('#passReal').focus();
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
-          $('#passReal').css( 'top', $('#pass').position().top + 8 );
-      });
-
-      setTimeout( function() {
-          $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
-      }, 500 );
-
-  }
-
   function updateSyncManager( event ) 
   {
     syncManager.initialize( _cwsRenderObj );
   }
 
   // ----------------------------------------------------
-  
-  //window.isUpdateAvailable = new Promise(function(resolve, reject) {
+
+  function initialize()
+  {
+
+    FormMsgManager.appBlockTemplate( 'appLoad' );
 
     if ('serviceWorker' in navigator) {
 
-      navigator.serviceWorker.register('./service-worker.js').then(registration=> {
+      navigator.serviceWorker.register( './service-worker.js' ).then( registration => {
 
-          registration.onupdatefound = () => {
+        SWinfoObj = localStorage.getItem( 'swInfo' );
 
-            const installingWorker = registration.installing;
+        if ( ! SWinfoObj )
+        {
+          SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date() ).toISOString() };
+        }
+        else
+        {
+          SWinfoObj = JSON.parse( SWinfoObj );
 
-            installingWorker.onstatechange = () => {
+          SWinfoObj[ 'reloadRequired' ] = false;
+        }
 
-              console.log( ' ~ sw_state: ' + installingWorker.state );
+        if ( registration.active == null )
+        {
+          swNewInstallStartup = true;
+          SWinfoObj.lastState = '';
+        }
+        else
+        {
+          swNewInstallStartup = false;
+          SWinfoObj.lastState = registration.active.state;
+        }
 
-              switch (installingWorker.state) {
-                case 'installed':
+        localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+
+
+        registration.onupdatefound = () => {
+
+          const installingWorker = registration.installing;
+
+          SWinfoObj = JSON.parse( localStorage.getItem( 'swInfo' ) );
+
+          SWinfoObj[ 'lastState' ] = installingWorker.state;
+
+          localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+
+          if ( debugMode ) console.log( ' - sw_state: ' + installingWorker.state );
+
+
+          installingWorker.onstatechange = () => {
+
+            SWinfoObj = JSON.parse( localStorage.getItem( 'swInfo' ) );
+            swStateChanges = true;
+
+            if ( debugMode ) console.log( ' ~ sw_state: ' + installingWorker.state );
+            SWinfoObj[ 'lastState' ] = installingWorker.state;
+
+            switch (installingWorker.state) 
+            {
+              case 'installed':
+                  // existing controller = existing SW :: new updates installed
                   if (navigator.serviceWorker.controller) 
                   {
-                    // new update available
-                    //resolve(true);
-                    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-                    // move to cwsRender ?
-                    $( btnUpgrade ).click ( () => {
-                      location.reload( true );
-                    });
-
-                    // MISSING TRANSLATION
-                    MsgManager.notificationMessage ( 'New updates installed. Click refresh to view changes', 'notificationDark', btnUpgrade, '', 'right', 'bottom', 15000 );
-                  } 
-                  else 
+                    swPromptRefresh = true;
+                    SWinfoObj[ 'reloadRequired' ] = true;
+                  }
+                  else
                   {
-                    // no update available
-                    //resolve(false);
+                    //localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date() ).toISOString() } ) );
+                    SWinfoObj[ 'reloadRequired' ] = false;
                   }
                   break;
-              }
+              case 'activating':
+                  break;
+              case 'activated':
 
-            };
+                  var mySWupdates = JSON.parse( localStorage.getItem( 'swInfo' ) );
+
+                  //if ( mySWupdates )
+                  {
+                    //mySWupdates = JSON.parse( mySWupdates );
+
+                    if ( mySWupdates.reloadRequired )
+                    {
+                      mySWupdates[ 'datetimeApplied' ] = (new Date() ).toISOString();
+                      mySWupdates[ 'reloadRequired' ] = false;
+
+                      localStorage.setItem( 'swInfo', JSON.stringify( mySWupdates ) );
+                    }
+
+                  }
+
+                  if ( swNewInstallStartup )
+                  {
+                    startApp();
+                  }
+                  else
+                  {
+                    SWinfoObj[ 'reloadRequired' ] = true;
+                    _cwsRenderObj.createRefreshIntervalTimer( _ver );
+                  }
+                  break;
+            }
+
+            localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
 
           };
 
-          _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
-          _registrationObj = registration;
-          if ( debugMode ) console.log('Service Worker Registered');
+        };
 
-        })
+        _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
+        _registrationObj = registration;
+
+        localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+
+        if ( debugMode ) console.log('Service Worker Registered');
+
+      })
         .then(function() {
 
-          // Start the app after service worker is ready.
-          startApp();
+          if ( debugMode ) console.log( 'swStateChanges: ' + swStateChanges );
+          if ( debugMode ) console.log( 'swNewInstallStartup: ' + swNewInstallStartup );
+
+          localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+
+          // Start the app after service worker is ready && not a new install/upgrade.
+          if ( swNewInstallStartup == false ) startApp();
 
         })
         .catch(err => 
@@ -293,22 +251,55 @@
 
     }
 
-	//});
+  }
 
-  /*window['isUpdateAvailable']
-  .then(isAvailable => {
-    if (isAvailable) {
+  function startApp() 
+  {
+    // 1. Online/Offline related event setup
+    updateOnlineStatus();
 
-      var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('appinstalled', recordInstallEvent);
 
-      // move to cwsRender 
-      $( btnUpgrade ).click ( () => {
-        //_registrationObj.update();
-        location.reload( true );
-      });
+    // Set App Connection Mode
+    ConnManager.initialize();
 
-      MsgManager.notificationMessage ( 'New updates applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
-    }
-  });*/
+    // 2. Do 'appInfoOperation' that does app Version Check & action first
+    //  & set web service type for the app
+    // , then, proceed with 'cwsRenderObj' rendering.
+
+    appInfoOperation( function() {
+
+      $( '#spanVersion' ).text( 'v' + _ver );
+
+      ConnManager._cwsRenderObj = _cwsRenderObj;
+    
+      _cwsRenderObj.render();  
+
+      syncManager.initialize( _cwsRenderObj );
+
+      FormUtil.createNumberLoginPinPad(); //if ( Util.isMobi() )
+
+      if ( debugMode )  console.log( 'swPromptRefresh: ' + swPromptRefresh );
+
+      if ( swPromptRefresh )
+      {
+        _cwsRenderObj.createRefreshIntervalTimer( _ver );
+      }
+
+      setTimeout(function(){
+
+        FormMsgManager.appUnblock();
+
+      },500)
+
+
+    });
+
+
+  }
+
+  initialize();
 
 })();

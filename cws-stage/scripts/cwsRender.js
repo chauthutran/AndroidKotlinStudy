@@ -13,8 +13,8 @@ function cwsRender()
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
 
 	// This get cloned..  Thus, we should use it as icon class name?
-	me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
-	me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
+	//me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
+	//me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.headerLogoTag = $( '.headerLogo' );
@@ -26,6 +26,7 @@ function cwsRender()
 	me.manifest;
 	me.favIconsObj;
 	me.aboutApp;
+	me.settingsApp;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
@@ -57,7 +58,7 @@ function cwsRender()
 	me._translateEnable = true;
 
 	me._manageInputSwipe;
-	me.autoLogoutDelayMins = 60; //auto logout after X mins
+	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 
 	me.debugMode = false;
@@ -112,6 +113,7 @@ function cwsRender()
 		me.langTermObj = new LangTerm( me );
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
+		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new statistics( me );
 	}
 
@@ -168,14 +170,16 @@ function cwsRender()
 
 			// added by Greg (2019-02-18) > test track googleAnalytics
 			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-			//console.log( areaId );
+
 			// should close current tag/content?
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+			else if ( areaId === 'settingsPage') me.settingsApp.render();
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{  
 				me.clearMenuClickStyles();
+				
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
 				//console.log( me.areaList );
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
@@ -207,10 +211,8 @@ function cwsRender()
 
 	me.renderBlock = function( blockName, options )
 	{
-		console.log( ' new block ');
 		if ( options )
 		{
-			console.log('options: ' + JSON.stringify( options ));
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
 		}
 		else
@@ -218,7 +220,7 @@ function cwsRender()
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
-		blockObj.render();  // should been done/rendered automatically?  			
+		blockObj.render();			
 
 		return blockObj;
 	}
@@ -227,35 +229,18 @@ function cwsRender()
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function( configJson )
 	{
-		//console.log( configJson );
 
-		/*if ( me._localConfigUse )
-		{
-			ConfigUtil.getDsConfigJson( me.dsConfigLoc, function( success, configDataFile ) {
+		me.configJson = configJson;
+		ConfigUtil.setConfigJson( me.configJson );
 
-				//console.log( 'local config' );
-
-				me.configJson = configDataFile;
-				ConfigUtil.setConfigJson( me.configJson );
-
-				me.startBlockExecute( me.configJson );
-			});		
-		}
-		else*/
-		{
-			//console.log( 'network config' );
-
-			me.configJson = configJson;
-			ConfigUtil.setConfigJson( me.configJson );
-
+		//setTimeout( function(){
 			me.startBlockExecute( me.configJson );
-		}
+		//}, 500 )
 
 	}
 
 	me.startBlockExecute = function( configJson )
 	{
-		//console.log( 'menu prep: ' + ConnManager.userNetworkMode_Online + ' vs ' + ConnManager.networkSyncConditions() + ' = ' + ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ) );
 		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
 
 		if ( me.areaList )
@@ -281,7 +266,24 @@ function cwsRender()
 	me.startBlockExecuteAgain = function()
 	{
 		DataManager.getUserConfigData( function( userData ){
-			me.startBlockExecute( userData.dcdConfig );
+
+			if ( userData != undefined )
+			{
+				me.startBlockExecute( userData.dcdConfig );
+			}
+			else
+			{
+				var sessData = localStorage.getItem( 'session' );
+
+				if ( sessData )
+				{
+					var dcdData = localStorage.getItem( JSON.parse( sessData ).user );
+
+					me.startBlockExecute( JSON.parse( dcdData ).dcdConfig );
+				}
+				
+			}
+
 		});
 	}
 
@@ -317,12 +319,12 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			if( mySessionData == undefined )
+			/*if( mySessionData == undefined )
 			{
 				return;
-			}
+			}*/
 
-			FormUtil.getMyListData( me.storageName_RedeemList, true, function( myData ){
+			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
 
 				DataManager.getUserConfigData( function( userData ){
 
@@ -411,23 +413,23 @@ function cwsRender()
 
 	me.populateMenuList = function( areaList, exeFunc )
 	{
-		
+
 		DataManager.getSessionData( function(userSessionJson) {
 			//var userSessionJson = DataManager.getSessionData();
 			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
 			var startMenuTag;
-			if ( me.debugMode ) console.log( ' cwsR > populateMenuList ' );
+
 			$( '#navDrawerDiv' ).empty();
 
 			// clear the list first
 			me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-			var navMenuHead = $( '<div style="width:100%;height:100px;margin:0;padding:0;border-radius:0;border-bottom:1px solid rgb(0, 0, 0, 0.1)" class="" />' );
+			var navMenuHead = $( '<div id="navMenuHead" />' );
 			var navMenuTbl = $( '<table id="navDrawerHeader" />' );
 			var tr = $( '<tr />' );
-			var tdLeft = $( '<td style="padding: 14px;width:76px;" />' );
-			var tdRight = $( '<td  style="padding:2px 0 0 0;height:52px;" />' );
+			var tdLeft = $( '<td class="menuHeadLeft" />' );
+			var tdRight = $( '<td class="menuHeadRight" />' );
 
 			me.navDrawerDivTag.append ( navMenuHead );
 			navMenuHead.append ( navMenuTbl );
@@ -438,15 +440,15 @@ function cwsRender()
 			var navMenuLogo = $( '<img src="images/logo.svg" />' );
 
 			tdLeft.append ( navMenuLogo );
-			tdRight.append ( $( '<div id="divNavDrawerOUName" class="" style="font-size:17pt;font-weight:500;letter-spacing: -0.02em;line-height: 28px;">' + userName + '</div>') );
-			tdRight.append ( $( '<div id="divNavDrawerOUlongName" class="" style="letter-spacing: 0.5px;font-size:12px;font-weight:normal;font-style: normal;padding: 4px 0 0 0"" />' ) );
+			tdRight.append ( $( '<div id="divNavDrawerOUName" >' + userName + '</div>') );
+			tdRight.append ( $( '<div id="divNavDrawerOUlongName" />' ) );
 
 			var tr = $( '<tr />' );
 			var td = $( '<td colspan=2 style="height:20px;" />' );
 
 			navMenuTbl.append ( tr );
 			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" class="" style="position:relative;top:-7px;padding: 0 0 0 14px;font-style: normal;font-weight: normal;line-height: 16px;font-size: 14px;Color:#fff;" />') );
+			td.append ( $( '<div id="divNavDrawerSummaryData" />') );
 
 			// Add the menu rows
 			if ( areaList )
@@ -454,8 +456,8 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
-
-					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+					var menuStyle = (( area.group != undefined ) ? ( area.group == false ? 'border-bottom: 0;' : '' ) : 'border-bottom: 0;' );
+					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '" style="' + menuStyle + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
 
 					me.setupMenuTagClick( menuTag );
 
@@ -608,7 +610,7 @@ function cwsRender()
 				if ( allLangTerms )
 				{
 					// Enable the language switch dropdown
-					me.aboutApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+					me.settingsApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
 
 					// Translate current page
 					me.langTermObj.translatePage();
@@ -638,17 +640,6 @@ function cwsRender()
 		}
 	}
 
-	/*me.processExistingloggedIn = function( lastSession, loginData )
-	{
-		me.renderDefaultTheme();
-		me.loginObj.loginFormDivTag.hide();
-		me.loginObj._userName = lastSession.user;
-		FormUtil.login_UserName = lastSession.user;
-		FormUtil.login_Password = Util.decrypt ( loginData.mySession.pin, 4);
-		me.loginObj.loginSuccessProcess( loginData );
-		me.retrieveAndSetUpTranslate();
-	}*/
-
 	me.showLoginForm = function()
 	{
 		// If 'initializeStartBlock' case, open the Login form.
@@ -668,6 +659,7 @@ function cwsRender()
 		$( '#focusRelegator' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
+		$( '#settingsFormDiv' ).hide();
 
 		// hide the menu div if open
 		me.hidenavDrawerDiv();			
@@ -676,13 +668,14 @@ function cwsRender()
 	me.clearMenuClickStyles = function()
 	{
 		$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
+		$( 'table.menu-mobile-row' ).css( 'opacity', '0.8' );
 	}
 
 	me.updateMenuClickStyles = function( areaId )
 	{
-		//$( '[area]' ).css( 'background-color', 'none' );
-		var tag = $( '[areaid="' + areaId + '"]' ).css( 'background-color', '#F2F2F2' );
-
+		//var tag = 
+		$( '[areaid="' + areaId + '"]' ).css( 'background-color', 'rgb(235,235,235,1)' ); //as per FIGMA
+		$( '[areaid="' + areaId + '"]' ).css( 'opacity', '1' );
 	}
 
 	me.logOutProcess = function()
@@ -692,6 +685,31 @@ function cwsRender()
 		FormUtil.undoLogin();
 		sessionStorage.clear();
 
+		// change to session Management process > forced reload of app (detect new version + forced login)
+		var SWinfoObj = localStorage.getItem( 'swInfo' );
+
+		if ( SWinfoObj )
+		{
+			SWinfoObj = JSON.parse( SWinfoObj );
+			
+			if ( SWinfoObj.reloadRequired )
+			{ 
+				location.reload( true );
+			}
+			else
+			{
+				me.closeLoginSession();
+			}
+		}
+		else
+		{
+			me.closeLoginSession();
+		}
+
+	}
+
+	me.closeLoginSession = function()
+	{
 		me.loginObj.spanOuNameTag.text( '' );
 		me.loginObj.spanOuNameTag.hide();
 		me.clearMenuPlaceholders();
@@ -703,13 +721,18 @@ function cwsRender()
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
 		{
 			me.aboutApp.hideAboutPage();
-		} //$( 'div.aboutListDiv' ).hide();
+		}
+		
 		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
 		{
 			me.statisticsObj.hideStatsPage();
-			//$( 'div.statisticsDiv' ).hide();
+		}
+		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
+		{
+			me.settingsApp.hideSettingsPage();
 		}
 
+		$( 'nav' ).hide();
 	}
 
 	me.clearMenuPlaceholders = function()
@@ -722,16 +745,18 @@ function cwsRender()
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	me.trackUserLocation = function( clicked_area )
 	{
-		DataManager.getSessionData( function(lastSession){
+		DataManager.getSessionData( function( lastSession ){
+
 			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
 			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
 			var matchOn = [ "id", "startBlockName", "name" ];
 			var matchedOn, areaMatched;
 
-			if (lastSession)
+			if ( lastSession )
 			{
 
 				DataManager.getUserConfigData( function( loginData ){
+
 					if (loginData)
 					{
 						for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
@@ -747,6 +772,7 @@ function cwsRender()
 			
 						//UPDATE lastStorage session for current user (based on last menu selection)
 						DataManager.saveData( lastSession.user, loginData );
+
 					}
 				});
 				
@@ -766,6 +792,55 @@ function cwsRender()
 		}		
 	}
 
+	me.createRefreshIntervalTimer = function( ver )
+	{
+		var bDev = ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 );
+
+		me.newSWrefreshNotification( ver );
+
+		var refreshIntV = setInterval( function() {
+
+			me.newSWrefreshNotification( ver );
+
+			// if running on DEV/Local server, run repeat notification every 2.5min until user refreshes
+		}, ( ( ( ( bDev ) ? 1 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) ); //60 * 60 * 1000 = 3600,000 = 60mins
+
+		console.log( ' ~ auto REFRESH interval timer: ' + refreshIntV + ' {' + ( ( ( ( bDev ) ? 5 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) + '}');
+
+	}
+
+	me.newSWrefreshNotification = function( ver )
+	{
+
+		// new update available
+		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+		// move to cwsRender ?
+		$( btnUpgrade ).click ( () => {
+
+			var SWinfoObj = localStorage.getItem( 'swInfo' );
+
+			if ( SWinfoObj )
+			{
+				//do nothing
+			}
+			else
+			{
+				localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': (new Date() ).toISOString() } ) );
+			}
+
+			location.reload( true );
+
+		});
+
+		// MISSING TRANSLATION
+		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationBlue', btnUpgrade, '', 'right', 'bottom', 25000 );
+
+		console.log( ' ~ REFRESH notification' );
+
+		localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': true, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': '' } ) );
+
+	}
 
 	// ======================================
 

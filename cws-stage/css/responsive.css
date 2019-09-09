@@ -13,12 +13,12 @@
 
     ul {
       list-style-type: none;
-      width: 98%;
+      width: 100%;
       box-sizing: border-box;
     }
 
     ul li {
-      font-size: 0.9em;
+      font-size: 0.7em;
     }
 
     ul li .expandable {
@@ -40,17 +40,40 @@
     }
 
     ul li .expandable {
-      background: #FFF;
+      /* background: rgba(51, 51, 51, 0.02); */
+      background-color: #fff;
       color: #333;
       text-decoration: none;
       display: inline-block;
       width: 100%;
-      height:auto;
-      /*border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
-      border-bottom: #ccc 0.5px solid;
+      /* height: 42px; */
+      left:0%;
+      right:0%;
+      top:0%;
+      bottom: 0%;
+      padding: 6px 6px 6px 0;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
     }
 
+    ul li .listExpandable {
+      /* background: rgba(51, 51, 51, 0.02); */
+      background-color: #fff;
+      color: #333;
+      text-decoration: none;
+      display: inline-block;
+      width: 100%;
+      height:62px; /* 42px; */
+      left:0%;
+      right:0%;
+      top:0%;
+      bottom: 0%;
+      padding: 6px 6px 6px 0;
+      /*border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
+      /* border-bottom: #ccc 0.5px solid; */
+      box-sizing: border-box;
+    }
+    
     ul li .expandable+div {
       display: none;
     }
@@ -58,7 +81,9 @@
     ul li .expandable.expanded {
       color: #333;
       font-weight: 800;
-      margin-bottom:5px;
+      /* margin-bottom:5px; */
+      box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+      background: rgb(251,251,251);
     }
 
     ul li .expandable.expanded:after,
@@ -150,7 +175,7 @@
       height: 36px;
       background-color: #fff;
       padding: 5px;
-      border-bottom: dotted 0.5px #333;
+      /* border-bottom: dotted 0.5px #333; */
       box-sizing: border-box;
     }
 
@@ -162,11 +187,15 @@
 
     .icon-row > img
     {
-      padding: 0 0 0 2px;
+      padding: 0 6px 0 6px;
     }
     .icon-arrow {
       float: right;
       box-sizing: border-box;
+    }
+
+    .arrow-paddTop {
+      top: -2px; 
     }
 
 
@@ -197,6 +226,18 @@
     /* ======================= */
     /* 1A. Smallest Anchor Mode */
     @media screen and (max-width: 559px) {
+      body {
+        padding: 44px 0px;
+      }
+      .bg-color {
+        background-color: #fff;
+      }
+      .settingsTopfiller {
+        margin:62px 0 0 0;
+      }
+      .dateGroupPaddTop {
+        margin-top: 58px;
+      }
       #navDrawerDiv
       {
         max-width: 280px;
@@ -236,34 +277,42 @@
       }
       .act-l {
         font-size: calc(9px + 0.4vw);
-        padding: 5px 0 5px 15px;
+        padding: 12px 0 0px 15px;
       }
   
       ul li .expandable {
+        /* margin: 40px 0 0 0; */
+      }
 
+      ul.tab__content_act > li.emptyListLi > .expandable {
+        margin: 40px 0 0 0; 
       }
 
       .title-act-mobile {
         position: fixed;
-        text-align: center;
+        text-align: left;
         top: 56px;
         left: 0px;
         width: 100%;
-        height: 36px;
+        height: 48px;
         background-color: #fff;
-        padding: 5px;
+        padding: 12px 5px 15px 19px;
         display: block;
-        border-bottom: dotted 0.5px #333;
+        /*border-bottom: dotted 0.5px #333;*/
         box-sizing: border-box;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
       }
 
+      .title-act-mobile > label {
+        font-size: 12px;
+        padding: 0 0 0 10px;
+      }
 
       img.expandable-arrow{
-        width:24px;
+        width:20px;
         height:24px;
         position:relative;
-        top:-4px; /*-2px;*/
+        top: -6px; /*-2px;*/
       }
 
       .icons-status {
@@ -275,6 +324,16 @@
     /* 1B. Tab content mode - hide Anchor */
     @media screen and (min-width: 560px) {
 
+      body {
+        padding: 80px 20px;
+      }
+      .bg-color {
+        background-color: #f5f5f5;
+      }
+      /*.menu-wrapper {
+        max-width: 320px;
+        padding:16px;
+      }*/
       #navDrawerDiv
       {
         max-width: 400px;
@@ -296,6 +355,7 @@
         height: auto;
         border-radius: 5px;
         box-sizing: border-box;
+        border: 1px solid #fff;
       }
 
       .tab_content > li {
@@ -350,7 +410,7 @@
 
       .act-l {
         font-size: calc(9px + 0.2vw);
-        padding: 8px 0 5px 15px;
+        padding: 8px 0 0 15px;
       }
   
       ul li .expandable {
@@ -393,7 +453,7 @@
       .tb-content-d,
       .tb-content-result,
       .tb-content-buttom {
-        width: 96%;
+        width: 94%;
       }
     }
 
