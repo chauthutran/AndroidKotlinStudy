@@ -83,6 +83,9 @@ function inputMonitor( cwsRenderObj )
 
         if ( FormUtil.checkLogin() )
         {
+            inputMonLogoutDelay = JSON.parse(localStorage.getItem( "session" )).logoutDelay;
+        
+        
             cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
 
             InputMonLogoutTimer = setInterval( function() 

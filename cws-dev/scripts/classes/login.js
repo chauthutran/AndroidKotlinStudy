@@ -199,7 +199,7 @@ function Login( cwsRenderObj )
 
 			if ( lastSession == undefined || lastSession == null )
 			{
-				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true };
+				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true, logoutDelay: "60" };
 				localStorage.setItem( 'session', JSON.stringify( lastSession ) );
 			}
 			//DataManager.saveData( 'session', lastSession );

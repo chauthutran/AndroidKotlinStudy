@@ -17,6 +17,7 @@ function settingsApp( cwsRender )
     me.settingsInfo_langSelectTag = $( '#settingsInfo_langSelect' );
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
+    me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
     me.settingsInfo_autoCompleteInput = $( '#autoCompleteInput' );
 
@@ -171,6 +172,39 @@ function settingsApp( cwsRender )
             syncManager.reinitialize ( me.cwsRenderObj );
 
         });
+
+
+        me.settingsInfo_logoutDelay.change ( () => 
+        {
+            
+            me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_logoutDelay.val();
+
+            DataManager.setSessionDataValue( 'logoutDelay', me.settingsInfo_logoutDelay.val() );
+
+            $( '#settingsInfo_logout_Text' ).html( ( me.settingsInfo_logoutDelay.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getLogoutOptions(), me.settingsInfo_logoutDelay.val() ) );
+
+            syncManager.reinitialize ( me.cwsRenderObj );
+
+
+
+            var sessData = JSON.parse(localStorage.getItem( "session" ));
+
+           
+  
+            sessData.logoutDelay = me.settingsInfo_logoutDelay.val(); //add
+            DataManager.saveData("session", sessData);
+
+
+
+
+
+
+
+
+
+
+        });
+        
 
 
         $( 'img.btnSettingsBack' ).click( () =>
@@ -366,6 +400,35 @@ function settingsApp( cwsRender )
 
         });
 
+        $( '#imgsettingsInfo_logoutDelay_Less' ).closest( 'div' ).click( function()
+        {
+            if ( $( '#imgsettingsInfo_logoutDelay_Less' ).hasClass( 'disabled' ) ) return;
+
+            $( '#imgsettingsInfo_logoutDelay_Less' )[0].classList.toggle( "rotateImg" ); //find this class to call img click event
+
+            if ( ! $( '#settingsInfo_logoutDelay_More' ).is(':visible') )
+            {
+                $( '#settingsInfo_logoutDelay_Less' ).hide( 'fast' );
+                $( '#settingsInfo_logoutDelay_More' ).show( 'fast' );
+                $( 'label.settingsHeader' ).attr( 'backText', $( 'label.settingsHeader' ).html() );
+                $( 'label.settingsHeader' ).attr( 'backTerm', $( 'label.settingsHeader' ).attr( 'term' ) );
+                $( 'label.settingsHeader' ).html( $( '#lblsettings_logout' ).html() );
+                $( 'label.settingsHeader' ).attr( 'term', $( '#lblsettings_logoout' ).attr( 'term' ) );
+
+                me.evalHideSections( 'settingsInfo_logoutDelay_Less' );
+            }
+            else
+            {
+                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
+                $( '#settingsInfo_logoutDelay_More' ).hide( 'fast' );
+                $( '#settingsInfo_logoutDelay_Less' ).show( 'fast' );
+
+                me.evalHideSections( 'settingsInfo_logoutDelay_Less' );
+            }
+
+        });
+
         $( '#lblsettings_userLanguage' ).css( 'user-select', 'none' );
         $( '#lblsettings_userLanguage' ).on( 'selectstart dragstart', false );
 
@@ -485,11 +548,11 @@ function settingsApp( cwsRender )
             if ( me.defaultsInitialised == 0 )
             {
 
-                $( '#settingsInfo_dcdVersion_Less' ).show();
-                $( '#settingsInfo_dcdVersion_Less' ).removeClass( 'byPassSettingsMore' );
+                //$( '#settingsInfo_dcdVersion_Less' ).show();
+                //$( '#settingsInfo_dcdVersion_Less' ).removeClass( 'byPassSettingsMore' );
     
-                $( '#settingsInfo_network_Less' ).show();
-                $( '#settingsInfo_network_Less' ).removeClass( 'byPassSettingsMore' )
+                //$( '#settingsInfo_network_Less' ).show();
+                //$( '#settingsInfo_network_Less' ).removeClass( 'byPassSettingsMore' )
 
                 if ( me.langTermObj.getLangList() )
                 {
@@ -511,6 +574,9 @@ function settingsApp( cwsRender )
                 $( '#settingsInfo_geoLocation_Less' ).show();
                 $( '#settingsInfo_geoLocation_Less' ).removeClass( 'byPassSettingsMore' );
 
+                $( '#settingsInfo_autocomplete_Less' ).show();
+                $( '#settingsInfo_autocomplete_Less' ).removeClass( 'byPassSettingsMore' );
+
                 if ( Util.isMobi() )
                 {
                     $( '#settingsInfo_soundEffects_Less' ).show();
@@ -522,8 +588,6 @@ function settingsApp( cwsRender )
                     $( '#settingsInfo_soundEffects_Less' ).addClass( 'byPassSettingsMore' );
                 }
 
-                $( '#settingsInfo_autoComplete_Less' ).show();
-                $( '#settingsInfo_autoComplete_Less' ).removeClass( 'byPassSettingsMore' );
             }
         }
         else
@@ -560,6 +624,9 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_network_Less' ).hide();
             $( '#settingsInfo_network_Less' ).addClass( 'byPassSettingsMore' )
+
+            $( '#settingsInfo_logoutDelay_Less' ).hide();
+            $( '#settingsInfo_logoutDelay_Less' ).addClass( 'byPassSettingsMore' )
 
         }
 
@@ -666,6 +733,8 @@ function settingsApp( cwsRender )
                 me.getThemeList( dcdConfig.themes );
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
+                me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins )
+
             }
         }
 
@@ -830,6 +899,19 @@ function settingsApp( cwsRender )
         $( '#settingsInfo_DivnetworkSelect' ).show();
     }
 
+    
+    me.populatelogoutDelayList_Show = function( syncEveryList, syncTimer )
+    {
+
+        Util.populateSelect( me.settingsInfo_logoutDelay, "", syncEveryList );
+        Util.setSelectDefaultByName( me.settingsInfo_logoutDelay, syncTimer );
+        me.settingsInfo_logoutDelay.val( syncTimer ); 
+
+        $( '#settingsInfo_logout_Text' ).html( ( syncTimer > 0 ? 'every' : '') + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
+        $( '#settingsInfo_DivlogoutSelect' ).show();
+    }
+ 
+
     me.getCoordinatesForPresentation = function()
     {
         var ret = ''; //'<div term="">not required by PWA</div>';
@@ -876,6 +958,30 @@ function settingsApp( cwsRender )
 
     }
 
+
+    me.getLogoutOptions = function()
+    {
+        var retOpts = []
+        var syncOpts = {};
+
+        syncOpts.id = 10;
+        syncOpts.name = '10 min';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 30;
+        syncOpts.name = '30 mins';
+        retOpts.push( syncOpts );
+
+        syncOpts = {};
+        syncOpts.id = 60;
+        syncOpts.name = '60 mins';
+        retOpts.push( syncOpts );
+
+        return retOpts;
+
+    }
+ 
     me.updateAutoComplete = function( newValue )
     {
 		var tagsWithAutoCompl = $( '[autocomplete]' );

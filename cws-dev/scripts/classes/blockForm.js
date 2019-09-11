@@ -23,9 +23,9 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		if ( formJsonArr !== undefined )
 		{
-            var sessData = JSON.parse( localStorage.getItem( "session" ) );
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var formTag = $( '<form autocomplete="' + ( sessData.autoComplete ? 'on' : 'off' ) + '"></form>' );
+			var valor = JSON.parse( localStorage.getItem('session') ).autoComplete;
+			var formTag = $( '<form autocomplete="' + valor + '"></form>' );
 
 			formDivSecTag.append( formTag );
 			blockTag.append( formDivSecTag );

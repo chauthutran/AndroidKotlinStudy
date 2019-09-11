@@ -133,7 +133,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/completed.svg",
-    "revision": "f0b6c1f756bc105d7e399b11abb1c9ae"
+    "revision": "d8c9827d88fe0ec692937f10cedabff1"
   },
   {
     "url": "images/Connect.svg",
@@ -145,7 +145,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/failed.svg",
-    "revision": "a3c5dc242aa6fbf178505ea377ba1550"
+    "revision": "06ed2b711619acc16461bf830a1d9f96"
   },
   {
     "url": "images/favbar_color_act.svg",
@@ -177,7 +177,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/hold.svg",
-    "revision": "6fb2c9c125841817c38ae5bdf857876a"
+    "revision": "424c05cf649a49a1c5c8057c89e6d4f1"
   },
   {
     "url": "images/icons/Connect_144px.png",
@@ -261,7 +261,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/pending.svg",
-    "revision": "cc1af7cf4f3f62ddfe6de4c4957b95f5"
+    "revision": "5fe5c1462f3c67821488685afdff8d87"
   },
   {
     "url": "images/plus_on.svg",
@@ -325,7 +325,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "1ac279ce74867cb6acbca9387570bb35"
+    "revision": "0c85249d3442ce3ce50f7a516d8e2429"
   },
   {
     "url": "redeemGen.html",
@@ -353,7 +353,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "a81f366b7a4a78468060d14df0095637"
+    "revision": "93af8222fc3683e0f1ea89b04a4acaca"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -377,7 +377,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "16c3785cec2d490eaea345fa6fd8295b"
+    "revision": "026f54f066bce457aa2bc74e3e4c1e01"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -385,7 +385,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "418046de7be04f350e70918f6f006f4d"
+    "revision": "e60416b5dcb8cae11549168aa9dbe362"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -461,7 +461,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "0f2d4e3ca78fa12655cb43c41783a97c"
+    "revision": "d640adb9cc179d7a53cd6b0d4eb4ae04"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
