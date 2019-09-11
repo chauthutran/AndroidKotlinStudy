@@ -4,18 +4,10 @@ function cwsRender()
 {
 	var me = this;
 
-	// Fixed variables
-	me.dsConfigLoc = 'data/dsConfig.json';	// 
-
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
-
-	// This get cloned..  Thus, we should use it as icon class name?
-	//me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
-	//me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
-
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.headerLogoTag = $( '.headerLogo' );
 	me.pulsatingProgress = $( '#pulsatingCircle' );
@@ -31,8 +23,6 @@ function cwsRender()
 	me.registrationObj;
 	me.loginObj;
 	me.langTermObj;
-	//me.enableThemedColorSchemes = false;
-
 
 	me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
@@ -49,15 +39,12 @@ function cwsRender()
 
 	// Create separate class for this?
 	me.blocks = {};	// "blockId": blockObj..
-
 	me.activityList = [];	// Move to FormUtil.activityList?
 
 	me._localConfigUse = false;
-	//me.syncManager;
- 
 	me._translateEnable = true;
-
 	me._manageInputSwipe;
+
 	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 

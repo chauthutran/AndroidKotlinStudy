@@ -285,6 +285,24 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			// Setup events and visibility and rules
 			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData );
+
+			if ( formItemJson.scanQR != undefined )
+			{
+				console.log( formItemJson.scanQR );
+				if ( formItemJson.scanQR == true )
+				{
+					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 10px;position:relative;top:-5px" >')
+
+					QRiconTag.click( function(){
+						var qrData = new readQR( entryTag );
+					} );
+
+					divInputTag.append( QRiconTag );
+					entryTag.addClass( 'qrInput' );
+
+				}
+
+			}
 		}
 	}
 

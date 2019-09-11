@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "2cb79e0ac2c0249b6f42c837263b9dab"
+    "revision": "0fd6a218bec1491f0e9d3459a3636c6d"
   },
   {
     "url": "images/about.svg",
@@ -133,7 +133,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/completed.svg",
-    "revision": "d8c9827d88fe0ec692937f10cedabff1"
+    "revision": "f0b6c1f756bc105d7e399b11abb1c9ae"
   },
   {
     "url": "images/Connect.svg",
@@ -145,7 +145,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/failed.svg",
-    "revision": "06ed2b711619acc16461bf830a1d9f96"
+    "revision": "a3c5dc242aa6fbf178505ea377ba1550"
   },
   {
     "url": "images/favbar_color_act.svg",
@@ -177,7 +177,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/hold.svg",
-    "revision": "424c05cf649a49a1c5c8057c89e6d4f1"
+    "revision": "6fb2c9c125841817c38ae5bdf857876a"
   },
   {
     "url": "images/icons/Connect_144px.png",
@@ -261,7 +261,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/pending.svg",
-    "revision": "5fe5c1462f3c67821488685afdff8d87"
+    "revision": "cc1af7cf4f3f62ddfe6de4c4957b95f5"
   },
   {
     "url": "images/plus_on.svg",
@@ -270,6 +270,14 @@ self.__precacheManifest = [
   {
     "url": "images/plus.svg",
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
+  },
+  {
+    "url": "images/qr_cancel.svg",
+    "revision": "da5083a7dfb0089fbf962140ca536077"
+  },
+  {
+    "url": "images/qr.svg",
+    "revision": "be30e8aa9a5803479d5f3eb9fad8bb5e"
   },
   {
     "url": "images/settings.svg",
@@ -325,11 +333,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0c85249d3442ce3ce50f7a516d8e2429"
+    "revision": "b7b58f20d2116b53e1f914724251d677"
   },
   {
     "url": "redeemGen.html",
-    "revision": "e2da8dfe1d4e4fe58dfccd2e6f6b70b9"
+    "revision": "7d39ec9b7d6aaf1be8623fd3391b0c76"
   },
   {
     "url": "scripts/app.js",
@@ -353,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "93af8222fc3683e0f1ea89b04a4acaca"
+    "revision": "2bb1fdc33d800d6ce634a01f2094cc6f"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -396,8 +404,12 @@ self.__precacheManifest = [
     "revision": "e0680cc46b3e5aebaeda5367e496e119"
   },
   {
+    "url": "scripts/classes/webqr.js",
+    "revision": "b9c24c3da245b66a8f0f14b5178d65da"
+  },
+  {
     "url": "scripts/cwsRender.js",
-    "revision": "e7d5ceef48c728c1d02d5c42a1394b25"
+    "revision": "8b6f68db39b8b46e622760bda74950f7"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -418,6 +430,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/jquery.blockUI.js",
     "revision": "1473907211f50cb96aa2f2402af49d69"
+  },
+  {
+    "url": "scripts/libraries/llqrcode.js",
+    "revision": "82f070af5b5225612aa9f75113d034b9"
   },
   {
     "url": "scripts/utils/activityUtil.js",

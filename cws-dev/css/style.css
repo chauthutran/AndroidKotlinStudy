@@ -880,3 +880,61 @@ a.searchresultSelector:hover {
 {
   display: none;
 }
+
+
+/* Start: QR SCANNER Styles */
+
+#qrBlock{
+  background-color: rgb( 35, 35, 35);
+  position: fixed;
+  top:0;
+  left:0;
+}
+
+#qrVideo{
+  width:100%;
+  height:100%;
+  object-fit: cover;    }
+
+#qr-canvas{
+  display:none;
+}
+
+#qrResult{
+  padding: 4px;
+  width:100%;
+  border: 2px solid royalblue;
+  border-radius: 4px;
+  background-color:aliceblue
+}
+
+#qrBottom {
+  position:fixed;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 80px;
+  width:100%;
+}
+
+#qrCancel {
+  text-align: center;
+  padding:12px 0 12px 0
+}
+
+#qrBusyIcon {
+  position:fixed;
+  left: 10px;
+  top: 10px;
+  display:none;
+  width:40px;
+  height:40px;
+  /* border: 2px solid #fff; */
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  padding:8px;
+}
+
+.qrInput{
+  width:80% !important;
+}
+/* END: QR SCANNER Styles */
