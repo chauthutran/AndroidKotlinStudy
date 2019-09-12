@@ -372,7 +372,7 @@ function syncManager()  {}
     
                                 myQueueStatus.html( itemData.queueStatus )
     
-                                if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
+                                //if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
                                 {
                                     playSound("coin");
                                 }

@@ -889,6 +889,7 @@ a.searchresultSelector:hover {
   position: fixed;
   top:0;
   left:0;
+  z-index: 100;
 }
 
 #qrVideo{
@@ -905,7 +906,7 @@ a.searchresultSelector:hover {
   width:100%;
   border: 2px solid royalblue;
   border-radius: 4px;
-  background-color:aliceblue
+  background-color:aliceblue;
 }
 
 #qrBottom {
@@ -918,7 +919,13 @@ a.searchresultSelector:hover {
 
 #qrCancel {
   text-align: center;
-  padding:12px 0 12px 0
+  padding:12px 0 12px 0;
+}
+
+#qrCancelButton {
+  border:1px solid #000; 
+  border-radius: 30px;
+  background-color: #fff;
 }
 
 #qrBusyIcon {

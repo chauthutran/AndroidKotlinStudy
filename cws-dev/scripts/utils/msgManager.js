@@ -344,7 +344,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
     if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
 
-    if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+    //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
     {
         if ( actionButton && autoClick )
         {

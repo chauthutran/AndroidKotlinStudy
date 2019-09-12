@@ -213,7 +213,7 @@ function readQR( valueTag ){
     {
 
         //document.getElementById( me.dataTargetTag ).innerHTML = "- scanning -";
-        $( me.dataTargetTag ).html( "<img src='images/Connect.svg' class='spinner' style='width:22px;height:22px;'>" );
+        //$( me.dataTargetTag ).html( "<img src='images/Connect.svg' class='spinner' style='width:22px;height:22px;'>" );
 
         if (stype == 1) 
         {

@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "0fd6a218bec1491f0e9d3459a3636c6d"
+    "revision": "dd0073bbfdd5a705ca95164ce0932386"
   },
   {
     "url": "images/about.svg",
@@ -236,18 +236,6 @@ self.__precacheManifest = [
     "revision": "0fb7b04a2651bfb60e59ae3289d4e2f6"
   },
   {
-    "url": "images/net-green.svg",
-    "revision": "0aafa33a6beeca84d37679273ad059d7"
-  },
-  {
-    "url": "images/net-sync.svg",
-    "revision": "ca8591a7226c1592fedda68b4d1efa1f"
-  },
-  {
-    "url": "images/net.svg",
-    "revision": "2144acb467584dffbf59e6798923bd2b"
-  },
-  {
     "url": "images/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
@@ -333,7 +321,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b7b58f20d2116b53e1f914724251d677"
+    "revision": "032e1cff246f3c0a8a38df078b30f3a5"
   },
   {
     "url": "redeemGen.html",
@@ -361,7 +349,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "2bb1fdc33d800d6ce634a01f2094cc6f"
+    "revision": "7ab87a0000f443f92c617c440b378b2b"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -385,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "026f54f066bce457aa2bc74e3e4c1e01"
+    "revision": "7ed1006f4761d43c59f2fe47144aee09"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -405,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/webqr.js",
-    "revision": "b9c24c3da245b66a8f0f14b5178d65da"
+    "revision": "4cedfff71a96855cead7af280052b0a3"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -489,7 +477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "9d9c1aeb37cc9b1020a2c9c5a3a6b640"
+    "revision": "19ff0f0bd96999621b3e96b3f892e6ea"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -501,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "3812bcd94a4383191950699a9fcccf13"
+    "revision": "c572c9a98f6c4638bd806eb86567f2d9"
   },
   {
     "url": "scripts/utils/util.js",

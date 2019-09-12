@@ -242,10 +242,18 @@ function BlockForm( cwsRenderObj, blockObj )
 		if ( formItemJson !== undefined )
 		{
 			var entryTag;
+			var bSkipControlAppend = false;
 
 			// TEMP DROPDOWN --> CHECKBOX
 			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
 
+			if ( formItemJson.scanQR != undefined )
+			{
+				if ( formItemJson.scanQR == true )
+				{
+					bSkipControlAppend = true;
+				}
+			}
 
 			if ( formItemJson.controlType === "INT"
 				|| formItemJson.controlType === "SHORT_TEXT" )
@@ -253,7 +261,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
-				divInputTag.append( entryTag );
+				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
 			}			
 			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
 			{
@@ -288,17 +296,27 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			if ( formItemJson.scanQR != undefined )
 			{
-				console.log( formItemJson.scanQR );
 				if ( formItemJson.scanQR == true )
 				{
+					var tbl = $( '<table style="width:100%"><tr></table>' );
+					var tdL = $( '<td style=""></td>' );
+					var tdR = $( '<td style="width:28px;"></td>' );
+
+					tbl.append( tdL );
+					tbl.append( tdR );
+					divInputTag.append( QRiconTag );
+
 					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 10px;position:relative;top:-5px" >')
 
 					QRiconTag.click( function(){
 						var qrData = new readQR( entryTag );
 					} );
 
-					divInputTag.append( QRiconTag );
-					entryTag.addClass( 'qrInput' );
+					tdL.append( entryTag );
+					tdR.append( QRiconTag );
+					//entryTag.addClass( 'qrInput' );
+
+					divInputTag.append( tbl );
 
 				}
 
