@@ -300,7 +300,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				{
 					var tbl = $( '<table style="width:100%"><tr></table>' );
 					var tdL = $( '<td style=""></td>' );
-					var tdR = $( '<td style="width:28px;"></td>' );
+					var tdR = $( '<td class="qrIcon"></td>' );
 
 					tbl.append( tdL );
 					tbl.append( tdR );
@@ -314,7 +314,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 					tdL.append( entryTag );
 					tdR.append( QRiconTag );
-					//entryTag.addClass( 'qrInput' );
+					entryTag.addClass( 'qrInput' );
 
 					divInputTag.append( tbl );
 

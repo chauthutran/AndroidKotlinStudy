@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "dd0073bbfdd5a705ca95164ce0932386"
+    "revision": "b89a2aece59df7a7879b532911df4374"
   },
   {
     "url": "images/about.svg",
@@ -321,7 +321,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "032e1cff246f3c0a8a38df078b30f3a5"
+    "revision": "d83534353d48bc4d5020016db29af837"
   },
   {
     "url": "redeemGen.html",
@@ -349,7 +349,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "7ab87a0000f443f92c617c440b378b2b"
+    "revision": "a16f09d8c2fa05b3d1e0ddcc51fa480d"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/webqr.js",
-    "revision": "4cedfff71a96855cead7af280052b0a3"
+    "revision": "0059563dcbe84aede3e4c2c5ad663d83"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -485,7 +485,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "2c1d6ba980c329e2aea72b56dc84dd4b"
+    "revision": "e0b5af712a75f4408dc22f48b428fc7e"
   },
   {
     "url": "scripts/utils/syncManager.js",
@@ -494,6 +494,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/utils/util.js",
     "revision": "a23dd492f82696606b368ed4dba88791"
+  },
+  {
+    "url": "sounds/beep.mp3",
+    "revision": "1161ea9429c49bdf9eb0c1b5c6d8b3b6"
   },
   {
     "url": "sounds/coin.mp3",

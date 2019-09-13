@@ -3,8 +3,10 @@ function readQR( valueTag ){
     var me = this;
 
     me.targetFrameTag = '#qrVideo';
-    me.dataTargetTag = '#qrResult';
+    me.dataTargetTag = '#qrMessage';
     me.valueTag = valueTag;
+    me.qrAttempts = 0;
+    me.qrScanLimit = 60;
 
 // QRCODE reader Copyright 2011 Lazar Laszlo
 // http://www.webqr.com
@@ -25,19 +27,21 @@ function readQR( valueTag ){
 
     var qrBlock = '<div id="qrBlock"></div>';
     var qrVideo = '<video id="qrVideo" autoplay></video>';
-    var qrCanvas = '<canvas id="qr-canvas" width="800" height="600"></canvas>';
-    var qrCancel = '<div id="qrCancel" style="" ></div>';
-    var qrCancelButton = '<img id="qrCancelButton" src="images/qr_cancel.svg" >';
-    var qrBusyIcon = '<img id="qrBusyIcon" src="images/Connect.svg" class="spinner" >';
-    var qrResult = '<div id="qrResult" style="" ></div>';
+    var qrCanvas = '<canvas id="qr-canvas"></canvas>';
+    var qrCancel = '<div id="qrCancel"></div>';
+    var qrCancelButton = '<img id="qrCancelButton" class="rounded" src="images/qr_cancel.svg" >';
+    var qrBusyIcon = '<img id="qrBusyIcon" src="images/Connect.svg" class="rotating" >';
+    var qrMessage = '<div id="qrMessage" style="" ></div>';
     var qrBottom = '<div id="qrBottom" style="" ></div>';
-
 
     me.initialise = function()
     {
         if ( me.isCanvasSupported() && window.File && window.FileReader ) 
         {
+            me.qrAttempts = 0;
+
             me.createBlocks();
+            me.initiseStyles();
 
             //me.initCanvas(800, 600);
             me.initCanvas( $( document ).width(), $( document ).height() );
@@ -64,20 +68,25 @@ function readQR( valueTag ){
         $( '#qrBlock' ).append( qrBottom );
         $( '#qrBottom' ).append( qrCancel );
         $( '#qrCancel' ).append( qrCancelButton );
-        $( '#qrBottom' ).append( qrBusyIcon );
-        
+        $( '#qrBlock' ).append( qrMessage );
+        $( '#qrBlock' ).append( qrBusyIcon );
 
         $( '#qrCancel' ).on( 'click', function(){
             me.endQRstream();
             me.hideQR();
         } )
 
-        $( '#qrBlock' ).append( qrResult );
         $( '#qrBlock' ).append( qrCanvas );
 
         $( '#qrVideo' ).css( 'width', $( document ).width() );
         $( '#qrVideo' ).css( 'height', $( document ).height() );
+        $( '#qrVideo' ).attr( 'width', $( document ).width() );
+        $( '#qrVideo' ).attr( 'height', $( document ).height() );
 
+    }
+
+    me.initiseStyles = function()
+    {
 
     }
 
@@ -85,6 +94,7 @@ function readQR( valueTag ){
     {
         $( me.targetFrameTag ).hide( 'fast' );
         $( '#qrBlock' ).empty();
+        me.qrAttempts = 0;
     }
 
     me.initCanvas = function (w, h) 
@@ -92,6 +102,8 @@ function readQR( valueTag ){
         gCanvas = $( '#qr-canvas' );
         gCanvas.css( 'width', w + 'px' );
         gCanvas.css( 'height', h + 'px' );
+        gCanvas.attr( 'width', w + 'px' );
+        gCanvas.attr( 'height', h + 'px' );
 
         gCtx = gCanvas[ 0 ].getContext( '2d' );
 
@@ -105,18 +117,36 @@ function readQR( valueTag ){
 
         if (gUM) {
             try {
+                me.qrAttempts += 1;
                 gCtx.drawImage( v, 0, 0 );
                 try {
                     qrcode.decode();
                     if ( debugMode ) console.log('DECODED QR') /* SUCCESSFUL DECODE OF QR CODE */
-                    if ( me.valueTag ) me.valueTag.val( qrData );
+                    if ( me.valueTag ){
+                        me.valueTag.val( qrData );
+                    } 
+                    else
+                    {
+                        console.log( qrData );
+                    }
+                    playSound("beep");
+                    me.endQRstream();
                     me.hideQR();
                 }
                 catch (e) {
                     if ( e ) 
                     {
                         console.log(e);
-                        setTimeout( me.captureToCanvas, 500 );    
+                        if ( me.qrAttempts <= me.qrScanLimit )
+                        {
+                            setTimeout( me.captureToCanvas, 500 );
+                        }
+                        else
+                        {
+                            playSound("ping");
+                            me.endQRstream();
+                            me.hideQR();
+                        }
                     }
                 };
             }
@@ -147,11 +177,12 @@ function readQR( valueTag ){
 
         if ( html.length )
         {
-            MsgManager.notificationMessage ( 'URL found', 'notificationPurple', $( html ), '', 'left', 'top', 10000 )
+            MsgManager.notificationMessage ( 'URL found', 'notificationDark', $( html ), '', 'left', 'top', 10000 )
         }
         else
         {
             qrData = me.htmlEntities( a );
+            $( '#qrMessage' ).html( qrData );
         }
 
 
@@ -211,9 +242,7 @@ function readQR( valueTag ){
 
     me.setwebcam2 = function (options) 
     {
-
-        //document.getElementById( me.dataTargetTag ).innerHTML = "- scanning -";
-        //$( me.dataTargetTag ).html( "<img src='images/Connect.svg' class='spinner' style='width:22px;height:22px;'>" );
+        $( '#qrMessage' ).html( "present QR" );
 
         if (stype == 1) 
         {
