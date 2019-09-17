@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "b89a2aece59df7a7879b532911df4374"
+    "revision": "0e19ebe8f2d6e2707184eaa339b1fb03"
   },
   {
     "url": "images/about.svg",
@@ -321,11 +321,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "d83534353d48bc4d5020016db29af837"
+    "revision": "6c2e2e089c8f64ee8d0f58f43f68fffc"
   },
   {
     "url": "redeemGen.html",
-    "revision": "7d39ec9b7d6aaf1be8623fd3391b0c76"
+    "revision": "a5c66df7a44d801ca9e5785abcd9bc34"
   },
   {
     "url": "scripts/app.js",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/webqr.js",
-    "revision": "0059563dcbe84aede3e4c2c5ad663d83"
+    "revision": "5c631aa96dc90e3506a18a6527ee2330"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -429,7 +429,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/cacheManager.js",
-    "revision": "9cde6e47a6bcb4c6de3dbb703a86ad4e"
+    "revision": "13965f13915ef8f56d9542e91851a3c4"
   },
   {
     "url": "scripts/utils/configUtil.js",
@@ -453,7 +453,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "312d42824e91e55a6da363b667afdf05"
+    "revision": "9eaa929a19ba7ea2a69eca668540e42b"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -554,6 +554,6 @@ self.__precacheManifest = [
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.precaching.cleanupOutdatedCaches();
 
-workbox.googleAnalytics.initialize({});
+workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');

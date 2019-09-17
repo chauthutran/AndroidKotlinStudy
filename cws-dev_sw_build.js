@@ -1,6 +1,7 @@
 
 // Require WorkBox build
 const {generateSW} = require('workbox-build');
+const {Workbox} = require('workbox-window');
 
 generateSW({
 
@@ -11,8 +12,8 @@ generateSW({
   ],
   skipWaiting: true,
   clientsClaim: true,
-  offlineGoogleAnalytics: true,
-
+  offlineGoogleAnalytics: false,
+  cleanupOutdatedCaches: true,
   runtimeCaching: [
     {
       urlPattern: /.js|.html|.css/,

@@ -462,15 +462,19 @@ FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, 
 FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
+	var wsLoc = (location.host).replace('.psi-mis.org','');
+	var devLocs = 'localhost,ngrok,127.0.0.1:8080,psi-connect';
 
-	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
+	for ( var i=0; i< devLocs.split( ',' ).length; i++ )
 	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
+		if ( (location.href).indexOf( devLocs.split( ',' )[ i ] ) >= 0 )
+		{
+			wsLoc = "cws-dev";
+			break;
+		}
 	}
-	else
-	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: (location.host).replace('.psi-mis.org','') };
-	}
+
+	var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: wsLoc };
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{

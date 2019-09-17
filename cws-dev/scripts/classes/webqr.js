@@ -11,7 +11,7 @@ function readQR( valueTag ){
 // QRCODE reader Copyright 2011 Lazar Laszlo
 // http://www.webqr.com
 
-    var debugMode = false;
+    var debugMode = true;
     var gCtx = null;
     var gCanvas = null;
     var c=0;
@@ -41,12 +41,13 @@ function readQR( valueTag ){
             me.qrAttempts = 0;
 
             me.createBlocks();
-            me.initiseStyles();
-
-            //me.initCanvas(800, 600);
-            me.initCanvas( $( document ).width(), $( document ).height() );
+            me.initCanvas( $( document ).innerWidth(), $( document ).innerHeight() ); //(800, 600);
+            me.initiseStyles( $( document ).innerWidth(), $( document ).innerHeight() );
 
             qrcode.callback = me.readContent;
+
+            $( '#qrBlock' ).show();
+
             me.setwebcam();
 
         }
@@ -78,26 +79,27 @@ function readQR( valueTag ){
 
         $( '#qrBlock' ).append( qrCanvas );
 
-        $( '#qrVideo' ).css( 'width', $( document ).width() );
-        $( '#qrVideo' ).css( 'height', $( document ).height() );
-        $( '#qrVideo' ).attr( 'width', $( document ).width() );
-        $( '#qrVideo' ).attr( 'height', $( document ).height() );
-
     }
 
-    me.initiseStyles = function()
+    me.initiseStyles = function( w, h )
     {
-
+        $( '#qrVideo' ).css( 'width', w );
+        $( '#qrVideo' ).css( 'height', h );
+        $( '#qrVideo' ).attr( 'width', w );
+        $( '#qrVideo' ).attr( 'height', h );
     }
 
     me.hideQR = function()
     {
         $( me.targetFrameTag ).hide( 'fast' );
+
         $( '#qrBlock' ).empty();
+        $( '#qrBlock' ).hide();
+
         me.qrAttempts = 0;
     }
 
-    me.initCanvas = function (w, h) 
+    me.initCanvas = function ( w, h ) 
     {
         gCanvas = $( '#qr-canvas' );
         gCanvas.css( 'width', w + 'px' );
@@ -107,7 +109,7 @@ function readQR( valueTag ){
 
         gCtx = gCanvas[ 0 ].getContext( '2d' );
 
-        gCtx.clearRect(0, 0, w, h);
+        gCtx.clearRect( 0, 0, w, h );
     }
 
     me.captureToCanvas = function () 
@@ -215,17 +217,24 @@ function readQR( valueTag ){
     me.setwebcam = function () {
 
         var options = true;
+        var videolabels = 0;
+        var validLabels = 0;
         if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
             try {
                 navigator.mediaDevices.enumerateDevices()
                     .then(function (devices) {
                         devices.forEach(function (device) {
+                            console.log( device );
                             if (device.kind === 'videoinput') {
+                                videolabels += 1;
+                                if ( device.label.length ) validLabels += 1;
                                 if (device.label.toLowerCase().search("back") > -1)
                                     options = { 'deviceId': { 'exact': device.deviceId }, 'facingMode': 'environment' };
                             }
                             if ( debugMode ) console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
                         });
+                        console.log( options );
+                        console.log( validLabels + ' / ' + videolabels );
                         me.setwebcam2(options);
                     });
             }
@@ -282,6 +291,42 @@ function readQR( valueTag ){
         gUM = false;
     }
 
-    me.initialise();
+    me.evalMediaDevices = function( callBack )
+    {
+        var videolabels = 0;
+        var validLabels = 0;
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            try {
+                navigator.mediaDevices.enumerateDevices()
+                    .then(function (devices) {
+                        devices.forEach(function (device) {
+                            console.log( device );
+                            if (device.kind === 'videoinput') {
+                                videolabels += 1;
+                                if ( device.label.length ) validLabels += 1;
+                            }
+                        });
+
+                        console.log( validLabels + ' / ' + videolabels );
+                        
+                        if ( callBack ) callBack();
+
+                    });
+            }
+            catch (e) {
+                console.log(e);
+                if ( callBack ) callBack();
+            }
+        }
+        else {
+            console.log("no navigator.mediaDevices.enumerateDevices");
+            if ( callBack ) callBack();
+        }
+    }
+
+    me.evalMediaDevices( function(){
+         me.initialise();
+    })
+   
 
 }

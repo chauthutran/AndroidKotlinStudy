@@ -5,13 +5,15 @@ function cacheManager() {}
 
 cacheManager.cacheKeys = [];
 cacheManager.initialising = false;
+cacheManager.cacheAvailable = false;
 
 cacheManager.initialise = function()
 {
 	cacheManager.cacheKeys = [];
 	cacheManager.initialising = true;
+	cacheManager.cacheAvailable = ( 'caches' in self );
 
-	if ( caches )
+	if ( cacheManager.cacheAvailable )
 	{
 		caches.keys().then(function(names) 
 		{
@@ -36,48 +38,52 @@ cacheManager.initialise = function()
 
 cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 {
-	if ( cacheManager.cacheKeys.length )
+	if ( cacheManager.cacheAvailable )
 	{
-		if ( !cacheManager.initialising )
+		if ( cacheManager.cacheKeys.length )
 		{
-			var results = [];
-			for ( var i = 0; i < cacheManager.cacheKeys.length; i++ )
+			if ( !cacheManager.initialising )
 			{
-				if ( regExclude )
+				var results = [];
+				for ( var i = 0; i < cacheManager.cacheKeys.length; i++ )
 				{
-					if ( regExclude.test( cacheManager.cacheKeys[ i ] ) ) 
+					if ( regExclude )
 					{
-						console.log( 'skipping {regEx} cache named ' + cacheManager.cacheKeys[ i ] );
+						if ( regExclude.test( cacheManager.cacheKeys[ i ] ) ) 
+						{
+							console.log( 'skipping {regEx} cache named ' + cacheManager.cacheKeys[ i ] );
+						}
+						else
+						{
+							let promise = caches.delete( cacheManager.cacheKeys[ i ] );
+							console.log( 'deleting {non-matching} cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
+							let result = await promise;
+							results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
+						}
 					}
 					else
 					{
 						let promise = caches.delete( cacheManager.cacheKeys[ i ] );
-						console.log( 'deleting {non-matching} cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
+						console.log( 'deleting cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
 						let result = await promise;
 						results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
 					}
 				}
-				else
-				{
-					let promise = caches.delete( cacheManager.cacheKeys[ i ] );
-					console.log( 'deleting cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
-					let result = await promise;
-					results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
-				}
+	
+				if ( returnFunc ) returnFunc( results );
 			}
-
-			if ( returnFunc ) returnFunc( results );
+			else
+			{
+				if ( returnFunc ) returnFunc( false );
+			}
 		}
 		else
 		{
+			// Browser not supporting Service Worker Caches
 			if ( returnFunc ) returnFunc( false );
 		}
 	}
-	else
-	{
-		// Browser not supporting Service Worker Caches
-		if ( returnFunc ) returnFunc( false );
-	}
+
 }
 
 
