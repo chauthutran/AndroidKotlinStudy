@@ -814,6 +814,11 @@ FormUtil.evalReservedField = function( tagTarget, val )
 			var pattern = Util.getParameterInside( val, '()' );
 			tagTarget.val( Util.getAgeValueFromPattern( tagTarget, pattern ) );
 		}
+		else if ( val.indexOf( 'epoch' ) >= 0 )
+		{
+			var len = Util.getParameterInside( val, '()' );
+			tagTarget.val( Util.epoch( len ) );
+		}
 	}
 	else
 	{

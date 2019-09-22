@@ -1135,8 +1135,15 @@ Util.getParameterByName = function( name )
 Util.getParameterInside = function( value, openClose )
 {
 	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
-	var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
-	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
+	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
+	{
+		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
+		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
+	}
+	else
+	{
+		return '';
+	}
 }
 
 Util.newLocalSequence = function( pattern, commitSEQIncr )
@@ -1895,4 +1902,15 @@ $.fn.rotate=function(options) {
   {
 	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
 	return Math.abs( Math.round( ageHr ) );
+  }
+  Util.epoch = function( precision, offSetDate )
+  {
+	  var prec = ( precision ) ? precision : 10;
+	  var dateDiff = ( offSetDate ) ? ( new Date().getTime() - new Date( offSetDate ).getTime() ) : ( new Date().getTime() - new Date( '2016-01-01' ).getTime() ) / 1000 * prec;
+
+	  return Math.round( dateDiff );
+  }
+  Util.getBaseFromBase = function ( input, from, to )
+  {
+	  return ConvertBase.custom( input, from, to );
   }

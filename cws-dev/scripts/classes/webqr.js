@@ -8,6 +8,12 @@ function readQR( valueTag ){
     me.qrAttempts = 0;
     me.qrScanLimit = 60;
 
+    /*
+    QR code limits: 
+        - minimum size: 115px x 115px (for smart phone reading of each module)
+        - border: 4 module width (1 module = 1 block inside QR)
+    */
+
 // QRCODE reader Copyright 2011 Lazar Laszlo
 // http://www.webqr.com
 
@@ -308,7 +314,7 @@ function readQR( valueTag ){
                         });
 
                         console.log( validLabels + ' / ' + videolabels );
-                        
+
                         if ( callBack ) callBack();
 
                     });
