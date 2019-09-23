@@ -20,22 +20,22 @@
             }
         };
     };
-        
+
     // binary to decimal
     ConvertBase.bin2dec = function (num) {
         return ConvertBase(num).from(2).to(10);
     };
-    
+
     // binary to hexadecimal
     ConvertBase.bin2hex = function (num) {
         return ConvertBase(num).from(2).to(16);
     };
-    
+
     // decimal to binary
     ConvertBase.dec2bin = function (num) {
         return ConvertBase(num).from(10).to(2);
     };
-    
+
     // decimal to hexadecimal
     ConvertBase.dec2hex = function (num) {
         return ConvertBase(num).from(10).to(16);
@@ -45,24 +45,24 @@
     ConvertBase.dec2b35 = function (num) {
         return ConvertBase(num).from(10).to(35);
     };
-    
+
     // hexadecimal to binary
     ConvertBase.hex2bin = function (num) {
         return ConvertBase(num).from(16).to(2);
     };
-    
+
     // hexadecimal to decimal
     ConvertBase.hex2dec = function (num) {
         return ConvertBase(num).from(16).to(10);
     };
-        
+
     // hexadecimal to decimal
     ConvertBase.custom = function (num,from,to) {
         return ConvertBase(num).from(from).to(to);
     };
-    
+
     this.ConvertBase = ConvertBase;
-    
+
 })(this);
 
 /*

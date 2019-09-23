@@ -1905,10 +1905,21 @@ $.fn.rotate=function(options) {
   }
   Util.epoch = function( precision, offSetDate )
   {
-	  var prec = ( precision ) ? precision : 10;
-	  var dateDiff = ( offSetDate ) ? ( new Date().getTime() - new Date( offSetDate ).getTime() ) : ( new Date().getTime() - new Date( '2016-01-01' ).getTime() ) / 1000 * prec;
+	  var prec = ( precision ) ? precision : 100;
+	  var newEpoch = new pwaEpoch( offSetDate ).issue();
 
-	  return Math.round( dateDiff );
+	  if ( prec == 1000 )
+	  {
+		return newEpoch.ms1000.base10
+	  }
+	  else if ( prec == 100 )
+	  {
+		return newEpoch.ms100.base10
+	  }
+	  else
+	  {
+		return newEpoch.ms10.base10
+	  }
   }
   Util.getBaseFromBase = function ( input, from, to )
   {

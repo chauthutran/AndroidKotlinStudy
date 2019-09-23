@@ -996,3 +996,13 @@ a.searchresultSelector:hover {
   text-align: center;
 }
 /* END: QR SCANNER Styles */
+
+/* START: QR generate (barcode) */
+
+#qrTemplate {
+  display: none;
+  background-color: #fff;
+  padding:14px;
+}
+
+/* END: QR generate (barcode) */
