@@ -124,6 +124,10 @@ self.__precacheManifest = [
     "revision": "325472601571f31e1bf00674c368d335"
   },
   {
+    "url": "images/care.svg",
+    "revision": "2492b5e17f7b283ab9185d16bd6d4299"
+  },
+  {
     "url": "images/client.svg",
     "revision": "b44e4e98e1665413e1d6299c832db99f"
   },
@@ -170,6 +174,10 @@ self.__precacheManifest = [
   {
     "url": "images/favbar_color_sas.svg",
     "revision": "f473cc5a6d3959639ea00e5d518e4818"
+  },
+  {
+    "url": "images/followup.svg",
+    "revision": "0ababc3260aa87307cc547a9cd3a3a30"
   },
   {
     "url": "images/hide.png",
@@ -260,6 +268,10 @@ self.__precacheManifest = [
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
   },
   {
+    "url": "images/provision.svg",
+    "revision": "4f2008c79e266a2d5f079d2833ff8fc0"
+  },
+  {
     "url": "images/qr_cancel.svg",
     "revision": "da5083a7dfb0089fbf962140ca536077"
   },
@@ -321,7 +333,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "a31350a80dcdb22e33cefd9ca9be9d57"
+    "revision": "2c01fb9657d729729ad4f34a6bc57afc"
   },
   {
     "url": "redeemGen.html",
