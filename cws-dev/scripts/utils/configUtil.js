@@ -44,9 +44,38 @@ ConfigUtil.getMsgAutoHide = function( configJson )
 
 // ------------------------------------
 
-ConfigUtil.getAreaListByStatus = function( bOnline, configJson )
+ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
 {
-    return ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
+    ConfigUtil.configUserRole( bOnline, configJson, function(){
+
+         var compareList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
+         var retAreaList = [];
+
+         for ( var i=0; i< compareList.length; i++ )
+         {
+            if ( compareList[ i ].userRoles )
+            {
+                var bFound = false;
+
+                for ( var p=0; p< compareList[ i ].userRoles.length; p++ )
+                {
+                    if ( compareList[ i ].userRoles[ p ] == FormUtil.login_UserRole )
+                    {
+                        retAreaList.push( compareList[ i ] );
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                retAreaList.push( compareList[ i ] );
+            }
+         }
+
+        if ( callBack ) callBack( retAreaList );
+
+    } );
+    
 };
 
 ConfigUtil.getAllAreaList = function( configJson )
@@ -54,4 +83,32 @@ ConfigUtil.getAllAreaList = function( configJson )
     var combinedAreaList = [];
 
     return combinedAreaList.concat( configJson.areas.online, configJson.areas.offline );
+};
+
+ConfigUtil.configUserRole = function( bOnline, configJson, callBack )
+{
+    var defRoles = configJson.definitionUserRoles;
+    var userGroupRole = FormUtil.orgUnitData.orgUnit.organisationUnitGroups;
+
+    if ( defRoles && userGroupRole )
+    {
+        var roleID = userGroupRole[ 0 ].id;
+
+        for ( var i=0; i< defRoles.length; i++ )
+        {
+            if ( defRoles[ i ].uid == roleID )
+            {
+                FormUtil.login_UserRole = defRoles[ i ].id;
+                break;
+            }
+        }
+
+        if ( callBack ) callBack();
+    }
+    else
+    {
+        FormUtil.login_UserRole = '';
+        if ( callBack ) callBack();
+    }
+
 };

@@ -11,10 +11,11 @@
  * See https://goo.gl/2aRDsh
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
-workbox.skipWaiting();
-workbox.clientsClaim();
+workbox.core.skipWaiting();
+
+workbox.core.clientsClaim();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
@@ -140,7 +141,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/completed.svg",
-    "revision": "484c511a0417b487c41c17e1a8428b69"
+    "revision": "d8c9827d88fe0ec692937f10cedabff1"
   },
   {
     "url": "images/Connect.svg",
@@ -152,7 +153,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/failed.svg",
-    "revision": "9b63f0a96f4f1fcda79ea150f09fad1e"
+    "revision": "06ed2b711619acc16461bf830a1d9f96"
   },
   {
     "url": "images/favbar_color_act.svg",
@@ -168,15 +169,15 @@ self.__precacheManifest = [
   },
   {
     "url": "images/favbar_color_fpl-fu.svg",
-    "revision": "fad14262b353f577d28795d065cf7813"
+    "revision": "6daaad3095eb23645844d946000652c6"
   },
   {
     "url": "images/favbar_color_fpl-sp.svg",
-    "revision": "2f3947984b6bef5c80fdf5c0e416940c"
+    "revision": "232001f8a7fa6e86319b1f9b92713b1a"
   },
   {
     "url": "images/favbar_color_sas.svg",
-    "revision": "14ceca1978fb6a3aafe8c71f59b5572c"
+    "revision": "a1edee2488949524b11b66afa59c40b4"
   },
   {
     "url": "images/hide.png",
@@ -184,7 +185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/hold.svg",
-    "revision": "373d2944a1b43261304cde50c5905c18"
+    "revision": "424c05cf649a49a1c5c8057c89e6d4f1"
   },
   {
     "url": "images/icons/Connect_144px.png",
@@ -284,7 +285,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/pending.svg",
-    "revision": "3ca8bd1b85955b7015872d039658e4c4"
+    "revision": "5fe5c1462f3c67821488685afdff8d87"
   },
   {
     "url": "images/plus_on.svg",
@@ -488,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "497b024118888bed9708c0a5cc885f11"
+    "revision": "930e6a5424a4fcea8e468ad0b6f383ed"
   },
   {
     "url": "scripts/utils/syncManager.js",
@@ -551,9 +552,8 @@ self.__precacheManifest = [
     "revision": "7fe4d1a9f3a9aeb0bc27500a3511c473"
   }
 ].concat(self.__precacheManifest || []);
-workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/eRefWS/, workbox.strategies.staleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
 
 workbox.googleAnalytics.initialize({});

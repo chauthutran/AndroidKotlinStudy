@@ -6,9 +6,15 @@ function pwaEpoch( optionalEpoch )
 
     me.incr = 0;
     me.exclusionValid = false;
-    me.exclusions = /1|L|l|I|i|0|O|o/;
+    me.b35Exclusions = /1|l|i|0|o/; // /1|L|l|I|i|0|O|o/;
     me.epochDate = ( optionalEpoch != undefined) ? optionalEpoch : '2016-07-22'; // why this date? on 23 Sep 2019 it calculated (base10) values (just) above 1000000000
     me.roundIgnore = true;
+    me.validBase10 = false;
+    me.quit = false;
+
+    me.epochDec1000;
+    me.epochDec100;
+    me.epochDec10;
 
     /*
 
@@ -23,56 +29,105 @@ function pwaEpoch( optionalEpoch )
 	// -----------------------------
 	// ---- Methods ----------------
 
-    me.issue = function() 
+    me.issue = function( callBack ) 
     {
 
-        //while ( me.validBase10 == false || parseInt( me.incr ) < 99 ) {
-            //me.incr += 1;
-
+        while ( me.quit == false && parseInt( me.incr ) < 20 ) 
+        {
             var myBaseEpoch    = parseFloat( new Date().getTime() - new Date( me.epochDate ).getTime() );
             var myEpochDec1000 = ( parseFloat( myBaseEpoch ) / 1 ).toString().split( '.' )[ 0 ];
             var myEpochDec100  = ( parseFloat( myBaseEpoch ) / 10 ).toString().split( '.' )[ 0 ];
             var myEpochDec10   = ( parseFloat( myBaseEpoch ) / 100 ).toString().split( '.' )[ 0 ];
 
-            var myEpochDec1000b8 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 8 );
-            var myEpochDec100b8 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 8 );
-            var myEpochDec10b8 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 8 );
+            //var myEpochDec1000b8 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 8 );
+            //var myEpochDec100b8 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 8 );
+            //var myEpochDec10b8 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 8 );
 
-            var myEpochDec1000b16 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 16 );
-            var myEpochDec100b16 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 16 );
-            var myEpochDec10b16 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 16 );
+            var myEpochDec1000b18 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 18 );
+            var myEpochDec100b18 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 18 );
+            var myEpochDec10b18 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 18 );
 
             var myEpochDec1000b35 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 35 );
             var myEpochDec100b35 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 35 );
             var myEpochDec10b35 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 35 );
 
-            var subJcalc1000 = { precision: 1000, base10: myEpochDec1000, base8: myEpochDec1000b8, base16: myEpochDec1000b16, base35: myEpochDec1000b35 };
-            var subJcalc100 = { precision: 100, base10: myEpochDec100, base8: myEpochDec100b8, base16: myEpochDec100b16, base35: myEpochDec100b35 };
-            var subJcalc10 = { precision: 10, base10: myEpochDec10, base8: myEpochDec10b8, base16: myEpochDec10b16, base35: myEpochDec10b35 };
+            var subJcalc1000 = { precision: 1000, base10: myEpochDec1000, base18: myEpochDec1000b18, base35: myEpochDec1000b35 };
+            var subJcalc100 = { precision: 100, base10: myEpochDec100, base18: myEpochDec100b18, base35: myEpochDec100b35 };
+            var subJcalc10 = { precision: 10, base10: myEpochDec10, base18: myEpochDec10b18, base35: myEpochDec10b35 };
 
-            var retJson = { epochDate: me.epochDate, ms1000: subJcalc1000, ms100: subJcalc100, ms10: subJcalc10 };
+            var retJson = { epochDate: me.epochDate, '1ms': subJcalc1000, '10ms': subJcalc100, '100ms': subJcalc10 };
 
-
-            var qrContainer = $( '#qrTemplate' );
+            /*var qrContainer = $( '#qrTemplate' );
 
             var myQR = new QRCode( qrContainer[ 0 ] );
 
-            myQR.makeCode ( myEpochDec1000b35, function(){
-                console.log( $( qrContainer ).find( 'img' ).attr( 'src' ) );
-            } );
+            myQR.fetchCode ( myEpochDec1000b35, function( retData1ms ){
 
+                console.log( retData1ms );
+                retJson[ '1ms' ].b35QR = retData1ms;
+
+                myQR.fetchCode ( myEpochDec100b35, function( retData10ms ){
+
+                    console.log( retData10ms );
+                    retJson[ '10ms' ].b35QR = retData10ms;
+
+                    console.log( retJson );
+
+                    if ( callBack )
+                    {
+                        callBack( retJson )
+                    }
+                    else
+                    {
+                        return retJson;
+                    }
+
+                });
+            } );*/
+
+            me.incr += 1;
+            retJson.incr = me.incr;
+
+            me.validBase10 = me.b35Exclusions.test( myEpochDec1000b35.toString() );
+
+            retJson.valid = me.validBase10;
+
+            if ( me.validBase10 )
+            {
+                me.quit = true;
+            }
+
+            console.log( retJson );
+
+        }
+
+        if ( callBack ) 
+        {
+            callBack( retJson );
+        }
+        else
+        {
             
-
-        //    me.validBase10 = true; //me.exclusions.test( me.base35 );
-        //}
-
-        return retJson;
+        }
 
     }
 
-    me.isValid = function( val )
+    /*me.isValid = function( val )
     {
-        return ( ! me.exclusions.test( val ) );
-    }
+        return ( ! me.b35Exclusions.test( val ) );
+    }*/
 
+    me.test = function()
+    {
+
+        var qrContainer = $( '#qrTemplate' );
+        var myQR = new QRCode( qrContainer[ 0 ] );
+
+        myQR.fetchCode ( 'myInputValue', function( dataURI ){
+
+            console.log( dataURI );
+            
+        } );
+
+    }
 }

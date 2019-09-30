@@ -263,7 +263,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
 			}			
-			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
+			else if ( formItemJson.controlType === "DROPDOWN_LIST" || formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" )
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 

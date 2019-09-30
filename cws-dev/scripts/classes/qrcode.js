@@ -30,6 +30,7 @@ var QRCode;
 		this.mode = QRMode.MODE_8BIT_BYTE;
 		this.data = data;
 		this.parsedData = [];
+		this.qrData;
 
 		// Added to support UTF-8 Characters
 		for (var i = 0, l = this.data.length; i < l; i++) {
@@ -278,7 +279,7 @@ var QRCode;
 			this._elImage.style.display = "block";
 			this._elCanvas.style.display = "none";			
 		}
-		
+
 		// Android 2.1 bug workaround
 		// http://code.google.com/p/android/issues/detail?id=5141
 		if (this._android && this._android <= 2.1) {
@@ -416,13 +417,18 @@ var QRCode;
 			
 			this._bIsPainted = true;
 		};
-			
+
 		/**
 		 * Make the image from Canvas if the browser supports Data URI.
 		 */
 		Drawing.prototype.makeImage = function () {
 			if (this._bIsPainted) {
 				_safeSetDataURI.call(this, _onMakeImage);
+			}
+		};
+		Drawing.prototype.fetchImage = function ( callBack ) {
+			if (this._bIsPainted) {
+				_safeSetDataURI.call(this, callBack);
 			}
 		};
 			
@@ -586,7 +592,17 @@ var QRCode;
 		this._oDrawing.draw(this._oQRCode);			
 		this.makeImage();
 	};
-	
+	QRCode.prototype.fetchCode = function ( sText, callBack ) {
+		this._oQRCode = new QRCodeModel(_getTypeNumber(sText, this._htOption.correctLevel), this._htOption.correctLevel);
+		this._oQRCode.addData(sText);
+		this._oQRCode.make();
+		this._el.title = sText;
+		this._oDrawing.draw(this._oQRCode);			
+		this.fetchImage( function() {
+			//console.log( this._elCanvas.toDataURL("image/png") )
+			if ( callBack ) callBack( this._elCanvas.toDataURL("image/png") );
+		});
+	}; 
 	/**
 	 * Make the Image from Canvas element
 	 * - It occurs automatically
@@ -599,6 +615,12 @@ var QRCode;
 			this._oDrawing.makeImage();
 		}
 	};
+	QRCode.prototype.fetchImage = function ( callBack ) {
+		if (typeof this._oDrawing.fetchImage == "function" && (!this._android || this._android >= 3)) {
+			this._oDrawing.fetchImage( callBack );
+		}
+	};
+	
 	
 	/**
 	 * Clear the QRCode

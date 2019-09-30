@@ -166,11 +166,11 @@ function cwsRender()
 			else
 			{  
 				me.clearMenuClickStyles();
-				
+
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-				//console.log( me.areaList );
+
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-				//console.log( selectedArea );
+
 				// TODO: ACTIVITY ADDING
 				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
@@ -228,11 +228,27 @@ function cwsRender()
 
 	me.startBlockExecute = function( configJson )
 	{
-		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
+		ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson, function( areaList ){
 
-		if ( me.areaList )
+			if ( areaList )
+			{
+				var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+	
+				me.populateMenuList( finalAreaList, function( startMenuTag ){
+	
+					if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+	
+					// initialise favIcons
+					me.favIconsObj = new favIcons( me );
+	
+				} );
+	
+			}
+
+		} );
+
+		/*if ( me.areaList )
 		{
-
 			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
 
 			me.populateMenuList( finalAreaList, function( startMenuTag ){
@@ -244,9 +260,7 @@ function cwsRender()
 
 			} );
 
-			
-
-		}
+		}*/
 	} 
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
@@ -306,11 +320,6 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			/*if( mySessionData == undefined )
-			{
-				return;
-			}*/
-
 			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
 
 				DataManager.getUserConfigData( function( userData ){
@@ -325,27 +334,24 @@ function cwsRender()
 					}
 
 				});
-	
-				
+
+
 				if ( myData && FormUtil.checkLogin() )
 				{
 					var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 					var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
 					//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 					var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
-	
+
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
-	
+
 					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
-	
+
 				}
 
 			} );
-			
+
 		});
-
-
-		
 
 	}
 
@@ -401,7 +407,7 @@ function cwsRender()
 	me.populateMenuList = function( areaList, exeFunc )
 	{
 
-		DataManager.getSessionData( function(userSessionJson) {
+		DataManager.getSessionData( function( userSessionJson ) {
 			//var userSessionJson = DataManager.getSessionData();
 			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
 			var startMenuTag;

@@ -1906,20 +1906,23 @@ $.fn.rotate=function(options) {
   Util.epoch = function( precision, offSetDate )
   {
 	  var prec = ( precision ) ? precision : 100;
-	  var newEpoch = new pwaEpoch( offSetDate ).issue();
+	  pwaEpoch( offSetDate ).issue( function( newEpoch ){
+		  console.log( newEpoch );
+	  });
 
-	  if ( prec == 1000 )
+	  /*if ( prec == 1000 )
 	  {
-		return newEpoch.ms1000.base10
+		return newEpoch[ '1ms' ].base10
 	  }
 	  else if ( prec == 100 )
 	  {
-		return newEpoch.ms100.base10
+		return newEpoch[ '10ms' ].base10
 	  }
 	  else
 	  {
-		return newEpoch.ms10.base10
-	  }
+		return newEpoch[ '100ms' ].base10
+	  }*/
+
   }
   Util.getBaseFromBase = function ( input, from, to )
   {

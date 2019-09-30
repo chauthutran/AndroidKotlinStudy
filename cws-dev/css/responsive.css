@@ -394,7 +394,8 @@
         top: -4px;
       }
       .icons-status img{
-        height: 24px;
+        top: 2px;
+        position: relative;
       }
       
       .icon-row {

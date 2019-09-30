@@ -11,7 +11,7 @@ ConnManager.appConnMode_Online = true; // app mode: Online / Offline (current 'r
 
 ConnManager.scheduledTimer_ID = 0;	// IntervalTimer for checking network conditions
 ConnManager.scheduledTimer_intvMS = 1000;	// check navigator.isOnline status every X milli sec (changed from 500ms due to excessive processing placed on device)
-ConnManager.scheduledTimer_intvActLimit = 3; // act on [changed network status] after X number of repeat observed outcomes
+ConnManager.scheduledTimer_intvActLimit = 15; // act on [changed network status] after X number of repeat observed outcomes
 ConnManager.scheduledTimer_intvCounter = 0;
 ConnManager.schedulerTestUnderway = 0;
 
