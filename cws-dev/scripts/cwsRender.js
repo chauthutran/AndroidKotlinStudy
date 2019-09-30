@@ -226,8 +226,9 @@ function cwsRender()
 
 	}
 
-	me.startBlockExecute = function( configJson )
+	me.startBlockExecute = function( configJson, initializationInstructions )
 	{
+		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
 		ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson, function( areaList ){
 
 			if ( areaList )
@@ -247,20 +248,6 @@ function cwsRender()
 
 		} );
 
-		/*if ( me.areaList )
-		{
-			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
-
-			me.populateMenuList( finalAreaList, function( startMenuTag ){
-
-				if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
-
-				// initialise favIcons
-				me.favIconsObj = new favIcons( me );
-
-			} );
-
-		}*/
 	} 
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'

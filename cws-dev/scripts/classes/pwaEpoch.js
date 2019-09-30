@@ -17,13 +17,7 @@ function pwaEpoch( optionalEpoch )
     me.epochDec10;
 
     /*
-
         http://extraconversion.com/base-number/base-35
-
-        Base-2 is equivalent to binary.
-        Base-8 is equivalent to octal.
-        Base-10 is equivalent to decimal.
-        Base-16 is equivalent to hexadecimal.
     */
 
 	// -----------------------------
@@ -34,39 +28,55 @@ function pwaEpoch( optionalEpoch )
 
         while ( me.quit == false && parseInt( me.incr ) < 20 ) 
         {
-            var myBaseEpoch    = parseFloat( new Date().getTime() - new Date( me.epochDate ).getTime() );
-            var myEpochDec1000 = ( parseFloat( myBaseEpoch ) / 1 ).toString().split( '.' )[ 0 ];
-            var myEpochDec100  = ( parseFloat( myBaseEpoch ) / 10 ).toString().split( '.' )[ 0 ];
-            var myEpochDec10   = ( parseFloat( myBaseEpoch ) / 100 ).toString().split( '.' )[ 0 ];
+            var baseEpochDate    = parseFloat( new Date().getTime() - new Date( me.epochDate ).getTime() );
 
-            //var myEpochDec1000b8 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 8 );
-            //var myEpochDec100b8 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 8 );
-            //var myEpochDec10b8 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 8 );
+            var epochDec12b10 = ( parseFloat( baseEpochDate ) / 1 ).toString().split( '.' )[ 0 ];
+            var epochDec11b10  = ( parseFloat( baseEpochDate ) / 10 ).toString().split( '.' )[ 0 ];
+            var epochDec10b10   = ( parseFloat( baseEpochDate ) / 100 ).toString().split( '.' )[ 0 ];
 
-            var myEpochDec1000b18 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 18 );
-            var myEpochDec100b18 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 18 );
-            var myEpochDec10b18 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 18 );
+            var epochDec12prime = { base: 10, seed: epochDec12b10, chars: epochDec12b10.toString().length };
+            var epochDec11prime = { base: 10, seed: epochDec11b10, chars: epochDec11b10.toString().length };
+            var epochDec10prime = { base: 10, seed: epochDec10b10, chars: epochDec10b10.toString().length };
 
-            var myEpochDec1000b35 = Util.getBaseFromBase( parseFloat( myEpochDec1000 ), 10, 35 );
-            var myEpochDec100b35 = Util.getBaseFromBase( parseFloat( myEpochDec100 ), 10, 35 );
-            var myEpochDec10b35 = Util.getBaseFromBase( parseFloat( myEpochDec10 ), 10, 35 );
+            var epochDec12bases = [];
+            var epochDec11bases = [];
+            var epochDec10bases = [];
 
-            var subJcalc1000 = { precision: 1000, base10: myEpochDec1000, base18: myEpochDec1000b18, base35: myEpochDec1000b35 };
-            var subJcalc100 = { precision: 100, base10: myEpochDec100, base18: myEpochDec100b18, base35: myEpochDec100b35 };
-            var subJcalc10 = { precision: 10, base10: myEpochDec10, base18: myEpochDec10b18, base35: myEpochDec10b35 };
+            for ( var i=2; i< 37; i++ )
+            {
+                var epochDec12bCalc = Util.getBaseFromBase( parseFloat( epochDec12b10 ), 10, i );
+                var epochDec12bJson = { base: i, value: epochDec12bCalc, chars: epochDec12bCalc.toString().length, prime: ( i == 10 ) };
 
-            var retJson = { epochDate: me.epochDate, '1ms': subJcalc1000, '10ms': subJcalc100, '100ms': subJcalc10 };
+                epochDec12bases.push( epochDec12bJson );
+
+                var epochDec11bCalc = Util.getBaseFromBase( parseFloat( epochDec11b10 ), 10, i );
+                var epochDec11bJson = { base: i, value: epochDec11bCalc, chars: epochDec11bCalc.toString().length, prime: ( i == 10 ) };
+
+                epochDec11bases.push( epochDec11bJson );
+
+                var epochDec10bCalc = Util.getBaseFromBase( parseFloat( epochDec10b10 ), 10, i );
+                var epochDec10bJson = { base: i, value: epochDec10bCalc, chars: epochDec10bCalc.toString().length, prime: ( i == 10 ) };
+
+                epochDec10bases.push( epochDec10bJson );
+
+            }
+
+            epochDec12prime.bases = epochDec12bases;
+            epochDec11prime.bases = epochDec11bases;
+            epochDec10prime.bases = epochDec10bases;
+
+            var retJson = { epochDate: me.epochDate, '12': epochDec12prime, '11': epochDec11prime, '10': epochDec10prime };
 
             /*var qrContainer = $( '#qrTemplate' );
 
             var myQR = new QRCode( qrContainer[ 0 ] );
 
-            myQR.fetchCode ( myEpochDec1000b35, function( retData1ms ){
+            myQR.fetchCode ( epochDec12b10_b35, function( retData1ms ){
 
                 console.log( retData1ms );
                 retJson[ '1ms' ].b35QR = retData1ms;
 
-                myQR.fetchCode ( myEpochDec100b35, function( retData10ms ){
+                myQR.fetchCode ( epochDec11b10_b35, function( retData10ms ){
 
                     console.log( retData10ms );
                     retJson[ '10ms' ].b35QR = retData10ms;
@@ -88,7 +98,7 @@ function pwaEpoch( optionalEpoch )
             me.incr += 1;
             retJson.incr = me.incr;
 
-            me.validBase10 = me.b35Exclusions.test( myEpochDec1000b35.toString() );
+            me.validBase10 = me.b35Exclusions.test( epochDec11b10.toString() );
 
             retJson.valid = me.validBase10;
 
@@ -96,8 +106,6 @@ function pwaEpoch( optionalEpoch )
             {
                 me.quit = true;
             }
-
-            console.log( retJson );
 
         }
 
@@ -107,7 +115,7 @@ function pwaEpoch( optionalEpoch )
         }
         else
         {
-            
+            console.log( retJson );
         }
 
     }
@@ -123,7 +131,7 @@ function pwaEpoch( optionalEpoch )
         var qrContainer = $( '#qrTemplate' );
         var myQR = new QRCode( qrContainer[ 0 ] );
 
-        myQR.fetchCode ( 'myInputValue', function( dataURI ){
+        myQR.fetchCode ( location.host, function( dataURI ){
 
             console.log( dataURI );
             

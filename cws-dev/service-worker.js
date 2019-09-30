@@ -385,7 +385,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
-    "revision": "3eecb7edb7f8b0bfafdd5521ec750b9b"
+    "revision": "26600b6b5376f671d2999cee2f5002fa"
   },
   {
     "url": "scripts/classes/qrcode.js",
@@ -409,7 +409,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "48ed3ff4d48c54f5a5306850c1e71034"
+    "revision": "2cc7702f893c1476b1acfed3b2990b7a"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -505,7 +505,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ae1297a7b2fb2be3c6d9bb4e707631ad"
+    "revision": "a34643eef0ba38b8171053eec99e85f3"
   },
   {
     "url": "sounds/beep.mp3",
