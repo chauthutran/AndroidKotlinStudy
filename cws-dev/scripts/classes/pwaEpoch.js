@@ -1,17 +1,21 @@
 // -------------------------------------------
 // -- pwaEpoch Class/Methods
-function pwaEpoch( optionalEpoch )
+function pwaEpoch( decimals, base, epochOffset )
 {
     var me = this;
 
     me.incr = 0;
     me.exclusionValid = false;
     me.b35Exclusions = /1|l|i|0|o/; // /1|L|l|I|i|0|O|o/;
-    me.epochDate = ( optionalEpoch != undefined) ? optionalEpoch : '2016-07-22'; // why this date? on 23 Sep 2019 it calculated (base10) values (just) above 1000000000
+    me.decimals = decimals;
+    me.returnBase = base;
+    me.epochDate = ( epochOffset != undefined) ? epochOffset : '2016-07-22'; // why this date? on 23 Sep 2019 it calculated (base10) values (just) above 1000000000
     me.roundIgnore = true;
     me.validBase10 = false;
     me.quit = false;
+    me.randomize = ( epochOffset == undefined);
 
+    me.dayMS = 86400000;
     me.epochDec1000;
     me.epochDec100;
     me.epochDec10;
@@ -25,6 +29,19 @@ function pwaEpoch( optionalEpoch )
 
     me.issue = function( callBack ) 
     {
+        var retData;
+        if ( me.randomize )
+        {
+            var start = new Date( ( new Date() - ( ( 11367 + Math.random() ) * me.dayMS  ) ) ); //11367 = 365.25 x 31.12 years //).getFullYear() - 31 , 0, 1);
+            var end = new Date( ( new Date() - ( ( 1159 - Math.random() ) * me.dayMS ) ) ); // 1159 = 365.25 x 3.12 years; 86400000 = 1 days in 1/1000th of a second
+
+            me.epochDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            //console.log( 'epochDate ~ ' + Util.formatDateAndTime(me.epochDate) + ' { RND between ' + Util.formatDateAndTime(start) + ' _and_ ' + Util.formatDateAndTime(end) );
+        }
+        else
+        {
+            //console.log( 'epochDate ~ ' + me.epochDate  );
+        }
 
         while ( me.quit == false && parseInt( me.incr ) < 20 ) 
         {
@@ -109,15 +126,54 @@ function pwaEpoch( optionalEpoch )
 
         }
 
-        if ( callBack ) 
+        if ( me.decimals )
         {
-            callBack( retJson );
+            var retDec = ( me.decimals == 1000 ) ? 12 : ( ( me.decimals == 100 ) ? 11 : 10 );
+            var actJson = retJson[ retDec.toString() ];
+
+            if ( me.returnBase )
+            {
+                for ( var i=0; i< actJson.bases.length; i++ )
+                {
+                    if ( actJson.bases[ i ].base == me.returnBase )
+                    {
+                        retData = actJson.bases[ i ];
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                retData = actJson;
+            }
         }
         else
         {
-            console.log( retJson );
+            retData = retJson;
         }
 
+        if ( callBack ) 
+        {
+            callBack( retData );
+        }
+        else
+        {
+            console.log( retData );
+        }
+
+    }
+
+    me.issueQRfromValue = function( inputVal, callBack)
+    {
+        var qrContainer = $( '#qrTemplate' );
+        var myQR = new QRCode( qrContainer[ 0 ] );
+
+        myQR.fetchCode ( inputVal, function( retData1ms ){
+
+            console.log( retData1ms );
+            if ( callBack ) callBack( retData1ms );
+
+        } );
     }
 
     /*me.isValid = function( val )

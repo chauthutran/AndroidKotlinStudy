@@ -612,9 +612,9 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				$( '#focusRelegator').on( 'click' , function( event )
 				{
 					thisTag.css('zIndex',1);
-	
+
 					event.preventDefault();
-	
+
 					thisTag.click();
 				});
 
@@ -817,8 +817,8 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		}
 		else if ( val.indexOf( 'epoch' ) >= 0 )
 		{
-			var len = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.epoch( len ) );
+			var pattern = Util.getParameterInside( val, '()' );
+			tagTarget.val( Util.epoch( pattern ) );
 		}
 	}
 	else

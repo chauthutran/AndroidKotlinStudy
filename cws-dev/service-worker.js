@@ -381,7 +381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "723a524dbc05825dcf1097fec9eed094"
+    "revision": "f3d311f955b393e3579246bbd521e1eb"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -397,7 +397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
-    "revision": "26600b6b5376f671d2999cee2f5002fa"
+    "revision": "0c612c35cd1da9b6abaf4ff5af137168"
   },
   {
     "url": "scripts/classes/qrcode.js",
@@ -477,11 +477,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "066bc28b3c04f9e643a8d336270e8ac2"
+    "revision": "d0484232296c0c75acd348c4b00e6cec"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
-    "revision": "55a9bb369f9779dccfba422de11dae0a"
+    "revision": "acebe44784de8d6e87508b769ed3c2b3"
   },
   {
     "url": "scripts/utils/indexdbStorage.js",
@@ -517,7 +517,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "a34643eef0ba38b8171053eec99e85f3"
+    "revision": "f3db7e844f5758541c8d48f36ae13ef9"
   },
   {
     "url": "sounds/beep.mp3",

@@ -1019,6 +1019,28 @@ Util.dateToMyFormat = function( date, myFormat )
 	}
 };
 
+Util.formatDateAndTime = function( datetimeStamp )
+{
+    var date = new Date( datetimeStamp );
+    var aaaa = date.getFullYear();
+    var gg = date.getDate();
+    var mm = (date.getMonth() + 1);
+
+    if (gg < 10) gg = '0' + gg;
+    if (mm < 10) mm = '0' + mm;
+
+    var cur_day = aaaa + '-' + mm + '-' + gg;
+    var hours = date.getHours()
+    var minutes = date.getMinutes()
+    var seconds = date.getSeconds();
+
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (seconds < 10) seconds = '0' + seconds;
+
+    return ( cur_day + ' ' + hours + ':' + minutes + ':' + seconds );
+}
+
 // Date Formatting Related
 // ----------------------------------
 
@@ -1903,14 +1925,45 @@ $.fn.rotate=function(options) {
 	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
 	return Math.abs( Math.round( ageHr ) );
   }
-  Util.epoch = function( precision, offSetDate )
+  Util.epoch = function( pattern, callBack )
   {
+	  var offSetDate; // '2016-07-22' OR something randomized
+	  var precision;
+	  var base;
+
+	  if ( pattern )
+	  {
+		precision = pattern.split( ',' )[ 0 ];
+
+		if ( pattern.split( ',' ).length > 1 ) base = pattern.split( ',' )[ 1 ];
+		if ( pattern.split( ',' ).length > 2 ) offSetDate = pattern.split( ',' )[ 2 ];
+
+	  }
+
 	  var prec = ( precision ) ? precision : 100;
-	  new pwaEpoch( offSetDate ).issue( function( newEpoch ){
-		  console.log( newEpoch );
+	  new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
+		  //console.log( newEpoch.value );
+		  if ( callBack ) callBack( newEpoch );
 	  });
   }
   Util.getBaseFromBase = function ( input, from, to )
   {
 	  return ConvertBase.custom( input, from, to );
+  }
+  Util.generateRandomEpoch = function( howMany, base )
+  {
+	var arrEpochs = [], b = ( base == undefined) ? 10 : base;
+	for ( var i = 0; i < howMany; i++ )
+	{
+		Util.epoch( '1000,' + b, function( data ){
+			arrEpochs.push( data.value );
+		} )
+	}
+
+	arrEpochs.sort();
+
+	//console.log( arrEpochs );
+
+	console.log( arrEpochs.toString() )
+	  
   }

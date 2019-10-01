@@ -203,7 +203,6 @@ IndexdbDataManager.getUserConfigData = function( callBack )
 		}
 	});
 
-	
 }
 
 IndexdbDataManager.getSessionData = function( callBack ) 

@@ -61,7 +61,6 @@ function favIcons( cwsRender )
                 me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
             }
 
-        
         } );
 
 
