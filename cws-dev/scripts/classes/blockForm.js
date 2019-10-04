@@ -263,7 +263,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
 			}			
-			else if ( formItemJson.controlType === "DROPDOWN_LIST" || formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" )
+			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 
@@ -277,6 +277,72 @@ function BlockForm( cwsRenderObj, blockObj )
 				var divSelectTag = $( '<div class="select"></div>' );
 				divSelectTag.append( entryTag );
 				divInputTag.append( divSelectTag );
+			}
+			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" ){
+				var optionList = FormUtil.getObjFromDefinition(
+					formItemJson.options,
+					me.cwsRenderObj.configJson.definitionOptions
+				  );
+				Util.decodeURI_ItemList(optionList, "defaultName")
+				var arr = optionList.map(obj=>{
+					return{
+						value: obj.defaultName,
+						data: obj.value
+					}
+				})
+				var divSelectTag = $('<div class="select"></div>');
+				var inputReal = $(`<input name="${formItemJson.id}" uid="${formItemJson.uid}" style="display:none" />`)
+				var inputShow = $(`<input type="text" />`)
+				inputShow.css({
+					border: 'none',
+					padding: '8px',
+					fontSize: '14px',
+					width: '100%'
+				})
+				var seleccion
+				inputShow.devbridgeAutocomplete({
+					lookup: arr,
+					minChars: 0,
+					onSelect: function (suggestion) {
+						inputReal.val(suggestion.data)
+						seleccion = true
+				  	}
+				})
+				inputShow.on('input',function(){
+					seleccion = false
+				})
+				$(document).click(function(){
+					if($('.autocomplete-suggestions').css('display') !== 'none'){
+						if(!seleccion){
+							let string = inputShow.val()
+							inputReal.val(' ')
+							inputReal.val('')
+							inputShow.val(string)
+						}
+					}
+				})
+				/*
+				divSelectTag.click(function(e){
+					e.stopPropagation()
+					if($('.autocomplete-suggestions').css('display') == 'none'){
+						$('.autocomplete-suggestions').css('display','block')
+					}
+				})
+				$(document).click(function(){
+					if($('.autocomplete-suggestions').css('display') !== 'none'){
+						$('.autocomplete-suggestions').css('display','none')
+					}
+				})
+				*/
+				// $(document).click(function(){
+				// 	if($('.autocomplete-suggestions').css('display') !== 'none'){
+				// 		let string = inputReal.val()
+				// 		inputShow.val(string)
+				// 	}
+				// })
+				$('.autocomplete-suggestion').css({padding: '4px 8px', fontSize: '14px'})
+				divSelectTag.append(inputReal,inputShow)
+				divInputTag.append(divSelectTag)
 			}
 			else if ( formItemJson.controlType === "CHECKBOX" )
 			{

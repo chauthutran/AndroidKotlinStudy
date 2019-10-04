@@ -85,6 +85,66 @@ function settingsApp( cwsRender )
         });
 
 
+
+        //  Funcionalidad: Reset Data
+        //  La siguiente funci�n autoejecutable es toda la funcionalidad
+        //  del elemento con id "resetCollapsible". Depende de las clases
+        //  Modal e InterfaceModal, y de una instancia 
+        //  de InterfaceModal: Modals. Se encuentra en /scripts/modal.js
+        //  Los estilos de los elementos se encuentran
+        //  en [project]/css/style.css
+        //  de la l�nea 1035 a 1068
+        ( function() {
+            $("#headerCollapsible").click( function() {
+                $("#bodyCollapsible").slideToggle("fast")
+                $("#headerCollapsible").toggleClass("collapsible-body--on")
+            })
+            let titleMessage="Reset app data & configuration",
+                bodyMessage="Your configuration and App data stored in the device will be deleted. "
+                questionMessage="Are you sure?",
+
+                btnAcceptResetData = $('<button>', {
+                    'text' : 'ACCEPT'
+                }),
+                btnDeclineResetData = $('<button>', {
+                'text' : 'DECLINE'
+                }),
+                commonStylesButtons = {
+                    border: 'none',
+                    fontSize: '12px',
+                    fontFamily: 'Rubik',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    margin: '24px',
+                    float: 'right'
+                }
+            btnAcceptResetData.css({
+                color: '#FF0000',
+                ...commonStylesButtons
+            })
+            btnDeclineResetData.css({
+                color: '#2C98F0',
+                ...commonStylesButtons
+            })
+            let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
+                
+            $("#buttonResetData").click(function(){
+                pptManager.on({titleMessage,bodyMessage,questionMessage,buttons})
+            })
+            btnDeclineResetData.click(function(){
+                pptManager.on({titleMessage,bodyMessage,questionMessage,buttons})
+            })
+            btnAcceptResetData.click(()=>{
+                DataManager.clearSessionStorage()
+                if ( cacheManager.clearCacheKeys() )
+                {
+                    me.cwsRenderObj.reGetAppShell();
+                }
+                pptManager.on({})
+            })
+        })()
+
+
         var divButtonDcdVersionTag = $( 'settingsInfo_dcdVersionInner' );
         var btnDcdConfigTag = $( '#dcdUpdateBtn' );
 
@@ -486,16 +546,7 @@ function settingsApp( cwsRender )
 
         });
         
-        $( '#btnReset' ).click( function() {
-
-			DataManager.clearSessionStorage();
-
-            if ( cacheManager.clearCacheKeys() )
-            {
-                me.cwsRenderObj.reGetAppShell();
-            }
-
-        });
+    
 
         cacheManager.initialise();
 

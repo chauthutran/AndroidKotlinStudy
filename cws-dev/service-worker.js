@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "0be6067c04a86cec403f845a32c5d865"
+    "revision": "165c6db972d54a1d997032a203b3318e"
   },
   {
     "url": "images/about.svg",
@@ -333,7 +333,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "da935897fc7ee1cce8bc173462ee4e11"
+    "revision": "004dac82d9fbe682701f3d3b6df44199"
   },
   {
     "url": "redeemGen.html",
@@ -345,7 +345,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "2ea62aead544c3bb229c69215475c774"
+    "revision": "a0db667c83a700ab5e27712ac25c8400"
   },
   {
     "url": "scripts/classes/action.js",
@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "1fefd0c50d3a0cccb5d2c13bd52ade35"
+    "revision": "9104bf40eb6d047feaa4a280dd509e04"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -405,7 +405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "e60416b5dcb8cae11549168aa9dbe362"
+    "revision": "443215025b5ca17ae1146e5773f5fea2"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -430,6 +430,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
     "revision": "eac275563332b65bae1a3452532ebe38"
+  },
+  {
+    "url": "scripts/libraries/jquery-autocomplete.js",
+    "revision": "4102c8bda3aa2c9dee5765ba82dbcc4c"
   },
   {
     "url": "scripts/libraries/jquery-dateformat.min.js",
@@ -504,6 +508,10 @@ self.__precacheManifest = [
     "revision": "19ff0f0bd96999621b3e96b3f892e6ea"
   },
   {
+    "url": "scripts/utils/pptManager.js",
+    "revision": "989a91b74aace673b8985521aa32a118"
+  },
+  {
     "url": "scripts/utils/restUtil.js",
     "revision": "8017cd0aad3a9a8be568a380127f0523"
   },
@@ -517,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "8651948fd5cd16225a5538affd90c8ca"
+    "revision": "1265983a30f8fc5b9c3dc983e1cd1c01"
   },
   {
     "url": "sounds/beep.mp3",
@@ -558,6 +566,10 @@ self.__precacheManifest = [
   {
     "url": "styles/images/ui-icons_ffffff_256x240.png",
     "revision": "ea4ebe072be75fbbea002631916836de"
+  },
+  {
+    "url": "styles/jquery-autocomplete.css",
+    "revision": "602ec6ed8e50725d77160d87fe73ee5f"
   },
   {
     "url": "styles/jquery-ui.css",

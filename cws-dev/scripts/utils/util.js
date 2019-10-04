@@ -569,6 +569,23 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 	}
 };
 
+Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
+{
+	json_Data.forEach(optionData=>{
+		let option = document.createElement('option')
+		option.style.setProperty('display','none')
+		option.style.setProperty('width','100%')
+		option.style.setProperty('list-style','none')
+		option.style.setProperty('background','white')
+		option.style.setProperty('padding','4px 8px')
+		option.style.setProperty('font-size','14px')
+		option.textContent=optionData.defaultName
+		option.value=optionData.value
+		option.addEventListener('click',eventsOptions)
+		selectObj.appendChild(option)
+	})
+};
+
 Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 {
 	selectObj.empty();
