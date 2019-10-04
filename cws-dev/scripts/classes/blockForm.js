@@ -496,6 +496,14 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.dataTargets ) ) );
 		}
+		else
+		{
+			if( formItemJson.payload && formItemJson.payload.default && formItemJson.payload.default.dataTargets )
+			{
+				entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.payload.default.dataTargets ) ) );
+			}
+		}
+
 
 	}
 

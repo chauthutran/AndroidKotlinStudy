@@ -162,70 +162,75 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	var inputTargets = [];
 	var uniqTargs = [];
 
-	inputTags.each( function()
-	{		
-		var inputTag = $(this);	
-		var attrDataTargets = inputTag.attr( 'datatargets' );
+	if ( inputTags.length )
+	{
+	
+		inputTags.each( function()
+		{		
+			var inputTag = $(this);	
+			var attrDataTargets = inputTag.attr( 'datatargets' );
 
-		if ( attrDataTargets )
-		{
-			var val = FormUtil.getTagVal( inputTag );
-
-			if ( val != null && val != '' )
+			if ( attrDataTargets )
 			{
-				var dataTargs = JSON.parse( unescape( attrDataTargets ) );
-				var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
-	
-				inputTargets.push ( newPayLoad );
-	
-				Object.keys( dataTargs ).forEach(function( key ) {
-	
-					if ( ! uniqTargs.includes( key ) )
-					{
-						uniqTargs.push( key );
-					}
-	
-				});
+				var val = FormUtil.getTagVal( inputTag );
+
+				if ( val != null && val != '' )
+				{
+					var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+					var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+		
+					inputTargets.push ( newPayLoad );
+		
+					Object.keys( dataTargs ).forEach(function( key ) {
+		
+						if ( ! uniqTargs.includes( key ) )
+						{
+							uniqTargs.push( key );
+						}
+		
+					});
+				}
+				
+
 			}
-			
-
-		}
-
-	});
-
-	uniqTargs.sort();
-	uniqTargs.reverse();
-
-	// BUILD new template payload structure (based on named target values)
-	for ( var t = 0; t < uniqTargs.length; t++ )
-	{
-		var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
-
-		// initialize with item at position zero [0]
-		FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
-	}
-
-	// FILL/populate new template payload structure (according to named inputTarget destinations)
-	for ( var t = 0; t < inputTargets.length; t++ )
-	{
-		Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
-
-			var dataTargetHierarchy = ( key ).toString().split( '.' );
-
-			// initialize with item at position zero [0]
-			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
 
 		});
 
-	}
+		uniqTargs.sort();
+		uniqTargs.reverse();
 
-	inputsJson[ 'userName' ] = FormUtil.login_UserName;
-	inputsJson[ 'password' ] = FormUtil.login_Password;
+		// BUILD new template payload structure (based on named target values)
+		for ( var t = 0; t < uniqTargs.length; t++ )
+		{
+			var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
 
-	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
-	{
-		console.log ( inputsJson );
-		console.log ( JSON.stringify( inputsJson, null, 4) );	
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
+		}
+
+		// FILL/populate new template payload structure (according to named inputTarget destinations)
+		for ( var t = 0; t < inputTargets.length; t++ )
+		{
+			Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
+
+				var dataTargetHierarchy = ( key ).toString().split( '.' );
+
+				// initialize with item at position zero [0]
+				FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
+
+			});
+
+		}
+
+		inputsJson[ 'userName' ] = FormUtil.login_UserName;
+		inputsJson[ 'password' ] = FormUtil.login_Password;
+
+		if ( (location.href).indexOf('cws.') < 0 )
+		{
+			console.log ( inputsJson );
+			console.log ( JSON.stringify( inputsJson, null, 4) );	
+		}
+			
 	}
 
 	return inputsJson;

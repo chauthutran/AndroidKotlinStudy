@@ -1927,7 +1927,8 @@ $.fn.rotate=function(options) {
   }
   Util.epoch = function( pattern, callBack )
   {
-	  var offSetDate; // '2016-07-22' OR something randomized
+	  //use examples: Util.epoch( '1000', console.log ); Util.epoch( '1000,36', console.log ); 
+	  var offSetDate; // always randomize
 	  var precision;
 	  var base;
 
@@ -1950,20 +1951,21 @@ $.fn.rotate=function(options) {
   {
 	  return ConvertBase.custom( input, from, to );
   }
-  Util.generateRandomEpoch = function( howMany, base )
+  Util.generateRandomEpoch = function( howMany, base, precision )
   {
-	var arrEpochs = [], b = ( base == undefined) ? 10 : base;
+	//use examples: Util.generateRandomEpoch(5,36,1000);
+	var arrEpochs = [], b = ( base == undefined) ? 10 : base, prec = ( precision == undefined ) ? 100 : precision;
 	for ( var i = 0; i < howMany; i++ )
 	{
-		Util.epoch( '1000,' + b, function( data ){
+		Util.epoch( prec + ',' + b, function( data ){
 			arrEpochs.push( data.value );
 		} )
 	}
 
 	arrEpochs.sort();
 
-	//console.log( arrEpochs );
+	console.log( arrEpochs.toString() );
 
-	console.log( arrEpochs.toString() )
+	return arrEpochs;
 	  
   }

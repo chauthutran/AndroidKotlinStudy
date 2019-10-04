@@ -25,7 +25,7 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/responsive.css",
-    "revision": "c9aa0d67077cd8e373da7f65f25ab628"
+    "revision": "0cf6d3eb0d12e3a0af8eb362fa5804ee"
   },
   {
     "url": "css/style.css",
@@ -333,7 +333,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "2c01fb9657d729729ad4f34a6bc57afc"
+    "revision": "da935897fc7ee1cce8bc173462ee4e11"
   },
   {
     "url": "redeemGen.html",
@@ -361,11 +361,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "6fb82b1dfe9e23a448f2f2499d764889"
+    "revision": "7673c32e7ead315c1fc7eb9f5f8578e7"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f92224393cb212e3ac7fca5742fd57e1"
+    "revision": "1fefd0c50d3a0cccb5d2c13bd52ade35"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -389,7 +389,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "7ed1006f4761d43c59f2fe47144aee09"
+    "revision": "355317b1c5b78c82ff0c384a136f90dd"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -397,7 +397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
-    "revision": "0c612c35cd1da9b6abaf4ff5af137168"
+    "revision": "2e5857d51b33bcfb76f28f1483bf95d1"
   },
   {
     "url": "scripts/classes/qrcode.js",
@@ -461,7 +461,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "df6ad4d694792722d32ce6794e8b1d79"
+    "revision": "8013fd4b31bd8e3b03f2326de62976db"
   },
   {
     "url": "scripts/utils/dataManager.js",
@@ -477,7 +477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "d0484232296c0c75acd348c4b00e6cec"
+    "revision": "db78c7ceff0c62250491913f89b3850a"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -517,7 +517,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "f3db7e844f5758541c8d48f36ae13ef9"
+    "revision": "8651948fd5cd16225a5538affd90c8ca"
   },
   {
     "url": "sounds/beep.mp3",
