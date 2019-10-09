@@ -219,30 +219,32 @@ function BlockList( cwsRenderObj, blockObj )
             {
                 if ( me.redeemListScrollingState == 0 )
                 {
-                    me.cwsRenderObj.pulsatingProgress.show();
-                    me.redeemListScrollingState = 1;
 
-                    var aCalGroups = me.newBlockTag.find( 'a.dateGroupSection' );
-                    console.log( aCalGroups );
+                    var aCalGroups = me.newBlockTag.find( 'li.dateGroup' );
 
-                    if ( aCalGroups.length > 0 )
+                    if ( aCalGroups.length > 0 ) // if list already loaded with dateGroupSections
                     {
-                        aCalGroups[ aCalGroups.length-1 ]
-                    }
 
-                    /*var liArr = parentTag.find( 'li' );
-
-                    for( var i = 0; i < aCalGroups.length ; i++ )
-                    {
-                        if ( liArr[ i ] && $( liArr[ i ] ).attr( attrName ) && $( liArr[ i ] ).attr( attrName ) == attrVal )
+                        if ( $( aCalGroups[ aCalGroups.length-1 ] ).hasClass( 'opened' ) )
                         {
-                            $( liArr[ i ] ).css( 'display', ( $( liArr[ i ] ).css( 'display' ) == 'none' ) ? 'block' : 'none' );
+                            me.cwsRenderObj.pulsatingProgress.show();
+                            me.redeemListScrollingState = 1;
+        
+                            setTimeout( function() {
+                                me.appendRedeemListOnScrollBottom();
+                            }, 500 );
                         }
-                    }*/
 
-                    setTimeout( function() {
-                        me.appendRedeemListOnScrollBottom();
-                    }, 500 );
+                    }
+                    else
+                    {
+                        me.cwsRenderObj.pulsatingProgress.show();
+                        me.redeemListScrollingState = 1;
+    
+                        setTimeout( function() {
+                            me.appendRedeemListOnScrollBottom();
+                        }, 500 );   
+                    }
 
                 }
             }
@@ -260,7 +262,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                 if ( me.redeemListDateGroups[ g ].created == 0 )
                 {
-                    var liContentTag = $( '<li class="dateGroup"></li>' );
+                    var liContentTag = $( '<li class="dateGroup opened"></li>' );
                     var anchorTag = $( '<a class="dateGroupSection" peGroup="' + retGroup + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.redeemListDateGroups[ g ].name + '</a>' );
 
                     targTag.append( liContentTag );
