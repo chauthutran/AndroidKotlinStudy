@@ -90,19 +90,19 @@ function settingsApp( cwsRender )
         //  La siguiente funci�n autoejecutable es toda la funcionalidad
         //  del elemento con id "resetCollapsible". Depende de las clases
         //  Modal e InterfaceModal, y de una instancia 
-        //  de InterfaceModal: Modals. Se encuentra en /scripts/modal.js
+        //  It is found in [rootPath]/scripts/utils/pptManager.js 
         //  Los estilos de los elementos se encuentran
         //  en [project]/css/style.css
         //  de la l�nea 1035 a 1068
         ( function() {
-            $("#headerCollapsible").click( function() {
+            $("#settingsAppRestHeader").click( function() {
                 $("#bodyCollapsible").slideToggle("fast")
-                $("#headerCollapsible").toggleClass("collapsible-body--on")
+                $("#settingsAppRestHeader").toggleClass("collapsible-body--on")
             })
+            // @GREG: ADD TRANSLATION SUPPORT HERE
             let titleMessage="Reset app data & configuration",
                 bodyMessage="Your configuration and App data stored in the device will be deleted. "
                 questionMessage="Are you sure?",
-
                 btnAcceptResetData = $('<button>', {
                     'text' : 'ACCEPT'
                 }),
@@ -111,11 +111,11 @@ function settingsApp( cwsRender )
                 }),
                 commonStylesButtons = {
                     border: 'none',
-                    fontSize: '12px',
+                    fontSize: '14px',
                     fontFamily: 'Rubik',
                     fontStyle: 'normal',
-                    fontWeight: 500,
-                    margin: '24px',
+                    fontWeight: 600,
+                    margin: '34px 24px 12px 20px',
                     float: 'right'
                 }
             btnAcceptResetData.css({
@@ -127,7 +127,7 @@ function settingsApp( cwsRender )
                 ...commonStylesButtons
             })
             let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
-                
+
             $("#buttonResetData").click(function(){
                 pptManager.on({titleMessage,bodyMessage,questionMessage,buttons})
             })

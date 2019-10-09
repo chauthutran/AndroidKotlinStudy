@@ -18,6 +18,7 @@ FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
+FormUtil.block_payloadConfig = '';
 
 FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
 FormUtil._serverUrlOverride = "";
@@ -164,7 +165,7 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 	if ( inputTags.length )
 	{
-	
+
 		inputTags.each( function()
 		{		
 			var inputTag = $(this);	
@@ -178,11 +179,11 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 				{
 					var dataTargs = JSON.parse( unescape( attrDataTargets ) );
 					var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
-		
+
 					inputTargets.push ( newPayLoad );
-		
+
 					Object.keys( dataTargs ).forEach(function( key ) {
-		
+
 						if ( ! uniqTargs.includes( key ) )
 						{
 							uniqTargs.push( key );
@@ -282,7 +283,7 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 
 			if ( ( arrSpecRaw.indexOf( ':' ) < 0 ) || ( arrSpecRaw.length > 0 && arrSpecArr.length > 2 ) ) arrSpecArr = [];
 		}
-		
+
 		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
 		var dataValue = ( ( fillValue.toString().indexOf( '{' ) >= 0 ) && ( fillValue.toString().indexOf( '}' ) >= 0 ) ? JSON.parse( fillValue ) : fillValue );
 
@@ -292,16 +293,16 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ arrSpecArr[ 0 ].trim() ]: fillKey, [ arrSpecArr[ 1 ].trim() ]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ fillKey.trim() ]: dataValue } );
 				}
 			}
 			else
 			{
-				targetDef[ dataTargetKeyItem ] [fillKey] = dataValue;
+				targetDef[ dataTargetKeyItem ] [ fillKey ] = dataValue;
 			}
 		}
 		else if ( ( dataTargetKeyItem ).length == 0 )
@@ -310,11 +311,11 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ arrSpecArr[ 0 ].trim() ]: fillKey, [ arrSpecArr[ 1 ].trim() ]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ fillKey.trim() ]: dataValue } );
 				}
 			}
 			else
@@ -1742,19 +1743,14 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 			{
 				inputTag.attr( 'dataTargets', escape( JSON.stringify( dataTarg.dataTargets ) ) );
 			}
+
 			if ( dataTarg.defaultValue )
 			{
-				if ( dataTarg.defaultValue.length && dataTarg.defaultValue.indexOf( 'generatePattern(' ) > 0 && dataTarg.defaultValue.indexOf( 'form:' ) > 0 )
+				if ( dataTarg.defaultValue.indexOf( '##{' ) > 0 )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
 
-					if ( tagTarget )
-					{
-						var pattern = Util.getParameterInside( dataTarg.defaultValue, '()' );
-
-						inputTag.val( Util.getValueFromPattern( inputTag, pattern ) );
-					}
-
+					FormUtil.evalReservedField( tagTarget, dataTarg.defaultValue );
 				}
 				else
 				{

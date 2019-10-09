@@ -506,8 +506,7 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 {
 	selectObj.empty();
 
-	$.each( json_Data, function( i, item ) 
-	{								
+	$.each( json_Data, function( i, item ) {								
 		selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
 	});
 };
@@ -516,7 +515,6 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inputOption )
 {
 	selectObj.empty();
-
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>' );
 
 	var valuePropStr = "id";
@@ -530,12 +528,12 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 
 	if ( json_Data !== undefined )
 	{
-		$.each( json_Data, function( i, item ) 
-		{
+		$.each( json_Data, function( i, item ) {
+
 			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
-				
+
 			selectObj.append( optionTag );
 		});
 	}
@@ -544,7 +542,6 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 {
 	selectObj.empty();
-
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>' );
 	
 	var valuePropStr = "id";
@@ -558,8 +555,8 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 
 	if ( json_Data !== undefined )
 	{
-		$.each( json_Data, function( i, item ) 
-		{
+		$.each( json_Data, function( i, item ) {
+
 			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
@@ -571,25 +568,174 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 
 Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 {
-	json_Data.forEach(optionData=>{
+	json_Data.forEach( optionData => {
+
 		let option = document.createElement('option')
+
 		option.style.setProperty('display','none')
 		option.style.setProperty('width','100%')
 		option.style.setProperty('list-style','none')
 		option.style.setProperty('background','white')
 		option.style.setProperty('padding','4px 8px')
 		option.style.setProperty('font-size','14px')
-		option.textContent=optionData.defaultName
-		option.value=optionData.value
+
+		option.textContent = optionData.defaultName
+		option.value = optionData.value
+
 		option.addEventListener('click',eventsOptions)
-		selectObj.appendChild(option)
+
+		selectObj.appendChild( option )
+
 	})
 };
+
+Util.createCheckbox = function createCheckbox( { message='', align, name='', uid='' } )
+{
+	var divContainerTag = $( '<div></div>' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" class="form-type-text" type="checkbox" style="display:none" />' );
+	var checkboxShow = $( '<div></div>' );
+	var text = $( '<span>' + message + '</span>' )
+	var check = $( '<span></span>' )
+
+	divContainerTag.css( {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: align ? align : 'flex-start',
+		cursor: 'pointer',
+		padding: '4px 4px 2px 8px',
+		margin: '0 0 4px 0'
+	} );
+
+	text.css( { marginLeft: '12px', fontSize: '14px' } );
+
+	checkboxShow.css( {
+		display: 'inline-block',
+		overflow: 'hidden',
+		border: '2px solid gray',
+		padding: '1px',
+		background: 'transparent',
+		width: '18px',
+		height: '18px',
+		transition: '.2s'
+	} );
+
+	check.css( {
+		display: 'inline-block',
+		border: '2px solid rgba(0,0,0,0)',
+		borderTop: 'none',
+		borderLeft: 'none',
+		width: '50%',
+		height: '100%'
+	} );
+
+	divContainerTag.click( function(){
+
+		if ( checkboxReal.prop( 'checked' ) )
+		{
+			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+			checkboxShow.css( 'background', 'transparent' );
+			checkboxReal.prop( 'checked', false );
+		} 
+		else 
+		{
+			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+			checkboxShow.css( 'background', 'gray' );
+			checkboxReal.prop( 'checked', true );
+		}
+
+	} );
+
+	if ( checkboxReal.prop( 'checked' ) )
+	{
+		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+		checkboxShow.css( 'background', 'transparent' );
+		checkboxReal.prop( 'checked', false );
+	}
+
+	checkboxShow.append( check );
+	divContainerTag.append( checkboxReal,checkboxShow, text );
+
+	return { component: divContainerTag, input:checkboxReal };
+
+}
+
+Util.populateDropdown_MultiCheckbox = function ( selectObj, json_Data )
+{
+	selectObj.empty();
+
+	json_Data.forEach( obj=> {
+
+		var { component } = Util.createCheckbox( {
+			message:	obj.defaultName,
+			name:		obj.value } ),
+			li = $( '<li></li>' )
+			li.append( component )
+			selectObj.append( li )
+
+	} )
+}
+Util.populateRadios = function (selectObj, json_Data)
+{
+	selectObj.empty();
+
+	json_Data.forEach( obj => {
+
+		var input = $( '<input type="radio" name="radioOpt" uid="' + obj.uid ? obj.uid : '' + '" value="' + obj.defaultName + '" style="display:none"/>' ),
+			 picker = $( '<span></span>' ),
+			 pickerOn = $( '<i></i>' )
+			 text = $( '<span>' + obj.defaultName + '</span>' ),
+			 content = $( '<div></div>' )
+
+		picker.append( pickerOn );
+
+		content.css( { padding: '4px 4px 2px 8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'} );
+
+		text.css( 'marginLeft', '8px' );
+		text.css( 'font-size', '14px' );
+
+		picker.css( {
+			width: '18px',
+			height: '18px',
+			borderRadius: '50%',
+			border: '2px solid gray',
+			position: 'relative',
+			display: 'inline-block',
+		} );
+
+		pickerOn.css( {
+			width: '70%',
+			height: '70%',
+			position: 'absolute',
+			top: '50%',
+			left: '50%',
+			transform: 'translateX(-50%) translateY(-50%)',
+			borderRadius: '50%',
+			transition: '.2s'
+		} );
+
+		content.append(input,picker,text);
+
+		content.click(function(e){
+			e.stopPropagation()
+			if(!input.prop('checked')){
+				content[0].parentElement.querySelectorAll('i').forEach(i=>{
+					$(i).css( 'background', 'transparent' )
+				})
+				pickerOn.css( 'background', 'gray' )
+				input.prop( 'checked', true )
+			}
+		})
+
+		selectObj.append(content)
+		//console.log(obj)
+
+	} )
+
+}
 
 Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 {
 	selectObj.empty();
-
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' );
 
 	if ( json_Data !== undefined )
@@ -615,7 +761,6 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 Util.populateSelect_WithDefaultName = function( selectObj, selectName, json_Data, defaultName )
 {
 	selectObj.empty();
-
 	selectObj.append( $( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' ) );
 
 	$.each( json_Data, function( i, item ) {

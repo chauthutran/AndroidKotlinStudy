@@ -289,7 +289,12 @@ function BlockButton( cwsRenderObj, blockObj )
 
 				if ( actionJson.payloadConfig )
 				{
-					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ me.cwsRenderObj.configJson.definitionBlocks[ actionJson.blockId ].form ] );
+					FormUtil.block_payloadConfig = actionJson.payloadConfig;
+					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
+				}
+				else
+				{
+					FormUtil.block_payloadConfig = '';
 				}
 
 			}

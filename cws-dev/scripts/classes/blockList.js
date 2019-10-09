@@ -222,6 +222,24 @@ function BlockList( cwsRenderObj, blockObj )
                     me.cwsRenderObj.pulsatingProgress.show();
                     me.redeemListScrollingState = 1;
 
+                    var aCalGroups = me.newBlockTag.find( 'a.dateGroupSection' );
+                    console.log( aCalGroups );
+
+                    if ( aCalGroups.length > 0 )
+                    {
+                        aCalGroups[ aCalGroups.length-1 ]
+                    }
+
+                    /*var liArr = parentTag.find( 'li' );
+
+                    for( var i = 0; i < aCalGroups.length ; i++ )
+                    {
+                        if ( liArr[ i ] && $( liArr[ i ] ).attr( attrName ) && $( liArr[ i ] ).attr( attrName ) == attrVal )
+                        {
+                            $( liArr[ i ] ).css( 'display', ( $( liArr[ i ] ).css( 'display' ) == 'none' ) ? 'block' : 'none' );
+                        }
+                    }*/
+
                     setTimeout( function() {
                         me.appendRedeemListOnScrollBottom();
                     }, 500 );
@@ -243,7 +261,7 @@ function BlockList( cwsRenderObj, blockObj )
                 if ( me.redeemListDateGroups[ g ].created == 0 )
                 {
                     var liContentTag = $( '<li class="dateGroup"></li>' );
-                    var anchorTag = $( '<a class="dateGroupSection" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.redeemListDateGroups[ g ].name + '</a>' );
+                    var anchorTag = $( '<a class="dateGroupSection" peGroup="' + retGroup + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.redeemListDateGroups[ g ].name + '</a>' );
 
                     targTag.append( liContentTag );
                     liContentTag.append( anchorTag );
@@ -254,9 +272,12 @@ function BlockList( cwsRenderObj, blockObj )
                         var calendardGroupClickedTag = $( this );
 
                         me.evalToggleCalGroupCards( calendardGroupClickedTag.parent().parent(), 'calGroup', retGroup );
+
+                        calendardGroupClickedTag.parent()[ 0 ].classList.toggle( "opened" );
+
                         imgTag.classList.toggle( "rotateImg" );
 
-                    });    
+                    });
 
                     me.redeemListDateGroups[ g ].created = 1;
                     break;
@@ -281,6 +302,17 @@ function BlockList( cwsRenderObj, blockObj )
                 $( liArr[ i ] ).css( 'display', ( $( liArr[ i ] ).css( 'display' ) == 'none' ) ? 'block' : 'none' );
             }
         }
+
+        //var liDtmGrp = parentTag.find( 'li.dateGroup' );
+        //console.log ( liDtmGrp )
+
+        //var imgTag = parentTag.children[ 0 ].children[ 0 ];
+        //var calendardGroupClickedTag = $( this );
+
+        //me.evalToggleCalGroupCards( calendardGroupClickedTag.parent().parent(), 'calGroup', retGroup );
+        //imgTag.classList.toggle( "rotateImg" );
+        //console.log( imgTag );
+
     }
 
     me.appendRedeemListOnScrollBottom = function()
@@ -532,11 +564,11 @@ function BlockList( cwsRenderObj, blockObj )
                         // CHECK IF ITEM ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
                         //var dataItm = DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id );
                         DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( dataItm ){
-
+                            console.log( dataItm );
                             if ( dataItm.syncActionStarted == 0 )
                             {
-                                console.log( e );
-                                console.log( statusSecDivTag.find( 'small.syncIcon img' ) );
+                                //console.log( e );
+                                //console.log( statusSecDivTag.find( 'small.syncIcon img' ) );
                                 var mySyncIcon = statusSecDivTag.find( 'small.syncIcon img' ); //$( this );
                                 var dtmRedeemAttempt = (new Date() ).toISOString();
         

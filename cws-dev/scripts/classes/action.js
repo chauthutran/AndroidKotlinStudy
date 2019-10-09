@@ -49,16 +49,35 @@ function Action( cwsRenderObj, blockObj )
 	me.handleSequenceIncrCommits = function( formDivSecTag )
 	{
 		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		var pConf = FormUtil.block_payloadConfig;
 
 		for( var i = 0; i < jData.length; i++ )
 		{
-			if ( jData[ i ].defaultValue )
+			if ( jData[ i ].defaultValue || jData[ i ].payload )
 			{
-				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 )
+				var payloadPattern = false;
+				var pattern = '';
+
+				payloadPattern = ( jData[ i ].defaultValue && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+				if ( payloadPattern )
+				{
+					pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+				}
+				else
+				{
+					payloadPattern = ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue && jData[ i ].payload[ pConf ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+					if ( payloadPattern )
+					{
+						pattern = Util.getParameterInside( jData[ i ].payload[ pConf ].defaultValue, '()' );
+					}
+				}
+
+				if ( payloadPattern )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
+					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
 
 					if ( calcVal != undefined )
 					{
@@ -230,8 +249,15 @@ function Action( cwsRenderObj, blockObj )
 
 					if ( clickActionJson.payloadConfig )
 					{
+						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
 						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
 					}
+					else
+					{
+						FormUtil.block_payloadConfig = '';
+					}
+
+					
 
 				}
 

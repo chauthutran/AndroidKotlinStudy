@@ -12,8 +12,8 @@ function DBStorageSelector()
     me.setDefaultDataHandler = function() {
         var selectedValue = 'indexdb';
 
-        LocalStorageDataManager.saveData( "dbStorageType", selectedValue );
-        IndexdbDataManager.saveData( "dbStorageType", selectedValue );
+        //LocalStorageDataManager.saveData( "dbStorageType", selectedValue );
+        //IndexdbDataManager.saveData( "dbStorageType", selectedValue );
 
         DataManager.dbStorageType = selectedValue;
     };

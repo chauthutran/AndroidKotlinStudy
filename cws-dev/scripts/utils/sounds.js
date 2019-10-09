@@ -47,7 +47,7 @@ function loadSound(name)
 function playSound(name, options){
 
   var sessData = JSON.parse( localStorage.getItem('session') );
-  var play = ( sessData.soundEffects != undefined ? sessData.soundEffects : false );
+  var play = ( ( sessData == null || sessData === undefined ) ? false : ( sessData.soundEffects != undefined ) ? sessData.soundEffects : false );
 
   if ( play )
   {

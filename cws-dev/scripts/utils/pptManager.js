@@ -90,11 +90,13 @@ class Modal{
             title.style.setProperty('font-family','"Rubik", Arial')
             title.style.setProperty('line-height','45px')
             title.style.setProperty('padding','4px 0 10px 0')
+            title.style.setProperty('text-align','left')
             
         }
         if ( body )
         {
             body.style.setProperty('font-size','14px')
+            body.style.setProperty('text-align','left')
         }
         if ( question )
         {

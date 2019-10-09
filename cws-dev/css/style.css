@@ -209,9 +209,9 @@ header {
   box-sizing: border-box;
 }
 #divNavDrawerOUName {
-  font-size:12pt;
-  font-weight:500;
-  letter-spacing: -0.02em;
+  font-size:16px;
+  font-weight:400;
+  letter-spacing: 0.4px;
   line-height: 28px;
   position: relative;
   top: -12px;
@@ -464,7 +464,7 @@ input[type=text]:focus{
 }
 .o-one > li > label{
   font-size: 1.1em;
-  padding:0 0 0 16px;
+  padding:0 0 0 38px;
 }
 .o-one > li:before {
   z-index: -1;
@@ -989,8 +989,8 @@ a.searchresultSelector:hover {
 }
 
 .qrInput{
-  width:100% !important;
-  border:2px dotted #95989A;
+  width: 100% !important;
+  border: 1px dotted #AAA;
   border-radius: 3px;
 }
 .qrIcon {
@@ -1041,10 +1041,13 @@ div.loginBtn {
 .collapsible .collapsible-body{
   font-size: 14px;
   display: none;
-  padding: 20px 10px 4px 10px;
+  padding: 6px 10px 4px 10px;
 }
 .collapsible .collapsible-body--on{
   box-shadow: 0 4px 2px -2px rgba(0,0,0,.1);
+}
+#settingsAppRestHeader {
+  box-shadow: none !important;
 }
 #bodyCollapsible__text{
   font-family: Rubik;
@@ -1066,6 +1069,8 @@ div.loginBtn {
     background: none;
     color: #EB5757;
     cursor: pointer;
+    font-weight: 600;
+    font-family: Rubik;
 }
 /*
   Funcionalidad: Reset Data

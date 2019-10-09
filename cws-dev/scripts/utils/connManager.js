@@ -11,7 +11,7 @@ ConnManager.appConnMode_Online = true; // app mode: Online / Offline (current 'r
 
 ConnManager.scheduledTimer_ID = 0;	// IntervalTimer for checking network conditions
 ConnManager.scheduledTimer_intvMS = 1000;	// check navigator.isOnline status every X milli sec (changed from 500ms due to excessive processing placed on device)
-ConnManager.scheduledTimer_intvActLimit = 3; // act on [changed network status] after X number of repeat observed outcomes
+ConnManager.scheduledTimer_intvActLimit = 5; // act on [changed network status] after X number of repeat observed outcomes
 ConnManager.scheduledTimer_intvCounter = 0;
 ConnManager.schedulerTestUnderway = 0;
 
@@ -41,7 +41,7 @@ ConnManager.userNetworkModeSwitch_IntvLimit = 3600; //3600 = 60 * 60sec = 1h (@ 
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 
-ConnManager.debugMode = false;
+ConnManager.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
@@ -281,7 +281,7 @@ ConnManager.createScheduledConnTests = function()
 
 			ConnManager.runScheduledConnTest( function( jsonData ) {
 
-				if ( ConnManager.debugMode ) console.log( jsonData );
+				//if ( ConnManager.debugMode ) console.log( jsonData );
 
 				ConnManager.setScreen_NetworkIcons( jsonData.networkOnline, jsonData.dataServerOnline );
 

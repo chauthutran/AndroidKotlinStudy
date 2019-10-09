@@ -275,81 +275,108 @@ function BlockForm( cwsRenderObj, blockObj )
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				var divSelectTag = $( '<div class="select"></div>' );
+
 				divSelectTag.append( entryTag );
 				divInputTag.append( divSelectTag );
 			}
-			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" ){
-				var optionList = FormUtil.getObjFromDefinition(
-					formItemJson.options,
-					me.cwsRenderObj.configJson.definitionOptions
-				  );
+			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" )
+			{
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+				
 				Util.decodeURI_ItemList(optionList, "defaultName")
-				var arr = optionList.map(obj=>{
-					return{
-						value: obj.defaultName,
-						data: obj.value
-					}
+
+				var arr = optionList.map( obj => {
+					return { value: obj.defaultName, data: obj.value }
 				})
-				var divSelectTag = $('<div class="select"></div>');
-				var inputReal = $(`<input name="${formItemJson.id}" uid="${formItemJson.uid}" style="display:none" />`)
-				var inputShow = $(`<input type="text" />`)
+
+				var divSelectTag = $( '<div class="select"></div>' );
+				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" style="display:none" />' );
+				var inputShow = $( '<input type="text" />' );
+
 				inputShow.css({
 					border: 'none',
 					padding: '8px',
 					fontSize: '14px',
 					width: '100%'
-				})
-				var seleccion
-				inputShow.devbridgeAutocomplete({
+				});
+
+				var selection;
+
+				inputShow.devbridgeAutocomplete( {
 					lookup: arr,
 					minChars: 0,
-					onSelect: function (suggestion) {
-						inputReal.val(suggestion.data)
-						seleccion = true
+					onSelect: function ( suggestion ) {
+						inputReal.val( suggestion.data )
+						selection = true
 				  	}
-				})
-				inputShow.on('input',function(){
-					seleccion = false
-				})
-				$(document).click(function(){
-					if($('.autocomplete-suggestions').css('display') !== 'none'){
-						if(!seleccion){
-							let string = inputShow.val()
-							inputReal.val(' ')
-							inputReal.val('')
-							inputShow.val(string)
+				});
+
+				inputShow.on( 'input', function(){
+					selection = false
+				});
+
+				$(document).click( function(){
+					if( $( '.autocomplete-suggestions' ).css( 'display' ) !== 'none')
+					{
+						if ( ! selection )
+						{
+							let string = inputShow.val();
+							inputReal.val(' ');
+							inputReal.val('');
+							inputShow.val( string );
 						}
 					}
-				})
-				/*
-				divSelectTag.click(function(e){
-					e.stopPropagation()
-					if($('.autocomplete-suggestions').css('display') == 'none'){
-						$('.autocomplete-suggestions').css('display','block')
-					}
-				})
-				$(document).click(function(){
-					if($('.autocomplete-suggestions').css('display') !== 'none'){
-						$('.autocomplete-suggestions').css('display','none')
-					}
-				})
-				*/
-				// $(document).click(function(){
-				// 	if($('.autocomplete-suggestions').css('display') !== 'none'){
-				// 		let string = inputReal.val()
-				// 		inputShow.val(string)
-				// 	}
-				// })
-				$('.autocomplete-suggestion').css({padding: '4px 8px', fontSize: '14px'})
-				divSelectTag.append(inputReal,inputShow)
-				divInputTag.append(divSelectTag)
+				});
+
+				$( '.autocomplete-suggestion' ).css( { padding: '4px 8px', fontSize: '14px' } );
+
+				divSelectTag.append( inputReal, inputShow );
+				divInputTag.append( divSelectTag );
+			}
+			else if ( formItemJson.controlType === "RADIO")
+			{
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+
+				Util.decodeURI_ItemList( optionList, "defaultName" );
+
+				var container = $( '<div></div>' );
+				container.css( { margin:'4px 0 4px 0' } );
+
+				Util.populateRadios(container, optionList);
+
+				divInputTag.append(container);
+			}
+			else if ( formItemJson.controlType === "MULTI_CHECKBOX")
+			{
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+
+				Util.decodeURI_ItemList( optionList, "defaultName" )
+
+				var ul = $( '<ul></ul>' ), selectCheckList = $( '<div class="select"></div>' ), divContentTag = $( '<div></div>' );
+
+				ul.css('display','none');
+				selectCheckList.css( { padding: '0 8px', cursor: 'pointer', fontSize: '14px' } );
+				divContentTag.css( { margin:'4px 0 4px 0', border: 'none', padding: 0 } );
+
+				Util.populateDropdown_MultiCheckbox( ul, optionList );
+
+				divContentTag.append( selectCheckList, ul );
+
+				selectCheckList.click( function(){
+					ul.slideToggle('fast')
+				});
+
+				selectCheckList.click();
+
+				divInputTag.append( divContentTag );
 			}
 			else if ( formItemJson.controlType === "CHECKBOX" )
 			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="checkbox" />' );
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
 
-				divInputTag.append( entryTag );
+				FormUtil.setTagVal( input, formItemJson.defaultValue )
+
+				divInputTag.append( component );
 			}
 			else if ( formItemJson.controlType === "LABEL" )
 			{
@@ -397,38 +424,27 @@ function BlockForm( cwsRenderObj, blockObj )
 			if ( formDivSecTag.attr( 'data-fields') != undefined )
 			{
 				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-		
+				var pConf = FormUtil.block_payloadConfig;
+
+				//console.log( pConf );
+
 				for( var i = 0; i < jData.length; i++ )
 				{
-					if ( jData[ i ].defaultValue )
+					if ( jData[ i ].defaultValue || jData[ i ].payload )
 					{
-						if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
+						var EvalActionString = '';
+
+						if ( jData[ i ].defaultValue ) EvalActionString = jData[ i ].defaultValue;
+
+						if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
+
+						//console.log( jData[ i ].id + ': ' + EvalActionString );
+
+						if ( EvalActionString.length )
 						{
 							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-							if ( tagTarget )
-							{
-								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-
-								tagTarget.val( Util.getValueFromPattern( tagTarget, pattern ) );
-							}
-
-						}
-						else if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'getAge(' ) > 0 && jData[ i ].defaultValue.indexOf( 'form:' ) > 0 )
-						{
-							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-							if ( tagTarget )
-							{
-								var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-								var ageCal  = Util.getAgeValueFromPattern( tagTarget, pattern );
-
-								if ( ageCal != undefined && ageCal > 0 )
-								{
-									tagTarget.val( ageCal );
-								}
-							}
-
+							FormUtil.evalReservedField( tagTarget, EvalActionString );
 						}
 
 					}
