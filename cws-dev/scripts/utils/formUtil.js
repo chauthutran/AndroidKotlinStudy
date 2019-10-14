@@ -799,13 +799,16 @@ FormUtil.evalReservedField = function( tagTarget, val )
 	{
 		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			FormUtil.refreshGeoLocation( function() {
-				if ( FormUtil.geoLocationLatLon.length )
-				{
-					MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true, true );
-				}
-				tagTarget.val( FormUtil.geoLocationCoordinates );
-			});
+			if ( tagTarget.val() != FormUtil.geoLocationCoordinates )
+			{
+				FormUtil.refreshGeoLocation( function() {
+					if ( FormUtil.geoLocationLatLon.length )
+					{
+						MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true );
+					}
+					tagTarget.val( FormUtil.geoLocationCoordinates );
+				});
+			}
 		}
 		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
 		{
@@ -1805,4 +1808,15 @@ FormUtil.createNumberLoginPinPad = function()
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
           $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
       }, 500 );
+}
+
+FormUtil.getCommonDateGroups = function()
+{
+	var z = [ { name: "Last 24 hours", term: "", hours: 24, created: 0 },
+			{ name: "Last 3 days", term: "", hours: 72 , created: 0 },
+			{ name: "Last 7 days", term: "", hours: 168, created: 0 },
+			{ name: "Last 30 days", term: "", hours: 720, created: 0 },
+			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
+			{ name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
+	return z;
 }

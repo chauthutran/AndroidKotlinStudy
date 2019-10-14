@@ -342,6 +342,10 @@
       {
         width:70%;
       }
+      #localStatistics
+      {
+          background-color: #FFF;
+      }
       /*tab_content_act*/
       .tab_content a.expandable {
         display: none !important;

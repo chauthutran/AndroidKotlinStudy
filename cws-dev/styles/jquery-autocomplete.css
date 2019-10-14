@@ -25,8 +25,8 @@
    white-space: nowrap; 
    overflow: hidden; 
    text-overflow: ellipsis; 
-   font-size: 1.02em; 
-   color: #333; 
+   font-size: 13.333px; 
+   color: #000; 
 }
 .autocomplete-suggestion b { 
    font-weight: normal; 

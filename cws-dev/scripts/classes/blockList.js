@@ -42,14 +42,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.render = function( list, newBlockTag, passedData, options )
 	{
-        me.redeemListDateGroups = [ 
-            { name: "Last 24 hours", hours: 24, created: 0 },
-            { name: "Last 3 days", hours: 72 , created: 0 },
-            { name: "Last 7 days", hours: 168, created: 0 },
-            { name: "Last 30 days", hours: 720, created: 0 },
-            { name: "Last 3 months", hours: 2160, created: 0 },
-            { name: "Last 6 months", hours: 4320, created: 0 } 
-        ];
+        me.redeemListDateGroups = FormUtil.getCommonDateGroups();
 
 		if ( list === 'redeemList' )
         {

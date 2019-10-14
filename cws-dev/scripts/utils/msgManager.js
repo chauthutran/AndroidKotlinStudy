@@ -345,6 +345,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
 
     //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+    if ( ReserveMsgID & ReserveMsgID != 'geolocation' )
     {
         if ( actionButton && autoClick )
         {

@@ -5,7 +5,7 @@ MoveLocalStorageData.moveData = function(){
 
     LocalStorageDataManager.getData( "movedData", function( movedData ){
 
-        if( movedData == undefined )
+        if( movedData == undefined || movedData == false )
         {
             // Get all items in localStorage
             var keys = Object.keys( localStorage );

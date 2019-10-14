@@ -603,7 +603,7 @@ Util.createCheckbox = function createCheckbox( { message='', align, name='', uid
 		justifyContent: align ? align : 'flex-start',
 		cursor: 'pointer',
 		padding: '4px 4px 2px 8px',
-		margin: '0 0 4px 0'
+		margin: '8px 0 4px 0'
 	} );
 
 	text.css( { marginLeft: '12px', fontSize: '14px' } );
@@ -688,7 +688,7 @@ Util.populateRadios = function (selectObj, json_Data)
 
 		picker.append( pickerOn );
 
-		content.css( { padding: '4px 4px 2px 8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'} );
+		content.css( { padding: '8px 4px 2px 8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'} );
 
 		text.css( 'marginLeft', '8px' );
 		text.css( 'font-size', '14px' );
@@ -1201,6 +1201,20 @@ Util.formatDateAndTime = function( datetimeStamp )
     if (seconds < 10) seconds = '0' + seconds;
 
     return ( cur_day + ' ' + hours + ':' + minutes + ':' + seconds );
+}
+
+Util.formatTime = function( datetimeStamp )
+{
+    var date = new Date( datetimeStamp );
+    var hours = date.getHours()
+    var minutes = date.getMinutes()
+    var seconds = date.getSeconds();
+
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (seconds < 10) seconds = '0' + seconds;
+
+    return ( hours + ':' + minutes + ':' + seconds );
 }
 
 // Date Formatting Related

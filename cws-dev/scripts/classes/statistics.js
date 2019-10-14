@@ -1,6 +1,6 @@
 // -------------------------------------------
 // -- BlockMsg Class/Methods
-function statistics( cwsRender )
+function statisticsOld( cwsRender )
 {
     var me = this;
 
@@ -15,7 +15,7 @@ function statistics( cwsRender )
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
 	me.statisticsContentDivTag = $( '#statisticsContentDiv' );
 	me.statisticsTableTag = $( 'table.tableStats' );
-
+	//me.localStats;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -23,6 +23,7 @@ function statistics( cwsRender )
 
 	me.initialize = function() 
 	{
+
 		me.setEvents_OnInit();
     }
 
@@ -30,6 +31,7 @@ function statistics( cwsRender )
 
     me.render = function() 
     {
+		//me.localStats = new localStatistics( cwsRender );
         me.showStatsPage();
     }
 
