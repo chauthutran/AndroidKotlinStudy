@@ -4,6 +4,7 @@
   <head>
     <title>CwS - Provider: redeemGen</title>
     <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.js" ></script>
+    <script type="text/javascript" src="scripts/utils/util.js" ></script>
     <style>
         div.label {
             width:150px;
@@ -70,10 +71,26 @@
                     </tr>
                     <tr>
                         <td style="text-align:right">
-                            <div class="label">minutes apart</div>
+                            <div class="label">open From</div>
                         </td>
                         <td>
-                            <input type="text" class="minSpread" value="30">
+                            <select class="openHourFrom"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <div class="label">open To</div>
+                        </td>
+                        <td>
+                            <select class="openHourTo"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <div class="label">DELETE Indexed DB</div>
+                        </td>
+                        <td>
+                            <input type="checkbox" id="deleteIndexedDB">
                         </td>
                     </tr>
                 </table>
@@ -116,7 +133,7 @@
                         </td>
                         <td>
                                 <input type="button" class="button" value="Overwrite" onclick="writeToLocalStorage(true)">
-                                <input type="button" class="button" value="Append" onclick="writeToLocalStorage(false)">
+                                <input type="button" class="button" value="Append" DISABLED onclick="writeToLocalStorage(false)">
                         </td>
                     </tr>
                 </table>
@@ -124,13 +141,25 @@
         </tr>
     </table>
 
+    <div id="f1_container">
+        <div id="f1_card" class="shadow">
+            <div class="front face">
+                <img src="images/Connect.svg"/>
+            </div>
+            <div class="back face center">
+                    <img src="images/Connect.svg"/>
+            </div>
+        </div>
+    </div>
+
     <script>
 
         $('input.redeemURL').css ( 'width',  $('textarea.output').css('width').replace('px','') - 90 );
-
         $('input.redeemURL').val ( location.origin + '/eRefWSDev3/api/dc/redeem')
-
         $('input.activityType').val( (getRedeemDefs()) );
+        $( 'select.openHourFrom' ).html( getOpenHours(6) );
+        $( 'select.openHourTo' ).html( getOpenHours(14) );
+        //$( '#deleteIndexedDB' ).checked( false );
 
         if ( localStorage.getItem ('session') )
         {
@@ -139,15 +168,46 @@
 
         //http://localhost:8080/eRefWSDev3/api/dc/redeem
     
+    function getOpenHours( def )
+    {
+        var opts = '';
+        
+        for (var i = 0; i < 24; i+= 0.25) 
+        {
+            opts += '<option value=' + i ; //Util.paddNumeric( i, 2 )
+            if ( def == i) opts += ' SELECTED ';
+            opts += '>' + formatTime( new Date( 86400000 * ( i / 24 ) ) ) + '</option>';
+        }
+
+        return opts;
+
+    }
+
+    
+    function formatTime( datetimeStamp )
+    {
+        var date = new Date( datetimeStamp );
+        var hours = date.getHours()
+        var minutes = date.getMinutes()
+        //var seconds = date.getSeconds();
+
+        if (hours < 10) hours = '0' + hours;
+        if (minutes < 10) minutes = '0' + minutes;
+        //if (seconds < 10) seconds = '0' + seconds;
+
+        return ( hours + ':' + minutes ); //+ ':' + seconds 
+    }
+    
     function generate()
     {
         var myTemplate = template();
-        var myDateTimeSeed = new Date();
+        var myDateTimeSeed = Util.dateToString( new Date() ) + 'T00:00:00Z'; //new Date();
         var myResult = '', tmpRow = '';
-
+        console.log( myDateTimeSeed );
         for (var i = 1; i <= $('input.rows').val(); i++) 
         {
-            myDateTimeSeed = getCalcTime(myDateTimeSeed,$('input.minSpread').val () * -1);
+            myDateTimeSeed = getCalcTime(myDateTimeSeed, $('select.openHourFrom').val(), $('select.openHourTo').val() );
+            //console.log( ' ~ ' + myDateTimeSeed );
 
             var myDate = getTodayDate(myDateTimeSeed);
             var myTime = getTimeNow(myDateTimeSeed);
@@ -177,10 +237,11 @@
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
-
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
+
+            myDateTimeSeed = ( Util.dateToString( new Date( myDateTimeSeed ) ) + 'T00:00:00Z' );
 
         }
 
@@ -215,9 +276,15 @@
         return ret;
     }
 
-    function getCalcTime(dtmSeed,min)
+    function getCalcTime(dtmSeed,openFrom,openTo)
     {
-        return new Date(dtmSeed.getTime() + (min*60000));
+        var min = ( ( 86400000 * ( openFrom / 24 ) ) );
+        var max = ( ( 86400000 * ( openTo / 24 ) ) );
+        var rndOffset = generateRandomNumberRange( min, max );
+        var rndDtm = ( new Date( dtmSeed ).getTime() - 86400000 + rndOffset );
+
+        console.log( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
+        return new Date( rndDtm ).toISOString();
     }
 
     function getTownList()
@@ -294,6 +361,8 @@
 
     function writeToLocalStorage(overwrite)
     {
+        localStorage.removeItem( 'movedData' );
+
         if ( overwrite )
         {
             localStorage.setItem( 'redeemList', '{"list":[ ' +  $('textarea.output').val() + ' ] } ' );
@@ -318,10 +387,64 @@
             }
 
         }
+
+        if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );
         
+    }
+
+    deleteIndexedDB = function(dbName)
+    {
+        var bProceed = confirm( "are you sure you want to delete indexedDB? It will erase EVERYTHING you've already captured");
+
+        if ( bProceed )
+        {
+            var req = indexedDB.deleteDatabase(dbName);
+            req.onsuccess = function () {
+                alert ("Deleted indexed DB successfully");
+            };
+            req.onerror = function () {
+                alert ("Couldn't delete database");
+            };
+            req.onblocked = function () {
+                alert ("Couldn't delete database due to the operation being blocked");
+            };
+
+        }
+       
+    }
+
+    var tmr;
+
+    //me.
+    whatEver = function()
+    {
+
+        setInterval( function() {
+
+            $( 'img.rotImg' ).css( 'transform', 'rotateY(180deg)' );
+            $( 'img.rotImg' ).attr( 'data-on', 0 );
+
+            if ( tmr ) clearInterval( tmr );
+
+            tmr = setTimeout( function() { // timeout (500) used to create image rotation effect (requires 1s transition on img obj)
+                $( 'img.rotImg' ).css( 'transform', 'rotateY(360deg)' );
+                $( '#imgNetworkStatus' ).attr( 'data-on', 1 );
+            }, 500 );
+
+        }, 1000 );
+
     }
     
     </script>
+
+
+    <div id="f2_container">
+        <div id="f2_card" class="shadow">
+            <div class="rotTest">
+                <img class="rotImg" src="images/Connect.svg" style=""/>
+            </div>
+        </div>
+    </div>
 
 
     <style>
@@ -331,6 +454,15 @@
     width: 24px;
     height: 24px;
     z-index: 1;
+    display: none;
+    }
+    #f2_container {
+    position: relative;
+    margin: 10px auto;
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+    display: none;
     }
     #f1_container {
     perspective: 1000;
@@ -342,7 +474,7 @@
     transition: all 1.0s linear;
     }
     #f1_container:hover #f1_card {
-    transform: rotateY(180deg);
+    transform: rotateY(360deg);
     }
     .face {
     position: absolute;
@@ -352,7 +484,7 @@
     }
     .face.back {
     display: block;
-    transform: rotateY(180deg);
+    transform: rotateY(0deg);
     box-sizing: border-box;
     color: white;
     text-align: center;

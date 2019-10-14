@@ -333,11 +333,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "01862c0dc700506a1357de8afd3d50d1"
+    "revision": "8a87eeefc8a503d14ca4433859aec5f3"
   },
   {
     "url": "redeemGen.html",
-    "revision": "198a758c238ec2e0bfbbb3567a921e61"
+    "revision": "c806037ed52a3abbb3ace0fb124d25e7"
   },
   {
     "url": "scripts/app.js",
@@ -497,7 +497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "255f8af30aaa1567b38bd3b2b4625c84"
+    "revision": "44566ee8377b416ab42d3b3c85a14f28"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -596,4 +596,6 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
 workbox.precaching.cleanupOutdatedCaches();
 
-workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/, new workbox.strategies.CacheFirst({ "cacheName":"appShell", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/eRefWSDev3/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"googleFonts", plugins: [] }), 'GET');

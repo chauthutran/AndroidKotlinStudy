@@ -1,7 +1,6 @@
 
 // Require WorkBox build
 const {generateSW} = require('workbox-build');
-const {Workbox} = require('workbox-window');
 
 generateSW({
 
@@ -16,29 +15,25 @@ generateSW({
   cleanupOutdatedCaches: true,
   runtimeCaching: [
     {
-      urlPattern: /.js|.html|.css/,
+      urlPattern: /.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'appShell'
       }
-    }
-  ],
-  runtimeCaching: [
+    },
+    {
+        urlPattern: /eRefWSDev3/,
+        handler: 'staleWhileRevalidate',
+        options: {
+          cacheName: 'eRef-WebService'
+        }
+    },
     {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {
         cacheName: 'googleFonts'
       }
-    }
-  ],
-  runtimeCaching: [
-    {
-        urlPattern: /eRefWS/,
-        handler: 'staleWhileRevalidate',
-        options: {
-          cacheName: 'eRef-WebService'
-        }
     }
   ]
 

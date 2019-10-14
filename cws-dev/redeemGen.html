@@ -133,7 +133,7 @@
                         </td>
                         <td>
                                 <input type="button" class="button" value="Overwrite" onclick="writeToLocalStorage(true)">
-                                <input type="button" class="button" value="Append" onclick="writeToLocalStorage(false)">
+                                <input type="button" class="button" value="Append" DISABLED onclick="writeToLocalStorage(false)">
                         </td>
                     </tr>
                 </table>
@@ -201,7 +201,7 @@
     function generate()
     {
         var myTemplate = template();
-        var myDateTimeSeed = Util.dateToString( new Date() ) + ' 00:00:00'; //new Date();
+        var myDateTimeSeed = Util.dateToString( new Date() ) + 'T00:00:00Z'; //new Date();
         var myResult = '', tmpRow = '';
         console.log( myDateTimeSeed );
         for (var i = 1; i <= $('input.rows').val(); i++) 
@@ -237,12 +237,11 @@
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
-
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             myResult += tmpRow + ',';
 
-            myDateTimeSeed = new Date( Util.dateToString( new Date( myDateTimeSeed ) ) + ' 00:00:00' );
+            myDateTimeSeed = ( Util.dateToString( new Date( myDateTimeSeed ) ) + 'T00:00:00Z' );
 
         }
 
@@ -284,7 +283,7 @@
         var rndOffset = generateRandomNumberRange( min, max );
         var rndDtm = ( new Date( dtmSeed ).getTime() - 86400000 + rndOffset );
 
-        console.log( ' ~ ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
+        console.log( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
         return new Date( rndDtm ).toISOString();
     }
 
@@ -455,6 +454,15 @@
     width: 24px;
     height: 24px;
     z-index: 1;
+    display: none;
+    }
+    #f2_container {
+    position: relative;
+    margin: 10px auto;
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+    display: none;
     }
     #f1_container {
     perspective: 1000;

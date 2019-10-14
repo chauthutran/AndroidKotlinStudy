@@ -189,7 +189,10 @@ function statistics( cwsRender )
             me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
             me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
 
-            me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+            if ( me.earliestDate )
+            {
+                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+            }
 
         });
     }
@@ -258,7 +261,11 @@ function statistics( cwsRender )
             tr.append( tdData );
 
             tdName.html( arrObj[ i ].name );
-            tdData.html( arrObj[ i ].data.length );
+
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                tdData.html( arrObj[ i ].data.length );
+            }
 
         }
 
@@ -300,7 +307,12 @@ function statistics( cwsRender )
             trName.append( tdName );
 
             tdName.html( arrObj[ i ].name );
-            tdData.html( arrObj[ i ].data.length );
+
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                tdData.html( arrObj[ i ].data.length );
+            }
+
 
         }
 
@@ -341,10 +353,13 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            var divIconObj = $( '<div></div>' );
+            var divIconObj = $( '<div id="activityType_' + i + '"></div>' );
             var divIconText = $( '<div></div>' );
 
-            tdData.html( arrObj[ i ].data.length );
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                tdData.html( arrObj[ i ].data.length );
+            }
 
             tdName.append( divIconText );
             tdName.append( divIconObj );
@@ -392,10 +407,13 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            var divIconObj = $( '<div></div>' );
+            var divIconObj = $( '<div id="status_' + i + '"></div>' );
             var divIconText = $( '<div></div>' );
 
-            tdData.html( arrObj[ i ].data.length );
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                tdData.html( arrObj[ i ].data.length );
+            }
 
             tdName.append( divIconText );
             tdName.append( divIconObj );
@@ -423,9 +441,14 @@ function statistics( cwsRender )
 
         for (var i = 0; i < arrObj.length; i++)
         {
-            if ( arrObj[ i ].data.length > max ) max = arrObj[ i ].data.length;
-            if ( arrObj[ i ].data.length < min ) min = arrObj[ i ].data.length;
+            if ( arrObj[ i ].data )
+            {
+                if ( arrObj[ i ].data.length > max ) max = arrObj[ i ].data.length;
+                if ( arrObj[ i ].data.length < min ) min = arrObj[ i ].data.length;    
+            }
         }
+
+        if ( max == 0 ) min = 0;
 
         var tbl = $( '<table class="tableStatistics column">' );
 
@@ -446,7 +469,12 @@ function statistics( cwsRender )
             var tdBar = $( '<td class="columnBar">' );
             var tdData = $( '<td class="columnData">' );
             var tdName = $( '<td class="columnLabel">' );
-            var barH = ( arrObj[ i ].data.length > 0 ? ( maxHeight * ( arrObj[ i ].data.length / max ) ) + 'px' : '0' );
+            var barH = 0;
+
+            if ( arrObj[ i ].data )
+            {
+                barH = ( arrObj[ i ].data.length > 0 ? ( maxHeight * ( arrObj[ i ].data.length / max ) ) + 'px' : '0' );
+            }
 
             tbl.append( trBar );
             trBar.append( tdBar );
@@ -492,7 +520,7 @@ function statistics( cwsRender )
 
     me.getSpecialNote = function( earliest )
     {
-        return $( '<div class="icon-row" style="padding: 8px 4px"><strong term="">Note:</strong><span term="">the statistic displayed above are calculated based on the activities registered using this device since earliest date </span><strong>' + Util.dateToString( earliest ) + '</strong></div>')
+        return $( '<div class="icon-row" style="padding: 8px 4px;line-height:18px"><strong term="">Note: </strong><span term="">the statistic displayed above are calculated based on the activities registered using this device since earliest date </span><strong>' + Util.dateToString( earliest ) + '</strong></div>')
     }
 
 	me.initialize();
