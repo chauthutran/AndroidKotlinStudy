@@ -337,7 +337,7 @@ self.__precacheManifest = [
   },
   {
     "url": "redeemGen.html",
-    "revision": "c806037ed52a3abbb3ace0fb124d25e7"
+    "revision": "28df9f1b5db14e85780ea088707ef2ec"
   },
   {
     "url": "scripts/app.js",
@@ -481,7 +481,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "1434c061959c8466a782dda61516117d"
+    "revision": "187bc8f665b10396d594ceb51971b551"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -497,7 +497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "44566ee8377b416ab42d3b3c85a14f28"
+    "revision": "8964c35e4324b0af95a246a641fafc71"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",

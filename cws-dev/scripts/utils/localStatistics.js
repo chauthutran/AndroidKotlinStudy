@@ -353,7 +353,7 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            var divIconObj = $( '<div id="activityType_' + i + '"></div>' );
+            var divIconObj = $( '<div id="activityStatistic_' + i + '"></div>' );
             var divIconText = $( '<div></div>' );
 
             if ( arrObj[ i ].data && arrObj[ i ].data.length )
@@ -407,7 +407,7 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            var divIconObj = $( '<div id="status_' + i + '"></div>' );
+            var divIconObj = $( '<div id="statusStatistic_' + i + '"></div>' );
             var divIconText = $( '<div></div>' );
 
             if ( arrObj[ i ].data && arrObj[ i ].data.length )
