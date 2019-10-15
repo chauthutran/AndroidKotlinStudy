@@ -333,11 +333,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "8a87eeefc8a503d14ca4433859aec5f3"
+    "revision": "efb587a9233a52062d36ca117f3ef5b4"
   },
   {
     "url": "redeemGen.html",
-    "revision": "28df9f1b5db14e85780ea088707ef2ec"
+    "revision": "dfd2f7a4e730e9df4fe06feb2752b46e"
   },
   {
     "url": "scripts/app.js",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "1c0290a2526f683c87e11f389e42ef0f"
+    "revision": "e85573b1ad030122131bc836958de38c"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -481,7 +481,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "187bc8f665b10396d594ceb51971b551"
+    "revision": "6c4890bd935366cdbc7955fc82ba2c7a"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",

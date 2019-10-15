@@ -103,7 +103,7 @@ function BlockList( cwsRenderObj, blockObj )
         // Copy from list html template
         $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
-        var listUlLiActiveTag = blockTag.find( 'li.active' );
+        //var listUlLiActiveTag = blockTag.find( 'li.active' );
         var listContentUlTag = blockTag.find( '.tab__content_act' );
 
         me.redeemListTargetTag = listContentUlTag;
@@ -585,9 +585,9 @@ function BlockList( cwsRenderObj, blockObj )
                                 if ( ConnManager.isOffline() )
                                 {
                                     // MISSING TRANSLATION
-                                    MsgManager.notificationMessage ( 'Currently mode: offline.  Need to be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
+                                    MsgManager.notificationMessage ( 'Current mode: offline. Need to be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
                                     myTag.html( fetchItemData.title );
-                                    $(this).stop();
+                                    mySyncIcon.stop();
                                 }
                                 else
                                 {

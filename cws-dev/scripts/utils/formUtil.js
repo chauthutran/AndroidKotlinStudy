@@ -1520,7 +1520,7 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 			{
 				FormUtil.geoLocationError = error.code; //Error locating your device
 
-				if (error.code == error.PERMISSION_DENIED)
+				if (error.code == error_PERMISSION_DENIED)
 				{
 					FormUtil.geoLocationLatLon = '';
 				}

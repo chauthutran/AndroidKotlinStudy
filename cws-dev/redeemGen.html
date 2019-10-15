@@ -203,7 +203,7 @@
         var myTemplate = template();
         var myDateTimeSeed = Util.dateToString( new Date() ) + 'T00:00:00Z'; //new Date();
         var myResult = '', tmpRow = '';
-        console.log( myDateTimeSeed );
+
         for (var i = 1; i <= $('input.rows').val(); i++) 
         {
             myDateTimeSeed = getCalcTime(myDateTimeSeed, $('select.openHourFrom').val(), $('select.openHourTo').val() );
@@ -238,11 +238,14 @@
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
+            
+            tmpRow = ( getAdditionalFields( tmpRow ) );
+            console.log( ' ~ ' + tmpRow );
 
             myResult += tmpRow + ',';
 
             myDateTimeSeed = ( Util.dateToString( new Date( myDateTimeSeed ) ) + 'T00:00:00Z' );
-
+            
         }
 
         myResult = myResult.substring(myResult,myResult.length-1);
@@ -276,6 +279,44 @@
         return ret;
     }
 
+    function getAdditionalFields( currTemplate )
+    {
+        var ret = '';
+        var arr;
+        var retPush = JSON.parse( currTemplate );
+
+        if ( localStorage.getItem('session') )
+        {
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+
+            if ( itms.length )
+            {
+                ret = '';
+                for (var i = 0; i < itms.length; i++) 
+                {
+                    ret += itms[ i ].previewData.toString() +',';
+                }
+                ret = ret.substring( 0, ret.length -1 );
+                ret = ret.replace(/ /g, ',')
+                arr = ret.split( ',' );
+            }
+
+        }
+
+        if ( arr )
+        {
+            for (var i = 0; i < arr.length; i++) 
+            {
+                if ( currTemplate.indexOf( arr[ i ] ) < 0 )
+                {
+                    retPush.data.previewJson[ arr[ i ] ] = arr[ i ];
+                }
+            }
+        }
+
+        return JSON.stringify( retPush );
+    }
+
     function getCalcTime(dtmSeed,openFrom,openTo)
     {
         var min = ( ( 86400000 * ( openFrom / 24 ) ) );
@@ -301,8 +342,8 @@
     {
         return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "network":false, "networkAttempt":{NETWORKATTEMPT}, "history": [], "syncActionStarted": 0, ' +
              ' "data":{  "payloadJson":{  "countryType":"MZ", "walkIn_firstName":"{FIRSTNAME}", "walkIn_lastName":"{LASTNAME}", "walkIn_age":"{AGE}", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
-             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"Somerset West", "pointOfReference":"A", "bookPageNumber":"2" ' +
-             ' }, ' +
+             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"addressNeighborhood", "pointOfReference":"A", "bookPageNumber":"2" ' +
+             ' }, "previewJson": {}, ' +
              ' "url":"{redeemURL}", ' +
              ' "actionJson":{   "actionType":"sendToWS", "payloadBody":["voucherCode" ], "payloadHeader":[  "usr","pwd" ], "alertResult":"true", "wsNACase":{  "note":"display message" },' +
              ' "redeemListInsert":"true", "url":"/api/dc/redeem" }}} '
