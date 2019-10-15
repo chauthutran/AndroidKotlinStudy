@@ -244,6 +244,10 @@ self.__precacheManifest = [
     "revision": "0fb7b04a2651bfb60e59ae3289d4e2f6"
   },
   {
+    "url": "images/my_details.svg",
+    "revision": "dba1cfb6a07e7d21af17eb0dcbf6683c"
+  },
+  {
     "url": "images/open.svg",
     "revision": "f7cf6943aeb6e19ae972aabcebcb022d"
   },
@@ -333,7 +337,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "efb587a9233a52062d36ca117f3ef5b4"
+    "revision": "ef56c057de37bfa7038a857cc1dea0f2"
   },
   {
     "url": "redeemGen.html",
@@ -365,11 +369,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "7980f342e9df3a1e3486ce89c3707638"
+    "revision": "de3b8afb0f2bf667313ca1d4a6b0e87b"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "e85573b1ad030122131bc836958de38c"
+    "revision": "b3c39d1e2db6b62a0e01c9f6a3ef170e"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -393,7 +397,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "304b91f23b8699fe8473692af2294659"
+    "revision": "ee88cca432775ad94312b96923d26a9b"
+  },
+  {
+    "url": "scripts/classes/myDetails.js",
+    "revision": "b6cdde8dc99e5ad1aba1a2179a94a246"
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
@@ -421,7 +429,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "2cc7702f893c1476b1acfed3b2990b7a"
+    "revision": "75830428561f5be6ddb51106fe3a2553"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -481,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "6c4890bd935366cdbc7955fc82ba2c7a"
+    "revision": "8649a91dc3917aa260198a718e036633"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -497,7 +505,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "8964c35e4324b0af95a246a641fafc71"
+    "revision": "152576ceca656380e8d422bab520e876"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -593,8 +601,6 @@ self.__precacheManifest = [
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
-
-workbox.precaching.cleanupOutdatedCaches();
 
 workbox.routing.registerRoute(/.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/, new workbox.strategies.CacheFirst({ "cacheName":"appShell", plugins: [] }), 'GET');
 workbox.routing.registerRoute(/eRefWSDev3/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');

@@ -356,7 +356,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				ul.css('display','none');
 				selectCheckList.css( { padding: '0 8px', cursor: 'pointer', fontSize: '14px' } );
-				divContentTag.css( { margin:'4px 0 4px 0', border: 'none', padding: 0 } );
+				divContentTag.css( { margin:'0', border: 'none', padding: 0 } );
 
 				Util.populateDropdown_MultiCheckbox( ul, optionList );
 

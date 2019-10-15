@@ -12,7 +12,7 @@ generateSW({
   skipWaiting: true,
   clientsClaim: true,
   offlineGoogleAnalytics: false,
-  cleanupOutdatedCaches: true,
+  cleanupOutdatedCaches: false,
   runtimeCaching: [
     {
       urlPattern: /.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/,

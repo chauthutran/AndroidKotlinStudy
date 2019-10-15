@@ -19,6 +19,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.settingsApp;
+	me.myDetails;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
@@ -101,6 +102,7 @@ function cwsRender()
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
+		me.myDetails = new myDetails( me );
 		me.statisticsObj = new statistics( me );
 	}
 
@@ -162,6 +164,7 @@ function cwsRender()
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 			else if ( areaId === 'settingsPage') me.settingsApp.render();
+			else if ( areaId === 'myDetails') me.myDetails.loadFormData();
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{  
@@ -710,6 +713,10 @@ function cwsRender()
 		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
 		{
 			me.settingsApp.hideSettingsPage();
+		}
+		if ( $( 'div.detailsListDiv' ).is(':visible') ) 
+		{
+			me.myDetails.hidemyDetailsPage();
 		}
 
 		$( 'nav' ).hide();

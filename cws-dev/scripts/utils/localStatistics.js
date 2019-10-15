@@ -82,7 +82,11 @@ function statistics( cwsRender )
             $( '#aboutFormDiv' ).hide();
 		}
 
-		me.statisticsFormDiv.show( 'fast' );
+        me.statisticsFormDiv.show( 'fast' );
+
+        setTimeout( function(){
+            $( 'div.statsBar' ).show( 'slow' );
+        }, 500);
 
     }
 
@@ -460,13 +464,13 @@ function statistics( cwsRender )
         tbl.append( trTitle );
         trTitle.append( tdTitle );
 
-        var trBar  = $( '<tr>' );
+        var trBar  = $( '<tr style="height:'+(maxHeight+10)+'px">' );
         var trData = $( '<tr>' );
         var trName = $( '<tr>' );
 
         for (var i = 0; i < arrObj.length; i++)
         {
-            var tdBar = $( '<td class="columnBar">' );
+            var tdBar = $( '<td class="columnBar" style="min-height:'+(maxHeight+10)+'px">' );
             var tdData = $( '<td class="columnData">' );
             var tdName = $( '<td class="columnLabel">' );
             var barH = 0;
@@ -485,7 +489,7 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            tdBar.html( '<div class="statsBar" style="height:' + barH + '">&nbsp;</div>' );
+            tdBar.html( '<div class="statsBar" style="display:none;height:' + barH + '">&nbsp;</div>' );
             tdName.html( arrObj[ i ].name );
 
         }

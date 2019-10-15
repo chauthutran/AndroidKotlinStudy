@@ -26,6 +26,8 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemListDateGroups;
     me.showredeemListDateGroups = true;
+    me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
+
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -559,7 +561,7 @@ function BlockList( cwsRenderObj, blockObj )
                         // CHECK IF ITEM ALREADY BEING SYNCRONIZED ELSEWHERE IN THE SYSTEM
                         //var dataItm = DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id );
                         DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( dataItm ){
-                            console.log( dataItm );
+
                             if ( dataItm.syncActionStarted == 0 )
                             {
                                 //console.log( e );
@@ -712,8 +714,11 @@ function BlockList( cwsRenderObj, blockObj )
             // added by Greg (2019-02-18) > test track googleAnalytics
             ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-            console.log( tempJsonData );
-            console.log( JSON.stringify( tempJsonData ) );
+            if ( me.debugMode )
+            {
+                console.log( tempJsonData );
+                console.log( JSON.stringify( tempJsonData ) );    
+            }
 
             DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData, callBack );
         });
