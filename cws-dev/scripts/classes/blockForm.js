@@ -383,6 +383,17 @@ function BlockForm( cwsRenderObj, blockObj )
 				divInputTag.css( 'background-color', 'darkgray' );
 				divInputTag.find( 'label.titleDiv' ).css( 'color', 'white' );
 			}
+			else if ( formItemJson.controlType === "IMAGE" )
+			{
+				var divSelectTag = $( '<div class="imgQRInput"></div>' );
+				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" style="display:none" />' );
+				var imgDisplay = $( '<img name="imgPreview_' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="">' );
+
+				divSelectTag.append( inputReal );
+				divSelectTag.append( imgDisplay );
+				divInputTag.append( divSelectTag );
+
+			}
 
 			// Setup events and visibility and rules
 			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData );

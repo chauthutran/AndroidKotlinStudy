@@ -2118,9 +2118,10 @@ $.fn.rotate=function(options) {
 	  }
 
 	  var prec = ( precision ) ? precision : 100;
+
 	  new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
-		  //console.log( newEpoch.value );
-		  if ( callBack ) callBack( newEpoch );
+
+		  if ( callBack ) callBack( newEpoch.value );
 	  });
   }
   Util.getBaseFromBase = function ( input, from, to )
