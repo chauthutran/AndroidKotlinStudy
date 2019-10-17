@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "0c5792a248dcef1223872df57c599afe"
+    "revision": "33ebe3ee9e562a445abecf86c9058071"
   },
   {
     "url": "images/about.svg",
@@ -337,7 +337,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5da0a240360bfc3be67a7e748602a18c"
+    "revision": "ef56c057de37bfa7038a857cc1dea0f2"
   },
   {
     "url": "redeemGen.html",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "fb8f95871a5b04afa34a6c28d4842373"
+    "revision": "de3b8afb0f2bf667313ca1d4a6b0e87b"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -489,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "c68b599de96be742ed9e7babbf3b2549"
+    "revision": "8649a91dc3917aa260198a718e036633"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -537,7 +537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "0201bc9e89dd63df573831fb773c48df"
+    "revision": "1f0d85632ad076527f173cc7e4f7ad95"
   },
   {
     "url": "sounds/beep.mp3",
