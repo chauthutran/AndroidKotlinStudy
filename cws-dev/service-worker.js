@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "33ebe3ee9e562a445abecf86c9058071"
+    "revision": "5b5bc9d40524fba854fc737f87a4a7a0"
   },
   {
     "url": "images/about.svg",
@@ -337,7 +337,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ef56c057de37bfa7038a857cc1dea0f2"
+    "revision": "3fdc80b92d8accc7bf9a64adc1f24248"
   },
   {
     "url": "redeemGen.html",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "de3b8afb0f2bf667313ca1d4a6b0e87b"
+    "revision": "88d474424c69702cb05bcb18ef67a2ca"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -489,11 +489,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "8649a91dc3917aa260198a718e036633"
+    "revision": "00b32a101c795734a857ee12748d99a7"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
-    "revision": "97ef78a5646575f1c9f4356385da1b4c"
+    "revision": "c4fa8598ad0ffae81c74b88bbf747325"
   },
   {
     "url": "scripts/utils/indexdbStorage.js",
@@ -513,11 +513,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/moveLocalStorageData.js",
-    "revision": "094729e61fcd1332f458aa67d119640d"
+    "revision": "b64daab6c28a951acacf96f5af1af534"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "5f5f1abe4a305affa3d9d222e800a16b"
+    "revision": "60da0b24b16aae51934086e1e72ea307"
   },
   {
     "url": "scripts/utils/pptManager.js",
@@ -537,7 +537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "1f0d85632ad076527f173cc7e4f7ad95"
+    "revision": "a11030bad5877b114d7bdcb9387945eb"
   },
   {
     "url": "sounds/beep.mp3",
@@ -597,7 +597,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "581989440fda64b7e053eb9ef4aab909"
+    "revision": "2ee7b53075f60f083520d9deedbca596"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

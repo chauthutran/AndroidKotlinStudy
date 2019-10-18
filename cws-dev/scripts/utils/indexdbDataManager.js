@@ -16,6 +16,9 @@ IndexdbDataManager.saveData = function( secName, jsonData, callBack )
 	if ( DataManager.protectedContainer( secName ) )
 	{
 
+		// preparation for WACO-179: here is where we upgrade secured container content to use array values per Username
+		var JSONcontainerData = {};
+
 		IndexdbDataManager.getIV( function( iv ){
 
 			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
@@ -40,7 +43,6 @@ IndexdbDataManager.saveData = function( secName, jsonData, callBack )
 		if ( callBack ) callBack();
 	}
 
-	
 };
 
 IndexdbDataManager.getData = function( secName, callBack ) 

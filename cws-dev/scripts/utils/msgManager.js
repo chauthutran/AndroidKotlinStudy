@@ -380,6 +380,25 @@ MsgManager.clearReservedMessage = function( reservedID )
 
 }
 
+
+MsgManager.confirmationPreview = function( jsonData )
+{
+    // Util.convertPropListToArray 
+    var tbl = $( '<table></table>' );
+    if ( jsonData )
+    {
+
+        for (var i = 0; i < jsonData.length; i++)
+        {
+
+                //return true;
+
+        }
+
+    }
+
+}
+
 MsgManager.initialSetup();
 
 // -- End of Message Manager Class

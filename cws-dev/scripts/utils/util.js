@@ -538,6 +538,96 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 		});
 	}
 };
+Util.populate_year = function (el,data){
+	var ul = el.getElementsByClassName('optionsSymbol')[0],
+    modal = el.getElementsByClassName('modalSymbol')[0],
+    container = el.getElementsByClassName('containerSymbol')[0],
+    set = el.querySelector('button.set'),
+    cancel = el.querySelector('button.cancel'),
+    inputTrue = el.querySelector('.containerSymbol #inputTrue'),
+    inputShow = el.querySelector('.containerSymbol #inputShow'),
+    inputSearch = el.getElementsByClassName('searchSymbol')[0],
+    closeSearch = el.querySelector('.closeSearchSymbol')
+	function sendFocus(newIndex){
+		if(ul.dataset.index != newIndex){
+			const lastEl = ul.children[ul.dataset.index]
+			if(lastEl){
+				lastEl.style.setProperty('color','black')
+				lastEl.classList.toggle('focus')
+			}
+			ul.children[newIndex].classList.toggle('focus')
+			ul.children[newIndex].style.setProperty('color','#009788')
+			ul.dataset.index=newIndex
+		}
+	}
+	function sendChoose(){
+		inputTrue.value=ul.children[ul.dataset.index].dataset.value
+		inputShow.value=ul.children[ul.dataset.index].innerText
+	}
+	function generateLi({value,text,parent,index}){
+		const li = document.createElement('li')
+		li.dataset.value=value
+		li.dataset.index=index
+		li.innerText=text
+		li.addEventListener('click',e=>{
+			sendFocus(li.dataset.index)
+		})
+		parent.appendChild(li)
+		return li
+	}
+	function hidrateUl(data){
+		data.map((obj,index)=>generateLi({...obj,index,parent:ul}))
+	}
+	closeSearch.style.setProperty('display','none')
+	inputSearch.style.setProperty('display','none')
+	set.addEventListener('click',e=>{
+		e.preventDefault()
+		if(!isNaN(parseInt(ul.dataset.index))){
+			sendChoose();
+		}
+		modal.parentElement.style.setProperty('display','none')
+	})
+	cancel.addEventListener('click',e=>{  
+		e.preventDefault()
+		modal.parentElement.style.setProperty('display','none')
+	})
+	inputShow.addEventListener('click',e=>{
+		e.preventDefault()
+		modal.parentElement.style.setProperty('display','flex')
+	})
+	modal.parentElement.addEventListener('click',e=>{
+		e.preventDefault()
+		if(e.target === modal.parentElement){
+			modal.parentElement.style.setProperty('display','none')
+		}
+	})
+	inputSearch.addEventListener('keyup',e=>{
+		if(e.target.value==''){
+			closeSearch.style.setProperty('display','none')
+		}else{
+			closeSearch.style.setProperty('display','flex')
+		}
+		var letras = e.target.value
+		var lis = Array.from(ul.children)
+		lis.forEach(li=>{
+			var palabra = li.innerText.toLowerCase()
+			if(!palabra.match(`.*${letras.toLowerCase()}.*`)){
+				li.style.setProperty('display','none')
+			}else{
+				li.style.setProperty('display','block')
+			}
+		})
+	})
+	closeSearch.addEventListener('click',e=>{
+		e.preventDefault()
+		inputSearch.value=''
+		closeSearch.style.setProperty('display','none')
+		var lis = Array.from(ul.children)
+		lis.forEach(li=>li.style.setProperty('display','block'))
+	})
+	inputSearch.parentElement.innerHTML='Date of birth'
+	hidrateUl(data)
+}
 
 Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 {
@@ -2118,9 +2208,10 @@ $.fn.rotate=function(options) {
 	  }
 
 	  var prec = ( precision ) ? precision : 100;
+
 	  new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
-		  //console.log( newEpoch.value );
-		  if ( callBack ) callBack( newEpoch );
+
+		  if ( callBack ) callBack( newEpoch.value );
 	  });
   }
   Util.getBaseFromBase = function ( input, from, to )
@@ -2143,5 +2234,18 @@ $.fn.rotate=function(options) {
 	console.log( arrEpochs.toString() );
 
 	return arrEpochs;
-	  
+
   }
+  Util.isJSON = function( objVal ) 
+  {
+	try {
+        JSON.parse(objVal);
+    } catch (e) {
+        return false;
+    }
+    return true;
+  } 
+  Util.isArray = function( objVal ) 
+  {
+	 return Array.isArray ( objVal );
+  } 

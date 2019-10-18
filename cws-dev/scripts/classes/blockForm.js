@@ -333,6 +333,56 @@ function BlockForm( cwsRenderObj, blockObj )
 				divSelectTag.append( inputReal, inputShow );
 				divInputTag.append( divSelectTag );
 			}
+			else if( formItemJson.controlType === "YEAR" ){
+
+				var data = []
+				var today = new Date();
+				var year = today.getFullYear();
+
+				// NOTE Greg: let's make this data driven and come up with a spec that, 
+				//		 1) supports min-max calulations e.g. YEAR(CALC:-50:-18), 
+				//		 2) AND hardcoded year numbers, e.g. YEAR(RANGE:1950-2020) )
+				//		 ... in the absense of any parameters, we default to a hardcoded list (remembering that young girls < 18 can fall pregnant)
+
+				for ( let i = 18; i<=50; i++ )
+				{
+					data.push( { value: year-i, text: year-i } );
+				}
+
+				var component = $(`
+							<div class="containerSymbol">
+								<input id="inputTrue" type="text" name="${formItemJson.id}" uid="${formItemJson.uid}" />
+								<input id="inputShow" type="text" class="form-type-text">
+								<div class="container--modalSymbol">
+									<div class="modalSymbol">
+										<div class="textSymbol">
+											<input type="text" class="searchSymbol">
+											<span class="closeSearchSymbol">�</span>
+										</div>
+										<div class="container--optionsSymbol">
+											<ul class="optionsSymbol">
+											</ul>
+										</div>
+										<div class="controlsSymbol">
+											<button class="cancel">Cancel</button>
+											<button class="set">Set</button>
+										</div>
+									</div>
+								</div>
+							</div>`);
+
+				//console.log( component );
+
+				var wrapperTag = $( '<div></div>' );
+
+				wrapperTag.append( entryTag, component );
+				divInputTag.append( wrapperTag );
+
+				//console.log( wrapperTag[0] );
+
+				Util.populate_year( component[0], data );
+
+			}
 			else if ( formItemJson.controlType === "RADIO")
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
@@ -382,6 +432,17 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				divInputTag.css( 'background-color', 'darkgray' );
 				divInputTag.find( 'label.titleDiv' ).css( 'color', 'white' );
+			}
+			else if ( formItemJson.controlType === "IMAGE" )
+			{
+				var divSelectTag = $( '<div class="imgQRInput"></div>' );
+				var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" style="display:none" />' );
+				var imgDisplay = $( '<img name="imgPreview_' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="">' );
+
+				divSelectTag.append( entryTag );
+				divSelectTag.append( imgDisplay );
+				divInputTag.append( divSelectTag );
+
 			}
 
 			// Setup events and visibility and rules
@@ -477,6 +538,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		if ( formItemJson.display === "hiddenVal" )
 		{
 			divInputTag.hide();
+			if ( entryTag == undefined ) console.log ( formItemJson ) ;
 			entryTag.attr( 'display', 'hiddenVal' );
 
 			if ( formItemJson.display === "hiddenVal" )

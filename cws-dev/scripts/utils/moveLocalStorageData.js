@@ -20,12 +20,10 @@ MoveLocalStorageData.moveData = function(){
             {
                 var value = localStorage.getItem( moveKeys[ i ] );
 
-                //console.log( 'moving ~ ' + moveKeys[ i ] );
-
                 MoveLocalStorageData.moveOneData( moveKeys[ i ], value, function( container, newData ){
 
                     //console.log( 'moved [' + container + '] now updating to  ~ ' );
-                    //console.log( newData );
+
                     LocalStorageDataManager.saveData( container, newData );
 
                 } );

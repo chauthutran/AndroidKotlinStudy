@@ -1198,3 +1198,112 @@ img.imgMore
     border-radius: 5px 5px 0 0;
   }
    /* END > new localSTATISTICS */
+   /***** YEAR  */
+   .modalSymbol li{list-style: none;}
+   .containerSymbol #inputTrue{
+     display: none;
+   }
+   .container--modalSymbol{
+       --bradius: .5em;
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100vw;
+       height: 100vh;
+       background: rgba(0,0,0,.4);
+       display: none;
+       justify-content: center;
+       align-items: center;
+       z-index: 9999;
+   }
+   .modalSymbol{
+       background: #009788;
+       max-width: 95%;
+       width: 150%;
+       text-align: center;
+       border-radius: var(--bradius);
+   }
+   .modalSymbol .textSymbol{
+       position: relative;
+       display: flex;
+       justify-content: stretch;
+       align-items: stretch;
+       padding: .5em;
+       text-align: center;
+       color: rgba(255,255,255,.7);
+       font-size: 36px;
+   }
+   .container--modalSymbol input{
+       flex-grow: 1;
+       border: none;
+       padding: .5em 1.25em;
+       border-radius: .5em;
+       outline: 0;
+   }
+   .container--optionsSymbol{
+       font-family: -apple-system,Helvetica Neue,Helvetica,Arial,sans-serif;
+       background: #F7F7F7;
+       height: 300px;
+       position: relative;
+       padding: .5em;
+       overflow-y: auto;
+   }
+   .optionsSymbol{
+       position: absolute;
+       left: 50%;
+       transform: translateX(-50%);
+       width: 100%;
+   }
+   .container--optionsSymbol::-webkit-scrollbar{
+       display: none;
+   }
+   .optionsSymbol li{
+       font-size: 24px;
+       position: relative;
+       width: 100%;
+       padding: 5px 0;
+       cursor: pointer;
+   }
+   .optionsSymbol li.focus::before{
+       content:'✓';
+       width: 10px;
+       height: 10px;
+       position: absolute;
+       left: 10px;
+       line-height: 30px;
+   }
+   .controlsSymbol{
+       display: flex;
+       justify-content: stretch;
+       overflow: hidden;
+       border-radius: 0 0 var(--bradius) var(--bradius);
+   }
+   .controlsSymbol button{
+       padding: 1em;
+       font-size: 16px;
+       background: #F7F7F7;
+       border: none;
+       border-top: 1px solid #ccc;
+       color: #009788;
+       width: 100%;
+       cursor: pointer;
+   }
+   .controlsSymbol button.set{
+       font-weight: bold;
+   }
+   .controlsSymbol button:active{
+       background: rgb(234, 234, 234);
+   }
+   .closeSearchSymbol{
+       display: none;
+       position: absolute;
+       right: 15px;
+       top: 50%;
+       transform: translateY(-50%);
+       width: 15px;
+       height: 15px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 20px;
+   }

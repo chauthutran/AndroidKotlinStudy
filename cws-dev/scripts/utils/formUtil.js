@@ -827,13 +827,38 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		else if ( val.indexOf( 'epoch' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.epoch( pattern ) );
+			if ( tagTarget.val().length == 0 ) 
+			{
+				Util.epoch( pattern, function( epochVal ){
+					tagTarget.val( epochVal );
+				} );
+			}
+		}
+		else if ( val.indexOf( 'dataURI' ) >= 0 )
+		{
+			var sourceInput = Util.getParameterInside( val, '()' );
+			FormUtil.setQRdataURI( sourceInput, tagTarget );
 		}
 	}
 	else
 	{
 		tagTarget.val( val );
 	}
+
+}
+
+FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
+{
+	var qrContainer = $( '#qrTemplate' );
+	var myQR = new QRCode( qrContainer[ 0 ] );
+	var inputVal = $( '[name=' + sourceInput +']' ).val();
+
+	myQR.fetchCode ( inputVal, function( dataURI ){
+
+		var previewTag = $( '[name=imgPreview_' + imgInputTag.attr( 'name' ) +']' )
+		previewTag.attr( 'src', dataURI );
+
+	})
 
 }
 
@@ -1447,6 +1472,20 @@ FormUtil.shareApp = function() {
     }
 }
 
+FormUtil.shareDataURI = function( title, dataURI ) {
+    //var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
+    if ('share' in navigator) {
+        navigator.share({
+            title: 'CwS: Connect App',
+            text: title,
+            url: dataURI,
+        })
+    } else {
+        // Here we use the WhatsApp API as fallback; remember to encode your text for URI
+        location.href = 'https://api.whatsapp.com/send?text=' + dataURI
+    }
+}
+
 FormUtil.testNewSWavailable = function()
 {
 	console.log( 'testing new SW available ');
@@ -1825,7 +1864,10 @@ FormUtil.getCommonDateGroups = function()
 
 FormUtil.getMyDetails = function( callBack )
 {
-	var targetURL = 'https://api.psi-connect.org/locator.api/?code=' + FormUtil.login_UserName;
+	//https://cws-dhis.psi-mis.org/dws/locator.api/?code=
+	//https://pwa.psi-connect.org/ws/dws/locator.api/?code=
+	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + FormUtil.login_UserName;
+
 	var payload = {
 		"action-details": 2,
 		"config.action": "https://cws-dhis.psi-mis.org/api/dataStore/Connect_config/dws@locator@api",
@@ -1845,6 +1887,7 @@ FormUtil.getMyDetails = function( callBack )
 
 	fetch(request)
         .then((response) => {
+			console.log( response );
             if (!response.ok) {
                 throw Error(response.statusText);
 			}
