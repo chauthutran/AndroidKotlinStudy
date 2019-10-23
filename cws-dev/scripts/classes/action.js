@@ -36,7 +36,7 @@ function Action( cwsRenderObj, blockObj )
 			{
 				me.btnClickMarked( btnTag );
 				me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
-					me.clearBtn_ClickedMark( btnTag );					
+					me.clearBtn_ClickedMark( btnTag );
 				} );
 			}
 			else
@@ -151,7 +151,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					actionIndex++;
 
-					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );	
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );
 				}
 				else
 				{
@@ -368,100 +368,140 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
-				var currBlockId = blockDivTag.attr( 'blockId' );
-				var inputsJson;
 
-				// generate inputsJson - with value assigned...
-				if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
+				console.log( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData );
+				me.handlePayloadPreview( clickActionJson, formDivSecTag, btnTag, function() { 
+
+					var currBlockId = blockDivTag.attr( 'blockId' );
+					var inputsJson;
+	
+					// generate inputsJson - with value assigned...
+					if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
+					{
+						inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
+					}
+					else
+					{
+						inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+					}
+	
+					var previewJson = FormUtil.generateInputJson( formDivSecTag );
+	
+					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
+	
+					// Voucher Status add to payload
+					if ( clickActionJson.voucherStatus )
+					{
+						inputsJson.voucherStatus = clickActionJson.voucherStatus;
+					}
+	
+					// generate url
+					var url = FormUtil.generateUrl( inputsJson, clickActionJson );
+	
+					if ( url !== undefined )
+					{
+						var submitJson = {};
+						submitJson.payloadJson = inputsJson;
+						submitJson.previewJson = previewJson;
+						submitJson.actionJson = clickActionJson;
+						submitJson.url = url;
+	
+						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
+						if ( clickActionJson.redeemListInsert === "true" )
+						{
+							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
+	
+								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
+	
+								if ( afterActionFunc ) afterActionFunc();
+	
+							} );
+	
+						}
+						else if ( clickActionJson.url !== undefined )
+						{					
+							// generate url
+							var url = FormUtil.generateUrl( inputsJson, clickActionJson );
+	
+							// Loading Tag part..
+							var loadingTag = FormUtil.generateLoadingTag( btnTag );
+	
+							// NOTE: This form data is saved in owner form block
+							// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
+							if ( clickActionJson.redeemListInsert === "true" )
+							{
+								me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
+							}
+	
+							FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
+								// final call..
+								//actionIndex++;
+								if ( !redeemReturnJson ) redeemReturnJson = {};
+	
+								FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
+	
+								var resultStr = "success";
+	
+								if ( success )
+								{
+									dataPass.prevWsReplyData = redeemReturnJson;
+	
+									// This will be picked up by 'processWSResult' action (next action to this one)
+	
+									//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
+								}
+								else
+								{
+									// MISSING TRANSLATION
+									MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
+									// Should we stop at here?  Or continue with subActions?
+	
+									var resultStr = "actionFailed";
+								}
+	
+								if ( afterActionFunc ) afterActionFunc( resultStr );
+	
+							});
+						}
+					}
+
+				} )
+
+			}
+		}
+	}
+
+	me.handlePayloadPreview = function( clickActionJson, formDivSecTag, btnTag, callBack )
+	{
+
+		if ( clickActionJson.redeemListInsert === "true" )
+		{
+
+			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
+			console.log( dataPass );
+
+			formDivSecTag.hide();
+
+			MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, 'Record Summary', function( confirmed ){
+
+				formDivSecTag.show();
+
+				if ( confirmed )
 				{
-					inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
+					if ( callBack ) callBack();
 				}
 				else
 				{
-					inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+					if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
 				}
 
-				var previewJson = FormUtil.generateInputJson( formDivSecTag );
-
-				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
-
-				// Voucher Status add to payload
-				if ( clickActionJson.voucherStatus )
-				{
-					inputsJson.voucherStatus = clickActionJson.voucherStatus;
-				}
-
-				// generate url
-				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-
-				if ( url !== undefined )
-				{
-					var submitJson = {};
-					submitJson.payloadJson = inputsJson;
-					submitJson.previewJson = previewJson;
-					submitJson.actionJson = clickActionJson;
-					submitJson.url = url;
-
-					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					if ( clickActionJson.redeemListInsert === "true" )
-					{
-						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
-
-							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
-
-							if ( afterActionFunc ) afterActionFunc();
-
-						} );
-
-					}
-					else if ( clickActionJson.url !== undefined )
-					{					
-						// generate url
-						var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-
-						// Loading Tag part..
-						var loadingTag = FormUtil.generateLoadingTag( btnTag );
-
-						// NOTE: This form data is saved in owner form block
-						// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
-						if ( clickActionJson.redeemListInsert === "true" )
-						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
-						}
-
-						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
-							// final call..
-							//actionIndex++;
-							if ( !redeemReturnJson ) redeemReturnJson = {};
-
-							FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
-
-							var resultStr = "success";
-
-							if ( success )
-							{
-								dataPass.prevWsReplyData = redeemReturnJson;
-
-								// This will be picked up by 'processWSResult' action (next action to this one)
-
-								//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
-							}
-							else
-							{
-								// MISSING TRANSLATION
-								MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
-								// Should we stop at here?  Or continue with subActions?
-
-								var resultStr = "actionFailed";
-							}
-
-							if ( afterActionFunc ) afterActionFunc( resultStr );
-
-						});
-					}
-				}
-			}
+			} );
 		}
+		else
+		{
+			if ( callBack ) callBack();
+		}
+
 	}
 
 	// ========================================================

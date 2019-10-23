@@ -255,8 +255,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				}
 			}
 
-			if ( formItemJson.controlType === "INT"
-				|| formItemJson.controlType === "SHORT_TEXT" )
+			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
@@ -333,8 +332,8 @@ function BlockForm( cwsRenderObj, blockObj )
 				divSelectTag.append( inputReal, inputShow );
 				divInputTag.append( divSelectTag );
 			}
-			else if( formItemJson.controlType === "YEAR" ){
-
+			else if( formItemJson.controlType === "YEAR" )
+			{
 				var data = []
 				var today = new Date();
 				var year = today.getFullYear();
@@ -371,14 +370,12 @@ function BlockForm( cwsRenderObj, blockObj )
 								</div>
 							</div>`);
 
-				//console.log( component );
-
 				var wrapperTag = $( '<div></div>' );
 
-				wrapperTag.append( entryTag, component );
-				divInputTag.append( wrapperTag );
+				entryTag = $( component ).find( '#inputShow' );
 
-				//console.log( wrapperTag[0] );
+				wrapperTag.append( component );
+				divInputTag.append( wrapperTag );
 
 				Util.populate_year( component[0], data );
 
@@ -475,6 +472,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				}
 
 			}
+
 		}
 	}
 

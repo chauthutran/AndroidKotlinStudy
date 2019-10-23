@@ -704,11 +704,12 @@ act {
   vertical-align:top;
   padding:6px 2px;
   white-space:nowrap;
+  cursor: default;
 }
 
-.listItem_voucher_code {
+.listItem_voucher_status {
   vertical-align:top;
-  padding:6px 2px 0 0;
+  padding:10px 2px 0 0;
 }
 
 .listItem_action_sync{

@@ -233,7 +233,7 @@ function syncManager()  {}
                 bProcess = true;
             }
             else
-            {   
+            {
                 //  counter exists for this item AND counter is below limit
                 if ( itemData.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                 {

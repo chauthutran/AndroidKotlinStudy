@@ -108,6 +108,7 @@
     }
     ul li .expandable.expanded .act-l {
       display:block;
+      /*width: auto;*/
     }
 
     #color-theroy .pgcolor-theroy {
@@ -319,6 +320,18 @@
         padding: 5px;
       }
 
+      .modalSymbol{
+        background: #009788;
+        max-width: 95%;
+        width: 150%;
+        text-align: center;
+        border-radius: var(--bradius);
+      }
+
+      .previewPayload {
+        width:97%;
+      }
+
     }
 
     /* 1B. Tab content mode - hide Anchor */
@@ -443,6 +456,20 @@
         height:24px;
         position:relative;
         top:-12px; /*-2px;*/
+      }
+
+      .modalSymbol{
+        background: #009788;
+        max-width: 95%;
+        width: 50%;
+        text-align: center;
+        border-radius: var(--bradius);
+      }
+
+
+      .previewPayload {
+        /*max-width: 75%;
+        width:75%;*/
       }
 
     }

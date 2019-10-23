@@ -113,7 +113,6 @@ FormUtil.generateUrl = function( inputsJson, actionJson )
 	return url;
 }
 
-
 FormUtil.generateInputJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
@@ -154,6 +153,47 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	});		
 
 	return inputsJson;
+}
+
+FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
+{
+	// Input Tag values
+	var retDataArray = [];
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
+
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);	
+		var getVal_visible = inputTag.is(':visible');
+
+		console.log( inputTag );
+		//console.log( inputTag.is(':visible') );
+
+		if ( getVal_visible )
+		{
+
+			if ( inputTag[ 0 ].nodeName === "LABEL" )
+			{
+				inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+			}
+			else if ( inputTag[ 0 ].nodeName === "INPUT" )
+			{
+				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+			}
+			else if ( inputTag[ 0 ].nodeName === "SELECT" )
+			{
+				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+			}
+
+			retDataArray.push( inputsJson );
+
+		}
+
+
+	});		
+
+	return retDataArray;
 }
 
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )

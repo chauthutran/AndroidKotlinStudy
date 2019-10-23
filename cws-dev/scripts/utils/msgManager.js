@@ -381,20 +381,48 @@ MsgManager.clearReservedMessage = function( reservedID )
 }
 
 
-MsgManager.confirmationPreview = function( jsonData )
+MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBackSuccess )
 {
-    // Util.convertPropListToArray 
-    var tbl = $( '<table></table>' );
     if ( jsonData )
     {
+        //var dataPreview =  Util.jsonToArray ( jsonData, 'name:value' );
+        var unqID = Util.generateRandomId();
 
-        for (var i = 0; i < jsonData.length; i++)
-        {
+        var screenWidth = document.body.clientWidth;
+        var screenHeight = document.body.clientHeight;
+        var notifDiv = $( '<div id="notif_' + unqID + '" class="previewPayload rounded" >' );
 
-                //return true;
+        $( parentTag ).append( notifDiv );
+    
+        var prevRow = $( '<div class="" />' );
+        var btnRow = $( '<div style="height:70px;text-align:center;" />' );
+        var btnConfirm = $( '<button term="" class="confirmButton" style="">confirm</button>' );
+        var btnDecline = $( '<button term="" class="cancelButton" style="">cancel</button>' );
 
-        }
+        notifDiv.append( prevRow )
+        notifDiv.append( btnRow );
 
+        prevRow.append( Util.arrayToHTMLtable( title, jsonData ) );
+
+        btnRow.append( btnConfirm )
+        btnRow.append( btnDecline )
+
+        btnConfirm.click( function(){
+
+            $( '#notif_' + unqID ).remove();
+            
+            if ( callBackSuccess ) callBackSuccess( true );
+
+        } );
+
+        btnDecline.click( function(){
+
+            $( '#notif_' + unqID ).remove();
+
+            if ( callBackSuccess ) callBackSuccess( false );
+
+        } );
+    
     }
 
 }

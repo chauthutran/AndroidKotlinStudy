@@ -376,21 +376,75 @@ Util.checkEmptyId_FromList = function( list )
 	return ( Util.getFromList( list, '' ) !== undefined );
 };
 
-Util.convertPropListToArray = function( jsonData )
+Util.jsonToArray = function( jsonData, structureConfig )
 {
-	var arr = [];
+	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;
+	//to do: make recursive in the presence of nested json objects (typeOf obj === "object" )
+	var strucConfArr = ( structureConfig ? structureConfig.split( ':' ) : undefined );
+	var arrRet = [];
+	var fldExcl = 'userName,password,';
 
 	for( var keyName in jsonData )
-	{		
-		if ( jsonData.hasOwnProperty( keyName ) ) {
-			var obj = jsonData[keyName];
-			obj.keyName = keyName;
-			arr.push( obj );
+	{
+		if ( fldExcl.indexOf( keyName ) < 0 )
+		{
+			var obj = jsonData[ keyName ];
+
+			if ( strucConfArr )
+			{
+				var jDat = { [ strucConfArr[ 0 ] ]: keyName, [ strucConfArr[ 1 ] ]: obj };
+			}
+			else
+			{
+				var jDat = { [ keyName ]: obj };
+			}
+	
+			arrRet.push ( jDat );
 		}
 	}
 
-	return arr;
+	return arrRet;
 };
+
+Util.arrayToHTMLtable = function( title, arr )
+{
+	var ret = $( '<table />');
+
+	if ( arr )
+	{
+		if ( title )
+		{
+			var tr = $( '<tr />');
+			ret.append( tr );
+			tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + title + '</strong>' ) );	
+		}
+	
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + arr[ i ].name + '</strong>' ) );	
+			}
+			else
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td />').html( arr[ i ].name ) );
+				tr.append( $( '<td />').html( arr[ i ].value ) );
+			}
+		}
+	
+		var tr = $( '<tr />');
+		ret.append( tr );
+		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
+
+	}
+
+	return ret;
+
+}
 
 // List / Array Related
 // ----------------------------------
@@ -538,95 +592,139 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 		});
 	}
 };
+
 Util.populate_year = function (el,data){
+
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
-    modal = el.getElementsByClassName('modalSymbol')[0],
-    container = el.getElementsByClassName('containerSymbol')[0],
-    set = el.querySelector('button.set'),
-    cancel = el.querySelector('button.cancel'),
-    inputTrue = el.querySelector('.containerSymbol #inputTrue'),
-    inputShow = el.querySelector('.containerSymbol #inputShow'),
-    inputSearch = el.getElementsByClassName('searchSymbol')[0],
-    closeSearch = el.querySelector('.closeSearchSymbol')
-	function sendFocus(newIndex){
-		if(ul.dataset.index != newIndex){
+		modal = el.getElementsByClassName('modalSymbol')[0],
+		container = el.getElementsByClassName('containerSymbol')[0],
+		set = el.querySelector('button.set'),
+		cancel = el.querySelector('button.cancel'),
+		inputTrue = el.querySelector('.containerSymbol #inputTrue'),
+		inputShow = el.querySelector('.containerSymbol #inputShow'),
+		inputSearch = el.getElementsByClassName('searchSymbol')[0],
+		closeSearch = el.querySelector('.closeSearchSymbol');
+
+	function sendFocus(newIndex) {
+
+		if (ul.dataset.index != newIndex) {
+
 			const lastEl = ul.children[ul.dataset.index]
-			if(lastEl){
-				lastEl.style.setProperty('color','black')
+
+			if (lastEl) {
+				lastEl.style.setProperty('color', 'black')
 				lastEl.classList.toggle('focus')
 			}
+
 			ul.children[newIndex].classList.toggle('focus')
-			ul.children[newIndex].style.setProperty('color','#009788')
-			ul.dataset.index=newIndex
+			ul.children[newIndex].style.setProperty('color', '#009788')
+			ul.dataset.index = newIndex
+
 		}
 	}
+
 	function sendChoose(){
-		inputTrue.value=ul.children[ul.dataset.index].dataset.value
-		inputShow.value=ul.children[ul.dataset.index].innerText
+
+		inputTrue.value = ul.children[ul.dataset.index].dataset.value
+		inputShow.value = ul.children[ul.dataset.index].innerText
+
+		if ("createEvent" in document) {
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent('change', false, true);
+			inputShow.dispatchEvent(evt);
+			console.log( 'dispached change ');
+		}
+		else
+		{
+			inputShow.fireEvent("onchange");
+			console.log( 'fired onchange ');
+		}
+
 	}
-	function generateLi({value,text,parent,index}){
-		const li = document.createElement('li')
-		li.dataset.value=value
-		li.dataset.index=index
-		li.innerText=text
-		li.addEventListener('click',e=>{
+
+	function generateLi( { value, text, parent, index} ){
+
+		const li = document.createElement('li');
+
+		li.dataset.value = value;
+		li.dataset.index = index;
+		li.innerText = text;
+
+		li.addEventListener('click', e => {
 			sendFocus(li.dataset.index)
-		})
-		parent.appendChild(li)
-		return li
+		});
+
+		parent.appendChild(li);
+
+		return li;
+
 	}
 	function hidrateUl(data){
-		data.map((obj,index)=>generateLi({...obj,index,parent:ul}))
+		data.map((obj,index)=>generateLi({...obj,index,parent:ul}));
 	}
-	closeSearch.style.setProperty('display','none')
-	inputSearch.style.setProperty('display','none')
-	set.addEventListener('click',e=>{
-		e.preventDefault()
-		if(!isNaN(parseInt(ul.dataset.index))){
+
+	closeSearch.style.setProperty('display','none');
+	inputSearch.style.setProperty('display','none');
+
+	set.addEventListener('click', e => {
+		e.preventDefault();
+		if (!isNaN(parseInt(ul.dataset.index))) {
 			sendChoose();
 		}
-		modal.parentElement.style.setProperty('display','none')
+		modal.parentElement.style.setProperty('display', 'none');
 	})
-	cancel.addEventListener('click',e=>{  
-		e.preventDefault()
-		modal.parentElement.style.setProperty('display','none')
+
+	cancel.addEventListener('click', e => {
+		e.preventDefault();
+		modal.parentElement.style.setProperty('display', 'none');
 	})
-	inputShow.addEventListener('click',e=>{
-		e.preventDefault()
-		modal.parentElement.style.setProperty('display','flex')
+
+	inputShow.addEventListener('click', e => {
+		e.preventDefault();
+		modal.parentElement.style.setProperty('display', 'flex');
 	})
-	modal.parentElement.addEventListener('click',e=>{
-		e.preventDefault()
-		if(e.target === modal.parentElement){
-			modal.parentElement.style.setProperty('display','none')
+
+	modal.parentElement.addEventListener('click', e => {
+		e.preventDefault();
+		if (e.target === modal.parentElement) {
+			modal.parentElement.style.setProperty('display', 'none');
 		}
 	})
-	inputSearch.addEventListener('keyup',e=>{
-		if(e.target.value==''){
-			closeSearch.style.setProperty('display','none')
-		}else{
-			closeSearch.style.setProperty('display','flex')
+
+	inputSearch.addEventListener('keyup', e => {
+
+		if (e.target.value == '') {
+			closeSearch.style.setProperty('display', 'none');
+		} else {
+			closeSearch.style.setProperty('display', 'flex');
 		}
-		var letras = e.target.value
-		var lis = Array.from(ul.children)
-		lis.forEach(li=>{
-			var palabra = li.innerText.toLowerCase()
-			if(!palabra.match(`.*${letras.toLowerCase()}.*`)){
-				li.style.setProperty('display','none')
-			}else{
-				li.style.setProperty('display','block')
+
+		var letras = e.target.value;
+		var lis = Array.from(ul.children);
+
+		lis.forEach(li => {
+			var palabra = li.innerText.toLowerCase();
+			if (!palabra.match(`.*${letras.toLowerCase()}.*`)) {
+				li.style.setProperty('display', 'none');
+			} else {
+				li.style.setProperty('display', 'block');
 			}
-		})
+		});
+
 	})
-	closeSearch.addEventListener('click',e=>{
+
+	closeSearch.addEventListener('click', e => {
 		e.preventDefault()
-		inputSearch.value=''
-		closeSearch.style.setProperty('display','none')
+		inputSearch.value = ''
+		closeSearch.style.setProperty('display', 'none')
 		var lis = Array.from(ul.children)
-		lis.forEach(li=>li.style.setProperty('display','block'))
+		lis.forEach(li => li.style.setProperty('display', 'block'))
 	})
-	inputSearch.parentElement.innerHTML='Date of birth'
-	hidrateUl(data)
+
+	inputSearch.parentElement.innerHTML = 'Date of birth';
+
+	hidrateUl(data);
+
 }
 
 Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )

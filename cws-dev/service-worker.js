@@ -25,11 +25,11 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/responsive.css",
-    "revision": "52778faea46c90859de6686694ae020c"
+    "revision": "60b0081cb9c28123e3712f4381ba6fe3"
   },
   {
     "url": "css/style.css",
-    "revision": "5b5bc9d40524fba854fc737f87a4a7a0"
+    "revision": "a4be3f065a0b1a8a046c9b45c1d54690"
   },
   {
     "url": "images/about.svg",
@@ -337,11 +337,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "3fdc80b92d8accc7bf9a64adc1f24248"
+    "revision": "4ac39093e4732cce746379dd66f42500"
   },
   {
     "url": "redeemGen.html",
-    "revision": "dfd2f7a4e730e9df4fe06feb2752b46e"
+    "revision": "ca5d5efe73926933e17f35c82b2892d6"
   },
   {
     "url": "scripts/app.js",
@@ -353,7 +353,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "3c537aaa4bcf110bb7e64bb3de3c081d"
+    "revision": "740f1bb5d3531c6a1e13a6f4dd9f6820"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -369,11 +369,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "88d474424c69702cb05bcb18ef67a2ca"
+    "revision": "2a0bbb21b35ccd95c287e37017fe79fa"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "b3c39d1e2db6b62a0e01c9f6a3ef170e"
+    "revision": "afb46196dc9bffc4325429785d8c4815"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -489,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "00b32a101c795734a857ee12748d99a7"
+    "revision": "638c5597ab4d2f4709b90c97bfa47630"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -501,7 +501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "d640adb9cc179d7a53cd6b0d4eb4ae04"
+    "revision": "3860ca69ec3bd3f5386e0c9dbc64cbed"
   },
   {
     "url": "scripts/utils/localStatistics.js",
@@ -517,7 +517,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "60da0b24b16aae51934086e1e72ea307"
+    "revision": "7fc4d3f37b0a30ba0a8d019b89a442b1"
   },
   {
     "url": "scripts/utils/pptManager.js",
@@ -533,11 +533,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "9af99cfd201181843b590068ffeba4d4"
+    "revision": "40f722d1981850b1107a5d171849a39a"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "a11030bad5877b114d7bdcb9387945eb"
+    "revision": "3bc09697ffa42c79341e3d6fb5923c37"
   },
   {
     "url": "sounds/beep.mp3",
@@ -597,7 +597,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "2ee7b53075f60f083520d9deedbca596"
+    "revision": "3d4ea045d384f0bb7f8337c584f12b8d"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
