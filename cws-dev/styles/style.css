@@ -1334,7 +1334,8 @@ img.imgMore
     width: 100%;
   }
   .previewPayload > div > table > tr > td {
-    line-height: 1.2em;
+    line-height: 1.9em;
+    width: 45%;
   }
   .dataToHTMLheader {
     text-align: center;

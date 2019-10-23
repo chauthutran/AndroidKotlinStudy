@@ -353,7 +353,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "740f1bb5d3531c6a1e13a6f4dd9f6820"
+    "revision": "772550a7f023089543917e13567670bd"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -373,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "afb46196dc9bffc4325429785d8c4815"
+    "revision": "fc03ed286e183e0b58e811e179d7a804"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -489,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "638c5597ab4d2f4709b90c97bfa47630"
+    "revision": "13448376c6b24225309e02b2dcdf00d7"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "40f722d1981850b1107a5d171849a39a"
+    "revision": "e89c3ca3af6927213f9b1adf63406609"
   },
   {
     "url": "scripts/utils/util.js",
@@ -597,7 +597,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "3d4ea045d384f0bb7f8337c584f12b8d"
+    "revision": "bc60a57a28ec61e5641f7d265638fb59"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

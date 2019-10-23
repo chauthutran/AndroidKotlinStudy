@@ -288,11 +288,11 @@ function syncManager()  {}
                     {
                         mySyncIcon.rotate({ count:999, forceJS: true, startDeg: 0 });
         
-                        var myResultTag = $( '#listItem_networkResults_' + itemData.id );
+                        //var myResultTag = $( '#listItem_networkResults_' + itemData.id );
                         var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting to network... </div>' ); //MISSING TRANSLATION
         
-                        myResultTag.empty();
-                        myResultTag.append( loadingTag );
+                        //myResultTag.empty();
+                        //myResultTag.append( loadingTag );
         
                     }
     
@@ -407,7 +407,7 @@ function syncManager()  {}
                             if ( mySyncIcon )
                             {
                                 mySyncIcon.stop();
-                                myResultTag.html( newTitle );
+                                //myResultTag.html( newTitle );
                             }
     
                             if ( returnJson )

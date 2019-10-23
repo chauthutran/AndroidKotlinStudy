@@ -369,7 +369,6 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
 
-				console.log( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData );
 				me.handlePayloadPreview( clickActionJson, formDivSecTag, btnTag, function() { 
 
 					var currBlockId = blockDivTag.attr( 'blockId' );
@@ -478,6 +477,7 @@ function Action( cwsRenderObj, blockObj )
 		{
 
 			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
+			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
 			console.log( dataPass );
 
 			formDivSecTag.hide();

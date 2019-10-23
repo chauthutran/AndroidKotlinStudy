@@ -435,19 +435,29 @@ function BlockList( cwsRenderObj, blockObj )
 
             e.stopPropagation();
 
-            expandedDivTag.toggleClass( 'act-l-more-open' );            
+            expandedDivTag.toggleClass( 'act-l-more-open' );  
+
+            if ( expandedDivTag.hasClass( 'act-l-more-open' ) )
+            {
+                expandedDivTag.empty();
+
+                DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
+
+                    var trxDetails = Util.arrayToHTMLtable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
+                    //var prevDetails = Util.arrayToHTMLtable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
+                    var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
+                    var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
+
+                    expandedDivTag.append( trxDetails );
+                    expandedDivTag.append( historyDetails );
+            
+                    if ( paylDetails && paylDetails.length ) expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
+    
+                });
+            }
+
 
         })
-
-        var trxDetails = Util.arrayToHTMLtable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
-        //var prevDetails = Util.arrayToHTMLtable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
-        var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
-        var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
-
-        expandedDivTag.append( trxDetails );
-        expandedDivTag.append( historyDetails );
-
-        if ( paylDetails && paylDetails.length ) expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
 
         // Populate the Item Content
         me.populateData_RedeemItemTag( itemData, liContentTag );
@@ -647,12 +657,12 @@ function BlockList( cwsRenderObj, blockObj )
                                 fetchItemData.lastAttempt = dtmRedeemAttempt;
 
                                 var redeemID = mySyncIcon.attr( 'id' ).replace( 'listItem_icon_sync_','' );
-                                var myTag = $( '#listItem_networkResults_' + redeemID );
+                                //var myTag = $( '#listItem_networkResults_' + redeemID );
                                 var myQueueStatus = $( '#listItem_queueStatus_' + itemData.id );
                                 var loadingTag = $( '<div class="loadingImg syncConnecting" >Connecting to network... </div>' ); //MISSING TRANSLATION
 
-                                myTag.empty();
-                                myTag.append( loadingTag );
+                                //myTag.empty();
+                                //myTag.append( loadingTag );
 
                                 e.stopPropagation();
 
@@ -661,7 +671,7 @@ function BlockList( cwsRenderObj, blockObj )
                                 {
                                     // MISSING TRANSLATION
                                     MsgManager.notificationMessage ( 'Current mode: offline. Need to be online for this.', 'notificationDark', undefined, '', 'right', 'top', undefined, undefined, undefined, 'OfflineSyncWarning' );
-                                    myTag.html( fetchItemData.title );
+                                    //myTag.html( fetchItemData.title );
                                     mySyncIcon.stop();
                                 }
                                 else
@@ -692,7 +702,7 @@ function BlockList( cwsRenderObj, blockObj )
                                             if ( fetchItemData.activityList ) delete fetchItemData.activityList;
 
                                             myQueueStatus.html( fetchItemData.queueStatus )
-                                            myTag.html( fetchItemData.title );
+                                            //myTag.html( fetchItemData.title );
 
                                         }
                                         else 
@@ -715,7 +725,7 @@ function BlockList( cwsRenderObj, blockObj )
                                                 fetchItemData.queueStatus = 'retry'; // MISSING TRANSLATION
                                             }
         
-                                            myTag.html( 'Error redeeming' );
+                                            //myTag.html( 'Error redeeming' );
                                         }
 
                                         if ( returnJson )

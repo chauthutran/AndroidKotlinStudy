@@ -205,7 +205,6 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 	if ( inputTags.length )
 	{
-
 		inputTags.each( function()
 		{		
 			var inputTag = $(this);	
