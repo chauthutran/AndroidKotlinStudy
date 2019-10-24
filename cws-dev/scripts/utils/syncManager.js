@@ -25,7 +25,7 @@ function syncManager()  {}
     syncManager.lastSyncAttempt = 0;
     syncManager.lastSyncSuccess = 0;
 
-    syncManager.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
+    syncManager.debugMode = WsApiManager.isDebugMode;
 
     var syncAutomationInteruptedTimer = 0;
     var progClass;

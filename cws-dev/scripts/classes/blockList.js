@@ -443,6 +443,8 @@ function BlockList( cwsRenderObj, blockObj )
 
                 DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
 
+                    console.log( fetchItemData );
+
                     var trxDetails = Util.arrayToHTMLtable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
                     //var prevDetails = Util.arrayToHTMLtable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
                     var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );

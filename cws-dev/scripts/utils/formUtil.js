@@ -3,10 +3,7 @@
 
 function FormUtil() {}
 
-FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
-FormUtil.appUrlName = 'cws';			// App name - Part of the url
 
-FormUtil.dynamicWS = '';
 FormUtil.staticWSpath = '';
 
 FormUtil.login_UserName = '';
@@ -20,8 +17,6 @@ FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
 FormUtil.block_payloadConfig = '';
 
-FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
-FormUtil._serverUrlOverride = "";
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
@@ -47,70 +42,6 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 	}
 
 	return objJson;
-}
-
-
-FormUtil.getServerUrl = function()
-{
-	var serverUrl = "";
-
-	if ( FormUtil._serverUrlOverride )
-	{
-		serverUrl = FormUtil._serverUrlOverride; 
-	}
-	else
-	{
-		serverUrl = FormUtil._serverUrl;
-	}
-
-	return serverUrl;
-};
-
-
-FormUtil.isAppsPsiServer = function()
-{
-	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
-}
-
-FormUtil.isPsiServer = function()
-{
-	return ( location.host.indexOf( 'psi-mis.org' ) >= 0 );
-}
-
-FormUtil.generateUrl = function( inputsJson, actionJson )
-{
-	var url;
-
-	if ( actionJson.url !== undefined )
-	{
-		url = FormUtil.getWsUrl( actionJson.url );
-
-		if ( actionJson.urlParamNames !== undefined 
-			&& actionJson.urlParamInputs !== undefined 
-			&& actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
-		{
-			var paramAddedCount = 0;
-	
-			for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
-			{
-				var paramName = actionJson.urlParamNames[i];
-				var inputName = actionJson.urlParamInputs[i];
-	
-				if ( inputsJson[ inputName ] !== undefined )
-				{
-					var value = inputsJson[ inputName ];
-	
-					url += ( paramAddedCount == 0 ) ? '?': '&';
-	
-					url += paramName + '=' + value;
-				}
-	
-				paramAddedCount++;
-			}
-		}
-	}
-	
-	return url;
 }
 
 FormUtil.generateInputJson = function( formDivSecTag, getValList )
@@ -159,34 +90,43 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var retDataArray = [];
-	var inputsJson = {};
+	var inputsJson;
 	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
 
 	inputTags.each( function()
 	{		
 		var inputTag = $(this);	
-		var getVal_visible = inputTag.is(':visible');
-
-		console.log( inputTag );
-		//console.log( inputTag.is(':visible') );
+		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) ;
 
 		if ( getVal_visible )
 		{
 
 			if ( inputTag[ 0 ].nodeName === "LABEL" )
 			{
-				inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+				if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
+				{
+					inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "INPUT" )
 			{
-				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' )  ) )
+				{
+					inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "SELECT" )
 			{
 				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 			}
 
-			retDataArray.push( inputsJson );
+			if ( inputsJson )
+			{
+				console.log( inputTag );
+				retDataArray.push( inputsJson );
+			}
+
+			inputsJson = undefined;
 
 		}
 
@@ -265,7 +205,7 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		inputsJson[ 'userName' ] = FormUtil.login_UserName;
 		inputsJson[ 'password' ] = FormUtil.login_Password;
 
-		if ( (location.href).indexOf('cws.') < 0 )
+	  if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
 		{
 			console.log ( inputsJson );
 			console.log ( JSON.stringify( inputsJson, null, 4) );	
@@ -427,19 +367,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
-FormUtil.getWsUrl = function( subUrl )
-{
-	// if 'subUrl' is full url, use it.  Otherwise, add server url in front.
-	if ( subUrl.indexOf( 'http' ) === 0 )
-	{
-		return subUrl;  // THIS WOULD NOT NORMALY WORK DUE TO CORS policy
-	} 
-	else 
-	{
-		return FormUtil.getServerUrl() + "/" + FormUtil.staticWSName + subUrl;
-	}
-}
-
 
 // POST Request required json prepare
 FormUtil.getFetchWSJson = function( payloadJson, headerJson )
@@ -468,7 +395,7 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {
-	var url = FormUtil.getWsUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
 
 	RESTUtil.retrieveJson( url, function( success, returnJson )
 	{
@@ -481,7 +408,7 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 // POST Request to Web Service..
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
-	var url = FormUtil.getWsUrl( apiPath );
+	var url = WsApiManager.composeWsFullUrl( apiPath );
 
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
@@ -508,19 +435,14 @@ FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, 
 FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
-	var wsLoc = (location.host).replace('.psi-mis.org','');
-	var devLocs = 'localhost,ngrok,127.0.0.1:8080,psi-connect';
 
-	for ( var i=0; i< devLocs.split( ',' ).length; i++ )
-	{
-		if ( (location.href).indexOf( devLocs.split( ',' )[ i ] ) >= 0 )
-		{
-			wsLoc = "cws-dev";
-			break;
-		}
-	}
+	var payloadJson = { 'submitLogin': true
+		, 'submitLogin_usr': userName
+		, 'submitLogin_pwd': password
+		, 'dcConfigGet': 'Y'
+		, pwaStage: WsApiManager.getStageName() 
+	};
 
-	var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: wsLoc };
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
@@ -755,28 +677,18 @@ FormUtil.getRedeemPayload = function( id ) {
 
 }
 
-FormUtil.getConfigInfo = function( returnFunc )
-{
-	var jsonData = {
-		"cws": 		 "https://cws.psi-mis.org/ws/eRefWSProd",
-		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
-		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSStage",
-		"cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" //use 'eRefWSDev4' (4) when server issues exist
-	};
 
-	returnFunc( true, jsonData );
-}
 
 FormUtil.getAppInfo = function( returnFunc )
 {	
-	var url = FormUtil.getWsUrl( '/api/getPWAInfo' );
+	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
 }
 
 FormUtil.getDataServerAvailable = function( returnFunc )
 {	
-	var url = FormUtil.getWsUrl( '/api/available' );
+	var url = WsApiManager.composeWsFullUrl( '/api/available' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
 }
@@ -896,6 +808,7 @@ FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 
 		var previewTag = $( '[name=imgPreview_' + imgInputTag.attr( 'name' ) +']' )
 		previewTag.attr( 'src', dataURI );
+		imgInputTag.val( dataURI );
 
 	})
 
@@ -1259,8 +1172,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
 };
 
-
-FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj)
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride )
 {
 	if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
 	{
@@ -1268,6 +1180,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 		$.get( activityType.icon.path, function(data) {
 
 			var svgObject = ( $(data)[0].documentElement );
+			var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
 
 			if ( activityType.icon.colors )
 			{
@@ -1296,10 +1209,10 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$( iconObj ).empty();
 			$( iconObj ).append( svgObject );
 
-			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize && $(iconObj).html() )
+			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
 			{
-				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
-				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
+				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, svgStyle.width ) );
+				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, svgStyle.height ) );
 
 			}
 
@@ -1900,6 +1813,30 @@ FormUtil.getCommonDateGroups = function()
 			{ name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
 	return z;
 }
+
+FormUtil.getActivityTypes = function()
+    {
+        // get different 'Areas' or Activity-Types
+        var sessData = localStorage.getItem('session');
+        var retArr = [];
+
+        if ( sessData )
+        {
+            var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+
+            if ( itms && itms.length )
+            {
+                for (var i = 0; i < itms.length; i++)
+                {
+                    retArr.push( { name: itms[ i ].name } );
+                }
+            }
+
+        }
+
+        return retArr;
+
+    };
 
 FormUtil.getMyDetails = function( callBack )
 {

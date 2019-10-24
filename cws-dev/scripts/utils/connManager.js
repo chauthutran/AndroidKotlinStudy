@@ -41,7 +41,7 @@ ConnManager.userNetworkModeSwitch_IntvLimit = 3600; //3600 = 60 * 60sec = 1h (@ 
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 
-ConnManager.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
+ConnManager.debugMode = WsApiManager.isDebugMode;
 
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
@@ -281,7 +281,6 @@ ConnManager.createScheduledConnTests = function()
 
 			ConnManager.runScheduledConnTest( function( jsonData ) {
 
-				//if ( ConnManager.debugMode ) console.log( jsonData );
 
 				ConnManager.setScreen_NetworkIcons( jsonData.networkOnline, jsonData.dataServerOnline );
 

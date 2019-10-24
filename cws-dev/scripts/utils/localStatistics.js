@@ -56,7 +56,7 @@ function statistics( cwsRender )
 
     me.render = function()
     {
-        me.activityTypes = me.getActivityTypes();
+        me.activityTypes = FormUtil.getActivityTypes();
         me.statusTypes = me.getStatusTypes();
         me.dateGroups = FormUtil.getCommonDateGroups();
         me.hoursInDay = me.getHoursInDay();
@@ -130,29 +130,6 @@ function statistics( cwsRender )
     }
 
     // ==== Methods ======================
-    me.getActivityTypes = function()
-    {
-        // get different 'Areas' or Activity-Types
-        var sessData = localStorage.getItem('session');
-        var retArr = [];
-
-        if ( sessData )
-        {
-            var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
-
-            if ( itms && itms.length )
-            {
-                for (var i = 0; i < itms.length; i++)
-                {
-                    retArr.push( { name: itms[ i ].name } );
-                }
-            }
-
-        }
-
-        return retArr;
-
-    };
 
     me.createLocalAnalytics = function()
     {
@@ -370,7 +347,7 @@ function statistics( cwsRender )
 
             divIconText.html( arrObj[ i ].name );
 
-            FormUtil.appendActivityTypeIcon ( divIconObj, FormUtil.getActivityType( { activityType: arrObj[ i ].name } ), { name: me.cwsRenderObj.status_redeem_submit }, me.cwsRenderObj );
+            FormUtil.appendActivityTypeIcon ( divIconObj, FormUtil.getActivityType( { activityType: arrObj[ i ].name } ), { name: me.cwsRenderObj.status_redeem_submit }, me.cwsRenderObj, { width:38, height: 38 } );
 
         }
 

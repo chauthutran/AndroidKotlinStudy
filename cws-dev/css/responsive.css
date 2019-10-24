@@ -329,7 +329,9 @@
       }
 
       .previewPayload {
-        width:97%;
+        width:95vw;
+        height:96vh;
+        left: 0;
       }
 
     }
@@ -450,7 +452,7 @@
         display: none;
       }
 
-      
+
       img.expandable-arrow{
         width:24px;
         height:24px;
@@ -468,8 +470,9 @@
 
 
       .previewPayload {
-        /*max-width: 75%;
-        width:75%;*/
+        min-width: 500px;
+        max-width: 50vw;
+        height: 96vh;
       }
 
     }

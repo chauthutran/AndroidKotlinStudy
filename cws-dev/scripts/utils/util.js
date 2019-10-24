@@ -416,7 +416,7 @@ Util.arrayToHTMLtable = function( title, arr )
 		{
 			var tr = $( '<tr />');
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + title + '</strong>' ) );	
+			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( '<strong>' + title + '</strong>' ) );	
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )
@@ -780,7 +780,7 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 Util.createCheckbox = function createCheckbox( { message='', align, name='', uid='' } )
 {
 	var divContainerTag = $( '<div></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" class="form-type-text" type="checkbox" style="display:none" />' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" class="inputHidden" type="checkbox" style="display:none" />' );
 	var checkboxShow = $( '<div></div>' );
 	var text = $( '<span>' + message + '</span>' )
 	var check = $( '<span></span>' )
@@ -847,7 +847,7 @@ Util.createCheckbox = function createCheckbox( { message='', align, name='', uid
 
 }
 
-Util.populateDropdown_MultiCheckbox = function ( selectObj, json_Data )
+Util.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
 {
 	selectObj.empty();
 
@@ -855,7 +855,7 @@ Util.populateDropdown_MultiCheckbox = function ( selectObj, json_Data )
 
 		var { component } = Util.createCheckbox( {
 			message:	obj.defaultName,
-			name:		obj.value } ),
+			name:		'checkbox_' + formItemJson.id + '_' + obj.value } ),
 			li = $( '<li></li>' )
 			li.append( component )
 			selectObj.append( li )

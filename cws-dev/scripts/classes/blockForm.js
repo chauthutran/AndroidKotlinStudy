@@ -405,9 +405,11 @@ function BlockForm( cwsRenderObj, blockObj )
 				selectCheckList.css( { padding: '0 8px', cursor: 'pointer', fontSize: '14px' } );
 				divContentTag.css( { margin:'0', border: 'none', padding: 0 } );
 
-				Util.populateDropdown_MultiCheckbox( ul, optionList );
+				Util.populateDropdown_MultiCheckbox( formItemJson, ul, optionList );
 
-				divContentTag.append( selectCheckList, ul );
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="MULTI_CHECKBOX ' + formItemJson.id + '" type="hidden" />' );
+
+				divContentTag.append( entryTag, selectCheckList, ul );
 
 				selectCheckList.click( function(){
 					ul.slideToggle('fast')

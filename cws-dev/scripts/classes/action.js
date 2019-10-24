@@ -395,7 +395,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 	
 					// generate url
-					var url = FormUtil.generateUrl( inputsJson, clickActionJson );
+					var url = me.generateWsUrl( inputsJson, clickActionJson );
 	
 					if ( url !== undefined )
 					{
@@ -420,7 +420,7 @@ function Action( cwsRenderObj, blockObj )
 						else if ( clickActionJson.url !== undefined )
 						{					
 							// generate url
-							var url = FormUtil.generateUrl( inputsJson, clickActionJson );
+							var url = me.generateWsUrl( inputsJson, clickActionJson );
 	
 							// Loading Tag part..
 							var loadingTag = FormUtil.generateLoadingTag( btnTag );
@@ -482,20 +482,29 @@ function Action( cwsRenderObj, blockObj )
 
 			formDivSecTag.hide();
 
-			MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, 'Record Summary', function( confirmed ){
+			if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
+			{
 
-				formDivSecTag.show();
+				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, 'Record Summary', function( confirmed ){
 
-				if ( confirmed )
-				{
-					if ( callBack ) callBack();
-				}
-				else
-				{
-					if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
-				}
+					formDivSecTag.show();
+	
+					if ( confirmed )
+					{
+						if ( callBack ) callBack();
+					}
+					else
+					{
+						if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
+					}
+	
+				} );
+			}
+			else
+			{
+				if ( callBack ) callBack();
+			}
 
-			} );
 		}
 		else
 		{
@@ -504,6 +513,44 @@ function Action( cwsRenderObj, blockObj )
 
 	}
 
+
+	// This has moved from FormUtil
+	me.generateWsUrl = function( inputsJson, actionJson )
+	{
+		var url;
+
+		if ( actionJson.url !== undefined )
+		{
+			url = WsApiManager.composeWsFullUrl( actionJson.url );
+
+			if ( actionJson.urlParamNames !== undefined 
+				&& actionJson.urlParamInputs !== undefined 
+				&& actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
+			{
+				var paramAddedCount = 0;
+		
+				for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
+				{
+					var paramName = actionJson.urlParamNames[i];
+					var inputName = actionJson.urlParamInputs[i];
+		
+					if ( inputsJson[ inputName ] !== undefined )
+					{
+						var value = inputsJson[ inputName ];
+		
+						url += ( paramAddedCount == 0 ) ? '?': '&';
+		
+						url += paramName + '=' + value;
+					}
+		
+					paramAddedCount++;
+				}
+			}
+		}
+		
+		return url;
+	}
+  
 	// ========================================================
 	
 	me.btnClickedAlready = function( btnTag )
