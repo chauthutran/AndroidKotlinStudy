@@ -60,13 +60,10 @@ WsApiManager.setupWsApiVariables = function( returnFunc )
     if ( returnFunc ) returnFunc();
 };
 
-
-// FormUtil.getConfigInfo  = function( returnFunc )
 WsApiManager.getWsApiList = function( returnFunc )
 {
 	returnFunc( true, WsApiManager.wsApiListJson );
 };
-
 
 WsApiManager.getWsApiUrl = function( wsApiListJson ) 
 {
@@ -74,7 +71,6 @@ WsApiManager.getWsApiUrl = function( wsApiListJson )
 
     // If error occurs here, add try/catch
     var locHostName = location.host;
-    //var isPsiWebSite = ( locHostName.indexOf( WsApiManager.domain_psiOrg ) >= 0 );
 
     if ( WsApiManager.isSite_psiOrg ) 
     {
@@ -86,7 +82,6 @@ WsApiManager.getWsApiUrl = function( wsApiListJson )
 
     return wsApiUrl;
 };
-
 
 WsApiManager.getWSNameFromUrl = function( wsUrl ) 
 {
@@ -106,7 +101,6 @@ WsApiManager.getWSNameFromUrl = function( wsUrl )
 
     return wsName;
 };
-
 
 WsApiManager.getServerUrl = function( wsUrl, wsName ) 
 {
@@ -139,7 +133,6 @@ WsApiManager.composeWsFullUrl = function( subUrl )
 	}
 };
 
-
 WsApiManager.getServerUrl = function()
 {
 	var serverUrl = "";
@@ -155,7 +148,6 @@ WsApiManager.getServerUrl = function()
 
 	return serverUrl;
 };
-
 
 WsApiManager.getSubDomainName_PsiOrg = function()
 {

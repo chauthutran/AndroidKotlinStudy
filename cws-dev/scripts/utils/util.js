@@ -777,44 +777,13 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 	})
 };
 
-Util.createCheckbox = function createCheckbox( { message='', align, name='', uid='' } )
+Util.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
 {
-	var divContainerTag = $( '<div></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" class="inputHidden" type="checkbox" style="display:none" />' );
-	var checkboxShow = $( '<div></div>' );
-	var text = $( '<span>' + message + '</span>' )
-	var check = $( '<span></span>' )
-
-	divContainerTag.css( {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: align ? align : 'flex-start',
-		cursor: 'pointer',
-		padding: '4px 4px 2px 8px',
-		margin: '8px 0 4px 0'
-	} );
-
-	text.css( { marginLeft: '12px', fontSize: '14px' } );
-
-	checkboxShow.css( {
-		display: 'inline-block',
-		overflow: 'hidden',
-		border: '2px solid gray',
-		padding: '1px',
-		background: 'transparent',
-		width: '18px',
-		height: '18px',
-		transition: '.2s'
-	} );
-
-	check.css( {
-		display: 'inline-block',
-		border: '2px solid rgba(0,0,0,0)',
-		borderTop: 'none',
-		borderLeft: 'none',
-		width: '50%',
-		height: '100%'
-	} );
+	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" updates="' + updates + '" value="' + value + '" class="inputHidden" type="checkbox" style="display:none" />' );
+	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
+	var text = $( '<span class="checkboxText">' + message + '</span>' )
+	var check = $( '<span class="checkboxCheck" ></span>' )
 
 	divContainerTag.click( function(){
 
@@ -830,6 +799,8 @@ Util.createCheckbox = function createCheckbox( { message='', align, name='', uid
 			checkboxShow.css( 'background', 'gray' );
 			checkboxReal.prop( 'checked', true );
 		}
+
+		Util.updateMultiCheckboxPayloadValue( updates )
 
 	} );
 
@@ -851,17 +822,42 @@ Util.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_D
 {
 	selectObj.empty();
 
+	var inputOpts = [];
+
 	json_Data.forEach( obj=> {
 
 		var { component } = Util.createCheckbox( {
-			message:	obj.defaultName,
-			name:		'checkbox_' + formItemJson.id + '_' + obj.value } ),
-			li = $( '<li></li>' )
-			li.append( component )
-			selectObj.append( li )
+				message:	obj.defaultName,
+				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
+				updates:	formItemJson.id,
+				value: 		obj.value } ),
+				li = $( '<li></li>' )
+				li.append( component )
+				selectObj.append( li );
 
-	} )
+		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
+
+	} );
+
 }
+
+Util.updateMultiCheckboxPayloadValue = function( updates )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
+		}
+	}
+
+	$( '[name="' + updates + '"]' ).val( vals );
+}
+
 Util.populateRadios = function (selectObj, json_Data)
 {
 	selectObj.empty();

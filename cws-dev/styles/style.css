@@ -1378,3 +1378,33 @@ img.imgMore
     box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
     margin: 2px 2px 2px 12px;
   }
+  .inputCheckbox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    padding: 4px 4px 2px 8px;
+    margin: 8px 0 4px 0;
+  }
+  .checkboxText {
+    margin-left: 12px; 
+    font-size: 14px;
+  }
+  .checkboxShow {
+    display: inline-block;
+    overflow: hidden;
+    border: 2px solid gray;
+    padding: 1px;
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    transition: .2s;
+  }
+  .checkboxCheck {
+    display: inline-block;
+    border: 2px solid rgba(0,0,0,0);
+    border-top: none;
+    border-left: none;
+    width: 50%;
+    height: 100%;
+  }
