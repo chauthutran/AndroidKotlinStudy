@@ -858,60 +858,81 @@ Util.updateMultiCheckboxPayloadValue = function( updates )
 	$( '[name="' + updates + '"]' ).val( vals );
 }
 
-Util.populateRadios = function (selectObj, json_Data)
+Util.updateOtherRadioOptions = function( updates, excludeName )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.name != excludeName ) obj.checked = false;
+		}
+	}
+}
+
+Util.updateRadioPayloadValue = function( updates )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.checked )
+			{
+				console.log( obj.value );
+				console.log( $( '[name="' + updates + '"]' ) );
+				$( '[name="' + updates + '"]' ).val( obj.value );
+				
+			} 
+		}
+	}
+}
+
+
+Util.populateRadios = function ( formItemJson, selectObj, json_Data )
 {
 	selectObj.empty();
-
+	console.log( json_Data );
 	json_Data.forEach( obj => {
 
-		var input = $( '<input type="radio" name="radioOpt" uid="' + obj.uid ? obj.uid : '' + '" value="' + obj.defaultName + '" style="display:none"/>' ),
-			 picker = $( '<span></span>' ),
-			 pickerOn = $( '<i></i>' )
-			 text = $( '<span>' + obj.defaultName + '</span>' ),
-			 content = $( '<div></div>' )
+		var content = $( '<div class="radioContent" ></div>' );
+		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
+		var picker = $( '<span class="radioPicker"></span>' );
+		var pickerOn = $( '<i class="radioPickerOn"></i>' )
+		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
 
+		console.log( input );
 		picker.append( pickerOn );
+		content.append( input, picker, text);
 
-		content.css( { padding: '8px 4px 2px 8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'} );
+		content.click( function(e) {
 
-		text.css( 'marginLeft', '8px' );
-		text.css( 'font-size', '14px' );
+			e.stopPropagation();
 
-		picker.css( {
-			width: '18px',
-			height: '18px',
-			borderRadius: '50%',
-			border: '2px solid gray',
-			position: 'relative',
-			display: 'inline-block',
-		} );
+			if (! input.prop('checked') ){
 
-		pickerOn.css( {
-			width: '70%',
-			height: '70%',
-			position: 'absolute',
-			top: '50%',
-			left: '50%',
-			transform: 'translateX(-50%) translateY(-50%)',
-			borderRadius: '50%',
-			transition: '.2s'
-		} );
-
-		content.append(input,picker,text);
-
-		content.click(function(e){
-			e.stopPropagation()
-			if(!input.prop('checked')){
 				content[0].parentElement.querySelectorAll('i').forEach(i=>{
 					$(i).css( 'background', 'transparent' )
-				})
-				pickerOn.css( 'background', 'gray' )
-				input.prop( 'checked', true )
+				});
+
+				pickerOn.css( 'background', 'gray' );
+				input.prop( 'checked', true );
+
+				Util.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
+
 			}
+
+			Util.updateRadioPayloadValue( formItemJson.id );
+
 		})
 
-		selectObj.append(content)
-		//console.log(obj)
+		selectObj.append( content );
 
 	} )
 

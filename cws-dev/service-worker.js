@@ -373,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f1f5001402b272cf110e0fc0c6e6ed66"
+    "revision": "6da3dfd6d7dffab59f15f24c002c25e6"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -501,7 +501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "69c0219b25f9e44587ed6223dc9dfbd4"
+    "revision": "275fa1fa8ef833a47757a58bc6743448"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -549,7 +549,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "d69f780e98bc38e1be291d618f6bf60a"
+    "revision": "ec3b088176500dc7aa4d6d19bcfa8fcc"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
@@ -613,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "6015b8e005604d1e4f45e6c81c9aaf7b"
+    "revision": "40f895d5dbb45bbc17d4ed7ece3821ee"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

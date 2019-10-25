@@ -96,7 +96,7 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	inputTags.each( function()
 	{		
 		var inputTag = $(this);	
-		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) ;
+		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
 
 		if ( getVal_visible )
 		{

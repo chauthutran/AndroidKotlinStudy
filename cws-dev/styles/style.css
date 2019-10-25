@@ -1408,3 +1408,31 @@ img.imgMore
     width: 50%;
     height: 100%;
   }
+  .radioContent {
+    padding: 8px 4px 2px 8px; 
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start;
+  }
+  .radioText {
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  .radioPickerOn {
+    width: 70%;
+    height: 70%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 50%;
+    transition: .2s;
+  }
+  .radioPicker {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid gray;
+    position: relative;
+    display: inline-block;
+  }

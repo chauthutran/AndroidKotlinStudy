@@ -437,11 +437,14 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
 				var container = $( '<div></div>' );
+
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="RADIO ' + formItemJson.id + '" type="hidden" >' );
+
 				container.css( { margin:'4px 0 4px 0' } );
 
-				Util.populateRadios(container, optionList);
+				Util.populateRadios( formItemJson, container, optionList );
 
-				divInputTag.append(container);
+				divInputTag.append( entryTag, container );
 			}
 			else if ( formItemJson.controlType === "MULTI_CHECKBOX")
 			{
