@@ -24,6 +24,10 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "css/mdDateTimePicker.min.css",
+    "revision": "351f852c5fd2492c7d4ad1aa9d16e16a"
+  },
+  {
     "url": "css/responsive.css",
     "revision": "c0a5f19ffb298aca16cbe24841bdebbf"
   },
@@ -337,7 +341,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "8f34e5e9d4e3b8d44a7606d96c9ead98"
+    "revision": "81ffa506c2eea3aa546d8b075416a861"
   },
   {
     "url": "redeemGen.html",
@@ -369,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "0150c3f3b316cbfa77be822639ca0d1a"
+    "revision": "f1f5001402b272cf110e0fc0c6e6ed66"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -460,6 +464,14 @@ self.__precacheManifest = [
     "revision": "82f070af5b5225612aa9f75113d034b9"
   },
   {
+    "url": "scripts/libraries/mdDateTimePicker.min.js",
+    "revision": "bfb3948ba7e5ade7979088f3aac77bba"
+  },
+  {
+    "url": "scripts/libraries/moment.min.js",
+    "revision": "132734424cbe44372cf5fc2d6f7e2ec3"
+  },
+  {
     "url": "scripts/utils/activityUtil.js",
     "revision": "34b37025b968199c5d6adc5a6689f8ec"
   },
@@ -537,11 +549,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "47427e047fd8c3be23ed48f0609ec1c0"
+    "revision": "d69f780e98bc38e1be291d618f6bf60a"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "9ed40e0a10930e52971cf132709d890f"
+    "revision": "1670594607983db8f9ce16ba7bdcfa9e"
   },
   {
     "url": "sounds/beep.mp3",
@@ -601,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "2d2664a165772db11b87b3b9a570d8f9"
+    "revision": "6015b8e005604d1e4f45e6c81c9aaf7b"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

@@ -380,6 +380,56 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.populate_year( component[0], data );
 
 			}
+			else if ( formItemJson.controlType === "DATE" )
+			{
+
+				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+
+				divInputTag.append( entryTag );
+
+				//function that call datepicker
+				entryTag.click(function() {
+
+					var dtmPicker = new mdDateTimePicker.default({
+						type: 'date',
+						value: '2016-07-29'
+					});
+
+					dtmPicker.toggle();
+
+					var inputDate = document.getElementById( entryTag[0].name );
+
+					dtmPicker.trigger = inputDate;
+
+					console.log( dtmPicker );
+
+					inputDate.addEventListener('onOk', function() {
+
+						inputDate.value = convert( dtmPicker.time.toString() );
+
+						function convert(str) 
+						{
+							var date = new Date(str),
+							mnth = ("0" + ( date.getMonth() + 1 ) ).slice(-2),
+							day = ("0" + date.getDate()).slice(-2);
+							return [ date.getFullYear(), mnth, day].join("-");
+						}
+
+						console.log( dtmPicker );
+
+						$( '#' + dtmPicker._sDialog.picker.id ).remove()
+
+					});
+					
+					inputDate.addEventListener('onCancel', function() {
+						//console.log( 'onCancel' );
+						$( '#' + dtmPicker._sDialog.picker.id ).remove()
+					})
+
+				});
+
+			}
 			else if ( formItemJson.controlType === "RADIO")
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
