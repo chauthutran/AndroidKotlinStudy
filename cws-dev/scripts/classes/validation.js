@@ -14,7 +14,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
     me.setUp_Events = function( formTag )
     {
         formTag.find( "input,select,textarea" ).each( function() {
-            var inputTag = $(this);
+            var inputTag = $( this );
             inputTag.change( function(){
                 me.checkValidations( inputTag );
             });
@@ -44,9 +44,10 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		// Validation Initial Setting Clear
 		tag.attr( 'valid', 'true' );
 		var divTag = tag.closest( "div" );
+		var validationTag = ( divTag.hasClass( 'inputValidation' ) ? divTag.hasClass( 'inputValidation' ) : divTag.find( ".inputValidation" ) );
 		divTag.find( "span.errorMsg" ).remove();
-		
-		if ( tag.is( ':visible' ) )
+
+		if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
 		{		
 			me.performValidationCheck( tag, 'mandatory', divTag );
 			me.performValidationCheck( tag, 'minlength', divTag );
@@ -58,9 +59,10 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		}
 
 		var valid = ( tag.attr( 'valid' ) == 'true' );
-		
+
 		// If not valid, set the background color.
 		tag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
+		validationTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
 		
 		return valid;
 	};
@@ -71,11 +73,11 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		// , and if not valid, set the tag as '"valid"=false' in the attribute
 		var valid = true;
 		var validationAttr = tag.attr( type );
-		
+
 		// If the validation attribute is present in the tag and not empty string or set to false
 		if ( validationAttr && validationAttr !== 'false' )
 		{									
-			
+
 			if ( type == 'mandatory' ) valid = me.checkRequiredValue( tag, divTag, type );
 			else if ( type == 'minlength' ) valid = me.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
 			else if ( type == 'maxlength' ) valid = me.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
@@ -114,7 +116,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		var valid = true;
 		var value = inputTag.val();
 
-		if( !value && !me.checkFalseEvalSpecialCase() )
+		if( ! me.checkFalseEvalSpecialCase() && ( ! value || value == "" || value == null ) )
 		{
 			var message = me.getMessage( type, "This field is required" );
 			divTag.append( me.getErrorSpanTag( message ) );
@@ -317,8 +319,13 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 	me.getErrorSpanTag = function( keyword, term )
 	{
 		var text = me.cwsRenderObj.langTermObj.translateText( keyword, term ); // + optionalStr;
+		var dvContainer = $( '<div class="errorMsg" /> ' );
+		var errorMsg = $( '<div class="errorMsgText" keyword="' + keyword + '" term="' + term + '" > ' + text + ' </div>' );
+		var arrow = $( '<div class="errorMsgArrow">&nbsp;</span>' );
 
-		return  $( '<span ' + FormUtil.getTermAttrStr( term ) + ' class="errorMsg" keyword="' + keyword + '"> ' + text + '</span>' );
+		dvContainer.append( errorMsg, arrow );
+
+		return dvContainer;
 	};
 	
 	me.clearTagValidations = function( tags )
@@ -326,7 +333,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		tags.css( "background-color", "" ).val( "" ).attr( "altval", "" );
 		
 		tags.each( function() {
-			$( this ).closest( "div" ).find( "span.errorMsg" ).remove();
+			$( this ).closest( "div" ).find( "div.errorMsg" ).remove();
 		});		
 	};	
 	

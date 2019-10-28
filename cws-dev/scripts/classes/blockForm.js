@@ -257,7 +257,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
@@ -268,7 +268,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
-				entryTag = $( '<select class="selector" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
+				entryTag = $( '<select class="selector inputValidation" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
 				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
@@ -281,7 +281,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" )
 			{
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
-				
+
 				Util.decodeURI_ItemList(optionList, "defaultName")
 
 				var arr = optionList.map( obj => {
@@ -289,16 +289,8 @@ function BlockForm( cwsRenderObj, blockObj )
 				})
 
 				var divSelectTag = $( '<div class="select"></div>' );
-				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" style="display:none" />' );
-				var inputShow = $( '<input type="text" />' );
-
-				inputShow.css({
-					border: 'none',
-					padding: '8px',
-					fontSize: '14px',
-					width: '100%'
-				});
-
+				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />' );
+				var inputShow = $( '<input type="text" class="autoCompleteInput" />' );
 				var selection;
 
 				inputShow.devbridgeAutocomplete( {
@@ -337,21 +329,22 @@ function BlockForm( cwsRenderObj, blockObj )
 				var data = []
 				var today = new Date();
 				var year = today.getFullYear();
+				var rndID = Util.generateRandomId( 8 );
 
 				// NOTE Greg: let's make this data driven and come up with a spec that, 
 				//		 1) supports min-max calulations e.g. YEAR(CALC:-50:-18), 
 				//		 2) AND hardcoded year numbers, e.g. YEAR(RANGE:1950-2020) )
 				//		 ... in the absense of any parameters, we default to a hardcoded list (remembering that young girls < 18 can fall pregnant)
 
-				for ( let i = 18; i<=50; i++ )
+				for ( let i = 75; i >= 18; i-- )
 				{
 					data.push( { value: year-i, text: year-i } );
 				}
 
 				var component = $(`
 							<div class="containerSymbol">
-								<input id="inputTrue" type="text" name="${formItemJson.id}" uid="${formItemJson.uid}" />
-								<input id="inputShow" type="text" class="form-type-text">
+								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" />
+								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation">
 								<div class="container--modalSymbol">
 									<div class="modalSymbol">
 										<div class="textSymbol">
@@ -372,18 +365,18 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				var wrapperTag = $( '<div></div>' );
 
-				entryTag = $( component ).find( '#inputShow' );
+				entryTag = $( component ).find( '.inputShow' );
 
 				wrapperTag.append( component );
 				divInputTag.append( wrapperTag );
 
-				Util.populate_year( component[0], data );
+				Util.populate_year( component[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
 
 			}
 			else if ( formItemJson.controlType === "DATE" )
 			{
 
-				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text" type="text" />' );
+				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				divInputTag.append( entryTag );
@@ -402,8 +395,6 @@ function BlockForm( cwsRenderObj, blockObj )
 
 					dtmPicker.trigger = inputDate;
 
-					console.log( dtmPicker );
-
 					inputDate.addEventListener('onOk', function() {
 
 						inputDate.value = convert( dtmPicker.time.toString() );
@@ -415,8 +406,6 @@ function BlockForm( cwsRenderObj, blockObj )
 							day = ("0" + date.getDate()).slice(-2);
 							return [ date.getFullYear(), mnth, day].join("-");
 						}
-
-						console.log( dtmPicker );
 
 						$( '#' + dtmPicker._sDialog.picker.id ).remove()
 
@@ -436,11 +425,9 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
-				var container = $( '<div></div>' );
+				var container = $( '<div class="inputValidation inputRadio"></div>' );
 
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="RADIO ' + formItemJson.id + '" type="hidden" >' );
-
-				container.css( { margin:'4px 0 4px 0' } );
 
 				Util.populateRadios( formItemJson, container, optionList );
 
@@ -452,23 +439,20 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				Util.decodeURI_ItemList( optionList, "defaultName" )
 
-				var ul = $( '<ul></ul>' ), selectCheckList = $( '<div class="select"></div>' ), divContentTag = $( '<div></div>' );
+				var ul = $( '<ul class="inputValidation"></ul>' ); 
+				var divContentTag = $( '<div></div>' );
 
 				ul.css('display','none');
-				selectCheckList.css( { padding: '0 8px', cursor: 'pointer', fontSize: '14px' } );
+
 				divContentTag.css( { margin:'0', border: 'none', padding: 0 } );
 
 				Util.populateDropdown_MultiCheckbox( formItemJson, ul, optionList );
 
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="MULTI_CHECKBOX ' + formItemJson.id + '" type="hidden" />' );
 
-				divContentTag.append( entryTag, selectCheckList, ul );
+				divContentTag.append( entryTag, ul ); 
 
-				selectCheckList.click( function(){
-					ul.slideToggle('fast')
-				});
-
-				selectCheckList.click();
+				ul.slideToggle('fast')
 
 				divInputTag.append( divContentTag );
 			}

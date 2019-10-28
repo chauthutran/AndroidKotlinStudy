@@ -122,7 +122,6 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 
 			if ( inputsJson )
 			{
-				console.log( inputTag );
 				retDataArray.push( inputsJson );
 			}
 

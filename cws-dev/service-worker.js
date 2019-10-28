@@ -25,7 +25,7 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/mdDateTimePicker.min.css",
-    "revision": "351f852c5fd2492c7d4ad1aa9d16e16a"
+    "revision": "6ff5fb6086311c2ea753766c36e7c67a"
   },
   {
     "url": "css/responsive.css",
@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "a4be3f065a0b1a8a046c9b45c1d54690"
+    "revision": "ba7499c3524fea58f09853fe26c66d6b"
   },
   {
     "url": "images/about.svg",
@@ -341,7 +341,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "81ffa506c2eea3aa546d8b075416a861"
+    "revision": "369ab743734fd6e6c9b3dbda33488e63"
   },
   {
     "url": "redeemGen.html",
@@ -373,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "6da3dfd6d7dffab59f15f24c002c25e6"
+    "revision": "82fefc8271f0635389905dde468fdaaa"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "e0680cc46b3e5aebaeda5367e496e119"
+    "revision": "0839e92f0061e4190b5e26342c925ce3"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -465,7 +465,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/mdDateTimePicker.min.js",
-    "revision": "bfb3948ba7e5ade7979088f3aac77bba"
+    "revision": "6872d1bb3a1770b8f5c854ac794faf18"
   },
   {
     "url": "scripts/libraries/moment.min.js",
@@ -501,7 +501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "275fa1fa8ef833a47757a58bc6743448"
+    "revision": "a11621dbb37e36b27013e8b880f5af00"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -549,7 +549,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ec3b088176500dc7aa4d6d19bcfa8fcc"
+    "revision": "f3045cdd7cdbb01e8c5b547e20baced9"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
@@ -613,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "40f895d5dbb45bbc17d4ed7ece3821ee"
+    "revision": "9942559ac9bd19988009c0f3b57112f0"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

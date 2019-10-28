@@ -277,11 +277,37 @@ a.brand-logo {
   text-decoration: none;
 }
 
-.errorMsg
+div.errorMsg
 {
-  color: red;
+  color: #fff;
   font-style: italic;
   font-size: 10px;
+  position: relative;
+  border-top: 2px solid red;
+  top: 4px;
+  width: fit-content;
+}
+
+div.errorMsgText {
+  padding: 4px 6px 3px;
+  background-color: #000;
+  position: relative;
+  z-index: 1;
+  border-radius: 0 0 3px 3px;
+}
+
+div.errorMsgArrow
+{
+  display: block;
+  width: 10px;
+  position: absolute;
+  background-color: red;
+  left: 4px;
+  top: -7px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg); /* Opera */
+  border-radius: 0px 0px 4px 0;
 }
 
 .topIconsTbl td {
@@ -1218,7 +1244,7 @@ img.imgMore
    /* END > new localSTATISTICS */
    /***** YEAR  */
    .modalSymbol li{list-style: none;}
-   .containerSymbol #inputTrue{
+   .containerSymbol .inputTrue{
      display: none;
    }
    .container--modalSymbol{
@@ -1394,11 +1420,12 @@ img.imgMore
     display: inline-block;
     overflow: hidden;
     border: 2px solid gray;
-    padding: 1px;
+    padding: 3px;
     background: transparent;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     transition: .2s;
+    border-radius: 11px; /* REMOVE for SQUARE CHECKBOXES */
   }
   .checkboxCheck {
     display: inline-block;
@@ -1407,6 +1434,11 @@ img.imgMore
     border-left: none;
     width: 50%;
     height: 100%;
+    /* box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.25); */
+  }
+  .inputRadio {
+    margin: 4px 0px 4px 0px; 
+    padding: 0 0 4px 0px !important;
   }
   .radioContent {
     padding: 8px 4px 2px 8px; 
@@ -1429,10 +1461,21 @@ img.imgMore
     transition: .2s;
   }
   .radioPicker {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     border: 2px solid gray;
     position: relative;
     display: inline-block;
+  }
+  .autoCompleteInput {
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
+    border-radius: 3px;
+  }
+  .inputValidation {
+    border-radius: 3px;
+    margin: 4px 0 0 0 !important;
   }

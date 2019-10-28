@@ -565,7 +565,6 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 	});
 };
 
-
 Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inputOption )
 {
 	selectObj.empty();
@@ -593,15 +592,15 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 	}
 };
 
-Util.populate_year = function (el,data){
+Util.populate_year = function ( el, data, labelText ) {
 
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
 		modal = el.getElementsByClassName('modalSymbol')[0],
 		container = el.getElementsByClassName('containerSymbol')[0],
 		set = el.querySelector('button.set'),
 		cancel = el.querySelector('button.cancel'),
-		inputTrue = el.querySelector('.containerSymbol #inputTrue'),
-		inputShow = el.querySelector('.containerSymbol #inputShow'),
+		inputTrue = el.querySelector('.inputTrue'),
+		inputShow = el.querySelector('.inputShow'),
 		inputSearch = el.getElementsByClassName('searchSymbol')[0],
 		closeSearch = el.querySelector('.closeSearchSymbol');
 
@@ -625,19 +624,17 @@ Util.populate_year = function (el,data){
 
 	function sendChoose(){
 
-		inputTrue.value = ul.children[ul.dataset.index].dataset.value
-		inputShow.value = ul.children[ul.dataset.index].innerText
+		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
+		inputShow.value = ul.children[ul.dataset.index].innerText;
 
 		if ("createEvent" in document) {
 			var evt = document.createEvent("HTMLEvents");
 			evt.initEvent('change', false, true);
 			inputShow.dispatchEvent(evt);
-			console.log( 'dispached change ');
 		}
 		else
 		{
 			inputShow.fireEvent("onchange");
-			console.log( 'fired onchange ');
 		}
 
 	}
@@ -659,8 +656,12 @@ Util.populate_year = function (el,data){
 		return li;
 
 	}
-	function hidrateUl(data){
-		data.map((obj,index)=>generateLi({...obj,index,parent:ul}));
+
+	function hidrateUl( data, callBack )
+	{
+		data.map( (obj,index) => generateLi( { ...obj, index, parent:ul } ));
+
+		if ( callBack ) callBack();
 	}
 
 	closeSearch.style.setProperty('display','none');
@@ -679,9 +680,11 @@ Util.populate_year = function (el,data){
 		modal.parentElement.style.setProperty('display', 'none');
 	})
 
-	inputShow.addEventListener('click', e => {
+	inputShow.addEventListener('focus', e => {
 		e.preventDefault();
 		modal.parentElement.style.setProperty('display', 'flex');
+		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
+
 	})
 
 	modal.parentElement.addEventListener('click', e => {
@@ -721,9 +724,9 @@ Util.populate_year = function (el,data){
 		lis.forEach(li => li.style.setProperty('display', 'block'))
 	})
 
-	inputSearch.parentElement.innerHTML = 'Date of birth';
+	inputSearch.parentElement.innerHTML = labelText; //'Date of birth'; // MISSING TRANSLATION
 
-	hidrateUl(data);
+	hidrateUl( data);
 
 }
 
@@ -898,7 +901,7 @@ Util.updateRadioPayloadValue = function( updates )
 Util.populateRadios = function ( formItemJson, selectObj, json_Data )
 {
 	selectObj.empty();
-	console.log( json_Data );
+
 	json_Data.forEach( obj => {
 
 		var content = $( '<div class="radioContent" ></div>' );
@@ -907,7 +910,6 @@ Util.populateRadios = function ( formItemJson, selectObj, json_Data )
 		var pickerOn = $( '<i class="radioPickerOn"></i>' )
 		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
 
-		console.log( input );
 		picker.append( pickerOn );
 		content.append( input, picker, text);
 
