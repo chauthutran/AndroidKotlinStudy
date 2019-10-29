@@ -45,7 +45,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		tag.attr( 'valid', 'true' );
 		var divTag = tag.closest( "div" );
 		var validationTag = ( divTag.hasClass( 'inputValidation' ) ? divTag.hasClass( 'inputValidation' ) : divTag.find( ".inputValidation" ) );
-		divTag.find( "span.errorMsg" ).remove();
+		divTag.find( "div.errorMsg" ).remove();
 
 		if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
 		{		

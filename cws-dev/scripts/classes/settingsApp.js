@@ -1032,7 +1032,7 @@ function settingsApp( cwsRender )
         return retOpts;
 
     }
- 
+
     me.updateAutoComplete = function( newValue )
     {
 		var tagsWithAutoCompl = $( '[autocomplete]' );

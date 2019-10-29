@@ -1,5 +1,6 @@
 class Modal{
     constructor(object = {
+                customElement: undefined,
                 titleMessage:undefined,       
                 bodyMessage:undefined,
                 questionMessage:undefined,
@@ -22,6 +23,7 @@ class Modal{
             title: undefined,
             body: undefined,
             question: undefined,
+            customElement: object.customElement,
             containerButtons: undefined,
             buttons: (function(){
                 if(object.buttons){
@@ -114,6 +116,7 @@ class Modal{
 
         this.elements.content.appendChild(this.elements.title)
         this.elements.content.appendChild(this.elements.body)
+        this.elements.content.appendChild(this.elements.customElement)
         this.elements.content.appendChild(this.elements.containerButtons)
 
         this.elements.body.appendChild(this.elements.question)
@@ -269,7 +272,7 @@ class InterfaceModal{
     }
 }
 
-var pptManager = new InterfaceModal({passive:true})
+// var pptManager = new InterfaceModal({passive:true})
 //
 /*
     new InterfaceModal()return Interface Controller of Modals. (one is enough for the application)

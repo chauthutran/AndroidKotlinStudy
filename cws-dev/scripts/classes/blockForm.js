@@ -24,10 +24,11 @@ function BlockForm( cwsRenderObj, blockObj )
 		if ( formJsonArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var valor = JSON.parse( localStorage.getItem('session') ).autoComplete;
-			var formTag = $( '<form autocomplete="' + valor + '"></form>' );
+			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem('session') ).autoComplete + '"';
+			var formTag = $( '<form ' + autoComplete + '></form>' );
 
 			formDivSecTag.append( formTag );
+
 			blockTag.append( formDivSecTag );
 
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
@@ -243,6 +244,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			var entryTag;
 			var bSkipControlAppend = false;
+			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem('session') ).autoComplete + '"';
 
 			// TEMP DROPDOWN --> CHECKBOX
 			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
@@ -257,7 +259,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
@@ -269,6 +271,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
 				entryTag = $( '<select class="selector inputValidation" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
+
 				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
@@ -290,7 +293,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				var divSelectTag = $( '<div class="select"></div>' );
 				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />' );
-				var inputShow = $( '<input type="text" class="autoCompleteInput" />' );
+				var inputShow = $( '<input type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
 				var selection;
 
 				inputShow.devbridgeAutocomplete( {
@@ -306,7 +309,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					selection = false
 				});
 
-				$(document).click( function(){
+				$( document ).click( function(){
 					if( $( '.autocomplete-suggestions' ).css( 'display' ) !== 'none')
 					{
 						if ( ! selection )
@@ -316,6 +319,20 @@ function BlockForm( cwsRenderObj, blockObj )
 							inputReal.val('');
 							inputShow.val( string );
 						}
+						/*else
+						{
+
+							if ("createEvent" in document) 
+							{
+								var evt = document.createEvent("HTMLEvents");
+								evt.initEvent('change', false, true);
+								inputShow.dispatchEvent(evt);
+							}
+							else
+							{
+								inputShow.fireEvent("onchange");
+							}
+						}*/
 					}
 				});
 
@@ -344,7 +361,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				var component = $(`
 							<div class="containerSymbol">
 								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" />
-								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation">
+								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" ${autoComplete} >
 								<div class="container--modalSymbol">
 									<div class="modalSymbol">
 										<div class="textSymbol">
@@ -376,7 +393,9 @@ function BlockForm( cwsRenderObj, blockObj )
 			else if ( formItemJson.controlType === "DATE" )
 			{
 
-				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+				var rndID = Util.generateRandomId( 8 );
+
+				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				divInputTag.append( entryTag );
@@ -386,13 +405,16 @@ function BlockForm( cwsRenderObj, blockObj )
 
 					var dtmPicker = new mdDateTimePicker.default({
 						type: 'date',
-						value: '2016-07-29'
+						value: entryTag[ 0 ].value,
+						targetTag: divInputTag,
+						id: rndID
 					});
 
 					dtmPicker.toggle();
 
-					var inputDate = document.getElementById( entryTag[0].name );
-
+					var inputDate = entryTag[ 0 ]; //document.getElementById( entryTag[0].name );
+					console.log( inputDate );
+					console.log( entryTag[ 0 ].value );
 					dtmPicker.trigger = inputDate;
 
 					inputDate.addEventListener('onOk', function() {
@@ -407,14 +429,7 @@ function BlockForm( cwsRenderObj, blockObj )
 							return [ date.getFullYear(), mnth, day].join("-");
 						}
 
-						$( '#' + dtmPicker._sDialog.picker.id ).remove()
-
 					});
-					
-					inputDate.addEventListener('onCancel', function() {
-						//console.log( 'onCancel' );
-						$( '#' + dtmPicker._sDialog.picker.id ).remove()
-					})
 
 				});
 
