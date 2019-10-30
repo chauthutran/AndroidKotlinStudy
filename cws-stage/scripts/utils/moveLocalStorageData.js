@@ -2,41 +2,58 @@
 function MoveLocalStorageData() {}
 
 MoveLocalStorageData.moveData = function(){
-    
-        
-        LocalStorageDataManager.getData("movedData", function( movedData ){
-            if( movedData == undefined )
+
+    LocalStorageDataManager.getData( "movedData", function( movedData ){
+
+        if( movedData == undefined || movedData == false )
+        {
+            // Get all items in localStorage
+            var keys = Object.keys( localStorage );
+            var moveKeys = [];
+
+            for ( var key in keys ) 
             {
-                // Get all items in localStorage
-                var keys = Object.keys( localStorage );
-
-                for ( var key in keys ) {
-                        var value = LocalStorageDataManager.getData( key );
-                        MoveLocalStorageData.moveOneData( key, value );
-                }
-
-                LocalStorageDataManager.saveData("movedData", "true");
-
-                //console.log("All data from localStorage is moved to IndexDb.");
+                if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
             }
-            else
+
+            for ( i = 0; i < moveKeys.length; i++ )
             {
-                //console.log("All data from localStorage was moved to IndexDb alreadly.");
+                var value = localStorage.getItem( moveKeys[ i ] );
+
+                MoveLocalStorageData.moveOneData( moveKeys[ i ], value, function( container, newData ){
+
+                    //console.log( 'moved [' + container + '] now updating to  ~ ' );
+
+                    LocalStorageDataManager.saveData( container, newData );
+
+                } );
             }
-        } );
-        
+
+            LocalStorageDataManager.saveData("movedData", "true");
+
+            //console.log("All data from localStorage is moved to IndexDb.");
+        }
+        else
+        {
+            //console.log("All data from localStorage was moved to IndexDb alreadly.");
+        }
+    } );
+
 };
 
-MoveLocalStorageData.moveOneData = function( key, value )
+MoveLocalStorageData.moveOneData = function( key, value, callBack )
 {
     var dbStorage = new DBStorage();
 
     dbStorage.getData( key, function( searched ){
+
         if( searched === undefined )
         {
-            //console.log(' --saving  key : ' + key );
-            var dbStorage1 = new DBStorage();
-            dbStorage1.addData( key, key );
+            IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
+
+                if ( callBack ) callBack( key, retData )
+
+            } );
         }
     })
 };

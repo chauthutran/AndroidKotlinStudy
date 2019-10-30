@@ -209,9 +209,9 @@ header {
   box-sizing: border-box;
 }
 #divNavDrawerOUName {
-  font-size:12pt;
-  font-weight:500;
-  letter-spacing: -0.02em;
+  font-size:16px;
+  font-weight:400;
+  letter-spacing: 0.4px;
   line-height: 28px;
   position: relative;
   top: -12px;
@@ -464,6 +464,7 @@ input[type=text]:focus{
 }
 .o-one > li > label{
   font-size: 1.1em;
+  padding:0 0 0 38px;
 }
 .o-one > li:before {
   z-index: -1;
@@ -489,6 +490,7 @@ input[type=text]:focus{
   color: #50555a;
   background-color: #fff;
   border-radius: 5px 5px 0 0;
+  text-align: left;
 }
 .o-one > li.active:before {
   transition-duration: .5s;
@@ -700,24 +702,20 @@ act {
 
 .listItem_data_preview {
   vertical-align:top;
-  padding:6px 2px;
+  /* padding:6px 2px; */
   white-space:nowrap;
+  cursor: default;
 }
 
-.listItem_voucher_code {
+.listItem_voucher_status {
   vertical-align:top;
-  padding:6px 2px 0 0;
+  padding:10px 2px 0 0;
 }
 
 .listItem_action_sync{
   width:50px;
   position:relative;
   top:-2px;
-}
-
-.listItem_label_date{
-  font-weight:400;
-  padding:0 2px;
 }
 
 
@@ -729,6 +727,12 @@ img.listItem_icon_sync{
 .listDataPreview{
   float:left;
   padding:4px;
+  position: relative;
+  top: -10px;
+  display: contents;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .listDataItem{
@@ -785,11 +789,12 @@ div.select {
   position: relative;
   display: block;
   /*height: 3em; */
-  line-height: 2.8; /* 3 */
+  line-height: 1.5; /* 2.8; /* 3 */
   border-radius: 4px;
   background-color: #fff;
-  overflow: hidden;
+  overflow: visible;
   border-radius: .25em;
+  margin: 3px 0 0 0;
 }
 
 div.select::before {
@@ -879,4 +884,202 @@ a.searchresultSelector:hover {
 #dbStorageSelector
 {
   display: none;
+}
+
+
+/* Start: QR SCANNER Styles */
+
+#qrBlock{
+  background-color: rgb( 35, 35, 35);
+  position: fixed;
+  top:0;
+  left:0;
+  z-index: 100;
+  height: 100%;
+  width: 100%;
+}
+
+#qrVideo{
+  width:100%;
+  height:100%;
+  object-fit: cover;    
+}
+
+#qr-canvas{
+  display:none;
+}
+
+#qrMessage{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:100%;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  overflow: hidden;
+}
+
+#qrBottom {
+  position:fixed;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 80px;
+  width:100%;
+}
+
+#qrCancel {
+  text-align: center;
+  padding:12px 0 12px 0;
+}
+
+#qrCancelButton {
+  border: 1px solid rgba( 0, 0, 0, 0.5 ); 
+  border-radius: 30px;
+  background-color: rgba( 255, 255, 255, 0.75 );
+}
+
+#qrBusyIcon {
+  position:fixed;
+  left: 10px;
+  top: 10px;
+  width:40px;
+  height:40px;
+  /*border: 2px solid rgba(0, 0, 0, 0.1 );
+  background: rgba(0, 0, 0, 0.15);*/
+  border-radius: 20px;
+  padding:8px;
+
+  transform-style: preserve-3d;
+  transition: all 0.5s linear;
+}
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -webkit-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -ms-transform: rotateY(360deg);
+    -moz-transform: rotateY(360deg);
+    -webkit-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
+.qrInput{
+  width: 100% !important;
+  border: 1px dotted #AAA;
+  border-radius: 3px;
+}
+.qrIcon {
+  width:28px;
+  text-align: center;
+}
+/* END: QR SCANNER Styles */
+
+/* START: QR generate (barcode) */
+
+#qrTemplate {
+  display: none;
+  background-color: #fff;
+  padding:14px;
+}
+
+/* END: QR generate (barcode) */
+
+#imgAppDataSyncStatus {
+  height: 28px;
+  opacity: 0.65;
+}
+
+#spanOuName {
+  color: rgb(0, 0, 0); 
+  font-size: 18px; 
+  font-weight: 700; 
+  letter-spacing: 0em; 
+  position: fixed; 
+  left: 30px; 
+  top: 16px; 
+  margin-left: 20px;
+}
+div.loginBtn {
+  box-shadow: none !important;
+}
+
+/*
+  Funcionalidad: Reset Data
+  Inicio
+*/
+.collapsible .collapsible-header{
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+}
+
+.collapsible .collapsible-body{
+  font-size: 14px;
+  display: none;
+  padding: 6px 10px 4px 10px;
+}
+.collapsible .collapsible-body--on{
+  box-shadow: 0 4px 2px -2px rgba(0,0,0,.1);
+}
+#settingsAppRestHeader {
+  box-shadow: none !important;
+}
+#bodyCollapsible__text{
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.1px;
+
+  color: rgba(51, 51, 51, 0.87);
+}
+#buttonResetData{
+    width: 66px;
+    height: 48px;
+    position: relative;
+    left: 100%;
+    transform: translateX(-100%);
+    border: none;
+    background: none;
+    color: #EB5757;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: Rubik;
+}
+/*
+  Funcionalidad: Reset Data
+  Fin
+*/
+.imgQRInput {
+  padding: 8px 12px;
+  text-align: center;
 }

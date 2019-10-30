@@ -18,34 +18,47 @@ DataManager.securedContainers = [ 'redeemList' ];
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
-DataManager.saveData = function( secName, jsonData, retFunc ) {
-	LocalStorageDataManager.saveData( secName, jsonData );
-	IndexdbDataManager.saveData( secName, jsonData, retFunc );
-};
-
-DataManager.getData = function( secName, callBack ) {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+DataManager.saveData = function( secName, jsonData, retFunc ) 
+{
+	if ( DataManager.protectedContainer( secName ) )
 	{
-		LocalStorageDataManager.getData( secName, callBack );
+		IndexdbDataManager.saveData( secName, jsonData, retFunc );
 	}
 	else
+	{
+		LocalStorageDataManager.saveData( secName, jsonData );
+		if ( retFunc ) retFunc();
+	}
+};
+
+DataManager.getData = function( secName, callBack ) 
+{
+	
+	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.getData( secName, callBack );
 	}
+	else
+	{
+		LocalStorageDataManager.getData( secName, callBack );
+	}
 };
 
-DataManager.getOrCreateData = function( secName, callBack ) {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-		LocalStorageDataManager.getOrCreateData( secName, callBack );
-	}
-	else
+DataManager.getOrCreateData = function( secName, callBack ) 
+{
+	
+	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.getOrCreateData( secName, callBack );
 	}
+	else
+	{
+		LocalStorageDataManager.getOrCreateData( secName, callBack );
+	}
 };
 
-DataManager.deleteData = function( secName ) {
+DataManager.deleteData = function( secName ) 
+{
 	LocalStorageDataManager.deleteData( secName );
 	IndexdbDataManager.deleteData( secName );
 };
@@ -53,52 +66,44 @@ DataManager.deleteData = function( secName ) {
 // -------------------------------------
 // ---- List Item Data Save/Get/Delete ---
 
-DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) {
+DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) 
+{
 
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-		LocalStorageDataManager.insertDataItem( secName, jsonInsertData );
-	}
-	else
+	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.insertDataItem( secName, jsonInsertData, retFunc );
 	}
-};
-
-DataManager.removeItemFromData = function( secName, id ) {
-
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	else
 	{
 		LocalStorageDataManager.insertDataItem( secName, jsonInsertData );
 	}
-	else
-	{
-		IndexdbDataManager.insertDataItem( secName, jsonInsertData );
-	}
 };
+
 
 DataManager.getItemFromData = function( secName, id, callBack ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	
+	if ( DataManager.protectedContainer( secName ) )
 	{
-		return LocalStorageDataManager.getItemFromData( secName, id );
+		return IndexdbDataManager.getItemFromData( secName, id, callBack );
 	}
 	else
 	{
-		return IndexdbDataManager.getItemFromData( secName, id, callBack );
+		return LocalStorageDataManager.getItemFromData( secName, id );
 	}
 };
 
 
 DataManager.updateItemFromData = function( secName, id, jsonDataItem ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	
+	if ( DataManager.protectedContainer( secName ) )
 	{
-		LocalStorageDataManager.updateItemFromData( secName, id, jsonDataItem );
+		IndexdbDataManager.updateItemFromData( secName, id, jsonDataItem );
 	}
 	else
 	{
-		IndexdbDataManager.updateItemFromData( secName, id, jsonDataItem );
+		LocalStorageDataManager.updateItemFromData( secName, id, jsonDataItem );
 	}
 };
 
@@ -106,51 +111,22 @@ DataManager.updateItemFromData = function( secName, id, jsonDataItem )
 
 DataManager.getUserConfigData = function( callBack ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-		LocalStorageDataManager.getUserConfigData( callBack );
-	}
-	else
-	{
-		IndexdbDataManager.getUserConfigData( callBack );
-	}
-
+	LocalStorageDataManager.getUserConfigData( callBack );
 }
 
 DataManager.getSessionData = function( callBack ) 
 {
-	//if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-		LocalStorageDataManager.getSessionData( callBack );
-	}
-	/*else
-	{
-		IndexdbDataManager.getSessionData( callBack );
-	}*/
+	LocalStorageDataManager.getSessionData( callBack );
 }
 
 DataManager.setSessionDataValue = function( prop, val ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-	 	LocalStorageDataManager.setSessionDataValue( prop, val );
-	}
-	else
-	{
-		IndexdbDataManager.setSessionDataValue( prop, val );
-	}
+	LocalStorageDataManager.setSessionDataValue( prop, val );
 }
 
 DataManager.getSessionDataValue = function( prop, defval, callBack ) 
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
-	{
-	 	LocalStorageDataManager.getSessionDataValue( prop, defval, callBack  );
-	}
-	else
-	{
-		IndexdbDataManager.getSessionDataValue( prop, defval, callBack  );
-	}
+	LocalStorageDataManager.getSessionDataValue( prop, defval, callBack  );
 }
 
 

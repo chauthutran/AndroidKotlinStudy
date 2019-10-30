@@ -28,36 +28,73 @@ function favIcons( cwsRender )
 
     }
 
-    me.createIconButtons = function( favData ) {
+    me.createIconButtons = function( favData ) 
+    {
 
-        var favList = favData;
-        var networkStatus = ( ConnManager.getAppConnMode_Online() ) ? 'online' : 'offline';
+        me.configFavUserRole( ConnManager.getAppConnMode_Online(), favData, function( favList ){
 
-        if ( favList[ networkStatus ] )
-        {
-            (favList[ networkStatus ]).sort(function (a, b) {
-                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                if (b.id < a.id) {
-                    return b1st;
-                }
-                else if (a.id < b.id) {
-                    return a1st;
-                }
-                else {
-                    return equal;
-                }
-            });
+            var networkStatus = ( ConnManager.getAppConnMode_Online() ) ? 'online' : 'offline';
 
-            me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
-            me.favIconsTag.empty();
+            //if ( favList[ networkStatus ] )
+            {
+                //(favList[ networkStatus ]).sort(function (a, b) {
+                (favList).sort(function (a, b) {
+                    var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
+                    if (b.id < a.id) {
+                        return b1st;
+                    }
+                    else if (a.id < b.id) {
+                        return a1st;
+                    }
+                    else {
+                        return equal;
+                    }
+                });
 
-            var favItems = localStorage.getItem( 'favIcons' );
+                me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
+                me.favIconsTag.empty();
 
-            //console.log ( favItems != undefined && favItems.length > 0 );
-            me.createRecursiveFavIcons ( favList[ networkStatus ], 0, ( favItems != undefined && favItems.length > 0 ) )
-        }
+                var favItems = localStorage.getItem( 'favIcons' );
+
+                //console.log ( favItems != undefined && favItems.length > 0 );
+                //me.createRecursiveFavIcons ( favList[ networkStatus ], 0, ( favItems != undefined && favItems.length > 0 ) )
+                me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
+            }
+
+        } );
+
 
     }
+
+    me.configFavUserRole = function( bOnline, favData, callBack )
+    {
+        var compareList = ( bOnline ) ? favData.online : favData.offline;
+        var retAreaList = [];
+
+        for ( var i=0; i< compareList.length; i++ )
+        {
+           if ( compareList[ i ].userRoles )
+           {
+               var bFound = false;
+
+               for ( var p=0; p< compareList[ i ].userRoles.length; p++ )
+               {
+                   if ( compareList[ i ].userRoles[ p ] == FormUtil.login_UserRole )
+                   {
+                       retAreaList.push( compareList[ i ] );
+                       break;
+                   }
+               }
+           }
+           else
+           {
+            retAreaList.push( compareList[ i ] );
+           }
+        }
+
+        if ( callBack ) callBack( retAreaList );
+    
+    };
 
 	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )
 	{

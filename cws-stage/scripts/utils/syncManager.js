@@ -25,7 +25,7 @@ function syncManager()  {}
     syncManager.lastSyncAttempt = 0;
     syncManager.lastSyncSuccess = 0;
 
-    syncManager.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );;
+    syncManager.debugMode = WsApiManager.isDebugMode;
 
     var syncAutomationInteruptedTimer = 0;
     var progClass;
@@ -233,7 +233,7 @@ function syncManager()  {}
                 bProcess = true;
             }
             else
-            {   
+            {
                 //  counter exists for this item AND counter is below limit
                 if ( itemData.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
                 {
@@ -288,11 +288,11 @@ function syncManager()  {}
                     {
                         mySyncIcon.rotate({ count:999, forceJS: true, startDeg: 0 });
         
-                        var myResultTag = $( '#listItem_networkResults_' + itemData.id );
+                        //var myResultTag = $( '#listItem_networkResults_' + itemData.id );
                         var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;">Connecting to network... </div>' ); //MISSING TRANSLATION
         
-                        myResultTag.empty();
-                        myResultTag.append( loadingTag );
+                        //myResultTag.empty();
+                        //myResultTag.append( loadingTag );
         
                     }
     
@@ -372,7 +372,7 @@ function syncManager()  {}
     
                                 myQueueStatus.html( itemData.queueStatus )
     
-                                if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
+                                //if ( FormUtil.PWAlaunchFrom() == "homeScreen" ) 
                                 {
                                     playSound("coin");
                                 }
@@ -407,7 +407,7 @@ function syncManager()  {}
                             if ( mySyncIcon )
                             {
                                 mySyncIcon.stop();
-                                myResultTag.html( newTitle );
+                                //myResultTag.html( newTitle );
                             }
     
                             if ( returnJson )

@@ -4,18 +4,10 @@ function cwsRender()
 {
 	var me = this;
 
-	// Fixed variables
-	me.dsConfigLoc = 'data/dsConfig.json';	// 
-
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	me.menuAppMenuIconTag = $( '#nav-toggle' );
-
-	// This get cloned..  Thus, we should use it as icon class name?
-	//me.floatListMenuIconTag =  $( '.floatListMenuIcon' );
-	//me.floatListMenuSubIconsTag = $( '.floatListMenuSubIcons' );
-
 	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.headerLogoTag = $( '.headerLogo' );
 	me.pulsatingProgress = $( '#pulsatingCircle' );
@@ -27,12 +19,11 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.settingsApp;
+	me.myDetails;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
 	me.langTermObj;
-	//me.enableThemedColorSchemes = false;
-
 
 	me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
@@ -49,15 +40,12 @@ function cwsRender()
 
 	// Create separate class for this?
 	me.blocks = {};	// "blockId": blockObj..
-
 	me.activityList = [];	// Move to FormUtil.activityList?
 
 	me._localConfigUse = false;
-	//me.syncManager;
- 
 	me._translateEnable = true;
-
 	me._manageInputSwipe;
+
 	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 
@@ -114,6 +102,7 @@ function cwsRender()
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
+		me.myDetails = new myDetails( me );
 		me.statisticsObj = new statistics( me );
 	}
 
@@ -175,15 +164,16 @@ function cwsRender()
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 			else if ( areaId === 'settingsPage') me.settingsApp.render();
+			else if ( areaId === 'myDetails') me.myDetails.loadFormData();
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{  
 				me.clearMenuClickStyles();
-				
+
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
-				//console.log( me.areaList );
+
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-				//console.log( selectedArea );
+
 				// TODO: ACTIVITY ADDING
 				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
@@ -239,27 +229,28 @@ function cwsRender()
 
 	}
 
-	me.startBlockExecute = function( configJson )
+	me.startBlockExecute = function( configJson, initializationInstructions )
 	{
-		me.areaList = ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson );
+		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
+		ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson, function( areaList ){
 
-		if ( me.areaList )
-		{
+			if ( areaList )
+			{
+				var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+	
+				me.populateMenuList( finalAreaList, function( startMenuTag ){
+	
+					if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+	
+					// initialise favIcons
+					me.favIconsObj = new favIcons( me );
+	
+				} );
+	
+			}
 
-			var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( me.areaList ) : Menu.setInitialLogInMenu( me );
+		} );
 
-			me.populateMenuList( finalAreaList, function( startMenuTag ){
-
-				if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
-
-				// initialise favIcons
-				me.favIconsObj = new favIcons( me );
-
-			} );
-
-			
-
-		}
 	} 
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
@@ -319,11 +310,6 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			/*if( mySessionData == undefined )
-			{
-				return;
-			}*/
-
 			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
 
 				DataManager.getUserConfigData( function( userData ){
@@ -338,27 +324,24 @@ function cwsRender()
 					}
 
 				});
-	
-				
+
+
 				if ( myData && FormUtil.checkLogin() )
 				{
 					var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
 					var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
 					//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
 					var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
-	
+
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
-	
+
 					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
-	
+
 				}
 
 			} );
-			
+
 		});
-
-
-		
 
 	}
 
@@ -414,7 +397,7 @@ function cwsRender()
 	me.populateMenuList = function( areaList, exeFunc )
 	{
 
-		DataManager.getSessionData( function(userSessionJson) {
+		DataManager.getSessionData( function( userSessionJson ) {
 			//var userSessionJson = DataManager.getSessionData();
 			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
 			var startMenuTag;
@@ -730,6 +713,10 @@ function cwsRender()
 		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
 		{
 			me.settingsApp.hideSettingsPage();
+		}
+		if ( $( 'div.detailsListDiv' ).is(':visible') ) 
+		{
+			me.myDetails.hidemyDetailsPage();
 		}
 
 		$( 'nav' ).hide();

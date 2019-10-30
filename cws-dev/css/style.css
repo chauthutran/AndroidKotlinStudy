@@ -702,7 +702,7 @@ act {
 
 .listItem_data_preview {
   vertical-align:top;
-  padding:6px 2px;
+  /* padding:6px 2px; */
   white-space:nowrap;
   cursor: default;
 }
@@ -718,11 +718,6 @@ act {
   top:-2px;
 }
 
-.listItem_label_date{
-  font-weight:400;
-  padding:0 2px;
-}
-
 
 img.listItem_icon_sync{
   width:24px;
@@ -732,6 +727,12 @@ img.listItem_icon_sync{
 .listDataPreview{
   float:left;
   padding:4px;
+  position: relative;
+  top: -10px;
+  display: contents;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .listDataItem{

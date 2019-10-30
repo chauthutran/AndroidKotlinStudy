@@ -199,9 +199,21 @@ function Login( cwsRenderObj )
 
 			if ( lastSession == undefined || lastSession == null )
 			{
-				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true };
-				localStorage.setItem( 'session', JSON.stringify( lastSession ) );
+				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true, logoutDelay: 60 };
 			}
+			else
+			{
+				lastSession = JSON.parse( lastSession );
+
+				lastSession.user = userName;
+
+				if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
+				if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
+				if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
+			}
+
+			localStorage.setItem( 'session', JSON.stringify( lastSession ) );
+
 			//DataManager.saveData( 'session', lastSession );
 
 		});
@@ -226,6 +238,7 @@ function Login( cwsRenderObj )
 		// Set Logged in orgUnit info
 		if ( loginData.orgUnitData )
 		{
+			FormUtil.orgUnitData = loginData.orgUnitData; 
 			me.loggedInDivTag.show();
 			me.spanOuNameTag.show();
 			me.spanOuNameTag.text( ' ' + loginData.orgUnitData.userName + ' ' ).attr( 'title', loginData.orgUnitData.ouName );	

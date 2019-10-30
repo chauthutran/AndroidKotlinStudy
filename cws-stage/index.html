@@ -27,7 +27,6 @@
     <!-- Windows Phone -->
     <meta name="msapplication-navbutton-color" content="#FFC61D">
 
-
     <title>CwS - Apps</title>
 
     <link rel="icon" type="image/png" href="images/icons/icon-144x144.png">
@@ -35,11 +34,15 @@
     <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery-ui.js" ></script>
+    <script type="text/javascript" src="scripts/libraries/jquery-autocomplete.js" ></script>
     <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js" ></script>
     <script type="text/javascript" src="scripts/libraries/aes.js" ></script>
+    <script type="text/javascript" src="scripts/libraries/llqrcode.js" ></script>
+    <script type="text/javascript" src="scripts/libraries/moment.min.js"></script>
+    <script type="text/javascript" src="scripts/libraries/mdDateTimePicker.min.js" ></script>
 
 
-    <script> var _ver = '1.1.0-rc.8'; </script>
+    <script> var _ver = '1.2.0-rc.23'; </script>
 
 
     <!-- Google Analytics -->
@@ -55,10 +58,12 @@
 
     <link rel="manifest" href="manifest.json" >
 
+    <link rel="stylesheet" type="text/css" href="styles/jquery-autocomplete.css" >
     <link rel="stylesheet" type="text/css" href="styles/jquery-ui.css" >
     <link rel="stylesheet" type="text/css" href="styles/style.css" >
     <link rel="stylesheet" type="text/css" href="css/style.css" >
     <link rel="stylesheet" type="text/css" href="css/responsive.css" >
+    <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
 
     <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
 
@@ -81,7 +86,7 @@
         <div>
           <div id="preload" style="display: none"><img src='images/baseline-cloud_off-24px.svg' ><img src='images/Connect.svg' ></div>
           <div id="loggedInDiv" style="display: none; cursor: pointer;">
-            <span id="spanOuName" style="color: rgb(0, 0, 0); font-size: 18px; font-weight: normal; letter-spacing: 0em; position: fixed; left: 30px; top: 16px; margin-left: 20px;">[LogIn]</span>
+            <span id="spanOuName" >[LogIn]</span>
           </div>
         </div>
       </div>
@@ -145,11 +150,11 @@
 
                           <table style='width:100%'>
                             <tr>
-                              <td style='text-align: center;'>
+                              <td style='text-align:right;'>
                                 <span class="padding">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                <span id="spanVersion" title="" style="font-size: 12px;color:#95989A">v</span>
+                                <span id="spanVersion" title="" style="font-size: 11px;color:#95989A">v</span>
                               </td>
-                              <td style='width:22px;text-align:center;'>
+                              <td style='width:12px;text-align:center;'>
                                 <img id='appShare' src='images/outline-share-24px.svg' style='display:none;width:20px;height:20px;display:none' alt="appShare">
                               </td>
                             </tr>
@@ -292,9 +297,9 @@
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
-                        <div id="settingsInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select"><select
-                            id="settingsInfo_langSelect" class="selector form-type-text"
-                            style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
+                        <div id="settingsInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select">
+                          <select id="settingsInfo_langSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
+                        </div>
                       </td>
                     </tr>
                   </table>
@@ -345,9 +350,9 @@
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
-                        <div id="settingsInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="select"><select
-                            id="settingsInfo_ThemeSelect" class="selector form-type-text"
-                            style="padding-left:0;padding-top:0;max-width: 250px;"></select></div>
+                        <div id="settingsInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="select">
+                          <select id="settingsInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
+                        </div>
                       </td>
                     </tr>
                   </table>
@@ -356,6 +361,45 @@
               </li>
     
 
+              <li class="inputDiv settingsGroupDiv" id='settingsInfo_logoutDelay_Less'
+              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
+              <label term="settings_logout" id="lblsettings_logout" class="from-string titleDiv">Auto logOut</label>
+  
+              <div class="form-type-text" style="padding:10px 0 5px 10px">
+                <table style="width:100%;border-spacing:0;">
+                  <tr
+                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
+                    <td><span id="settingsInfo_logout_Text"></span></td>
+                    <td style="width:30px;">
+                      <img src='images/arrow_right.svg' class="imgMore enabled" id='imgsettingsInfo_logoutDelay_Less'
+                        style="display:block;width:28px;" alt="arrowRight">
+                    </td>
+                  </tr>
+                </table>
+  
+              </div>
+            </li>
+  
+            <li class="inputDiv settingsMoreDiv" id='settingsInfo_logoutDelay_More'
+              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
+  
+              <label term="settings_autologout" id="" class="from-string titleDiv">Auto LogOut after</label>
+              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
+                <table style="width:100%;border-spacing:0;">
+                  <tr>
+                    <td>
+                      
+                      <div id="settingsInfo_DivlogoutSelect" style="display:none;max-width: 250px;" class="select">
+                        <select id="settingsInfo_logoutDelay" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
+                      </div>
+
+                    </td>
+                  </tr>
+                </table>
+              </div>
+  
+            </li>
+    
 
               <li class="inputDiv settingsGroupDiv" id='settingsInfo_soundEffects_Less'
                 style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;display:none;">
@@ -374,7 +418,7 @@
               </li>
     
               <li class="inputDiv settingsGroupDiv" id='settingsInfo_autoComplete_Less'
-                style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;display:none;">
+                style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
                 <label term="" class="from-string titleDiv">Auto Complete</label>
                 <div id="settingsInfo_autoComplete" class="form-type-text" style="padding:10px 0 5px 10px">
                   <!-- Switch -->
@@ -388,25 +432,38 @@
                   </div>
                 </div>
               </li>
+
     
        
     
-              <li class="inputDiv settingsGroupDiv" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-    
-                <label term="settings_system" class="from-string titleDiv">System</label>
-                <div class="form-type-text" style="padding:10px 0 5px 10px">
-                  <table style="width:100%;border-spacing:0;">
-                    <tr>
-                      <td style="width:120px;">
-                        <div id="">
-                          <button id="btnReset" term="settingsInfo_Reset" class="btnStyle1">reset</button>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-    
-              </li>
+              <!-- /scripts/classes/settingsApp line 89 -->
+              <li class="inputDiv settingsGroupDiv" id="resetCollapsible" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
+                <ul class="collapsible">
+                  <li>
+                    <div class="collapsible-header from-string titleDiv" id="settingsAppRestHeader" term="" style="padding: 2px !important;">
+
+                      <table>
+                        <tr>
+                          <td style="width: 30px;text-align: left;">
+                              <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z" fill="#333333" fill-opacity="0.87"/>
+                              </svg>
+                          </td>
+                          <td>
+                              <span>Reset app data & configuration</span>
+                          </td>
+                        </tr>
+                      </table>
+
+                    </div>
+                    <div class="collapsible-body" id="bodyCollapsible">
+                      <div id="bodyCollapsible__text" term="">
+                        Your configuration and App data stored in the device will be deleted. You will be asked to log in again and data which is not synced to the server will be lost.
+                      </div>
+                      <button id="buttonResetData" term="">ACCEPT</button>
+                    </div>
+                  </li>
+                </ul>
     
             </ul>
           </div>
@@ -577,16 +634,19 @@
               </li>
             </ul>
 
-              <div class="title-act-mobile" style="padding: 8px 0 0 0">
-                  <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px"  class="btnStatsBack" alt="arrowLeft">
-                  <label class="statisticsHeader" term="menu_statistics">Statistics</label>
-                </div>
+              <div class="title-act-mobile">
+                <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px" class="btnStatsBack" alt="arrowLeft">
+                <img src="images/statistics.svg" class="tab-image" alt="active">
+                <label class="statisticsHeader" term="menu_statistics">Statistics</label>
+              </div>
 
             <ul class="tab__content_act">
 
-              <li class="inputDiv" style="width: 97%;margin:0;"></li>
+              <li class="settingsTopfiller" style="width: 97%;"></li>
 
-              <table class="tableStats">
+              <div id="localStatistics"></div>
+              <!-- 
+              <table class="tableStats_Template">
                 <thead>
                   <tr>
                     <th>&nbsp;</th>
@@ -619,6 +679,8 @@
                   </div>
 
                 </li>
+
+                -->
 
               </ul>
 
@@ -658,9 +720,75 @@
 
     </div>
 
+    <div id="qrTemplate"></div>
+
+  <div id="hnqisTemplate" style="display:none;">
+    <div id='hnqisHeader'>HNQIS</div>
+    <div id='hnqisHeader2'></div>
+    <div id='hnqisHeader3'></div>
+  </div>
+  <div id="detailsFormDiv" style="display:none;">
+    <div name="top-body" class="bodytop bg-color-program-son"></div>
+    <section class="wrapper">
+      <main class="container">
+        <div id="detailsContentDiv " class="detailsListDiv listDiv" style="position:relative;text-align:left;">
+          <ul class="o-one ">
+            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
+              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;" class="btnMyDetailsBack" alt="arrowLeft">
+              <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
+              <br>
+            </li>
+          </ul>
+          <div class="title-act-mobile">
+            <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px" class="btnMyDetailsBack" alt="arrowLeft">
+            <img src="images/my_details.svg" class="tab-image" alt="active">
+            <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
+          </div>
+          <ul class="tab__content_act" style="background-color: #fff;padding: 16px;">
+            <li class="settingsTopfiller" style="width: 97%;"></li>
+            <li>
+              <table class="previewCard" id="" style="width: 100%">
+                <tbody>
+                  <tr>
+                    <td class="searchResultMainName" colspan="2"
+                      style="font-family: Rubik;font-style: normal;font-weight: 800;font-size: 14px;"></td>
+                  </tr>
+                  <td class="previewCardAddress" colspan="2" style="font-size: 12px;"></td>
+                  </tr>
+                  </tr>
+                  <td class="searchResultLocationArea" colspan="2" style="font-size: 12px;"></td>
+                  </tr>
+                  </tr>
+                  <td class="searchResultPhoneNumber" colspan="2"
+                    style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" style="padding-top:8px;"><b>Opening Hours</b></td>
+                  </tr>
+                  <tr>
+                    <td class="previewCardOperatingHours"
+                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-top:8px;padding-bottom:8px;"></td>
+                    <td class="previewCardProviderName"
+                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
+                  </tr>
+                  <tr>
+                    <td class="servicesRow" style="font-size: 12px;padding-top:8px;"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </section>
+  </div>
+  </div>
     <div id="focusRelegator" style="background-color: #000;opacity: 0.4;position: fixed;top:0;left:0;width: 100%;height: 100%;display: none;"></div>
 
+    <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>
+    <script type="text/javascript" src="scripts/utils/pptManager.js"></script>
     <script type="text/javascript" src="scripts/utils/util.js"></script>
+    <script type="text/javascript" src="scripts/utils/wsApiManager.js"></script>
     <script type="text/javascript" src="scripts/utils/inputUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/syncManager.js"></script>
     <script type="text/javascript" src="scripts/utils/activityUtil.js"></script>
@@ -678,6 +806,7 @@
     <script type="text/javascript" src="scripts/utils/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
     <script type="text/javascript" src="scripts/utils/moveLocalStorageData.js"></script>
+    <script type="text/javascript" src="scripts/utils/localStatistics.js"></script>
 
     <script type="text/javascript" src="scripts/classes/langTerm.js"></script>	
     <script type="text/javascript" src="scripts/classes/statistics.js"></script>
@@ -694,6 +823,11 @@
     <script type="text/javascript" src="scripts/classes/blockButton.js"></script>
     <script type="text/javascript" src="scripts/classes/blockMsg.js"></script>
     <script type="text/javascript" src="scripts/classes/block.js"></script>
+    <script type="text/javascript" src="scripts/classes/webqr.js"></script>
+    <script type="text/javascript" src="scripts/classes/qrcode.js"></script>
+    <script type="text/javascript" src="scripts/classes/pwaEpoch.js"></script>
+    <script type="text/javascript" src="scripts/classes/baseConverter.js"></script>
+  <script type="text/javascript" src="scripts/classes/myDetails.js"></script>
 
     <script type="text/javascript" src="scripts/cwsRender.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>

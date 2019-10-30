@@ -344,7 +344,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
 
     if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
 
-    if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+    //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
+    if ( ReserveMsgID & ReserveMsgID != 'geolocation' )
     {
         if ( actionButton && autoClick )
         {
@@ -375,6 +376,53 @@ MsgManager.clearReservedMessage = function( reservedID )
                 }
             }
         }
+    }
+
+}
+
+
+MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBackSuccess )
+{
+    if ( jsonData )
+    {
+        //var dataPreview =  Util.jsonToArray ( jsonData, 'name:value' );
+        var unqID = Util.generateRandomId();
+
+        var screenWidth = document.body.clientWidth;
+        var screenHeight = document.body.clientHeight;
+        var notifDiv = $( '<div id="notif_' + unqID + '" class="previewPayload rounded" >' );
+
+        $( parentTag ).append( notifDiv );
+    
+        var prevRow = $( '<div class="" />' );
+        var btnRow = $( '<div style="height:70px;text-align:center;" />' );
+        var btnConfirm = $( '<button term="" class="confirmButton" style="">confirm</button>' );
+        var btnDecline = $( '<button term="" class="cancelButton" style="">cancel</button>' );
+
+        notifDiv.append( prevRow )
+        notifDiv.append( btnRow );
+
+        prevRow.append( Util.arrayToHTMLtable( title, jsonData ) );
+
+        btnRow.append( btnConfirm )
+        btnRow.append( btnDecline )
+
+        btnConfirm.click( function(){
+
+            $( '#notif_' + unqID ).remove();
+            
+            if ( callBackSuccess ) callBackSuccess( true );
+
+        } );
+
+        btnDecline.click( function(){
+
+            $( '#notif_' + unqID ).remove();
+
+            if ( callBackSuccess ) callBackSuccess( false );
+
+        } );
+    
     }
 
 }

@@ -398,17 +398,7 @@ function aboutApp( cwsRender )
             }
 
         });
-        
-        $( '#btnReset' ).click( function() {
-
-			DataManager.clearSessionStorage();
-
-            if ( cacheManager.clearCacheKeys() )
-            {
-                me.cwsRenderObj.reGetAppShell();
-            }
-
-        });
+ 
 
         cacheManager.initialise();
 

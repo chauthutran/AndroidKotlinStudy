@@ -19,7 +19,7 @@ LocalStorageDataManager.getData = function( secName, callBack ) {
 	var dataStr = localStorage[ secName ];
 	if ( dataStr ) jsonData = JSON.parse( dataStr );
 
-	if ( callBack ) callBack(jsonData);
+	if ( callBack ) callBack( jsonData );
 };
 
 LocalStorageDataManager.getOrCreateData = function( secName, callBack ) {
@@ -115,16 +115,16 @@ LocalStorageDataManager.updateItemFromData = function( secName, id, jsonDataItem
 LocalStorageDataManager.getUserConfigData = function( callBack ) 
 {
 	LocalStorageDataManager.getSessionData(function( sessionJson ){
-		console.log( sessionJson );
+		//console.log( sessionJson );
 		if ( sessionJson && sessionJson.user )	
 		{
 			LocalStorageDataManager.getData( sessionJson.user, function( userConfigJson ){
-				callBack( userConfigJson );
+				if ( callBack ) callBack( userConfigJson );
 			} );
 		}
 		else
 		{
-			callBack();
+			if ( callBack ) callBack();
 		}
 	});
 

@@ -376,21 +376,75 @@ Util.checkEmptyId_FromList = function( list )
 	return ( Util.getFromList( list, '' ) !== undefined );
 };
 
-Util.convertPropListToArray = function( jsonData )
+Util.jsonToArray = function( jsonData, structureConfig )
 {
-	var arr = [];
+	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;
+	//to do: make recursive in the presence of nested json objects (typeOf obj === "object" )
+	var strucConfArr = ( structureConfig ? structureConfig.split( ':' ) : undefined );
+	var arrRet = [];
+	var fldExcl = 'userName,password,';
 
 	for( var keyName in jsonData )
-	{		
-		if ( jsonData.hasOwnProperty( keyName ) ) {
-			var obj = jsonData[keyName];
-			obj.keyName = keyName;
-			arr.push( obj );
+	{
+		if ( fldExcl.indexOf( keyName ) < 0 )
+		{
+			var obj = jsonData[ keyName ];
+
+			if ( strucConfArr )
+			{
+				var jDat = { [ strucConfArr[ 0 ] ]: keyName, [ strucConfArr[ 1 ] ]: obj };
+			}
+			else
+			{
+				var jDat = { [ keyName ]: obj };
+			}
+	
+			arrRet.push ( jDat );
 		}
 	}
 
-	return arr;
+	return arrRet;
 };
+
+Util.arrayToHTMLtable = function( title, arr )
+{
+	var ret = $( '<table />');
+
+	if ( arr )
+	{
+		if ( title )
+		{
+			var tr = $( '<tr />');
+			ret.append( tr );
+			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( '<strong>' + title + '</strong>' ) );	
+		}
+	
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + arr[ i ].name + '</strong>' ) );	
+			}
+			else
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td />').html( arr[ i ].name ) );
+				tr.append( $( '<td />').html( arr[ i ].value ) );
+			}
+		}
+	
+		var tr = $( '<tr />');
+		ret.append( tr );
+		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
+
+	}
+
+	return ret;
+
+}
 
 // List / Array Related
 // ----------------------------------
@@ -506,17 +560,14 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 {
 	selectObj.empty();
 
-	$.each( json_Data, function( i, item ) 
-	{								
+	$.each( json_Data, function( i, item ) {								
 		selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
 	});
 };
 
-
 Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inputOption )
 {
 	selectObj.empty();
-
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>' );
 
 	var valuePropStr = "id";
@@ -530,21 +581,158 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 
 	if ( json_Data !== undefined )
 	{
-		$.each( json_Data, function( i, item ) 
-		{
+		$.each( json_Data, function( i, item ) {
+
 			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
-				
+
 			selectObj.append( optionTag );
 		});
 	}
 };
 
+Util.populate_year = function ( el, data, labelText ) {
+
+	var ul = el.getElementsByClassName('optionsSymbol')[0],
+		modal = el.getElementsByClassName('modalSymbol')[0],
+		container = el.getElementsByClassName('containerSymbol')[0],
+		set = el.querySelector('button.set'),
+		cancel = el.querySelector('button.cancel'),
+		inputTrue = el.querySelector('.inputTrue'),
+		inputShow = el.querySelector('.inputShow'),
+		inputSearch = el.getElementsByClassName('searchSymbol')[0],
+		closeSearch = el.querySelector('.closeSearchSymbol');
+
+	function sendFocus(newIndex) {
+
+		if (ul.dataset.index != newIndex) {
+
+			const lastEl = ul.children[ul.dataset.index]
+
+			if (lastEl) {
+				lastEl.style.setProperty('color', 'black')
+				lastEl.classList.toggle('focus')
+			}
+
+			ul.children[newIndex].classList.toggle('focus')
+			ul.children[newIndex].style.setProperty('color', '#009788')
+			ul.dataset.index = newIndex
+
+		}
+	}
+
+	function sendChoose(){
+
+		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
+		inputShow.value = ul.children[ul.dataset.index].innerText;
+
+		if ("createEvent" in document) {
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent('change', false, true);
+			inputShow.dispatchEvent(evt);
+		}
+		else
+		{
+			inputShow.fireEvent("onchange");
+		}
+
+	}
+
+	function generateLi( { value, text, parent, index} ){
+
+		const li = document.createElement('li');
+
+		li.dataset.value = value;
+		li.dataset.index = index;
+		li.innerText = text;
+
+		li.addEventListener('click', e => {
+			sendFocus(li.dataset.index)
+		});
+
+		parent.appendChild(li);
+
+		return li;
+
+	}
+
+	function hidrateUl( data, callBack )
+	{
+		data.map( (obj,index) => generateLi( { ...obj, index, parent:ul } ));
+
+		if ( callBack ) callBack();
+	}
+
+	closeSearch.style.setProperty('display','none');
+	inputSearch.style.setProperty('display','none');
+
+	set.addEventListener('click', e => {
+		e.preventDefault();
+		if (!isNaN(parseInt(ul.dataset.index))) {
+			sendChoose();
+		}
+		modal.parentElement.style.setProperty('display', 'none');
+	})
+
+	cancel.addEventListener('click', e => {
+		e.preventDefault();
+		modal.parentElement.style.setProperty('display', 'none');
+	})
+
+	inputShow.addEventListener('focus', e => {
+		e.preventDefault();
+		modal.parentElement.style.setProperty('display', 'flex');
+		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
+
+	})
+
+	modal.parentElement.addEventListener('click', e => {
+		e.preventDefault();
+		if (e.target === modal.parentElement) {
+			modal.parentElement.style.setProperty('display', 'none');
+		}
+	})
+
+	inputSearch.addEventListener('keyup', e => {
+
+		if (e.target.value == '') {
+			closeSearch.style.setProperty('display', 'none');
+		} else {
+			closeSearch.style.setProperty('display', 'flex');
+		}
+
+		var letras = e.target.value;
+		var lis = Array.from(ul.children);
+
+		lis.forEach(li => {
+			var palabra = li.innerText.toLowerCase();
+			if (!palabra.match(`.*${letras.toLowerCase()}.*`)) {
+				li.style.setProperty('display', 'none');
+			} else {
+				li.style.setProperty('display', 'block');
+			}
+		});
+
+	})
+
+	closeSearch.addEventListener('click', e => {
+		e.preventDefault()
+		inputSearch.value = ''
+		closeSearch.style.setProperty('display', 'none')
+		var lis = Array.from(ul.children)
+		lis.forEach(li => li.style.setProperty('display', 'block'))
+	})
+
+	inputSearch.parentElement.innerHTML = labelText; //'Date of birth'; // MISSING TRANSLATION
+
+	hidrateUl( data);
+
+}
+
 Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 {
 	selectObj.empty();
-
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>' );
 	
 	var valuePropStr = "id";
@@ -558,8 +746,8 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 
 	if ( json_Data !== undefined )
 	{
-		$.each( json_Data, function( i, item ) 
-		{
+		$.each( json_Data, function( i, item ) {
+
 			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
 
 			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
@@ -569,10 +757,192 @@ Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 	}
 };
 
-Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
+Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
+{
+	json_Data.forEach( optionData => {
+
+		let option = document.createElement('option')
+
+		option.style.setProperty('display','none')
+		option.style.setProperty('width','100%')
+		option.style.setProperty('list-style','none')
+		option.style.setProperty('background','white')
+		option.style.setProperty('padding','4px 8px')
+		option.style.setProperty('font-size','14px')
+
+		option.textContent = optionData.defaultName
+		option.value = optionData.value
+
+		option.addEventListener('click',eventsOptions)
+
+		selectObj.appendChild( option )
+
+	})
+};
+
+Util.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
+{
+	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" updates="' + updates + '" value="' + value + '" class="inputHidden" type="checkbox" style="display:none" />' );
+	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
+	var text = $( '<span class="checkboxText">' + message + '</span>' )
+	var check = $( '<span class="checkboxCheck" ></span>' )
+
+	divContainerTag.click( function(){
+
+		if ( checkboxReal.prop( 'checked' ) )
+		{
+			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+			checkboxShow.css( 'background', 'transparent' );
+			checkboxReal.prop( 'checked', false );
+		} 
+		else 
+		{
+			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+			checkboxShow.css( 'background', 'gray' );
+			checkboxReal.prop( 'checked', true );
+		}
+
+		Util.updateMultiCheckboxPayloadValue( updates )
+
+	} );
+
+	if ( checkboxReal.prop( 'checked' ) )
+	{
+		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+		checkboxShow.css( 'background', 'transparent' );
+		checkboxReal.prop( 'checked', false );
+	}
+
+	checkboxShow.append( check );
+	divContainerTag.append( checkboxReal,checkboxShow, text );
+
+	return { component: divContainerTag, input:checkboxReal };
+
+}
+
+Util.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
 {
 	selectObj.empty();
 
+	var inputOpts = [];
+
+	json_Data.forEach( obj=> {
+
+		var { component } = Util.createCheckbox( {
+				message:	obj.defaultName,
+				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
+				updates:	formItemJson.id,
+				value: 		obj.value } ),
+				li = $( '<li></li>' )
+				li.append( component )
+				selectObj.append( li );
+
+		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
+
+	} );
+
+}
+
+Util.updateMultiCheckboxPayloadValue = function( updates )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
+		}
+	}
+
+	$( '[name="' + updates + '"]' ).val( vals );
+}
+
+Util.updateOtherRadioOptions = function( updates, excludeName )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.name != excludeName ) obj.checked = false;
+		}
+	}
+}
+
+Util.updateRadioPayloadValue = function( updates )
+{
+	var vals = '';
+	var InpTarg = $( "[updates='" + updates + "']" );
+
+	if ( InpTarg )
+	{
+		for ( var i = 0; i < InpTarg.length; i++ )
+		{
+			var obj = InpTarg[ i ];
+			if ( obj.checked )
+			{
+				console.log( obj.value );
+				console.log( $( '[name="' + updates + '"]' ) );
+				$( '[name="' + updates + '"]' ).val( obj.value );
+				
+			} 
+		}
+	}
+}
+
+
+Util.populateRadios = function ( formItemJson, selectObj, json_Data )
+{
+	selectObj.empty();
+
+	json_Data.forEach( obj => {
+
+		var content = $( '<div class="radioContent" ></div>' );
+		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
+		var picker = $( '<span class="radioPicker"></span>' );
+		var pickerOn = $( '<i class="radioPickerOn"></i>' )
+		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
+
+		picker.append( pickerOn );
+		content.append( input, picker, text);
+
+		content.click( function(e) {
+
+			e.stopPropagation();
+
+			if (! input.prop('checked') ){
+
+				content[0].parentElement.querySelectorAll('i').forEach(i=>{
+					$(i).css( 'background', 'transparent' )
+				});
+
+				pickerOn.css( 'background', 'gray' );
+				input.prop( 'checked', true );
+
+				Util.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
+
+			}
+
+			Util.updateRadioPayloadValue( formItemJson.id );
+
+		})
+
+		selectObj.append( content );
+
+	} )
+
+}
+
+Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
+{
+	selectObj.empty();
 	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' );
 
 	if ( json_Data !== undefined )
@@ -598,7 +968,6 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 Util.populateSelect_WithDefaultName = function( selectObj, selectName, json_Data, defaultName )
 {
 	selectObj.empty();
-
 	selectObj.append( $( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' ) );
 
 	$.each( json_Data, function( i, item ) {
@@ -1019,6 +1388,42 @@ Util.dateToMyFormat = function( date, myFormat )
 	}
 };
 
+Util.formatDateAndTime = function( datetimeStamp )
+{
+    var date = new Date( datetimeStamp );
+    var aaaa = date.getFullYear();
+    var gg = date.getDate();
+    var mm = (date.getMonth() + 1);
+
+    if (gg < 10) gg = '0' + gg;
+    if (mm < 10) mm = '0' + mm;
+
+    var cur_day = aaaa + '-' + mm + '-' + gg;
+    var hours = date.getHours()
+    var minutes = date.getMinutes()
+    var seconds = date.getSeconds();
+
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (seconds < 10) seconds = '0' + seconds;
+
+    return ( cur_day + ' ' + hours + ':' + minutes + ':' + seconds );
+}
+
+Util.formatTime = function( datetimeStamp )
+{
+    var date = new Date( datetimeStamp );
+    var hours = date.getHours()
+    var minutes = date.getMinutes()
+    var seconds = date.getSeconds();
+
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (seconds < 10) seconds = '0' + seconds;
+
+    return ( hours + ':' + minutes + ':' + seconds );
+}
+
 // Date Formatting Related
 // ----------------------------------
 
@@ -1135,8 +1540,15 @@ Util.getParameterByName = function( name )
 Util.getParameterInside = function( value, openClose )
 {
 	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
-	var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
-	return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];
+	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
+	{
+		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
+		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
+	}
+	else
+	{
+		return '';
+	}
 }
 
 Util.newLocalSequence = function( pattern, commitSEQIncr )
@@ -1896,3 +2308,61 @@ $.fn.rotate=function(options) {
 	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
 	return Math.abs( Math.round( ageHr ) );
   }
+  Util.epoch = function( pattern, callBack )
+  {
+	  //use examples: Util.epoch( '1000', console.log ); Util.epoch( '1000,36', console.log ); 
+	  var offSetDate; // always randomize
+	  var precision;
+	  var base;
+
+	  if ( pattern )
+	  {
+		precision = pattern.split( ',' )[ 0 ];
+
+		if ( pattern.split( ',' ).length > 1 ) base = pattern.split( ',' )[ 1 ];
+		if ( pattern.split( ',' ).length > 2 ) offSetDate = pattern.split( ',' )[ 2 ];
+
+	  }
+
+	  var prec = ( precision ) ? precision : 100;
+
+	  new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
+
+		  if ( callBack ) callBack( newEpoch.value );
+	  });
+  }
+  Util.getBaseFromBase = function ( input, from, to )
+  {
+	  return ConvertBase.custom( input, from, to );
+  }
+  Util.generateRandomEpoch = function( howMany, base, precision )
+  {
+	//use examples: Util.generateRandomEpoch(5,36,1000);
+	var arrEpochs = [], b = ( base == undefined) ? 10 : base, prec = ( precision == undefined ) ? 100 : precision;
+	for ( var i = 0; i < howMany; i++ )
+	{
+		Util.epoch( prec + ',' + b, function( data ){
+			arrEpochs.push( data.value );
+		} )
+	}
+
+	arrEpochs.sort();
+
+	console.log( arrEpochs.toString() );
+
+	return arrEpochs;
+
+  }
+  Util.isJSON = function( objVal ) 
+  {
+	try {
+        JSON.parse(objVal);
+    } catch (e) {
+        return false;
+    }
+    return true;
+  } 
+  Util.isArray = function( objVal ) 
+  {
+	 return Array.isArray ( objVal );
+  } 

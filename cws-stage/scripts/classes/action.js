@@ -36,7 +36,7 @@ function Action( cwsRenderObj, blockObj )
 			{
 				me.btnClickMarked( btnTag );
 				me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
-					me.clearBtn_ClickedMark( btnTag );					
+					me.clearBtn_ClickedMark( btnTag );
 				} );
 			}
 			else
@@ -49,16 +49,35 @@ function Action( cwsRenderObj, blockObj )
 	me.handleSequenceIncrCommits = function( formDivSecTag )
 	{
 		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		var pConf = FormUtil.block_payloadConfig;
 
 		for( var i = 0; i < jData.length; i++ )
 		{
-			if ( jData[ i ].defaultValue )
+			if ( jData[ i ].defaultValue || jData[ i ].payload )
 			{
-				if ( jData[ i ].defaultValue.length && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 )
+				var payloadPattern = false;
+				var pattern = '';
+
+				payloadPattern = ( jData[ i ].defaultValue && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+				if ( payloadPattern )
+				{
+					pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+				}
+				else
+				{
+					payloadPattern = ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue && jData[ i ].payload[ pConf ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+					if ( payloadPattern )
+					{
+						pattern = Util.getParameterInside( jData[ i ].payload[ pConf ].defaultValue, '()' );
+					}
+				}
+
+				if ( payloadPattern )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-					var pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( jData[ i ].defaultValue.indexOf( 'SEQ[' ) > 0 ) );
+					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
 
 					if ( calcVal != undefined )
 					{
@@ -132,7 +151,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					actionIndex++;
 
-					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );	
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );
 				}
 				else
 				{
@@ -230,8 +249,15 @@ function Action( cwsRenderObj, blockObj )
 
 					if ( clickActionJson.payloadConfig )
 					{
+						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
 						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
 					}
+					else
+					{
+						FormUtil.block_payloadConfig = '';
+					}
+
+					
 
 				}
 
@@ -342,102 +368,189 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
-				var currBlockId = blockDivTag.attr( 'blockId' );
-				var inputsJson;
 
-				// generate inputsJson - with value assigned...
-				if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
-				{
-					inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
-				}
-				else
-				{
-					inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
-				}
+				me.handlePayloadPreview( clickActionJson, formDivSecTag, btnTag, function() { 
 
-				var previewJson = FormUtil.generateInputJson( formDivSecTag );
-
-				FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
-
-				// Voucher Status add to payload
-				if ( clickActionJson.voucherStatus )
-				{
-					inputsJson.voucherStatus = clickActionJson.voucherStatus;
-				}
-
-				// generate url
-				var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-
-				if ( url !== undefined )
-				{
-					var submitJson = {};
-					submitJson.payloadJson = inputsJson;
-					submitJson.previewJson = previewJson;
-					submitJson.actionJson = clickActionJson;
-					submitJson.url = url;
-
-					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					if ( clickActionJson.redeemListInsert === "true" )
+					var currBlockId = blockDivTag.attr( 'blockId' );
+					var inputsJson;
+	
+					// generate inputsJson - with value assigned...
+					if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
 					{
-						me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
-
-							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
-
-							if ( afterActionFunc ) afterActionFunc();
-
-						} );
-
+						inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
 					}
-					else if ( clickActionJson.url !== undefined )
-					{					
-						// generate url
-						var url = FormUtil.generateUrl( inputsJson, clickActionJson );
-
-						// Loading Tag part..
-						var loadingTag = FormUtil.generateLoadingTag( btnTag );
-
-						// NOTE: This form data is saved in owner form block
-						// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
+					else
+					{
+						inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+					}
+	
+					var previewJson = FormUtil.generateInputJson( formDivSecTag );
+	
+					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
+	
+					// Voucher Status add to payload
+					if ( clickActionJson.voucherStatus )
+					{
+						inputsJson.voucherStatus = clickActionJson.voucherStatus;
+					}
+	
+					// generate url
+					var url = me.generateWsUrl( inputsJson, clickActionJson );
+	
+					if ( url !== undefined )
+					{
+						var submitJson = {};
+						submitJson.payloadJson = inputsJson;
+						submitJson.previewJson = previewJson;
+						submitJson.actionJson = clickActionJson;
+						submitJson.url = url;
+	
+						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
+							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
+	
+								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
+	
+								if ( afterActionFunc ) afterActionFunc();
+	
+							} );
+	
 						}
-
-						FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
-							// final call..
-							//actionIndex++;
-							if ( !redeemReturnJson ) redeemReturnJson = {};
-
-							FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
-
-							var resultStr = "success";
-
-							if ( success )
+						else if ( clickActionJson.url !== undefined )
+						{					
+							// generate url
+							var url = me.generateWsUrl( inputsJson, clickActionJson );
+	
+							// Loading Tag part..
+							var loadingTag = FormUtil.generateLoadingTag( btnTag );
+	
+							// NOTE: This form data is saved in owner form block
+							// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
+							if ( clickActionJson.redeemListInsert === "true" )
 							{
-								dataPass.prevWsReplyData = redeemReturnJson;
-
-								// This will be picked up by 'processWSResult' action (next action to this one)
-
-								//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
+								me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
 							}
-							else
-							{
-								// MISSING TRANSLATION
-								MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
-								// Should we stop at here?  Or continue with subActions?
-
-								var resultStr = "actionFailed";
-							}
-
-							if ( afterActionFunc ) afterActionFunc( resultStr );
-
-						});
+	
+							FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
+								// final call..
+								//actionIndex++;
+								if ( !redeemReturnJson ) redeemReturnJson = {};
+	
+								FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
+	
+								var resultStr = "success";
+	
+								if ( success )
+								{
+									dataPass.prevWsReplyData = redeemReturnJson;
+	
+									// This will be picked up by 'processWSResult' action (next action to this one)
+	
+									//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
+								}
+								else
+								{
+									// MISSING TRANSLATION
+									MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
+									// Should we stop at here?  Or continue with subActions?
+	
+									var resultStr = "actionFailed";
+								}
+	
+								if ( afterActionFunc ) afterActionFunc( resultStr );
+	
+							});
+						}
 					}
-				}
+
+				} )
+
 			}
 		}
 	}
 
+	me.handlePayloadPreview = function( clickActionJson, formDivSecTag, btnTag, callBack )
+	{
+
+		if ( clickActionJson.redeemListInsert === "true" )
+		{
+
+			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
+			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
+			console.log( dataPass );
+
+			formDivSecTag.hide();
+
+			if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
+			{
+
+				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, 'Record Summary', function( confirmed ){
+
+					formDivSecTag.show();
+	
+					if ( confirmed )
+					{
+						if ( callBack ) callBack();
+					}
+					else
+					{
+						if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
+					}
+	
+				} );
+			}
+			else
+			{
+				if ( callBack ) callBack();
+			}
+
+		}
+		else
+		{
+			if ( callBack ) callBack();
+		}
+
+	}
+
+
+	// This has moved from FormUtil
+	me.generateWsUrl = function( inputsJson, actionJson )
+	{
+		var url;
+
+		if ( actionJson.url !== undefined )
+		{
+			url = WsApiManager.composeWsFullUrl( actionJson.url );
+
+			if ( actionJson.urlParamNames !== undefined 
+				&& actionJson.urlParamInputs !== undefined 
+				&& actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
+			{
+				var paramAddedCount = 0;
+		
+				for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
+				{
+					var paramName = actionJson.urlParamNames[i];
+					var inputName = actionJson.urlParamInputs[i];
+		
+					if ( inputsJson[ inputName ] !== undefined )
+					{
+						var value = inputsJson[ inputName ];
+		
+						url += ( paramAddedCount == 0 ) ? '?': '&';
+		
+						url += paramName + '=' + value;
+					}
+		
+					paramAddedCount++;
+				}
+			}
+		}
+		
+		return url;
+	}
+  
 	// ========================================================
 	
 	me.btnClickedAlready = function( btnTag )

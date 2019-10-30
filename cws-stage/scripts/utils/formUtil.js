@@ -3,23 +3,20 @@
 
 function FormUtil() {}
 
-FormUtil.staticWSName = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
-FormUtil.appUrlName = 'cws';			// App name - Part of the url
 
-FormUtil.dynamicWS = '';
 FormUtil.staticWSpath = '';
 
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
+FormUtil.login_UserRole = '';
 FormUtil.orgUnitData;
 FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
+FormUtil.block_payloadConfig = '';
 
-FormUtil._serverUrl = 'https://apps.psi-mis.org';  // Apps WebService version
-FormUtil._serverUrlOverride = "";
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
@@ -46,71 +43,6 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 
 	return objJson;
 }
-
-
-FormUtil.getServerUrl = function()
-{
-	var serverUrl = "";
-
-	if ( FormUtil._serverUrlOverride )
-	{
-		serverUrl = FormUtil._serverUrlOverride; 
-	}
-	else
-	{
-		serverUrl = FormUtil._serverUrl;
-	}
-
-	return serverUrl;
-};
-
-
-FormUtil.isAppsPsiServer = function()
-{
-	return ( location.host.indexOf( 'apps.psi-mis.org' ) >= 0 );
-}
-
-FormUtil.isPsiServer = function()
-{
-	return ( location.host.indexOf( 'psi-mis.org' ) >= 0 );
-}
-
-FormUtil.generateUrl = function( inputsJson, actionJson )
-{
-	var url;
-
-	if ( actionJson.url !== undefined )
-	{
-		url = FormUtil.getWsUrl( actionJson.url );
-
-		if ( actionJson.urlParamNames !== undefined 
-			&& actionJson.urlParamInputs !== undefined 
-			&& actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
-		{
-			var paramAddedCount = 0;
-	
-			for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
-			{
-				var paramName = actionJson.urlParamNames[i];
-				var inputName = actionJson.urlParamInputs[i];
-	
-				if ( inputsJson[ inputName ] !== undefined )
-				{
-					var value = inputsJson[ inputName ];
-	
-					url += ( paramAddedCount == 0 ) ? '?': '&';
-	
-					url += paramName + '=' + value;
-				}
-	
-				paramAddedCount++;
-			}
-		}
-	}
-	
-	return url;
-}
-
 
 FormUtil.generateInputJson = function( formDivSecTag, getValList )
 {
@@ -154,6 +86,55 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	return inputsJson;
 }
 
+FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
+{
+	// Input Tag values
+	var retDataArray = [];
+	var inputsJson;
+	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
+
+	inputTags.each( function()
+	{		
+		var inputTag = $(this);	
+		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
+
+		if ( getVal_visible )
+		{
+
+			if ( inputTag[ 0 ].nodeName === "LABEL" )
+			{
+				if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
+				{
+					inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+				}
+			}
+			else if ( inputTag[ 0 ].nodeName === "INPUT" )
+			{
+				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' )  ) )
+				{
+					inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+				}
+			}
+			else if ( inputTag[ 0 ].nodeName === "SELECT" )
+			{
+				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+			}
+
+			if ( inputsJson )
+			{
+				retDataArray.push( inputsJson );
+			}
+
+			inputsJson = undefined;
+
+		}
+
+
+	});		
+
+	return retDataArray;
+}
+
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
 	var inputsJson = {};
@@ -161,70 +142,74 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	var inputTargets = [];
 	var uniqTargs = [];
 
-	inputTags.each( function()
-	{		
-		var inputTag = $(this);	
-		var attrDataTargets = inputTag.attr( 'datatargets' );
+	if ( inputTags.length )
+	{
+		inputTags.each( function()
+		{		
+			var inputTag = $(this);	
+			var attrDataTargets = inputTag.attr( 'datatargets' );
 
-		if ( attrDataTargets )
-		{
-			var val = FormUtil.getTagVal( inputTag );
-
-			if ( val != null && val != '' )
+			if ( attrDataTargets )
 			{
-				var dataTargs = JSON.parse( unescape( attrDataTargets ) );
-				var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
-	
-				inputTargets.push ( newPayLoad );
-	
-				Object.keys( dataTargs ).forEach(function( key ) {
-	
-					if ( ! uniqTargs.includes( key ) )
-					{
-						uniqTargs.push( key );
-					}
-	
-				});
+				var val = FormUtil.getTagVal( inputTag );
+
+				if ( val != null && val != '' )
+				{
+					var dataTargs = JSON.parse( unescape( attrDataTargets ) );
+					var newPayLoad = { "name": $( inputTag ).attr( 'name' ), "value": val, "dataTargets": dataTargs };
+
+					inputTargets.push ( newPayLoad );
+
+					Object.keys( dataTargs ).forEach(function( key ) {
+
+						if ( ! uniqTargs.includes( key ) )
+						{
+							uniqTargs.push( key );
+						}
+		
+					});
+				}
+				
+
 			}
-			
-
-		}
-
-	});
-
-	uniqTargs.sort();
-	uniqTargs.reverse();
-
-	// BUILD new template payload structure (based on named target values)
-	for ( var t = 0; t < uniqTargs.length; t++ )
-	{
-		var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
-
-		// initialize with item at position zero [0]
-		FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
-	}
-
-	// FILL/populate new template payload structure (according to named inputTarget destinations)
-	for ( var t = 0; t < inputTargets.length; t++ )
-	{
-		Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
-
-			var dataTargetHierarchy = ( key ).toString().split( '.' );
-
-			// initialize with item at position zero [0]
-			FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
 
 		});
 
-	}
+		uniqTargs.sort();
+		uniqTargs.reverse();
 
-	inputsJson[ 'userName' ] = FormUtil.login_UserName;
-	inputsJson[ 'password' ] = FormUtil.login_Password;
+		// BUILD new template payload structure (based on named target values)
+		for ( var t = 0; t < uniqTargs.length; t++ )
+		{
+			var dataTargetHierarchy = ( uniqTargs[ t ] ).toString().split( '.' );
 
-	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
-	{
-		console.log ( inputsJson );
-		console.log ( JSON.stringify( inputsJson, null, 4) );	
+			// initialize with item at position zero [0]
+			FormUtil.recursiveJSONbuild( inputsJson, dataTargetHierarchy, 0 );
+		}
+
+		// FILL/populate new template payload structure (according to named inputTarget destinations)
+		for ( var t = 0; t < inputTargets.length; t++ )
+		{
+			Object.keys( inputTargets[ t ].dataTargets ).forEach(function( key ) {
+
+				var dataTargetHierarchy = ( key ).toString().split( '.' );
+
+				// initialize with item at position zero [0]
+				FormUtil.recursiveJSONfill( inputsJson, dataTargetHierarchy, 0, inputTargets[ t ].dataTargets[ key ], inputTargets[ t ].value );
+
+			});
+
+		}
+
+		inputsJson[ 'userName' ] = FormUtil.login_UserName;
+		inputsJson[ 'password' ] = FormUtil.login_Password;
+
+	  if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
+		{
+			console.log ( inputsJson );
+			console.log ( JSON.stringify( inputsJson, null, 4) );	
+		}
+			
 	}
 
 	return inputsJson;
@@ -276,7 +261,7 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 
 			if ( ( arrSpecRaw.indexOf( ':' ) < 0 ) || ( arrSpecRaw.length > 0 && arrSpecArr.length > 2 ) ) arrSpecArr = [];
 		}
-		
+
 		var dataTargetKeyItem = ( dataTargetHierarchy[ itm ] ).toString().replace('[' + arrSpecRaw + ']','');
 		var dataValue = ( ( fillValue.toString().indexOf( '{' ) >= 0 ) && ( fillValue.toString().indexOf( '}' ) >= 0 ) ? JSON.parse( fillValue ) : fillValue );
 
@@ -286,16 +271,16 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ arrSpecArr[ 0 ].trim() ]: fillKey, [ arrSpecArr[ 1 ].trim() ]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ fillKey.trim() ]: dataValue } );
 				}
 			}
 			else
 			{
-				targetDef[ dataTargetKeyItem ] [fillKey] = dataValue;
+				targetDef[ dataTargetKeyItem ] [ fillKey ] = dataValue;
 			}
 		}
 		else if ( ( dataTargetKeyItem ).length == 0 )
@@ -304,11 +289,11 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			{
 				if ( arrSpecArr.length )
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [arrSpecArr[ 0 ]]: fillKey, [arrSpecArr[ 1 ]]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ arrSpecArr[ 0 ].trim() ]: fillKey, [ arrSpecArr[ 1 ].trim() ]: dataValue } );
 				}
 				else
 				{
-					targetDef[ dataTargetKeyItem ].push ( { [fillKey]: dataValue } );
+					targetDef[ dataTargetKeyItem ].push ( { [ fillKey.trim() ]: dataValue } );
 				}
 			}
 			else
@@ -381,19 +366,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
-FormUtil.getWsUrl = function( subUrl )
-{
-	// if 'subUrl' is full url, use it.  Otherwise, add server url in front.
-	if ( subUrl.indexOf( 'http' ) === 0 )
-	{
-		return subUrl;  // THIS WOULD NOT NORMALY WORK DUE TO CORS policy
-	} 
-	else 
-	{
-		return FormUtil.getServerUrl() + "/" + FormUtil.staticWSName + subUrl;
-	}
-}
-
 
 // POST Request required json prepare
 FormUtil.getFetchWSJson = function( payloadJson, headerJson )
@@ -422,7 +394,7 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {
-	var url = FormUtil.getWsUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
 
 	RESTUtil.retrieveJson( url, function( success, returnJson )
 	{
@@ -435,7 +407,7 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 // POST Request to Web Service..
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
-	var url = FormUtil.getWsUrl( apiPath );
+	var url = WsApiManager.composeWsFullUrl( apiPath );
 
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
@@ -463,14 +435,13 @@ FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
 	var apiPath = '/api/loginCheck';
 
-	if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 ) // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
-	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: "cws-dev" };
-	}
-	else
-	{
-		var payloadJson = { 'submitLogin': true, 'submitLogin_usr': userName, 'submitLogin_pwd': password, 'dcConfigGet': 'Y', pwaStage: (location.host).replace('.psi-mis.org','') };
-	}
+	var payloadJson = { 'submitLogin': true
+		, 'submitLogin_usr': userName
+		, 'submitLogin_pwd': password
+		, 'dcConfigGet': 'Y'
+		, pwaStage: WsApiManager.getStageName() 
+	};
+
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
@@ -607,9 +578,9 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				$( '#focusRelegator').on( 'click' , function( event )
 				{
 					thisTag.css('zIndex',1);
-	
+
 					event.preventDefault();
-	
+
 					thisTag.click();
 				});
 
@@ -705,28 +676,18 @@ FormUtil.getRedeemPayload = function( id ) {
 
 }
 
-FormUtil.getConfigInfo = function( returnFunc )
-{
-	var jsonData = {
-		"cws": 		 "https://cws.psi-mis.org/ws/eRefWSProd",
-		"cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
-		"cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSStage",
-		"cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" //use 'eRefWSDev4' (4) when server issues exist
-	};
 
-	returnFunc( true, jsonData );
-}
 
 FormUtil.getAppInfo = function( returnFunc )
 {	
-	var url = FormUtil.getWsUrl( '/api/getPWAInfo' );
+	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
 }
 
 FormUtil.getDataServerAvailable = function( returnFunc )
 {	
-	var url = FormUtil.getWsUrl( '/api/available' );
+	var url = WsApiManager.composeWsFullUrl( '/api/available' );
 
 	RESTUtil.retrieveJson( url, returnFunc );
 }
@@ -788,13 +749,16 @@ FormUtil.evalReservedField = function( tagTarget, val )
 	{
 		if ( val.indexOf( 'getCoordinates()' ) >= 0 )
 		{
-			FormUtil.refreshGeoLocation( function() {
-				if ( FormUtil.geoLocationLatLon.length )
-				{
-					MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, undefined, true, true );
-				}
-				tagTarget.val( FormUtil.geoLocationCoordinates );
-			});
+			if ( tagTarget.val() != FormUtil.geoLocationCoordinates )
+			{
+				FormUtil.refreshGeoLocation( function() {
+					if ( FormUtil.geoLocationLatLon.length )
+					{
+						MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true );
+					}
+					tagTarget.val( FormUtil.geoLocationCoordinates );
+				});
+			}
 		}
 		else if ( val.indexOf( 'newDateAndTime()' ) >= 0 )
 		{
@@ -810,11 +774,42 @@ FormUtil.evalReservedField = function( tagTarget, val )
 			var pattern = Util.getParameterInside( val, '()' );
 			tagTarget.val( Util.getAgeValueFromPattern( tagTarget, pattern ) );
 		}
+		else if ( val.indexOf( 'epoch' ) >= 0 )
+		{
+			var pattern = Util.getParameterInside( val, '()' );
+			if ( tagTarget.val().length == 0 ) 
+			{
+				Util.epoch( pattern, function( epochVal ){
+					tagTarget.val( epochVal );
+				} );
+			}
+		}
+		else if ( val.indexOf( 'dataURI' ) >= 0 )
+		{
+			var sourceInput = Util.getParameterInside( val, '()' );
+			FormUtil.setQRdataURI( sourceInput, tagTarget );
+		}
 	}
 	else
 	{
 		tagTarget.val( val );
 	}
+
+}
+
+FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
+{
+	var qrContainer = $( '#qrTemplate' );
+	var myQR = new QRCode( qrContainer[ 0 ] );
+	var inputVal = $( '[name=' + sourceInput +']' ).val();
+
+	myQR.fetchCode ( inputVal, function( dataURI ){
+
+		var previewTag = $( '[name=imgPreview_' + imgInputTag.attr( 'name' ) +']' )
+		previewTag.attr( 'src', dataURI );
+		imgInputTag.val( dataURI );
+
+	})
 
 }
 
@@ -1176,8 +1171,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
 };
 
-
-FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj)
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride )
 {
 	if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
 	{
@@ -1185,6 +1179,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 		$.get( activityType.icon.path, function(data) {
 
 			var svgObject = ( $(data)[0].documentElement );
+			var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
 
 			if ( activityType.icon.colors )
 			{
@@ -1213,14 +1208,14 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$( iconObj ).empty();
 			$( iconObj ).append( svgObject );
 
-			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityIconSize && $(iconObj).html() )
+			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
 			{
-				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width ) );
-				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.height ) );
+				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, svgStyle.width ) );
+				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, svgStyle.height ) );
 
 			}
 
-			if ( $(iconObj).html() )
+			if ( $(iconObj).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 			{
 				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="vertical-align:top;position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
 
@@ -1249,36 +1244,38 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 		else
 		{
 		// read local SVG xml structure, then replace appropriate content 'holders'
+			if ( statusOpt && statusOpt.icon && statusOpt.icon.path )
+			{
+				$.get( statusOpt.icon.path, function(data) {
 
-			$.get( statusOpt.icon.path, function(data) {
-
-				var svgObject = ( $(data)[0].documentElement );
-
-				if ( statusOpt.icon.colors )
-				{
-					if ( statusOpt.icon.colors.background )
+					var svgObject = ( $(data)[0].documentElement );
+	
+					if ( statusOpt.icon.colors )
 					{
-						$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
-						$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+						if ( statusOpt.icon.colors.background )
+						{
+							$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+							$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+						}
+						if ( statusOpt.icon.colors.foreground )
+						{
+							$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+							$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+						}
 					}
-					if ( statusOpt.icon.colors.foreground )
+	
+					$( targetObj ).empty();
+					$( targetObj ).append( svgObject );
+	
+					if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 					{
-						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
-						$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+						$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+						$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
 					}
-				}
-
-				$( targetObj ).empty();
-				$( targetObj ).append( svgObject );
-
-				if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
-				{
-					$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-					$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
-				}
-
-			});
-			
+	
+				});
+	
+			}			
 		}
 
 	}
@@ -1426,6 +1423,20 @@ FormUtil.shareApp = function() {
     }
 }
 
+FormUtil.shareDataURI = function( title, dataURI ) {
+    //var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
+    if ('share' in navigator) {
+        navigator.share({
+            title: 'CwS: Connect App',
+            text: title,
+            url: dataURI,
+        })
+    } else {
+        // Here we use the WhatsApp API as fallback; remember to encode your text for URI
+        location.href = 'https://api.whatsapp.com/send?text=' + dataURI
+    }
+}
+
 FormUtil.testNewSWavailable = function()
 {
 	console.log( 'testing new SW available ');
@@ -1499,7 +1510,7 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 			{
 				FormUtil.geoLocationError = error.code; //Error locating your device
 
-				if (error.code == error.PERMISSION_DENIED)
+				if (error.code == error_PERMISSION_DENIED)
 				{
 					FormUtil.geoLocationLatLon = '';
 				}
@@ -1727,19 +1738,14 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 			{
 				inputTag.attr( 'dataTargets', escape( JSON.stringify( dataTarg.dataTargets ) ) );
 			}
+
 			if ( dataTarg.defaultValue )
 			{
-				if ( dataTarg.defaultValue.length && dataTarg.defaultValue.indexOf( 'generatePattern(' ) > 0 && dataTarg.defaultValue.indexOf( 'form:' ) > 0 )
+				if ( dataTarg.defaultValue.indexOf( '##{' ) > 0 )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
 
-					if ( tagTarget )
-					{
-						var pattern = Util.getParameterInside( dataTarg.defaultValue, '()' );
-
-						inputTag.val( Util.getValueFromPattern( inputTag, pattern ) );
-					}
-
+					FormUtil.evalReservedField( tagTarget, dataTarg.defaultValue );
 				}
 				else
 				{
@@ -1794,4 +1800,415 @@ FormUtil.createNumberLoginPinPad = function()
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
           $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
       }, 500 );
+}
+
+FormUtil.getCommonDateGroups = function()
+{
+	var z = [ { name: "Last 24 hours", term: "", hours: 24, created: 0 },
+			{ name: "Last 3 days", term: "", hours: 72 , created: 0 },
+			{ name: "Last 7 days", term: "", hours: 168, created: 0 },
+			{ name: "Last 30 days", term: "", hours: 720, created: 0 },
+			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
+			{ name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
+	return z;
+}
+
+FormUtil.getActivityTypes = function()
+    {
+        // get different 'Areas' or Activity-Types
+        var sessData = localStorage.getItem('session');
+        var retArr = [];
+
+        if ( sessData )
+        {
+            var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+
+            if ( itms && itms.length )
+            {
+                for (var i = 0; i < itms.length; i++)
+                {
+                    retArr.push( { name: itms[ i ].name } );
+                }
+            }
+
+        }
+
+        return retArr;
+
+    };
+
+FormUtil.getMyDetails = function( callBack )
+{
+	//https://cws-dhis.psi-mis.org/dws/locator.api/?code=
+	//https://pwa.psi-connect.org/ws/dws/locator.api/?code=
+	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + FormUtil.login_UserName;
+
+	var payload = {
+		"action-details": 2,
+		"config.action": "https://cws-dhis.psi-mis.org/api/dataStore/Connect_config/dws@locator@api",
+		"username": "pwa",
+		"password": "529n3KpyjcNcBMsP"
+	};
+
+	let request = new Request(targetURL, {
+		method: 'POST',
+		crossDomain : true,
+		headers: {
+		  'Content-Type': 'application/json',
+		  "Authorization": "Basic " + btoa( payload.username + ":" + payload.password ) 
+		},
+		body: JSON.stringify(payload)
+	});
+
+	fetch(request)
+        .then((response) => {
+			console.log( response );
+            if (!response.ok) {
+                throw Error(response.statusText);
+			}
+			if ( callBack )
+			{
+				callBack( response.json() );
+			} 
+			else
+			{
+				return response;
+			}
+        })
+		.then( (response) => { 
+			if ( callBack )
+			{
+				callBack( response.json() );
+			} 
+			else
+			{
+				return response.json;
+			}
+		} );
+}
+
+FormUtil.fetchMyDetails = function () {
+	/*
+	var myD_username = FormUtil.login_UserName;
+	var myD_password = FormUtil.login_Password;
+	//var server_url = FormUtil.getServerUrl();
+	var server_url = 'https://replica.psi-mis.org/locator/api/1?code=';
+	alert(server_url+myD_username+'<br/>'+myD_password);
+	//var server_url = 'https://replica.psi-mis.org/locator/api/1?code=NP_TEST_PROV';
+	$.ajax({
+		type: "GET",
+		url: server_url+'/api/1?code='+myD_username,
+		dataType: 'json',
+		headers: { 'Autorization': 'Basic' + btoa(myD_username + ':' + myD_password) },
+		success: function (response) {
+			console.log(response);
+			return(response);
+		},
+		error: function (xhr) {
+			console.log(type);
+			console.log(msg);
+		}
+	});
+*/
+	//https://replica.psi-mis.org/locator/api/1?code=NP-OHF-3122
+	//https://replica.psi-mis.org/locator/api/1?code=NP_TEST_PROV
+	
+	return {
+		"result": {
+			"msg": {
+				"response": {
+					"returnCode": "200",
+					"outlet": [
+						{
+							"dhisCode": "NP-OHF-8858",
+							"dhisId": "X7FJl3bf9KH",
+							"servicesStandard": "Family Planning, Maternity, MA, MVA",
+							"description": "Description about Me",
+							"url": "http://www.testoutlet.com",
+							"outletName": "NP Outlet Test",
+							"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
+							"phoneNumber": "984123345",
+							"postgresId": "798523356",
+							"closedDate": "2021-12-31",
+							"locatorType": "OUT",
+							"dhisName": "NP Outlet Test (OHF-8858)",
+							"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
+							"comment": "Comment about Test outlet",
+							"location": {
+								"area": "Lagankhel",
+								"areaSub": "Bus Stop",
+								"address": "Kantipath, Kathmandu",
+								"latitude": 27.668306,
+								"longitude": 85.31838
+							},
+							"openingDate": "2019-06-23",
+							"email": "testperson@gmail.com",
+							"providers": [
+								{
+									"gender": "F",
+									"dhisId": "CRcXVby89hP",
+									"providerName": "Prov - 3"
+								},
+								{
+									"gender": "F",
+									"dhisId": "DSKZ0IXIarC",
+									"providerName": "prov-2"
+								},
+								{
+									"gender": "F",
+									"dhisId": "Vwnc7T1CAyh",
+									"providerName": "prov - 5"
+								},
+								{
+									"gender": "F",
+									"dhisId": "VNX2O8qEIPC",
+									"providerName": "Prov - 4"
+								},
+								{
+									"gender": "F",
+									"dhisId": "HJ2XC2c07R9",
+									"providerName": "prov-1"
+								}
+							]
+						}
+					],
+					"status": "Showing 1 OrgUnits"
+				}
+			}
+		},
+		"actionDetails": [
+			{
+				"auth": {
+					"action": {
+						"authorised": true
+					},
+					"actionDefinition": {
+						"eval": [
+							"function b2a(r){var t,c,e,h,a,n,A,i,o,l='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',d=0,u=0,C='',f=[];if(!r)return r;do t=r.charCodeAt(d++),c=r.charCodeAt(d++),e=r.charCodeAt(d++),i=t<<16|c<<8|e,h=63&i>>18,a=63&i>>12,n=63&i>>6,A=63&i,f[u++]=l.charAt(h)+l.charAt(a)+l.charAt(n)+l.charAt(A);while(d<r.length);return C=f.join(''),o=r.length%3,(o?C.slice(0,o-3):C)+'==='.slice(o||3)}",
+							"function a2b(r){var o,t,a,f={},n=0,h=0,c='',e=String.fromCharCode,g=r.length;for(o=0;64>o;o++)f['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.charAt(o)]=o;for(t=0;g>t;t++)for(o=f[r.charAt(t)],n=(n<<6)+o,h+=6;h>=8;)((a=255&n>>>(h-=8))||g-2>t)&&(c+=e(a));return c}",
+							"var auth = {};",
+							"auth.authorised = incomingHeader.authorization === 'Basic ' + b2a('pwa:529n3KpyjcNcBMsP');"
+						],
+						"goTo": " goTo = ( auth.authorised ) ? 'authValid' : 'authInvalid' ; ",
+						"id": "auth",
+						"requestData": null
+					}
+				}
+			},
+			{
+				"authValid": {
+					"action": {
+						"msg": "AUTH SUCCESS"
+					},
+					"actionDefinition": {
+						"eval": "authValid.msg = 'AUTH SUCCESS' ;",
+						"goTo": " goTo = 'reading' ;",
+						"id": "authValid",
+						"requestData": null
+					}
+				}
+			},
+			{
+				"reading": {
+					"action": {
+						"code": "NP-OHF-8858"
+					},
+					"actionDefinition": {
+						"eval": [
+							"reading = {} ;",
+							"reading.code = incomingParams.code[0] ;"
+						],
+						"goTo": " goTo = 'readingAuthDetails';",
+						"id": "reading",
+						"requestData": null
+					}
+				}
+			},
+			{
+				"readingAuthDetails": {
+					"action": {},
+					"actionDefinition": {
+						"eval": [
+							"var payload = {};",
+							"payload.username = incomingPayload.username;",
+							"payload.password = incomingPayload.password;"
+						],
+						"goTo": " goTo = 'storage' ;",
+						"id": "readingAuthDetails",
+						"requestData": null
+					}
+				}
+			},
+			{
+				"storage": {
+					"action": {
+						"payload": {
+							"password": "529n3KpyjcNcBMsP",
+							"username": "pwa"
+						}
+					},
+					"actionDefinition": {
+						"eval": [
+							"var storage = {};",
+							"storage.payload = payload;"
+						],
+						"goTo": " goTo = 'send' ;",
+						"id": "storage",
+						"requestData": null
+					}
+				}
+			},
+			{
+				"send": {
+					"action": {
+						"response": {
+							"returnCode": "200",
+							"outlet": [
+								{
+									"dhisCode": "NP-OHF-8858",
+									"dhisId": "X7FJl3bf9KH",
+									"servicesStandard": "Family Planning, Maternity, MA, MVA",
+									"description": "Description about Me",
+									"url": "http://www.testoutlet.com",
+									"outletName": "NP Outlet Test",
+									"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
+									"phoneNumber": "984123345",
+									"postgresId": "798523356",
+									"closedDate": "2021-12-31",
+									"locatorType": "OUT",
+									"dhisName": "NP Outlet Test (OHF-8858)",
+									"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
+									"comment": "Comment about Test outlet",
+									"location": {
+										"area": "Lagankhel",
+										"areaSub": "Bus Stop",
+										"address": "Kantipath, Kathmandu",
+										"latitude": 27.668306,
+										"longitude": 85.31838
+									},
+									"openingDate": "2019-06-23",
+									"email": "testperson@gmail.com",
+									"providers": [
+										{
+											"gender": "F",
+											"dhisId": "CRcXVby89hP",
+											"providerName": "Prov - 3"
+										},
+										{
+											"gender": "F",
+											"dhisId": "DSKZ0IXIarC",
+											"providerName": "prov-2"
+										},
+										{
+											"gender": "F",
+											"dhisId": "Vwnc7T1CAyh",
+											"providerName": "prov - 5"
+										},
+										{
+											"gender": "F",
+											"dhisId": "VNX2O8qEIPC",
+											"providerName": "Prov - 4"
+										},
+										{
+											"gender": "F",
+											"dhisId": "HJ2XC2c07R9",
+											"providerName": "prov-1"
+										}
+									]
+								}
+							],
+							"status": "Showing 1 OrgUnits"
+						}
+					},
+					"actionDefinition": {
+						"eval": null,
+						"goTo": " goTo = 'response' ;",
+						"id": "send",
+						"requestData": {
+							"input": "storage",
+							"method": "POST",
+							"sourceType": "BASIC_AUTH",
+							"URL": "server+'/api/1?code=' + reading.code;"
+						}
+					}
+				}
+			},
+			{
+				"response": {
+					"action": {
+						"msg": {
+							"response": {
+								"returnCode": "200",
+								"outlet": [
+									{
+										"dhisCode": "NP-OHF-8858",
+										"dhisId": "X7FJl3bf9KH",
+										"servicesStandard": "Family Planning, Maternity, MA, MVA",
+										"description": "Description about Me",
+										"url": "http://www.testoutlet.com",
+										"outletName": "NP Outlet Test",
+										"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
+										"phoneNumber": "984123345",
+										"postgresId": "798523356",
+										"closedDate": "2021-12-31",
+										"locatorType": "OUT",
+										"dhisName": "NP Outlet Test (OHF-8858)",
+										"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
+										"comment": "Comment about Test outlet",
+										"location": {
+											"area": "Lagankhel",
+											"areaSub": "Bus Stop",
+											"address": "Kantipath, Kathmandu",
+											"latitude": 27.668306,
+											"longitude": 85.31838
+										},
+										"openingDate": "2019-06-23",
+										"email": "testperson@gmail.com",
+										"providers": [
+											{
+												"gender": "F",
+												"dhisId": "CRcXVby89hP",
+												"providerName": "Prov - 3"
+											},
+											{
+												"gender": "F",
+												"dhisId": "DSKZ0IXIarC",
+												"providerName": "prov-2"
+											},
+											{
+												"gender": "F",
+												"dhisId": "Vwnc7T1CAyh",
+												"providerName": "prov - 5"
+											},
+											{
+												"gender": "F",
+												"dhisId": "VNX2O8qEIPC",
+												"providerName": "Prov - 4"
+											},
+											{
+												"gender": "F",
+												"dhisId": "HJ2XC2c07R9",
+												"providerName": "prov-1"
+											}
+										]
+									}
+								],
+								"status": "Showing 1 OrgUnits"
+							}
+						}
+					},
+					"actionDefinition": {
+						"eval": [
+							"var response = {};",
+							"response.msg = send;"
+						],
+						"goTo": " goTo = 'FINISH' ;",
+						"id": "response",
+						"requestData": null
+					}
+				}
+			}
+		]
+	}
+	
 }

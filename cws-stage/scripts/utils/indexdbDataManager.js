@@ -15,22 +15,34 @@ IndexdbDataManager.saveData = function( secName, jsonData, callBack )
 
 	if ( DataManager.protectedContainer( secName ) )
 	{
-		var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), FormUtil.login_Password,
-		{
-		   keySize: 128 / 8,
-		   iv: FormUtil.login_Password,
-		   mode: CryptoJS.mode.CBC,
-		   padding: CryptoJS.pad.Pkcs7
-		 }).toString();
+
+		// preparation for WACO-179: here is where we upgrade secured container content to use array values per Username
+		var JSONcontainerData = {};
+
+		IndexdbDataManager.getIV( function( iv ){
+
+			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
+			{
+			   keySize: 128 / 8,
+			   iv: iv,
+			   mode: CryptoJS.mode.CBC,
+			   padding: CryptoJS.pad.Pkcs7
+			 }).toString();
+
+			 dbStorage.addData( secName, pushData );
+
+			 if ( callBack ) callBack( pushData );
+		} )
 	}
 	else
 	{
-		pushData = JSON.stringify( jsonData )
+		pushData = JSON.stringify( jsonData );
+
+		dbStorage.addData( secName, pushData );
+
+		if ( callBack ) callBack();
 	}
 
-	dbStorage.addData( secName, pushData );
-
-	if ( callBack ) callBack();
 };
 
 IndexdbDataManager.getData = function( secName, callBack ) 
@@ -48,28 +60,64 @@ IndexdbDataManager.getData = function( secName, callBack )
 				if ( DataManager.protectedContainer( secName ) )
 				{
 
-					jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.value.toString(), FormUtil.login_Password, 
-					{
-						keySize: 128 / 8,
-						iv: FormUtil.login_Password,
-						mode: CryptoJS.mode.CBC,
-						padding: CryptoJS.pad.Pkcs7
-					} ) ) );
+					IndexdbDataManager.getIV( function( iv ){
+
+						jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.value.toString(), iv, 
+						{
+							keySize: 128 / 8,
+							iv: iv,
+							mode: CryptoJS.mode.CBC,
+							padding: CryptoJS.pad.Pkcs7
+						} ) ) );
+
+						if ( callBack ) callBack( jsonData );
+
+					} )
 
 				}
 				else
 				{
 					jsonData = JSON.parse( data.value );
+
+					if ( callBack ) callBack( jsonData );
 				}
 			}
-			if ( callBack ) callBack( jsonData );
+			else
+			{
+				if ( callBack ) callBack( jsonData );
+			}
 		} );
 	}
-	else {
+	else 
+	{
 		if ( callBack ) callBack();
 	}
 
 };
+
+IndexdbDataManager.getIV = function( callBack )
+{
+	if ( FormUtil.login_Password ) 
+	{ 
+		if ( callBack ) callBack( FormUtil.login_Password );
+	}
+	else
+	{
+		DataManager.getSessionData( function( data ) { 
+
+			if ( data && data.user )
+			{
+				if ( callBack ) callBack( Util.decrypt( FormUtil.getUserSessionAttr( data.user,'pin' ), 4) );
+			}
+			else
+			{
+				if ( callBack ) callBack();
+			}
+
+		} )
+	}
+
+}
 
 IndexdbDataManager.getOrCreateData = function( secName, callBack ) {
 	IndexdbDataManager.getData( secName, function( lastSessionAll ){
@@ -203,7 +251,6 @@ IndexdbDataManager.getUserConfigData = function( callBack )
 		}
 	});
 
-	
 }
 
 IndexdbDataManager.getSessionData = function( callBack ) 
@@ -217,7 +264,6 @@ IndexdbDataManager.setSessionDataValue = function( prop, val )
 		if ( sessionJson )
 		{
 			sessionJson[ prop ] = val;
-
 			IndexdbDataManager.saveData( DataManager.StorageName_session, sessionJson );
 		}
 	} );
@@ -226,6 +272,7 @@ IndexdbDataManager.setSessionDataValue = function( prop, val )
 IndexdbDataManager.getSessionDataValue = function( prop, defval, callBack ) 
 {
 	IndexdbDataManager.getData( DataManager.StorageName_session, function( sessionJson ){
+
 		var ret;
 
 		if ( sessionJson )
@@ -242,7 +289,6 @@ IndexdbDataManager.getSessionDataValue = function( prop, defval, callBack )
 		callBack( ret );
 	} );
 }
-
 
 IndexdbDataManager.clearSessionStorage = function()
 {

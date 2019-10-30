@@ -24,12 +24,16 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
+    "url": "css/mdDateTimePicker.min.css",
+    "revision": "f469502c89e4e421afc1994a4e553195"
+  },
+  {
     "url": "css/responsive.css",
-    "revision": "4931a03cb0658327155c6062b035176f"
+    "revision": "86ca0c6178d0d9b4d9210d512479cc19"
   },
   {
     "url": "css/style.css",
-    "revision": "2cb79e0ac2c0249b6f42c837263b9dab"
+    "revision": "1caf89ada45902d4daa930719f222c46"
   },
   {
     "url": "images/about.svg",
@@ -124,6 +128,10 @@ self.__precacheManifest = [
     "revision": "325472601571f31e1bf00674c368d335"
   },
   {
+    "url": "images/care.svg",
+    "revision": "2492b5e17f7b283ab9185d16bd6d4299"
+  },
+  {
     "url": "images/client.svg",
     "revision": "b44e4e98e1665413e1d6299c832db99f"
   },
@@ -170,6 +178,10 @@ self.__precacheManifest = [
   {
     "url": "images/favbar_color_sas.svg",
     "revision": "f473cc5a6d3959639ea00e5d518e4818"
+  },
+  {
+    "url": "images/followup.svg",
+    "revision": "0ababc3260aa87307cc547a9cd3a3a30"
   },
   {
     "url": "images/hide.png",
@@ -236,8 +248,12 @@ self.__precacheManifest = [
     "revision": "0fb7b04a2651bfb60e59ae3289d4e2f6"
   },
   {
+    "url": "images/my_details.svg",
+    "revision": "dba1cfb6a07e7d21af17eb0dcbf6683c"
+  },
+  {
     "url": "images/net-green.svg",
-    "revision": "0aafa33a6beeca84d37679273ad059d7"
+    "revision": "7267a1c85f97b8d8f2b1d8e84c3baed2"
   },
   {
     "url": "images/net-sync.svg",
@@ -270,6 +286,18 @@ self.__precacheManifest = [
   {
     "url": "images/plus.svg",
     "revision": "7051f6c37f8d6b64308cf5a635ba1e56"
+  },
+  {
+    "url": "images/provision.svg",
+    "revision": "4f2008c79e266a2d5f079d2833ff8fc0"
+  },
+  {
+    "url": "images/qr_cancel.svg",
+    "revision": "da5083a7dfb0089fbf962140ca536077"
+  },
+  {
+    "url": "images/qr.svg",
+    "revision": "be30e8aa9a5803479d5f3eb9fad8bb5e"
   },
   {
     "url": "images/settings.svg",
@@ -325,23 +353,27 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "1ac279ce74867cb6acbca9387570bb35"
+    "revision": "8065949941d6c6291941b6dbf35056fa"
   },
   {
     "url": "redeemGen.html",
-    "revision": "e2da8dfe1d4e4fe58dfccd2e6f6b70b9"
+    "revision": "ca5d5efe73926933e17f35c82b2892d6"
   },
   {
     "url": "scripts/app.js",
-    "revision": "f4ffdc5c9e258ad134b444999431000c"
+    "revision": "10d9230a428c1028a1505cfb8b1cd97a"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "2ea62aead544c3bb229c69215475c774"
+    "revision": "a0db667c83a700ab5e27712ac25c8400"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "8c032b89925821340c789c0a844b9134"
+    "revision": "e516cfbb28e57150801b5f33b1d0d649"
+  },
+  {
+    "url": "scripts/classes/baseConverter.js",
+    "revision": "a307a74f8732128f26d7e7c17d0e8a62"
   },
   {
     "url": "scripts/classes/block.js",
@@ -349,15 +381,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "6fb82b1dfe9e23a448f2f2499d764889"
+    "revision": "9b8fbecb42800ef578d449a33f4c8f29"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "a81f366b7a4a78468060d14df0095637"
+    "revision": "ab0744b51a9f88d4dd61dd7bb93ecf75"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "f9b59ace9be3e7a7e6e2dd45b7748b44"
+    "revision": "1b84fac1925b6a8866c5b98178f66392"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -369,7 +401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "7b368bf349845fb52eed39dde3440bd1"
+    "revision": "f3d311f955b393e3579246bbd521e1eb"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -377,27 +409,43 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "16c3785cec2d490eaea345fa6fd8295b"
+    "revision": "355317b1c5b78c82ff0c384a136f90dd"
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "304b91f23b8699fe8473692af2294659"
+    "revision": "ee88cca432775ad94312b96923d26a9b"
+  },
+  {
+    "url": "scripts/classes/myDetails.js",
+    "revision": "b6cdde8dc99e5ad1aba1a2179a94a246"
+  },
+  {
+    "url": "scripts/classes/pwaEpoch.js",
+    "revision": "2e5857d51b33bcfb76f28f1483bf95d1"
+  },
+  {
+    "url": "scripts/classes/qrcode.js",
+    "revision": "010fe455f3cef968ee50c6f5de456e8a"
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "418046de7be04f350e70918f6f006f4d"
+    "revision": "eaa585576a6dca5f5c826e09ce3dc161"
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "f218648c961d85f0c6fc9ae763ec844e"
+    "revision": "323ad2c0c1981de0b1314900a025f0aa"
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "e0680cc46b3e5aebaeda5367e496e119"
+    "revision": "e5c5253c16b0e1d2638ab98c517e8a52"
+  },
+  {
+    "url": "scripts/classes/webqr.js",
+    "revision": "d68c757ed34cd531bb2ebadf15c681c8"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "e7d5ceef48c728c1d02d5c42a1394b25"
+    "revision": "75830428561f5be6ddb51106fe3a2553"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -406,6 +454,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/jquery-3.4.0.js",
     "revision": "eac275563332b65bae1a3452532ebe38"
+  },
+  {
+    "url": "scripts/libraries/jquery-autocomplete.js",
+    "revision": "4102c8bda3aa2c9dee5765ba82dbcc4c"
   },
   {
     "url": "scripts/libraries/jquery-dateformat.min.js",
@@ -420,28 +472,40 @@ self.__precacheManifest = [
     "revision": "1473907211f50cb96aa2f2402af49d69"
   },
   {
+    "url": "scripts/libraries/llqrcode.js",
+    "revision": "82f070af5b5225612aa9f75113d034b9"
+  },
+  {
+    "url": "scripts/libraries/mdDateTimePicker.min.js",
+    "revision": "e909fb12b5ca1f5e7ce8b8a67e2d1418"
+  },
+  {
+    "url": "scripts/libraries/moment.min.js",
+    "revision": "132734424cbe44372cf5fc2d6f7e2ec3"
+  },
+  {
     "url": "scripts/utils/activityUtil.js",
     "revision": "34b37025b968199c5d6adc5a6689f8ec"
   },
   {
     "url": "scripts/utils/cacheManager.js",
-    "revision": "9cde6e47a6bcb4c6de3dbb703a86ad4e"
+    "revision": "13965f13915ef8f56d9542e91851a3c4"
   },
   {
     "url": "scripts/utils/configUtil.js",
-    "revision": "f8ddba013021052651d0b2242ac97afa"
+    "revision": "9d5b1b1ade53af54b2caaae852822280"
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "8013fd4b31bd8e3b03f2326de62976db"
+    "revision": "1a37f4b896dcd086a79a96837123b24c"
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "593372bf1d3191b84d2ccb8c487d7951"
+    "revision": "eb4c786c576b70530e98db3461bb173d"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
-    "revision": "df0728534fea8003f81e7583eea6b6b2"
+    "revision": "e5c21632873d151139cddc4f1bb0efab"
   },
   {
     "url": "scripts/utils/formMsgManager.js",
@@ -449,11 +513,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "312d42824e91e55a6da363b667afdf05"
+    "revision": "a11621dbb37e36b27013e8b880f5af00"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
-    "revision": "55a9bb369f9779dccfba422de11dae0a"
+    "revision": "c4fa8598ad0ffae81c74b88bbf747325"
   },
   {
     "url": "scripts/utils/indexdbStorage.js",
@@ -461,19 +525,31 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "0f2d4e3ca78fa12655cb43c41783a97c"
+    "revision": "3860ca69ec3bd3f5386e0c9dbc64cbed"
+  },
+  {
+    "url": "scripts/utils/localStatistics.js",
+    "revision": "d514880964b9483165393e45339ca8c4"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
-    "revision": "ad2b54245539b3d75270181e46c48858"
+    "revision": "ce19286bd3edacd7955c151c7ea1e9c6"
   },
   {
     "url": "scripts/utils/moveLocalStorageData.js",
-    "revision": "629d5b9171c832c5a011efbac7e5d95f"
+    "revision": "b64daab6c28a951acacf96f5af1af534"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "9d9c1aeb37cc9b1020a2c9c5a3a6b640"
+    "revision": "7fc4d3f37b0a30ba0a8d019b89a442b1"
+  },
+  {
+    "url": "scripts/utils/pptManager.js",
+    "revision": "427b1d738286bfc5b5aa5418ff8ad170"
+  },
+  {
+    "url": "scripts/utils/pptOptions.js",
+    "revision": "83759861a0f465464be2abb4cb70c887"
   },
   {
     "url": "scripts/utils/restUtil.js",
@@ -481,15 +557,23 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/sounds.js",
-    "revision": "2c1d6ba980c329e2aea72b56dc84dd4b"
+    "revision": "110d54633ee16ad089f53d7d16478828"
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "3812bcd94a4383191950699a9fcccf13"
+    "revision": "8031a29aea0cc2191d233a78cfac6020"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "a23dd492f82696606b368ed4dba88791"
+    "revision": "f3045cdd7cdbb01e8c5b547e20baced9"
+  },
+  {
+    "url": "scripts/utils/wsApiManager.js",
+    "revision": "1670594607983db8f9ce16ba7bdcfa9e"
+  },
+  {
+    "url": "sounds/beep.mp3",
+    "revision": "1161ea9429c49bdf9eb0c1b5c6d8b3b6"
   },
   {
     "url": "sounds/coin.mp3",
@@ -528,6 +612,10 @@ self.__precacheManifest = [
     "revision": "ea4ebe072be75fbbea002631916836de"
   },
   {
+    "url": "styles/jquery-autocomplete.css",
+    "revision": "328af1bcd19137dfa16aa6d8b210fb71"
+  },
+  {
     "url": "styles/jquery-ui.css",
     "revision": "85291df7b046cd32eb4fb33ddc85bb99"
   },
@@ -541,11 +629,13 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "acf8963670cb27b9fce0428d6886ad18"
+    "revision": "aee10a452e8c11b66fa0ffb87f2c5355"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/eRefWS/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.precaching.cleanupOutdatedCaches();
 
-workbox.googleAnalytics.initialize({});
+workbox.routing.registerRoute(/.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/, new workbox.strategies.CacheFirst({ "cacheName":"appShell", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/eRefWSStage/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"eRef-WebService", plugins: [] }), 'GET');
+workbox.routing.registerRoute(/^https:\/\/fonts\.googleapis\.com.*/, new workbox.strategies.StaleWhileRevalidate({ "cacheName":"googleFonts", plugins: [] }), 'GET');

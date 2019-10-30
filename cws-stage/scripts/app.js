@@ -5,7 +5,7 @@
 
   const _cwsRenderObj = new cwsRender();
   
-  var debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
+  var debugMode = WsApiManager.isDebugMode;
   var SWinfoObj;
   var swStateChanges = false;
   var swNewInstallStartup = false;
@@ -31,50 +31,20 @@
     // Only online mode and by app.psi-mis.org, check the version diff.
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
-
-      FormUtil.getConfigInfo( function( result, data ) 
-      {
-        try {
-          if ( ( location.href ).indexOf( '.psi-mis.org' ) >= 0 )
-            FormUtil.dynamicWS = data[ ( location.host ).replace( '.psi-mis.org', '' ) ];
-          else
-            FormUtil.dynamicWS = data[ "cws-dev" ];
-        }
-        catch(err) {
-          try {
-            FormUtil.dynamicWS = data[ "cws-dev" ];
-          }
-          catch(err) {
-            console.log( err.message );
-          }
+      WsApiManager.setupWsApiVariables(returnFunc);
         }
 
-        FormUtil.staticWSName = ( FormUtil.dynamicWS ).toString().split('/')[ ( FormUtil.dynamicWS ).toString().split('/').length-1 ];
-        FormUtil._serverUrlOverride = '';
 
-        for (var i = 0; i < ( FormUtil.dynamicWS ).toString().split('/').length -1; i++)
-        {
-          FormUtil._serverUrlOverride = FormUtil._serverUrlOverride + ( FormUtil.dynamicWS ).toString().split('/')[ i ];
-          if ( i < ( FormUtil.dynamicWS ).toString().split('/').length -2 ) FormUtil._serverUrlOverride += '/';
-        }
 
-        FormUtil._getPWAInfo = FormUtil.dynamicWS;
 
-        webServiceSet( FormUtil.staticWSName );
 
-        if (returnFunc) returnFunc();
 
-      });
 
-    }
     else
     {
-      if ( debugMode ) console.log('not PSI server')
+      if (debugMode) console.log('Offline Mode'); //console.log('not PSI server')
 
-      if ( ! FormUtil._getPWAInfo )
-      {
-        FormUtil._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
-      }
+      //if ( ! FormUtil._getPWAInfo ) WsApiManager._getPWAInfo
 
       if (returnFunc) returnFunc();
     }
@@ -82,10 +52,6 @@
   };
 
 
-  function webServiceSet( wsName )
-  {
-    if ( wsName ) FormUtil.staticWSName = wsName;
-  }
 
   function recordInstallEvent( event )
   {

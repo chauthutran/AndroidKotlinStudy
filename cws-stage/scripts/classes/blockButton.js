@@ -275,7 +275,7 @@ function BlockButton( cwsRenderObj, blockObj )
 	me.renderBlockTabContent = function( liContentTag, onClick )
 	{
 		if ( onClick && onClick.length > 0 )
-		{			
+		{
 			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, me.cwsRenderObj.configJson.definitionActions );
 			var actionJson = Util.getFromList( actionJsonArr, 'openBlock', 'actionType' );
 
@@ -287,23 +287,15 @@ function BlockButton( cwsRenderObj, blockObj )
 				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );	
 				newBlockObj.render();
 
-				// Get array of showCase + hideCase inputs > then action results of array
-				/*var actionCases = me.getActionCases( onClick );
-
-				if ( actionCases.show.length || actionCases.hide.length )
+				if ( actionJson.payloadConfig )
 				{
-
-					for( var i = 0; i < actionCases.show.length; i++ )
-					{
-						if ( $('input[name="' + actionCases.show[ i ] + '"]') ) ( $('input[name="' + actionCases.show[ i ] + '"]') ).parent().show();
-					}
-
-					for( var i = 0; i < actionCases.hide.length; i++ )
-					{
-						if ( $('input[name="' + actionCases.hide[ i ] + '"]') ) ( $('input[name="' + actionCases.hide[ i ] + '"]') ).parent().hide();
-					}
-
-				}*/
+					FormUtil.block_payloadConfig = actionJson.payloadConfig;
+					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
+				}
+				else
+				{
+					FormUtil.block_payloadConfig = '';
+				}
 
 			}
 		}

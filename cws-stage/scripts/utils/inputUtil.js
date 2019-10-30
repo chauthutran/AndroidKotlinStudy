@@ -83,6 +83,9 @@ function inputMonitor( cwsRenderObj )
 
         if ( FormUtil.checkLogin() )
         {
+            inputMonLogoutDelay = JSON.parse(localStorage.getItem( "session" )).logoutDelay;
+        
+        
             cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
 
             InputMonLogoutTimer = setInterval( function() 
@@ -281,7 +284,7 @@ function inputMonitor( cwsRenderObj )
 
         $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'width', '' );
         //$( startTouchTargetTag ).css( 'width', $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).width() + 'px' );
-        $( '#listItem_voucher_code_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
+        $( '#listItem_voucher_status_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
         $( '#listItem_action_sync_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
         $( '#listItem_trExpander_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
         
@@ -491,7 +494,7 @@ function inputMonitor( cwsRenderObj )
 
 
         $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'width', '100%' );
-        $( '#listItem_voucher_code_' + startTouchTargetTag.attr( 'itemid' ) ).show();
+        $( '#listItem_voucher_status_' + startTouchTargetTag.attr( 'itemid' ) ).show();
         $( '#listItem_action_sync_' + startTouchTargetTag.attr( 'itemid' ) ).show();
         $( '#listItem_trExpander_' + startTouchTargetTag.attr( 'itemid' ) ).show();
 

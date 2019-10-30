@@ -226,21 +226,23 @@ select option {
   width: 100%;
   box-sizing: border-box;
   font-weight:400;
-  top: -6px;
+  /* top: -6px; */
   cursor: pointer;
 }
 
 .act-l-more-open {
   height: 150px;
+  width: auto;
   overflow: scroll;
   display: block !important;
   padding: 10px 15px;
+  border-top: 2px solid #DCDCDC;
 }
 
 .act-l-more-open > table {
   width: 100%;
-  border: 1px solid #E5E5E5;
-  border-radius: 4px;
+  /* border: 1px solid #E5E5E5;
+  border-radius: 4px;*/
 }
 
 .act-l-more-open > table > tr > td {
