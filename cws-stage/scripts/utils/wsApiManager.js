@@ -129,7 +129,8 @@ WsApiManager.composeWsFullUrl = function( subUrl )
 	} 
 	else 
 	{
-		return WsApiManager.getServerUrl() + "/" + WsApiManager.wsName + subUrl;
+        //return WsApiManager.getServerUrl() + "/" + WsApiManager.wsName + subUrl;
+        return WsApiManager.wsApiUrl + subUrl;
 	}
 };
 

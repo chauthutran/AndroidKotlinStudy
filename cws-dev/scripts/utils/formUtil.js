@@ -688,8 +688,13 @@ FormUtil.getAppInfo = function( returnFunc )
 FormUtil.getDataServerAvailable = function( returnFunc )
 {	
 	var url = WsApiManager.composeWsFullUrl( '/api/available' );
+	console.log( '~ 1 : api/available  ')
+	//RESTUtil.retrieveJson( url, returnFunc );
+	RESTUtil.retrieveJson( url, function(){
+		console.log( '~ 2 : api/available  ')
+		RESTUtil.retrieveJson( url, returnFunc );
 
-	RESTUtil.retrieveJson( url, returnFunc );
+	} );
 }
 
 // ======================================

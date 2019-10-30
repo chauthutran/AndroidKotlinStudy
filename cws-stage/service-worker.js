@@ -513,7 +513,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "a11621dbb37e36b27013e8b880f5af00"
+    "revision": "0e213eb11f830ed4f635208cf9620f99"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -569,7 +569,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "1670594607983db8f9ce16ba7bdcfa9e"
+    "revision": "f1d7ce78a273f4f540c82ed7b7bcd5fc"
   },
   {
     "url": "sounds/beep.mp3",
