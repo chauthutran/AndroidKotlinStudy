@@ -705,6 +705,7 @@ act {
   /* padding:6px 2px; */
   white-space:nowrap;
   cursor: default;
+  height: min-content;
 }
 
 .listItem_voucher_status {
@@ -725,14 +726,20 @@ img.listItem_icon_sync{
 }
 
 .listDataPreview{
-  float:left;
+  /*float:left;
   padding:4px;
   position: relative;
   top: -10px;
   display: contents;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
+  box-sizing: border-box;*/
+  display: -webkit-flex;
+  -webkit-justify-content: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  /* height: -webkit-fill-available; */
 }
 
 .listDataItem{
@@ -800,12 +807,14 @@ div.select {
 div.select::before {
   content: '\25BC';
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 6px;
+  right: 2px;
   bottom: 0;
   padding: 0 1em;
-  background-color: #fff;
+  background-color: transparent; /* #fff; */
   pointer-events: none;
+  height:20px;
+  width: 2px;
 }
 
 select {

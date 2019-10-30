@@ -25,7 +25,7 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/mdDateTimePicker.min.css",
-    "revision": "f469502c89e4e421afc1994a4e553195"
+    "revision": "22fa218ade70d62b19c19337ba82bd5f"
   },
   {
     "url": "css/responsive.css",
@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "1caf89ada45902d4daa930719f222c46"
+    "revision": "b07ec6ba2ad49be7fb49b3fa4ebad6d5"
   },
   {
     "url": "images/about.svg",
@@ -190,6 +190,10 @@ self.__precacheManifest = [
   {
     "url": "images/hold.svg",
     "revision": "6fb2c9c125841817c38ae5bdf857876a"
+  },
+  {
+    "url": "images/i_date.svg",
+    "revision": "f2bb36ec28433e2bf11c51ee2290274f"
   },
   {
     "url": "images/icons/Connect_144px.png",
@@ -373,7 +377,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "ab0744b51a9f88d4dd61dd7bb93ecf75"
+    "revision": "281baf0c90360757f12de88d8626069e"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -517,7 +521,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "d514880964b9483165393e45339ca8c4"
+    "revision": "c18b9693cdecc2482007f46c7c0402cc"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -617,7 +621,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "aee10a452e8c11b66fa0ffb87f2c5355"
+    "revision": "a8e38efe29e8215e39c546dc72093809"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

@@ -292,11 +292,12 @@ function BlockForm( cwsRenderObj, blockObj )
 				})
 
 				var divSelectTag = $( '<div class="select"></div>' );
-				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />' );
-				var inputShow = $( '<input type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
+				var inputReal = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '" type="hidden" />' );
+				//var inputShow = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
 				var selection;
 
-				inputShow.devbridgeAutocomplete( {
+				entryTag.devbridgeAutocomplete( {
 					lookup: arr,
 					minChars: 0,
 					onSelect: function ( suggestion ) {
@@ -305,7 +306,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				  	}
 				});
 
-				inputShow.on( 'input', function(){
+				entryTag.on( 'input', function(){
 					selection = false
 				});
 
@@ -314,31 +315,24 @@ function BlockForm( cwsRenderObj, blockObj )
 					{
 						if ( ! selection )
 						{
-							let string = inputShow.val();
+							let string = entryTag.val();
+
 							inputReal.val(' ');
 							inputReal.val('');
-							inputShow.val( string );
-						}
-						/*else
-						{
+							entryTag.val( string );
 
-							if ("createEvent" in document) 
-							{
-								var evt = document.createEvent("HTMLEvents");
-								evt.initEvent('change', false, true);
-								inputShow.dispatchEvent(evt);
-							}
-							else
-							{
-								inputShow.fireEvent("onchange");
-							}
-						}*/
+							setTimeout( function() {
+								entryTag[0].dispatchEvent( new Event('onChange') );
+								inputReal[0].dispatchEvent( new Event('onChange') );
+							}, 200 );
+
+						}
 					}
 				});
 
 				$( '.autocomplete-suggestion' ).css( { padding: '4px 8px', fontSize: '14px' } );
 
-				divSelectTag.append( inputReal, inputShow );
+				divSelectTag.append( inputReal, entryTag ); //inputShow
 				divInputTag.append( divSelectTag );
 			}
 			else if( formItemJson.controlType === "YEAR" )
@@ -392,35 +386,49 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "DATE" )
 			{
-
-				var rndID = Util.generateRandomId( 8 );
-
-				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
+				wrapperDad = $('<div></div>');
+				wrapperInput = $('<div></div>');
+				wrapperInput.css({
+					'flex-grow':1
+				});
+				wrapperDad.css({'display':'flex','align-items':'flex-start'});
+				button = $('<button></button>');
+				button.css({
+					background: 'none',
+					border:'none'
+				});
+				icoCalendar = $('<img src="images/i_date.svg" style="height:24px" />');
+				button.append(icoCalendar);
+				var FORMATDATE = 'DD MM YYYY';
+				entryTag = $( '<input placeholder="' + FORMATDATE  + '" id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+				wrapperInput.append(entryTag);
+				wrapperDad.append(wrapperInput, button);
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
-				divInputTag.append( entryTag );
+				divInputTag.append(wrapperDad)
 
 				//function that call datepicker
-				entryTag.click(function() {
 
 					var dtmPicker = new mdDateTimePicker.default({
 						type: 'date',
-						value: entryTag[ 0 ].value,
-						targetTag: divInputTag,
-						id: rndID
+					value: '2016-07-29'
+				});
+				entryTag.click(e=>{
+					e.preventDefault()
 					});
 
+				button.click(function(e) {
+					e.preventDefault();
 					dtmPicker.toggle();
 
 					var inputDate = entryTag[ 0 ]; //document.getElementById( entryTag[0].name );
-					console.log( inputDate );
-					console.log( entryTag[ 0 ].value );
+
 					dtmPicker.trigger = inputDate;
 
 					inputDate.addEventListener('onOk', function() {
-
+						inputDate.dispatchEvent(new Event('onChange'))
 						inputDate.value = convert( dtmPicker.time.toString() );
-
+						//var dtmFormat = me.getFormControlRule( formItemJson, "placeholder" )
 						function convert(str) 
 						{
 							var date = new Date(str),
