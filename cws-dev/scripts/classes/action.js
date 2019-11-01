@@ -369,7 +369,10 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
 
-				me.handlePayloadPreview( me.cwsRenderObj.configJson.definitionForms[ blockJson.form ], clickActionJson, formDivSecTag, btnTag, function() { 
+				//var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
+				//me.cwsRenderObj.configJson.definitionForms[ blockJson.form ]
+
+				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 
 					var currBlockId = blockDivTag.attr( 'blockId' );
 					var inputsJson;
