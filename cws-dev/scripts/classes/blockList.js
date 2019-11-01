@@ -359,7 +359,7 @@ function BlockList( cwsRenderObj, blockObj )
         {
             var activityType = FormUtil.getActivityType ( itemData );
             var statusOpt = FormUtil.getStatusOpt ( itemData );
-
+            console.log( statusOpt );
             if ( statusOpt )
             {
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );
@@ -408,8 +408,57 @@ function BlockList( cwsRenderObj, blockObj )
 
         var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
+        
+        DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync" ></small></div>' );
+            var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
+
+            if ( paylDetails && paylDetails.length )
+            {
+                //ADD DCDconfig lookup to get 'phoneNumber' defined field name (linked to current activityType)
+                var cellReservedField = "phoneNumber"; //getConfigPhoneCallField
+
+                //  CELLPHONE 
+                var cellphoneNumber = paylDetails.filter( item => { if ( item.name.indexOf( cellReservedField ) >= 0 ){ return item.value } } );
+
+                if ( cellphoneNumber && cellphoneNumber.length && cellphoneNumber.length > 0 ) 
+                {
+
+                    //ADD DCDconfig lookup to compare defined rules [show/hide logic] for rendering phoneCall action event
+                    var passConditionTest = false;
+
+                    if ( 1 == 1 ) passConditionTest = true
+
+                    if ( passConditionTest )
+                    {
+                        var cellphoneTag = $('<img src="images/cellphone.svg" style="float:right;width:32px;padding: 5px 0 0 0"/>');
+
+                        cellphoneTag.click( function(e) {
+    
+                            e.stopPropagation();
+    
+                            if ( Util.isMobi() )
+                            {
+                                window.open(`tel:${cellphoneNumber[0].value}`)
+                            }
+                            else
+                            {
+                                alert( cellphoneNumber[0].value )
+                            }
+                        });
+    
+                        tdVoucherIdObj.append( cellphoneTag );
+                    }
+
+                } 
+                //  
+            } 
+
+        });
+
+        
+
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == me.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
         // Content that gets collapsed/expanded 
@@ -450,10 +499,15 @@ function BlockList( cwsRenderObj, blockObj )
                     var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
                     var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
 
+                    
                     expandedDivTag.append( trxDetails );
                     expandedDivTag.append( historyDetails );
-            
-                    if ( paylDetails && paylDetails.length ) expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
+                    
+                    if ( paylDetails && paylDetails.length )
+                    {
+                        //console.log("PAYLOADDDD",paylDetails)
+                        expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
+                    } 
     
                 });
             }
@@ -704,6 +758,7 @@ function BlockList( cwsRenderObj, blockObj )
                                             if ( fetchItemData.activityList ) delete fetchItemData.activityList;
 
                                             myQueueStatus.html( fetchItemData.queueStatus )
+                                            statusSecDivTag.find( '.listItem_icon_sync' ).addClass( 'listItem_icon_sync_done' );
                                             //myTag.html( fetchItemData.title );
 
                                         }

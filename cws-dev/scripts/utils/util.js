@@ -409,14 +409,16 @@ Util.jsonToArray = function( jsonData, structureConfig )
 Util.arrayToHTMLtable = function( title, arr )
 {
 	var ret = $( '<table />');
-
+	//console.log("-------------------------------------------------asdsads---")
+	//console.log(arr, title)
+	window.darwinva=arr
 	if ( arr )
 	{
 		if ( title )
 		{
 			var tr = $( '<tr />');
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( '<strong>' + title + '</strong>' ) );	
+			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );	
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )
@@ -425,14 +427,14 @@ Util.arrayToHTMLtable = function( title, arr )
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + arr[ i ].name + '</strong>' ) );	
+				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );	
 			}
 			else
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td />').html( arr[ i ].name ) );
-				tr.append( $( '<td />').html( arr[ i ].value ) );
+				tr.append( $( '<td class="dataToHTMLleft" />').html( arr[ i ].name ) );
+				tr.append( $( '<td class="dataToHTMLright" />').html( arr[ i ].value ) );
 			}
 		}
 	
@@ -597,8 +599,8 @@ Util.populate_year = function ( el, data, labelText ) {
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
 		modal = el.getElementsByClassName('modalSymbol')[0],
 		container = el.getElementsByClassName('containerSymbol')[0],
-		set = el.querySelector('button.set'),
-		cancel = el.querySelector('button.cancel'),
+		set = el.querySelector('button.acceptButton'),
+		cancel = el.querySelector('button.declineButton'),
 		inputTrue = el.querySelector('.inputTrue'),
 		inputShow = el.querySelector('.inputShow'),
 		inputSearch = el.getElementsByClassName('searchSymbol')[0],
@@ -611,12 +613,12 @@ Util.populate_year = function ( el, data, labelText ) {
 			const lastEl = ul.children[ul.dataset.index]
 
 			if (lastEl) {
-				lastEl.style.setProperty('color', 'black')
+				//lastEl.style.setProperty('color', 'black')
 				lastEl.classList.toggle('focus')
 			}
 
 			ul.children[newIndex].classList.toggle('focus')
-			ul.children[newIndex].style.setProperty('color', '#009788')
+			//ul.children[newIndex].style.setProperty('color', '#009788')
 			ul.dataset.index = newIndex
 
 		}
@@ -859,6 +861,9 @@ Util.updateMultiCheckboxPayloadValue = function( updates )
 	}
 
 	$( '[name="' + updates + '"]' ).val( vals );
+
+	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' )[ 0 ] );
+	
 }
 
 Util.updateOtherRadioOptions = function( updates, excludeName )
@@ -891,6 +896,8 @@ Util.updateRadioPayloadValue = function( updates )
 				console.log( obj.value );
 				console.log( $( '[name="' + updates + '"]' ) );
 				$( '[name="' + updates + '"]' ).val( obj.value );
+
+				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' )[ 0 ] );
 				
 			} 
 		}
@@ -2365,4 +2372,60 @@ $.fn.rotate=function(options) {
   Util.isArray = function( objVal ) 
   {
 	 return Array.isArray ( objVal );
-  } 
+  }
+
+  Util.storageEstimateWrapper = function( callBack ) {
+	if ('storage' in navigator && 'estimate' in navigator.storage) {
+	  return navigator.storage.estimate();
+	}
+	if ('webkitTemporaryStorage' in navigator &&
+		'queryUsageAndQuota' in navigator.webkitTemporaryStorage) {
+	  return new Promise(function(resolve, reject) {
+		navigator.webkitTemporaryStorage.queryUsageAndQuota(
+		  function(usage, quota) {resolve({usage: usage, quota: quota})},
+		  reject
+		);
+	  });
+	}
+	if ( callBack )
+	{
+		callBack( Promise.resolve({usage: NaN, quota: NaN}) )
+	}
+	else
+	{
+		return Promise.resolve({usage: NaN, quota: NaN});
+	}
+  }
+  Util.localStorageSpace = function()
+  {
+	var allStrings = '';
+	for(var key in window.localStorage){
+		if(window.localStorage.hasOwnProperty(key)){
+			allStrings += window.localStorage[key];
+		}
+	}
+	return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+  }
+  Util.getLocalStorageSizes = function()
+  {  
+	// provide the size in bytes of the data currently stored
+	var runningTotal = 0;
+	var dataSize = 0;
+	var arrItms = [];
+
+	for ( var i = 0; i <= localStorage.length -1; i++ )  
+	{
+		key  = localStorage.key(i);  
+		dataSize = Util.lengthInUtf8Bytes( localStorage.getItem( key ) );
+		arrItms.push( { container: 'localStorage', name: key, bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 } )
+		runningTotal += dataSize;
+	}
+	arrItms.push( { container: 'localStorage', name: 'TOTAL SIZE', bytes: runningTotal, kb: runningTotal / 1024, mb: runningTotal / 1024 / 1024 } )
+	return arrItms;
+  }
+  
+  Util.lengthInUtf8Bytes = function(str) {
+	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+	var m = encodeURIComponent(str).match(/%[89ABab]/g);
+	return str.length + (m ? m.length : 0);
+  }

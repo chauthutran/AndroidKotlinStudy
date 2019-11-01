@@ -396,8 +396,8 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
     
         var prevRow = $( '<div class="" />' );
         var btnRow = $( '<div style="height:70px;text-align:center;" />' );
-        var btnConfirm = $( '<button term="" class="confirmButton" style="">confirm</button>' );
-        var btnDecline = $( '<button term="" class="cancelButton" style="">cancel</button>' );
+        var btnConfirm = $( '<button term="" class="acceptButton" style="">CONFIRM</button>' );
+        var btnDecline = $( '<button term="" class="declineButton" style="">CANCEL</button>' );
 
         notifDiv.append( prevRow )
         notifDiv.append( btnRow );

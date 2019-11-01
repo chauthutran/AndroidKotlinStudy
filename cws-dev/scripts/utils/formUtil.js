@@ -744,6 +744,19 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 	}
 }
 
+FormUtil.dispatchOnChangeEvent = function( targetControl )
+{
+	if ("createEvent" in document) {
+		var evt = document.createEvent("HTMLEvents");
+		evt.initEvent('change', true, true);
+		targetControl[0].dispatchEvent(evt);
+	}
+	else
+	{
+		targetControl[0].fireEvent("onchange");
+	}
+}
+
 FormUtil.evalReservedField = function( tagTarget, val )
 {
 	if ( val.indexOf( '$${' ) >= 0 )

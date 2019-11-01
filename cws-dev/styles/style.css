@@ -214,10 +214,11 @@ select option {
 }
 
 .act-r {
-  float: right;
+  /* float: right; */
   text-align: right;
   font-size: 10px;
   box-sizing: border-box;
+  display: none;
 }
 
 .act-l {
@@ -1291,14 +1292,13 @@ img.imgMore
    }
 
    .modalSymbol .textSymbol{
-       position: relative;
-       display: flex;
-       justify-content: stretch;
-       align-items: stretch;
-       padding: .5em;
-       text-align: center;
-       color: rgba(255,255,255,.7);
-       font-size: 2.5em;
+       color: #50555a;
+       font-size: 16px;
+       font-weight: 700;
+       font-family: "Rubik", Arial;
+       line-height: 35px;
+       padding: 0px 0px 0px 10px;
+       text-align: left;
    }
    .container--modalSymbol input{
        flex-grow: 1;
@@ -1308,27 +1308,29 @@ img.imgMore
        outline: 0;
    }
    .container--optionsSymbol{
-       font-family: -apple-system,Helvetica Neue,Helvetica,Arial,sans-serif;
+       font-family: 'Rubik', Arial;
        background: #F7F7F7;
        height: 300px;
        position: relative;
        padding: .5em;
        overflow-y: auto;
+       margin: 10px 0 0 0;
    }
    .optionsSymbol{
        position: absolute;
        left: 50%;
        transform: translateX(-50%);
        width: 100%;
+       text-align: center;
    }
    .container--optionsSymbol::-webkit-scrollbar{
        display: none;
    }
    .optionsSymbol li{
-       font-size: 24px;
-       position: relative;
-       width: 100%;
-       padding: 5px 0;
+      padding: 5px 0;
+      font-size: 18px;
+      font-family: 'Rubik', Arial;
+      margin-left: 24px;
        cursor: pointer;
    }
    .optionsSymbol li.focus::before{
@@ -1336,23 +1338,25 @@ img.imgMore
        width: 10px;
        height: 10px;
        position: fixed;
-       left: 38%;
+       left: 30%;
        line-height: 30px;
    }
    .controlsSymbol{
-       display: flex;
+       display: block;
        justify-content: stretch;
        overflow: hidden;
        border-radius: 0 0 var(--bradius) var(--bradius);
+       background-color: #fff;
+       padding:10px;
    }
    .controlsSymbol button{
-       padding: 1em;
+       /*padding: 1em;
        font-size: 16px;
        background: #F7F7F7;
        border: none;
        border-top: 1px solid #ccc;
        color: #009788;
-       width: 100%;
+       width: 100%;*/
        cursor: pointer;
    }
    .controlsSymbol button.set{
@@ -1391,47 +1395,61 @@ img.imgMore
   }
   .previewPayload > div {
       width: 100%;
-      padding:14px;
+      /* padding:14px; */
   }
   .previewPayload > div > table {
     width: 100%;
+    border-spacing: 0;
   }
   .previewPayload > div > table > tr > td {
     line-height: 1.9em;
     width: 45%;
   }
   .dataToHTMLtitle {
-    padding: 4px;
-    font-size: 1.1em;
+    padding: 8px;
+    /* font-size: 1.1em; */
+    font-weight: 800;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+    background: rgb(251,251,251)
   }
   .dataToHTMLheader {
-    text-align: center;
+    padding: 8px;
+    font-size: calc(10px + 0.4vw);
+    /* box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1); */
+    background: #f5f5f5;
+    font-weight: 600;
   }
-  .confirmButton {
+  .dataToHTMLleft {
+    padding: 8px 8px 8px 12px;
+    font-size: calc(10px + 0.4vw);
+    text-align: left;
+    background: #fff;
+  }
+  .dataToHTMLright {
+    padding: 8px 12px 8px 8px;
+    font-size: calc(10px + 0.4vw);
+    text-align: right;
+    background: #fff;
+  }
+  .declineButton {
     color: rgb(44, 152, 240); 
     border: none; 
     font-size: 14px; 
     font-family: Rubik; 
     font-style: normal; 
     font-weight: 600; 
-    padding: 12px 20px; 
-    -webkit-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-    -moz-box-shadow: 0px 4px 4px 0px rgba(5, 2, 2, 0.25);
-    box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-    margin: 2px 2px 2px 12px;
+    float: right;
+    margin: 34px 24px 12px 20px;
   }
-  .cancelButton {
-    color: rgb(255, 0, 0); 
+  .acceptButton {
+    color: #FF0000;
     border: none; 
     font-size: 14px; 
     font-family: Rubik; 
     font-style: normal; 
     font-weight: 600; 
-    padding: 12px 20px; 
-    -webkit-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-    -moz-box-shadow: 0px 4px 4px 0px rgba(5, 2, 2, 0.25);
-    box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-    margin: 2px 2px 2px 12px;
+    float: right;
+    margin: 34px 24px 12px 20px;
   }
   .inputCheckbox {
     display: flex;
@@ -1507,4 +1525,118 @@ img.imgMore
   .inputValidation {
     border-radius: 3px;
     margin: 4px 0 0 0 !important;
+  }
+  /* ppt styles */
+  .pptContainer {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 16px;
+    background: rgba(0,0,0, 0.15);
+  }
+  .pptContent {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background: white;
+    margin: 16px;
+  }
+  .pptTitle {
+    color: #50555a;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Rubik", Arial;
+    line-height: 35px;
+    padding: 0px 0px 0px 10px;
+    text-align: left;
+  }
+  .pptBody {
+    font-size: 14px;
+    text-align: left;
+    padding: 0px 10px 0px 10px;
+  }
+  .pptQuestion {
+    font-weight: bold;
+  }
+  /* opts styles */
+  .optInputSearch {
+    /* border-radius: 16px; */
+    width: 256px;
+    outline: none;
+    padding: 12px 12px 12px 36px;
+    padding-left: 28px;
+    border: 1px solid black;
+  }
+  .imgSearchOpts {
+    height: 24px;
+    position: absolute;
+    left: 4px;
+    top: 8px;
+  }
+  .optSearchBar {
+    width: 100%;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .optItem {
+    padding: 0;
+    height: 240px;
+    overflow-y: scroll;
+  }
+  .optListItem {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .optItemPoint {
+    box-sizing: border-box;
+    height: 24px;
+    flex-shrink: 0;
+    width: 24px;
+    padding: 2px;
+  }
+  .optItemPointBorder {
+    box-sizing: border-box;
+    border-radius: 50%;
+    height: 100%;
+    padding: 3px;
+  }
+  .optItemPointInt {
+    display: none;
+    box-sizing: border-box;
+    border-radius: 50%;
+    height: 100%;
+  }
+  .optItemText {
+    font-size: 14px;
+    font-family: 'Rubik', Arial;
+    margin-left: 24px;
+  }
+
+  /* DATE CONTROL */
+  .dateContainer {
+    display: flex;
+    align-items: flex-start;
+  }
+  .dateWrapper {
+    flex-grow:1;
+  }
+  .dateButton {
+    background: none;
+    border: none;
+    position: relative;
+    top: 6px;
+  }
+  .imgCalendarInput {
+    height: 24px;
   }

@@ -710,7 +710,7 @@ act {
 
 .listItem_voucher_status {
   vertical-align:top;
-  padding:10px 2px 0 0;
+  /* padding:10px 2px 0 0; */
 }
 
 .listItem_action_sync{
@@ -722,7 +722,13 @@ act {
 
 img.listItem_icon_sync{
   width:24px;
-  height:24px;
+  height:24px !important;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+img.listItem_icon_sync_done {
+  box-shadow: none !important;
 }
 
 .listDataPreview{
@@ -1091,4 +1097,15 @@ div.loginBtn {
 .imgQRInput {
   padding: 8px 12px;
   text-align: center;
+}
+
+.modalSymbol{
+  background: #FFF;
+  padding: 16px;
+  margin: 16px;
+  color: #50555a;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Rubik", Arial;
+  line-height: 35px;
 }

@@ -251,6 +251,8 @@ function cwsRender()
 
 		} );
 
+		//DataManager.initialiseDataStorageSize();
+
 	} 
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
@@ -642,6 +644,7 @@ function cwsRender()
 		$( '#focusRelegator' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
+		$( '#detailsFormDiv' ).hide();
 		$( '#settingsFormDiv' ).hide();
 
 		// hide the menu div if open

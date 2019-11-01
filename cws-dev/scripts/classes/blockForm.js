@@ -237,6 +237,15 @@ function BlockForm( cwsRenderObj, blockObj )
 		formDivSecTag.append( divInputTag );
 	}
 
+	me.getFormControlRule = function ( formItemJson, attr )
+	{
+		var objAttr = formItemJson.rules.filter(obj=>obj.name===attr)[0] 
+		return(
+			objAttr
+			?	objAttr.value
+			:	''
+		)	
+	}
 
 	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData )
 	{
@@ -260,8 +269,10 @@ function BlockForm( cwsRenderObj, blockObj )
 			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
+					// FormUtil.setTagVal( entryTag, "##{getAge(form:walkIn_yearOfBirth)}" );
+				// else{
+					FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+				// }
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
 			}			
 			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
@@ -288,52 +299,43 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.decodeURI_ItemList(optionList, "defaultName")
 
 				var arr = optionList.map( obj => {
-					return { value: obj.defaultName, data: obj.value }
-				})
-
-				var divSelectTag = $( '<div class="select"></div>' );
-				var inputReal = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '" type="hidden" />' );
-				//var inputShow = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
-				var selection;
-
-				entryTag.devbridgeAutocomplete( {
-					lookup: arr,
-					minChars: 0,
-					onSelect: function ( suggestion ) {
-						inputReal.val( suggestion.data )
-						selection = true
-				  	}
+					return { content: obj.defaultName, value: obj.value }
 				});
 
-				entryTag.on( 'input', function(){
-					selection = false
+				var btnSelect = $('<button term="" class="acceptButton">SELECT</button>');
+				var btnDisagree = $('<button term="" class="declineButton">CANCEL</button>');
+
+				//	Input with property "name" for to be send
+				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />'  );
+				//	Input for to be shown in the app
+				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' );
+
+				
+				let options = new OptionsManager({name:'BirthDistrict',data:arr, search:true});
+
+				var labelTerm = me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term )
+				
+				let nuevoModal = new Modal({parent: divInputTag[0], titleMessage: labelTerm,customElement: options.element,buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true});
+
+				inputShow.click(function(){
+					options.showAll();
+					nuevoModal.exec();
+				});
+				btnDisagree.click(function(e){
+					e.preventDefault()
+					nuevoModal.exec();
+				});
+				btnSelect.click(function(e){
+					e.preventDefault()
+					input.val(options.element.dataset.value);
+					inputShow.val(options.element.dataset.content);
+					FormUtil.dispatchOnChangeEvent( input );
+					nuevoModal.exec();
 				});
 
-				$( document ).click( function(){
-					if( $( '.autocomplete-suggestions' ).css( 'display' ) !== 'none')
-					{
-						if ( ! selection )
-						{
-							let string = entryTag.val();
-
-							inputReal.val(' ');
-							inputReal.val('');
-							entryTag.val( string );
-
-							setTimeout( function() {
-								entryTag[0].dispatchEvent( new Event('onChange') );
-								inputReal[0].dispatchEvent( new Event('onChange') );
-							}, 200 );
-
-						}
-					}
-				});
-
-				$( '.autocomplete-suggestion' ).css( { padding: '4px 8px', fontSize: '14px' } );
-
-				divSelectTag.append( inputReal, entryTag ); //inputShow
-				divInputTag.append( divSelectTag );
+				let wrapperTag = $('<div></div>');
+				wrapperTag.append( input, inputShow );
+				divInputTag.append( $(wrapperTag) );
 			}
 			else if( formItemJson.controlType === "YEAR" )
 			{
@@ -347,7 +349,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				//		 2) AND hardcoded year numbers, e.g. YEAR(RANGE:1950-2020) )
 				//		 ... in the absense of any parameters, we default to a hardcoded list (remembering that young girls < 18 can fall pregnant)
 
-				for ( let i = 75; i >= 18; i-- )
+				for ( let i = 69; i >= 9; i-- )
 				{
 					data.push( { value: year-i, text: year-i } );
 				}
@@ -367,8 +369,8 @@ function BlockForm( cwsRenderObj, blockObj )
 											</ul>
 										</div>
 										<div class="controlsSymbol">
-											<button class="cancel">Cancel</button>
-											<button class="set">Set</button>
+											<button class="acceptButton">SELECT</button>
+											<button class="declineButton">CANCEL</button>
 										</div>
 									</div>
 								</div>
@@ -386,56 +388,50 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "DATE" )
 			{
-				wrapperDad = $('<div></div>');
-				wrapperInput = $('<div></div>');
-				wrapperInput.css({
-					'flex-grow':1
-				});
-				wrapperDad.css({'display':'flex','align-items':'flex-start'});
-				button = $('<button></button>');
-				button.css({
-					background: 'none',
-					border:'none'
-				});
-				icoCalendar = $('<img src="images/i_date.svg" style="height:24px" />');
+
+				wrapperDad = $('<div class="dateContainer"></div>');
+				wrapperInput = $('<div class="dateWrapper"></div>');
+				button = $('<button class="dateButton" ></button>');
+				icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
+
 				button.append(icoCalendar);
-				var FORMATDATE = 'DD MM YYYY';
-				entryTag = $( '<input placeholder="' + FORMATDATE  + '" id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+
+				var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
+
+				entryTag = $( '<input placeholder="' + formatDate  + '" id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+
 				wrapperInput.append(entryTag);
 				wrapperDad.append(wrapperInput, button);
+
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				divInputTag.append(wrapperDad)
-
+console.log( entryTag[ 0 ].value );
 				//function that call datepicker
-
-					var dtmPicker = new mdDateTimePicker.default({
-						type: 'date',
-					value: '2016-07-29'
+				var dtmPicker = new mdDateTimePicker.default({
+					type: 'date',
+					value: entryTag[ 0 ].value
 				});
-				entryTag.click(e=>{
-					e.preventDefault()
-					});
+
+				entryTag.click( e => e.preventDefault() );
 
 				button.click(function(e) {
+
 					e.preventDefault();
 					dtmPicker.toggle();
 
-					var inputDate = entryTag[ 0 ]; //document.getElementById( entryTag[0].name );
-
+					var inputDate = entryTag[ 0 ];
 					dtmPicker.trigger = inputDate;
 
 					inputDate.addEventListener('onOk', function() {
-						inputDate.dispatchEvent(new Event('onChange'))
-						inputDate.value = convert( dtmPicker.time.toString() );
-						//var dtmFormat = me.getFormControlRule( formItemJson, "placeholder" )
-						function convert(str) 
-						{
-							var date = new Date(str),
-							mnth = ("0" + ( date.getMonth() + 1 ) ).slice(-2),
-							day = ("0" + date.getDate()).slice(-2);
-							return [ date.getFullYear(), mnth, day].join("-");
-						}
+
+						var trueFormat = (formatDate == '') ? 'YYYY' : formatDate;
+						var inpDate = $( '[name=' + formItemJson.id + ']' );
+
+						inpDate.val( dtmPicker.time.format(trueFormat) );
+
+						FormUtil.dispatchOnChangeEvent( inpDate );
+						console.log( inpDate ); 
 
 					});
 
@@ -547,8 +543,6 @@ function BlockForm( cwsRenderObj, blockObj )
 				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
 				var pConf = FormUtil.block_payloadConfig;
 
-				//console.log( pConf );
-
 				for( var i = 0; i < jData.length; i++ )
 				{
 					if ( jData[ i ].defaultValue || jData[ i ].payload )
@@ -558,8 +552,6 @@ function BlockForm( cwsRenderObj, blockObj )
 						if ( jData[ i ].defaultValue ) EvalActionString = jData[ i ].defaultValue;
 
 						if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
-
-						//console.log( jData[ i ].id + ': ' + EvalActionString );
 
 						if ( EvalActionString.length )
 						{

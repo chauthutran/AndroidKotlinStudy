@@ -332,11 +332,8 @@
       }
 
       .modalSymbol{
-        background: #009788;
         max-width: 95%;
         width: 150%;
-        text-align: center;
-        border-radius: var(--bradius);
       }
 
       .previewPayload {
@@ -483,11 +480,8 @@
       }
 
       .modalSymbol{
-        background: #009788;
         max-width: 95%;
         width: 50%;
-        text-align: center;
-        border-radius: var(--bradius);
       }
 
 
