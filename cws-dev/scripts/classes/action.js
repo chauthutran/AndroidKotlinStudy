@@ -369,7 +369,7 @@ function Action( cwsRenderObj, blockObj )
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
 
-				me.handlePayloadPreview( clickActionJson, formDivSecTag, btnTag, function() { 
+				me.handlePayloadPreview( me.cwsRenderObj.configJson.definitionForms[ blockJson.form ], clickActionJson, formDivSecTag, btnTag, function() { 
 
 					var currBlockId = blockDivTag.attr( 'blockId' );
 					var inputsJson;
@@ -470,7 +470,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 	}
 
-	me.handlePayloadPreview = function( clickActionJson, formDivSecTag, btnTag, callBack )
+	me.handlePayloadPreview = function( formDefinition, clickActionJson, formDivSecTag, btnTag, callBack )
 	{
 
 		if ( clickActionJson.redeemListInsert === "true" )
@@ -478,14 +478,14 @@ function Action( cwsRenderObj, blockObj )
 
 			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
 			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
-			console.log( dataPass );
 
 			formDivSecTag.hide();
 
 			if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
 			{
+				var confirmMessage = 'Please check before Confirm'; // MISSING TRANSLATION
 
-				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, 'Record Summary', function( confirmed ){
+				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
 
 					formDivSecTag.show();
 	

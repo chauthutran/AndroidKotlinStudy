@@ -862,8 +862,8 @@ Util.updateMultiCheckboxPayloadValue = function( updates )
 
 	$( '[name="' + updates + '"]' ).val( vals );
 
-	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' )[ 0 ] );
-	
+	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
+
 }
 
 Util.updateOtherRadioOptions = function( updates, excludeName )
@@ -893,13 +893,9 @@ Util.updateRadioPayloadValue = function( updates )
 			var obj = InpTarg[ i ];
 			if ( obj.checked )
 			{
-				console.log( obj.value );
-				console.log( $( '[name="' + updates + '"]' ) );
 				$( '[name="' + updates + '"]' ).val( obj.value );
-
-				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' )[ 0 ] );
-				
-			} 
+			}
+			FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
 		}
 	}
 }

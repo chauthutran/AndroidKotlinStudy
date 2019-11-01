@@ -342,6 +342,10 @@
         left: 0;
       }
 
+      .inputDivRadio {
+        width: 94%;
+      }
+
     }
 
     /* 1B. Tab content mode - hide Anchor */
@@ -491,6 +495,10 @@
         height: 96vh;
       }
 
+      .inputDivRadio {
+        width: 97%;
+      }
+
     }
     /* ======================= */
 
@@ -506,6 +514,10 @@
       .tb-content-buttom {
         width: 94%;
       }
+
+      .inputDivRadio {
+        width: 97%;
+      }
     }
 
     /* 2B. 2 column input wider than 866px */
@@ -518,6 +530,10 @@
       .tb-content-result,
       .tb-content-buttom {
         width: 47%;
+      }
+
+      .inputDivRadio {
+        width: 97%;
       }
     }
     /* ==================================== */

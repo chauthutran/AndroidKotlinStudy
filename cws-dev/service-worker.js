@@ -29,11 +29,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "17c3c7d032ab2e99e2a6bb05d89c6938"
+    "revision": "3b61622c4202672966235bc7224ee558"
   },
   {
     "url": "css/style.css",
-    "revision": "550d296ff938ccfa2c5591d29161e599"
+    "revision": "2c21c7ededc1376ae63b50df8b11bdca"
   },
   {
     "url": "images/about.svg",
@@ -373,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "e516cfbb28e57150801b5f33b1d0d649"
+    "revision": "e14a741f00b2d3a609604460117030fe"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -389,11 +389,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "f0858c83ecbe92594e6e8ebe26836b0d"
+    "revision": "d2972f57a69d62789fe9c792c58646fb"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "09350294b45319bf5597d8fa75d3c2c2"
+    "revision": "8221836204e13b5da27ff347be2eba5d"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "c18b9693cdecc2482007f46c7c0402cc"
+    "revision": "2df5cbc5a8eb88a2e8a6cee8f3b36f79"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -569,7 +569,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ae0efaef5cb7c5f48a960f057396fe28"
+    "revision": "92ebf5fb61041a6ebdbc576c84df22c5"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
@@ -633,7 +633,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "87ac7da2d5a49a9012507ebc57a4cd26"
+    "revision": "61aaa52338e19b431d40b4672d373ce8"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

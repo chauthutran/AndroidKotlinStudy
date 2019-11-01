@@ -440,6 +440,9 @@ console.log( entryTag[ 0 ].value );
 			}
 			else if ( formItemJson.controlType === "RADIO")
 			{
+
+				divInputTag.addClass( 'inputDivRadio' );
+
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
@@ -451,6 +454,7 @@ console.log( entryTag[ 0 ].value );
 				Util.populateRadios( formItemJson, container, optionList );
 
 				divInputTag.append( entryTag, container );
+
 			}
 			else if ( formItemJson.controlType === "MULTI_CHECKBOX")
 			{

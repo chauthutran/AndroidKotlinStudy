@@ -813,14 +813,15 @@ div.select {
 div.select::before {
   content: '\25BC';
   position: absolute;
-  top: 6px;
-  right: 2px;
+  top: 10px;
+  right: 3px;
   bottom: 0;
-  padding: 0 1em;
-  background-color: transparent; /* #fff; */
+  padding: 0px 4px;
+  background-color: #fff;
   pointer-events: none;
-  height:20px;
-  width: 2px;
+  height: 16px;
+  width: 10px;
+  border-radius: 18px;
 }
 
 select {

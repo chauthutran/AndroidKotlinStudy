@@ -359,7 +359,7 @@ function BlockList( cwsRenderObj, blockObj )
         {
             var activityType = FormUtil.getActivityType ( itemData );
             var statusOpt = FormUtil.getStatusOpt ( itemData );
-            console.log( statusOpt );
+
             if ( statusOpt )
             {
                 var blockListItemTag = $( '<div class="icon-row listItem" />' );

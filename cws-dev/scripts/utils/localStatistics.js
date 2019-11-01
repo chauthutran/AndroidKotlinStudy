@@ -177,7 +177,7 @@ function statistics( cwsRender )
 
             setTimeout( function() {
                 $( '.hide' ).hide( 'slow' );
-            }, 500 )
+            }, 50 )
 
         });
     }
@@ -422,13 +422,16 @@ function statistics( cwsRender )
     me.toColumnsWithChart = function( arrObj, title )
     {
         var min = 999999999, max = 0;
-        var maxHeight = 80;
+        var maxHeight = 100;
         var from = 0, to = 23;
+        var arrHours = [];
 
         for (var i = 0; i < arrObj.length; i++)
         {
-            if ( arrObj[ i ].data )
+            if ( arrObj[ i ].data.length )
             {
+                arrHours.push( i );
+
                 if ( arrObj[ i ].data.length > max )
                 { 
                     max = arrObj[ i ].data.length;
@@ -440,21 +443,22 @@ function statistics( cwsRender )
                     from = i;
                 } 
 
-                if ( arrObj[ i ].data.length )
-                {
-                    if ( to < i ) to = i;
+                if ( from < i ) from = i;
 
-                    if ( from > i ) from = i;
-                }
+                if ( to > i ) from = i;
+
             }
         }
-console.log( from, to)
+
+        from = Math.min( ...arrHours );
+        to = Math.max( ...arrHours );
+
         if ( max == 0 ) min = 0;
 
         var tbl = $( '<table class="tableStatsPopularHours column">' );
 
         var trTitle = $( '<tr>' );
-        var tdTitle = $( '<td class="tableTitle" colspan="' + arrObj.length + '">' ); //( to - from )
+        var tdTitle = $( '<td class="tableTitle" colspan="' + ( to - from ) + '">' ); //arrObj.length
 
         tdTitle.html( title );
 
@@ -465,20 +469,21 @@ console.log( from, to)
         var trData = $( '<tr>' );
         var trName = $( '<tr>' );
 
-        for (var i = 0; i < arrObj.length; i++)
-        //for (var i = from; i < to; i++)
+        //for (var i = 0; i < arrObj.length; i++)
+        for (var i = from; i < to; i++)
         {
             var showHideClass = ( ( from > i || to < i ) ? 'hide' : '' );
-
-            var tdBar = $( '<td class="columnBar ' + showHideClass + '" style="min-height:'+(maxHeight+10)+'px">' );
-            //var tdData = $( '<td class="columnData">' );
-            var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
             var barH = 0;
 
             if ( arrObj[ i ].data )
             {
                 barH = ( arrObj[ i ].data.length > 0 ? ( maxHeight * ( arrObj[ i ].data.length / max ) ) + 'px' : '0' );
             }
+
+            var tdBar = $( '<td class="columnBar ' + showHideClass + '" title="' + arrObj[ i ].data.length + '" style="min-height:'+(maxHeight+10)+'px;opacity:' + ( ( parseFloat(  arrObj[ i ].data.length / ( max - min ) ) / 1.5 ) + 0.25) + '">' );
+            //var tdData = $( '<td class="columnData">' );
+            var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
+
 
             tbl.append( trBar );
             trBar.append( tdBar );
@@ -495,7 +500,7 @@ console.log( from, to)
         }
 
         var trFiller = $( '<tr>' );
-        var tdFiller = $( '<td class="columnFiller" colspan="' + arrObj.length + '">' ); //( to - from )
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( to - from ) + '">' ); //arrObj.length
 
         tbl.append( trFiller );
         trFiller.append( tdFiller );
