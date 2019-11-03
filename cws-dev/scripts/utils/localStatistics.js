@@ -21,6 +21,7 @@ function statistics( cwsRender )
     //me.statusTypes = [];
 
     me.earliestDate;
+    me.total;
 
     me.dateGroups;
     me.hoursInDay;
@@ -160,24 +161,25 @@ function statistics( cwsRender )
                 }
 
                 me.earliestDate = me.earliest( myData )
+                me.total = myData.length;
+
+                me.localStatsTag.empty();
+
+                me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
+                me.localStatsTag.append( me.toRowActivities( me.activityTypes, "activity breakdown" ) );
+                me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
+                //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
+
+                if ( me.earliestDate )
+                {
+                    me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+                }
+
+                setTimeout( function() {
+                    $( '.hide' ).hide( 'slow' );
+                }, 50 )
 
             }
-
-            me.localStatsTag.empty();
-
-            me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
-            me.localStatsTag.append( me.toColumnActivities( me.activityTypes, "activity breakdown" ) );
-            me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
-            //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
-
-            if ( me.earliestDate )
-            {
-                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
-            }
-
-            setTimeout( function() {
-                $( '.hide' ).hide( 'slow' );
-            }, 50 )
 
         });
     }
@@ -365,6 +367,64 @@ function statistics( cwsRender )
         return tbl;
     }
 
+    me.toRowActivities = function( arrObj, title )
+    {
+        //console.log( arrObj );
+        var tbl = $( '<table class="tableStatistics column">' );
+
+        var trTitle = $( '<tr>' );
+        var tdTitle = $( '<td class="tableTitle" colspan="' + arrObj.length + '">' );
+
+        tdTitle.html( title );
+
+        tbl.append( trTitle );
+        trTitle.append( tdTitle );
+
+        //var trData = $( '<tr>' );
+
+        for (var i = 0; i < arrObj.length; i++)
+        {
+            var actType = FormUtil.getActivityType( { activityType: arrObj[ i ].name } );
+            var trRow = $( '<tr>' );
+            var tdName = $( '<td class="columnLabel">' );
+            var tdData = $( '<td class="columnData">' );
+            var nameContent = '';
+
+            tbl.append( trRow );
+            trRow.append( tdName );
+            trRow.append( tdData );
+
+            var divIconObj = $( '<div id="activityStatistic_' + i + '"></div>' );
+            var divIconText = $( '<div></div>' );
+
+            tdName.append( divIconObj );
+
+            FormUtil.appendActivityTypeIcon ( divIconObj, actType, { name: me.cwsRenderObj.status_redeem_submit }, me.cwsRenderObj, { width:48, height: 48 } );
+
+            divIconText.html( arrObj[ i ].name );
+
+            nameContent = '<h4>' + actType.label + '</h4>';
+
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                nameContent += '<div style="padding:4px 0 0 0">Total: ' + arrObj[ i ].data.length + '</div>';
+                nameContent += '<h3 style="padding:4px 0 0 0">' + parseFloat( parseFloat( arrObj[ i ].data.length ) / parseFloat(  me.total )  * 100 ).toFixed(0) + '%</h3>' ;
+            }
+
+            tdData.html( nameContent );
+            tdName.append( divIconText );
+        }
+
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="2">' );
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
+        return tbl;
+    }
+
     me.toColumnStatuses = function( arrObj, title )
     {
         //console.log( arrObj );
@@ -465,6 +525,13 @@ function statistics( cwsRender )
         tbl.append( trTitle );
         trTitle.append( tdTitle );
 
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( to - from ) + '">' ); //arrObj.length
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
         var trBar  = $( '<tr style="height:'+(maxHeight+10)+'px">' );
         var trData = $( '<tr>' );
         var trName = $( '<tr>' );
@@ -480,8 +547,8 @@ function statistics( cwsRender )
                 barH = ( arrObj[ i ].data.length > 0 ? ( maxHeight * ( arrObj[ i ].data.length / max ) ) + 'px' : '0' );
             }
 
-            var tdBar = $( '<td class="columnBar ' + showHideClass + '" title="' + arrObj[ i ].data.length + '" style="min-height:'+(maxHeight+10)+'px;opacity:' + ( ( parseFloat(  arrObj[ i ].data.length / ( max - min ) ) / 1.5 ) + 0.25) + '">' );
-            //var tdData = $( '<td class="columnData">' );
+            var opac = ( ( parseFloat(  arrObj[ i ].data.length / ( max ) ) ) );
+            var tdBar = $( '<td class="columnBar ' + showHideClass + '" title="' + arrObj[ i ].data.length + '/ ' + max + ' {min:' + min + '}" style="min-height:'+(maxHeight+10)+'px;opacity:' + opac + '">' );
             var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
 
 
@@ -495,7 +562,7 @@ function statistics( cwsRender )
             trName.append( tdName );
 
             tdBar.html( '<div class="statsBar" style="display:none;height:' + barH + '">&nbsp;</div>' );
-            tdName.html( arrObj[ i ].name );
+            tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + arrObj[ i ].name + '</label></div>' );
 
         }
 
