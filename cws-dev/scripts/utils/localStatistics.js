@@ -17,6 +17,8 @@ function statistics( cwsRender )
     me.dataFailed;
     me.failedDateStats = {};
 
+    me.popularDays = [];
+    me.popularHours = [];
     me.activityTypes = [];
     //me.statusTypes = [];
 
@@ -26,21 +28,15 @@ function statistics( cwsRender )
     me.dateGroups;
     me.hoursInDay;
 
-    /* = [ 
-        { name: "today", hours: 24, group: 'daily' },
-        { name: "yesterday", hours: 48, group: 'daily' },
-        { name: "last 7 days", hours: 168 , group: 'weekly' },
-        { name: "prev 7 days", hours: 336, group: 'weekly' },
-        { name: "this Month", hours: 168 , group: 'monthly' },
-        { name: "last Month", hours: 336, group: 'monthly' },
-    ];*/
-
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
     me.initialize = function() 
     {
+        
+        me.localStatsTag.empty();
+
         me.setEvents_OnInit();
     }
 
@@ -60,6 +56,7 @@ function statistics( cwsRender )
         me.hoursInDay = me.getHoursInDay();
         me.activityTypes = FormUtil.getActivityTypes();
         me.dateGroups = FormUtil.getCommonDateGroups();
+        me.popularDays = me.getPopularDays();
         //me.statusTypes = me.getStatusTypes();
 
         me.createLocalAnalytics();
@@ -85,9 +82,9 @@ function statistics( cwsRender )
 
         me.statisticsFormDiv.show( 'fast' );
 
-        setTimeout( function(){
-            $( 'div.statsBar' ).show( 'slow' );
-        }, 500);
+        //setTimeout( function(){
+        //    $( 'div.statsBar' ).show( 'fast' );
+        //}, 500);
 
     }
 
@@ -102,7 +99,6 @@ function statistics( cwsRender )
                 $( dataTags[ i ] ).css( 'color', '#C0C0C0 !important' );
             }
         }
-
 
     }
 
@@ -130,7 +126,32 @@ function statistics( cwsRender )
 
     }
 
-    // ==== Methods ======================
+    
+    me.getPopularDays = function()
+    {
+        var retArr = [];
+        var days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+
+        for (var i = 0; i < 7; i++)
+        {
+            retArr.push( { day: i, name: days[ i ], term: '', data: [], hoursInDay: [] } );
+
+            for (var h = 0; h < me.hoursInDay.length; h++)
+            {
+                retArr[ i ].hoursInDay.push ( { name: me.hoursInDay[ h ].name } ) ;
+            }
+        }
+
+        retArr.push( { day: 8, name: 'TOTAL', term: '', data: [], hoursInDay: [] } );
+
+        for (var h = 0; h < me.hoursInDay.length; h++)
+        {
+            retArr[ 7 ].hoursInDay.push ( { name: me.hoursInDay[ h ].name } ) ;
+        }
+
+        return retArr;
+
+    }
 
     me.createLocalAnalytics = function()
     {
@@ -155,17 +176,38 @@ function statistics( cwsRender )
                     me.dateGroups[ d ].data = me.enrichDateCalculations( myData, me.dateGroups[ d ].hours );
                 }
 
-                for (var h = 0; h < me.hoursInDay.length; h++) 
+                /*for (var h = 0; h < me.hoursInDay.length; h++) 
                 {
                     me.hoursInDay[ h ].data = ( myData.filter( e=>e.hourInDay == me.hoursInDay[ h ].name ) );
+                }*/
+
+                for (var d = 0; d < me.popularDays.length - 1; d++)
+                {
+                    me.popularDays[ d ].data = ( myData.filter( e=>e.dayInWeek == d ) );
+
+                    for (var h = 0; h < me.hoursInDay.length; h++) 
+                    {
+                        me.popularDays[ d ].hoursInDay[ h ].data = ( myData.filter( e => e.dayInWeek == d && e.hourInDay == me.hoursInDay[ h ].name ) );
+                    }
+
+                }
+
+                me.popularDays[ 7 ].data = ( myData );
+
+                for (var h = 0; h < me.hoursInDay.length; h++) 
+                {
+                    me.popularDays[ 7 ].hoursInDay[ h ].data = ( myData.filter( e => e.hourInDay == me.hoursInDay[ h ].name ) );
                 }
 
                 me.earliestDate = me.earliest( myData )
                 me.total = myData.length;
 
-                me.localStatsTag.empty();
+                for (var d = 0; d < me.popularDays.length; d++)
+                {
+                    me.localStatsTag.append( me.toColumnsWithChart( me.popularDays[ d ].hoursInDay, me.popularDays[ d ].name ) );
+                }
 
-                me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
+                //me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
                 me.localStatsTag.append( me.toRowActivities( me.activityTypes, "activity breakdown" ) );
                 me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
                 //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
@@ -197,7 +239,7 @@ function statistics( cwsRender )
     }
 
     me.enrichDateCalculations = function( myArr, hrTo )
-    {   //, hrFrom
+    {
         var retArr = [];
 
         if ( myArr && myArr.length )
@@ -208,6 +250,7 @@ function statistics( cwsRender )
 
                 myArr[ i ].ageHours = parseFloat( me.dtmNow - dtmThis.getTime() ) / 1000 / 60 / 60;
                 myArr[ i ].hourInDay = ( dtmThis.getHours() );
+                myArr[ i ].dayInWeek = ( dtmThis.getDay() );
 
                 var e = myArr[ i ];
 
@@ -373,7 +416,7 @@ function statistics( cwsRender )
         var tbl = $( '<table class="tableStatistics column">' );
 
         var trTitle = $( '<tr>' );
-        var tdTitle = $( '<td class="tableTitle" colspan="' + arrObj.length + '">' );
+        var tdTitle = $( '<td class="tableTitle" colspan="' + 3 + '">' );
 
         tdTitle.html( title );
 
@@ -416,7 +459,7 @@ function statistics( cwsRender )
         }
 
         var trFiller = $( '<tr>' );
-        var tdFiller = $( '<td class="columnFiller" colspan="2">' );
+        var tdFiller = $( '<td class="columnFiller" colspan="3">' );
 
         tbl.append( trFiller );
         trFiller.append( tdFiller );
@@ -561,7 +604,7 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            tdBar.html( '<div class="statsBar" style="display:none;height:' + barH + '">&nbsp;</div>' );
+            tdBar.html( '<div class="statsBar" style="height:' + barH + '">&nbsp;</div>' );
             tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + arrObj[ i ].name + '</label></div>' );
 
         }

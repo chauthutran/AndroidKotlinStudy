@@ -1205,6 +1205,7 @@ img.imgMore
      border-right: 1px solid #fff;
      border-bottom: 1px solid #BDBDBD;
      table-layout: fixed;
+     border-spacing: 10px;
    }
    table.tableStatsPopularHours {
     padding: 4px;
@@ -1270,9 +1271,9 @@ img.imgMore
      font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
      padding: 8px 2px 8px 2px;
      text-align: center;
+     border-radius: 16px;
    }
    table.tableStatistics > tr > td.columnData {
-    background-color: #FFF;
     font-size: 0.7em;
     font-weight: 400;
     font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
