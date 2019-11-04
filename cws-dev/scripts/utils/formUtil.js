@@ -1832,28 +1832,28 @@ FormUtil.getCommonDateGroups = function()
 }
 
 FormUtil.getActivityTypes = function()
-    {
-        // get different 'Areas' or Activity-Types
-        var sessData = localStorage.getItem('session');
-        var retArr = [];
+{
+	// get different 'Areas' or Activity-Types
+	var sessData = localStorage.getItem('session');
+	var retArr = [];
 
-        if ( sessData )
-        {
-            var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+	if ( sessData )
+	{
+		var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
 
-            if ( itms && itms.length )
-            {
-                for (var i = 0; i < itms.length; i++)
-                {
-                    retArr.push( { name: itms[ i ].name } );
-                }
-            }
+		if ( itms && itms.length )
+		{
+			for (var i = 0; i < itms.length; i++)
+			{
+				retArr.push( { name: itms[ i ].name, jsonObj: itms[ i ] } );
+			}
+		}
 
-        }
+	}
 
-        return retArr;
+	return retArr;
 
-    };
+};
 
 FormUtil.getMyDetails = function( callBack )
 {

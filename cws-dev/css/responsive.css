@@ -326,6 +326,7 @@
         height:24px;
         position:relative;
         top: -2px; /*-2px;*/
+        left: -2px;
       }
 
       .icons-status {
@@ -345,6 +346,12 @@
 
       .inputDivRadio {
         width: 94%;
+      }
+
+      .phoneCallAction {
+        position: absolute;
+        right: 40px;
+        top: 8px;
       }
 
     }
@@ -481,7 +488,8 @@
         width:24px;
         height:24px;
         position:relative;
-        top:-12px; /*-2px;*/
+        top: 0; /* -12px;*/
+        left: -1px;
       }
 
       .modalSymbol{
@@ -499,6 +507,11 @@
       .inputDivRadio {
         width: 97%;
       }
+
+      .phoneCallAction {
+        position: absolute;
+        right: 50px;
+        top: 10px;      }
 
     }
     /* ======================= */

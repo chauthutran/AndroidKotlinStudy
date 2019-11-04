@@ -431,7 +431,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                     if ( passConditionTest )
                     {
-                        var cellphoneTag = $('<img src="images/cellphone.svg" style="float:right;width:32px;padding: 5px 0 0 0"/>');
+                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
 
                         cellphoneTag.click( function(e) {
     
