@@ -774,7 +774,7 @@ function statistics( cwsRender )
 
     me.getNoDataMessage = function()
     {
-        return $( '<div class="icon-row" style="padding: 8px 4px;line-height:18px"><strong term="">Note: </strong><span term="">no local Statistics available </span></div>')
+        return $( '<div class="" style="font-size: 12px;padding: 8px 4px;line-height:18px"><span term="">no local Statistics available </span></div>')
     }
 
 	me.initialize();

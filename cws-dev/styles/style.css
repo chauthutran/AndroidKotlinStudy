@@ -1505,7 +1505,7 @@ img.imgMore
   }
   .previewPayload > div {
       width: 100%;
-      /* padding:14px; */
+      padding:14px;
   }
   .previewPayload > div > table {
     width: 100%;
@@ -1515,6 +1515,11 @@ img.imgMore
     line-height: 1.9em;
     width: 45%;
   }
+
+  .activityListPreviewTable {
+    font-size: calc(9px + 0.2vw);
+  }
+
   .dataToHTMLtitle {
     padding: 8px;
     /* font-size: 1.1em; */
@@ -1532,13 +1537,11 @@ img.imgMore
   .dataToHTMLleft {
     padding: 8px 8px 8px 12px;
     font-size: calc(10px + 0.4vw);
-    text-align: left;
     background: #fff;
   }
   .dataToHTMLright {
     padding: 8px 12px 8px 8px;
     font-size: calc(10px + 0.4vw);
-    text-align: right;
     background: #fff;
   }
   .declineButton {
@@ -1755,10 +1758,10 @@ img.imgMore
   }
   .phoneCallAction {
     border-radius: 22px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
     padding: 0;
-    width: 44px;
-    height: 44px !important;
+    width: 28px;
+    height: 28px !important;
     background: #2C98F0;
     margin: 2px;
   }

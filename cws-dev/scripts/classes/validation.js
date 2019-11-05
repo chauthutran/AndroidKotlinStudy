@@ -15,7 +15,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
     {
         formTag.find( "input,select,textarea" ).each( function() {
             var inputTag = $( this );
-            inputTag.change( function(){
+            inputTag.change( function(){ //blur
                 me.checkValidations( inputTag );
             });
         });
@@ -48,12 +48,13 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		divTag.find( "div.errorMsg" ).remove();
 
 		if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
-		{		
+		{
 			me.performValidationCheck( tag, 'mandatory', divTag );
 			me.performValidationCheck( tag, 'minlength', divTag );
 			me.performValidationCheck( tag, 'maxlength', divTag );
 			me.performValidationCheck( tag, 'maxvalue', divTag );
 			me.performValidationCheck( tag, 'isNumber', divTag );
+			me.performValidationCheck( tag, 'isDate', divTag );
 			me.performValidationCheck( tag, 'phoneNumber', divTag );
 			me.performValidationCheck( tag, 'patterns', divTag );
 		}
@@ -84,6 +85,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			else if ( type == 'maxvalue' ) valid = me.checkValueRange( tag, divTag, 0, Number( validationAttr ) );
 			else if ( type == 'exactlength' ) valid = me.checkValueLen( tag, divTag, type, Number( validationAttr ) );
 			else if ( type == 'isNumber' ) valid = me.checkNumberOnly( tag, divTag, type );
+			else if ( type == 'isDate' ) valid = me.checkValidDate( tag, divTag, type );
 			else if ( type == 'phoneNumber' ) valid = me.checkPhoneNumberValue( tag, divTag, type );
 			else if ( type == 'patterns' ) valid = me.checkValue_RegxRules( tag, divTag, type );
 
@@ -184,7 +186,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		var valid = true;
 		var value = inputTag.val();
 		var reg = new RegExp( /^\d+$/ );
-		
+
 		if ( value && !reg.test( value ) )
 		{
 			var message = me.getMessage( type, 'Please enter number only' );
@@ -195,6 +197,39 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		
 		return valid;		
 	};
+
+	me.checkValidDate = function( inputTag, divTag, type )
+	{
+		var valid = true;
+		var value = inputTag.val();
+		var dateFormat = inputTag.attr( 'placeholder' );
+		//var reg = new RegExp( /^\d+$/ );
+		
+		if ( dateFormat && dateFormat.length )
+		{
+			var dtm = new Date( value );
+
+			if (Object.prototype.toString.call( dtm ) === "[object Date]") {
+				// it is a date
+				if ( isNaN( dtm.getTime() ) ) {  // d.valueOf() could also work
+				  // date is not valid
+				  var message = me.getMessage( type, 'Please enter valid date' );
+				  divTag.append( me.getErrorSpanTag( message ) );
+				  valid = false;
+				} else {
+				  // date is valid
+				}
+			  } else {
+				// not a date
+				var message = me.getMessage( type, 'Please enter valid date' );
+				divTag.append( me.getErrorSpanTag( message ) );
+				valid = false;
+			  }
+
+		}
+
+		return valid;	
+	}
 	
 	me.checkPhoneNumberValue = function( inputTag, divTag, type )
 	{

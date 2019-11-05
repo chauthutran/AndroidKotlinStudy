@@ -406,19 +406,17 @@ Util.jsonToArray = function( jsonData, structureConfig )
 	return arrRet;
 };
 
-Util.arrayToHTMLtable = function( title, arr )
+Util.arrayPreviewRecord = function( title, arr )
 {
 	var ret = $( '<table />');
-	//console.log("-------------------------------------------------asdsads---")
-	//console.log(arr, title)
-	window.darwinva=arr
+
 	if ( arr )
 	{
 		if ( title )
 		{
 			var tr = $( '<tr />');
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );	
+			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )
@@ -427,7 +425,7 @@ Util.arrayToHTMLtable = function( title, arr )
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );	
+				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );
 			}
 			else
 			{
@@ -448,6 +446,45 @@ Util.arrayToHTMLtable = function( title, arr )
 
 }
 
+Util.activityListPreviewTable = function( title, arr )
+{
+	var ret = $( '<table class="activityListPreviewTable" />');
+
+	if ( arr )
+	{
+		if ( title )
+		{
+			var tr = $( '<tr />');
+			ret.append( tr );
+			tr.append( $( '<td colspan=2 class="" />').html( '<strong>' + title + '</strong>') );	//dataToHTMLtitle
+		}
+	
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td colspan=2 class="" />').html( arr[ i ].name ) );	//dataToHTMLheader
+			}
+			else
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
+				tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
+			}
+		}
+	
+		var tr = $( '<tr />');
+		ret.append( tr );
+		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
+
+	}
+
+	return ret;
+
+}
 // List / Array Related
 // ----------------------------------
 
@@ -684,6 +721,7 @@ Util.populate_year = function ( el, data, labelText ) {
 
 	inputShow.addEventListener('focus', e => {
 		e.preventDefault();
+		inputShow.blur();
 		modal.parentElement.style.setProperty('display', 'flex');
 		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
 
@@ -1320,7 +1358,32 @@ Util.formatDate = function( strDate )
 	return returnVal;
 };
 
+Util.handleMask = function (event, mask) {
+	event.stopPropagation()
+	event.preventDefault()
+	if (!event.charCode) return
+	var c = String.fromCharCode(event.charCode)
+	if (c.match(/\D/)) return
+	var val = event.target.value.substring(0, event.target.selectionStart) + c + event.target.value.substr(event.target.selectionEnd)
+	var pos = event.target.selectionStart + 1
 
+    var nan = count(val, /\D/, pos) // nan va calcolato prima di eliminare i separatori
+    val = val.replace(/\D/g,'')
+    var mask = mask.match(/^(\D*)(.+9)(\D*)$/)
+    if (!mask) return // meglio exception?
+    if (val.length > count(mask[2], /9/)) return
+    for (var txt='', im=0, iv=0; im<mask[2].length && iv<val.length; im+=1) {
+        var c = mask[2].charAt(im)
+        txt += c.match(/\D/) ? c : val.charAt(iv++)
+    }
+	event.target.value = mask[1] + txt + mask[3]
+	event.target.selectionStart = event.target.selectionEnd = pos + (pos==1 ? mask[1].length : count(event.target.value, /\D/, pos) - nan)
+    function count(str, c, e) {
+        e = e || str.length
+        for (var n=0, i=0; i<e; i+=1) if (str.charAt(i).match(c)) n+=1
+        return n
+    }
+}
 Util.formatDateBack = function( strDate )
 {
 	if ( Util.checkValue( strDate ) )
@@ -2409,7 +2472,7 @@ $.fn.rotate=function(options) {
 	var dataSize = 0;
 	var arrItms = [];
 
-	for ( var i = 0; i <= localStorage.length -1; i++ )  
+	for ( var i = 0; i <= localStorage.length -1; i++ )
 	{
 		key  = localStorage.key(i);  
 		dataSize = Util.lengthInUtf8Bytes( localStorage.getItem( key ) );
@@ -2424,4 +2487,18 @@ $.fn.rotate=function(options) {
 	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
 	var m = encodeURIComponent(str).match(/%[89ABab]/g);
 	return str.length + (m ? m.length : 0);
+  }
+
+  Util.getDateSeparator = function( formatDate )
+  {
+	  var toTry = [ '-', '/', ' ' ];
+
+	  for ( var i = 0; i <= toTry.length -1; i++ )
+	  {
+		if ( formatDate.indexOf( toTry[ i ] ) > 0 ) 
+		{ 
+			return toTry[ i ];
+		}
+	  }
+
   }

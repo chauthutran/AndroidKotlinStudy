@@ -494,9 +494,9 @@ function BlockList( cwsRenderObj, blockObj )
 
                     console.log( fetchItemData );
 
-                    var trxDetails = Util.arrayToHTMLtable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
-                    //var prevDetails = Util.arrayToHTMLtable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
-                    var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
+                    var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
+                    //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
+                    var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
                     var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
 
                     
@@ -506,7 +506,7 @@ function BlockList( cwsRenderObj, blockObj )
                     if ( paylDetails && paylDetails.length )
                     {
                         //console.log("PAYLOADDDD",paylDetails)
-                        expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
+                        expandedDivTag.append( Util.activityListPreviewTable( 'payload', paylDetails ) );
                     } 
     
                 });
@@ -555,9 +555,9 @@ function BlockList( cwsRenderObj, blockObj )
         {
             for ( var i=0; i< dataObj.length; i++ )
             {
-                ret[ 'attempt_' + ( i + 1) ] = dataObj[ i ][ 'syncAttempt' ] ;
-                ret[ 'success_' + ( i + 1) ] = dataObj[ i ][ 'success' ] ;
-                ret[ 'response_' + ( i + 1) ] = ( dataObj[ i ][ 'returnJson' ] && dataObj[ i ][ 'returnJson' ][ 'response' ] ? dataObj[ i ][ 'returnJson' ][ 'response' ] : '' ) ;
+                ret[ ( i + 1) + '.attempt' ] = dataObj[ i ][ 'syncAttempt' ] ;
+                ret[ ( i + 1) + '.succeeded' ] = dataObj[ i ][ 'success' ] ;
+                ret[ ( i + 1) + '.server_response' ] = ( dataObj[ i ][ 'returnJson' ] && dataObj[ i ][ 'returnJson' ][ 'response' ] ? dataObj[ i ][ 'returnJson' ][ 'response' ] : '' ) ;
             }
 
             return Util.jsonToArray( ret, designLayout ); 

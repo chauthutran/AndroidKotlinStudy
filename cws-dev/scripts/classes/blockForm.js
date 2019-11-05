@@ -318,8 +318,10 @@ function BlockForm( cwsRenderObj, blockObj )
 				let nuevoModal = new Modal({parent: divInputTag[0], titleMessage: labelTerm,customElement: options.element,buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true});
 
 				inputShow.click(function(){
+					inputShow.blur()
 					options.showAll();
 					nuevoModal.exec();
+					options.inputSearch.focus()
 				});
 				btnDisagree.click(function(e){
 					e.preventDefault()
@@ -357,7 +359,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				var component = $(`
 							<div class="containerSymbol">
 								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" />
-								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" ${autoComplete} >
+								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" isNumber="true" ${autoComplete} >
 								<div class="container--modalSymbol">
 									<div class="modalSymbol">
 										<div class="textSymbol">
@@ -397,8 +399,18 @@ function BlockForm( cwsRenderObj, blockObj )
 				button.append(icoCalendar);
 
 				var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
+				var dtmSeparator = Util.getDateSeparator( formatDate );
+				var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => {
+					let arr=""
+					for(let i = 0; i< item.length; i++)
+					{
+						arr += "9"
+					}
+					acum.push(arr);
+					return acum;
+					}, [] ).join( dtmSeparator );
 
-				entryTag = $( '<input placeholder="' + formatDate  + '" id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" />' );
+				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
 
 				wrapperInput.append(entryTag);
 				wrapperDad.append(wrapperInput, button);
@@ -406,7 +418,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				divInputTag.append(wrapperDad)
-console.log( entryTag[ 0 ].value );
+
 				//function that call datepicker
 				var dtmPicker = new mdDateTimePicker.default({
 					type: 'date',
@@ -414,6 +426,10 @@ console.log( entryTag[ 0 ].value );
 				});
 
 				entryTag.click( e => e.preventDefault() );
+
+				entryTag.on( 'keypress', function( e ){
+					Util.handleMask( e, formatMask );
+				} );
 
 				button.click(function(e) {
 
@@ -425,13 +441,12 @@ console.log( entryTag[ 0 ].value );
 
 					inputDate.addEventListener('onOk', function() {
 
-						var trueFormat = (formatDate == '') ? 'YYYY' : formatDate;
+						var trueFormat = ( formatDate == '' ) ? 'YYYY' : formatDate;
 						var inpDate = $( '[name=' + formItemJson.id + ']' );
 
-						inpDate.val( dtmPicker.time.format(trueFormat) );
+						inpDate.val( dtmPicker.time.format( trueFormat ) );
 
 						FormUtil.dispatchOnChangeEvent( inpDate );
-						console.log( inpDate ); 
 
 					});
 

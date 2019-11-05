@@ -350,8 +350,15 @@
 
       .phoneCallAction {
         position: absolute;
-        right: 40px;
-        top: 8px;
+        right: 48px;
+        top: 10px;
+      }
+
+      .leftDynamic, .dataToHTMLleft {
+        text-align: left;
+      }
+      .rightDynamic, .dataToHTMLright {
+        text-align: right;
       }
 
     }
@@ -511,7 +518,15 @@
       .phoneCallAction {
         position: absolute;
         right: 50px;
-        top: 10px;      }
+        top: 6px;      
+      }
+
+      .leftDynamic, .dataToHTMLleft {
+        text-align: left;
+      }
+      .rightDynamic, .dataToHTMLright {
+        text-align: left;
+      }
 
     }
     /* ======================= */
@@ -519,6 +534,12 @@
     /* ==================================== */
     /* 2A. 1 column input less than 866px */
     @media screen and (max-width: 865px) {
+      .optItem {
+        padding: 0;
+        height: 110px;
+        overflow-y: scroll;
+        background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+      }
       #navDrawerDiv
       {
         max-width: 360px;
