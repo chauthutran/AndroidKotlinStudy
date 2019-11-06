@@ -104,13 +104,13 @@ FormUtil.inputPreviewLabel = function( formInput )
 
 	if ( lbl == undefined )
 	{
-		if ( $( formInput ).closest( '.inputDiv' ).find( 'label' ) )
+
+		if ( $( formInput ).closest( '.inputDiv' ).find( 'label' ) && $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ] )
 		{
 			lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
 		}
 		else
 		{
-			console.log( formInput );
 			console.log( $( formInput ).closest( '.inputDiv' ) ); //.find( 'label' )[ 0 ].innerText;
 		}
 	}
@@ -133,14 +133,17 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 
 		if ( getVal_visible )
 		{
-			console.log( inputTag );
-			var inputLabel = FormUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );
-			console.log( inputLabel );
+			if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
+			{
+				console.log( inputTag[ 0 ].nodeName );
+				var inputLabel = FormUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
+			}
+
 			if ( inputTag[ 0 ].nodeName === "LABEL" )
 			{
 				if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
 				{
-					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].innerText ), type: inputTag[ 0 ].nodeName, value: [] };
+					inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
 				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "INPUT" )
