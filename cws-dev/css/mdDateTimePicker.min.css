@@ -78,9 +78,12 @@
     color: #000;
     text-align: center;
 }
+.mddtp-date__header {
+	background-color: #F5F5F5;
+}
 .mddtp-picker .mddtp-picker__body {
 	position: relative;
-	background-color: #fff
+	background-color: #fff;
 }
 .mddtp-picker .mddtp-picker__body .mddtp-picker__action {
 	margin-top: 24px;
@@ -1587,7 +1590,8 @@
 	-webkit-animation-timing-function: cubic-bezier(.42, 0, .58, 1);
 	animation-timing-function: cubic-bezier(.42, 0, .58, 1);
 	-webkit-animation-fill-mode: both;
-	animation-fill-mode: both
+	animation-fill-mode: both;
+	background-color: #fff;
 }
 @media screen and (max-device-width: 425px) and (orientation: portrait) {
 	.mddtp-picker {

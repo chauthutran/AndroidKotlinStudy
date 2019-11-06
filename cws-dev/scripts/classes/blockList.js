@@ -444,7 +444,8 @@ function BlockList( cwsRenderObj, blockObj )
     
                             if ( Util.isMobi() )
                             {
-                                window.open(`tel:${cellphoneNumber[0].value}`)
+                                //window.open(`tel:${cellphoneNumber[0].value}`)
+                                window.location.href = `tel:${cellphoneNumber[0].value}`;
                             }
                             else
                             {

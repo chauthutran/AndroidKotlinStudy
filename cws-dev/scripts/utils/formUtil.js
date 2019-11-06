@@ -104,7 +104,15 @@ FormUtil.inputPreviewLabel = function( formInput )
 
 	if ( lbl == undefined )
 	{
-		lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
+		if ( $( formInput ).closest( '.inputDiv' ).find( 'label' ) )
+		{
+			lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
+		}
+		else
+		{
+			console.log( formInput );
+			console.log( $( formInput ).closest( '.inputDiv' ) ); //.find( 'label' )[ 0 ].innerText;
+		}
 	}
 
 	return lbl;
