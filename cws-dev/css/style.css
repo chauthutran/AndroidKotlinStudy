@@ -378,7 +378,7 @@ header {
   font-size: 11px;
   border-bottom: 0;
   margin: 0;
-  padding: 6px 4px 0 6px;
+  padding: 6px 4px 6px 6px;
   color: #95989A;
   position: relative;
   top: 2px;
@@ -882,17 +882,25 @@ a.searchresultSelector:hover {
 }
 
 .btnStyle1 {
-  position: relative;
+  width: 66px;
+  height: 48px;
+  border: none;
+  background: none;
+  color: #EB5757;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: Rubik;
+  /* position: relative;
   padding: 1px 4px 2px 4px;
   border: 1px solid #C0C0C0;
   color: #236EDE;
   border-radius: 8px;
-  font-size: calc(9px + 0.2vw);
+  font-size: calc(9px + 0.2vw); */
 }
-
+/* 
 .btnStyle1:hover {
   background-color: silver !important;
-}
+} */
 
 .aboutHeader {
    padding: 0 0 0 20px;
@@ -1077,19 +1085,6 @@ div.loginBtn {
   letter-spacing: 0.1px;
 
   color: rgba(51, 51, 51, 0.87);
-}
-#buttonResetData{
-    width: 66px;
-    height: 48px;
-    position: relative;
-    left: 100%;
-    transform: translateX(-100%);
-    border: none;
-    background: none;
-    color: #EB5757;
-    cursor: pointer;
-    font-weight: 600;
-    font-family: Rubik;
 }
 /*
   Funcionalidad: Reset Data

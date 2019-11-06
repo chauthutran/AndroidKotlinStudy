@@ -15,7 +15,7 @@
 	text-transform: uppercase;
 	outline: 0;
 	cursor: pointer;
-	color: #009688;
+	/* color: #009688; */
 	-webkit-appearance: button;
 	overflow: visible;
 	-webkit-tap-highlight-color: transparent;
@@ -52,7 +52,7 @@
 .mddtp-picker .mddtp-picker__header {
     width: 100px;
     min-width: 100px;
-	background-color: #009688;
+	background-color: #F5F5F5;
 	padding: 24px 24px 20px
 }
 .mddtp-picker .mddtp-picker__header .mddtp-picker__title {
@@ -69,13 +69,13 @@
 }
 .mddtp-picker .mddtp-picker__header .mddtp-picker__subtitle,
 .mddtp-picker .mddtp-picker__header .mddtp-picker__title {
-	color: rgba(255, 255, 255, .7);
+	color: rgba(0, 0, 0, 1);
 	margin: 0;
 	cursor: pointer;
 	text-align: center;
 }
 .mddtp-picker .mddtp-picker__header .mddtp-picker__color--active {
-    color: #fff;
+    color: #000;
     text-align: center;
 }
 .mddtp-picker .mddtp-picker__body {
@@ -85,7 +85,10 @@
 .mddtp-picker .mddtp-picker__body .mddtp-picker__action {
 	margin-top: 24px;
 	padding: 8px 0;
-	text-align: right
+	text-align: left;
+	display: inline-flex;
+    flex-flow: unset;
+    float: right;
 }
 .mddtp-picker .mddtp-picker__body,
 .mddtp-picker .mddtp-picker__header {
@@ -178,12 +181,12 @@
 	vertical-align: middle
 }
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid span.mddtp-picker__cell--today {
-	color: #009688;
+	color: rgba(0, 0, 0, .45);
 	font-weight: 600
 }
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid .mddtp-picker__tr span.mddtp-picker__cell:hover,
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid span.mddtp-picker__cell--selected {
-	background-color: #009688;
+	background-color: rgba(0, 0, 0, .45);
 	color: #fff
 }
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid span.mddtp-picker__cell--disabled {

@@ -81,11 +81,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
+					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
 				}
 				else
 				{
-					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
+					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
 				}
 
 			}
@@ -206,7 +206,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 
 	// Old UI Used Method
-	me.renderInput = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
+	me.renderInput = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
 	{
 		var divInputTag = $( '<div class="inputDiv"></div>' );
 
@@ -217,13 +217,13 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		divInputTag.append( titleDivTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
+	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
 	{
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
@@ -232,7 +232,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		spanTitleTag.text( formItemJson.defaultName );
 		divInputTag.append( spanTitleTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
@@ -269,10 +269,8 @@ function BlockForm( cwsRenderObj, blockObj )
 			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
-					// FormUtil.setTagVal( entryTag, "##{getAge(form:walkIn_yearOfBirth)}" );
-				// else{
-					FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-				// }
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
 			}			
 			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
@@ -329,15 +327,15 @@ function BlockForm( cwsRenderObj, blockObj )
 				});
 				btnSelect.click(function(e){
 					e.preventDefault()
-					input.val(options.element.dataset.value);
-					inputShow.val(options.element.dataset.content);
+					input.val( options.element.dataset.value );
+					inputShow.val( options.element.dataset.content );
 					FormUtil.dispatchOnChangeEvent( input );
 					nuevoModal.exec();
 				});
 
-				let wrapperTag = $('<div></div>');
-				wrapperTag.append( input, inputShow );
-				divInputTag.append( $(wrapperTag) );
+				//let wrapperTag = $('<div></div>');
+				divInputTag.append( input, inputShow );
+				//divInputTag.append( $(wrapperTag) );
 			}
 			else if( formItemJson.controlType === "YEAR" )
 			{
@@ -404,34 +402,33 @@ function BlockForm( cwsRenderObj, blockObj )
 					let arr=""
 					for(let i = 0; i< item.length; i++)
 					{
-						arr += "9"
+						arr += "#"
 					}
 					acum.push(arr);
 					return acum;
-					}, [] ).join( dtmSeparator );
+				}, [] ).join( dtmSeparator );
 
-				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+				entryTag = $( '<input data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
 
-				wrapperInput.append(entryTag);
-				wrapperDad.append(wrapperInput, button);
+				wrapperInput.append( entryTag );
+				wrapperDad.append( wrapperInput, button );
 
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
-				divInputTag.append(wrapperDad)
+				divInputTag.append( wrapperDad );
 
 				//function that call datepicker
-				var dtmPicker = new mdDateTimePicker.default({
-					type: 'date',
-					value: entryTag[ 0 ].value
-				});
+				Maska.create( entryTag[0] );
 
 				entryTag.click( e => e.preventDefault() );
 
-				entryTag.on( 'keypress', function( e ){
-					Util.handleMask( e, formatMask );
-				} );
-
 				button.click(function(e) {
+
+					var dtmPicker = new mdDateTimePicker.default({
+						type: 'date',
+							init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
+							future: moment()
+					} );
 
 					e.preventDefault();
 					dtmPicker.toggle();
@@ -496,7 +493,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "CHECKBOX" )
 			{
-				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
+				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid, updates:formItemJson.id } );
 
 				FormUtil.setTagVal( input, formItemJson.defaultValue )
 
@@ -596,7 +593,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag.parent().parent() )
+				me.evalFormInputFunctions( formDivSecTag.parent() ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -876,7 +873,8 @@ function BlockForm( cwsRenderObj, blockObj )
 
 	me.getMatchingInputTag = function( formDivSecTag, idStr )
 	{
-		return formDivSecTag.find( 'input[name="' + idStr + '"],select[name="' + idStr + '"]' );
+		//return formDivSecTag.find( 'input[name="' + idStr + '"],select[name="' + idStr + '"]' );
+		return formDivSecTag.find( '[name="' + idStr + '"]' );
 	};
 
 

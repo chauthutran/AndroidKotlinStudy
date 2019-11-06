@@ -83,8 +83,20 @@ function settingsApp( cwsRender )
                 }, 500 );
             }
         });
-
-
+        var show = false
+        $('#languageCollapsibleHeader').click( ()=> {
+            $('#languageCollapsibleBody').slideToggle('fast')
+            console.log(show)
+            if(show){
+                $('#languageCollapsibleBody').css('border-bottom','none')
+                $('#languageCollapsibleHeader').css('border-bottom','2px solid #F5F5F5')
+            }
+            else{
+                $('#languageCollapsibleHeader').css('border-bottom','none')
+                $('#languageCollapsibleBody').css('border-bottom','2px solid #F5F5F5')
+            }
+            show = !show
+        });
 
         //  Funcionalidad: Reset Data
         //  La siguiente funci�n autoejecutable es toda la funcionalidad

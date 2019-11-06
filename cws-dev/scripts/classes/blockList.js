@@ -417,12 +417,15 @@ function BlockList( cwsRenderObj, blockObj )
             {
                 //ADD DCDconfig lookup to get 'phoneNumber' defined field name (linked to current activityType)
                 var cellReservedField = "phoneNumber"; //getConfigPhoneCallField
-
+                var consentCellReservedField = "phoneContactConsent"
+                var consentFeedbackReservedField = "phoneContactConsent_feedback"
                 //  CELLPHONE 
                 var cellphoneNumber = paylDetails.filter( item => { if ( item.name.indexOf( cellReservedField ) >= 0 ){ return item.value } } );
 
                 if ( cellphoneNumber && cellphoneNumber.length && cellphoneNumber.length > 0 ) 
                 {
+                    var valueConsentCell = Util.getValueByCallFieldFromConfig( paylDetails, consentCellReservedField, ['name','value'] );
+                    var valueConsentCellFeedback = Util.getValueByCallFieldFromConfig( paylDetails, consentFeedbackReservedField, ['name','value'] );
 
                     //ADD DCDconfig lookup to compare defined rules [show/hide logic] for rendering phoneCall action event
                     var passConditionTest = false;
@@ -431,6 +434,8 @@ function BlockList( cwsRenderObj, blockObj )
 
                     if ( passConditionTest )
                     {
+                        if ( valueConsentCell == "YESP" || valueConsentCellFeedback == "YESP" )
+                        {
                         var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
 
                         cellphoneTag.click( function(e) {
@@ -448,6 +453,7 @@ function BlockList( cwsRenderObj, blockObj )
                         });
     
                         tdVoucherIdObj.append( cellphoneTag );
+                        }
                     }
 
                 } 
@@ -523,7 +529,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.getTrxDetails = function( dataObj, designLayout )
     {
         var ret = {};
-        var fldList = 'id:id,created:dateCreated,network:createdOnline,networkAttempt:uploadAttempts,status:recordStatus,returnJson.response:last_error';
+        var fldList = 'id:id,created:dateCreated,network:createdOnline,networkAttempt:uploadAttempts,status:recordStatus,returnJson.response:lastError';
         var arrFld = fldList.split(',');
 
         for ( var i=0; i< arrFld.length; i++ )

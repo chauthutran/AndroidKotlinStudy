@@ -406,6 +406,17 @@ Util.jsonToArray = function( jsonData, structureConfig )
 	return arrRet;
 };
 
+Util.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
+{	
+	return array.filter( item => 
+		{
+			if ( item[attr].indexOf( field ) >= 0 )
+			{ 
+				return item[value]
+			} 
+		} 
+	)[0][value];
+}
 Util.arrayPreviewRecord = function( title, arr )
 {
 	var ret = $( '<table />');
@@ -851,7 +862,7 @@ Util.createCheckbox = function( { message='', name='', uid='', updates='', value
 	{
 		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
 		checkboxShow.css( 'background', 'transparent' );
-		checkboxReal.prop( 'checked', false );
+		//checkboxReal.prop( 'checked', false );
 	}
 
 	checkboxShow.append( check );
@@ -1358,32 +1369,7 @@ Util.formatDate = function( strDate )
 	return returnVal;
 };
 
-Util.handleMask = function (event, mask) {
-	event.stopPropagation()
-	event.preventDefault()
-	if (!event.charCode) return
-	var c = String.fromCharCode(event.charCode)
-	if (c.match(/\D/)) return
-	var val = event.target.value.substring(0, event.target.selectionStart) + c + event.target.value.substr(event.target.selectionEnd)
-	var pos = event.target.selectionStart + 1
 
-    var nan = count(val, /\D/, pos) // nan va calcolato prima di eliminare i separatori
-    val = val.replace(/\D/g,'')
-    var mask = mask.match(/^(\D*)(.+9)(\D*)$/)
-    if (!mask) return // meglio exception?
-    if (val.length > count(mask[2], /9/)) return
-    for (var txt='', im=0, iv=0; im<mask[2].length && iv<val.length; im+=1) {
-        var c = mask[2].charAt(im)
-        txt += c.match(/\D/) ? c : val.charAt(iv++)
-    }
-	event.target.value = mask[1] + txt + mask[3]
-	event.target.selectionStart = event.target.selectionEnd = pos + (pos==1 ? mask[1].length : count(event.target.value, /\D/, pos) - nan)
-    function count(str, c, e) {
-        e = e || str.length
-        for (var n=0, i=0; i<e; i+=1) if (str.charAt(i).match(c)) n+=1
-        return n
-    }
-}
 Util.formatDateBack = function( strDate )
 {
 	if ( Util.checkValue( strDate ) )

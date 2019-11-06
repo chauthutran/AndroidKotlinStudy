@@ -190,7 +190,7 @@ function statistics( cwsRender )
 
         for (var d = 0; d < me.popularDays.length; d++)
         {
-            var tagDot = $( '<span data-item="' + d + '" class="statsDot ' + ( d == me.slideIndex ? 'StatsDotActive' : '' ) + '" ></span>' );
+            var tagDot = $( '<span data-item="' + d + '" class="statsDot ' + ( d == me.slideIndex ? 'StatsDotActive ' : ' ' ) + ( d == (me.popularDays.length-1) ? 'StatsDotAllDays' : '' ) + '" ></span>' );
 
             tagCarousel.append( tagDot );
 

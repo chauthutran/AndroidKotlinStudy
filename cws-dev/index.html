@@ -40,10 +40,10 @@
     <script type="text/javascript" src="scripts/libraries/llqrcode.js" ></script>
     <script type="text/javascript" src="scripts/libraries/moment.min.js"></script>
     <script type="text/javascript" src="scripts/libraries/mdDateTimePicker.min.js" ></script>
-    <script type="text/javascript" src="scripts/libraries/jquery.maska.js"></script>
+    <script type="text/javascript" src="scripts/libraries/maska.js"></script>
 
 
-    <script> var _ver = '1.2.0-rc.25'; </script>
+    <script> var _ver = '1.2.0-rc.26'; </script>
 
 
     <!-- Google Analytics -->
@@ -306,14 +306,17 @@
                   </table>
                 </div>
     
-                <label term="settings_Language_pack_date" id="" class="from-string titleDiv">Language pack date</label>
-                <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
+                <label term="settings_Language_pack_date" id="languageCollapsibleHeader" class="from-string titleDiv" style="display: flex; justify-content: flex-start; align-items: center;border-bottom:2px solid #F5F5F5">
+                  <img src="images/sync-banner.svg" alt="" style="margin-right: 9px;">
+                  <span>Language pack date</span>
+                </label>
+                <div class="form-type-text" id="languageCollapsibleBody" style="display: none; border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
                   <table style="width:100%;border-spacing:0;">
                     <tr>
-                      <td style="width:160px;"><span id="settingsInfo_userLanguage_Update" style="color:#808080"></span></td>
+                      <td style="width:160px;"><span id="settingsInfo_userLanguage_Update" style="color:#808080; position: relative; left: 20px;"></span></td>
                       <td>
                         <div id="" class="form-type-text">
-                          <button id="settingsInfo_newLangTermsDownload" term="" class="btnStyle1">update</button>
+                          <button id="settingsInfo_newLangTermsDownload" term="" class="btnStyle1" style="float: right;">UPDATE</button>
                           <!-- /*sorry to change it */ term="settings_newLangTermsDownload" -->
                         </div>
                       </td>
@@ -461,7 +464,7 @@
                       <div id="bodyCollapsible__text" term="">
                         Your configuration and App data stored in the device will be deleted. You will be asked to log in again and data which is not synced to the server will be lost.
                       </div>
-                      <button id="buttonResetData" term="">ACCEPT</button>
+                      <button id="buttonResetData" class="btnStyle1" term="" style="position:relative; left:100%; transform:translateX(-100%);">ACCEPT</button>
                     </div>
                   </li>
                 </ul>

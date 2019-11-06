@@ -86,6 +86,31 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	return inputsJson;
 }
 
+FormUtil.inputPreviewLabel = function( formInput )
+{
+	var lbl;
+	var sibs = $( formInput ).siblings();
+
+	sibs.each( function() {
+
+		var tag = $( this );
+
+		if ( tag[ 0 ].nodeName === "LABEL" )
+		{
+			lbl = tag[ 0 ].innerText;
+		}
+
+	})
+
+	if ( lbl == undefined )
+	{
+		lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
+	}
+
+	return lbl;
+
+}
+
 FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
@@ -94,30 +119,32 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
 
 	inputTags.each( function()
-	{		
-		var inputTag = $(this);	
+	{
+		var inputTag = $( this );	
 		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
 
 		if ( getVal_visible )
 		{
-
+			console.log( inputTag );
+			var inputLabel = FormUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );
+			console.log( inputLabel );
 			if ( inputTag[ 0 ].nodeName === "LABEL" )
 			{
 				if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
 				{
-					inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].innerText ), type: inputTag[ 0 ].nodeName, value: [] };
 				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "INPUT" )
 			{
 				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' )  ) )
 				{
-					inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "SELECT" )
 			{
-				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+				inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 			}
 
 			if ( inputsJson )
