@@ -83,8 +83,20 @@ function settingsApp( cwsRender )
                 }, 500 );
             }
         });
-
-
+        var show = false
+        $('#languageCollapsibleHeader').click( ()=> {
+            $('#languageCollapsibleBody').slideToggle('fast')
+            console.log(show)
+            if(show){
+                $('#languageCollapsibleBody').css('border-bottom','none')
+                $('#languageCollapsibleHeader').css('border-bottom','2px solid #F5F5F5')
+            }
+            else{
+                $('#languageCollapsibleHeader').css('border-bottom','none')
+                $('#languageCollapsibleBody').css('border-bottom','2px solid #F5F5F5')
+            }
+            show = !show
+        });
 
         //  Funcionalidad: Reset Data
         //  La siguiente funci�n autoejecutable es toda la funcionalidad
@@ -95,6 +107,7 @@ function settingsApp( cwsRender )
         //  en [project]/css/style.css
         //  de la l�nea 1035 a 1068
         ( function() {
+            var sectionReset = document.getElementById('resetCollapsible')
             $("#settingsAppRestHeader").click( function() {
                 $("#bodyCollapsible").slideToggle("fast")
                 $("#settingsAppRestHeader").toggleClass("collapsible-body--on")
@@ -103,36 +116,16 @@ function settingsApp( cwsRender )
             let titleMessage="Reset app data & configuration",
                 bodyMessage="Your configuration and App data stored in the device will be deleted. "
                 questionMessage="Are you sure?",
-                btnAcceptResetData = $('<button>', {
-                    'text' : 'ACCEPT'
-                }),
-                btnDeclineResetData = $('<button>', {
-                'text' : 'DECLINE'
-                }),
-                commonStylesButtons = {
-                    border: 'none',
-                    fontSize: '14px',
-                    fontFamily: 'Rubik',
-                    fontStyle: 'normal',
-                    fontWeight: 600,
-                    margin: '34px 24px 12px 20px',
-                    float: 'right'
-                }
-            btnAcceptResetData.css({
-                color: '#FF0000',
-                ...commonStylesButtons
-            })
-            btnDeclineResetData.css({
-                color: '#2C98F0',
-                ...commonStylesButtons
-            })
+                btnAcceptResetData = $( '<button class="acceptButton" term="">ACCEPT</button>' ),
+                btnDeclineResetData = $( '<button class="declineButton" term="">DECLINE</button>' );
+
             let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
 
             $("#buttonResetData").click(function(){
-                pptManager.on({titleMessage,bodyMessage,questionMessage,buttons})
+                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
             })
             btnDeclineResetData.click(function(){
-                pptManager.on({titleMessage,bodyMessage,questionMessage,buttons})
+                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
             })
             btnAcceptResetData.click(()=>{
                 DataManager.clearSessionStorage()

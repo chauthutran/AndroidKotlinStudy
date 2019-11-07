@@ -313,6 +313,7 @@
         /*border-bottom: dotted 0.5px #333;*/
         box-sizing: border-box;
         box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 1;
       }
 
       .title-act-mobile > label {
@@ -325,6 +326,7 @@
         height:24px;
         position:relative;
         top: -2px; /*-2px;*/
+        left: -2px;
       }
 
       .icons-status {
@@ -332,17 +334,31 @@
       }
 
       .modalSymbol{
-        background: #009788;
         max-width: 95%;
-        width: 150%;
-        text-align: center;
-        border-radius: var(--bradius);
+        width: 320px;
       }
 
       .previewPayload {
         width:95vw;
         height:96vh;
         left: 0;
+      }
+
+      .inputDivRadio {
+        width: 94%;
+      }
+
+      .phoneCallAction {
+        position: absolute;
+        right: 48px;
+        top: 10px;
+      }
+
+      .leftDynamic, .dataToHTMLleft {
+        text-align: left;
+      }
+      .rightDynamic, .dataToHTMLright {
+        text-align: right;
       }
 
     }
@@ -479,15 +495,13 @@
         width:24px;
         height:24px;
         position:relative;
-        top:-12px; /*-2px;*/
+        top: 0; /* -12px;*/
+        left: -1px;
       }
 
       .modalSymbol{
-        background: #009788;
         max-width: 95%;
-        width: 50%;
-        text-align: center;
-        border-radius: var(--bradius);
+        width: 320px;
       }
 
 
@@ -497,12 +511,35 @@
         height: 96vh;
       }
 
+      .inputDivRadio {
+        width: 97%;
+      }
+
+      .phoneCallAction {
+        position: absolute;
+        right: 50px;
+        top: 6px;      
+      }
+
+      .leftDynamic, .dataToHTMLleft {
+        text-align: left;
+      }
+      .rightDynamic, .dataToHTMLright {
+        text-align: left;
+      }
+
     }
     /* ======================= */
 
     /* ==================================== */
     /* 2A. 1 column input less than 866px */
     @media screen and (max-width: 865px) {
+      .optItem {
+        padding: 0 4px 0 8px;
+        height: 110px;
+        overflow-y: scroll;
+        background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+      }
       #navDrawerDiv
       {
         max-width: 360px;
@@ -511,6 +548,10 @@
       .tb-content-result,
       .tb-content-buttom {
         width: 94%;
+      }
+
+      .inputDivRadio {
+        width: 97%;
       }
     }
 
@@ -524,6 +565,10 @@
       .tb-content-result,
       .tb-content-buttom {
         width: 47%;
+      }
+
+      .inputDivRadio {
+        width: 97%;
       }
     }
     /* ==================================== */

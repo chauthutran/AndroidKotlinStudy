@@ -378,7 +378,7 @@ header {
   font-size: 11px;
   border-bottom: 0;
   margin: 0;
-  padding: 6px 4px 0 6px;
+  padding: 6px 4px 6px 6px;
   color: #95989A;
   position: relative;
   top: 2px;
@@ -705,11 +705,12 @@ act {
   /* padding:6px 2px; */
   white-space:nowrap;
   cursor: default;
+  height: min-content;
 }
 
 .listItem_voucher_status {
   vertical-align:top;
-  padding:10px 2px 0 0;
+  /* padding:10px 2px 0 0; */
 }
 
 .listItem_action_sync{
@@ -720,19 +721,31 @@ act {
 
 
 img.listItem_icon_sync{
-  width:24px;
-  height:24px;
+  width:28px;
+  height:28px !important;
+  background-color: #fff;
+  border-radius: 14px;
+  /* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5); */
+}
+img.listItem_icon_sync_done {
+  box-shadow: none !important;
 }
 
 .listDataPreview{
-  float:left;
+  /*float:left;
   padding:4px;
   position: relative;
   top: -10px;
   display: contents;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
+  box-sizing: border-box;*/
+  display: -webkit-flex;
+  -webkit-justify-content: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  /* height: -webkit-fill-available; */
 }
 
 .listDataItem{
@@ -800,12 +813,15 @@ div.select {
 div.select::before {
   content: '\25BC';
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right: 3px;
   bottom: 0;
-  padding: 0 1em;
+  padding: 0px 4px;
   background-color: #fff;
   pointer-events: none;
+  height: 16px;
+  width: 10px;
+  border-radius: 18px;
 }
 
 select {
@@ -866,17 +882,25 @@ a.searchresultSelector:hover {
 }
 
 .btnStyle1 {
-  position: relative;
+  width: 66px;
+  height: 48px;
+  border: none;
+  background: none;
+  color: #EB5757;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: Rubik;
+  /* position: relative;
   padding: 1px 4px 2px 4px;
   border: 1px solid #C0C0C0;
   color: #236EDE;
   border-radius: 8px;
-  font-size: calc(9px + 0.2vw);
+  font-size: calc(9px + 0.2vw); */
 }
-
+/* 
 .btnStyle1:hover {
   background-color: silver !important;
-}
+} */
 
 .aboutHeader {
    padding: 0 0 0 20px;
@@ -936,14 +960,14 @@ a.searchresultSelector:hover {
 }
 
 #qrCancelButton {
-  border: 1px solid rgba( 0, 0, 0, 0.5 ); 
+  border: 0; 
   border-radius: 30px;
-  background-color: rgba( 255, 255, 255, 0.75 );
+  background-color: rgba( 255, 255, 255, 0.85 );
 }
 
 #qrBusyIcon {
   position:fixed;
-  left: 10px;
+  left: 6px;
   top: 10px;
   width:40px;
   height:40px;
@@ -995,6 +1019,7 @@ a.searchresultSelector:hover {
   width: 100% !important;
   border: 1px dotted #AAA;
   border-radius: 3px;
+  margin: 0 !important;
 }
 .qrIcon {
   width:28px;
@@ -1062,19 +1087,6 @@ div.loginBtn {
 
   color: rgba(51, 51, 51, 0.87);
 }
-#buttonResetData{
-    width: 66px;
-    height: 48px;
-    position: relative;
-    left: 100%;
-    transform: translateX(-100%);
-    border: none;
-    background: none;
-    color: #EB5757;
-    cursor: pointer;
-    font-weight: 600;
-    font-family: Rubik;
-}
 /*
   Funcionalidad: Reset Data
   Fin
@@ -1082,4 +1094,15 @@ div.loginBtn {
 .imgQRInput {
   padding: 8px 12px;
   text-align: center;
+}
+
+.modalSymbol{
+  background: #FFF;
+  padding: 16px 16px 0px 16px;
+  margin: 16px;
+  color: #50555a;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Rubik", Arial;
+  line-height: 35px;
 }

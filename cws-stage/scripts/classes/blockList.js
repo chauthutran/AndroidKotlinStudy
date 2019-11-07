@@ -408,8 +408,64 @@ function BlockList( cwsRenderObj, blockObj )
 
         var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
+        
+        DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync" ></small></div>' );
+            var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
+
+            if ( paylDetails && paylDetails.length )
+            {
+                //ADD DCDconfig lookup to get 'phoneNumber' defined field name (linked to current activityType)
+                var cellReservedField = "phoneNumber"; //getConfigPhoneCallField
+                var consentCellReservedField = "phoneContactConsent"
+                var consentFeedbackReservedField = "phoneContactConsent_feedback"
+                //  CELLPHONE 
+                var cellphoneNumber = paylDetails.filter( item => { if ( item.name.indexOf( cellReservedField ) >= 0 ){ return item.value } } );
+
+                if ( cellphoneNumber && cellphoneNumber.length && cellphoneNumber.length > 0 ) 
+                {
+                    var valueConsentCell = Util.getValueByCallFieldFromConfig( paylDetails, consentCellReservedField, ['name','value'] );
+                    var valueConsentCellFeedback = Util.getValueByCallFieldFromConfig( paylDetails, consentFeedbackReservedField, ['name','value'] );
+
+                    //ADD DCDconfig lookup to compare defined rules [show/hide logic] for rendering phoneCall action event
+                    var passConditionTest = false;
+
+                    if ( 1 == 1 ) passConditionTest = true
+
+                    if ( passConditionTest )
+                    {
+                        if ( valueConsentCell == "YESP" || valueConsentCellFeedback == "YESP" )
+                        {
+                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+
+                        cellphoneTag.click( function(e) {
+    
+                            e.stopPropagation();
+    
+                            if ( Util.isMobi() )
+                            {
+                                //window.open(`tel:${cellphoneNumber[0].value}`)
+                                window.location.href = `tel:${cellphoneNumber[0].value}`;
+                            }
+                            else
+                            {
+                                alert( cellphoneNumber[0].value )
+                            }
+                        });
+    
+                        tdVoucherIdObj.append( cellphoneTag );
+                        }
+                    }
+
+                } 
+                //  
+            } 
+
+        });
+
+        
+
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == me.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
         // Content that gets collapsed/expanded 
@@ -445,15 +501,20 @@ function BlockList( cwsRenderObj, blockObj )
 
                     console.log( fetchItemData );
 
-                    var trxDetails = Util.arrayToHTMLtable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
-                    //var prevDetails = Util.arrayToHTMLtable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
-                    var historyDetails = Util.arrayToHTMLtable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
+                    var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
+                    //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
+                    var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
                     var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
 
+                    
                     expandedDivTag.append( trxDetails );
                     expandedDivTag.append( historyDetails );
-            
-                    if ( paylDetails && paylDetails.length ) expandedDivTag.append( Util.arrayToHTMLtable( 'payload', paylDetails ) );
+                    
+                    if ( paylDetails && paylDetails.length )
+                    {
+                        //console.log("PAYLOADDDD",paylDetails)
+                        expandedDivTag.append( Util.activityListPreviewTable( 'payload', paylDetails ) );
+                    } 
     
                 });
             }
@@ -469,7 +530,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.getTrxDetails = function( dataObj, designLayout )
     {
         var ret = {};
-        var fldList = 'id:id,created:dateCreated,network:createdOnline,networkAttempt:uploadAttempts,status:recordStatus,returnJson.response:last_error';
+        var fldList = 'id:id,created:dateCreated,network:createdOnline,networkAttempt:uploadAttempts,status:recordStatus,returnJson.response:lastError';
         var arrFld = fldList.split(',');
 
         for ( var i=0; i< arrFld.length; i++ )
@@ -501,9 +562,9 @@ function BlockList( cwsRenderObj, blockObj )
         {
             for ( var i=0; i< dataObj.length; i++ )
             {
-                ret[ 'attempt_' + ( i + 1) ] = dataObj[ i ][ 'syncAttempt' ] ;
-                ret[ 'success_' + ( i + 1) ] = dataObj[ i ][ 'success' ] ;
-                ret[ 'response_' + ( i + 1) ] = ( dataObj[ i ][ 'returnJson' ] && dataObj[ i ][ 'returnJson' ][ 'response' ] ? dataObj[ i ][ 'returnJson' ][ 'response' ] : '' ) ;
+                ret[ ( i + 1) + '.attempt' ] = dataObj[ i ][ 'syncAttempt' ] ;
+                ret[ ( i + 1) + '.succeeded' ] = dataObj[ i ][ 'success' ] ;
+                ret[ ( i + 1) + '.server_response' ] = ( dataObj[ i ][ 'returnJson' ] && dataObj[ i ][ 'returnJson' ][ 'response' ] ? dataObj[ i ][ 'returnJson' ][ 'response' ] : '' ) ;
             }
 
             return Util.jsonToArray( ret, designLayout ); 
@@ -704,6 +765,7 @@ function BlockList( cwsRenderObj, blockObj )
                                             if ( fetchItemData.activityList ) delete fetchItemData.activityList;
 
                                             myQueueStatus.html( fetchItemData.queueStatus )
+                                            statusSecDivTag.find( '.listItem_icon_sync' ).addClass( 'listItem_icon_sync_done' );
                                             //myTag.html( fetchItemData.title );
 
                                         }

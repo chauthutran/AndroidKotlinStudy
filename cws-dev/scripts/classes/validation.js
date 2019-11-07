@@ -13,7 +13,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 
     me.setUp_Events = function( formTag )
     {
-        formTag.find( "input,select,textarea" ).each( function() {
+        formTag.find( "input,select,checkbox,textarea" ).each( function() {
             var inputTag = $( this );
             inputTag.change( function(){ //blur
                 me.checkValidations( inputTag );
@@ -29,7 +29,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 		var allValid = true;
 
 		// If any of the tag is not valid, mark it as invalid.
-		formTag.find( "input,select,textarea" ).each( function() {
+		formTag.find( "input,select,checkbox,textarea" ).each( function() {
 			if ( !me.checkValidations( $(this) ) )
 			{
 				allValid = false;

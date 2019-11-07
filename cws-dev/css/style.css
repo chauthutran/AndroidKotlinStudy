@@ -960,14 +960,14 @@ a.searchresultSelector:hover {
 }
 
 #qrCancelButton {
-  border: 1px solid rgba( 0, 0, 0, 0.5 ); 
+  border: 0; 
   border-radius: 30px;
-  background-color: rgba( 255, 255, 255, 0.75 );
+  background-color: rgba( 255, 255, 255, 0.85 );
 }
 
 #qrBusyIcon {
   position:fixed;
-  left: 10px;
+  left: 6px;
   top: 10px;
   width:40px;
   height:40px;
@@ -1019,6 +1019,7 @@ a.searchresultSelector:hover {
   width: 100% !important;
   border: 1px dotted #AAA;
   border-radius: 3px;
+  margin: 0 !important;
 }
 .qrIcon {
   width:28px;

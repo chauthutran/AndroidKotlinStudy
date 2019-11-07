@@ -48,7 +48,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 	inputTags.each( function()
 	{		
@@ -124,12 +124,12 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	// Input Tag values
 	var retDataArray = [];
 	var inputsJson;
-	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
+	var inputTags = formDivSecTag.find( '.formGroupSection,input,checkbox,select' );
 
 	inputTags.each( function()
 	{
 		var inputTag = $( this );	
-		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
+		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
 
 		if ( getVal_visible )
 		{
@@ -148,7 +148,7 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 			}
 			else if ( inputTag[ 0 ].nodeName === "INPUT" )
 			{
-				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' )  ) )
+				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ) || ( inputTag.attr( 'updates' ) == undefined && inputTag.hasClass( 'CHECKBOX' )  ) )
 				{
 					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 				}
@@ -176,7 +176,7 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 	var inputTargets = [];
 	var uniqTargs = [];
 
@@ -375,12 +375,12 @@ FormUtil.generateLoadingTag = function( btnTag )
 
 	if ( btnTag.is( 'div' ) )
 	{
-		loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+		loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 		btnTag.append( loadingTag );
 	}
 	else if ( btnTag.is( 'button' ) )
 	{
-		loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+		loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 		btnTag.after( loadingTag );
 	}
 
@@ -1668,7 +1668,7 @@ FormUtil.screenMaxZindex = function(parent, limit)
 FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResource )
 {
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 	var arrPayStructure = localResource.split( '.' );
 	var WSexchangeData = JSON.parse( sessionStorage.getItem( 'WSexchange' ) );
 	var lastPayload = WSexchangeData[ arrPayStructure[ 0 ] ];
@@ -1781,7 +1781,7 @@ FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm,
 FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 {
 	var formDivSecTag = blockObj.parentTag;
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 	inputTags.each( function()
 	{		

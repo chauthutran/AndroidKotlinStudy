@@ -422,7 +422,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				entryTag.click( e => e.preventDefault() );
 
-				button.click(function(e) {
+				button.click( function(e) {
 
 					var dtmPicker = new mdDateTimePicker.default({
 						type: 'date',
@@ -493,11 +493,13 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "CHECKBOX" )
 			{
-				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid, updates:formItemJson.id } );
+				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
 
 				FormUtil.setTagVal( input, formItemJson.defaultValue )
 
 				divInputTag.append( component );
+
+				entryTag = $( '[name=' + formItemJson.id + ']' );
 			}
 			else if ( formItemJson.controlType === "LABEL" )
 			{
@@ -531,7 +533,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					tbl.append( tdR );
 					divInputTag.append( QRiconTag );
 
-					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 10px;position:relative;top:-5px" >')
+					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 6px;position:relative;top:-5px" >')
 
 					QRiconTag.click( function(){
 						var qrData = new readQR( entryTag );
@@ -903,7 +905,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				// var attributes = passedData.data.relationships[0].relative.attributes;
 				var attributes = passedData.displayData;  // <-- we are assuming this is single list...
-				var inputTags = formDivSecTag.find( 'input,select' );
+				var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 				// Go through each input tags and use 'uid' to match the attribute for data population
 				inputTags.each( function( i ) 

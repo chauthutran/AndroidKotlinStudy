@@ -223,7 +223,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
 					if ( btnJson.buttonType === 'listRightImg' )
 					{
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 						btnTag.hide();
 						btnTag.parent().append( loadingTag );
 					} 
@@ -256,7 +256,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 						}
 
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 						btnTag.hide();
 						btnTag.parent().append( loadingTag );
 					} 

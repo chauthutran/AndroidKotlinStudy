@@ -81,11 +81,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
+					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
 				}
 				else
 				{
-					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formFull_IdList, passedData );
+					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
 				}
 
 			}
@@ -206,7 +206,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 
 	// Old UI Used Method
-	me.renderInput = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
+	me.renderInput = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
 	{
 		var divInputTag = $( '<div class="inputDiv"></div>' );
 
@@ -217,13 +217,13 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		divInputTag.append( titleDivTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formFull_IdList, passedData )
+	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
 	{
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
@@ -232,11 +232,20 @@ function BlockForm( cwsRenderObj, blockObj )
 		spanTitleTag.text( formItemJson.defaultName );
 		divInputTag.append( spanTitleTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
 
 		formDivSecTag.append( divInputTag );
 	}
 
+	me.getFormControlRule = function ( formItemJson, attr )
+	{
+		var objAttr = formItemJson.rules.filter(obj=>obj.name===attr)[0] 
+		return(
+			objAttr
+			?	objAttr.value
+			:	''
+		)	
+	}
 
 	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData )
 	{
@@ -288,58 +297,45 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.decodeURI_ItemList(optionList, "defaultName")
 
 				var arr = optionList.map( obj => {
-					return { value: obj.defaultName, data: obj.value }
-				})
-
-				var divSelectTag = $( '<div class="select"></div>' );
-				var inputReal = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />' );
-				var inputShow = $( '<input type="text" class="autoCompleteInput"  ' + autoComplete + ' />' );
-				var selection;
-
-				inputShow.devbridgeAutocomplete( {
-					lookup: arr,
-					minChars: 0,
-					onSelect: function ( suggestion ) {
-						inputReal.val( suggestion.data )
-						selection = true
-				  	}
+					return { content: obj.defaultName, value: obj.value }
 				});
 
-				inputShow.on( 'input', function(){
-					selection = false
+				var btnSelect = $('<button term="" class="acceptButton">SELECT</button>');
+				var btnDisagree = $('<button term="" class="declineButton">CANCEL</button>');
+
+				//	Input with property "name" for to be send
+				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />'  );
+				//	Input for to be shown in the app
+				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' );
+
+				
+				let options = new OptionsManager({name:'BirthDistrict',data:arr, search:true});
+
+				var labelTerm = me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term )
+				
+				let nuevoModal = new Modal({parent: divInputTag[0], titleMessage: labelTerm,customElement: options.element,buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true});
+
+				inputShow.click(function(){
+					inputShow.blur()
+					options.showAll();
+					nuevoModal.exec();
+					options.inputSearch.focus()
+				});
+				btnDisagree.click(function(e){
+					e.preventDefault()
+					nuevoModal.exec();
+				});
+				btnSelect.click(function(e){
+					e.preventDefault()
+					input.val( options.element.dataset.value );
+					inputShow.val( options.element.dataset.content );
+					FormUtil.dispatchOnChangeEvent( input );
+					nuevoModal.exec();
 				});
 
-				$( document ).click( function(){
-					if( $( '.autocomplete-suggestions' ).css( 'display' ) !== 'none')
-					{
-						if ( ! selection )
-						{
-							let string = inputShow.val();
-							inputReal.val(' ');
-							inputReal.val('');
-							inputShow.val( string );
-						}
-						/*else
-						{
-
-							if ("createEvent" in document) 
-							{
-								var evt = document.createEvent("HTMLEvents");
-								evt.initEvent('change', false, true);
-								inputShow.dispatchEvent(evt);
-							}
-							else
-							{
-								inputShow.fireEvent("onchange");
-							}
-						}*/
-					}
-				});
-
-				$( '.autocomplete-suggestion' ).css( { padding: '4px 8px', fontSize: '14px' } );
-
-				divSelectTag.append( inputReal, inputShow );
-				divInputTag.append( divSelectTag );
+				//let wrapperTag = $('<div></div>');
+				divInputTag.append( input, inputShow );
+				//divInputTag.append( $(wrapperTag) );
 			}
 			else if( formItemJson.controlType === "YEAR" )
 			{
@@ -353,7 +349,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				//		 2) AND hardcoded year numbers, e.g. YEAR(RANGE:1950-2020) )
 				//		 ... in the absense of any parameters, we default to a hardcoded list (remembering that young girls < 18 can fall pregnant)
 
-				for ( let i = 75; i >= 18; i-- )
+				for ( let i = 69; i >= 9; i-- )
 				{
 					data.push( { value: year-i, text: year-i } );
 				}
@@ -361,7 +357,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				var component = $(`
 							<div class="containerSymbol">
 								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" />
-								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" ${autoComplete} >
+								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" isNumber="true" ${autoComplete} >
 								<div class="container--modalSymbol">
 									<div class="modalSymbol">
 										<div class="textSymbol">
@@ -373,8 +369,8 @@ function BlockForm( cwsRenderObj, blockObj )
 											</ul>
 										</div>
 										<div class="controlsSymbol">
-											<button class="cancel">Cancel</button>
-											<button class="set">Set</button>
+											<button class="acceptButton">SELECT</button>
+											<button class="declineButton">CANCEL</button>
 										</div>
 									</div>
 								</div>
@@ -393,41 +389,61 @@ function BlockForm( cwsRenderObj, blockObj )
 			else if ( formItemJson.controlType === "DATE" )
 			{
 
-				var rndID = Util.generateRandomId( 8 );
+				wrapperDad = $('<div class="dateContainer"></div>');
+				wrapperInput = $('<div class="dateWrapper"></div>');
+				button = $('<button class="dateButton" ></button>');
+				icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
 
-				entryTag = $( '<input id="' + formItemJson.id + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
+				button.append(icoCalendar);
+
+				var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
+				var dtmSeparator = Util.getDateSeparator( formatDate );
+				var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => {
+					let arr=""
+					for(let i = 0; i< item.length; i++)
+					{
+						arr += "#"
+					}
+					acum.push(arr);
+					return acum;
+				}, [] ).join( dtmSeparator );
+
+				entryTag = $( '<input data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+
+				wrapperInput.append( entryTag );
+				wrapperDad.append( wrapperInput, button );
+
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
-				divInputTag.append( entryTag );
+				divInputTag.append( wrapperDad );
 
 				//function that call datepicker
-				entryTag.click(function() {
+				Maska.create( entryTag[0] );
+
+				entryTag.click( e => e.preventDefault() );
+
+				button.click( function(e) {
 
 					var dtmPicker = new mdDateTimePicker.default({
 						type: 'date',
-						value: entryTag[ 0 ].value,
-						targetTag: divInputTag,
-						id: rndID
-					});
+							init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
+							future: moment()
+					} );
 
+					e.preventDefault();
 					dtmPicker.toggle();
 
-					var inputDate = entryTag[ 0 ]; //document.getElementById( entryTag[0].name );
-					console.log( inputDate );
-					console.log( entryTag[ 0 ].value );
+					var inputDate = entryTag[ 0 ];
 					dtmPicker.trigger = inputDate;
 
 					inputDate.addEventListener('onOk', function() {
 
-						inputDate.value = convert( dtmPicker.time.toString() );
+						var trueFormat = ( formatDate == '' ) ? 'YYYY' : formatDate;
+						var inpDate = $( '[name=' + formItemJson.id + ']' );
 
-						function convert(str) 
-						{
-							var date = new Date(str),
-							mnth = ("0" + ( date.getMonth() + 1 ) ).slice(-2),
-							day = ("0" + date.getDate()).slice(-2);
-							return [ date.getFullYear(), mnth, day].join("-");
-						}
+						inpDate.val( dtmPicker.time.format( trueFormat ) );
+
+						FormUtil.dispatchOnChangeEvent( inpDate );
 
 					});
 
@@ -436,6 +452,9 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "RADIO")
 			{
+
+				divInputTag.addClass( 'inputDivRadio' );
+
 				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
@@ -447,6 +466,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				Util.populateRadios( formItemJson, container, optionList );
 
 				divInputTag.append( entryTag, container );
+
 			}
 			else if ( formItemJson.controlType === "MULTI_CHECKBOX")
 			{
@@ -478,6 +498,8 @@ function BlockForm( cwsRenderObj, blockObj )
 				FormUtil.setTagVal( input, formItemJson.defaultValue )
 
 				divInputTag.append( component );
+
+				entryTag = $( '[name=' + formItemJson.id + ']' );
 			}
 			else if ( formItemJson.controlType === "LABEL" )
 			{
@@ -511,7 +533,7 @@ function BlockForm( cwsRenderObj, blockObj )
 					tbl.append( tdR );
 					divInputTag.append( QRiconTag );
 
-					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 10px;position:relative;top:-5px" >')
+					var QRiconTag = $( '<img src="images/qr.svg" class="" style="width:24px;height:24px;margin:0 4px 0 6px;position:relative;top:-5px" >')
 
 					QRiconTag.click( function(){
 						var qrData = new readQR( entryTag );
@@ -539,8 +561,6 @@ function BlockForm( cwsRenderObj, blockObj )
 				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
 				var pConf = FormUtil.block_payloadConfig;
 
-				//console.log( pConf );
-
 				for( var i = 0; i < jData.length; i++ )
 				{
 					if ( jData[ i ].defaultValue || jData[ i ].payload )
@@ -550,8 +570,6 @@ function BlockForm( cwsRenderObj, blockObj )
 						if ( jData[ i ].defaultValue ) EvalActionString = jData[ i ].defaultValue;
 
 						if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
-
-						//console.log( jData[ i ].id + ': ' + EvalActionString );
 
 						if ( EvalActionString.length )
 						{
@@ -577,7 +595,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag.parent().parent() )
+				me.evalFormInputFunctions( formDivSecTag.parent() ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -857,7 +875,8 @@ function BlockForm( cwsRenderObj, blockObj )
 
 	me.getMatchingInputTag = function( formDivSecTag, idStr )
 	{
-		return formDivSecTag.find( 'input[name="' + idStr + '"],select[name="' + idStr + '"]' );
+		//return formDivSecTag.find( 'input[name="' + idStr + '"],select[name="' + idStr + '"]' );
+		return formDivSecTag.find( '[name="' + idStr + '"]' );
 	};
 
 
@@ -886,7 +905,7 @@ function BlockForm( cwsRenderObj, blockObj )
 			{
 				// var attributes = passedData.data.relationships[0].relative.attributes;
 				var attributes = passedData.displayData;  // <-- we are assuming this is single list...
-				var inputTags = formDivSecTag.find( 'input,select' );
+				var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 				// Go through each input tags and use 'uid' to match the attribute for data population
 				inputTags.each( function( i ) 

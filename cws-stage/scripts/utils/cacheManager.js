@@ -4,6 +4,7 @@
 function cacheManager() {}
 
 cacheManager.cacheKeys = [];
+cacheManager.cacheStorage = [];
 cacheManager.initialising = false;
 cacheManager.cacheAvailable = false;
 
@@ -18,9 +19,12 @@ cacheManager.initialise = function()
 		caches.keys().then(function(names) 
 		{
 			var myArr = [];
+			var myDetails = [];
+			var dataSize = 0;
 			for (let name of names)
 			{
 				myArr.push( name );
+				myDetails.push( { container: 'caches', name: name, bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 } )
 			}
 
 			cacheManager.cacheKeys = myArr;
@@ -34,6 +38,9 @@ cacheManager.initialise = function()
 	{
 		cacheManager.initialising = false;
 	}
+
+	cacheManager.initialiseCacheSizes();
+
 }
 
 cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
@@ -85,5 +92,43 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 	}
 
 }
+cacheManager.initialiseCacheSizes = function()
+{
+	cacheManager.getCacheStoragesAssetTotalSize();
+}
 
+cacheManager.getCacheStoragesAssetTotalSize = async function() 
+{
+  // Note: opaque (i.e. cross-domain, without CORS) responses in the cache will return a size of 0.
+  const cacheNames = await caches.keys();
 
+  let total = 0;
+  let arrSummary = [];
+
+  const sizePromises = cacheNames.map( async cacheName => {
+
+	const cache = await caches.open(cacheName);
+	const keys = await cache.keys();
+
+	let cacheSize = 0;
+
+	await Promise.all( keys.map( async key => {
+	  const response = await cache.match(key);
+	  const blob = await response.blob();
+	  total += blob.size;
+	  cacheSize += blob.size;
+	  //arrSummary.push( { container: 'caches', name: cacheName, bytes: blob.size, kb: blob.size / 1024, mb: blob.size / 1024 / 1024 } )
+
+	}));
+
+	//console.log(`Cache ${cacheName}: ${cacheSize} bytes`);
+	arrSummary.push( { container: 'caches', name: cacheName, bytes: cacheSize, kb: cacheSize / 1024, mb: cacheSize / 1024 / 1024 } )
+
+  });
+
+  await Promise.all( sizePromises );
+
+  cacheManager.cacheStorage = arrSummary;
+
+  //return arrSummary; //`Total Cache Storage: ${total} bytes`;
+}

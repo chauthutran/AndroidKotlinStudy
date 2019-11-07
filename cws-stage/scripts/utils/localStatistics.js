@@ -17,22 +17,19 @@ function statistics( cwsRender )
     me.dataFailed;
     me.failedDateStats = {};
 
+    me.popularDays = [];
+    me.popularHours = [];
     me.activityTypes = [];
-    me.statusTypes = [];
+    //me.statusTypes = [];
 
     me.earliestDate;
+    me.hoursFrom;
+    me.hoursTo;
+    me.total;
+    me.slideIndex; 
 
     me.dateGroups;
     me.hoursInDay;
-
-    /* = [ 
-        { name: "today", hours: 24, group: 'daily' },
-        { name: "yesterday", hours: 48, group: 'daily' },
-        { name: "last 7 days", hours: 168 , group: 'weekly' },
-        { name: "prev 7 days", hours: 336, group: 'weekly' },
-        { name: "this Month", hours: 168 , group: 'monthly' },
-        { name: "last Month", hours: 336, group: 'monthly' },
-    ];*/
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -40,7 +37,15 @@ function statistics( cwsRender )
 
     me.initialize = function() 
     {
+
+        $( window ).scrollTop(0);
+
+        me.localStatsTag.empty();
+
+        me.slideIndex = new Date().getDay();
+
         me.setEvents_OnInit();
+
     }
 
     
@@ -50,25 +55,56 @@ function statistics( cwsRender )
         $( 'img.btnStatsBack' ).click( () =>
         {
             me.hideStatsPage();
+            me.localStatsTag.empty();
 		});
 
     }
 
     me.render = function()
     {
-        me.activityTypes = FormUtil.getActivityTypes();
-        me.statusTypes = me.getStatusTypes();
-        me.dateGroups = FormUtil.getCommonDateGroups();
+        $( window ).scrollTop(0);
+
+        me.localStatsTag.empty();
+
         me.hoursInDay = me.getHoursInDay();
+        me.activityTypes = FormUtil.getActivityTypes();
+        me.dateGroups = FormUtil.getCommonDateGroups();
+        me.popularDays = me.getPopularDays();
+        //me.statusTypes = me.getStatusTypes();
 
-        me.createLocalAnalytics();
+        me.createLocalAnalytics( function( dataFound ){
 
-        me.showStatsPage()
-        me.colorize();
+            me.showStatsPage( dataFound )
+            me.colorize();
+
+         });
+
     }
 
-    me.showStatsPage = function()
+    me.showStatsPage = function( dataFound )
 	{
+
+        if ( dataFound )
+        {
+            me.createSlideShow( me.localStatsTag );
+
+            //me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
+            me.localStatsTag.append( me.toRowActivities( me.activityTypes, "activity breakdown" ) );
+            me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
+            //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
+    
+            if ( me.earliestDate )
+            {
+                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+            }
+    
+            setTimeout( function() {
+                $( '.hide' ).hide( 'slow' );
+            }, 50 )
+
+        }
+        
+
         if ( $( 'div.mainDiv' ).is( ":visible" ) )
         {
             $( 'div.mainDiv' ).hide();
@@ -84,11 +120,109 @@ function statistics( cwsRender )
 
         me.statisticsFormDiv.show( 'fast' );
 
-        setTimeout( function(){
-            $( 'div.statsBar' ).show( 'slow' );
-        }, 500);
+        //setTimeout( function(){
+        //    $( 'div.statsBar' ).show( 'fast' );
+        //}, 500);
 
     }
+
+    me.createSlideShow = function( targetTag )
+    {
+
+        var arrObj = me.popularDays[ me.popularDays.length -1 ].hoursInDay;
+        var arrHours = [];
+
+        for (var i = 0; i < arrObj.length; i++)
+        {
+            if ( arrObj[ i ].data.length )
+            {
+                arrHours.push( i );
+            }
+        }
+
+        me.hoursFrom = Math.min( ...arrHours );
+        me.hoursTo = Math.max( ...arrHours );
+
+        var tbl = $( '<table class="tableStatistics column" style="border:0 !important;margin:0 !important">' );
+        var trTitle = $( '<tr>' );
+        var tdTitle = $( '<td class="tableTitle" >' ); //arrObj.length
+
+        tdTitle.html( 'Popular hours' );
+
+        tbl.append( trTitle );
+        trTitle.append( tdTitle );
+        targetTag.append( tbl );
+
+        var tagContainer = $( '<div class="statsSlideShowContainer" />' );
+
+        targetTag.append( tagContainer );
+
+        for (var d = 0; d < me.popularDays.length; d++)
+        {
+            var tagSlide = $( '<div class="statsSlide" />' );
+            var tagSlideLabel = $( '<div class="statsSlideLabel" />' );
+            var tagSlideContents = me.toColumnsWithChart( me.popularDays[ d ].hoursInDay, me.popularDays[ d ].name );
+
+            tagSlideLabel.html( ( d + 1 ) + ' / ' + me.popularDays.length );
+
+            tagContainer.append( tagSlide );
+            tagSlide.append( tagSlideLabel );
+            tagSlide.append( tagSlideContents );
+        }
+
+        var tagPrev = $( '<a class="statsSlideShowPrev" >❮</a>' );
+        var tagNext = $( '<a class="statsSlideShowNext" >❯</a>' );
+
+        tagContainer.append( tagPrev );
+        tagContainer.append( tagNext );
+
+        tagPrev.on( 'click', function(){
+            me.showStatSlide( me.slideIndex -=1 );
+        } );
+
+        tagNext.on( 'click', function(){
+            me.showStatSlide( me.slideIndex +=1 );
+        } );
+
+        var tagCarousel = $( '<div class="statsCarouselDotContainer" />' );
+
+        tagContainer.append( tagCarousel );
+
+        for (var d = 0; d < me.popularDays.length; d++)
+        {
+            var tagDot = $( '<span data-item="' + d + '" class="statsDot ' + ( d == me.slideIndex ? 'StatsDotActive ' : ' ' ) + ( d == (me.popularDays.length-1) ? 'StatsDotAllDays' : '' ) + '" ></span>' );
+
+            tagCarousel.append( tagDot );
+
+            tagDot.on( 'click', function(){
+                me.showStatSlide( me.slideIndex = parseFloat( $( this ).attr( 'data-item' ) ) );
+            } );
+
+        }
+
+        me.showStatSlide( me.slideIndex )
+
+    }
+
+    me.showStatSlide = function( n ) 
+    {
+        
+        var slides = me.localStatsTag.find( '.statsSlide' );
+        var dots = me.localStatsTag.find( '.statsDot' );
+
+        if ( n == slides.length ) me.slideIndex = 0;
+        if ( n < 0 ) me.slideIndex = slides.length -1;
+
+        for ( var i = 0; i < slides.length; i++ ) 
+        {
+            $( slides[i] ).css( 'display', 'none');
+            $( dots[i] ).removeClass( 'StatsDotActive' );
+        }
+
+        $( slides[ me.slideIndex ] ).css( 'display', 'block');
+        $( dots[ me.slideIndex ] ).addClass( 'StatsDotActive' );
+
+      }
 
     me.colorize = function()
     {
@@ -102,10 +236,9 @@ function statistics( cwsRender )
             }
         }
 
-
     }
 
-    me.getStatusTypes = function()
+    /*me.getStatusTypes = function()
     {
         var retArr = [];
 
@@ -114,7 +247,7 @@ function statistics( cwsRender )
         retArr.push( { name: me.cwsRenderObj.status_redeem_failed } );
 
         return retArr;
-    }
+    }*/
 
     me.getHoursInDay = function()
     {
@@ -129,9 +262,34 @@ function statistics( cwsRender )
 
     }
 
-    // ==== Methods ======================
+    
+    me.getPopularDays = function()
+    {
+        var retArr = [];
+        var days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
 
-    me.createLocalAnalytics = function()
+        for (var i = 0; i < 7; i++)
+        {
+            retArr.push( { day: i, name: days[ i ], term: '', data: [], hoursInDay: [] } );
+
+            for (var h = 0; h < me.hoursInDay.length; h++)
+            {
+                retArr[ i ].hoursInDay.push ( { name: me.hoursInDay[ h ].name } ) ;
+            }
+        }
+
+        retArr.push( { day: 8, name: 'All Days', term: '', data: [], hoursInDay: [] } );
+
+        for (var h = 0; h < me.hoursInDay.length; h++)
+        {
+            retArr[ 7 ].hoursInDay.push ( { name: me.hoursInDay[ h ].name } ) ;
+        }
+
+        return retArr;
+
+    }
+
+    me.createLocalAnalytics = function( callBack )
     {
 
         FormUtil.getMyListData( me.cwsRenderObj.storageName_RedeemList, function( myData ){
@@ -139,10 +297,10 @@ function statistics( cwsRender )
             if ( myData )
             {
 
-                for (var s = 0; s < me.statusTypes.length; s++) 
+                /*for (var s = 0; s < me.statusTypes.length; s++) 
                 {
                     me.statusTypes[ s ].data = ( myData.filter( e=>e.status == me.statusTypes[ s ].name ) );
-                }
+                }*/
 
                 for (var a = 0; a < me.activityTypes.length; a++) 
                 {
@@ -154,25 +312,41 @@ function statistics( cwsRender )
                     me.dateGroups[ d ].data = me.enrichDateCalculations( myData, me.dateGroups[ d ].hours );
                 }
 
-                for (var h = 0; h < me.hoursInDay.length; h++) 
+                /*for (var h = 0; h < me.hoursInDay.length; h++) 
                 {
                     me.hoursInDay[ h ].data = ( myData.filter( e=>e.hourInDay == me.hoursInDay[ h ].name ) );
+                }*/
+
+                for (var d = 0; d < me.popularDays.length - 1; d++)
+                {
+                    me.popularDays[ d ].data = ( myData.filter( e=>e.dayInWeek == d ) );
+
+                    for (var h = 0; h < me.hoursInDay.length; h++) 
+                    {
+                        me.popularDays[ d ].hoursInDay[ h ].data = ( myData.filter( e => e.dayInWeek == d && e.hourInDay == me.hoursInDay[ h ].name ) );
+                    }
+
+                }
+
+                me.popularDays[ 7 ].data = ( myData );
+
+                for (var h = 0; h < me.hoursInDay.length; h++) 
+                {
+                    me.popularDays[ 7 ].hoursInDay[ h ].data = ( myData.filter( e => e.hourInDay == me.hoursInDay[ h ].name ) );
                 }
 
                 me.earliestDate = me.earliest( myData )
+                me.total = myData.length;
+
+                if ( callBack ) callBack( true );
 
             }
-
-            me.localStatsTag.empty();
-
-            me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
-            me.localStatsTag.append( me.toColumnActivities( me.activityTypes, "activity breakdown" ) );
-            me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
-            me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
-
-            if ( me.earliestDate )
+            else
             {
-                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+                me.localStatsTag.append( me.getNoDataMessage() );
+
+                if ( callBack ) callBack( false );
+
             }
 
         });
@@ -191,7 +365,7 @@ function statistics( cwsRender )
     }
 
     me.enrichDateCalculations = function( myArr, hrTo )
-    {   //, hrFrom
+    {
         var retArr = [];
 
         if ( myArr && myArr.length )
@@ -202,6 +376,7 @@ function statistics( cwsRender )
 
                 myArr[ i ].ageHours = parseFloat( me.dtmNow - dtmThis.getTime() ) / 1000 / 60 / 60;
                 myArr[ i ].hourInDay = ( dtmThis.getHours() );
+                myArr[ i ].dayInWeek = ( dtmThis.getDay() );
 
                 var e = myArr[ i ];
 
@@ -251,7 +426,7 @@ function statistics( cwsRender )
         }
 
         var trFiller = $( '<tr>' );
-        var tdFiller = $( '<td class="columnFiller">' );
+        var tdFiller = $( '<td class="columnFiller" >' );
 
         tbl.append( trFiller );
         trFiller.append( tdFiller );
@@ -361,6 +536,84 @@ function statistics( cwsRender )
         return tbl;
     }
 
+    me.toRowActivities = function( arrObj, title )
+    {
+        //console.log( arrObj );
+        var tbl = $( '<table class="tableStatistics column">' );
+
+        var trTitle = $( '<tr>' );
+        var tdTitle = $( '<td class="tableTitle" colspan="' + 3 + '">' );
+
+        tdTitle.html( title );
+
+        tbl.append( trTitle );
+        trTitle.append( tdTitle );
+
+        for (var i = 0; i < arrObj.length; i++)
+        {
+            var actType = arrObj[ i ].jsonObj; // FormUtil.getActivityType( { activityType: arrObj[ i ].name } );
+            var trRow = $( '<tr>' );
+            var tdIcon = $( '<td class="columnIcon">' )
+            var tdLabels = $( '<td class="columnLabel">' );
+            var tdData = $( '<td class="columnData">' );
+            var nameContent = '', dataContent = '';
+
+            tbl.append( trRow );
+            trRow.append( tdIcon );
+            trRow.append( tdLabels );
+            trRow.append( tdData );
+
+            var divIconObj = $( '<div id="activityStatistic_' + i + '"></div>' );
+            var divIconText = $( '<div></div>' );
+
+            if ( actType.icon && actType.icon.colors && actType.icon.colors.background )
+            {
+                tdIcon.css( 'background-color', actType.icon.colors.background + ' !important')
+            }
+            if ( actType.icon && actType.icon.colors && actType.icon.colors.foreground )
+            {
+                tdIcon.css( 'color', actType.icon.colors.foreground + ' !important')
+            }
+
+            tdIcon.append( divIconObj );
+
+            FormUtil.appendActivityTypeIcon ( divIconObj, actType, { name: me.cwsRenderObj.status_redeem_submit }, me.cwsRenderObj, { width:48, height: 48 } );
+
+            divIconText.html( arrObj[ i ].name );
+            tdIcon.append( divIconText );
+
+            nameContent = '<div style="font-size:12px;">' + actType.label + '</div>';
+
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                nameContent += '<div style="font-size:10px;padding:4px 0 0 0">Total: </div>';
+                nameContent += '<div style="font-size:10px;padding:4px 0 0 0">Frequency: </div>' ;
+            }
+
+            tdLabels.html( nameContent );
+
+            dataContent = '<div style="font-size:12px;">&nbsp;</div>';
+
+            if ( arrObj[ i ].data && arrObj[ i ].data.length )
+            {
+                dataContent += '<div style="font-size:10px;padding:4px 0 0 0">' + arrObj[ i ].data.length + '</div>';
+                dataContent += '<div style="font-size:10px;padding:4px 0 0 0">' + parseFloat( parseFloat( arrObj[ i ].data.length ) / parseFloat(  me.total )  * 100 ).toFixed(0) + '%</div>' ;
+            }
+
+            tdData.html( dataContent );
+
+        }
+
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="3">' );
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
+        return tbl;
+    }
+
     me.toColumnStatuses = function( arrObj, title )
     {
         //console.log( arrObj );
@@ -418,38 +671,53 @@ function statistics( cwsRender )
     me.toColumnsWithChart = function( arrObj, title )
     {
         var min = 999999999, max = 0;
-        var maxHeight = 80;
+        var maxHeight = 100;
 
         for (var i = 0; i < arrObj.length; i++)
         {
-            if ( arrObj[ i ].data )
+            if ( arrObj[ i ].data.length )
             {
-                if ( arrObj[ i ].data.length > max ) max = arrObj[ i ].data.length;
-                if ( arrObj[ i ].data.length < min ) min = arrObj[ i ].data.length;    
+
+                if ( arrObj[ i ].data.length > max )
+                { 
+                    max = arrObj[ i ].data.length;
+                }
+
+                if ( arrObj[ i ].data.length < min )
+                {
+                    min = arrObj[ i ].data.length;
+                } 
+
             }
         }
 
         if ( max == 0 ) min = 0;
 
-        var tbl = $( '<table class="tableStatistics column">' );
+        var tbl = $( '<table class="tableStatsPopularHours column">' );
 
         var trTitle = $( '<tr>' );
-        var tdTitle = $( '<td class="tableTitle" colspan="' + arrObj.length + '">' );
+        var tdTitle = $( '<td class="tableTitle" colspan="' + ( me.hoursTo - me.hoursFrom ) + '">' ); //arrObj.length
 
         tdTitle.html( title );
 
         tbl.append( trTitle );
         trTitle.append( tdTitle );
 
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( me.hoursTo - me.hoursFrom ) + '">' ); //arrObj.length
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
         var trBar  = $( '<tr style="height:'+(maxHeight+10)+'px">' );
         var trData = $( '<tr>' );
         var trName = $( '<tr>' );
 
-        for (var i = 0; i < arrObj.length; i++)
+        //for (var i = 0; i < arrObj.length; i++)
+        for (var i = me.hoursFrom; i <= me.hoursTo; i++)
         {
-            var tdBar = $( '<td class="columnBar" style="min-height:'+(maxHeight+10)+'px">' );
-            var tdData = $( '<td class="columnData">' );
-            var tdName = $( '<td class="columnLabel">' );
+            var showHideClass = ( ( me.hoursFrom > i || me.hoursTo < i ) ? 'hide' : '' );
             var barH = 0;
 
             if ( arrObj[ i ].data )
@@ -457,22 +725,22 @@ function statistics( cwsRender )
                 barH = ( arrObj[ i ].data.length > 0 ? ( maxHeight * ( arrObj[ i ].data.length / max ) ) + 'px' : '0' );
             }
 
+            var opac = ( ( parseFloat(  arrObj[ i ].data.length / ( max ) ) ) );
+            var tdBar = $( '<td class="columnBar ' + showHideClass + '" style="min-height:'+(maxHeight+10)+'px;opacity:' + opac + '">' );
+            var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
+
             tbl.append( trBar );
             trBar.append( tdBar );
-
-            tbl.append( trData );
-            trData.append( tdData );
-
             tbl.append( trName );
             trName.append( tdName );
 
-            tdBar.html( '<div class="statsBar" style="display:none;height:' + barH + '">&nbsp;</div>' );
-            tdName.html( arrObj[ i ].name );
+            tdBar.html( '<div class="statsBar" style="height:' + barH + '">&nbsp;</div>' );
+            tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + arrObj[ i ].name + '</label></div>' );
 
         }
 
         var trFiller = $( '<tr>' );
-        var tdFiller = $( '<td class="columnFiller" colspan="' + arrObj.length + '">' );
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( me.hoursTo - me.hoursFrom ) + '" style="height:40px">' ); //arrObj.length
 
         tbl.append( trFiller );
         trFiller.append( tdFiller );
@@ -502,6 +770,11 @@ function statistics( cwsRender )
     me.getSpecialNote = function( earliest )
     {
         return $( '<div class="icon-row" style="padding: 8px 4px;line-height:18px"><strong term="">Note: </strong><span term="">the statistic displayed above are calculated based on the activities registered using this device since earliest date </span><strong>' + Util.dateToString( earliest ) + '</strong></div>')
+    }
+
+    me.getNoDataMessage = function()
+    {
+        return $( '<div class="" style="font-size: 12px;padding: 8px 4px;line-height:18px"><span term="">no local Statistics available </span></div>')
     }
 
 	me.initialize();

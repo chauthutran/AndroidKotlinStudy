@@ -48,7 +48,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 	inputTags.each( function()
 	{		
@@ -86,20 +86,58 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 	return inputsJson;
 }
 
+FormUtil.inputPreviewLabel = function( formInput )
+{
+	var lbl;
+	var sibs = $( formInput ).siblings();
+
+	sibs.each( function() {
+
+		var tag = $( this );
+
+		if ( tag[ 0 ].nodeName === "LABEL" )
+		{
+			lbl = tag[ 0 ].innerText;
+		}
+
+	})
+
+	if ( lbl == undefined )
+	{
+
+		if ( $( formInput ).closest( '.inputDiv' ).find( 'label' ) && $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ] )
+		{
+			lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
+		}
+		else
+		{
+			console.log( $( formInput ).closest( '.inputDiv' ) ); //.find( 'label' )[ 0 ].innerText;
+		}
+	}
+
+	return lbl;
+
+}
+
 FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var retDataArray = [];
 	var inputsJson;
-	var inputTags = formDivSecTag.find( '.formGroupSection,input,select' );
+	var inputTags = formDivSecTag.find( '.formGroupSection,input,checkbox,select' );
 
 	inputTags.each( function()
-	{		
-		var inputTag = $(this);	
-		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
+	{
+		var inputTag = $( this );	
+		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
 
 		if ( getVal_visible )
 		{
+			if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
+			{
+				console.log( inputTag[ 0 ].nodeName );
+				var inputLabel = FormUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
+			}
 
 			if ( inputTag[ 0 ].nodeName === "LABEL" )
 			{
@@ -110,14 +148,14 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 			}
 			else if ( inputTag[ 0 ].nodeName === "INPUT" )
 			{
-				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' )  ) )
+				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ) || ( inputTag.attr( 'updates' ) == undefined && inputTag.hasClass( 'CHECKBOX' )  ) )
 				{
-					inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 				}
 			}
 			else if ( inputTag[ 0 ].nodeName === "SELECT" )
 			{
-				inputsJson = { name: inputTag[ 0 ].name, type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+				inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
 			}
 
 			if ( inputsJson )
@@ -138,7 +176,7 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 	var inputTargets = [];
 	var uniqTargs = [];
 
@@ -337,12 +375,12 @@ FormUtil.generateLoadingTag = function( btnTag )
 
 	if ( btnTag.is( 'div' ) )
 	{
-		loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+		loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 		btnTag.append( loadingTag );
 	}
 	else if ( btnTag.is( 'button' ) )
 	{
-		loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading.gif"></div>' );
+		loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
 		btnTag.after( loadingTag );
 	}
 
@@ -741,6 +779,19 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		}
 
 		if ( returnFunc ) returnFunc();
+	}
+}
+
+FormUtil.dispatchOnChangeEvent = function( targetControl )
+{
+	if ("createEvent" in document) {
+		var evt = document.createEvent("HTMLEvents");
+		evt.initEvent('change', true, true);
+		targetControl[0].dispatchEvent(evt);
+	}
+	else
+	{
+		targetControl[0].fireEvent("onchange");
 	}
 }
 
@@ -1617,7 +1668,7 @@ FormUtil.screenMaxZindex = function(parent, limit)
 FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResource )
 {
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 	var arrPayStructure = localResource.split( '.' );
 	var WSexchangeData = JSON.parse( sessionStorage.getItem( 'WSexchange' ) );
 	var lastPayload = WSexchangeData[ arrPayStructure[ 0 ] ];
@@ -1730,7 +1781,7 @@ FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm,
 FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 {
 	var formDivSecTag = blockObj.parentTag;
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
 
 	inputTags.each( function()
 	{		
@@ -1819,28 +1870,28 @@ FormUtil.getCommonDateGroups = function()
 }
 
 FormUtil.getActivityTypes = function()
-    {
-        // get different 'Areas' or Activity-Types
-        var sessData = localStorage.getItem('session');
-        var retArr = [];
+{
+	// get different 'Areas' or Activity-Types
+	var sessData = localStorage.getItem('session');
+	var retArr = [];
 
-        if ( sessData )
-        {
-            var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+	if ( sessData )
+	{
+		var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
 
-            if ( itms && itms.length )
-            {
-                for (var i = 0; i < itms.length; i++)
-                {
-                    retArr.push( { name: itms[ i ].name } );
-                }
-            }
+		if ( itms && itms.length )
+		{
+			for (var i = 0; i < itms.length; i++)
+			{
+				retArr.push( { name: itms[ i ].name, jsonObj: itms[ i ] } );
+			}
+		}
 
-        }
+	}
 
-        return retArr;
+	return retArr;
 
-    };
+};
 
 FormUtil.getMyDetails = function( callBack )
 {

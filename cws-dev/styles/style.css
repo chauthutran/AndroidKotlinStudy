@@ -150,7 +150,8 @@ select option {
 .inputDiv {
   margin: 3px;
   padding: 5px;
-  background-color: white;  
+  background-color: white;
+  min-height: 76px
 }
 
 .inputDivRadio {
@@ -1398,7 +1399,7 @@ img.imgMore
        left: 0;
        width: 100vw;
        height: 100vh;
-       background: rgba(0,0,0,.4);
+       background: rgba(0,0,0,.15);
        display: none;
        justify-content: center;
        align-items: center;
@@ -1411,7 +1412,7 @@ img.imgMore
        font-weight: 700;
        font-family: "Rubik", Arial;
        line-height: 35px;
-       padding: 0px 0px 0px 10px;
+       padding: 10px 0px 20px 10px;
        text-align: left;
    }
    .container--modalSymbol input{
@@ -1447,12 +1448,12 @@ img.imgMore
       font-size: 16px;
       font-family: 'Rubik', Arial;
       font-weight: 400;
-      margin-left: 24px;
+      margin-left: 0px;
    }
    .optionsSymbol li.focus::before{
        content:'✓';
        position: fixed;
-       left: 30%;
+       left: 10%;
        font-size: 22px;
        font-weight: 800;
    }
@@ -1550,7 +1551,7 @@ img.imgMore
     background: #fff;
   }
   .declineButton {
-    color: rgb(44, 152, 240); 
+    color: #FF0000;
     border: none; 
     font-size: 14px; 
     font-family: Rubik; 
@@ -1560,14 +1561,14 @@ img.imgMore
     margin: 34px 24px 12px 20px;
   }
   .acceptButton {
-    color: #FF0000;
+    color: #2C98F0;
     border: none; 
     font-size: 14px; 
     font-family: Rubik; 
     font-style: normal; 
     font-weight: 600; 
     float: right;
-    margin: 34px 24px 12px 20px;
+    margin: 34px 4px 12px 20px;
   }
   .inputCheckbox {
     display: flex;
@@ -1706,7 +1707,7 @@ img.imgMore
     margin-bottom: 24px;
   }
   .optItem {
-    padding: 0;
+    padding: 0 2px 0 4px;
     height: 240px;
     overflow-y: scroll;
     background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );

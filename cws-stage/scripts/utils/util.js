@@ -406,7 +406,18 @@ Util.jsonToArray = function( jsonData, structureConfig )
 	return arrRet;
 };
 
-Util.arrayToHTMLtable = function( title, arr )
+Util.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
+{	
+	return array.filter( item => 
+		{
+			if ( item[attr].indexOf( field ) >= 0 )
+			{ 
+				return item[value]
+			} 
+		} 
+	)[0][value];
+}
+Util.arrayPreviewRecord = function( title, arr )
 {
 	var ret = $( '<table />');
 
@@ -416,7 +427,7 @@ Util.arrayToHTMLtable = function( title, arr )
 		{
 			var tr = $( '<tr />');
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( '<strong>' + title + '</strong>' ) );	
+			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )
@@ -425,14 +436,14 @@ Util.arrayToHTMLtable = function( title, arr )
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( '<strong>' + arr[ i ].name + '</strong>' ) );	
+				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );
 			}
 			else
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td />').html( arr[ i ].name ) );
-				tr.append( $( '<td />').html( arr[ i ].value ) );
+				tr.append( $( '<td class="dataToHTMLleft" />').html( arr[ i ].name ) );
+				tr.append( $( '<td class="dataToHTMLright" />').html( arr[ i ].value ) );
 			}
 		}
 	
@@ -446,6 +457,45 @@ Util.arrayToHTMLtable = function( title, arr )
 
 }
 
+Util.activityListPreviewTable = function( title, arr )
+{
+	var ret = $( '<table class="activityListPreviewTable" />');
+
+	if ( arr )
+	{
+		if ( title )
+		{
+			var tr = $( '<tr />');
+			ret.append( tr );
+			tr.append( $( '<td colspan=2 class="" />').html( '<strong>' + title + '</strong>') );	//dataToHTMLtitle
+		}
+	
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td colspan=2 class="" />').html( arr[ i ].name ) );	//dataToHTMLheader
+			}
+			else
+			{
+				var tr = $( '<tr />');
+				ret.append( tr );
+				tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
+				tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
+			}
+		}
+	
+		var tr = $( '<tr />');
+		ret.append( tr );
+		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
+
+	}
+
+	return ret;
+
+}
 // List / Array Related
 // ----------------------------------
 
@@ -597,8 +647,8 @@ Util.populate_year = function ( el, data, labelText ) {
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
 		modal = el.getElementsByClassName('modalSymbol')[0],
 		container = el.getElementsByClassName('containerSymbol')[0],
-		set = el.querySelector('button.set'),
-		cancel = el.querySelector('button.cancel'),
+		set = el.querySelector('button.acceptButton'),
+		cancel = el.querySelector('button.declineButton'),
 		inputTrue = el.querySelector('.inputTrue'),
 		inputShow = el.querySelector('.inputShow'),
 		inputSearch = el.getElementsByClassName('searchSymbol')[0],
@@ -611,12 +661,12 @@ Util.populate_year = function ( el, data, labelText ) {
 			const lastEl = ul.children[ul.dataset.index]
 
 			if (lastEl) {
-				lastEl.style.setProperty('color', 'black')
+				//lastEl.style.setProperty('color', 'black')
 				lastEl.classList.toggle('focus')
 			}
 
 			ul.children[newIndex].classList.toggle('focus')
-			ul.children[newIndex].style.setProperty('color', '#009788')
+			//ul.children[newIndex].style.setProperty('color', '#009788')
 			ul.dataset.index = newIndex
 
 		}
@@ -682,6 +732,7 @@ Util.populate_year = function ( el, data, labelText ) {
 
 	inputShow.addEventListener('focus', e => {
 		e.preventDefault();
+		inputShow.blur();
 		modal.parentElement.style.setProperty('display', 'flex');
 		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
 
@@ -783,7 +834,7 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 Util.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
 {
 	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" updates="' + updates + '" value="' + value + '" class="inputHidden" type="checkbox" style="display:none" />' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
 	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
 	var text = $( '<span class="checkboxText">' + message + '</span>' )
 	var check = $( '<span class="checkboxCheck" ></span>' )
@@ -803,11 +854,17 @@ Util.createCheckbox = function( { message='', name='', uid='', updates='', value
 			checkboxReal.prop( 'checked', true );
 		}
 
-		Util.updateMultiCheckboxPayloadValue( updates )
+		if ( updates ) Util.updateMultiCheckboxPayloadValue( updates )
 
 	} );
 
-	if ( checkboxReal.prop( 'checked' ) )
+	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
+	{
+		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+		checkboxShow.css( 'background', 'gray' );
+		checkboxReal.prop( 'checked', true );
+	} 
+	else 
 	{
 		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
 		checkboxShow.css( 'background', 'transparent' );
@@ -859,6 +916,9 @@ Util.updateMultiCheckboxPayloadValue = function( updates )
 	}
 
 	$( '[name="' + updates + '"]' ).val( vals );
+
+	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
+
 }
 
 Util.updateOtherRadioOptions = function( updates, excludeName )
@@ -888,11 +948,12 @@ Util.updateRadioPayloadValue = function( updates )
 			var obj = InpTarg[ i ];
 			if ( obj.checked )
 			{
-				console.log( obj.value );
-				console.log( $( '[name="' + updates + '"]' ) );
 				$( '[name="' + updates + '"]' ).val( obj.value );
+				console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
+
+				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
 				
-			} 
+			}
 		}
 	}
 }
@@ -2365,4 +2426,74 @@ $.fn.rotate=function(options) {
   Util.isArray = function( objVal ) 
   {
 	 return Array.isArray ( objVal );
-  } 
+  }
+
+  Util.storageEstimateWrapper = function( callBack ) {
+	if ('storage' in navigator && 'estimate' in navigator.storage) {
+	  return navigator.storage.estimate();
+	}
+	if ('webkitTemporaryStorage' in navigator &&
+		'queryUsageAndQuota' in navigator.webkitTemporaryStorage) {
+	  return new Promise(function(resolve, reject) {
+		navigator.webkitTemporaryStorage.queryUsageAndQuota(
+		  function(usage, quota) {resolve({usage: usage, quota: quota})},
+		  reject
+		);
+	  });
+	}
+	if ( callBack )
+	{
+		callBack( Promise.resolve({usage: NaN, quota: NaN}) )
+	}
+	else
+	{
+		return Promise.resolve({usage: NaN, quota: NaN});
+	}
+  }
+  Util.localStorageSpace = function()
+  {
+	var allStrings = '';
+	for(var key in window.localStorage){
+		if(window.localStorage.hasOwnProperty(key)){
+			allStrings += window.localStorage[key];
+		}
+	}
+	return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+  }
+  Util.getLocalStorageSizes = function()
+  {  
+	// provide the size in bytes of the data currently stored
+	var runningTotal = 0;
+	var dataSize = 0;
+	var arrItms = [];
+
+	for ( var i = 0; i <= localStorage.length -1; i++ )
+	{
+		key  = localStorage.key(i);  
+		dataSize = Util.lengthInUtf8Bytes( localStorage.getItem( key ) );
+		arrItms.push( { container: 'localStorage', name: key, bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 } )
+		runningTotal += dataSize;
+	}
+	arrItms.push( { container: 'localStorage', name: 'TOTAL SIZE', bytes: runningTotal, kb: runningTotal / 1024, mb: runningTotal / 1024 / 1024 } )
+	return arrItms;
+  }
+  
+  Util.lengthInUtf8Bytes = function(str) {
+	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+	var m = encodeURIComponent(str).match(/%[89ABab]/g);
+	return str.length + (m ? m.length : 0);
+  }
+
+  Util.getDateSeparator = function( formatDate )
+  {
+	  var toTry = [ '-', '/', ' ' ];
+
+	  for ( var i = 0; i <= toTry.length -1; i++ )
+	  {
+		if ( formatDate.indexOf( toTry[ i ] ) > 0 ) 
+		{ 
+			return toTry[ i ];
+		}
+	  }
+
+  }

@@ -1,5 +1,6 @@
 class Modal{
     constructor(object = {
+                parent: undefined,
                 customElement: undefined,
                 titleMessage:undefined,       
                 bodyMessage:undefined,
@@ -8,6 +9,7 @@ class Modal{
                 typeModal:undefined,
                 positionZ:undefined,
                 passive:false}){
+        this.parent = object.parent
         this.passive = object.passive
         this.typeModal = object.typeModal
         this.positionZ = object.positionZ | 1000
@@ -57,52 +59,31 @@ class Modal{
     }
     //  Inicializa estilos necesarios al elemento modal
     initializeStylesContainer(){
-        let container = this.elements.container
-        container.style.setProperty('display','none') // Al ejecutarse será "flex"
-        container.style.setProperty('justify-content','center')
-        container.style.setProperty('align-items','center')
-        container.style.setProperty('position','fixed') 
-        container.style.setProperty('top','0') 
-        container.style.setProperty('left','0') 
-        container.style.setProperty('width','100vw')
-        container.style.setProperty('height','100vh')
-        container.style.setProperty('padding','16px')
+        let container = this.elements.container;
+        container.className = 'pptContainer';
         container.style.setProperty('z-index',`${this.positionZ}`)
-        container.style.setProperty('background','rgba(0,0,0, 0.15)')
     }
     //  Inicializa estilos necesarios al contenido del modal
     initializeStylesContent(){
         let content = this.elements.content,
             title = this.elements.title,
             body = this.elements.body,
-            question = this.elements.question
-        content.style.setProperty('padding', '16px')
-        content.style.setProperty('display', 'flex')
-        content.style.setProperty('flex-direction', 'column')
-        content.style.setProperty('justify-content', 'center')
-        content.style.setProperty('text-align', 'center')
-        content.style.setProperty('background','white')
-        content.style.setProperty('margin','16px')
+            question = this.elements.question;
+
+        content.className = 'pptContent';
 
         if ( title )
         {
-            title.style.setProperty('color','#50555a')
-            title.style.setProperty('font-size','18px')
-            title.style.setProperty('font-weight','700')
-            title.style.setProperty('font-family','"Rubik", Arial')
-            title.style.setProperty('line-height','45px')
-            title.style.setProperty('padding','4px 0 10px 0')
-            title.style.setProperty('text-align','left')
+            title.className = 'pptTitle';
             
         }
         if ( body )
         {
-            body.style.setProperty('font-size','14px')
-            body.style.setProperty('text-align','left')
+            body.className = 'pptBody';
         }
         if ( question )
         {
-            question.style.setProperty('font-weight','bold')
+            question.className = 'pptQuestion';
         }
         
     }
@@ -116,7 +97,8 @@ class Modal{
 
         this.elements.content.appendChild(this.elements.title)
         this.elements.content.appendChild(this.elements.body)
-        this.elements.content.appendChild(this.elements.customElement)
+        if ( this.elements.customElement )
+          this.elements.content.appendChild(this.elements.customElement)
         this.elements.content.appendChild(this.elements.containerButtons)
 
         this.elements.body.appendChild(this.elements.question)
@@ -124,7 +106,9 @@ class Modal{
             this.elements.containerButtons.appendChild(button)
         })
         
-        document.body.appendChild(this.elements.container)
+        this.parent 
+            ?   this.parent.appendChild(this.elements.container)
+            :   document.body.appendChild(this.elements.container)
     }
 
     initialize(){
@@ -272,7 +256,8 @@ class InterfaceModal{
     }
 }
 
-// var pptManager = new InterfaceModal({passive:true})
+var pptManager = new InterfaceModal({passive:true})
+
 //
 /*
     new InterfaceModal()return Interface Controller of Modals. (one is enough for the application)

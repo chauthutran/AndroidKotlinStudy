@@ -13,7 +13,7 @@ DataManager.dbStorageType_indexdb = "indexdb";
 DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. Will be set from databaseSelector.js
 
 DataManager.securedContainers = [ 'redeemList' ];
-
+DataManager.indexedDBStorage = [];
 
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
@@ -154,5 +154,44 @@ DataManager.protectedContainer = function( secName )
 		} 
 	}
 	return ret;
+
+}
+
+DataManager.initialiseDataStorageSize = function()
+{
+	for ( var i = 0; i < DataManager.securedContainers.length; i++ )
+	{
+		FormUtil.getMyListData( DataManager.securedContainers[i], function (data) {
+
+			var dataSize = Util.lengthInUtf8Bytes(JSON.stringify(data));
+
+			DataManager.indexedDBStorage.push({ container: 'indexedDB', name: DataManager.securedContainers[i], bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 });
+
+		})
+	}
+}
+
+DataManager.getStorageSizes = function( callBack )
+{
+	//DataManager.initialiseDataStorageSize( function()
+	{
+
+		var arrItems = [];
+
+		arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
+		arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
+		arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
+	
+		if ( callBack )
+		{
+			callBack( arrItems )
+		}
+		else
+		{
+			return arrItems;
+		}
+
+	} //)
+	
 
 }

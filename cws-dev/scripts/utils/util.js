@@ -834,7 +834,7 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 Util.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
 {
 	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" updates="' + updates + '" value="' + value + '" class="inputHidden" type="checkbox" style="display:none" />' );
+	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
 	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
 	var text = $( '<span class="checkboxText">' + message + '</span>' )
 	var check = $( '<span class="checkboxCheck" ></span>' )
@@ -854,15 +854,21 @@ Util.createCheckbox = function( { message='', name='', uid='', updates='', value
 			checkboxReal.prop( 'checked', true );
 		}
 
-		Util.updateMultiCheckboxPayloadValue( updates )
+		if ( updates ) Util.updateMultiCheckboxPayloadValue( updates )
 
 	} );
 
-	if ( checkboxReal.prop( 'checked' ) )
+	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
+	{
+		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+		checkboxShow.css( 'background', 'gray' );
+		checkboxReal.prop( 'checked', true );
+	} 
+	else 
 	{
 		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
 		checkboxShow.css( 'background', 'transparent' );
-		//checkboxReal.prop( 'checked', false );
+		checkboxReal.prop( 'checked', false );
 	}
 
 	checkboxShow.append( check );
@@ -943,8 +949,11 @@ Util.updateRadioPayloadValue = function( updates )
 			if ( obj.checked )
 			{
 				$( '[name="' + updates + '"]' ).val( obj.value );
+				console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
+
+				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
+				
 			}
-			FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
 		}
 	}
 }

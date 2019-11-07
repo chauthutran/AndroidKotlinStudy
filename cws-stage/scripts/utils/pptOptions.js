@@ -4,7 +4,7 @@ class CustomOption{
         this.element.dataset.value = value
         this.element.dataset.content = content || value
 
-        this.colorOn = colorOn || '#2C98F0'
+        this.colorOn = colorOn || '#5C5C5C'
         this.colorOff = colorOff || 'rgba(0,0,0,.54)'
 
         this.point = document.createElement('div') 
@@ -22,34 +22,16 @@ class CustomOption{
         this.events()
     }
     setStyles(style){
-        this.element.style.setProperty('height','50px')
-        this.element.style.setProperty('display','flex')
-        this.element.style.setProperty('align-items','center')
-        this.element.style.setProperty('cursor','pointer')
-        this.element.style.setProperty('padding-top','12px')
-        this.element.style.setProperty('padding-bottom','12px')
+        this.element.className = 'optListItem';
+        this.point.className = 'optItemPoint';
+        this.pointBorder.className = 'optItemPointBorder';
+        this.pointInt.className = 'optItemPointInt';
+        this.text.className = 'optItemText';
 
-        this.point.style.setProperty('box-sizing','border-box')
-        this.point.style.setProperty('height','24px')
-        this.point.style.setProperty('flex-shrink','0')
-        this.point.style.setProperty('width','24px')
-        this.point.style.setProperty('padding','2px')
-
-        this.pointBorder.style.setProperty('box-sizing','border-box')
-        this.pointBorder.style.setProperty('border-radius','50%')
-        this.pointBorder.style.setProperty('height','100%')
         this.pointBorder.style.setProperty('border',`2px solid ${this.colorOff}`)
-        this.pointBorder.style.setProperty('padding','3px')
 
-        this.pointInt.style.setProperty('display','none')
-        this.pointInt.style.setProperty('box-sizing','border-box')
-        this.pointInt.style.setProperty('border-radius','50%')
-        this.pointInt.style.setProperty('height','100%')
         this.pointInt.style.setProperty('background',`${this.colorOn}`)
 
-        this.text.style.setProperty('font-size','14px')
-        this.text.style.setProperty('font-family',"'Rubik', Arial")
-        this.text.style.setProperty('margin-left','24px')
         //
         if(style == 'simple'){
             this.point.style.setProperty('display','none')
@@ -83,13 +65,13 @@ class CustomOption{
     select(){
         this.pointInt.style.setProperty('display','block')
         this.pointBorder.style.setProperty('border-color',this.colorOn)
-        this.text.style.setProperty('color',this.colorOn)
+        //this.text.style.setProperty('color',this.colorOn)
         this.text.style.setProperty('font-weight','bolder')
     }
     unselect(){
         this.pointInt.style.setProperty('display','none')
         this.pointBorder.style.setProperty('border-color',this.colorOff)
-        this.text.style.setProperty('color','black')
+        //this.text.style.setProperty('color','black')
         this.text.style.setProperty('font-weight','normal')
     }
     hide(){
@@ -116,33 +98,20 @@ class OptionsManager{
     }
     createElements(search){
         this.ul = document.createElement('ul')
-        this.ul.style.setProperty('padding','0')
-        this.ul.style.setProperty('height','240px')
-        this.ul.style.setProperty('overflow-y','scroll')
+        this.ul.className = 'optItem'
 
         if(search){
             this.searchBar = document.createElement('div')
             this.inputSearch = document.createElement('input')
             var imgSearch = document.createElement('img')
             
-            imgSearch.src = window.location.href+'images/search.svg'
+            imgSearch.className = 'imgSearchOpts';
+            imgSearch.src = 'images/search.svg'
             
             this.inputSearch.placeholder = 'Search'
-            this.inputSearch.style.setProperty('border-radius','16px')
-            this.inputSearch.style.setProperty('width','256px')
-            this.inputSearch.style.setProperty('outline','none')
-            this.inputSearch.style.setProperty('padding','4px')
-            this.inputSearch.style.setProperty('padding-left','28px')
-            this.inputSearch.style.setProperty('border','1px solid black')
+            this.inputSearch.className = 'optInputSearch'
+            this.searchBar.className = 'optSearchBar'
 
-            imgSearch.style.setProperty('height','24px')
-            imgSearch.style.setProperty('position','absolute')
-            imgSearch.style.setProperty('left','4px')
-            imgSearch.style.setProperty('top','2px')
-
-            this.searchBar.style.setProperty('width','100%')
-            this.searchBar.style.setProperty('position','relative')
-            this.searchBar.style.setProperty('margin-bottom','24px')
             
             this.searchBar.appendChild(this.inputSearch)
             this.searchBar.appendChild(imgSearch)
@@ -188,6 +157,7 @@ class OptionsManager{
                 this.element.dataset.content=e.detail.content
             }
         })
+        if(this.optionStyle == 'simple')
         this.ul.addEventListener('click',e=>{
             if(e.srcElement.tagName=='SPAN'){
                 var index = Array.from(this.ul.children).findIndex(li=>{
