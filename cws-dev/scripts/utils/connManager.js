@@ -43,6 +43,9 @@ ConnManager.userNetworkMode_dtmPrompt;
 
 ConnManager.debugMode = WsApiManager.isDebugMode;
 
+ConnManager.connection; //v1.3
+ConnManager.type;		//v1.3
+
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
 //
@@ -61,9 +64,19 @@ ConnManager.initialize = function()
     ConnManager.scheduledTimer_intvCounter = ConnManager.scheduledTimer_intvActLimit;
     ConnManager.dataServer_statusCheck_IntvCounter = ConnManager.dataServer_statusCheck_IntvLimit;
 
+	ConnManager.connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+	ConnManager.type = ConnManager.connection.effectiveType;
+
+	ConnManager.connection.addEventListener( 'change', ConnManager.updateConnectionStatus );
+
 	ConnManager.createScheduledConnTests();
 
 }
+
+ConnManager.updateConnectionStatus = function () {
+	console.log("Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType);
+	ConnManager.type = ConnManager.connection.effectiveType;
+  }
 
 ConnManager.isOffline = function() {
 	return !ConnManager.network_Online; 

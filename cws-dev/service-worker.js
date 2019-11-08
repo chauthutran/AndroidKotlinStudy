@@ -509,7 +509,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "1a37f4b896dcd086a79a96837123b24c"
+    "revision": "5a606673a722bdc243cd6af30de8365a"
   },
   {
     "url": "scripts/utils/dataManager.js",
