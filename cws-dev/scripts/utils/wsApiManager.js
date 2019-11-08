@@ -11,6 +11,8 @@ WsApiManager.wsApiListJson = {
     //use 'eRefWSDev4' (4) when server issues exist
 };
 
+// psi-connect.org (NEW)
+// psi-mis.org (OLD)
 
 WsApiManager.wsApiUrl = ''; 
 WsApiManager.wsApiName_Dev = 'cws-dev';  // Dev Default is 'cws-dev'

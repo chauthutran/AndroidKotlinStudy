@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "072786586230c89e207d94324dff3666"
+    "revision": "16eadca77454d43f37a42ec14e1d71c0"
   },
   {
     "url": "css/style.css",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "daafb860c771b1bb1ec71fc3e1e25ab1"
+    "revision": "49b6c7a0578add36cf8b53118647c393"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -405,7 +405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "f3d311f955b393e3579246bbd521e1eb"
+    "revision": "4f236656ebfe6b237f66a2750376dd21"
   },
   {
     "url": "scripts/classes/langTerm.js",
@@ -505,7 +505,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/configUtil.js",
-    "revision": "9d5b1b1ade53af54b2caaae852822280"
+    "revision": "fa728c15fe1f4ad76a097d4e998d9b1a"
   },
   {
     "url": "scripts/utils/connManager.js",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "6031eaef41cfbab2968923022d6475ec"
+    "revision": "a06ae99724c18d529adbb6b6747ed582"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -553,7 +553,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "76150c7664bf689904098b9835693967"
+    "revision": "1189ee1bd03c2222b7c18f516bf00ce4"
   },
   {
     "url": "scripts/utils/pptManager.js",
@@ -581,7 +581,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "f1d7ce78a273f4f540c82ed7b7bcd5fc"
+    "revision": "a252eec366f3c90936e3a06ddb373976"
   },
   {
     "url": "sounds/beep.mp3",
@@ -641,7 +641,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "6e55069ef20aabcc20533b3ba33ea91c"
+    "revision": "9f039090e4a96875d9af7c5c0b1f0352"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

@@ -1512,10 +1512,12 @@ img.imgMore
   .previewPayload > div {
       width: 100%;
       padding:14px;
+      overflow-y: hidden;
   }
   .previewPayload > div > table {
     width: 100%;
     border-spacing: 0;
+    overflow-y: hidden;
   }
   .previewPayload > div > table > tr > td {
     line-height: 1.9em;
@@ -1524,6 +1526,15 @@ img.imgMore
 
   .activityListPreviewTable {
     font-size: calc(9px + 0.2vw);
+  }
+
+  .leftDynamic, .dataToHTMLleft {
+    text-align: left;
+    width: 47%;
+  }
+  .rightDynamic, .dataToHTMLright {
+    width: 0.47vw;
+    overflow: hidden;
   }
 
   .dataToHTMLtitle {
@@ -1544,11 +1555,14 @@ img.imgMore
     padding: 8px 8px 8px 12px;
     font-size: calc(10px + 0.4vw);
     background: #fff;
+    white-space: nowrap;
   }
   .dataToHTMLright {
     padding: 8px 12px 8px 8px;
     font-size: calc(10px + 0.4vw);
     background: #fff;
+    max-width: 0.45vw;
+    overflow: hidden;
   }
   .declineButton {
     color: #FF0000;

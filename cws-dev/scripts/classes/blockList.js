@@ -504,16 +504,15 @@ function BlockList( cwsRenderObj, blockObj )
                     var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( fetchItemData, 'name:value' ) );
                     //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
                     var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( fetchItemData.history, 'name:value' ) );
-                    var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
-
+                    var prevDetails = Util.jsonToArray ( fetchItemData.data.previewJson, 'name:value' );
                     
                     expandedDivTag.append( trxDetails );
                     expandedDivTag.append( historyDetails );
                     
-                    if ( paylDetails && paylDetails.length )
+                    if ( prevDetails && prevDetails.length )
                     {
-                        //console.log("PAYLOADDDD",paylDetails)
-                        expandedDivTag.append( Util.activityListPreviewTable( 'payload', paylDetails ) );
+                        //console.log("PAYLOADDDD",prevDetails)
+                        expandedDivTag.append( Util.activityListPreviewTable( 'preview', prevDetails ) );
                     } 
     
                 });

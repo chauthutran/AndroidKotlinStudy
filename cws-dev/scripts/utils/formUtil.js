@@ -9,7 +9,7 @@ FormUtil.staticWSpath = '';
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
-FormUtil.login_UserRole = '';
+FormUtil.login_UserRole = [];
 FormUtil.orgUnitData;
 FormUtil.dcdConfig;
 

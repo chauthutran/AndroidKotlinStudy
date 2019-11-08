@@ -354,9 +354,6 @@
         top: 10px;
       }
 
-      .leftDynamic, .dataToHTMLleft {
-        text-align: left;
-      }
       .rightDynamic, .dataToHTMLright {
         text-align: right;
       }
@@ -521,9 +518,6 @@
         top: 6px;      
       }
 
-      .leftDynamic, .dataToHTMLleft {
-        text-align: left;
-      }
       .rightDynamic, .dataToHTMLright {
         text-align: left;
       }
