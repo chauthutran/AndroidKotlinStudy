@@ -1106,3 +1106,19 @@ div.loginBtn {
   font-family: "Rubik", Arial;
   line-height: 35px;
 }
+
+.storageUsageGreenBar {
+  width:35%;
+  background-color: #3FF000;
+}
+.storageUsageYellowBar {
+  width:30%;
+  background-image: -webkit-linear-gradient(left,#3FF000,yellow, red);
+  background-image: -o-linear-gradient(right,#3FF000,yellow, red);
+  background-image: -moz-linear-gradient(right,#3FF000,yellow, red);
+  background-image: linear-gradient(to right,#3FF000,yellow, red);
+}
+.storageUsageRedBar {
+  width:35%;
+  background-color: red;
+}

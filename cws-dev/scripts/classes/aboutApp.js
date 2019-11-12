@@ -634,8 +634,6 @@ function aboutApp( cwsRender )
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
         $( '#aboutInfo_Browser' ).html( navigator.sayswho );
 
-        me.getStorageSummary( $( '#aboutInfo_StorageSize' ), DataManager.storageEstimate );
-
         if ( ! me.langTermObj.getLangList() )
         {
             $( '#aboutInfo_userLanguage_DBupdate' ).hide();
@@ -675,21 +673,6 @@ function aboutApp( cwsRender )
                 }
             });
         }
-
-    }
-
-    me.getStorageSummary = function( targetTag, storageJSON )
-    {
-
-        targetTag.append( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) + ' / ' + parseFloat( parseFloat( storageJSON.quota ) / 1024 / 1024 ).toFixed( 1 ) + ' ' + 'MB' );
-
-        var sizeProgress = parseFloat( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) * 100 ).toFixed(1);
-        var colors = ( sizeProgress < 40 ? 'green' : ( sizeProgress > 70 ) ? 'red' : 'orange' );
-        var progContainer = $( '<div style="height:8px;border:1px solid #F5F5F5;margin:8px 0 0 0;background-Color:#fff;width:100%;text-align:left;" />' );
-        var progProgress  = $( '<div style="height:6px;border:0;margin:0;background-Color:' + colors + ';width:' + sizeProgress + '%" />' );
-
-        targetTag.append( progContainer );
-        progContainer.append( progProgress );
 
     }
 

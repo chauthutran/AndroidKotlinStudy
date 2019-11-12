@@ -203,6 +203,8 @@
         var myTemplate = template();
         var myDateTimeSeed = Util.dateToString( new Date() ) + 'T00:00:00Z'; //new Date();
         var myResult = '', tmpRow = '';
+        var prevFields = getPreviewDataFields();
+        var likeFirstname, likeSurname, likeAge;
 
         for (var i = 1; i <= $('input.rows').val(); i++) 
         {
@@ -238,9 +240,10 @@
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
-            
+
             tmpRow = ( getAdditionalFields( tmpRow ) );
-            console.log( ' ~ ' + tmpRow );
+
+            //console.log( ' ~ ' + tmpRow );
 
             myResult += tmpRow + ',';
 
@@ -274,7 +277,7 @@
 
         }
 
-        console.log( ret );
+        //console.log( ret );
         
         return ret;
     }
@@ -317,6 +320,29 @@
         return JSON.stringify( retPush );
     }
 
+    function getPreviewDataFields()
+    {
+
+        if ( localStorage.getItem('session') )
+        {
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+
+            if ( itms.length )
+            {
+                ret = '';
+                for (var i = 0; i < itms.length; i++) 
+                {
+                    ret += itms[ i ].previewData.toString() +',';
+                }
+                ret = ret.substring( 0, ret.length -1 );
+                ret = ret.replace(/ /g, ',')
+                arr = ret.split( ',' );
+
+                return arr;
+            }
+
+        }
+    }
     function getCalcTime(dtmSeed,openFrom,openTo)
     {
         var min = ( ( 86400000 * ( openFrom / 24 ) ) );
@@ -324,7 +350,7 @@
         var rndOffset = generateRandomNumberRange( min, max );
         var rndDtm = ( new Date( dtmSeed ).getTime() - 86400000 + rndOffset );
 
-        console.log( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
+        //console.log( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
         return new Date( rndDtm ).toISOString();
     }
 
@@ -335,7 +361,7 @@
 
     function getNameList()
     {
-        return 'Vickey Vire, Yuri Youngquist, Sherice Sharma, Ariane Albert, Heather Hillock, Taunya Tubb, Lawanda Lord, Quentin Quesenberry, Terrance Tennyson, Rosaria Romberger, Joann Julius, Doyle Dunker, Carolina Casterline, Sherly Shupe, Dorris Degner, Xuan Xu, Mercedez Matheney, Jacque Jamerson, Lillian Lefler, Derek Deegan, Berenice Barboza, Charlene Marriot, Mariam Malott, Cyndy Carrozza, Shaquana Smith, Kendall Kitterman, Reagan Riehle, Mittie Maez, Carry Carstarphen, Nelida Nakano, Christoper Compo, Sadie Shedd, Coleen Samsonite, Estella Eutsler, Pamula Pannone, Keenan Kerber, Tyisha Tisdale, Ashlyn Aguirre, Ashlie Albritton, Willy Wonka, Diann Yowzer, Asha Carpenter, Devin Dashiell, Arvilla Alers, Sheba Sherron, Richard Racca, Elba Early, Coretta Cossey, Brande Bushnell, Larraine Samsung, Luis Nunes, Gaspar Hernandez, Greg Rowles, James Chang, Bruno Raimbault, Rodolfo Melia, Chris Purdy, Martin Dale, Sam Sox, Joe Soap, Joan Sope';
+        return 'Vickey Vire, Yuri Youngquist, Sherice Sharma, Ariane Albert, Heather Hillock, Taunya Tubb, Lawanda Lord, Quentin Quesenberry, Terrance Tennyson, Rosaria Romberger, Joann Julius, Doyle Dunker, Carolina Casterline, Sherly Shupe, Dorris Degner, Xuan Xu, Mercedez Matheney, Jacque Jamerson, Lillian Lefler, Derek Deegan, Berenice Barboza, Charlene Marriot, Mariam Malott, Cyndy Carrozza, Shaquana Smith, Kendall Kitterman, Reagan Riehle, Mittie Maez, Carry Carstarphen, Nelida Nakano, Christoper Compo, Sadie Shedd, Coleen Samsonite, Estella Eutsler, Pamula Pannone, Keenan Kerber, Tyisha Tisdale, Ashlyn Aguirre, Ashlie Albritton, Willy Wonka, Diann Yowzer, Asha Carpenter, Devin Dashiell, Arvilla Alers, Sheba Sherron, Richard Racca, Elba Early, Coretta Cossey, Brande Bushnell, Larraine Samsung, Pilar Varillas, Gaspar Hernandez, Greg Rowles, James Chang, Bruno Raimbault, Rodolfo Melia, Chris Purdy, Martin Dale, Sam Sox, Joe Soap, Joan Sope';
     }
 
     function template()

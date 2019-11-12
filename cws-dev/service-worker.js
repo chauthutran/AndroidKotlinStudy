@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "36df24ec57fcdcc9c262fbcc7d5f6f02"
+    "revision": "d72419de45d0acbd28c941ae664a0a96"
   },
   {
     "url": "images/about.svg",
@@ -357,11 +357,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "f2d5a7e100a2e45077266f9d6951262a"
+    "revision": "382a3248ed3aded7716c6a33a4818a51"
   },
   {
     "url": "redeemGen.html",
-    "revision": "ca5d5efe73926933e17f35c82b2892d6"
+    "revision": "39f080ab3148c9bc92abe01ca86e52bc"
   },
   {
     "url": "scripts/app.js",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "7d238d8dfe6abc38af5706f923a7ad8c"
+    "revision": "a0db667c83a700ab5e27712ac25c8400"
   },
   {
     "url": "scripts/classes/action.js",
@@ -433,7 +433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "6f20b3fd3684266afe85100bc70748c6"
+    "revision": "0511ae7c67ed124c4c2ecf434ec6616f"
   },
   {
     "url": "scripts/classes/statistics.js",
