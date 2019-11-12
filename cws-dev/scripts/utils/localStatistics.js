@@ -38,9 +38,14 @@ function statistics( cwsRender )
     me.initialize = function() 
     {
 
-        $( window ).scrollTop(0);
+        if ( $( 'div.listDiv' ).is(':visible') )
+        {
+            $( 'div.listDiv' ).remove();
+        }
 
         me.localStatsTag.empty();
+
+        $( window ).scrollTop(0);
 
         me.slideIndex = new Date().getDay();
 
@@ -51,12 +56,6 @@ function statistics( cwsRender )
     
 	me.setEvents_OnInit = function()
 	{	
-
-        $( 'img.btnStatsBack' ).click( () =>
-        {
-            me.hideStatsPage();
-            me.localStatsTag.empty();
-		});
 
     }
 

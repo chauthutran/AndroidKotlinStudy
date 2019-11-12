@@ -823,13 +823,12 @@ function settingsApp( cwsRender )
 
     }
 
-    
     me.getStorageSummary = function( targetTag, storageJSON )
     {
 
         targetTag.empty();
 
-        targetTag.append( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) + ' ' + 'MB' + ' used of available ' + parseFloat( parseFloat( storageJSON.quota ) / 1024 / 1024 ).toFixed( 1 ) + ' ' + 'MB' );
+        targetTag.append( Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' used of available ' + Util.numberWithCommas( parseFloat( parseFloat( storageJSON.quota ) / 1024 / 1024 ).toFixed( 1 ) + ' ' + 'MB' ) );
 
         var sizeProgress = parseFloat( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) * 100 ).toFixed(1);
         var colors = ( sizeProgress < 40 ? 'green' : ( sizeProgress > 70 ) ? 'red' : 'orange' );

@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "382a3248ed3aded7716c6a33a4818a51"
+    "revision": "6a69121ce7cac6fc7b5c6fb7bb6bc929"
   },
   {
     "url": "redeemGen.html",
@@ -433,7 +433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "0511ae7c67ed124c4c2ecf434ec6616f"
+    "revision": "2dcf6cb68cfd2cf62e45c98495b3b0a9"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -541,7 +541,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "d5f11856951c89db4f7314aad003a481"
+    "revision": "f1bc97696f851b6baa058029a9c4e232"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -577,7 +577,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "7b3cf2e65225452ae008c26594a8c0b9"
+    "revision": "dcf593b832f38aa6df1a959b6018e215"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
