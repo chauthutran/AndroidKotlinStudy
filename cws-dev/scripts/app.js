@@ -32,19 +32,10 @@
     if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
     {
       WsApiManager.setupWsApiVariables(returnFunc);
-        }
-
-
-
-
-
-
-
+    }
     else
     {
       if (debugMode) console.log('Offline Mode'); //console.log('not PSI server')
-
-      //if ( ! FormUtil._getPWAInfo ) WsApiManager._getPWAInfo
 
       if (returnFunc) returnFunc();
     }

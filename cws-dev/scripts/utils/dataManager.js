@@ -14,6 +14,7 @@ DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. 
 
 DataManager.securedContainers = [ 'redeemList' ];
 DataManager.indexedDBStorage = [];
+DataManager.storageEstimate;
 
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
@@ -157,7 +158,31 @@ DataManager.protectedContainer = function( secName )
 
 }
 
-DataManager.initialiseDataStorageSize = function()
+DataManager.estimateStorageUse = function( callBack )
+{
+	if ('storage' in navigator && 'estimate' in navigator.storage) 
+	{
+		navigator.storage.estimate().then(({usage, quota}) => {
+
+			var retJson = { 'usage': usage, 'quota': quota };
+
+			DataManager.storageEstimate = retJson;
+
+		  	if ( callBack )
+			{
+				callBack( retJson )
+			}
+			else
+			{
+				return retJson;
+			}
+
+		});
+
+	}
+}
+
+DataManager.initialiseStorageEstimates = function()
 {
 	for ( var i = 0; i < DataManager.securedContainers.length; i++ )
 	{
@@ -173,25 +198,19 @@ DataManager.initialiseDataStorageSize = function()
 
 DataManager.getStorageSizes = function( callBack )
 {
-	//DataManager.initialiseDataStorageSize( function()
+	var arrItems = [];
+
+	arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
+	arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
+	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
+
+	if ( callBack )
 	{
-
-		var arrItems = [];
-
-		arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
-		arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
-		arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
-	
-		if ( callBack )
-		{
-			callBack( arrItems )
-		}
-		else
-		{
-			return arrItems;
-		}
-
-	} //)
-	
+		callBack( arrItems )
+	}
+	else
+	{
+		return arrItems;
+	}
 
 }

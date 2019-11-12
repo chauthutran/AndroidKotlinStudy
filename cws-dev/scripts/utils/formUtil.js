@@ -856,6 +856,8 @@ FormUtil.evalReservedField = function( tagTarget, val )
 FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 {
 	var qrContainer = $( '#qrTemplate' );
+	qrContainer.empty();
+
 	var myQR = new QRCode( qrContainer[ 0 ] );
 	var inputVal = $( '[name=' + sourceInput +']' ).val();
 

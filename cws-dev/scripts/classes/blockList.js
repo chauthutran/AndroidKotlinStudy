@@ -518,7 +518,6 @@ function BlockList( cwsRenderObj, blockObj )
                 });
             }
 
-
         })
 
         // Populate the Item Content

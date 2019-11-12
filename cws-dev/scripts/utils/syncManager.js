@@ -319,14 +319,14 @@ function syncManager()  {}
                         if ( !success && !returnJson && !ConnManager.networkSyncConditions() )
                         {
                             syncManager.pauseSync( itemData, itemClone);
-    
+
                             FormUtil.hideProgressBar();
-    
+
                             $( syncManager.subProgressBar ).removeClass( 'determinate' );
                             $( syncManager.subProgressBar ).addClass( progClass );
-                
+
                             $( '#imgAppDataSyncStatus' ).stop();
-    
+
                             if ( btnTag )
                             {
                                 if ( btnTag.hasClass( 'clicked' ) )
@@ -334,9 +334,9 @@ function syncManager()  {}
                                     btnTag.removeClass( 'clicked' );
                                 }
                             }
-                
+
                             syncManager.syncRunning = 0;
-                
+
                             if ( syncManager.pauseProcess )
                             {
                                 MsgManager.msgAreaShow ( 'Sync PAUSED > network conditions' )
@@ -345,13 +345,13 @@ function syncManager()  {}
                         }
                         else
                         {
-    
+
                             var itmHistory = itemData.history;
                             var syncType = ( btnTag ) ? 'manual-Sync-Manager' : 'auto-Sync-Manager';
                             var newTitle;
-    
+
                             itemData.returnJson = returnJson;
-    
+
                             // record network sync attempts (for limit management)
                             if ( itemData.networkAttempt ) itemData.networkAttempt += 1;
                             else itemData.networkAttempt = 1;

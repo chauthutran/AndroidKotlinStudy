@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "d9bba22b40b0a43c23ae73752d6bdf1a"
+    "revision": "f2d5a7e100a2e45077266f9d6951262a"
   },
   {
     "url": "redeemGen.html",
@@ -365,11 +365,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "10d9230a428c1028a1505cfb8b1cd97a"
+    "revision": "8a00f8834d702c6672a0acc252d64039"
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "a0db667c83a700ab5e27712ac25c8400"
+    "revision": "7d238d8dfe6abc38af5706f923a7ad8c"
   },
   {
     "url": "scripts/classes/action.js",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "49b6c7a0578add36cf8b53118647c393"
+    "revision": "2e44b63a1c136c3b168b3804394622a4"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -509,11 +509,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "5a606673a722bdc243cd6af30de8365a"
+    "revision": "973fbe08932baccd180fbb9dba6c4d3b"
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "ab61c2f804118e08cd9584d7605b2b0b"
+    "revision": "cb172a83969ccd659a49bd3f4fd86940"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "a06ae99724c18d529adbb6b6747ed582"
+    "revision": "561e5c9bf3c13abd0f6764a5527fdf3b"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -573,7 +573,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "8031a29aea0cc2191d233a78cfac6020"
+    "revision": "dde84aefea18368689eb089bd84f589a"
   },
   {
     "url": "scripts/utils/util.js",
