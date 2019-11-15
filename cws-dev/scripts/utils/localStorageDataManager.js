@@ -171,6 +171,9 @@ LocalStorageDataManager.getSessionDataValue = function( prop, defval, callBack )
 
 LocalStorageDataManager.clearSessionStorage = function()
 {
+	LocalStorageDataManager.deleteData( 'networkConnectionObs' );
+	localStorage.removeItem( 'networkConnectionObs' );
+
 	LocalStorageDataManager.getSessionData( function( sessionData ){
 		LocalStorageDataManager.deleteData( DataManager.StorageName_session );
 		LocalStorageDataManager.deleteData( sessionData.user );

@@ -162,12 +162,26 @@ function cwsRender()
 
 			// should close current tag/content?
 			if (areaId === 'logOut') me.logOutProcess();
-			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
-			else if ( areaId === 'settingsPage') me.settingsApp.render();
-			else if ( areaId === 'myDetails') me.myDetails.loadFormData();
-			else if ( areaId === 'aboutPage') me.aboutApp.render();
+			else if ( areaId === 'statisticsPage') 
+			{
+				me.clearMenuClickStyles();
+				me.statisticsObj.render();
+				me.updateMenuClickStyles( areaId );
+			}
+			else if ( areaId === 'settingsPage')
+			{
+				me.settingsApp.render();
+			}
+			else if ( areaId === 'myDetails') 
+			{
+				me.myDetails.loadFormData();
+			}
+			else if ( areaId === 'aboutPage') 
+			{
+				me.aboutApp.render();
+			}
 			else
-			{  
+			{
 				me.clearMenuClickStyles();
 
 				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
@@ -194,6 +208,7 @@ function cwsRender()
 				me.updateMenuClickStyles( areaId );
 
 			}
+
 		});
 
 	}
@@ -337,7 +352,7 @@ function cwsRender()
 
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
-					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+					//$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
 
 				}
 
@@ -428,12 +443,12 @@ function cwsRender()
 			tdRight.append ( $( '<div id="divNavDrawerOUName" >' + userName + '</div>') );
 			tdRight.append ( $( '<div id="divNavDrawerOUlongName" />' ) );
 
-			var tr = $( '<tr />' );
+			/* var tr = $( '<tr />' );
 			var td = $( '<td colspan=2 style="height:20px;" />' );
 
 			navMenuTbl.append ( tr );
 			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" />') );
+			td.append ( $( '<div id="divNavDrawerSummaryData" />') ); */
 
 			// Add the menu rows
 			if ( areaList )
@@ -729,7 +744,7 @@ function cwsRender()
 	{
 		$( '#divNavDrawerOUName' ).html( '' );
 		$( '#divNavDrawerOUlongName' ).html( '' );
-		$( '#divNavDrawerSummaryData' ).html( '' );
+		//$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...

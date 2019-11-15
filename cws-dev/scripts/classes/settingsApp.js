@@ -817,41 +817,54 @@ function settingsApp( cwsRender )
                 }
             });
 
-            me.getStorageSummary( $( '#settingsInfo_StorageSize' ), DataManager.storageEstimate );
+            me.getStorageSummary( $( '#settingsInfo_StorageSize' ) ); //, DataManager.storageEstimate
 
         }
 
     }
 
-    me.getStorageSummary = function( targetTag, storageJSON )
+    me.getStorageSummary = function( targetTag ) // , storageJSON
     {
 
         targetTag.empty();
 
-        targetTag.append( Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' used of available ' + Util.numberWithCommas( parseFloat( parseFloat( storageJSON.quota ) / 1024 / 1024 ).toFixed( 1 ) + ' ' + 'MB' ) );
+        DataManager.estimateStorageUse( function( storageJSON ){
 
-        var sizeProgress = parseFloat( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) * 100 ).toFixed(1);
-        var colors = ( sizeProgress < 40 ? 'green' : ( sizeProgress > 70 ) ? 'red' : 'orange' );
+            var quotaDenom = parseFloat( storageJSON.quota ) / 1024 / 1024;
+            var suffix = 'MB';
+    
+            if ( quotaDenom > 1000 )
+            {
+                quotaDenom = ( quotaDenom / 1000 );
+                suffix = 'GB';
+            }
+    
+            targetTag.append( Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' used of available ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ) );
+    
+            var sizeProgress = parseFloat( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) * 100 ).toFixed(1);
+            var colors = ( sizeProgress < 40 ? 'green' : ( sizeProgress > 70 ) ? 'red' : 'orange' );
+    
+            var progContainer = $( '<div style="height:8px;border:1px solid #F5F5F5;margin:8px 0 0 0;background-Color:#fff;width:100%;text-align:left;" />' );
+    
+            var progTbl =  $( '<table style="height:6px;border:0;margin:0;width:100%;border-collapse: collapse;" />' );
+            var tr =       $( '<tr>' );
+            var tdGreen  = $( '<td class="storageUsageGreenBar" style="opacity:0.75">' );
+            var tdOrange = $( '<td class="storageUsageYellowBar" style="opacity:0.75">' );
+            var tdRed    = $( '<td class="storageUsageRedBar" style="opacity:0.75">' );
+    
+            var progProgress  = $( '<div style="height:12px;width:3px;border:0;margin:0;background-Color:#000;position:relative;left:'+ sizeProgress +'%;top:-10px;border-radius:2px" />' );
+    
+            targetTag.append( progContainer );
+            progContainer.append( progTbl );
+    
+            progTbl.append( tr );
+            tr.append( tdGreen );
+            tr.append( tdOrange );
+            tr.append( tdRed );
+    
+            targetTag.append( progProgress );
 
-        var progContainer = $( '<div style="height:8px;border:1px solid #F5F5F5;margin:8px 0 0 0;background-Color:#fff;width:100%;text-align:left;" />' );
-
-        var progTbl =  $( '<table style="height:6px;border:0;margin:0;width:100%;border-collapse: collapse;" />' );
-        var tr =       $( '<tr>' );
-        var tdGreen  = $( '<td class="storageUsageGreenBar" style="opacity:0.75">' );
-        var tdOrange = $( '<td class="storageUsageYellowBar" style="opacity:0.75">' );
-        var tdRed    = $( '<td class="storageUsageRedBar" style="opacity:0.75">' );
-
-        var progProgress  = $( '<div style="height:12px;width:3px;border:0;margin:0;background-Color:#000;position:relative;left:'+ sizeProgress +'%;top:-10px;border-radius:2px" />' );
-
-        targetTag.append( progContainer );
-        progContainer.append( progTbl );
-
-        progTbl.append( tr );
-        tr.append( tdGreen );
-        tr.append( tdOrange );
-        tr.append( tdRed );
-
-        targetTag.append( progProgress );
+        })
 
     }
 

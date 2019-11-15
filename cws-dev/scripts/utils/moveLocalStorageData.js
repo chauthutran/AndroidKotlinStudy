@@ -36,6 +36,13 @@ MoveLocalStorageData.moveData = function(){
         else
         {
             //console.log("All data from localStorage was moved to IndexDb alreadly.");
+            // initiate Diagnostics process:
+            // 1. check current cacheSize against recorded cacheSize history?
+            // 2. if conditions correct [from 1]
+            //     > decrpyt+move indexedDB content to localStorage
+            //       > erase indexedDB + set movedData = false
+            //         > run other clean up routines
+            //           > run page refresh ()
         }
     } );
 

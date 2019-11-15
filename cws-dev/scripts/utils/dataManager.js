@@ -16,6 +16,9 @@ DataManager.securedContainers = [ 'redeemList' ];
 DataManager.indexedDBStorage = [];
 DataManager.storageEstimate;
 
+DataManager.indexedDBopenRequestTime; // time the opening + 
+DataManager.indexedDBopenResponseTime;// response delay times
+
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
 
@@ -133,14 +136,14 @@ DataManager.getSessionDataValue = function( prop, defval, callBack )
 
 DataManager.clearSessionStorage = function()
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	//if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
 	 	LocalStorageDataManager.clearSessionStorage();
 	}
-	else
+	/*else
 	{
 		IndexdbDataManager.clearSessionStorage();
-	}
+	}*/
 }
 
 DataManager.protectedContainer = function( secName )

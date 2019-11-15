@@ -46,6 +46,7 @@ ConnManager.debugMode = WsApiManager.isDebugMode;
 ConnManager.connection; //v1.3
 ConnManager.type;		//v1.3
 ConnManager.roundConnectionTestToMins = 5;
+ConnManager.lastConnectTypeObs;
 
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
@@ -192,7 +193,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
 						ConnManager.schedulerTestUnderway = 0;
 
-						DataManager.estimateStorageUse();
+						//DataManager.estimateStorageUse();
+						ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 						if ( returnFunc ) returnFunc( retJson );
 
@@ -252,7 +254,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
 						ConnManager.schedulerTestUnderway = 0;
 
-						DataManager.estimateStorageUse();
+						//DataManager.estimateStorageUse();
+						ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 						if ( returnFunc ) returnFunc( retJson );
 					});
@@ -332,8 +335,6 @@ ConnManager.createScheduledConnTests = function()
 						ConnManager.connSwitchPrompted = false;
 					}
 				}
-
-				ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 			});
 		}
@@ -514,47 +515,58 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 	else return undefined;
 }
 
-ConnManager.updateNetworkConnectionObserver = function( connType )
-{
-
-}
-
 ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connChangedTo )
 {
 
 	if ( FormUtil.checkLogin() )
 	{
-		DataManager.getData( 'networkConnectionObs', function( dataObs ) {
+		var dtmObs = new Date();
+		var dtmHr = dtmObs.getHours();
+		var bProceed = false;
 
-			var dtmObs = new Date();
-			var dtmHr = dtmObs.getHours();
-			var dtmLast = '';
-			//var checkObs = parseFloat( dtmObs.getTime() / 5000 ).toFixed( 0 ); //5000ms, rounded to 5seconds
-			//var checkLast;
+		if ( ! ConnManager.lastConnectTypeObs )
+		{
+			bProceed = true;
+		}
+		else if ( $.format.date( ConnManager.lastConnectTypeObs, "yyyymmddHHmm" ) != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+		{
+			bProceed = true;
+		}
 
-			if ( ! dataObs )
-			{
-				var data = { 'earliest': dtmObs.toISOString(), 'slow-2g': {}, '2g': {}, '3g': {}, '4g': {}, 'offline': {}, 'last': dtmObs.toISOString() };
-			}
-			else
-			{
-				var data = dataObs;
-				dtmLast = $.format.date( new Date( data.last ), "yyyymmddHHmm" )
-			}
+		if ( bProceed )
+		{
 
-			// block collection of connectivityType data when multiple observations occur in same minute
-			if ( dtmLast != $.format.date( dtmObs, "yyyymmddHHmm" ) )
-			{
-				var hrs = ( data[ connChangedTo ][ dtmHr ] ? data[ connChangedTo ][ dtmHr ] : 0 ) + 1;
+			DataManager.getData( 'networkConnectionObs', function( dataObs ) {
 
-				data[ connChangedTo ][ dtmHr ] = hrs
-				data.last = dtmObs.toISOString();
+				var dtmLast = '';
+	
+				if ( ! dataObs )
+				{
+					var data = { 'first': dtmObs.toISOString(), 'last': dtmObs.toISOString(), 'observations': { 'slow-2g': {}, '2g': {}, '3g': {}, '4g': {}, 'offline': {} } };
+				}
+				else
+				{
+					var data = dataObs;
+					dtmLast = $.format.date( new Date( data.last ), "yyyymmddHHmm" )
+				}
+	
+				// block collection of connectivityType data when multiple observations occur in same minute
+				if ( dtmLast != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+				{
+					var hrs = ( data.observations[ connChangedTo ][ dtmHr ] ? data.observations[ connChangedTo ][ dtmHr ] : 0 ) + 1;
+	
+					data.observations[ connChangedTo ][ dtmHr ] = hrs
+					data.last = dtmObs.toISOString();
+	
+					DataManager.saveData( 'networkConnectionObs', data );
+	
+					ConnManager.lastConnectTypeObs = dtmObs;
+	
+				}
+	
+			})
+		}
 
-				DataManager.saveData( 'networkConnectionObs', data );
-
-			}
-
-		})
 	}
 
 }

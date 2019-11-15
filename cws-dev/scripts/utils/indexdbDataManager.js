@@ -62,6 +62,8 @@ IndexdbDataManager.getData = function( secName, callBack )
 
 					IndexdbDataManager.getIV( function( iv ){
 
+						IndexdbDataManager.trackOpenEventDelay( false );
+
 						jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.value.toString(), iv, 
 						{
 							keySize: 128 / 8,
@@ -69,6 +71,8 @@ IndexdbDataManager.getData = function( secName, callBack )
 							mode: CryptoJS.mode.CBC,
 							padding: CryptoJS.pad.Pkcs7
 						} ) ) );
+
+						IndexdbDataManager.trackOpenEventDelay( true );
 
 						if ( callBack ) callBack( jsonData );
 
@@ -94,6 +98,19 @@ IndexdbDataManager.getData = function( secName, callBack )
 	}
 
 };
+
+IndexdbDataManager.trackOpenEventDelay = function( lastEntry )
+{
+	if ( lastEntry == false )
+	{
+
+	}
+	else
+	{
+		
+	}
+
+}
 
 IndexdbDataManager.getIV = function( callBack )
 {
