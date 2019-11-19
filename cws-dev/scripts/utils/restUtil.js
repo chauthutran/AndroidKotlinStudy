@@ -20,10 +20,13 @@ RESTUtil.performREST = function( url, payloadData, returnFunc )
     .then( jsonData => {
         returnFunc( true, jsonData );
     })
-    .catch( error => {  
-        console.log( 'Failed to retrieve url - ' + url );
-        console.log( error );  
-        //alert( 'Failed to load the config file' );
+    .catch( error => {
+        if ( WsApiManager.isDebugMode )
+        {
+            console.log( 'Failed to retrieve url - ' + url );
+            console.log( error );  
+            //alert( 'Failed to load the config file' );
+        }
         returnFunc( false, { "response": error.toString() } );
     });
 };

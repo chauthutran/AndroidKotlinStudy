@@ -58,6 +58,16 @@
   {
     ConnManager.network_Online = navigator.onLine;
 
+    if ( ConnManager.network_Online )
+    {
+      $( '#ConnectingWithSara' ).removeClass( 'logoOffline' );
+      $( '#ConnectingWithSara' ).addClass( 'logoOnline' );    }
+    else
+    {
+      $( '#ConnectingWithSara' ).removeClass( 'logoOnline' );
+      $( '#ConnectingWithSara' ).addClass( 'logoOffline' );
+    }
+
     if ( _cwsRenderObj.initializeStartBlock )
     {
       syncManager.initialize( _cwsRenderObj );

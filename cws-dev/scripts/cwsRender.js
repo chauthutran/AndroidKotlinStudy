@@ -28,8 +28,8 @@ function cwsRender()
 	me.storageName_RedeemList = "redeemList";
     me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
 	me.status_redeem_queued = "queued"; // initialize from dcd@XX ?
-	me.status_redeem_paused = "paused"; // initialize from dcd@XX ?
 	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
+	me.status_redeem_paused = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
 
 	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
     me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?
@@ -327,7 +327,8 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			FormUtil.getMyListData( me.storageName_RedeemList, function( myData ){
+			//FormUtil.getMyListData( me.storageName_RedeemList, function( myData )
+			{
 
 				DataManager.getUserConfigData( function( userData ){
 
@@ -343,20 +344,19 @@ function cwsRender()
 				});
 
 
-				if ( myData && FormUtil.checkLogin() )
+				if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
 				{
-					var mySubmit = myData.filter( a=>a.status == me.status_redeem_submit );
-					var myQueue = myData.filter( a=>a.status == me.status_redeem_queued );
-					//var myPaused = myData.filter( a=>a.status == me.status_redeem_paused );
-					var myFailed = myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+					var mySubmit = FormUtil.records_redeem_submit; //myData.filter( a=>a.status == me.status_redeem_submit );
+					var myQueue = FormUtil.records_redeem_queued; //myData.filter( a=>a.status == me.status_redeem_queued );
+					var myFailed = FormUtil.records_redeem_failed; //myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
 
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
-					//$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
 
 				}
 
-			} );
+			} //re);
 
 		});
 
@@ -364,6 +364,7 @@ function cwsRender()
 
 	me.menuStatSummary = function( submitList, queueList, failedList )
 	{
+
 		var statTbl = $( '<table class="tblMenuStatSummary" />');
 		var tr = $( '<tr>' );
 		var tdFiller = $( '<td class="statFiller" />' );
@@ -382,24 +383,24 @@ function cwsRender()
 		var dataQueue  = $( '<span class="menuDataStat" />' );
 		var dataFailed = $( '<span class="menuDataStat" />' );
 
-		if ( submitList && submitList.length )
+		if ( submitList && submitList > 0 )
 		{
 			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ), true );
-			dataSubmit.append( submitList.length );
+			dataSubmit.append( submitList );
 			tr.append( tdSubmit );	
 		}
 
-		if ( queueList && queueList.length )
+		if ( queueList && queueList > 0 )
 		{
 			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": me.status_redeem_queued } ), true );
-			dataQueue.append( queueList.length );
+			dataQueue.append( queueList );
 			tr.append( tdQueue );
 		}
 
-		if ( failedList && failedList.length )
+		if ( failedList && failedList > 0 )
 		{
 			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": me.status_redeem_failed } ), true );
-			dataFailed.append( failedList.length );
+			dataFailed.append( failedList );
 			tr.append( tdFailed );
 
 		}
@@ -443,12 +444,12 @@ function cwsRender()
 			tdRight.append ( $( '<div id="divNavDrawerOUName" >' + userName + '</div>') );
 			tdRight.append ( $( '<div id="divNavDrawerOUlongName" />' ) );
 
-			/* var tr = $( '<tr />' );
+			 var tr = $( '<tr />' );
 			var td = $( '<td colspan=2 style="height:20px;" />' );
 
 			navMenuTbl.append ( tr );
 			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" />') ); */
+			td.append ( $( '<div id="divNavDrawerSummaryData" />') );
 
 			// Add the menu rows
 			if ( areaList )
@@ -539,7 +540,7 @@ function cwsRender()
 			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
 			//$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
 			$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
 			//$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -744,7 +745,7 @@ function cwsRender()
 	{
 		$( '#divNavDrawerOUName' ).html( '' );
 		$( '#divNavDrawerOUlongName' ).html( '' );
-		//$( '#divNavDrawerSummaryData' ).html( '' );
+		$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...

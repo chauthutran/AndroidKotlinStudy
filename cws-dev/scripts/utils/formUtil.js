@@ -26,6 +26,10 @@ FormUtil.geoLocationState;  // --> move to geolocation.js class
 FormUtil.geoLocationError;  // --> move to geolocation.js class
 FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
 
+FormUtil.records_redeem_submit = 0;
+FormUtil.records_redeem_queued = 0;
+FormUtil.records_redeem_failed = 0;
+
 // ==== Methods ======================
 
 FormUtil.getObjFromDefinition = function( def, definitions )
@@ -879,7 +883,7 @@ FormUtil.getTagVal = function( tag )
 	{
 		if ( FormUtil.checkTag_CheckBox( tag ) )
 		{			
-			val = tag.is( ":checked" ) ? "true" : "" ;
+			val = tag.is( ":checked" ) ? "true" : "false" ;
 		}
 		else
 		{
@@ -1118,11 +1122,23 @@ FormUtil.getMyListData = function( listName, retFunc )
 {
 	var redList = {}, returnList = {};
 
+	FormUtil.records_redeem_submit = 0;
+	FormUtil.records_redeem_queued = 0;
+	FormUtil.records_redeem_failed = 0;
+
 	DataManager.getData( listName, function( redList ) {
 
 		if ( redList )
 		{
 			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
+
+			var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+			var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+			var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
+
+			FormUtil.records_redeem_submit = mySubmit.length;
+			FormUtil.records_redeem_queued = myQueue.length;
+			FormUtil.records_redeem_failed = myFailed.length;
 
 			if ( retFunc ) retFunc( returnList );
 		}

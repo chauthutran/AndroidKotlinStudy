@@ -96,12 +96,12 @@ class Modal{
         this.elements.container.appendChild(this.elements.content)
 
         this.elements.content.appendChild(this.elements.title)
-        this.elements.content.appendChild(this.elements.body)
+        //this.elements.content.appendChild(this.elements.body)
         if ( this.elements.customElement )
           this.elements.content.appendChild(this.elements.customElement)
         this.elements.content.appendChild(this.elements.containerButtons)
 
-        this.elements.body.appendChild(this.elements.question)
+        //this.elements.body.appendChild(this.elements.question)
         this.elements.buttons.forEach(button=>{
             this.elements.containerButtons.appendChild(button)
         })
@@ -208,7 +208,8 @@ class Modal{
         // Por el momento sólo el evento click fuera del contenido para cerrar la ventana modal
         let self = this
         let container = this.elements.container
-        container.addEventListener('click',function(e){
+        $(container).click( function(e)
+        {
             if(e.target == this){
                 self.exec()
             }

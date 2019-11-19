@@ -236,7 +236,7 @@ header {
 }
 #navMenuHead {
   width:100%;
-  height:80px; /*100px*/
+  height:100px; /*100px*/
   margin:0;
   padding:0;
   border-radius:0;
@@ -1121,4 +1121,11 @@ div.loginBtn {
 .storageUsageRedBar {
   width:35%;
   background-color: red;
+}
+.formBlockProgressIcon {
+  border-radius: 20px;
+  padding:8px;
+
+  transform-style: preserve-3d;
+  transition: all 0.5s linear;
 }

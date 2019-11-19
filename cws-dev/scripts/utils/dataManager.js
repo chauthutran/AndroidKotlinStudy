@@ -37,7 +37,6 @@ DataManager.saveData = function( secName, jsonData, retFunc )
 
 DataManager.getData = function( secName, callBack ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.getData( secName, callBack );
@@ -50,7 +49,6 @@ DataManager.getData = function( secName, callBack )
 
 DataManager.getOrCreateData = function( secName, callBack ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.getOrCreateData( secName, callBack );
@@ -72,7 +70,6 @@ DataManager.deleteData = function( secName )
 
 DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) 
 {
-
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.insertDataItem( secName, jsonInsertData, retFunc );
@@ -86,7 +83,6 @@ DataManager.insertDataItem = function( secName, jsonInsertData, retFunc )
 
 DataManager.getItemFromData = function( secName, id, callBack ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		return IndexdbDataManager.getItemFromData( secName, id, callBack );
@@ -100,7 +96,6 @@ DataManager.getItemFromData = function( secName, id, callBack )
 
 DataManager.updateItemFromData = function( secName, id, jsonDataItem ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.updateItemFromData( secName, id, jsonDataItem );

@@ -1,3 +1,17 @@
+#ConnectingWithSara {
+  width:80px;
+  height:80px;
+}
+#Connect {
+  font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 24px;
+  color:rgb(51,51,51,0.5);
+  padding:10px;
+  margin:0px 20px 20px 20px;
+}
 
 .cwsLogoRotateY{
   width: 100%;
@@ -1171,7 +1185,12 @@ img.imgMore
          -ms-user-select: none;
              user-select: none;
    }
-   
+   .switchSider {
+    display:flex; 
+    align-items: center; 
+    justify-content: start;
+    margin: 12px 0 8px 0;
+   }
    .switch label {
      cursor: pointer;
    }
@@ -1206,7 +1225,7 @@ img.imgMore
      -webkit-transition: background 0.3s ease;
      transition: background 0.3s ease;
      vertical-align: middle;
-     margin: 0 16px;
+     margin: 0 16px 0 6px;
    }
    
    .switch label .lever:before, .switch label .lever:after {
@@ -1393,7 +1412,7 @@ img.imgMore
     border-radius: 3px 3px 0 0;
   }
   div.statsNetworkTypeBarGrid {
-    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,.5) 7px, rgba(255,255,255,.5) 10px);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,.5) 10px, rgba(255,255,255,.5) 10px);
   }
   div.statsNetworkTypeText {
     height:20px;
@@ -1466,13 +1485,19 @@ img.imgMore
       font-weight: 400;
       margin-left: 0px;
    }
-   .optionsSymbol li.focus::before{
+   .optionsSymbol li.focus {
+    background-color: #2C98F0;
+    color: #fff;
+    border-radius: 20px;
+    margin: 0 90px 0 90px;
+   }
+   /*.optionsSymbol li.focus::before{
        content:'✓';
        position: fixed;
        left: 10%;
        font-size: 22px;
        font-weight: 800;
-   }
+   }*/
    .controlsSymbol{
        display: block;
        justify-content: stretch;
@@ -1692,12 +1717,13 @@ img.imgMore
   }
   .pptContent {
     padding: 16px;
-    display: flex;
+    display: block;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
+    text-align: left;
     background: white;
     margin: 16px;
+    height: 70vh;
   }
   .pptTitle {
     color: #50555a;
@@ -1734,11 +1760,11 @@ img.imgMore
   .optSearchBar {
     width: 100%;
     position: relative;
-    margin-bottom: 24px;
+    margin-bottom: 14px;
   }
   .optItem {
     padding: 0 2px 0 4px;
-    height: 240px;
+    height: 100%; /*300px*/
     overflow-y: scroll;
     background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
   }
@@ -1800,4 +1826,15 @@ img.imgMore
     height: 28px !important;
     background: #2C98F0;
     margin: 2px;
+  }
+
+  .logoOffline {
+    -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+    filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+    transition: all 1.5s ease;
+  }
+  .logoOnline {
+    -webkit-filter: grayscale(0); /* Google Chrome, Safari 6+ & Opera 15+ */
+    filter: grayscale(0); /* Microsoft Edge and Firefox 35+ */
+    transition: all 1s ease;
   }

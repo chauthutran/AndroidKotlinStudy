@@ -480,10 +480,13 @@ Util.activityListPreviewTable = function( title, arr )
 			}
 			else
 			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
-				tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
+				if ( arr[ i ].value && arr[ i ].value.length > 0 )
+				{
+					var tr = $( '<tr />');
+					ret.append( tr );
+					tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
+					tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
+				}
 			}
 		}
 	
@@ -697,7 +700,7 @@ Util.populate_year = function ( el, data, labelText ) {
 		li.dataset.index = index;
 		li.innerText = text;
 
-		li.addEventListener('click', e => {
+		$(li).click(function(){
 			sendFocus(li.dataset.index)
 		});
 
@@ -717,18 +720,21 @@ Util.populate_year = function ( el, data, labelText ) {
 	closeSearch.style.setProperty('display','none');
 	inputSearch.style.setProperty('display','none');
 
-	set.addEventListener('click', e => {
+	$(set).click( function(e)
+	{
 		e.preventDefault();
 		if (!isNaN(parseInt(ul.dataset.index))) {
 			sendChoose();
 		}
 		modal.parentElement.style.setProperty('display', 'none');
-	})
 
-	cancel.addEventListener('click', e => {
+	});
+
+	$(cancel).click( function(e)
+	{
 		e.preventDefault();
 		modal.parentElement.style.setProperty('display', 'none');
-	})
+	});
 
 	inputShow.addEventListener('focus', e => {
 		e.preventDefault();
@@ -738,12 +744,13 @@ Util.populate_year = function ( el, data, labelText ) {
 
 	})
 
-	modal.parentElement.addEventListener('click', e => {
+	$(modal.parentElement).click( function(e)
+	{
 		e.preventDefault();
 		if (e.target === modal.parentElement) {
 			modal.parentElement.style.setProperty('display', 'none');
 		}
-	})
+	});
 
 	inputSearch.addEventListener('keyup', e => {
 
@@ -767,7 +774,8 @@ Util.populate_year = function ( el, data, labelText ) {
 
 	})
 
-	closeSearch.addEventListener('click', e => {
+	$(closeSearch).click( function(e)
+	{
 		e.preventDefault()
 		inputSearch.value = ''
 		closeSearch.style.setProperty('display', 'none')
@@ -814,17 +822,19 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 
 		let option = document.createElement('option')
 
-		option.style.setProperty('display','none')
-		option.style.setProperty('width','100%')
-		option.style.setProperty('list-style','none')
-		option.style.setProperty('background','white')
-		option.style.setProperty('padding','4px 8px')
-		option.style.setProperty('font-size','14px')
+		$(option).css({
+			'display':'none',
+			'width':'100%',
+			'list-style':'none',
+			'background':'white',
+			'padding':'4px 8px',
+			'font-size':'14px'
+		})
 
 		option.textContent = optionData.defaultName
 		option.value = optionData.value
 
-		option.addEventListener('click',eventsOptions)
+		$(option).click(eventsOptions)
 
 		selectObj.appendChild( option )
 

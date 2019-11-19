@@ -29,11 +29,11 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "16eadca77454d43f37a42ec14e1d71c0"
+    "revision": "c168b9f2cd2870e178fe136cc61e7170"
   },
   {
     "url": "css/style.css",
-    "revision": "3633dbb28aecc06cb63a78e56ba17f38"
+    "revision": "85d3ba5d9997c62ff584f44882b5a054"
   },
   {
     "url": "images/about.svg",
@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "7a04865138462ead30b1e99ebaaf6337"
+    "revision": "f8f91d6dc4be303c5851a2e4f7772805"
   },
   {
     "url": "redeemGen.html",
@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "8a00f8834d702c6672a0acc252d64039"
+    "revision": "37dbb1758b0bafed92ae16e844f4518f"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -389,11 +389,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "0e629a963c08ff8c7c49455ef2e1cf7c"
+    "revision": "caa86a11e376e094a17b6d35429f67c3"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "76ee22d1a0e772eccb4ea5317922f344"
+    "revision": "b04f8272190640eee6f08655f9eacffb"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
-    "revision": "2e5857d51b33bcfb76f28f1483bf95d1"
+    "revision": "09015fa59b86932c56a80f2822aed1f7"
   },
   {
     "url": "scripts/classes/qrcode.js",
@@ -449,7 +449,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "4662af2f9dcd69ab329a4f2f7a615954"
+    "revision": "84e0448d953193b7d88685793d5fbd86"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -509,11 +509,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "68d0a1a4c431de7fd4ab27f5f103147c"
+    "revision": "426a7a92d205072189787738f1e21061"
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "c8db9a6c9046a70f1c9f86d6e10b065c"
+    "revision": "8e20d5f4f3ff70b693ee1aad38f625d2"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -521,11 +521,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formMsgManager.js",
-    "revision": "1800f751175640c1978ad3a9a074980f"
+    "revision": "641f9668ffacb0fcc3f24184a9e21cc0"
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "561e5c9bf3c13abd0f6764a5527fdf3b"
+    "revision": "aca986eca3b702b6affa1ef613084fef"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -541,7 +541,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "6377970b83fc9ac3239095f21e348043"
+    "revision": "484f5540f376491a5560c6fc51b4be31"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
@@ -553,19 +553,19 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "1189ee1bd03c2222b7c18f516bf00ce4"
+    "revision": "f477b8e27083cba8251dfbfcbc622cde"
   },
   {
     "url": "scripts/utils/pptManager.js",
-    "revision": "bef28dce3a41f4f4bcc6f8b81921672e"
+    "revision": "2d6f974cc18206989ca8ef8cb660fef7"
   },
   {
     "url": "scripts/utils/pptOptions.js",
-    "revision": "b680552adbf542174e6a358790a7cf47"
+    "revision": "7206d5c8b52e6d9e5e9ab336d5ea67eb"
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "8017cd0aad3a9a8be568a380127f0523"
+    "revision": "c8cb5b9cce755b036a5c40ddb8ce043b"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -573,11 +573,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "dde84aefea18368689eb089bd84f589a"
+    "revision": "95e38d06984e76f612ef5331278f2311"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "dcf593b832f38aa6df1a959b6018e215"
+    "revision": "56835588f11d60e76b560d4170f16cba"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
@@ -641,7 +641,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "b7f7188b0221b11ad198fcbcaa5144e8"
+    "revision": "4bab84c64b1987002c35e4613e7b35e0"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

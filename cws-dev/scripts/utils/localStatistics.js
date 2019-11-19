@@ -99,15 +99,10 @@ function statistics( cwsRender )
             //me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
             me.localStatsTag.append( me.toRowActivities( me.activityTypes, "activity breakdown" ) );
             me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
-
-            me.localStatsTag.append( me.networkTypesToChart( me.connectionTypes, "network Quality" ) );
-
+            me.localStatsTag.append( me.networkTypesToChart( me.connectionTypes, "network quality" ) );
             //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
-    
-            if ( me.earliestDate )
-            {
-                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
-            }
+
+            if ( me.earliestDate )  me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
 
             setTimeout( function() {
                 $( '.hide' ).hide( 'slow' );
@@ -310,7 +305,7 @@ function statistics( cwsRender )
 
             if ( dataObs )
             {
-                connTypes = { 'slow-2g': 0, '2g': 0, '3g': 0, '4g': 0, 'offline': 0 };
+                var connTypes = { 'slow-2g': 0, '2g': 0, '3g': 0, '4g': 0, 'offline': 0 };
 
                 for ( var connType in connTypes ) 
                 {
@@ -805,23 +800,23 @@ function statistics( cwsRender )
         var colorBrewer = [ "#E0E080", "#94D6CB", "#1EC802", "#F82827", "#E0E0E0" ];
         var opacityCols = [ 0.5, 0.5, 1, 1, 0.5 ];
 
-        for ( var connType in connTypes )
+        for ( var connType in me.connectionTypes )
         {
-            if ( connTypes[ connType ] )
+            if ( me.connectionTypes[ connType ] )
             {
-                sum += connTypes[ connType ];
+                sum += me.connectionTypes[ connType ];
 
-                if ( connTypes[ connType ] > max )
+                if ( me.connectionTypes[ connType ] > max )
                 { 
-                    max = connTypes[ connType ];
+                    max = me.connectionTypes[ connType ];
                 }
 
-                if ( connTypes[ connType ] < min )
+                if ( me.connectionTypes[ connType ] < min )
                 {
-                    min = connTypes[ connType ];
+                    min = me.connectionTypes[ connType ];
                 } 
-                typeCount += 1;
             }
+            typeCount += 1;
         }
 
         if ( max == 0 ) min = 0;
@@ -849,17 +844,17 @@ function statistics( cwsRender )
 
         //for (var i = 0; i < arrObj.length; i++)
         //for (var i = me.hoursFrom; i <= me.hoursTo; i++)
-        for ( var connType in connTypes )
+        for ( var connType in me.connectionTypes )
         {
             var showHideClass = '';
             var barH = 0;
 
             //if ( arrObj[ i ].data )
             {
-                barH = ( connTypes[ connType ] > 0 ? ( maxHeight * ( connTypes[ connType ] / max ) ) + 'px' : '0' );
+                barH = ( me.connectionTypes[ connType ] > 0 ? ( maxHeight * ( me.connectionTypes[ connType ] / max ) ) + 'px' : '0' );
             }
 
-            var opac = ( ( parseFloat(  connTypes[ connType ] / ( max ) ) ) );
+            var opac = ( ( parseFloat(  me.connectionTypes[ connType ] / ( max ) ) ) );
             var tdBar = $( '<td class="columnBar ' + showHideClass + '" style="min-height:'+(maxHeight+30)+'px;">' );
             var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
 
@@ -868,7 +863,7 @@ function statistics( cwsRender )
             tbl.append( trName );
             trName.append( tdName );
 
-            tdBar.append( $( '<div class="statsNetworkTypeText" >' + ( connTypes[ connType ] > 0 ? ( ( parseFloat( connTypes[ connType ] / sum ) * 100 ).toFixed(1) ).toString().replace('.0','') + '%' : '' ) + '</div>' ) );
+            tdBar.append( $( '<div class="statsNetworkTypeText" >' + ( me.connectionTypes[ connType ] > 0 ? ( ( parseFloat( me.connectionTypes[ connType ] / sum ) * 100 ).toFixed(1) ).toString().replace('.0','') + '%' : '' ) + '</div>' ) );
             tdBar.append( $( '<div class="statsNetworkTypeBar ' + ( connType == '3g' || connType == '4g' ? 'statsNetworkTypeBarGrid' : '' ) + '" style="height:' + barH + ';opacity:' + opacityCols[ i ] + ';background-Color:' + colorBrewer[ i ] + '">&nbsp;</div>' ) );
             tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + connType + '</label></div>' );
 

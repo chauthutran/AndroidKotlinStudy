@@ -211,6 +211,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 					ConnManager.dataServer_statusCheck_IntvCounter = 0; //no need to check server status if network offline
 					ConnManager.schedulerTestUnderway = 0;
 
+					ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
+
 					if ( returnFunc ) returnFunc( retJson );
 				}
 			}
@@ -269,6 +271,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 
 					ConnManager.dataServer_statusCheck_IntvCounter = 0;
 					ConnManager.schedulerTestUnderway = 0;
+
+					ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 					if ( returnFunc ) returnFunc( retJson );
 				}
