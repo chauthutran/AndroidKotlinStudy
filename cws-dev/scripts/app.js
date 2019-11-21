@@ -207,8 +207,53 @@
 
           localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
 
-          // Start the app after service worker is ready && not a new install/upgrade.
-          if ( swNewInstallStartup == false ) startApp();
+          if ( Util.getURLParameterByName( window.location.href,'diagnose' ).length )
+          {
+
+            MsgManager.notificationMessage( '1. diagnostics Initiating', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1' );
+
+            Util.cacheSizeCheckAndRepair( function( restart, details ){
+
+              console.log( details );
+
+              if ( restart ) 
+              {
+                //MsgManager.notificationMessage( '3. Clearing Session Storage', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics3' );
+
+                //LocalStorageDataManager.clearSessionStorage( function(){
+
+                  MsgManager.notificationMessage( '3. Clearning Cache', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics4' );
+
+                  cacheManager.clearCacheKeys( false, function(){
+
+                    MsgManager.notificationMessage( '4. Restarting Service Worker', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics5' );
+
+                    _cwsRenderObj.reGetAppShell( function(){
+
+                      MsgManager.notificationMessage( '5. SUCCESS ~ restarting', 'notificationGreen', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics6' );
+
+                      window.location = ( window.location.href ).replace( '?diagnose=' + Util.getURLParameterByName( window.location.href,'diagnose' ), '' ).replace( '&diagnose=' + Util.getURLParameterByName( window.location.href,'diagnose' ), '' )
+
+                    });
+
+                  });
+  
+                //})
+
+              }
+              else
+              {
+                if ( swNewInstallStartup == false ) startApp();
+              }
+
+            });
+
+          }
+          else
+          {
+            // Start the app after service worker is ready && not a new install/upgrade.
+            if ( swNewInstallStartup == false ) startApp();
+          }
 
         })
         .catch(err => 

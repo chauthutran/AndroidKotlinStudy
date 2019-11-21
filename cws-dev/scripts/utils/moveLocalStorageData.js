@@ -1,4 +1,3 @@
-
 function MoveLocalStorageData() {}
 
 MoveLocalStorageData.moveData = function(){
@@ -22,16 +21,19 @@ MoveLocalStorageData.moveData = function(){
 
                 MoveLocalStorageData.moveOneData( moveKeys[ i ], value, function( container, newData ){
 
-                    //console.log( 'moved [' + container + '] now updating to  ~ ' );
-
-                    LocalStorageDataManager.saveData( container, newData );
+                    // LocalStorageDataManager.saveData( container, newData );
+                    localStorage.removeItem( moveKeys[ i ] );
 
                 } );
             }
 
             LocalStorageDataManager.saveData("movedData", "true");
 
-            //console.log("All data from localStorage is moved to IndexDb.");
+            for ( i = 0; i < moveKeys.length; i++ )
+            {
+                localStorage.removeItem( moveKeys[ i ] );
+            }
+
         }
         else
         {

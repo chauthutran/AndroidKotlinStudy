@@ -25,6 +25,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed";
 
     me.redeemListDateGroups;
+    me.lastSyncDate;
     me.showredeemListDateGroups = true;
     me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
@@ -73,7 +74,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.redeemList_Display = function( blockTag )
     {
 
-        FormUtil.getMyListData( me.storageName_RedeemList, function( jsonStorageData ){
+        FormUtil.updateSyncListItems( me.storageName_RedeemList, function( jsonStorageData ){
 
             me.renderRedeemList( jsonStorageData, blockTag, function(){
 
@@ -102,113 +103,119 @@ function BlockList( cwsRenderObj, blockObj )
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
 
-        // Copy from list html template
-        $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
+        DataManager.getData( 'session', function( data ){
 
-        //var listUlLiActiveTag = blockTag.find( 'li.active' );
-        var listContentUlTag = blockTag.find( '.tab__content_act' );
+            me.lastSyncDate = data[ 'syncDate' ];
 
-        me.redeemListTargetTag = listContentUlTag;
+            // Copy from list html template
+            $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
-        if ( redeemObj && redeemObj.length )
-        {
-            var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
+            //var listUlLiActiveTag = blockTag.find( 'li.active' );
+            var listContentUlTag = blockTag.find( '.tab__content_act' );
 
-            listContentUlTag.append( lidateGroupPaddTop );
-    
-            me.redeemList = redeemObj.filter( a=> a.owner == FormUtil.login_UserName );
+            me.redeemListTargetTag = listContentUlTag;
 
-            if ( me.options && me.options.filter )
+            if ( redeemObj && redeemObj.length )
             {
-                for( var o=0; o<me.options.filter.length; o++ )
+                var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
+
+                listContentUlTag.append( lidateGroupPaddTop );
+        
+                me.redeemList = redeemObj.filter( a=> a.owner == FormUtil.login_UserName );
+
+                if ( me.options && me.options.filter )
                 {
-                    var filterObj = me.options.filter[o];
-                    var keys = Object.keys(filterObj);
-                    var keyValue = filterObj[keys[0]];
+                    for( var o=0; o<me.options.filter.length; o++ )
+                    {
+                        var filterObj = me.options.filter[o];
+                        var keys = Object.keys(filterObj);
+                        var keyValue = filterObj[keys[0]];
 
-                    me.redeemList = redeemObj.filter( a=> a[keys[0]] == keyValue );
+                        me.redeemList = redeemObj.filter( a=> a[keys[0]] == keyValue );
+                    }
                 }
+
+                ( me.redeemList ).sort(function (a, b) {
+                    var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
+                    if (b.created > a.created) {
+                        return b1st;
+                    }
+                    else if (a.created > b.created) {
+                        return a1st;
+                    }
+                    else {
+                        return equal;
+                    }
+                });
+
+                if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
+
+                if ( me.redeemList === undefined || me.redeemList.length == 0 )
+                {
+                    var liTag = $( '<li class="emptyListLi"></li>' );
+                    var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;" term="' + Util.termName_listEmpty + '">List is empty.</a>' );
+
+                    liTag.append( spanTag );
+                    listContentUlTag.append( liTag );
+
+                    if ( callBack ) callBack();
+                }
+                else
+                {
+                    me.cwsRenderObj.pulsatingProgress.show();
+                    me.redeemListScrollLimit = me.redeemList.length;
+
+                    if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
+                    {
+                        //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
+                    if ( me.redeemListScrollExists == 0)
+                    {
+                            document.addEventListener('scroll', function (event) {
+                                me.evalScrollOnBottom();
+                            }, true );
+
+                            me.redeemListScrollExists = 1;
+
+                            me.evalScrollOnBottom();
+
+                        }
+                    }
+                    else
+                    {
+                        me.redeemListLimit = true;
+                        document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
+                        me.redeemListScrollExists = 0;
+                    }
+
+                    setTimeout( function() {
+                        me.cwsRenderObj.pulsatingProgress.hide();
+                    }, 500 );
+
+                    if ( callBack ) callBack();
+
+                }
+
             }
-
-            ( me.redeemList ).sort(function (a, b) {
-                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                if (b.created > a.created) {
-                    return b1st;
-                }
-                else if (a.created > b.created) {
-                    return a1st;
-                }
-                else {
-                    return equal;
-                }
-            });
-
-            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
-
-            if ( me.redeemList === undefined || me.redeemList.length == 0 )
+            else
             {
+
                 var liTag = $( '<li class="emptyListLi"></li>' );
-                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;" term="' + Util.termName_listEmpty + '">List is empty.</a>' );
+                var spanTag = $( '<a class="expandable" style="padding: 19px 5px 15px 19px; color: #888;"><img src="images/unavail.svg" class="tab-image" alt="active"><label class="from-string titleDiv" style="padding:0 0 0 16px;" term="' + Util.termName_listEmpty + '">List is empty.</label></a>' );
 
                 liTag.append( spanTag );
                 listContentUlTag.append( liTag );
 
                 if ( callBack ) callBack();
-            }
-            else
-            {
-                me.cwsRenderObj.pulsatingProgress.show();
-                me.redeemListScrollLimit = me.redeemList.length;
-
-                if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
-                {
-                    //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
-                   if ( me.redeemListScrollExists == 0)
-                   {
-                        document.addEventListener('scroll', function (event) {
-                            me.evalScrollOnBottom();
-                        }, true );
-
-                        me.redeemListScrollExists = 1;
-
-                        me.evalScrollOnBottom();
-
-                    }
-                }
-                else
-                {
-                    me.redeemListLimit = true;
-                    document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
-                    me.redeemListScrollExists = 0;
-                }
-
-                setTimeout( function() {
-                    me.cwsRenderObj.pulsatingProgress.hide();
-                }, 500 );
-
-                if ( callBack ) callBack();
 
             }
 
-        }
-        else
-        {
-
-            var liTag = $( '<li class="emptyListLi"></li>' );
-            var spanTag = $( '<a class="expandable" style="padding: 19px 5px 15px 19px; color: #888;"><img src="images/unavail.svg" class="tab-image" alt="active"><label class="from-string titleDiv" style="padding:0 0 0 16px;" term="' + Util.termName_listEmpty + '">List is empty.</label></a>' );
-
-            liTag.append( spanTag );
-            listContentUlTag.append( liTag );
-
-            if ( callBack ) callBack();
-
-        }
+        });
 
     }
 
     me.evalScrollOnBottom = function()
     {
-        if ( !me.redeemListLimit && me.newBlockTag.find( 'div.listDiv' ) && me.newBlockTag.find( 'div.listDiv' ).is(':visible') )
+        if ( !me.redeemListLimit && me.newBlockTag.find( 'div.listDiv' ) && me.newBlockTag.find( 'div.listDiv' ).is(':visible') && ( FormUtil.syncRunning == undefined || FormUtil.syncRunning == 0 ) )
         {
             if ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() )
             {
@@ -314,30 +321,35 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.appendRedeemListOnScrollBottom = function()
     {
-        if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-        for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
-        {
-            me.lastRedeemDate =  me.redeemList[i].created;
-            me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
+        me.refreshRedeemListArray( function(){
 
-            var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-            me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
-            me.redeemListScrollCount += 1;
-        }
+            for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
+            {
+                me.lastRedeemDate =  me.redeemList[i].created;
+                me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
 
-        FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act'), '.expandable', 'click' ); // add click event (expander to show voucher details) to newly created items
+                var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
 
-        if ( parseInt( me.redeemListScrollCount ) == parseInt( me.redeemListScrollLimit ) )
-        {
-            me.redeemListLimit = true;
-            document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
-            me.redeemListScrollExists = 0;
-        }
+                me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
+                me.redeemListScrollCount += 1;
+            }
 
-        me.cwsRenderObj.pulsatingProgress.hide();
-        me.redeemListScrollingState = 0;
+            FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act'), '.expandable', 'click' ); // add click event (expander to show voucher details) to newly created items
+
+            if ( parseInt( me.redeemListScrollCount ) == parseInt( me.redeemListScrollLimit ) )
+            {
+                me.redeemListLimit = true;
+                document.removeEventListener( 'scroll', me.evalScrollOnBottom() );
+                me.redeemListScrollExists = 0;
+            }
+
+            me.cwsRenderObj.pulsatingProgress.hide();
+            me.redeemListScrollingState = 0;
+
+        });
 
     }
 
@@ -660,11 +672,15 @@ function BlockList( cwsRenderObj, blockObj )
 
                 e.stopPropagation();
 
-                if ( syncManager.syncRunning == 0 )
+                if ( FormUtil.syncRunning == 0 )
                 {
                     var mySyncIcon = statusSecDivTag.find( 'small.syncIcon img' );
 
-                    SyncManager.runManualSync( itemData, mySyncIcon );
+                    SyncManager.runManualSync( itemData, mySyncIcon, function(){
+
+                        FormUtil.updateSyncListItems( 'redeemList' );
+
+                    } );
 
                 }
 
@@ -714,6 +730,8 @@ function BlockList( cwsRenderObj, blockObj )
             }
 
             DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData, callBack );
+            // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
+            //       pwa MUST re-initialize 'syncManager' queue+fail arrays
         });
     }
 
@@ -747,7 +765,6 @@ function BlockList( cwsRenderObj, blockObj )
                     return json[ i ].defJson.activityType;
                 }
             }
-            
         }
         else
         {
@@ -763,7 +780,33 @@ function BlockList( cwsRenderObj, blockObj )
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
 	{
         FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me.cwsRenderObj );
-	}
+    }
+    
+    me.refreshRedeemListArray = function( callBack )
+    {
+        // check the last recorded date for a sync run; if that date is different to localStorage (session:syncDate) we need to reload me.redeemList with fresh copy of activity/redeemList for rendering up-to-date statuses for records
+        DataManager.getData( 'session', function( data ){
+
+            var lastSyncDate = data[ 'syncDate' ];
+
+            if ( lastSyncDate != me.lastSyncDate )
+            {
+                DataManager.getData( 'redeemList', function( activityList ){
+
+                    me.redeemList = activityList.list.filter( a=> a.owner == FormUtil.login_UserName );
+                    me.lastSyncDate = data[ 'syncDate' ];
+
+                    if ( callBack ) callBack();
+                });
+            }
+            else
+            {
+                if ( callBack ) callBack();
+            }
+
+        });
+
+    }
 
 	// =============================================
 

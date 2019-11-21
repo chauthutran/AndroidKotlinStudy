@@ -2508,6 +2508,52 @@ $.fn.rotate=function(options) {
 
   }
 
-  Util.numberWithCommas = function(x) {
+  Util.numberWithCommas = function(x) 
+  {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+  }
+
+  Util.cacheSizeCheckAndRepair = function( callBack )
+  {
+
+	DataManager.estimateStorageUse( function( storageJSON ){
+
+		var quotaDenom = parseFloat( storageJSON.quota ) / 1024 / 1024;
+		var suffix = 'MB';
+
+		if ( quotaDenom > 1000 )
+		{
+			quotaDenom = ( quotaDenom / 1000 );
+			suffix = 'GB';
+		}
+
+		var threshold_UsagePercent = 50, threshold_UsageMBsize = 500;
+
+		console.log( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) );
+
+		if ( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) > ( threshold_UsagePercent / 100 ) || ( 5752434934 / 1024 / 1024 ) > threshold_UsageMBsize )
+		{
+			MsgManager.notificationMessage( '1: data usage exceeds 50% of available quota: ' + Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' / ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ), 'notificationRed', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics' );
+
+			DataManager.getData( 'movedData', function( movedData ){
+
+				if ( movedData != undefined || movedData != "true" )
+				{
+					DataManager.migrateIndexedDBtoLocalStorage( function( result, msg ){
+
+						if ( callBack ) callBack( result, msg );
+
+					} );
+				}
+
+			});
+
+		}
+		else
+		{
+			if ( callBack ) callBack( false, 'no need to run clean up' );
+		}
+
+	} );
+
+  }

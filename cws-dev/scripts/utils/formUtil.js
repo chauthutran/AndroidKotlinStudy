@@ -29,6 +29,7 @@ FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
 FormUtil.records_redeem_submit = 0;
 FormUtil.records_redeem_queued = 0;
 FormUtil.records_redeem_failed = 0;
+FormUtil.syncRunning = 0;
 
 // ==== Methods ======================
 
@@ -1118,9 +1119,9 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, retFunc )
+FormUtil.updateSyncListItems = function( listName, retFunc )
 {
-	var redList = {}, returnList = {};
+	var returnList = {};
 
 	FormUtil.records_redeem_submit = 0;
 	FormUtil.records_redeem_queued = 0;
@@ -1130,6 +1131,7 @@ FormUtil.getMyListData = function( listName, retFunc )
 
 		if ( redList )
 		{
+
 			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
 			var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
@@ -1140,6 +1142,9 @@ FormUtil.getMyListData = function( listName, retFunc )
 			FormUtil.records_redeem_queued = myQueue.length;
 			FormUtil.records_redeem_failed = myFailed.length;
 
+			syncManager.dataQueued = myQueue;
+			syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+			
 			if ( retFunc ) retFunc( returnList );
 		}
 		else

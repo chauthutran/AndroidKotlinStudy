@@ -253,7 +253,7 @@ select option {
 .act-l-more-open {
   height: 150px;
   width: auto;
-  overflow: scroll;
+  overflow-y: scroll;
   display: block !important;
   padding: 10px 15px;
   border-top: 2px solid #DCDCDC;

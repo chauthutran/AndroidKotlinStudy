@@ -327,7 +327,7 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			//FormUtil.getMyListData( me.storageName_RedeemList, function( myData )
+			//FormUtil.updateSyncListItems( me.storageName_RedeemList, function( myData )
 			{
 
 				DataManager.getUserConfigData( function( userData ){
@@ -489,18 +489,36 @@ function cwsRender()
 		me.registrationObj = registrationObj;
 	}
 
-	me.reGetAppShell = function()
+	me.reGetAppShell = function( callBack )
 	{
 		if ( me.registrationObj !== undefined )
 		{
 			me.registrationObj.unregister().then(function(boolean) {
-				location.reload( true );
+
+				if ( callBack )
+				{
+					callBack();
+				}
+				else
+				{
+					location.reload( true );
+				}
+
 			})
 			.catch(err => {
 				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
 				setTimeout( function() {
-					location.reload( true );
+					
+					if ( callBack )
+					{
+						callBack();
+					}
+					else
+					{
+						location.reload( true );
+					}
+
 				}, 100 )		
 			
 			});

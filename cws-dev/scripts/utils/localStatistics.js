@@ -336,7 +336,7 @@ function statistics( cwsRender )
     me.createLocalAnalytics = function( callBack )
     {
 
-        FormUtil.getMyListData( me.cwsRenderObj.storageName_RedeemList, function( myData ){
+        FormUtil.updateSyncListItems( me.cwsRenderObj.storageName_RedeemList, function( myData ){
 
             if ( myData )
             {
@@ -864,7 +864,7 @@ function statistics( cwsRender )
             trName.append( tdName );
 
             tdBar.append( $( '<div class="statsNetworkTypeText" >' + ( me.connectionTypes[ connType ] > 0 ? ( ( parseFloat( me.connectionTypes[ connType ] / sum ) * 100 ).toFixed(1) ).toString().replace('.0','') + '%' : '' ) + '</div>' ) );
-            tdBar.append( $( '<div class="statsNetworkTypeBar ' + ( connType == '3g' || connType == '4g' ? 'statsNetworkTypeBarGrid' : '' ) + '" style="height:' + barH + ';opacity:' + opacityCols[ i ] + ';background-Color:' + colorBrewer[ i ] + '">&nbsp;</div>' ) );
+            tdBar.append( $( '<div class="statsNetworkTypeBar ' + ( connType.indexOf( '2g' ) < 0 ? 'statsNetworkTypeBarGrid' : '' ) + '" style="height:' + barH + ';opacity:' + opacityCols[ i ] + ';background-Color:' + colorBrewer[ i ] + '">&nbsp;</div>' ) );
             tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + connType + '</label></div>' );
 
             i += 1;

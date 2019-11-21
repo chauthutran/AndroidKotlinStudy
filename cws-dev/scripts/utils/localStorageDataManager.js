@@ -169,13 +169,16 @@ LocalStorageDataManager.getSessionDataValue = function( prop, defval, callBack )
 }
 
 
-LocalStorageDataManager.clearSessionStorage = function()
+LocalStorageDataManager.clearSessionStorage = function( callBack )
 {
-	LocalStorageDataManager.deleteData( 'networkConnectionObs' );
-	localStorage.removeItem( 'networkConnectionObs' );
+	//LocalStorageDataManager.deleteData( 'networkConnectionObs' );
+	//localStorage.removeItem( 'networkConnectionObs' );
 
 	LocalStorageDataManager.getSessionData( function( sessionData ){
+
 		LocalStorageDataManager.deleteData( DataManager.StorageName_session );
-		LocalStorageDataManager.deleteData( sessionData.user );
+		//LocalStorageDataManager.deleteData( sessionData.user );
+
+		if ( callBack ) callBack();
 	});
 }
