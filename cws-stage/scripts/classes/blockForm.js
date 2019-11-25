@@ -308,12 +308,11 @@ function BlockForm( cwsRenderObj, blockObj )
 				//	Input for to be shown in the app
 				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' );
 
-				
-				let options = new OptionsManager({name:'BirthDistrict',data:arr, search:true});
+				let options = new OptionsManager( { name: formItemJson.uid, data: arr, search:true } ); //name:'BirthDistrict'
 
 				var labelTerm = me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term )
-				
-				let nuevoModal = new Modal({parent: divInputTag[0], titleMessage: labelTerm,customElement: options.element,buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true});
+
+				let nuevoModal = new Modal( { parent: divInputTag[0], titleMessage: labelTerm, customElement: options.element, buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true } );
 
 				inputShow.click(function(){
 					inputShow.blur()
@@ -321,10 +320,12 @@ function BlockForm( cwsRenderObj, blockObj )
 					nuevoModal.exec();
 					options.inputSearch.focus()
 				});
+
 				btnDisagree.click(function(e){
 					e.preventDefault()
 					nuevoModal.exec();
 				});
+
 				btnSelect.click(function(e){
 					e.preventDefault()
 					input.val( options.element.dataset.value );
@@ -333,9 +334,8 @@ function BlockForm( cwsRenderObj, blockObj )
 					nuevoModal.exec();
 				});
 
-				//let wrapperTag = $('<div></div>');
 				divInputTag.append( input, inputShow );
-				//divInputTag.append( $(wrapperTag) );
+
 			}
 			else if( formItemJson.controlType === "YEAR" )
 			{
@@ -422,12 +422,14 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				entryTag.click( e => e.preventDefault() );
 
-				button.click( function(e) {
-
+				var tagOfClick = Util.isMobi() ? button.parent() : button
+				tagOfClick.click( function(e) {
+					if(Util.isMobi()) entryTag.blur()
 					var dtmPicker = new mdDateTimePicker.default({
 						type: 'date',
 							init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
-							future: moment()
+						future: moment(), // Date max
+						past: moment().subtract(40, 'years') // Date min 
 					} );
 
 					e.preventDefault();
@@ -493,13 +495,41 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 			else if ( formItemJson.controlType === "CHECKBOX" )
 			{
-				var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
+				if ( formItemJson.slider && (formItemJson.slider == "true" || formItemJson.slider == true ) )
+				{
 
-				FormUtil.setTagVal( input, formItemJson.defaultValue )
+					var switchEl = $(`
+						<div class="switchSider" >
+							<div class="switch" style="margin-right:10px">
+								<label>
+								<input name="${formItemJson.id}" type="checkbox" />
+								<span class="lever"></span>
+								</label>
+							</div>
+							<span class="switch__defaultName">${formItemJson.defaultName}</span>
+						</div>
+					`);
 
-				divInputTag.append( component );
+					$('input',switchEl).click(function(){
+						$('input',switchEl).attr("checked", !$('input',switchEl).attr("checked") );
+					});
 
-				entryTag = $( '[name=' + formItemJson.id + ']' );
+					$('span.switch__defaultName',switchEl).click(function(){
+						$('input',switchEl).attr("checked", !$('input',switchEl).attr("checked") );
+					});
+
+					divInputTag.append(switchEl);
+				}
+				else
+				{
+					var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
+
+					FormUtil.setTagVal( input, formItemJson.defaultValue )
+
+					divInputTag.append( component );
+
+					entryTag = $( '[name=' + formItemJson.id + ']' );
+				}
 			}
 			else if ( formItemJson.controlType === "LABEL" )
 			{

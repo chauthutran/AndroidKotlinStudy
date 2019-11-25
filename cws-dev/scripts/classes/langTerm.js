@@ -84,7 +84,18 @@ function LangTerm( cwsRenderObj )
 	// Retrieve it from ws and put it on local storage or local store location
 	me.retrieveAllLangTermInner = function( returnFunc )
 	{
-		var queryLoc = '/api/langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
+
+		if ( WsApiManager.useDWS() )
+		{
+			var queryLoc = '/PWA.langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
+			var dailyCache = '/PWA.dailyCache';
+		}
+		else
+		{
+			var queryLoc = '/api/langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
+			var dailyCache = '/api/dailyCache';
+		}
+
 		var loadingTag = undefined;
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
@@ -101,7 +112,7 @@ function LangTerm( cwsRenderObj )
 				if ( me.debugMode ) console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
-				FormUtil.wsSubmitGeneral( '/api/dailyCache', { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
+				FormUtil.wsSubmitGeneral( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
 					if ( success && allLangTermsJson )
 					{
 						

@@ -25,15 +25,15 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/mdDateTimePicker.min.css",
-    "revision": "94decc3f0399de0cfd3d05339f5f7106"
+    "revision": "0ecbb1a0d51067dcdc00987e81ba2307"
   },
   {
     "url": "css/responsive.css",
-    "revision": "072786586230c89e207d94324dff3666"
+    "revision": "c168b9f2cd2870e178fe136cc61e7170"
   },
   {
     "url": "css/style.css",
-    "revision": "36df24ec57fcdcc9c262fbcc7d5f6f02"
+    "revision": "70ccc25877b48195096075e689d196c3"
   },
   {
     "url": "images/about.svg",
@@ -357,15 +357,15 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "d9bba22b40b0a43c23ae73752d6bdf1a"
+    "revision": "b02c3b86e4ca357913c991cb74bea795"
   },
   {
     "url": "redeemGen.html",
-    "revision": "ca5d5efe73926933e17f35c82b2892d6"
+    "revision": "39f080ab3148c9bc92abe01ca86e52bc"
   },
   {
     "url": "scripts/app.js",
-    "revision": "10d9230a428c1028a1505cfb8b1cd97a"
+    "revision": "c010a313f04630c7cdf336234a520f54"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -389,11 +389,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "0e629a963c08ff8c7c49455ef2e1cf7c"
+    "revision": "caa86a11e376e094a17b6d35429f67c3"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "daafb860c771b1bb1ec71fc3e1e25ab1"
+    "revision": "57a92856184c6d30336d3e97549568a8"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -405,15 +405,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "f3d311f955b393e3579246bbd521e1eb"
+    "revision": "4f236656ebfe6b237f66a2750376dd21"
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "0849e5b23c987704ea33b9fdaa01ed35"
+    "revision": "5d62e856f46657c809ed739d709b214f"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "355317b1c5b78c82ff0c384a136f90dd"
+    "revision": "fe253642c27931e440621fec7223eb47"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
-    "revision": "2e5857d51b33bcfb76f28f1483bf95d1"
+    "revision": "09015fa59b86932c56a80f2822aed1f7"
   },
   {
     "url": "scripts/classes/qrcode.js",
@@ -433,7 +433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "6f20b3fd3684266afe85100bc70748c6"
+    "revision": "9ad93da74649ab54a41e8f57afeee234"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -449,7 +449,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "19f4189eda77f571cf4e0f0e002178d3"
+    "revision": "d0e70074961aa66eea3377ff27e29574"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -505,15 +505,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/configUtil.js",
-    "revision": "9d5b1b1ade53af54b2caaae852822280"
+    "revision": "fa728c15fe1f4ad76a097d4e998d9b1a"
   },
   {
     "url": "scripts/utils/connManager.js",
-    "revision": "1a37f4b896dcd086a79a96837123b24c"
+    "revision": "426a7a92d205072189787738f1e21061"
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "ab61c2f804118e08cd9584d7605b2b0b"
+    "revision": "f451bb9c133a3f32098d78d506bcc09f"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -521,15 +521,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formMsgManager.js",
-    "revision": "1800f751175640c1978ad3a9a074980f"
+    "revision": "d12cdc7721b1ecbd8b430e8f4a4ea4df"
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "6031eaef41cfbab2968923022d6475ec"
+    "revision": "791b92b6c8a059bce72dbd19a4d1daa4"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
-    "revision": "c4fa8598ad0ffae81c74b88bbf747325"
+    "revision": "f3af229dc827fb2e6d6654358156d86a"
   },
   {
     "url": "scripts/utils/indexdbStorage.js",
@@ -541,31 +541,31 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "d5f11856951c89db4f7314aad003a481"
+    "revision": "bd3a59917c04f797b24140e983328104"
   },
   {
     "url": "scripts/utils/localStorageDataManager.js",
-    "revision": "ce19286bd3edacd7955c151c7ea1e9c6"
+    "revision": "d5f25ae4971422158a959336dee9e5a9"
   },
   {
     "url": "scripts/utils/moveLocalStorageData.js",
-    "revision": "b64daab6c28a951acacf96f5af1af534"
+    "revision": "fc782a207dddb2273392b3d5d0d1ba11"
   },
   {
     "url": "scripts/utils/msgManager.js",
-    "revision": "76150c7664bf689904098b9835693967"
+    "revision": "f477b8e27083cba8251dfbfcbc622cde"
   },
   {
     "url": "scripts/utils/pptManager.js",
-    "revision": "bef28dce3a41f4f4bcc6f8b81921672e"
+    "revision": "2d6f974cc18206989ca8ef8cb660fef7"
   },
   {
     "url": "scripts/utils/pptOptions.js",
-    "revision": "b680552adbf542174e6a358790a7cf47"
+    "revision": "7206d5c8b52e6d9e5e9ab336d5ea67eb"
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "8017cd0aad3a9a8be568a380127f0523"
+    "revision": "e998acaf4673ea87aaf1d8fdbd340311"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -573,15 +573,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "8031a29aea0cc2191d233a78cfac6020"
+    "revision": "eb8f307745372e39984309f2dcb4c4ef"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "7b3cf2e65225452ae008c26594a8c0b9"
+    "revision": "1e9cd06e257bbbf409d1576854950163"
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "f1d7ce78a273f4f540c82ed7b7bcd5fc"
+    "revision": "cdcaa6bdf7a9fafad990df99d620f95c"
   },
   {
     "url": "sounds/beep.mp3",
@@ -641,7 +641,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "6e55069ef20aabcc20533b3ba33ea91c"
+    "revision": "1bf9c1896987350102865d587160aec7"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

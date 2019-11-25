@@ -46,7 +46,7 @@ ConfigUtil.getMsgAutoHide = function( configJson )
 
 ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
 {
-    ConfigUtil.configUserRole( bOnline, configJson, function(){
+    ConfigUtil.configUserRole( configJson, function(){
 
          var compareList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
          var retAreaList = [];
@@ -55,11 +55,9 @@ ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
          {
             if ( compareList[ i ].userRoles )
             {
-                var bFound = false;
-
                 for ( var p=0; p< compareList[ i ].userRoles.length; p++ )
                 {
-                    if ( compareList[ i ].userRoles[ p ] == FormUtil.login_UserRole )
+                    if ( FormUtil.login_UserRole.includes( compareList[ i ].userRoles[ p ]  ) )
                     {
                         retAreaList.push( compareList[ i ] );
                         break;
@@ -75,7 +73,7 @@ ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
         if ( callBack ) callBack( retAreaList );
 
     } );
-    
+
 };
 
 ConfigUtil.getAllAreaList = function( configJson )
@@ -85,21 +83,21 @@ ConfigUtil.getAllAreaList = function( configJson )
     return combinedAreaList.concat( configJson.areas.online, configJson.areas.offline );
 };
 
-ConfigUtil.configUserRole = function( bOnline, configJson, callBack )
+ConfigUtil.configUserRole = function( configJson, callBack )
 {
     var defRoles = configJson.definitionUserRoles;
     var userGroupRole = FormUtil.orgUnitData.orgUnit.organisationUnitGroups;
 
     if ( defRoles && userGroupRole )
     {
-        var roleID = userGroupRole[ 0 ].id;
-
-        for ( var i=0; i< defRoles.length; i++ )
+        for ( var r=0; r< userGroupRole.length; r++ )
         {
-            if ( defRoles[ i ].uid == roleID )
+            for ( var i=0; i< defRoles.length; i++ )
             {
-                FormUtil.login_UserRole = defRoles[ i ].id;
-                break;
+                if ( defRoles[ i ].uid == userGroupRole[ r ].id )
+                {
+                    FormUtil.login_UserRole.push( defRoles[ i ].id );
+                }
             }
         }
 
@@ -107,7 +105,7 @@ ConfigUtil.configUserRole = function( bOnline, configJson, callBack )
     }
     else
     {
-        FormUtil.login_UserRole = '';
+        FormUtil.login_UserRole = [];
         if ( callBack ) callBack();
     }
 

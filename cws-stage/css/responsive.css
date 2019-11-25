@@ -354,9 +354,6 @@
         top: 10px;
       }
 
-      .leftDynamic, .dataToHTMLleft {
-        text-align: left;
-      }
       .rightDynamic, .dataToHTMLright {
         text-align: right;
       }
@@ -521,9 +518,6 @@
         top: 6px;      
       }
 
-      .leftDynamic, .dataToHTMLleft {
-        text-align: left;
-      }
       .rightDynamic, .dataToHTMLright {
         text-align: left;
       }
@@ -536,7 +530,6 @@
     @media screen and (max-width: 865px) {
       .optItem {
         padding: 0 4px 0 8px;
-        height: 110px;
         overflow-y: scroll;
         background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
       }

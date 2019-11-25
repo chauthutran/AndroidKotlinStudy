@@ -29,8 +29,16 @@ class CustomOption{
         this.text.className = 'optItemText';
 
         this.pointBorder.style.setProperty('border',`2px solid ${this.colorOff}`)
-
         this.pointInt.style.setProperty('background',`${this.colorOn}`)
+
+        if ( Util.isMobi() )
+        {
+
+        }
+        else
+        {
+
+        }
 
         //
         if(style == 'simple'){
@@ -53,25 +61,23 @@ class CustomOption{
 
     }
     events(){
-        this.element.addEventListener('click',e=>{
+        $(this.element).click((e)=>{
             this.element.dispatchEvent(this.event)
             if(window.getComputedStyle(this.pointInt).display === 'none'){
                 this.select()
             }else{
                 this.unselect()
             }
-        })
+        });
     }
     select(){
         this.pointInt.style.setProperty('display','block')
         this.pointBorder.style.setProperty('border-color',this.colorOn)
-        //this.text.style.setProperty('color',this.colorOn)
         this.text.style.setProperty('font-weight','bolder')
     }
     unselect(){
         this.pointInt.style.setProperty('display','none')
         this.pointBorder.style.setProperty('border-color',this.colorOff)
-        //this.text.style.setProperty('color','black')
         this.text.style.setProperty('font-weight','normal')
     }
     hide(){
@@ -158,7 +164,8 @@ class OptionsManager{
             }
         })
         if(this.optionStyle == 'simple')
-        this.ul.addEventListener('click',e=>{
+        $(this.ul).click( e=>
+            {
             if(e.srcElement.tagName=='SPAN'){
                 var index = Array.from(this.ul.children).findIndex(li=>{
                     return li.querySelector('span')==e.srcElement
@@ -166,7 +173,8 @@ class OptionsManager{
                 this.ul.scrollTop = 50*parseFloat(index)-50  
             }
         })
-        if(this.inputSearch){
+        if(this.inputSearch)
+        {
             this.inputSearch.addEventListener('keyup',e=>{
                 const letras = e.target.value
                 for(let prop in this.options){
@@ -181,39 +189,51 @@ class OptionsManager{
         }
     }
     setStyles(){
-        this.element.style.setProperty('padding','16px')
-        this.element.style.setProperty('width','288px')
-        this.element.style.setProperty('overflow','hidden')
-        this.element.style.setProperty('position','relative')
+        $(this.element).css(
+            {
+                'padding':'16px',
+                'width':'288px',
+                'overflow':'hidden',
+                'position':'relative',
+                'height': '80%'
+            }
+        );
         if(this.optionStyle == 'simple'){
-            this.decorationLinesTop.style.setProperty('background','black')
-            this.decorationLinesTop.style.setProperty('border','none')
-            this.decorationLinesTop.style.setProperty('height','2px')
-            this.decorationLinesTop.style.setProperty('width','80px')
-            this.decorationLinesTop.style.setProperty('position','absolute')
-            this.decorationLinesTop.style.setProperty('top','33%')
-            this.decorationLinesTop.style.setProperty('left','50%')
-            this.decorationLinesTop.style.setProperty('transform','translateX(-50%)')
-            this.decorationLinesTop.style.setProperty('pointer-events','none')
-            
-            this.decorationLinesBottom.style.setProperty('background','black')
-            this.decorationLinesBottom.style.setProperty('border','none')
-            this.decorationLinesBottom.style.setProperty('height','1.5px')
-            this.decorationLinesBottom.style.setProperty('width','80px')
-            this.decorationLinesBottom.style.setProperty('position','absolute')
-            this.decorationLinesBottom.style.setProperty('bottom','33%')
-            this.decorationLinesBottom.style.setProperty('left','50%')
-            this.decorationLinesBottom.style.setProperty('transform','translateX(-50%)')
-            this.decorationLinesBottom.style.setProperty('pointer-events','none')
+            $(this.decorationLinesTop).css(
+                {
+                    'background':'black',
+                    'border':'none',
+                    'height':'2px',
+                    'width':'80px',
+                    'position':'absolute',
+                    'top':'33%',
+                    'left':'50%',
+                    'transform':'translateX(-50%)',
+                    'pointer-events':'none'
+                }
+            );
+            $(this.decorationLinesBottom).css(
+                {
+                    'background':'black',
+                    'border':'none',
+                    'height':'1.5px',
+                    'width':'80px',
+                    'position':'absolute',
+                    'top':'33%',
+                    'left':'50%',
+                    'transform':'translateX(-50%)',
+                    'pointer-events':'none'
+                }
+            );
 
-            this.element.style.setProperty('height','150px')
+            $(this.element).css('height','150px');
 
             this.ul.scroll=18.5
         }
     }
     showAll(){
         for(let prop in this.options){
-            this.options[prop].show()
+            this.options[prop].show();
         }
     }
 }

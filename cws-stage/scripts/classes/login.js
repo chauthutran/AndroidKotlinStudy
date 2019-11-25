@@ -288,6 +288,13 @@ function Login( cwsRenderObj )
 			me.loginAfter();
 		}
 
+		DataManager.getData( 'syncList', function( syncData ){
+
+			// if previously run Sync process 'crashed' without saving results > update results
+			if ( syncData ) syncManager.mergeSyncListWithIndexDB();
+
+		});
+
 		$( 'nav' ).show();
 
 	}

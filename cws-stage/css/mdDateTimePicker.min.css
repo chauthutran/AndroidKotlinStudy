@@ -189,7 +189,7 @@
 }
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid .mddtp-picker__tr span.mddtp-picker__cell:hover,
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid span.mddtp-picker__cell--selected {
-	background-color: rgba(0, 0, 0, .45);
+	background-color: #2C98F0; /*rgba(0, 0, 0, .45);*/
 	color: #fff
 }
 .mddtp-picker__body .mddtp-picker__viewHolder .mddtp-picker__grid span.mddtp-picker__cell--disabled {

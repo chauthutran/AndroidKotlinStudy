@@ -14,6 +14,11 @@ DataManager.dbStorageType = DataManager.dbStorageType_indexdb; // Defaut value. 
 
 DataManager.securedContainers = [ 'redeemList' ];
 DataManager.indexedDBStorage = [];
+DataManager.storageEstimate;
+
+DataManager.indexedDBopenRequestTime; // time the opening + 
+DataManager.indexedDBopenResponseTime;// response delay times
+DataManager.trackOpenDelays = {};
 
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---
@@ -33,20 +38,70 @@ DataManager.saveData = function( secName, jsonData, retFunc )
 
 DataManager.getData = function( secName, callBack ) 
 {
-	
+
 	if ( DataManager.protectedContainer( secName ) )
 	{
-		IndexdbDataManager.getData( secName, callBack );
+		DataManager.trackOpenEventDelay( secName, false );
+
+		IndexdbDataManager.getData( secName, function( data ){
+
+			DataManager.trackOpenEventDelay( secName, true );
+
+			if ( secName == 'redeemList' && data && data.list )
+			{
+
+				var returnList = data.list.filter( a => a.owner == FormUtil.login_UserName );
+				var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+				var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+				var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
+
+				FormUtil.records_redeem_submit = mySubmit.length;
+				FormUtil.records_redeem_queued = myQueue.length;
+				FormUtil.records_redeem_failed = myFailed.length;
+
+				syncManager.dataQueued = myQueue;
+				syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+
+			}
+
+			if ( callBack ) callBack( data );
+
+		});
 	}
 	else
 	{
-		LocalStorageDataManager.getData( secName, callBack );
+
+		DataManager.trackOpenEventDelay( secName, false );
+
+		LocalStorageDataManager.getData( secName, function( data ){
+
+			DataManager.trackOpenEventDelay( secName, true );
+
+			if ( callBack ) callBack( data );
+
+		});
+
 	}
 };
 
+DataManager.trackOpenEventDelay = function( secName, trackClose )
+{
+	if ( ! trackClose ) DataManager.trackOpenDelays[ secName ] = {};
+
+	DataManager.trackOpenDelays[ secName ][ ( trackClose ? 'response' : 'request' ) ] = new Date().toISOString();
+
+	if ( trackClose )
+	{
+		DataManager.trackOpenDelays[ secName ][ 'delay' ] = new Date( DataManager.trackOpenDelays[ secName ][ 'response' ] ) - new Date( DataManager.trackOpenDelays[ secName ][ 'request' ] );
+
+		if ( secName == 'redeemList' ) console.log( DataManager.trackOpenDelays[ secName ] );
+
+	}
+
+}
+
 DataManager.getOrCreateData = function( secName, callBack ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.getOrCreateData( secName, callBack );
@@ -68,7 +123,6 @@ DataManager.deleteData = function( secName )
 
 DataManager.insertDataItem = function( secName, jsonInsertData, retFunc ) 
 {
-
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.insertDataItem( secName, jsonInsertData, retFunc );
@@ -82,7 +136,6 @@ DataManager.insertDataItem = function( secName, jsonInsertData, retFunc )
 
 DataManager.getItemFromData = function( secName, id, callBack ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		return IndexdbDataManager.getItemFromData( secName, id, callBack );
@@ -96,7 +149,6 @@ DataManager.getItemFromData = function( secName, id, callBack )
 
 DataManager.updateItemFromData = function( secName, id, jsonDataItem ) 
 {
-	
 	if ( DataManager.protectedContainer( secName ) )
 	{
 		IndexdbDataManager.updateItemFromData( secName, id, jsonDataItem );
@@ -132,14 +184,14 @@ DataManager.getSessionDataValue = function( prop, defval, callBack )
 
 DataManager.clearSessionStorage = function()
 {
-	if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
+	//if( DataManager.dbStorageType == DataManager.dbStorageType_localStorage )
 	{
 	 	LocalStorageDataManager.clearSessionStorage();
 	}
-	else
+	/*else
 	{
 		IndexdbDataManager.clearSessionStorage();
-	}
+	}*/
 }
 
 DataManager.protectedContainer = function( secName )
@@ -157,11 +209,35 @@ DataManager.protectedContainer = function( secName )
 
 }
 
-DataManager.initialiseDataStorageSize = function()
+DataManager.estimateStorageUse = function( callBack )
+{
+	if ('storage' in navigator && 'estimate' in navigator.storage) 
+	{
+		navigator.storage.estimate().then(({usage, quota}) => {
+
+			var retJson = { 'usage': usage, 'quota': quota };
+
+			DataManager.storageEstimate = retJson;
+
+		  	if ( callBack )
+			{
+				callBack( retJson )
+			}
+			else
+			{
+				return retJson;
+			}
+
+		});
+
+	}
+}
+
+/*DataManager.initialiseStorageEstimates = function()
 {
 	for ( var i = 0; i < DataManager.securedContainers.length; i++ )
 	{
-		FormUtil.getMyListData( DataManager.securedContainers[i], function (data) {
+		FormUtil.updateSyncListItems( DataManager.securedContainers[i], function (data) {
 
 			var dataSize = Util.lengthInUtf8Bytes(JSON.stringify(data));
 
@@ -173,25 +249,65 @@ DataManager.initialiseDataStorageSize = function()
 
 DataManager.getStorageSizes = function( callBack )
 {
-	//DataManager.initialiseDataStorageSize( function()
+	var arrItems = [];
+
+	arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
+	arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
+	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
+
+	if ( callBack )
 	{
+		callBack( arrItems )
+	}
+	else
+	{
+		return arrItems;
+	}
 
-		var arrItems = [];
+}*/
 
-		arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
-		arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
-		arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
-	
-		if ( callBack )
-		{
-			callBack( arrItems )
-		}
-		else
-		{
-			return arrItems;
-		}
+DataManager.migrateIndexedDBtoLocalStorage = function( callBack )
+{
+	MsgManager.notificationMessage( '1.1: removed localStorage "moveData"', 'notificatioDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.1' );
+	localStorage.removeItem( 'movedData' );
 
-	} //)
-	
+	MsgManager.notificationMessage( '1.2: opening indexedDB', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.2' );
+	DataManager.getData( 'redeemList', function( activityData ){
 
+		MsgManager.notificationMessage( '1.3: copying to localStorage', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.3' );
+		localStorage.setItem( 'redeemList', JSON.stringify( activityData ) );
+
+		MsgManager.notificationMessage( '1.4: deleting IndexedDB', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.4' );
+
+		DataManager.dropMyIndexedDB_CAUTION_DANGEROUS( function( result, msg ){
+
+			if ( callBack ) callBack( result, msg );
+
+		});
+
+	});
+
+}
+
+DataManager.dropMyIndexedDB_CAUTION_DANGEROUS = function( callBack )
+{
+	var req = indexedDB.deleteDatabase( 'cwsdb' );
+
+	req.onsuccess = function () {
+		var msg = "SUCCESS: indexedDB removed";
+		MsgManager.notificationMessage( '2: diagnostics > indexedDB MOVED', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics2' );
+		if ( callBack ) callBack( true, msg );
+	};
+
+	req.onerror = function () {
+		var msg = "Error unable to delete database";
+		MsgManager.notificationMessage( '2: diagnostics > indexedDB ERROR', 'notificationPurple', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics2' );
+		if ( callBack ) callBack( false, msg );
+	};
+
+	req.onblocked = function () {
+		var msg = "DB blocked from being deleted";
+		MsgManager.notificationMessage( '2: diagnostics > indexedDB LOCKED', 'notificationPurple', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics2' );
+		if ( callBack ) callBack( false, msg );
+	};
 }

@@ -236,7 +236,7 @@ header {
 }
 #navMenuHead {
   width:100%;
-  height:100px;
+  height:104px; /*100px*/
   margin:0;
   padding:0;
   border-radius:0;
@@ -1106,3 +1106,126 @@ div.loginBtn {
   font-family: "Rubik", Arial;
   line-height: 35px;
 }
+
+.storageUsageGreenBar {
+  width:35%;
+  background-color: #3FF000;
+}
+.storageUsageYellowBar {
+  width:30%;
+  background-image: -webkit-linear-gradient(left,#3FF000,yellow, red);
+  background-image: -o-linear-gradient(right,#3FF000,yellow, red);
+  background-image: -moz-linear-gradient(right,#3FF000,yellow, red);
+  background-image: linear-gradient(to right,#3FF000,yellow, red);
+}
+.storageUsageRedBar {
+  width:35%;
+  background-color: red;
+}
+.formBlockProgressIcon {
+  border-radius: 20px;
+  padding:8px;
+
+  transform-style: preserve-3d;
+  transition: all 0.5s linear;
+}
+
+
+
+/* CSS loading.io */
+
+/* 1. ellipsis START */
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 20px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4285f4;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+/* 1. ellipsis END */
+
+/* 2. spinning Rings START */
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 38px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: 4px;
+  border: 3px solid #4285f4;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #4285f4 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* 2. spinning Rings END */

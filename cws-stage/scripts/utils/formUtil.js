@@ -9,7 +9,7 @@ FormUtil.staticWSpath = '';
 FormUtil.login_UserName = '';
 FormUtil.login_Password = '';
 FormUtil.login_server = '';
-FormUtil.login_UserRole = '';
+FormUtil.login_UserRole = [];
 FormUtil.orgUnitData;
 FormUtil.dcdConfig;
 
@@ -25,6 +25,11 @@ FormUtil.geoLocationLatLon;  // --> move to geolocation.js class
 FormUtil.geoLocationState;  // --> move to geolocation.js class
 FormUtil.geoLocationError;  // --> move to geolocation.js class
 FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
+
+FormUtil.records_redeem_submit = 0;
+FormUtil.records_redeem_queued = 0;
+FormUtil.records_redeem_failed = 0;
+FormUtil.syncRunning = 0;
 
 // ==== Methods ======================
 
@@ -432,14 +437,30 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {
-	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-	RESTUtil.retrieveJson( url, function( success, returnJson )
+	if ( WsApiManager.useDWS() )
 	{
-		if ( loadingTag ) loadingTag.remove();
+		var url = WsApiManager.composeWsFullUrl( apiPath );
 
-		if ( returnFunc ) returnFunc( returnJson );
-	});
+		RESTUtil.retrieveDWSJson( url, function( success, returnJson )
+		{
+			if ( loadingTag ) loadingTag.remove();
+
+			if ( returnFunc ) returnFunc( returnJson );
+		});
+	}
+	else
+	{
+
+		var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+
+		RESTUtil.retrieveJson( url, function( success, returnJson )
+		{
+			if ( loadingTag ) loadingTag.remove();
+
+			if ( returnFunc ) returnFunc( returnJson );
+		});
+
+	}
 }
 
 // POST Request to Web Service..
@@ -715,7 +736,6 @@ FormUtil.getRedeemPayload = function( id ) {
 }
 
 
-
 FormUtil.getAppInfo = function( returnFunc )
 {	
 	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
@@ -724,15 +744,27 @@ FormUtil.getAppInfo = function( returnFunc )
 }
 
 FormUtil.getDataServerAvailable = function( returnFunc )
-{	
-	var url = WsApiManager.composeWsFullUrl( '/api/available' );
-	console.log( '~ 1 : api/available  ')
-	//RESTUtil.retrieveJson( url, returnFunc );
-	RESTUtil.retrieveJson( url, function(){
-		console.log( '~ 2 : api/available  ')
-		RESTUtil.retrieveJson( url, returnFunc );
+{
 
-	} );
+	if ( WsApiManager.useDWS() )
+	{
+		var url = WsApiManager.composeWsFullUrl( '/PWA.available' );
+
+		RESTUtil.retrieveDWSJson( url, returnFunc );
+	}
+	else
+	{
+		var url = WsApiManager.composeWsFullUrl( '/api/available' );
+
+		console.log( '~ 1 : api/available  ')
+		//RESTUtil.retrieveJson( url, returnFunc );
+		RESTUtil.retrieveJson( url, function(){
+			console.log( '~ 2 : api/available  ')
+			RESTUtil.retrieveJson( url, returnFunc );
+
+		} );	
+	}
+
 }
 
 // ======================================
@@ -856,6 +888,8 @@ FormUtil.evalReservedField = function( tagTarget, val )
 FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 {
 	var qrContainer = $( '#qrTemplate' );
+	qrContainer.empty();
+
 	var myQR = new QRCode( qrContainer[ 0 ] );
 	var inputVal = $( '[name=' + sourceInput +']' ).val();
 
@@ -877,7 +911,7 @@ FormUtil.getTagVal = function( tag )
 	{
 		if ( FormUtil.checkTag_CheckBox( tag ) )
 		{			
-			val = tag.is( ":checked" ) ? "true" : "" ;
+			val = tag.is( ":checked" ) ? "true" : "false" ;
 		}
 		else
 		{
@@ -1112,16 +1146,32 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.getMyListData = function( listName, retFunc )
+FormUtil.updateSyncListItems = function( listName, retFunc )
 {
-	var redList = {}, returnList = {};
+	var returnList = {};
+
+	FormUtil.records_redeem_submit = 0;
+	FormUtil.records_redeem_queued = 0;
+	FormUtil.records_redeem_failed = 0;
 
 	DataManager.getData( listName, function( redList ) {
 
 		if ( redList )
 		{
+
 			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
+			var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+			var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+			var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
+
+			FormUtil.records_redeem_submit = mySubmit.length;
+			FormUtil.records_redeem_queued = myQueue.length;
+			FormUtil.records_redeem_failed = myFailed.length;
+
+			syncManager.dataQueued = myQueue;
+			syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+			
 			if ( retFunc ) retFunc( returnList );
 		}
 		else
@@ -1892,6 +1942,17 @@ FormUtil.getActivityTypes = function()
 	return retArr;
 
 };
+
+FormUtil.loaderEllipsis = function()
+{
+	return '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+}
+
+FormUtil.loaderRing = function()
+{
+	return '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
+	//return '<div class="loadingImg" style=""><img src="images/loading_small.svg"></div>';
+}
 
 FormUtil.getMyDetails = function( callBack )
 {

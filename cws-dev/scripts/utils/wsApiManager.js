@@ -23,16 +23,20 @@ WsApiManager.cwsDash = 'cws-';  //
 WsApiManager.wsName = 'eRefWSDev3';     // default 'wsName' value..
 WsApiManager.serverUrl = '';  // "https://cws.psi-mis.org/ws  // Was _serverOverride before
 
+
 // Below should be named differently?..
 WsApiManager.serverUrl_appsPsiOrg = 'https://apps.psi-mis.org';  // Apps WebService version
 WsApiManager.domain_appsPsiOrg = 'apps.psi-mis.org';  // change to '.psi-connect.org';
-WsApiManager.domain_psiOrg = '.psi-mis.org';  // change to '.psi-connect.org';
+WsApiManager.domain_psiMIS = '.psi-mis.org';  // change to '.psi-connect.org';
+WsApiManager.domain_psiConnect = '.psi-connect.org';  // change to '.psi-connect.org';
+
 
 // ----------------------------------------------
 // User usage site approaching types..
 WsApiManager.isSite_appsPsiOrg = ( location.host.indexOf( WsApiManager.domain_appsPsiOrg ) >= 0 );
-WsApiManager.isSite_psiOrg = ( location.host.indexOf( WsApiManager.domain_psiOrg ) >= 0 )
-WsApiManager.isSite_cwsDash = ( location.host.indexOf( WsApiManager.cwsDash ) >= 0 );
+WsApiManager.isSite_psiOrg =    ( location.host.indexOf( WsApiManager.domain_psiMIS ) >= 0 )
+WsApiManager.isSite_cwsDash =   ( location.host.indexOf( WsApiManager.cwsDash ) >= 0 );
+WsApiManager.isSite_psiConnect =   ( location.host.indexOf( WsApiManager.domain_psiConnect ) >= 0 );
 
 WsApiManager.isSite_DevType = ( location.host.indexOf( 'localhost' ) >= 0 
                         || location.host.indexOf( 'ngrok' ) >= 0 
@@ -76,7 +80,7 @@ WsApiManager.getWsApiUrl = function( wsApiListJson )
 
     if ( WsApiManager.isSite_psiOrg ) 
     {
-        var locHostNameFront = locHostName.replace( WsApiManager.domain_psiOrg, '');
+        var locHostNameFront = locHostName.replace( WsApiManager.domain_psiMIS, '');
         var wsApiUrlFound = wsApiListJson[ locHostNameFront ];
     
         if ( wsApiUrlFound ) wsApiUrl = wsApiUrlFound;
@@ -124,16 +128,30 @@ WsApiManager.getServerUrl = function( wsUrl, wsName )
 WsApiManager.composeWsFullUrl = function( subUrl )
 {
     // Used in config -> request url part --> could be partial or full url..
-	// if 'subUrl' is full url, use it.  Otherwise, add server url in front.
-	if ( subUrl.indexOf( 'http' ) === 0 )
-	{
-		return subUrl;  // THIS WOULD NOT NORMALY WORK DUE TO CORS policy
-	} 
-	else 
-	{
-        //return WsApiManager.getServerUrl() + "/" + WsApiManager.wsName + subUrl;
-        return WsApiManager.wsApiUrl + subUrl;
-	}
+    // if 'subUrl' is full url, use it.  Otherwise, add server url in front.
+
+    var arrHost = location.origin.split( '://' )
+    var arrPlace= arrHost[ 1 ].split( '.' );
+    var arrServ = arrPlace[ 0 ].split( '-' );
+
+    if ( WsApiManager.isSite_psiConnect )
+    {
+        // api-dev
+        return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + subUrl;
+    }
+    else
+    {
+        if ( subUrl.indexOf( 'http' ) === 0 )
+        {
+            return subUrl;  // THIS WOULD NOT NORMALY WORK DUE TO CORS policy
+        } 
+        else 
+        {
+            //return WsApiManager.getServerUrl() + "/" + WsApiManager.wsName + subUrl;
+            return WsApiManager.wsApiUrl + subUrl;
+        }
+    }
+
 };
 
 WsApiManager.getServerUrl = function()
@@ -154,11 +172,16 @@ WsApiManager.getServerUrl = function()
 
 WsApiManager.getSubDomainName_PsiOrg = function()
 {
-    return location.host.replace( WsApiManager.domain_psiOrg, '' );
+    return location.host.replace( WsApiManager.domain_psiMIS, '' );
 };
 
 // How is this used?
 WsApiManager.getStageName = function()
 {
     return ( WsApiManager.isSite_DevType ) ? WsApiManager.wsApiName_Dev : WsApiManager.getSubDomainName_PsiOrg();
+};
+
+WsApiManager.useDWS = function()
+{
+    return ( location.host.indexOf( WsApiManager.domain_psiConnect ) > 0 );
 };

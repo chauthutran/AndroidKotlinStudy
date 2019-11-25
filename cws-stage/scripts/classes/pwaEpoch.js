@@ -88,34 +88,6 @@ function pwaEpoch( decimals, base, epochOffsetDate )
 
             var retJson = { epochDate: me.epochDate, '12': epochDec12seed, '11': epochDec11seed, '10': epochDec10seed };
 
-            /*var qrContainer = $( '#qrTemplate' );
-
-            var myQR = new QRCode( qrContainer[ 0 ] );
-
-            myQR.fetchCode ( epochDec12b10_b35, function( retData1ms ){
-
-                console.log( retData1ms );
-                retJson[ '1ms' ].b35QR = retData1ms;
-
-                myQR.fetchCode ( epochDec11b10_b35, function( retData10ms ){
-
-                    console.log( retData10ms );
-                    retJson[ '10ms' ].b35QR = retData10ms;
-
-                    console.log( retJson );
-
-                    if ( callBack )
-                    {
-                        callBack( retJson )
-                    }
-                    else
-                    {
-                        return retJson;
-                    }
-
-                });
-            } );*/
-
             me.incr += 1;
             retJson.incr = me.incr;
             retJson.valid = me.failValidBase36Test;

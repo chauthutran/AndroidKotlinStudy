@@ -409,7 +409,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "0849e5b23c987704ea33b9fdaa01ed35"
+    "revision": "5d62e856f46657c809ed739d709b214f"
   },
   {
     "url": "scripts/classes/login.js",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "b7a250d0e21bd688e5480c892cf56002"
+    "revision": "791b92b6c8a059bce72dbd19a4d1daa4"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -565,7 +565,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "c8cb5b9cce755b036a5c40ddb8ce043b"
+    "revision": "e998acaf4673ea87aaf1d8fdbd340311"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -581,7 +581,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "a252eec366f3c90936e3a06ddb373976"
+    "revision": "cdcaa6bdf7a9fafad990df99d620f95c"
   },
   {
     "url": "sounds/beep.mp3",

@@ -75,11 +75,9 @@ function favIcons( cwsRender )
         {
            if ( compareList[ i ].userRoles )
            {
-               var bFound = false;
-
                for ( var p=0; p< compareList[ i ].userRoles.length; p++ )
                {
-                   if ( compareList[ i ].userRoles[ p ] == FormUtil.login_UserRole )
+                   if ( FormUtil.login_UserRole.includes( compareList[ i ].userRoles[ p ] ) )
                    {
                        retAreaList.push( compareList[ i ] );
                        break;

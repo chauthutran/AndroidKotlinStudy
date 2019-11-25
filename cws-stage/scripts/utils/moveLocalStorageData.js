@@ -1,4 +1,3 @@
-
 function MoveLocalStorageData() {}
 
 MoveLocalStorageData.moveData = function(){
@@ -22,20 +21,30 @@ MoveLocalStorageData.moveData = function(){
 
                 MoveLocalStorageData.moveOneData( moveKeys[ i ], value, function( container, newData ){
 
-                    //console.log( 'moved [' + container + '] now updating to  ~ ' );
-
-                    LocalStorageDataManager.saveData( container, newData );
+                    // LocalStorageDataManager.saveData( container, newData );
+                    localStorage.removeItem( moveKeys[ i ] );
 
                 } );
             }
 
             LocalStorageDataManager.saveData("movedData", "true");
 
-            //console.log("All data from localStorage is moved to IndexDb.");
+            for ( i = 0; i < moveKeys.length; i++ )
+            {
+                localStorage.removeItem( moveKeys[ i ] );
+            }
+
         }
         else
         {
             //console.log("All data from localStorage was moved to IndexDb alreadly.");
+            // initiate Diagnostics process:
+            // 1. check current cacheSize against recorded cacheSize history?
+            // 2. if conditions correct [from 1]
+            //     > decrpyt+move indexedDB content to localStorage
+            //       > erase indexedDB + set movedData = false
+            //         > run other clean up routines
+            //           > run page refresh ()
         }
     } );
 

@@ -192,7 +192,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
         }
     }
 
-    var Tbl = $( '<table style="width:100%;padding:6px;">' );
+    var Tbl = $( '<table style="width:100%;padding:6px 4px;">' );
     var tBody = $( '<tbody>' );
     var trBody = $( '<tr>' );
     var tdMessage = $( '<td>' );
@@ -230,7 +230,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     if ( disableClose == undefined || disableClose === false )
     {
         var tdClose = $( '<td style="width:24px;">' );
-        var notifClose = $( '<img class="round" src="images/close_white.svg" >' );
+        var notifClose = $( '<img class="round" src="images/close_white.svg" style="border-radius:12px;" >' );
 
         $( notifClose ).click ( () => {
 
@@ -395,7 +395,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
         $( parentTag ).append( notifDiv );
     
         var prevRow = $( '<div class="" />' );
-        var btnRow = $( '<div style="height:70px;text-align:center;" />' );
+        var btnRow = $( '<div style="height:90px;text-align:center;" />' );
         var btnConfirm = $( '<button term="" class="acceptButton" style="">CONFIRM</button>' );
         var btnDecline = $( '<button term="" class="declineButton" style="">CANCEL</button>' );
 

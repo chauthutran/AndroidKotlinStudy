@@ -21,6 +21,7 @@ function statistics( cwsRender )
     me.popularHours = [];
     me.activityTypes = [];
     //me.statusTypes = [];
+    me.connectionTypes = [];
 
     me.earliestDate;
     me.hoursFrom;
@@ -38,9 +39,15 @@ function statistics( cwsRender )
     me.initialize = function() 
     {
 
-        $( window ).scrollTop(0);
+        if ( $( 'div.listDiv' ).is(':visible') )
+        {
+            $( 'div.listDiv' ).hide();
+            $( 'div.listDiv' ).remove();
+        }
 
         me.localStatsTag.empty();
+
+        $( window ).scrollTop(0);
 
         me.slideIndex = new Date().getDay();
 
@@ -51,12 +58,6 @@ function statistics( cwsRender )
     
 	me.setEvents_OnInit = function()
 	{	
-
-        $( 'img.btnStatsBack' ).click( () =>
-        {
-            me.hideStatsPage();
-            me.localStatsTag.empty();
-		});
 
     }
 
@@ -72,12 +73,19 @@ function statistics( cwsRender )
         me.popularDays = me.getPopularDays();
         //me.statusTypes = me.getStatusTypes();
 
-        me.createLocalAnalytics( function( dataFound ){
+        me.getConnectionTypes( function( connData ) {
 
-            me.showStatsPage( dataFound )
-            me.colorize();
+            me.connectionTypes = connData;
 
-         });
+            me.createLocalAnalytics( function( dataFound ){
+
+                me.showStatsPage( dataFound )
+                me.colorize();
+
+            });
+
+        });
+
 
     }
 
@@ -91,17 +99,19 @@ function statistics( cwsRender )
             //me.localStatsTag.append( me.toColumnsWithChart( me.hoursInDay, "popular hours" ) );
             me.localStatsTag.append( me.toRowActivities( me.activityTypes, "activity breakdown" ) );
             me.localStatsTag.append( me.toRows( me.dateGroups, "all activities" ) );
+            me.localStatsTag.append( me.networkTypesToChart( me.connectionTypes, "network quality" ) );
             //me.localStatsTag.append( me.toColumnStatuses( me.statusTypes, "upload status" ) );
-    
-            if ( me.earliestDate )
-            {
-                me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
-            }
-    
+
+            if ( me.earliestDate )  me.localStatsTag.append( me.getSpecialNote( me.earliestDate ) );
+
             setTimeout( function() {
                 $( '.hide' ).hide( 'slow' );
             }, 50 )
 
+        }
+        else
+        {            
+            me.localStatsTag.append( me.networkTypesToChart( me.connectionTypes, "network Quality" ) );
         }
         
 
@@ -289,10 +299,44 @@ function statistics( cwsRender )
 
     }
 
+    me.getConnectionTypes = function( callBack )
+    {
+        DataManager.getData( 'networkConnectionObs', function( dataObs ) {
+
+            if ( dataObs )
+            {
+                var connTypes = { 'slow-2g': 0, '2g': 0, '3g': 0, '4g': 0, 'offline': 0 };
+
+                for ( var connType in connTypes ) 
+                {
+                    var typeSum = 0;
+                   
+                    for ( var key in dataObs.observations[ connType ] ) 
+                    {
+                        typeSum += parseFloat( dataObs.observations[ connType ][ key ] );
+                    }
+
+                    connTypes[ connType ] = typeSum
+                }
+
+            }
+
+            if ( callBack )
+            {
+                callBack( connTypes );
+            }
+            else
+            {
+                return connTypes;
+            }
+
+        })
+    }
+
     me.createLocalAnalytics = function( callBack )
     {
 
-        FormUtil.getMyListData( me.cwsRenderObj.storageName_RedeemList, function( myData ){
+        FormUtil.updateSyncListItems( me.cwsRenderObj.storageName_RedeemList, function( myData ){
 
             if ( myData )
             {
@@ -409,7 +453,7 @@ function statistics( cwsRender )
         for (var i = 0; i < arrObj.length; i++)
         {
             var tr = $( '<tr>' );
-            var tdName = $( '<td class="columnLabel">' );
+            var tdName = $( '<td class="columnLabel" style="background-Color:#F5F5F5;width: 150px;">' );
             var tdData = $( '<td class="columnData">' );
 
             tbl.append( tr );
@@ -741,6 +785,93 @@ function statistics( cwsRender )
 
         var trFiller = $( '<tr>' );
         var tdFiller = $( '<td class="columnFiller" colspan="' + ( me.hoursTo - me.hoursFrom ) + '" style="height:40px">' ); //arrObj.length
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
+        return tbl;
+    }
+
+    me.networkTypesToChart = function( jsonObj, title )
+    {
+        var min = 999999999, max = 0, sum = 0;
+        var maxHeight = 100, typeCount = 0, i = 0;
+        var colorBrewer = [ "#E0E080", "#94D6CB", "#1EC802", "#F82827", "#E0E0E0" ];
+        var opacityCols = [ 0.5, 0.5, 1, 1, 0.5 ];
+
+        for ( var connType in me.connectionTypes )
+        {
+            if ( me.connectionTypes[ connType ] )
+            {
+                sum += me.connectionTypes[ connType ];
+
+                if ( me.connectionTypes[ connType ] > max )
+                { 
+                    max = me.connectionTypes[ connType ];
+                }
+
+                if ( me.connectionTypes[ connType ] < min )
+                {
+                    min = me.connectionTypes[ connType ];
+                } 
+            }
+            typeCount += 1;
+        }
+
+        if ( max == 0 ) min = 0;
+
+        var tbl = $( '<table class="tableStatistics tableStatsPopularHours column">' );
+
+        var trTitle = $( '<tr>' );
+        var tdTitle = $( '<td class="tableTitle" style="color:#50555a;" colspan="' + ( typeCount ) + '">' ); //arrObj.length
+
+        tdTitle.html( title );
+
+        tbl.append( trTitle );
+        trTitle.append( tdTitle );
+
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( typeCount ) + '">' ); //arrObj.length
+
+        tbl.append( trFiller );
+        trFiller.append( tdFiller );
+        tdFiller.html( '&nbsp;' );
+
+        var trBar  = $( '<tr style="height:'+(maxHeight+30)+'px">' );
+        var trData = $( '<tr>' );
+        var trName = $( '<tr>' );
+
+        //for (var i = 0; i < arrObj.length; i++)
+        //for (var i = me.hoursFrom; i <= me.hoursTo; i++)
+        for ( var connType in me.connectionTypes )
+        {
+            var showHideClass = '';
+            var barH = 0;
+
+            //if ( arrObj[ i ].data )
+            {
+                barH = ( me.connectionTypes[ connType ] > 0 ? ( maxHeight * ( me.connectionTypes[ connType ] / max ) ) + 'px' : '0' );
+            }
+
+            var opac = ( ( parseFloat(  me.connectionTypes[ connType ] / ( max ) ) ) );
+            var tdBar = $( '<td class="columnBar ' + showHideClass + '" style="min-height:'+(maxHeight+30)+'px;">' );
+            var tdName = $( '<td class="columnHours ' + showHideClass + '">' );
+
+            tbl.append( trBar );
+            trBar.append( tdBar );
+            tbl.append( trName );
+            trName.append( tdName );
+
+            tdBar.append( $( '<div class="statsNetworkTypeText" >' + ( me.connectionTypes[ connType ] > 0 ? ( ( parseFloat( me.connectionTypes[ connType ] / sum ) * 100 ).toFixed(1) ).toString().replace('.0','') + '%' : '' ) + '</div>' ) );
+            tdBar.append( $( '<div class="statsNetworkTypeBar ' + ( connType.indexOf( '2g' ) < 0 ? 'statsNetworkTypeBarGrid' : '' ) + '" style="height:' + barH + ';opacity:' + opacityCols[ i ] + ';background-Color:' + colorBrewer[ i ] + '">&nbsp;</div>' ) );
+            tdName.html( '<div class="statsHour" ><label class="statsHourLabel">' + connType + '</label></div>' );
+
+            i += 1;
+        }
+
+        var trFiller = $( '<tr>' );
+        var tdFiller = $( '<td class="columnFiller" colspan="' + ( typeCount ) + '" style="height:40px">' ); //arrObj.length
 
         tbl.append( trFiller );
         trFiller.append( tdFiller );

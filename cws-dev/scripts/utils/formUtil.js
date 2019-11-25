@@ -437,14 +437,30 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {
-	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-	RESTUtil.retrieveJson( url, function( success, returnJson )
+	if ( WsApiManager.useDWS() )
 	{
-		if ( loadingTag ) loadingTag.remove();
+		var url = WsApiManager.composeWsFullUrl( apiPath );
 
-		if ( returnFunc ) returnFunc( returnJson );
-	});
+		RESTUtil.retrieveDWSJson( url, function( success, returnJson )
+		{
+			if ( loadingTag ) loadingTag.remove();
+
+			if ( returnFunc ) returnFunc( returnJson );
+		});
+	}
+	else
+	{
+
+		var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+
+		RESTUtil.retrieveJson( url, function( success, returnJson )
+		{
+			if ( loadingTag ) loadingTag.remove();
+
+			if ( returnFunc ) returnFunc( returnJson );
+		});
+
+	}
 }
 
 // POST Request to Web Service..
@@ -720,7 +736,6 @@ FormUtil.getRedeemPayload = function( id ) {
 }
 
 
-
 FormUtil.getAppInfo = function( returnFunc )
 {	
 	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
@@ -729,15 +744,27 @@ FormUtil.getAppInfo = function( returnFunc )
 }
 
 FormUtil.getDataServerAvailable = function( returnFunc )
-{	
-	var url = WsApiManager.composeWsFullUrl( '/api/available' );
-	console.log( '~ 1 : api/available  ')
-	//RESTUtil.retrieveJson( url, returnFunc );
-	RESTUtil.retrieveJson( url, function(){
-		console.log( '~ 2 : api/available  ')
-		RESTUtil.retrieveJson( url, returnFunc );
+{
 
-	} );
+	if ( WsApiManager.useDWS() )
+	{
+		var url = WsApiManager.composeWsFullUrl( '/PWA.available' );
+
+		RESTUtil.retrieveDWSJson( url, returnFunc );
+	}
+	else
+	{
+		var url = WsApiManager.composeWsFullUrl( '/api/available' );
+
+		console.log( '~ 1 : api/available  ')
+		//RESTUtil.retrieveJson( url, returnFunc );
+		RESTUtil.retrieveJson( url, function(){
+			console.log( '~ 2 : api/available  ')
+			RESTUtil.retrieveJson( url, returnFunc );
+
+		} );	
+	}
+
 }
 
 // ======================================

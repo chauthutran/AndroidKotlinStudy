@@ -43,6 +43,11 @@ ConnManager.userNetworkMode_dtmPrompt;
 
 ConnManager.debugMode = WsApiManager.isDebugMode;
 
+ConnManager.connection; //v1.3
+ConnManager.type;		//v1.3
+ConnManager.roundConnectionTestToMins = 5;
+ConnManager.lastConnectTypeObs;
+
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
 //
@@ -61,30 +66,55 @@ ConnManager.initialize = function()
     ConnManager.scheduledTimer_intvCounter = ConnManager.scheduledTimer_intvActLimit;
     ConnManager.dataServer_statusCheck_IntvCounter = ConnManager.dataServer_statusCheck_IntvLimit;
 
+	ConnManager.connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+	ConnManager.type = ConnManager.connection.effectiveType;
+
+	ConnManager.connection.addEventListener( 'change', ConnManager.updateConnectionStatus );
+
 	ConnManager.createScheduledConnTests();
+
+	ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 }
 
-ConnManager.isOffline = function() {
+ConnManager.updateConnectionStatus = function () 
+{
+
+	ConnManager.connection = ( navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' } );
+
+	console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
+
+	//ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
+
+	ConnManager.type = ConnManager.connection.effectiveType; //( navigator.onLine ? ConnManager.connection.effectiveType : 'offline' );
+
+  }
+
+ConnManager.isOffline = function() 
+{
 	return !ConnManager.network_Online; 
 };
 
-ConnManager.isOnline = function() {
+ConnManager.isOnline = function() 
+{
 	return ConnManager.network_Online;
 }
 
-ConnManager.connStatusStr = function( bOnline ) {
+ConnManager.connStatusStr = function( bOnline ) 
+{
 	return (bOnline) ? 'Online': 'Offline';
 }
 
 // ----------------------------------
 // --- App Connection Mode ----------
 
-ConnManager.getAppConnMode_Online = function() {
+ConnManager.getAppConnMode_Online = function() 
+{
 	return ConnManager.appConnMode_Online;
 }
 
-ConnManager.getAppConnMode_Offline = function() {
+ConnManager.getAppConnMode_Offline = function() 
+{
 	return !ConnManager.appConnMode_Online;
 }
 
@@ -163,6 +193,9 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
 						ConnManager.schedulerTestUnderway = 0;
 
+						//DataManager.estimateStorageUse();
+						ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
+
 						if ( returnFunc ) returnFunc( retJson );
 
 					});
@@ -177,6 +210,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 
 					ConnManager.dataServer_statusCheck_IntvCounter = 0; //no need to check server status if network offline
 					ConnManager.schedulerTestUnderway = 0;
+
+					ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 					if ( returnFunc ) returnFunc( retJson );
 				}
@@ -203,6 +238,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 			{
 				if ( ConnManager.networkOnline_CurrState )
 				{
+
 					FormUtil.getDataServerAvailable( function( success, jsonData ) 
 					{
 						if ( success && jsonData && jsonData.available != undefined )
@@ -220,6 +256,9 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
 						ConnManager.schedulerTestUnderway = 0;
 
+						//DataManager.estimateStorageUse();
+						ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
+
 						if ( returnFunc ) returnFunc( retJson );
 					});
 				}
@@ -232,6 +271,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 
 					ConnManager.dataServer_statusCheck_IntvCounter = 0;
 					ConnManager.schedulerTestUnderway = 0;
+
+					ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 					if ( returnFunc ) returnFunc( retJson );
 				}
@@ -280,7 +321,6 @@ ConnManager.createScheduledConnTests = function()
 		{
 
 			ConnManager.runScheduledConnTest( function( jsonData ) {
-
 
 				ConnManager.setScreen_NetworkIcons( jsonData.networkOnline, jsonData.dataServerOnline );
 
@@ -477,4 +517,60 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 	}
 
 	else return undefined;
+}
+
+ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connChangedTo )
+{
+
+	if ( FormUtil.checkLogin() )
+	{
+		var dtmObs = new Date();
+		var dtmHr = dtmObs.getHours();
+		var bProceed = false;
+
+		if ( ! ConnManager.lastConnectTypeObs )
+		{
+			bProceed = true;
+		}
+		else if ( $.format.date( ConnManager.lastConnectTypeObs, "yyyymmddHHmm" ) != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+		{
+			bProceed = true;
+		}
+
+		if ( bProceed )
+		{
+
+			DataManager.getData( 'networkConnectionObs', function( dataObs ) {
+
+				var dtmLast = '';
+	
+				if ( ! dataObs )
+				{
+					var data = { 'first': dtmObs.toISOString(), 'last': dtmObs.toISOString(), 'observations': { 'slow-2g': {}, '2g': {}, '3g': {}, '4g': {}, 'offline': {} } };
+				}
+				else
+				{
+					var data = dataObs;
+					dtmLast = $.format.date( new Date( data.last ), "yyyymmddHHmm" )
+				}
+	
+				// block collection of connectivityType data when multiple observations occur in same minute
+				if ( dtmLast != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+				{
+					var hrs = ( data.observations[ connChangedTo ][ dtmHr ] ? data.observations[ connChangedTo ][ dtmHr ] : 0 ) + 1;
+	
+					data.observations[ connChangedTo ][ dtmHr ] = hrs
+					data.last = dtmObs.toISOString();
+	
+					DataManager.saveData( 'networkConnectionObs', data );
+	
+					ConnManager.lastConnectTypeObs = dtmObs;
+	
+				}
+	
+			})
+		}
+
+	}
+
 }
