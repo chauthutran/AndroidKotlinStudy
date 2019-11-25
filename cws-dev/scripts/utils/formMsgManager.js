@@ -57,6 +57,12 @@ FormMsgManager.appBlockTemplate = function( template )
         //css = 'border: none !important;background-color:rbga(0,0,0,0.5);'
         css = { 'border': 'none !important', 'background-color': 'rbga(0,0,0,0.5) !important' };
     }
+    else if ( template == 'appDiagnostic' )
+    {
+        block = "<img src='images/care.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>";
+        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important' };
+
+    }
     else
     {
         block = template;

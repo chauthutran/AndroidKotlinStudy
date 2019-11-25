@@ -47,10 +47,8 @@ DataManager.getData = function( secName, callBack )
 
 			DataManager.trackOpenEventDelay( secName, true );
 
-			if ( secName == 'redeemList')
+			if ( secName == 'redeemList' && data && data.list )
 			{
-
-				console.log( callBack );
 
 				var returnList = data.list.filter( a => a.owner == FormUtil.login_UserName );
 				var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );

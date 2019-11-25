@@ -225,7 +225,12 @@ function cwsRender()
 			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
-		blockObj.render();			
+		blockObj.render();
+
+		// Greg: find a way to link back favIcon 'menu-item-ID' for current [area:online/offline]
+		//console.log( blockObj )
+		//var areaId = blockObj.id
+		//me.updateMenuClickStyles( areaId );
 
 		return blockObj;
 	}

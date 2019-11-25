@@ -1,10 +1,10 @@
-(function() {
+(function () {
   'use strict';
 
   let _registrationObj;
 
   const _cwsRenderObj = new cwsRender();
-  
+
   var debugMode = WsApiManager.isDebugMode;
   var SWinfoObj;
   var swStateChanges = false;
@@ -12,29 +12,27 @@
   var swPromptRefresh = false;
 
 
-  window.onload = function() {
+  window.onload = function () {
     // see service worker registration/update handler below
   }
 
   // ----------------------------------------------------
 
-  $( '#imgAppDataSyncStatus' ).click ( () => {
-    syncManager.syncOfflineData( this );
+  $('#imgAppDataSyncStatus').click(() => {
+    syncManager.syncOfflineData(this);
   });
 
 
   // App version check and return always..  
   //  (Unless version is outdated and agreed to perform 'reget' for new service worker
   //    - which leads to app reload with new version of service worker.
-  function appInfoOperation( returnFunc ) 
-  {
+  function appInfoOperation(returnFunc) {
     // Only online mode and by app.psi-mis.org, check the version diff.
-    if ( ConnManager.getAppConnMode_Online() ) // && FormUtil.isAppsPsiServer()
+    if (ConnManager.getAppConnMode_Online()) // && FormUtil.isAppsPsiServer()
     {
       WsApiManager.setupWsApiVariables(returnFunc);
     }
-    else
-    {
+    else {
       if (debugMode) console.log('Offline Mode'); //console.log('not PSI server')
 
       if (returnFunc) returnFunc();
@@ -44,229 +42,250 @@
 
 
 
-  function recordInstallEvent( event )
-  {
+  function recordInstallEvent(event) {
+    // Track event: The app was installed (banner or manual installation)
+    FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
       // Track event: The app was installed (banner or manual installation)
-      FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
-          // Track event: The app was installed (banner or manual installation)
-          ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-          playSound("coin");
-      });
+      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+      playSound("coin");
+    });
   }
 
-  function updateOnlineStatus( event ) 
-  {
+  function updateOnlineStatus(event) {
     ConnManager.network_Online = navigator.onLine;
 
-    if ( ConnManager.network_Online )
-    {
-      $( '#ConnectingWithSara' ).removeClass( 'logoOffline' );
-      $( '#ConnectingWithSara' ).addClass( 'logoOnline' );    }
-    else
-    {
-      $( '#ConnectingWithSara' ).removeClass( 'logoOnline' );
-      $( '#ConnectingWithSara' ).addClass( 'logoOffline' );
+    if (ConnManager.network_Online) {
+      $('#ConnectingWithSara').removeClass('logoOffline');
+      $('#ConnectingWithSara').addClass('logoOnline');
+    }
+    else {
+      $('#ConnectingWithSara').removeClass('logoOnline');
+      $('#ConnectingWithSara').addClass('logoOffline');
     }
 
-    if ( _cwsRenderObj.initializeStartBlock )
-    {
-      syncManager.initialize( _cwsRenderObj );
+    if (_cwsRenderObj.initializeStartBlock) {
+      syncManager.initialize(_cwsRenderObj);
     }
 
   };
 
-  function updateSyncManager( event ) 
-  {
-    syncManager.initialize( _cwsRenderObj );
+  function updateSyncManager(event) {
+    syncManager.initialize(_cwsRenderObj);
   }
 
   // ----------------------------------------------------
 
-  function initialize()
-  {
-
-    FormMsgManager.appBlockTemplate( 'appLoad' );
-
-    if ('serviceWorker' in navigator) {
-
-      navigator.serviceWorker.register( './service-worker.js' ).then( registration => {
-
-        SWinfoObj = localStorage.getItem( 'swInfo' );
-
-        if ( ! SWinfoObj )
-        {
-          SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date() ).toISOString() };
-        }
-        else
-        {
-          SWinfoObj = JSON.parse( SWinfoObj );
-
-          SWinfoObj[ 'reloadRequired' ] = false;
-        }
-
-        if ( registration.active == null )
-        {
-          swNewInstallStartup = true;
-          SWinfoObj.lastState = '';
-        }
-        else
-        {
-          swNewInstallStartup = false;
-          SWinfoObj.lastState = registration.active.state;
-        }
-
-        localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+  function initialize() {
 
 
-        registration.onupdatefound = () => {
+    if ( Util.getURLParameterByName(window.location.href, 'diagnostic').length || Util.getURLParameterByName(window.location.href, 'kill').length ) {
 
-          const installingWorker = registration.installing;
+      FormMsgManager.appBlockTemplate('appDiagnostic');
 
-          SWinfoObj = JSON.parse( localStorage.getItem( 'swInfo' ) );
+      if ( Util.getURLParameterByName(window.location.href, 'kill').length )
+      {
+        cacheManager.clearCacheKeys(false, function () {
 
-          SWinfoObj[ 'lastState' ] = installingWorker.state;
+          if ( Util.getURLParameterByName(window.location.href, 'kill') == 'indexedDB' )
+          {
 
-          localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+            MsgManager.notificationMessage( 'deleting IndexedDB...', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.4' );
 
-          if ( debugMode ) console.log( ' - sw_state: ' + installingWorker.state );
+            localStorage.removeItem( 'movedData' );
+  
+            DataManager.dropMyIndexedDB_CAUTION_DANGEROUS( function( result, msg ){
+  
+              MsgManager.notificationMessage('SUCCESS ~ restarting', 'notificationGreen', undefined, '', 'right', 'top', 10000, false, undefined, 'diagnostics6');
+  
+              setTimeout( function(){
+                window.location = (window.location.href).split( '?' )[ 0 ];
+              }, 2000 );
+              
+  
+            });
+  
+          }
+
+        })
+      }
+      else
+      {
+
+      }
+
+    }
+    else {
+
+      FormMsgManager.appBlockTemplate('appLoad');
+
+      if ('serviceWorker' in navigator) {
+
+        navigator.serviceWorker.register('./service-worker.js').then(registration => {
+
+          SWinfoObj = localStorage.getItem('swInfo');
+
+          if (!SWinfoObj) {
+            SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date()).toISOString(), 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date()).toISOString() };
+          }
+          else {
+            SWinfoObj = JSON.parse(SWinfoObj);
+
+            SWinfoObj['reloadRequired'] = false;
+          }
+
+          if (registration.active == null) {
+            swNewInstallStartup = true;
+            SWinfoObj.lastState = '';
+          }
+          else {
+            swNewInstallStartup = false;
+            SWinfoObj.lastState = registration.active.state;
+          }
+
+          localStorage.setItem('swInfo', JSON.stringify(SWinfoObj));
 
 
-          installingWorker.onstatechange = () => {
+          registration.onupdatefound = () => {
 
-            SWinfoObj = JSON.parse( localStorage.getItem( 'swInfo' ) );
-            swStateChanges = true;
+            const installingWorker = registration.installing;
 
-            if ( debugMode ) console.log( ' ~ sw_state: ' + installingWorker.state );
-            SWinfoObj[ 'lastState' ] = installingWorker.state;
+            SWinfoObj = JSON.parse(localStorage.getItem('swInfo'));
 
-            switch (installingWorker.state) 
-            {
-              case 'installed':
+            SWinfoObj['lastState'] = installingWorker.state;
+
+            localStorage.setItem('swInfo', JSON.stringify(SWinfoObj));
+
+            if (debugMode) console.log(' - sw_state: ' + installingWorker.state);
+
+
+            installingWorker.onstatechange = () => {
+
+              SWinfoObj = JSON.parse(localStorage.getItem('swInfo'));
+              swStateChanges = true;
+
+              if (debugMode) console.log(' ~ sw_state: ' + installingWorker.state);
+              SWinfoObj['lastState'] = installingWorker.state;
+
+              switch (installingWorker.state) {
+                case 'installed':
                   // existing controller = existing SW :: new updates installed
-                  if (navigator.serviceWorker.controller) 
-                  {
+                  if (navigator.serviceWorker.controller) {
                     swPromptRefresh = true;
-                    SWinfoObj[ 'reloadRequired' ] = true;
+                    SWinfoObj['reloadRequired'] = true;
                   }
-                  else
-                  {
+                  else {
                     //localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date() ).toISOString() } ) );
-                    SWinfoObj[ 'reloadRequired' ] = false;
+                    SWinfoObj['reloadRequired'] = false;
                   }
                   break;
-              case 'activating':
+                case 'activating':
                   break;
-              case 'activated':
+                case 'activated':
 
-                  var mySWupdates = JSON.parse( localStorage.getItem( 'swInfo' ) );
+                  var mySWupdates = JSON.parse(localStorage.getItem('swInfo'));
 
                   //if ( mySWupdates )
                   {
                     //mySWupdates = JSON.parse( mySWupdates );
 
-                    if ( mySWupdates.reloadRequired )
-                    {
-                      mySWupdates[ 'datetimeApplied' ] = (new Date() ).toISOString();
-                      mySWupdates[ 'reloadRequired' ] = false;
+                    if (mySWupdates.reloadRequired) {
+                      mySWupdates['datetimeApplied'] = (new Date()).toISOString();
+                      mySWupdates['reloadRequired'] = false;
 
-                      localStorage.setItem( 'swInfo', JSON.stringify( mySWupdates ) );
+                      localStorage.setItem('swInfo', JSON.stringify(mySWupdates));
                     }
 
                   }
 
-                  if ( swNewInstallStartup )
-                  {
+                  if (swNewInstallStartup) {
                     startApp();
                   }
-                  else
-                  {
-                    SWinfoObj[ 'reloadRequired' ] = true;
-                    _cwsRenderObj.createRefreshIntervalTimer( _ver );
+                  else {
+                    SWinfoObj['reloadRequired'] = true;
+                    _cwsRenderObj.createRefreshIntervalTimer(_ver);
                   }
                   break;
-            }
+              }
 
-            localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+              localStorage.setItem('swInfo', JSON.stringify(SWinfoObj));
+
+            };
 
           };
 
-        };
+          _cwsRenderObj.setRegistrationObject(registration); //added by Greg (2018/12/13)
+          _registrationObj = registration;
 
-        _cwsRenderObj.setRegistrationObject( registration ); //added by Greg (2018/12/13)
-        _registrationObj = registration;
+          localStorage.setItem('swInfo', JSON.stringify(SWinfoObj));
 
-        localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+          if (debugMode) console.log('Service Worker Registered');
 
-        if ( debugMode ) console.log('Service Worker Registered');
+        })
+          .then(function () {
 
-      })
-        .then(function() {
+            if (debugMode) console.log('swStateChanges: ' + swStateChanges);
+            if (debugMode) console.log('swNewInstallStartup: ' + swNewInstallStartup);
 
-          if ( debugMode ) console.log( 'swStateChanges: ' + swStateChanges );
-          if ( debugMode ) console.log( 'swNewInstallStartup: ' + swNewInstallStartup );
+            localStorage.setItem('swInfo', JSON.stringify(SWinfoObj));
 
-          localStorage.setItem( 'swInfo', JSON.stringify( SWinfoObj ) );
+            if (Util.getURLParameterByName(window.location.href, 'diagnose').length) {
 
-          if ( Util.getURLParameterByName( window.location.href,'diagnose' ).length )
-          {
+              MsgManager.notificationMessage('1. diagnostics Initiating', 'notificationDark', undefined, '', 'right', 'top', 10000, false, undefined, 'diagnostics1');
 
-            MsgManager.notificationMessage( '1. diagnostics Initiating', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1' );
+              Util.cacheSizeCheckAndRepair(function (restart, details) {
 
-            Util.cacheSizeCheckAndRepair( function( restart, details ){
+                console.log(details);
 
-              console.log( details );
+                if (restart) {
+                  //MsgManager.notificationMessage( '3. Clearing Session Storage', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics3' );
 
-              if ( restart ) 
-              {
-                //MsgManager.notificationMessage( '3. Clearing Session Storage', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics3' );
+                  //LocalStorageDataManager.clearSessionStorage( function(){
 
-                //LocalStorageDataManager.clearSessionStorage( function(){
+                  MsgManager.notificationMessage('3. Clearning Cache', 'notificationDark', undefined, '', 'right', 'top', 10000, false, undefined, 'diagnostics4');
 
-                  MsgManager.notificationMessage( '3. Clearning Cache', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics4' );
+                  cacheManager.clearCacheKeys(false, function () {
 
-                  cacheManager.clearCacheKeys( false, function(){
+                    MsgManager.notificationMessage('4. Restarting Service Worker', 'notificationDark', undefined, '', 'right', 'top', 10000, false, undefined, 'diagnostics5');
 
-                    MsgManager.notificationMessage( '4. Restarting Service Worker', 'notificationDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics5' );
+                    _cwsRenderObj.reGetAppShell(function () {
 
-                    _cwsRenderObj.reGetAppShell( function(){
+                      MsgManager.notificationMessage('5. SUCCESS ~ restarting', 'notificationGreen', undefined, '', 'right', 'top', 10000, false, undefined, 'diagnostics6');
 
-                      MsgManager.notificationMessage( '5. SUCCESS ~ restarting', 'notificationGreen', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics6' );
-
-                      window.location = ( window.location.href ).replace( '?diagnose=' + Util.getURLParameterByName( window.location.href,'diagnose' ), '' ).replace( '&diagnose=' + Util.getURLParameterByName( window.location.href,'diagnose' ), '' )
+                      window.location = (window.location.href).split( '?' )[ 0 ]; //(window.location.href).replace('?diagnose=' + Util.getURLParameterByName(window.location.href, 'diagnose'), '').replace('&diagnose=' + Util.getURLParameterByName(window.location.href, 'diagnose'), '')
 
                     });
 
                   });
-  
-                //})
 
-              }
-              else
-              {
-                if ( swNewInstallStartup == false ) startApp();
-              }
+                  //})
 
-            });
+                }
+                else {
+                  if (swNewInstallStartup == false) startApp();
+                }
 
-          }
-          else
-          {
-            // Start the app after service worker is ready && not a new install/upgrade.
-            if ( swNewInstallStartup == false ) startApp();
-          }
+              });
 
-        })
-        .catch(err => 
-          // MISSING TRANSLATION
-          MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 )
-        );
+            }
+            else {
+              // Start the app after service worker is ready && not a new install/upgrade.
+              if (swNewInstallStartup == false) startApp();
+            }
+
+          })
+          .catch(err =>
+            // MISSING TRANSLATION
+            MsgManager.notificationMessage('SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000)
+          );
+
+
+      }
 
     }
 
   }
 
-  function startApp() 
-  {
+  function startApp() {
     // 1. Online/Offline related event setup
     updateOnlineStatus();
 
@@ -281,30 +300,29 @@
     //  & set web service type for the app
     // , then, proceed with 'cwsRenderObj' rendering.
 
-    appInfoOperation( function() {
+    appInfoOperation(function () {
 
-      $( '#spanVersion' ).text( 'v' + _ver );
+      $('#spanVersion').text('v' + _ver);
 
       ConnManager._cwsRenderObj = _cwsRenderObj;
-    
-      _cwsRenderObj.render();  
 
-      syncManager.initialize( _cwsRenderObj );
+      _cwsRenderObj.render();
+
+      syncManager.initialize(_cwsRenderObj);
 
       FormUtil.createNumberLoginPinPad(); //if ( Util.isMobi() )
 
-      if ( debugMode )  console.log( 'swPromptRefresh: ' + swPromptRefresh );
+      if (debugMode) console.log('swPromptRefresh: ' + swPromptRefresh);
 
-      if ( swPromptRefresh )
-      {
-        _cwsRenderObj.createRefreshIntervalTimer( _ver );
+      if (swPromptRefresh) {
+        _cwsRenderObj.createRefreshIntervalTimer(_ver);
       }
 
-      setTimeout(function(){
+      setTimeout(function () {
 
         FormMsgManager.appUnblock();
 
-      },500)
+      }, 500)
 
 
     });

@@ -504,7 +504,8 @@ function BlockList( cwsRenderObj, blockObj )
             {
                 moreDivTag.find( 'span' ).html( 'see less' );
 
-                expandedDivTag.empty();
+                //expandedDivTag.empty();
+                expandedDivTag.html( FormUtil.loaderRing() )
 
                 DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
 
@@ -512,10 +513,12 @@ function BlockList( cwsRenderObj, blockObj )
                     //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
                     var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
                     var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
-                    
+
+                    expandedDivTag.empty();
+
                     expandedDivTag.append( trxDetails );
                     expandedDivTag.append( historyDetails );
-                    
+
                     if ( prevDetails && prevDetails.length )
                     {
                         expandedDivTag.append( Util.activityListPreviewTable( 'preview', prevDetails ) );

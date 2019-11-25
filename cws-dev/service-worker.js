@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "b5609ace24c201305781d79a998aa2d7"
+    "revision": "70ccc25877b48195096075e689d196c3"
   },
   {
     "url": "images/about.svg",
@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "29e7385044585b8d924a148561a5f33d"
+    "revision": "c010a313f04630c7cdf336234a520f54"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "8c1d2154fb844919b21c0f1920eb8a8e"
+    "revision": "57a92856184c6d30336d3e97549568a8"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -449,7 +449,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "b7f30065ff8d308ae66e48dee51667be"
+    "revision": "d0e70074961aa66eea3377ff27e29574"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -513,7 +513,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/dataManager.js",
-    "revision": "853d0b0eaf3123d8e19755ecef67fe09"
+    "revision": "f451bb9c133a3f32098d78d506bcc09f"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -521,11 +521,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formMsgManager.js",
-    "revision": "641f9668ffacb0fcc3f24184a9e21cc0"
+    "revision": "d12cdc7721b1ecbd8b430e8f4a4ea4df"
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "0c80066debdc0e59356b087e477403e3"
+    "revision": "b7a250d0e21bd688e5480c892cf56002"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -641,7 +641,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "8f8526bd34dea812692e95b7a5d874f8"
+    "revision": "1bf9c1896987350102865d587160aec7"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

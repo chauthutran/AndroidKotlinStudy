@@ -1916,6 +1916,17 @@ FormUtil.getActivityTypes = function()
 
 };
 
+FormUtil.loaderEllipsis = function()
+{
+	return '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+}
+
+FormUtil.loaderRing = function()
+{
+	return '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
+	//return '<div class="loadingImg" style=""><img src="images/loading_small.svg"></div>';
+}
+
 FormUtil.getMyDetails = function( callBack )
 {
 	//https://cws-dhis.psi-mis.org/dws/locator.api/?code=
