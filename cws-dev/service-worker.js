@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b02c3b86e4ca357913c991cb74bea795"
+    "revision": "25374c125b30d2223fdeebac2e8d080c"
   },
   {
     "url": "redeemGen.html",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "791b92b6c8a059bce72dbd19a4d1daa4"
+    "revision": "49c94933add21a634fafcfccdbb1e4fd"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -565,7 +565,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "e998acaf4673ea87aaf1d8fdbd340311"
+    "revision": "0832480b0216181292ab969b749537cf"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -581,7 +581,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/wsApiManager.js",
-    "revision": "cdcaa6bdf7a9fafad990df99d620f95c"
+    "revision": "764bfe672f32bef07632beae18ff350b"
   },
   {
     "url": "sounds/beep.mp3",

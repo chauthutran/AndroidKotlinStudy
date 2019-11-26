@@ -6,7 +6,14 @@ function RESTUtil() {}
 // ==== Methods ======================
 RESTUtil.retrieveJson = function( url, returnFunc )
 {
-   RESTUtil.performREST( url, undefined, returnFunc );
+    if ( WsApiManager.useDWS() )
+    {
+        RESTUtil.performDWSfetch( url, returnFunc );
+    }
+    else
+    {
+        RESTUtil.performREST( url, undefined, returnFunc );
+    }
 };
 
 RESTUtil.performREST = function( url, payloadData, returnFunc )
@@ -33,23 +40,28 @@ RESTUtil.performREST = function( url, payloadData, returnFunc )
 
 RESTUtil.retrieveDWSJson = function( url, returnFunc )
 {
-   RESTUtil.performDWSrest( url, {}, returnFunc );
+   RESTUtil.performDWSfetch( url, returnFunc );
 };
 
-RESTUtil.performDWSrest = function( url, payloadData, returnFunc )
+RESTUtil.performDWSfetch = function( url, returnFunc )
 {
-    var dws_headers = { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' };
 
-    //dws_headers.append( 'Authorization', 'Basic ' + base64.encode( "pwa:529n3KpyjcNcBMsP" ) );
-    //dws_headers.append( 'Authorization', 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' );
-    console.log ( dws_headers );
-    fetch( url, { headers: dws_headers } )
+    //var dws_headers = new Headers();
+    //dws_headers.set('Content-Type', 'text/plain');
+    //dws_headers.set('Accept', 'application/json');
+    //dws_headers.set('Authorization', 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=');
+    //var request = new Request( url, { method: 'get', mode: 'no-cors', headers: dws_headers } );
+    //var dws_headers = { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' };
+    //fetch( request )
+    //fetch( url, { method: 'get', mode: 'no-cors', headers: dws_headers } )
+
+    fetch( url, { method: 'get', mode: 'no-cors', headers: { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' } } )
     .then( response => {
         if ( response.ok ) return response.json();
         else if ( response.statusText ) throw Error( response.statusText )
     })
     .then( jsonData => {
-        returnFunc( true, jsonData );
+        if ( returnFunc ) returnFunc( true, jsonData );
     })
     .catch( error => {
         if ( WsApiManager.isDebugMode )
@@ -58,6 +70,6 @@ RESTUtil.performDWSrest = function( url, payloadData, returnFunc )
             console.log( error );  
             //alert( 'Failed to load the config file' );
         }
-        returnFunc( false, { "response": error.toString() } );
+        if ( returnFunc ) returnFunc( false, { "response": error.toString() } );
     });
 };

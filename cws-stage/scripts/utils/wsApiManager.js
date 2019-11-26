@@ -130,13 +130,14 @@ WsApiManager.composeWsFullUrl = function( subUrl )
     // Used in config -> request url part --> could be partial or full url..
     // if 'subUrl' is full url, use it.  Otherwise, add server url in front.
 
-    var arrHost = location.origin.split( '://' )
-    var arrPlace= arrHost[ 1 ].split( '.' );
-    var arrServ = arrPlace[ 0 ].split( '-' );
-
     if ( WsApiManager.isSite_psiConnect )
     {
-        // api-dev
+
+        var arrHost = location.origin.split( '://' )
+        var arrPlace= arrHost[ 1 ].split( '.' );
+        var arrServ = arrPlace[ 0 ].split( '-' );
+        
+        //return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + '/ws/dws-' + arrServ[ 1 ] + subUrl;
         return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + subUrl;
     }
     else
