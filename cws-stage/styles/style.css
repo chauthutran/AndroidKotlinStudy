@@ -1723,7 +1723,10 @@ img.imgMore
     text-align: left;
     background: white;
     margin: 16px;
-    height: 70vh;
+    height: 160px;
+  }
+  .pptAutocomplete {
+    height: 70vh !important;
   }
   .pptTitle {
     color: #50555a;

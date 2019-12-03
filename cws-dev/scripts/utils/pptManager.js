@@ -8,10 +8,12 @@ class Modal{
                 buttons:undefined,
                 typeModal:undefined,
                 positionZ:undefined,
+                contentClass:undefined,
                 passive:false}){
         this.parent = object.parent
         this.passive = object.passive
         this.typeModal = object.typeModal
+        this.contentClass = object.contentClass
         this.positionZ = object.positionZ | 1000
         this.status = false
         this.data = {
@@ -46,7 +48,7 @@ class Modal{
         this.elements.container = document.createElement('div')
         this.elements.content = document.createElement('div')
         this.elements.containerButtons = document.createElement('div')
-        this.elements.title = document.createElement('strong')
+        this.elements.title = document.createElement('div')
         this.elements.body = document.createElement('div')
         this.elements.question = document.createElement('span')
     }
@@ -71,6 +73,8 @@ class Modal{
             question = this.elements.question;
 
         content.className = 'pptContent';
+
+        if ( this.contentClass ) content.classList.add( this.contentClass );
 
         if ( title )
         {

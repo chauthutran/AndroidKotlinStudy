@@ -530,8 +530,9 @@
     @media screen and (max-width: 865px) {
       .optItem {
         padding: 0 4px 0 8px;
-        overflow-y: scroll;
+        overflow-y: auto;
         background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+        height: inherit;
       }
       #navDrawerDiv
       {

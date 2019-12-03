@@ -11,6 +11,10 @@ WsApiManager.wsApiListJson = {
     //use 'eRefWSDev4' (4) when server issues exist
 };
 
+WsApiManager.wsApiCallListJson = {
+
+};
+
 // psi-connect.org (NEW)
 // psi-mis.org (OLD)
 
@@ -137,8 +141,8 @@ WsApiManager.composeWsFullUrl = function( subUrl )
         var arrPlace= arrHost[ 1 ].split( '.' );
         var arrServ = arrPlace[ 0 ].split( '-' );
         
-        //return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + '/ws/dws-' + arrServ[ 1 ] + subUrl;
-        return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + subUrl;
+        return arrHost[ 0 ] + '://' + arrServ[ 0 ] + '-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + '/ws/dws-' + arrServ[ 1 ] + subUrl;
+        //return arrHost[ 0 ] + '://' + 'api-' + arrServ[ 1 ] + '.' + arrPlace[ 1 ] + '.' + arrPlace[ 2 ] + subUrl;
     }
     else
     {
@@ -174,6 +178,15 @@ WsApiManager.getServerUrl = function()
 WsApiManager.getSubDomainName_PsiOrg = function()
 {
     return location.host.replace( WsApiManager.domain_psiMIS, '' );
+};
+
+WsApiManager.stageName = function()
+{
+    var arrHost = location.origin.split( '://' )
+    var arrPlace= arrHost[ 1 ].split( '.' );
+    var arrServ = arrPlace[ 0 ].split( '-' );
+
+    return 'cws-' + arrServ[ 1 ]
 };
 
 // How is this used?

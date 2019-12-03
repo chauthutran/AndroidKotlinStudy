@@ -412,16 +412,30 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 
 // POST Request required json prepare
 FormUtil.getFetchWSJson = function( payloadJson, headerJson )
-{	
-	var fetchJson = {
-		 method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
-		,body: '{}'
-	};
+{
+	if ( WsApiManager.useDWS() )
+	{
+		var fetchJson = {
+			method: 'POST', 
+			headers: { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' },
+		    body: '{}'
+	   };
+	}
+	else
+	{
+		var fetchJson = {
+			method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
+		   ,body: '{}'
+	   };
+	}
 
 	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
 	{
-		payloadJson.userName = payloadJson.submitLogin_usr;
-		payloadJson.password = payloadJson.submitLogin_pwd;	
+		if ( ! WsApiManager.useDWS() )
+		{
+			payloadJson.userName = payloadJson.submitLogin_usr;
+			payloadJson.password = payloadJson.submitLogin_pwd;	
+		}
 	}
 	else
 	{
@@ -437,7 +451,7 @@ FormUtil.getFetchWSJson = function( payloadJson, headerJson )
 // GET Request to Web Service..
 FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 {
-	if ( WsApiManager.useDWS() )
+	/*if ( WsApiManager.useDWS() )
 	{
 		var url = WsApiManager.composeWsFullUrl( apiPath );
 
@@ -460,7 +474,16 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 			if ( returnFunc ) returnFunc( returnJson );
 		});
 
-	}
+	}*/
+	
+	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
+
+	RESTUtil.retrieveJson( url, function( success, returnJson )
+	{
+		if ( loadingTag ) loadingTag.remove();
+
+		if ( returnFunc ) returnFunc( returnJson );
+	});
 }
 
 // POST Request to Web Service..
@@ -492,18 +515,34 @@ FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, 
 
 FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
 {
-	var apiPath = '/api/loginCheck';
+	console.log( userName + ':' + password );
+	if ( WsApiManager.useDWS() )
+	{
+		var apiPath = ( '/PWA.loginCheck' ); //WsApiManager.composeWsFullUrl
 
-	var payloadJson = { 'submitLogin': true
-		, 'submitLogin_usr': userName
-		, 'submitLogin_pwd': password
-		, 'dcConfigGet': 'Y'
-		, pwaStage: WsApiManager.getStageName() 
-	};
+		var payloadJson = { 
+			'userName': userName,
+			'password': password,
+			'pwaStage': WsApiManager.stageName()  
+		};
+		//WsApiManager.getStageName()
+	}
+	else
+	{
+		var apiPath = ( '/api/loginCheck' ); //WsApiManager.composeWsFullUrl
 
+		var payloadJson = { 'submitLogin': true
+			, 'submitLogin_usr': userName
+			, 'submitLogin_pwd': password
+			, 'dcConfigGet': 'Y'
+			, pwaStage: WsApiManager.getStageName() 
+		};
+
+	}
 
 	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
 	{
+
 		if ( success )
 		{
 			// Check the login success message in content.. ..			
@@ -534,7 +573,15 @@ FormUtil.setLogin = function( userName, password )
 
 FormUtil.checkLoginSubmitCase = function( payloadJson )
 {
-	return ( payloadJson && payloadJson.submitLogin );
+	if ( WsApiManager.useDWS() )
+	{
+		return ( payloadJson && payloadJson.pwaStage );
+	}
+	else
+	{
+		return ( payloadJson && payloadJson.submitLogin );
+	}
+	
 }
 
 FormUtil.checkLogin = function()

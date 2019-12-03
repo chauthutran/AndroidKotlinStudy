@@ -166,7 +166,7 @@ function settingsApp( cwsRender )
             me.langTermObj.translatePage();
 
             $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( me.langTermObj.getLangList(), me.settingsInfo_langSelectTag.val() ) );
-            $( '#settingsInfo_userLanguage_Update' ).html( me.getLanguageUpdate( me.langTermObj.getLangList(), me.settingsInfo_langSelectTag.val() ) );            
+            $( '#settingsInfo_userLanguage_Update' ).html( 'Refresh date' + ': ' + me.getLanguageUpdate( me.langTermObj.getLangList(), me.settingsInfo_langSelectTag.val() ) );            
 
             FormUtil.hideProgressBar();
 
@@ -911,7 +911,7 @@ function settingsApp( cwsRender )
         }
 
         $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
-        $( '#settingsInfo_userLanguage_Update' ).html( me.getLanguageUpdate( languageList, defaultLangCode ) );
+        $( '#settingsInfo_userLanguage_Update' ).html( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#settingsInfo_DivLangSelect' ).show();
 
     }

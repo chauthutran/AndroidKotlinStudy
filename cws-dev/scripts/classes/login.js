@@ -178,6 +178,7 @@ function Login( cwsRenderObj )
 
 			FormUtil.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
+				console.log( loginData );
 				if ( success )
 				{
 					me._pHash = Util.encrypt(password,4);
@@ -230,6 +231,7 @@ function Login( cwsRenderObj )
 
 	me.loginSuccessProcess = function( loginData ) 
 	{
+		console.log( loginData );
 		var dtmNow = ( new Date() ).toISOString();
 
 		me.closeForm();
@@ -238,10 +240,11 @@ function Login( cwsRenderObj )
 		// Set Logged in orgUnit info
 		if ( loginData.orgUnitData )
 		{
-			FormUtil.orgUnitData = loginData.orgUnitData; 
+			//FormUtil.orgUnitData = loginData.orgUnitData;
+
 			me.loggedInDivTag.show();
 			me.spanOuNameTag.show();
-			me.spanOuNameTag.text( ' ' + loginData.orgUnitData.userName + ' ' ).attr( 'title', loginData.orgUnitData.ouName );	
+			me.spanOuNameTag.text( ' ' + FormUtil.orgUnitData.userName + ' ' ).attr( 'title', FormUtil.orgUnitData.ouName );	
 		} 
 
 		// Load config and continue the CWS App process

@@ -302,17 +302,14 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				var btnSelect = $('<button term="" class="acceptButton">SELECT</button>');
 				var btnDisagree = $('<button term="" class="declineButton">CANCEL</button>');
-
-				//	Input with property "name" for to be send
-				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />'  );
-				//	Input for to be shown in the app
-				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' );
-
-				let options = new OptionsManager( { name: formItemJson.uid, data: arr, search:true } ); //name:'BirthDistrict'
+				
+				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />'  ); //	Input with property "name" for to be send
+				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' ); //	Input for to be shown in the app
+				let options = new OptionsManager( { name: formItemJson.uid, data: arr, search:true } ); 
 
 				var labelTerm = me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term )
 
-				let nuevoModal = new Modal( { parent: divInputTag[0], titleMessage: labelTerm, customElement: options.element, buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true } );
+				let nuevoModal = new Modal( { parent: divInputTag[0], titleMessage: labelTerm, customElement: options.element, buttons:[ btnSelect[0] , btnDisagree[0] ], passive:true, contentClass: 'pptAutocomplete' } );
 
 				inputShow.click(function(){
 					inputShow.blur()
@@ -813,14 +810,14 @@ function BlockForm( cwsRenderObj, blockObj )
 		}
 
 		return result;
-	};
+	}
 
 	
 	me.conditionVarIdToVal = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
 		// Replace 'this' first.
 		evalCondition = Util.replaceAll( evalCondition, '$$(this)', tagVal );
-		
+
 		// Replace other tag val cases.
 		for ( var i = 0; i < formFull_IdList.length; i++ )
 		{

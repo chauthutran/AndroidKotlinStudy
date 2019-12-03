@@ -376,6 +376,47 @@ Util.checkEmptyId_FromList = function( list )
 	return ( Util.getFromList( list, '' ) !== undefined );
 };
 
+Util.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
+{
+	// planned use: blockList will 'unpack' a complex json payload back into a single array 
+	recurseInputArr = function( arrItem, arrObj, itm, callBack )
+	{
+		if ( arrObj[ (itm + 1) ] )
+		{
+			recurseInputArr( arrItem[ arrObj[ itm] ], arrObj, (itm + 1), callBack )
+		}
+		else
+		{
+			if ( callBack ) callBack( arrItem, arrObj[ itm] )
+		}
+	}
+
+	var arrInp = inputStructure.split( '.' );
+	var itm = 0;
+	var thisItem = jsonObj[ arrInp[ itm] ];
+	
+	console.log( jsonObj );
+	console.log( arrInp[ itm] );
+
+	if ( arrInp[ (itm + 1) ] )
+	{
+		recurseInputArr( thisItem, arrInp, (itm + 1), function( innerData, innerSpec ){
+
+			console.log( innerData );
+			console.log( innerSpec );
+
+		} )
+	}
+	else
+	{
+		console.log( thisItem );
+		console.log( 'stopped here' );
+	}
+	
+
+
+}
+
 Util.jsonToArray = function( jsonData, structureConfig )
 {
 	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;

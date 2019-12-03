@@ -421,56 +421,7 @@ function BlockList( cwsRenderObj, blockObj )
         var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
-        //var paylDetails = Util.jsonToArray ( fetchItemData.data.payloadJson, 'name:value' );
-        var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
-
-        if ( paylDetails && paylDetails.length )
-        {
-            //ADD DCDconfig lookup to get 'phoneNumber' defined field name (linked to current activityType)
-            var cellReservedField = "phoneNumber"; //getConfigPhoneCallField
-            var consentCellReservedField = "phoneContactConsent"
-            var consentFeedbackReservedField = "phoneContactConsent_feedback"
-            //  CELLPHONE 
-            var cellphoneNumber = paylDetails.filter( item => { if ( item.name.indexOf( cellReservedField ) >= 0 ){ return item.value } } );
-
-            if ( cellphoneNumber && cellphoneNumber.length && cellphoneNumber.length > 0 ) 
-            {
-                var valueConsentCell = Util.getValueByCallFieldFromConfig( paylDetails, consentCellReservedField, ['name','value'] );
-                var valueConsentCellFeedback = Util.getValueByCallFieldFromConfig( paylDetails, consentFeedbackReservedField, ['name','value'] );
-
-                //ADD DCDconfig lookup to compare defined rules [show/hide logic] for rendering phoneCall action event
-                var passConditionTest = false;
-
-                if ( 1 == 1 ) passConditionTest = true
-
-                if ( passConditionTest )
-                {
-                    if ( valueConsentCell == "YESP" || valueConsentCellFeedback == "YESP" )
-                    {
-                    var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
-
-                    cellphoneTag.click( function(e) {
-
-                        e.stopPropagation();
-
-                        if ( Util.isMobi() )
-                        {
-                            //window.open(`tel:${cellphoneNumber[0].value}`)
-                            window.location.href = `tel:${cellphoneNumber[0].value}`;
-                        }
-                        else
-                        {
-                            alert( cellphoneNumber[0].value )
-                        }
-                    });
-
-                    tdVoucherIdObj.append( cellphoneTag );
-                    }
-                }
-
-            } 
-            //  
-        }
+        me.evalCallEnabled( itemData, tdVoucherIdObj )
 
         var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == me.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
@@ -536,6 +487,101 @@ function BlockList( cwsRenderObj, blockObj )
         // Populate the Item Content
         me.populateData_RedeemItemTag( itemData, liContentTag );
 
+    }
+
+    me.evalCallEnabled = function( itemData, targTag )
+    {
+        var activityType = FormUtil.getActivityType ( itemData );
+
+        if ( activityType && activityType.calls && activityType.calls )
+        {
+
+            var phoneNumber = itemData.data.payloadJson[ activityType.calls.phoneNumber ];
+            var evalConditions = activityType.calls.evalConditions;
+
+            /*if ( activityType.calls.evalArray )
+            {
+                var paylDetails = Util.jsonObjToThisArray ( itemData.data.payloadJson, activityType.calls.evalArray, 'name:value' );
+            }
+            else
+            {*/
+                console.log( itemData.data.payloadJson );
+                var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
+            //}
+
+            for( var i = 0; ( i < evalConditions.length ) ; i++ )
+            {
+                var phoneCondition = evalConditions[ i ].condition;
+
+                me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
+
+                    if ( passConditionTest )
+                    {
+                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+
+                        cellphoneTag.click( function(e) {
+
+                            e.stopPropagation();
+
+                            if ( Util.isMobi() )
+                            {
+                                window.location.href = `tel:${phoneNumber}`;
+                            }
+                            else
+                            {
+                                alert( phoneNumber )
+                            }
+                        });
+
+                        targTag.append( cellphoneTag );
+
+                    }
+    
+                })
+
+            
+            }
+
+        }
+
+    }
+
+	me.checkCondition = function( evalCondition, arrData, callBack )
+	{
+		var result = false;
+
+		if ( evalCondition )
+		{
+			try
+			{
+				var afterCondStr = me.conditionVarToVal( evalCondition, arrData )
+
+                result = eval( afterCondStr );	
+                console.log( afterCondStr + ' >> ' + result );
+			}
+			catch(ex) 
+			{
+				console.log( 'Failed during condition eval: ' );
+				console.log( ex );
+			}
+		}
+
+		if ( callBack ) callBack( result );
+	}
+
+	
+	me.conditionVarToVal = function( evalCondition, arrData )
+	{
+        var evalString = evalCondition;
+
+        for ( var i = 0; i < arrData.length; i++ )
+		{
+			var idStr = arrData[i];
+            evalString = Util.replaceAll( evalString, '$$(' + idStr.name + ')', idStr.value );
+            //console.log( evalString, idStr.name, idStr.value );
+		}
+
+		return evalString;
     }
 
     me.getTrxDetails = function( dataObj, designLayout )
