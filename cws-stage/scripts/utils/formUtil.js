@@ -212,7 +212,6 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 		
 					});
 				}
-				
 
 			}
 
@@ -1594,14 +1593,14 @@ FormUtil.testNewSWavailable = function()
 	.then(isAvailable => {
 		console.log( ' ~ SW isUpdateAvailable: ' + isAvailable );
 	  if (isAvailable) {
-  
+
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-  
+
 		// move to cwsRender ?
 		$( btnUpgrade ).click ( () => {
 		  location.reload( true );
 		});
-  
+
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
 	  }
@@ -1709,6 +1708,29 @@ FormUtil.geolocationAllowed = function()
 		}
 	});
 
+}
+
+FormUtil.getGeoLocationIndex = function( separator, group )
+{
+	// idea is to provide a 'complex' or 'cluster' set of keys for quick reference when running searches for services
+	// current format is: COUNTRYCODE + '_' + GROUP (IPC/PROV/ALL) + '_' + YYYYMMDD + '_' + LAT + '_' + LONG
+	// numberic prefix is accuracy down to metres (THIS SHOULD CHANGE TO SOMETHING MORE MEANINGFUL )
+
+	var sep = ( separator ? separator : '_')
+	var retIdx = FormUtil.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
+	var dtmNow = $.format.date( new Date(), "yyyymmdd" );
+	var ArrCoords = FormUtil.geoLocationLatLon.split( ',' );
+
+	retIdx += dtmNow + sep;
+
+	var ret = { '111000': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 0 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 0 ), 
+				'11100': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 1 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 1 ), 
+				'1110': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 2 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 2 ), 
+				'111': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 3 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 3 ), 
+				'11': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 4 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 4 ) 
+	}
+
+	return ret;
 }
 
 FormUtil.screenMaxZindex = function(parent, limit)
@@ -2048,256 +2070,209 @@ FormUtil.getMyDetails = function( callBack )
 		} );
 }
 
-FormUtil.fetchMyDetails = function () {
-	/*
-	var myD_username = FormUtil.login_UserName;
-	var myD_password = FormUtil.login_Password;
-	//var server_url = FormUtil.getServerUrl();
-	var server_url = 'https://replica.psi-mis.org/locator/api/1?code=';
-	alert(server_url+myD_username+'<br/>'+myD_password);
-	//var server_url = 'https://replica.psi-mis.org/locator/api/1?code=NP_TEST_PROV';
-	$.ajax({
-		type: "GET",
-		url: server_url+'/api/1?code='+myD_username,
-		dataType: 'json',
-		headers: { 'Autorization': 'Basic' + btoa(myD_username + ':' + myD_password) },
-		success: function (response) {
-			console.log(response);
-			return(response);
-		},
-		error: function (xhr) {
-			console.log(type);
-			console.log(msg);
+FormUtil.fetchMyDetails = function ( useAPI, returnFunc ) 
+{
+
+	if ( useAPI != undefined && useAPI == true )
+	{
+
+		var myD_username = 'pwa'; //FormUtil.login_UserName;
+		var myD_password = '529n3KpyjcNcBMsP'; //FormUtil.login_Password;
+		var server_url = 'https://replica.psi-mis.org/' + 'locator/api/1?code=NP-OHF-3122';
+
+		if ( 1 == 1)
+		{
+
+			let result = $.when($.ajax({
+				url: "https://replica.psi-mis.org/locator/api/1?uid=B4b76ISunPi",
+				headers: {
+					'Authorization': 'Basic Y2hhdGJvdGNob2NvbGF0ZTpOeGgkS1Y2U3FrNndR',
+					'Content-Type': 'application/json'
+				}
+			})).done(function(data) {
+				console.log("response", data);
+				return data;
+			})
+			console.log("testing", result);
+			return result;
 		}
-	});
-*/
-	//https://replica.psi-mis.org/locator/api/1?code=NP-OHF-3122
-	//https://replica.psi-mis.org/locator/api/1?code=NP_TEST_PROV
+		else
+		{
+			fetch( server_url , { method: 'get', headers: { 'Authorization': 'Basic' + btoa(myD_username + ':' + myD_password) } } )
+			.then( response => {
+				if ( response.ok ) return response.json();
+				else if ( response.statusText ) throw Error( response.statusText )
+			})
+			.then( jsonData => {
+				if ( returnFunc ) returnFunc( true, jsonData );
+			})
+			.catch( error => {
+				if ( WsApiManager.isDebugMode )
+				{
+					console.log( 'Failed to retrieve url - ' + server_url );
+					console.log( error );  
+					//alert( 'Failed to load the config file' );
+				}
+				if ( returnFunc ) returnFunc( false, { "response": error.toString() } );
+			});
+		}
+		
 	
-	return {
-		"result": {
-			"msg": {
-				"response": {
-					"returnCode": "200",
-					"outlet": [
-						{
-							"dhisCode": "NP-OHF-8858",
-							"dhisId": "X7FJl3bf9KH",
-							"servicesStandard": "Family Planning, Maternity, MA, MVA",
-							"description": "Description about Me",
-							"url": "http://www.testoutlet.com",
-							"outletName": "NP Outlet Test",
-							"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
-							"phoneNumber": "984123345",
-							"postgresId": "798523356",
-							"closedDate": "2021-12-31",
-							"locatorType": "OUT",
-							"dhisName": "NP Outlet Test (OHF-8858)",
-							"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
-							"comment": "Comment about Test outlet",
-							"location": {
-								"area": "Lagankhel",
-								"areaSub": "Bus Stop",
-								"address": "Kantipath, Kathmandu",
-								"latitude": 27.668306,
-								"longitude": 85.31838
-							},
-							"openingDate": "2019-06-23",
-							"email": "testperson@gmail.com",
-							"providers": [
-								{
-									"gender": "F",
-									"dhisId": "CRcXVby89hP",
-									"providerName": "Prov - 3"
+	}
+	else
+	{
+
+		//https://replica.psi-mis.org/locator/api/1?code=NP-OHF-3122
+		//https://replica.psi-mis.org/locator/api/1?code=NP_TEST_PROV
+		
+		return {
+			"result": {
+				"msg": {
+					"response": {
+						"returnCode": "200",
+						"outlet": [
+							{
+								"dhisCode": "NP-OHF-8858",
+								"dhisId": "X7FJl3bf9KH",
+								"servicesStandard": "Family Planning, Maternity, MA, MVA",
+								"description": "Description about Me",
+								"url": "http://www.testoutlet.com",
+								"outletName": "NP Outlet Test",
+								"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
+								"phoneNumber": "984123345",
+								"postgresId": "798523356",
+								"closedDate": "2021-12-31",
+								"locatorType": "OUT",
+								"dhisName": "NP Outlet Test (OHF-8858)",
+								"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
+								"comment": "Comment about Test outlet",
+								"location": {
+									"area": "Lagankhel",
+									"areaSub": "Bus Stop",
+									"address": "Kantipath, Kathmandu",
+									"latitude": 27.668306,
+									"longitude": 85.31838
 								},
-								{
-									"gender": "F",
-									"dhisId": "DSKZ0IXIarC",
-									"providerName": "prov-2"
-								},
-								{
-									"gender": "F",
-									"dhisId": "Vwnc7T1CAyh",
-									"providerName": "prov - 5"
-								},
-								{
-									"gender": "F",
-									"dhisId": "VNX2O8qEIPC",
-									"providerName": "Prov - 4"
-								},
-								{
-									"gender": "F",
-									"dhisId": "HJ2XC2c07R9",
-									"providerName": "prov-1"
-								}
-							]
-						}
-					],
-					"status": "Showing 1 OrgUnits"
-				}
-			}
-		},
-		"actionDetails": [
-			{
-				"auth": {
-					"action": {
-						"authorised": true
-					},
-					"actionDefinition": {
-						"eval": [
-							"function b2a(r){var t,c,e,h,a,n,A,i,o,l='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',d=0,u=0,C='',f=[];if(!r)return r;do t=r.charCodeAt(d++),c=r.charCodeAt(d++),e=r.charCodeAt(d++),i=t<<16|c<<8|e,h=63&i>>18,a=63&i>>12,n=63&i>>6,A=63&i,f[u++]=l.charAt(h)+l.charAt(a)+l.charAt(n)+l.charAt(A);while(d<r.length);return C=f.join(''),o=r.length%3,(o?C.slice(0,o-3):C)+'==='.slice(o||3)}",
-							"function a2b(r){var o,t,a,f={},n=0,h=0,c='',e=String.fromCharCode,g=r.length;for(o=0;64>o;o++)f['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.charAt(o)]=o;for(t=0;g>t;t++)for(o=f[r.charAt(t)],n=(n<<6)+o,h+=6;h>=8;)((a=255&n>>>(h-=8))||g-2>t)&&(c+=e(a));return c}",
-							"var auth = {};",
-							"auth.authorised = incomingHeader.authorization === 'Basic ' + b2a('pwa:529n3KpyjcNcBMsP');"
-						],
-						"goTo": " goTo = ( auth.authorised ) ? 'authValid' : 'authInvalid' ; ",
-						"id": "auth",
-						"requestData": null
-					}
-				}
-			},
-			{
-				"authValid": {
-					"action": {
-						"msg": "AUTH SUCCESS"
-					},
-					"actionDefinition": {
-						"eval": "authValid.msg = 'AUTH SUCCESS' ;",
-						"goTo": " goTo = 'reading' ;",
-						"id": "authValid",
-						"requestData": null
-					}
-				}
-			},
-			{
-				"reading": {
-					"action": {
-						"code": "NP-OHF-8858"
-					},
-					"actionDefinition": {
-						"eval": [
-							"reading = {} ;",
-							"reading.code = incomingParams.code[0] ;"
-						],
-						"goTo": " goTo = 'readingAuthDetails';",
-						"id": "reading",
-						"requestData": null
-					}
-				}
-			},
-			{
-				"readingAuthDetails": {
-					"action": {},
-					"actionDefinition": {
-						"eval": [
-							"var payload = {};",
-							"payload.username = incomingPayload.username;",
-							"payload.password = incomingPayload.password;"
-						],
-						"goTo": " goTo = 'storage' ;",
-						"id": "readingAuthDetails",
-						"requestData": null
-					}
-				}
-			},
-			{
-				"storage": {
-					"action": {
-						"payload": {
-							"password": "529n3KpyjcNcBMsP",
-							"username": "pwa"
-						}
-					},
-					"actionDefinition": {
-						"eval": [
-							"var storage = {};",
-							"storage.payload = payload;"
-						],
-						"goTo": " goTo = 'send' ;",
-						"id": "storage",
-						"requestData": null
-					}
-				}
-			},
-			{
-				"send": {
-					"action": {
-						"response": {
-							"returnCode": "200",
-							"outlet": [
-								{
-									"dhisCode": "NP-OHF-8858",
-									"dhisId": "X7FJl3bf9KH",
-									"servicesStandard": "Family Planning, Maternity, MA, MVA",
-									"description": "Description about Me",
-									"url": "http://www.testoutlet.com",
-									"outletName": "NP Outlet Test",
-									"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
-									"phoneNumber": "984123345",
-									"postgresId": "798523356",
-									"closedDate": "2021-12-31",
-									"locatorType": "OUT",
-									"dhisName": "NP Outlet Test (OHF-8858)",
-									"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
-									"comment": "Comment about Test outlet",
-									"location": {
-										"area": "Lagankhel",
-										"areaSub": "Bus Stop",
-										"address": "Kantipath, Kathmandu",
-										"latitude": 27.668306,
-										"longitude": 85.31838
+								"openingDate": "2019-06-23",
+								"email": "testperson@gmail.com",
+								"providers": [
+									{
+										"gender": "F",
+										"dhisId": "CRcXVby89hP",
+										"providerName": "Prov - 3"
 									},
-									"openingDate": "2019-06-23",
-									"email": "testperson@gmail.com",
-									"providers": [
-										{
-											"gender": "F",
-											"dhisId": "CRcXVby89hP",
-											"providerName": "Prov - 3"
-										},
-										{
-											"gender": "F",
-											"dhisId": "DSKZ0IXIarC",
-											"providerName": "prov-2"
-										},
-										{
-											"gender": "F",
-											"dhisId": "Vwnc7T1CAyh",
-											"providerName": "prov - 5"
-										},
-										{
-											"gender": "F",
-											"dhisId": "VNX2O8qEIPC",
-											"providerName": "Prov - 4"
-										},
-										{
-											"gender": "F",
-											"dhisId": "HJ2XC2c07R9",
-											"providerName": "prov-1"
-										}
-									]
-								}
-							],
-							"status": "Showing 1 OrgUnits"
-						}
-					},
-					"actionDefinition": {
-						"eval": null,
-						"goTo": " goTo = 'response' ;",
-						"id": "send",
-						"requestData": {
-							"input": "storage",
-							"method": "POST",
-							"sourceType": "BASIC_AUTH",
-							"URL": "server+'/api/1?code=' + reading.code;"
-						}
+									{
+										"gender": "F",
+										"dhisId": "DSKZ0IXIarC",
+										"providerName": "prov-2"
+									},
+									{
+										"gender": "F",
+										"dhisId": "Vwnc7T1CAyh",
+										"providerName": "prov - 5"
+									},
+									{
+										"gender": "F",
+										"dhisId": "VNX2O8qEIPC",
+										"providerName": "Prov - 4"
+									},
+									{
+										"gender": "F",
+										"dhisId": "HJ2XC2c07R9",
+										"providerName": "prov-1"
+									}
+								]
+							}
+						],
+						"status": "Showing 1 OrgUnits"
 					}
 				}
 			},
-			{
-				"response": {
-					"action": {
-						"msg": {
+			"actionDetails": [
+				{
+					"auth": {
+						"action": {
+							"authorised": true
+						},
+						"actionDefinition": {
+							"eval": [
+								"function b2a(r){var t,c,e,h,a,n,A,i,o,l='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',d=0,u=0,C='',f=[];if(!r)return r;do t=r.charCodeAt(d++),c=r.charCodeAt(d++),e=r.charCodeAt(d++),i=t<<16|c<<8|e,h=63&i>>18,a=63&i>>12,n=63&i>>6,A=63&i,f[u++]=l.charAt(h)+l.charAt(a)+l.charAt(n)+l.charAt(A);while(d<r.length);return C=f.join(''),o=r.length%3,(o?C.slice(0,o-3):C)+'==='.slice(o||3)}",
+								"function a2b(r){var o,t,a,f={},n=0,h=0,c='',e=String.fromCharCode,g=r.length;for(o=0;64>o;o++)f['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.charAt(o)]=o;for(t=0;g>t;t++)for(o=f[r.charAt(t)],n=(n<<6)+o,h+=6;h>=8;)((a=255&n>>>(h-=8))||g-2>t)&&(c+=e(a));return c}",
+								"var auth = {};",
+								"auth.authorised = incomingHeader.authorization === 'Basic ' + b2a('pwa:529n3KpyjcNcBMsP');"
+							],
+							"goTo": " goTo = ( auth.authorised ) ? 'authValid' : 'authInvalid' ; ",
+							"id": "auth",
+							"requestData": null
+						}
+					}
+				},
+				{
+					"authValid": {
+						"action": {
+							"msg": "AUTH SUCCESS"
+						},
+						"actionDefinition": {
+							"eval": "authValid.msg = 'AUTH SUCCESS' ;",
+							"goTo": " goTo = 'reading' ;",
+							"id": "authValid",
+							"requestData": null
+						}
+					}
+				},
+				{
+					"reading": {
+						"action": {
+							"code": "NP-OHF-8858"
+						},
+						"actionDefinition": {
+							"eval": [
+								"reading = {} ;",
+								"reading.code = incomingParams.code[0] ;"
+							],
+							"goTo": " goTo = 'readingAuthDetails';",
+							"id": "reading",
+							"requestData": null
+						}
+					}
+				},
+				{
+					"readingAuthDetails": {
+						"action": {},
+						"actionDefinition": {
+							"eval": [
+								"var payload = {};",
+								"payload.username = incomingPayload.username;",
+								"payload.password = incomingPayload.password;"
+							],
+							"goTo": " goTo = 'storage' ;",
+							"id": "readingAuthDetails",
+							"requestData": null
+						}
+					}
+				},
+				{
+					"storage": {
+						"action": {
+							"payload": {
+								"password": "529n3KpyjcNcBMsP",
+								"username": "pwa"
+							}
+						},
+						"actionDefinition": {
+							"eval": [
+								"var storage = {};",
+								"storage.payload = payload;"
+							],
+							"goTo": " goTo = 'send' ;",
+							"id": "storage",
+							"requestData": null
+						}
+					}
+				},
+				{
+					"send": {
+						"action": {
 							"response": {
 								"returnCode": "200",
 								"outlet": [
@@ -2356,20 +2331,98 @@ FormUtil.fetchMyDetails = function () {
 								],
 								"status": "Showing 1 OrgUnits"
 							}
+						},
+						"actionDefinition": {
+							"eval": null,
+							"goTo": " goTo = 'response' ;",
+							"id": "send",
+							"requestData": {
+								"input": "storage",
+								"method": "POST",
+								"sourceType": "BASIC_AUTH",
+								"URL": "server+'/api/1?code=' + reading.code;"
+							}
 						}
-					},
-					"actionDefinition": {
-						"eval": [
-							"var response = {};",
-							"response.msg = send;"
-						],
-						"goTo": " goTo = 'FINISH' ;",
-						"id": "response",
-						"requestData": null
+					}
+				},
+				{
+					"response": {
+						"action": {
+							"msg": {
+								"response": {
+									"returnCode": "200",
+									"outlet": [
+										{
+											"dhisCode": "NP-OHF-8858",
+											"dhisId": "X7FJl3bf9KH",
+											"servicesStandard": "Family Planning, Maternity, MA, MVA",
+											"description": "Description about Me",
+											"url": "http://www.testoutlet.com",
+											"outletName": "NP Outlet Test",
+											"path": "/WFFJSzhyMAO/ACVBeX3Cl0J/bgnqePvj4Oz/X7FJl3bf9KH",
+											"phoneNumber": "984123345",
+											"postgresId": "798523356",
+											"closedDate": "2021-12-31",
+											"locatorType": "OUT",
+											"dhisName": "NP Outlet Test (OHF-8858)",
+											"openingHours": "Mo-Fr,9:00,13:00,15:00,19:00;Sa,9:00,13:30",
+											"comment": "Comment about Test outlet",
+											"location": {
+												"area": "Lagankhel",
+												"areaSub": "Bus Stop",
+												"address": "Kantipath, Kathmandu",
+												"latitude": 27.668306,
+												"longitude": 85.31838
+											},
+											"openingDate": "2019-06-23",
+											"email": "testperson@gmail.com",
+											"providers": [
+												{
+													"gender": "F",
+													"dhisId": "CRcXVby89hP",
+													"providerName": "Prov - 3"
+												},
+												{
+													"gender": "F",
+													"dhisId": "DSKZ0IXIarC",
+													"providerName": "prov-2"
+												},
+												{
+													"gender": "F",
+													"dhisId": "Vwnc7T1CAyh",
+													"providerName": "prov - 5"
+												},
+												{
+													"gender": "F",
+													"dhisId": "VNX2O8qEIPC",
+													"providerName": "Prov - 4"
+												},
+												{
+													"gender": "F",
+													"dhisId": "HJ2XC2c07R9",
+													"providerName": "prov-1"
+												}
+											]
+										}
+									],
+									"status": "Showing 1 OrgUnits"
+								}
+							}
+						},
+						"actionDefinition": {
+							"eval": [
+								"var response = {};",
+								"response.msg = send;"
+							],
+							"goTo": " goTo = 'FINISH' ;",
+							"id": "response",
+							"requestData": null
+						}
 					}
 				}
-			}
-		]
-	}
+			]
+		}
 	
+	}
+
 }

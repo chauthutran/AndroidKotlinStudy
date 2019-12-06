@@ -376,7 +376,7 @@ function Action( cwsRenderObj, blockObj )
 
 					var currBlockId = blockDivTag.attr( 'blockId' );
 					var inputsJson;
-	
+
 					// generate inputsJson - with value assigned...
 					if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
 					{
@@ -386,17 +386,17 @@ function Action( cwsRenderObj, blockObj )
 					{
 						inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
 					}
-	
+
 					var previewJson = FormUtil.generateInputJson( formDivSecTag );
-	
+
 					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
-	
+
 					// Voucher Status add to payload
 					if ( clickActionJson.voucherStatus )
 					{
 						inputsJson.voucherStatus = clickActionJson.voucherStatus;
 					}
-	
+
 					// generate url
 					var url = me.generateWsUrl( inputsJson, clickActionJson );
 	
