@@ -1827,6 +1827,10 @@ Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
 						{
 							InpVal = InpVal.substring( 0, parseInt( oper[ 1 ] ) )
 						}
+						else if ( oper[ 0 ] == 'SUBSTRING' )
+						{
+							InpVal = InpVal.substring( parseInt( oper[ 1 ] ), parseInt( oper[ 2 ] ) )
+						}
 						else if ( oper[ 0 ] == 'PADDNUMERIC' )
 						{
 							InpVal = Util.paddNumeric( InpVal, oper[ 1 ] );

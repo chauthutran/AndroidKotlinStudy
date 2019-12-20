@@ -218,6 +218,7 @@
             tmpRow = myTemplate;
 
             let newID = generateRandomString(8);
+            let rnd1 = generateRandomNumber(1);
             let rnd8 = generateRandomNumber(8);
             let rnd12 = generateRandomNumber(12);
             let mystatus = ( ($('select.status').val() == 'random') ? getRandomWord('submit,queued,failed',myUniqueItm) : $('select.status').val() );
@@ -227,6 +228,7 @@
             let myLast = getRandomWord( getNameList(), myUniqueItm ).trim();
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
+            tmpRow = tmpRow.replace( /{NUMERIC1}/g, rnd1 );
             tmpRow = tmpRow.replace( /{NUMERIC8}/g, generateRandomNumber(8) );
             tmpRow = tmpRow.replace( /{NUMERIC12}/g, rnd12 );
             tmpRow = tmpRow.replace( /{DATETODAY}/g, myDate );
@@ -235,6 +237,8 @@
             tmpRow = tmpRow.replace( /{status}/g, mystatus );
             tmpRow = tmpRow.replace( /{activitytype}/g, myactType );
             tmpRow = tmpRow.replace( /{addressCity}/g, myTown );
+            tmpRow = tmpRow.replace( /{phoneContactConsent}/g, getRandomWord('YES,YESP,NO',myUniqueItm) );
+            tmpRow = tmpRow.replace( /{phoneContactConsent_feedback}/g, getRandomWord('YES,YESP,NO',myUniqueItm) );
             tmpRow = tmpRow.replace( /{FIRSTNAME}/g, myFirst.split(' ')[0] );
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
             tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
@@ -367,12 +371,18 @@
     function template()
     {
         return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "queueStatus":"{status}","network":false, "networkAttempt":{NETWORKATTEMPT}, "history": [], "syncActionStarted": 0, ' +
-             ' "data":{  "payloadJson":{  "countryType":"MZ", "walkIn_firstName":"{FIRSTNAME}", "walkIn_lastName":"{LASTNAME}", "walkIn_age":"{AGE}", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
+             ' "data":{  "payloadJson":{  "countryType":"MZ", "walkIn_firstName":"{FIRSTNAME}", "walkIn_lastName":"{LASTNAME}", "walkIn_age":"{AGE}", "phoneNumber":"+99{NUMERIC8}", "phoneContactConsent":"{phoneContactConsent}", "phoneContactConsent_feedback":"{phoneContactConsent_feedback}", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
              ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"addressNeighborhood", "pointOfReference":"A", "bookPageNumber":"2" ' +
              ' }, "previewJson": {}, ' +
              ' "url":"{redeemURL}", ' +
              ' "actionJson":{   "actionType":"sendToWS", "payloadBody":["voucherCode" ], "payloadHeader":[  "usr","pwd" ], "alertResult":"true", "wsNACase":{  "note":"display message" },' +
              ' "redeemListInsert":"true", "url":"/api/dc/redeem" }}} '
+    }
+
+    function templateA()
+    {
+        return '{  "title":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}",  ' +
+             ' "name": "{FIRSTNAME} {LASTNAME}", "phoneNumber": "+99{NUMERIC8}", "numField": "{NUMERIC1}", "seguimento": "Ninguno" } '
     }
 
     function getTodayDate(dtmSeed)

@@ -240,7 +240,7 @@ function Login( cwsRenderObj )
 		// Set Logged in orgUnit info
 		if ( loginData.orgUnitData )
 		{
-			//FormUtil.orgUnitData = loginData.orgUnitData;
+			if ( FormUtil.orgUnitData != loginData.orgUnitData) FormUtil.orgUnitData = loginData.orgUnitData;
 
 			me.loggedInDivTag.show();
 			me.spanOuNameTag.show();

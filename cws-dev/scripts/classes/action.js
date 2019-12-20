@@ -522,9 +522,16 @@ function Action( cwsRenderObj, blockObj )
 	{
 		var url;
 
-		if ( actionJson.url !== undefined )
+		if ( actionJson.url !== undefined || WsApiManager.isSite_psiConnect  )
 		{
-			url = WsApiManager.composeWsFullUrl( actionJson.url );
+			if ( WsApiManager.isSite_psiConnect && actionJson.dws && actionJson.dws.url )
+			{
+				url = WsApiManager.composeWsFullUrl( actionJson.dws.url );
+			}
+			else
+			{
+				url = WsApiManager.composeWsFullUrl( actionJson.url );
+			}
 
 			if ( actionJson.urlParamNames !== undefined 
 				&& actionJson.urlParamInputs !== undefined 

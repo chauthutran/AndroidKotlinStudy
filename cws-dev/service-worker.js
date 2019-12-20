@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "ea4519c105d20fcaa04d086a8dd5b334"
+    "revision": "a6679e2537ea5812b0aac0c58688f0db"
   },
   {
     "url": "css/style.css",
@@ -357,11 +357,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "facea40695fbec852ee07a64f56f56ce"
+    "revision": "453fb31d594becd5d85e15790426971f"
   },
   {
     "url": "redeemGen.html",
-    "revision": "39f080ab3148c9bc92abe01ca86e52bc"
+    "revision": "0da61720e42fa867d539eb948548be26"
   },
   {
     "url": "scripts/app.js",
@@ -373,7 +373,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "7122d8908901d4539fc1f5375ba23282"
+    "revision": "423c95efcbac0f48adbb52f4c105001c"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -393,7 +393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "5dba9b81d280f7c0e1360cf7260ac948"
+    "revision": "6ee2ddc00280b68eff3745aaa0bd204a"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -413,7 +413,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "8202ed04dcb780246a6893f5de5bf47c"
+    "revision": "dad738b40733a514670546dddf5fea01"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "94daa77d9835af57503d4f2f1f00800d"
+    "revision": "1b8c5f6049f0eaa5f5c37314047790fc"
   },
   {
     "url": "scripts/utils/indexdbDataManager.js",
@@ -573,11 +573,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/syncManager.js",
-    "revision": "eb8f307745372e39984309f2dcb4c4ef"
+    "revision": "2026e3f0f91cbc3744d3ceb805b61a29"
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "70f31fbcd5c0068477b4c28ef8001dea"
+    "revision": "62e082581e4df3d158ac1723cdb11121"
   },
   {
     "url": "scripts/utils/wsApiManager.js",

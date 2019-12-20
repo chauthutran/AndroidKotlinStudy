@@ -351,7 +351,7 @@
       .phoneCallAction {
         position: absolute;
         right: 48px;
-        top: 10px;
+        top: 8px;
       }
 
       .rightDynamic, .dataToHTMLright {
@@ -514,8 +514,8 @@
 
       .phoneCallAction {
         position: absolute;
-        right: 50px;
-        top: 6px;      
+        right: 48px;
+        top: 4px;      
       }
 
       .rightDynamic, .dataToHTMLright {

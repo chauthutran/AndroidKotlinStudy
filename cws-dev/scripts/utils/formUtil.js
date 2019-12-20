@@ -488,7 +488,17 @@ FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
 // POST Request to Web Service..
 FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	
-	var url = WsApiManager.composeWsFullUrl( apiPath );
+	var url; 
+
+	//if apiPath already contains correctly formed path, do not change 
+	if ( apiPath.indexOf( WsApiManager.domain_psiConnect ) < 0 && apiPath.indexOf( WsApiManager.domain_psiMIS ) < 0 )
+	{
+		url = WsApiManager.composeWsFullUrl( apiPath );
+	}
+	else
+	{
+		url = apiPath;
+	}
 
 	// Send the POST reqesut	
 	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 

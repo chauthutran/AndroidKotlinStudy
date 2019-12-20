@@ -26,7 +26,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemListDateGroups;
     me.lastSyncDate;
-    me.showredeemListDateGroups = true;
+    me.showredeemListDateGroups = false;
     me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
 
@@ -120,7 +120,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
 
                 listContentUlTag.append( lidateGroupPaddTop );
-        
+
                 me.redeemList = redeemObj.filter( a=> a.owner == FormUtil.login_UserName );
 
                 if ( me.options && me.options.filter )
@@ -493,10 +493,10 @@ function BlockList( cwsRenderObj, blockObj )
     {
         var activityType = FormUtil.getActivityType ( itemData );
 
-        if ( activityType && activityType.calls && activityType.calls )
+        if ( activityType && activityType.calls )
         {
 
-            var phoneNumber = itemData.data.payloadJson[ activityType.calls.phoneNumber ];
+            var phoneNumber = itemData.data.payloadJson[ activityType.calls.phoneNumberField ];
             var evalConditions = activityType.calls.evalConditions;
 
             /*if ( activityType.calls.evalArray )
