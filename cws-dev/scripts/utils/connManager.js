@@ -1,7 +1,30 @@
 // -------------------------------------------
 // -- ConnManager Class/Methods
 
-function ConnManager() {}
+// ConnManager() - network status info & server connection status info store..  for quick access of this info.
+// 		Other Task Run or Not Check - Fetch doable..  Others. ?
+
+// Maybe new class:
+// BackgroundTask();
+// Scheduling For Interval Checks - 
+//			- What kind of things do we do on these interval ones...
+//				- Online/Offline (of network)
+//				- Data Server availabilty Check
+//				- 3G/2G switch check?
+
+// ------------------------  [Ideally]
+//  Run();
+//		--> CheckNetworkStatus(Online/Offline)()
+//		--> CheckDataServerAvailabiility()		(DataServerAvailability.-------)
+//		--> NetworkSpeedType (3G/2G) Check()    (NetworkType.------)
+//				--> StoreData()
+// -------------------------
+
+// Maybe new class:
+// NetworkType();  <-- Has all the methods related to 3G/2G etc..
+
+
+function ConnManager() {};
 
 ConnManager._cwsRenderObj;
 
@@ -71,24 +94,23 @@ ConnManager.initialize = function()
 
 	ConnManager.connection.addEventListener( 'change', ConnManager.updateConnectionStatus );
 
+	// Start the interval background connection testing..
 	ConnManager.createScheduledConnTests();
 
-	ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
-
+	// ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 }
 
 ConnManager.updateConnectionStatus = function () 
 {
-
-	ConnManager.connection = ( navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' } );
+	// ConnManager.connection = ( navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' } );
+	ConnManager.connection = navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' };
 
 	console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
 
 	//ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 
 	ConnManager.type = ConnManager.connection.effectiveType; //( navigator.onLine ? ConnManager.connection.effectiveType : 'offline' );
-
-  }
+}
 
 ConnManager.isOffline = function() 
 {
@@ -133,6 +155,12 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 {
 	ConnManager.schedulerTestUnderway = 1;
 
+	// Check----();
+	// CheckNetworkOnline()
+	//	  Execute/Run9000()
+	//		Do---()
+	//
+
 	var networkStateChanged = ( ConnManager.network_Online != ConnManager.networkOnline_PrevState );
 	var retJson = { 'networkOnline': ConnManager.network_Online, 
 					'dataServerOnline': ConnManager.dataServer_Online, 
@@ -174,6 +202,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 				if ( ConnManager.network_Online )
 				{
 
+					// 
 					FormUtil.getDataServerAvailable( function( success, jsonData ) 
 					{
 
@@ -506,17 +535,13 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 			if ( success )
 			{
 				if ( returnFunc ) returnFunc( loginData.dcdConfig.version );
-				else return success;
 			}
 			else
 			{
 				if ( returnFunc ) returnFunc( undefined );
-				else return undefined;
 			}
 		});
 	}
-
-	else return undefined;
 }
 
 ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connChangedTo )
@@ -528,6 +553,7 @@ ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connC
 		var dtmHr = dtmObs.getHours();
 		var bProceed = false;
 
+		// Util Method for something like this..  
 		if ( ! ConnManager.lastConnectTypeObs )
 		{
 			bProceed = true;
@@ -536,6 +562,7 @@ ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connC
 		{
 			bProceed = true;
 		}
+
 
 		if ( bProceed )
 		{
