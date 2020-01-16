@@ -55,32 +55,39 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data = function( success, responseJson, callBack )
     {
-        if ( success )
-        {
-            //me.syncSuccess( responseJson, callBack );
 
-            // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
-            me.updateItem_DataFields( true, responseJson );
+        // Update itemJson data & history
+        me.updateItem_DataFields( success, responseJson, me.itemJson, me.cwsRenderObj );
 
-            // 2. increment [log]
-            // 3. clean up itemData record, remove 'bloat'
-            // 4. save to indexedDB
+        // 4. save to indexedDB
+        
 
-        }
-        else
-        {
-            //me.syncFail( responseJson, callBack );
-
-            // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
-            // responseCodes Doc [ ]
-
-            // 1. update 'root' field values [msg, status, title, etc]
-            me.updateItem_DataFields( false, responseJson );
-
-            // 2. increment [log] (history)
-        }
-
+        if ( success ) me.cleanUpItem_activityList( me.itemJson );
     };
+
+    //if ( success )
+    //{
+        //me.syncSuccess( responseJson, callBack );
+
+        // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
+        // 2. increment [log]
+
+        // 3. clean up itemData record, remove 'bloat'
+        // 4. save to indexedDB
+    //}
+    //else
+    //{
+        //me.syncFail( responseJson, callBack );
+
+        // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
+        // responseCodes Doc [ ]
+
+        // 1. update 'root' field values [msg, status, title, etc]
+
+        // 2. increment [log] (history)
+        // 3. save to indexedDB
+    //}
+
 
     me.updateItem_UI_StartSync = function()
     {
@@ -101,19 +108,21 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             me.syncIcon_Animate( false );
 
             // update card status + activityType 
-            me.updateItem_UI_Icons( me.cwsRenderObj );
+            me.updateItem_UI_Icons( me.itemJson, me.cwsRenderObj );
         }
 
     };
 
-    me.updateItem_UI_Icons = function( cwsRenderObj )
+    me.updateItem_UI_Icons = function( itemJson, cwsRenderObj )
     {
         // update card 'status' (submit/fail/queue)
-        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + me.itemData.id ).find( 'div.icons-status' ), me.itemData, cwsRenderObj );
+        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemJson.id ).find( 'div.icons-status' ), itemJson, cwsRenderObj );
 
         // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + me.itemData.id ), FormUtil.getActivityType ( me.itemData ), FormUtil.getStatusOpt ( me.itemData ), cwsRenderObj )
-
+        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemJson.id )
+            , FormUtil.getActivityType ( itemJson )
+            , FormUtil.getStatusOpt ( me.itemJson )
+            , cwsRenderObj );
     };
 
 
@@ -130,78 +139,55 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     };
 
 
-    me.syncSuccess = function( responseJson, callBack )
-    {
-        // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
-        me.updateItem_DataFields( true, responseJson );
-
-        // 2. increment [log]
-        // 3. clean up itemData record, remove 'bloat'
-        // 4. save to indexedDB
-
-        callBack();
-
-    }
-
-
-    me.updateItem_DataFields = function( success, responseJson )
+    me.updateItem_DataFields = function( success, responseJson, itemJson, cwsRenderObj )
     {
         var dtmDateNow = (new Date() ).toISOString();
 
         if ( success )
         {
-            me.itemJson.redeemDate = dtmDateNow;
-            me.itemJson.title = 'saved to network' + ' [' + dtmDateNow + ']'; // MISSING TRANSLATION
-            me.itemJson.status = Constants.status_redeem_submit;
-            me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
-
-            me.cleanUpItem_activityList();
-
+            itemJson.redeemDate = dtmDateNow;
+            itemJson.title = 'saved to network' + ' [' + dtmDateNow + ']'; // MISSING TRANSLATION
+            itemJson.status = Constants.status_redeem_submit;
+            itemJson.queueStatus = 'success'; // MISSING TRANSLATION
         }
         else
         {
-            if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) && ConnManager.networkSyncConditions() & !syncManager.pauseProcess ) 
+            // Failed case: 
+            // 1. PUT the error message to the title part..
+            if ( responseJson 
+                && responseJson.displayData 
+                && ( responseJson.displayData.length > 0 ) ) //& !syncManager.pauseProcess ) 
             {
-                var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+                var msg = JSON.parse( responseJson.displayData[0].value ).msg;
         
-                itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                itemJson.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
                 // newTitle = 'error > ' + msg.toString().replace(/--/g,'<br>');
             }
         
-            /* only when sync-test exceeds limit do we mark item as FAIL */
-            if ( itemData.networkAttempt >= syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
+            // 2. When fail attempt count reaches ##, Mark item as FAIL
+            if ( itemJson.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+               // && ConnManager.networkSyncConditions() ) // & !syncManager.pauseProcess )
             {
-                itemData.status = syncManager.cwsRenderObj.status_redeem_failed;
-                itemData.queueStatus = syncManager.cwsRenderObj.status_redeem_failed;
+                itemJson.status = Constants.status_redeem_failed;
+                itemJson.queueStatus = Constants.status_redeem_failed;
                 // newTitle = 'error occurred > exceeded network attempt limit';
             }
             else
             {
-                itemData.queueStatus = 'retry'; // MISSING TRANSLATION
+                // Move 'retry' string to Constants?
+                // itemJson.queueStatus = 'retry'; // MISSING TRANSLATION
             }
         }
+        
+
+        // Place Log or History - from responseJson to itemJson.history
     };
 
-    me.cleanUpItem_activityList = function()
+    me.cleanUpItem_activityList = function( itemJson )
     {
         //clean out unnecessary 'track history of user naviation'
-        if ( itemData.activityList ) delete itemData.activityList;
+        if ( itemJson.activityList ) delete itemJson.activityList;
     }
-
-    me.syncFail = function( responseJson, callBack )
-    {
-        // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
-        // responseCodes Doc [ ]
-
-        // 1. update 'root' field values [msg, status, title, etc]
-        me.updateItem_DataFields( false, responseJson );
-
-        // 2. increment [log] (history)
-        // 3. save to indexedDB
-
-        callBack();
-    }
-
 
     me.initialize();
 
