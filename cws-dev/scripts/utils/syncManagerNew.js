@@ -106,15 +106,20 @@ syncManagerNew.syncItem = function( itemJson, itemTag )
 
         var activityItem = new ActivityItem( itemJson, itemTag ); // cwsRenderObj
 
-        activityItem.updateItemUI_StartSync();
+        activityItem.updateItem_UI_StartSync();
 
         // Calls Server
         syncManagerNew.performActivity( function( success, responseJson ) {
             // For both 'success' / 'failure' of response..
 
-            activityItem.updateItemData( success, responseJson );
+            activityItem.updateItem_Data( success, responseJson, function(){
 
-            activityItem.updateItemUI_FinishSync( success, responseJson );
+                activityItem.updateItem_UI_FinishSync();
+
+            } );
+
+            //activityItem.updateItem_UI_FinishSync();
+
         });
 
     }, function ( errJson ) {
@@ -128,11 +133,16 @@ syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_f
 {
     try
     {
-        // Check Network Connectivity
+        // Check Network Connectivity + Check Server Availability
+        if ( ConnManager.networkSyncConditions() ) 
+        {
+            callBack_success();
+        }
+        else
+        {
+            callBack_failure();
+        }
 
-        // Check Server Availability
-
-        callBack_success();
     }
     catch( err )
     {
@@ -153,6 +163,7 @@ syncManagerNew.performActivity = function( callBack )
     FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
 
         callBack( success, returnJson );
+
     });
 };
 
