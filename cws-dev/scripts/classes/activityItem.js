@@ -120,6 +120,8 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     me.syncSuccess = function( responseJson, callBack )
     {
         // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
+        me.updateItem_Data_Fields( responseJson );
+
         // 2. increment [log]
         // 3. clean up itemData record, remove 'bloat'
         // 4. save to indexedDB
@@ -128,11 +130,25 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     }
 
+        me.updateItem_SuccessData_Fields = function( responseJson )
+        {
+            var dtmRedeemDate = (new Date() ).toISOString();
+
+            me.itemJson.redeemDate = dtmRedeemDate;
+            me.itemJson.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
+            me.itemJson.status = me.cwsRenderObj.status_redeem_submit;
+            me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
+        
+            if ( itemData.activityList ) delete itemData.activityList;
+        }
+
     me.syncFail = function( responseJson, callBack )
     {
         // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
-        // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
-        // 2. increment [log]
+        // responseCodes Doc [ ]
+
+        // 1. update 'root' field values [msg, status, title, etc]
+        // 2. increment [log] (history)
         // 3. save to indexedDB
 
         callBack();

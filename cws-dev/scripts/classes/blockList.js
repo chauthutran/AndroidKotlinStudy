@@ -358,7 +358,7 @@ function BlockList( cwsRenderObj, blockObj )
     // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
 
     me.createRedeemListCard = function( itemData, listContentUlTag, calGroup )
-    {   
+    {
         var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '"' + ( ( calGroup ) ? ' calGroup="' + calGroup + '" ' : '' );
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
