@@ -57,11 +57,27 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     {
         if ( success )
         {
-            me.syncSuccess( responseJson, callBack );
+            //me.syncSuccess( responseJson, callBack );
+
+            // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
+            me.updateItem_DataFields( true, responseJson );
+
+            // 2. increment [log]
+            // 3. clean up itemData record, remove 'bloat'
+            // 4. save to indexedDB
+
         }
         else
         {
-            me.syncFail( responseJson, callBack );
+            //me.syncFail( responseJson, callBack );
+
+            // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
+            // responseCodes Doc [ ]
+
+            // 1. update 'root' field values [msg, status, title, etc]
+            me.updateItem_DataFields( false, responseJson );
+
+            // 2. increment [log] (history)
         }
 
     };
@@ -117,7 +133,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     me.syncSuccess = function( responseJson, callBack )
     {
         // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
-        me.updateItem_Data_Fields( responseJson );
+        me.updateItem_DataFields( true, responseJson );
 
         // 2. increment [log]
         // 3. clean up itemData record, remove 'bloat'
@@ -128,18 +144,49 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     }
 
 
-    me.updateItem_SuccessData_Fields = function( responseJson )
+    me.updateItem_DataFields = function( success, responseJson )
     {
-        var dtmRedeemDate = (new Date() ).toISOString();
+        var dtmDateNow = (new Date() ).toISOString();
 
-        me.itemJson.redeemDate = dtmRedeemDate;
-        me.itemJson.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
-        me.itemJson.status = Constants.status_redeem_submit;
-        me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
-    
-        if ( itemData.activityList ) delete itemData.activityList;
+        if ( success )
+        {
+            me.itemJson.redeemDate = dtmDateNow;
+            me.itemJson.title = 'saved to network' + ' [' + dtmDateNow + ']'; // MISSING TRANSLATION
+            me.itemJson.status = Constants.status_redeem_submit;
+            me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
+
+            me.cleanUpItem_activityList();
+
+        }
+        else
+        {
+            if ( returnJson && returnJson.displayData && ( returnJson.displayData.length > 0 ) && ConnManager.networkSyncConditions() & !syncManager.pauseProcess ) 
+            {
+                var msg = JSON.parse( returnJson.displayData[0].value ).msg;
+        
+                itemData.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                // newTitle = 'error > ' + msg.toString().replace(/--/g,'<br>');
+            }
+        
+            /* only when sync-test exceeds limit do we mark item as FAIL */
+            if ( itemData.networkAttempt >= syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
+            {
+                itemData.status = syncManager.cwsRenderObj.status_redeem_failed;
+                itemData.queueStatus = syncManager.cwsRenderObj.status_redeem_failed;
+                // newTitle = 'error occurred > exceeded network attempt limit';
+            }
+            else
+            {
+                itemData.queueStatus = 'retry'; // MISSING TRANSLATION
+            }
+        }
     };
 
+    me.cleanUpItem_activityList = function()
+    {
+        //clean out unnecessary 'track history of user naviation'
+        if ( itemData.activityList ) delete itemData.activityList;
+    }
 
     me.syncFail = function( responseJson, callBack )
     {
@@ -147,6 +194,8 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         // responseCodes Doc [ ]
 
         // 1. update 'root' field values [msg, status, title, etc]
+        me.updateItem_DataFields( false, responseJson );
+
         // 2. increment [log] (history)
         // 3. save to indexedDB
 
