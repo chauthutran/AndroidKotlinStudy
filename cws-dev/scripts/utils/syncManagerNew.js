@@ -63,7 +63,7 @@
 function syncManagerNew()  {};
 
 /*
-syncManager.storage_offline_SyncExecutionTimerInterval;          //uses setTimeout
+syncManager.storage_offline_SyncExecutionTimerInterval;     //uses setTimeout
 syncManager.storage_offline_SyncConditionsTimerInterval;    //uses setInterval
 syncManager.syncTimer;
 
@@ -92,10 +92,6 @@ syncManager.progClass;
 */
 
 
-// ??
-syncManagerNew.startSync = function() 
-{
-};
 
 
 // One of the main call - We should try to keep this as simple as possible...
@@ -110,7 +106,10 @@ syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj )
 
         // Calls Server
         syncManagerNew.performActivity( function( success, responseJson ) {
+
             // For both 'success' / 'failure' of response..
+            // think about handling special responseJson 'commands/actions' received from server here (e.g server telling PWA to perform some special action based on content received)
+
 
             activityItem.updateItem_Data( success, responseJson, function(){
 
@@ -118,15 +117,12 @@ syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj )
 
             } );
 
-            //activityItem.updateItem_UI_FinishSync();
-
         });
 
     }, function ( errJson ) {
         console.log( 'Sync condition failed - ' + errJson );
     });
 };
-
 
 
 syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
@@ -184,3 +180,21 @@ syncManagerNew.performActivity = function( callBack )
 //{
 //    return ; // return promise..  new Promise(..)
 //}
+
+
+
+
+// ??
+syncManagerNew.startSync = function()
+{
+
+    // x
+
+};
+
+syncManagerNew.getListItems_toSync = function( callBack )
+{
+
+    // x
+
+};
