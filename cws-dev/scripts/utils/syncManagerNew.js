@@ -99,12 +99,12 @@ syncManagerNew.startSync = function()
 
 
 // One of the main call - We should try to keep this as simple as possible...
-syncManagerNew.syncItem = function( itemJson, itemTag ) 
+syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj ) 
 {
     // if there is error, it will be handled within the method..
     syncManagerNew.checkCondition_SyncReady( function() {
 
-        var activityItem = new ActivityItem( itemJson, itemTag ); // cwsRenderObj
+        var activityItem = new ActivityItem( itemJson, itemTag, cwsRenderObj );
 
         activityItem.updateItem_UI_StartSync();
 

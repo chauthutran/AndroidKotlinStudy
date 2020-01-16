@@ -8,9 +8,9 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 {
 	var me = this;
 
-    me.cwsRenderObj = cwsRenderObj;
     me.itemJson = itemJson;
     me.itemTag = itemTag;
+    me.cwsRenderObj = cwsRenderObj;
 
 
     me.itemTagActivityType; // activityType display icon (img tag)
@@ -18,11 +18,9 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
 
 
-    /* Greg notes: */
-    /* Assumptions: 1) not all cards (itemData objects) are visible/loaded on screen >> initialize() can determine this
-                    2) cards layout contain (referenceable) attribute + id information as per v1.2.1 design
-    */
-
+    // Greg notes: 
+    // Assumptions: 1) not all cards (itemData objects) are visible/loaded on screen >> initialize() can determine this
+    //                2) cards layout contain (referenceable) attribute + id information as per v1.2.1 design
     
 
 
@@ -87,20 +85,20 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             me.syncIcon_Animate( false );
 
             // update card status + activityType 
-            me.updateItem_UI_Icons();
+            me.updateItem_UI_Icons( me.cwsRenderObj );
         }
 
     };
 
-    me.updateItem_UI_Icons = function()
+    me.updateItem_UI_Icons = function( cwsRenderObj )
     {
         // update card 'status' (submit/fail/queue)
-        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + me.itemData.id ).find( 'div.icons-status' ), me.itemData, syncManager.cwsRenderObj );
+        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + me.itemData.id ).find( 'div.icons-status' ), me.itemData, cwsRenderObj );
 
         // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + me.itemData.id ), FormUtil.getActivityType ( me.itemData ), FormUtil.getStatusOpt ( me.itemData ), syncManager.cwsRenderObj )
+        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + me.itemData.id ), FormUtil.getActivityType ( me.itemData ), FormUtil.getStatusOpt ( me.itemData ), cwsRenderObj )
 
-    }
+    };
 
 
     me.syncIcon_Animate = function( runAnimation )
@@ -113,8 +111,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         {
             me.itemTagSyncButton.stop();
         }
-    }
-
+    };
 
 
     me.syncSuccess = function( responseJson, callBack )
@@ -130,17 +127,19 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     }
 
-        me.updateItem_SuccessData_Fields = function( responseJson )
-        {
-            var dtmRedeemDate = (new Date() ).toISOString();
 
-            me.itemJson.redeemDate = dtmRedeemDate;
-            me.itemJson.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
-            me.itemJson.status = me.cwsRenderObj.status_redeem_submit;
-            me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
-        
-            if ( itemData.activityList ) delete itemData.activityList;
-        }
+    me.updateItem_SuccessData_Fields = function( responseJson )
+    {
+        var dtmRedeemDate = (new Date() ).toISOString();
+
+        me.itemJson.redeemDate = dtmRedeemDate;
+        me.itemJson.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
+        me.itemJson.status = Constants.status_redeem_submit;
+        me.itemJson.queueStatus = 'success'; // MISSING TRANSLATION
+    
+        if ( itemData.activityList ) delete itemData.activityList;
+    };
+
 
     me.syncFail = function( responseJson, callBack )
     {
@@ -152,7 +151,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         // 3. save to indexedDB
 
         callBack();
-
     }
 
 

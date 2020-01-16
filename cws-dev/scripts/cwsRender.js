@@ -25,12 +25,15 @@ function cwsRender()
 	me.loginObj;
 	me.langTermObj;
 
-	me.storageName_RedeemList = "redeemList";
-    me.status_redeem_submit = "submit"; // initialize from dcd@XX ?
-	me.status_redeem_queued = "queued"; // initialize from dcd@XX ?
-	me.status_redeem_failed = "failed"; // initialize from dcd@XX ?
-	me.status_redeem_paused = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
+	// Constants
+	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
+	me.storageName_RedeemList = Constants.storageName_RedeemList
+    me.status_redeem_submit = Constants.status_redeem_submit
+	me.status_redeem_queued = Constants.status_redeem_queued
+	me.status_redeem_failed = Constants.status_redeem_failed
+	me.status_redeem_paused = Constants.status_redeem_paused
 
+	// Settings var
 	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
     me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?
     me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds?
