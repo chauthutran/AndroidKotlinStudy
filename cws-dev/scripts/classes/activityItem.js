@@ -12,11 +12,8 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     me.itemTag = itemTag;
     me.cwsRenderObj = cwsRenderObj;
 
-
     me.itemTagActivityType; // activityType display icon (img tag)
-    me.itemTagSyncButton;         // sync icon action button (img tag)
-
-
+    me.itemTagSyncButton;   // sync icon action button (img tag)
 
     // Greg notes: 
     // Assumptions: 1) not all cards (itemData objects) are visible/loaded on screen >> initialize() can determine this
@@ -37,10 +34,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         }
 
     }
-
-
-	//me.render = function() {}  // <-- if we create it to display on the list initially...
-
 
 
     // -------------
@@ -128,10 +121,10 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
         if ( success )
         {
-            itemJson.redeemDate = dtmDateNow;
-            itemJson.title = 'saved to network' + ' [' + dtmDateNow + ']'; 
             itemJson.status = Constants.status_redeem_submit;
             itemJson.queueStatus = 'success'; 
+            itemJson.title = 'saved to network' + ' [' + dtmDateNow + ']'; 
+            itemJson.redeemDate = dtmDateNow;
         }
         else
         {
@@ -142,20 +135,16 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
                 && ( responseJson.displayData.length > 0 ) ) 
             {
                 var msg = JSON.parse( responseJson.displayData[0].value ).msg;
-                itemJson.title = msg.toString().replace(/--/g,'<br>'); // hardcoding to create better layout
+                itemJson.title = msg.toString().replace(/--/g,'<br>'); // create better layout
             }
 
             // 2. When fail attempt count reaches ##, Mark item as FAIL
             if ( itemJson.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
             {
+                // evaluate conditions for elligible reattempt (for retry)
                 itemJson.status = Constants.status_redeem_failed;
-                //itemJson.queueStatus = Constants.status_redeem_failed;
             }
-            else
-            {
-                // Move 'retry' string to Constants?
-                // itemJson.queueStatus = 'retry'; // MISSING TRANSLATION
-            }
+
         }
 
         callBack( itemJson, dtmDateNow );
@@ -171,26 +160,22 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data_saveHistory = function( itemJson, dtmSyncAttempt, success, returnJson )
     {
-        //var syncType = ( btnTag ) ? 'manual-Sync-Manager' : 'auto-Sync-Manager';
         var itmHistory = itemJson.history;
         if ( returnJson )
         {
-            //itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmSyncAttempt, "success": success, "returnJson": returnJson } );
             itmHistory.push ( { "syncAttempt": dtmSyncAttempt, "success": success, "returnJson": returnJson } );
         }
         else
         {
-            //itmHistory.push ( { "syncType": syncType, "syncAttempt": dtmSyncAttempt, "success": success } );
             itmHistory.push ( { "syncAttempt": dtmSyncAttempt, "success": success } );
         }
-    
+
         itemJson.history = itmHistory; 
     }
 
     me.updateItem_Data_saveToDB = function( itemJson, callBack )
     {
         // where do we fetch our activityList item from? a new classHandler?
-
         DataManager.getData( 'redeemList', function( activityData ){
 
             var bFound = false; 
@@ -206,7 +191,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
                     activityData.list[ i ][ 'data' ] = itemJson[ 'data' ];
                     activityData.list[ i ][ 'history' ] = itemJson[ 'history' ];
                     activityData.list[ i ][ 'status' ] = itemJson[ 'status' ];
-                    //activityData.list[ i ][ 'queueStatus' ] = itemJson[ 'queueStatus' ];
 
                     bFound = true;
 
@@ -222,32 +206,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
 
     }
-
-    //if ( success )
-    //{
-        //me.syncSuccess( responseJson, callBack );
-
-        // 1. update 'root' field values [redeemedDate, msg, status, title, etc]
-        // 2. increment [log]
-
-        // 3. clean up itemData record, remove 'bloat'
-        // 4. save to indexedDB
-    //}
-    //else
-    //{
-        //me.syncFail( responseJson, callBack );
-
-        // 0. run 'fail check' routine (e.g. exceeded limit, special errors/actions, etc)
-        // responseCodes Doc [ ]
-
-        // 1. update 'root' field values [msg, status, title, etc]
-
-        // 2. increment [log] (history)
-        // 3. save to indexedDB
-    //}
-
-
-
 
     me.initialize();
 

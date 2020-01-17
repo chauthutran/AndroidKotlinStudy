@@ -34,9 +34,9 @@ function cwsRender()
 	me.status_redeem_paused = Constants.status_redeem_paused
 
 	// Settings var
-	me.storage_offline_ItemNetworkAttemptLimit = 3; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
-    me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?
-    me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds?
+	me.storage_offline_ItemNetworkAttemptLimit = Constants.storage_offline_ItemNetworkAttemptLimit; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
+    me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?  // move to SchedManager?
+    me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds? // move to SchedManager?
 
 	me._globalMsg = "";
 	me._globalJsonData = undefined;

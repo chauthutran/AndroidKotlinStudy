@@ -62,58 +62,38 @@
 
 function syncManagerNew()  {};
 
-/*
-syncManager.storage_offline_SyncExecutionTimerInterval;     //uses setTimeout
-syncManager.storage_offline_SyncConditionsTimerInterval;    //uses setInterval
-syncManager.syncTimer;
 
-syncManager.appShell;
-syncManager.dcdConfig;
-syncManager.offLineData;
-syncManager.cwsRenderObj;
+syncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
+syncManagerNew.sync_Download_Running = false; // for planned download sync
 
-syncManager.dataQueued = {};
-syncManager.dataFailed = {};
-syncManager.dataCombine = {};
+syncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
+syncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
 
-syncManager.subProgressBar;
-
-syncManager.conditionsCheckTimer = 0;
-syncManager.syncAutomationRunTimer = 0;
-
-syncManager.pauseProcess = false;
-syncManager.lastSyncAttempt = 0;
-syncManager.lastSyncSuccess = 0;
-
-//syncManager.debugMode = WsApiManager.isDebugMode;
-
-syncManager.syncAutomationInteruptedTimer = 0;
-syncManager.progClass;
-*/
-
-
+syncManagerNew.progClass;
 
 
 // One of the main call - We should try to keep this as simple as possible...
-syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj ) 
+syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj, callBack )
 {
     // if there is error, it will be handled within the method..
     syncManagerNew.checkCondition_SyncReady( function() {
 
         var activityItem = new ActivityItem( itemJson, itemTag, cwsRenderObj );
 
+        // run UI animations
         activityItem.updateItem_UI_StartSync();
 
         // Calls Server
-        syncManagerNew.performActivity( function( success, responseJson ) {
+        syncManagerNew.performActivity( itemJson, function( success, responseJson ) {
 
             // For both 'success' / 'failure' of response..
             // think about handling special responseJson 'commands/actions' received from server here (e.g server telling PWA to perform some special action based on content received)
 
-
             activityItem.updateItem_Data( success, responseJson, function(){
 
                 activityItem.updateItem_UI_FinishSync();
+
+                callBack();
 
             } );
 
@@ -152,7 +132,7 @@ syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_f
 
 
 // Perform Server Operation..
-syncManagerNew.performActivity = function( callBack )
+syncManagerNew.performActivity = function( itemData, callBack )
 {
 
     // if the activity type is 'redeem'..
@@ -161,40 +141,134 @@ syncManagerNew.performActivity = function( callBack )
         callBack( success, returnJson );
 
     });
+
+};
+
+
+syncManagerNew.startSync_UploadMany = function( btnTag, cwsRenderObj, callBack )
+{
+    // check upload sync process not already running
+    if ( syncManagerNew.syncManyConditions( btnTag ) )
+    {
+        // get syncItems (for upload)
+        syncManagerNew.getSync_UploadItems( function( syncItems ){
+
+            // initialise UI + animation
+            syncManagerNew.update_UI_StartSync();
+
+            // syncRunning 'flag'
+            syncManagerNew.sync_Upload_Running = true;
+
+            for ( var s = 0; s < syncItems.length; s++ )
+            {
+                // @Tran/@James: callBack or Promise ?
+                syncManagerNew.syncItem( itemJson, itemTag, cwsRenderObj, function(){
+
+                    FormUtil.updateProgressWidth( ( s + 1 ) / syncItems.length );
+
+                } )
+
+            }
+
+            syncManagerNew.finishSync_UploadMany()
+            
+            callBack();
+
+        } )
+
+    }
+
+};
+
+syncManagerNew.syncManyConditions = function( btnTag )
+{
+    // condition 1: not already running upload sync
+    return ( ! syncManagerNew.sync_Upload_Running )
+};
+
+syncManagerNew.getSync_UploadItems = function( callBack )
+{
+
+    // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
+	DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
+
+		if ( activityList && activityList.list )
+		{
+			var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
+			var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
+            var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
+            var uploadItems = myQueue.concat( myFailed ); //combined list
+
+			if ( retFunc ) retFunc( uploadItems );
+		}
+		else
+		{
+			if ( retFunc ) retFunc( undefined );
+		}
+
+	});
+
+};
+
+syncManagerNew.update_UI_StartSync = function()
+{
+    // initialise ProgressBar Defaults
+    syncManagerNew.initialiseProgressBar();
+
+    // animate syncButton 'running' 
+    syncManagerNew.updateSyncButton_UI_Animation( true, syncManagerNew.imgAppSyncActionButton )
+
+};
+
+syncManagerNew.initialiseProgressBar = function()
+{
+
+    $( syncManagerNew.subProgressBar ).removeClass( 'indeterminate' );
+    $( syncManagerNew.subProgressBar ).addClass( 'determinate' );
+
+    FormUtil.updateProgressWidth( 0 );
+    FormUtil.showProgressBar( 0 );
+};
+
+syncManagerNew.hideProgressBar = function()
+{
+
+    FormUtil.hideProgressBar();
+
+    $( syncManager.subProgressBar ).removeClass( 'determinate' );
+    $( syncManager.subProgressBar ).addClass( 'indeterminate' );
+}
+
+syncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSyncButton )
+{
+    if ( runAnimation )
+    {
+        itemTagSyncButton.rotate({ count:999, forceJS: true, startDeg: 0 });
+    }
+    else
+    {
+        itemTagSyncButton.stop();
+    }
+};
+
+syncManagerNew.finishSync_UploadMany = function()
+{
+    syncManagerNew.hideProgressBar();
+    syncManagerNew.updateSyncButton_UI_Animation( false, syncManagerNew.imgAppSyncActionButton );
+
+    syncManagerNew.sync_Upload_Running = false;
+
 };
 
 
 
 
-    // Promise - easily catch error..
-    /*
-    syncManagerNew.checkCondition_SyncReady().then( function() {
-
-    }).catch( function( err ) {
-        console.log( 'error during SyncReadyCheck - ' + err );
-    });
-    */
-
-
+// Promise - easily catch error..
+//syncManagerNew.checkCondition_SyncReady().then( function() {
+//}).catch( function( err ) {
+//    console.log( 'error during SyncReadyCheck - ' + err );
+//});
 //syncManagerNew.checkCondition_SyncReady = async function()
 //{
 //    return ; // return promise..  new Promise(..)
 //}
-
-
-
-
-// ??
-syncManagerNew.startSync = function()
-{
-
-    // x
-
-};
-
-syncManagerNew.getListItems_toSync = function( callBack )
-{
-
-    // x
-
-};
