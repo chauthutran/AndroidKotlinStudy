@@ -92,6 +92,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
             me.updateItem_Data_saveToDB( me.itemJson, callBack );
 
+            // LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
             //me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function() {
             //} );    
         } );

@@ -1,23 +1,23 @@
 // =========================================
 // -------------------------------------------------
-// -- TODO:
-//      - Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
+// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
 //
-//      - Lvl 1. --> The Expected Features of this class..
+//      - LVL 1. The Expected Features of this class..
 //          1. Running 'Sync' on Item --> Submit Offline(?) Item to Server to process operation.  MORE: SyncUp, SyncDown
-//
 //          2. 'SyncAll' - all the list of items, perform Sync.
-//
 //          3. 'ScheduleSync' - Start running the scheduled sync on the background.
 //          
-//      - Lvl 2. Go through each of 'Lvl 1' Methods to put general operation logics
-//
+//      - LVL 2. Go through each of 'Lvl 1' Methods to put general operation logics
 //          OP1. ""'Sync' on a item"
 //              A. Check on Network Status.
 //              B. Submit/Perform the operation of item on server..
 //              B1(?). Update Data based on B
 //              C. Update The App/UI of changes
 //
+// -------------------------------------------------
+//  TODO:
+//      1. Make a real call from outside to 'syncItem'  <--- tie to a button..
+//      2. Fix the error case handling during 'syncItem'
 // -------------------------------------------------
 
 function syncManagerNew()  {};
@@ -51,6 +51,10 @@ syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj, callBack )
 
             // For both 'success' / 'failure' of response..
             // think about handling special responseJson 'commands/actions' received from server here (e.g server telling PWA to perform some special action based on content received)
+
+            // TODO: ISSUE WITH THIS!!  We should always process this regardless of error in here!!!
+            //  - with this design of 'callback', it only calls back / return, if things are successful.
+            //      Solution --> return failed cases or do not use 'callback'.. (in places we do not need to?)
 
             activityItem.updateItem_Data( success, responseJson, function(){
 
