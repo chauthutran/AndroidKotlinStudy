@@ -1,9 +1,11 @@
-
-// Sync List Item could be named 'ActivityItem'
-//  - This 'ActivityItemService' class is for ...
-// 
 // -------------------------------------------
-// -- Block Class/Methods
+// -- ActivityItem Class/Methods
+//      - Mainly used for syncManager run one activity item sync
+//
+//      - Tags will be used if this item is displayed on the app.
+//          - There will be cases where activity items are processed (in sync)
+//              without being displayed on the app list.  
+//
 function ActivityItem( itemJson, itemTag, cwsRenderObj )
 {
 	var me = this;
@@ -23,29 +25,40 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
 
 	// =============================================
-	// === TEMPLATE METHODS ========================
+	// === Initialize Related ========================
 
     me.initialize = function() 
     {
+        me.checkMandatoryData( me.itemJson );
 
-        if ( me.itemTag )
-        {
-            me.initializeUI_Tags()
-        }
-
-    }
+        if ( me.itemTag ) me.initializeUI_Tags( me.itemTag, me.itemJson );
+    };
 
 
     // -------------
-
-    me.initializeUI_Tags = function()
+    me.checkMandatoryData = function( itemJson )
     {
-        // reference card template tags (required for class to update interface)
+        if ( !itemJson ) throw "ActivityItem Create Error - itemJson undefined!";
+    };
 
-        me.itemTagActivityType = me.itemTag.find( '#listItem_icon_activityType_' + me.itemJson.id );
 
-        me.itemTagSyncButton = me.itemTag.find( '#listItem_icon_sync_' + me.itemJson.id );
-    }
+    me.initializeUI_Tags = function( itemTag, itemJson )
+    {
+        if ( itemTag )
+        {
+            // reference card template tags (required for class to update interface)
+            me.itemTagActivityType = itemTag.find( '#listItem_icon_activityType_' + itemJson.id );
+
+            me.itemTagSyncButton = itemTag.find( '#listItem_icon_sync_' + itemJson.id );
+        }
+    };
+
+
+    // =============================================
+	// === MAIN METHODS - 'syncManager' Related ========================
+    // activityItem.updateItem_UI_StartSync();
+    // activityItem.updateItem_Data( success, responseJson, function(){
+    // activityItem.updateItem_UI_FinishSync();
 
     me.updateItem_UI_StartSync = function()
     {
@@ -55,7 +68,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             // start spinning "busy/working" icon
             me.updateItem_UI_Animation( true, me.itemTagSyncButton ); 
         }
-
     };
 
     me.updateItem_UI_FinishSync = function()
@@ -71,6 +83,23 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         }
 
     };
+
+    me.updateItem_Data = function( success, responseJson, callBack )
+    {
+        me.updateItem_DataFields( success, responseJson, me.itemJson, me.cwsRenderObj, function() {
+
+            if ( success ) me.updateItem_Data_CleanUp( me.itemJson );
+
+            me.updateItem_Data_saveToDB( me.itemJson, callBack );
+
+            //me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function() {
+            //} );    
+        } );
+    };
+
+
+    // =============================================
+	// === Other Supporting METHODS ========================
 
     me.updateItem_UI_Icons = function( itemJson, cwsRenderObj )
     {
@@ -96,24 +125,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         }
     };
 
-
-
-    me.updateItem_Data = function( success, responseJson, callBack )
-    {
-
-        me.updateItem_DataFields( success, responseJson, me.itemJson, me.cwsRenderObj, function( dtmSyncAttempt ){
-
-            if ( success ) me.updateItem_Data_CleanUp( me.itemJson );
-
-            me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function(){
-
-                me.updateItem_Data_saveToDB( me.itemJson, callBack );
-
-            } );    
-
-        } );
-
-    };
 
     me.updateItem_DataFields = function( success, responseJson, itemJson, cwsRenderObj, callBack )
     {
@@ -147,66 +158,49 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
         }
 
-        callBack( itemJson, dtmDateNow );
-
+        callBack( itemJson );
     };
+
 
     me.updateItem_Data_CleanUp = function( itemJson )
     {
         //clean out unnecessary 'track history of user naviation' under [activityList]
         if ( itemJson.activityList ) delete itemJson.activityList;
-    }
+    };
 
 
-    me.updateItem_Data_saveHistory = function( itemJson, dtmSyncAttempt, success, returnJson )
-    {
-        var itmHistory = itemJson.history;
-        if ( returnJson )
-        {
-            itmHistory.push ( { "syncAttempt": dtmSyncAttempt, "success": success, "returnJson": returnJson } );
-        }
-        else
-        {
-            itmHistory.push ( { "syncAttempt": dtmSyncAttempt, "success": success } );
-        }
+    // NOT USED FOR NOW.
+    //me.updateItem_Data_saveHistory = function( itemJson, dtmSyncAttempt, success, returnJson )
+    //{
+    //    itemJson.history.push ( { "syncAttempt": dtmSyncAttempt, "success": success, "returnJson": returnJson } );
+    //}
 
-        itemJson.history = itmHistory; 
-    }
 
     me.updateItem_Data_saveToDB = function( itemJson, callBack )
     {
         // where do we fetch our activityList item from? a new classHandler?
         DataManager.getData( 'redeemList', function( activityData ){
 
-            var bFound = false; 
-            for ( var i = 0; i < activityData.list.length; i++ )
+            var activityItem = Util.getFromList( activityData.list, itemJson.id, "id" );
+
+            if ( activityItem )
             {
+                activityItem.lastAttempt = itemJson.lastAttempt;
+                activityItem.network = itemJson.network;
+                activityItem.networkAttempt = itemJson.networkAttempt;
+                activityItem.data = itemJson.data;
+                // activityItem.history = itemJson.history;
+                activityItem.status = itemJson.status;
 
-                if ( activityData.list[ i ].id === itemJson.id )
-                {
-
-                    activityData.list[ i ][ 'lastAttempt' ] = itemJson[ 'lastAttempt' ];
-                    activityData.list[ i ][ 'network' ] = itemJson[ 'network' ];
-                    activityData.list[ i ][ 'networkAttempt' ] = itemJson[ 'networkAttempt' ];
-                    activityData.list[ i ][ 'data' ] = itemJson[ 'data' ];
-                    activityData.list[ i ][ 'history' ] = itemJson[ 'history' ];
-                    activityData.list[ i ][ 'status' ] = itemJson[ 'status' ];
-
-                    bFound = true;
-
-                }
-
-                if ( bFound ) break;
-
+                DataManager.saveData( 'redeemList', activityData, callBack );
             }
-
-            DataManager.saveData( 'redeemList', activityData, callBack );
-
         });
+    };
 
 
-    }
-
+    // =============================================
+    // === Run initialize - when instantiating this class  ========================
+        
     me.initialize();
 
 }

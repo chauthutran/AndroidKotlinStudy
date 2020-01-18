@@ -1,28 +1,12 @@
 // =========================================
-// Pseudo Code - of this class
-//      High Level Features & Process..
-//  Sync Manager Do?
-//
-//  Run Sync On Item?
-//  Run Sync On All Items?
-
-//      RunSyncOnAllItems();
-//          - CheckConditions
-//             - CheckItemStatus
-//                 - RunRedeem (RunTask)
-//                      - What do we do After Runn..
-
 // -------------------------------------------------
 // -- TODO:
 //      - Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
+//
 //      - Lvl 1. --> The Expected Features of this class..
-//          1. Running 'Sync' on Item --> Submit Offline(?) Item to Server to process operation.
-//              - Maybe we should split the terms --> SyncUp, SyncDown
-//                 [Manual Run]
-//              'SyncItem()';  // 'SyncUpItem();
+//          1. Running 'Sync' on Item --> Submit Offline(?) Item to Server to process operation.  MORE: SyncUp, SyncDown
 //
 //          2. 'SyncAll' - all the list of items, perform Sync.
-//                 [Manual Run]
 //
 //          3. 'ScheduleSync' - Start running the scheduled sync on the background.
 //          
@@ -34,45 +18,24 @@
 //              B1(?). Update Data based on B
 //              C. Update The App/UI of changes
 //
-//      - Lvl 3.
-//              A. Check on Network Status / Data Server Online Check  <-- Simple One check
-//                 If ( SubmitPossibleCheck() ) Fails --> Notify User NetworkCondition is Bad.
-//                      'lastAttmeptDateTime' update?
-//                  CheckAppNetwork();
-//                  Method - 'CheckNetworkNDataServer()'
-
-//              B. Perform Submit on Server - Of Operation.
-//                  Method - 'PerformDataSeverSubmit()'
-
-//                      Method - 'OnSbumitFail()'
-//                          Fail - 'No Return' with HTTP ReponseCode 404? --> Update Status of Item..
-//                      Method - 'OnSubmitSuccess()'
-//                        Success - 'Return with response' --> Data Analyze + Update UI
-
-//              C. 
-//                      - Update item data with response info..
-//                          Method - UpdateItemData( responeInfo );
-//                      - Update UI of item.
-//                             (UI - Item removal upon success not here, yet)
-//                          Method - UpdateUiOfItem() <-- This shoudl be a methond in some other class.  We should just call it.
-//
-//      - HAPPY CODING!!
-//
 // -------------------------------------------------
 
 function syncManagerNew()  {};
 
+syncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 
-syncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
-syncManagerNew.sync_Download_Running = false; // for planned download sync
+//syncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
+//syncManagerNew.sync_Download_Running = false; // for planned download sync
 
 syncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
 syncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
 
 syncManagerNew.progClass;
 
+// ===================================================
+// === MAIN 3 FEATURES =============
 
-// One of the main call - We should try to keep this as simple as possible...
+// 1. Run 'sync' activity on one item
 syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj, callBack )
 {
     // if there is error, it will be handled within the method..
@@ -104,6 +67,46 @@ syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj, callBack )
     });
 };
 
+
+// 2. Run 'sync' activity on one item
+syncManagerNew.startSync_UploadMany = function( btnTag, cwsRenderObj, callBack )
+{
+    // check upload sync process not already running
+    if ( syncManagerNew.syncManyConditions( btnTag ) )
+    {
+        // get syncItems (for upload)
+        syncManagerNew.getSync_UploadItems( function( syncItems ){
+
+            // initialise UI + animation
+            syncManagerNew.update_UI_StartSync();
+
+            // syncRunning 'flag'
+            syncManagerNew.sync_Running = true;
+
+            for ( var s = 0; s < syncItems.length; s++ )
+            {
+                // @Tran/@James: callBack or Promise ?
+                syncManagerNew.syncItem( itemJson, itemTag, cwsRenderObj, function(){
+
+                    FormUtil.updateProgressWidth( ( s + 1 ) / syncItems.length );
+
+                } )
+
+            }
+
+            syncManagerNew.finishSync_UploadMany()
+            
+            callBack();
+
+        } )
+
+    }
+
+};
+
+
+// ===================================================
+// === 1. 'syncItem' Related Methods =============
 
 syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
 {
@@ -145,45 +148,10 @@ syncManagerNew.performActivity = function( itemData, callBack )
 };
 
 
-syncManagerNew.startSync_UploadMany = function( btnTag, cwsRenderObj, callBack )
-{
-    // check upload sync process not already running
-    if ( syncManagerNew.syncManyConditions( btnTag ) )
-    {
-        // get syncItems (for upload)
-        syncManagerNew.getSync_UploadItems( function( syncItems ){
-
-            // initialise UI + animation
-            syncManagerNew.update_UI_StartSync();
-
-            // syncRunning 'flag'
-            syncManagerNew.sync_Upload_Running = true;
-
-            for ( var s = 0; s < syncItems.length; s++ )
-            {
-                // @Tran/@James: callBack or Promise ?
-                syncManagerNew.syncItem( itemJson, itemTag, cwsRenderObj, function(){
-
-                    FormUtil.updateProgressWidth( ( s + 1 ) / syncItems.length );
-
-                } )
-
-            }
-
-            syncManagerNew.finishSync_UploadMany()
-            
-            callBack();
-
-        } )
-
-    }
-
-};
-
 syncManagerNew.syncManyConditions = function( btnTag )
 {
     // condition 1: not already running upload sync
-    return ( ! syncManagerNew.sync_Upload_Running )
+    return ( ! syncManagerNew.sync_Running )
 };
 
 syncManagerNew.getSync_UploadItems = function( callBack )
@@ -213,14 +181,14 @@ syncManagerNew.getSync_UploadItems = function( callBack )
 syncManagerNew.update_UI_StartSync = function()
 {
     // initialise ProgressBar Defaults
-    syncManagerNew.initialiseProgressBar();
+    syncManagerNew.initializeProgressBar();
 
     // animate syncButton 'running' 
     syncManagerNew.updateSyncButton_UI_Animation( true, syncManagerNew.imgAppSyncActionButton )
 
 };
 
-syncManagerNew.initialiseProgressBar = function()
+syncManagerNew.initializeProgressBar = function()
 {
 
     $( syncManagerNew.subProgressBar ).removeClass( 'indeterminate' );
@@ -256,7 +224,7 @@ syncManagerNew.finishSync_UploadMany = function()
     syncManagerNew.hideProgressBar();
     syncManagerNew.updateSyncButton_UI_Animation( false, syncManagerNew.imgAppSyncActionButton );
 
-    syncManagerNew.sync_Upload_Running = false;
+    syncManagerNew.sync_Running = false;
 
 };
 
