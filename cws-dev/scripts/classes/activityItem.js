@@ -86,16 +86,16 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data = function( success, responseJson, callBack )
     {
-        me.updateItem_DataFields( success, responseJson, me.itemJson, me.cwsRenderObj, function() {
+        me.updateItem_DataFields( success, responseJson, me.itemJson, me.cwsRenderObj );
 
-            if ( success ) me.updateItem_Data_CleanUp( me.itemJson );
+        if ( success ) me.updateItem_Data_CleanUp( me.itemJson );
 
-            me.updateItem_Data_saveToDB( me.itemJson, callBack );
+        me.updateItem_Data_saveToDB( me.itemJson, callBack );
 
-            // LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
-            //me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function() {
-            //} );    
-        } );
+        // LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
+        //me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function() {
+        //} );    
+ 
     };
 
 
@@ -127,7 +127,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     };
 
 
-    me.updateItem_DataFields = function( success, responseJson, itemJson, cwsRenderObj, callBack )
+    me.updateItem_DataFields = function( success, responseJson, itemJson, cwsRenderObj )
     {
         var dtmDateNow = (new Date() ).toISOString();
 
@@ -159,7 +159,6 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
         }
 
-        callBack( itemJson );
     };
 
 

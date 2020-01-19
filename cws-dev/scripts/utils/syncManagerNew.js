@@ -30,7 +30,6 @@ syncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 syncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
 syncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
 
-syncManagerNew.progClass;
 
 // ===================================================
 // === MAIN 3 FEATURES =============
@@ -55,18 +54,16 @@ syncManagerNew.syncItem = function( itemJson, itemTag, cwsRenderObj, callBack )
             // TODO: ISSUE WITH THIS!!  We should always process this regardless of error in here!!!
             //  - with this design of 'callback', it only calls back / return, if things are successful.
             //      Solution --> return failed cases or do not use 'callback'.. (in places we do not need to?)
+            //  > Added try/catch to syncManagerNew.performActivity : perhaps we could inspect 'success' before running activityItem.updateItem_Data (with customized responseJson)?
 
-            activityItem.updateItem_Data( success, responseJson, function(){
+            activityItem.updateItem_Data( success, responseJson );
 
-                activityItem.updateItem_UI_FinishSync();
-
-                callBack();
-
-            } );
+            activityItem.updateItem_UI_FinishSync();
 
         });
 
     }, function ( errJson ) {
+
         console.log( 'Sync condition failed - ' + errJson );
     });
 };
@@ -141,14 +138,23 @@ syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_f
 // Perform Server Operation..
 syncManagerNew.performActivity = function( itemData, callBack )
 {
+    try
+    {
+        // if the activity type is 'redeem'..
+        FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
 
-    // if the activity type is 'redeem'..
-    FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
+            callBack( success, returnJson );
 
-        callBack( success, returnJson );
+        });
+    }
+    catch( err )
+    {
+        console.log( 'Error in syncManagerNew.performActivity' );
+        console.log( err );
 
-    });
-
+        // Flag for error?
+        callBack( false, err );
+    }
 };
 
 
