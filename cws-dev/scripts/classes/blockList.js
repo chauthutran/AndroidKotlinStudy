@@ -710,6 +710,7 @@ function BlockList( cwsRenderObj, blockObj )
         });        
     }
 
+    // NOTE: JAMES/GREG --> SyncManagerNew.syncItem calling place..
     me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
     {
 
@@ -720,18 +721,29 @@ function BlockList( cwsRenderObj, blockObj )
             imgSyncIconTag.click( function(e) {
 
                 e.stopPropagation();
+                
+                var divListItemTag = $( this ).parents( 'div.listItem' );
 
+                console.log( 'clicking activityItem on blockList, itemData: ' );
+                console.log( itemData );
+
+                
+                var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+
+                syncManagerNew.syncItem( activityItem, function( success ) {
+
+                    console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
+                });
+
+                /*
                 if ( FormUtil.syncRunning == 0 )
                 {
                     var mySyncIcon = statusSecDivTag.find( 'small.syncIcon img' );
-
                     SyncManager.runManualSync( itemData, mySyncIcon, function(){
-
                         FormUtil.updateSyncListItems( 'redeemList' );
-
                     } );
-
                 }
+                */
 
             });
 
