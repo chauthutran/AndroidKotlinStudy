@@ -153,7 +153,54 @@ syncManagerNew.performActivity = function( itemData, callBack )
     {
         // if the activity type is 'redeem'..
         //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
-        FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
+
+        https://cws-dev.psi-mis.org/ws/eRefWSDev3/api/dc/action
+
+        /*
+        var testJson =    {
+                "captureValues": {
+                    "coordinate": {
+                        "latitude": 35.1619484,
+                        "longitude": 128.9838509,
+                        "altitude": null,
+                        "accuracy": 40,
+                        "altitudeAccuracy": null,
+                        "heading": null,
+                        "speed": null
+                    }
+                },
+                "firstName": "James",
+                "lastName": "Tester11234",
+                "birthProvince": "Maputo Cidade",
+                "yearOfBirth": "2007",
+                "dateOfBirth": "2020-01-01",
+                "birthOrder": "1",
+                "age": "13",
+                "ownershipOfPhone": "SHA",
+                "typeOfSession": "GS",
+                "channelOfReferral": "EV",
+                "program": "IFPP-REG",
+                "currentMethod_STD": "IUD",
+                "householdDelivery_PIL": "NO",
+                "householdDelivery_INJ": "NO",
+                "generateVoucher": "YES",
+                "voucherCode": "527540054351",
+                "coordinate": {
+                    "latitude": 35.1619484,
+                    "longitude": 128.9838509,
+                    "altitude": null,
+                    "accuracy": 40,
+                    "altitudeAccuracy": null,
+                    "heading": null,
+                    "speed": null
+                },
+                "userName": "DV_TEST_IPC",
+                "password": "1234"
+            };
+        */
+       
+        //FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
+        FormUtil.submitRedeem( itemData.data.url, testJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
 
             console.log( 'after performActivity, FormUtil.submitRedeem: ' );
             console.log( success );
