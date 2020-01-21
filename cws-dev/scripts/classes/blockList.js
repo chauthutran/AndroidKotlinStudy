@@ -727,13 +727,15 @@ function BlockList( cwsRenderObj, blockObj )
                 console.log( 'clicking activityItem on blockList, itemData: ' );
                 console.log( itemData );
 
-                
-                var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+                if ( SyncManagerNew.syncStart() )
+                {
+                    var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
 
-                syncManagerNew.syncItem( activityItem, function( success ) {
-
-                    console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
-                });
+                    SyncManagerNew.syncItem( activityItem, function( success ) {
+    
+                        console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
+                    });    
+                }
 
                 /*
                 if ( FormUtil.syncRunning == 0 )

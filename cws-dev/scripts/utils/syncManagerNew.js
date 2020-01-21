@@ -20,22 +20,22 @@
 //      2. Fix the error case handling during 'syncItem'
 // -------------------------------------------------
 
-function syncManagerNew()  {};
+function SyncManagerNew()  {};
 
-syncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
+SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 
-//syncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
-//syncManagerNew.sync_Download_Running = false; // for planned download sync
+//SyncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
+//SyncManagerNew.sync_Download_Running = false; // for planned download sync
 
-syncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
-syncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
+SyncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
+SyncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
 
 
 // ===================================================
 // === MAIN 3 FEATURES =============
 
 // 1. Run 'sync' activity on one item
-syncManagerNew.syncItem = function( activityItem, callBack )
+SyncManagerNew.syncItem = function( activityItem, callBack )
 {
     // IMPORTANT: NOTE: 
     // Even with error, we should always return with 'callBack' since we want next item to continue if multiple case.
@@ -44,23 +44,20 @@ syncManagerNew.syncItem = function( activityItem, callBack )
     try
     {
         // if there is error, it will be handled within the method..
-        if ( syncManagerNew.checkCondition_SyncReady() )
+        if ( SyncManagerNew.checkCondition_SyncReady() )
         {
-            //var activityItem = ( activityItemInput ) ? activityItemInput : new ActivityItem( itemJson, itemTag, cwsRenderObj );
-
             // run UI animations
             activityItem.updateItem_UI_StartSync();
 
             // Calls Server
-            syncManagerNew.performActivity( activityItem.itemJson, function( success, responseJson ) {
+            SyncManagerNew.performActivity( activityItem.itemJson, function( success, responseJson ) {
 
                 // For both 'success' / 'failure' of response..
                 // think about handling special responseJson 'commands/actions' received from server here (e.g server telling PWA to perform some special action based on content received)
-
                 // TODO: ISSUE WITH THIS!!  We should always process this regardless of error in here!!!
                 //  - with this design of 'callback', it only calls back / return, if things are successful.
                 //      Solution --> return failed cases or do not use 'callback'.. (in places we do not need to?)
-                //  > Added try/catch to syncManagerNew.performActivity : perhaps we could inspect 'success' before running activityItem.updateItem_Data (with customized responseJson)?
+                //  > Added try/catch to SyncManagerNew.performActivity : perhaps we could inspect 'success' before running activityItem.updateItem_Data (with customized responseJson)?
 
                 // mark in activityItem of success...
                 activityItem.updateItem_Data( success, responseJson );
@@ -78,7 +75,7 @@ syncManagerNew.syncItem = function( activityItem, callBack )
     }
     catch( errMsg )
     {
-        console.log( 'Error happened during syncManagerNew.syncItem - ' + errMsg );
+        console.log( 'Error happened during SyncManagerNew.syncItem - ' + errMsg );
 
         callBack( false );
     }
@@ -86,19 +83,19 @@ syncManagerNew.syncItem = function( activityItem, callBack )
 
 
 // 2. Run 'sync' activity on ALL items
-syncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
+SyncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
 {
-    // check upload sync process not already running
-    if ( syncManagerNew.syncManyConditions( btnTag ) )
+    if ( SyncManagerNew.syncStart() )
     {
+
         // get syncItems (for upload)
-        syncManagerNew.getSync_UploadItems( function( syncItems ){
+        SyncManagerNew.getSync_UploadItems( function( syncItems ){
 
             // initialise UI + animation
-            syncManagerNew.update_UI_StartSync();
+            SyncManagerNew.update_UI_StartSync();
 
             // syncRunning 'flag'
-            syncManagerNew.sync_Running = true;
+            SyncManagerNew.sync_Running = true;
 
             for ( var s = 0; s < syncItems.length; s++ )
             {
@@ -106,7 +103,7 @@ syncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
                 var activityItem = new ActivityItem( itemJson, itemTag, cwsRenderObj );
 
                 // @Tran/@James: callBack or Promise ?
-                syncManagerNew.syncItem( activityItem, function(){
+                SyncManagerNew.syncItem( activityItem, function(){
 
                     FormUtil.updateProgressWidth( ( s + 1 ) / syncItems.length );
 
@@ -114,7 +111,7 @@ syncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
 
             }
 
-            syncManagerNew.finishSync_UploadMany()
+            SyncManagerNew.finishSync_UploadMany()
             
             callBack();
 
@@ -128,7 +125,7 @@ syncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
 
-syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
+SyncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
 {
     return ConnManager.networkSyncConditions();
 
@@ -147,7 +144,7 @@ syncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_f
 
 
 // Perform Server Operation..
-syncManagerNew.performActivity = function( itemData, callBack )
+SyncManagerNew.performActivity = function( itemData, callBack )
 {
     try
     {
@@ -164,7 +161,7 @@ syncManagerNew.performActivity = function( itemData, callBack )
     }
     catch( err )
     {
-        console.log( 'Error in syncManagerNew.performActivity' );
+        console.log( 'Error in SyncManagerNew.performActivity' );
         console.log( err );
 
         // Flag for error?
@@ -173,13 +170,13 @@ syncManagerNew.performActivity = function( itemData, callBack )
 };
 
 
-syncManagerNew.syncManyConditions = function( btnTag )
+SyncManagerNew.syncManyConditions = function( btnTag )
 {
     // condition 1: not already running upload sync (e.g. )
-    return ( ! syncManagerNew.sync_Running )
+    return ( ! SyncManagerNew.sync_Running )
 };
 
-syncManagerNew.getSync_UploadItems = function( callBack )
+SyncManagerNew.getSync_UploadItems = function( callBack )
 {
 
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
@@ -203,27 +200,27 @@ syncManagerNew.getSync_UploadItems = function( callBack )
 
 };
 
-syncManagerNew.update_UI_StartSync = function()
+SyncManagerNew.update_UI_StartSync = function()
 {
     // initialise ProgressBar Defaults
-    syncManagerNew.initializeProgressBar();
+    SyncManagerNew.initializeProgressBar();
 
     // animate syncButton 'running' 
-    syncManagerNew.updateSyncButton_UI_Animation( true, syncManagerNew.imgAppSyncActionButton )
+    SyncManagerNew.updateSyncButton_UI_Animation( true, SyncManagerNew.imgAppSyncActionButton )
 
 };
 
-syncManagerNew.initializeProgressBar = function()
+SyncManagerNew.initializeProgressBar = function()
 {
 
-    $( syncManagerNew.subProgressBar ).removeClass( 'indeterminate' );
-    $( syncManagerNew.subProgressBar ).addClass( 'determinate' );
+    $( SyncManagerNew.subProgressBar ).removeClass( 'indeterminate' );
+    $( SyncManagerNew.subProgressBar ).addClass( 'determinate' );
 
     FormUtil.updateProgressWidth( 0 );
     FormUtil.showProgressBar( 0 );
 };
 
-syncManagerNew.hideProgressBar = function()
+SyncManagerNew.hideProgressBar = function()
 {
 
     FormUtil.hideProgressBar();
@@ -232,7 +229,7 @@ syncManagerNew.hideProgressBar = function()
     $( syncManager.subProgressBar ).addClass( 'indeterminate' );
 }
 
-syncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSyncButton )
+SyncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSyncButton )
 {
     if ( runAnimation )
     {
@@ -244,24 +241,57 @@ syncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSy
     }
 };
 
-syncManagerNew.finishSync_UploadMany = function()
+SyncManagerNew.finishSync_UploadMany = function()
 {
-    syncManagerNew.hideProgressBar();
-    syncManagerNew.updateSyncButton_UI_Animation( false, syncManagerNew.imgAppSyncActionButton );
+    SyncManagerNew.hideProgressBar();
+    SyncManagerNew.updateSyncButton_UI_Animation( false, SyncManagerNew.imgAppSyncActionButton );
 
-    syncManagerNew.sync_Running = false;
+    SyncManagerNew.sync_Running = false;
 
 };
 
 
 
+// ===================================================
+// === 'syncStart/Finish' Related Methods =============
+
+SyncManagerNew.syncStart = function()
+{
+    var isOkToStart = false;
+
+    // Return 'false' if there is already running one..
+    if ( SyncManagerNew.sync_Running ) 
+    {
+        isOkToStart = false;
+        // TODO: Change to popup message in the app
+        alert( 'There is another sync job currenly running..' );        
+    }
+    else 
+    {
+        SyncManagerNew.sync_Running = true;
+        isOkToStart = true;
+    }
+
+    return isOkToStart;
+};
+
+SyncManagerNew.syncFinish = function()
+{
+    SyncManagerNew.sync_Running = false;
+};
+
+
+// ===================================================
+// ===  =============
+
+
 
 // Promise - easily catch error..
-//syncManagerNew.checkCondition_SyncReady().then( function() {
+//SyncManagerNew.checkCondition_SyncReady().then( function() {
 //}).catch( function( err ) {
 //    console.log( 'error during SyncReadyCheck - ' + err );
 //});
-//syncManagerNew.checkCondition_SyncReady = async function()
+//SyncManagerNew.checkCondition_SyncReady = async function()
 //{
 //    return ; // return promise..  new Promise(..)
 //}
