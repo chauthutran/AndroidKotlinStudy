@@ -97,7 +97,7 @@ ConnManager.initialize = function()
 	// Start the interval background connection testing..
 	ConnManager.createScheduledConnTests();
 
-	// ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
+	ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 }
 
 ConnManager.updateConnectionStatus = function () 

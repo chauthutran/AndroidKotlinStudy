@@ -85,8 +85,8 @@ syncManagerNew.syncItem = function( activityItem, callBack )
 };
 
 
-// 2. Run 'sync' activity on one item
-syncManagerNew.startSync_UploadMany = function( btnTag, cwsRenderObj, callBack )
+// 2. Run 'sync' activity on ALL items
+syncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
 {
     // check upload sync process not already running
     if ( syncManagerNew.syncManyConditions( btnTag ) )
@@ -153,54 +153,7 @@ syncManagerNew.performActivity = function( itemData, callBack )
     {
         // if the activity type is 'redeem'..
         //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
-
-        https://cws-dev.psi-mis.org/ws/eRefWSDev3/api/dc/action
-
-        /*
-        var testJson =    {
-                "captureValues": {
-                    "coordinate": {
-                        "latitude": 35.1619484,
-                        "longitude": 128.9838509,
-                        "altitude": null,
-                        "accuracy": 40,
-                        "altitudeAccuracy": null,
-                        "heading": null,
-                        "speed": null
-                    }
-                },
-                "firstName": "James",
-                "lastName": "Tester11234",
-                "birthProvince": "Maputo Cidade",
-                "yearOfBirth": "2007",
-                "dateOfBirth": "2020-01-01",
-                "birthOrder": "1",
-                "age": "13",
-                "ownershipOfPhone": "SHA",
-                "typeOfSession": "GS",
-                "channelOfReferral": "EV",
-                "program": "IFPP-REG",
-                "currentMethod_STD": "IUD",
-                "householdDelivery_PIL": "NO",
-                "householdDelivery_INJ": "NO",
-                "generateVoucher": "YES",
-                "voucherCode": "527540054351",
-                "coordinate": {
-                    "latitude": 35.1619484,
-                    "longitude": 128.9838509,
-                    "altitude": null,
-                    "accuracy": 40,
-                    "altitudeAccuracy": null,
-                    "heading": null,
-                    "speed": null
-                },
-                "userName": "DV_TEST_IPC",
-                "password": "1234"
-            };
-        */
-       
-        //FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
-        FormUtil.submitRedeem( itemData.data.url, testJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
+        FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
 
             console.log( 'after performActivity, FormUtil.submitRedeem: ' );
             console.log( success );
@@ -222,7 +175,7 @@ syncManagerNew.performActivity = function( itemData, callBack )
 
 syncManagerNew.syncManyConditions = function( btnTag )
 {
-    // condition 1: not already running upload sync
+    // condition 1: not already running upload sync (e.g. )
     return ( ! syncManagerNew.sync_Running )
 };
 
