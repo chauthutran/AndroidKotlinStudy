@@ -8,6 +8,7 @@ WsApiManager.wsApiListJson = {
     "cws-train": "https://cws-train.psi-mis.org/ws/eRefWSTrain",
     "cws-stage": "https://cws-stage.psi-mis.org/ws/eRefWSStage",
     "cws-dev":   "https://cws-dev.psi-mis.org/ws/eRefWSDev3" 
+    //"cws-dev":   "http://localhost:8080/eRefWSDev3" 
     //use 'eRefWSDev4' (4) when server issues exist
 };
 
