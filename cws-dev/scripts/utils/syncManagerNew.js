@@ -85,38 +85,68 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
 // 2. Run 'sync' activity on ALL items
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
-    if ( SyncManagerNew.syncStart() )
+    try
     {
-        // initialise UI + animation
-        SyncManagerNew.update_UI_StartSync();
+        if ( SyncManagerNew.syncStart() )
+        {
+            // initialise UI + animation
+            SyncManagerNew.update_UI_StartSync();
+    
+            // get activityItems (for upload) > not already uploaded (to be processed)
+            SyncManagerNew.getActivityItems_TBP( function( itemDataList ){
+    
+                SyncManagerNew.syncItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
+    
+                    console.log( 'syncAll finished' );
+                    SyncManagerNew.syncFinish();
+                    SyncManagerNew.update_UI_FinishSync();
 
-        // get activityItems (for upload) > not already uploaded (to be processed)
-        SyncManagerNew.getActivityItems_TBP( function( syncItems ){
-
-            for ( var s = 0; s < syncItems.length; s++ )
-            {
-                throw "startSync_UploadMany - NOT READY YET";
-                var activityItem = new ActivityItem( itemJson, itemTag, cwsRenderObj );
-
-                // @Tran/@James: callBack or Promise ?
-                SyncManagerNew.syncItem( activityItem, function(){
-
-                    FormUtil.updateProgressWidth( ( s + 1 ) / syncItems.length );
-
-                } )
-
-            }
-
-            SyncManagerNew.finishSync_UploadMany()
-            
-            callBack();
-
-        } )
-
+                    callBack( true );
+                });
+            });
+        }
+        else
+        {
+            throw "Sync not ready";
+        }
     }
-
+    catch( errMsg )
+    {
+        console.log( 'syncAll not run properly - ' + errMsg );
+        callBack( false );
+    }
 };
 
+
+SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
+{
+    // length is 1  index 'i' = 0; next time 'i' = 1
+    if ( itemDataList.length <= i )
+    {
+        // If index is equal or bigger to list, return back. - End reached.
+        return callBack();        
+    }
+    else
+    {
+        var itemData = itemDataList[i];       
+
+        var divItemTag = $( '#listItem_table_' + itemData.id ).parent( 'div.listItem' );
+
+        var activityItem = new ActivityItem( itemData, divItemTag, cwsRenderObj );
+
+        // Process the item
+        SyncManagerNew.syncItem( activityItem, function( success ) {
+
+            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
+
+            // update on progress bar
+            FormUtil.updateProgressWidth( ( i + 1 ) / itemDataList.length );
+
+            // Process next item.
+            SyncManagerNew.syncItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
+        });
+    }
+}
 
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
@@ -206,6 +236,13 @@ SyncManagerNew.update_UI_StartSync = function()
 
 };
 
+SyncManagerNew.update_UI_FinishSync = function()
+{
+    SyncManagerNew.hideProgressBar();
+    SyncManagerNew.updateSyncButton_UI_Animation( false, SyncManagerNew.imgAppSyncActionButton ); 
+};
+
+
 SyncManagerNew.initializeProgressBar = function()
 {
 
@@ -237,16 +274,6 @@ SyncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSy
     }
 };
 
-SyncManagerNew.finishSync_UploadMany = function()
-{
-    SyncManagerNew.hideProgressBar();
-    SyncManagerNew.updateSyncButton_UI_Animation( false, SyncManagerNew.imgAppSyncActionButton );
-
-    SyncManagerNew.sync_Running = false;
-
-};
-
-
 
 // ===================================================
 // === 'syncStart/Finish' Related Methods =============
@@ -273,7 +300,7 @@ SyncManagerNew.syncStart = function()
 
 SyncManagerNew.syncFinish = function()
 {
-    SyncManagerNew.sync_Running = false;
+    SyncManagerNew.sync_Running = false;  
 };
 
 
