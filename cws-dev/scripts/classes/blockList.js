@@ -437,6 +437,10 @@ function BlockList( cwsRenderObj, blockObj )
         var expandedDivTag = $( '<div class="act-l-expander" style="display:none"></div>' );
         contentDivTag.append( expandedDivTag );
 
+        expandedDivTag.click( function(e){
+            e.stopPropagation();
+        });
+
         // Click Events
         me.setContentDivClick( contentDivTag );
 
@@ -505,41 +509,48 @@ function BlockList( cwsRenderObj, blockObj )
             }
             else
             {*/
-                console.log( itemData.data.payloadJson );
-                var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
+                //console.log( itemData.data.payloadJson );
+                //var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
             //}
 
-            for( var i = 0; ( i < evalConditions.length ) ; i++ )
+            if ( evalConditions )
             {
-                var phoneCondition = evalConditions[ i ].condition;
 
-                me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
+                var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
 
-                    if ( passConditionTest )
-                    {
-                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+                for( var i = 0; ( i < evalConditions.length ) ; i++ )
+                {
+                    var phoneCondition = evalConditions[ i ].condition;
 
-                        cellphoneTag.click( function(e) {
+                    me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
 
-                            e.stopPropagation();
-
-                            if ( Util.isMobi() )
-                            {
-                                window.location.href = `tel:${phoneNumber}`;
-                            }
-                            else
-                            {
-                                alert( phoneNumber )
-                            }
-                        });
-
-                        targTag.append( cellphoneTag );
-
-                    }
+                        if ( passConditionTest )
+                        {
+                            var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
     
-                })
+                            cellphoneTag.click( function(e) {
+    
+                                e.stopPropagation();
+    
+                                if ( Util.isMobi() )
+                                {
+                                    window.location.href = `tel:${phoneNumber}`;
+                                }
+                                else
+                                {
+                                    alert( phoneNumber )
+                                }
+                            });
 
-            
+                            targTag.append( cellphoneTag );
+
+                        }
+
+                    })
+
+                }
+
+
             }
 
         }
@@ -721,21 +732,32 @@ function BlockList( cwsRenderObj, blockObj )
             imgSyncIconTag.click( function(e) {
 
                 e.stopPropagation();
-                
+
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
-                console.log( 'clicking activityItem on blockList, itemData: ' );
-                console.log( itemData );
+                // itemData above is now outdated (status changed) because of a syncAll() run > means item with status 'submit' is reattempted with single-click sync
+                DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){
 
-                if ( SyncManagerNew.syncStart() )
-                {
-                    var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+                    console.log( 'clicking activityItem on blockList, itemData: ' );
+                    console.log( ItemData_refreshed );
 
-                    SyncManagerNew.syncItem( activityItem, function( success ) {
+                    if ( ItemData_refreshed.status != me.status_redeem_submit )
+                    {
+
+                        if ( SyncManagerNew.syncStart() )
+                        {
+                            var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
+        
+                            SyncManagerNew.syncItem( activityItem, function( success ) {
+        
+                                console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
     
-                        console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
-                    });    
-                }
+                            });
+                        }
+
+                    }
+
+                } );
 
                 /*
                 if ( FormUtil.syncRunning == 0 )

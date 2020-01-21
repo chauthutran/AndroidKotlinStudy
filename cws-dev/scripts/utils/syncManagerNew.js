@@ -101,7 +101,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
                     SyncManagerNew.syncFinish();
                     SyncManagerNew.update_UI_FinishSync();
 
-                    callBack( true );
+                    if ( callBack ) callBack( true );
                 });
             });
         }
@@ -140,7 +140,7 @@ SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderO
             if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
 
             // update on progress bar
-            FormUtil.updateProgressWidth( ( i + 1 ) / itemDataList.length );
+            FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
 
             // Process next item.
             SyncManagerNew.syncItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
@@ -215,11 +215,26 @@ SyncManagerNew.getActivityItems_TBP = function( callBack )
             var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
             var uploadItems = myQueue.concat( myFailed ); //combined list
 
-			if ( retFunc ) retFunc( uploadItems );
+            //sort array so that 'onscreen' items are synchronized down the list, right now it's not in top-down sequence
+            // move into reusable function
+            uploadItems.sort(function (a, b, fld) {
+                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
+                if (b.created > a.created) {
+                    return b1st;
+                }
+                else if (a.created > b.created) {
+                    return a1st;
+                }
+                else {
+                    return equal;
+                }
+            });
+
+			if ( callBack ) callBack( uploadItems );
 		}
 		else
 		{
-			if ( retFunc ) retFunc( undefined );
+			if ( callBack ) callBack( undefined );
 		}
 
 	});
