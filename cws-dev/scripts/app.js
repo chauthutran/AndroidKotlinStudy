@@ -19,7 +19,11 @@
   // ----------------------------------------------------
 
   $('#imgAppDataSyncStatus').click(() => {
-    syncManager.syncOfflineData(this);
+
+    SyncManagerNew.syncAll( _cwsRenderObj, 'Manual' );
+
+    //syncManager.syncOfflineData(this);
+
   });
 
 

@@ -83,19 +83,15 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
 
 
 // 2. Run 'sync' activity on ALL items
-SyncManagerNew.syncAll = function( btnTag, cwsRenderObj, callBack )
+SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     if ( SyncManagerNew.syncStart() )
     {
+        // initialise UI + animation
+        SyncManagerNew.update_UI_StartSync();
 
-        // get syncItems (for upload)
-        SyncManagerNew.getSync_UploadItems( function( syncItems ){
-
-            // initialise UI + animation
-            SyncManagerNew.update_UI_StartSync();
-
-            // syncRunning 'flag'
-            SyncManagerNew.sync_Running = true;
+        // get activityItems (for upload) > not already uploaded (to be processed)
+        SyncManagerNew.getActivityItems_TBP( function( syncItems ){
 
             for ( var s = 0; s < syncItems.length; s++ )
             {
@@ -176,9 +172,9 @@ SyncManagerNew.syncManyConditions = function( btnTag )
     return ( ! SyncManagerNew.sync_Running )
 };
 
-SyncManagerNew.getSync_UploadItems = function( callBack )
+SyncManagerNew.getActivityItems_TBP = function( callBack )
 {
-
+    //TBP = to be processed :)
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
 	DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
 

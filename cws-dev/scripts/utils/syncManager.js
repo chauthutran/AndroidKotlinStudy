@@ -264,7 +264,10 @@ syncManager.scheduleSyncAutomationRun = function()
     if ( syncManager.storage_offline_SyncExecutionTimerInterval > 0 )
     {
         syncManager.syncAutomationRunTimer = setTimeout( function() {
-            syncManager.syncOfflineData();
+
+            //syncManager.syncOfflineData();
+            SyncManagerNew.syncAll( syncManager.cwsRenderObj, 'Schedule' );
+
         }, syncManager.storage_offline_SyncExecutionTimerInterval );
     }
 
