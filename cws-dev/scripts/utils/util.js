@@ -13,6 +13,7 @@ Util.disableTag = function( tag, isDisable )
 	tag.prop('disabled', isDisable);
 }
 
+// Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
 {
 	if ( array.length == 0 || array[0][key] === undefined ) return array;

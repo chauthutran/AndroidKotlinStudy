@@ -90,16 +90,16 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         if ( SyncManagerNew.syncStart() )
         {
             // initialise UI + animation
-            SyncManagerNew.update_UI_StartSync();
+            SyncManagerNew.update_UI_StartSyncAll();
     
             // get activityItems (for upload) > not already uploaded (to be processed)
-            SyncManagerNew.getActivityItems_TBP( function( itemDataList ){
+            SyncManagerNew.getActivityItems_ForSync( function( itemDataList ){
     
                 SyncManagerNew.syncItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
     
                     console.log( 'syncAll finished' );
                     SyncManagerNew.syncFinish();
-                    SyncManagerNew.update_UI_FinishSync();
+                    SyncManagerNew.update_UI_FinishSyncAll();
 
                     if ( callBack ) callBack( true );
                 });
@@ -117,36 +117,6 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     }
 };
 
-
-SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
-{
-    // length is 1  index 'i' = 0; next time 'i' = 1
-    if ( itemDataList.length <= i )
-    {
-        // If index is equal or bigger to list, return back. - End reached.
-        return callBack();        
-    }
-    else
-    {
-        var itemData = itemDataList[i];       
-
-        var divItemTag = $( '#listItem_table_' + itemData.id ).parent( 'div.listItem' );
-
-        var activityItem = new ActivityItem( itemData, divItemTag, cwsRenderObj );
-
-        // Process the item
-        SyncManagerNew.syncItem( activityItem, function( success ) {
-
-            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
-
-            // update on progress bar
-            FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
-
-            // Process next item.
-            SyncManagerNew.syncItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
-        });
-    }
-}
 
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
@@ -196,52 +166,67 @@ SyncManagerNew.performActivity = function( itemData, callBack )
 };
 
 
-SyncManagerNew.syncManyConditions = function( btnTag )
-{
-    // condition 1: not already running upload sync (e.g. )
-    return ( ! SyncManagerNew.sync_Running )
-};
+// ===================================================
+// === 2. 'syncAll' Related Methods =============
 
-SyncManagerNew.getActivityItems_TBP = function( callBack )
+SyncManagerNew.getActivityItems_ForSync = function( callBack )
 {
     //TBP = to be processed :)
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
 	DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
 
+		var uploadItems = [];
+		
 		if ( activityList && activityList.list )
 		{
 			var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
 			var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
             var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-            var uploadItems = myQueue.concat( myFailed ); //combined list
-
-            //sort array so that 'onscreen' items are synchronized down the list, right now it's not in top-down sequence
-            // move into reusable function
-            uploadItems.sort(function (a, b, fld) {
-                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                if (b.created > a.created) {
-                    return b1st;
-                }
-                else if (a.created > b.created) {
-                    return a1st;
-                }
-                else {
-                    return equal;
-                }
-            });
-
-			if ( callBack ) callBack( uploadItems );
+            uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created' ); //combined list - Ascending order by default			
 		}
-		else
-		{
-			if ( callBack ) callBack( undefined );
-		}
+
+		callBack( uploadItems );
 
 	});
 
 };
 
-SyncManagerNew.update_UI_StartSync = function()
+SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
+{
+    // length is 1  index 'i' = 0; next time 'i' = 1
+    if ( itemDataList.length <= i )
+    {
+        // If index is equal or bigger to list, return back. - End reached.
+        return callBack();        
+    }
+    else
+    {
+        var itemData = itemDataList[i];       
+
+        var divItemTag = $( '#listItem_table_' + itemData.id ).parent( 'div.listItem' );
+
+        var activityItem = new ActivityItem( itemData, divItemTag, cwsRenderObj );
+
+        // Process the item
+        SyncManagerNew.syncItem( activityItem, function( success ) {
+
+            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
+
+            // update on progress bar
+            FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
+
+            // Process next item.
+            SyncManagerNew.syncItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
+        });
+    }
+};
+
+
+// ===================================================
+// === UI Related Methods =============
+
+
+SyncManagerNew.update_UI_StartSyncAll = function()
 {
     // initialise ProgressBar Defaults
     SyncManagerNew.initializeProgressBar();
@@ -251,7 +236,7 @@ SyncManagerNew.update_UI_StartSync = function()
 
 };
 
-SyncManagerNew.update_UI_FinishSync = function()
+SyncManagerNew.update_UI_FinishSyncAll = function()
 {
     SyncManagerNew.hideProgressBar();
     SyncManagerNew.updateSyncButton_UI_Animation( false, SyncManagerNew.imgAppSyncActionButton ); 
@@ -320,7 +305,7 @@ SyncManagerNew.syncFinish = function()
 
 
 // ===================================================
-// ===  =============
+// === OTHERS Methods =============
 
 
 
