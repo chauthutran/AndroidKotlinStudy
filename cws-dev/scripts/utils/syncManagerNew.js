@@ -170,9 +170,11 @@ SyncManagerNew.performActivity = function( itemData, callBack )
 // === 2. 'syncAll' Related Methods =============
 
 SyncManagerNew.getActivityItems_ForSync = function( callBack )
-{
+{    
     //TBP = to be processed :)
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
+    // TODO: if it failes to get data or some error case in 'DataManager.getData', 
+    //      Let's think about it later or test about it..
 	DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
 
 		var uploadItems = [];
@@ -182,13 +184,12 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 			var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
 			var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
             var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-            uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created' ); //combined list - Ascending order by default			
+            uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created', undefined, 'Decending' ); // combined list
 		}
 
 		callBack( uploadItems );
 
 	});
-
 };
 
 SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )

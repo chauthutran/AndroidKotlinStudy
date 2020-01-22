@@ -700,11 +700,15 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.populateData_RedeemItemTag = function( itemData, itemLiTag )
     {    
+        // TODO: THIS SHOULD BE PLACED IN ActivityItem class.
+        //  We should create Activity Item object at this point.
+        //      And have all theses populate method in the activityItem class..
+
         var statusSecDivTag = itemLiTag.find( 'div.icons-status' );
 
         FormUtil.setStatusOnTag( statusSecDivTag, itemData, me.cwsRenderObj ); 
 
-        // Click Events
+        // Click Events        
         me.submitButtonListUpdate( statusSecDivTag, itemLiTag, itemData );
 
     }
@@ -724,9 +728,10 @@ function BlockList( cwsRenderObj, blockObj )
     // NOTE: JAMES/GREG --> SyncManagerNew.syncItem calling place..
     me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
     {
-
+        // TODO: Find a way to reset/clear previous events, etc and add new one as needed
         if ( itemData.status != me.status_redeem_submit )
         {
+            // TODO: Find a way to reset/clear previous events, etc and add new one as needed
             var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
 
             imgSyncIconTag.click( function(e) {
@@ -741,9 +746,9 @@ function BlockList( cwsRenderObj, blockObj )
                     console.log( 'clicking activityItem on blockList, itemData: ' );
                     console.log( ItemData_refreshed );
 
-                    if ( ItemData_refreshed.status != me.status_redeem_submit )
-                    {
-
+                    // TODO: 
+                    //if ( ItemData_refreshed.status != me.status_redeem_submit )
+                    //{
                         if ( SyncManagerNew.syncStart() )
                         {
                             var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
@@ -754,8 +759,7 @@ function BlockList( cwsRenderObj, blockObj )
     
                             });
                         }
-
-                    }
+                    //}
 
                 } );
 
