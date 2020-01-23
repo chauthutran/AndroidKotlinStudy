@@ -25,6 +25,9 @@ function cwsRender()
 	me.loginObj;
 	me.langTermObj;
 
+	me._activityDataListStorage = {};  // TODO: THIS MUST GET loaded/Populated when the app starts!!!!
+		// QUESTION - What is 'me.activityList' in below?  Is it same data?
+
 	// Constants
 	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
 	me.storageName_RedeemList = Constants.storageName_RedeemList
@@ -42,8 +45,10 @@ function cwsRender()
 	me._globalJsonData = undefined;
 
 	// Create separate class for this?
+	// NOT BEING USED.
 	me.blocks = {};	// "blockId": blockObj..
 	me.activityList = [];	// Move to FormUtil.activityList?
+
 
 	me._localConfigUse = false;
 	me._translateEnable = true;
