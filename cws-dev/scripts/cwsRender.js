@@ -25,16 +25,19 @@ function cwsRender()
 	me.loginObj;
 	me.langTermObj;
 
-	me._activityDataListStorage = {};  // TODO: THIS MUST GET loaded/Populated when the app starts!!!!
-		// QUESTION - What is 'me.activityList' in below?  Is it same data?
+	// Main 'activityItem' List Storage place
+	me._activityListData = { 'list': [] };  // TODO: THIS MUST GET loaded/Populated when the app starts!!!!
+	// QUESTION - What is 'me.activityList' in below?  Is it same data?
+
+	// loadActivityListData_AfterLogin
 
 	// Constants
 	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
-	me.storageName_RedeemList = Constants.storageName_RedeemList
-    me.status_redeem_submit = Constants.status_redeem_submit
-	me.status_redeem_queued = Constants.status_redeem_queued
-	me.status_redeem_failed = Constants.status_redeem_failed
-	me.status_redeem_paused = Constants.status_redeem_paused
+	me.storageName_RedeemList = Constants.storageName_RedeemList;
+    me.status_redeem_submit = Constants.status_redeem_submit;
+	me.status_redeem_queued = Constants.status_redeem_queued;
+	me.status_redeem_failed = Constants.status_redeem_failed;
+	me.status_redeem_paused = Constants.status_redeem_paused;
 
 	// Settings var
 	me.storage_offline_ItemNetworkAttemptLimit = Constants.storage_offline_ItemNetworkAttemptLimit; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
@@ -47,7 +50,7 @@ function cwsRender()
 	// Create separate class for this?
 	// NOT BEING USED.
 	me.blocks = {};	// "blockId": blockObj..
-	me.activityList = [];	// Move to FormUtil.activityList?
+	//me.activityList = [];	// Move to FormUtil.activityList?
 
 
 	me._localConfigUse = false;
@@ -76,6 +79,7 @@ function cwsRender()
 		if ( me.debugMode ) console.log( 'cwsRender.render()' );
 
 		me.handleLastSession( function() {
+
 			me.showLoginForm();
 		});
 
@@ -86,7 +90,6 @@ function cwsRender()
 
 	}
 
-	
 	// ------------------
 
 	me.setInitialData = function()
@@ -158,6 +161,27 @@ function cwsRender()
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
+
+
+	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
+	me.loadActivityListData_AfterLogin = function( callBack )
+	{
+		// TODO: If this fails, should we alert? - Need some testing...
+		DataManager.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
+		{
+			if ( jsonData_FromStorage && jsonData_FromStorage.list )
+			{
+				me._activityListData.list = jsonData_FromStorage.list;
+
+				// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
+				FormUtil.updateSyncListItems( me._activityListData, function()
+				{
+					callBack( me._activityListData );
+				});		
+			}
+		});
+	};
+
 
 	me.renderArea = function( areaId )
 	{

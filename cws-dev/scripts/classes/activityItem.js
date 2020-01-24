@@ -178,23 +178,21 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data_saveToDB = function( itemJson, callBack )
     {
-        // where do we fetch our activityList item from? a new classHandler?
-        DataManager.getData( 'redeemList', function( activityData ){
+        var activityData = me.cwsRenderObj._activityListData;
 
-            var activityItem = Util.getFromList( activityData.list, itemJson.id, "id" );
+        var activityItem = Util.getFromList( activityData.list, itemJson.id, "id" );
 
-            if ( activityItem )
-            {
-                activityItem.lastAttempt = itemJson.lastAttempt;
-                activityItem.network = itemJson.network;
-                activityItem.networkAttempt = itemJson.networkAttempt;
-                activityItem.data = itemJson.data;
-                // activityItem.history = itemJson.history;
-                activityItem.status = itemJson.status;
+        if ( activityItem )
+        {
+            activityItem.lastAttempt = itemJson.lastAttempt;
+            activityItem.network = itemJson.network;
+            activityItem.networkAttempt = itemJson.networkAttempt;
+            activityItem.data = itemJson.data;
+            // activityItem.history = itemJson.history;
+            activityItem.status = itemJson.status;
 
-                DataManager.saveData( 'redeemList', activityData, callBack );
-            }
-        });
+            DataManager.saveData( 'redeemList', activityData, callBack );
+        }
     };
 
 

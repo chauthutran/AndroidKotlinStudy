@@ -336,7 +336,9 @@ function statistics( cwsRender )
     me.createLocalAnalytics = function( callBack )
     {
 
-        FormUtil.updateSyncListItems( me.cwsRenderObj.storageName_RedeemList, function( myData ){
+        var myData = me.cwsRenderObj._activityListData;
+        
+        //FormUtil.updateSyncListItems( me.cwsRenderObj.storageName_RedeemList, function( myData ){
 
             if ( myData )
             {
@@ -393,7 +395,7 @@ function statistics( cwsRender )
 
             }
 
-        });
+        //});
     }
 
     me.earliest = function( myArr )

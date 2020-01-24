@@ -304,13 +304,18 @@ function Login( cwsRenderObj )
 
 	me.loginAfter = function()
 	{
-		FormUtil.geolocationAllowed();
+		// NOTE: JAMES:
+		//	- After Login, we are loading 'redeemList' data into cwsObject.
+		me.cwsRenderObj.loadActivityListData_AfterLogin( function() {
 
-		me.cwsRenderObj.renderDefaultTheme();
+			FormUtil.geolocationAllowed();
 
-		MsgManager.initialSetup();
+			me.cwsRenderObj.renderDefaultTheme();
 
-		FormUtil.hideProgressBar();
+			MsgManager.initialSetup();
+
+			FormUtil.hideProgressBar();
+		});
 	}
 
 	// --------------------------------------

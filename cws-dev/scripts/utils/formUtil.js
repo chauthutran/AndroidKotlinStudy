@@ -1199,40 +1199,27 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.updateSyncListItems = function( listName, retFunc )
+FormUtil.updateSyncListItems = function( redList, retFunc )
 {
-	var returnList = {};
-
 	FormUtil.records_redeem_submit = 0;
 	FormUtil.records_redeem_queued = 0;
 	FormUtil.records_redeem_failed = 0;
 
-	DataManager.getData( listName, function( redList ) {
 
-		if ( redList )
-		{
+	var returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
-			returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
+	var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
+	var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+	var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
 
-			var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
-			var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
-			var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
+	FormUtil.records_redeem_submit = mySubmit.length;
+	FormUtil.records_redeem_queued = myQueue.length;
+	FormUtil.records_redeem_failed = myFailed.length;
 
-			FormUtil.records_redeem_submit = mySubmit.length;
-			FormUtil.records_redeem_queued = myQueue.length;
-			FormUtil.records_redeem_failed = myFailed.length;
-
-			syncManager.dataQueued = myQueue;
-			syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
-			
-			if ( retFunc ) retFunc( returnList );
-		}
-		else
-		{
-			if ( retFunc ) retFunc( undefined );
-		}
-
-	});
+	syncManager.dataQueued = myQueue;
+	syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+		
+	retFunc( returnList );
 }
 
 FormUtil.updateProgressWidth = function( W )

@@ -7,7 +7,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;        
 
-    me.redeemList;
+    //me.redeemList;  // NOTE: Replaced by cwsRenderObj._activityDataListStorage
     me.redeemListTargetTag;
     me.redeemListScrollSize = 15; // move where?
     me.redeemListScrollingState = 0;
@@ -71,29 +71,26 @@ function BlockList( cwsRenderObj, blockObj )
     }
 
 
+    // TODO: JAMES - Working on here..
     me.redeemList_Display = function( blockTag )
     {
+        
+        me.renderRedeemList( me.cwsRenderObj._activityListData, blockTag, function() {
 
-        FormUtil.updateSyncListItems( me.storageName_RedeemList, function( jsonStorageData ){
+            if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+            {
+                me.cwsRenderObj.favIconsObj.initialize();
 
-            me.renderRedeemList( jsonStorageData, blockTag, function(){
-
-                if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
-                {
-                    me.cwsRenderObj.favIconsObj.initialize();
-
-                    me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
-                }
-                else
-                {
-                    $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
-                }
-
-            } );
+                me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
+            }
+            else
+            {
+                $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
+            }
 
         } );
-
     }
+
 
     me.renderRedeemList = function( redeemObj, blockTag, callBack )
     {
@@ -740,8 +737,10 @@ function BlockList( cwsRenderObj, blockObj )
 
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
-                // itemData above is now outdated (status changed) because of a syncAll() run > means item with status 'submit' is reattempted with single-click sync
-                DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){
+                
+
+
+                //DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){
 
                     console.log( 'clicking activityItem on blockList, itemData: ' );
                     console.log( ItemData_refreshed );
@@ -761,22 +760,9 @@ function BlockList( cwsRenderObj, blockObj )
                         }
                     //}
 
-                } );
-
-                /*
-                if ( FormUtil.syncRunning == 0 )
-                {
-                    var mySyncIcon = statusSecDivTag.find( 'small.syncIcon img' );
-                    SyncManager.runManualSync( itemData, mySyncIcon, function(){
-                        FormUtil.updateSyncListItems( 'redeemList' );
-                    } );
-                }
-                */
-
+                //} );
             });
-
         }
-
     }
 
 	// =============================================

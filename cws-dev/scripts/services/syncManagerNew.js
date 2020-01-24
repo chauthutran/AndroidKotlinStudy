@@ -93,7 +93,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             SyncManagerNew.update_UI_StartSyncAll();
     
             // get activityItems (for upload) > not already uploaded (to be processed)
-            SyncManagerNew.getActivityItems_ForSync( function( itemDataList ){
+            SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( itemDataList ){
     
                 SyncManagerNew.syncItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
     
@@ -124,18 +124,6 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 SyncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
 {
     return ConnManager.networkSyncConditions();
-
-    /*
-    // Check Network Connectivity + Check Server Availability
-    if ( ConnManager.networkSyncConditions() ) 
-    {
-        callBack_success();
-    }
-    else
-    {
-        callBack_failure();
-    }
-    */
 };
 
 
@@ -169,27 +157,28 @@ SyncManagerNew.performActivity = function( itemData, callBack )
 // ===================================================
 // === 2. 'syncAll' Related Methods =============
 
-SyncManagerNew.getActivityItems_ForSync = function( callBack )
+SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
 {    
     //TBP = to be processed :)
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
     // TODO: if it failes to get data or some error case in 'DataManager.getData', 
     //      Let's think about it later or test about it..
-	DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
+	//DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
+    var activityList = cwsRenderObj._activityListData
 
-		var uploadItems = [];
-		
-		if ( activityList && activityList.list )
-		{
-			var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
-			var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
-            var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-            uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created', undefined, 'Decending' ); // combined list
-		}
+    var uploadItems = [];
+    
+    if ( activityList && activityList.list )
+    {
+        var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
+        var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
+        var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
+        uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created', undefined, 'Decending' ); // combined list
+    }
 
-		callBack( uploadItems );
+    callBack( uploadItems );
 
-	});
+	//});
 };
 
 SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
