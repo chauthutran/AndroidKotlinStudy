@@ -697,9 +697,8 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.populateData_RedeemItemTag = function( itemData, itemLiTag )
     {    
-        // TODO: THIS SHOULD BE PLACED IN ActivityItem class.
-        //  We should create Activity Item object at this point.
-        //      And have all theses populate method in the activityItem class..
+        // NOTE: Good place to create ActivityItem class.
+        //      - But for efficiency, we are creating it when 'click' event happens
 
         var statusSecDivTag = itemLiTag.find( 'div.icons-status' );
 
@@ -707,7 +706,6 @@ function BlockList( cwsRenderObj, blockObj )
 
         // Click Events        
         me.submitButtonListUpdate( statusSecDivTag, itemLiTag, itemData );
-
     }
 
     me.setContentDivClick = function( contentDivTag )
@@ -737,7 +735,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
-                
+
 
 
                 //DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){

@@ -80,9 +80,13 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
             // update card status + activityType 
             me.updateItem_UI_Icons( me.itemJson, me.cwsRenderObj );
-        }
 
+            // TODO:  Update ActivityItem UI based on the updated info.
+            //  - Need to get more UI changes from syncManager.endSync()?
+            me.updateUI( me.itemTag, me.itemJson );
+        }
     };
+
 
     me.updateItem_Data = function( success, responseJson, callBack )
     {
@@ -126,6 +130,25 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         }
     };
 
+    // Update ActivityItem UI based on current activityItem data
+    me.updateUI = function( itemTag, itemJson )
+    {
+        me.updateItem_UI_Button( itemTag.find( 'small.syncIcon img' ) );
+    };
+
+
+    me.updateItem_UI_Button = function( btnTag )
+    {
+        if ( btnTag )
+        {
+            if ( btnTag.hasClass( 'clicked' ) )
+            { 
+                btnTag.removeClass( 'clicked' );
+            }
+        }        
+    };
+
+    // --------------------------
 
     me.updateItem_DataFields = function( success, responseJson, itemJson, cwsRenderObj )
     {
@@ -202,3 +225,4 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     me.initialize();
 
 }
+
