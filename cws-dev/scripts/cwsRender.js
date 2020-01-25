@@ -167,7 +167,7 @@ function cwsRender()
 	me.loadActivityListData_AfterLogin = function( callBack )
 	{
 		// TODO: If this fails, should we alert? - Need some testing...
-		DataManager2.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
+		DataManager.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
 		{
 			if ( jsonData_FromStorage && jsonData_FromStorage.list )
 			{
