@@ -29,7 +29,7 @@ SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 
 SyncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
 SyncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
-
+// QUESTION: Why use 'children()[0]'??
 
 // ===================================================
 // === MAIN 3 FEATURES =============
@@ -37,10 +37,6 @@ SyncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
 // 1. Run 'sync' activity on one item
 SyncManagerNew.syncItem = function( activityItem, callBack )
 {
-    // IMPORTANT: NOTE: 
-    // Even with error, we should always return with 'callBack' since we want next item to continue if multiple case.
-    // Thus, this same logic should be applied to below/inner methods..  
-    // 
     try
     {
         // if there is error, it will be handled within the method..
@@ -52,19 +48,13 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
             // Calls Server
             SyncManagerNew.performActivity( activityItem.itemJson, function( success, responseJson ) {
 
-                // For both 'success' / 'failure' of response..
-                // think about handling special responseJson 'commands/actions' received from server here (e.g server telling PWA to perform some special action based on content received)
-                // TODO: ISSUE WITH THIS!!  We should always process this regardless of error in here!!!
-                //  - with this design of 'callback', it only calls back / return, if things are successful.
-                //      Solution --> return failed cases or do not use 'callback'.. (in places we do not need to?)
-                //  > Added try/catch to SyncManagerNew.performActivity : perhaps we could inspect 'success' before running activityItem.updateItem_Data (with customized responseJson)?
-
                 // mark in activityItem of success...
-                activityItem.updateItem_Data( success, responseJson );
+                activityItem.updateItem_Data( success, responseJson, function() {
 
-                activityItem.updateItem_UI_FinishSync();
+                    activityItem.updateItem_UI_FinishSync();
 
-                callBack( success );
+                    callBack( success );
+                } );
             });
         }
         else
@@ -75,8 +65,8 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
     }
     catch( errMsg )
     {
+        // NOTE: Even with error, we want to return with 'callBack' since we want next item to continue if multiple run case.
         console.log( 'Error happened during SyncManagerNew.syncItem - ' + errMsg );
-
         callBack( false );
     }
 };
@@ -121,7 +111,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
 
-SyncManagerNew.checkCondition_SyncReady = function( callBack_success, callBack_failure )
+SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
 {
     return ConnManager.networkSyncConditions();
 };
@@ -135,21 +125,13 @@ SyncManagerNew.performActivity = function( itemData, callBack )
         // if the activity type is 'redeem'..
         //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
         FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
-
-            console.log( 'after performActivity, FormUtil.submitRedeem: ' );
-            console.log( success );
-            console.log( returnJson );
-
             callBack( success, returnJson );
         });
     }
-    catch( err )
+    catch( errMsg )
     {
-        console.log( 'Error in SyncManagerNew.performActivity' );
-        console.log( err );
-
-        // Flag for error?
-        callBack( false, err );
+        console.log( 'Error in SyncManagerNew.performActivity - ' + errMsg );
+        callBack( false );
     }
 };
 

@@ -96,7 +96,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
         me.updateItem_Data_saveToDB( me.itemJson, callBack );
 
-        // LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
+        // TODO: LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
         //me.updateItem_Data_saveHistory( me.itemJson, dtmSyncAttempt, success, returnJson, function() {
         //} );    
  
@@ -215,6 +215,11 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             activityItem.status = itemJson.status;
 
             DataManager.saveData( 'redeemList', activityData, callBack );
+        }
+        else
+        {
+            //callBack( false );
+            throw "Error in ActivityItem.updateItem_Data_saveToDB - activityItem by id not found";
         }
     };
 
