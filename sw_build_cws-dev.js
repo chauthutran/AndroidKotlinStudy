@@ -22,13 +22,6 @@ generateSW({
       }
     },
     {
-        urlPattern: /eRefWSDev3/,
-        handler: 'staleWhileRevalidate',
-        options: {
-          cacheName: 'eRef-WebService'
-        }
-    },
-    {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
       handler: 'staleWhileRevalidate',
       options: {

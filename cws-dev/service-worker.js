@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "73c51c28f445525deb1fb95c313923e3"
+    "revision": "083b453f0223b79de3bc9ae91afa4870"
   },
   {
     "url": "redeemGen.html",
@@ -417,7 +417,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "9b76d74aec15f360ee56eefbc3e32149"
+    "revision": "fae0bd21e525d02eb936dfc7c4ba8013"
   },
   {
     "url": "scripts/classes/menu.js",
