@@ -4,7 +4,7 @@ MoveLocalStorageData.moveData = function(){
 
     LocalStorageDataManager.getData( "movedData", function( movedData ){
 
-        if( movedData == undefined || movedData == false )
+        if( !movedData )
         {
             // Get all items in localStorage
             var keys = Object.keys( localStorage );
@@ -22,17 +22,16 @@ MoveLocalStorageData.moveData = function(){
                 MoveLocalStorageData.moveOneData( moveKeys[ i ], value, function( container, newData ){
 
                     // LocalStorageDataManager.saveData( container, newData );
-                    localStorage.removeItem( moveKeys[ i ] );
+                    //localStorage.removeItem( moveKeys[ i ] );
+                    LocalStorageDataManager.saveData("movedData", "true");
 
                 } );
             }
 
-            LocalStorageDataManager.saveData("movedData", "true");
-
-            for ( i = 0; i < moveKeys.length; i++ )
+            /*for ( i = 0; i < moveKeys.length; i++ )
             {
                 localStorage.removeItem( moveKeys[ i ] );
-            }
+            }*/
 
         }
         else
@@ -53,13 +52,13 @@ MoveLocalStorageData.moveData = function(){
 MoveLocalStorageData.moveOneData = function( key, value, callBack )
 {
     var dbStorage = new DBStorage();
-
+    
     dbStorage.getData( key, function( searched ){
 
         if( searched === undefined )
         {
             IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
-
+    
                 if ( callBack ) callBack( key, retData )
 
             } );

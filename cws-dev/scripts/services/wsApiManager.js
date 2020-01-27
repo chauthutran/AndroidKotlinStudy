@@ -48,7 +48,8 @@ WsApiManager.isSite_DevType = ( location.host.indexOf( 'localhost' ) >= 0
                         || location.host.indexOf( '127.0.0.1:8080' ) >= 0 );
                         // location.href).substring((location.href).length - 4, (location.href).length) == '/cws' || >> last 4 chars of url
     
-WsApiManager.isDebugMode = ( !WsApiManager.isSite_psiOrg || WsApiManager.isSite_cwsDash );
+WsApiManager.isDebugMode = false;
+//( !WsApiManager.isSite_psiOrg || WsApiManager.isSite_cwsDash );
 // ----------------------------------------------
 
 // WsApiManager._getPWAInfo = { "reloadInstructions": {"session": "false","allCaches": "false","serviceWorker": "false"},"appWS": {"cws-dev": "eRefWSDev3","cws-train": "eRefWSTrain","cws": "eRefWSDev3"},"version": _ver};
