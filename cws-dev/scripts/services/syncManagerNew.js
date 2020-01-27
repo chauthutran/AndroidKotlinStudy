@@ -28,8 +28,9 @@ SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 //SyncManagerNew.sync_Download_Running = false; // for planned download sync
 
 SyncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
-SyncManagerNew.subProgressBar = $( '#divProgressBar' ).children()[0];
-// QUESTION: Why use 'children()[0]'??
+SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
+//.children()[0];
+// $( '#divProgressBar.indeterminate' );
 
 // ===================================================
 // === MAIN 3 FEATURES =============

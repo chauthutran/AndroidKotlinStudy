@@ -295,7 +295,7 @@ function cwsRender()
 					if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
 	
 					// initialise favIcons
-					me.favIconsObj = new favIcons( me );
+					//me.favIconsObj = new favIcons( me );
 	
 				} );
 	

@@ -179,9 +179,6 @@ function Login( cwsRenderObj )
 			FormUtil.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
 				console.log( loginData );
-
-				alert( 'login Result: ' + success );
-				
 				if ( success )
 				{
 					me._pHash = Util.encrypt(password,4);

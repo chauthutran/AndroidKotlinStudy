@@ -30,6 +30,8 @@ function BlockList( cwsRenderObj, blockObj )
     me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
 
+    me.favIconsObj;
+
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -79,7 +81,11 @@ function BlockList( cwsRenderObj, blockObj )
 
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
             {
-                me.cwsRenderObj.favIconsObj.initialize();
+
+				me.favIconsObj = new favIcons( me.cwsRenderObj );
+                me.favIconsObj.initialize();
+
+                //me.cwsRenderObj.favIconsObj.initialize();
 
                 me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
             }
@@ -734,9 +740,6 @@ function BlockList( cwsRenderObj, blockObj )
                 e.stopPropagation();
 
                 var divListItemTag = $( this ).parents( 'div.listItem' );
-
-
-
 
                 //DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){
 

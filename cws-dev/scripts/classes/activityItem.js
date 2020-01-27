@@ -134,6 +134,8 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     me.updateUI = function( itemTag, itemJson )
     {
         me.updateItem_UI_Button( itemTag.find( 'small.syncIcon img' ) );
+
+        // PUT: Any other changes reflected on the ActivityItem - by submit..
     };
 
 
