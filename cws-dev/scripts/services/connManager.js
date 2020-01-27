@@ -71,6 +71,11 @@ ConnManager.type;		//v1.3
 ConnManager.roundConnectionTestToMins = 5;
 ConnManager.lastConnectTypeObs;
 
+// SHOULD BE DEFINED/MOVED TO ConnManagerNew class
+ConnManager.serverStateChanged;
+ConnManager.promptSwitchNetworkMode;
+ConnManager.promptSwitchUserNetworkMode;
+
 // TODO:ConnManager.networkMode_Switch_Prompt
 //		- Need to summarize and put into a document about the current logic
 //
@@ -164,7 +169,6 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 	var networkStateChanged = ( ConnManager.network_Online != ConnManager.networkOnline_PrevState );
 	var retJson = { 'networkOnline': ConnManager.network_Online, 
 					'dataServerOnline': ConnManager.dataServer_Online, 
-					'networkStateChanged': networkStateChanged, 
 					'serverStateChanged': false, 
 					'promptSwitchNetworkMode': false, 
 					'promptSwitchUserNetworkMode': false };
@@ -178,6 +182,8 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 			if ( retJson.networkOnline == retJson.dataServerOnline ) 
 			{
 				retJson.promptSwitchUserNetworkMode = true;
+				ConnManager.promptSwitchUserNetworkMode = retJson.promptSwitchUserNetworkMode;
+
 
 				ConnManager.userNetworkMode_intvCounter = 0;
 			}
@@ -210,6 +216,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						{
 							ConnManager.dataServer_Online = jsonData.available;
 							retJson.promptSwitchNetworkMode = true; //only prompt switch to 'ONLINE' if both network + server = online
+							ConnManager.promptSwitchNetworkMode = retJson.promptSwitchNetworkMode;
 						}
 						else
 						{
@@ -217,6 +224,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						}
 
 						retJson.serverStateChanged = ( retJson.dataServerOnline != ConnManager.dataServer_Online );
+						ConnManager.serverStateChanged = retJson.serverStateChanged;
 						retJson.dataServerOnline = ConnManager.dataServer_Online;
 
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
@@ -234,8 +242,11 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 					ConnManager.dataServer_Online = false;
 
 					retJson.serverStateChanged = ( retJson.dataServerOnline != ConnManager.dataServer_Online );
+					ConnManager.serverStateChanged = retJson.serverStateChanged;
+											
 					retJson.dataServerOnline = false;
 					retJson.promptSwitchNetworkMode = true;
+					ConnManager.promptSwitchNetworkMode = retJson.promptSwitchNetworkMode;
 
 					ConnManager.dataServer_statusCheck_IntvCounter = 0; //no need to check server status if network offline
 					ConnManager.schedulerTestUnderway = 0;
@@ -280,6 +291,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 						}
 
 						retJson.serverStateChanged = ( retJson.dataServerOnline != ConnManager.dataServer_Online );
+						ConnManager.serverStateChanged = retJson.serverStateChanged;
 						retJson.dataServerOnline = ConnManager.dataServer_Online;
 
 						ConnManager.dataServer_statusCheck_IntvCounter = 0;
@@ -296,6 +308,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 					ConnManager.dataServer_Online = false;
 
 					retJson.serverStateChanged = ( retJson.dataServerOnline != ConnManager.dataServer_Online );
+					ConnManager.serverStateChanged = retJson.serverStateChanged;
 					retJson.dataServerOnline = false;
 
 					ConnManager.dataServer_statusCheck_IntvCounter = 0;
@@ -312,7 +325,10 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 
 				if ( ConnManager.userNetworkMode_intvCounter > ConnManager.userNetworkModeSwitch_IntvLimit  )
 				{
-					if ( retJson.networkOnline == retJson.dataServerOnline ) retJson.promptSwitchUserNetworkMode = true;
+					if ( retJson.networkOnline == retJson.dataServerOnline ) {
+						retJson.promptSwitchUserNetworkMode = true;
+						ConnManager.promptSwitchUserNetworkMode = retJson.promptSwitchUserNetworkMode;
+					}
 				}
 
 				ConnManager.schedulerTestUnderway = 0;
@@ -526,6 +542,8 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 {
 	if ( localStorage.getItem('session') !== null && FormUtil.checkLogin() )
 	{
+		console.log( 'ConnManager.getDcdConfigVersion - FormUtil.login_UserName/Password: ' + FormUtil.login_UserName + ', ' + FormUtil.login_Password );
+
 		var loadingTag = undefined;
 		var userName = FormUtil.login_UserName;
 		var userPin = FormUtil.login_Password;

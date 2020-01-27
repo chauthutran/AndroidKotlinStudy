@@ -24,33 +24,52 @@
 // NetworkType();  <-- Has all the methods related to 3G/2G etc..
 
 
-function ConnManager() {};
+function ConnManagerNew() {};
 
-ConnManager._cwsRenderObj;
+ConnManagerNew._cwsRenderObj;
 
-
-ConnManager.initialize = function() 
+// ScheduleManager will do this one instead..
+/*ConnManagerNew.initialize = function() 
 {
-	ConnManager.initialiseNetworkSererMonitors()
+	ConnManagerNew.initialiseNetworkSererMonitors()
 };
 
-ConnManager.createConnectionMonitors = function()
+ConnManagerNew.createConnectionMonitors = function()
 {
-	ConnManager.monitorNetworkStatusChanges();
+	ConnMaConnManagerNewnager.monitorNetworkStatusChanges();
 
-	ConnManager.monitorDataServerAvailable();
+	ConnManagerNew.monitorDataServerAvailable();
 
 };
 
-ConnManager.monitorNetworkStatusChanges = function()
+ConnManagerNew.monitorNetworkStatusChanges = function()
 {
 	// track online/offline changes
 
 
 };
 
-ConnManager.monitorDataServerAvailable = function()
+ConnManagerNew.monitorDataServerAvailable = function()
 {
 	// create  Server Available changes
 
+}*/
+
+// Calling it on method from 'statusInfoManager.js' instead.
+/*
+// TODO: MOVE: Create statusInfoSummary class to get all status data at once?
+ConnManagerNew.getCurrentStatusSummary = function()
+{
+	// TODO: Need to change 'ConnManager' to ..?.
+	var connSummary = {
+		'networkOnline': ConnManager.network_Online,
+		'dataServerOnline': ConnManager.dataServer_Online,
+		'serverStateChanged': ConnManager.serverStateChanged,
+		'promptSwitchNetworkMode': ConnManager.network_Online,
+		'promptSwitchUserNetworkMode': ConnManager.promptSwitchUserNetworkMode		
+	};
+
+	// create  Server Available changes
+	return connSummary;
 }
+*/

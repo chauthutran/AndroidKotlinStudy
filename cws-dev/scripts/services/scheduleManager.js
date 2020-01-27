@@ -5,6 +5,9 @@
 function ScheduleManager() {};
 
 // ScheduleManager.runSummary = { 'list': [] };
+ScheduleManager.interval_networkStatusChecks = 5000;
+ScheduleManager.interval_dataServerStatusChecks = 30000;
+// TODO: More...
 
 // ===================================================
 // === PART 1. Schedule Call/Start Methods =============
@@ -12,7 +15,7 @@ function ScheduleManager() {};
 ScheduleManager.scheduleNetworkStatusChecks = function()
 {
 	// 5 seconds
-	setInterval( ConnManager.networkOnlineChecks(), 5000 );
+	setInterval( ConnManager.networkOnlineChecks(), ScheduleManager.interval_networkStatusChecks );
 	//ConnManager.monitorNetworkStatusChanges();
 	// ConnManager.monitorDataServerAvailable();
 };
@@ -20,8 +23,18 @@ ScheduleManager.scheduleNetworkStatusChecks = function()
 ScheduleManager.scheduleDataServerStatusChecks = function() 
 {
 	// 30 seconds
-	setInterval( ConnManager.dataServerStatusChecks(), 30000 );
+	setInterval( ConnManager.dataServerStatusChecks(), ScheduleManager.interval_dataServerStatusChecks );
 }
+
+
+ScheduleManager.schedulePromptQuestionCancelChecks = function()
+{
+	// 1 seconds
+	//setInterval( ConnManager.networkOnlineChecks(), ScheduleManager.interval_networkStatusChecks );
+	//ConnManager.monitorNetworkStatusChanges();
+	// ConnManager.monitorDataServerAvailable();
+};
+
 
 ScheduleManager.scheduleSyncAllRuns = function() 
 {
