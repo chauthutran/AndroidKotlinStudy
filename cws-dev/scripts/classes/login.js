@@ -230,78 +230,75 @@ function Login( cwsRenderObj )
 	}
 
 	me.loginSuccessProcess = function( loginData ) 
-	{		
+	{
 		var dtmNow = ( new Date() ).toISOString();
 
-		// NOTE: JAMES:
-		//	- After Login, we are loading 'redeemList' data into cwsObject.
 		me.cwsRenderObj.loadActivityListData_AfterLogin( function() {
+		me.closeForm();
+		me.pageTitleDivTab.hide(); 
 
-			me.closeForm();
-			me.pageTitleDivTab.hide(); 
+		// Set Logged in orgUnit info
+		if ( loginData.orgUnitData )
+		{
+			if ( FormUtil.orgUnitData != loginData.orgUnitData) FormUtil.orgUnitData = loginData.orgUnitData;
 
-			// Set Logged in orgUnit info
-			if ( loginData.orgUnitData )
+			me.loggedInDivTag.show();
+			me.spanOuNameTag.show();
+			me.spanOuNameTag.text( ' ' + FormUtil.orgUnitData.userName + ' ' ).attr( 'title', FormUtil.orgUnitData.ouName );	
+		} 
+
+		// Load config and continue the CWS App process
+		if ( loginData.dcdConfig ) 
+		{
+			FormUtil.dcdConfig = loginData.dcdConfig; 
+			// call CWS start with this config data..
+			me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
+
+			var dtmNow = ( new Date() ).toISOString();
+
+			// if session data exists, update the lastUpdated date else create new session data
+			if ( loginData.mySession ) 
 			{
-				if ( FormUtil.orgUnitData != loginData.orgUnitData) FormUtil.orgUnitData = loginData.orgUnitData;
-
-				me.loggedInDivTag.show();
-				me.spanOuNameTag.show();
-				me.spanOuNameTag.text( ' ' + FormUtil.orgUnitData.userName + ' ' ).attr( 'title', FormUtil.orgUnitData.ouName );	
-			} 
-
-			// Load config and continue the CWS App process
-			if ( loginData.dcdConfig ) 
-			{
-				FormUtil.dcdConfig = loginData.dcdConfig; 
-				// call CWS start with this config data..
-				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
-
-				var dtmNow = ( new Date() ).toISOString();
-
-				// if session data exists, update the lastUpdated date else create new session data
-				if ( loginData.mySession ) 
-				{
-					loginData.mySession.lastUpdated = dtmNow;
-					loginData.mySession.stayLoggedIn = me._staySignedIn;
-		
-					DataManager.saveData( me._userName, loginData );	
-		
-					me.loginAfter();
-				}
-				else
-				{
-					var newSaveObj = Object.assign( {} , loginData);
-		
-					FormUtil.defaultLanguage( function( defaultLang ){
-						newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
-		
-						DataManager.saveData( me._userName, newSaveObj );
-			
-						FormUtil.dcdConfig = newSaveObj.dcdConfig; 
-		
-						me.loginAfter();
-					});
-
-				}
-
+				loginData.mySession.lastUpdated = dtmNow;
+				loginData.mySession.stayLoggedIn = me._staySignedIn;
+	
+				DataManager.saveData( me._userName, loginData );	
+	
+				me.loginAfter();
 			}
 			else
 			{
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
+				var newSaveObj = Object.assign( {} , loginData);
+	
+				FormUtil.defaultLanguage( function( defaultLang ){
+					newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
+	
+					DataManager.saveData( me._userName, newSaveObj );
+		
+					FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+	
+					me.loginAfter();
+				});
 
-				me.loginAfter();
 			}
 
-			DataManager.getData( 'syncList', function( syncData ){
+		}
+		else
+		{
+			// MISSING TRANSLATION
+			MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 
-				// if previously run Sync process 'crashed' without saving results > update results
-				if ( syncData ) syncManager.mergeSyncListWithIndexDB();
+			me.loginAfter();
+		}
 
-			});
+		DataManager.getData( 'syncList', function( syncData ){
 
-			$( 'nav' ).show();
+			// if previously run Sync process 'crashed' without saving results > update results
+			if ( syncData ) syncManager.mergeSyncListWithIndexDB();
+
+		});
+
+		$( 'nav' ).show();
 
 		});
 	}
@@ -309,13 +306,13 @@ function Login( cwsRenderObj )
 	me.loginAfter = function()
 	{
 
-		FormUtil.geolocationAllowed();
+			FormUtil.geolocationAllowed();
 
-		me.cwsRenderObj.renderDefaultTheme();
+			me.cwsRenderObj.renderDefaultTheme();
 
-		MsgManager.initialSetup();
+			MsgManager.initialSetup();
 
-		FormUtil.hideProgressBar();
+			FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------

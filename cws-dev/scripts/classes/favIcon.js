@@ -300,5 +300,5 @@ function favIcons( cwsRender )
 
 	// ------------------------------------
 
-	//me.initialize();
+	me.initialize();
 }

@@ -65,21 +65,25 @@ function BlockList( cwsRenderObj, blockObj )
                 // Add Event from 'FormUtil'
                 //  - To Enable click
                 FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
+
             }
+
+
         }
     };
 
 
+    // TODO: JAMES - Working on here..
     me.redeemList_Display = function( blockTag )
     {
+        
         me.renderRedeemList( me.cwsRenderObj._activityListData.list, blockTag, function() {
 
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
             {
 
 				me.favIconsObj = new favIcons( me.cwsRenderObj );
-                me.favIconsObj.initialize();
-
+                //me.favIconsObj.initialize();
                 //me.cwsRenderObj.favIconsObj.initialize();
 
                 me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
@@ -94,7 +98,8 @@ function BlockList( cwsRenderObj, blockObj )
 
 
     me.renderRedeemList = function( redeemObj, blockTag, callBack )
-    {        
+    {
+
         $( window ).scrollTop(0);
 
         // Remove any previous render.

@@ -5,49 +5,69 @@
 function ScheduleManager() {};
 
 // ScheduleManager.runSummary = { 'list': [] };
-ScheduleManager.interval_networkStatusChecks = 5000;
-ScheduleManager.interval_dataServerStatusChecks = 30000;
+
+ScheduleManager.interval_networkStatusCheck = 5000;
+ScheduleManager.interval_dataServerStatusCheck = 30000;
+ScheduleManager.interval_networkConnectionTypeCheck = 30000; 
+
 // TODO: More...
+
 
 // ===================================================
 // === PART 1. Schedule Call/Start Methods =============
+ScheduleManager.initialize_ConnectionManagerChecks = function()
+{
+	ScheduleManager.schedule_networkStatus_Check();
+	ScheduleManager.schedule_serverStatus_Check();
+	ScheduleManager.schedule_connectionTypeMonitoringCheck();
+	ScheduleManager.schedule_switchNetworkModePrompt_Check();
+	console.log( 'created scheduler tasks for ConnectionManagerNew ' );
+}
 
-ScheduleManager.scheduleNetworkStatusChecks = function()
+ScheduleManager.schedule_networkStatus_Check = function()
 {
 	// 5 seconds
-	setInterval( ConnManager.networkOnlineChecks(), ScheduleManager.interval_networkStatusChecks );
-	//ConnManager.monitorNetworkStatusChanges();
-	// ConnManager.monitorDataServerAvailable();
+	setInterval( ConnManagerNew.networkStatus_Check, ScheduleManager.interval_networkStatusCheck );
 };
 
-ScheduleManager.scheduleDataServerStatusChecks = function() 
+ScheduleManager.schedule_serverStatus_Check = function() 
 {
 	// 30 seconds
-	setInterval( ConnManager.dataServerStatusChecks(), ScheduleManager.interval_dataServerStatusChecks );
+	ConnManagerNew.serverOnline_StatusCheck_ID = setInterval(  //setTimeout
+		ConnManagerNew.serverStatus_Check, ScheduleManager.interval_dataServerStatusCheck 
+	);
+	console.log('scheduleMan.serverOnlineStatusCheck created ~ ' + ConnManagerNew.serverOnline_StatusCheck_ID);
+};
+
+ScheduleManager.schedule_connectionTypeMonitoringCheck = function()
+{
+	setInterval( ConnManagerNew.incrementConnectionTypeMonitor, ScheduleManager.interval_networkConnectionTypeCheck );
 }
 
+ScheduleManager.schedule_switchNetworkModePrompt_Check = function()
+{
+	// 5 seconds << should be 1 second, because smallest timer interval at present is network Online check = 1sec
+	setInterval( ConnManagerNew.switchNetworkModePrompt_Check, 1000 );
+};
 
-ScheduleManager.schedulePromptQuestionCancelChecks = function()
+ScheduleManager.schedulePromptSwitchNetworkCancelCheck = function()
 {
 	// 1 seconds
-	//setInterval( ConnManager.networkOnlineChecks(), ScheduleManager.interval_networkStatusChecks );
-	//ConnManager.monitorNetworkStatusChanges();
-	// ConnManager.monitorDataServerAvailable();
+	setInterval( ConnManagerNew.promptSwitchNetworkCancelCheck, 1000 );
 };
 
 
-ScheduleManager.scheduleSyncAllRuns = function() 
+ScheduleManager.scheduleSyncAllRun = function() 
 {
 	// 30 seconds
-	setInterval( SyncManagerNew.syncAll_WithChecks(), 30000 );
+	setInterval( SyncManagerNew.syncAll_WithChecks, 30000 );
 }
 
-ScheduleManager.scheduleSyncAllButtonUIChange = function() 
+ScheduleManager.scheduleSyncAllButtonUIshowHide = function() 
 {
 	// 10 seconds
-	setInterval( SyncManagerNew.syncAllButtonChange(), 10000 );
+	setInterval( SyncManagerNew.syncAllButtonChange, 10000 );
 }
 
 // ===================================================
 // === PART 2. Schedule Status or History Reteive Methods ? =============
-

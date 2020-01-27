@@ -377,7 +377,6 @@ Util.checkEmptyId_FromList = function( list )
 	return ( Util.getFromList( list, '' ) !== undefined );
 };
 
-
 Util.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
 {
 	// planned use: blockList will 'unpack' a complex json payload back into a single array 
@@ -414,6 +413,9 @@ Util.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
 		console.log( thisItem );
 		console.log( 'stopped here' );
 	}
+	
+
+
 };
 
 Util.jsonToArray = function( jsonData, structureConfig )
@@ -445,39 +447,19 @@ Util.jsonToArray = function( jsonData, structureConfig )
 
 	return arrRet;
 };
-
-// List / Array Related
-// ----------------------------------
-
-// ----------------------------------
-// RecursiveCalls
-
 Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 {
-    // dataObj can store any info + 'list' for itemDataList..
-
-    // length is 1  index 'i' = 0; next time 'i' = 1
     if ( dataObj.list.length <= i )
     {
-        // If index is equal or bigger to list, return back. - End reached.
         return finishCallBack();        
     }
     else
     {
         runMethod( dataObj.list[i], function() {
-
-            // Process next item.
             Util.recursiveCalls( dataObj, i + 1, runMethod, finishCallBack );
-
         }, finishCallBack );
     }
 };
-
-// RecursiveCalls
-// ----------------------------------
-
-// ----------------------------------
-// Others
 
 Util.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
 {	

@@ -104,7 +104,7 @@ ConnManager.initialize = function()
 
 	ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 }
-
+//rename to updateConnectionType
 ConnManager.updateConnectionStatus = function () 
 {
 	// ConnManager.connection = ( navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' } );

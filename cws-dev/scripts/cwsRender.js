@@ -60,6 +60,7 @@ function cwsRender()
 	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 
+
 	me.debugMode = false;
 
 	// =============================================

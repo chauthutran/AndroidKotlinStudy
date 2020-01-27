@@ -29,6 +29,7 @@ MoveLocalStorageData.moveData = function(){
                 } );
             }
 
+
             /*for ( i = 0; i < moveKeys.length; i++ )
             {
                 localStorage.removeItem( moveKeys[ i ] );
@@ -53,13 +54,13 @@ MoveLocalStorageData.moveData = function(){
 MoveLocalStorageData.moveOneData = function( key, value, callBack )
 {
     var dbStorage = new DBStorage();
-    
+
     dbStorage.getData( key, function( searched ){
 
         if( searched === undefined )
         {
             IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
-    
+
                 if ( callBack ) callBack( key, retData )
 
             } );

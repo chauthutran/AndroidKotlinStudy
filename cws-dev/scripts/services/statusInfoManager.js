@@ -14,11 +14,12 @@ StatusInfoManager.getCurrentStatusSummary = function()
 {
 	// TODO: Need to change 'ConnManager'.
 	var connSummary = {
-		'networkOnline': ConnManager.network_Online,
-		'dataServerOnline': ConnManager.dataServer_Online,
-		'serverStateChanged': ConnManager.serverStateChanged,
-		'promptSwitchNetworkMode': ConnManager.network_Online,
-		'promptSwitchUserNetworkMode': ConnManager.promptSwitchUserNetworkMode		
+		'networkOnline': ConnManagerNew.networkOnline_CurrState,
+		'networkOnlinePREV': ConnManagerNew.networkOnline_PrevState,
+		'dataServerOnline': ConnManagerNew.serverOnline_CurrState,
+		'dataServerOnlinePREV': ConnManagerNew.serverOnline_PrevState,
+		'serverStateChanged': ConnManagerNew.serverOnline_StateChanged,
+		'promptSwitchNetworkMode': ConnManagerNew.switchPrompt_CurrState		
 	};
 
 	// create  Server Available changes

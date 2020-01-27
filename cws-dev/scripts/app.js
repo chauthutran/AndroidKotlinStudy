@@ -27,19 +27,17 @@
   });
 
 
-  // App version check and return always..  
-  //  (Unless version is outdated and agreed to perform 'reget' for new service worker
-  //    - which leads to app reload with new version of service worker.
-  function appInfoOperation(returnFunc) {
+  function appInfoOperation( returnFunc ) 
+  {
     // Only online mode and by app.psi-mis.org, check the version diff.
     if (ConnManager.getAppConnMode_Online()) // && FormUtil.isAppsPsiServer()
     {
-      WsApiManager.setupWsApiVariables(returnFunc);
+      WsApiManager.setupWsApiVariables( returnFunc );
     }
     else {
-      if (debugMode) console.log('Offline Mode'); //console.log('not PSI server')
+      if ( debugMode ) console.log('Offline Mode'); //console.log('not PSI server')
 
-      if (returnFunc) returnFunc();
+      if ( returnFunc ) returnFunc();
     }
 
   };
@@ -56,19 +54,12 @@
   }
 
   function updateOnlineStatus(event) {
+
     ConnManager.network_Online = navigator.onLine;
+    ConnManagerNew.setNetworkStatus( navigator.onLine );
 
-    if (ConnManager.network_Online) {
-      $('#ConnectingWithSara').removeClass('logoOffline');
-      $('#ConnectingWithSara').addClass('logoOnline');
-    }
-    else {
-      $('#ConnectingWithSara').removeClass('logoOnline');
-      $('#ConnectingWithSara').addClass('logoOffline');
-    }
-
-    if (_cwsRenderObj.initializeStartBlock) {
-      syncManager.initialize(_cwsRenderObj);
+    if ( _cwsRenderObj.initializeStartBlock ) {
+      syncManager.initialize( _cwsRenderObj );
     }
 
   };
@@ -304,7 +295,9 @@
     //  & set web service type for the app
     // , then, proceed with 'cwsRenderObj' rendering.
 
-    appInfoOperation(function () {
+    appInfoOperation( function () {
+
+      ConnManagerNew.initialize();
 
       $('#spanVersion').text('v' + _ver);
 
