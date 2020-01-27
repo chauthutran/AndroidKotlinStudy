@@ -357,11 +357,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "7285fa9106aa9acb5790a4b9598c778b"
+    "revision": "71a7c968fa6ed202e4281b42e765634e"
   },
   {
     "url": "redeemGen.html",
-    "revision": "330ae1d8f73b2cc0f9152c73a827367b"
+    "revision": "0da12156bd1077295bcc6e03a85d0274"
   },
   {
     "url": "scripts/app.js",
@@ -513,7 +513,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManager.js",
-    "revision": "20e4dd8bbd4c4aee4ac6cbb7a40c9dc6"
+    "revision": "ebcf79c5772eec370f1674349c4b3a3c"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -526,6 +526,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/services/dataManager2.js",
     "revision": "e737d52a8d032e775a0f7f06deb1cce3"
+  },
+  {
+    "url": "scripts/services/dataVerMove.js",
+    "revision": "571b801589c9eda4592579cc6d78162e"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -545,7 +549,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/moveLocalStorageData.js",
-    "revision": "e9085c015bf1b0b6cb9b9edf307f186d"
+    "revision": "540735a9d8eaef724ee6a72d3d575c29"
   },
   {
     "url": "scripts/services/moveLocalStorageDataNew.js",
@@ -597,7 +601,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "34825de6cf5c240274725770ec440aff"
+    "revision": "4acecfb6f0eee0f6862fd4955fb48192"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -625,7 +629,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "238151f79bbe72e77a2fa97e7c712d64"
+    "revision": "4525405058aea4813d6ea06df4141e14"
   },
   {
     "url": "sounds/beep.mp3",

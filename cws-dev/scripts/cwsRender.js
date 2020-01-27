@@ -176,7 +176,6 @@ function cwsRender()
 				// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
 				FormUtil.updateSyncListItems( me._activityListData, function()
 				{
-					console.log( ' ===> CallBack From me.loadActivityListData_AfterLogin' );
 					callBack( me._activityListData );
 				});		
 			}

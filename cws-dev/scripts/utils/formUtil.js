@@ -810,10 +810,13 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	else
 	{
 		var url = WsApiManager.composeWsFullUrl( '/api/available' );
-		console.log( '~ 1 : api/available  ')
+		
+		if ( WsApiManager.isDebugMode ) console.log( '~ 1 : api/available  ' );
+
 		//RESTUtil.retrieveJson( url, returnFunc );
-		RESTUtil.retrieveJson( url, function(){
-			console.log( '~ 2 : api/available  ')
+		RESTUtil.retrieveJson( url, function()
+		{
+			if ( WsApiManager.isDebugMode ) console.log( '~ 2 : api/available  ' );
 			RESTUtil.retrieveJson( url, returnFunc );
 		} );	
 	}

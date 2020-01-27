@@ -4,6 +4,7 @@ MoveLocalStorageData.moveData = function(){
 
     LocalStorageDataManager.getData( "movedData", function( movedData ){
 
+        // if movedData flag does not exist in 'localStorage', work on moving the 'redeemList'..
         if( !movedData )
         {
             // Get all items in localStorage

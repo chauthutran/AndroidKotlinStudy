@@ -788,6 +788,7 @@
     <script type="text/javascript" src="scripts/services/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
     <script type="text/javascript" src="scripts/services/moveLocalStorageData.js"></script>
+    <script type="text/javascript" src="scripts/services/dataVerMove.js"></script>
     <script type="text/javascript" src="scripts/utils/localStatistics.js"></script>
 
     <script type="text/javascript" src="scripts/classes/activityItem.js"></script>
@@ -819,7 +820,9 @@
 
   <script>
     //setTimeout( function(){
-      MoveLocalStorageData.moveData();
+      //MoveLocalStorageData.moveData();
+      DataVerMove.dataChangeHandle();
+
       new DBStorageSelector();  
     //}, 500 ); 
 
