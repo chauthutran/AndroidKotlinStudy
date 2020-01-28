@@ -64,7 +64,7 @@ ConnManager.userNetworkModeSwitch_IntvLimit = 3600; //3600 = 60 * 60sec = 1h (@ 
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 
-ConnManager.debugMode = WsApiManager.isDebugMode;
+ConnManager.debugMode = true; //WsApiManager.isDebugMode;
 
 ConnManager.connection; //v1.3
 ConnManager.type;		//v1.3

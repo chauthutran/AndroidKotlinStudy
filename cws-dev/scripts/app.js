@@ -30,7 +30,8 @@
   function appInfoOperation( returnFunc ) 
   {
     // Only online mode and by app.psi-mis.org, check the version diff.
-    if (ConnManager.getAppConnMode_Online()) // && FormUtil.isAppsPsiServer()
+    //if (ConnManager.getAppConnMode_Online()) // && FormUtil.isAppsPsiServer()
+    if (ConnManagerNew.networkOnline_CurrState) // && FormUtil.isAppsPsiServer()
     {
       WsApiManager.setupWsApiVariables( returnFunc );
     }
@@ -289,7 +290,7 @@
     window.addEventListener('appinstalled', recordInstallEvent);
 
     // Set App Connection Mode
-    ConnManager.initialize();
+    //ConnManager.initialize();
 
     // 2. Do 'appInfoOperation' that does app Version Check & action first
     //  & set web service type for the app
@@ -301,7 +302,7 @@
 
       $('#spanVersion').text('v' + _ver);
 
-      ConnManager._cwsRenderObj = _cwsRenderObj;
+      //ConnManager._cwsRenderObj = _cwsRenderObj;
 
       _cwsRenderObj.render();
 

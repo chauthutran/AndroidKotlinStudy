@@ -54,29 +54,20 @@ ConnManagerNew.debugMode = WsApiManager.isDebugMode;
 
 ConnManagerNew.initialize = function()
 {
+
 	ConnManagerNew.setDefaults();
 
-	// start up > run network status Online/Offline check
-	ConnManagerNew.networkStatus_Check( function(){
+	// create scheduler events
+	ScheduleManager.initialize_ConnectionManagerChecks( function(){
 
-		//console.log( ' ~ startup >> networkStatus ');
+		console.log( '>>> network: ' + ConnManagerNew.networkOnline_CurrState + ', server: ' + ConnManagerNew.serverOnline_CurrState );
 
-		ConnManagerNew.initialiseConnectionTypeMonitors();
-
-		// start up > run server status Online/Offline check
-		ConnManagerNew.serverStatus_Check( function(){ 
-
-			console.log( '>>> network: ' + ConnManagerNew.networkOnline_CurrState + ', server: ' + ConnManagerNew.serverOnline_CurrState );
-
-			// first paint of UI layout with connection "results"
-			ConnManagerNew.update_UI_CheckResults();
-
-			// create scheduler events
-			ScheduleManager.initialize_ConnectionManagerChecks();
-
-		});
+		// first paint of UI layout with connection "results"
+		ConnManagerNew.update_UI_CheckResults();
 
 	});
+
+	ConnManagerNew.initialiseConnectionTypeMonitors();
 
 }
 
@@ -102,20 +93,10 @@ ConnManagerNew.networkStatus_Check = function( callBack )
 		ConnManagerNew.update_UI_CheckResults();
 	}
 
-	// remove timer interval to check SERVER-ONLINE if networkMode = offline
-	if ( ! ConnManagerNew.networkOnline_CurrState )
-	{
-		ConnManagerNew.clearExistingTimeout( ConnManagerNew.serverOnline_StatusCheck_ID );
-	}
-	else
-	{
-		if ( ConnManagerNew.serverOnline_StatusCheck_ID == 0 ) ScheduleManager.schedule_serverStatus_Check();
-	}
-
 	ConnManager.networkOnline_PrevState = ConnManagerNew.networkOnline_CurrState;
 
-	console.log( ' ~ network statusCheck >> ' + ConnManagerNew.networkOnline_CurrState );
-	console.log( ' ~ network networkOnline_StateChanged >> ' + ConnManagerNew.networkOnline_StateChanged );
+	//console.log( ' ~ network status Check >> ' + ConnManagerNew.networkOnline_CurrState );
+	//console.log( ' ~ network state Changed >> ' + ConnManagerNew.networkOnline_StateChanged );
 
 	if ( callBack ) callBack();
 
@@ -129,36 +110,38 @@ ConnManagerNew.serverStatus_Check = function ( callBack )
 	// initialise defaults for new server check
 	ConnManagerNew.serverOnline_StateChanged = false;
 
+	console.log( '~ running serverStatus_Check');
+
 	try {
 
 		if ( ConnManagerNew.networkOnline_CurrState ) // ONLY if networkStatus == online
 		{
-			console.log( '~checkSERVERstatus')
-			// clear last schedule for repeating data server check (in case of slow DWS reponse causes a 2nd serverCheck before 1st one completes)
-			ConnManagerNew.clearExistingTimeout( ConnManagerNew.serverOnline_StatusCheck_ID );
 
 			FormUtil.getDataServerAvailable( function ( success, jsonData ) {
 
 				ConnManagerNew.processDataServerCheck_Response( success, jsonData, function() {
 
-					// callBack only included on startup/initialise
-					if ( callBack == undefined )
+					if ( ConnManagerNew.serverOnline_StateChanged )
 					{
-						//console.log( ' ~ dataServerAvailable > stateChanged: ' + ConnManagerNew.serverOnline_StateChanged );
-						if ( ConnManagerNew.serverOnline_StateChanged )
-						{
-							var labelSwitchToState = ( ConnManagerNew.serverOnline_CurrState ) ? 'online' : 'offline';
-							ConnManagerNew.createNetworkSwitchPrompt( labelSwitchToState, ConnManagerNew.serverOnline_CurrState );
-						}
+						ConnManagerNew.update_UI_CheckResults();
 					}
-					
-					ScheduleManager.schedule_serverStatus_Check(); //recreate timer 
+
+					//console.log( ' ~ server status Check >> ' + ConnManagerNew.serverOnline_CurrState );
+					//console.log( ' ~ server state Changed >> ' + ConnManagerNew.serverOnline_StateChanged );
 
 					if ( callBack ) callBack();
 
 				} )
 
 			});
+		}
+		else
+		{
+			if ( ConnManagerNew.serverOnline_CurrState != ConnManagerNew.networkOnline_CurrState )
+			{
+				ConnManagerNew.serverOnline_CurrState = ConnManagerNew.networkOnline_CurrState;
+				ConnManagerNew.serverOnline_PrevState = ConnManagerNew.serverOnline_CurrState;
+			}
 		}
 
 	}
@@ -173,6 +156,7 @@ ConnManagerNew.serverStatus_Check = function ( callBack )
 
 ConnManagerNew.clearExistingTimeout = function( timerID )
 {
+	// remove? no longer required
 	if ( timerID ) 
 	{
 		clearTimeout( timerID );
@@ -332,21 +316,23 @@ ConnManagerNew.update_UI_NetworkIcons = function( networkServerConditionsGood )
 
 ConnManagerNew.update_ConnectionTypeObservation = function () 
 {
+	//console.log( ' ~ run ConnManagerNew.update_ConnectionTypeObservation' );
 	ConnManagerNew.connection = navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' };
 
 	if ( WsApiManager.isDebugMode ) console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
 
 	ConnManagerNew.type = ConnManagerNew.connection.effectiveType; //( navigator.onLine ? ConnManager.connection.effectiveType : 'offline' );
+	//console.log( ' ~ RAN ConnManagerNew.update_ConnectionTypeObservation' );
 }
 
 ConnManagerNew.initialiseConnectionTypeMonitors = function()
 {
-	ConnManagerNew.connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-	ConnManagerNew.type = ConnManager.connection.effectiveType;
+	//console.log( ' ~ run ConnManagerNew.initialiseConnectionTypeMonitors' );
+	ConnManagerNew.update_ConnectionTypeObservation();
 
 	// monitor connectionType changes (2g/3g/etc)
 	ConnManagerNew.connection.addEventListener( 'change', ConnManagerNew.update_ConnectionTypeObservation );
-
+	//console.log( ' ~ RAN ConnManagerNew.initialiseConnectionTypeMonitors' );
 }
 
 /* TO BE COMPLETED LATER */
