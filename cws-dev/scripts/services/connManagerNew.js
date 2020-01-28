@@ -30,8 +30,8 @@ ConnManagerNew._cwsRenderObj;
 //ConnManagerNew.networkOnline = false; 
 
 
-ConnManagerNew.networkOnline_CurrState = false;
-ConnManagerNew.networkOnline_PrevState = false;
+ConnManagerNew.networkOnline_CurrState = navigator.onLine;
+ConnManagerNew.networkOnline_PrevState = navigator.onLine;
 ConnManagerNew.networkOnline_StateChanged = false;
 
 
@@ -55,6 +55,7 @@ ConnManagerNew.debugMode = WsApiManager.isDebugMode;
 ConnManagerNew.initialize = function()
 {
 
+	ConnManagerNew.createEventHandlers();
 	ConnManagerNew.setDefaults();
 
 	// create scheduler events
@@ -67,50 +68,54 @@ ConnManagerNew.initialize = function()
 
 	});
 
-	ConnManagerNew.initialiseConnectionTypeMonitors();
+	//ConnManagerNew.initialiseConnectionTypeMonitors();
 
 }
 
-ConnManagerNew.setDefaults = function()
-{
-	ConnManagerNew.serverOnline_CurrState = navigator.onLine;
-	ConnManagerNew.networkOnline_PrevState = navigator.onLine;
-}
 
+// 1. NETWORK status check
 ConnManagerNew.networkStatus_Check = function( callBack )
 {
-
-	// run every 5 seconds
-	ConnManagerNew.networkOnline_StateChanged = ( ConnManagerNew.networkOnline_CurrState != ConnManager.networkOnline_PrevState );
-
-	if ( ConnManagerNew.networkOnline_StateChanged ) //&& ConnManagerNew.networkOnline_CurrState != ConnManagerNew.serverOnline_CurrState )
+	// if networkState Changed and no action taken, wait until something is done to reset this variable
+	if ( ! ConnManagerNew.networkOnline_StateChanged )
 	{
-		if ( ! ConnManagerNew.networkOnline_CurrState )
+		// runs every 5 seconds
+		ConnManagerNew.networkOnline_StateChanged = ( ConnManagerNew.networkOnline_CurrState != ConnManagerNew.networkOnline_PrevState );
+
+		// only 'save' stateChanged check results if already logged in
+		/*if ( ConnManagerNew.networkOnline_StateChanged && FormUtil.checkLogin() ) //&& ConnManagerNew.networkOnline_CurrState != ConnManagerNew.serverOnline_CurrState )
 		{
-			ConnManagerNew.serverOnline_CurrState = ConnManagerNew.networkOnline_CurrState;
+			if ( ! ConnManagerNew.networkOnline_CurrState )
+			{
+				ConnManagerNew.serverOnline_CurrState = ConnManagerNew.networkOnline_CurrState;
+			}
 		}
+		else
+		{
+			ConnManagerNew.networkOnline_StateChanged = false; //override
+			ConnManagerNew.networkOnline_PrevState = ConnManagerNew.networkOnline_CurrState;
+		}*/
 
 		ConnManagerNew.update_UI_CheckResults();
+
+		if ( callBack ) callBack();
 	}
-
-	ConnManager.networkOnline_PrevState = ConnManagerNew.networkOnline_CurrState;
-
-	//console.log( ' ~ network status Check >> ' + ConnManagerNew.networkOnline_CurrState );
-	//console.log( ' ~ network state Changed >> ' + ConnManagerNew.networkOnline_StateChanged );
-
-	if ( callBack ) callBack();
-
+	else
+	{
+		if ( callBack ) callBack();
+	}
 
 };
 
+// 2. SERVER status check
 ConnManagerNew.serverStatus_Check = function ( callBack ) 
 {
-	// run every 30 seconds
+	// runs every 30 seconds
 
-	// initialise defaults for new server check
 	ConnManagerNew.serverOnline_StateChanged = false;
+	ConnManagerNew.serverOnline_PrevState = ConnManagerNew.serverOnline_CurrState;
 
-	console.log( '~ running serverStatus_Check');
+	console.log( '~ running serverStatus_Check (prevStat:' + ConnManagerNew.serverOnline_PrevState + ', currState:' + ConnManagerNew.serverOnline_CurrState );
 
 	try {
 
@@ -121,13 +126,14 @@ ConnManagerNew.serverStatus_Check = function ( callBack )
 
 				ConnManagerNew.processDataServerCheck_Response( success, jsonData, function() {
 
-					if ( ConnManagerNew.serverOnline_StateChanged )
-					{
-						ConnManagerNew.update_UI_CheckResults();
-					}
+					//if ( ! ConnManagerNew.serverOnline_StateChanged )
+					//{
+					//	ConnManagerNew.serverOnline_PrevState = ConnManagerNew.serverOnline_CurrState;
+					//}
 
-					//console.log( ' ~ server status Check >> ' + ConnManagerNew.serverOnline_CurrState );
-					//console.log( ' ~ server state Changed >> ' + ConnManagerNew.serverOnline_StateChanged );
+					ConnManagerNew.update_UI_CheckResults();
+
+					console.log( ' ~ networkOnlineSTATEchanged: ' + ConnManagerNew.networkOnline_StateChanged + ' ~ serverOnlineSTATEchanged: ' + ConnManagerNew.serverOnline_StateChanged );
 
 					if ( callBack ) callBack();
 
@@ -154,6 +160,28 @@ ConnManagerNew.serverStatus_Check = function ( callBack )
 
 };
 
+
+
+
+ConnManagerNew.createEventHandlers = function()
+{
+    window.addEventListener('online', ConnManagerNew.updateNetworkOnlineStatus);
+    window.addEventListener('offline', ConnManagerNew.updateNetworkOnlineStatus);
+}
+
+ConnManagerNew.updateNetworkOnlineStatus = function( event )
+{
+	ConnManagerNew.setNetworkStatus( navigator.onLine );
+}
+
+ConnManagerNew.setDefaults = function()
+{
+	ConnManagerNew.updateNetworkOnlineStatus();
+
+	ConnManagerNew.serverOnline_CurrState = navigator.onLine;
+	ConnManagerNew.networkOnline_PrevState = navigator.onLine;
+}
+
 ConnManagerNew.clearExistingTimeout = function( timerID )
 {
 	// remove? no longer required
@@ -176,7 +204,15 @@ ConnManagerNew.processDataServerCheck_Response = function( success, jsonData, ca
 		ConnManagerNew.serverOnline_CurrState = false;
 	}
 
-	ConnManagerNew.serverOnline_StateChanged = ( ConnManagerNew.serverOnline_CurrState != ConnManagerNew.serverOnline_PrevState );
+	// only 'save' stateChanged check results if already logged in
+	if ( FormUtil.checkLogin() )
+	{
+		ConnManagerNew.serverOnline_StateChanged = ( ConnManagerNew.serverOnline_CurrState != ConnManagerNew.serverOnline_PrevState );
+	}
+	else
+	{
+		ConnManagerNew.serverOnline_StateChanged = false;
+	}
 
 	callBack();
 
@@ -217,7 +253,7 @@ ConnManagerNew.switchToNetworkPromptedMode = function()
 	{
 
 		// Switch the mode to ...
-		ConnManager.setNetworkConnectionMode( ConnManagerNew.networkOnline_CurrState );
+		ConnManagerNew.setNetworkConnectionMode( ConnManagerNew.serverOnline_CurrState ); // falls to serverOnline setting as override
 
 		// This is not being called..
 		if ( ConnManagerNew._cwsRenderObj ) 
@@ -225,7 +261,7 @@ ConnManagerNew.switchToNetworkPromptedMode = function()
 			ConnManagerNew._cwsRenderObj.startBlockExecuteAgain();
 		}
 
-		ConnManager.switchPrompt_Underway = false;
+		ConnManagerNew.switchPrompt_Underway = false;
 
 	}
 }
@@ -235,23 +271,64 @@ ConnManagerNew.setNetworkConnectionMode = function( bOnline )
 {
 	ConnManagerNew.networkOnline_CurrState = bOnline;
 	ConnManagerNew.networkOnline_PrevState = bOnline;
-	ConnManagerNew.switchPrompt_Underway = false;
+
+	ConnManagerNew.serverOnline_CurrState = bOnline;
+	ConnManagerNew.serverOnline_PrevState = bOnline;
+
+	ConnManagerNew.networkOnline_StateChanged = false;
+	ConnManagerNew.serverOnline_StateChanged = false;
+
 }
 
 ConnManagerNew.switchNetworkModePrompt_Check = function()
 {
 	// run every 5 seconds
-
-	// if prompt already underway, cancel
-	if ( ! ConnManagerNew.switchPrompt_Underway )
+	if ( ConnManagerNew.switchPrompt_Underway || ! FormUtil.checkLogin() )
 	{
-		// ONLY if logged prompt to switch user mode || if stateChange detected
-		if ( FormUtil.checkLogin() && ( ConnManagerNew.networkOnline_StateChanged || ConnManagerNew.serverOnline_StateChanged ) )
-		{
-			var labelSwitchToState = ( ConnManagerNew.networkOnline_CurrState ) ? 'online' : 'offline';
-			ConnManagerNew.createNetworkSwitchPrompt( labelSwitchToState, ConnManagerNew.networkOnline_CurrState );
-		}
+		return;
+	}
 
+	var bPassChecks = false;
+	var switchToState;
+	var switchCondition;
+
+	if ( ConnManagerNew.networkOnline_StateChanged )
+	{
+		// switched to network OFFLINE
+		if ( ! ConnManagerNew.networkOnline_CurrState )
+		{
+			switchCondition = 'switched to network OFFLINE';
+			switchToState = ConnManagerNew.networkOnline_CurrState;
+			bPassChecks = true;
+		}
+		else
+		{
+			// switched to network ONLINE + server ONLINE
+			if ( ConnManagerNew.serverOnline_StateChanged && ConnManagerNew.serverOnline_CurrState )
+			{
+				switchCondition = 'switched to network ONLINE + server ONLINE';
+				switchToState = ConnManagerNew.serverOnline_CurrState;
+				bPassChecks = true;
+			}
+		}
+	}
+	else if ( ConnManagerNew.serverOnline_StateChanged )
+	{
+		// switched to server OFFLINE but network remains ONLINE
+		if ( ! ConnManagerNew.serverOnline_CurrState && ConnManagerNew.networkOnline_CurrState )
+		{
+			switchCondition = 'switched to server OFFLINE but network remains ONLINE';
+			switchToState = ConnManagerNew.serverOnline_CurrState;
+			bPassChecks = true;
+		}
+	}
+
+	if ( bPassChecks ) 
+	{
+		console.log( switchCondition );
+		var labelSwitchToState = ( switchToState ) ? 'online' : 'offline';
+
+		ConnManagerNew.createNetworkSwitchPrompt( labelSwitchToState, ConnManagerNew.serverOnline_CurrState );
 	}
 }
 
@@ -260,7 +337,11 @@ ConnManagerNew.promptSwitchNetworkCancelCheck = function()
 	// run every 1 second
 	if ( ConnManagerNew.switchPrompt_Underway )
 	{
+		MsgManager.clearReservedMessage( ConnManagerNew.reservedMsgID );
 
+		ConnManagerNew.reservedMsgID = undefined;
+		ConnManagerNew.networkOnline_PrevState = ConnManagerNew.networkOnline_CurrState;
+		ConnManagerNew.switchPrompt_Underway = false;
 	}
 
 }
@@ -313,15 +394,15 @@ ConnManagerNew.update_UI_NetworkIcons = function( networkServerConditionsGood )
 }
 
 
-
+/*
 ConnManagerNew.update_ConnectionTypeObservation = function () 
 {
 	//console.log( ' ~ run ConnManagerNew.update_ConnectionTypeObservation' );
 	ConnManagerNew.connection = navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' };
 
-	if ( WsApiManager.isDebugMode ) console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
+	if ( WsApiManager.isDebugMode ) console.log( "Connection type changed from " + ConnManagerNew.type + " to " + ConnManagerNew.connection.effectiveType + " (online:" + navigator.onLine + ")" );
 
-	ConnManagerNew.type = ConnManagerNew.connection.effectiveType; //( navigator.onLine ? ConnManager.connection.effectiveType : 'offline' );
+	ConnManagerNew.type = ConnManagerNew.connection.effectiveType; //( navigator.onLine ? ConnManagerNew.connection.effectiveType : 'offline' );
 	//console.log( ' ~ RAN ConnManagerNew.update_ConnectionTypeObservation' );
 }
 
@@ -335,7 +416,7 @@ ConnManagerNew.initialiseConnectionTypeMonitors = function()
 	//console.log( ' ~ RAN ConnManagerNew.initialiseConnectionTypeMonitors' );
 }
 
-/* TO BE COMPLETED LATER */
+// TO BE COMPLETED LATER
 ConnManagerNew.incrementConnectionTypeMonitor = function()
 {
 	var connTypeChangedTo = ConnManagerNew.connection.effectiveType;
@@ -351,7 +432,7 @@ ConnManagerNew.incrementConnectionTypeMonitor = function()
 		{
 			bProceed = true;
 		}
-		else if ( $.format.date( ConnManager.connType_lastObs, "yyyymmddHHmm" ) != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+		else if ( $.format.date( ConnManagerNew.connType_lastObs, "yyyymmddHHmm" ) != $.format.date( dtmObs, "yyyymmddHHmm" ) )
 		{
 			bProceed = true;
 		}
@@ -384,7 +465,7 @@ ConnManagerNew.incrementConnectionTypeMonitor = function()
 	
 					DataManager.saveData( 'networkConnectionObs', data );
 	
-					ConnManager.connType_lastObs = dtmObs;
+					ConnManagerNew.connType_lastObs = dtmObs;
 	
 				}
 	
@@ -393,7 +474,7 @@ ConnManagerNew.incrementConnectionTypeMonitor = function()
 
 	}
 }
-
+*/
 
 // Calling it on method from 'statusInfoManager.js' instead.
 /*
@@ -402,11 +483,11 @@ ConnManagerNew.getCurrentStatusSummary = function()
 {
 	// TODO: Need to change 'ConnManager' to ..?.
 	var connSummary = {
-		'networkOnline': ConnManager.network_Online,
-		'dataServerOnline': ConnManager.dataServer_Online,
-		'serverStateChanged': ConnManager.serverStateChanged,
-		'promptSwitchNetworkMode': ConnManager.network_Online,
-		'promptSwitchUserNetworkMode': ConnManager.promptSwitchUserNetworkMode		
+		'networkOnline': ConnManagerNew.network_Online,
+		'dataServerOnline': ConnManagerNew.dataServer_Online,
+		'serverStateChanged': ConnManagerNew.serverStateChanged,
+		'promptSwitchNetworkMode': ConnManagerNew.network_Online,
+		'promptSwitchUserNetworkMode': ConnManagerNew.promptSwitchUserNetworkMode		
 	};
 
 	// create  Server Available changes

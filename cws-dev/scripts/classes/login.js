@@ -133,7 +133,8 @@ function Login( cwsRenderObj )
 		parentTag.find( 'div.loadingImg' ).remove();
 
 		// ONLINE vs OFFLINE HANDLING
-		if ( ! ConnManager.networkSyncConditions() )
+		//if ( ! ConnManager.networkSyncConditions() )
+		if ( ! ConnManagerNew.networkSyncConditions() )
 		{
 			// validate encrypted pwd against already stored+encrypted pwd
 			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
@@ -232,7 +233,7 @@ function Login( cwsRenderObj )
 	me.loginSuccessProcess = function( loginData ) 
 	{
 		var dtmNow = ( new Date() ).toISOString();
-
+console.log( ' ~ loginSuccessProcess');
 		me.cwsRenderObj.loadActivityListData_AfterLogin( function() {
 		me.closeForm();
 		me.pageTitleDivTab.hide(); 

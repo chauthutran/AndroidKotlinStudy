@@ -19,7 +19,7 @@ ScheduleManager.initialize_ConnectionManagerChecks = function( callBack )
 {
 	ScheduleManager.schedule_networkStatus_Check();
 	ScheduleManager.schedule_serverStatus_Check();
-	ScheduleManager.schedule_connectionTypeMonitoringCheck();
+	//ScheduleManager.schedule_connectionTypeMonitoringCheck();
 	ScheduleManager.schedule_switchNetworkModePrompt_Check();
 
 	console.log( 'created all scheduler tasks for ConnectionManagerNew ' );
