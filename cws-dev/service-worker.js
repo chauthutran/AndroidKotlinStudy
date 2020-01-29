@@ -577,7 +577,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/swManager.js",
-    "revision": "a1181313f37aeb30027f06b6301b9663"
+    "revision": "053754000f3b90e2c97322ac572dbfd3"
   },
   {
     "url": "scripts/services/syncManager.js",

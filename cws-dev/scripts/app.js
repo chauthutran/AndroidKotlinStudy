@@ -9,16 +9,26 @@
 
   'use strict';
 
-  App_UI_startUp_loading();
-
   const _cwsRenderObj = new cwsRender();
-  const _swManagerObj = new swManager( startApp, _cwsRenderObj );
+  const _swManagerObj = new swManager( _cwsRenderObj );
 
   var debugMode = WsApiManager.isDebugMode;
 
-  function appInfoOperation( returnFunc ) 
+  // ----------------------------------------------------
+
+  App_UI_startUp_loading();
+  
+  _swManagerObj.run( function(){
+
+    startApp();
+
+  } );   
+
+
+
+  /*function appInfoOperation( returnFunc ) 
   {
-    if ( ConnManagerNew.networkOnline_CurrState ) // && FormUtil.isAppsPsiServer()
+    if ( navigator.onLine ) // && FormUtil.isAppsPsiServer()
     {
       WsApiManager.setupWsApiVariables( returnFunc );
     }
@@ -27,7 +37,7 @@
       if ( returnFunc ) returnFunc();
     }
 
-  };
+  };*/
 
 
 
@@ -42,21 +52,18 @@
 
   }
 
-  // ----------------------------------------------------
-
-  function initialize() 
+  function startApp() 
   {
-
-  }
-
-  function startApp() {
 
     window.addEventListener('appinstalled', app_Installed_Done);
 
     // 2. Do 'appInfoOperation' that does app Version Check & action first
 
-    appInfoOperation( function () {
+    //appInfoOperation( function () {
 
+    WsApiManager.setupWsApiVariables( function () {
+
+      ScheduleManager.runSchedules_AppStart();
       ConnManagerNew.initialize();
 
       App_version_UI_Update();
@@ -74,7 +81,6 @@
 
       App_UI_startUp_done();
 
-
     });
 
 
@@ -88,7 +94,7 @@
 
   function App_UI_startUp_done()
   {
-    // hide PWA (loading) screen
+    // hide PWA (loading) screen: timeout used for delay (UI effect)
     setTimeout(function () {
 
       FormMsgManager.appUnblock();
@@ -110,6 +116,6 @@
     });
   }
 
-  initialize();
+  //initialize();
 
 })();

@@ -1,21 +1,20 @@
 // -------------------------------------------
 // -- ScheduleManager Class/Methods
-//		1. Have a method/api to start/run the schedule
-//		2(?). Manage the run state, etc.. <-- Not sure if we need them...
+//	  - Setup schedules for tasks that runs in the background
+//		1. Create Initiate method to start task schedules in the beginning of the app
+//		2. Create method to start task after login
+
+
 function ScheduleManager() {};
 
-// ScheduleManager.runSummary = { 'list': [] };
+ScheduleManager.interval_networkStatusCheck = 5000;				// network is onine/offline check
+ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
+ScheduleManager.interval_networkConnectionTypeCheck = 30000;  	// (2g/3g/etc) connection type check
 
-ScheduleManager.interval_networkStatusCheck = 5000;
-ScheduleManager.interval_serverStatusCheck = 30000;
-ScheduleManager.interval_networkConnectionTypeCheck = 30000; 
 
-// TODO: More...
-// Create schedulerCreate with flag to execute call rightAway (boolean)
-
-// =========================================bRunRightAway==========
 // === PART 1. Schedule Call/Start Methods =============
-ScheduleManager.initialize_ConnectionManagerChecks = function( callBack )
+//ScheduleManager.initialize_ConnectionManagerChecks = function( callBack )
+ScheduleManager.runSchedules_AppStart = function( callBack )
 {
 	ScheduleManager.schedule_networkStatus_Check();
 	ScheduleManager.schedule_serverStatus_Check();
@@ -41,9 +40,7 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 	if ( ! NotRunRightAway ) ConnManagerNew.serverStatus_Check();
 
 	// 30 seconds
-	ConnManagerNew.serverOnline_StatusCheck_ID = setInterval(  //setTimeout
-		ConnManagerNew.serverStatus_Check, ScheduleManager.interval_serverStatusCheck 
-	);
+	setInterval( ConnManagerNew.serverStatus_Check, ScheduleManager.interval_serverStatusCheck );
 };
 
 ScheduleManager.schedule_connectionTypeMonitoringCheck = function( NotRunRightAway )

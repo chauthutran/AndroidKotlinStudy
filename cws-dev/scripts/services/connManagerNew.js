@@ -4,8 +4,6 @@
 // ConnManager() - network status info & server connection status info store..  for quick access of this info.
 // 		Other Task Run or Not Check - Fetch doable..  Others. ?
 
-// Maybe new class:
-// BackgroundTask();
 // Scheduling For Interval Checks - 
 //			- What kind of things do we do on these interval ones...
 //				- Online/Offline (of network)
@@ -35,7 +33,7 @@ ConnManagerNew.networkOnline_PrevState = navigator.onLine;
 ConnManagerNew.networkOnline_StateChanged = false;
 
 
-ConnManagerNew.serverOnline_StatusCheck_ID; // timeout id (timer created then removed ... repeat)
+//ConnManagerNew.serverOnline_StatusCheck_ID; // timeout id (timer created then removed ... repeat)
 ConnManagerNew.serverOnline_CurrState = false;
 ConnManagerNew.serverOnline_PrevState = false; 
 ConnManagerNew.serverOnline_StateChanged = false;
@@ -57,18 +55,7 @@ ConnManagerNew.initialize = function()
 
 	ConnManagerNew.createEventHandlers();
 	ConnManagerNew.setDefaults();
-
-	// create scheduler events
-	ScheduleManager.initialize_ConnectionManagerChecks( function(){
-
-		console.log( '>>> network: ' + ConnManagerNew.networkOnline_CurrState + ', server: ' + ConnManagerNew.serverOnline_CurrState );
-
-		// first paint of UI layout with connection "results"
-		ConnManagerNew.update_UI_CheckResults();
-
-	});
-
-	//ConnManagerNew.initialiseConnectionTypeMonitors();
+	ConnManagerNew.update_UI_CheckResults();
 
 }
 

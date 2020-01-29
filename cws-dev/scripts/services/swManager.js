@@ -1,78 +1,91 @@
-function swManager( callBackStartApp, _cwsRenderObj ) {
+function swManager( _cwsRenderObj ) {
 
-    swManager.callBackStartApp = callBackStartApp;
-    swManager._cwsRenderObj = _cwsRenderObj;
+    var me = this;
 
-    swManager.SWinfoObj;
+    me.swFile =  './service-worker.js';
+    me.callBackStartApp;
+    me._cwsRenderObj = _cwsRenderObj;
 
-    swManager.swRegObj;
-    swManager.swInstallObj;
+    me.SWinfoObj;
 
-    swManager.freshSWregistration = false;
-    swManager.updatesFound = false;
-    swManager.UpdatesRequireRefresh = false;
+    me.swRegObj;
+    me.swInstallObj;
 
-    swManager.debugMode = true;
+    me.freshSWregistration = false;
+    me.updatesFound = false;
+    me.UpdatesRequireRefresh = false;
 
-    swManager.initialise = function () 
+    me.debugMode = true;
+
+    me.run = function ( callBack ) 
     {
-        swManager.createSWinfo();
-        swManager.installServiceWorker();
+        //me.callBackStartApp = callBackStartApp;
+
+        me.createSWinfo();
+        me.installServiceWorker( callBack );
     }
 
-    swManager.createSWinfo = function () 
+    me.createSWinfo = function () 
     {
-        swManager.SWinfoObj = localStorage.getItem('swInfo');
+        var SWinfoStr = localStorage.getItem( 'swInfo' );
 
-        if ( ! swManager.SWinfoObj ) 
+        if ( ! SWinfoStr ) 
         {
-            swManager.SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date()).toISOString(), 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date()).toISOString() };
+            me.SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date()).toISOString(), 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date()).toISOString() };
         }
         else 
         {
-            swManager.SWinfoObj['reloadRequired'] = false;
+            me.SWinfoObj = JSON.parse( SWinfoStr );
+            me.SWinfoObj.reloadRequired = false;
         }
-    }
+    };
 
     // 1. main purpose of SW class
-    swManager.installServiceWorker = function () 
+    me.installServiceWorker = function ( callBack ) 
     {
-        swManager.checkSWexists(function () {
+        me.checkSWexists(function () {
 
-            swManager.registerServiceWorker()
+            me.registerServiceWorker( callBack );
 
+        }, function() {
+            alert ( 'SERVICE WORKER not supported. Cannot continue' );
         });
-    }
+    };
 
-    swManager.checkSWexists = function (callBack) 
+    me.checkSWexists = function ( callBack, errCallBack ) 
     {
         if ('serviceWorker' in navigator) {
             callBack();
         }
-    }
-
-    swManager.saveSWinfo = function () 
-    {
-        localStorage.setItem('swInfo', JSON.stringify(swManager.SWinfoObj));
-    }
-
-    swManager.loadRegistrationObjVars = function (swRegObj) 
-    {
-        swManager.swRegObj = swRegObj;
-
-        if (swRegObj.active == null) 
+        else
         {
-            swManager.freshSWregistration = true; // 1st time running SW registration (1st time running PWA)
-            swManager.SWinfoObj.lastState = '';
+            errCallBack();
+        }
+    };
+
+    me.saveSWinfo = function () 
+    {
+        localStorage.setItem('swInfo', JSON.stringify(me.SWinfoObj));
+    }
+
+    me.loadRegistrationObjVars = function ( swRegObj ) 
+    {
+        // track status of registration object 'state'
+        me.swRegObj = swRegObj;
+
+        if ( ! swRegObj.active )
+        {
+            me.freshSWregistration = true; // 1st time running SW registration (1st time running PWA)
+            me.SWinfoObj.lastState = '';
         }
         else 
         {
-            swManager.freshSWregistration = false;
-            swManager.SWinfoObj.lastState = swRegObj.active.state;
+            me.freshSWregistration = false;
+            me.SWinfoObj.lastState = swRegObj.active.state;
         }
     }
 
-    swManager.monitorUpdatesAndStateChanges = function ( swRegObj ) 
+    me.monitorUpdatesAndStateChanges = function ( swRegObj, callBack ) 
     {
 
         /**** level 1 SW EVENT ****/
@@ -80,23 +93,23 @@ function swManager( callBackStartApp, _cwsRenderObj ) {
         // SW changes detected
         swRegObj.onupdatefound = () => {
 
-            swManager.swInstallObj = swRegObj.installing;
+            me.swInstallObj = swRegObj.installing;
 
-            swManager.SWinfoObj['lastState'] = swManager.swInstallObj.state;
+            me.SWinfoObj['lastState'] = me.swInstallObj.state;
 
-            swManager.saveSWinfo();
+            me.saveSWinfo();
 
-            if (swManager.debugMode) console.log(' - sw_state update: ' + swManager.swInstallObj.state);
+            if (me.debugMode) console.log(' - sw_state update: ' + me.swInstallObj.state);
 
             /**** level 2 SW EVENT ****/
-            swManager.swInstallObj.onstatechange = () => {
+            me.swInstallObj.onstatechange = () => {
 
-                swManager.updatesFound = true;
-                swManager.SWinfoObj['lastState'] = swManager.swInstallObj.state;
+                me.updatesFound = true;
+                me.SWinfoObj['lastState'] = me.swInstallObj.state;
 
-                if (swManager.debugMode) console.log(' ~ sw_state: ' + swManager.swInstallObj.state);
+                if (me.debugMode) console.log(' ~ sw_state: ' + me.swInstallObj.state);
 
-                switch (swManager.swInstallObj.state) {
+                switch (me.swInstallObj.state) {
 
                     // SW installing (1) - applying changes
                     case 'installing':
@@ -106,12 +119,12 @@ function swManager( callBackStartApp, _cwsRenderObj ) {
                     case 'installed':
                         if (navigator.serviceWorker.controller) 
                         {
-                            swManager.UpdatesRequireRefresh = true;
-                            swManager.SWinfoObj['reloadRequired'] = true;
+                            me.UpdatesRequireRefresh = true;
+                            me.SWinfoObj['reloadRequired'] = true;
                         }
                         else 
                         {
-                            swManager.SWinfoObj['reloadRequired'] = false;
+                            me.SWinfoObj['reloadRequired'] = false;
                         }
                         break;
 
@@ -123,62 +136,64 @@ function swManager( callBackStartApp, _cwsRenderObj ) {
                     // SW activated (4) - done > ready for refresh
                     case 'activated':
 
-                        if (swManager.SWinfoObj.reloadRequired) 
+                        if (me.SWinfoObj.reloadRequired) 
                         {
-                            swManager.SWinfoObj['datetimeApplied'] = (new Date()).toISOString();
-                            swManager.SWinfoObj['reloadRequired'] = false;
-                            swManager.saveSWinfo();
+                            me.SWinfoObj['datetimeApplied'] = (new Date()).toISOString();
+                            me.SWinfoObj['reloadRequired'] = false;
+                            me.saveSWinfo();
                         }
 
-                        if (swManager.freshSWregistration) 
+                        if (me.freshSWregistration) 
                         {
                             //startApp(); // callBack to App.js
-                            swManager.callBackStartApp();
+                            //me.callBackStartApp();
+                            callBack();
                         }
                         else 
                         {
-                            swManager.SWinfoObj['reloadRequired'] = true;
-                            swManager._cwsRenderObj.createRefreshIntervalTimer(_ver);
+                            me.SWinfoObj['reloadRequired'] = true;
+                            me._cwsRenderObj.createRefreshIntervalTimer(_ver);
                         }
                         break;
                 }
 
-                swManager.saveSWinfo()
+                me.saveSWinfo()
 
             };
 
         };
     }
 
-    swManager.registerServiceWorker = function () 
+    me.registerServiceWorker = function ( callBack ) 
     {
 
-        navigator.serviceWorker.register('./service-worker.js').then( registration => {
+        navigator.serviceWorker.register( me.swFile ).then( registration => {
 
-            swManager.loadRegistrationObjVars( registration );
+            me.loadRegistrationObjVars( registration );
 
-            swManager.saveSWinfo()
+            me.saveSWinfo();
 
-            swManager.monitorUpdatesAndStateChanges( registration )
+            me.monitorUpdatesAndStateChanges( registration, callBack );
 
             // need to share registration obj with cwsRender (for reset App, etc)
-            swManager._cwsRenderObj.setRegistrationObject( registration );
+            me._cwsRenderObj.setRegistrationObject( registration );
 
-            swManager.saveSWinfo()
+            me.saveSWinfo();
 
-            if (swManager.debugMode) console.log('Service Worker Registered');
+            if (me.debugMode) console.log('Service Worker Registered');
 
         }).then(function () {
 
-            if (swManager.debugMode) console.log('updatesFound: ' + swManager.updatesFound);
-            if (swManager.debugMode) console.log('freshSWregistration: ' + swManager.freshSWregistration);
+            if (me.debugMode) console.log('updatesFound: ' + me.updatesFound);
+            if (me.debugMode) console.log('freshSWregistration: ' + me.freshSWregistration);
 
-            swManager.saveSWinfo()
+            me.saveSWinfo();
 
-            if (swManager.freshSWregistration == false) 
+            if (me.freshSWregistration == false) 
             {
                 // callBack to App.js
-                swManager.callBackStartApp();
+                //me.callBackStartApp();
+                callBack();
             }
 
         }).catch(err =>
@@ -187,7 +202,5 @@ function swManager( callBackStartApp, _cwsRenderObj ) {
         );
 
     }
-
-    swManager.initialise();
 
 };
