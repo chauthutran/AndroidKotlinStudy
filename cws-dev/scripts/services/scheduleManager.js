@@ -1,18 +1,24 @@
 // -------------------------------------------
 // -- ScheduleManager Class/Methods
 //	  - Setup schedules for tasks that runs in the background
+//		LVL 1:
 //		1. Create Initiate method to start task schedules in the beginning of the app
 //		2. Create method to start task after login
-
+//	
+//		LVL 2:
+//			- Create each task schedule calls - with intervals.
+//				- Have flag to start in the beginning of interval or not.
 
 function ScheduleManager() {};
 
 ScheduleManager.interval_networkStatusCheck = 5000;				// network is onine/offline check
 ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
 ScheduleManager.interval_networkConnectionTypeCheck = 30000;  	// (2g/3g/etc) connection type check
+// Let's define all interval times here..
 
 
 // === PART 1. Schedule Call/Start Methods =============
+
 //ScheduleManager.initialize_ConnectionManagerChecks = function( callBack )
 ScheduleManager.runSchedules_AppStart = function( callBack )
 {
@@ -26,6 +32,17 @@ ScheduleManager.runSchedules_AppStart = function( callBack )
 	if ( callBack ) callBack();
 
 }
+
+ScheduleManager.runSchedules_AfterLogin = function( callBack )
+{
+	// Fill below parts with task schedule methods..
+
+	if ( callBack ) callBack();
+}
+
+
+// -------------------------------------------------------------------
+// ------ Sub Methods ------------------------------
 
 ScheduleManager.schedule_networkStatus_Check = function( NotRunRightAway )
 {
