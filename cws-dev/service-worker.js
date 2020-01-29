@@ -357,7 +357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "a25d9530e1f0c97370a8f38741b08b71"
+    "revision": "41a2e73e388ede290380ef1f0416d683"
   },
   {
     "url": "redeemGen.html",
@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "eef8f0ce2cca9bed229d1d5a78d2aff7"
+    "revision": "6c78fe846ccf50a236222010d02e2283"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -574,6 +574,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/services/storageMng.js",
     "revision": "03483b29d0213d4291064e123adbb0b6"
+  },
+  {
+    "url": "scripts/services/swManager.js",
+    "revision": "a1181313f37aeb30027f06b6301b9663"
   },
   {
     "url": "scripts/services/syncManager.js",
