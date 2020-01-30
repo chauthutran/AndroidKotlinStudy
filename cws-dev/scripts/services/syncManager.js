@@ -803,7 +803,7 @@ syncManager.pauseSync = function(  itmObj, itmClone )
 
 syncManager.mergeSyncListWithIndexDB = function( callBack )
 {
-    DataManager.getData( 'redeemList', function( activityData ){
+    DataManager2.getData_RedeemList( function( activityData ){
 
         DataManager.getData( 'syncList', function( syncData ){
 
@@ -860,13 +860,13 @@ syncManager.mergeSyncListWithIndexDB = function( callBack )
                 DataManager.saveData( 'syncList', syncData );
             }
 
-            DataManager.saveData( 'redeemList', activityData, callBack );
+            DataManager2.saveData_RedeemList( activityData, callBack );
 
-            DataManager.getData( 'session', function( data ){
+            DataManager.getData( Constants.storageName_session, function( data ){
 
                 data[ 'syncDate' ] = new Date().toISOString();
 
-                DataManager.saveData( 'session', data );
+                DataManager.saveData( Constants.storageName_session, data );
 
             } )
 

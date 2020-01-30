@@ -165,18 +165,18 @@ function cwsRender()
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
-	{		
-		// Do 'redeemList' move from localStorage to IndexedDB
-		//  - Since we need password to encrypt the data..		
-		DataVerMove.redeemListLS_IDB( function() 
-		{
+	{
+		// Do 'redeemList' move from localStorage to IndexedDB (localForage version)
+		//  - Since we need password to encrypt the data..
+		DataVerMove.lsRedeemListMove( function() {
+
 			// Load the redeemList json into the main memory of this class '_activityListData.list'
-			DataManager.getData( Constants.storageName_redeemList, function( jsonData_FromStorage ) 
+			DataManager2.getData_RedeemList( function( jsonData_FromStorage ) 
 			{
 				if ( jsonData_FromStorage && jsonData_FromStorage.list )
 				{
 					me._activityListData.list = jsonData_FromStorage.list;
-
+	
 					// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
 					FormUtil.updateSyncListItems( me._activityListData, function()
 					{
@@ -185,6 +185,7 @@ function cwsRender()
 				}
 				else callBack( me._activityListData );
 			});
+	
 		});
 	};
 
@@ -324,7 +325,7 @@ function cwsRender()
 			}
 			else
 			{
-				var sessData = localStorage.getItem( 'session' );
+				var sessData = localStorage.getItem( Constants.storageName_session );
 
 				if ( sessData )
 				{

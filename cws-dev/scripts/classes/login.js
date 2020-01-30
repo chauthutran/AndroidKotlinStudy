@@ -111,7 +111,8 @@ function Login( cwsRenderObj )
 
 		// TODO: NEW JAMES - 2019/01/22
 		Menu.setInitialLogInMenu( me.cwsRenderObj );
-	}
+	};
+
 
 	me.closeForm = function()
 	{
@@ -121,7 +122,8 @@ function Login( cwsRenderObj )
 		$( '#loggedInDiv' ).show();		
 
 		//me.cwsRenderObj.configureMobileMenuIcon();
-	}
+	};
+
 
 	me.processLogin = function( userName, password, server, btnTag )
 	{
@@ -195,9 +197,11 @@ function Login( cwsRenderObj )
 			} );
 		}
 
+
+		// TODO: NOTE: SAVING SESSION INFO FOR THE FIRST TIME AT HERE?
 		FormUtil.defaultLanguage( function( defaultLang ){
 
-			var lastSession = localStorage.getItem( 'session' );
+			var lastSession = localStorage.getItem( Constants.storageName_session );
 
 			if ( lastSession == undefined || lastSession == null )
 			{
@@ -214,32 +218,36 @@ function Login( cwsRenderObj )
 				if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
 			}
 
-			localStorage.setItem( 'session', JSON.stringify( lastSession ) );
 
-			//DataManager.saveData( 'session', lastSession );
+			localStorage.setItem( Constants.storageName_session, JSON.stringify( lastSession ) );
+
+			//DataManager.saveData( Constants.storageName_session, lastSession );
 
 		});
-	}
+	};
+
+
 
 	me.regetDCDconfig = function()
 	{
-		var userName = JSON.parse( localStorage.getItem('session') ).user;
+		var userName = JSON.parse( localStorage.getItem(Constants.storageName_session) ).user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
 
 		// greg: use location.origin for server parameter? Always records server location
 		me.processLogin( userName, userPin, location.origin, $( this ) );
-	}
+	};
+
 
 	me.loginSuccessProcess = function( loginData ) 
-	{
+	{		
 		var dtmNow = ( new Date() ).toISOString();
 
-		console.log( ' ~ loginSuccessProcess');
+		console.log( ' ===> Login.loginSuccessProcess before');
+		// NOTE: JAMES:
+		//	- After Login, we are loading 'redeemList' data into cwsObject.
+		me.cwsRenderObj.loadActivityListData_AfterLogin( function() {
 
-		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
-		{
-
-			console.log( ' ~ after cwsRenderObj.loadActivityListData_AfterLogin');
+			console.log( ' ===> Login.loginSuccessProcess = loadActivityListData_AfterLogin' );
 
 			me.closeForm();
 			me.pageTitleDivTab.hide(); 
@@ -313,13 +321,13 @@ function Login( cwsRenderObj )
 	me.loginAfter = function()
 	{
 
-			FormUtil.geolocationAllowed();
+		FormUtil.geolocationAllowed();
 
-			me.cwsRenderObj.renderDefaultTheme();
+		me.cwsRenderObj.renderDefaultTheme();
 
-			MsgManager.initialSetup();
+		MsgManager.initialSetup();
 
-			FormUtil.hideProgressBar();
+		FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------

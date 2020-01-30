@@ -1,4 +1,5 @@
-
+// IndexedDB storage base class..
+//
 function DBStorage() {
 
   var me = this;

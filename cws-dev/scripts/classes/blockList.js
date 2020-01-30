@@ -7,7 +7,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;        
 
-    me.redeemList;  // NOTE: Replaced by cwsRenderObj._activityDataListStorage
+    me.redeemList;  // Temporary Use due to many existing this global variable reference
     me.redeemListTargetTag;
     me.redeemListScrollSize = 15; // move where?
     me.redeemListScrollingState = 0;
@@ -64,18 +64,13 @@ function BlockList( cwsRenderObj, blockObj )
                 // Add Event from 'FormUtil'
                 //  - To Enable click
                 FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act') );
-
             }
-
-
         }
     };
 
 
-    // TODO: JAMES - Working on here..
     me.redeemList_Display = function( blockTag )
     {
-        
         me.renderRedeemList( me.cwsRenderObj._activityListData.list, blockTag, function() {
 
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
@@ -96,21 +91,20 @@ function BlockList( cwsRenderObj, blockObj )
     }
 
 
-    me.renderRedeemList = function( redeemObj, blockTag, callBack )
-    {
-
+    me.renderRedeemList = function( redeemList, blockTag, callBack )
+    {        
         $( window ).scrollTop(0);
 
-        // TODO: JAMES: FOR TEMPORARY MEASURE
-        me.redeemList = redeemObj;
-
+        // Temporary set
+        me.redeemList = redeemList;
 
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
 
-        DataManager.getData( 'session', function( data ){
+        DataManager.getData( Constants.storageName_session, function( data ){
 
             me.lastSyncDate = data[ 'syncDate' ];
+
             // Copy from list html template
             $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
@@ -119,13 +113,13 @@ function BlockList( cwsRenderObj, blockObj )
 
             me.redeemListTargetTag = listContentUlTag;
 
-            if ( redeemObj && redeemObj.length )
+            if ( redeemList && redeemList.length )
             {
                 var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
 
                 listContentUlTag.append( lidateGroupPaddTop );
 
-                me.redeemList = redeemObj.filter( a=> a.owner == FormUtil.login_UserName );
+                me.redeemList = redeemList.filter( a=> a.owner == FormUtil.login_UserName );
 
                 if ( me.options && me.options.filter )
                 {
@@ -135,7 +129,7 @@ function BlockList( cwsRenderObj, blockObj )
                         var keys = Object.keys(filterObj);
                         var keyValue = filterObj[keys[0]];
 
-                        me.redeemList = redeemObj.filter( a=> a[keys[0]] == keyValue );
+                        me.redeemList = redeemList.filter( a=> a[keys[0]] == keyValue );
                     }
                 }
 
@@ -464,33 +458,35 @@ function BlockList( cwsRenderObj, blockObj )
                 moreDivTag.find( 'span' ).html( 'see less' );
 
                 //expandedDivTag.empty();
-                expandedDivTag.html( FormUtil.loaderRing() )
+                expandedDivTag.html( FormUtil.loaderRing() );
 
-                DataManager.getItemFromData( Constants.storageName_redeemList, itemData.id, function( fetchItemData ){
 
-                    var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
-                    //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
-                    var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
-                    var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
+                //DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( fetchItemData ){
+                itemData = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
 
-                    expandedDivTag.empty();
+                var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
+                //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
+                var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
+                var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
 
-                    expandedDivTag.append( trxDetails );
-                    expandedDivTag.append( historyDetails );
+                expandedDivTag.empty();
 
-                    if ( prevDetails && prevDetails.length )
-                    {
-                        expandedDivTag.append( Util.activityListPreviewTable( 'preview', prevDetails ) );
-                    } 
+                expandedDivTag.append( trxDetails );
+                expandedDivTag.append( historyDetails );
+
+                if ( prevDetails && prevDetails.length )
+                {
+                    expandedDivTag.append( Util.activityListPreviewTable( 'preview', prevDetails ) );
+                } 
     
-                } );
+                //} );
             }
             else
             {
                 moreDivTag.find( 'span' ).html( 'see more' );
             }
 
-        })
+        });
 
         // Populate the Item Content
         me.populateData_RedeemItemTag( itemData, liContentTag );
@@ -542,24 +538,18 @@ function BlockList( cwsRenderObj, blockObj )
                                 }
                                 else
                                 {
-                                    alert( phoneNumber )
+                                    alert( phoneNumber );
                                 }
                             });
 
                             targTag.append( cellphoneTag );
-
                         }
-
                     })
-
                 }
-
-
             }
-
         }
+    };
 
-    }
 
 	me.checkCondition = function( evalCondition, arrData, callBack )
 	{
@@ -569,7 +559,7 @@ function BlockList( cwsRenderObj, blockObj )
 		{
 			try
 			{
-				var afterCondStr = me.conditionVarToVal( evalCondition, arrData )
+				var afterCondStr = me.conditionVarToVal( evalCondition, arrData );
 
                 result = eval( afterCondStr );	
                 console.log( afterCondStr + ' >> ' + result );
@@ -582,7 +572,7 @@ function BlockList( cwsRenderObj, blockObj )
 		}
 
 		if ( callBack ) callBack( result );
-	}
+	};
 
 	
 	me.conditionVarToVal = function( evalCondition, arrData )
@@ -599,6 +589,7 @@ function BlockList( cwsRenderObj, blockObj )
 		return evalString;
     }
 
+    
     me.getTrxDetails = function( dataObj, designLayout )
     {
         var ret = {};
@@ -742,36 +733,32 @@ function BlockList( cwsRenderObj, blockObj )
 
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
-                // DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( ItemData_refreshed ){
-                
-                    var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
-                    console.log( 'clicking activityItem on blockList, itemData: ' );
-                    // console.log( ItemData_refreshed );
+                // DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( ItemData_refreshed ){                
+                var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
 
-                    // TODO: 
-                    //if ( ItemData_refreshed.status != me.status_redeem_submit )
-                    //{
-                        if ( SyncManagerNew.syncStart() )
-                        {
-                            try
-                            {
-                                var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
-        
-                                SyncManagerNew.syncItem( activityItem, function( success ) {
-    
-                                    SyncManagerNew.syncFinish();     
-                                    console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
-                                });    
-                            }
-                            catch( errMsg )
-                            {
-                                console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
-                                SyncManagerNew.syncFinish();     
-                            }
-                        }
-                    //}
+                // TODO: 
+                //if ( ItemData_refreshed.status != me.status_redeem_submit )
+                //{
+                if ( SyncManagerNew.syncStart() )
+                {
+                    try
+                    {
+                        var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
 
-                //} );
+                        SyncManagerNew.syncItem( activityItem, function( success ) {
+
+                            SyncManagerNew.syncFinish();     
+                            console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
+                        });    
+                    }
+                    catch( errMsg )
+                    {
+                        console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
+                        SyncManagerNew.syncFinish();     
+                    }
+                }
+                //}
+
             });
         }
     }
@@ -815,7 +802,7 @@ function BlockList( cwsRenderObj, blockObj )
                 console.log( JSON.stringify( tempJsonData ) );    
             }
 
-            DataManager.insertDataItem( Constants.storageName_redeemList, tempJsonData, callBack );
+            DataManager2.insertDataItem( Constants.storageName_redeemList, tempJsonData, callBack );
             // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
             //       pwa MUST re-initialize 'syncManager' queue+fail arrays
         });
@@ -871,13 +858,13 @@ function BlockList( cwsRenderObj, blockObj )
     me.refreshRedeemListArray = function( callBack )
     {
         // check the last recorded date for a sync run; if that date is different to localStorage (session:syncDate) we need to reload me.redeemList with fresh copy of activity/redeemList for rendering up-to-date statuses for records
-        DataManager.getData( 'session', function( data ){
+        DataManager.getData( Constants.storageName_session, function( data ){
 
             var lastSyncDate = data[ 'syncDate' ];
 
             if ( lastSyncDate != me.lastSyncDate )
             {
-                DataManager.getData( 'redeemList', function( activityList ){
+                DataManager2.getData_RedeemList( function( activityList ){
 
                     me.redeemList = activityList.list.filter( a=> a.owner == FormUtil.login_UserName );
                     me.lastSyncDate = data[ 'syncDate' ];

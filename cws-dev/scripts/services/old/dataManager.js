@@ -269,7 +269,7 @@ DataManager.getStorageSizes = function( callBack )
 DataManager.migrateIndexedDBtoLocalStorage = function( callBack )
 {
 	MsgManager.notificationMessage( '1.1: removed localStorage "moveData"', 'notificatioDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.1' );
-	localStorage.removeItem( 'movedData' );
+	localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
 
 	MsgManager.notificationMessage( '1.2: opening indexedDB', 'notificationBlue', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.2' );
 	DataManager2.getData_RedeemList( function( activityData ){

@@ -2,6 +2,7 @@
 function Constants() {};
 
 Constants.storageName_redeemList = "redeemList";
+Constants.storageName_session = "session";
 
 Constants.status_redeem_submit = "submit"; // initialize from dcd@XX ?
 Constants.status_redeem_queued = "queued"; // initialize from dcd@XX ?
@@ -17,3 +18,4 @@ Constants.status_hold = "paused"; // initialize from dcd@XX ? //REMOVE? We don't
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;
 Constants.storage_offline_ItemAgeLimit = ( 92 * 24 ); //92 days
 
+Constants.lsFlag_dataMoved_redeemListIDB = "dataMoved_redeemListIDB";

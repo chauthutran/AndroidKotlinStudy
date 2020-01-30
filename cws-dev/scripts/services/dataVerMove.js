@@ -1,142 +1,83 @@
 function DataVerMove() {}
 
-// Not Used, yet!!!
-// The version methods should also add the version..
-// should call one after another in order..
 DataVerMove.verRunList = [];
 
+// =====================================
+// ===== MAIN STARTING CALL ============
 
 DataVerMove.dataChangeHandle = function()
 {
     // List the version methods here, since we need to define this first..
     // Put this in 'initalize'?  'setUp'?
     DataVerMove.verRunList = [
-        //{ 'ver': 1, 'run': DataVerMove.redeemListLS_IDB }
-        { 'ver': 2, 'run': DataVerMove.blankTest }
+        //{ 'ver': 2, 'run': DataVerMove.lsLocalForageMove }
+        //{ 'ver': undefined, 'run': DataVerMove.lsRedeemListMove }
+        { 'ver': undefined, 'run': DataVerMove.idbLocalForageMove }
     ];
 
-    DataVerMove.getDataVersionNumber( function( versionNumber )
+
+    DataVerMove.getDataVersionNumber_LF( function( versionNumber )
     {
+        console.log( ' ===> DataVerMove Current versionNumber: ' + versionNumber  );
+
         var dataObj = { 'currVer': versionNumber, 'list': DataVerMove.verRunList };
 
         Util.recursiveCalls( dataObj, 0, function( itemData, continueNext, finishCall ) {
 
-            if ( itemData.ver > dataObj.currVer )
+            if ( !itemData.ver || itemData.ver > dataObj.currVer )
             {
+                console.log( ' ===> DataVerMove RUN [VER: ' + itemData.ver + ']' );
+
                 itemData.run( function() {
                     
-                    DataVerMove.markDataVersionNumber( itemData.ver );
-
-                    continueNext();                    
+                    DataVerMove.markDataVersionNumber_LF( itemData.ver, function() {
+                        continueNext();                    
+                    } );
                 });
             }
             else continueNext();
 
         }, function() {
             // Finished
-            console.log( 'Finished running DataVerMove.dataChangeHandle()' );
+            console.log( ' ===> DataVerMove.dataChangeHandle() FINISHED' );
         });
         
     });
+};
 
+// =====================================
+// ===== VERSION GET/MARK CALLS  ============
+
+// ---------------------------------------
+// --- localForage Version
+
+DataVerMove.getDataVersionNumber_LF = function( callBack )
+{    
+    DataManager2.getData_LS( "dataVersion", function( dataVersion )
+    {
+        var versionNumber = 0;
+
+        if ( dataVersion && dataVersion.ver ) versionNumber = Number( dataVersion.ver );
         
-
-
-        /*
-        if( !dataVersion )
-        {
-            // Get all items in localStorage
-            var keys = Object.keys( localStorage );
-            var moveKeys = [];
-
-            for ( var key in keys ) 
-            {
-                if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
-            }
-
-            for ( i = 0; i < moveKeys.length; i++ )
-            {
-                var value = localStorage.getItem( moveKeys[ i ] );
-
-                DataVerMove.moveOneData( moveKeys[ i ], value, function( container, newData ){
-
-                    // LocalStorageDataManager.saveData( container, newData );
-                    //localStorage.removeItem( moveKeys[ i ] );
-                    LocalStorageDataManager.saveData("dataVersion", "1");
-
-                } );
-            }
-
-            //for ( i = 0; i < moveKeys.length; i++ ) localStorage.removeItem( moveKeys[ i ] );
-
-        }
-        */
+        callBack( versionNumber );
+    });
 };
 
-DataVerMove.redeemListLS_IDB = function( callBack )
-{
-    try
+DataVerMove.markDataVersionNumber_LF = function( versionNumber, callBack )
+{    
+    if ( !versionNumber ) callBack();
+    else
     {
-        // Get all items in localStorage
-        var keys = Object.keys( localStorage );
-        var moveKeys = [];
+        var dataJson = { 'ver': versionNumber };
 
-        // Compose 'moveKeys' with intertested to move ones 'redeemList' in our case.
-        for ( var key in keys ) 
-        {
-            if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
-        }
-
-        // For moving keys, copy from localStorage to IndexedDB.
-        for ( i = 0; i < moveKeys.length; i++ )
-        {
-            var value = localStorage.getItem( moveKeys[ i ] );
-
-            DataVerMove.moveToIDB( moveKeys[ i ], value, function( container, newData ){
-
-                console.log( 'Moved key to indexedDB ' );
-                // LocalStorageDataManager.saveData( container, newData );
-                //localStorage.removeItem( moveKeys[ i ] );
-                //LocalStorageDataManager.saveData("dataVersion", "1");
-
-            } );
-        }
-
-        console.log( ' ===> Ran DataVerMove.redeemListLS_IDB()' );
-    }
-    catch( errMsg )
-    {
-        console.log( 'ERROR on DataVerMove.redeemListLS_IDB, errMsg - ' + errMsg );
-    }
-
-    callBack();
-};
-
-DataVerMove.blankTest = function( callBack )
-{
-    console.log( ' ===> Ran DataVerMove.blankTest()' );
-    callBack();
-};
-
-
-DataVerMove.moveToIDB = function( key, value, callBack )
-{
-    var dbStorage = new DBStorage();
+        console.log( 'markDataVersionNumber_LF, versionNumber ' + versionNumber  );
     
-    dbStorage.getData( key, function( searched ){
+        DataManager2.saveData_LS( "dataVersion", dataJson, callBack );    
+    }
+}
 
-        if( searched === undefined )
-        {
-            IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
-    
-                if ( callBack ) callBack( key, retData )
-
-            } );
-        }
-    })
-};
-
-// -----------------------------------
+// ---------------------------------------
+// --- old Versions
 
 DataVerMove.getDataVersionNumber = function( callBack )
 {    
@@ -157,30 +98,302 @@ DataVerMove.markDataVersionNumber = function( versionNumber )
     LocalStorageDataManager.saveData( "dataVersion", dataJson );
 }
 
-// ====================================================
+// =====================================
+// ===== CALLING METHODS  ============
 
-// ---------------------------
-// Before Login, when app start, to check user login?
-// But, we can do this right when user click on 'login' as well.
-//  - Right before login is performed, we can do below 'modifyDataNew( keys )'
-//  - Right after login, we can move localStorage to indexedDB - as needed..
-//  * Create AppInfo json in localStorage <-- has database/storage version..
-//      - By looking at the storage version, we can decide to upgrade, move, or modify accordingly..
-//          (What about  )
-//
+DataVerMove.lsLocalForageMove = function( callBack )
+{
+    DataVerMove.checkLS_LocalForageNeedMove( function( needToMove, moveKeys ) 
+    {
+        if ( needToMove )
+        {
+            console.log( ' ===> NEED TO MOVE LS LF, moveKeys: ' );
+            console.log( moveKeys );
 
-DataVerMove.moveDataNew = function(){
+            var dataObj = { 'list': moveKeys };
 
-    // modify old localstorage data base
-    var keys = Object.keys( localStorage );
+            Util.recursiveCalls( dataObj, 0, function( keyStr, continueNext, finishCall ) {
 
-    DataVerMove.lsKeyChange( keys, 0, function() {
+                var jsonData = JSON.parse( localStorage[ keyStr ] )
+                
+                // Change key name
+                DataManager2.saveData_LS( keyStr, jsonData, function(){
+                    continueNext();
+                } );
 
-        DataVerMove.dataCopyToIDB();
+            }, function() {
+                // Finished
+                console.log( ' ===> Ran DataVerMove.lsLocalForageMove()' );
+                callBack();
+
+                //DataVerMove.dataCopyToIDBs();
+            });
+        }
+        else callBack();
     });
 };
 
-DataVerMove.lsKeyChange = function( keys, index, returnFunc )
+
+DataVerMove.blankTest = function( callBack )
+{    
+    console.log( ' ===> Ran DataVerMove.blankTest()' );
+    callBack();
+};
+
+
+DataVerMove.idbLocalForageMove = function( callBack )
+{    
+    DataVerMove.checkIDB_LocalForageNeedMove( function( needToMove, moveKeys ) 
+    {
+        if ( needToMove )
+        {
+            console.log( ' IDB, needToMove: ' + needToMove );
+
+            var dbStorage_IDB = new DBStorage();
+
+            //console.log( moveKeys );
+
+            var dataObj = { 'list': moveKeys };
+            
+            Util.recursiveCalls( dataObj, 0, function( keyStr, continueNext, finishCall ) {
+
+                dbStorage_IDB.getData( keyStr, function( jsonData )
+                {
+                    // Change key name
+                    DataManager2.saveData_IDB( keyStr, jsonData, function(){
+
+                        console.log( ' ===> IDB COPIED - keyStr: ' + keyStr );
+                        continueNext();
+                    } );
+
+                });
+                
+            }, function() {
+                // Finished
+                console.log( ' ===> Ran DataVerMove.idbLocalForageMove()' );
+                callBack();
+            });
+            
+        }
+        else callBack();
+
+    });
+};
+
+
+DataVerMove.lsRedeemListMove = function( callBack )
+{    
+    // Add Try/Catch Wrapper?
+    Util.tryCatchContinue( callBack, function( callBackInner ) {
+
+        DataVerMove.checkRedeemListNeedMove( function( needToMove ) 
+        {
+            if ( needToMove )
+            {
+                console.log( ' lsRedeemList, needToMove: ' + needToMove );
+    
+                // get from LocalStorage and put it on IDB with localForage..
+                var redeemListDataStr = localStorage.getItem( Constants.storageName_redeemList );
+
+                if ( redeemListDataStr )
+                {
+                    var redeemListJson = JSON.parse( redeemListDataStr );
+    
+                    DataManager2.saveData_RedeemList( redeemListJson, function( retData )
+                    {
+                        console.log( ' ===> RedeemList LS Moved.' );                    
+                        localStorage.setItem( Constants.lsFlag_dataMoved_redeemListIDB, "Y" );
+    
+                        callBackInner();
+                    });
+                }
+                else callBackInner();
+            }
+            else callBackInner();
+        });
+    });
+};
+
+// =====================================
+// ===== SUPPORTING METHODS  ============
+
+
+// NOTE: Just checks if missing match exists..
+DataVerMove.checkLS_LocalForageNeedMove = function( callBack )
+{
+    var moveKeys = [];
+    var keys = Object.keys( localStorage );
+
+    for ( var i = 0; i < keys.length; i++ )
+    {
+        var keyStr = keys[i];
+
+        if ( keyStr != 'dataVersion' ) // skip 'dataVersion' on LF move..
+        {
+            // if key is not 'localForage' type 
+            if( !( keyStr.indexOf( "localforage/" ) == 0 ) )
+            {
+                // and if the matching 'localForage' version does not exists..
+                if ( keys.indexOf( "localforage/" + keyStr ) < 0 )
+                {
+                    moveKeys.push( keyStr );
+                }
+            }    
+        }
+    }
+
+    var needToMove = ( moveKeys.length > 0 );
+
+    callBack( needToMove, moveKeys );
+};
+
+
+DataVerMove.checkIDB_LocalForageNeedMove = function( callBack )
+{
+    var dbStorage_IDB = new DBStorage();
+    var moveKeys = DataManager2.securedContainers; //[ Constants.storageName_redeemList ];
+    // LATER, use 'recursiveCall' method to go through the list..
+
+    var keyStr = Constants.storageName_redeemList;
+    // var fixedKeys = [ Constants.storageName_redeemList ];
+
+    // Get IndexedDB using old storage..
+    dbStorage_IDB.getData( keyStr, function( searched )
+    {
+        // If exists, check the 'localForage' one
+        if( searched )
+        {
+            // 
+            DataManager2.getData_IDB( keyStr, function( retData )
+            {
+                // If exists in LS, but Not in IDB, callBack with true..
+                if ( !retData )
+                {
+                    //console.log( searched );
+                    callBack( true, [ keyStr ] );
+                }
+                else callBack( false, [] );
+            } );
+        }
+        else callBack( false, [] );
+    });
+};
+
+
+DataVerMove.checkRedeemListNeedMove = function( callBack )
+{    
+    var needToMove = true;
+
+    var moveFlag = localStorage.getItem( Constants.lsFlag_dataMoved_redeemListIDB );
+
+    if ( moveFlag === "Y" ) needToMove = false;
+    else 
+    {
+        
+    }
+
+    callBack( needToMove );
+};
+
+// -----------------------------------------
+
+DataVerMove.dataCopyToIDBs = function()
+{
+    // Move to indexedDB for all the secured ones (Constants.storageName_redeemList)
+    var moveKeys = DataManager2.securedContainers;
+
+    for ( i = 0; i < moveKeys.length; i++ )
+    {
+        var value = localStorage.getItem( moveKeys[ i ] );
+
+        DataVerMove.dataCopyToIDB( moveKeys[ i ], value, function(){
+            // DataManager2.deleteDataByStorageType( StorageMng.StorageType_LocalStorage, moveKeys[ i ] );
+
+        } );
+    }
+};
+
+
+// Save to indexedDB storage with same key..
+DataVerMove.dataCopyToIDB = function( key, value, callBack )
+{
+    DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, key, function( searched )
+    {
+        // If there is already info in IndexedDB, do not save it..
+        if( searched === null )
+        {
+            DataManager2.saveData_IDB( key, JSON.parse( value ), function( retData ){
+                console.log( ' ===> [NEW]: DATA MOVED to indexedDB, key: ' + key + '.' );
+
+                if ( callBack ) callBack( key, retData );
+            } );
+        }
+        else
+        {
+            console.log( ' ===> [NEW]: DATA NOT MOVED.  Data in IndexedDB already exists.' );
+        }
+    })
+};
+
+// ===========================================
+// === OLD
+
+DataVerMove.moveToIDB = function( key, value, callBack )
+{
+    var dbStorage = new DBStorage();
+    
+    dbStorage.getData( key, function( searched ){
+
+        if( searched === undefined )
+        {
+            IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
+    
+                if ( callBack ) callBack( key, retData )
+
+            } );
+        }
+    })
+};
+
+/*
+DataVerMove.redeemListLS_IDB = function( callBack )
+{
+    // Get all items in localStorage
+    var keys = Object.keys( localStorage );
+    var moveKeys = [];
+
+    // Compose 'moveKeys' with intertested to move ones Constants.storageName_redeemList in our case.
+    for ( var key in keys ) 
+    {
+        if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
+    }
+
+    // For moving keys, copy from localStorage to IndexedDB.
+    for ( i = 0; i < moveKeys.length; i++ )
+    {
+        var value = localStorage.getItem( moveKeys[ i ] );
+
+        DataVerMove.moveToIDB( moveKeys[ i ], value, function( container, newData ){
+
+            console.log( 'Moved key to indexedDB ' );
+            // LocalStorageDataManager.saveData( container, newData );
+            //localStorage.removeItem( moveKeys[ i ] );
+            //LocalStorageDataManager.saveData("dataVersion", "1");
+
+        });
+    }
+
+    console.log( ' ===> Ran DataVerMove.redeemListLS_IDB()' );
+    callBack();
+};
+*/
+
+
+    //DataVerMove.lsKeyChange( keys, 0, function() {
+    //    DataVerMove.dataCopyToIDBs();
+    //});
+
+/*DataVerMove.lsKeyChange = function( keys, index, returnFunc )
 {
     
     //DataVerMove.idx++;
@@ -190,7 +403,7 @@ DataVerMove.lsKeyChange = function( keys, index, returnFunc )
     if( index < keys.length )
     {
         // If within, move localStorage keys from '--' -> 'localforage/'
-        var keyVal = keys[ DataVerMove.idx ];
+        var keyVal = keys[ index ];
         index++;
 
         if( !( keyVal.indexOf( "localforage/" ) == 0 ) )
@@ -212,47 +425,4 @@ DataVerMove.lsKeyChange = function( keys, index, returnFunc )
     {
         returnFunc();
     }
-};
-
-DataVerMove.dataCopyToIDB = function()
-{
-    // If does not exists, it copies..
-    // However, we should check the database version number
-    // and if the database version number is lower than expected
-    // we should move data..  regardless of existing or not?
-
-    // Move to indexedDB for all the secured ones ('redeemlist')
-    var moveKeys = DataManager2.securedContainers;
-
-    for ( i = 0; i < moveKeys.length; i++ )
-    {
-        var value = localStorage.getItem( moveKeys[ i ] );
-
-        DataVerMove.moveOneDataNew( moveKeys[ i ], value, function(){
-            // DataManager2.deleteDataByStorageType( StorageMng.StorageType_LocalStorage, moveKeys[ i ] );
-
-        } );
-    }
-};
-
-
-// Save to indexedDB storage with same key..
-DataVerMove.moveOneDataNew = function( key, value, callBack )
-{
-    DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, key, function( searched )
-    {
-        // If there is already info in IndexedDB, do not save it..
-        if( searched === null )
-        {
-            DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, key, JSON.parse( value ), function( retData ){
-                console.log( ' ===> [NEW]: DATA MOVED to indexedDB, key: ' + key + '.' );
-
-                if ( callBack ) callBack( key, retData );
-            } );
-        }
-        else
-        {
-            console.log( ' ===> [NEW]: DATA NOT MOVED.  Data in IndexedDB already exists.' );
-        }
-    })
-};
+};*/

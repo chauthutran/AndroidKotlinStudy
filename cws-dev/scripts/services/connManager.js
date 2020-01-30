@@ -64,7 +64,7 @@ ConnManager.userNetworkModeSwitch_IntvLimit = 3600; //3600 = 60 * 60sec = 1h (@ 
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 
-ConnManager.debugMode = true; //WsApiManager.isDebugMode;
+ConnManager.debugMode = WsApiManager.isDebugMode;
 
 ConnManager.connection; //v1.3
 ConnManager.type;		//v1.3
@@ -540,7 +540,7 @@ ConnManager.setUserNetworkMode = function( requestConnMode )
 
 ConnManager.getDcdConfigVersion = function( returnFunc )
 {
-	if ( localStorage.getItem('session') !== null && FormUtil.checkLogin() )
+	if ( localStorage.getItem(Constants.storageName_session) !== null && FormUtil.checkLogin() )
 	{
 		console.log( 'ConnManager.getDcdConfigVersion - FormUtil.login_UserName/Password: ' + FormUtil.login_UserName + ', ' + FormUtil.login_Password );
 

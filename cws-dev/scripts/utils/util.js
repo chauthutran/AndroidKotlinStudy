@@ -8,6 +8,21 @@ Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
 
+
+Util.tryCatchContinue = function( callBack, runFunc )
+{
+	try
+	{
+		runFunc( callBack );
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR, tryCatchContinue, errMsg - ' + errMsg );
+		callBack();
+	}
+};
+
+
 Util.disableTag = function( tag, isDisable )
 {
 	tag.prop('disabled', isDisable);
@@ -1768,7 +1783,7 @@ Util.paddNumeric = function( val, padding )
 
 Util.getLocalStorageObjectValue = function( objKeyVal )
 {
-	var lastSession = DataManager.getSessionData(); //JSON.parse( localStorage.getItem( 'session' ) );
+	var lastSession = DataManager.getSessionData(); //JSON.parse( localStorage.getItem( Constants.storageName_session ) );
 	var arrKeys;
 
 	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
@@ -2592,11 +2607,12 @@ $.fn.rotate=function(options) {
 
 		if ( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) > ( threshold_UsagePercent / 100 ) || ( 5752434934 / 1024 / 1024 ) > threshold_UsageMBsize )
 		{
-			MsgManager.notificationMessage( '1: data usage exceeds 50% of available quota: ' + Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' / ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ), 'notificationRed', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics' );
+			MsgManager.notificationMessage( '1: data usage exceeds 50% of available quota: ' 
+			+ Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' / ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ), 'notificationRed', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics' );
 
-			DataManager.getData( 'movedData', function( movedData ){
-
-				if ( movedData != undefined || movedData != "true" )
+			DataManager.getData( Constants.lsFlag_dataMoved_redeemListIDB, function( movedData )
+			{
+				if ( movedData === "Y" )
 				{
 					DataManager.migrateIndexedDBtoLocalStorage( function( result, msg ){
 

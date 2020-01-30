@@ -24,7 +24,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		if ( formJsonArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem('session') ).autoComplete + '"';
+			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
 			var formTag = $( '<form ' + autoComplete + '></form>' );
 
 			formDivSecTag.append( formTag );
@@ -253,7 +253,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		{
 			var entryTag;
 			var bSkipControlAppend = false;
-			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem('session') ).autoComplete + '"';
+			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
 
 			// TEMP DROPDOWN --> CHECKBOX
 			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
@@ -359,7 +359,7 @@ function BlockForm( cwsRenderObj, blockObj )
 									<div class="modalSymbol">
 										<div class="textSymbol">
 											<input type="text" class="searchSymbol">
-											<span class="closeSearchSymbol">ï¿½</span>
+											<span class="closeSearchSymbol">ï¿?/span>
 										</div>
 										<div class="container--optionsSymbol">
 											<ul class="optionsSymbol">

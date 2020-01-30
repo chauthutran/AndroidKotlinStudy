@@ -38,9 +38,9 @@ MsgManager.initialSetup = function()
         MsgManager.divProgressAreaTag.empty();
     });
 
-    if ( localStorage.getItem('session') )
+    if ( localStorage.getItem(Constants.storageName_session) )
     {
-        var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+        var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
 
         if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
         {
@@ -62,7 +62,7 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
     {
         if ( !MsgManager._autoHide )
         {
-            var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+            var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
 
             if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
             {

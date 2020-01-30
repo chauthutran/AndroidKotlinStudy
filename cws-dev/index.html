@@ -768,7 +768,7 @@
 
     <script type="text/javascript" src="scripts/services/wsApiManager.js"></script>
     <script type="text/javascript" src="scripts/services/storageMng.js"></script>
-    <script type="text/javascript" src="scripts/services/dataManager.js"></script>
+    <script type="text/javascript" src="scripts/services/old/dataManager.js"></script>
     <script type="text/javascript" src="scripts/services/dataManager2.js"></script>
 
     <script type="text/javascript" src="scripts/utils/inputUtil.js"></script>
@@ -780,15 +780,14 @@
     <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
     <script type="text/javascript" src="scripts/services/connManager.js"></script>
     <script type="text/javascript" src="scripts/services/connManagerNew.js"></script>
-    <script type="text/javascript" src="scripts/services/indexdbStorage.js"></script>
-    <script type="text/javascript" src="scripts/services/indexdbDataManager.js"></script>
-    <script type="text/javascript" src="scripts/services/localStorageDataManager.js"></script>
+    <script type="text/javascript" src="scripts/services/old/dbStorageIDB.js"></script>
+    <script type="text/javascript" src="scripts/services/old/indexdbDataManager.js"></script>
+    <script type="text/javascript" src="scripts/services/old/localStorageDataManager.js"></script>
     <script type="text/javascript" src="scripts/utils/dbStorageSelector.js"></script>
     <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
     <script type="text/javascript" src="scripts/utils/configUtil.js"></script>
     <script type="text/javascript" src="scripts/services/cacheManager.js"></script>
     <script type="text/javascript" src="scripts/utils/sounds.js" ></script>
-    <script type="text/javascript" src="scripts/services/moveLocalStorageData.js"></script>
     <script type="text/javascript" src="scripts/services/dataVerMove.js"></script>
     <script type="text/javascript" src="scripts/utils/localStatistics.js"></script>
     <script type="text/javascript" src="scripts/services/scheduleManager.js"></script>
@@ -826,6 +825,7 @@
     //setTimeout( function(){
       //MoveLocalStorageData.moveData();
       DataVerMove.dataChangeHandle();
+
       new DBStorageSelector();  
     //}, 500 ); 
 

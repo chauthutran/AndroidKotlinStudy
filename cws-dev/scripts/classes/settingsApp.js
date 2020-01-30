@@ -800,7 +800,7 @@ function settingsApp( cwsRender )
 
             ConnManager.getDcdConfigVersion( function( retVersion ) 
             {
-                var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem('session') ).user ) );
+                var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
     
                 if ( ( userConfig.dcdConfig.version ).toString() < retVersion.toString() )
                 {

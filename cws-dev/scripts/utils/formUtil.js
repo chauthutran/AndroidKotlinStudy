@@ -810,7 +810,9 @@ FormUtil.getDataServerAvailable = function( returnFunc )
 	else
 	{
 		var url = WsApiManager.composeWsFullUrl( '/api/available' );
+		
 		if ( WsApiManager.isDebugMode ) console.log( '~ 1 : api/available  ' );
+
 		//RESTUtil.retrieveJson( url, returnFunc );
 		RESTUtil.retrieveJson( url, function()
 		{
@@ -1026,7 +1028,7 @@ FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 
 FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
-	var sessionData = localStorage.getItem('session');
+	var sessionData = localStorage.getItem(Constants.storageName_session);
 
 	if ( sessionData )
 	{
@@ -1053,7 +1055,7 @@ FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 			}
 		}
 
-		localStorage.setItem( 'session', JSON.stringify( SessionObj ) );
+		localStorage.setItem( Constants.storageName_session, JSON.stringify( SessionObj ) );
 	}
 }
 
@@ -1970,7 +1972,8 @@ FormUtil.createNumberLoginPinPad = function()
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
           $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
       }, 500 );
-}
+};
+
 
 FormUtil.getCommonDateGroups = function()
 {
@@ -1981,12 +1984,13 @@ FormUtil.getCommonDateGroups = function()
 			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
 			{ name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
 	return z;
-}
+};
+
 
 FormUtil.getActivityTypes = function()
 {
 	// get different 'Areas' or Activity-Types
-	var sessData = localStorage.getItem('session');
+	var sessData = localStorage.getItem(Constants.storageName_session);
 	var retArr = [];
 
 	if ( sessData )
@@ -2004,19 +2008,21 @@ FormUtil.getActivityTypes = function()
 	}
 
 	return retArr;
-
 };
+
 
 FormUtil.loaderEllipsis = function()
 {
 	return '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
-}
+};
+
 
 FormUtil.loaderRing = function()
 {
 	return '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
 	//return '<div class="loadingImg" style=""><img src="images/loading_small.svg"></div>';
-}
+};
+
 
 FormUtil.getMyDetails = function( callBack )
 {
@@ -2066,7 +2072,8 @@ FormUtil.getMyDetails = function( callBack )
 				return response.json;
 			}
 		} );
-}
+};
+
 
 FormUtil.fetchMyDetails = function ( useAPI, returnFunc ) 
 {

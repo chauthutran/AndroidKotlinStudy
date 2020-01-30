@@ -22,57 +22,6 @@ DataManager2.indexedDBopenResponseTime;// response delay times
 // ---- Overall Data Save/Get/Delete ---
 
 // ------------------------------------------------
-// -------- SAVE Methods --------------
-
-// -- SaveData - storage type decided by 'secName'
-DataManager2.saveData = function( secName, jsonData, retFunc ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	DataManager2.saveDataByStorageType( storageTypeStr, secName, jsonData, retFunc );
-};
-
-// saveData - IndexedDB
-DataManager2.saveData_IDB = function( secName, jsonData, retFunc ) 
-{
-	DataManager2.saveDataByStorageType( DataManager2.dbStorageType_indexdb, secName, jsonData, retFunc );
-};
-
-// saveData - LocalStorage
-DataManager2.saveData_LS = function( secName, jsonData, retFunc ) 
-{
-	DataManager2.saveDataByStorageType( DataManager2.dbStorageType_localStorage, secName, jsonData, retFunc );
-};
-
-// Base SaveData - by storage type
-DataManager2.saveDataByStorageType = function( storageTypeStr, secName, jsonData, callBack ) 
-{		
-	if( storageTypeStr == StorageMng.StorageType_IndexedDB )
-	{
-		DataManager2.getIV( function( iv ){
-
-			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
-			{
-				keySize: 128 / 8,
-				iv: iv,
-				mode: CryptoJS.mode.CBC,
-				padding: CryptoJS.pad.Pkcs7
-			}).toString();
-
-			StorageMng.setItem( storageTypeStr, secName, pushData, function() {
-				if ( callBack ) callBack( pushData );
-			});
-		} )
-		
-	}
-	else
-	{
-		StorageMng.setItem( storageTypeStr, secName, jsonData, function() {
-			if( callBack ) callBack( jsonData );
-		});
-	}
-}
-
-// ------------------------------------------------
 // -------- GET Methods --------------
 
 // -- GetData - storage type decided by 'secName'
@@ -84,18 +33,19 @@ DataManager2.getData = function( secName, callBack )
 // GetData - IndexedDB
 DataManager2.getData_IDB = function( secName, callBack ) 
 {
-	DataManager2.getDataByStorageType( DataManager2.dbStorageType_indexdb, secName, callBack );
+	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, callBack );
 };
 // GetData - LocalStorage
 DataManager2.getData_LS = function( secName, callBack ) 
 {
-	DataManager2.getDataByStorageType( DataManager2.dbStorageType_localStorage, secName, callBack );
+	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, secName, callBack );
 };
 
 // Base GetData - by storage type
 DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack ) 
 {
-	StorageMng.getItem( storageTypeStr, secName, function( err, data ){
+	StorageMng.getItem( storageTypeStr, secName, function( err, data )
+	{
 		
 		if ( data && DataManager2.protectedContainer( secName ) )
 		{
@@ -134,7 +84,115 @@ DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack 
 
 
 // ------------------------------------------------
+// -------- SAVE Methods --------------
+
+// -- SaveData - storage type decided by 'secName'
+DataManager2.saveData = function( secName, jsonData, retFunc ) 
+{
+	var storageTypeStr = DataManager2.getStorageType( secName );
+	DataManager2.saveDataByStorageType( storageTypeStr, secName, jsonData, retFunc );
+};
+
+// saveData - IndexedDB
+DataManager2.saveData_IDB = function( secName, jsonData, retFunc ) 
+{
+	DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, secName, jsonData, retFunc );
+};
+
+// saveData - LocalStorage
+DataManager2.saveData_LS = function( secName, jsonData, retFunc ) 
+{
+	DataManager2.saveDataByStorageType( StorageMng.StorageType_LocalStorage, secName, jsonData, retFunc );
+};
+
+// Base SaveData - by storage type
+DataManager2.saveDataByStorageType = function( storageTypeStr, secName, jsonData, callBack ) 
+{		
+	if( storageTypeStr == StorageMng.StorageType_IndexedDB )
+	{
+		DataManager2.getIV( function( iv ){
+
+			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
+			{
+				keySize: 128 / 8,
+				iv: iv,
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7
+			}).toString();
+
+			StorageMng.setItem( storageTypeStr, secName, pushData, function() {
+				if ( callBack ) callBack( pushData );
+			});
+		} )
+		
+	}
+	else
+	{
+		StorageMng.setItem( storageTypeStr, secName, jsonData, function() {
+			if( callBack ) callBack( jsonData );
+		});
+	}
+}
+
+// ------------------------------------------------
+// -------- Get/Save Specific Operations Methods --------------
+
+DataManager2.getData_RedeemList = function( callBack )
+{
+	DataManager2.getData( Constants.storageName_redeemList, callBack );
+};
+
+// ------------------
+
+DataManager2.saveData_RedeemList = function( jsonData, callBack )
+{
+	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
+};
+
+
+// ------------------------------------------------
+// -------- Get/Save LocalStorage without LocalForage - No CallBack --------------
+
+// Not Yet Implemented
+DataManager2.getData_LS_JSON = function( key )
+{
+	var jsonData;
+
+	try
+	{
+		var dataStr = localStorage.getItem( key );
+		if ( dataStr ) jsonData = JSON.parse( dataStr );
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR during DataManager2.getData_LS_JSON, errMsg - ' + errMsg );
+		console.log( ' - LocalStorage data might not be JSON Format String' );
+	}
+
+	return jsonData;
+};
+
+DataManager2.getData_LS_Str = function( key )
+{
+	return localStorage.getItem( key );
+};
+
+// ------------------
+
+// Not Yet Implemented
+DataManager2.saveData_LS_JSON = function( key, jsonData )
+{
+	localStorage.setItem( key, JSON.stringify( jsonData ) );
+};
+
+DataManager2.saveData_LS_Str = function( key, strData )
+{
+	localStorage.setItem( key, strData );
+};
+
+// ------------------------------------------------
 // -------- Other Operation Methods --------------
+
 
 DataManager2.deleteDataByStorageType = function( storageTypeStr, secName ) 
 {
@@ -142,7 +200,6 @@ DataManager2.deleteDataByStorageType = function( storageTypeStr, secName )
 		console.log( secName + " DELETE successfully !!!");
 	} );
 };
-
 
 
 DataManager2.getOrCreateData = function( secName, callBack ) 
@@ -225,15 +282,6 @@ DataManager2.getItemFromData = function( secName, id, callBack )
 	{
 		if ( callBack ) callBack();
 	}
-
-	// if ( DataManager2.protectedContainer( secName ) )
-	// {
-	// 	return IndexdbDataManager2.getItemFromData( secName, id, callBack );
-	// }
-	// else
-	// {
-	// 	return LocalStorageDataManager2.getItemFromData( secName, id );
-	// }
 };
 
 

@@ -216,7 +216,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             // activityItem.history = itemJson.history;
             activityItem.status = itemJson.status;
 
-            DataManager.saveData( 'redeemList', activityData, callBack );
+            DataManager2.saveData_RedeemList( activityData, callBack );
         }
         else
         {

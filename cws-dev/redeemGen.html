@@ -4,6 +4,7 @@
   <head>
     <title>CwS - Provider: redeemGen</title>
     <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.js" ></script>
+    <script type="text/javascript" src="scripts/constants/constants.js"></script>
     <script type="text/javascript" src="scripts/utils/util.js" ></script>
     <style>
         div.label {
@@ -161,9 +162,9 @@
         $( 'select.openHourTo' ).html( getOpenHours(14) );
         //$( '#deleteIndexedDB' ).checked( false );
 
-        if ( localStorage.getItem ('session') )
+        if ( localStorage.getItem (Constants.storageName_session) )
         {
-            $('input.user').val ( JSON.parse(localStorage.getItem ('session')).user )
+            $('input.user').val ( JSON.parse(localStorage.getItem (Constants.storageName_session)).user )
         }
 
         //http://localhost:8080/eRefWSDev3/api/dc/redeem
@@ -265,9 +266,9 @@
     {
         var ret = 'eVoucher,WalkInA,WalkInB,PhoneVoucher';
 
-        if ( localStorage.getItem('session') )
+        if ( localStorage.getItem(Constants.storageName_session) )
         {
-            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem(Constants.storageName_session)).user )).dcdConfig.settings.redeemDefs.activityTypes;
 
             if ( itms.length )
             {
@@ -292,9 +293,9 @@
         var arr;
         var retPush = JSON.parse( currTemplate );
 
-        if ( localStorage.getItem('session') )
+        if ( localStorage.getItem(Constants.storageName_session) )
         {
-            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem(Constants.storageName_session)).user )).dcdConfig.settings.redeemDefs.activityTypes;
 
             if ( itms.length )
             {
@@ -327,9 +328,9 @@
     function getPreviewDataFields()
     {
 
-        if ( localStorage.getItem('session') )
+        if ( localStorage.getItem(Constants.storageName_session) )
         {
-            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem('session')).user )).dcdConfig.settings.redeemDefs.activityTypes;
+            var itms = JSON.parse(localStorage.getItem( JSON.parse(localStorage.getItem(Constants.storageName_session)).user )).dcdConfig.settings.redeemDefs.activityTypes;
 
             if ( itms.length )
             {
@@ -438,8 +439,7 @@
 
     function writeToLocalStorage(overwrite)
     {
-        localStorage.removeItem( 'dataVersion' );
-        localStorage.removeItem( 'movedData' );
+        //localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
 
         if ( overwrite )
         {
@@ -466,8 +466,12 @@
 
         }
 
-        if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );
-        
+
+        // After putting data to 'redeemList' on localStorage, set flag, so that data move happens to indexedDB
+        // NOTE: We put this on localStorage, so that version move happens smoothly?
+        localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
+
+        //if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );        
     }
 
     deleteIndexedDB = function(dbName)

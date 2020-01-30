@@ -20,6 +20,7 @@ IndexdbDataManager.saveData = function( secName, jsonData, callBack )
 		var JSONcontainerData = {};
 
 		console.log( 'IndexdbDataManager.saveData, before IndexdbDataManager.getIV, secName: ' + secName );
+
 		IndexdbDataManager.getIV( function( iv ){
 
 			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
