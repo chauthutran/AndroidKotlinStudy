@@ -33,7 +33,6 @@ function cwsRender()
 
 	// Constants
 	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
-	me.storageName_RedeemList = Constants.storageName_RedeemList;
     me.status_redeem_submit = Constants.status_redeem_submit;
 	me.status_redeem_queued = Constants.status_redeem_queued;
 	me.status_redeem_failed = Constants.status_redeem_failed;
@@ -172,7 +171,7 @@ function cwsRender()
 		DataVerMove.redeemListLS_IDB( function() 
 		{
 			// Load the redeemList json into the main memory of this class '_activityListData.list'
-			DataManager.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
+			DataManager.getData( Constants.storageName_redeemList, function( jsonData_FromStorage ) 
 			{
 				if ( jsonData_FromStorage && jsonData_FromStorage.list )
 				{
@@ -371,7 +370,7 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			//FormUtil.updateSyncListItems( me.storageName_RedeemList, function( myData )
+			//FormUtil.updateSyncListItems( Constants.storageName_redeemList, function( myData )
 			{
 
 				DataManager.getUserConfigData( function( userData ){

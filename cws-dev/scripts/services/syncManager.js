@@ -746,11 +746,11 @@ syncManager.syncOfflineData = function( btnTag )
                             FormUtil.updateProgressWidth( 0 );
                             FormUtil.showProgressBar( 0 );
 
-                            if ( !FormUtil.dcdConfig ) 
-                            {
-                                FormUtil.dcdConfig = JSON.parse( DataManager.getData ( syncManager.cwsRenderObj.storageName_RedeemList ) ).dcdConfig;
-                                MsgManager.msgAreaShow( 'syncManager > reloading FormUtil.dcdConfig :(' );
-                            } 
+                            //if ( !FormUtil.dcdConfig ) 
+                            //{
+                            //    FormUtil.dcdConfig = JSON.parse( DataManager.getData ( Constants.storageName_redeemList ) ).dcdConfig;
+                            //    MsgManager.msgAreaShow( 'syncManager > reloading FormUtil.dcdConfig :(' );
+                            //} 
 
                             if ( syncManager.pauseProcess )
                             {

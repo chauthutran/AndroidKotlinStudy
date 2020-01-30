@@ -338,7 +338,7 @@ function statistics( cwsRender )
 
         var myData = me.cwsRenderObj._activityListData;
         
-        //FormUtil.updateSyncListItems( me.cwsRenderObj.storageName_RedeemList, function( myData ){
+        //FormUtil.updateSyncListItems( Constants.storageName_redeemList, function( myData ){
 
             if ( myData )
             {

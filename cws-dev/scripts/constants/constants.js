@@ -1,7 +1,7 @@
 
 function Constants() {};
 
-Constants.storageName_RedeemList = "redeemList";
+Constants.storageName_redeemList = "redeemList";
 
 Constants.status_redeem_submit = "submit"; // initialize from dcd@XX ?
 Constants.status_redeem_queued = "queued"; // initialize from dcd@XX ?

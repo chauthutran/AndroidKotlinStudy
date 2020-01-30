@@ -19,7 +19,6 @@ function BlockList( cwsRenderObj, blockObj )
     me.options;
     me.newBlockTag;
 
-    me.storageName_RedeemList = cwsRenderObj.storageName_RedeemList; // "redeemList";
     me.status_redeem_submit = cwsRenderObj.status_redeem_submit; //"submit"; 
     me.status_redeem_queued = cwsRenderObj.status_redeem_queued; //"queued"; 
     me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed";
@@ -467,7 +466,7 @@ function BlockList( cwsRenderObj, blockObj )
                 //expandedDivTag.empty();
                 expandedDivTag.html( FormUtil.loaderRing() )
 
-                DataManager.getItemFromData( me.cwsRenderObj.storageName_RedeemList, itemData.id, function( fetchItemData ){
+                DataManager.getItemFromData( Constants.storageName_redeemList, itemData.id, function( fetchItemData ){
 
                     var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
                     //var prevDetails = Util.activityListPreviewTable( 'preview', Util.jsonToArray ( itemData.data.previewJson, 'name:value' ) );
@@ -816,7 +815,7 @@ function BlockList( cwsRenderObj, blockObj )
                 console.log( JSON.stringify( tempJsonData ) );    
             }
 
-            DataManager.insertDataItem( me.storageName_RedeemList, tempJsonData, callBack );
+            DataManager.insertDataItem( Constants.storageName_redeemList, tempJsonData, callBack );
             // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
             //       pwa MUST re-initialize 'syncManager' queue+fail arrays
         });
