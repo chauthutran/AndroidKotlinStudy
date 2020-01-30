@@ -281,7 +281,7 @@ SyncManager.runManualSync = function( itemData, btnTag, callBack )
     if ( ( ( itemData.networkAttempt == undefined ) 
         || ( itemData.networkAttempt != undefined 
             && itemData.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) ) 
-        && ( itemData.status != syncManager.cwsRenderObj.status_redeem_submit ) )
+        && ( itemData.status != Constants.status_redeem_submit ) )
     {
         // Initialize the array for dealing with - indexedDB update/save list - do it just once at the end of handling the list.
 
@@ -338,8 +338,8 @@ syncManager.syncItemData = function( listItem, btnTag, callBack )
             {
                 //MsgManager.msgAreaShow( ' network TEST LIMIT exceeded: ' + syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit );
                 processCode = 2;
-                itemData.status = syncManager.cwsRenderObj.status_redeem_failed;
-                itemData.queueStatus = syncManager.cwsRenderObj.status_redeem_failed;
+                itemData.status = Constants.status_redeem_failed;
+                itemData.queueStatus = Constants.status_redeem_failed;
                 if ( WsApiManager.isDebugMode ) console.log( ' #networkAttempts exceeded: ' + itemData.networkAttempt );
             }
         }
@@ -575,7 +575,7 @@ syncManager.syncSuccess = function( itemData, myQueueStatus )
 
     itemData.redeemDate = dtmRedeemDate;
     itemData.title = 'saved to network' + ' [' + dtmRedeemDate + ']'; // MISSING TRANSLATION
-    itemData.status = syncManager.cwsRenderObj.status_redeem_submit;
+    itemData.status = Constants.status_redeem_submit;
     itemData.queueStatus = 'success'; // MISSING TRANSLATION
 
     if ( itemData.activityList ) delete itemData.activityList;
@@ -603,8 +603,8 @@ syncManager.syncFail = function( returnJson, itemData, myQueueStatus )
     /* only when sync-test exceeds limit do we mark item as FAIL */
     if ( itemData.networkAttempt >= syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit && ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
     {
-        itemData.status = syncManager.cwsRenderObj.status_redeem_failed;
-        itemData.queueStatus = syncManager.cwsRenderObj.status_redeem_failed;
+        itemData.status = Constants.status_redeem_failed;
+        itemData.queueStatus = Constants.status_redeem_failed;
         // newTitle = 'error occurred > exceeded network attempt limit';
     }
     else

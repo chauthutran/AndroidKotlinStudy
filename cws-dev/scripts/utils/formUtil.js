@@ -1211,16 +1211,16 @@ FormUtil.updateSyncListItems = function( redList, retFunc )
 
 	var returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
 
-	var myQueue = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_queued );
-	var myFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
-	var mySubmit = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_submit );
+	var myQueue = returnList.filter( a=>a.status == Constants.status_redeem_queued );
+	var myFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+	var mySubmit = returnList.filter( a=>a.status == Constants.status_redeem_submit );
 
 	FormUtil.records_redeem_submit = mySubmit.length;
 	FormUtil.records_redeem_queued = myQueue.length;
 	FormUtil.records_redeem_failed = myFailed.length;
 
 	syncManager.dataQueued = myQueue;
-	syncManager.dataFailed = returnList.filter( a=>a.status == syncManager.cwsRenderObj.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+	syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
 		
 	retFunc( returnList );
 }
@@ -1345,7 +1345,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 			}
 
-			if ( statusOpt && statusOpt.name == cwsRenderObj.status_redeem_submit )
+			if ( statusOpt && statusOpt.name = Constants.status_redeem_submit )
 			{
 				$( svgObject ).css( 'opacity', '1' );
 			}
@@ -1436,11 +1436,11 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 
 	var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
 
-	if ( itemData.status === cwsRenderObj.status_redeem_submit )
+	if ( itemData.status === Constants.status_redeem_submit )
 	{
 		imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
 	}
-	else if ( itemData.status === cwsRenderObj.status_redeem_failed )
+	else if ( itemData.status === Constants.status_redeem_failed )
 	{
 
 		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )

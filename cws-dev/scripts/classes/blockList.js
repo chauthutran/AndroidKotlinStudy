@@ -19,9 +19,9 @@ function BlockList( cwsRenderObj, blockObj )
     me.options;
     me.newBlockTag;
 
-    me.status_redeem_submit = cwsRenderObj.status_redeem_submit; //"submit"; 
-    me.status_redeem_queued = cwsRenderObj.status_redeem_queued; //"queued"; 
-    me.status_redeem_failed = cwsRenderObj.status_redeem_failed; //"failed";
+    me.status_redeem_submit = Constants.status_redeem_submit; //"submit"; 
+    me.status_redeem_queued = Constants.status_redeem_queued; //"queued"; 
+    me.status_redeem_failed = Constants.status_redeem_failed; //"failed";
 
     me.redeemListDateGroups;
     me.lastSyncDate;
