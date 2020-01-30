@@ -740,23 +740,32 @@ function BlockList( cwsRenderObj, blockObj )
 
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
-                //DataManager.getItemFromData( Constants.storageName_RedeemList, itemData.id, function( ItemData_refreshed ){
-
+                // DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( ItemData_refreshed ){
+                
+                    var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
                     console.log( 'clicking activityItem on blockList, itemData: ' );
-                    console.log( ItemData_refreshed );
+                    // console.log( ItemData_refreshed );
 
                     // TODO: 
                     //if ( ItemData_refreshed.status != me.status_redeem_submit )
                     //{
                         if ( SyncManagerNew.syncStart() )
                         {
-                            var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
+                            try
+                            {
+                                var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
         
-                            SyncManagerNew.syncItem( activityItem, function( success ) {
-        
-                                console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );
+                                SyncManagerNew.syncItem( activityItem, function( success ) {
     
-                            });
+                                    SyncManagerNew.syncFinish();     
+                                    console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
+                                });    
+                            }
+                            catch( errMsg )
+                            {
+                                console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
+                                SyncManagerNew.syncFinish();     
+                            }
                         }
                     //}
 
