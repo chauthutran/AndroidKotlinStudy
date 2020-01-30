@@ -166,20 +166,26 @@ function cwsRender()
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
-	{
-		// TODO: If this fails, should we alert? - Need some testing...
-		DataManager.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
+	{		
+		// Do 'redeemList' move from localStorage to IndexedDB
+		//  - Since we need password to encrypt the data..		
+		DataVerMove.redeemListLS_IDB( function() 
 		{
-			if ( jsonData_FromStorage && jsonData_FromStorage.list )
+			// Load the redeemList json into the main memory of this class '_activityListData.list'
+			DataManager.getData( Constants.storageName_RedeemList, function( jsonData_FromStorage ) 
 			{
-				me._activityListData.list = jsonData_FromStorage.list;
-
-				// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
-				FormUtil.updateSyncListItems( me._activityListData, function()
+				if ( jsonData_FromStorage && jsonData_FromStorage.list )
 				{
-					callBack( me._activityListData );
-				});		
-			}
+					me._activityListData.list = jsonData_FromStorage.list;
+
+					// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
+					FormUtil.updateSyncListItems( me._activityListData, function()
+					{
+						callBack( me._activityListData );
+					});		
+				}
+				else callBack( me._activityListData );
+			});
 		});
 	};
 

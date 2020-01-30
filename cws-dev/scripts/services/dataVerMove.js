@@ -11,8 +11,8 @@ DataVerMove.dataChangeHandle = function()
     // List the version methods here, since we need to define this first..
     // Put this in 'initalize'?  'setUp'?
     DataVerMove.verRunList = [
-        { 'ver': 1, 'run': DataVerMove.redeemListLS_IDB }
-        ,{ 'ver': 2, 'run': DataVerMove.blankTest }
+        //{ 'ver': 1, 'run': DataVerMove.redeemListLS_IDB }
+        { 'ver': 2, 'run': DataVerMove.blankTest }
     ];
 
     DataVerMove.getDataVersionNumber( function( versionNumber )
@@ -75,32 +75,40 @@ DataVerMove.dataChangeHandle = function()
 
 DataVerMove.redeemListLS_IDB = function( callBack )
 {
-    // Get all items in localStorage
-    var keys = Object.keys( localStorage );
-    var moveKeys = [];
-
-    // Compose 'moveKeys' with intertested to move ones 'redeemList' in our case.
-    for ( var key in keys ) 
+    try
     {
-        if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
+        // Get all items in localStorage
+        var keys = Object.keys( localStorage );
+        var moveKeys = [];
+
+        // Compose 'moveKeys' with intertested to move ones 'redeemList' in our case.
+        for ( var key in keys ) 
+        {
+            if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
+        }
+
+        // For moving keys, copy from localStorage to IndexedDB.
+        for ( i = 0; i < moveKeys.length; i++ )
+        {
+            var value = localStorage.getItem( moveKeys[ i ] );
+
+            DataVerMove.moveToIDB( moveKeys[ i ], value, function( container, newData ){
+
+                console.log( 'Moved key to indexedDB ' );
+                // LocalStorageDataManager.saveData( container, newData );
+                //localStorage.removeItem( moveKeys[ i ] );
+                //LocalStorageDataManager.saveData("dataVersion", "1");
+
+            } );
+        }
+
+        console.log( ' ===> Ran DataVerMove.redeemListLS_IDB()' );
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR on DataVerMove.redeemListLS_IDB, errMsg - ' + errMsg );
     }
 
-    // For moving keys, copy from localStorage to IndexedDB.
-    for ( i = 0; i < moveKeys.length; i++ )
-    {
-        var value = localStorage.getItem( moveKeys[ i ] );
-
-        DataVerMove.moveToIDB( moveKeys[ i ], value, function( container, newData ){
-
-            console.log( 'Moved key to indexedDB ' );
-            // LocalStorageDataManager.saveData( container, newData );
-            //localStorage.removeItem( moveKeys[ i ] );
-            //LocalStorageDataManager.saveData("dataVersion", "1");
-
-        } );
-    }
-
-    console.log( ' ===> Ran DataVerMove.redeemListLS_IDB()' );
     callBack();
 };
 
