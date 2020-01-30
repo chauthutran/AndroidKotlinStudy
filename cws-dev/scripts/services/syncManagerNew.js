@@ -1,5 +1,9 @@
 // =========================================
 // -------------------------------------------------
+//     SyncManagerNew
+//          - Methods related to submitting data to server
+//              - Later will have downloading data from server feature.
+//
 // -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
 //
 //      - LVL 1. The Expected Features of this class..
@@ -15,10 +19,6 @@
 //              C. Update The App/UI of changes
 //
 // -------------------------------------------------
-//  TODO:
-//      1. Make a real call from outside to 'syncItem'  <--- tie to a button..
-//      2. Fix the error case handling during 'syncItem'
-// -------------------------------------------------
 
 function SyncManagerNew()  {};
 
@@ -33,9 +33,9 @@ SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
 // $( '#divProgressBar.indeterminate' );
 
 // ===================================================
-// === MAIN 3 FEATURES =============
+// === MAIN 2 FEATURES =============
 
-// 1. Run 'sync' activity on one item
+// 1. Run 'sync' on a activityItem
 SyncManagerNew.syncItem = function( activityItem, callBack )
 {
     try
@@ -73,7 +73,7 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
 };
 
 
-// 2. Run 'sync' activity on ALL items
+// 2. Run 'sync' on All activityItems
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     try
@@ -104,7 +104,8 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     catch( errMsg )
     {
         console.log( 'syncAll not run properly - ' + errMsg );
-        callBack( false );
+        SyncManagerNew.syncFinish();
+        if( callBack ) callBack( false );
     }
 };
 
@@ -146,7 +147,7 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
     // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
     // TODO: if it failes to get data or some error case in 'DataManager.getData', 
     //      Let's think about it later or test about it..
-	//DataManager.getData( Constants.storageName_RedeemList, function( activityList ) {
+	//DataManager.getData( Constants.storageName_redeemList, function( activityList ) {
     var activityList = cwsRenderObj._activityListData
 
     var uploadItems = [];
@@ -279,15 +280,3 @@ SyncManagerNew.syncFinish = function()
 
 // ===================================================
 // === OTHERS Methods =============
-
-
-
-// Promise - easily catch error..
-//SyncManagerNew.checkCondition_SyncReady().then( function() {
-//}).catch( function( err ) {
-//    console.log( 'error during SyncReadyCheck - ' + err );
-//});
-//SyncManagerNew.checkCondition_SyncReady = async function()
-//{
-//    return ; // return promise..  new Promise(..)
-//}

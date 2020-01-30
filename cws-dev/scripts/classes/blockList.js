@@ -7,7 +7,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;        
 
-    //me.redeemList;  // NOTE: Replaced by cwsRenderObj._activityDataListStorage
+    me.redeemList;  // NOTE: Replaced by cwsRenderObj._activityDataListStorage
     me.redeemListTargetTag;
     me.redeemListScrollSize = 15; // move where?
     me.redeemListScrollingState = 0;
@@ -102,13 +102,16 @@ function BlockList( cwsRenderObj, blockObj )
 
         $( window ).scrollTop(0);
 
+        // TODO: JAMES: FOR TEMPORARY MEASURE
+        me.redeemList = redeemObj;
+
+
         // Remove any previous render.
         blockTag.find( 'div.listDiv' ).remove();
 
         DataManager.getData( 'session', function( data ){
 
             me.lastSyncDate = data[ 'syncDate' ];
-
             // Copy from list html template
             $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
 
