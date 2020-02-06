@@ -1955,22 +1955,25 @@ FormUtil.createNumberLoginPinPad = function()
           $( "#passReal" ).val( '' );
           $( "#pass" ).val( '' );
         }
-      });
+	  });
+	  
+	  const PWD_INPUT_PADDING_LEFT = 10;
+	  const CHAR_SPACING_WIDTH = 5;
 
       $( "#passReal" ).keyup( function( event ) {
-          $('#pass').val( $('#passReal').val() );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+		  $('#pass').val( $('#passReal').val() );
+          $('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
       });
 
       $( "#pass" ).focus( function() {
-          $('#passReal').focus();
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + ( 5.5 * ( $('#pass').val().length ) ) + 'px' );
+		  $('#passReal').focus();
+          $('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
           $('#passReal').css( 'top', $('#pass').position().top + 8 );
       });
 
       setTimeout( function() {
           $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + 10 + 'px' );
+          $('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );
       }, 500 );
 };
 
