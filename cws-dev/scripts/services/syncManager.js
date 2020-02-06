@@ -164,7 +164,7 @@ syncManager.evalSyncConditions = function()
 {
     if ( FormUtil.checkLogin() ) // correct valid-login test?
     {
-        if ( ConnManager.networkSyncConditions() )
+        if ( ConnManagerNew.isAppMode_Online() )
         {
             if ( syncManager.dataQueued.length + syncManager.dataFailed.length )
             {
@@ -349,14 +349,14 @@ syncManager.syncItemData = function( listItem, btnTag, callBack )
         processCode = 1;
     }
 
-    if ( ! ConnManager.networkSyncConditions() )
+    if ( ! ConnManagerNew.isAppMode_Online() )
     {
         syncManager.pauseSync( itemData, itemClone);
         bProcess = false;
     }
     else
     {
-        if ( !syncManager.pauseProcess && ConnManager.networkSyncConditions() )
+        if ( !syncManager.pauseProcess && ConnManagerNew.isAppMode_Online() )
         {
             //if ( WsApiManager.isDebugMode ) console.log( bProcess + ',' + syncManager.pauseProcess );
             syncManager.pauseProcess = false;
@@ -402,7 +402,7 @@ syncManager.syncItemData = function( listItem, btnTag, callBack )
                 // network conditions deteriorate during sync process run
                 if ( !success 
                     && !returnJson 
-                    && !ConnManager.networkSyncConditions() )
+                    && !ConnManagerNew.isAppMode_Online() )
                 {
                     syncManager.pauseSync( itemData, itemClone);
 
@@ -480,7 +480,7 @@ syncManager.syncItemData = function( listItem, btnTag, callBack )
                 FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ), syncManager.cwsRenderObj )
                 FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, syncManager.cwsRenderObj );
 
-                if ( WsApiManager.isDebugMode ) console.log( ' ending HERE [' + ( bProcess && !syncManager.pauseProcess ) + '] >> sync Conditions: ' + ConnManager.networkSyncConditions() + ' AND ! syncManager.pauseProcess: ' + syncManager.pauseProcess );
+                if ( WsApiManager.isDebugMode ) console.log( ' ending HERE [' + ( bProcess && !syncManager.pauseProcess ) + '] >> sync Conditions: ' + ConnManagerNew.isAppMode_Online() + ' AND ! syncManager.pauseProcess: ' + syncManager.pauseProcess );
                 //syncManager.endSync( btnTag );
 
                 DataManager.getData( 'syncList', function( processedData ){
@@ -653,7 +653,7 @@ syncManager.updateDataAfterSync = function( itemData, itemClone, btnTag, listIte
     FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemData.id ).find( 'div.icons-status' ), itemData, syncManager.cwsRenderObj );
     FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + itemData.id ), FormUtil.getActivityType ( itemData ), FormUtil.getStatusOpt ( itemData ), syncManager.cwsRenderObj )
 
-    if ( ConnManager.networkSyncConditions() & !syncManager.pauseProcess )
+    if ( ConnManagerNew.isAppMode_Online() & !syncManager.pauseProcess )
     {
         //syncManager.setSyncListOutcome ( btnTag, itemData, listItem, function(){ } )
 
@@ -683,7 +683,7 @@ syncManager.updateDataAfterSync = function( itemData, itemClone, btnTag, listIte
         }
         else
         {
-            if ( WsApiManager.isDebugMode ) console.log( 'ending becuase of sync Conditions: ' + ConnManager.networkSyncConditions() );
+            if ( WsApiManager.isDebugMode ) console.log( 'ending becuase of sync Conditions: ' + ConnManagerNew.isAppMode_Online() );
             syncManager.endSync( btnTag, callBack );
         }
 
@@ -720,7 +720,7 @@ syncManager.syncOfflineData = function( btnTag )
 
             if ( FormUtil.checkLogin() ) // correct valid-login test?
             {
-                if ( ConnManager.networkSyncConditions() )
+                if ( ConnManagerNew.isAppMode_Online() )
                 {
                     if ( syncManager.dataQueued.length + syncManager.dataFailed.length )
                     {

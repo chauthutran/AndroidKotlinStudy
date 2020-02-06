@@ -115,7 +115,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
 SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
 {
-    return ConnManager.networkSyncConditions();
+    return ConnManagerNew.isAppMode_Online();
 };
 
 
@@ -271,6 +271,19 @@ SyncManagerNew.syncStart = function()
 
     return isOkToStart;
 };
+
+SyncManagerNew.syncAllButtonChange = function()
+{
+    showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
+    
+    ( showSyncIcon ) ? $('#divAppDataSyncStatus').show() : $('#divAppDataSyncStatus').hide();
+    ( showSyncIcon ) ? $('#imgAppDataSyncStatus').show() : $('#imgAppDataSyncStatus').hide();
+    
+}
+SyncManagerNew.syncAll_WithChecks = function()
+{
+    // automated sync process
+}
 
 SyncManagerNew.syncFinish = function()
 {

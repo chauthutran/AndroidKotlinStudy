@@ -3,96 +3,116 @@
 //	  - Setup schedules for tasks that runs in the background
 //		LVL 1:
 //		1. Create Initiate method to start task schedules in the beginning of the app
-//		2. Create method to start task after login
+//		2. Create method to start task schedules after login
+//		3. Create method to cancel task schedules after logout
 //	
 //		LVL 2:
 //			- Create each task schedule calls - with intervals.
 //				- Have flag to start in the beginning of interval or not.
 
+
 function ScheduleManager() {};
 
-ScheduleManager.interval_networkStatusCheck = 5000;				// network is onine/offline check
+//ScheduleManager.interval_networkStatusCheck = 5000;				// network is onine/offline check
 ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
+//ScheduleManager.interval_networkSwitchPromptCheck = 1000;  		// prompt user switch-network check
+//ScheduleManager.interval_networkSwitchPromptCancelCheck = 1000; // cancel prompt switch-network popup check
+ScheduleManager.interval_scheduleSyncAllRun = 30000;			// automated SyncAll process
+ScheduleManager.interval_scheduleShowHideSyncAllButtonUI = 10000; // check show/hide syncAll Button/Icon
 ScheduleManager.interval_networkConnectionTypeCheck = 30000;  	// (2g/3g/etc) connection type check
-// Let's define all interval times here..
+
+
+// list of Scheduler timerIDs (for cancelling at logoff)
+//ScheduleManager.timerID_networkSwitchPromptCheck;				
+ScheduleManager.timerID_scheduleSyncAllRun;
+ScheduleManager.timerID_showHideSyncAllButtonUI;
+ScheduleManager.timerID_trackConnectionType;
 
 
 // === PART 1. Schedule Call/Start Methods =============
 
-//ScheduleManager.initialize_ConnectionManagerChecks = function( callBack )
 ScheduleManager.runSchedules_AppStart = function( callBack )
 {
-	ScheduleManager.schedule_networkStatus_Check();
-	ScheduleManager.schedule_serverStatus_Check();
-	//ScheduleManager.schedule_connectionTypeMonitoringCheck();
-	ScheduleManager.schedule_switchNetworkModePrompt_Check();
-
-	console.log( 'created all scheduler tasks for ConnectionManagerNew ' );
+	ScheduleManager.schedule_serverStatus_Check( true );
 
 	if ( callBack ) callBack();
-
 }
 
 ScheduleManager.runSchedules_AfterLogin = function( callBack )
 {
-	// Fill below parts with task schedule methods..
+	ScheduleManager.schedule_showHideSyncAllButtonUI( false ); 	//manual sync (enable)
+	ScheduleManager.schedule_syncAllRun( false );				//auto sync (enable)
+	//ScheduleManager.schedule_trackConnectionType();
+
+	console.log( 'runSchedules_AfterLogin' );
 
 	if ( callBack ) callBack();
 }
+
+ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
+{
+	clearInterval ( ScheduleManager.timerID_showHideSyncAllButtonUI );
+	clearInterval ( ScheduleManager.timerID_scheduleSyncAllRun );
+	//clearInterval ( ScheduleManager.timerID_trackConnectionType );
+
+	console.log( 'stopSchedules_AfterLogOut' );
+
+	if ( callBack ) callBack();
+}
+
+ScheduleManager.runSchedules_cancelPrompt_AppModeSwitch = function( callBack )
+{
+	// when cancelling switchMode notification prompt > create this schedule
+	//   to 'push' user to move to appropriate online/offline mode
+	// problem? when to switch off this schedule...
+
+}
+
+
 
 
 // -------------------------------------------------------------------
 // ------ Sub Methods ------------------------------
 
-ScheduleManager.schedule_networkStatus_Check = function( NotRunRightAway )
-{
-	if ( ! NotRunRightAway ) ConnManagerNew.networkStatus_Check();
-
-	// 5 seconds
-	setInterval( ConnManagerNew.networkStatus_Check, ScheduleManager.interval_networkStatusCheck );
-};
 
 ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway ) 
 {
-	if ( ! NotRunRightAway ) ConnManagerNew.serverStatus_Check();
+	if ( ! NotRunRightAway ) ConnManagerNew.scheduled_checkNSet_ServerAvailable();
 
 	// 30 seconds
-	setInterval( ConnManagerNew.serverStatus_Check, ScheduleManager.interval_serverStatusCheck );
+	setInterval( ConnManagerNew.scheduled_checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
+
 };
 
-ScheduleManager.schedule_connectionTypeMonitoringCheck = function( NotRunRightAway )
-{
-	if ( ! NotRunRightAway ) ConnManagerNew.incrementConnectionTypeMonitor();
 
-	setInterval( ConnManagerNew.incrementConnectionTypeMonitor, ScheduleManager.interval_networkConnectionTypeCheck );
-}
 
 ScheduleManager.schedule_switchNetworkModePrompt_Check = function( NotRunRightAway )
 {
-	if ( ! NotRunRightAway ) ConnManagerNew.switchNetworkModePrompt_Check();
+	if ( ! NotRunRightAway ) ConnManagerNew.runSwitchNetworkMode_Prompt_Check( NotRunRightAway );
 
-	// 5 seconds << should be 1 second, because smallest timer interval at present is network Online check = 1sec
-	setInterval( ConnManagerNew.switchNetworkModePrompt_Check, 1000 );
+	// 1 second 
+	ScheduleManager.timerID_networkSwitchPromptCheck = setInterval( ConnManagerNew.runSwitchNetworkMode_Prompt_Check, ScheduleManager.interval_networkSwitchPromptCheck );
 };
 
-ScheduleManager.schedulePromptSwitchNetworkCancelCheck = function()
+ScheduleManager.schedule_showHideSyncAllButtonUI = function( NotRunRightAway ) 
 {
-	// 1 seconds
-	setInterval( ConnManagerNew.promptSwitchNetworkCancelCheck, 1000 );
-};
+	if ( ! NotRunRightAway ) SyncManagerNew.syncAllButtonChange();
 
-
-ScheduleManager.scheduleSyncAllRun = function() 
-{
-	// 30 seconds
-	setInterval( SyncManagerNew.syncAll_WithChecks, 30000 );
-}
-
-ScheduleManager.scheduleSyncAllButtonUIshowHide = function() 
-{
 	// 10 seconds
-	setInterval( SyncManagerNew.syncAllButtonChange, 10000 );
+	ScheduleManager.timerID_showHideSyncAllButtonUI = setInterval( SyncManagerNew.syncAllButtonChange, ScheduleManager.interval_scheduleShowHideSyncAllButtonUI );
 }
 
-// ===================================================
-// === PART 2. Schedule Status or History Reteive Methods ? =============
+ScheduleManager.schedule_syncAllRun = function( NotRunRightAway ) 
+{
+	if ( ! NotRunRightAway ) SyncManagerNew.syncAll_WithChecks();
+
+	// 30 seconds
+	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_WithChecks, ScheduleManager.interval_scheduleSyncAllRun );
+}
+
+ScheduleManager.schedule_trackConnectionType = function( NotRunRightAway )
+{
+	if ( ! NotRunRightAway ) ConnManagerNew.trackConnectionType();
+
+	ScheduleManager.timerID_trackConnectionType = setInterval( ConnManagerNew.trackConnectionType, ScheduleManager.interval_networkConnectionTypeCheck );
+}

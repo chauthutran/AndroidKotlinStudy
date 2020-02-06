@@ -372,6 +372,7 @@ MsgManager.clearReservedMessage = function( reservedID )
                     $( '#notif_' + MsgManager.reservedMsgBlocks[ i ].blockid ).remove();
                     MsgManager.reservedMsgBlocks.splice( MsgManager.reservedIDs.indexOf( reservedID ), 1 );
                     MsgManager.reservedIDs.splice( MsgManager.reservedIDs.indexOf( reservedID ), 1 );
+                    reservedID = null;
                     return true;
                 }
             }

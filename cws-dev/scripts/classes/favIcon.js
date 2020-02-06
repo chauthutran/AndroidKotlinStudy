@@ -30,36 +30,30 @@ function favIcons( cwsRender )
 
     me.createIconButtons = function( favData ) 
     {
+// TODO: GREG: BUG FIX HERE
+        me.configFavUserRole( ConnManagerNew.pwaApplicationMode, favData, function( favList ){
 
-        me.configFavUserRole( ConnManager.getAppConnMode_Online(), favData, function( favList ){
+            var networkStatus = ( ConnManagerNew.pwaApplicationMode ) ? 'online' : 'offline';
 
-            var networkStatus = ( ConnManager.getAppConnMode_Online() ) ? 'online' : 'offline';
+            (favList).sort(function (a, b) {
+                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
+                if (b.id < a.id) {
+                    return b1st;
+                }
+                else if (a.id < b.id) {
+                    return a1st;
+                }
+                else {
+                    return equal;
+                }
+            });
 
-            //if ( favList[ networkStatus ] )
-            {
-                //(favList[ networkStatus ]).sort(function (a, b) {
-                (favList).sort(function (a, b) {
-                    var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                    if (b.id < a.id) {
-                        return b1st;
-                    }
-                    else if (a.id < b.id) {
-                        return a1st;
-                    }
-                    else {
-                        return equal;
-                    }
-                });
+            me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
+            me.favIconsTag.empty();
 
-                me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
-                me.favIconsTag.empty();
+            var favItems = localStorage.getItem( 'favIcons' );
 
-                var favItems = localStorage.getItem( 'favIcons' );
-
-                //console.log ( favItems != undefined && favItems.length > 0 );
-                //me.createRecursiveFavIcons ( favList[ networkStatus ], 0, ( favItems != undefined && favItems.length > 0 ) )
-                me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
-            }
+            me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
 
         } );
 

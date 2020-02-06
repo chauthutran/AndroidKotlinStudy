@@ -25,63 +25,42 @@
   } );   
 
 
-
-  /*function appInfoOperation( returnFunc ) 
-  {
-    if ( navigator.onLine ) // && FormUtil.isAppsPsiServer()
-    {
-      WsApiManager.setupWsApiVariables( returnFunc );
-    }
-    else {
-      if ( debugMode ) console.log('Offline Mode'); //console.log('not PSI server')
-      if ( returnFunc ) returnFunc();
-    }
-
-  };*/
-
-
-
-  function app_Installed_Done(event) {
-
-    // Track event: The app was installed (banner or manual installation)
-    FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
-      // Track event: The app was installed (banner or manual installation)
-      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-      playSound("coin");
-    });
-
-  }
-
   function startApp() 
   {
+    // app startup event setup (for listeners)
+    window.addEventListener('appinstalled', App_installed_done);
 
-    window.addEventListener('appinstalled', app_Installed_Done);
+    ConnManagerNew.createNetworkConnListeners();
 
-    // 2. Do 'appInfoOperation' that does app Version Check & action first
+    ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
 
-    //appInfoOperation( function () {
+    try {
 
-    WsApiManager.setupWsApiVariables( function () {
+      WsApiManager.setupWsApiVariables( function () {
 
-      ScheduleManager.runSchedules_AppStart();
-      ConnManagerNew.initialize();
+        ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj, function () {
 
-      App_version_UI_Update();
-      App_syncIcon_UI_event();
+          App_version_UI_Update();
 
-      _cwsRenderObj.render();
+          App_syncIcon_UI_event();
 
-      FormUtil.createNumberLoginPinPad(); //if ( Util.isMobi() )
+          _cwsRenderObj.render();
 
-      if (debugMode) console.log('swPromptRefresh: ' + swPromptRefresh);
+          FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
-      if ( _swManagerObj.swPromptRefresh ) {
-        _cwsRenderObj.createRefreshIntervalTimer(_ver);
-      }
+          App_checkUpdates_found_prompt();
 
-      App_UI_startUp_done();
+          App_UI_startUp_done();
 
-    });
+        });
+
+      });
+    }
+    catch( err )
+    {
+      console.log( 'error starting App > startApp() error: ' + err );
+
+    }
 
 
   }
@@ -116,6 +95,23 @@
     });
   }
 
-  //initialize();
+  function App_checkUpdates_found_prompt()
+  {
+    if ( _swManagerObj.swPromptRefresh ) {
+      _cwsRenderObj.createRefreshIntervalTimer(_ver);
+    }
+  }
+  
+  function App_installed_done(event) {
+
+    // Track event: The app was installed (banner or manual installation)
+    FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
+      // Track event: The app was installed (banner or manual installation)
+      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+      playSound("coin");
+    });
+
+  }
+
 
 })();

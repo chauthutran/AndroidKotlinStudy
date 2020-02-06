@@ -651,7 +651,7 @@ function aboutApp( cwsRender )
         {
 
             $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
-            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
+            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
             $( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
             ConnManager.getDcdConfigVersion( function( retVersion ) 

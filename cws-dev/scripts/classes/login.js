@@ -136,8 +136,9 @@ function Login( cwsRenderObj )
 
 		// ONLINE vs OFFLINE HANDLING
 		//if ( ! ConnManager.networkSyncConditions() )
-		if ( ! ConnManagerNew.networkSyncConditions() )
+		if ( ! ConnManagerNew.isAppMode_Online() )
 		{
+			// OFFLINE Login
 			// validate encrypted pwd against already stored+encrypted pwd
 			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
 			{
@@ -177,6 +178,7 @@ function Login( cwsRenderObj )
 		}
 		else
 		{
+			// ONLINE Login
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
 			FormUtil.submitLogin( userName, password, loadingTag, function( success, loginData ) 
@@ -303,7 +305,7 @@ function Login( cwsRenderObj )
 				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 
-				me.loginAfter();
+				//me.loginAfter();
 			}
 
 			DataManager.getData( 'syncList', function( syncData ){
@@ -321,13 +323,15 @@ function Login( cwsRenderObj )
 	me.loginAfter = function()
 	{
 
-		FormUtil.geolocationAllowed();
+			FormUtil.geolocationAllowed();
 
-		me.cwsRenderObj.renderDefaultTheme();
+			me.cwsRenderObj.renderDefaultTheme();
 
-		MsgManager.initialSetup();
+			MsgManager.initialSetup();
 
-		FormUtil.hideProgressBar();
+			ScheduleManager.runSchedules_AfterLogin();
+
+			FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------

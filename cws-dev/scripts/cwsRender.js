@@ -314,7 +314,12 @@ function cwsRender()
 
 	} 
 
-	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManager'
+	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
+	me.handleAppMode_Switch = function()
+	{
+		me.startBlockExecuteAgain(); // 
+	}
+
 	me.startBlockExecuteAgain = function()
 	{
 		DataManager.getUserConfigData( function( userData ){
@@ -512,6 +517,7 @@ function cwsRender()
 				}	
 			}
 
+/*
 			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
 			{
 				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
@@ -520,7 +526,7 @@ function cwsRender()
 			{
 				$( '#menu_userNetworkMode' ).remove();
 			}
-
+*/
 			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
 			if ( exeFunc ) exeFunc( startMenuTag );
@@ -748,6 +754,7 @@ function cwsRender()
 
 		FormUtil.undoLogin();
 		sessionStorage.clear();
+		ScheduleManager.stopSchedules_AfterLogOut();
 
 		// change to session Management process > forced reload of app (detect new version + forced login)
 		var SWinfoObj = localStorage.getItem( 'swInfo' );

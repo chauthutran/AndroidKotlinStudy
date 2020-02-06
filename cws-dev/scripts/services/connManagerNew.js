@@ -1,43 +1,60 @@
-// 1. check Network and Server status
-// 2. set app Mode
-// 3. inform user of switchedMode > with 'REFRESH' (applied after clicking)
 // -------------------------------------------
 // -- ConnManager NEW Class/Methods
 
 function ConnManagerNew() {};
 
-//ConnManagerNew._cwsRenderObj;  // <-- Tran wants to make this class instantiating if we use 'cwsRenderObj'..
+ConnManagerNew._cwsRenderObj;  // <-- Tran wants to make this class instantiating if we use 'cwsRenderObj'..
 
-ConnManagerNew.networkConnStableCheckTime = 5000;
-
+ConnManagerNew.networkConnStableCheckTime = 5000; // ms, 5000ms = 5 seconds
 ConnManagerNew.networkConnTimeOut;
 
 ConnManagerNew.statusInfo = {
     'networkConn': {
-        'currentStableMode': 'Offline', // 'Online'
+        'currentStableMode': 'Offline',
     },
     'serverAvailable': false,
-    'serverAvailablePrev': false,
-    'appMode': 'Offline' // 'Online'
+	'appMode': 'Offline', 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.currentStableMode == 'Online' )
+	'appMode_PromptedMode': ''
 };
+
+ConnManagerNew.switchPrompt_reservedMsgID;
+//ConnManagerNew.switchPromptObj = new AppModeSwitchPrompt();
 
 
 // ====================================================
 // ===============================
 
+// THIS IS EXCEPTION CASE - NOT MAIN CASE...
 // On start of the app, we set this initially..
-ConnManagerNew.firstNetworkConnSet = function( callBack ) 
+ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj, callBack ) 
 {
-	// sets 'networkConn.crrentStableMode'
-	ConnManagerNew.checkNetworkThenServerStatus( ConnManagerNew.statusInfo, navigator.onLine, function( statusInfo ){
+	ConnManagerNew._cwsRenderObj = cwsRenderObj;
 
-		// Trigger AppMode Change Check
-		ConnManagerNew.appModeSwitch( statusInfo );
+	try
+	{
+		// to start off > update UI to 'defaults' for connection settings
+		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
-		callBack();
+		// These 2 below checks/change will each trigger appModeSwitchRequest
+		//	But, since this is before logged In, they will simply set them accordingly..
 
-	} );
+		// sets 'networkConn.crrentStableMode'
+		ConnManagerNew.changeNetworkConnStatus( ConnManagerNew.statusInfo, navigator.onLine );
 
+		// Below will trigger another 
+		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+		{
+			// called again to update UI to new connect settings
+			ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+
+			callBack( true );
+		});
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR during ConnManagerNew.firstNetworkConnSet, errMsg: ' + errMsg );
+		callBack( false );
+	}
 };
 
 
@@ -52,87 +69,53 @@ ConnManagerNew.updateNetworkConnStatus = function()
 	clearTimeout( ConnManagerNew.networkConnTimeOut );
 
 	var modeOnline = navigator.onLine;
-
-	ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.checkNetworkThenServerStatus
+	
+	ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStatus
 		, ConnManagerNew.networkConnStableCheckTime
+		, ConnManagerNew.statusInfo
 		, modeOnline );
-
+	
 };
-
-ConnManagerNew.checkNetworkThenServerStatus = function( statusInfo, modeOnline, callBack )
-{
-	statusInfo.networkConn.currentStableMode = ( modeOnline ) ? 'Online': 'Offline';
-
-	if ( modeOnline )
-	{
-		// roll onto serverCheck (if changed to online)
-		ConnManagerNew.checkNSet_ServerAvailable( statusInfo, function() 
-		{
-			ConnManagerNew.setAppMode( statusInfo );
-	
-			if ( callBack ) callBack( statusInfo );
-		});
-	
-	}
-	else
-	{
-		//proceed
-		ConnManagerNew.setAppMode ( statusInfo );
-
-		// Trigger AppMode Change Check
-		ConnManagerNew.appModeSwitch( statusInfo );
-
-		if ( callBack ) callBack( statusInfo );
-
-	}
-
-}
-
 
 
 // CHECK #2 - SERVER AVAILABLE CHECK
 ConnManagerNew.checkNSet_ServerAvailable = function( statusInfo, callBack ) 
 {
-	// Below Method Not Exists Yet
-	// FormUtil.getDataServerAvailable = function( returnFunc )
-	if ( statusInfo.networkConn.currentStableMode === 'Online' )
+	ConnManagerNew.serverAvailable( statusInfo, function( newAvailable )
 	{
-		ConnManagerNew.serverAvailable( function ( available ) {
+		ConnManagerNew.changeServerAvailableIfDiff( newAvailable, statusInfo );
 
-			ConnManagerNew.statusInfo.serverAvailable = available;
-			callBack( available );
-		});	
-	}
-	else
-	{
-		ConnManagerNew.statusInfo.serverAvailable = false;
-		callBack( false );
-	}
+		callBack( newAvailable );
+	});	
+
 };
 
 
-
-// ===============================================
-// ------------------------------------------
-
-
-ConnManagerNew.serverAvailable = function( callBack )
+ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 {
 	try
 	{
-		FormUtil.getDataServerAvailable( function ( success, jsonData ) {
+		if ( statusInfo.networkConn.currentStableMode === 'Online' )
+		{
+			FormUtil.getDataServerAvailable( function ( success, jsonData ) {
 
-			// if check succeeds with valid [jsonData] payload
-			if ( success && jsonData && jsonData.available != undefined ) 
-			{
-				callBack( jsonData.available );
-			}
-			else 
-			{
-				callBack( false );
-			}
-
-		});
+				// if check succeeds with valid [jsonData] payload
+				if ( success && jsonData && jsonData.available != undefined ) 
+				{
+					callBack( jsonData.available );
+				}
+				else 
+				{
+					callBack( false );
+				}
+	
+			});
+		}
+		else
+		{	
+			callBack( false );
+		}
+		
 	}
 	catch (err)
 	{
@@ -141,87 +124,240 @@ ConnManagerNew.serverAvailable = function( callBack )
 	}
 }
 
-// Be carefule to used it - 1st app start time & by prompt allowed, use it.
-ConnManagerNew.setAppMode = function( statusInfo ) 
+// ===============================================
+// ------------------------------------------
+
+// Change Network Connection
+ConnManagerNew.changeNetworkConnStatus = function( statusInfo, modeOnline )
 {
-	statusInfo.appMode = ConnManagerNew.nameAppMode( ( statusInfo.networkConn.currentStableMode === 'Online'
-	&& statusInfo.serverAvailable ) );
+	statusInfo.networkConn.currentStableMode = ( modeOnline ) ? 'Online': 'Offline';
+
+	// Do we need a secondary-level function to switch Server:OFFLINE if network==='Offline'?
+	// --> it would be added here
+
+	// Trigger AppMode Change Check
+	ConnManagerNew.appModeSwitchRequest( statusInfo );
+
+	// update UI icons to reflect current network change
+	ConnManagerNew.update_UI( statusInfo );
 };
 
-ConnManagerNew.appModeSwitch = function( statusInfo ) 
+
+// Server
+ConnManagerNew.changeServerAvailableIfDiff =  function( newAvailable, statusInfo )
 {
-	// Need to check login.. decides we prompt or go ahead...
-	// If not login, then, just perform the switch of appMode..
+	// If there was a change in this status, trigger the appModeCheck
+	if ( newAvailable !== statusInfo.serverAvailable )
+	{
+		statusInfo.serverAvailable = newAvailable;
 
+		ConnManagerNew.appModeSwitchRequest( statusInfo );
+	}
+};
+
+// ===============================================
+// --- App Mode Switch Related --------------------
+
+//
+ConnManagerNew.appModeSwitchRequest = function( statusInfo ) 
+{
+	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo( statusInfo );
+
+	// If appModeNew is same as existing Prmopt MOde, ignore it.
+	if ( appModeNew !== statusInfo.appMode_PromptedMode )
+	{
+		// Only if appMode New is diff from current appmode proceed with setAppMode
+		if ( appModeNew !== statusInfo.appMode )
+		{
+			ConnManagerNew.setAppMode_WithCondition( appModeNew, statusInfo );
+		}
+		else 
+		{
+			// If appModeNew is same as existing appMode, but we have Prompt, then, we cancel the prompt.
+			if ( statusInfo.appMode_PromptedMode !== '' )
+			{
+				ConnManagerNew.cancelAndHide_promptModeSwitch( statusInfo );
+			}
+		}
+	}
+};
+
+
+ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo ) 
+{
+	// if there is any pending prompted switch request, clear them out.
+	//ConnManagerNew.hidePrompt_AppSwitch( statusInfo );
+
+	// If Logged In, display Prompt for user confirmation rather than switch.
+	if ( FormUtil.checkLogin() ) ConnManagerNew.prompt_AppModeSwitch_WithCondition( appModeNew, statusInfo );
+	else ConnManagerNew.setAppMode( appModeNew, statusInfo );
+};
+
+
+ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) 
+{
+	statusInfo.appMode = appModeNew;
+
+	console.log( 'AppMode Set to: ' + appModeNew );
+
+	// TODO: NEED TO TRIGGER SOME UI (Or others) CHANGES DUE TO AppMode Change
 	ConnManagerNew.update_UI( statusInfo );
+};
 
-    if ( FormUtil.checkLogin() )
-    {
-        ConnManagerNew.PrompAppModeSwitch( statusInfo );
-    }
+
+ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo ) 
+{
+	return ( statusInfo.networkConn.currentStableMode === 'Online'
+		&& statusInfo.serverAvailable ) ? 'Online': 'Offline';
+};
+
+
+// ===============================================
+// --- Prompt App Mode Switch Related --------------------
+
+ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, statusInfo ) 
+{
+	// only show switch prompt if current mode different to appModeNew
+	if ( appModeNew != statusInfo.appMode )
+	{
+		statusInfo.appMode_PromptedMode = appModeNew;
+
+		ConnManagerNew.showPrompt_AppSwitchMode( statusInfo );
+	}
+	else
+	{
+		if ( ConnManagerNew.switchPrompt_reservedMsgID ) 
+		{
+			console.log( 'clearing existing Prompt > Switch to - ' + appModeNew );
+			ConnManagerNew.hidePrompt_AppSwitch();
+		}
+	}
+};
+
+ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
+{
+
+	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.showPrompt( statusInfo );
+
+
+	var questionStr = "switch to [" + statusInfo.appMode_PromptedMode.toUpperCase() + "] "; //"Network changed: switch to '" + changeConnStr.toUpperCase() + "' mode?";
+	var btnSwitch = $( '<a term="" class="notifBtn" ">SWITCH</a>' );
+
+	$( btnSwitch ).click( function(){
+
+		// make part of cwsRender obj > think about
+		ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
+
+	});
+
+	ConnManagerNew.switchPrompt_reservedMsgID = 'ConnManagerNew_switch_' + statusInfo.appMode_PromptedMode.toUpperCase();
+
+	MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManagerNew.rejectPrompt_AppModeSwitch, ConnManagerNew.switchPrompt_reservedMsgID );
+
 }
 
-ConnManagerNew.networkSyncConditions = function()
+ConnManagerNew.cancelPrompt_AppModeSwitch = function( appModeNew, statusInfo ) 
+{
+	//if ( appModeNew === statusInfo.appMode )
+	if ( appModeNew !== statusInfo.appMode_PromptedMode )
+	ConnManagerNew.hidePrompt_AppSwitch();
+
+};
+
+// Called from other place - event handler click..
+ConnManagerNew.acceptPrompt_AppModeSwitch = function( statusInfo )
+{
+	ConnManagerNew.setAppMode( statusInfo.appMode_PromptedMode, statusInfo );
+
+	ConnManagerNew._cwsRenderObj.handleAppMode_Switch(); //rename function to something like cwsRenderObj.handleAppMode_StartSwitch
+
+	ConnManagerNew.cancelAndHide_promptModeSwitch( statusInfo );
+};
+
+// 
+ConnManagerNew.rejectPrompt_AppModeSwitch = function()
+{
+	ConnManagerNew.hidePrompt_AppSwitch();
+}
+
+ConnManagerNew.cancelAndHide_promptModeSwitch = function( statusInfo )
+{
+	statusInfo.appMode_PromptedMode = '';
+
+	ConnManagerNew.hidePrompt_AppSwitch();
+}
+
+ConnManagerNew.hidePrompt_AppSwitch = function()
+{
+	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.hidePrompt( ConnManagerNew.switchPrompt_reservedMsgID );
+	MsgManager.clearReservedMessage( ConnManagerNew.switchPrompt_reservedMsgID );
+}
+
+
+// ===============================================
+// --- Others --------------------
+
+
+
+// ===============================================
+// --- Event Listeners for Connection Changes ---
+
+ConnManagerNew.createNetworkConnListeners = function()
+{
+    window.addEventListener('online', ConnManagerNew.updateNetworkConnStatus);
+	window.addEventListener('offline', ConnManagerNew.updateNetworkConnStatus);
+};
+
+
+ConnManagerNew.isAppMode_Online = function()
 {
 	return ( ConnManagerNew.statusInfo.appMode === 'Online' );
 }
 
-ConnManagerNew.PrompAppModeSwitch = function( statusInfo ) 
+//  replaced by ConnManagerNew.isAppMode_Online()
+//ConnManagerNew.networkSyncConditions = function()
+//{
+//	return ( ConnManagerNew.statusInfo.appMode === 'Online' );
+//}
+
+
+
+// ===============================================
+// --- Scheduler related Tasks ---
+
+ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 {
-    // Use here or call other plalce?  Probably here..
-	//
-	console.log(' creating prompt switch to ' + ConnManagerNew.statusInfo.appMode );
-    //
-    //
-};
+	// Below will trigger another 
+	ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+	{
+		// called again to update UI to new connect settings
+		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+
+		//if ( callBack ) callBack( true );
+	});
+
+}
+
+// ===============================================================
+// =====================================
+
+
+
+
+// ===============================================
+// --- UI section ----
 
 ConnManagerNew.update_UI = function( statusInfo )
 {
     // update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
-    //
-    //
+
     if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
-
-	ConnManagerNew.update_UI_NetworkIcons( statusInfo );
-}
-
-
-ConnManagerNew.initialize = function() 
-{
-    ConnManagerNew.firstNetworkConnSet( function(){
-
-        ConnManagerNew.createNetworkConnListeners();
-
-    });
-};
-
-ConnManagerNew.createNetworkConnListeners = function()
-{
-    window.addEventListener('online', ConnManagerNew.updateNetworkOnlineListener);
-	window.addEventListener('offline', ConnManagerNew.updateNetworkOnlineListener);
-};
-
-ConnManagerNew.updateNetworkOnlineListener = function()
-{
-    ConnManagerNew.checkNetworkThenServerStatus( ConnManagerNew.statusInfo, navigator.onLine, function( statusInfo ){
-
-		// Trigger AppMode Change Check
-		ConnManagerNew.appModeSwitch( statusInfo );
-
-	} );
-}
-
-ConnManagerNew.nameAppMode = function( bOnline )
-{
-	if ( bOnline ) return 'Online'
-	else return 'Offline';
+	else ConnManagerNew.update_UI_NetworkIcons( statusInfo );
 }
 
 
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 {
-	console.log( statusInfo );
-	console.log( statusInfo.appMode );
 	// update loginScreen Logo (grayscale = offline): offline indicator before logging in
     if ( statusInfo.appMode === 'Online' ) {
 		$('#ConnectingWithSara').removeClass('logoOffline');
@@ -233,10 +369,11 @@ ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 	  }
 };
 
+
 ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 {
-	var networkServerConditionsGood = ( statusInfo.appMode === 'Online' );
-
+	var networkServerConditionsGood = ( statusInfo.networkConn.currentStableMode === 'Online' && statusInfo.appMode === 'Online' );
+	
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
 	var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( statusInfo.networkConn.currentStableMode === 'Online' ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
 
@@ -249,21 +386,3 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 
 	$( '#divNetworkStatus' ).css( 'display', 'block' );
 };
-
-// called from scheduler
-ConnManagerNew.scheduledServerCheck = function( callBack )
-{
-	ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-	{
-		console.log( 'scheduledServerCheck' );
-		ConnManagerNew.setAppMode( ConnManagerNew.statusInfo );
-
-		callBack();
-	});
-}
-
-
-// Maybe new class:
-// NetworkType();  <-- Has all the methods related to 3G/2G etc..
-
-
