@@ -227,6 +227,11 @@
             let myTown = getRandomWord( getTownList(), myUniqueItm);
             let myFirst = getRandomWord( getNameList(), myUniqueItm ).trim();
             let myLast = getRandomWord( getNameList(), myUniqueItm ).trim();
+            let ageNum = generateRandomNumberRange(14,55).toFixed(0);
+            let birthYr = generateRandomNumberRange(1960,2005).toFixed(0);
+            let prodType = getRandomWord(getProductType(),myUniqueItm);
+            let sex = getRandomWord('male,female,unknown',myUniqueItm);
+            let YN = getRandomWord('YES,NO',myUniqueItm);
 
             tmpRow = tmpRow.replace( /{NEWID}/g, newID );
             tmpRow = tmpRow.replace( /{NUMERIC1}/g, rnd1 );
@@ -242,13 +247,19 @@
             tmpRow = tmpRow.replace( /{phoneContactConsent_feedback}/g, getRandomWord('YES,YESP,NO',myUniqueItm) );
             tmpRow = tmpRow.replace( /{FIRSTNAME}/g, myFirst.split(' ')[0] );
             tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
-            tmpRow = tmpRow.replace( /{AGE}/g, generateRandomNumberRange(18,49).toFixed(0) );
+            tmpRow = tmpRow.replace( /{AGE}/g, ageNum );
             tmpRow = tmpRow.replace( /{NETWORKATTEMPT}/g, generateRandomNumberRange(0,2).toFixed(0) );
             tmpRow = tmpRow.replace( /{redeemURL}/g, $('input.redeemURL').val() );
 
             tmpRow = ( getAdditionalFields( tmpRow ) );
 
-            //console.log( ' ~ ' + tmpRow );
+            tmpRow = tmpRow.replace( /{FIRSTNAME}/g, myFirst.split(' ')[0] );
+            tmpRow = tmpRow.replace( /{LASTNAME}/g, myLast.split(' ')[1] );
+            tmpRow = tmpRow.replace( /{AGE}/g, ageNum );
+            tmpRow = tmpRow.replace( /{YEAR}/g, birthYr );
+            tmpRow = tmpRow.replace( /{PRODTYPE}/g, prodType );
+            tmpRow = tmpRow.replace( /{SEX}/g, sex );
+            tmpRow = tmpRow.replace( /{YESNO}/g, YN );
 
             myResult += tmpRow + ',';
 
@@ -282,8 +293,6 @@
 
         }
 
-        //console.log( ret );
-        
         return ret;
     }
 
@@ -317,7 +326,7 @@
             {
                 if ( currTemplate.indexOf( arr[ i ] ) < 0 )
                 {
-                    retPush.data.previewJson[ arr[ i ] ] = arr[ i ];
+                    retPush.data.previewJson[ arr[ i ] ] = replaceFieldKeyWords( arr[ i ] );
                 }
             }
         }
@@ -369,11 +378,15 @@
         return 'Vickey Vire, Yuri Youngquist, Sherice Sharma, Ariane Albert, Heather Hillock, Taunya Tubb, Lawanda Lord, Quentin Quesenberry, Terrance Tennyson, Rosaria Romberger, Joann Julius, Doyle Dunker, Carolina Casterline, Sherly Shupe, Dorris Degner, Xuan Xu, Mercedez Matheney, Jacque Jamerson, Lillian Lefler, Derek Deegan, Berenice Barboza, Charlene Marriot, Mariam Malott, Cyndy Carrozza, Shaquana Smith, Kendall Kitterman, Reagan Riehle, Mittie Maez, Carry Carstarphen, Nelida Nakano, Christoper Compo, Sadie Shedd, Coleen Samsonite, Estella Eutsler, Pamula Pannone, Keenan Kerber, Tyisha Tisdale, Ashlyn Aguirre, Ashlie Albritton, Willy Wonka, Diann Yowzer, Asha Carpenter, Devin Dashiell, Arvilla Alers, Sheba Sherron, Richard Racca, Elba Early, Coretta Cossey, Brande Bushnell, Larraine Samsung, Pilar Varillas, Gaspar Hernandez, Greg Rowles, James Chang, Bruno Raimbault, Rodolfo Melia, Chris Purdy, Martin Dale, Sam Sox, Joe Soap, Joan Sope';
     }
 
+    function getProductType()
+    {
+        return 'Catheter,Cryo-freeze,Injection,Sterilization,Implant,Hearing Aid,Anesthesia,Suction,Transfusion,Prosthetic';
+    }
     function template()
     {
         return '{  "title":"Voucher: {NUMERIC8} - {DATETODAY} {TIMENOW}.00", "created":"{DATETODAY} {TIMENOW}.00", "owner":"{user}", "activityType": "{activitytype}", "id":"{NUMERIC12}", "status":"{status}", "queueStatus":"{status}","network":false, "networkAttempt":{NETWORKATTEMPT}, "history": [], "syncActionStarted": 0, ' +
              ' "data":{  "payloadJson":{  "countryType":"MZ", "walkIn_firstName":"{FIRSTNAME}", "walkIn_lastName":"{LASTNAME}", "walkIn_age":"{AGE}", "phoneNumber":"+99{NUMERIC8}", "phoneContactConsent":"{phoneContactConsent}", "phoneContactConsent_feedback":"{phoneContactConsent_feedback}", "cbdCase":"Y", "clientId":"", "voucherId":"", "cbdEnrollOuId":"", "walkInClientCase":"", "voucherCode":"{NUMERIC8}", "walkIn_birthDistrict":"MZ10", ' +
-             ' "walkIn_birthOrder":"2", "walkIn_age":"28", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"addressNeighborhood", "pointOfReference":"A", "bookPageNumber":"2" ' +
+             ' "walkIn_birthOrder":"2", "walkIn_age":"{AGE}", "program":"FPL", "service":"COUNS", "typeOfMethodUser":"CONTINUE", "ownershipOfPhone":"NO", "addressCity":"{addressCity}", "addressNeighborhood":"addressNeighborhood", "pointOfReference":"A", "bookPageNumber":"2" ' +
              ' }, "previewJson": {}, ' +
              ' "url":"{redeemURL}", ' +
              ' "actionJson":{   "actionType":"sendToWS", "payloadBody":["voucherCode" ], "payloadHeader":[  "usr","pwd" ], "alertResult":"true", "wsNACase":{  "note":"display message" },' +
@@ -437,6 +450,26 @@
         return text;
     }
 
+    function replaceFieldKeyWords( inputFld )
+    {
+        var reserved = '_firstN,_mothern,_surname,_lastn,_age,year,productType,gender,sex,concent';
+        var replaced = '{FIRSTNAME},{LASTNAME},{LASTNAME},{LASTNAME},{AGE},{YEAR},{PRODTYPE},{SEX},{SEX},{YESNO}';
+        var resArr = reserved.split( ',' );
+        var repArr = replaced.split( ',' );
+
+        for (var i = 0; i < resArr.length; i++)
+        {
+            if ( inputFld.toLowerCase().indexOf( ( resArr[ i ] ).toLowerCase() ) >= 0 )
+                {
+                    //console.log( 'replacing [' + inputFld + '] with [' + repArr[ i ] + ']')
+                    return repArr[ i ];
+                }
+        }
+
+        return inputFld;
+
+    }
+
     function writeToLocalStorage(overwrite)
     {
         //localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
@@ -454,8 +487,8 @@
                 var appList = JSON.parse( '[' + $('textarea.output').val() + ']' );
                 var newList = lsRed.list.concat(appList);
 
-                console.log( newList );
-                console.log( JSON.stringify( newList ) );
+                //console.log( newList );
+                //console.log( JSON.stringify( newList ) );
 
                 localStorage.setItem( 'redeemList', '{"list": ' + JSON.stringify( newList ) + ' } ' );
             }
@@ -466,17 +499,16 @@
 
         }
 
-
         // After putting data to 'redeemList' on localStorage, set flag, so that data move happens to indexedDB
         // NOTE: We put this on localStorage, so that version move happens smoothly?
         localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
-
         //if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );        
+        
     }
 
     deleteIndexedDB = function(dbName)
     {
-        var bProceed = confirm( "are you sure you want to delete indexedDB? It will erase EVERYTHING you've already captured");
+        var bProceed = true; //confirm( "are you sure you want to delete indexedDB? It will erase EVERYTHING you've already captured");
 
         if ( bProceed )
         {

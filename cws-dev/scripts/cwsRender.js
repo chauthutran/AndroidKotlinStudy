@@ -291,7 +291,7 @@ function cwsRender()
 	me.startBlockExecute = function( configJson, initializationInstructions )
 	{
 		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
-		ConfigUtil.getAreaListByStatus( ( ConnManager.userNetworkMode ? ConnManager.userNetworkMode_Online : ConnManager.networkSyncConditions() ), configJson, function( areaList ){
+		ConfigUtil.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), configJson, function( areaList ){
 
 			if ( areaList )
 			{

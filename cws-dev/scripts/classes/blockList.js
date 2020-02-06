@@ -30,6 +30,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
     me.favIconsObj;
+    me.viewsListObj;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -75,10 +76,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
             {
-
-				me.favIconsObj = new favIcons( me.cwsRenderObj );
-                //me.favIconsObj.initialize();
-                //me.cwsRenderObj.favIconsObj.initialize();
+                me.favIconsObj = new favIcons( me.cwsRenderObj );
 
                 me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
             }
@@ -92,7 +90,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
     me.renderRedeemList = function( redeemList, blockTag, callBack )
-    {        
+    {
         $( window ).scrollTop(0);
 
         // Temporary set
@@ -119,9 +117,15 @@ function BlockList( cwsRenderObj, blockObj )
 
                 listContentUlTag.append( lidateGroupPaddTop );
 
+                if ( me.blockObj.blockJson.activityListViews && me.blockObj.blockJson.activityListViews.length )
+                {
+                    // only show 'viewsFilter' items if activityItems exist
+                    listContentUlTag.append( me.viewListControls_UI_create( me.blockObj.blockJson.activityListViews ) );
+                }
+
                 me.redeemList = redeemList.filter( a=> a.owner == FormUtil.login_UserName );
 
-                if ( me.options && me.options.filter )
+                /*if ( me.options && me.options.filter )
                 {
                     for( var o=0; o<me.options.filter.length; o++ )
                     {
@@ -144,8 +148,9 @@ function BlockList( cwsRenderObj, blockObj )
                     else {
                         return equal;
                     }
-                });
+                });*/
 
+                // GREG: overhaul way list is sorted + loaded via viewsList filter
                 if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
 
                 if ( me.redeemList === undefined || me.redeemList.length == 0 )
@@ -160,17 +165,16 @@ function BlockList( cwsRenderObj, blockObj )
                 }
                 else
                 {
-                    me.cwsRenderObj.pulsatingProgress.show();
+                    //me.cwsRenderObj.pulsatingProgress.show();
                     me.redeemListScrollLimit = me.redeemList.length;
 
-                    if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
+                    /*if ( parseInt(me.redeemListScrollCount) < me.redeemListScrollLimit )
                     {
                         //attach window scroll event listener to call me.appendRedeemListOnScrollBottom()
-                    if ( me.redeemListScrollExists == 0)
-                    {
+                        if (me.redeemListScrollExists == 0) {
                             document.addEventListener('scroll', function (event) {
                                 me.evalScrollOnBottom();
-                            }, true );
+                            }, true);
 
                             me.redeemListScrollExists = 1;
 
@@ -187,7 +191,7 @@ function BlockList( cwsRenderObj, blockObj )
 
                     setTimeout( function() {
                         me.cwsRenderObj.pulsatingProgress.hide();
-                    }, 500 );
+                    }, 500 );*/
 
                     if ( callBack ) callBack();
 
@@ -322,17 +326,33 @@ function BlockList( cwsRenderObj, blockObj )
 
         me.refreshRedeemListArray( function(){
 
+            // add viewsSort_CurrentItem.field > here to auto sort (not by created data)
             if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
-            for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
+            var filteredListMatches = me.redeemListScrollSize;
+
+            //for( var i = 0; ( ( i < me.redeemList.length) && ( i < parseInt(me.redeemListScrollSize)) ) ; i++ )
+            for( var i = 0; ( ( i < me.redeemList.length) && ( filteredListMatches > 0 )  ) ; i++ )
             {
-                me.lastRedeemDate =  me.redeemList[i].created;
-                me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
+                var activityItem = me.redeemList[i];
 
-                var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+                if ( me.viewsListObj.viewsList_CurrentItem )
+                {
+                    //console.log( eval( me.viewsListObj.viewsList_CurrentItem.query ), activityItem.data.payloadJson.walkIn_age, me.viewsListObj.viewsList_CurrentItem.query )
+                    if ( eval( me.viewsListObj.viewsList_CurrentItem.query ) )
+                    {
+                        me.lastRedeemDate =  me.redeemList[i].created;
+                        me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
+        
+                        var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+        
+                        me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
 
-                me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
-                me.redeemListScrollCount += 1;
+                        me.redeemListScrollCount += 1;
+                        filteredListMatches -= 1;
+                    }
+                }
+
             }
 
             FormUtil.setUpTabAnchorUI( me.newBlockTag.find( 'ul.tab__content_act'), '.expandable', 'click' ); // add click event (expander to show voucher details) to newly created items
@@ -562,7 +582,7 @@ function BlockList( cwsRenderObj, blockObj )
 				var afterCondStr = me.conditionVarToVal( evalCondition, arrData );
 
                 result = eval( afterCondStr );	
-                console.log( afterCondStr + ' >> ' + result );
+                //console.log( afterCondStr + ' >> ' + result );
 			}
 			catch(ex) 
 			{
@@ -748,7 +768,7 @@ function BlockList( cwsRenderObj, blockObj )
                         SyncManagerNew.syncItem( activityItem, function( success ) {
 
                             SyncManagerNew.syncFinish();     
-                            console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
+                            //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
                         });    
                     }
                     catch( errMsg )
@@ -881,6 +901,14 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
+    me.viewListControls_UI_create = function( viewList )
+    {
+
+        me.viewsListObj = new ViewsList( me );
+
+        return me.viewsListObj.createViewsList_Controllers( viewList );
+
+    }
 	// =============================================
 
 	me.initialize();

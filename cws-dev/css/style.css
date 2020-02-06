@@ -815,8 +815,11 @@ div.select {
 div.select::before {
   content: '\25BC';
   position: absolute;
-  top: 10px;
-  right: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 6px;
+  right: 4%;
   bottom: 0;
   padding: 0px 4px;
   background-color: #fff;
@@ -827,7 +830,7 @@ div.select::before {
 }
 
 select {
-  width: 100%;
+  width: 97%;
   height: 2em; /* 100%; */
   margin: 0;
   padding: 0 0 0 .5em;
@@ -1231,3 +1234,60 @@ div.loginBtn {
   }
 }
 /* 2. spinning Rings END */
+/* viewsList Controls [drop down + sort button */
+.divSortOrder {
+  flex-grow:0;
+  position: relative;
+  cursor: pointer;
+}
+.divSortOrder > ul {
+  display: flex; 
+  flex-grow: 0; 
+  position: absolute; 
+  right: 0px; 
+  top: 0px; 
+  width: max-content; 
+  flex-direction: column; 
+  background: white; 
+  z-index: 1000; 
+  box-shadow: rgba(0, 0, 0, 0.75) 1px 1px 5px 1px; 
+  border-radius: 3px; 
+  padding: 2px 2px 6px;
+}
+.divSortOrder > ul > li {
+  padding: 4px 8px;
+  font-size: 14px;
+}
+.buttonSortOrder
+{
+  border:none;
+  color: #6E6E6E;
+  position: relative;
+  top: 2px;
+}
+.buttonSortOrder::after {
+  content: '\2807';
+  font-size: 20px;
+}
+.tb-content-filterView {
+  float: left;
+  width: 47%;
+  margin: 0px 12px 0px 0px;
+  border-radius: 0 5px 0 0;
+  background-color: #fff;
+  text-align: left;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+.settingsSelect {
+  padding-left:0;
+  padding-top:0;
+  max-width: 240px;
+}
+.filterGroupHR {
+  margin: 2px 0px 6px 0px;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 0;
+}

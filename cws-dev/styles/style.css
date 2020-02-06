@@ -237,7 +237,7 @@ select option {
   text-align: right;
   font-size: 10px;
   box-sizing: border-box;
-  display: none;
+  /* display: none; */
 }
 
 .act-l {
@@ -1613,7 +1613,7 @@ img.imgMore
     font-style: normal; 
     font-weight: 600; 
     float: right;
-    margin: 34px 24px 12px 20px;
+    margin: 12px 24px 12px 20px;
   }
   .acceptButton {
     color: #2C98F0;
@@ -1623,7 +1623,7 @@ img.imgMore
     font-style: normal; 
     font-weight: 600; 
     float: right;
-    margin: 34px 4px 12px 20px;
+    margin: 12px 4px 12px 20px;
   }
   .inputCheckbox {
     display: flex;
@@ -1717,9 +1717,9 @@ img.imgMore
   }
   .pptContent {
     padding: 16px;
-    display: block;
+    display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     text-align: left;
     background: white;
     margin: 16px;
