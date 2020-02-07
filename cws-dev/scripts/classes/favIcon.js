@@ -31,9 +31,9 @@ function favIcons( cwsRender )
     me.createIconButtons = function( favData ) 
     {
 // TODO: GREG: BUG FIX HERE
-        me.configFavUserRole( ConnManagerNew.pwaApplicationMode, favData, function( favList ){
+        me.configFavUserRole( ( ConnManagerNew.statusInfo.appMode === 'Online' ), favData, function( favList ){
 
-            var networkStatus = ( ConnManagerNew.pwaApplicationMode ) ? 'online' : 'offline';
+            var networkStatus = ConnManagerNew.statusInfo.appMode.toLowerCase();
 
             (favList).sort(function (a, b) {
                 var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal

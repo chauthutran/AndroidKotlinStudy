@@ -53,6 +53,10 @@ function ViewsList( blockList )
 
         me.createViewsList_Items( arrViews );
 
+        setTimeout( function(){
+            me.runApply_ViewsListFilter( arrViews[ 0 ] );
+        }, 500);
+
         return me.viewsList_ContainerTag;
     }
 
@@ -112,7 +116,7 @@ function ViewsList( blockList )
         me.viewsList_ContainerTag = $(`
             <div class="tb-content-filterView inputDiv">
                 <label term="" class="from-string titleDiv">Select a view</label>
-                <div style="display:flex;align-items:center;">
+                <div style="display:flex;align-items:center;padding: 0 6px 0 0;">
                 </div>
             </div>
         `);
@@ -140,7 +144,7 @@ function ViewsList( blockList )
         viewControllers.forEach( controller =>
         {
             var option = $(`
-                <option value="${controller.name}">
+                <option value="${controller.id}">
                     ${controller.name}
                 </option>
             `);
@@ -163,6 +167,7 @@ function ViewsList( blockList )
         for ( var i = 0; i < arrViews.length; i++ )
         {
             var viewObj = { 
+                id: allViews[ arrViews[ i ] ].id,
                 name: allViews[ arrViews[ i ] ].name,
                 text: allViews[ arrViews[ i ] ].name,
                 query: allViews[ arrViews[ i ] ].query,
@@ -176,18 +181,25 @@ function ViewsList( blockList )
         return retObj;
     }
 
-    me.setViewsList_CurrentItem = function( name )
+    me.setViewsList_CurrentItem = function( itemID )
     {
-        me.viewsList_CurrentItem = me.getViewsListConfig( name );
+        me.getViewsListItemConfig( itemID, function( viewsListItem ){
 
-        me.viewsListSorterObj.setSortList_CurrentItem( me.viewsList_CurrentItem );
+            me.viewsList_CurrentItem = viewsListItem;
+
+            me.viewsListSorterObj.setSortList_CurrentItem( me.viewsList_CurrentItem );
+
+        } );
+
     }
 
-    me.getViewsListConfig = function( itemName )
+    me.getViewsListItemConfig = function( itemID, callBack )
     {
-        return me.viewsList_Items.find( function ( controller ) {
-            return controller.name == itemName;
-        });
+        var itemConfig = me.viewsList_Items.find( function ( controller ) {
+            return controller.id == itemID;
+        }) 
+
+        callBack( itemConfig )
     }
 
 
@@ -246,22 +258,21 @@ function ViewsListSorter( viewsList )
         me.sortList_Items = viewsList_CurrentItem.sort; //passes array obj
 
         me.createSortList_Items();
-
     };
 
     me.createSortList_Items = function ()
     {
         me.sortList_TagUL.empty();
 
-        me.sortList_Items.forEach( ( obj ) => {
+        me.sortList_Items.forEach( ( sortObj ) => {
 
-            var li = $(`<li sortid="${obj.id}" >${obj.name}</li>`);
+            var li = $(`<li sortid="${sortObj.id}" >${sortObj.name}</li>`);
 
             li.click( function()
             {
                 me.prepareTagsLi();
                 me.sortList_CurrentItem && me.sortList_CurrentItem.css("font-weight","normal");
-                me.runApply_ViewsListSort( obj.getFeature );
+                me.runApply_ViewsListSort( sortObj );
                 me.sortList_CurrentItem = li;
                 li.css("font-weight","bolder")
                 me.sortList_TagUL.hide();
@@ -269,8 +280,8 @@ function ViewsListSorter( viewsList )
 
             me.sortList_TagUL.append( li );
 
-            if ( obj.groupAfter != undefined ) console.log( obj );
-            if ( obj.groupAfter != undefined && obj.groupAfter === 'true' )
+            if ( sortObj.groupAfter != undefined ) console.log( sortObj );
+            if ( sortObj.groupAfter != undefined && sortObj.groupAfter === 'true' )
             {
                 var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
                 me.sortList_TagUL.append( liGroup );
@@ -310,8 +321,10 @@ function ViewsListSorter( viewsList )
     }
 
 
-    me.runApply_ViewsListSort = function ( getFeature )
+    me.runApply_ViewsListSort = function ( sortObj )
     {
+        console.log( sortObj );
+        /*
         me.blockList_TagsLI.detach().sort( function (liA, liB)
         {
             const arr=[], 
@@ -343,7 +356,7 @@ function ViewsListSorter( viewsList )
 
         });
 
-        me.blockList_TagUL.append( me.blockList_TagsLI );
+        me.blockList_TagUL.append( me.blockList_TagsLI );*/
 
     }
 

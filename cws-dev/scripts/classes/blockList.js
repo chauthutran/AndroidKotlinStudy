@@ -25,11 +25,11 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemListDateGroups;
     me.lastSyncDate;
-    me.showredeemListDateGroups = false;
+    me.showGroupBy = false;
     me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
 
-    me.favIconsObj;
+    //me.favIconsObj;
     me.viewsListObj;
 
 	// TODO: NEED TO IMPLEMENT
@@ -47,7 +47,14 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.render = function( list, newBlockTag, passedData, options )
 	{
-        me.redeemListDateGroups = FormUtil.getCommonDateGroups();
+        if ( me.showGroupBy )
+        {
+            me.redeemListDateGroups = FormUtil.getCommonDateGroups();
+        }
+        else
+        {
+            me.redeemListDateGroups = undefined;
+        }
 
 		if ( list === 'redeemList' )
         {
@@ -74,20 +81,10 @@ function BlockList( cwsRenderObj, blockObj )
     {
         me.renderRedeemList( me.cwsRenderObj._activityListData.list, blockTag, function() {
 
-            if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
-            {
-                me.favIconsObj = new favIcons( me.cwsRenderObj );
-
-                me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
-            }
-            else
-            {
-                $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
-            }
+            me.cwsRenderObj.favIcons_Update();
 
         } );
     }
-
 
     me.renderRedeemList = function( redeemList, blockTag, callBack )
     {
@@ -125,32 +122,8 @@ function BlockList( cwsRenderObj, blockObj )
 
                 me.redeemList = redeemList.filter( a=> a.owner == FormUtil.login_UserName );
 
-                /*if ( me.options && me.options.filter )
-                {
-                    for( var o=0; o<me.options.filter.length; o++ )
-                    {
-                        var filterObj = me.options.filter[o];
-                        var keys = Object.keys(filterObj);
-                        var keyValue = filterObj[keys[0]];
-
-                        me.redeemList = redeemList.filter( a=> a[keys[0]] == keyValue );
-                    }
-                }
-
-                ( me.redeemList ).sort(function (a, b) {
-                    var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                    if (b.created > a.created) {
-                        return b1st;
-                    }
-                    else if (a.created > b.created) {
-                        return a1st;
-                    }
-                    else {
-                        return equal;
-                    }
-                });*/
-
                 // GREG: overhaul way list is sorted + loaded via viewsList filter
+                // this is a 'paging' filter ( me.lastRedeemData = last page/fetched record's "created" date )
                 if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter( a=> a['created'] < me.lastRedeemDate );
 
                 if ( me.redeemList === undefined || me.redeemList.length == 0 )
@@ -224,12 +197,12 @@ function BlockList( cwsRenderObj, blockObj )
                 if ( me.redeemListScrollingState == 0 )
                 {
 
-                    var aCalGroups = me.newBlockTag.find( 'li.dateGroup' );
+                    var liGroupBys = me.newBlockTag.find( 'li.dateGroup' );
 
-                    if ( aCalGroups.length > 0 ) // if list already loaded with dateGroupSections
+                    if ( liGroupBys.length > 0 ) // if list already loaded with dateGroupSections
                     {
 
-                        if ( $( aCalGroups[ aCalGroups.length-1 ] ).hasClass( 'opened' ) )
+                        if ( $( liGroupBys[ liGroupBys.length-1 ] ).hasClass( 'opened' ) )
                         {
                             me.cwsRenderObj.pulsatingProgress.show();
                             me.redeemListScrollingState = 1;
@@ -277,7 +250,7 @@ function BlockList( cwsRenderObj, blockObj )
                         var imgTag = this.children[ 0 ];
                         var calendardGroupClickedTag = $( this );
 
-                        me.evalToggleCalGroupCards( calendardGroupClickedTag.parent().parent(), 'calGroup', retGroup );
+                        me.evalToggleGroupByCards( calendardGroupClickedTag.parent().parent(), 'groupBy', retGroup );
 
                         calendardGroupClickedTag.parent()[ 0 ].classList.toggle( "opened" );
 
@@ -297,7 +270,7 @@ function BlockList( cwsRenderObj, blockObj )
         return retGroup;
     }
 
-    me.evalToggleCalGroupCards = function( parentTag, attrName, attrVal )
+    me.evalToggleGroupByCards = function( parentTag, attrName, attrVal )
     {        
         var liArr = parentTag.find( 'li' );
 
@@ -315,7 +288,7 @@ function BlockList( cwsRenderObj, blockObj )
         //var imgTag = parentTag.children[ 0 ].children[ 0 ];
         //var calendardGroupClickedTag = $( this );
 
-        //me.evalToggleCalGroupCards( calendardGroupClickedTag.parent().parent(), 'calGroup', retGroup );
+        //me.evalToggleGroupByCards( calendardGroupClickedTag.parent().parent(), 'groupBy', retGroup );
         //imgTag.classList.toggle( "rotateImg" );
         //console.log( imgTag );
 
@@ -327,7 +300,7 @@ function BlockList( cwsRenderObj, blockObj )
         me.refreshRedeemListArray( function(){
 
             // add viewsSort_CurrentItem.field > here to auto sort (not by created data)
-            if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+            //if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
 
             var filteredListMatches = me.redeemListScrollSize;
 
@@ -335,18 +308,23 @@ function BlockList( cwsRenderObj, blockObj )
             for( var i = 0; ( ( i < me.redeemList.length) && ( filteredListMatches > 0 )  ) ; i++ )
             {
                 var activityItem = me.redeemList[i];
+                var listGroup;
 
                 if ( me.viewsListObj.viewsList_CurrentItem )
                 {
-                    //console.log( eval( me.viewsListObj.viewsList_CurrentItem.query ), activityItem.data.payloadJson.walkIn_age, me.viewsListObj.viewsList_CurrentItem.query )
-                    if ( eval( me.viewsListObj.viewsList_CurrentItem.query ) )
+                    me.viewsListObj.viewListItem_Filter
+
+                    if ( me.viewsListObj.viewListItem_Filter( me.viewsListObj.viewsList_CurrentItem.query, me.redeemList[i] ) )
                     {
                         me.lastRedeemDate =  me.redeemList[i].created;
                         me.redeemList[i].hours = Util.ageHours( me.redeemList[i].created )
         
-                        var calendarGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
-        
-                        me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, calendarGroup );
+                        if ( me.showGroupBy )
+                        {
+                            listGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+                        }
+                        
+                        me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, listGroup );
 
                         me.redeemListScrollCount += 1;
                         filteredListMatches -= 1;
@@ -375,10 +353,10 @@ function BlockList( cwsRenderObj, blockObj )
     // TODO: Split into HTML frame create and content populate?
     // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
 
-    me.createRedeemListCard = function( itemData, listContentUlTag, calGroup )
+    me.createRedeemListCard = function( itemData, listContentUlTag, groupBy )
     {
         var bIsMobile = Util.isMobi();
-        var itemAttrStr = 'itemId="' + itemData.id + '"' + ( ( calGroup ) ? ' calGroup="' + calGroup + '" ' : '' );
+        var itemAttrStr = 'itemId="' + itemData.id + '"' + ( ( groupBy ) ? ' groupBy="' + groupBy + '" ' : '' );
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
@@ -802,7 +780,7 @@ function BlockList( cwsRenderObj, blockObj )
         tempJsonData.status = status;
         tempJsonData.queueStatus = 'pending'; //DO NOT TRANSLATE?
         tempJsonData.archived = 0;
-        tempJsonData.network = ConnManager.getAppConnMode_Online(); // Added by Greg: 2018/11/26 > record network status at time of creation
+        tempJsonData.network = ConnManagerNew.statusInfo.appMode.toLowerCase(); // Added by Greg: 2018/11/26 > record network status at time of creation
         tempJsonData.data = submitJson;
         tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList(), 'eVoucher' ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
 
@@ -870,10 +848,6 @@ function BlockList( cwsRenderObj, blockObj )
 	// =============================================
 	// === EVENTS METHODS ========================
 
-    me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
-	{
-        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me.cwsRenderObj );
-    }
     
     me.refreshRedeemListArray = function( callBack )
     {

@@ -1359,9 +1359,11 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
 			{
-				$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, svgStyle.width ) );
-				$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, svgStyle.height ) );
+				$( svgObject ).attr( 'width', svgStyle.width );
+				$( svgObject ).attr( 'height', svgStyle.height );
 
+				//$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, svgStyle.width ) );
+				//$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, svgStyle.height ) );
 			}
 
 			if ( $(iconObj).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
@@ -1415,11 +1417,14 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 	
 					$( targetObj ).empty();
 					$( targetObj ).append( svgObject );
-	
+
 					if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
 					{
-						$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-						$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+						$( svgObject ).attr( 'width', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width );
+						$( svgObject ).attr( 'height', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height );
+		
+						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
 					}
 	
 				});

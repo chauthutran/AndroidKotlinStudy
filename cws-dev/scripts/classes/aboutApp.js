@@ -530,7 +530,8 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_networkMode' ).css( 'user-select', 'none' );
             $( '#aboutInfo_networkMode' ).on( 'selectstart', false );
 
-            $( '#aboutInfo_networkMode' ).click( () => {
+            // 2020-02-07:  Greg removing 'easter egg' for allow users to force network mode to their choice
+            /*$( '#aboutInfo_networkMode' ).click( () => {
 
                 if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) )
                 {
@@ -560,15 +561,15 @@ function aboutApp( cwsRender )
 
                         var requestConnMode;
 
-                        if ( $( '#aboutInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() )
+                        if ( $( '#aboutInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() )
                         {
                             // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
-                            requestConnMode = ! ConnManager.getAppConnMode_Online();
+                            requestConnMode = ! ConnManagerNew.statusInfo.appMode.toLowerCase();
                         }
                         else
                         {
                             // current setting is NOT actual network condition setting > prompt to change back
-                            requestConnMode = ConnManager.getAppConnMode_Online();
+                            requestConnMode = ConnManagerNew.statusInfo.appMode.toLowerCase();
                         }
 
                         ConnManager.changeConnModeTo = requestConnMode;
@@ -580,7 +581,7 @@ function aboutApp( cwsRender )
                         $( btnSwitch ).click ( () => {
                             ConnManager.userNetworkMode = true;
                             ConnManager.switchPreDeterminedConnMode();
-                            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
+                            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
                         });
 
                         // MISSING TRANSLATION
@@ -599,7 +600,7 @@ function aboutApp( cwsRender )
                     }, 3000 );
                 }
 
-            });
+            });*/
 
         }
 

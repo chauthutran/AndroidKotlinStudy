@@ -412,13 +412,13 @@ function Action( cwsRenderObj, blockObj )
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
 							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
-	
-								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManager.getAppConnMode_Online() } };
-	
+
+								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+
 								if ( afterActionFunc ) afterActionFunc();
-	
+
 							} );
-	
+
 						}
 						else if ( clickActionJson.url !== undefined )
 						{					

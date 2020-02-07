@@ -697,15 +697,15 @@ function settingsApp( cwsRender )
 
                         var requestConnMode;
 
-                        if ( $( '#settingsInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() )
+                        if ( $( '#settingsInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() )
                         {
                             // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
-                            requestConnMode = ! ConnManager.getAppConnMode_Online();
+                            requestConnMode = ! ConnManagerNew.statusInfo.appMode.toLowerCase();
                         }
                         else
                         {
                             // current setting is NOT actual network condition setting > prompt to change back
-                            requestConnMode = ConnManager.getAppConnMode_Online();
+                            requestConnMode = ConnManagerNew.statusInfo.appMode.toLowerCase();
                         }
 
                         ConnManager.changeConnModeTo = requestConnMode;
@@ -717,7 +717,7 @@ function settingsApp( cwsRender )
                         $( btnSwitch ).click ( () => {
                             ConnManager.userNetworkMode = true;
                             ConnManager.switchPreDeterminedConnMode();
-                            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
+                            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
                         });
 
                         // MISSING TRANSLATION
@@ -790,7 +790,7 @@ function settingsApp( cwsRender )
         {
 
             $( '#settingsInfo_dcdVersion' ).html( dcdConfigVersion );
-            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ).toLowerCase() + '</div>' );
+            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
             $( '#settingsInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
             var sessData = JSON.parse( localStorage.getItem( "session" ) );

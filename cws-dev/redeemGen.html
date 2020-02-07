@@ -260,6 +260,7 @@
             tmpRow = tmpRow.replace( /{PRODTYPE}/g, prodType );
             tmpRow = tmpRow.replace( /{SEX}/g, sex );
             tmpRow = tmpRow.replace( /{YESNO}/g, YN );
+            tmpRow = tmpRow.replace( /{phoneContactConsent}/g, getRandomWord('YES,YESP,NO',myUniqueItm) );
 
             myResult += tmpRow + ',';
 
@@ -326,7 +327,7 @@
             {
                 if ( currTemplate.indexOf( arr[ i ] ) < 0 )
                 {
-                    retPush.data.previewJson[ arr[ i ] ] = replaceFieldKeyWords( arr[ i ] );
+                    retPush.data.previewJson[ arr[ i ] ] = replaceReservedKeyWords( arr[ i ] );
                 }
             }
         }
@@ -450,10 +451,10 @@
         return text;
     }
 
-    function replaceFieldKeyWords( inputFld )
+    function replaceReservedKeyWords( inputFld )
     {
-        var reserved = '_firstN,_mothern,_surname,_lastn,_age,year,productType,gender,sex,concent';
-        var replaced = '{FIRSTNAME},{LASTNAME},{LASTNAME},{LASTNAME},{AGE},{YEAR},{PRODTYPE},{SEX},{SEX},{YESNO}';
+        var reserved = '_firstN,_mothern,_surname,_lastn,_age,year,productType,gender,sex,consent,treatment';
+        var replaced = '{FIRSTNAME},{LASTNAME},{LASTNAME},{LASTNAME},{AGE},{YEAR},{PRODTYPE},{SEX},{SEX},{phoneContactConsent},{YESNO}';
         var resArr = reserved.split( ',' );
         var repArr = replaced.split( ',' );
 

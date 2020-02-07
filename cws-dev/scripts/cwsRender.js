@@ -29,7 +29,6 @@ function cwsRender()
 	me._activityListData = { 'list': [] };  // TODO: THIS MUST GET loaded/Populated when the app starts!!!!
 	// QUESTION - What is 'me.activityList' in below?  Is it same data?
 
-	// loadActivityListData_AfterLogin
 
 	// Constants
 	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
@@ -317,7 +316,9 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
 	me.handleAppMode_Switch = function()
 	{
-		me.startBlockExecuteAgain(); // 
+		me.startBlockExecuteAgain(); //
+		// 
+		// where do we refresh favIcons? blockList references favIcons
 	}
 
 	me.startBlockExecuteAgain = function()
@@ -520,7 +521,7 @@ function cwsRender()
 /*
 			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
 			{
-				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManager.getAppConnMode_Online() ) + '</div>' );
+				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ) + '</div>' );
 			}
 			else
 			{
@@ -822,8 +823,8 @@ function cwsRender()
 	{
 		DataManager.getSessionData( function( lastSession ){
 
-			var thisNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'online' : 'offline' );
-			var altNetworkMode = ( ConnManager.getAppConnMode_Online() ? 'offline' : 'online' );
+			var thisNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'online' : 'offline' );
+			var altNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'offline' : 'online' );
 			var matchOn = [ "id", "startBlockName", "name" ];
 			var matchedOn, areaMatched;
 
@@ -853,7 +854,7 @@ function cwsRender()
 				
 			}
 		});
-	}
+	};
 
 	me.hidenavDrawerDiv = function()
 	{
@@ -865,7 +866,7 @@ function cwsRender()
 
 			$('#nav-toggle').removeClass('active');
 		}		
-	}
+	};
 
 	me.createRefreshIntervalTimer = function( ver )
 	{
@@ -882,7 +883,7 @@ function cwsRender()
 
 		console.log( ' ~ auto REFRESH interval timer: ' + refreshIntV + ' {' + ( ( ( ( bDev ) ? 5 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) + '}');
 
-	}
+	};
 
 	me.newSWrefreshNotification = function( ver )
 	{
@@ -915,7 +916,27 @@ function cwsRender()
 
 		localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': true, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': '' } ) );
 
-	}
+	};
+	
+    me.favIcons_Update = function()
+    {
+		console.log( $( '#pageDiv' ).find( '.floatListMenuIcon' ) );
+        if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+        {
+            me.favIconsObj = new favIcons( me );
+
+            me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
+        }
+        else
+        {
+            $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
+        }
+	};
+
+    me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
+	{
+        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me );
+	};
 
 	// ======================================
 

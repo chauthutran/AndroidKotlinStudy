@@ -65,19 +65,19 @@ self.__precacheManifest = [
   },
   {
     "url": "images/act_col.svg",
-    "revision": "78353bdf9dccfc06acb8927eb6695536"
+    "revision": "cd9442045f364002623a0d24be42c137"
   },
   {
     "url": "images/act_fpl-fu.svg",
-    "revision": "b18ca960206b1675d135b01655ea6c57"
+    "revision": "823b455dc5dcf74369bc8e6c97f148b8"
   },
   {
     "url": "images/act_fpl-sp.svg",
-    "revision": "391d86831342cdb469e50b55a8d22b6a"
+    "revision": "9bb235be88fbedf47d9bcac017a8e7ba"
   },
   {
     "url": "images/act_sas.svg",
-    "revision": "bae8dc42013c60622f76ab3ad96a0967"
+    "revision": "ef69dfc74178bc131a507964299bc6fe"
   },
   {
     "url": "images/act.svg",
@@ -177,15 +177,15 @@ self.__precacheManifest = [
   },
   {
     "url": "images/favbar_color_fpl-fu.svg",
-    "revision": "563134d74b6a5afaef196e0269501bfb"
+    "revision": "1d7957648caffb1b7cc89e628c676bc7"
   },
   {
     "url": "images/favbar_color_fpl-sp.svg",
-    "revision": "db597511bf8e707794a431332a14f00f"
+    "revision": "8a6b62abbdf75437f5e8da00cf9a0d1a"
   },
   {
     "url": "images/favbar_color_sas.svg",
-    "revision": "f473cc5a6d3959639ea00e5d518e4818"
+    "revision": "a4a62efa0479685af22529f2bc5426ce"
   },
   {
     "url": "images/followup.svg",
@@ -357,11 +357,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "95f254beb3d4b566076642190af62651"
+    "revision": "0ffd1334c67147a351a4084a4f4db777"
   },
   {
     "url": "redeemGen.html",
-    "revision": "c6a59a31645db6ae8b9c55c4bc91e832"
+    "revision": "b47265c7754f17f741c73408171305cb"
   },
   {
     "url": "scripts/app.js",
@@ -369,11 +369,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "c3059ffc7f0a4a3ee7de44ae1cc03f81"
+    "revision": "12ca1becf57e297802cfc370e549db97"
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "423c95efcbac0f48adbb52f4c105001c"
+    "revision": "a87822dc4bce06b93ad7bee19c0ac98b"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -401,7 +401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "fdcd87c37aaef7f6d923927fd54e8d17"
+    "revision": "a7a1decc76ff17e2cc890f4700c5a10a"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -413,7 +413,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "0cd4d5ba254b5a8b93136e1148080738"
+    "revision": "d5f7528c737c09a206114aee8c430f52"
   },
   {
     "url": "scripts/classes/inputControl.js",
@@ -445,7 +445,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "2312014fee8e6cb85abe57c5e2d420a2"
+    "revision": "8b78599d4c0d80da9bd179c53f37dabd"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -465,7 +465,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "a1430fd02bfff6ccc3b3b72cef90ab87"
+    "revision": "fc653ed2856f1acfbfce3246f35ec251"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -565,7 +565,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/statusInfoManager.js",
-    "revision": "c46758d48e676145c3ada35a3a662845"
+    "revision": "ac8db784258b182a227e31ef795e653b"
   },
   {
     "url": "scripts/services/storageMng.js",
@@ -585,7 +585,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/viewsListManager.js",
-    "revision": "ec04233a318bb8bd7e07a23563432f15"
+    "revision": "c1e40b3889d12203cac40c7b65173a27"
   },
   {
     "url": "scripts/services/wsApiManager.js",
@@ -605,7 +605,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "1c2cf2317743a216237e693bc0467d2d"
+    "revision": "e224d6c6ae7c3d3d762717485e45753e"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -613,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "1c540fff86b1ef2be91f787fe8f6e131"
+    "revision": "b6da56823d27dedc0f2657a974b6ee7b"
   },
   {
     "url": "scripts/utils/pptManager.js",
