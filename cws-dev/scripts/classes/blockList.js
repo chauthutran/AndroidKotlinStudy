@@ -8,7 +8,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.blockObj = blockObj;        
 
     me.redeemList;  // Temporary Use due to many existing this global variable reference
-    me.redeemListTargetTag;
+    me.activityListParentTag;
     me.redeemListScrollSize = 15; // move where?
     me.redeemListScrollingState = 0;
     me.redeemListScrollCount = 0;
@@ -23,7 +23,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.status_redeem_queued = Constants.status_redeem_queued; //"queued"; 
     me.status_redeem_failed = Constants.status_redeem_failed; //"failed";
 
-    me.redeemListDateGroups;
+    me.activityItemGroupBys;
     me.lastSyncDate;
     me.showGroupBy = false;
     me.debugMode = ( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
@@ -49,11 +49,11 @@ function BlockList( cwsRenderObj, blockObj )
 	{
         if ( me.showGroupBy )
         {
-            me.redeemListDateGroups = FormUtil.getCommonDateGroups();
+            me.activityItemGroupBys = FormUtil.getCommonDateGroups();
         }
         else
         {
-            me.redeemListDateGroups = undefined;
+            me.activityItemGroupBys = undefined;
         }
 
 		if ( list === 'redeemList' )
@@ -106,13 +106,13 @@ function BlockList( cwsRenderObj, blockObj )
             //var listUlLiActiveTag = blockTag.find( 'li.active' );
             var listContentUlTag = blockTag.find( '.tab__content_act' );
 
-            me.redeemListTargetTag = listContentUlTag;
+            me.activityListParentTag = listContentUlTag;
 
             if ( redeemList && redeemList.length )
             {
-                var lidateGroupPaddTop = $( '<li class="dateGroupPaddTop"></li>' );
+                var liactivityItemGroupPaddTop = $( '<li class="activityItemGroupPaddTop"></li>' );
 
-                listContentUlTag.append( lidateGroupPaddTop );
+                listContentUlTag.append( liactivityItemGroupPaddTop );
 
                 if ( me.blockObj.blockJson.activityListViews && me.blockObj.blockJson.activityListViews.length )
                 {
@@ -188,7 +188,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
-    me.evalScrollOnBottom = function()
+    me.evalScrollOnBottom = function( viewsList_FilteredData )
     {
         if ( !me.redeemListLimit && me.newBlockTag.find( 'div.listDiv' ) && me.newBlockTag.find( 'div.listDiv' ).is(':visible') && ( FormUtil.syncRunning == undefined || FormUtil.syncRunning == 0 ) )
         {
@@ -197,9 +197,9 @@ function BlockList( cwsRenderObj, blockObj )
                 if ( me.redeemListScrollingState == 0 )
                 {
 
-                    var liGroupBys = me.newBlockTag.find( 'li.dateGroup' );
+                    var liGroupBys = me.newBlockTag.find( 'li.activityItemGroup' );
 
-                    if ( liGroupBys.length > 0 ) // if list already loaded with dateGroupSections
+                    if ( liGroupBys.length > 0 ) // if list already loaded with activityItemGroupSections
                     {
 
                         if ( $( liGroupBys[ liGroupBys.length-1 ] ).hasClass( 'opened' ) )
@@ -208,7 +208,7 @@ function BlockList( cwsRenderObj, blockObj )
                             me.redeemListScrollingState = 1;
         
                             setTimeout( function() {
-                                me.appendRedeemListOnScrollBottom();
+                                me.appendRedeemListOnScrollBottom( viewsList_FilteredData );
                             }, 500 );
                         }
 
@@ -219,7 +219,7 @@ function BlockList( cwsRenderObj, blockObj )
                         me.redeemListScrollingState = 1;
     
                         setTimeout( function() {
-                            me.appendRedeemListOnScrollBottom();
+                            me.appendRedeemListOnScrollBottom( viewsList_FilteredData );
                         }, 500 );   
                     }
 
@@ -228,19 +228,19 @@ function BlockList( cwsRenderObj, blockObj )
         }
     }
 
-    me.evalCreateDateGroup = function( ageHours, targTag )
+    me.evalCreateActivityItemGroup = function( ageHours, targTag )
     {
         var retGroup = '';
-        for ( var g=0; g < me.redeemListDateGroups.length; g++ )
+        for ( var g=0; g < me.activityItemGroupBys.length; g++ )
         {
-            if ( ( parseInt( ageHours ) < parseInt( me.redeemListDateGroups[ g ].hours ) ) )
+            if ( ( parseInt( ageHours ) < parseInt( me.activityItemGroupBys[ g ].hours ) ) )
             {
-                retGroup = me.redeemListDateGroups[ g ].hours;
+                retGroup = me.activityItemGroupBys[ g ].hours;
 
-                if ( me.redeemListDateGroups[ g ].created == 0 )
+                if ( me.activityItemGroupBys[ g ].created == 0 )
                 {
-                    var liContentTag = $( '<li class="dateGroup opened"></li>' );
-                    var anchorTag = $( '<a class="dateGroupSection" peGroup="' + retGroup + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.redeemListDateGroups[ g ].name + '</a>' );
+                    var liContentTag = $( '<li class="activityItemGroup opened"></li>' );
+                    var anchorTag = $( '<a class="activityItemGroupSection" peGroup="' + retGroup + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.activityItemGroupBys[ g ].name + '</a>' );
 
                     targTag.append( liContentTag );
                     liContentTag.append( anchorTag );
@@ -248,17 +248,17 @@ function BlockList( cwsRenderObj, blockObj )
                     anchorTag.click( function() {
 
                         var imgTag = this.children[ 0 ];
-                        var calendardGroupClickedTag = $( this );
+                        var groupByClickTag = $( this );
 
-                        me.evalToggleGroupByCards( calendardGroupClickedTag.parent().parent(), 'groupBy', retGroup );
+                        me.evalToggleGroupByCards( groupByClickTag.parent().parent(), 'groupBy', retGroup );
 
-                        calendardGroupClickedTag.parent()[ 0 ].classList.toggle( "opened" );
+                        groupByClickTag.parent()[ 0 ].classList.toggle( "opened" );
 
                         imgTag.classList.toggle( "rotateImg" );
 
                     });
 
-                    me.redeemListDateGroups[ g ].created = 1;
+                    me.activityItemGroupBys[ g ].created = 1;
                     break;
                 }
                 else
@@ -282,25 +282,35 @@ function BlockList( cwsRenderObj, blockObj )
             }
         }
 
-        //var liDtmGrp = parentTag.find( 'li.dateGroup' );
+        //var liDtmGrp = parentTag.find( 'li.activityItemGroup' );
         //console.log ( liDtmGrp )
 
         //var imgTag = parentTag.children[ 0 ].children[ 0 ];
-        //var calendardGroupClickedTag = $( this );
+        //var groupByClickTag = $( this );
 
-        //me.evalToggleGroupByCards( calendardGroupClickedTag.parent().parent(), 'groupBy', retGroup );
+        //me.evalToggleGroupByCards( groupByClickTag.parent().parent(), 'groupBy', retGroup );
         //imgTag.classList.toggle( "rotateImg" );
         //console.log( imgTag );
 
     }
 
-    me.appendRedeemListOnScrollBottom = function()
+    me.appendRedeemListOnScrollBottom = function( viewsList_FilteredData )
     {
 
         me.refreshRedeemListArray( function(){
 
             // add viewsSort_CurrentItem.field > here to auto sort (not by created data)
             //if ( me.lastRedeemDate ) me.redeemList = me.redeemList.filter(a=>a['created']<me.lastRedeemDate);
+            if ( ( me.redeemList === undefined || me.redeemList.length == 0 ) && me.activityListParentTag.find( 'li.activityItemCard' ).length == 0 )
+            {
+                var liTag = $( '<li class="emptyListLi"></li>' );
+                var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 10px; color: #888;" term="' + Util.termName_listEmpty + '">List is empty.</a>' );
+
+                liTag.append( spanTag );
+                listContentUlTag.append( liTag );
+
+                if ( callBack ) callBack();
+            }
 
             var filteredListMatches = me.redeemListScrollSize;
 
@@ -321,10 +331,11 @@ function BlockList( cwsRenderObj, blockObj )
         
                         if ( me.showGroupBy )
                         {
-                            listGroup = me.evalCreateDateGroup( me.redeemList[i].hours, me.redeemListTargetTag )
+                            // add generic groupBy code here abouts (when the time comes)
+                            listGroup = me.evalCreateActivityItemGroup( me.redeemList[i].hours, me.activityListParentTag )
                         }
                         
-                        me.createRedeemListCard( me.redeemList[i], me.redeemListTargetTag, listGroup );
+                        me.createRedeemListCard( me.redeemList[i], me.activityListParentTag, listGroup );
 
                         me.redeemListScrollCount += 1;
                         filteredListMatches -= 1;
@@ -356,7 +367,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.createRedeemListCard = function( itemData, listContentUlTag, groupBy )
     {
         var bIsMobile = Util.isMobi();
-        var itemAttrStr = 'itemId="' + itemData.id + '"' + ( ( groupBy ) ? ' groupBy="' + groupBy + '" ' : '' );
+        var itemAttrStr = 'itemId="' + itemData.id + '" class="activityItemCard" ' + ( ( groupBy ) ? ' groupBy="' + groupBy + '" ' : '' );
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
@@ -634,15 +645,16 @@ function BlockList( cwsRenderObj, blockObj )
 
     }
 
-    me.getListDataPreview = function( payloadJson, previewData )
+    me.getListDataPreview = function( dataJson, previewConfig )
     {
-        if ( previewData )
+        console.log( dataJson, previewConfig );
+        if ( previewConfig )
         {
             var dataRet = $( '<div class="previewData listDataPreview" ></div>' );
 
-            for ( var i=0; i< previewData.length; i++ ) 
+            for ( var i=0; i< previewConfig.length; i++ ) 
             {
-                var dat = me.mergePreviewData( previewData[ i ], payloadJson );
+                var dat = me.mergePreviewData( previewConfig[ i ], dataJson );
                 dataRet.append ( $( '<div class="listDataItem" >' + dat + '</div>' ) );
             }
 
@@ -883,6 +895,13 @@ function BlockList( cwsRenderObj, blockObj )
         return me.viewsListObj.createViewsList_Controllers( viewList );
 
     }
+
+    me.clearExistingList = function()
+    {
+        me.activityListParentTag.find( 'li.activityItemCard' ).remove();
+        me.activityListParentTag.find( 'li.activityItemGroup' ).remove();
+        me.activityListParentTag.find( 'li.emptyListLi' ).remove();
+    };
 	// =============================================
 
 	me.initialize();

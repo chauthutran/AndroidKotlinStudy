@@ -43,8 +43,11 @@ function ViewsList( blockList )
     me.viewsListTag; //rename?
     me.element;
     me.select;
+
     me.blockList_TagUL;
     me.blockList_TagsLI;
+
+    me.filteredData_ForBlockList;
 
 //  # 1
     me.createViewsList_Controllers = function ( arrViews )
@@ -53,6 +56,7 @@ function ViewsList( blockList )
 
         me.createViewsList_Items( arrViews );
 
+        // run 1st time only [default to 1st filter in list]
         setTimeout( function(){
             me.runApply_ViewsListFilter( arrViews[ 0 ] );
         }, 500);
@@ -67,11 +71,12 @@ function ViewsList( blockList )
 
         // - -- --- -- - New code logic as per pseudocode - -- --- -- - 
         // - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- --  
-        me.viewsList_RunDataFetch_WithFilter( me.viewsList_CurrentItem, function( filteredItems ) {
+        me.viewsList_RunDataFetch_AndFilter( me.viewsList_CurrentItem, function( filteredItems ) {
 
             me.viewsListSorterObj.sortList_RunSort( filteredItems, function( sortedItems ) {
 
-                me.blockListObj.evalScrollOnBottom();
+                me.filteredData_ForBlockList = sortedItems;
+                me.blockListObj.evalScrollOnBottom( sortedItems );
 
             })
         })
@@ -97,7 +102,6 @@ function ViewsList( blockList )
         // - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- 
 
     }
-
 
 
     me.createViewsList_Controls = function()
@@ -187,11 +191,13 @@ function ViewsList( blockList )
 
             me.viewsList_CurrentItem = viewsListItem;
 
+            me.blockListObj.clearExistingList();
+
             me.viewsListSorterObj.setSortList_CurrentItem( me.viewsList_CurrentItem );
 
         } );
 
-    }
+    };
 
     me.getViewsListItemConfig = function( itemID, callBack )
     {
@@ -200,14 +206,42 @@ function ViewsList( blockList )
         }) 
 
         callBack( itemConfig )
-    }
+    };
 
 
-    me.viewsList_RunDataFetch_WithFilter = function( viewsListConfig, callBack )
+    me.viewsList_RunDataFetch_AndFilter = function( viewsListConfig, callBack )
     {
         //TO DO
-        var filteredData = viewsListConfig; // cwsRender.__activityListData.list
-        callBack( filteredData ); // return evalResultsFiltered ( cwsRender.__activityListData )
+        me.viewsList_getBlockListData_AndRunFilter( viewsListConfig, function( filteredData ){
+
+            callBack( filteredData ); // return evalResultsFiltered ( cwsRender.__activityListData )
+
+        } ); // cwsRender.__activityListData.list
+        
+    };
+
+    me.viewsList_getBlockListData_AndRunFilter = function( viewsListConfig, callBack )
+    {
+        // 1. fetch blockList data array
+        // 2. apply filters
+        
+        var filterData = me.blockListObj.cwsRenderObj._activityListData;
+        var returnData = { 'list': [] };
+
+        if ( filterData && filterData.list )
+        {
+            for ( var i = 0; i < filterData.list.length; i++ )
+            {
+                if ( me.viewListItem_Filter( viewsListConfig.query, filterData.list[ i ] ) )
+                {
+                    returnData.list.push( filterData.list[ i ] );
+                }
+            }
+        }
+
+        console.log( filterData, returnData );
+
+        callBack( returnData )
     }
 
     me.viewListItem_Filter = function( query, activityItem )
@@ -220,16 +254,16 @@ function ViewsList( blockList )
             console.log( 'error evaluating viewList query : ' + err);
         }
         return success;
-    }
+    };
 
     me.prepareTagsLi = function ()
     {
         me.blockList_TagUL = $("#renderBlock .listDiv .tab__content_act");
         me.blockList_TagsLI = $("li[itemid]", me.blockList_TagUL);
-        me.groupsLi = $("li.dateGroup", me.blockList_TagUL);
+        me.groupsLi = $("li.activityListGroup", me.blockList_TagUL);
         
         me.groupsLi.each( ( key, li ) => $(li).hide() );
-    }
+    };
 
 }
 
@@ -364,7 +398,7 @@ function ViewsListSorter( viewsList )
     {
         me.blockList_TagUL = $("#renderBlock .listDiv .tab__content_act");
         me.blockList_TagsLI = $("li[itemid]", me.blockList_TagUL);
-        me.groupsLi = $("li.dateGroup", me.blockList_TagUL);
+        me.groupsLi = $("li.activityListGroup", me.blockList_TagUL);
         
         me.groupsLi.each( ( key, li ) => $(li).hide() );
     }
