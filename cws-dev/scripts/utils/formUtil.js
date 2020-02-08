@@ -1507,10 +1507,12 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 	
 }
 
+
 FormUtil.gAnalyticsEventAction = function( returnFunc )
 {
 	var dcd = DataManager.getUserConfigData();
 	var ret = '';
+	
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED

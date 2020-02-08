@@ -19,9 +19,9 @@ function BlockList( cwsRenderObj, blockObj )
     me.options;
     me.newBlockTag;
 
-    me.status_redeem_submit = Constants.status_redeem_submit; //"submit"; 
-    me.status_redeem_queued = Constants.status_redeem_queued; //"queued"; 
-    me.status_redeem_failed = Constants.status_redeem_failed; //"failed";
+    Constants.status_redeem_submit = Constants.status_redeem_submit; //"submit"; 
+    Constants.status_redeem_queued = Constants.status_redeem_queued; //"queued"; 
+    Constants.status_redeem_failed = Constants.status_redeem_failed; //"failed";
 
     me.redeemListDateGroups;
     me.lastSyncDate;
@@ -419,7 +419,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         me.evalCallEnabled( itemData, tdVoucherIdObj )
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == me.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == Constants.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
         // Content that gets collapsed/expanded 
@@ -720,7 +720,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
     {
         // TODO: Find a way to reset/clear previous events, etc and add new one as needed
-        if ( itemData.status != me.status_redeem_submit )
+        if ( itemData.status != Constants.status_redeem_submit )
         {
             // TODO: Find a way to reset/clear previous events, etc and add new one as needed
             var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
@@ -735,7 +735,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
 
                 // TODO: 
-                //if ( ItemData_refreshed.status != me.status_redeem_submit )
+                //if ( ItemData_refreshed.status != Constants.status_redeem_submit )
                 //{
                 if ( SyncManagerNew.syncStart() )
                 {
@@ -770,40 +770,52 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.redeemList_Add = function( submitJson, status, callBack )
     {
-        var dateTimeStr = (new Date() ).toISOString();
-        var tempJsonData = {};
+        try
+        {
+            var dateTimeStr = (new Date() ).toISOString();
+            var tempJsonData = {};
+    
+            // TODO: CREATE A METHOD FOR GENERATING NEW ACTIVITYITEM DATA..
+            tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
+            tempJsonData.created = dateTimeStr;
+            tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
+            tempJsonData.id = Util.generateRandomId();
+            tempJsonData.status = status;
+            tempJsonData.queueStatus = 'pending'; //DO NOT TRANSLATE?
+            tempJsonData.archived = 0;
+            tempJsonData.network = ConnManagerNew.statusInfo.appMode.toLowerCase(); // Added by Greg: 2018/11/26 > record network status at time of creation
+            tempJsonData.data = submitJson;
+            tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList(), 'eVoucher' ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
+    
+            // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
+            tempJsonData.activityList = ActivityUtil.getActivityList();
+            tempJsonData.syncActionStarted = 0;
+            tempJsonData.history = [];
+    
+    
+            // NEW: JAMES: 
+            // Save(Append to) to main activityList & update the storage with the data..
+            me.cwsRenderObj._activityListData.list.push( tempJsonData );
 
-        tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
-        tempJsonData.created = dateTimeStr;
-        tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
-        tempJsonData.id = Util.generateRandomId();
-        tempJsonData.status = status;
-        tempJsonData.queueStatus = 'pending'; //DO NOT TRANSLATE?
-        tempJsonData.archived = 0;
-        tempJsonData.network = ConnManagerNew.statusInfo.appMode.toLowerCase(); // Added by Greg: 2018/11/26 > record network status at time of creation
-        tempJsonData.data = submitJson;
-        tempJsonData.activityType = me.lastActivityType( ActivityUtil.getActivityList(), 'eVoucher' ); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
+            console.log( 'blockList.redeemList_Add - Before saveData_RedeemList' );
+            DataManager2.saveData_RedeemList( me.cwsRenderObj._activityListData, function() {
+    
+                console.log( 'blockList.redeemList_Add - after saveData_RedeemList' );
 
-        // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
-        tempJsonData.activityList = ActivityUtil.getActivityList();
-        tempJsonData.syncActionStarted = 0;
-        tempJsonData.history = [];
+                FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+                    // added by Greg (2019-02-18) > test track googleAnalytics
+                    ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+                });    
+            } );
 
-        FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+            // NOTE: if there is any failure or error case above, make sure we throw error that can be caught by 'catch' below.
+        }
+        catch( errMsg )
+        {
+            // Temporarily use 'alert' to get noticed about this...  for now..
+            alert( 'ERROR during blockList.redeemList_Add, errMsg: ' + errMsg );
+        }
 
-            // added by Greg (2019-02-18) > test track googleAnalytics
-            ga('send', { 'hitType': 'event', 'eventCategory': 'redeemList_Add', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-
-            if ( me.debugMode )
-            {
-                console.log( tempJsonData );
-                console.log( JSON.stringify( tempJsonData ) );    
-            }
-
-            DataManager2.insertDataItem( Constants.storageName_redeemList, tempJsonData, callBack );
-            // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
-            //       pwa MUST re-initialize 'syncManager' queue+fail arrays
-        });
     }
 
     me.redeemList_Reload = function( listItemTag )
@@ -818,9 +830,9 @@ function BlockList( cwsRenderObj, blockObj )
         // Set background color of Div
         var divBgColor = "";
 
-        if ( status === me.status_redeem_submit ) divBgColor = 'LightGreen';
-        else if ( status === me.status_redeem_queued ) divBgColor = 'LightGray';
-        else if ( status === me.status_redeem_failed ) divBgColor = 'Tomato';
+        if ( status === Constants.status_redeem_submit ) divBgColor = 'LightGreen';
+        else if ( status === Constants.status_redeem_queued ) divBgColor = 'LightGray';
+        else if ( status === Constants.status_redeem_failed ) divBgColor = 'Tomato';
 
         if ( divBgColor != "" ) divTag.css( 'background-color', divBgColor );         
     }
