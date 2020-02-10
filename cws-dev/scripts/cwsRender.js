@@ -317,7 +317,6 @@ function cwsRender()
 	me.handleAppMode_Switch = function()
 	{
 		me.startBlockExecuteAgain(); //
-		me.favIcons_Update();
 		// 
 		// where do we refresh favIcons? blockList references favIcons
 	}
@@ -921,6 +920,7 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
+		console.log( $( '#pageDiv' ).find( '.floatListMenuIcon' ) );
         if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
         {
             me.favIconsObj = new favIcons( me );

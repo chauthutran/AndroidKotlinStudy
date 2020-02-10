@@ -29,7 +29,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "3956224d664e1718224b4d2c371341a6"
+    "revision": "e6c863eec6464d39750d07a2bb4b621f"
   },
   {
     "url": "css/style.css",
@@ -401,7 +401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "597cf66ff57ff3495a2d8e8a3ac70189"
+    "revision": "a7a1decc76ff17e2cc890f4700c5a10a"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -465,7 +465,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "8ce71e8822deb5b6cb8e96ff8061db15"
+    "revision": "fc653ed2856f1acfbfce3246f35ec251"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -585,7 +585,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/viewsListManager.js",
-    "revision": "c3aeca10d8596474210427a593ddd20e"
+    "revision": "c1e40b3889d12203cac40c7b65173a27"
   },
   {
     "url": "scripts/services/wsApiManager.js",
