@@ -471,7 +471,7 @@
 
     }
 
-    function writeToLocalStorage(overwrite)
+    function writeToLocalStorage( overwrite )
     {
         //localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
 
@@ -503,7 +503,9 @@
         // After putting data to 'redeemList' on localStorage, set flag, so that data move happens to indexedDB
         // NOTE: We put this on localStorage, so that version move happens smoothly?
         localStorage.removeItem( Constants.lsFlag_dataMoved_redeemListIDB );
-        //if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );        
+        //if ( $( '#deleteIndexedDB' ).is(':checked') ) deleteIndexedDB( 'cwsdb' );    
+        
+        alert( 'Wrote data to local storage!' );
         
     }
 

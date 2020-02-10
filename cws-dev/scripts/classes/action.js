@@ -411,7 +411,7 @@ function Action( cwsRenderObj, blockObj )
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_queued, function(){
+							me.blockObj.blockListObj.redeemList_Add( submitJson, Constants.status_redeem_queued, function(){
 
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 
@@ -432,7 +432,7 @@ function Action( cwsRenderObj, blockObj )
 							// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
 							if ( clickActionJson.redeemListInsert === "true" )
 							{
-								me.blockObj.blockListObj.redeemList_Add( submitJson, me.blockObj.blockListObj.status_redeem_submit );
+								me.blockObj.blockListObj.redeemList_Add( submitJson, Constants.status_redeem_submit );
 							}
 	
 							FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {

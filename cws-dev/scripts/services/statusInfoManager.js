@@ -9,8 +9,8 @@ function StatusInfoManager() {};
 StatusInfoManager.dataServerStatus;
 StatusInfoManager.otherOnes;
 
-// TODO: MOVE: Create statusInfoSummary class to get all status data at once?
-StatusInfoManager.getCurrentStatusSummary = function()
+// Can be also used to call this from console.log();
+StatusInfoManager.getInfo = function()
 {
 	// create  Server Available changes
 	return ConnManagerNew.statusInfo;
