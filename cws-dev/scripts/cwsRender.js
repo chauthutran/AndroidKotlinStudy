@@ -462,6 +462,57 @@ function cwsRender()
 		return statTbl;
 	}
 
+
+	me.setUpQUnitDiv = function( trTag )
+	{
+		console.log( 'In setUpQUnitDiv' );
+
+		var divQUnitTestTag = $( '<div id="divQUnitTest" style="cursor: pointer;">T</div>' );
+		var tdTag = $( '<td></td>' );
+
+		tdTag.append( divQUnitTestTag );
+		trTag.append( tdTag );
+
+		divQUnitTestTag.click( function() {
+
+			console.log( 'divQUnitTestTag clicked' );
+
+			$( '#divAppMain' ).hide();
+			$( '#divQUnitMain' ).show( 'fast' );
+
+			/*
+			// Use recursive to load list of scripts..
+			$.getScript( "scripts/libraries/qunit.js", function( data, textStatus ) 
+			{
+				// Display qUnitTest Div here?
+				//console.log( data ); // Data returned
+				console.log( textStatus ); // Success
+
+				$.getScript( "unittest/qunittest/js/test_Login.js", function( data, textStatus ) 
+				{
+					//console.log( data ); // Data returned
+					console.log( textStatus ); // Success
+				
+					$.getScript( "unittest/qunittest/js/test_Util.js", function( data, textStatus ) 
+					{
+						//console.log( data ); // Data returned
+						console.log( textStatus ); // Success
+
+						// OR Display qUnitTest Div here?
+						console.log( 'All qUnitTest Script Load Done!' );
+
+						$( '#divAppMain' ).hide();
+						$( '#divQUnitMain' ).show( 'fast' );
+
+					});					 
+				});
+			});
+			*/
+
+			// Load libraries first
+		});
+	}
+
 	me.populateMenuList = function( areaList, exeFunc )
 	{
 
@@ -487,6 +538,11 @@ function cwsRender()
 			navMenuTbl.append ( tr );
 			tr.append ( tdLeft );
 			tr.append ( tdRight );
+
+			console.log( 'Populating QUnit' );
+			// NEW: JAMES: QUnitTest link
+			me.setUpQUnitDiv( tr );
+
 
 			var navMenuLogo = $( '<img src="images/logo.svg" />' );
 

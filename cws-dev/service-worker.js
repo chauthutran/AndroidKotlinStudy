@@ -28,6 +28,10 @@ self.__precacheManifest = [
     "revision": "0ecbb1a0d51067dcdc00987e81ba2307"
   },
   {
+    "url": "css/qunit.css",
+    "revision": "aa03c22c7ae5acdc832b0b719193d453"
+  },
+  {
     "url": "css/responsive.css",
     "revision": "e6c863eec6464d39750d07a2bb4b621f"
   },
@@ -357,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0ffd1334c67147a351a4084a4f4db777"
+    "revision": "69500f83aac6881f8d2015e3cd16d401"
   },
   {
     "url": "redeemGen.html",
@@ -465,7 +469,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "fc653ed2856f1acfbfce3246f35ec251"
+    "revision": "2af00793df17e1706afc6428b97a1830"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -514,6 +518,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/moment.min.js",
     "revision": "132734424cbe44372cf5fc2d6f7e2ec3"
+  },
+  {
+    "url": "scripts/libraries/qunit.js",
+    "revision": "12bbfc8e326e6881bb82e836b4d51106"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -589,7 +597,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/wsApiManager.js",
-    "revision": "da3043b9a80cb6862f33b063c3bbedf8"
+    "revision": "3cf701268b849858d18ac06efb111fc1"
   },
   {
     "url": "scripts/utils/activityUtil.js",
@@ -605,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "9c9e777362a2be90873ec55ecbd951be"
+    "revision": "4cceef8b94b9994f28fd2f9bda99dab3"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -625,7 +633,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/restUtil.js",
-    "revision": "e51cc709120b2a1df41bac7d73a9df6d"
+    "revision": "eefc48efb6ebd155effb9d141287c594"
   },
   {
     "url": "scripts/utils/sounds.js",
@@ -633,7 +641,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "4a4ca335e2fb83ee6b371dd87366b717"
+    "revision": "b7322e0d1ae1408c6491be2ba3651863"
   },
   {
     "url": "sounds/beep.mp3",
@@ -694,6 +702,34 @@ self.__precacheManifest = [
   {
     "url": "styles/style.css",
     "revision": "38aaef78ee8059729eb38a751057a280"
+  },
+  {
+    "url": "unittest/jest/util.test.js",
+    "revision": "7709f17d9136804f94e03a648d3be913"
+  },
+  {
+    "url": "unittest/noteStorageMng.js",
+    "revision": "7435900e40cb13fb207c1feb6238f4f5"
+  },
+  {
+    "url": "unittest/qunittest/js/test_Login.js",
+    "revision": "da62c884590304f149f4af7d24720358"
+  },
+  {
+    "url": "unittest/qunittest/js/test_Util.js",
+    "revision": "3110a5aa78d1aca9d73313c47bab4032"
+  },
+  {
+    "url": "unittest/qunittest/libs/qunit.css",
+    "revision": "aa03c22c7ae5acdc832b0b719193d453"
+  },
+  {
+    "url": "unittest/qunittest/libs/qunit.js",
+    "revision": "12bbfc8e326e6881bb82e836b4d51106"
+  },
+  {
+    "url": "unittest/qunittest/test.html",
+    "revision": "9bdb19ca6b628e040fe06bf633a79d03"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
