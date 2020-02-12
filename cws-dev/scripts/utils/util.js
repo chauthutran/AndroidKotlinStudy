@@ -2632,3 +2632,8 @@ $.fn.rotate=function(options) {
 	} );
 
   }
+
+
+try {
+    module.exports = Util;
+} catch (error) { }
