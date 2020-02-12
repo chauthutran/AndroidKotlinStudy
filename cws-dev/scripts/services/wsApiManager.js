@@ -201,3 +201,8 @@ WsApiManager.useDWS = function()
 {
     return ( location.host.indexOf( WsApiManager.domain_psiConnect ) > 0 );
 };
+
+
+try {
+    module.exports = WsApiManager;
+} catch (error) { }

@@ -2441,3 +2441,8 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 	}
 
 }
+
+
+try {
+    module.exports = FormUtil;
+} catch (error) { }

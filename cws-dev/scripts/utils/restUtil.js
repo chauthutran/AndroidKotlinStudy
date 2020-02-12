@@ -93,3 +93,9 @@ RESTUtil.performDWSfetch = function( url, payloadData, returnFunc )
     }
     
 }
+
+
+
+try {
+    module.exports = RESTUtil;
+} catch (error) { }
