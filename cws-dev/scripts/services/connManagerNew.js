@@ -314,13 +314,6 @@ ConnManagerNew.isAppMode_Online = function()
 	return ( ConnManagerNew.statusInfo.appMode === 'Online' );
 }
 
-//  replaced by ConnManagerNew.isAppMode_Online()
-//ConnManagerNew.networkSyncConditions = function()
-//{
-//	return ( ConnManagerNew.statusInfo.appMode === 'Online' );
-//}
-
-
 
 // ===============================================
 // --- Scheduler related Tasks ---
@@ -359,7 +352,10 @@ ConnManagerNew.update_UI = function( statusInfo )
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 {
 	// update loginScreen Logo (grayscale = offline): offline indicator before logging in
-    if ( statusInfo.appMode === 'Online' ) {
+	//$('#ConnectingWithSara').removeClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOffline' : 'logoOnline' );
+	//$('#ConnectingWithSara').addClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOnline' : 'logoOffline' );
+	
+    if ( ConnManagerNew.isAppMode_Online() ) {
 		$('#ConnectingWithSara').removeClass('logoOffline');
 		$('#ConnectingWithSara').addClass('logoOnline');
 	  }
@@ -372,8 +368,8 @@ ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 
 ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 {
-	var networkServerConditionsGood = ( statusInfo.networkConn.currentStableMode === 'Online' && statusInfo.appMode === 'Online' );
-	
+	var networkServerConditionsGood = ConnManagerNew.isAppMode_Online();
+
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
 	var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( statusInfo.networkConn.currentStableMode === 'Online' ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
 

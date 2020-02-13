@@ -8,8 +8,9 @@ function StatusInfoManager() {};
 
 StatusInfoManager.dataServerStatus;
 StatusInfoManager.otherOnes;
+StatusInfoManager.debugMode = false;
 
-// Can be also used to call this from console.log();
+// TODO: MOVE: Create statusInfoSummary class to get all status data at once?
 StatusInfoManager.getInfo = function()
 {
 	// create  Server Available changes

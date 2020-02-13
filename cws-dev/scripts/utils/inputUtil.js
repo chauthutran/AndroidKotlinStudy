@@ -97,7 +97,7 @@ function inputMonitor( cwsRenderObj )
     
             }, parseInt( inputMonLogoutDelay ) * 60 * 1000 ); //60 * 60 * 1000
     
-            // console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+            if ( StatusInfoManager.debugMode ) console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
         }
         
 

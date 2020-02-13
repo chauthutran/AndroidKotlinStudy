@@ -2,7 +2,7 @@
 // First draft pseudoCode write up (2020-02-05): greg
 // - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- ---
 //
-// 1. create viewsListController (and control(s?))
+// 1. create viewsListController ( and control(s?) )
 //  
 //  1.1 create viewsList control
 //  1.1.1 fetch activityListViews from DCDconfig
@@ -30,6 +30,19 @@
 // - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- ---
 
 
+// CHANGE: blockList has a copy of activityItemList..  
+// At start of blockList, 
+
+// If view list in config does not exist, blockList.activityItemList = [];
+//  and do copy of array contents..  for... blockList.activityItemList each,  activityItemList.push( cwsRender._activityList.list.items);
+
+// If we do have 'viewList' in blockList config, depends on the selection of the view, 
+// we generate different list, we use cwsRender._activityList.list.items to filter or sort and push to --> blockList.activityItemList.push( );
+// list blockList.activityItemList
+
+// What we didn't describe --> html generation...  <-- 100 by filter --> you are displaying 15 at a time..
+
+
 function ViewsList( blockList )
 {
     var me = this;
@@ -43,8 +56,14 @@ function ViewsList( blockList )
     me.viewsListTag; //rename?
     me.element;
     me.select;
+    me.recordPager;
+
     me.blockList_TagUL;
     me.blockList_TagsLI;
+
+    me.filteredData_ForBlockList; // temp holder of last filtered activityList (for reuse/sorting/etc)
+
+    me.showRecordPager = false;
 
 //  # 1
     me.createViewsList_Controllers = function ( arrViews )
@@ -53,6 +72,7 @@ function ViewsList( blockList )
 
         me.createViewsList_Items( arrViews );
 
+        // run 1st time only [default to 1st filter in list]
         setTimeout( function(){
             me.runApply_ViewsListFilter( arrViews[ 0 ] );
         }, 500);
@@ -67,11 +87,19 @@ function ViewsList( blockList )
 
         // - -- --- -- - New code logic as per pseudocode - -- --- -- - 
         // - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- --  
-        me.viewsList_RunDataFetch_WithFilter( me.viewsList_CurrentItem, function( filteredItems ) {
+        me.viewsList_RunDataFetch_AndFilter( me.viewsList_CurrentItem, function( filteredItems ) {
 
             me.viewsListSorterObj.sortList_RunSort( filteredItems, function( sortedItems ) {
 
-                me.blockListObj.evalScrollOnBottom();
+                me.filteredData_ForBlockList = sortedItems;
+
+                me.blockListObj.blockList_Paging_lastItm = 0;
+
+                me.blockListObj.evalScrollOnBottom( me.filteredData_ForBlockList, function( recordFrom, recordTo, recordCount ){
+
+                    me.viewsListSorterObj.sortList_Pager_UI_finish( recordFrom, recordTo, recordCount );
+
+                } );
 
             })
         })
@@ -81,7 +109,6 @@ function ViewsList( blockList )
 
         // - -- --- -- - -- --- OLD CODE logic  - -- --- -- - -- --- -
 
-        me.prepareTagsLi();
         me.blockList_TagsLI.hide();
 
         // Change: fetch data from 'memory' not DataManager/DB
@@ -99,7 +126,6 @@ function ViewsList( blockList )
     }
 
 
-
     me.createViewsList_Controls = function()
     {
 
@@ -114,9 +140,9 @@ function ViewsList( blockList )
     me.initializeViewsList_Defaults = function()
     {
         me.viewsList_ContainerTag = $(`
-            <div class="tb-content-filterView inputDiv">
+            <div class="viewsListFIlterAndSortContainer inputDiv">
                 <label term="" class="from-string titleDiv">Select a view</label>
-                <div style="display:flex;align-items:center;padding: 0 6px 0 0;">
+                <div class="viewsListContainerTag">
                 </div>
             </div>
         `);
@@ -124,6 +150,14 @@ function ViewsList( blockList )
         me.element = $(`
             <div class="select" style="flex-grow:1;">
                 <select class='selector'></select>
+            </div>
+        `);
+
+        me.recordPager = $(`
+            <div class="viewsListPager" style="">
+                <img class="pagerLeft" src="images/arrow_left.svg" style="opacity:0" >
+                <img class="pagerRight" src="images/arrow_right.svg" style="opacity:0" >
+                <span class="pagerInfo"></span>
             </div>
         `);
 
@@ -186,12 +220,15 @@ function ViewsList( blockList )
         me.getViewsListItemConfig( itemID, function( viewsListItem ){
 
             me.viewsList_CurrentItem = viewsListItem;
+            me.filteredData_ForBlockList = [];
 
-            me.viewsListSorterObj.setSortList_CurrentItem( me.viewsList_CurrentItem );
+            me.blockListObj.clearExistingList();
+
+            me.viewsListSorterObj.createSortList_FomViewsListItem( me.viewsList_CurrentItem );
 
         } );
 
-    }
+    };
 
     me.getViewsListItemConfig = function( itemID, callBack )
     {
@@ -200,14 +237,41 @@ function ViewsList( blockList )
         }) 
 
         callBack( itemConfig )
-    }
+    };
 
 
-    me.viewsList_RunDataFetch_WithFilter = function( viewsListConfig, callBack )
+    me.viewsList_RunDataFetch_AndFilter = function( viewsListConfig, callBack )
     {
-        //TO DO
-        var filteredData = viewsListConfig; // cwsRender.__activityListData.list
-        callBack( filteredData ); // return evalResultsFiltered ( cwsRender.__activityListData )
+        //why do we need this [viewsList_getBlockListData_AndRunFilter] >> can't it be done by [viewsList_RunDataFetch_AndFilter]?
+        me.viewsList_getBlockListData_AndRunFilter( viewsListConfig, function( filteredData ){
+
+            callBack( filteredData ); // return evalResultsFiltered ( cwsRender.__activityListData )
+
+        } );
+
+    };
+
+    me.viewsList_getBlockListData_AndRunFilter = function( viewsListConfig, callBack )
+    {
+        // 1. fetch blockList data array
+        // 2. apply filters
+
+        var filterData = me.blockListObj.cwsRenderObj._activityListData;
+        var returnData = []; //{ 'list': [] };
+
+        if ( filterData && filterData.list )
+        {
+            for ( var i = 0; i < filterData.list.length; i++ )
+            {
+                if ( me.viewListItem_Filter( viewsListConfig.query, filterData.list[ i ] ) )
+                {
+                    //returnData.list.push( filterData.list[ i ] );
+                    returnData.push( filterData.list[ i ] );
+                }
+            }
+        }
+
+        callBack( returnData )
     }
 
     me.viewListItem_Filter = function( query, activityItem )
@@ -220,15 +284,54 @@ function ViewsList( blockList )
             console.log( 'error evaluating viewList query : ' + err);
         }
         return success;
+    };
+
+
+
+    me.createPager_ObjectNEvents = function()
+    {
+        if ( me.showRecordPager )
+        {
+            var leftPager = $( ".pagerLeft", me.recordPager );
+            var rightPager = $( ".pagerRight", me.recordPager );
+    
+            leftPager.click( () => me.pageDirection( -1 ) );
+            rightPager.click( () => me.pageDirection( 1 ) );
+    
+            return me.recordPager;
+        }
+
     }
 
-    me.prepareTagsLi = function ()
+    me.pageDirection = function( nextPageDirection )
     {
-        me.blockList_TagUL = $("#renderBlock .listDiv .tab__content_act");
-        me.blockList_TagsLI = $("li[itemid]", me.blockList_TagUL);
-        me.groupsLi = $("li.dateGroup", me.blockList_TagUL);
-        
-        me.groupsLi.each( ( key, li ) => $(li).hide() );
+
+        if ( nextPageDirection > 0 )
+        {
+            // next 15
+            console.log( 'next ' );
+
+            me.viewsListSorterObj.sortList_Pager_UI_start();
+
+            me.blockListObj.cwsRenderObj.pulsatingProgress.show();
+            me.blockListObj.redeemListScrollingState = 1;
+
+            setTimeout( function() {
+
+                me.blockListObj.appendRedeemListOnScrollBottom( me.filteredData_ForBlockList, function( recordFrom, recordTo, recordCount ){
+
+                    me.viewsListSorterObj.sortList_Pager_UI_finish( recordFrom, recordTo, recordCount );
+
+                } );
+
+            }, 500 );
+
+        }
+        else
+        {
+            // prev 15
+            console.log( 'prev ' );
+        }
     }
 
 }
@@ -238,11 +341,12 @@ function ViewsList( blockList )
 function ViewsListSorter( viewsList )
 {
     var me = this;
-    
+
     me.viewsListObj = viewsList; //do we need this?
 
     me.sortList_Items;
     me.sortList_CurrentItem;
+    me.sortList_CurrentTagLI;
 
     me.blockList_TagUL;
     me.blockList_TagsLI;
@@ -253,9 +357,11 @@ function ViewsListSorter( viewsList )
 
 
 //  # 2
-    me.setSortList_CurrentItem = function( viewsList_CurrentItem )
+    me.createSortList_FomViewsListItem = function( viewsList_CurrentItem )
     {
+
         me.sortList_Items = viewsList_CurrentItem.sort; //passes array obj
+        me.sortList_CurrentItem = me.sortList_Items[ 0 ];
 
         me.createSortList_Items();
     };
@@ -264,31 +370,33 @@ function ViewsListSorter( viewsList )
     {
         me.sortList_TagUL.empty();
 
-        me.sortList_Items.forEach( ( sortObj ) => {
-
+        for ( var i = 0; i < me.sortList_Items.length; i++ )
+        {
+            var sortObj = me.sortList_Items[ i ];
             var li = $(`<li sortid="${sortObj.id}" >${sortObj.name}</li>`);
 
             li.click( function()
             {
-                me.prepareTagsLi();
-                me.sortList_CurrentItem && me.sortList_CurrentItem.css("font-weight","normal");
-                me.runApply_ViewsListSort( sortObj );
-                me.sortList_CurrentItem = li;
-                li.css("font-weight","bolder")
+                me.sortList_ApplySortItem( this );
                 me.sortList_TagUL.hide();
             });
 
             me.sortList_TagUL.append( li );
 
-            if ( sortObj.groupAfter != undefined ) console.log( sortObj );
             if ( sortObj.groupAfter != undefined && sortObj.groupAfter === 'true' )
             {
                 var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
                 me.sortList_TagUL.append( liGroup );
-
             }
 
-        });
+            if ( i === 0 ) 
+            {
+                me.sortList_CurrentItem = sortObj;
+                me.sortList_CurrentTagLI = li;
+                li.css("font-weight","bolder");
+            }
+
+        }
 
     };
 
@@ -304,7 +412,7 @@ function ViewsListSorter( viewsList )
                 <ul></ul>
             </div>
         `);
-        
+
         me.sortList_Tagbutton = $( "button", me.element );
         me.sortList_TagUL = $( "ul", me.element );
 
@@ -312,61 +420,132 @@ function ViewsListSorter( viewsList )
 
         $( document ).click( ev => ( ev.target != me.sortList_Tagbutton[0] ) && me.sortList_TagUL.hide() );
     };
-    
+
+//  # 4
     me.sortList_RunSort = function( filteredData, callBack )
     {
-        //TO DO
         var sortedData = filteredData;
-        callBack ( sortedData );
-    }
 
+        try {
 
-    me.runApply_ViewsListSort = function ( sortObj )
-    {
-        console.log( sortObj );
-        /*
-        me.blockList_TagsLI.detach().sort( function (liA, liB)
-        {
-            const arr=[], 
-            idA = $(liA).attr("itemid"),
-            idB = $(liB).attr("itemid"),
-            compare = function()
+            sortedData.sort(function(a, b)
             {
-                if ( arr.idA && arr.idB )
+                if ( me.sortList_CurrentItem.order.toLowerCase().indexOf( 'desc' ) )
                 {
-                    var result = arr.idA.localeCompare( arr.idB );
-                    if(result == 0) return 0;
-                    return result > 0 ? 1 : -1
+                    //old method
+                    //if ( a[ me.sortList_CurrentItem.field ] < b[ me.sortList_CurrentItem.field ] ) return -1;
+                    //if ( b[ me.sortList_CurrentItem.field ] < a[ me.sortList_CurrentItem.field ] ) return 1;
+                    //else return 0;
+
+                    var sortEval = '( a.' + me.sortList_CurrentItem.field + ' < b.' + me.sortList_CurrentItem.field + ' ) ? -1 : ' +
+                                    ' ( b.' + me.sortList_CurrentItem.field + ' < a.' + me.sortList_CurrentItem.field + ' ) ? 1 ' +
+                                    ' : 0 ';
                 }
-            };
+                else
+                {
+                    //old method
+                    //if ( a[ me.sortList_CurrentItem.field ] > b[ me.sortList_CurrentItem.field ] ) return -1;
+                    //if ( b[ me.sortList_CurrentItem.field ] > a[ me.sortList_CurrentItem.field ] ) return 1;
+                    //else return 0;
 
-            DataManager.getItemFromData( "redeemList", idA, card =>
-            {
-                const value = getFeature( card )
-                arr.push({idA:value})
-                if(arr.length == 2) return compare();
+                    var sortEval = '( a.' + me.sortList_CurrentItem.field + ' > b.' + me.sortList_CurrentItem.field + ' ) ? -1 : ' +
+                                    ' ( b.' + me.sortList_CurrentItem.field + ' > a.' + me.sortList_CurrentItem.field + ' ) ? 1 ' +
+                                    ' : 0 ';
+
+                }
+
+                return eval( sortEval );
+
             });
 
-            DataManager.getItemFromData( "redeemList", idB, card =>
-            {
-                const value = getFeature( card );
-                arr.push({idB:value})
-                if(arr.length == 2) return compare();
-            });
+            callBack ( sortedData );
 
-        });
-
-        me.blockList_TagUL.append( me.blockList_TagsLI );*/
+        }
+        catch (err) {
+            console.log( 'error running viewsListManager.sortList_RunSort on field [' + me.sortList_CurrentItem.field + ']');
+        }
 
     }
 
-    me.prepareTagsLi = function ()
+
+    me.sortList_ApplySortItem = function ( sortTag )
     {
-        me.blockList_TagUL = $("#renderBlock .listDiv .tab__content_act");
-        me.blockList_TagsLI = $("li[itemid]", me.blockList_TagUL);
-        me.groupsLi = $("li.dateGroup", me.blockList_TagUL);
-        
-        me.groupsLi.each( ( key, li ) => $(li).hide() );
+
+        var sortObj = me.sortListItem_FromTag( sortTag );
+
+        me.sortList_CurrentTagLI = sortTag;
+        me.sortList_CurrentItem = sortObj;
+
+        me.sortList_Pager_UI_start();
+        me.sortListItem_SelectTag( sortTag );
+
+        me.viewsListObj.blockListObj.clearExistingList();
+
+        // UX delay
+        setTimeout( function(){
+
+            me.sortList_RunSort( me.viewsListObj.filteredData_ForBlockList, function( sortedItems ) {
+
+                me.filteredData_ForBlockList = sortedItems;
+    
+                me.viewsListObj.blockListObj.blockList_Paging_lastItm = 0;
+                me.viewsListObj.blockListObj.redeemListScrollLimit = sortedItems.length;
+
+                me.viewsListObj.blockListObj.evalScrollOnBottom( me.viewsListObj.filteredData_ForBlockList, function( recordFrom, recordTo, recordCount ){
+
+                    me.sortList_Pager_UI_finish( recordFrom, recordTo, recordCount );
+
+                } );
+    
+            })
+
+        }, 250);
+
+    }
+
+    me.sortList_Pager_UI_start = function()
+    {
+        $( '.pagerLeft' ).css( 'opacity', 0.25 );
+        $( '.pagerRight' ).css( 'opacity', 0.25 );
+        $( '.pagerInfo' ).css( 'opacity', 0.25 );
+        //$( '.pagerInfo' ).html( '' );
+    }
+
+    me.sortList_Pager_UI_finish = function( recordFrom, recordTo, recordCount )
+    {
+        $( '.pagerLeft' ).css( 'opacity', ( recordFrom > 1 ) ? 0.5 : 0.25 );
+        $( '.pagerRight' ).css( 'opacity', ( recordTo === recordCount ) ? 0.25 : 0.5 );
+        $( '.pagerInfo').html( recordFrom + ' - ' + recordTo + ' of ' + recordCount )
+        $( '.pagerInfo' ).css( 'opacity', ( recordCount ) ? 1 : 0.25 );
+    }
+
+    me.sortListItem_SelectTag = function( sortTag )
+    {
+        for ( var i = 0; i < me.sortList_Items.length; i++ )
+        {
+            if ( $( sortTag ).attr( 'sortid' ) === me.sortList_Items[ i ].id )
+            {
+                $( me.sortList_TagUL ).find( 'li[sortid="' + me.sortList_Items[ i ].id + '"]' ).css("font-weight","bolder");
+            }
+            else
+            {
+                $( me.sortList_TagUL ).find( 'li[sortid="' + me.sortList_Items[ i ].id + '"]' ).css("font-weight","normal");
+            }
+        }
+
+    }
+
+    me.sortListItem_FromTag = function( sortTag )
+    {
+
+        for ( var i = 0; i < me.sortList_Items.length; i++ )
+        {
+            if ( $( sortTag ).attr( 'sortid' ) === me.sortList_Items[ i ].id )
+            {
+                return me.sortList_Items[ i ];
+            }
+        }
+
     }
 
     me.createSortList_Controllers();

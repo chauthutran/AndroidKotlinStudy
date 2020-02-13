@@ -28,16 +28,12 @@ self.__precacheManifest = [
     "revision": "0ecbb1a0d51067dcdc00987e81ba2307"
   },
   {
-    "url": "css/qunit.css",
-    "revision": "aa03c22c7ae5acdc832b0b719193d453"
-  },
-  {
     "url": "css/responsive.css",
-    "revision": "e6c863eec6464d39750d07a2bb4b621f"
+    "revision": "a43b4b62e1d6abff7544a95d39a02147"
   },
   {
     "url": "css/style.css",
-    "revision": "cec65e530a842b8d9f92f1dfb5cc2eba"
+    "revision": "149da5c4f66f6863791a05b47d7d3b67"
   },
   {
     "url": "images/about.svg",
@@ -361,15 +357,15 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "69500f83aac6881f8d2015e3cd16d401"
+    "revision": "0ffd1334c67147a351a4084a4f4db777"
   },
   {
     "url": "redeemGen.html",
-    "revision": "dec1607e12653b8c744b14c6811f25cc"
+    "revision": "b47265c7754f17f741c73408171305cb"
   },
   {
     "url": "scripts/app.js",
-    "revision": "56b3e0ec9aa211befa5fe879a334da22"
+    "revision": "eb772e514a5ac3363190df2e843b0b26"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -405,7 +401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "d75a8fab83c89f496b9f55082bb16c12"
+    "revision": "ce327c9c68d0ec47faefa6ab03f1f6eb"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -465,11 +461,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "74b280fa2b0ce1ff22678db40a95ce3d"
+    "revision": "aca761a3dd4240ed662750d3dae4e8a0"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "2af00793df17e1706afc6428b97a1830"
+    "revision": "8ce71e8822deb5b6cb8e96ff8061db15"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -520,10 +516,6 @@ self.__precacheManifest = [
     "revision": "132734424cbe44372cf5fc2d6f7e2ec3"
   },
   {
-    "url": "scripts/libraries/qunit.js",
-    "revision": "12bbfc8e326e6881bb82e836b4d51106"
-  },
-  {
     "url": "scripts/services/cacheManager.js",
     "revision": "12a125e92e4408bd95f6d456065824e1"
   },
@@ -533,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "1bc6c4bce2a38336414b6afcb1d81fb5"
+    "revision": "1bed545a3d7d7635d33f782ef094230c"
   },
   {
     "url": "scripts/services/dataManager2.js",
@@ -573,7 +565,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/statusInfoManager.js",
-    "revision": "5ab804755b51f45ffd92be8092f65c5f"
+    "revision": "4447d5788cb0b71d1a9f0ec563b721bc"
   },
   {
     "url": "scripts/services/storageMng.js",
@@ -589,11 +581,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "272a84e3725a315cd8ad9b1558754893"
+    "revision": "36a61a3204b4a43c45597fcb10243cde"
   },
   {
     "url": "scripts/services/viewsListManager.js",
-    "revision": "c1e40b3889d12203cac40c7b65173a27"
+    "revision": "155e2f5bf9e2c9bb0d788224d0aac85d"
   },
   {
     "url": "scripts/services/wsApiManager.js",
@@ -613,11 +605,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "4cceef8b94b9994f28fd2f9bda99dab3"
+    "revision": "40637a1d914ba79e3a43c1c237d119ab"
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "4e655689b6e122d6f566c4d5ba90eafd"
+    "revision": "591e6d08fe07d5995133630a11449800"
   },
   {
     "url": "scripts/utils/localStatistics.js",
@@ -701,7 +693,7 @@ self.__precacheManifest = [
   },
   {
     "url": "styles/style.css",
-    "revision": "38aaef78ee8059729eb38a751057a280"
+    "revision": "471c2e3da201caf8c38a9160d87e4b8e"
   },
   {
     "url": "unittest/jest/util.test.js",
@@ -729,7 +721,7 @@ self.__precacheManifest = [
   },
   {
     "url": "unittest/qunittest/test.html",
-    "revision": "9bdb19ca6b628e040fe06bf633a79d03"
+    "revision": "bf0138ea0fb2e73d5b061e36c73a8a96"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

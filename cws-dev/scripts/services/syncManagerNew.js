@@ -274,7 +274,12 @@ SyncManagerNew.syncStart = function()
 
 SyncManagerNew.syncAllButtonChange = function()
 {
-    showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
+    showSyncIcon = ( ConnManagerNew.isAppMode_Online()  );
+
+    if ( showSyncIcon )
+    {
+        showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
+    }
     
     ( showSyncIcon ) ? $('#divAppDataSyncStatus').show() : $('#divAppDataSyncStatus').hide();
     ( showSyncIcon ) ? $('#imgAppDataSyncStatus').show() : $('#imgAppDataSyncStatus').hide();

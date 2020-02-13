@@ -17,7 +17,7 @@
   // ----------------------------------------------------
 
   App_UI_startUp_loading();
-  
+
   _swManagerObj.run( function(){
 
     startApp();

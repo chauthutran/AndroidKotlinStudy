@@ -1507,12 +1507,10 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 	
 }
 
-
 FormUtil.gAnalyticsEventAction = function( returnFunc )
 {
 	var dcd = DataManager.getUserConfigData();
 	var ret = '';
-	
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
@@ -1962,26 +1960,27 @@ FormUtil.createNumberLoginPinPad = function()
           $( "#passReal" ).val( '' );
           $( "#pass" ).val( '' );
         }
-	  });
-	  
-	  const PWD_INPUT_PADDING_LEFT = 10;
-	  const CHAR_SPACING_WIDTH = 5;
+	});
 
-      $( "#passReal" ).keyup( function( event ) {
-		  $('#pass').val( $('#passReal').val() );
-          $('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
-      });
+	const PWD_INPUT_PADDING_LEFT = 10;
+	const CHAR_SPACING_WIDTH = 5;
 
-      $( "#pass" ).focus( function() {
-		  $('#passReal').focus();
-          $('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
-          $('#passReal').css( 'top', $('#pass').position().top + 8 );
-      });
+	$( "#passReal" ).keyup( function( event ) {
+		$('#pass').val( $('#passReal').val() );
+		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
+	});
 
-      setTimeout( function() {
-          $('#passReal').css( 'top', $('#pass').position().top + 12 );
-          $('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );
-      }, 500 );
+	$( "#pass" ).focus( function() {
+		$('#passReal').focus();
+		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
+		$('#passReal').css( 'top', $('#pass').position().top + 8 );
+	});
+
+	setTimeout( function() {
+		$('#passReal').css( 'top', $('#pass').position().top + 12 );
+		$('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );
+	}, 500 );
+
 };
 
 

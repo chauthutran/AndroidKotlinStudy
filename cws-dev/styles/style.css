@@ -51,7 +51,7 @@ input.loginUserPinNumeric
 input.loginUserPinNumeric:focus
 {
   border-left:0px solid #fff !important;
-  border-right:0.5px solid #333 !important;
+  border-right:1px solid #333 !important;
 
   animation: blink-input-focus 1000ms infinite ;
 
