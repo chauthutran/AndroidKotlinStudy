@@ -42,8 +42,6 @@ function cwsRender()
     me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?  // move to SchedManager?
     me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds? // move to SchedManager?
 
-	me._globalMsg = "";
-	me._globalJsonData = undefined;
 
 	// Create separate class for this?
 	// NOT BEING USED.

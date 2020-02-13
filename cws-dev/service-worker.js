@@ -28,6 +28,10 @@ self.__precacheManifest = [
     "revision": "0ecbb1a0d51067dcdc00987e81ba2307"
   },
   {
+    "url": "css/qunit.css",
+    "revision": "aa03c22c7ae5acdc832b0b719193d453"
+  },
+  {
     "url": "css/responsive.css",
     "revision": "a43b4b62e1d6abff7544a95d39a02147"
   },
@@ -373,7 +377,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "f6f9b5954fbf709ee866ef908f0b982c"
+    "revision": "fdd34e4a3e2832ed37487de98aecc6a0"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -465,7 +469,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "8ce71e8822deb5b6cb8e96ff8061db15"
+    "revision": "119c3d5107ab52e3043ead2a14bf8f6f"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -514,6 +518,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/moment.min.js",
     "revision": "132734424cbe44372cf5fc2d6f7e2ec3"
+  },
+  {
+    "url": "scripts/libraries/qunit.js",
+    "revision": "12bbfc8e326e6881bb82e836b4d51106"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -585,7 +593,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/viewsListManager.js",
-    "revision": "155e2f5bf9e2c9bb0d788224d0aac85d"
+    "revision": "86aab4993e8d07a3e617aef108ee801a"
   },
   {
     "url": "scripts/services/wsApiManager.js",
@@ -721,7 +729,7 @@ self.__precacheManifest = [
   },
   {
     "url": "unittest/qunittest/test.html",
-    "revision": "bf0138ea0fb2e73d5b061e36c73a8a96"
+    "revision": "41b8d2c8ee0356de3d0d683b26967b60"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

@@ -172,8 +172,9 @@ function Action( cwsRenderObj, blockObj )
 		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
 
 		// ACTIVITY ADDING
-		ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
+		var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
 
+		
 		if ( clickActionJson )
 		{
 			if ( clickActionJson.actionType === "evaluation" )
@@ -371,6 +372,12 @@ function Action( cwsRenderObj, blockObj )
 
 				//var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
 				//me.cwsRenderObj.configJson.definitionForms[ blockJson.form ]
+
+
+				// DEBUG: JAMES:
+				console.log( '=====> sendToWS ActivityListData: ' );
+				console.log( ActivityUtil.getActivityList() );
+
 
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 
