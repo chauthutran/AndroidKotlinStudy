@@ -12,12 +12,11 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
     // For some types, clear the activity list <-- to track/collect from 
     if ( type === "area" ) ActivityUtil.clearActivity();
 
-
     var activityJson = {};
     activityJson.type = type;
     activityJson.defJson = defJson;
     activityJson.defId = ( typeof defId === 'string' ) ? defId : ""; 
-    activityJson.inputsJson = inputsJson;
+    activityJson.inputsJson = inputsJson;  // Possibility..
 
     // Add to the activity list.
     ActivityUtil.activityList.push( activityJson );
@@ -26,6 +25,7 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
 };
 
 
+// Not yet used..
 ActivityUtil.setInputsJson = function( activityJson, inputsJson )
 {
     activityJson.inputsJson = inputsJson;

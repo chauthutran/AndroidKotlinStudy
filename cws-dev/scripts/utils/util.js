@@ -160,16 +160,11 @@ Util.unselectAllOption = function ( listTag ) {
 	listTag.find('option').attr('selected', true);
 };
 
-Util.getDeepCopy = function( obj )
+Util.getJsonDeepCopy = function( jsonObj )
 {
-	// Does not work..
-	return $.extend( true, {}, obj );
+	return JSON.parse( JSON.stringify( jsonObj ) );
 };
 
-Util.getObjectFromStr = function( str )
-{
-	return $.parseJSON( str );
-};
 
 Util.valueEscape = function( input )
 {
@@ -196,6 +191,12 @@ Util.reverseArray = function( arr )
 
 // ----------------------------------
 // Check Variable Related
+
+Util.getStr = function( val )
+{
+	return ( val ) ? val : '';
+}
+
 Util.getProperValue = function( val )
 {
 	Util.getNotEmpty( val );

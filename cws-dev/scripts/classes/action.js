@@ -369,30 +369,20 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
-
-				//var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
-				//me.cwsRenderObj.configJson.definitionForms[ blockJson.form ]
-
-
 				// DEBUG: JAMES:
-				console.log( '=====> sendToWS ActivityListData: ' );
-				console.log( ActivityUtil.getActivityList() );
+				//console.log( '=====> sendToWS ActivityListData: ' );
+				//console.log( ActivityUtil.getActivityList() );
+
+				// Temporarily move before 'handlePayloadPreview' - since version 1 
+				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag );
 
 
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 
 					var currBlockId = blockDivTag.attr( 'blockId' );
-					var inputsJson;
 
-					// generate inputsJson - with value assigned...
-					if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
-					{
-						inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
-					}
-					else
-					{
-						inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
-					}
+					//var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag );
+
 
 					var previewJson = FormUtil.generateInputJson( formDivSecTag );
 
@@ -414,7 +404,10 @@ function Action( cwsRenderObj, blockObj )
 						submitJson.previewJson = previewJson;
 						submitJson.actionJson = clickActionJson;
 						submitJson.url = url;
-	
+						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
+						submitJson.payloadJson2 = me.reconfigurePayloadJson2( inputsJson );
+
+						
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
@@ -473,6 +466,7 @@ function Action( cwsRenderObj, blockObj )
 							});
 						}
 					}
+
 
 				} )
 
@@ -584,5 +578,96 @@ function Action( cwsRenderObj, blockObj )
 	{
 		btnTag.removeClass( 'clicked' );
 	}
+
+	// ========================================================
+	
+	me.generateInputJsonByType = function( clickActionJson, formDivSecTag )
+	{
+		var inputsJson;
+
+		// generate inputsJson - with value assigned...
+		if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
+		{
+			inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
+		}
+		else
+		{
+			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+		}		
+
+		return inputsJson;
+	}
+
+
+	// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
+	me.reconfigurePayloadJson2 = function( inputsJson )
+	{
+		var templateJson = 
+		{
+			"activityId": "",
+			"userName": "",
+			"password": "",
+
+			"searchValues": {
+				"clientDetails": { }
+			},
+
+			"captureValues": {
+				"activityDate": {},
+				"activityId": "",
+				"activityType": "",
+				"program": "",
+				"activeUser": "",
+				"dc": { },
+				"location": {},
+				"transactions": []
+			}
+		};
+
+		// hard copy from template...
+		var payloadJson2 = Util.getJsonDeepCopy( templateJson );
+
+		// 0. Set "activityId", "userName", "password": "4321",
+		payloadJson2.activityId = "20200214" + Util.generateRandomId(6);
+		payloadJson2.userName = "LA_TEST_PROV";
+		payloadJson2.password = "4321";
+
+
+		// 1. Set Search Criteria.. (Later, Should be 'searchValues' = ... )
+		payloadJson2.searchValues.clientDetails = { 'phoneNumberCurrent': Util.getStr( inputsJson.phoneNumberCurrent ) };
+
+
+		// -------------------------------------
+		// 2. Set capture values..
+		// activityDate
+		var captureJson = payloadJson2.captureValues;
+		captureJson.activityDate = {
+			"capturedUTC": "2020-01-17T12:32:00.000",
+			"capturedLoc": "2020-01-17T11:32:00.000",
+			"createdOnDeviceUTC": new Date().toISOString() //"2020-06-17T12:32:30.000"
+		};
+
+		captureJson.activityId = payloadJson2.activityId;
+		// activityType, program, dc, location, activeUser
+
+		// Need to be properly populated - later..
+		captureJson.location = { "type:": "Point", "coordinates": [ -0.9969609975814819, 33.9327278137207 ] };
+		captureJson.accuracy = 100;
+		captureJson.dc = { "app": "pwa-connect", "softwareVersion": "1.3.2", "configVersion": "5" };
+		captureJson.activeUser = "qwertyuio1";
+		captureJson.activityType = "sp";
+		captureJson.program = "fpl";
+
+		// 2.1 - Set Transactions..
+		// 		- Registration (In case the record does not exists) <-- Normally, voucherCode would not be here?
+		captureJson.transactions.push( { "transactionType": "c_reg", "dataValues": inputsJson } );
+
+		// 		- In our case, issue voucher as well..
+		captureJson.transactions.push( { "transactionType": "v_iss", "dataValues": { 'voucherCode': Util.getStr( inputsJson.voucherCode ) } } );
+
+
+		return payloadJson2;
+	};
+
 
 }

@@ -33,6 +33,9 @@
     ConnManagerNew.createNetworkConnListeners();
 
     ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
+    
+    DevHelper.setUp( _cwsRenderObj );
+
 
     try {
 

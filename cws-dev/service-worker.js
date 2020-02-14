@@ -361,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0ffd1334c67147a351a4084a4f4db777"
+    "revision": "2193cef5ccf23f96c2111aa20c66ee57"
   },
   {
     "url": "redeemGen.html",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "eb772e514a5ac3363190df2e843b0b26"
+    "revision": "2f00366ffa4a495d87e433a87cbfd09f"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -377,7 +377,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "fdd34e4a3e2832ed37487de98aecc6a0"
+    "revision": "4c3c37ab64bda650cf3c26289d2c2092"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -544,6 +544,10 @@ self.__precacheManifest = [
     "revision": "26bc7cc839d8b6de400e3162ecc30b68"
   },
   {
+    "url": "scripts/services/devHelper.js",
+    "revision": "32c4cf7d78ca4fe9c34eded4eeb5c5dd"
+  },
+  {
     "url": "scripts/services/formMsgManager.js",
     "revision": "d12cdc7721b1ecbd8b430e8f4a4ea4df"
   },
@@ -601,7 +605,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "864292dfe7a6da060d89cfbbc5d1b355"
+    "revision": "69e3591606ce484398d365b3a492f2f3"
   },
   {
     "url": "scripts/utils/configUtil.js",
