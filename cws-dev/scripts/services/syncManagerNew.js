@@ -110,6 +110,13 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 };
 
 
+// NEW: JAMES: ----
+SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
+{
+    console.log( ' <=== syncDownAll clicked' );
+};
+
+
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
 
@@ -274,17 +281,32 @@ SyncManagerNew.syncStart = function()
 
 SyncManagerNew.syncAllButtonChange = function()
 {
-    showSyncIcon = ( ConnManagerNew.isAppMode_Online()  );
+    //showSyncIcon = ( ConnManagerNew.isAppMode_Online() );
+    showSyncIcon = ConnManagerNew.isAppMode_Online();
+
+    //if ( showSyncIcon )
+    //{
+    //    showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
+    //}
+    
+    // ( showSyncIcon ) ? $('#divAppDataSyncStatus').show() : $('#divAppDataSyncStatus').hide();
+    // ( showSyncIcon ) ? $('#imgAppDataSyncStatus').show() : $('#imgAppDataSyncStatus').hide();
 
     if ( showSyncIcon )
     {
-        showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
+        $('#divAppDataSyncStatus').show(); 
+        $('#divAppDataSyncDownStatus').show(); 
+        //$('#imgAppDataSyncStatus').show();        
     }
-    
-    ( showSyncIcon ) ? $('#divAppDataSyncStatus').show() : $('#divAppDataSyncStatus').hide();
-    ( showSyncIcon ) ? $('#imgAppDataSyncStatus').show() : $('#imgAppDataSyncStatus').hide();
-    
-}
+    else
+    {
+        $('#divAppDataSyncStatus').hide();
+        $('#divAppDataSyncDownStatus').show(); 
+        //$('#imgAppDataSyncStatus').hide()
+    } 
+};
+
+
 SyncManagerNew.syncAll_WithChecks = function()
 {
     // automated sync process

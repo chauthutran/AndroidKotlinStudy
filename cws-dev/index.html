@@ -100,25 +100,17 @@
               <div id="divOptionalNav" class="icons-status" style="display:none;"></div>
             </td>
             <td>
+              <div id="divAppDataSyncDownStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncDownStatus" src="images/sync-error.svg" alt="sync down"></div>
+            </td>
+            <td>
               <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner"></div>
             </td>
             <td>
               <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus" style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
-              <div style="margin-top: -20px; margin-left: 6px;">
-                <table style="border: none; height: 2px;">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div id="divStatusDot_network" style="color: #ccc; font-weight: bold;">.</div>
-                      </td>
-                      <td>
-                        <div id="divStatusDot_server" style="color:#ccc; margin-left: 4px;font-weight: bold;">.</div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div style="margin-top: -20px; margin-left: 6px; width: 20px;">
+                <div id="divStatusDot_network" style="color: #ccc; font-weight: bold; margin-left: 6px; float: left;">.</div>
+                <div id="divStatusDot_server" style="color:#ccc; margin-left: 16px; font-weight: bold;">.</div>
               </div>
-
             </td>
           </tr>
         </table>

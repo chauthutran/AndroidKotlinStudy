@@ -1045,6 +1045,13 @@ a.searchresultSelector:hover {
 #imgAppDataSyncStatus {
   height: 28px;
   opacity: 0.65;
+  cursor: pointer;
+}
+
+#imgAppDataSyncDownStatus {
+  height: 28px;
+  opacity: 0.65;
+  cursor: pointer;
 }
 
 #spanOuName {
