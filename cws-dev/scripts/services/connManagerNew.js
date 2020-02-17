@@ -10,7 +10,7 @@ ConnManagerNew.networkConnTimeOut;
 
 ConnManagerNew.statusInfo = {
     'networkConn': {
-        'currentStableMode': 'Offline',
+        'currentStableMode': 'Offline',  // CHANGE TO boolean <-- with variable 'networkConn'?
     },
     'serverAvailable': false,
 	'appMode': 'Offline', 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.currentStableMode == 'Online' )
@@ -150,6 +150,8 @@ ConnManagerNew.changeServerAvailableIfDiff =  function( newAvailable, statusInfo
 	if ( newAvailable !== statusInfo.serverAvailable )
 	{
 		statusInfo.serverAvailable = newAvailable;
+
+		ConnManagerNew.update_UI( statusInfo );
 
 		ConnManagerNew.appModeSwitchRequest( statusInfo );
 	}
@@ -343,9 +345,10 @@ ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 ConnManagerNew.update_UI = function( statusInfo )
 {
     // update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
-
     if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
 	else ConnManagerNew.update_UI_NetworkIcons( statusInfo );
+
+	ConnManagerNew.update_UI_statusDots( statusInfo );
 }
 
 
@@ -381,4 +384,21 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 	}, 500 );
 
 	$( '#divNetworkStatus' ).css( 'display', 'block' );
+};
+
+
+ConnManagerNew.update_UI_statusDots = function( statusInfo ) 
+{	
+	var divStatusDot_networkTag = $( '#divStatusDot_network' );
+	var divStatusDot_serverTag = $( '#divStatusDot_server' );
+
+	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.currentStableMode === 'Online' );
+	ConnManagerNew.setStatusCss( divStatusDot_serverTag, statusInfo.serverAvailable );
+};
+
+
+ConnManagerNew.setStatusCss = function( tag, isOn ) 
+{
+	var colorStr = ( isOn ) ? 'lightGreen' : 'red';
+	tag.css( 'color', colorStr );
 };

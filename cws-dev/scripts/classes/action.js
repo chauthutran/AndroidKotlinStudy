@@ -406,8 +406,12 @@ function Action( cwsRenderObj, blockObj )
 						submitJson.url = url;
 						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
 						submitJson.payloadJson2 = me.reconfigurePayloadJson2( inputsJson );
+						submitJson.payloadJson = submitJson.payloadJson2; // OVERWRITE FOR TESTING..
 
-						
+						console.log( 'submitJson.payloadJson2' );
+						console.log( submitJson.payloadJson2 );
+
+
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{

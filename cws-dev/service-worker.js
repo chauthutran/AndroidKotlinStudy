@@ -361,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "2193cef5ccf23f96c2111aa20c66ee57"
+    "revision": "03aaa5e129904b26695d706fe79017ce"
   },
   {
     "url": "redeemGen.html",
@@ -377,7 +377,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "4c3c37ab64bda650cf3c26289d2c2092"
+    "revision": "eba9c098ff09459bcb11848d3792ea9c"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "1bed545a3d7d7635d33f782ef094230c"
+    "revision": "48ab4dec6dda12ed159165eb65e0a283"
   },
   {
     "url": "scripts/services/dataManager2.js",
@@ -645,7 +645,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "b7322e0d1ae1408c6491be2ba3651863"
+    "revision": "abd637feea88b30d7e4e36074cae6885"
   },
   {
     "url": "sounds/beep.mp3",
