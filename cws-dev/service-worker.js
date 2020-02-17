@@ -37,7 +37,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "149da5c4f66f6863791a05b47d7d3b67"
+    "revision": "a019c54f5976f503c81a3b4fc0153f86"
   },
   {
     "url": "images/about.svg",
@@ -361,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "03aaa5e129904b26695d706fe79017ce"
+    "revision": "eff407b92117af10eef5833cee45ae64"
   },
   {
     "url": "redeemGen.html",
@@ -369,7 +369,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "2f00366ffa4a495d87e433a87cbfd09f"
+    "revision": "d47b03f1627b9c16a1692cd64d90345c"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "48ab4dec6dda12ed159165eb65e0a283"
+    "revision": "040f14ecace7a5aff5e1d3d2cf37bdb5"
   },
   {
     "url": "scripts/services/dataManager2.js",
@@ -593,7 +593,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "36a61a3204b4a43c45597fcb10243cde"
+    "revision": "3256d5bfd26bd81d56f775dd21ac9162"
   },
   {
     "url": "scripts/services/viewsListManager.js",
