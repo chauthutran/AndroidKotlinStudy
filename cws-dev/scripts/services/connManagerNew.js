@@ -8,14 +8,19 @@ ConnManagerNew._cwsRenderObj;  // <-- Tran wants to make this class instantiatin
 ConnManagerNew.networkConnStableCheckTime = 5000; // ms, 5000ms = 5 seconds
 ConnManagerNew.networkConnTimeOut;
 
+ConnManagerNew.ONLINE = 'Online';
+ConnManagerNew.OFFLINE = 'Offline';
+
 ConnManagerNew.statusInfo = {
     'networkConn': {
-        'currentStableMode': 'Offline',  // CHANGE TO boolean <-- with variable 'networkConn'?
+		'online_Current': false,
+        'online_Stable': false // 'Offline',  // CHANGE TO boolean <-- with variable 'networkConn'?
     },
     'serverAvailable': false,
-	'appMode': 'Offline', 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.currentStableMode == 'Online' )
+	'appMode': ConnManagerNew.OFFLINE, 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.connected_Stable == 'Online' )
 	'appMode_PromptedMode': ''
 };
+
 
 ConnManagerNew.switchPrompt_reservedMsgID;
 //ConnManagerNew.switchPromptObj = new AppModeSwitchPrompt();
@@ -66,10 +71,16 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj, callBack )
 // Event Handler for checking / updating consistant(not frequently changed) network connection status.
 ConnManagerNew.updateNetworkConnStatus = function() 
 {
+	// Whenever there is network status change, clear the timeout that would have set 'online_Stable' 
+	//	if no change has happened in some period of time.
 	clearTimeout( ConnManagerNew.networkConnTimeOut );
 
-	var modeOnline = navigator.onLine;
-	
+	var modeOnline = navigator.onLine;	
+	ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
+
+	ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+
+
 	ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStatus
 		, ConnManagerNew.networkConnStableCheckTime
 		, ConnManagerNew.statusInfo
@@ -95,7 +106,7 @@ ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 {
 	try
 	{
-		if ( statusInfo.networkConn.currentStableMode === 'Online' )
+		if ( statusInfo.networkConn.online_Stable )
 		{
 			FormUtil.getDataServerAvailable( function ( success, jsonData ) {
 
@@ -130,7 +141,7 @@ ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 // Change Network Connection
 ConnManagerNew.changeNetworkConnStatus = function( statusInfo, modeOnline )
 {
-	statusInfo.networkConn.currentStableMode = ( modeOnline ) ? 'Online': 'Offline';
+	statusInfo.networkConn.online_Stable = modeOnline;
 
 	// Do we need a secondary-level function to switch Server:OFFLINE if network==='Offline'?
 	// --> it would be added here
@@ -209,8 +220,7 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 
 ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo ) 
 {
-	return ( statusInfo.networkConn.currentStableMode === 'Online'
-		&& statusInfo.serverAvailable ) ? 'Online': 'Offline';
+	return ( statusInfo.networkConn.online_Stable && statusInfo.serverAvailable ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
 };
 
 
@@ -306,14 +316,14 @@ ConnManagerNew.hidePrompt_AppSwitch = function()
 
 ConnManagerNew.createNetworkConnListeners = function()
 {
-    window.addEventListener('online', ConnManagerNew.updateNetworkConnStatus);
-	window.addEventListener('offline', ConnManagerNew.updateNetworkConnStatus);
+    window.addEventListener( 'online', ConnManagerNew.updateNetworkConnStatus );
+	window.addEventListener( 'offline', ConnManagerNew.updateNetworkConnStatus );
 };
 
 
 ConnManagerNew.isAppMode_Online = function()
 {
-	return ( ConnManagerNew.statusInfo.appMode === 'Online' );
+	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
 }
 
 
@@ -374,7 +384,7 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 	var networkServerConditionsGood = ConnManagerNew.isAppMode_Online();
 
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
-	var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( statusInfo.networkConn.currentStableMode === 'Online' ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
+	var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
 
 	$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
 
@@ -390,9 +400,11 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 ConnManagerNew.update_UI_statusDots = function( statusInfo ) 
 {	
 	var divStatusDot_networkTag = $( '#divStatusDot_network' );
+	var divStatusDot_networkStableTag = $( '#divStatusDot_networkStable' );
 	var divStatusDot_serverTag = $( '#divStatusDot_server' );
 
-	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.currentStableMode === 'Online' );
+	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.connected_Current );
+	ConnManagerNew.setStatusCss( divStatusDot_networkStableTag, statusInfo.networkConn.connected_Stable );
 	ConnManagerNew.setStatusCss( divStatusDot_serverTag, statusInfo.serverAvailable );
 };
 
