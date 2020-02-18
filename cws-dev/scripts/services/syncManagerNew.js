@@ -114,7 +114,47 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
 {
     console.log( ' <=== syncDownAll clicked' );
+
+    // Retrieve data..
+    SyncManagerNew.downloadActivities( function( success, returnJson ) 
+    {
+        console.log( 'SyncManagerNew.downloadActivities' );
+        console.log( success );
+        console.log( returnJson );
+
+        // Perform Merge... and refresh list if needed.
+    } );    
 };
+
+// Perform Server Operation..
+SyncManagerNew.downloadActivities = function( callBack )
+{
+    try
+    {
+        //var url = 'https://api-dev.psi-connect.org/PWA.activities';
+        var url = 'http://localhost:8080/dws-dev/PWA.activities';
+		var payloadJson = {
+            "activity": { 
+                "activeUser": "qwertyuio1" 
+                ,"activityDate.createdOnMdbUTC": {
+                    "$gte": "2020-01-01",
+                    "$lt": "2020-02-17"
+                }        			
+            }
+        };
+        var loadingTag = undefined;
+
+        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson ) {
+            callBack( success, returnJson );
+        });
+    }
+    catch( errMsg )
+    {
+        console.log( 'Error in SyncManagerNew.downloadActivities - ' + errMsg );
+        callBack( false );
+    }
+};
+
 
 
 // ===================================================

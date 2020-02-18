@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "043041c9aa8ababcf9e3f751a3937e02"
+    "revision": "92c64f340e3e992565b678c5a5972b7d"
   },
   {
     "url": "scripts/services/dataManager2.js",
@@ -593,7 +593,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "3256d5bfd26bd81d56f775dd21ac9162"
+    "revision": "1bdaaf51b5d491d409f12860ccae39e0"
   },
   {
     "url": "scripts/services/viewsListManager.js",
