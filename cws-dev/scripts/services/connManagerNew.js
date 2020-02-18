@@ -38,13 +38,16 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj, callBack )
 	try
 	{
 		// to start off > update UI to 'defaults' for connection settings
+		var modeOnline = navigator.onLine;
+		ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
 		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
+		
 		// These 2 below checks/change will each trigger appModeSwitchRequest
 		//	But, since this is before logged In, they will simply set them accordingly..
 
 		// sets 'networkConn.crrentStableMode'
-		ConnManagerNew.changeNetworkConnStatus( ConnManagerNew.statusInfo, navigator.onLine );
+		ConnManagerNew.changeNetworkConnStatus( ConnManagerNew.statusInfo, modeOnline );
 
 		// Below will trigger another 
 		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
@@ -77,7 +80,6 @@ ConnManagerNew.updateNetworkConnStatus = function()
 
 	var modeOnline = navigator.onLine;	
 	ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
-
 	ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
 
@@ -210,7 +212,6 @@ ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo )
 ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) 
 {
 	statusInfo.appMode = appModeNew;
-
 	console.log( 'AppMode Set to: ' + appModeNew );
 
 	// TODO: NEED TO TRIGGER SOME UI (Or others) CHANGES DUE TO AppMode Change
@@ -248,9 +249,7 @@ ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, status
 
 ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
 {
-
 	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.showPrompt( statusInfo );
-
 
 	var questionStr = "switch to [" + statusInfo.appMode_PromptedMode.toUpperCase() + "] "; //"Network changed: switch to '" + changeConnStr.toUpperCase() + "' mode?";
 	var btnSwitch = $( '<a term="" class="notifBtn" ">SWITCH</a>' );
@@ -403,8 +402,8 @@ ConnManagerNew.update_UI_statusDots = function( statusInfo )
 	var divStatusDot_networkStableTag = $( '#divStatusDot_networkStable' );
 	var divStatusDot_serverTag = $( '#divStatusDot_server' );
 
-	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.connected_Current );
-	ConnManagerNew.setStatusCss( divStatusDot_networkStableTag, statusInfo.networkConn.connected_Stable );
+	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.online_Current );
+	ConnManagerNew.setStatusCss( divStatusDot_networkStableTag, statusInfo.networkConn.online_Stable );
 	ConnManagerNew.setStatusCss( divStatusDot_serverTag, statusInfo.serverAvailable );
 };
 

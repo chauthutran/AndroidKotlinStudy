@@ -361,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "eff407b92117af10eef5833cee45ae64"
+    "revision": "73ec24b22977a88004661b8b88de1c23"
   },
   {
     "url": "redeemGen.html",
@@ -533,7 +533,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "040f14ecace7a5aff5e1d3d2cf37bdb5"
+    "revision": "043041c9aa8ababcf9e3f751a3937e02"
   },
   {
     "url": "scripts/services/dataManager2.js",
