@@ -431,12 +431,12 @@ function BlockList( cwsRenderObj, blockObj )
     me.createRedeemListCard = function( itemData, listContentUlTag, groupBy )
     {
         
-        var bIsMobile = Util.isMobi();
+        //var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '" class="activityItemCard" ' + ( ( groupBy ) ? ' groupBy="' + groupBy + '" ' : '' );
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
 
         // Anchor for clickable header info
-        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style="' + ( !bIsMobile ? 'padding:4px;' : '' ) + '"></a>' );
+        var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style="' + 'padding:4px;' + '"></a>' );
         var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm" );
 
         var activityType;
@@ -454,9 +454,12 @@ function BlockList( cwsRenderObj, blockObj )
 
 
             var blockListItemTag = $( '<div class="icon-row listItem" />' );
+
             var tblObj = $( '<table id="listItem_table_' + itemData.id + '" class="listItem_table" >' );
             var trObj1 = $( '<tr>' );
-            var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:2px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? '' : '' ) + '" class="' + ( bIsMobile ? '' : '' ) + ' listItem">&nbsp;</div></td>' );
+            //var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + 'width:2px;' 
+            //    + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + '' + '" class="' + '' + ' listItem">&nbsp;</div></td>' );
+
             var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 class="listItem_icon_activityType" >' ); 
             var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 class="listItem_data_preview" >' ); 
             var tdVoucherIdObj = $( '<td id="listItem_voucher_status_' + itemData.id + '" rowspan=2 class="listItem_voucher_status" >' ); 
@@ -464,13 +467,15 @@ function BlockList( cwsRenderObj, blockObj )
             var labelDtm = $( '<div class="listItem_label_date" >' + dateTimeStr + '</div>' );
 
             tblObj.append( trObj1 );
-            trObj1.append( tdDragObj );
+            //trObj1.append( tdDragObj );
             trObj1.append( tdIconObj );
             trObj1.append( tdDataPreviewObj );
             trObj1.append( tdVoucherIdObj );
             trObj1.append( tdActionSyncObj );
             tblObj.append( trObj1 );
+
             blockListItemTag.append( tblObj );
+
             tdDataPreviewObj.append( labelDtm );
 
             if ( statusOpt )
@@ -508,7 +513,9 @@ function BlockList( cwsRenderObj, blockObj )
 
 
 
-        var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
+        var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'
+            + ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); 
+        //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
         me.evalCallEnabled( itemData, tdVoucherIdObj )
@@ -531,9 +538,7 @@ function BlockList( cwsRenderObj, blockObj )
         contentDivTag.append( expandedDivTag );
 
 
-        expandedDivTag.click( function(e){
-            e.stopPropagation();
-        });
+        //expandedDivTag.click( function(e){ e.stopPropagation(); });
 
 
 
@@ -542,8 +547,10 @@ function BlockList( cwsRenderObj, blockObj )
 
         anchorTag.append( blockListItemTag );
         anchorTag.append( contentDivTag );
+
         liContentTag.append( anchorTag ); 
         listContentUlTag.append( liContentTag );
+
 
         moreDivTag.click( function(e){
 
