@@ -302,7 +302,7 @@ DataVerMove.dataCopyToIDBs = function()
     // Move to indexedDB for all the secured ones (Constants.storageName_redeemList)
     var moveKeys = DataManager2.securedContainers;
 
-    for ( i = 0; i < moveKeys.length; i++ )
+    for ( var i = 0; i < moveKeys.length; i++ )
     {
         var value = localStorage.getItem( moveKeys[ i ] );
 
@@ -369,7 +369,7 @@ DataVerMove.redeemListLS_IDB = function( callBack )
     }
 
     // For moving keys, copy from localStorage to IndexedDB.
-    for ( i = 0; i < moveKeys.length; i++ )
+    for ( var i = 0; i < moveKeys.length; i++ )
     {
         var value = localStorage.getItem( moveKeys[ i ] );
 

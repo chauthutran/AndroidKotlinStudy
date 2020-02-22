@@ -159,6 +159,40 @@ function cwsRender()
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
+	// --- MOVE TO IT'S OWN CLASS?? <-- AcitivityListManager?
+
+	me.getAcitityList = function()
+	{
+		return me._activityListData.list;
+	};
+
+	// Not implemented/used properly, yet.
+	me.applyAcitityListChange = function( bSaveToStorage, callBack )
+	{
+		// 1. save to storage
+		if ( bSaveToStorage )
+		{
+            DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+
+            });
+		}
+		else
+		{
+
+		}
+	
+		// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
+		FormUtil.updateStat_SyncItems( me._activityListData, function()
+		{
+			callBack( me._activityListData );
+		});	
+
+		// Refresh BlockList with new data?
+	};
+
+
+	// ---------------------------------
+
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
@@ -172,10 +206,12 @@ function cwsRender()
 			{
 				if ( jsonData_FromStorage && jsonData_FromStorage.list )
 				{
+
+
 					me._activityListData.list = jsonData_FromStorage.list;
 	
 					// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
-					FormUtil.updateSyncListItems( me._activityListData, function()
+					FormUtil.updateStat_SyncItems( me._activityListData, function()
 					{
 						callBack( me._activityListData );
 					});		
@@ -376,7 +412,7 @@ function cwsRender()
 
 		DataManager.getSessionData( function( mySessionData ) {
 
-			//FormUtil.updateSyncListItems( Constants.storageName_redeemList, function( myData )
+			//FormUtil.updateStat_SyncItems( Constants.storageName_redeemList, function( myData )
 			{
 
 				DataManager.getUserConfigData( function( userData ){

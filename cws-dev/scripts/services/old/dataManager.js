@@ -233,39 +233,6 @@ DataManager.estimateStorageUse = function( callBack )
 	}
 }
 
-/*DataManager.initialiseStorageEstimates = function()
-{
-	for ( var i = 0; i < DataManager.securedContainers.length; i++ )
-	{
-		FormUtil.updateSyncListItems( DataManager.securedContainers[i], function (data) {
-
-			var dataSize = Util.lengthInUtf8Bytes(JSON.stringify(data));
-
-			DataManager.indexedDBStorage.push({ container: 'indexedDB', name: DataManager.securedContainers[i], bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 });
-
-		})
-	}
-}
-
-DataManager.getStorageSizes = function( callBack )
-{
-	var arrItems = [];
-
-	arrItems.push( { name: 'indexedDB', data: DataManager.indexedDBStorage } );
-	arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
-	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
-
-	if ( callBack )
-	{
-		callBack( arrItems )
-	}
-	else
-	{
-		return arrItems;
-	}
-
-}*/
-
 DataManager.migrateIndexedDBtoLocalStorage = function( callBack )
 {
 	MsgManager.notificationMessage( '1.1: removed localStorage "moveData"', 'notificatioDark', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics1.1' );

@@ -1202,7 +1202,8 @@ FormUtil.swCacheReset = function( returnFunc )
 	}
 }
 
-FormUtil.updateSyncListItems = function( redList, retFunc )
+//FormUtil.updateSyncListItems = function( redList, retFunc )
+FormUtil.updateStat_SyncItems = function( redList, retFunc )
 {
 	FormUtil.records_redeem_submit = 0;
 	FormUtil.records_redeem_queued = 0;

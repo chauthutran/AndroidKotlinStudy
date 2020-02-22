@@ -430,7 +430,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.createRedeemListCard = function( itemData, listContentUlTag, groupBy )
     {
-
+        
         var bIsMobile = Util.isMobi();
         var itemAttrStr = 'itemId="' + itemData.id + '" class="activityItemCard" ' + ( ( groupBy ) ? ' groupBy="' + groupBy + '" ' : '' );
         var liContentTag = $( '<li ' + itemAttrStr + '></li>' );
@@ -439,45 +439,57 @@ function BlockList( cwsRenderObj, blockObj )
         var anchorTag = $( '<a class="expandable" ' + itemAttrStr + ' style="' + ( !bIsMobile ? 'padding:4px;' : '' ) + '"></a>' );
         var dateTimeStr = $.format.date( itemData.created, "dd MMM yyyy - HH:mm" );
 
-        if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
+        var activityType;
+        var statusOptClassStrangeName = '';
+
+        if ( FormUtil.dcdConfig.settings 
+            //&& FormUtil.dcdConfig.settings 
+            && FormUtil.dcdConfig.settings.redeemDefs 
+            && FormUtil.dcdConfig.settings.redeemDefs.activityTypes )
         {
-            var activityType = FormUtil.getActivityType ( itemData );
+
+            // HERE>>
+            activityType = FormUtil.getActivityType ( itemData );
             var statusOpt = FormUtil.getStatusOpt ( itemData );
+
+
+            var blockListItemTag = $( '<div class="icon-row listItem" />' );
+            var tblObj = $( '<table id="listItem_table_' + itemData.id + '" class="listItem_table" >' );
+            var trObj1 = $( '<tr>' );
+            var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:2px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? '' : '' ) + '" class="' + ( bIsMobile ? '' : '' ) + ' listItem">&nbsp;</div></td>' );
+            var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 class="listItem_icon_activityType" >' ); 
+            var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 class="listItem_data_preview" >' ); 
+            var tdVoucherIdObj = $( '<td id="listItem_voucher_status_' + itemData.id + '" rowspan=2 class="listItem_voucher_status" >' ); 
+            var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" class="listItem_action_sync" >' ); 
+            var labelDtm = $( '<div class="listItem_label_date" >' + dateTimeStr + '</div>' );
+
+            tblObj.append( trObj1 );
+            trObj1.append( tdDragObj );
+            trObj1.append( tdIconObj );
+            trObj1.append( tdDataPreviewObj );
+            trObj1.append( tdVoucherIdObj );
+            trObj1.append( tdActionSyncObj );
+            tblObj.append( trObj1 );
+            blockListItemTag.append( tblObj );
+            tdDataPreviewObj.append( labelDtm );
 
             if ( statusOpt )
             {
-                var blockListItemTag = $( '<div class="icon-row listItem" />' );
-                var tblObj = $( '<table id="listItem_table_' + itemData.id + '" class="listItem_table" >' );
-                var trObj1 = $( '<tr>' );
-                var tdDragObj = $( '<td id="listItem_selector_drag_' + itemData.id + '" rowspan=2 class="" style="' + ( bIsMobile ? 'width:2px;' : 'width:2px;' ) + 'opacity:0.65;vertical-align:top;" ><div style="overflow-y:hidden;' + ( bIsMobile ? '' : '' ) + '" class="' + ( bIsMobile ? '' : '' ) + ' listItem">&nbsp;</div></td>' );
-                var tdIconObj = $( '<td id="listItem_icon_activityType_' + itemData.id + '" rowspan=2 class="listItem_icon_activityType" >' ); 
-                var tdDataPreviewObj = $( '<td id="listItem_data_preview_' + itemData.id + '" rowspan=2 class="listItem_data_preview" >' ); 
-                var tdVoucherIdObj = $( '<td id="listItem_voucher_status_' + itemData.id + '" rowspan=2 class="listItem_voucher_status" >' ); 
-                var tdActionSyncObj = $( '<td id="listItem_action_sync_' + itemData.id + '" class="listItem_action_sync" >' ); 
-                var labelDtm = $( '<div class="listItem_label_date" >' + dateTimeStr + '</div>' );
+                FormUtil.appendActivityTypeIcon( tdIconObj, activityType, statusOpt, me.cwsRenderObj );
 
-                tblObj.append( trObj1 );
-                trObj1.append( tdDragObj );
-                trObj1.append( tdIconObj );
-                trObj1.append( tdDataPreviewObj );
-                trObj1.append( tdVoucherIdObj );
-                trObj1.append( tdActionSyncObj );
-                tblObj.append( trObj1 );
-                blockListItemTag.append( tblObj );
-                tdDataPreviewObj.append( labelDtm );
-
-                FormUtil.appendActivityTypeIcon ( tdIconObj, activityType, statusOpt, me.cwsRenderObj );
-
+                statusOptClassStrangeName = ( statusOpt.name == Constants.status_redeem_submit ) ? 'listItem_icon_sync_done' : '';
             }
             else
             {
-                var blockListItemTag = $( '<div class="icon-row"><img src="images/act.svg">' + dateTimeStr + '</div>' );
+                console.log( 'Not Matching status icon case' );
+                //var blockListItemTag = $( '<div class="icon-row"><img src="images/act.svg">' + dateTimeStr + '</div>' );
             }
         }
         else
         {
             var blockListItemTag = $( '<div class="icon-row"><img src="images/act.svg">' + dateTimeStr + '</div>' );
         }
+
 
         var expandArrowTag = $( '<div class="icon-arrow listExpand"><img class="expandable-arrow" src="images/arrow_down.svg" ></div>' );
         var trObj2 = $( '<tr id="listItem_trExpander_' + itemData.id + '">' );
@@ -487,15 +499,22 @@ function BlockList( cwsRenderObj, blockObj )
         trObj2.append( tdExpandObj );
         tdExpandObj.append( expandArrowTag );
 
-        var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData )
-        tdDataPreviewObj.append( previewDivTag );
+
+        if ( activityType )
+        {
+            var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData )
+            tdDataPreviewObj.append( previewDivTag );    
+        }
+
+
 
         var voucherTag = $( '<div class="act-r"><span id="listItem_queueStatus_' + itemData.id + '">'+ ( ( itemData.queueStatus ) ? itemData.queueStatus : 'pending' ) +'</span></div>' ); //<br>' + itemData.activityType + ' //FormUtil.dcdConfig.countryCode : country code not necessary to 99.9% of health workers
         tdVoucherIdObj.append( voucherTag );
 
         me.evalCallEnabled( itemData, tdVoucherIdObj )
 
-        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' + itemData.id + '" class="listItem_icon_sync ' + ( statusOpt.name == Constants.status_redeem_submit ? 'listItem_icon_sync_done' : '' ) + '" ></small></div>' );
+        var statusSecDivTag = $( '<div class="icons-status"><small  class="syncIcon"><img src="images/sync-n.svg" id="listItem_icon_sync_' 
+            + itemData.id + '" class="listItem_icon_sync ' + statusOptClassStrangeName + '" ></small></div>' );
         tdActionSyncObj.append( statusSecDivTag );
 
         // Content that gets collapsed/expanded 
@@ -506,12 +525,17 @@ function BlockList( cwsRenderObj, blockObj )
         contentDivTag.append( moreDivTag );
         moreDivTag.append( '<img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span term="">see more</span>' );
 
+
+
         var expandedDivTag = $( '<div class="act-l-expander" style="display:none"></div>' );
         contentDivTag.append( expandedDivTag );
+
 
         expandedDivTag.click( function(e){
             e.stopPropagation();
         });
+
+
 
         // Click Events
         me.setContentDivClick( contentDivTag );
@@ -564,8 +588,10 @@ function BlockList( cwsRenderObj, blockObj )
 
         // Populate the Item Content
         me.populateData_RedeemItemTag( itemData, liContentTag );
+        
+    };
 
-    }
+
 
     me.evalCallEnabled = function( itemData, targTag )
     {
@@ -865,6 +891,8 @@ function BlockList( cwsRenderObj, blockObj )
             tempJsonData.activityList = ActivityUtil.getActivityList();
             tempJsonData.syncActionStarted = 0;
             tempJsonData.history = [];
+
+            
             me.cwsRenderObj._activityListData.list.push(tempJsonData);
 
             console.log('blockList.redeemList_Add - Before saveData_RedeemList');
@@ -891,7 +919,7 @@ function BlockList( cwsRenderObj, blockObj )
             alert('ERROR during blockList.redeemList_Add, errMsg: ' + errMsg);
         }
 
-        // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
+        // Greg: consider adding a loop back into FormUtil.updateStat_SyncItems() ? OR naturally let blockList handle this as it seems to be the next step 
         //       pwa MUST re-initialize 'syncManager' queue+fail arrays
     }
 

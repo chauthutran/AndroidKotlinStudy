@@ -28,6 +28,14 @@ Util.disableTag = function( tag, isDisable )
 	tag.prop('disabled', isDisable);
 }
 
+Util.mergeArrays = function( mainArr, newArr )
+{
+	for ( var i = 0; i < newArr.length; i++ )
+	{
+		mainArr.push( newArr[ i ] );
+	}
+};
+
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
 {
@@ -234,7 +242,7 @@ Util.checkData_WithPropertyVal = function( arr, propertyName, value )
 
 	if ( Util.checkDataExists( arr ) )
 	{
-		for ( i = 0; i < arr.length; i++ )
+		for ( var i = 0; i < arr.length; i++ )
 		{
 			var arrItem = arr[i];
 			if ( Util.checkDefined( arrItem[ propertyName ] ) && arrItem[ propertyName ] == value )
@@ -2144,7 +2152,7 @@ $.fn.outerHTML = function(){
 Util.encrypt = function (seed,loops) 
 {
 	let ret = seed;
-	for ( i = 0; i < loops; i++ )
+	for ( var i = 0; i < loops; i++ )
 	{
 		ret = btoa(ret); //SHA256(ret)
 	}
@@ -2154,7 +2162,7 @@ Util.encrypt = function (seed,loops)
 Util.decrypt = function (garbage,loops) 
 {
 	let seed = garbage;
-	for ( i = 0; i < loops; i++ )
+	for ( var i = 0; i < loops; i++ )
 	{
 		seed = atob(seed);
 	}

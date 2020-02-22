@@ -361,7 +361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "73ec24b22977a88004661b8b88de1c23"
+    "revision": "04a1f1f305e41c3d3249cb3484f136bb"
   },
   {
     "url": "redeemGen.html",
@@ -405,7 +405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "ce327c9c68d0ec47faefa6ab03f1f6eb"
+    "revision": "c01a708a97f1410aafca1e1b0b353745"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -465,11 +465,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "aca761a3dd4240ed662750d3dae4e8a0"
+    "revision": "6ed8a6fd6fd39975c1c202b369811ab8"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "119c3d5107ab52e3043ead2a14bf8f6f"
+    "revision": "03c36f559c8fa9cdb60000601a2e9ab6"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -536,16 +536,20 @@ self.__precacheManifest = [
     "revision": "92c64f340e3e992565b678c5a5972b7d"
   },
   {
+    "url": "scripts/services/dataFormatConvert.js",
+    "revision": "4a9cdf78d01b2a9fa084649029f29ebe"
+  },
+  {
     "url": "scripts/services/dataManager2.js",
     "revision": "bb61242ebb62cfdcda947ee7022d5e58"
   },
   {
     "url": "scripts/services/dataVerMove.js",
-    "revision": "26bc7cc839d8b6de400e3162ecc30b68"
+    "revision": "0bb5d177a77744d17286d3cd7cbbe6e5"
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "32c4cf7d78ca4fe9c34eded4eeb5c5dd"
+    "revision": "792d9f2a6e62cd4dff0b3fcf110a39e0"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -557,7 +561,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/old/dataManager.js",
-    "revision": "502574c653fb5e5d818658e1da3adb20"
+    "revision": "d31a3443a28e869de6f29892c779c87e"
   },
   {
     "url": "scripts/services/old/dbStorageIDB.js",
@@ -593,7 +597,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "1bdaaf51b5d491d409f12860ccae39e0"
+    "revision": "875366dba13c2a0372e8eba981fe54d7"
   },
   {
     "url": "scripts/services/viewsListManager.js",
@@ -617,7 +621,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "40637a1d914ba79e3a43c1c237d119ab"
+    "revision": "d95e9dcb494f5fe16e1a2119359aedd6"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -645,7 +649,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "abd637feea88b30d7e4e36074cae6885"
+    "revision": "82f6cb9b5d31fad31f36469880fa822d"
   },
   {
     "url": "sounds/beep.mp3",

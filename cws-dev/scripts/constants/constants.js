@@ -13,6 +13,7 @@ Constants.status_submit = "submit"; // initialize from dcd@XX ?
 Constants.status_queued = "queued"; // initialize from dcd@XX ?
 Constants.status_failed = "failed"; // initialize from dcd@XX ?
 Constants.status_hold = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
+Constants.status_downloaded = "downloaded"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
 
 
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;

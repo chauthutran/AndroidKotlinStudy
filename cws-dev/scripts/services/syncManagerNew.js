@@ -122,6 +122,31 @@ SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
         console.log( success );
         console.log( returnJson );
 
+        // For each client record, convert to activity and add it..
+        DataFormatConvert.convertToActivityItems( returnJson, function( newActivityItems ) {
+
+            console.log( 'Downloaded Data Convert success: ' );
+            console.log( newActivityItems );
+            // Need to merge by 'id'.  If exists in both place, check 'created' or 'activityDate' 
+            //      To check which one were updated later.. and use that to copy over..
+            Util.mergeArrays( cwsRenderObj._activityListData.list, newActivityItems );
+
+
+            DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+
+                if ( callBack ) callBack( true );
+            });
+
+            // Merge the converted activityItem (from mongoDB downloaded data)
+            //      --> But need to check for duplicate activityId <-- merging existing activity?
+
+            // Update the list UI...
+                // - Need Greg's implementation here.
+
+            // Stats update?
+
+        } );
+        
         // Perform Merge... and refresh list if needed.
     } );    
 };
@@ -131,7 +156,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 {
     try
     {
-        //var url = 'https://api-dev.psi-connect.org/PWA.activities';
+        //var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
         var url = 'http://localhost:8080/dws-dev/PWA.activities';
 		var payloadJson = {
             "activity": { 
@@ -195,7 +220,7 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
     // TODO: if it failes to get data or some error case in 'DataManager.getData', 
     //      Let's think about it later or test about it..
 	//DataManager.getData( Constants.storageName_redeemList, function( activityList ) {
-    var activityList = cwsRenderObj._activityListData
+    var activityList = cwsRenderObj._activityListData;
 
     var uploadItems = [];
     
