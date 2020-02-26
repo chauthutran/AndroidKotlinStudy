@@ -32,6 +32,10 @@ SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
 //.children()[0];
 // $( '#divProgressBar.indeterminate' );
 
+
+// If blockListObj were created and referened..  We could use cwsRenderObj instead..
+SyncManagerNew.blockListObj;  // If
+
 // ===================================================
 // === MAIN 2 FEATURES =============
 
@@ -360,13 +364,13 @@ SyncManagerNew.syncAllButtonChange = function()
     if ( showSyncIcon )
     {
         $('#divAppDataSyncStatus').show(); 
-        $('#divAppDataSyncDownStatus').show(); 
+        //$('#divAppDataSyncDownStatus').show(); 
         //$('#imgAppDataSyncStatus').show();        
     }
     else
     {
         $('#divAppDataSyncStatus').hide();
-        $('#divAppDataSyncDownStatus').show(); 
+        //$('#divAppDataSyncDownStatus').show(); 
         //$('#imgAppDataSyncStatus').hide()
     } 
 };
@@ -385,3 +389,8 @@ SyncManagerNew.syncFinish = function()
 
 // ===================================================
 // === OTHERS Methods =============
+
+SyncManagerNew.setBlockListObj = function( blockListObj )
+{
+    SyncManagerNew.blockListObj = blockListObj;
+};

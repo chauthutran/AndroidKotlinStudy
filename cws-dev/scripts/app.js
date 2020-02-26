@@ -97,11 +97,6 @@
       SyncManagerNew.syncAll( _cwsRenderObj, 'Manual' );
     });
 
-    // TODO: WHY do all these coding in app.js?
-    $('#imgAppDataSyncDownStatus').click(() => {
-      SyncManagerNew.syncDownAll( _cwsRenderObj, 'Manual' );
-    });
-
   }
 
   function App_checkUpdates_found_prompt()

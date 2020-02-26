@@ -361,15 +361,15 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "04a1f1f305e41c3d3249cb3484f136bb"
+    "revision": "6626071fd6d42662c99492a786001db3"
   },
   {
     "url": "redeemGen.html",
-    "revision": "b47265c7754f17f741c73408171305cb"
+    "revision": "294625bdc2e797994c50cc5e0b5d46da"
   },
   {
     "url": "scripts/app.js",
-    "revision": "d47b03f1627b9c16a1692cd64d90345c"
+    "revision": "7d7ab8ec477f6be1cbef02d44eb5a9bf"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -405,7 +405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "c01a708a97f1410aafca1e1b0b353745"
+    "revision": "97f8043d5f474a28a8aeb3865bfb7b15"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -458,6 +458,14 @@ self.__precacheManifest = [
   {
     "url": "scripts/classes/validation.js",
     "revision": "8d38e286ba3a3c75c7ad07b10abc9945"
+  },
+  {
+    "url": "scripts/classes/viewsListFilter.js",
+    "revision": "832f9df5f5576a62a7a6a90fdef5ad7e"
+  },
+  {
+    "url": "scripts/classes/viewsListSorter.js",
+    "revision": "3c7279252aafa3dd5e159d3b51218ef0"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -537,7 +545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
-    "revision": "4a9cdf78d01b2a9fa084649029f29ebe"
+    "revision": "302ddd4b0079f6613aa0d842c62ed8d4"
   },
   {
     "url": "scripts/services/dataManager2.js",
@@ -597,7 +605,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "875366dba13c2a0372e8eba981fe54d7"
+    "revision": "ac2a20222ffc074a190a896a89d3a4ed"
   },
   {
     "url": "scripts/services/viewsListManager.js",
@@ -649,7 +657,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "82f6cb9b5d31fad31f36469880fa822d"
+    "revision": "74522d835a7f2cf0470b4bb0233681e9"
   },
   {
     "url": "sounds/beep.mp3",

@@ -2642,6 +2642,39 @@ $.fn.rotate=function(options) {
 
   }
 
+  Util.cloneArray = function( dataArray, callBack )
+  {
+	if ( Array.isArray( dataArray ) )
+	{
+		try
+		{
+			var retArr = []; //[...dataArray]
+
+			for ( i = 0; i < dataArray.length; i++ )
+			{
+				retArr.push( dataArray[ i ] );
+			}
+
+			if ( callBack ) callBack( retArr )
+			else return retArr;
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in Util.cloneArray(): ' + errMsg );
+			callBack();
+		}
+	}
+	else
+	{
+		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
+	}
+	
+  };
+
+  Util.isFunction = function(functionToCheck) 
+  {
+	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+  }
 
 try {
     module.exports = Util;

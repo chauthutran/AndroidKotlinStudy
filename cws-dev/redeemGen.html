@@ -561,51 +561,178 @@
         </div>
     </div>
 
-
     <style>
-    #f1_container {
-    position: relative;
-    margin: 10px auto;
-    width: 24px;
-    height: 24px;
-    z-index: 1;
-    display: none;
-    }
-    #f2_container {
-    position: relative;
-    margin: 10px auto;
-    width: 24px;
-    height: 24px;
-    z-index: 1;
-    display: none;
-    }
-    #f1_container {
-    perspective: 1000;
-    }
-    #f1_card {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: all 1.0s linear;
-    }
-    #f1_container:hover #f1_card {
-    transform: rotateY(360deg);
-    }
-    .face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    }
-    .face.back {
-    display: block;
-    transform: rotateY(0deg);
-    box-sizing: border-box;
-    color: white;
-    text-align: center;
-    background-color: #fff;
-    }
+        #f1_container {
+            position: relative;
+            margin: 10px auto;
+            width: 24px;
+            height: 24px;
+            z-index: 1;
+            display: none;
+        }
+
+        #f2_container {
+            position: relative;
+            margin: 10px auto;
+            width: 24px;
+            height: 24px;
+            z-index: 1;
+            display: none;
+        }
+
+        #f1_container {
+            perspective: 1000;
+        }
+
+        #f1_card {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: all 1.0s linear;
+        }
+
+        #f1_container:hover #f1_card {
+            transform: rotateY(360deg);
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+
+        .face.back {
+            display: block;
+            transform: rotateY(0deg);
+            box-sizing: border-box;
+            color: white;
+            text-align: center;
+            background-color: #fff;
+        }
     </style>
+
+
+<li itemid="567565045236" class="activityItemCard">
+    <a class="expandable" itemid="567565045236" style="padding:4px;">
+
+        <div class="icon-row listItem">
+
+            <table class="listItem_table">
+                <tr>
+                    <td class="listItem_selector_drag" style="width:2px;opacity:0.65;vertical-align:top;">
+                        <div style="overflow-y:hidden;" class=" listItem">&nbsp;</div>
+                    </td>
+
+                    <td class="listItem_icon_activityType" style="width: 60px;">
+                        <div style="width: 56px;"></div>
+                    </td>
+
+                    <td class="listItem_data_preview">
+                        <div class="listItem_label_date">04 Feb 2020 - 21:41</div>
+                        <div class="previewData listDataPreview">
+                            <div class="listDataItem">birthYear </div>
+                            <div class="listDataItem">walkIn_motherName treatment reason </div>
+                        </div>
+                    </td>
+
+                    <td class="listItem_voucher_status">
+                        <div class="act-r"><span id="listItem_queueStatus">success</span></div>
+                    </td>
+
+                    <td class="listItem_action_sync">
+                        <div class="icons-status">
+                            <small class="syncIcon">
+                                <img src="images/sync-n.svg" class="listItem_icon_sync listItem_icon_sync_done">
+                            </small>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </a>
+</li>
+
+
+<!--
+<li itemid="567565045236" class="activityItemCard">
+    <a class="expandable" itemid="567565045236" style="padding:4px;">
+        <div class="icon-row listItem">
+            <table id="listItem_table_567565045236" class="listItem_table">
+                <tr>
+                    <td id="listItem_selector_drag_567565045236" rowspan="2" class=""
+                        style="width:2px;opacity:0.65;vertical-align:top;">
+                        <div style="overflow-y:hidden;" class=" listItem">&nbsp;</div>
+                    </td>
+                    <td id="listItem_icon_activityType_567565045236" rowspan="2" class="listItem_icon_activityType"
+                        style="width: 60px;">
+                        <svg xmlns:dc="http://purl.org/dc/elements/1.1/"
+                            xmlns:cc="http://creativecommons.org/ns#"
+                            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                            xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                            xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                            viewBox="0 0 6.349999855 6.35000018" width="56" height="56" version="1.1" id="svg20037"
+                            inkscape:version="0.92.3 (2405546, 2018-03-11)" sodipodi:docname="act_fpl-fu.svg"
+                            colors.background="#a6cee3" colors.foreground="#4F4F4F" style="opacity: 1;">
+                            <defs xmlns="http://www.w3.org/2000/svg" id="defs20031"></defs>
+                            <sodipodi:namedview xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" id="base"
+                                pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0"
+                                inkscape:pageshadow="2" inkscape:zoom="44.8" inkscape:cx="-8.1225975"
+                                inkscape:cy="-2.6826499" inkscape:document-units="px" inkscape:current-layer="g851"
+                                showgrid="false" units="px" inkscape:window-width="1920" inkscape:window-height="1017"
+                                inkscape:window-x="1072" inkscape:window-y="830" inkscape:window-maximized="1">
+                            </sodipodi:namedview>
+                            <metadata xmlns="http://www.w3.org/2000/svg" id="metadata20034">
+                                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                                    <cc:Work xmlns:cc="http://creativecommons.org/ns#" rdf:about="">
+                                        <dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format>
+                                        <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/"
+                                            rdf:resource="http://purl.org/dc/dcmitype/StillImage"></dc:type>
+                                        <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:title>
+                                    </cc:Work>
+                                </rdf:RDF>
+                            </metadata>
+                        </svg>
+                        <div id="icon_status_567565045236"
+                            style="vertical-align:top;position:relative;left:32px;top:-30px;">
+                            <svg></svg>
+                        </div>
+
+                    </td>
+                    <td id="listItem_data_preview_567565045236" rowspan="2" class="listItem_data_preview">
+                        <div class="listItem_label_date">04 Feb 2020 - 21:41</div>
+                        <div class="previewData listDataPreview">
+                            <div class="listDataItem">birthYear </div>
+                            <div class="listDataItem">walkIn_motherName treatment reason </div>
+                        </div>
+                    </td>
+                    <td id="listItem_voucher_status_567565045236" rowspan="2" class="listItem_voucher_status">
+                        <div class="act-r"><span id="listItem_queueStatus_567565045236">success</span></div>
+                    </td>
+                    <td id="listItem_action_sync_567565045236" class="listItem_action_sync">
+                        <div class="icons-status"><small class="syncIcon"><img src="images/sync-n.svg"
+                                    id="listItem_icon_sync_567565045236"
+                                    class="listItem_icon_sync listItem_icon_sync_done"></small></div>
+                    </td>
+                </tr>
+                <tr id="listItem_trExpander_567565045236">
+                    <td id="listItem_expand_567565045236" rowspan="1">
+                        <div class="icon-arrow listExpand"><img class="expandable-arrow" src="./images/arrow_down.svg">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="act-l " id="listItem_networkResults_567565045236">
+            <div class="act-l-more"><img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span
+                    term="">see more</span></div>
+            <div class="act-l-expander" style="display:none"></div>
+        </div>
+    </a>
+</li>
+-->
 
   </body>
 
