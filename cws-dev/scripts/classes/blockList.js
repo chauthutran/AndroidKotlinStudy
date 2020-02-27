@@ -1,17 +1,32 @@
-// 1. create activityItem Card
-
-// 2. create list of activityItems (from data source)
-
-// 3. add activityItem cards to list (on scroll)
-
-// 4. Other
-//  4.1. handle add to bottom of list (expansion on scroll)
-//  4.2. create viewsList controls
-//  4.3. handle 'groupBy' layout (disabled for now)
-
-
-// -------------------------------------------
-// -- BlockList Class/Methods
+// =========================================
+//   BlockList Class/Methods
+//          - Display List like 'activityList' - within BlockObject (Parent)
+//
+// -- Pseudo WriteUp: 
+//
+//      - MAIN FEATURES:
+//          1. Render() - Perform 'rendering' of blockList with main data from cwsRender
+//                  - Set Frame HTML (by cloning from templat) 
+//                  - Set Other Related Initial things
+//                  - Set ActivityList from main list on cwsRender.
+//                  - Populate ActivityItems (using 'ActivityList')
+//
+//          2. ReRender() - reRender the list with param 'newActivityList'.
+//
+//          2. ReRenderWithMainData() - call 'reRender' with newActivityList data.
+//
+//          3. AddActivityItem() - Add ActivityItem (on top) to main list and perform 'reRender'.
+//
+//      - MORE:
+//          1. Add viewFilter Implementation..
+//          2. SyncDownload Implementation..
+//
+//
+//      - OTHERS:
+//          1. GroupBy
+//          2. Scrolling
+//
+// -------------------------------------------------
 function BlockList( cwsRenderObj, blockObj ) 
 {
     var me = this;
@@ -19,7 +34,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;        
 
-    me.activityList = [];  // Temporary Use due to many existing this global variable reference
+    me.activityList = [];
     me.blockList_UL_Tag;
     me.recordsLoading = 0;
     me.recordCounter = 0;
@@ -82,7 +97,7 @@ function BlockList( cwsRenderObj, blockObj )
 
 
     // ===========================================================
-
+    // === Main Features =========================
 
     //  #1 Render BlockList
     me.render = function( list, blockTag, passedData, options )
@@ -107,7 +122,7 @@ function BlockList( cwsRenderObj, blockObj )
                     me.populateActivityList( me.activityList, me.blockList_UL_Tag );
     
 
-                    // Set Events - scroll, etc.
+                    // 4. Set Events - scroll, etc.
 
                 }
             }
@@ -118,6 +133,57 @@ function BlockList( cwsRenderObj, blockObj )
         }
     };
 
+
+    // Calls with new viewFilter..
+    me.reRender = function( newActivityList, callBack )
+    {
+        if ( me.blockList_UL_Tag )
+        {
+            $( window ).scrollTop( 0 ); // Scroll top
+
+            me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
+
+            me.clearExistingList( me.blockList_UL_Tag );
+
+            me.populateActivityList( me.activityList, me.blockList_UL_Tag );
+
+            if ( callBack ) callBack();
+        }
+        else
+        {
+            console.log( ' ===> Error on blockList.reRender - blockList_UI_Tag not available - probably not rendered, yet' );
+        } 
+    };
+
+
+    me.clearExistingList = function( blockList_UL_Tag )
+    {
+        blockList_UL_Tag.html( '' );
+    };
+
+
+    // Add one and reRender it
+    me.addActivityItem = function( activityItem, callBack )
+    {        
+        me.cwsRenderObj._activityListData.list.unshift( activityItem ); // We should have a method for this in 'cwsRender' or some class.
+        
+        me.reRenderWtMainData( callBack );
+    };
+
+
+    // reRender using activityList from cwsRenderObj - Can be called from 'SyncDown'
+    me.reRenderWtMainData = function( callBack )
+    {
+        var newActivityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
+
+        me.reRender( newActivityList, callBack );    
+    };
+
+
+    //me.cloneActivityListFromCwsRender = function( cwsRenderObj ) { return Util.cloneArray( cwsRenderObj._activityListData.list ); }
+    
+    // ===========================================================
+    // === #1 Render() Related Methods ============
 
     me.initRenderSetup = function( blockTag, divSyncDownTag, imgSyncDownTag, cwsRenderObj )
     {
@@ -145,8 +211,7 @@ function BlockList( cwsRenderObj, blockObj )
     };
         
 
-    // TODO: Split into HTML frame create and content populate?
-    // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
+    // Populate one Activity Item
     me.createActivityListCard = function( itemData, listContentUlTag, groupBy )
     {
         var liActivityItemCardTag = $( me.template_ActivityCard );
@@ -182,6 +247,13 @@ function BlockList( cwsRenderObj, blockObj )
             console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
         }
     };
+
+
+    // ===========================================================
+    // === Exposoed to Outside Methods ============
+
+
+
 
 
     // -----------------------------------------------------------------------
