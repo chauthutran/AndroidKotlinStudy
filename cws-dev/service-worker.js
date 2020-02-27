@@ -340,6 +340,10 @@ self.__precacheManifest = [
     "revision": "bb264dcfd6c85fa3c64dbc96a6716446"
   },
   {
+    "url": "images/sync-error.svg",
+    "revision": "6e779f7b1992ae8e7c48a02435aded39"
+  },
+  {
     "url": "images/sync-n.svg",
     "revision": "d46af5030a2cb6848ae8d568a72e26aa"
   },
@@ -405,7 +409,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "97f8043d5f474a28a8aeb3865bfb7b15"
+    "revision": "63fb72fe3a4bffa65471f28b36d85d6b"
   },
   {
     "url": "scripts/classes/blockMsg.js",

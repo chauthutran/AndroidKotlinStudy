@@ -19,13 +19,13 @@ function BlockList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;        
 
-    me.redeemList = [];  // Temporary Use due to many existing this global variable reference
+    me.activityList = [];  // Temporary Use due to many existing this global variable reference
     me.blockList_UL_Tag;
     me.recordsLoading = 0;
     me.recordCounter = 0;
 
     me.options;
-    me.newBlockTag;
+    me.blockTag;
 
     me.groupByItems;
     me.showGroupBy = false;
@@ -43,7 +43,7 @@ function BlockList( cwsRenderObj, blockObj )
                 <table class="listItem_table">
                     <tr>
                         <td class="listItem_selector_drag" style="width:2px;opacity:0.65;vertical-align:top;">
-                            <div style="overflow-y:hidden;" class=" listItem">&nbsp;</div>
+                            <div style="overflow-y:hidden;" class="listItem">&nbsp;</div>
                         </td>
 
                         <td class="listItem_icon_activityType" style="width: 60px;">
@@ -51,7 +51,7 @@ function BlockList( cwsRenderObj, blockObj )
                         </td>
 
                         <td class="listItem_data_preview">
-                            <div class="listItem_label_date">04 Feb 2020 - 21:41</div>
+                            <div class="listItem_label_date">---Date---</div>
                             <div class="previewData listDataPreview">
                                 <div class="listDataItem">birthYear </div>
                                 <div class="listDataItem">walkIn_motherName treatment reason </div>
@@ -84,56 +84,205 @@ function BlockList( cwsRenderObj, blockObj )
     // ===========================================================
 
 
-    //  #2 create and show list of activityItems
-    me.render = function( list, newBlockTag, passedData, options )
+    //  #1 Render BlockList
+    me.render = function( list, blockTag, passedData, options )
     {        
-        me.newBlockTag = newBlockTag;
-
-        if ( list === 'redeemList' || list === 'activityList' ) // for DCDconfig refactoring review
+        try
         {
-            if ( me.showGroupBy ) me.groupByItems = FormUtil.getCommonDateGroups(); //change to new method (viewsListMgr)
-            else me.groupByItems = undefined;
-
-            if ( options ) me.options = options;
-
-
-            // Set Links with this 'blockList' Obj.....  TODO: Not used properly, yet..
-            SyncManagerNew.setBlockListObj( me ); // NOTE: Like to set this on 'initialize()', but Block class does not use like that..  only on render..
-
-            // Set for 'display/show' of 'syncDown' imgBtn + set 'click' event
-            me.setupForSyncDownload( me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj ); // Show the button + click event
-
-
-            if ( newBlockTag )
+            if ( !blockTag ) throw "blockTag undefined!";
+            else 
             {
-                me.blockList_UL_Tag = me.renderBlockList_Content( newBlockTag, me.cwsRenderObj, me.blockObj );
+                me.blockTag = blockTag;
 
-                me.cwsRenderObj.favIcons_Update();
+                if ( list === 'redeemList' || list === 'activityList' ) // for DCDconfig refactoring review
+                {
+                    // 1. Initial Render Setups - Header frame cloning, anchor event setup, syncDown setup, etc..
+                    me.blockList_UL_Tag = me.initRenderSetup( blockTag, me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
 
-                //  - To Enable click  <-- Probably Move Out Of 'FormUtil'..  <-- DO NOT MOVE ONE OFF METHODS TO STATIC CLASS!!!
-                FormUtil.setUpTabAnchorUI( newBlockTag.find( 'ul.tab__content_act') );
-                FormUtil.setUpTabAnchorUI( me.blockList_UL_Tag, '.expandable', 'click' );
-            }
-            else
-            {
-                console.log( 'blockTag undefined in blockList.render - caused to not render the list' );
+                    // 2. Set initial Data - with full list (Use 'cloneArray' to copy reference list)
+                    me.activityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
+
+
+                    // 3. Main Data Populate
+                    me.populateActivityList( me.activityList, me.blockList_UL_Tag );
+    
+
+                    // Set Events - scroll, etc.
+
+                }
             }
         }
+        catch ( errMsg )
+        {
+            console.log( 'Error during blockList.render(), errMsg: ' + errMsg );
+        }
     };
+
+
+    me.initRenderSetup = function( blockTag, divSyncDownTag, imgSyncDownTag, cwsRenderObj )
+    {
+        SyncManagerNew.setBlockListObj( me ); // Not Utilized, yet.
+        me.setupForSyncDownload( divSyncDownTag, imgSyncDownTag, cwsRenderObj ); // Set 'SyncDownload' display show + click event
+        me.cwsRenderObj.favIcons_Update();
+    
+        // Block/BlockList HTML related setup
+        FormUtil.setUpTabAnchorUI( blockTag.find( 'ul.tab__content_act') ); // Set click event + heights
+        blockTag.append( $( '#listTemplateDiv > div.listDiv' ).clone() ); // Copy from list html template
+
+        return blockTag.find( 'ul.tab__content_act' );
+    };
+
+
+    // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
+    me.populateActivityList = function( activityList, blockList_UL_Tag )
+    {
+        for( var i = 0; i < activityList.length; i++ )
+        {
+            var activityItem = activityList[i];
+
+            me.createActivityListCard( activityItem, blockList_UL_Tag );
+        }    
+    };
+        
+
+    // TODO: Split into HTML frame create and content populate?
+    // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
+    me.createActivityListCard = function( itemData, listContentUlTag, groupBy )
+    {
+        var liActivityItemCardTag = $( me.template_ActivityCard );
+        listContentUlTag.append( liActivityItemCardTag );
+
+        //var liActivityItemCardTag = activityCardTag.find( 'li.activityItemCard' );
+        var anchorActivityItemCardTag = liActivityItemCardTag.find( 'a.expandable' );
+
+        try
+        {
+            // Probably need to populate only one of below 2
+            liActivityItemCardTag.attr( 'itemId', itemData.id );
+            anchorActivityItemCardTag.attr( 'itemId', itemData.id );
+
+            // Title - date description..
+            liActivityItemCardTag.find( 'div.listItem_label_date' ).html( $.format.date( itemData.created, "dd MMM yyyy - HH:mm" ) );
+
+            var listItem_icon_syncTag = liActivityItemCardTag.find( '.listItem_icon_sync' );
+
+            // click event - for activitySubmit..
+            listItem_icon_syncTag.click( function(e) {                
+                e.stopPropagation();  // Stops calling parent tags event calls..
+                console.log( 'activityCard Submit Clicked - ' + itemData.id );
+            });
+
+
+            // Populate the button image & click event
+            //me.populateData_RedeemItemTag( itemData, liActivityItemCardTag );
+            
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
+        }
+    };
+
+
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // -- OLD CODES BELOW..
+
+    me.setActivityListData = function( activityList )
+    {
+        me.activityList = Util.cloneArray( activityList );
+    }
+
+    // For each item/data, populate activity..
+
+    // Populate Data..
+    // Render Activities..
+
 
 
     // ReRender..  Refresh the list..
     me.reRender = function( callBack )
     {
+        // $( window ).scrollTop( 0 );
+
         if ( me.blockList_UL_Tag )
         {
-            me.blockList_UL_Tag = me.renderBlockList_Content( me.newBlockTag, me.cwsRenderObj, me.blockObj, callBack );
+            me.blockList_UL_Tag = me.renderBlockList_Content( me.blockTag, me.cwsRenderObj, me.blockObj, callBack );
         }
         else
         {
             console.log( 'Error on blockList.reRender - blockList_UI_Tag not available - probably not rendered, yet' );
         } 
     };
+
+    // -================================================
+
+
+    me.renderBlockList_Content = function( blockTag, cwsRenderObj, blockObj, callBack )
+    {
+        var blockList_UL_Tag = me.initializeBlockList_UI( blockTag );
+
+        if ( me.hasViewsList( blockObj ) ) 
+        {
+            me.initializeViewsList_ClassesAndData( function() {
+
+                document.addEventListener('scroll', function (event) {
+
+                    // blockList_UL_Tag  <-- probably need to pass this...
+                    me.loadBlockList_Data();
+
+                }, true);
+
+                if ( callBack ) callBack();
+            });
+        }
+        else
+        {
+            console.log( 'test2.B' );
+
+            me.setData_ForBlockList( cwsRenderObj._activityListData.list );
+
+            // document.addEventListener('scroll', function (event) { me.loadBlockList_Data(); }, true);
+
+            me.populateActivityListData( me.activityList, blockList_UL_Tag );
+            //me.loadBlockList_Data();
+
+            if ( callBack ) callBack();
+        }
+
+        return blockList_UL_Tag;
+    }
+
+
+
+
+    // New Method - like 'loadBlockList_Data...
+    me.populateActivityListData = function( activityList, blockList_UL_Tag )
+    {
+        for( var i = 0; i < activityList.length; i++ )
+        {
+            var activityItem = activityList[i];
+            var listGroup;
+
+            activityItem.hours = Util.ageHours( activityItem.created );
+
+            if ( me.showGroupBy )
+            {
+                // add generic groupBy code here abouts (when the time comes)
+                listGroup = me.evalCreateGroupBy_Block( activityItem.hours, blockList_UL_Tag )
+            }
+
+            console.log( 'test z1' );
+
+            me.createActivityListCard( activityItem, blockList_UL_Tag, listGroup );
+
+            me.recordCounter += 1;
+        }        
+    };
+
+
+
 
     // --------------------------------------
     // -- TEMP PLACEMENT..  MOVE IT LATER..
@@ -159,92 +308,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     // ===========================================================
 
-    me.renderBlockList_Content = function( blockTag, cwsRenderObj, blockObj, callBack )
-    {
-        var blockList_UL_Tag = me.initializeBlockList_UI( blockTag );
-
-        // this tag shouldn't have to be added >> we need to fix layout stacking according to WACO-251
-        //var liactivityItemGroupPaddTop = $( '<li class="activityItemGroupPaddTop"></li>' );
-        //me.blockList_UL_Tag.append( liactivityItemGroupPaddTop );
-
-        if ( me.hasViewsList( blockObj ) ) 
-        {
-            me.initializeViewsList_ClassesAndData( function(){
-
-                document.addEventListener('scroll', function (event) {
-
-                    me.loadBlockList_Data();
-
-                }, true);
-
-                if ( callBack ) callBack();
-            });
-        }
-        else
-        {
-            me.setData_ForBlockList( cwsRenderObj._activityListData.list );
-
-            document.addEventListener('scroll', function (event) {
-
-                me.loadBlockList_Data();
-
-            }, true);
-
-            me.loadBlockList_Data();
-
-            if ( callBack ) callBack();
-        }
-
-        return blockList_UL_Tag;
-    }
-
     // ===========================================================
-
-    // TODO: Split into HTML frame create and content populate?
-    // <-- Do same for all class HTML and data population?  <-- For HTML create vs 'data populate'/'update'
-    me.createActivityListCard = function( itemData, listContentUlTag, groupBy )
-    {
-        var activityCardTag = $( me.template_ActivityCard );
-        listContentUlTag.append( activityCardTag );
-
-        var liActivityItemCardTag = activityCardTag.find( 'li.activityItemCard' );
-        var anchorActivityItemCardTag = activityCardTag.find( 'a.expandable' );
-
-        try
-        {
-            // Probably need to populate only one of below 2
-            liActivityItemCardTag.attr( 'itemId', itemData.id );
-            anchorActivityItemCardTag.attr( 'itemId', itemData.id );
-
-            // Title - date description..
-            activityCardTag.find( 'listItem_label_date' ).html( $.format.date( itemData.created, "dd MMM yyyy - HH:mm" ) );
-
-            var divListItem_icon_syncTag = activityCardTag.find( 'div.divListItem_icon_sync' );
-
-            if ( divListItem_icon_syncTag ) 
-            {
-                console.log( 'itemData.id - ' + itemData.id );                
-                //console.log( divListItem_icon_syncTag );
-            }
-
-            // click event - for activitySubmit..
-            divListItem_icon_syncTag.click( function(e) {
-                console.log( 'test' );
-                e.stopPropagation();
-                console.log( 'activityCard Clicked - ' + itemData.id );
-            });
-
-
-            // Populate the Item Content
-            //me.populateData_RedeemItemTag( itemData, liContentTag );
-
-            
-        }
-        catch( errMsg )
-        {
-            console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
-        }
-    };
 
 
     me.blockListCard_Handle_ShowMore_Contents = function( expandedDivTag, moreDivTag, itemID  )
@@ -326,19 +390,6 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-    me.initializeBlockList_UI = function( blockTag )
-    {
-        // Remove any previous render.
-        blockTag.find( 'div.listDiv' ).remove();
-
-        $( window ).scrollTop( 0 );
-
-        // Copy from list html template
-        $( '#listTemplateDiv > div.listDiv' ).clone().appendTo( blockTag );
-        
-        return blockTag.find( 'ul.tab__content_act' );
-    };
-
     me.clearBlockList_UI_ForReload = function()
     {
         me.clearBlockListResults()
@@ -349,8 +400,15 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.loadBlockList_Data = function( callBack )
     {
-        var activityList = me.redeemList;
+        var activityList = me.activityList;
 
+        console.log( 'test2.C' );
+        console.log( activityList );
+
+
+        me.AddToBlockList_NextPage( activityList, callBack );
+
+        /*
         me.addToBlockList_Allowed_Check( function(){
 
             // if groupBy in use --> only allow adding of items if bottom group is Exanded (open)
@@ -369,18 +427,22 @@ function BlockList( cwsRenderObj, blockObj )
             }
 
         }, function(){
-            if ( me.redeemList.length === 0 )
+            if ( me.activityList.length === 0 )
             {
                 me.showList_EmptyTag()
             }
         });
-        
+        */
     }
+
+
+
+
 
     me.addToBlockList_Allowed_Check = function( callBackPass, callBackFail )
     {
-        var check_recordsExistForLoading = ( me.redeemList.length > 0 );
-        var check_recordsCanStillBeLoaded = ! ( parseFloat( me.recordCounter ) >= parseFloat( me.redeemList.length ) ); //me.blockList_Scrolling_LimitReached;
+        var check_recordsExistForLoading = ( me.activityList.length > 0 );
+        var check_recordsCanStillBeLoaded = ! ( parseFloat( me.recordCounter ) >= parseFloat( me.activityList.length ) ); //me.blockList_Scrolling_LimitReached;
         var check_blockListScreenIsLoaded = me.blockList_UL_Tag && me.blockList_UL_Tag.is(':visible');
         var check_blockListNotAlreadyScrolling = ( FormUtil.syncRunning === undefined || FormUtil.syncRunning === 0 );
         var check_scrollBar_NotAtTopOfScreen = ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() );
@@ -411,6 +473,11 @@ function BlockList( cwsRenderObj, blockObj )
 
         me.getBlockList_NextPage( blockListData, function( refreshed_DataList, recordFrom, recordTo ){
 
+
+            console.log( 'refreshed_DataList: ' );
+            console.log( refreshed_DataList );
+
+            
             // add viewsSort_CurrentItem.field > here to auto sort (not by created data)
             if ( ( refreshed_DataList === undefined || refreshed_DataList.length == 0 ) && ( blockListData === undefined || blockListData.length == 0 ) )
             {
@@ -457,10 +524,10 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.scrollingRecordLimitReached_Check = function()
     {
-        //me.blockList_Scrolling_LimitReached = ( parseFloat( me.recordCounter ) == parseFloat( me.redeemList.length ) );
+        //me.blockList_Scrolling_LimitReached = ( parseFloat( me.recordCounter ) == parseFloat( me.activityList.length ) );
 
         // record (display count) limit reached
-        if ( parseFloat( me.recordCounter ) >= parseFloat( me.redeemList.length ) )
+        if ( parseFloat( me.recordCounter ) >= parseFloat( me.activityList.length ) )
         {
             $( document ).off( 'scroll' );
         }
@@ -628,7 +695,7 @@ function BlockList( cwsRenderObj, blockObj )
             contentDivClickedTag = $( this );
 
             var itemId = contentDivClickedTag.attr( 'itemId' );
-            var itemClicked = Util.getFromList( me.redeemList, itemId, "id" );
+            var itemClicked = Util.getFromList( me.activityList, itemId, "id" );
 
         });        
     }
@@ -685,7 +752,7 @@ function BlockList( cwsRenderObj, blockObj )
 	// === OTHER METHODS ========================
 
 
-    me.redeemList_Add = function (submitJson, status, callBack) {
+    me.activityList_Add = function (submitJson, status, callBack) {
 
         try {
             var dateTimeStr = (new Date()).toISOString();
@@ -871,7 +938,7 @@ function BlockList( cwsRenderObj, blockObj )
     {
         me.paging_lastItm = 0;
         me.recordCounter = 0;
-        me.redeemList = Util.cloneArray( activityList ); //[...activityList];
+        me.activityList = Util.cloneArray( activityList ); //[...activityList];
 
         if ( withRefesh )
         {
@@ -949,6 +1016,9 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.getBlockList_NextPage = function( dataList, callBack )
     {
+        console.log( 'dataList: ' );
+        console.log( dataList );
+
         var pageFrom = me.paging_lastItm;
         var pageUntil = ( parseInt( me.paging_lastItm + Constants.activityList_PageSize ) < dataList.length ) ? parseInt( me.paging_lastItm + Constants.activityList_PageSize ) : dataList.length; 
         var pageResults = [];
