@@ -6,8 +6,11 @@
 //
 //      - MAIN FEATURES:
 //          1. Render() - Perform 'rendering' of blockList with main data from cwsRender
+//                  [Kind of Initialization Part]
 //                  - Set Frame HTML (by cloning from templat) 
 //                  - Set Other Related Initial things
+
+//                  [True Rendering Part]
 //                  - Set ActivityList from main list on cwsRender.
 //                  - Populate ActivityItems (using 'ActivityList')
 //
@@ -20,7 +23,6 @@
 //      - MORE:
 //          1. Add viewFilter Implementation..
 //          2. SyncDownload Implementation..
-//
 //
 //      - OTHERS:
 //          1. GroupBy
@@ -114,16 +116,22 @@ function BlockList( cwsRenderObj, blockObj )
                     // 1. Initial Render Setups - Header frame cloning, anchor event setup, syncDown setup, etc..
                     me.blockList_UL_Tag = me.initRenderSetup( blockTag, me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
 
+
                     // 2. Set initial Data - with full list (Use 'cloneArray' to copy reference list)
                     me.activityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
 
 
-                    // 3. Main Data Populate
-                    me.populateActivityList( me.activityList, me.blockList_UL_Tag );
-    
+                    // 3. Create ViewList if applicable (by config)
+                    me.setConditionalViewList( me.blockObj, function( hasViewList, newActivityList )
+                    {
+                        if ( hasViewList ) me.activityList = newActivityList;
+                        
+                        // 3. Main Data Populate
+                        me.populateActivityList( me.activityList, me.blockList_UL_Tag );
+                    });
+
 
                     // 4. Set Events - scroll, etc.
-
                 }
             }
         }
@@ -132,6 +140,25 @@ function BlockList( cwsRenderObj, blockObj )
             console.log( 'Error during blockList.render(), errMsg: ' + errMsg );
         }
     };
+
+
+
+    me.setConditionalViewList = function( blockObj, callBack )
+    {
+        ///function( hasViewList, newActivityList )
+
+        if ( me.hasViewsList( blockObj ) ) 
+        {
+            me.initializeViewsList_ClassesAndData( function() {
+
+                //document.addEventListener('scroll', function (event) {
+                //}, true);
+
+                callBack();
+            });
+        }
+        else { callBack(); }
+    }
 
 
     // Calls with new viewFilter..
@@ -164,9 +191,10 @@ function BlockList( cwsRenderObj, blockObj )
 
     // Add one and reRender it
     me.addActivityItem = function( activityItem, callBack )
-    {        
-        me.cwsRenderObj._activityListData.list.unshift( activityItem ); // We should have a method for this in 'cwsRender' or some class.
-        
+    {   
+        me.cwsRenderObj._activityListData.list.unshift( activityItem ); // We should have a method for this in 'cwsRender' or some class.        
+        // DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+
         me.reRenderWtMainData( callBack );
     };
 
@@ -272,22 +300,6 @@ function BlockList( cwsRenderObj, blockObj )
     // Render Activities..
 
 
-
-    // ReRender..  Refresh the list..
-    me.reRender = function( callBack )
-    {
-        // $( window ).scrollTop( 0 );
-
-        if ( me.blockList_UL_Tag )
-        {
-            me.blockList_UL_Tag = me.renderBlockList_Content( me.blockTag, me.cwsRenderObj, me.blockObj, callBack );
-        }
-        else
-        {
-            console.log( 'Error on blockList.reRender - blockList_UI_Tag not available - probably not rendered, yet' );
-        } 
-    };
-
     // -================================================
 
 
@@ -370,12 +382,20 @@ function BlockList( cwsRenderObj, blockObj )
         });
     };
 
-    me.afterSyncDownload = function() 
+
+    me.afterSyncDownload = function( success ) 
     {
-        // blockList UI Listing update??
-        me.reRender( function() {
-            console.log( 'Finished calling reRender() after syncDownload' );
-        });       
+        if ( success )
+        {
+            // blockList UI Listing update??
+            me.reRenderWtMainData( function() {
+                console.log( 'Finished calling reRender() after syncDownload' );
+            });       
+        }
+        else
+        {
+            console.log( 'syncDownload returned with failure..');
+        }
     };
 
     // ===========================================================
@@ -1040,6 +1060,8 @@ function BlockList( cwsRenderObj, blockObj )
         } );
     }
 
+
+    // OBSOLETE - TO BE REMOVED..
     me.createViewsList_UI = function( viewsContainerTag )
     {
         me.blockList_UL_Tag.append( viewsContainerTag );
@@ -1050,6 +1072,7 @@ function BlockList( cwsRenderObj, blockObj )
         me.blockList_UL_Tag.append( pagerBlockTag );
     }
 
+    // OBSOLETE - TO BE REMOVED...
     me.switchFilter = function( viewName )
     {
         me.clearBlockList_UI_ForReload();

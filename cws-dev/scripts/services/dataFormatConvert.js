@@ -9,7 +9,7 @@ function DataFormatConvert()  {};
 
 DataFormatConvert.templateActivityItem = {
     "title": "", //"Voucher: 82092643 - 2020-02-04 21:41:35.00",
-    "created": "", // "2020-02-04 21:41:35.00",
+    "created": "", // "2020-02-04 21:41:35.00",  // <-- will be updated if changed.. thus, works as lastUpdated as well.
     "owner": "", //FormUtil.login_UserName; "DV_TEST_IPC",  <-- WHY NEED THIS?
     "activityType": "", //"FPL-FU",
     "id": "", //"567565045236", 
@@ -121,6 +121,7 @@ DataFormatConvert.generatedActivityItem = function( mongoActivityJson, mongoClie
 
         activityItem.title = "DW - Voucher: ----";
         activityItem.created = mongoActivityJson.activityDate.capturedLoc;
+
         activityItem.owner = FormUtil.login_UserName;  // Do not need this saved in JSON!!
         activityItem.activityType = mongoActivityJson.activityType;  // <-- Diff between Mongo vs PWA?
         activityItem.id = mongoActivityJson.activityId //Util.generateRandomId();

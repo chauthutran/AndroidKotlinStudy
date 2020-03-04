@@ -40,253 +40,331 @@
 // list blockList.activityItemList
 
 // What we didn't describe --> html generation...  <-- 100 by filter --> you are displaying 15 at a time..
-function ViewsListFilter( blockList, callBack )
+function blockListViewList( blockList, blockList_UL_Tag, callBack )
 {
     var me = this;
 
     me.blockListObj = blockList;
+    me.blockList_UL_Tag = blockList_UL_Tag;
 
-    me.viewsListSorterObj;
+    me.mainList = me.blockListObj.cwsRenderObj._activityListData.list;
+    me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
+    me.viewDefs = [];
 
-    me.containerTag;
-    me.viewsList_Items;
-    me.viewsList_CurrentItem;
+    me.viewDef_Selected;  // Need to set 'undefined' when view is cleared?
+
+    me.viewFilteredList = [];
+    //me.viewsList_CurrentItem;
     
-    me.element;
+    
+    // View Filter Related Tag
     me.selectTag;
-    me.recordPager;
+    //me.recordPager;
 
-    me.blockList_TagUL;
-    me.blockList_TagsLI;
+    // Sort Related Tag
+    me.sortListButtonTag; // sortList_Tagbutton
+    me.sortListUlTag; // sortList_TagUL
 
-    me.containerTag = $(`
+
+    // TODO: On Config, 'sort' need to be moved to definitions...
+
+    me.containerTagTemplate = `
         <div class="viewsFilterAndSortContainer inputDiv">
             <div class="viewsFilter">
                 <label term="" class="from-string titleDiv">Select a view</label>
-                <div class="viewsListContainerTag"></div>
+                <div class="viewsListContainerTag">
+                    <div class="select divViewsListSelector" style="flex-grow:1;">
+                        <select class='selector selViewsListSelector'></select>
+                    </div>            
+                </div>                
             </div>
-        </div>
-    `);
 
-    me.element = $(`
-        <div class="select viewsListSelector" style="flex-grow:1;">
-            <select class='selector'></select>
-        </div>
-    `);
+            <div class="viewsSorter">
+                <button class="buttonSortOrder"></button>
+                <ul class="ulSortOrder" ></ul>            
+            </div>
 
-    // move into new [blockListPager] class
-    me.recordPager = $(`
-        <div class="blockListPager" style="">
-            <img class="pagerLeft" src="images/arrow_left.svg" style="opacity:0" >
-            <img class="pagerRight" src="images/arrow_right.svg" style="opacity:0" >
-            <span class="pagerInfo"></span>
         </div>
-    `);
+    `;
 
+    
+    me.viewOptionTagTemplate = `<option value=""></option>`;
+    me.sortLiTagTemplat = `<li class="liSort" sortid="" ></li>`;
+
+
+    // ----------------------------
 
     me.initialize = function()
     {
-        me.initializeDefaults();
+        me.setViewFilterData();
 
-        me.create_UI_Controls();
+        me.create_UI_Controls( me.blockList_UL_Tag, me.containerTagTemplate, me.viewDefs );
 
-        me.runFirstView();
-    }
+        me.runFirstView( me.activityListViews ); 
+        // BUT WE ALSO NEED TO APPLY THE 1ST SORT AS WELL.. 
+    };
 
-    me.initializeDefaults = function()
+    // ----------------------------
+
+    me.setViewFilterData = function()
     {
-        me.activityListViews = me.blockListObj.blockObj.blockJson.activityListViews;
+        // Set Filter View name list and those view's definition info.
+        me.activityListViews = me.blockListObj.blockObj.blockJson.activityListViews;  // These are just named list..  We need proper def again..
+        me.viewDefs = me.getActivityListViewDefinitions( me.activityListViews, me.viewsDefinitionList );
+    };
 
-        me.selectTag = $("select", me.element);
-        me.blockList_TagUL = $("#renderBlock .listDiv .tab__content_act");
-        me.blockList_TagsLI = $("li[itemid]", me.blockList_TagUL);
-    }
 
-    me.create_UI_Controls = function ()
+    me.create_UI_Controls = function ( blockList_UL_Tag, containerTagTemplate, viewDefs )
     {
-        me.createDropDown_List( me.activityListViews );
+        blockList_UL_Tag.append( containerTagTemplate );
 
-        if ( me.showRecordPager )
-        {
-            me.blockListObj.createPager_UI( me.recordPager ); //me.createPager_UI_withEvents()
+        // View Filter Tags
+        me.selectTag = blockList_UL_Tag.find( 'select.selViewsListSelector' );
+
+        me.populateViewList( viewDefs, me.selectTag );
+        me.setViewListEvent( me.selectTag );
+
+
+        // Sort Related Tags
+        me.sortListButtonTag = blockList_UL_Tag.find( 'button.buttonSortOrder' ); // sortList_Tagbutton
+        me.sortListUlTag = blockList_UL_Tag.find( 'ul.ulSortOrder' ); // sortList_TagUL
+        
+        // sort button click related event
+        me.setSortOtherEvents( me.sortListButtonTag );
+
+        // sort populate & click event are set on view selection
+        //me.sortListConfig = me.viewItemObj.sort; 
+        //me.populateSorts( me.sortListUlTag );
+    };
+
+
+    me.runFirstView = function( activityListViews )
+    {
+        if ( activityListViews && activityListViews.length > 0 )
+        {            
+            me.switchViewNSort( activityListViews[ 0 ], me.viewDefs, me.mainList );
         }
-    }
+    };
 
-    me.runFirstView = function()
+
+    // ============================================
+
+    // 
+    me.getActivityListViewDefinitions = function( activityViewNameList, viewsDefinitionList )
     {
-        if ( me.activityListViews.length )
-        {
-            me.runApply_ViewsListFilter( me.activityListViews[ 0 ], callBack );
-        }
-    }
-
-    me.createDropDown_List = function ( arrViews )
-    {
-        me.viewsList_Items = me.getViewsListDefinitions( arrViews );
-
-        me.populateDropDown_WithEvents( me.viewsList_Items, me.selectTag );
-
-        me.blockListObj.createViewsList_UI ( me.containerTag );   
-    }
-
-    me.populateDropDown_WithEvents = function( viewControllers, selectElement )
-    {
-        $( "div.viewsListContainerTag" , me.containerTag).append( me.element ); //, me.viewsListSorterObj.element );
-
-        viewControllers.forEach( controller =>
-        {
-            var option = $(`
-                <option value="${controller.id}">
-                    ${controller.name}
-                </option>
-            `);
-            selectElement.append( option );
-        });
-
-        selectElement.on( "change", function( event ) {
-
-            me.blockListObj.switchFilter( event.target.value );
-
-        });
-
-    }
-
-
-    me.runApply_ViewsListFilter  = function ( viewName, callBack )
-    {
-        me.setCurrentView( viewName );
-
-        me.runDataFetch_AndFilter( me.viewsList_CurrentItem, function( filteredItems ) {
-
-            if ( callBack ) callBack( me.viewsList_CurrentItem, filteredItems );
-
-        });
-    }
-
-
-
-
-    me.getViewsListDefinitions = function( arrViews )
-    {
-        var allViews = FormUtil.dcdConfig.definitionActivityListViews;
         var retObj = [];
 
-        for ( var i = 0; i < arrViews.length; i++ )
+        for ( var i = 0; i < activityViewNameList.length; i++ )
         {
-            var viewObj = { 
-                id: allViews[ arrViews[ i ] ].id,
-                name: allViews[ arrViews[ i ] ].name,
-                text: allViews[ arrViews[ i ] ].name,
-                query: allViews[ arrViews[ i ] ].query,
-                sort: allViews[ arrViews[ i ] ].sort,
-                groupBy: allViews[ arrViews[ i ] ].groupBy
-            }
+            var viewName = activityViewNameList[i];
+            var viewDef = viewsDefinitionList[ viewName ];
 
-            retObj.push ( viewObj );
+            if ( viewDef ) retObj.push ( viewDef );
+            //name: viewsDef[ viewName ].name,
+            //text: viewsDef[ viewName ].name,
+            //query: viewsDef[ viewName ].query,
         }
 
         return retObj;
-    }
-
-    me.setCurrentView = function( itemID )
-    {
-        me.viewsList_CurrentItem = me.getViewsItemConfig( itemID );
-    };
-
-    me.getViewsItemConfig = function( itemID )
-    {
-        var itemConfig = me.viewsList_Items.find( function ( controller ) {
-            return controller.id == itemID;
-        }) 
-
-        return( itemConfig )
     };
 
 
-    me.runDataFetch_AndFilter = function( viewsListConfig, callBack )
+    // -----------------------
+    // -- Populate Control & Perform Filtering related..
+
+    me.populateViewList = function( viewDefs, selectTag )
     {
-
-        me.getFilteredData( viewsListConfig, function( filteredData ){
-
-            callBack( filteredData );
-
-        } );
-
-    };
-
-    me.getFilteredData = function( viewsListConfig, callBack )
-    {
-        // 1. fetch cwsRenderObj._activityListData data array
-        // 2. apply filters
-
-        var filterData = []; 
-        var allData = me.blockListObj.cwsRenderObj._activityListData;
-
-        if ( allData && allData.list )
+        // Add options
+        viewDefs.forEach( viewDef =>
         {
-            for ( var i = 0; i < allData.list.length; i++ )
+            var optionTag = $( me.viewOptionTagTemplate ).attr( 'value', viewDef.id ).html( viewDef.name );
+            //`<option value="${viewDef.id}">${viewDef.name}</option>` );
+            selectTag.append( optionTag );
+        });
+    };
+
+
+    // -------------
+    // -- Events
+
+    me.setViewListEvent = function( selectTag )
+    {
+        selectTag.change( function() {
+            me.switchViewNSort( $( this ).val(), me.viewDefs, me.mainList );
+        });
+    };
+
+
+    me.setSortOtherEvents = function( sortListButtonTag )
+    {
+        sortListButtonTag.click( function() {
+            me.sortListUlTag.css( "display", "flex" );
+        });
+
+        $( document ).click( function( event ) 
+        {
+            // If click target is not sortButton, hide the UL;            
+            if ( event.target != me.sortListButtonTag[0] )
             {
-                if ( me.runQuery_Success( viewsListConfig.query, allData.list[ i ] ) )
-                {
-                    filterData.push( allData.list[ i ] );
-                }
+                me.sortListUlTag.hide();
+            }
+        });
+
+        // me.sortListUlTag click events are created when we create sort list from selected view
+    };
+
+
+    me.setSortLiTagClickEvent = function( liTag )
+    {
+        liTag.click( function()
+        {
+            var sortId = $( this ).attr( 'sortid' );
+
+            // get sortId and get sortDef from it..
+            var sortDef = Util.getFromList( sortDefs, sortId, "id" );
+
+            if ( sortDef )
+            {
+                me.sortList( sortDef, me.viewFilteredList );                        
+
+                me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
+            }
+        });
+    };
+
+
+    // -------------------------------------
+    // -- View Filter Operation Related
+
+    me.switchViewNSort = function( viewName, viewDefs, mainList )
+    {
+        //me.viewsList_CurrentItem = viewItem;
+        //var viewDef = me.getViewsItemConfig( viewName );
+        me.viewDef_Selected = Util.getFromList( viewDefs, viewName, "id" );
+
+        me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
+        
+
+        // Populate Sort List - based on viewDef..
+        me.populateSorts( me.sortListUlTag, me.viewDef_Selected.sort ); 
+
+        // Sort with 1st one..
+        me.sortList_1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
+
+
+        // Once the viewFiltered List is decided and sorted, reRender it 
+        me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
+    };
+
+
+    me.viewFilterData = function( viewDef, mainList )
+    {
+        var filteredData = []; 
+
+        for ( var i = 0; i < mainList.length; i++ )
+        {
+            var activityItem = mainList[ i ];
+
+            // Below eval use 'activityItem' object, thus, we need to declare it..
+            if ( me.evalQueryCondition( viewDef.query, activityItem ) )
+            {
+                filteredData.push( activityItem );
             }
         }
 
-        callBack( filterData )
-    }
+        return filteredData;
+    };
 
-    me.runQuery_Success = function( query, activityItem )
+    me.evalQueryCondition = function( query, activityItem )
     {
+        // NOTE: Param 'activityItem' object is assumed to be used within 'query' statement, thus, do not remove it.
         var success = false;
+
         try {
             success = eval( query );
         }
         catch ( err ) {
             console.log( 'error evaluating viewList query : ' + err);
         }
+
         return success;
     };
 
+    
+    // -------------------------------------
+    // -- Sorting Operation Related
 
-
-    me.createPager_UI_withEvents = function()
+    me.populateSorts = function ( sortListUlTag, sortList )
     {
-        //var leftPager = $( ".pagerLeft", me.recordPager );
-        //var rightPager = $( ".pagerRight", me.recordPager );
+        sortListUlTag.empty();
 
-        //leftPager.click( () => me.pageDirection( -1 ) );
-        //rightPager.click( () => me.pageDirection( 1 ) );
+        if ( sortList )
+        {
+            for ( var i = 0; i < sortList.length; i++ )
+            {
+                var sortDef = sortList[ i ];
+                var liTag = $( me.sortLiTagTemplat ).attr( 'sortid', sortDef.id ).html( sortDef.name );
+                // `<li class="liSort selected" sortid="${sortDef.id}" >${sortDef.name}</li>` );
 
-        //return me.recordPager;
-    }
+                sortListUlTag.append( liTag );
+    
+                me.setSortLiTagClickEvent( liTag );
+    
+                //if ( sortObj.groupAfter != undefined && sortObj.groupAfter === 'true' )
+                //{
+                //    var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
+                //    me.sortList_TagUL.append( liGroup );
+                //}
+            }                
+        }
 
-    /*me.pageDirection = function( nextPageDirection )
+        // For below, we can use .css to mark the bold for selected.
+        // me.updateMenuItem_Tag( me.sortListUlTag.children()[0] );
+    };
+
+
+    me.sortList_1stOne = function( sortDefs, viewFilteredList )
     {
-
-        if ( nextPageDirection > 0 )
+        if ( sortDefs && sortDefs.length > 0 )
         {
-            // next 15
-            console.log( 'next ' );
-
-            me.viewsListSorterObj.sortList_Pager_UI_start();
-
-            //me.blockListObj.cwsRenderObj.pulsatingProgress.show();
-            me.blockListObj.blockList_RecordsLoading = 1;
-
-            //setTimeout( function() {
-            //    me.blockListObj.AddBlockListItems_ToList( me.filteredData_ForBlockList, function( recordFrom, recordTo, recordCount ){
-            //        me.viewsListSorterObj.sortList_Pager_UI_finish( recordFrom, recordTo, recordCount );
-            //    } );
-            //}, 500 );
-
+            me.sortList( sortDefs[0], viewFilteredList );
         }
-        else
+    };
+
+
+    me.sortList = function( sortDef, viewFilteredList )
+    {
+        try 
         {
-            // prev 15
-            console.log( 'prev ' );
+           me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
         }
-    }*/
+        catch ( errMsg ) 
+        {
+            console.log( 'Error on blockListViewList.sortList, errMsg: ' + errMsg );
+        }                   
+    };
+
+
+    // Could be Util method...
+    me.evalSort = function( fieldEvalStr, list, orderStr )
+    {
+        var isDescending = orderStr.indexOf( 'desc' );
+
+        list.sort( function(a, b) {
+
+            var sortEval = ( isDescending ) ? '( a.' + fieldEvalStr + ' < b.' + fieldEvalStr + ' ) ? -1 : ' +
+                                ' ( b.' + fieldEvalStr + ' < a.' + fieldEvalStr + ' ) ? 1 ' +
+                                ' : 0 '
+                            : '( a.' + fieldEvalStr + ' > b.' + fieldEvalStr + ' ) ? -1 : ' +
+                                ' ( b.' + fieldEvalStr + ' > a.' + fieldEvalStr + ' ) ? 1 ' +
+                                ' : 0 ';
+    
+            return eval( sortEval );    
+        });          
+    };
+
+
+    // =-===============================
 
     me.initialize();
 }

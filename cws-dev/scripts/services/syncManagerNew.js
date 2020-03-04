@@ -117,41 +117,31 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 // NEW: JAMES: ----
 SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
 {
-    console.log( ' <=== syncDownAll clicked' );
-
     // Retrieve data..
     SyncManagerNew.downloadActivities( function( success, returnJson ) 
     {
-        console.log( 'SyncManagerNew.downloadActivities' );
-        console.log( success );
-        console.log( returnJson );
+        //console.log( 'SyncManagerNew.downloadActivities' );
+        //console.log( success );
+        //console.log( returnJson );
 
-        // For each client record, convert to activity and add it..
-        DataFormatConvert.convertToActivityItems( returnJson, function( newActivityItems ) {
+        if ( !success ) { if ( callBack ) callBack( false ); }
+        else
+        {
+            // For each client record, convert to activity and add it..
+            DataFormatConvert.convertToActivityItems( returnJson, function( newActivityItems ) {
 
-            console.log( 'Downloaded Data Convert success: ' );
-            console.log( newActivityItems );
-            // Need to merge by 'id'.  If exists in both place, check 'created' or 'activityDate' 
-            //      To check which one were updated later.. and use that to copy over..
-            Util.mergeArrays( cwsRenderObj._activityListData.list, newActivityItems );
+                SyncManagerNew.mergeDownloadedList( cwsRenderObj._activityListData.list, newActivityItems );
 
+                console.log( 'After Merge, going for Saveing' );
 
-            DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+                DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
 
-                if ( callBack ) callBack( true );
-            });
+                    console.log( 'After Merge, After Save.. CallBack' );
 
-            // Merge the converted activityItem (from mongoDB downloaded data)
-            //      --> But need to check for duplicate activityId <-- merging existing activity?
-
-            // Update the list UI...
-                // - Need Greg's implementation here.
-
-            // Stats update?
-
-        } );
-        
-        // Perform Merge... and refresh list if needed.
+                    if ( callBack ) callBack( true );
+                });
+            } );
+        }
     } );    
 };
 
@@ -185,6 +175,59 @@ SyncManagerNew.downloadActivities = function( callBack )
 };
 
 
+SyncManagerNew.mergeDownloadedList = function( mainList, newList )
+{
+    var newList_filtered = [];
+
+    // Check list for matching activityId
+    //  If does not exists in mainList, put into the mainList..
+    //  If exists, and if new one is later one, copy the content into main item (merging) 
+
+    for ( var i = 0; i < newList.length; i++ )
+    {        
+        var newItem = newList[i];
+        var existingItem = Util.getFromList( mainList, newItem.id, "id" );
+
+        try
+        {
+            // If matching id item(activity) already exists in device, 
+            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
+            if ( existingItem )
+            {
+                var newItemDate = $.format.date( newItem.created, "dd MMM yyyy - HH:mm" );
+                var existingItemDate = $.format.date( existingItem.created, "dd MMM yyyy - HH:mm" );
+
+                if ( newItemDate > existingItemDate ) 
+                {
+                    // Merge newItem into existingItem (it does not delete existing attributes)
+                    Util.mergeJson( existingItem, newItem );
+                    //console.log( 'Item content merged' );
+                }
+                //else console.log( 'Item content not merged - new one not latest..' );
+            }
+            else
+            {
+                // If not existing on device, simply add it.
+                newList_filtered.push( newItem );
+                //console.log( 'Item content merged' );
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
+            console.log( newItem );
+            console.log( existingItem );
+        }
+    }
+
+    //title: "DW - Voucher: ----"
+    //created: "2020-01-17T11:32:00.000"
+    //owner: "LA_TEST_PROV"
+    //activityType: "sp"
+    //id: "5349521735217"
+    
+    Util.appendArray( mainList, newList_filtered );
+}; 
 
 // ===================================================
 // === 1. 'syncItem' Related Methods =============

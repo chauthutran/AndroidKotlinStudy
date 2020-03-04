@@ -28,12 +28,26 @@ Util.disableTag = function( tag, isDisable )
 	tag.prop('disabled', isDisable);
 }
 
+// NOTE: Should be named 'append'?
 Util.mergeArrays = function( mainArr, newArr )
 {
 	for ( var i = 0; i < newArr.length; i++ )
 	{
 		mainArr.push( newArr[ i ] );
 	}
+};
+
+Util.appendArray = function( mainArr, newArr )
+{
+	Util.mergeArrays( mainArr, newArr );
+};
+
+Util.mergeJson = function( destObj, srcObj )
+{
+	for( var key in srcObj )
+	{
+		destObj[key] = srcObj[key];
+	}	
 };
 
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.

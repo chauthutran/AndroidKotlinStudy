@@ -618,7 +618,7 @@ function Action( cwsRenderObj, blockObj )
 
 			"captureValues": {
 				"activityDate": {},
-				"activityId": "",
+				"activityId": "payload.activityDateId",
 				"activityType": "",
 				"program": "",
 				"activeUser": "",
