@@ -1,45 +1,45 @@
-// ViewsList class >> fetches 'views' from dcdConfig (definitionActivityListViews)
-// First draft pseudoCode write up (2020-02-05): greg
-// - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- ---
+// =========================================
+//   BlockListViewList Class/Methods
+//          - View List - filter by view dropdown and sorting controls
 //
-// 1. create viewsList controller ( and other control(s?) )
-//  
-//      1.1 create viewsList control
+//   -- CLASS METHOD TEMPLATING THOUGHTS:
+//      - Below are the common standard methods of instantiating classes in this project:
 //
-// 2. create viewsList sorter
-//  
-//      2.1 create sortList control
-//      2.2 populate sortList items
+//      1. initialize()
+//          - Set values from parents class or other related ones.
+//          * SHOULD be the ones that needs to be set only once on instantiation
 //
-// 3. run/apply viewsList-filter query
+//      2. render()
+//          - renders the class - can be called after calculation/perform operation/changes
+//          * SHOULD take care of displaying data that were changed/set.
+//          * SHOULD be able to be called again..  
+//              - Simply reRendering on the space like classDiv, after clearing(reset) any previous one.
+//          * COULD HAVE 
+//                  - set classDiv(section) content
+//                  - set rendered tag class variables
+//                  - populate(create) controls based on data
+//                  - rendered control evetns
 //
-//      3.1 set current viewsList item
+//      3. events
+//          - class actions are events driven..
+//          - set events handler that will perform the class actions
+//          
+// -- Pseudo WriteUp: 
 //
-//      3.2 fetch activityData with filter 
-//      3.2.1 get activityData
-//      3.2.2 run filter rules against activityData
-//        >> *change run against 'memory' redeemList/activityList data (right now doing getDataManager fetch)
+//      - MAIN FEATURES:
+//          1. Initialize() - Set some variables like 
+//                  - viewListNames from the block definition
+//                  - viewListDefinition which holds detailed properties of view (for each view in viewListNames)
+//                  - mainList which is the full list of activities from cwsRender Object
 //
-//      3.3 run/apply sorting on fitered-activityData
+//          2. Render() - setUp the controls and populate the view list (select option tags with data)
+//                  - set rendered control events
 //
-// 4. run/apply sortOrder
+//          3. viewSelect_1st - called to select 1st 'view' on populated View List
 //
-// 5. pass payload to blockList 
-
-// - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- ---
-
-
-// CHANGE: blockList has a copy of activityItemList..  
-// At start of blockList, 
-
-// If view list in config does not exist, blockList.activityItemList = [];
-//  and do copy of array contents..  for... blockList.activityItemList each,  activityItemList.push( cwsRender._activityList.list.items);
-
-// If we do have 'viewList' in blockList config, depends on the selection of the view, 
-// we generate different list, we use cwsRender._activityList.list.items to filter or sort and push to --> blockList.activityItemList.push( );
-// list blockList.activityItemList
-
-// What we didn't describe --> html generation...  <-- 100 by filter --> you are displaying 15 at a time..
+//          4. Sort Populate and Event - are done when 'view' is selected due to each view has sorting list & definitions
+//
+// =========================================
 function blockListViewList( blockList, blockList_UL_Tag, callBack )
 {
     var me = this;
@@ -47,18 +47,20 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     me.blockListObj = blockList;
     me.blockList_UL_Tag = blockList_UL_Tag;
 
-    me.mainList = me.blockListObj.cwsRenderObj._activityListData.list;
-    me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
-    me.viewDefs = [];
+    me.mainList; // = me.blockListObj.cwsRenderObj._activityListData.list;
+    me.viewsDefinitionList; // = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
+    me.viewListDefs = [];
 
     me.viewDef_Selected;  // Need to set 'undefined' when view is cleared?
 
     me.viewFilteredList = [];
     //me.viewsList_CurrentItem;
     
-    
+    me.viewListNames = [];  // List of view names - used on this blockList
+
+    // --- Tags -----------------------
     // View Filter Related Tag
-    me.selectTag;
+    me.viewSelectTag;
     //me.recordPager;
 
     // Sort Related Tag
@@ -66,8 +68,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     me.sortListUlTag; // sortList_TagUL
 
 
-    // TODO: On Config, 'sort' need to be moved to definitions...
-
+    // --- Templates ----------------
     me.containerTagTemplate = `
         <div class="viewsFilterAndSortContainer inputDiv">
             <div class="viewsFilter">
@@ -86,8 +87,6 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
 
         </div>
     `;
-
-    
     me.viewOptionTagTemplate = `<option value=""></option>`;
     me.sortLiTagTemplat = `<li class="liSort" sortid="" ></li>`;
 
@@ -96,56 +95,98 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
 
     me.initialize = function()
     {
-        me.setViewFilterData();
+        me.setUpInitialData();
+    };
+    
+    // ----------------------------
 
-        me.create_UI_Controls( me.blockList_UL_Tag, me.containerTagTemplate, me.viewDefs );
+    me.render = function()
+    {
+        // Clear previous UI & Set containerTag with templates
+        me.clearClassTag( me.blockList_UL_Tag );        
+        me.setClassContainerTag( me.blockList_UL_Tag, me.containerTagTemplate );
 
-        me.runFirstView( me.activityListViews ); 
-        // BUT WE ALSO NEED TO APPLY THE 1ST SORT AS WELL.. 
+        // Set viewList/sort related class variables
+        me.setClassVariableTags( me.blockList_UL_Tag );
+        
+        // Populate controls - view related.  Sort related are done in view select event handling.
+        me.populateControls( me.viewListDefs, me.viewSelectTag );
+
+        // Events handling
+        me.setRenderEvents( me.viewSelectTag, me.sortListButtonTag );
     };
 
     // ----------------------------
-
-    me.setViewFilterData = function()
+    
+    me.viewSelect_1st = function()
     {
-        // Set Filter View name list and those view's definition info.
-        me.activityListViews = me.blockListObj.blockObj.blockJson.activityListViews;  // These are just named list..  We need proper def again..
-        me.viewDefs = me.getActivityListViewDefinitions( me.activityListViews, me.viewsDefinitionList );
+        var firstOptionVal = me.viewSelectTag.find( 'option.first' ).attr( 'value' );
+        
+        me.viewSelectTag.val( firstOptionVal ).change();        
     };
 
+    //me.sortSelect_1st = function()
+    //{
+    //    me.sortListUlTag.find( 'li.liSort:first' ).click();       
+    //};
 
-    me.create_UI_Controls = function ( blockList_UL_Tag, containerTagTemplate, viewDefs )
+    // ----------------------------
+
+    me.setUpInitialData = function()
     {
+        me.mainList = me.blockListObj.cwsRenderObj._activityListData.list;
+        me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
+
+        // Set Filter View name list and those view's definition info.
+        me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
+        me.viewListDefs = me.getActivityListViewDefinitions( me.viewListNames, me.viewsDefinitionList );
+    };
+
+    // -----------------
+
+    me.clearClassTag = function( blockList_UL_Tag )
+    {
+        // Clear any previous ones of this class
+        blockList_UL_Tag.find( 'div.viewsFilterAndSortContainer' ).remove();
+    };
+
+    me.setClassContainerTag = function( blockList_UL_Tag, containerTagTemplate )
+    {
+        // Set HTML from template 
         blockList_UL_Tag.append( containerTagTemplate );
+    };
 
+    me.setClassVariableTags = function ( blockList_UL_Tag )
+    {
         // View Filter Tags
-        me.selectTag = blockList_UL_Tag.find( 'select.selViewsListSelector' );
-
-        me.populateViewList( viewDefs, me.selectTag );
-        me.setViewListEvent( me.selectTag );
-
-
+        me.viewSelectTag = blockList_UL_Tag.find( 'select.selViewsListSelector' );
         // Sort Related Tags
         me.sortListButtonTag = blockList_UL_Tag.find( 'button.buttonSortOrder' ); // sortList_Tagbutton
         me.sortListUlTag = blockList_UL_Tag.find( 'ul.ulSortOrder' ); // sortList_TagUL
-        
-        // sort button click related event
-        me.setSortOtherEvents( me.sortListButtonTag );
-
-        // sort populate & click event are set on view selection
-        //me.sortListConfig = me.viewItemObj.sort; 
-        //me.populateSorts( me.sortListUlTag );
     };
 
 
-    me.runFirstView = function( activityListViews )
+    me.populateControls = function ( viewListDefs, viewSelectTag )
     {
-        if ( activityListViews && activityListViews.length > 0 )
-        {            
-            me.switchViewNSort( activityListViews[ 0 ], me.viewDefs, me.mainList );
-        }
+        // Populate ViewList (select tag options, which is each view)       
+        me.populateViewList( viewListDefs, viewSelectTag );
+
+        // Populate Sort is done in 'View' select event
+        //    Since selected view contains the sorting definition.
     };
 
+
+    me.setRenderEvents = function ( viewSelectTag, sortListButtonTag )
+    {
+        // Set Event, View - View select event
+        me.setViewListEvent( viewSelectTag );
+        
+        // Set Event, Sort - Sort button click related event, not main sort selection event
+        me.setSortOtherEvents( sortListButtonTag );
+
+        // Set Sort selection/click Event (Main one) is done in 'View' select event
+        //    Since selected view contains the sorting definition.
+    };
 
     // ============================================
 
@@ -172,14 +213,14 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     // -----------------------
     // -- Populate Control & Perform Filtering related..
 
-    me.populateViewList = function( viewDefs, selectTag )
+    me.populateViewList = function( viewListDefs, viewSelectTag )
     {
         // Add options
-        viewDefs.forEach( viewDef =>
+        viewListDefs.forEach( viewDef =>
         {
             var optionTag = $( me.viewOptionTagTemplate ).attr( 'value', viewDef.id ).html( viewDef.name );
             //`<option value="${viewDef.id}">${viewDef.name}</option>` );
-            selectTag.append( optionTag );
+            viewSelectTag.append( optionTag );
         });
     };
 
@@ -187,10 +228,10 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     // -------------
     // -- Events
 
-    me.setViewListEvent = function( selectTag )
+    me.setViewListEvent = function( viewSelectTag )
     {
-        selectTag.change( function() {
-            me.switchViewNSort( $( this ).val(), me.viewDefs, me.mainList );
+        viewSelectTag.change( function() {
+            me.switchViewNSort( $( this ).val(), me.viewListDefs, me.mainList );
         });
     };
 
@@ -236,11 +277,11 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     // -------------------------------------
     // -- View Filter Operation Related
 
-    me.switchViewNSort = function( viewName, viewDefs, mainList )
+    me.switchViewNSort = function( viewName, viewListDefs, mainList )
     {
         //me.viewsList_CurrentItem = viewItem;
         //var viewDef = me.getViewsItemConfig( viewName );
-        me.viewDef_Selected = Util.getFromList( viewDefs, viewName, "id" );
+        me.viewDef_Selected = Util.getFromList( viewListDefs, viewName, "id" );
 
         me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
         
