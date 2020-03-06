@@ -122,13 +122,13 @@ function BlockList( cwsRenderObj, blockObj )
 
 
                     // 3. Create ViewList if applicable (by config)
-                    me.setConditionalViewList( me.blockObj, function( hasViewList, newActivityList )
-                    {
-                        if ( hasViewList ) me.activityList = newActivityList;
+                    // me.setConditionalViewList( me.blockObj, function( hasViewList, newActivityList )
+                    //{
+                    //    if ( hasViewList ) me.activityList = newActivityList;
                         
                         // 3. Main Data Populate
                         me.populateActivityList( me.activityList, me.blockList_UL_Tag );
-                    });
+                    //});
 
 
                     // 4. Set Events - scroll, etc.
@@ -142,7 +142,7 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-
+    /*
     me.setConditionalViewList = function( blockObj, callBack )
     {
         ///function( hasViewList, newActivityList )
@@ -158,7 +158,8 @@ function BlockList( cwsRenderObj, blockObj )
             });
         }
         else { callBack(); }
-    }
+    };
+    */
 
 
     // Calls with new viewFilter..
