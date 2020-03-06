@@ -24,6 +24,8 @@
 //          - class actions are events driven..
 //          - set events handler that will perform the class actions
 //          
+//      NOTE: BlockList class should also follow above method templating logic.
+//
 // -- Pseudo WriteUp: 
 //
 //      - MAIN FEATURES:
@@ -68,7 +70,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     me.sortListUlTag; // sortList_TagUL
 
 
-    // --- Templates ----------------
+    // --- HTML Templates ----------------
     me.containerTagTemplate = `
         <div class="viewsFilterAndSortContainer inputDiv">
             <div class="viewsFilter">
@@ -85,10 +87,10 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
                 <ul class="ulSortOrder" ></ul>            
             </div>
 
-        </div>
-    `;
+        </div>`;
+
     me.viewOptionTagTemplate = `<option value=""></option>`;
-    me.sortLiTagTemplat = `<li class="liSort" sortid="" ></li>`;
+    me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
 
 
     // ----------------------------
@@ -225,55 +227,6 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     };
 
 
-    // -------------
-    // -- Events
-
-    me.setViewListEvent = function( viewSelectTag )
-    {
-        viewSelectTag.change( function() {
-            me.switchViewNSort( $( this ).val(), me.viewListDefs, me.mainList );
-        });
-    };
-
-
-    me.setSortOtherEvents = function( sortListButtonTag )
-    {
-        sortListButtonTag.click( function() {
-            me.sortListUlTag.css( "display", "flex" );
-        });
-
-        $( document ).click( function( event ) 
-        {
-            // If click target is not sortButton, hide the UL;            
-            if ( event.target != me.sortListButtonTag[0] )
-            {
-                me.sortListUlTag.hide();
-            }
-        });
-
-        // me.sortListUlTag click events are created when we create sort list from selected view
-    };
-
-
-    me.setSortLiTagClickEvent = function( liTag )
-    {
-        liTag.click( function()
-        {
-            var sortId = $( this ).attr( 'sortid' );
-
-            // get sortId and get sortDef from it..
-            var sortDef = Util.getFromList( sortDefs, sortId, "id" );
-
-            if ( sortDef )
-            {
-                me.sortList( sortDef, me.viewFilteredList );                        
-
-                me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
-            }
-        });
-    };
-
-
     // -------------------------------------
     // -- View Filter Operation Related
 
@@ -290,7 +243,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
         me.populateSorts( me.sortListUlTag, me.viewDef_Selected.sort ); 
 
         // Sort with 1st one..
-        me.sortList_1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
+        me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
 
 
         // Once the viewFiltered List is decided and sorted, reRender it 
@@ -344,7 +297,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
             for ( var i = 0; i < sortList.length; i++ )
             {
                 var sortDef = sortList[ i ];
-                var liTag = $( me.sortLiTagTemplat ).attr( 'sortid', sortDef.id ).html( sortDef.name );
+                var liTag = $( me.sortLiTagTemplate ).attr( 'sortid', sortDef.id ).html( sortDef.name );
                 // `<li class="liSort selected" sortid="${sortDef.id}" >${sortDef.name}</li>` );
 
                 sortListUlTag.append( liTag );
@@ -364,7 +317,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     };
 
 
-    me.sortList_1stOne = function( sortDefs, viewFilteredList )
+    me.sortList_wt1stOne = function( sortDefs, viewFilteredList )
     {
         if ( sortDefs && sortDefs.length > 0 )
         {
@@ -404,6 +357,56 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
         });          
     };
 
+
+    // ---------------------------------------------------------
+    // -- Events Related
+
+    me.setViewListEvent = function( viewSelectTag )
+    {
+        viewSelectTag.change( function() {
+            me.switchViewNSort( $( this ).val(), me.viewListDefs, me.mainList );
+        });
+    };
+
+
+    me.setSortOtherEvents = function( sortListButtonTag )
+    {
+        sortListButtonTag.click( function() {
+            me.sortListUlTag.css( "display", "flex" );
+        });
+
+        $( document ).click( function( event ) 
+        {
+            // If click target is not sortButton, hide the UL;            
+            if ( event.target != me.sortListButtonTag[0] )
+            {
+                me.sortListUlTag.hide();
+            }
+        });
+
+        // me.sortListUlTag click events are created when we create sort list from selected view
+    };
+
+
+    me.setSortLiTagClickEvent = function( liTag )
+    {
+        liTag.click( function()
+        {
+            var sortId = $( this ).attr( 'sortid' );
+
+            // get sortId and get sortDef from it..
+            var sortDef = Util.getFromList( sortDefs, sortId, "id" );
+
+            if ( sortDef )
+            {
+                me.sortList( sortDef, me.viewFilteredList );                        
+
+                // TODO:
+                //      - This should call 'setActivityListNRender()'
+                me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
+            }
+        });
+    };
 
     // =-===============================
 
