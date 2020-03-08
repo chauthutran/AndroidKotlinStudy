@@ -2,14 +2,40 @@
 //   BlockList Class/Methods
 //          - Display List like 'activityList' - within BlockObject (Parent)
 //
+//   -- CLASS METHOD TEMPLATING THOUGHTS:
+//      - Below are the common standard methods of instantiating classes in this project:
+//
+//      1. initialize()
+//          - Set values from parents class or other related ones.
+//          * SHOULD be the ones that needs to be set only once on instantiation
+//
+//      2. render()
+//          - renders the class - can be called after calculation/perform operation/changes
+//          * SHOULD take care of displaying data that were changed/set.
+//          * SHOULD be able to be called again..  
+//              - Simply reRendering on the space like classDiv, after clearing(reset) any previous one.
+//          * COULD HAVE 
+//                  - set classDiv(section) content
+//                  - set rendered tag class variables
+//                  - populate(create) controls based on data
+//                  - rendered control evetns
+//
+//      3. events
+//          - class actions are events driven..
+//          - set events handler that will perform the class actions
+//          
 // -- Pseudo WriteUp: 
 //
 //      - MAIN FEATURES:
+//
+//          1. InitialSetup() - Set some variables like below  <-- used rather than 'initialize' due to not having this ready on instantiation time
+//                  - 'me.activytList' - from cwsRender activity full list (but copy of the list, not influencing the actual list)
+//                  - 'me.blockJson' set from passed 'blockJson'
+//                 
 //          1. Render() - Perform 'rendering' of blockList with main data from cwsRender
 //                  [Kind of Initialization Part]
 //                  - Set Frame HTML (by cloning from templat) 
 //                  - Set Other Related Initial things
-
 //                  [True Rendering Part]
 //                  - Set ActivityList from main list on cwsRender.
 //                  - Populate ActivityItems (using 'ActivityList')
@@ -34,7 +60,8 @@ function BlockList( cwsRenderObj, blockObj )
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
-    me.blockObj = blockObj;        
+    me.blockObj = blockObj;     
+    me.blockJson;   
 
     me.activityList = [];
     me.blockList_UL_Tag;
@@ -51,6 +78,8 @@ function BlockList( cwsRenderObj, blockObj )
     me.viewsListFilterObj;
     me.viewsListSorterObj;
     me.paging_lastItm;
+
+    me.BlockListViewObj;
 
     me.template_ActivityCard = `<li itemid="" class="activityItemCard">
         <a class="expandable" itemid="" style="padding:4px;">
@@ -92,6 +121,11 @@ function BlockList( cwsRenderObj, blockObj )
         </a>
     </li>`;
 
+    
+    me.template_ActivityCardEmpty = `<li class="emptyListLi">
+            <a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="${Util.termName_listEmpty}">List is empty.</a>
+        </li>`;
+
     // -------- Tags --------------------------
 
     me.divSyncDownTag = $('#divSyncDown');
@@ -101,65 +135,35 @@ function BlockList( cwsRenderObj, blockObj )
     // ===========================================================
     // === Main Features =========================
 
-    //  #1 Render BlockList
-    me.render = function( list, blockTag, passedData, options )
-    {        
-        try
-        {
-            if ( !blockTag ) throw "blockTag undefined!";
-            else 
-            {
-                me.blockTag = blockTag;
+    // ----------------------------
+    me.initialize = function() {};
 
-                if ( list === 'redeemList' || list === 'activityList' ) // for DCDconfig refactoring review
-                {
-                    // 1. Initial Render Setups - Header frame cloning, anchor event setup, syncDown setup, etc..
-                    me.blockList_UL_Tag = me.initRenderSetup( blockTag, me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
-
-
-                    // 2. Set initial Data - with full list (Use 'cloneArray' to copy reference list)
-                    me.activityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
-
-
-                    // 3. Create ViewList if applicable (by config)
-                    // me.setConditionalViewList( me.blockObj, function( hasViewList, newActivityList )
-                    //{
-                    //    if ( hasViewList ) me.activityList = newActivityList;
-                        
-                        // 3. Main Data Populate
-                        me.populateActivityList( me.activityList, me.blockList_UL_Tag );
-                    //});
-
-
-                    // 4. Set Events - scroll, etc.
-                }
-            }
-        }
-        catch ( errMsg )
-        {
-            console.log( 'Error during blockList.render(), errMsg: ' + errMsg );
-        }
-    };
-
-
-    /*
-    me.setConditionalViewList = function( blockObj, callBack )
+    me.initialSetup = function( blockJson )
     {
-        ///function( hasViewList, newActivityList )
+        me.setUpInitialData( me.cwsRenderObj, blockJson );
+    }
+    
+    // -----------------------------------------------
 
-        if ( me.hasViewsList( blockObj ) ) 
-        {
-            me.initializeViewsList_ClassesAndData( function() {
+    //  Render BlockList
+    me.render = function( blockTag, passedData, options )
+    {        
+        // Clear previous UI & Set containerTag with templates
+        me.clearClassTag( blockTag );        
+        me.blockList_UL_Tag = me.setClassContainerTag( blockTag );
+        // Other Initial Render Setups - syncDown setup, favIcons, etc..
+        me.otherInitialRenderSetup( me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
 
-                //document.addEventListener('scroll', function (event) {
-                //}, true);
+        // Set class level tags
+        me.setClassVariableTags( blockTag );
+        
 
-                callBack();
-            });
-        }
-        else { callBack(); }
+        // Populate controls - ActivityLists, viewFilter/sort, related.
+        me.populateControls( me.blockJson, me.activityList, me.blockList_UL_Tag );
+
+        // Events handling
+        //me.setRenderEvents();
     };
-    */
 
 
     // Calls with new viewFilter..
@@ -184,12 +188,6 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-    me.clearExistingList = function( blockList_UL_Tag )
-    {
-        blockList_UL_Tag.html( '' );
-    };
-
-
     // Add one and reRender it
     me.addActivityItem = function( activityItem, callBack )
     {   
@@ -209,34 +207,88 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-    //me.cloneActivityListFromCwsRender = function( cwsRenderObj ) { return Util.cloneArray( cwsRenderObj._activityListData.list ); }
-    
-    // ===========================================================
-    // === #1 Render() Related Methods ============
+    // -----------------------------------------------
+    // -- Related Methods...
 
-    me.initRenderSetup = function( blockTag, divSyncDownTag, imgSyncDownTag, cwsRenderObj )
+    me.setUpInitialData = function( cwsRenderObj, blockJson )
+    {
+        me.activityList = Util.cloneArray( cwsRenderObj._activityListData.list );
+        me.blockJson = blockJson;
+    };
+
+
+    me.clearClassTag = function( blockTag )
+    {
+        // Clear any previous ones of this class
+        blockTag.find( 'div.listDiv' ).remove();
+    };
+
+    me.setClassContainerTag = function( blockTag )
+    {
+        // Block/BlockList HTML related setup
+        var listDivTag = $( '#listTemplateDiv > div.listDiv' ).clone(); // Copy from list html template located in index.html
+        blockTag.append( listDivTag );
+
+        var blockList_UL_Tag = listDivTag.find( 'ul.tab__content_act');
+
+        FormUtil.setUpTabAnchorUI( blockList_UL_Tag ); // Set click event + heights
+        
+        return blockList_UL_Tag;
+    };
+
+
+    me.otherInitialRenderSetup = function( divSyncDownTag, imgSyncDownTag, cwsRenderObj )
     {
         SyncManagerNew.setBlockListObj( me ); // Not Utilized, yet.
         me.setupForSyncDownload( divSyncDownTag, imgSyncDownTag, cwsRenderObj ); // Set 'SyncDownload' display show + click event
         me.cwsRenderObj.favIcons_Update();
-    
-        // Block/BlockList HTML related setup
-        FormUtil.setUpTabAnchorUI( blockTag.find( 'ul.tab__content_act') ); // Set click event + heights
-        blockTag.append( $( '#listTemplateDiv > div.listDiv' ).clone() ); // Copy from list html template
-
-        return blockTag.find( 'ul.tab__content_act' );
     };
 
+
+    me.setClassVariableTags = function ( blockTag )
+    {
+        me.blockTag = blockTag;
+    };
+
+
+    me.populateControls = function ( blockJson, activityList, blockList_UL_Tag )
+    {
+        if ( blockJson.activityListViews && blockJson.activityListViews.length > 0 )
+        {
+            me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockList_UL_Tag, blockJson.viewListNames );
+            me.BlockListViewObj.render();
+
+            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityList' with some clean up )?
+            me.BlockListViewObj.viewSelect_1st();    
+        }
+        else
+        {
+            me.populateActivityList( activityList, blockList_UL_Tag );
+        }
+    };
+
+    me.clearExistingList = function( blockList_UL_Tag )
+    {
+        blockList_UL_Tag.find( 'li' ).remove();
+    };
+
+
+    // ----------------------------------------
+
+    // ===========================================================
+    // === #1 Render() Related Methods ============
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     me.populateActivityList = function( activityList, blockList_UL_Tag )
     {
-        for( var i = 0; i < activityList.length; i++ )
+        if ( activityList.length === 0 ) me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+        else
         {
-            var activityItem = activityList[i];
-
-            me.createActivityListCard( activityItem, blockList_UL_Tag );
-        }    
+            for( var i = 0; i < activityList.length; i++ )
+            {
+                me.createActivityListCard( activityList[i], blockList_UL_Tag );
+            }    
+        }
     };
         
 
@@ -1130,4 +1182,6 @@ function BlockList( cwsRenderObj, blockObj )
     }
 
     // =============================================
+
+    me.initialize();
 }

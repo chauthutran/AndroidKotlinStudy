@@ -610,7 +610,6 @@ function Action( cwsRenderObj, blockObj )
 		{
 			"activityId": "",
 			"userName": "",
-			"password": "",
 
 			"searchValues": {
 				"clientDetails": { }
@@ -634,7 +633,7 @@ function Action( cwsRenderObj, blockObj )
 		// 0. Set "activityId", "userName", "password": "4321",
 		payloadJson2.activityId = "20200214" + Util.generateRandomId(6);
 		payloadJson2.userName = "LA_TEST_PROV";
-		payloadJson2.password = "4321";
+		//payloadJson2.password = "4321";
 
 
 		// 1. Set Search Criteria.. (Later, Should be 'searchValues' = ... )
@@ -673,5 +672,79 @@ function Action( cwsRenderObj, blockObj )
 		return payloadJson2;
 	};
 
+
+	me.reconfigurePayloadJson3 = function( inputsJson )
+	{
+
+		// 1. Collect data in 'payload' variable
+
+		var payloadJson = {};
+
+
+		var templateJson = 
+		{
+			"activityId": "",
+			"userName": "",
+
+			"searchValues": {
+				"clientDetails": { }
+			},
+
+			"captureValues": {
+				"activityDate": {},
+				"activityId": "payload.activityDateId",
+				"activityType": "",
+				"program": "",
+				"activeUser": "",
+				"dc": { },
+				"location": {},
+				"transactions": []
+			}
+		};
+
+		// hard copy from template...
+		var payloadJson2 = Util.getJsonDeepCopy( templateJson );
+
+		// 0. Set "activityId", "userName", "password": "4321",
+		payloadJson2.activityId = "20200214" + Util.generateRandomId(6);
+		payloadJson2.userName = "LA_TEST_PROV";
+		//payloadJson2.password = "4321";
+
+
+		// 1. Set Search Criteria.. (Later, Should be 'searchValues' = ... )
+		payloadJson2.searchValues.clientDetails = { 'phoneNumberCurrent': Util.getStr( inputsJson.phoneNumberCurrent ) };
+
+
+		// -------------------------------------
+		// 2. Set capture values..
+		// activityDate
+		var captureJson = payloadJson2.captureValues;
+		captureJson.activityDate = {
+			"capturedUTC": "2020-01-17T12:32:00.000",
+			"capturedLoc": "2020-01-17T11:32:00.000",
+			"createdOnDeviceUTC": new Date().toISOString() //"2020-06-17T12:32:30.000"
+		};
+
+		captureJson.activityId = payloadJson2.activityId;
+		// activityType, program, dc, location, activeUser
+
+		// Need to be properly populated - later..
+		captureJson.location = { "type:": "Point", "coordinates": [ -0.9969609975814819, 33.9327278137207 ] };
+		captureJson.accuracy = 100;
+		captureJson.dc = { "app": "pwa-connect", "softwareVersion": "1.3.2", "configVersion": "5" };
+		captureJson.activeUser = "qwertyuio1";
+		captureJson.activityType = "sp";
+		captureJson.program = "fpl";
+
+		// 2.1 - Set Transactions..
+		// 		- Registration (In case the record does not exists) <-- Normally, voucherCode would not be here?
+		captureJson.transactions.push( { "transactionType": "c_reg", "dataValues": inputsJson } );
+
+		// 		- In our case, issue voucher as well..
+		captureJson.transactions.push( { "transactionType": "v_iss", "dataValues": { 'voucherCode': Util.getStr( inputsJson.voucherCode ) } } );
+
+
+		return payloadJson2;
+	};
 
 }

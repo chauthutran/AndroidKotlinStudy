@@ -1,5 +1,5 @@
 // =========================================
-//   BlockListViewList Class/Methods
+//   BlockListView Class/Methods
 //          - View List - filter by view dropdown and sorting controls
 //
 //   -- CLASS METHOD TEMPLATING THOUGHTS:
@@ -42,12 +42,14 @@
 //          4. Sort Populate and Event - are done when 'view' is selected due to each view has sorting list & definitions
 //
 // =========================================
-function blockListViewList( blockList, blockList_UL_Tag, callBack )
+function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames )
 {
     var me = this;
 
+    me.cwsRenderObj = cwsRenderObj;
     me.blockListObj = blockList;
     me.blockList_UL_Tag = blockList_UL_Tag;
+    me.viewListNames = viewListNames;
 
     me.mainList; // = me.blockListObj.cwsRenderObj._activityListData.list;
     me.viewsDefinitionList; // = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
@@ -58,7 +60,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
     me.viewFilteredList = [];
     //me.viewsList_CurrentItem;
     
-    me.viewListNames = [];  // List of view names - used on this blockList
+    //me.viewListNames = [];  // List of view names - used on this blockList
 
     // --- Tags -----------------------
     // View Filter Related Tag
@@ -136,11 +138,11 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
 
     me.setUpInitialData = function()
     {
-        me.mainList = me.blockListObj.cwsRenderObj._activityListData.list;
+        me.mainList = me.cwsRenderObj._activityListData.list;
         me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
 
         // Set Filter View name list and those view's definition info.
-        me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
+        //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
         me.viewListDefs = me.getActivityListViewDefinitions( me.viewListNames, me.viewsDefinitionList );
     };
 
@@ -334,7 +336,7 @@ function blockListViewList( blockList, blockList_UL_Tag, callBack )
         }
         catch ( errMsg ) 
         {
-            console.log( 'Error on blockListViewList.sortList, errMsg: ' + errMsg );
+            console.log( 'Error on BlockListView.sortList, errMsg: ' + errMsg );
         }                   
     };
 

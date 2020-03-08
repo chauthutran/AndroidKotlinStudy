@@ -47,9 +47,10 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 			if ( me.blockJson.form ) me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
 
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
-			if ( me.blockJson.list === 'redeemList' )
+			if ( me.blockJson.list === 'redeemList' || me.blockJson.list === 'activityList' )
 			{
-				me.blockListObj.render( me.blockJson.list, me.blockTag, me.passedData, me.options );
+				me.blockListObj.initialSetup( me.blockJson );
+				me.blockListObj.render( me.blockTag, me.passedData, me.options );
 			}
 			else if ( me.blockJson.list === 'dataList' ) me.dataListObj.render( me.blockJson, me.blockTag, me.passedData, me.options );
 

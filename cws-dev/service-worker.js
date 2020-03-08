@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "6626071fd6d42662c99492a786001db3"
+    "revision": "1b42c2dafb76c0ed982d0a59598b3da0"
   },
   {
     "url": "redeemGen.html",
@@ -381,7 +381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "eba9c098ff09459bcb11848d3792ea9c"
+    "revision": "f9a314af33166c5b4d0d90bfea9838f7"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -397,7 +397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "364baedacd9be76bd1fb4625d082b1cc"
+    "revision": "0562d9bd3be3e8e83e8a5989a8f2ec7e"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -409,7 +409,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "90b627d7f79fbbdb2275908370cfa1a8"
+    "revision": "c7760d31b7114f0301ba7f01f80d3667"
+  },
+  {
+    "url": "scripts/classes/blockListViewList.js",
+    "revision": "e8c825cff6a2772bd4eab4da6b402a11"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -462,14 +466,6 @@ self.__precacheManifest = [
   {
     "url": "scripts/classes/validation.js",
     "revision": "8d38e286ba3a3c75c7ad07b10abc9945"
-  },
-  {
-    "url": "scripts/classes/viewsListFilter.js",
-    "revision": "832f9df5f5576a62a7a6a90fdef5ad7e"
-  },
-  {
-    "url": "scripts/classes/viewsListSorter.js",
-    "revision": "3c7279252aafa3dd5e159d3b51218ef0"
   },
   {
     "url": "scripts/classes/webqr.js",
