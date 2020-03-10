@@ -545,7 +545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
-    "revision": "ce36f21f8bf9e88e90f66abd4b312011"
+    "revision": "912642173be6b6cccfc39cfea0cccaef"
   },
   {
     "url": "scripts/services/dataVerMove.js",
@@ -593,7 +593,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
-    "revision": "fe4bfcb62ac375ee90955f480441bcf9"
+    "revision": "658823556a0f636d1e40ce4a23ea48b2"
   },
   {
     "url": "scripts/services/storage/storageMng.js",
@@ -609,7 +609,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "b8f206ad66507b6a375e19e039627587"
+    "revision": "32bc17d1fa26bb1bca3197a44e577a39"
   },
   {
     "url": "scripts/services/viewsListManager.js",

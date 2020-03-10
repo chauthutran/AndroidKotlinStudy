@@ -123,28 +123,37 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     // Retrieve data..
     SyncManagerNew.downloadActivities( function( success, mongoClients ) 
     {
+        var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
         // S2. NOTE: Mark that download done as just log?
 
-        if ( !success ) { if ( callBack ) callBack( false ); }
+        if ( !success ) { if ( callBack ) callBack( false, changeOccurred ); }
         else
         {
             // For each client record, convert to activity and add it..
             DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) {
 
-                SyncManagerNew.mergeDownloadedList( cwsRenderObj._activityListData.list, newActivityItems );
+                changeOccurred = SyncManagerNew.mergeDownloadedList( cwsRenderObj._activityListData.list, newActivityItems );
 
                 //console.log( 'After Merge, going for Saveing' );
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
 
-                DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
 
-                    //console.log( 'After Merge, After Save.. CallBack' );
-
-                    if ( callBack ) callBack( true );
-                });
+                // TODO: Only if there were changes <-- merged list, perform below
+                // + on callBack, indicate the change of data for list..
+                if ( changeOccurred )
+                {
+                    DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+                        //console.log( 'After Merge, After Save.. CallBack' );
+                        if ( callBack ) callBack( true, changeOccurred );
+                    });
+                }
+                else
+                {
+                    if ( callBack ) callBack( true, changeOccurred );
+                }
             } );
         }
     } );    
@@ -257,11 +266,11 @@ SyncManagerNew.downloadActivities = function( callBack )
 
 
         // If last download date exists, search after that. Otherwise, get all
-        var lastDownloadDateObj = LocalStgMng.lastDownload_Get();
+        var lastDownloadDateISOStr = LocalStgMng.lastDownload_Get();
 
-        if ( lastDownloadDateObj ) 
+        if ( lastDownloadDateISOStr ) 
         { 
-            var dateRange_gtStr = lastDownloadDateObj.toISOString().replace( 'Z', '' );
+            dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
 
             payloadJson.activity[ 'activityDate.createdOnMdbUTC' ] = {
                 "$gt": dateRange_gtStr
@@ -289,6 +298,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 
 SyncManagerNew.mergeDownloadedList = function( mainList, newList )
 {
+    var changeOccurred = false;
     var newList_filtered = [];
 
     // Check list for matching activityId
@@ -314,6 +324,7 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList )
                     // Merge newItem into existingItem (it does not delete existing attributes)
                     Util.mergeJson( existingItem, newItem );
                     //console.log( 'Item content merged' );
+                    changeOccurred = true;
                 }
                 //else console.log( 'Item content not merged - new one not latest..' );
             }
@@ -322,6 +333,7 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList )
                 // If not existing on device, simply add it.
                 newList_filtered.push( newItem );
                 //console.log( 'Item content merged' );
+                changeOccurred = true;
             }
         }
         catch( errMsg )
@@ -332,13 +344,11 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList )
         }
     }
 
-    //title: "DW - Voucher: ----"
-    //created: "2020-01-17T11:32:00.000"
-    //owner: "LA_TEST_PROV"
-    //activityType: "sp"
-    //id: "5349521735217"
-    
-    Util.appendArray( mainList, newList_filtered );
+
+    // if new list to push to mainList exists, add to the list.
+    if ( newList_filtered.length > 0 ) Util.appendArray( mainList, newList_filtered );
+
+    return changeOccurred;
 }; 
 
 

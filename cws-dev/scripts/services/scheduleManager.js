@@ -140,9 +140,16 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 {
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function( success ) {
+		SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function( success, changeOccurred ) {
 
-			if ( success ) {  console.log( 'syncDown once schedule finished success.' ); } //clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
+			if ( success ) 
+			{  
+				console.log( 'syncDown once schedule finished success.' ); 
+				//clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
+
+				// NOTE: If there was a new merge, for now, alert the user to reload the list?
+				if ( changeOccurred ) alert( 'SyncDown changed list.  Please refresh the list.' );
+			} 
 			else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
 		});
 	}

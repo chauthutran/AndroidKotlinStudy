@@ -101,14 +101,17 @@ DataFormatConvert.generatedActivityItems = function( clientJson, dateRange_gtStr
             var mongoActivityJson = mongoActivities[ i ];
 
             // NOTE: Due to search also returning client data, it could hold other activities that has later date.  Filter that.
-            if ( dateRange_gtStr && DataFormatConvert.activityDateConfirm( dateRange_gtStr, mongoActivityJson ) )
-            {
+            //if ( dateRange_gtStr && DataFormatConvert.activityDateConfirm( dateRange_gtStr, mongoActivityJson ) )
+            //{
                 var activityItem = DataFormatConvert.generatedActivityItem( mongoActivityJson, clientJson._id );
 
                 if ( activityItem ) activityItems.push( activityItem );
-            }
+            //}
         }
     }
+
+    console.log( 'activityItems' );
+    console.log( activityItems );
 
     return activityItems;
 };

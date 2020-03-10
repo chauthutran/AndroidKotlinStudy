@@ -10,21 +10,28 @@ LocalStgMng.KEY_langTerms = "langTerms";
 LocalStgMng.KEY_lastDownload = "lastDownload";
 // ---------------------------------------------------
 
-LocalStgMng.lastDownload_Save = function( dateObj ) 
+LocalStgMng.lastDownload_Save = function( dateISOStr ) 
 {
-	var jsonData = { 'lastDownload': dateObj.toISOString() };
+	var jsonData = { 'lastDownload': dateISOStr };
 
 	LocalStgMng.saveJsonData( LocalStgMng.KEY_lastDownload, jsonData );
 };
 
 LocalStgMng.lastDownload_Get = function() 
 {
-	var dateObj;
+	var dateISOStr;
 
-	var jsonData = LocalStgMng.getJsonData( LocalStgMng.KEY_lastDownload );
-	if ( jsonData && jsonData.lastDownload ) dateObj = new Date( jsonData.lastDownload );
+	try
+	{
+		var jsonData = LocalStgMng.getJsonData( LocalStgMng.KEY_lastDownload );
+		if ( jsonData && jsonData.lastDownload ) dateISOStr = ( new Date( jsonData.lastDownload ) ).toISOString();	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error in LocalStgMng.lastDownload_Get, errMsg: ' + errMsg );
+	}
 
-	return dateObj;  // return 'undefined' if lastDownload does not exists..
+	return dateISOStr;  // return 'undefined' if lastDownload does not exists..
 };
 
 
