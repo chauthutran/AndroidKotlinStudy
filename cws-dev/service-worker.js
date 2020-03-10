@@ -409,11 +409,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "3197aa48c0e5e85459df062b2fc33a4a"
+    "revision": "26f5f0eb4de978983e98124f1277a670"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "bc237cc5d171bda8d0bc4af27590cd4d"
+    "revision": "4ce068eaa95eb3854dc85530f9c482ca"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -581,7 +581,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "e0e9793fd45f4d47a53f85b4726aa388"
+    "revision": "9997827c8d6c2858084ea76e1840a8b4"
   },
   {
     "url": "scripts/services/statusInfoManager.js",
@@ -609,10 +609,10 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "32bc17d1fa26bb1bca3197a44e577a39"
+    "revision": "2cef77cc10a041a8888d6068885f23ba"
   },
   {
-    "url": "scripts/services/viewsListManager.js",
+    "url": "scripts/services/viewsListManagerOLD.js",
     "revision": "86aab4993e8d07a3e617aef108ee801a"
   },
   {

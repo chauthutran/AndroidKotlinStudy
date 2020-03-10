@@ -18,6 +18,6 @@ Constants.status_downloaded = "downloaded"; // initialize from dcd@XX ? //REMOVE
 
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;
 Constants.storage_offline_ItemAgeLimit = ( 92 * 24 ); //92 days
-Constants.activityList_PageSize = 15;
+//Constants.activityList_PageSize = 15;
 
 Constants.lsFlag_dataMoved_redeemListIDB = "dataMoved_redeemListIDB";

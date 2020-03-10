@@ -251,12 +251,13 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         // Populate Sort List - based on viewDef..
         me.populateSorts( me.sortListUlTag, me.viewDef_Selected.sort ); 
 
+
         // Sort with 1st one..
         me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
 
-
+        
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
+        me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..     
     };
 
 
@@ -301,16 +302,26 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         sortListUlTag.empty();
 
+        console.log( 'sortList' );
+        console.log( sortList );
+        
         if ( sortList )
         {
             for ( var i = 0; i < sortList.length; i++ )
             {
                 var sortDef = sortList[ i ];
-                var liTag = $( me.sortLiTagTemplate ).attr( 'sortid', sortDef.id ).html( sortDef.name );
+                var liTag = $( me.sortLiTagTemplate );
+                liTag.attr( 'sortid', sortDef.id );
+                liTag.html( 'james' );
+                
+                //.attr( 'sortid', sortDef.id ).html( sortDef.name );
                 // `<li class="liSort selected" sortid="${sortDef.id}" >${sortDef.name}</li>` );
 
                 sortListUlTag.append( liTag );
-    
+
+                console.log( sortListUlTag.html() );
+
+
                 me.setSortLiTagClickEvent( liTag );
     
                 //if ( sortObj.groupAfter != undefined && sortObj.groupAfter === 'true' )

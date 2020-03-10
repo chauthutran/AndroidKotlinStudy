@@ -65,8 +65,16 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.activityList = [];
     me.blockList_UL_Tag;
+
+    me.scrollEnabled = true;
+    // Constants class has scroll info..
+    me.activityList_PageSize = 15;
+    me.paging_lastItemCount = 0;
+
+
     me.recordsLoading = 0;
     me.recordCounter = 0;
+
 
     me.options;
     me.blockTag;
@@ -75,9 +83,10 @@ function BlockList( cwsRenderObj, blockObj )
     me.showGroupBy = false;
     me.debugMode = StatusInfoManager.debugMode; //( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
 
+    // Remove
     me.viewsListFilterObj;
     me.viewsListSorterObj;
-    me.paging_lastItm;
+
 
     me.BlockListViewObj;
 
@@ -136,7 +145,10 @@ function BlockList( cwsRenderObj, blockObj )
     // === Main Features =========================
 
     // ----------------------------
-    me.initialize = function() {};
+    me.initialize = function() 
+    {
+        me.setClassEvents();
+    };
 
     me.initialSetup = function( blockJson )
     {
@@ -175,8 +187,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
 
-            me.clearExistingList( me.blockList_UL_Tag );
-
+            me.clearExistingList( me.blockList_UL_Tag ); // remove li.activityItemCard..
 
             // This removes the top view - if view exists..
             me.populateActivityList( me.activityList, me.blockList_UL_Tag );
@@ -207,6 +218,32 @@ function BlockList( cwsRenderObj, blockObj )
 
         me.reRender( newActivityList, callBack );    
     };
+
+
+    // -----------------------------------------------
+    // -- Class Events ...
+
+    me.setClassEvents = function()
+    {
+        if ( me.scrollEnabled ) me.setScrollEvent();
+    };
+
+    me.setScrollEvent = function()
+    {
+        document.addEventListener('scroll', function (event) {
+            me.scrollList();
+        });
+    };
+
+    // Get next paging amount data and display it
+    me.scrollList = function()
+    {
+        // 1. check current paging, get next paging record data..
+
+        // 2. add to the displayed list..
+    };
+
+
 
 
     // -----------------------------------------------
@@ -271,7 +308,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.clearExistingList = function( blockList_UL_Tag )
     {
-        blockList_UL_Tag.find( 'li' ).remove();
+        blockList_UL_Tag.find( 'li.activityItemCard' ).remove();
     };
 
 
