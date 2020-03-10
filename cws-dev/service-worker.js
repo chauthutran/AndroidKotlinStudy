@@ -409,11 +409,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "26f5f0eb4de978983e98124f1277a670"
+    "revision": "8b53e1fcbdc51b835b2d537c552a18d3"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "4ce068eaa95eb3854dc85530f9c482ca"
+    "revision": "f00ff0571c7890bba21aba4d49ee54f9"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -473,7 +473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "6ed8a6fd6fd39975c1c202b369811ab8"
+    "revision": "7d9eb389b8f99aa150060c5e076492b4"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -553,7 +553,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "792d9f2a6e62cd4dff0b3fcf110a39e0"
+    "revision": "8a1eab22c90a2eb78332fea568d03310"
   },
   {
     "url": "scripts/services/formMsgManager.js",
