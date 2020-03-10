@@ -9,8 +9,8 @@
 //      - LVL 1. The Expected Features of this class..
 //          1. Running 'Sync' on Item --> Submit Offline(?) Item to Server to process operation.  MORE: SyncUp, SyncDown
 //          2. 'SyncAll' - all the list of items, perform Sync.
-//          3. 'ScheduleSync' - Start running the scheduled sync on the background.
-//          
+//          3. 'SyncDown' - Start download and merge
+//
 //      - LVL 2. Go through each of 'Lvl 1' Methods to put general operation logics
 //          OP1. ""'Sync' on a item"
 //              A. Check on Network Status.
@@ -115,28 +115,33 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
 
 // NEW: JAMES: ----
-SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
+SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 {
+    // NOTE: We can check network connection here, or from calling place.  
+    //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
+
     // Retrieve data..
-    SyncManagerNew.downloadActivities( function( success, returnJson ) 
+    SyncManagerNew.downloadActivities( function( success, mongoClients ) 
     {
-        //console.log( 'SyncManagerNew.downloadActivities' );
-        //console.log( success );
-        //console.log( returnJson );
+        //console.log( success ); //console.log( mongoClients );
+        // S2. NOTE: Mark that download done as just log?
 
         if ( !success ) { if ( callBack ) callBack( false ); }
         else
         {
             // For each client record, convert to activity and add it..
-            DataFormatConvert.convertToActivityItems( returnJson, function( newActivityItems ) {
+            DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) {
 
                 SyncManagerNew.mergeDownloadedList( cwsRenderObj._activityListData.list, newActivityItems );
 
-                console.log( 'After Merge, going for Saveing' );
+                //console.log( 'After Merge, going for Saveing' );
+
+                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+                LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
 
                 DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
 
-                    console.log( 'After Merge, After Save.. CallBack' );
+                    //console.log( 'After Merge, After Save.. CallBack' );
 
                     if ( callBack ) callBack( true );
                 });
@@ -144,90 +149,6 @@ SyncManagerNew.syncDownAll = function( cwsRenderObj, runType, callBack )
         }
     } );    
 };
-
-// Perform Server Operation..
-SyncManagerNew.downloadActivities = function( callBack )
-{
-    try
-    {
-        //var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
-        var url = 'http://localhost:8080/dws-dev/PWA.activities';
-		var payloadJson = {
-            "activity": { 
-                "activeUser": "qwertyuio1" 
-                ,"activityDate.createdOnMdbUTC": {
-                    "$gte": "2020-01-01",
-                    "$lt": "2020-02-17"
-                }        			
-            }
-        };
-        var loadingTag = undefined;
-
-        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson ) {
-            callBack( success, returnJson );
-        });
-    }
-    catch( errMsg )
-    {
-        console.log( 'Error in SyncManagerNew.downloadActivities - ' + errMsg );
-        callBack( false );
-    }
-};
-
-
-SyncManagerNew.mergeDownloadedList = function( mainList, newList )
-{
-    var newList_filtered = [];
-
-    // Check list for matching activityId
-    //  If does not exists in mainList, put into the mainList..
-    //  If exists, and if new one is later one, copy the content into main item (merging) 
-
-    for ( var i = 0; i < newList.length; i++ )
-    {        
-        var newItem = newList[i];
-        var existingItem = Util.getFromList( mainList, newItem.id, "id" );
-
-        try
-        {
-            // If matching id item(activity) already exists in device, 
-            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
-            if ( existingItem )
-            {
-                var newItemDate = $.format.date( newItem.created, "dd MMM yyyy - HH:mm" );
-                var existingItemDate = $.format.date( existingItem.created, "dd MMM yyyy - HH:mm" );
-
-                if ( newItemDate > existingItemDate ) 
-                {
-                    // Merge newItem into existingItem (it does not delete existing attributes)
-                    Util.mergeJson( existingItem, newItem );
-                    //console.log( 'Item content merged' );
-                }
-                //else console.log( 'Item content not merged - new one not latest..' );
-            }
-            else
-            {
-                // If not existing on device, simply add it.
-                newList_filtered.push( newItem );
-                //console.log( 'Item content merged' );
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
-            console.log( newItem );
-            console.log( existingItem );
-        }
-    }
-
-    //title: "DW - Voucher: ----"
-    //created: "2020-01-17T11:32:00.000"
-    //owner: "LA_TEST_PROV"
-    //activityType: "sp"
-    //id: "5349521735217"
-    
-    Util.appendArray( mainList, newList_filtered );
-}; 
 
 // ===================================================
 // === 1. 'syncItem' Related Methods =============
@@ -313,6 +234,112 @@ SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderO
         });
     }
 };
+
+
+// ===================================================
+// === 2. 'syncDown' Related Methods =============
+
+// Perform Server Operation..
+SyncManagerNew.downloadActivities = function( callBack )
+{
+    try
+    {
+        var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var dateRange_gtStr;
+
+        //var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
+        var url = 'http://localhost:8080/dws-dev/PWA.activities';
+		var payloadJson = {
+            "activity": { 
+                "activeUser": activeUser
+            }
+        };
+
+
+        // If last download date exists, search after that. Otherwise, get all
+        var lastDownloadDateObj = LocalStgMng.lastDownload_Get();
+
+        if ( lastDownloadDateObj ) 
+        { 
+            var dateRange_gtStr = lastDownloadDateObj.toISOString().replace( 'Z', '' );
+
+            payloadJson.activity[ 'activityDate.createdOnMdbUTC' ] = {
+                "$gt": dateRange_gtStr
+            };
+        }
+
+
+        var loadingTag = undefined;
+        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
+
+            // NOTE: IMPORTANT:
+            // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
+            if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
+
+            callBack( success, mongoClientsJson );
+        });
+    }
+    catch( errMsg )
+    {
+        console.log( 'Error in SyncManagerNew.downloadActivities - ' + errMsg );
+        callBack( false );
+    }
+};
+
+
+SyncManagerNew.mergeDownloadedList = function( mainList, newList )
+{
+    var newList_filtered = [];
+
+    // Check list for matching activityId
+    //  If does not exists in mainList, put into the mainList..
+    //  If exists, and if new one is later one, copy the content into main item (merging) 
+
+    for ( var i = 0; i < newList.length; i++ )
+    {        
+        var newItem = newList[i];
+        var existingItem = Util.getFromList( mainList, newItem.id, "id" );
+
+        try
+        {
+            // If matching id item(activity) already exists in device, 
+            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
+            if ( existingItem )
+            {
+                var newItemDate = $.format.date( newItem.created, "dd MMM yyyy - HH:mm" );
+                var existingItemDate = $.format.date( existingItem.created, "dd MMM yyyy - HH:mm" );
+
+                if ( newItemDate > existingItemDate ) 
+                {
+                    // Merge newItem into existingItem (it does not delete existing attributes)
+                    Util.mergeJson( existingItem, newItem );
+                    //console.log( 'Item content merged' );
+                }
+                //else console.log( 'Item content not merged - new one not latest..' );
+            }
+            else
+            {
+                // If not existing on device, simply add it.
+                newList_filtered.push( newItem );
+                //console.log( 'Item content merged' );
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
+            console.log( newItem );
+            console.log( existingItem );
+        }
+    }
+
+    //title: "DW - Voucher: ----"
+    //created: "2020-01-17T11:32:00.000"
+    //owner: "LA_TEST_PROV"
+    //activityType: "sp"
+    //id: "5349521735217"
+    
+    Util.appendArray( mainList, newList_filtered );
+}; 
 
 
 // ===================================================

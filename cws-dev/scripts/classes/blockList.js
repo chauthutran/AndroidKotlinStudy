@@ -122,7 +122,7 @@ function BlockList( cwsRenderObj, blockObj )
     </li>`;
 
     
-    me.template_ActivityCardEmpty = `<li class="emptyListLi">
+    me.template_ActivityCardEmpty = `<li class="emptyListLi activityItemCard">
             <a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="${Util.termName_listEmpty}">List is empty.</a>
         </li>`;
 
@@ -177,6 +177,8 @@ function BlockList( cwsRenderObj, blockObj )
 
             me.clearExistingList( me.blockList_UL_Tag );
 
+
+            // This removes the top view - if view exists..
             me.populateActivityList( me.activityList, me.blockList_UL_Tag );
 
             if ( callBack ) callBack();
@@ -255,7 +257,7 @@ function BlockList( cwsRenderObj, blockObj )
     {
         if ( blockJson.activityListViews && blockJson.activityListViews.length > 0 )
         {
-            me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockList_UL_Tag, blockJson.viewListNames );
+            me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockList_UL_Tag, blockJson.activityListViews );
             me.BlockListViewObj.render();
 
             // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityList' with some clean up )?
@@ -280,8 +282,11 @@ function BlockList( cwsRenderObj, blockObj )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     me.populateActivityList = function( activityList, blockList_UL_Tag )
-    {
-        if ( activityList.length === 0 ) me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+    {        
+        if ( activityList.length === 0 ) 
+        {
+            me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+        }
         else
         {
             for( var i = 0; i < activityList.length; i++ )
@@ -431,7 +436,7 @@ function BlockList( cwsRenderObj, blockObj )
 
         imgSyncDownTag.off( "click" ).click( () => {
 
-            SyncManagerNew.syncDownAll( cwsRenderObj, 'Manual', me.afterSyncDownload );
+            SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
         });
     };
 

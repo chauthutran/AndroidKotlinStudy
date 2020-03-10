@@ -365,7 +365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "1b42c2dafb76c0ed982d0a59598b3da0"
+    "revision": "8ceaa23fe864ed33dc1ee4b6fe88ab56"
   },
   {
     "url": "redeemGen.html",
@@ -409,11 +409,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "c7760d31b7114f0301ba7f01f80d3667"
+    "revision": "3197aa48c0e5e85459df062b2fc33a4a"
   },
   {
-    "url": "scripts/classes/blockListViewList.js",
-    "revision": "e8c825cff6a2772bd4eab4da6b402a11"
+    "url": "scripts/classes/blockListView.js",
+    "revision": "bc237cc5d171bda8d0bc4af27590cd4d"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -437,7 +437,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "039125c91c9c1a85d1ced12ae4b16571"
+    "revision": "7a2af2b49829128046bf7f27c75db0b0"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -477,7 +477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "03c36f559c8fa9cdb60000601a2e9ab6"
+    "revision": "fa23d7295cb6f5213a91aa77149d44cc"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -545,11 +545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
-    "revision": "3b70e3c62fbf708e753261dc50a209c6"
-  },
-  {
-    "url": "scripts/services/dataManager2.js",
-    "revision": "bb61242ebb62cfdcda947ee7022d5e58"
+    "revision": "ce36f21f8bf9e88e90f66abd4b312011"
   },
   {
     "url": "scripts/services/dataVerMove.js",
@@ -585,14 +581,22 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "d4fe2b21db257832443fafd7c48f3ee6"
+    "revision": "e0e9793fd45f4d47a53f85b4726aa388"
   },
   {
     "url": "scripts/services/statusInfoManager.js",
     "revision": "4447d5788cb0b71d1a9f0ec563b721bc"
   },
   {
-    "url": "scripts/services/storageMng.js",
+    "url": "scripts/services/storage/dataManager2.js",
+    "revision": "bb61242ebb62cfdcda947ee7022d5e58"
+  },
+  {
+    "url": "scripts/services/storage/localStgMng.js",
+    "revision": "fe4bfcb62ac375ee90955f480441bcf9"
+  },
+  {
+    "url": "scripts/services/storage/storageMng.js",
     "revision": "03483b29d0213d4291064e123adbb0b6"
   },
   {
@@ -605,7 +609,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "7ea5474a1a2f69e936e01268e204fbb9"
+    "revision": "b8f206ad66507b6a375e19e039627587"
   },
   {
     "url": "scripts/services/viewsListManager.js",

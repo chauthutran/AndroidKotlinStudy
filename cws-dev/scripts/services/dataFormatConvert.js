@@ -46,17 +46,17 @@ DataFormatConvert.templateActivityItem = {
 // === MAIN 2 FEATURES =============
 
 // 1. Downloaded monogoDB Client list --> PWA ActivityItem List
-DataFormatConvert.convertToActivityItems = function( mongoClients, callBack )
+DataFormatConvert.convertToActivityItems = function( mongoClientsJson, callBack )
 {
     var activityItems = [];
 
     try
     {
-        var clientList = DataFormatConvert.getMongo_ClientList( mongoClients );
+        var clientList = DataFormatConvert.getMongo_ClientList( mongoClientsJson );
 
         for( var i = 0; i < clientList.length; i++ )
         {
-            Util.mergeArrays( activityItems, DataFormatConvert.generatedActivityItems( clientList[ i ] ) );
+            Util.mergeArrays( activityItems, DataFormatConvert.generatedActivityItems( clientList[ i ], mongoClientsJson.dateRange_gtStr ) );
         }
 
         callBack( activityItems );
@@ -73,7 +73,6 @@ DataFormatConvert.convertToActivityItems = function( mongoClients, callBack )
 // ===================================================
 // === 1 Related Methods =============
 
-
 DataFormatConvert.getMongo_ClientList = function( mongoClients )
 {
     var clientList = [];
@@ -89,7 +88,7 @@ DataFormatConvert.getMongo_ClientList = function( mongoClients )
     return clientList;
 };
 
-DataFormatConvert.generatedActivityItems = function( clientJson )
+DataFormatConvert.generatedActivityItems = function( clientJson, dateRange_gtStr )
 {
     var activityItems = [];
 
@@ -101,14 +100,40 @@ DataFormatConvert.generatedActivityItems = function( clientJson )
         {
             var mongoActivityJson = mongoActivities[ i ];
 
-            var activityItem = DataFormatConvert.generatedActivityItem( mongoActivityJson, clientJson._id );
+            // NOTE: Due to search also returning client data, it could hold other activities that has later date.  Filter that.
+            if ( dateRange_gtStr && DataFormatConvert.activityDateConfirm( dateRange_gtStr, mongoActivityJson ) )
+            {
+                var activityItem = DataFormatConvert.generatedActivityItem( mongoActivityJson, clientJson._id );
 
-            if ( activityItem ) activityItems.push( activityItem );
+                if ( activityItem ) activityItems.push( activityItem );
+            }
         }
     }
 
     return activityItems;
 };
+
+
+DataFormatConvert.activityDateConfirm = function( dateRange_gtStr, mongoActivityJson )
+{
+    // mongo Activity date (createdOnMdbUTC) has to be higher than 'dateRagne_gtStr'
+    var dateCheck = false;
+
+    if ( dateRange_gtStr )
+    {
+        if ( mongoActivityJson.activityDate && mongoActivityJson.activityDate.createdOnMdbUTC )
+        {
+            // Since both date string has no 'Z', we can compare
+            var searchDateObj = new Date( dateRange_gtStr );
+            var activityDateObj = new Date( mongoActivityJson.activityDate.createdOnMdbUTC );
+
+            if ( searchDateObj < activityDateObj ) dateCheck = true;
+        }
+    }
+
+    return dateCheck;
+};
+
 
 DataFormatConvert.generatedActivityItem = function( mongoActivityJson, mongoClientId )
 {

@@ -308,6 +308,9 @@ function Login( cwsRenderObj )
 				//me.loginAfter();
 			}
 
+
+
+			// TODO: THIS IS USED?
 			DataManager.getData( 'syncList', function( syncData ){
 
 				// if previously run Sync process 'crashed' without saving results > update results
@@ -322,16 +325,15 @@ function Login( cwsRenderObj )
 
 	me.loginAfter = function()
 	{
+		FormUtil.geolocationAllowed();
 
-			FormUtil.geolocationAllowed();
+		me.cwsRenderObj.renderDefaultTheme();
 
-			me.cwsRenderObj.renderDefaultTheme();
+		MsgManager.initialSetup();
 
-			MsgManager.initialSetup();
+		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
 
-			ScheduleManager.runSchedules_AfterLogin();
-
-			FormUtil.hideProgressBar();
+		FormUtil.hideProgressBar();
 	}
 
 	// --------------------------------------

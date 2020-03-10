@@ -204,19 +204,25 @@ function cwsRender()
 			// Load the redeemList json into the main memory of this class '_activityListData.list'
 			DataManager2.getData_RedeemList( function( jsonData_FromStorage ) 
 			{
+
+				// TODO: After login, trigger the background 'syncDown'
+				//SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function() { } );
+
 				if ( jsonData_FromStorage && jsonData_FromStorage.list )
 				{
-
-
 					me._activityListData.list = jsonData_FromStorage.list;
 	
+
 					// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
 					FormUtil.updateStat_SyncItems( me._activityListData, function()
 					{
 						callBack( me._activityListData );
 					});		
 				}
-				else callBack( me._activityListData );
+				else 
+				{
+					callBack( me._activityListData );
+				}
 			});
 	
 		});

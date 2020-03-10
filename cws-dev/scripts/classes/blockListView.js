@@ -18,7 +18,7 @@
 //                  - set classDiv(section) content
 //                  - set rendered tag class variables
 //                  - populate(create) controls based on data
-//                  - rendered control evetns
+//                  - rendered control events
 //
 //      3. events
 //          - class actions are events driven..
@@ -71,24 +71,26 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.sortListButtonTag; // sortList_Tagbutton
     me.sortListUlTag; // sortList_TagUL
 
+    //            <div class="viewsFilter">             </div>
+
+
 
     // --- HTML Templates ----------------
     me.containerTagTemplate = `
-        <div class="viewsFilterAndSortContainer inputDiv">
-            <div class="viewsFilter">
-                <label term="" class="from-string titleDiv">Select a view</label>
-                <div class="viewsListContainerTag">
-                    <div class="select divViewsListSelector" style="flex-grow:1;">
-                        <select class='selector selViewsListSelector'></select>
-                    </div>            
-                </div>                
-            </div>
+        <div class="viewsFilterAndSortContainer viewsListFIlterAndSortContainer inputDiv">
+            <label term="" class="from-string titleDiv">Select a view</label>
+            <div class="viewsListContainerTag">
 
-            <div class="viewsSorter">
-                <button class="buttonSortOrder"></button>
-                <ul class="ulSortOrder" ></ul>            
-            </div>
+                <div class="select divViewsListSelector" style="flex-grow:1;">
+                    <select class='selector selViewsListSelector'></select>
+                </div>            
 
+                <div class="viewsSorter">
+                    <button class="buttonSortOrder"></button>
+                    <ul class="ulSortOrder" ></ul>            
+                </div>
+
+            </div>                
         </div>`;
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
@@ -124,7 +126,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     
     me.viewSelect_1st = function()
     {
-        var firstOptionVal = me.viewSelectTag.find( 'option.first' ).attr( 'value' );
+        var firstOptionVal = me.viewSelectTag.find( 'option:first' ).attr( 'value' );
         
         me.viewSelectTag.val( firstOptionVal ).change();        
     };
@@ -134,6 +136,8 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     //    me.sortListUlTag.find( 'li.liSort:first' ).click();       
     //};
 
+
+    // ====================================================
     // ----------------------------
 
     me.setUpInitialData = function()
@@ -141,6 +145,9 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         me.mainList = me.cwsRenderObj._activityListData.list;
         me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
 
+        console.log( 'me.viewListNames' );
+        console.log( me.viewListNames );
+        
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
         me.viewListDefs = me.getActivityListViewDefinitions( me.viewListNames, me.viewsDefinitionList );
