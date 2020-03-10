@@ -144,9 +144,6 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         me.mainList = me.cwsRenderObj._activityListData.list;
         me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
-
-        console.log( 'me.viewListNames' );
-        console.log( me.viewListNames );
         
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
@@ -255,7 +252,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         // Sort with 1st one..
         me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
 
-        
+
         // Once the viewFiltered List is decided and sorted, reRender it 
         me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..     
     };
@@ -301,9 +298,6 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.populateSorts = function ( sortListUlTag, sortList )
     {
         sortListUlTag.empty();
-
-        console.log( 'sortList' );
-        console.log( sortList );
         
         if ( sortList )
         {
@@ -318,9 +312,6 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
                 // `<li class="liSort selected" sortid="${sortDef.id}" >${sortDef.name}</li>` );
 
                 sortListUlTag.append( liTag );
-
-                console.log( sortListUlTag.html() );
-
 
                 me.setSortLiTagClickEvent( liTag );
     
