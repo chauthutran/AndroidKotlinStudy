@@ -403,7 +403,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
         notifDiv.append( prevRow )
         notifDiv.append( btnRow );
 
-        prevRow.append( Util.arrayPreviewRecord( title, jsonData ) );
+        prevRow.append( Util2.arrayPreviewRecord( title, jsonData ) );
 
         btnRow.append( btnConfirm )
         btnRow.append( btnDecline )

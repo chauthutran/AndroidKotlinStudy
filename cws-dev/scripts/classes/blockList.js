@@ -523,8 +523,8 @@ function BlockList( cwsRenderObj, blockObj )
             expandedDivTag.html( FormUtil.loaderRing() );
 
             var itemData = Util.getFromList( me.cwsRenderObj._activityListData.list, itemID, "id" );
-            var trxDetails = Util.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
-            var historyDetails = Util.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
+            var trxDetails = Util2.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
+            var historyDetails = Util2.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
             var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
 
             expandedDivTag.empty();
@@ -534,7 +534,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             if ( prevDetails && prevDetails.length )
             {
-                expandedDivTag.append( Util.activityListPreviewTable( 'preview', prevDetails ) );
+                expandedDivTag.append( Util2.activityListPreviewTable( 'preview', prevDetails ) );
             } 
 
         }

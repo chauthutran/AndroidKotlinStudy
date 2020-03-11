@@ -415,47 +415,6 @@ Util.checkEmptyId_FromList = function( list )
 	return ( Util.getFromList( list, '' ) !== undefined );
 };
 
-Util.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
-{
-	// planned use: blockList will 'unpack' a complex json payload back into a single array 
-	recurseInputArr = function( arrItem, arrObj, itm, callBack )
-	{
-		if ( arrObj[ (itm + 1) ] )
-		{
-			recurseInputArr( arrItem[ arrObj[ itm] ], arrObj, (itm + 1), callBack )
-		}
-		else
-		{
-			if ( callBack ) callBack( arrItem, arrObj[ itm] )
-		}
-	}
-
-	var arrInp = inputStructure.split( '.' );
-	var itm = 0;
-	var thisItem = jsonObj[ arrInp[ itm] ];
-	
-	console.log( jsonObj );
-	console.log( arrInp[ itm] );
-
-	if ( arrInp[ (itm + 1) ] )
-	{
-		recurseInputArr( thisItem, arrInp, (itm + 1), function( innerData, innerSpec ){
-
-			console.log( innerData );
-			console.log( innerSpec );
-
-		} )
-	}
-	else
-	{
-		console.log( thisItem );
-		console.log( 'stopped here' );
-	}
-	
-
-
-};
-
 Util.jsonToArray = function( jsonData, structureConfig )
 {
 	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;
@@ -485,6 +444,8 @@ Util.jsonToArray = function( jsonData, structureConfig )
 
 	return arrRet;
 };
+
+
 Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 {
     if ( dataObj.list.length <= i )
@@ -499,99 +460,6 @@ Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
     }
 };
 
-Util.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
-{	
-	return array.filter( item => 
-		{
-			if ( item[attr].indexOf( field ) >= 0 )
-			{ 
-				return item[value]
-			} 
-		} 
-	)[0][value];
-}
-Util.arrayPreviewRecord = function( title, arr )
-{
-	var ret = $( '<table />');
-
-	if ( arr )
-	{
-		if ( title )
-		{
-			var tr = $( '<tr />');
-			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );
-		}
-	
-		for ( var i = 0; i < arr.length; i++ )
-		{
-			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
-			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );
-			}
-			else
-			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td class="dataToHTMLleft" />').html( arr[ i ].name ) );
-				tr.append( $( '<td class="dataToHTMLright" />').html( arr[ i ].value ) );
-			}
-		}
-	
-		var tr = $( '<tr />');
-		ret.append( tr );
-		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
-
-	}
-
-	return ret;
-
-}
-
-Util.activityListPreviewTable = function( title, arr )
-{
-	var ret = $( '<table class="activityListPreviewTable" />');
-
-	if ( arr )
-	{
-		if ( title )
-		{
-			var tr = $( '<tr />');
-			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="" />').html( '<strong>' + title + '</strong>') );	//dataToHTMLtitle
-		}
-	
-		for ( var i = 0; i < arr.length; i++ )
-		{
-			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
-			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="" />').html( arr[ i ].name ) );	//dataToHTMLheader
-			}
-			else
-			{
-				if ( arr[ i ].value && arr[ i ].value.length > 0 )
-				{
-					var tr = $( '<tr />');
-					ret.append( tr );
-					tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
-					tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
-				}
-			}
-		}
-	
-		var tr = $( '<tr />');
-		ret.append( tr );
-		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
-
-	}
-
-	return ret;
-
-}
 // List / Array Related
 // ----------------------------------
 
@@ -677,9 +545,11 @@ Util.getObjPropertyCount = function( list )
 // Check Variable or List Related
 // -------
 
+
+// BELOW SHOULD MOVE TO FORM UNIT..
 // ----------------------------------
 // Seletet Tag Populate, Etc Related
-
+// -- Move to either 'Util2' class, or 'FormUtil' class
 
 Util.populateSelect_ByList = function( selectTag, listData, dataType )
 {
@@ -738,149 +608,6 @@ Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inp
 	}
 };
 
-Util.populate_year = function ( el, data, labelText ) {
-
-	var ul = el.getElementsByClassName('optionsSymbol')[0],
-		modal = el.getElementsByClassName('modalSymbol')[0],
-		container = el.getElementsByClassName('containerSymbol')[0],
-		set = el.querySelector('button.acceptButton'),
-		cancel = el.querySelector('button.declineButton'),
-		inputTrue = el.querySelector('.inputTrue'),
-		inputShow = el.querySelector('.inputShow'),
-		inputSearch = el.getElementsByClassName('searchSymbol')[0],
-		closeSearch = el.querySelector('.closeSearchSymbol');
-
-	function sendFocus(newIndex) {
-
-		if (ul.dataset.index != newIndex) {
-
-			const lastEl = ul.children[ul.dataset.index]
-
-			if (lastEl) {
-				//lastEl.style.setProperty('color', 'black')
-				lastEl.classList.toggle('focus')
-			}
-
-			ul.children[newIndex].classList.toggle('focus')
-			//ul.children[newIndex].style.setProperty('color', '#009788')
-			ul.dataset.index = newIndex
-
-		}
-	}
-
-	function sendChoose(){
-
-		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
-		inputShow.value = ul.children[ul.dataset.index].innerText;
-
-		if ("createEvent" in document) {
-			var evt = document.createEvent("HTMLEvents");
-			evt.initEvent('change', false, true);
-			inputShow.dispatchEvent(evt);
-		}
-		else
-		{
-			inputShow.fireEvent("onchange");
-		}
-
-	}
-
-	function generateLi( { value, text, parent, index} ){
-
-		const li = document.createElement('li');
-
-		li.dataset.value = value;
-		li.dataset.index = index;
-		li.innerText = text;
-
-		$(li).click(function(){
-			sendFocus(li.dataset.index)
-		});
-
-		parent.appendChild(li);
-
-		return li;
-
-	}
-
-	function hidrateUl( data, callBack )
-	{
-		data.map( (obj,index) => generateLi( { ...obj, index, parent:ul } ));
-
-		if ( callBack ) callBack();
-	}
-
-	closeSearch.style.setProperty('display','none');
-	inputSearch.style.setProperty('display','none');
-
-	$(set).click( function(e)
-	{
-		e.preventDefault();
-		if (!isNaN(parseInt(ul.dataset.index))) {
-			sendChoose();
-		}
-		modal.parentElement.style.setProperty('display', 'none');
-
-	});
-
-	$(cancel).click( function(e)
-	{
-		e.preventDefault();
-		modal.parentElement.style.setProperty('display', 'none');
-	});
-
-	inputShow.addEventListener('focus', e => {
-		e.preventDefault();
-		inputShow.blur();
-		modal.parentElement.style.setProperty('display', 'flex');
-		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
-
-	})
-
-	$(modal.parentElement).click( function(e)
-	{
-		e.preventDefault();
-		if (e.target === modal.parentElement) {
-			modal.parentElement.style.setProperty('display', 'none');
-		}
-	});
-
-	inputSearch.addEventListener('keyup', e => {
-
-		if (e.target.value == '') {
-			closeSearch.style.setProperty('display', 'none');
-		} else {
-			closeSearch.style.setProperty('display', 'flex');
-		}
-
-		var letras = e.target.value;
-		var lis = Array.from(ul.children);
-
-		lis.forEach(li => {
-			var palabra = li.innerText.toLowerCase();
-			if (!palabra.match(`.*${letras.toLowerCase()}.*`)) {
-				li.style.setProperty('display', 'none');
-			} else {
-				li.style.setProperty('display', 'block');
-			}
-		});
-
-	})
-
-	$(closeSearch).click( function(e)
-	{
-		e.preventDefault()
-		inputSearch.value = ''
-		closeSearch.style.setProperty('display', 'none')
-		var lis = Array.from(ul.children)
-		lis.forEach(li => li.style.setProperty('display', 'block'))
-	})
-
-	inputSearch.parentElement.innerHTML = labelText; //'Date of birth'; // MISSING TRANSLATION
-
-	hidrateUl( data);
-
-}
 
 Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
 {
@@ -934,175 +661,6 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 	})
 };
 
-Util.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
-{
-	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
-	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
-	var text = $( '<span class="checkboxText">' + message + '</span>' )
-	var check = $( '<span class="checkboxCheck" ></span>' )
-
-	divContainerTag.click( function(){
-
-		if ( checkboxReal.prop( 'checked' ) )
-		{
-			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-			checkboxShow.css( 'background', 'transparent' );
-			checkboxReal.prop( 'checked', false );
-		} 
-		else 
-		{
-			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-			checkboxShow.css( 'background', 'gray' );
-			checkboxReal.prop( 'checked', true );
-		}
-
-		if ( updates ) Util.updateMultiCheckboxPayloadValue( updates )
-
-	} );
-
-	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
-	{
-		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-		checkboxShow.css( 'background', 'gray' );
-		checkboxReal.prop( 'checked', true );
-	} 
-	else 
-	{
-		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-		checkboxShow.css( 'background', 'transparent' );
-		checkboxReal.prop( 'checked', false );
-	}
-
-	checkboxShow.append( check );
-	divContainerTag.append( checkboxReal,checkboxShow, text );
-
-	return { component: divContainerTag, input:checkboxReal };
-
-}
-
-Util.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
-{
-	selectObj.empty();
-
-	var inputOpts = [];
-
-	json_Data.forEach( obj=> {
-
-		var { component } = Util.createCheckbox( {
-				message:	obj.defaultName,
-				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
-				updates:	formItemJson.id,
-				value: 		obj.value } ),
-				li = $( '<li></li>' )
-				li.append( component )
-				selectObj.append( li );
-
-		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
-
-	} );
-
-}
-
-Util.updateMultiCheckboxPayloadValue = function( updates )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
-
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
-		}
-	}
-
-	$( '[name="' + updates + '"]' ).val( vals );
-
-	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
-
-}
-
-Util.updateOtherRadioOptions = function( updates, excludeName )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
-
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.name != excludeName ) obj.checked = false;
-		}
-	}
-}
-
-Util.updateRadioPayloadValue = function( updates )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
-
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.checked )
-			{
-				$( '[name="' + updates + '"]' ).val( obj.value );
-				console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
-
-				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
-				
-			}
-		}
-	}
-}
-
-
-Util.populateRadios = function ( formItemJson, selectObj, json_Data )
-{
-	selectObj.empty();
-
-	json_Data.forEach( obj => {
-
-		var content = $( '<div class="radioContent" ></div>' );
-		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
-		var picker = $( '<span class="radioPicker"></span>' );
-		var pickerOn = $( '<i class="radioPickerOn"></i>' )
-		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
-
-		picker.append( pickerOn );
-		content.append( input, picker, text);
-
-		content.click( function(e) {
-
-			e.stopPropagation();
-
-			if (! input.prop('checked') ){
-
-				content[0].parentElement.querySelectorAll('i').forEach(i=>{
-					$(i).css( 'background', 'transparent' )
-				});
-
-				pickerOn.css( 'background', 'gray' );
-				input.prop( 'checked', true );
-
-				Util.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
-
-			}
-
-			Util.updateRadioPayloadValue( formItemJson.id );
-
-		})
-
-		selectObj.append( content );
-
-	} )
-
-}
 
 Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 {
@@ -1126,55 +684,6 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 				
 			selectObj.append( option );
 		});
-	}
-};
-
-Util.populateSelect_WithDefaultName = function( selectObj, selectName, json_Data, defaultName )
-{
-	selectObj.empty();
-	selectObj.append( $( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' ) );
-
-	$.each( json_Data, function( i, item ) {
-
-		if( item.name == defaultName )
-		{
-			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + ' selected></option>' ).attr( "value", item.id ).text( item.name ) );
-		}
-		else
-		{
-			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", item.id ).text( item.name ) );
-		}
-	});
-};
-
-
-Util.selectOption_WithOptionalInsert = function ( selectObj, id, list )
-{
-	if ( selectObj.find( "option" ).length > 0 )
-	{
-		selectObj.val( id );				
-	}
-
-	// If not found, add the item.
-	if ( selectObj.val() != id )
-	{
-		if ( list !== undefined && list != null )
-		{
-			// If list is provided, get item (name & id pair) from the list
-			var item = Util.getFromList( list, id );
-
-			if ( item !== undefined )
-			{
-				selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", item.id ).text( item.name ) );
-			}
-		}
-		else
-		{
-			// If list is not provided, simply add this id - as value & name
-			selectObj.append( $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' ).attr( "value", id ).text( id ) );
-		}
-
-		selectObj.val( id );
 	}
 };
 
@@ -1219,210 +728,6 @@ Util.reset_tagsListData = function( tags, listJson )
 	});
 };
 // Seletet Tag Populate, Etc Related
-// ----------------------------------
-
-
-// ----------------------------------
-// Write Message, Paint, Toggle Related
-
-Util.write = function( data )
-{
-	$( "#testData" ).append( " [" + data + "] <br><br>" );
-};
-
-
-Util.paintControl = function( ctrlTarget, color ) 
-{
-	if ( ctrlTarget.is( "select" ) )
-	{
-		ctrlTarget.css( "background-color", color );
-		ctrlTarget.find( 'option' ).css( "background-color", color );
-	}	
-	else
-	{
-		ctrlTarget.css( "background-color", color );
-	}
-};
-
-
-Util.paintWarningIfEmpty = function( tag )
-{
-	if ( tag.val() == "" )
-	{
-		//Util.paintControl( tag, '#F0D0D0' );
-		Util.paintWarning( tag );
-	}
-	else
-	{
-		Util.paintClear( tag );
-	}
-};
-
-
-Util.paintWarning = function( ctrlTarget ) 
-{
-	Util.paintControl( ctrlTarget, "LightCoral" );
-};
-
-Util.paintAttention = function( ctrlTarget ) 
-{
-	Util.paintControl( ctrlTarget, "#CDEBFF" );
-};
-
-
-Util.paintLightGreen = function( ctrlTarget ) 
-{
-	Util.paintControl( ctrlTarget, "#EEFEEE" );
-};
-	
-
-Util.paintWhite = function( ctrlTarget ) 
-{
-	Util.paintControl( ctrlTarget, "White" );
-};
-
-
-Util.paintClear = function( ctrlTarget ) 
-{
-	ctrlTarget.css( "background-color", "" );
-};
-
-
-Util.paintResult = function( ctrlTarget, result ) 
-{
-	if( result )
-	{
-		Util.paintControl( ctrlTarget, "#BBEEBB" );
-	}
-	else 
-	{
-		Util.paintControl( ctrlTarget, "#FFFFFF" );
-	}
-};
-
-
-Util.paintSuccess = function( ctrlTarget, result ) 
-{
-	if( result )
-	{
-		Util.paintControl( ctrlTarget, "#BBEEBB" );
-	}
-	else 
-	{
-		Util.paintControl( ctrlTarget, "#FFFFFF" );
-	}
-};
-
-Util.paintError = function( ctrlTarget, result ) 
-{
-	if( result )
-	{
-		Util.paintControl( ctrlTarget, "Orange" );
-	}
-	else 
-	{
-		Util.paintControl( ctrlTarget, "#FFFFFF" );
-	}
-};
-
-Util.paintBorderClear = function( ctrlTarget ) 
-{
-	ctrlTarget.css( "border-color", "" );
-};
-
-Util.paintBorderWarning = function( ctrlTarget ) 
-{
-	ctrlTarget.css( "border-color", "#ff0000" );
-};
-
-Util.toggleTarget = function( toggleAnchor, target, expand )
-{
-	// If 'expand' it is defined, display accordingly.
-	// If not, toggle based on current display setting.
-	if ( expand !== undefined )
-	{
-		if ( expand )
-		{
-			target.show( "fast" );					
-			toggleAnchor.text( '[-]' );
-		}
-		else
-		{
-			target.hide( "fast" );
-			toggleAnchor.text( '[+]' );
-		}
-	}
-	else
-	{
-		if( toggleAnchor.text() == '[+]' )
-		{
-			target.show( "fast" );					
-			toggleAnchor.text( '[-]' );
-		}
-		else if( toggleAnchor.text() == '[-]' )
-		{
-			target.hide( "fast" );
-			toggleAnchor.text( '[+]' );
-		}
-	}
-};
-
-
-Util.toggleTargetButton = function( toggleButtonTag, targetTag, expand, expendFunc, collapseFunc )
-{
-
-	var expendText = toggleButtonTag.attr( 'expand' );
-	var collapseText = toggleButtonTag.attr( 'collapse' );
-
-	//if ( !Util.checkValue( expendText ) ) expendText = '[+]';
-	//if ( !Util.checkValue( collapseText ) ) collapseText = '[-]';
-
-	var show = false;
-
-	// If 'expand' it is defined, display accordingly.
-	// If not, toggle based on current display setting.
-	if ( expand !== undefined )
-	{
-		if ( expand ) show = true;
-		else show = false;
-	}
-	else
-	{
-		if( toggleButtonTag.text() == expendText ) show = true;
-		else if( toggleButtonTag.text() == collapseText ) show = false;
-	}
-
-
-	if ( show )
-	{
-		targetTag.show( "fast" );					
-		toggleButtonTag.text( collapseText );
-		if ( expendFunc !== undefined ) expendFunc();
-	}
-	else
-	{
-		targetTag.hide( "fast" );
-		toggleButtonTag.text( expendText );
-		if ( collapseFunc !== undefined ) collapseFunc();
-	}
-};
-
-
-Util.setRowRemoval = function( trCurrent, runFunc )
-{
-	trCurrent.slideUp( 200, function() {
-
-		trCurrent.remove();
-
-		if ( runFunc !== undefined )
-		{
-			runFunc();
-		}
-	
-	});
-};
-
-// Write Message, Paint, Toggle Related
 // ----------------------------------
 
 Util.checkInteger = function( input )
@@ -1499,7 +804,6 @@ Util.formatDateBack = function( strDate )
 };
 
 
-
 Util.dateToString = function( date )
 {
 	var month = eval( date.getMonth() ) + 1;
@@ -1511,46 +815,6 @@ Util.dateToString = function( date )
 	return date.getFullYear() + "-" + month + "-" + day;
 };
 
-Util.dateToMyFormat = function( date, myFormat )
-{
-	var y = ( date.getFullYear() ).toString();
-	var month = ( (myFormat.match(new RegExp("MM", "g")) || []).length ? eval( date.getMonth() ) + 1 : '' );
-	var day = ( (myFormat.match(new RegExp("DD", "g")) || []).length ? eval( date.getDate() ) : '' );
-	var year = y.toString(); // = ( (myFormat.match(new RegExp("YY", "g")) || []).length ? ( ( (myFormat.match(new RegExp("YY", "g")) || []).length > 1 ) ? y.toString() : y.toString().slice( -2 ) ) : '' );
-
-	if ( ( (myFormat.match(new RegExp("YY", "g")) || []).length == 1 ) ) year = y.toString().slice( -2 );
-	if ( month.toString().length ) month = ( parseInt( month ) < 10 ) ? "0" + ( month ).toString() : ( month ).toString();
-	if ( day.toString().length ) day = ( parseInt( day ) < 10 ) ? "0" + ( day ).toString() : ( day ).toString();
-
-	if ( myFormat.indexOf('YYMMDD') >= 0 )
-	{
-		return year.toString() + '' + month.toString() + '' + day.toString();
-	}
-	else if ( myFormat.indexOf('DDMMYY') >= 0 )
-	{
-		return day.toString() + '' + month.toString() + '' + year.toString();
-	}
-	else if ( myFormat.indexOf('DDMM') >= 0 )
-	{
-		return day.toString() + '' + month.toString();
-	}
-	else if ( myFormat.indexOf('MMDD') >= 0 )
-	{
-		return month.toString() + '' + day.toString();
-	}
-	else if ( myFormat.indexOf('YY') >= 0 )
-	{
-		return year.toString();
-	}
-	else if ( myFormat.indexOf('MM') >= 0 )
-	{
-		return month.toString();
-	}
-	else if ( myFormat.indexOf('DD') >= 0 )
-	{
-		return day.toString();
-	}
-};
 
 Util.formatDateAndTime = function( datetimeStamp )
 {
@@ -1590,60 +854,6 @@ Util.formatTime = function( datetimeStamp )
 
 // Date Formatting Related
 // ----------------------------------
-
-
-Util.setupDatePicker = function( ctrl, onSelectFunc, dateFormat, type )
-{
-	if ( !Util.checkValue( dateFormat ) )
-	{
-		dateFormat = _dateFormat_Picker_YYMMDD;
-	}
-
-	if ( !Util.checkDefined( onSelectFunc ) )
-	{
-		onSelectFunc = function() {}
-		//{ $( this ).focus(); }
-	}
-
-	var maxDate = null;
-	var yearRangeStr = "";
-	var yearRangeStr = "";
-	var currentYear = (new Date()).getFullYear();
-
-	if ( type !== undefined && type == "birthdate" )
-	{
-		yearRangeStr = '1930:' + currentYear;
-		maxDate = 0;
-	}
-	else if ( type !== undefined && type == "upToToday" )
-	{
-		yearRangeStr = '' + (currentYear - 15) + ':' + currentYear;
-		maxDate = 0;
-	}
-	else
-	{
-		yearRangeStr = '' + (currentYear - 15) + ':' + (currentYear + 2);
-	}
-
-	// set Datepickers
-	ctrl.datepicker( 
-	{
-		onSelect: onSelectFunc
-		/*,beforeShow: function()
-		{
-			setTimeout( function() 
-			{ 
-				$( 'select.ui-datepicker-month' ).first().focus(); 
-
-			}, 200 );
-		}*/
-		,dateFormat: dateFormat 
-		,changeMonth: true
-		,changeYear: true
-		,yearRange: yearRangeStr
-		,maxDate: maxDate
-	});
-};
 
 Util.pageHScroll = function( option )
 {
@@ -1713,78 +923,8 @@ Util.getParameterInside = function( value, openClose )
 	{
 		return '';
 	}
-}
+};
 
-Util.newLocalSequence = function( pattern, commitSEQIncr )
-{
-	//var jsonUserData = DataManager.getData( FormUtil.login_UserName );
-	DataManager.getData( FormUtil.login_UserName, function( jsonUserData ){
-
-		var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
-		var ret;
-	
-		if ( jsonStorageData == undefined ) 
-		{
-			jsonStorageData = { "DD": Util.dateToMyFormat( new Date(), 'DD' ), "MM": Util.dateToMyFormat( new Date(), 'MM' ), "YY": Util.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
-		}
-	
-		if ( pattern.indexOf('[') > 0 )
-		{
-			var parms = Util.getParameterInside( pattern, '[]' );
-	
-			if ( parms.length )
-			{
-				if ( parms.indexOf(':') )
-				{
-					var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
-	
-					if ( Util.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
-					{
-						// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
-						ret = 1;
-						jsonStorageData[ arrParm[0] ] = Util.dateToMyFormat( new Date(), arrParm[0] );
-					}
-					else
-					{
-						var last = jsonStorageData[ (arrParm[0]).slice(1) ];
-	
-						if ( last )
-						{
-							ret = ( parseInt( last ) + 1 );
-						}
-						else
-						{
-							ret = 1;
-						}
-	
-					}
-	
-					jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
-					jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-	
-					if ( commitSEQIncr != undefined && commitSEQIncr == true )
-					{
-						DataManager.saveData( FormUtil.login_UserName, jsonUserData );
-					}
-	
-					return Util.paddNumeric( ret, arrParm[1] );
-	
-				}
-				else
-				{
-					console.log( ' ~ no newLocalSequence comma separator');
-				}
-			}
-			else
-			{
-				console.log( ' ~ no localSequence parms');
-			}
-	
-		}
-	} );
-	
-
-}
 
 Util.paddNumeric = function( val, padding )
 {
@@ -1825,10 +965,9 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
 
 		}
-
 	}
+};
 
-}
 
 Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 {
@@ -1840,215 +979,8 @@ Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 	{
 		return objJson.toString();
 	}
-}
+};
 
-Util.getFormInputValuePattern = function( tagTarget, formInputPattern )
-{
-	var formTarg = tagTarget.closest( 'div.formDivSec' );
-	var arrPattern;
-	var ret = '';
-
-	arrPattern = formInputPattern.split( '+' );
-
-	for (var i = 0; i < arrPattern.length; i++)
-	{
-		var InpVal = '';
-		var formInpFld = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ 0 ];
-
-		if ( formInpFld.length )
-		{
-			var InpTarg = formTarg.find( "[name='" + formInpFld + "']" );
-
-			if ( InpTarg )
-			{
-				InpVal = InpTarg.val();
-
-				if ( InpVal && InpVal.length )
-				{
-
-					for (var p = 1; p < arrPattern[ i ].replace( 'form:', '' ).split( '[' ).length; p++) 
-					{
-						var pattEnum = arrPattern[ i ].replace( 'form:', '' ).split( '[' )[ p ].replace( ']', '' );
-						var oper = pattEnum.split( ':' );
-
-						if ( oper[ 0 ] == 'RIGHT' )
-						{
-							InpVal = InpVal.substring( InpVal.length - parseInt( oper[ 1 ] ), InpVal.length )
-						}
-						else if ( oper[ 0 ] == 'LEFT' )
-						{
-							InpVal = InpVal.substring( 0, parseInt( oper[ 1 ] ) )
-						}
-						else if ( oper[ 0 ] == 'SUBSTRING' )
-						{
-							InpVal = InpVal.substring( parseInt( oper[ 1 ] ), parseInt( oper[ 2 ] ) )
-						}
-						else if ( oper[ 0 ] == 'PADDNUMERIC' )
-						{
-							InpVal = Util.paddNumeric( InpVal, oper[ 1 ] );
-						}
-					}
-
-					ret += InpVal;
-				}
-
-			}
-			else
-			{
-				console.log( ' no corresponding value [' + formInpFld + ']' );
-			}
-		}
-		else
-		{
-			console.log( ' no corresponding field [' + formInpFld + ']' );
-		}
-	}
-
-	return ret;
-
-}
-
-Util.getAgeValueFromPattern = function( tagTarget, pattern )
-{
-	var formTarg = tagTarget.closest( 'div.formDivSec' );
-	var ret = '';
-
-	if ( pattern.indexOf( 'form:' ) >= 0 )
-	{
-		var targFld = pattern.split( 'form:' )[ 1 ];
-		var targTag = formTarg.find( "[name='" + targFld + "']" );
-
-		if ( targTag )
-		{
-			var InpVal = targTag.val();
-
-			if ( InpVal && InpVal.length )
-			{
-				var today = new Date();
-				var birthDate = new Date( InpVal );
-				var age = today.getFullYear() - birthDate.getFullYear();
-				var m = today.getMonth() - birthDate.getMonth();
-				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-					age = age - 1;
-				}
-			
-				return age;
-			}
-			else
-			{
-				return '';
-			}
-
-		}
-		else
-		{
-			return '';
-		}
-
-	}
-}
-
-Util.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
-{
-	var arrPattern;
-	var patternSeparator;
-	var removeSeparator = false;
-	var arrParms;
-	var ret = '';
-
-	if ( pattern.indexOf( ',' ) )
-	{
-		arrParms = pattern.split( ',' );
-		patternSeparator = ( arrParms[ 1 ] ).trim();
-		arrPattern = ( arrParms[ 0 ] ).split( patternSeparator );
-
-		if ( arrParms[ 2 ] != undefined )
-		{
-			if ( isNaN( arrParms[ 2 ] ) )
-			{
-				if ( ( arrParms[ 2 ] ).toLowerCase() == 'true' )
-				{
-					removeSeparator = true;
-				}
-			}
-			else
-			{
-				removeSeparator = ( parseFloat( arrParms[ 2 ] ) > 0 )
-			}
-		}
-	}
-	else
-	{
-		if ( pattern.indexOf('-') ) patternSeparator = '-';
-		if ( pattern.indexOf('_') ) patternSeparator = '_';
-		if ( pattern.indexOf(' ') ) patternSeparator = ' ';
-		if ( pattern.indexOf('/') ) patternSeparator = '/';
-		if ( pattern.indexOf('*') ) patternSeparator = '*';
-
-		arrPattern = pattern.split( patternSeparator );
-	}
-
-	for (var i = 0; i < arrPattern.length; i++)
-	{
-		var returnPart = '';
-
-		if ( isNaN( arrPattern[ i ] ) )
-		{
-			if ( ( arrPattern[ i ] ).indexOf( 'YYYYMMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 8 )
-			{
-				returnPart = Util.dateToMyFormat( new Date(), 'YYYYMMDD' );
-			}
-			else if ( ( arrPattern[ i ] ).indexOf( 'YYMMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 6 )
-			{
-				returnPart = Util.dateToMyFormat( new Date(), 'YYMMDD' );
-			}
-			else if ( ( arrPattern[ i ] ).indexOf( 'MMDD' ) >= 0 && ( arrPattern[ i ] ).toString().length == 4 )
-			{
-				returnPart = Util.dateToMyFormat( new Date(), 'MMDD' );
-			}
-			else if ( (( arrPattern[ i ] ).match(new RegExp("X", "g")) || []).length == ( arrPattern[ i ] ).toString().length )
-			{
-				returnPart = Util.generateRandomAnything( ( arrPattern[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-			}
-			else if ( ( arrPattern[ i ] ).indexOf( 'SEQ[' ) >= 0 )
-			{
-				returnPart = Util.newLocalSequence( arrPattern[ i ], commitSEQIncr );
-			}
-			else if ( ( arrPattern[ i ] ).indexOf( '.' ) > 0 )
-			{
-				returnPart = Util.getLocalStorageObjectValue( arrPattern[ i ] );
-			}
-			else if ( ( arrPattern[ i ] ).indexOf( 'form:' ) >= 0 )
-			{
-				returnPart = Util.getFormInputValuePattern( tagTarget, arrPattern[ i ] );
-			}
-			else
-			{
-				returnPart = ( arrPattern[ i ] );
-			}
-
-		}
-		else
-		{
-			if ( parseFloat( arrPattern[ i ] ) == 0 )
-			{
-				returnPart = Util.paddNumeric( ( Util.generateRandomNumberRange( 0, Math.pow(10, ( arrPattern[ i ] ).toString().length ) -1 ) ).toFixed(0), (arrPattern[ i ]).toString().length );
-			}
-
-		}
-
-		if ( returnPart && returnPart.length )
-		{
-			ret += returnPart + ( removeSeparator ? '' : patternSeparator );
-		}
-	}
-
-	if ( ret.length )
-	{
-		return ( removeSeparator ? ret : ret.substring( 0, ret.length -1 ) );
-	}
-
-}
 
 Util.parseInt = function( input )
 {
@@ -2136,33 +1068,6 @@ Util.upNumber_IntArr = function( arr, upNumber )
 // Others
 // ----------------------------------
 
-Util.oneTimeActions = {};
-
-Util.delayOnceTimeAction = function( delay, id, action ) {
-
-	// is there already a timer? clear if if there is
-	if ( Util.oneTimeActions[id] ) clearTimeout( Util.oneTimeActions[id] );
-
-	// set a new timer to execute delay milliseconds from last call
-	Util.oneTimeActions[id] = setTimeout( action, delay );
-};
-
-// ---------------------------------------
-// Prototypes.  Extensions.
-
-$.fn.outerHTML = function(){
-
-    // IE, Chrome & Safari will comply with the non-standard outerHTML, all others (FF) will have a fall-back for cloning
-    return (!this.length) ? this : (this[0].outerHTML || (
-      function(el){
-          var div = document.createElement('div');
-          div.appendChild(el.cloneNode(true));
-          var contents = div.innerHTML;
-          div = null;
-          return contents;
-    })(this[0]));
-};
-
 Util.encrypt = function (seed,loops) 
 {
 	let ret = seed;
@@ -2171,7 +1076,7 @@ Util.encrypt = function (seed,loops)
 		ret = btoa(ret); //SHA256(ret)
 	}
 	return ret;
-}
+};
 
 Util.decrypt = function (garbage,loops) 
 {
@@ -2181,288 +1086,13 @@ Util.decrypt = function (garbage,loops)
 		seed = atob(seed);
 	}
 	return seed;
-} 
-
-/* START: Added by Greg: 2018/11/26 */
-function SHA256(s){
-/**
-*
-*  Secure Hash Algorithm (SHA256)
-*  http://www.webtoolkit.info/
-*
-*  Original code by Angel Marin, Paul Johnston.
-*
-**/
-    var chrsz   = 8;
-    var hexcase = 0;
-
-    function safe_add (x, y) {
-
-        var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-        var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-
-		return (msw << 16) | (lsw & 0xFFFF);
-
-    }
-
-    function S (X, n) { return ( X >>> n ) | (X << (32 - n)); }
-
-    function R (X, n) { return ( X >>> n ); }
-
-    function Ch(x, y, z) { return ((x & y) ^ ((~x) & z)); }
-
-    function Maj(x, y, z) { return ((x & y) ^ (x & z) ^ (y & z)); }
-
-    function Sigma0256(x) { return (S(x, 2) ^ S(x, 13) ^ S(x, 22)); }
-
-    function Sigma1256(x) { return (S(x, 6) ^ S(x, 11) ^ S(x, 25)); }
-
-    function Gamma0256(x) { return (S(x, 7) ^ S(x, 18) ^ R(x, 3)); }
-
-    function Gamma1256(x) { return (S(x, 17) ^ S(x, 19) ^ R(x, 10)); }
-
-    function core_sha256 (m, l) {
-
-        var K = new Array(0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5, 0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174, 0xE49B69C1, 0xEFBE4786, 0xFC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA, 0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x6CA6351, 0x14292967, 0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85, 0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070, 0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3, 0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2);
-        var HASH = new Array(0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19);
-        var W = new Array(64);
-        var a, b, c, d, e, f, g, h, i, j;
-        var T1, T2;
-
-        m[l >> 5] |= 0x80 << (24 - l % 32);
-        m[((l + 64 >> 9) << 4) + 15] = l;
-
-        for ( var i = 0; i<m.length; i+=16 ) {
-            a = HASH[0];
-            b = HASH[1];
-            c = HASH[2];
-            d = HASH[3];
-            e = HASH[4];
-            f = HASH[5];
-            g = HASH[6];
-            h = HASH[7];
-
-            for ( var j = 0; j<64; j++) {
-
-				if (j < 16) W[j] = m[j + i];
-
-                else W[j] = safe_add(safe_add(safe_add(Gamma1256(W[j - 2]), W[j - 7]), Gamma0256(W[j - 15])), W[j - 16]);
-
-                T1 = safe_add(safe_add(safe_add(safe_add(h, Sigma1256(e)), Ch(e, f, g)), K[j]), W[j]);
-                T2 = safe_add(Sigma0256(a), Maj(a, b, c));
-
-                h = g;
-                g = f;
-                f = e;
-                e = safe_add(d, T1);
-                d = c;
-                c = b;
-                b = a;
-                a = safe_add(T1, T2);
-
-            }
-
-            HASH[0] = safe_add(a, HASH[0]);
-            HASH[1] = safe_add(b, HASH[1]);
-            HASH[2] = safe_add(c, HASH[2]);
-            HASH[3] = safe_add(d, HASH[3]);
-            HASH[4] = safe_add(e, HASH[4]);
-            HASH[5] = safe_add(f, HASH[5]);
-            HASH[6] = safe_add(g, HASH[6]);
-            HASH[7] = safe_add(h, HASH[7]);
-
-        }
-
-        return HASH;
-
-    }
-
-    function str2binb (str) {
-
-		var bin = Array();
-        var mask = (1 << chrsz) - 1;
-
-        for(var i = 0; i < str.length * chrsz; i += chrsz) {
-
-            bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (24 - i%32);
-
-        }
-
-        return bin;
-
-    }
-
-    function Utf8Encode(string) {
-
-        string = string.replace(/\r\n/g,"\n");
-
-		var utftext = "";
-
-        for (var n = 0; n < string.length; n++) {
-
-            var c = string.charCodeAt(n);
-
-			if (c < 128) 
-			{
-                utftext += String.fromCharCode(c);
-            }
-			else if((c > 127) && (c < 2048)) 
-			{
-                utftext += String.fromCharCode((c >> 6) | 192);
-                utftext += String.fromCharCode((c & 63) | 128);
-            }
-			else 
-			{
-			    utftext += String.fromCharCode((c >> 12) | 224);
-                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                utftext += String.fromCharCode((c & 63) | 128);
-            }
-
-        }
-
-        return utftext;
-
-    }
-
-    function binb2hex (binarray) {
-
-        var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-        var str = "";
-
-        for(var i = 0; i < binarray.length * 4; i++) {
-            str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
-            hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
-        }
-
-        return str;
-
-    }
-
-    s = Utf8Encode(s);
-
-    return binb2hex(core_sha256(str2binb(s), s.length * chrsz));
-
-}
+} ;
 
 
-$.fn.rotate=function(options) {
-/* jQuery-Rotate-Plugin v0.2 by anatol.at http://jsfiddle.net/Anatol/T6kDR/ */
-	var $this=$(this), prefixes, opts, wait4css=0;
-	prefixes=['-Webkit-', '-Moz-', '-O-', '-ms-', ''];
-	opts=$.extend({
-	  startDeg: false,
-	  endDeg: 360,
-	  duration: 1,
-	  count: 1,
-	  easing: 'linear',
-	  animate: {},
-	  forceJS: false
-	}, options);
-  
-	function supports(prop) {
-	  var can=false, style=document.createElement('div').style;
-	  $.each(prefixes, function(i, prefix) {
-		if (style[prefix.replace(/\-/g, '')+prop]==='') {
-		  can=true;
-		}
-	  });
-	  return can;
-	}
-  
-	function prefixed(prop, value) {
-	  var css={};
-	  if (!supports.transform) {
-		return css;
-	  }
-	  $.each(prefixes, function(i, prefix) {
-		css[prefix.toLowerCase()+prop]=value || '';
-	  });
-	  return css;
-	}
-  
-	function generateFilter(deg) {
-	  var rot, cos, sin, matrix;
-	  if (supports.transform) {
-		return '';
-	  }
-	  rot=deg>=0 ? Math.PI*deg/180 : Math.PI*(360+deg)/180;
-	  cos=Math.cos(rot);
-	  sin=Math.sin(rot);
-	  matrix='M11='+cos+',M12='+(-sin)+',M21='+sin+',M22='+cos+',SizingMethod="auto expand"';
-	  return 'progid:DXImageTransform.Microsoft.Matrix('+matrix+')';
-	}
-  
-	supports.transform=supports('Transform');
-	supports.transition=supports('Transition');
-  
-	opts.endDeg*=opts.count;
-	opts.duration*=opts.count;
-  
-	if (supports.transition && !opts.forceJS) { // CSS-Transition
-	  if ((/Firefox/).test(navigator.userAgent)) {
-		wait4css=(!options||!options.animate)&&(opts.startDeg===false||opts.startDeg>=0)?0:25;
-	  }
-	  $this.queue(function(next) {
-		if (opts.startDeg!==false) {
-		  $this.css(prefixed('transform', 'rotate(-'+opts.startDeg+'deg)'));
-		}
-		setTimeout(function() {
-		  $this
-			.css(prefixed('transition', 'all '+opts.duration+'s '+opts.easing))
-			.css(prefixed('transform', 'rotate(-'+opts.endDeg+'deg)'))
-			.css(opts.animate);
-		}, wait4css);
-  
-		setTimeout(function() {
-		  $this.css(prefixed('transition'));
-		  if (!opts.persist) {
-			$this.css(prefixed('transform'));
-		  }
-		  next();
-		}, (opts.duration*1000)-wait4css);
-	  });
-  
-	} else { // JavaScript-Animation + filter
-	  if (opts.startDeg===false) {
-		opts.startDeg=$this.data('rotated') || 0;
-	  }
-	  opts.animate.perc=100;
-  
-	  $this.animate(opts.animate, {
-		duration: opts.duration*1000,
-		easing: $.easing[opts.easing] ? opts.easing : '',
-		step: function(perc, fx) {
-		  var deg;
-		  if (fx.prop==='perc') {
-			deg=opts.startDeg+(opts.endDeg-opts.startDeg)*perc/100;
-			$this
-			  .css(prefixed('transform', 'rotate(-'+deg+'deg)'))
-			  .css('filter', generateFilter(deg));
-		  }
-		},
-		complete: function() {
-		  if (opts.persist) {
-			while (opts.endDeg>=360) {
-			  opts.endDeg-=360;
-			}
-		  } else {
-			opts.endDeg=0;
-			$this.css(prefixed('transform'));
-		  }
-		  $this.css('perc', 0).data('rotated', opts.endDeg);
-		}
-	  });
-	}
-  
-	return $this;
-  };
-  /* END: Added by Greg: 2018/11/26 */
-
-  
   Util.isMobi = function ( ) 
   {
 	return (/Mobi/.test(navigator.userAgent));
-  }
+  };
   
   Util.getPeriodName = function( pe )
   {
@@ -2470,57 +1100,22 @@ $.fn.rotate=function(options) {
 	var peM = parseInt(pe.substring(4,6));
 	var peF = parseInt(pe.substring(0,4));
 	return ( months[ ( peM - 1) ] + ' ' + peF);
-  }
+  };
+
+
   Util.ageHours = function( dtm ) 
   {
 	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
 	return Math.abs( Math.round( ageHr ) );
-  }
-  Util.epoch = function( pattern, callBack )
-  {
-	  //use examples: Util.epoch( '1000', console.log ); Util.epoch( '1000,36', console.log ); 
-	  var offSetDate; // always randomize
-	  var precision;
-	  var base;
+  };
 
-	  if ( pattern )
-	  {
-		precision = pattern.split( ',' )[ 0 ];
 
-		if ( pattern.split( ',' ).length > 1 ) base = pattern.split( ',' )[ 1 ];
-		if ( pattern.split( ',' ).length > 2 ) offSetDate = pattern.split( ',' )[ 2 ];
-
-	  }
-
-	  var prec = ( precision ) ? precision : 100;
-
-	  new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
-
-		  if ( callBack ) callBack( newEpoch.value );
-	  });
-  }
   Util.getBaseFromBase = function ( input, from, to )
   {
 	  return ConvertBase.custom( input, from, to );
-  }
-  Util.generateRandomEpoch = function( howMany, base, precision )
-  {
-	//use examples: Util.generateRandomEpoch(5,36,1000);
-	var arrEpochs = [], b = ( base == undefined) ? 10 : base, prec = ( precision == undefined ) ? 100 : precision;
-	for ( var i = 0; i < howMany; i++ )
-	{
-		Util.epoch( prec + ',' + b, function( data ){
-			arrEpochs.push( data.value );
-		} )
-	}
+  };
 
-	arrEpochs.sort();
 
-	console.log( arrEpochs.toString() );
-
-	return arrEpochs;
-
-  }
   Util.isJSON = function( objVal ) 
   {
 	try {
@@ -2529,34 +1124,15 @@ $.fn.rotate=function(options) {
         return false;
     }
     return true;
-  } 
+  };
+
+
   Util.isArray = function( objVal ) 
   {
 	 return Array.isArray ( objVal );
-  }
+  };
 
-  Util.storageEstimateWrapper = function( callBack ) {
-	if ('storage' in navigator && 'estimate' in navigator.storage) {
-	  return navigator.storage.estimate();
-	}
-	if ('webkitTemporaryStorage' in navigator &&
-		'queryUsageAndQuota' in navigator.webkitTemporaryStorage) {
-	  return new Promise(function(resolve, reject) {
-		navigator.webkitTemporaryStorage.queryUsageAndQuota(
-		  function(usage, quota) {resolve({usage: usage, quota: quota})},
-		  reject
-		);
-	  });
-	}
-	if ( callBack )
-	{
-		callBack( Promise.resolve({usage: NaN, quota: NaN}) )
-	}
-	else
-	{
-		return Promise.resolve({usage: NaN, quota: NaN});
-	}
-  }
+
   Util.localStorageSpace = function()
   {
 	var allStrings = '';
@@ -2566,24 +1142,8 @@ $.fn.rotate=function(options) {
 		}
 	}
 	return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
-  }
-  Util.getLocalStorageSizes = function()
-  {  
-	// provide the size in bytes of the data currently stored
-	var runningTotal = 0;
-	var dataSize = 0;
-	var arrItms = [];
+  };
 
-	for ( var i = 0; i <= localStorage.length -1; i++ )
-	{
-		key  = localStorage.key(i);  
-		dataSize = Util.lengthInUtf8Bytes( localStorage.getItem( key ) );
-		arrItms.push( { container: 'localStorage', name: key, bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 } )
-		runningTotal += dataSize;
-	}
-	arrItms.push( { container: 'localStorage', name: 'TOTAL SIZE', bytes: runningTotal, kb: runningTotal / 1024, mb: runningTotal / 1024 / 1024 } )
-	return arrItms;
-  }
   
   Util.lengthInUtf8Bytes = function(str) {
 	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -2610,51 +1170,6 @@ $.fn.rotate=function(options) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  Util.cacheSizeCheckAndRepair = function( callBack )
-  {
-
-	DataManager.estimateStorageUse( function( storageJSON ){
-
-		var quotaDenom = parseFloat( storageJSON.quota ) / 1024 / 1024;
-		var suffix = 'MB';
-
-		if ( quotaDenom > 1000 )
-		{
-			quotaDenom = ( quotaDenom / 1000 );
-			suffix = 'GB';
-		}
-
-		var threshold_UsagePercent = 50, threshold_UsageMBsize = 500;
-
-		console.log( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) );
-
-		if ( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) > ( threshold_UsagePercent / 100 ) || ( 5752434934 / 1024 / 1024 ) > threshold_UsageMBsize )
-		{
-			MsgManager.notificationMessage( '1: data usage exceeds 50% of available quota: ' 
-			+ Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' / ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ), 'notificationRed', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics' );
-
-			DataManager.getData( Constants.lsFlag_dataMoved_redeemListIDB, function( movedData )
-			{
-				if ( movedData === "Y" )
-				{
-					DataManager.migrateIndexedDBtoLocalStorage( function( result, msg ){
-
-						if ( callBack ) callBack( result, msg );
-
-					} );
-				}
-
-			});
-
-		}
-		else
-		{
-			if ( callBack ) callBack( false, 'no need to run clean up' );
-		}
-
-	} );
-
-  }
 
   Util.cloneArray = function( dataArray, callBack )
   {
@@ -2689,6 +1204,7 @@ $.fn.rotate=function(options) {
   {
 	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
   }
+
 
 try {
     module.exports = Util;

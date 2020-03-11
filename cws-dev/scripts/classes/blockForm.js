@@ -359,7 +359,7 @@ function BlockForm( cwsRenderObj, blockObj )
 									<div class="modalSymbol">
 										<div class="textSymbol">
 											<input type="text" class="searchSymbol">
-											<span class="closeSearchSymbol">ï¿?/span>
+											<span class="closeSearchSymbol">ï¿½?/span>
 										</div>
 										<div class="container--optionsSymbol">
 											<ul class="optionsSymbol">
@@ -380,7 +380,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				wrapperTag.append( component );
 				divInputTag.append( wrapperTag );
 
-				Util.populate_year( component[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+				Util2.populate_year( component[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
 
 			}
 			else if ( formItemJson.controlType === "DATE" )
@@ -462,7 +462,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="RADIO ' + formItemJson.id + '" type="hidden" >' );
 
-				Util.populateRadios( formItemJson, container, optionList );
+				Util2.populateRadios( formItemJson, container, optionList );
 
 				divInputTag.append( entryTag, container );
 
@@ -480,7 +480,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				divContentTag.css( { margin:'0', border: 'none', padding: 0 } );
 
-				Util.populateDropdown_MultiCheckbox( formItemJson, ul, optionList );
+				Util2.populateDropdown_MultiCheckbox( formItemJson, ul, optionList );
 
 				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="MULTI_CHECKBOX ' + formItemJson.id + '" type="hidden" />' );
 
@@ -519,7 +519,7 @@ function BlockForm( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					var { component, input } = Util.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
+					var { component, input } = Util2.createCheckbox({ message: formItemJson.defaultName, name:formItemJson.id, uid:formItemJson.uid } );
 
 					FormUtil.setTagVal( input, formItemJson.defaultValue )
 

@@ -511,7 +511,7 @@ DataManager2.getStorageSizes = function( callBack )
 	var arrItems = [];
 
 	arrItems.push( { name: 'indexedDB', data: DataManager2.indexedDBStorage } );
-	arrItems.push( { name: 'localStorage', data: Util.getLocalStorageSizes() } );
+	arrItems.push( { name: 'localStorage', data: Util2.getLocalStorageSizes() } );
 	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
 
 	if ( callBack )

@@ -911,19 +911,19 @@ FormUtil.evalReservedField = function( tagTarget, val )
 		else if ( val.indexOf( 'generatePattern(' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.getValueFromPattern( tagTarget, pattern, false ) );
+			tagTarget.val( Util2.getValueFromPattern( tagTarget, pattern, false ) );
 		}
 		else if ( val.indexOf( 'getAge(' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
-			tagTarget.val( Util.getAgeValueFromPattern( tagTarget, pattern ) );
+			tagTarget.val( Util2.getAgeValueFromPattern( tagTarget, pattern ) );
 		}
 		else if ( val.indexOf( 'epoch' ) >= 0 )
 		{
 			var pattern = Util.getParameterInside( val, '()' );
 			if ( tagTarget.val().length == 0 ) 
 			{
-				Util.epoch( pattern, function( epochVal ){
+				Util2.epoch( pattern, function( epochVal ){
 					tagTarget.val( epochVal );
 				} );
 			}

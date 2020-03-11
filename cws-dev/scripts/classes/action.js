@@ -77,7 +77,7 @@ function Action( cwsRenderObj, blockObj )
 				if ( payloadPattern )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-					var calcVal = Util.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
+					var calcVal = Util2.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
 
 					if ( calcVal != undefined )
 					{
@@ -683,7 +683,7 @@ function Action( cwsRenderObj, blockObj )
 
 		var templateJson = 
 		{
-			"activityId": "",
+			"activityId": "'' + Util.generateRandomId(6);",
 			"userName": "",
 
 			"searchValues": {
