@@ -52,16 +52,23 @@ DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack 
 			DataManager2.getIV( function( iv ){
 
 				// IndexdbDataManager2.trackOpenEventDelay( false );
+				var jsonData;
 
-				var jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.toString(), iv, 
+				try
 				{
-					keySize: 128 / 8,
-					iv: iv,
-					mode: CryptoJS.mode.CBC,
-					padding: CryptoJS.pad.Pkcs7
-				} ) ) );
-
-				// IndexdbDataManager2.trackOpenEventDelay( true );
+					// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
+					jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.toString(), iv, 
+					{
+						keySize: 128 / 8,
+						iv: iv,
+						mode: CryptoJS.mode.CBC,
+						padding: CryptoJS.pad.Pkcs7
+					} ) ) );	
+				}
+				catch ( errMsg )
+				{
+					alert( 'Error during data decryption with current password.  If User has been changed, clear all data to resolve this issue.' );
+				}
 
 				if ( callBack ) callBack( jsonData );
 

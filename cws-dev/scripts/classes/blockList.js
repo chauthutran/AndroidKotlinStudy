@@ -342,7 +342,7 @@ function BlockList( cwsRenderObj, blockObj )
         //var liActivityItemCardTag = activityCardTag.find( 'li.activityItemCard' );
         var anchorActivityItemCardTag = liActivityItemCardTag.find( 'a.expandable' );
 
-        //try
+        try
         {
             // Probably need to populate only one of below 2
             liActivityItemCardTag.attr( 'itemId', itemData.id );
@@ -366,10 +366,10 @@ function BlockList( cwsRenderObj, blockObj )
             me.updateActivityListCard_UI_Icon( liActivityItemCardTag, itemData, me.cwsRenderObj );
             
         }
-        /*catch( errMsg )
+        catch( errMsg )
         {
             console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
-        }*/
+        }
     };
 
 
