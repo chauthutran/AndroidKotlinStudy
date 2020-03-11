@@ -255,9 +255,9 @@ SyncManagerNew.downloadActivities = function( callBack )
     {
         var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
-
-        //var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
-        var url = 'http://localhost:8080/dws-dev/PWA.activities';
+        //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
+        var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
+        //var url = 'http://localhost:8080/dws-dev/PWA.activities';
 		var payloadJson = {
             "activity": { 
                 "activeUser": activeUser
@@ -279,6 +279,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 
 
         var loadingTag = undefined;
+
         FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
             // NOTE: IMPORTANT:
@@ -287,6 +288,8 @@ SyncManagerNew.downloadActivities = function( callBack )
 
             callBack( success, mongoClientsJson );
         });
+
+        
     }
     catch( errMsg )
     {

@@ -118,7 +118,7 @@ function BlockList( cwsRenderObj, blockObj )
                         </td>
 
                         <td class="listItem_action_sync">
-                            <div class="icons-status" class="divListItem_icon_sync">
+                            <div class="icons-status divListItem_icon_sync">
                                 <small class="syncIcon">
                                     <img src="images/sync-n.svg" class="listItem_icon_sync" />
                                 </small>
@@ -154,7 +154,7 @@ function BlockList( cwsRenderObj, blockObj )
     {
         me.setUpInitialData( me.cwsRenderObj, blockJson );
     }
-    
+
     // -----------------------------------------------
 
     //  Render BlockList
@@ -168,7 +168,6 @@ function BlockList( cwsRenderObj, blockObj )
 
         // Set class level tags
         me.setClassVariableTags( blockTag );
-        
 
         // Populate controls - ActivityLists, viewFilter/sort, related.
         me.populateControls( me.blockJson, me.activityList, me.blockList_UL_Tag );
@@ -343,7 +342,7 @@ function BlockList( cwsRenderObj, blockObj )
         //var liActivityItemCardTag = activityCardTag.find( 'li.activityItemCard' );
         var anchorActivityItemCardTag = liActivityItemCardTag.find( 'a.expandable' );
 
-        try
+        //try
         {
             // Probably need to populate only one of below 2
             liActivityItemCardTag.attr( 'itemId', itemData.id );
@@ -363,14 +362,29 @@ function BlockList( cwsRenderObj, blockObj )
 
             // Populate the button image & click event
             //me.populateData_RedeemItemTag( itemData, liActivityItemCardTag );
+
+            me.updateActivityListCard_UI_Icon( liActivityItemCardTag, itemData, me.cwsRenderObj );
             
         }
-        catch( errMsg )
+        /*catch( errMsg )
         {
             console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
-        }
+        }*/
     };
 
+
+    me.updateActivityListCard_UI_Icon = function( liActivityItemCardTag, itemJson, cwsRenderObj )
+    {
+
+        // update card 'status' (submit/fail/queue)
+        FormUtil.setStatusOnTag( $( liActivityItemCardTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
+
+        // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
+        FormUtil.appendActivityTypeIcon ( $( liActivityItemCardTag ).find( '.listItem_icon_activityType' ) 
+            , FormUtil.getActivityType ( itemJson )
+            , FormUtil.getStatusOpt ( itemJson )
+            , cwsRenderObj );
+    };
 
     // ===========================================================
     // === Exposoed to Outside Methods ============

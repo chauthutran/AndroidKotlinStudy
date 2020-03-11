@@ -1769,7 +1769,7 @@ img.imgMore
     padding: 0 2px 0 4px;
     height: 100%; /*300px*/
     overflow-y: scroll;
-    background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+    /*background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );*/
   }
   .optListItem {
     height: 40px;

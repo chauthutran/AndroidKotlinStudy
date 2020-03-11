@@ -297,7 +297,7 @@
       }
 
       ul.tab__content_act > li.emptyListLi > .expandable {
-        margin: 40px 0 0 0; 
+        /*margin: 40px 0 0 0;*/
       }
 
       .title-act-mobile {
@@ -356,6 +356,9 @@
 
       .rightDynamic, .dataToHTMLright {
         text-align: right;
+      }
+      .viewsFilterAndSortContainer {
+	padding-top: 50px;
       }
 
     }
@@ -531,7 +534,7 @@
       .optItem {
         padding: 0 4px 0 8px;
         overflow-y: auto;
-        background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+        /* background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff ); */
         height: inherit;
       }
       #navDrawerDiv
@@ -543,7 +546,7 @@
       .tb-content-buttom {
         width: 94%;
       }
-      .viewsListFIlterAndSortContainer {
+      .viewsFilterAndSortContainer {
         width: 100%;
       }
 
@@ -564,8 +567,8 @@
         width: 47%;
       }
 
-      .viewsListFIlterAndSortContainer {
-        width: 98%;
+      .viewsFilterAndSortContainer {
+        width: 100%;
       }
       .inputDivRadio {
         width: 97%;

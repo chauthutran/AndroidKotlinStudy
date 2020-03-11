@@ -803,8 +803,7 @@ img.listItem_icon_sync_done {
 div.select {
   position: relative;
   display: block;
-  /*height: 3em; */
-  line-height: 1.5; /* 2.8; /* 3 */
+  line-height: 1.5;
   border-radius: 4px;
   background-color: #fff;
   overflow: visible;
@@ -829,8 +828,34 @@ div.select::before {
   border-radius: 18px;
 }
 
+div.settingsSelect{
+  position: relative;
+  display: block;
+  line-height: 1.5; 
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: visible;
+  border-radius: .25em;
+  margin: 3px 0 0 0;
+}
+div.settingsSelect::before {
+  content: '\25BC';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 6px;
+  right: 2%;
+  bottom: 0;
+  padding: 0px 4px;
+  background-color: #fff;
+  pointer-events: none;
+  height: 16px;
+  width: 10px;
+  border-radius: 18px;
+}
 select {
-  width: 97%;
+  width: 96%;
   height: 2em; /* 100%; */
   margin: 0;
   padding: 0 0 0 .5em;
@@ -1241,20 +1266,72 @@ div.loginBtn {
   }
 }
 /* 2. spinning Rings END */
-/* viewsList Controls [drop down + sort button */
+/* viewsList Controls [drop down + sort button] START */
+.viewsFilterAndSortContainer {
+  display: flex;
+  float: left;
+  width: 47%;
+  margin: 0px 12px 0px 0px;
+  border-radius: 2px;
+  background-color: #fff;
+  text-align: left;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 5px 0px 5px 12px;
+}
+.viewsFilter {
+  margin:4px 0 4px 4px; 
+  border:1px solid rgba(51, 51, 51, 0.38);
+  border-radius: 2px;
+  width:92%
+}
+.viewsFilter > label {
+  margin: 0 0 0 4px;
+}
+.viewsFilter > div {
+  margin: 0;
+}
 .viewsListContainerTag {
   display: flex;
   align-items: center;
-  padding: 0 6px 2px 0;
-  /*border: 2px solid #F5F5F5;*/
   border-radius: 4px;
+  padding: 0 4px 0 4px
 }
-.divSortOrder {
-  flex-grow:0;
-  position: relative;
+
+.viewsListContainerTag > div {
+  margin: 0;
+}
+
+.viewsListContainerTag > div > select {
+  width: 100% !important;
+}
+.viewsListContainerSelect {
+  flex-grow:1;
+}
+.viewsListContainerSelect::before {
+  right: 1% !important;
+}
+.viewsSorter {
+  position: sticky;
   cursor: pointer;
+  width: 8%;
+  text-align: center;
+  vertical-align: middle;
 }
-.divSortOrder > ul {
+.buttonSortOrder
+{
+  border: none;
+  color: #6E6E6E;
+  position: relative;
+  top: 25%;
+}
+.buttonSortOrder::after {
+  content: '\2807';
+  font-size: 20px;
+}
+.viewsSorter > ul {
   display: flex; 
   flex-grow: 0; 
   position: absolute; 
@@ -1265,47 +1342,53 @@ div.loginBtn {
   background: white; 
   z-index: 1000; 
   box-shadow: rgba(0, 0, 0, 0.75) 1px 1px 5px 1px; 
-  border-radius: 3px; 
-  padding: 2px 2px 6px;
-}
-.divSortOrder > ul > li {
-  padding: 4px 8px;
-  font-size: 14px;
-}
-.buttonSortOrder
-{
-  border:none;
-  color: #6E6E6E;
-  position: relative;
-  top: 2px;
-}
-.buttonSortOrder::after {
-  content: '\2807';
-  font-size: 20px;
-}
-.viewsListFIlterAndSortContainer {
-  float: left;
-  width: 47%;
-  margin: 0px 12px 0px 0px;
-  border-radius: 0 5px 0 0;
-  background-color: #fff;
+  padding: 2px 2px 6px 6px;
   text-align: left;
-  box-sizing: border-box;
+  margin: 0 8px;
+}
+.viewsSorter > ul > li {
+  padding: 4px 8px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 20px;
+  color: #333333;
+}
+
+/*div.viewsListSelect{
   position: relative;
-  z-index: 1;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  display: block;
+  line-height: 1.5; 
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: visible;
+  border-radius: .25em;
+  margin: 3px 0 0 0;
 }
-.settingsSelect {
-  padding-left:0;
-  padding-top:0;
-  max-width: 240px;
-}
+div.viewsListSelect::before {
+  content: '\25BC';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 6px;
+  right: 2%;
+  bottom: 0;
+  padding: 0px 4px;
+  background-color: #fff;
+  pointer-events: none;
+  height: 16px;
+  width: 10px;
+  border-radius: 18px;
+}*/
 .filterGroupHR {
   margin: 2px 0px 6px 0px;
   border-top: 1px solid #d0d0d0;
   border-bottom: 0;
 }
-.viewsListPager {
+/* viewsList Controls [drop down + sort button] END */
+/* blockList [pager (info) > future functionality / partially implemented] */
+.blockListPager {
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
   padding: 4px 0 0 0;
   font-size: 10pt;

@@ -1362,17 +1362,18 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			{
 				$( svgObject ).attr( 'width', svgStyle.width );
 				$( svgObject ).attr( 'height', svgStyle.height );
-
-				//$( iconObj ).html( $(iconObj).html().replace(/{WIDTH}/g, svgStyle.width ) );
-				//$( iconObj ).html( $(iconObj).html().replace(/{HEIGHT}/g, svgStyle.height ) );
 			}
 
-			if ( $(iconObj).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
+			if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 			{
-				var statusIconObj = $( '<div id="' + iconObj.attr( 'id' ).replace( 'listItem_icon_activityType_','icon_status_' ) + '" style="vertical-align:top;position:relative;left:' + ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width - ( FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width / 1) ) + 'px;top:-' + (FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height + 6) + 'px;">&nbsp;</div>' );
+				var iconActivityWidth = FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width;
+				var iconStatusWidth = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
+				var iconStatusHeight = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
 
-				$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
-				$( iconObj ).append( statusIconObj )	
+				var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
+
+				//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+				$( iconObj ).append( statusIconObj );
 
 				FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
 			}

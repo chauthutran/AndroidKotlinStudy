@@ -71,27 +71,27 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.sortListButtonTag; // sortList_Tagbutton
     me.sortListUlTag; // sortList_TagUL
 
-    //            <div class="viewsFilter">             </div>
-
-
-
-    // --- HTML Templates ----------------
     me.containerTagTemplate = `
-        <div class="viewsFilterAndSortContainer viewsListFIlterAndSortContainer inputDiv">
-            <label term="" class="from-string titleDiv">Select a view</label>
-            <div class="viewsListContainerTag">
+        <div class="viewsFilterAndSortContainer inputDiv">
 
-                <div class="select divViewsListSelector" style="flex-grow:1;">
-                    <select class='selector selViewsListSelector'></select>
-                </div>            
+            <div class="viewsFilter">
 
-                <div class="viewsSorter">
-                    <button class="buttonSortOrder"></button>
-                    <ul class="ulSortOrder" ></ul>            
+                <label term="" class="from-string titleDiv">Select a view</label>
+
+                <div class="viewsListContainerTag">
+                    <div class="select viewsListContainerSelect">
+                        <select class="selector selViewsListSelector"></select>
+                    </div>
                 </div>
 
-            </div>                
-        </div>`;
+            </div>
+
+            <div class="viewsSorter">
+                <button class="buttonSortOrder"></button>
+                <ul class="ulSortOrder"></ul>
+            </div>
+
+        </div>`
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
     me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
@@ -131,12 +131,6 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         me.viewSelectTag.val( firstOptionVal ).change();        
     };
 
-    //me.sortSelect_1st = function()
-    //{
-    //    me.sortListUlTag.find( 'li.liSort:first' ).click();       
-    //};
-
-
     // ====================================================
     // ----------------------------
 
@@ -144,7 +138,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         me.mainList = me.cwsRenderObj._activityListData.list;
         me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
-        
+
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
         me.viewListDefs = me.getActivityListViewDefinitions( me.viewListNames, me.viewsDefinitionList );
@@ -303,24 +297,23 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         {
             for ( var i = 0; i < sortList.length; i++ )
             {
+
                 var sortDef = sortList[ i ];
                 var liTag = $( me.sortLiTagTemplate );
+
                 liTag.attr( 'sortid', sortDef.id );
-                liTag.html( 'james' );
-                
-                //.attr( 'sortid', sortDef.id ).html( sortDef.name );
-                // `<li class="liSort selected" sortid="${sortDef.id}" >${sortDef.name}</li>` );
+                liTag.html( sortDef.name );
 
                 sortListUlTag.append( liTag );
 
-                me.setSortLiTagClickEvent( liTag );
-    
-                //if ( sortObj.groupAfter != undefined && sortObj.groupAfter === 'true' )
-                //{
-                //    var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
-                //    me.sortList_TagUL.append( liGroup );
-                //}
-            }                
+                me.setSortLiTagClickEvent( liTag, me.viewDef_Selected.sort );
+
+                if ( sortDef.groupAfter != undefined && sortDef.groupAfter === 'true' )
+                {
+                    var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
+                    sortListUlTag.append( liGroup );
+                }
+            }
         }
 
         // For below, we can use .css to mark the bold for selected.
@@ -399,7 +392,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     };
 
 
-    me.setSortLiTagClickEvent = function( liTag )
+    me.setSortLiTagClickEvent = function( liTag, sortDefs )
     {
         liTag.click( function()
         {
