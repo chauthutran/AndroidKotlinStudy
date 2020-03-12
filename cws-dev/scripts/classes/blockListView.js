@@ -248,7 +248,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
 
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..     
+        me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..     
     };
 
 
@@ -407,7 +407,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
                 // TODO:
                 //      - This should call 'setActivityListNRender()'
-                me.blockListObj.reRender( me.viewFilteredList );  // there is 'callBack' param..            
+                me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..            
             }
         });
     };

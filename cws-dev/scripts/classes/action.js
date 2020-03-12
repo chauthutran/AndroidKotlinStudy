@@ -400,27 +400,22 @@ function Action( cwsRenderObj, blockObj )
 					if ( url !== undefined )
 					{
 						var submitJson = {};
-						submitJson.payloadJson = inputsJson;
-						submitJson.previewJson = previewJson;
+						//submitJson.payloadJson = inputsJson;
+						//submitJson.previewJson = previewJson;
 						submitJson.actionJson = clickActionJson;
 						submitJson.url = url;
 						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
-						submitJson.payloadJson2 = me.reconfigurePayloadJson3( inputsJson );
-						submitJson.payloadJson = submitJson.payloadJson2; // OVERWRITE FOR TESTING..
-
-						console.log( 'submitJson.payloadJson2' );
-						console.log( submitJson.payloadJson2 );
+						submitJson.payloadJson = me.reconfigurePayloadJson3( inputsJson );
 
 						
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
-							me.blockObj.blockListObj.redeemList_Add( submitJson, Constants.status_redeem_queued, function(){
-
+							me.blockObj.blockListObj.createNewActivity( submitJson, Constants.status_redeem_queued, function()
+							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 
 								if ( afterActionFunc ) afterActionFunc();
-
 							} );
 
 						}
@@ -679,15 +674,12 @@ function Action( cwsRenderObj, blockObj )
 	
 		// 1. Collect data in 'payload' variable
 		var payloadJson = {};
-	
-	
-		// add today..
-		inputsJson.now = new Date();
+		payloadJson.DATE = new Date();
 	
 	
 		var templateJson = 
 		{
-			"activityId": "Util.dateToStr( inputsJson.now ) + Util.generateRandomId(6);",
+			"activityId": "Util.dateToStr( payloadJson.DATE ) + Util.generateRandomId(6);",
 			"userName": "FormUtil.login_UserName;",
 	
 			"searchValues": {
@@ -698,9 +690,9 @@ function Action( cwsRenderObj, blockObj )
 	
 			"captureValues": {
 				"activityDate": {
-					"capturedUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );",
-					"capturedLoc": "Util.formatDateTimeStr( inputsJson.now.toString() );",
-					"createdOnDeviceUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );"
+					"capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
+					"capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
+					"createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
 				},
 				
 				"activityId": "payloadJson.activityId",

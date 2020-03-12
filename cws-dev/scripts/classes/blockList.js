@@ -54,6 +54,12 @@
 //          1. GroupBy
 //          2. Scrolling
 //
+//      - TERMS:
+//          1. ActivityCard - Displayed Activity (UI) in the list
+//          2. me.activityList - the json data list of activity, but this is just referenece list.
+//              The main actual list is in cwsRenderObj and this only makes different list reference..
+//
+//
 // -------------------------------------------------
 function BlockList( cwsRenderObj, blockObj ) 
 {
@@ -71,6 +77,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.activityList_PageSize = 15;
     me.paging_lastItemCount = 0;
 
+    me.hasView = false;  
 
     me.recordsLoading = 0;
     me.recordCounter = 0;
@@ -170,15 +177,15 @@ function BlockList( cwsRenderObj, blockObj )
         me.setClassVariableTags( blockTag );
 
         // Populate controls - ActivityLists, viewFilter/sort, related.
-        me.populateControls( me.blockJson, me.activityList, me.blockList_UL_Tag );
+        me.populateControls( me.blockJson, me.hasView, me.activityList, me.blockList_UL_Tag );
 
         // Events handling
         //me.setRenderEvents();
     };
 
 
-    // Calls with new viewFilter..
-    me.reRender = function( newActivityList, callBack )
+    // Used by viewFilter.. - 
+    me.reRenderWithList = function( newActivityList, callBack )
     {
         if ( me.blockList_UL_Tag )
         {
@@ -189,33 +196,40 @@ function BlockList( cwsRenderObj, blockObj )
             me.clearExistingList( me.blockList_UL_Tag ); // remove li.activityItemCard..
 
             // This removes the top view - if view exists..
-            me.populateActivityList( me.activityList, me.blockList_UL_Tag );
+            me.populateActivityCardList( me.activityList, me.blockList_UL_Tag );
 
             if ( callBack ) callBack();
         }
         else
         {
-            console.log( ' ===> Error on blockList.reRender - blockList_UI_Tag not available - probably not rendered, yet' );
+            console.log( ' ===> Error on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
         } 
     };
 
 
-    // Add one and reRender it
-    me.addActivityItem = function( activityItem, callBack )
+    // Add new Activity data <-- TODO: THIS SHOULD BE MOVED TO cwsRender or Some Class for this!!
+    me.insertNewActivityData = function( activityData, callBack )
     {   
-        me.cwsRenderObj._activityListData.list.unshift( activityItem ); // We should have a method for this in 'cwsRender' or some class.        
-        // DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
+        me.cwsRenderObj._activityListData.list.unshift( activityData ); // We should have a method for this in 'cwsRender' or some class.        
 
-        me.reRenderWtMainData( callBack );
+        DataManager2.saveData_RedeemList( me.cwsRenderObj._activityListData, function () 
+        {
+            if ( callBack ) callBack();
+        } );
     };
 
 
-    // reRender using activityList from cwsRenderObj - Can be called from 'SyncDown'
-    me.reRenderWtMainData = function( callBack )
+    me.reRender = function( callBack )
     {
-        var newActivityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
+        // When reRendering, if view exists, select 1st view to render the 1st view list.
+        // If no view, list full data as they are.
+        if ( me.hasView ) me.BlockListViewObj.viewSelect_1st(); 
+        else 
+        {
+            var newActivityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
 
-        me.reRender( newActivityList, callBack );    
+            me.reRenderWithList( newActivityList, callBack );    
+        }
     };
 
 
@@ -243,8 +257,6 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-
-
     // -----------------------------------------------
     // -- Related Methods...
 
@@ -252,6 +264,8 @@ function BlockList( cwsRenderObj, blockObj )
     {
         me.activityList = Util.cloneArray( cwsRenderObj._activityListData.list );
         me.blockJson = blockJson;
+        
+        me.hasView = ( blockJson.activityListViews && blockJson.activityListViews.length > 0 );
     };
 
 
@@ -289,19 +303,19 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-    me.populateControls = function ( blockJson, activityList, blockList_UL_Tag )
+    me.populateControls = function ( blockJson, hasView, activityList, blockList_UL_Tag )
     {
-        if ( blockJson.activityListViews && blockJson.activityListViews.length > 0 )
+        if ( hasView )
         {
             me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockList_UL_Tag, blockJson.activityListViews );
             me.BlockListViewObj.render();
 
-            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityList' with some clean up )?
+            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityCardList' with some clean up )?
             me.BlockListViewObj.viewSelect_1st();    
         }
         else
         {
-            me.populateActivityList( activityList, blockList_UL_Tag );
+            me.populateActivityCardList( activityList, blockList_UL_Tag );
         }
     };
 
@@ -317,7 +331,7 @@ function BlockList( cwsRenderObj, blockObj )
     // === #1 Render() Related Methods ============
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
-    me.populateActivityList = function( activityList, blockList_UL_Tag )
+    me.populateActivityCardList = function( activityList, blockList_UL_Tag )
     {        
         if ( activityList.length === 0 ) 
         {
@@ -327,31 +341,32 @@ function BlockList( cwsRenderObj, blockObj )
         {
             for( var i = 0; i < activityList.length; i++ )
             {
-                me.createActivityListCard( activityList[i], blockList_UL_Tag );
+                var activityCardLiTag = me.createActivityCard( activityList[i] );
+
+                if ( activityCardLiTag ) blockList_UL_Tag.append( activityCardLiTag );        
             }    
         }
     };
         
 
     // Populate one Activity Item
-    me.createActivityListCard = function( itemData, listContentUlTag, groupBy )
+    me.createActivityCard = function( itemData, groupBy )
     {
-        var liActivityItemCardTag = $( me.template_ActivityCard );
-        listContentUlTag.append( liActivityItemCardTag );
-
-        //var liActivityItemCardTag = activityCardTag.find( 'li.activityItemCard' );
-        var anchorActivityItemCardTag = liActivityItemCardTag.find( 'a.expandable' );
+        var activityCardLiTag;
 
         try
         {
+            activityCardLiTag = $( me.template_ActivityCard );
+            var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
+    
             // Probably need to populate only one of below 2
-            liActivityItemCardTag.attr( 'itemId', itemData.id );
-            anchorActivityItemCardTag.attr( 'itemId', itemData.id );
+            activityCardLiTag.attr( 'itemId', itemData.id );
+            activityCardAnchorTag.attr( 'itemId', itemData.id );
 
             // Title - date description..
-            liActivityItemCardTag.find( 'div.listItem_label_date' ).html( $.format.date( itemData.created, "dd MMM yyyy - HH:mm" ) );
+            activityCardLiTag.find( 'div.listItem_label_date' ).html( $.format.date( itemData.created, "dd MMM yyyy - HH:mm" ) );
 
-            var listItem_icon_syncTag = liActivityItemCardTag.find( '.listItem_icon_sync' );
+            var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
 
             // click event - for activitySubmit..
             listItem_icon_syncTag.click( function(e) {                
@@ -361,26 +376,28 @@ function BlockList( cwsRenderObj, blockObj )
 
 
             // Populate the button image & click event
-            //me.populateData_RedeemItemTag( itemData, liActivityItemCardTag );
+            //me.populateData_RedeemItemTag( itemData, activityCardLiTag );
 
-            me.updateActivityListCard_UI_Icon( liActivityItemCardTag, itemData, me.cwsRenderObj );
-            
+            me.updateActivityCard_UI_Icon( activityCardLiTag, itemData, me.cwsRenderObj );            
         }
         catch( errMsg )
         {
-            console.log( 'Error on createActivityListCard, errMsg: ' + errMsg );
+            activityCardLiTag = undefined;
+            console.log( 'Error on createActivityCard, errMsg: ' + errMsg );
         }
+
+        return activityCardLiTag;        
     };
 
 
-    me.updateActivityListCard_UI_Icon = function( liActivityItemCardTag, itemJson, cwsRenderObj )
+    me.updateActivityCard_UI_Icon = function( activityCardLiTag, itemJson, cwsRenderObj )
     {
 
         // update card 'status' (submit/fail/queue)
-        FormUtil.setStatusOnTag( $( liActivityItemCardTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
+        FormUtil.setStatusOnTag( $( activityCardLiTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
 
         // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-        FormUtil.appendActivityTypeIcon ( $( liActivityItemCardTag ).find( '.listItem_icon_activityType' ) 
+        FormUtil.appendActivityTypeIcon ( $( activityCardLiTag ).find( '.listItem_icon_activityType' ) 
             , FormUtil.getActivityType ( itemJson )
             , FormUtil.getStatusOpt ( itemJson )
             , cwsRenderObj );
@@ -388,6 +405,105 @@ function BlockList( cwsRenderObj, blockObj )
 
     // ===========================================================
     // === Exposoed to Outside Methods ============
+
+    // Add new activity to the list <-- from/by action
+    me.createNewActivity = function( dataJson, statusStr, callBack )
+    {
+        // 1. create proper json for adding to the activityList
+        var activityData = me.generateActivityData( dataJson, statusStr );
+
+        console.log( 'blockList.createNewActivity, activityData' );
+        console.log( activityData );
+
+        // 2. Add to the main list and display list
+        me.insertNewActivityData( activityData, function() 
+        {
+            console.log( 'added new activity' );
+            if ( callBack ) callBack();
+            // In sequence of actions, have this done and have next action to go to area with blockList..
+            // me.reRender( callBack );
+        } );
+    };
+
+
+    me.generateActivityData = function( dataJson, statusStr )
+    {
+        var activityData = {};
+
+        //activityData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
+        activityData.created = Util.formatDateTimeStr( dataJson.payloadJson.DATE.toString() );
+        activityData.id = dataJson.payloadJson.activityId;
+        activityData.status = statusStr;
+        activityData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..        
+        activityData.history = [];
+
+        activityData.data = dataJson;
+
+        return activityData;
+    };
+
+    // =============================================
+    // === OTHER METHODS ========================
+
+
+    me.activityList_Add = function (submitJson, status, callBack) {
+
+        try {
+            var dateTimeStr = (new Date()).toISOString();
+            var tempJsonData = {};
+
+            //tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
+            tempJsonData.created = dateTimeStr;
+            tempJsonData.id = Util.generateRandomId(); // ?? Used?
+            tempJsonData.status = status;
+            tempJsonData.data = submitJson;
+            tempJsonData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..
+            
+            tempJsonData.history = [];
+
+
+
+
+            me.cwsRenderObj._activityListData.list.push(tempJsonData);
+            //console.log('blockList.redeemList_Add - Before saveData_RedeemList');
+
+            DataManager2.saveData_RedeemList(me.cwsRenderObj._activityListData, function () {
+
+                //console.log('blockList.redeemList_Add - after saveData_RedeemList');
+                callBack();
+
+                FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
+
+                    // added by Greg (2019-02-18) > test track googleAnalytics
+                    ga('send', {
+                        'hitType': 'event',
+                        'eventCategory': 'redeemList_Add',
+                        'eventAction': analyticsEvent,
+                        'eventLabel': FormUtil.gAnalyticsEventLabel()
+                    });
+                });
+
+            });
+        }
+
+        catch (errMsg) {
+            // Temporarily use 'alert' to get noticed about this...  for now..
+            alert('ERROR during blockList.redeemList_Add, errMsg: ' + errMsg);
+        }
+
+        // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
+        //       pwa MUST re-initialize 'syncManager' queue+fail arrays
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -468,7 +584,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             console.log( 'test z1' );
 
-            me.createActivityListCard( activityItem, blockList_UL_Tag, listGroup );
+            me.createActivityCard( activityItem, blockList_UL_Tag, listGroup );
 
             me.recordCounter += 1;
         }        
@@ -698,7 +814,7 @@ function BlockList( cwsRenderObj, blockObj )
                     listGroup = me.evalCreateGroupBy_Block( activityItem.hours, me.blockList_UL_Tag )
                 }
 
-                me.createActivityListCard( activityItem, me.blockList_UL_Tag, listGroup );
+                me.createActivityCard( activityItem, me.blockList_UL_Tag, listGroup );
 
                 me.recordCounter += 1;
             }
@@ -948,7 +1064,6 @@ function BlockList( cwsRenderObj, blockObj )
 
 	// =============================================
 
-
 	// =============================================
 	// === OTHER METHODS ========================
 
@@ -959,21 +1074,17 @@ function BlockList( cwsRenderObj, blockObj )
             var dateTimeStr = (new Date()).toISOString();
             var tempJsonData = {};
 
-            tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
+            //tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
             tempJsonData.created = dateTimeStr;
-            tempJsonData.owner = FormUtil.login_UserName; // Added by Greg: 2018/11/26 > identify record owner
-            tempJsonData.id = Util.generateRandomId();
+            tempJsonData.id = Util.generateRandomId(); // ?? Used?
             tempJsonData.status = status;
-            tempJsonData.queueStatus = 'pending'; //DO NOT TRANSLATE?
-            tempJsonData.archived = 0;
-            tempJsonData.network = ConnManagerNew.statusInfo.appMode.toLowerCase(); // Added by Greg: 2018/11/26 > record network status at time of creation
             tempJsonData.data = submitJson;
-            tempJsonData.activityType = me.lastActivityType(ActivityUtil.getActivityList(), 'eVoucher'); // Added by Greg: 2019/01/29 > determine last activityType declared in dcd@XX file linked to activityList (history)
-
-            // TODO: ACTIVITY ADDING ==> FINAL PLACE FOR ACTIVITY LIST
-            tempJsonData.activityList = ActivityUtil.getActivityList();
-            tempJsonData.syncActionStarted = 0;
+            tempJsonData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..
+            
             tempJsonData.history = [];
+
+
+
 
             me.cwsRenderObj._activityListData.list.push(tempJsonData);
             //console.log('blockList.redeemList_Add - Before saveData_RedeemList');
