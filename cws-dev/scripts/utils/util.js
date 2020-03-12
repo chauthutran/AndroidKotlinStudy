@@ -8,6 +8,8 @@ Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
 
+Util.dateType1 = "yyyy-dd-MMTHH:mm:ss:SSS";
+
 
 Util.tryCatchContinue = function( callBack, runFunc )
 {
@@ -816,41 +818,30 @@ Util.dateToString = function( date )
 };
 
 
-Util.formatDateAndTime = function( datetimeStamp )
+Util.dateToStr = function( date, separator )
 {
-    var date = new Date( datetimeStamp );
-    var aaaa = date.getFullYear();
-    var gg = date.getDate();
-    var mm = (date.getMonth() + 1);
+	if ( !separator ) separator = "";
 
-    if (gg < 10) gg = '0' + gg;
-    if (mm < 10) mm = '0' + mm;
+	var month = eval( date.getMonth() ) + 1;
+	month = ( month < 10 ) ? "0" + month : month;
+	
+	var day = eval( date.getDate() );
+	day = ( day < 10 ) ? "0" + day : day;
+		
+	return date.getFullYear() + separator + month + separator + day;
+};
 
-    var cur_day = aaaa + '-' + mm + '-' + gg;
-    var hours = date.getHours()
-    var minutes = date.getMinutes()
-    var seconds = date.getSeconds();
-
-    if (hours < 10) hours = '0' + hours;
-    if (minutes < 10) minutes = '0' + minutes;
-    if (seconds < 10) seconds = '0' + seconds;
-
-    return ( cur_day + ' ' + hours + ':' + minutes + ':' + seconds );
-}
-
-Util.formatTime = function( datetimeStamp )
+Util.formatDateTime = function( dateObj, dateType )
 {
-    var date = new Date( datetimeStamp );
-    var hours = date.getHours()
-    var minutes = date.getMinutes()
-    var seconds = date.getSeconds();
+	Util.formatDateTimeStr( dateObj.toString(), dateType );
+};
 
-    if (hours < 10) hours = '0' + hours;
-    if (minutes < 10) minutes = '0' + minutes;
-    if (seconds < 10) seconds = '0' + seconds;
+Util.formatDateTimeStr = function( dateStr, dateType )
+{
+	if ( !dateType ) dateType = Util.dateType1;
 
-    return ( hours + ':' + minutes + ':' + seconds );
-}
+	return $.format.date( dateStr, dateType );
+};
 
 // Date Formatting Related
 // ----------------------------------

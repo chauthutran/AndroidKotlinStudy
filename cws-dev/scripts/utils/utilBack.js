@@ -2,22 +2,22 @@
 // -------------------------------------------
 // -- Utility Back Class/Methods
 
-function Util_Back() {}
+function UtilBack() {}
 
 
-Util_Back.oneTimeActions = {};
+UtilBack.oneTimeActions = {};
 
-Util_Back.delayOnceTimeAction = function( delay, id, action ) {
+UtilBack.delayOnceTimeAction = function( delay, id, action ) {
 
 	// is there already a timer? clear if if there is
-	if ( Util_Back.oneTimeActions[id] ) clearTimeout( Util_Back.oneTimeActions[id] );
+	if ( UtilBack.oneTimeActions[id] ) clearTimeout( UtilBack.oneTimeActions[id] );
 
 	// set a new timer to execute delay milliseconds from last call
-	Util_Back.oneTimeActions[id] = setTimeout( action, delay );
+	UtilBack.oneTimeActions[id] = setTimeout( action, delay );
 };
 
 
-Util_Back.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
+UtilBack.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructure )
 {
 	// planned use: blockList will 'unpack' a complex json payload back into a single array 
 	recurseInputArr = function( arrItem, arrObj, itm, callBack )
@@ -56,7 +56,7 @@ Util_Back.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStruct
 };
 
 
-Util_Back.setupDatePicker = function( ctrl, onSelectFunc, dateFormat, type )
+UtilBack.setupDatePicker = function( ctrl, onSelectFunc, dateFormat, type )
 {
 	if ( !Util.checkValue( dateFormat ) )
 	{
@@ -111,7 +111,7 @@ Util_Back.setupDatePicker = function( ctrl, onSelectFunc, dateFormat, type )
 
 
 
-Util_Back.toggleTarget = function( toggleAnchor, target, expand )
+UtilBack.toggleTarget = function( toggleAnchor, target, expand )
 {
 	// If 'expand' it is defined, display accordingly.
 	// If not, toggle based on current display setting.
@@ -144,7 +144,7 @@ Util_Back.toggleTarget = function( toggleAnchor, target, expand )
 };
 
 
-Util_Back.toggleTargetButton = function( toggleButtonTag, targetTag, expand, expendFunc, collapseFunc )
+UtilBack.toggleTargetButton = function( toggleButtonTag, targetTag, expand, expendFunc, collapseFunc )
 {
 
 	var expendText = toggleButtonTag.attr( 'expand' );
@@ -184,7 +184,7 @@ Util_Back.toggleTargetButton = function( toggleButtonTag, targetTag, expand, exp
 };
 
 
-Util_Back.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
+UtilBack.getValueByCallFieldFromConfig = function ( array, field, [attr, value] )
 {	
 	return array.filter( item => 
 		{
@@ -197,7 +197,7 @@ Util_Back.getValueByCallFieldFromConfig = function ( array, field, [attr, value]
 };
 
 
-Util_Back.cacheSizeCheckAndRepair = function( callBack )
+UtilBack.cacheSizeCheckAndRepair = function( callBack )
 {
 
   DataManager.estimateStorageUse( function( storageJSON ){
@@ -244,7 +244,7 @@ Util_Back.cacheSizeCheckAndRepair = function( callBack )
 };
 
 
-Util_Back.storageEstimateWrapper = function( callBack ) {
+UtilBack.storageEstimateWrapper = function( callBack ) {
 	if ('storage' in navigator && 'estimate' in navigator.storage) {
 	  return navigator.storage.estimate();
 	}
@@ -269,7 +269,7 @@ Util_Back.storageEstimateWrapper = function( callBack ) {
 
 
   
-  Util_Back.generateRandomEpoch = function( howMany, base, precision )
+  UtilBack.generateRandomEpoch = function( howMany, base, precision )
   {
 	//use examples: Util.generateRandomEpoch(5,36,1000);
 	var arrEpochs = [], b = ( base == undefined) ? 10 : base, prec = ( precision == undefined ) ? 100 : precision;

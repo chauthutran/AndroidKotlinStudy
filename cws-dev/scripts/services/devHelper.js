@@ -633,3 +633,98 @@ DevHelper.setDebugFlag = function() { };
 // Not yet implemented
 DevHelper.setScheduleMsgFlag = function() { };
 
+
+// ======================================
+// === TESTING ONES BELOW ================
+
+DevHelper.payloadTest = function()
+{
+
+    // 1. Collect data in 'payload' variable
+    var payloadJson = {};
+
+    var inputsJson = {
+        "phoneNumber": "1111222333",
+        "voucherCode": "12345678",
+        "firstName": "James",
+        "lastname": "Chang"
+    };
+
+    // add today..
+    inputsJson.now = new Date();
+
+
+    var templateJson = 
+    {
+        "activityId": "Util.dateToStr( inputsJson.now ) + Util.generateRandomId(6);",
+        "userName": "FormUtil.login_UserName;",
+
+        "searchValues": {
+            "clientDetails": { 
+                "phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
+            }
+        },
+
+        "captureValues": {
+            "activityDate": {
+                "capturedUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );",
+                "capturedLoc": "Util.formatDateTimeStr( inputsJson.now.toString() );",
+                "createdOnDeviceUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );"
+            },
+            
+            "activityId": "payloadJson.activityId",
+            "activityType": "'sp'",
+            "program": "'fpl'",
+            "activeUser": "'qwertyuio1'",
+            "dc": { },
+            "location": {},
+            "transactions": [
+                {
+                    "transactionType": "'c_reg'", 
+                    "dataValues": "inputsJson"
+                },
+                {
+                    "transactionType": "'v_iss'", 
+                    "dataValues": { 
+                        "voucherCode": "Util.getStr( inputsJson.voucherCode );"	
+                    }
+                }
+            ]
+        }
+    };
+
+
+    // hard copy from template...
+    payloadJson = Util.getJsonDeepCopy( templateJson );
+
+
+    DevHelper.traverseEval( payloadJson, payloadJson, inputsJson );
+
+    return payloadJson;
+};
+
+DevHelper.traverseEval = function( obj, payloadJson, inputsJson )
+{
+    for ( var prop in obj ) 
+    {
+        var propVal = obj[prop];
+
+        if ( typeof( propVal ) === "object" ) 
+        {
+            //console.log( prop, propVal );
+            DevHelper.traverseEval( propVal, payloadJson, inputsJson );
+        }
+        else if ( typeof( propVal ) === "string" ) 
+        {
+            //console.log( prop, propVal );
+            try
+            {
+                obj[prop] = eval( propVal );
+            }
+            catch( errMsg )
+            {
+                console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+            }
+        }
+    }
+};

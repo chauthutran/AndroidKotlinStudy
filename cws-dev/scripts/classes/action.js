@@ -405,13 +405,13 @@ function Action( cwsRenderObj, blockObj )
 						submitJson.actionJson = clickActionJson;
 						submitJson.url = url;
 						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
-						submitJson.payloadJson2 = me.reconfigurePayloadJson2( inputsJson );
+						submitJson.payloadJson2 = me.reconfigurePayloadJson3( inputsJson );
 						submitJson.payloadJson = submitJson.payloadJson2; // OVERWRITE FOR TESTING..
 
 						console.log( 'submitJson.payloadJson2' );
 						console.log( submitJson.payloadJson2 );
 
-
+						
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
@@ -469,6 +469,7 @@ function Action( cwsRenderObj, blockObj )
 	
 							});
 						}
+						
 					}
 
 
@@ -675,76 +676,88 @@ function Action( cwsRenderObj, blockObj )
 
 	me.reconfigurePayloadJson3 = function( inputsJson )
 	{
-
+	
 		// 1. Collect data in 'payload' variable
-
 		var payloadJson = {};
-
-
+	
+	
+		// add today..
+		inputsJson.now = new Date();
+	
+	
 		var templateJson = 
 		{
-			"activityId": "'' + Util.generateRandomId(6);",
-			"userName": "",
-
+			"activityId": "Util.dateToStr( inputsJson.now ) + Util.generateRandomId(6);",
+			"userName": "FormUtil.login_UserName;",
+	
 			"searchValues": {
-				"clientDetails": { }
+				"clientDetails": { 
+					"phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
+				}
 			},
-
+	
 			"captureValues": {
-				"activityDate": {},
-				"activityId": "payload.activityDateId",
-				"activityType": "",
-				"program": "",
-				"activeUser": "",
+				"activityDate": {
+					"capturedUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );",
+					"capturedLoc": "Util.formatDateTimeStr( inputsJson.now.toString() );",
+					"createdOnDeviceUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );"
+				},
+				
+				"activityId": "payloadJson.activityId",
+				"activityType": "'sp'",
+				"program": "'fpl'",
+				"activeUser": "'qwertyuio1'",
 				"dc": { },
 				"location": {},
-				"transactions": []
+				"transactions": [
+					{
+						"transactionType": "'c_reg'", 
+						"dataValues": "inputsJson"
+					},
+					{
+						"transactionType": "'v_iss'", 
+						"dataValues": { 
+							"voucherCode": "Util.getStr( inputsJson.voucherCode );"	
+						}
+					}
+				]
 			}
 		};
-
+	
+	
 		// hard copy from template...
-		var payloadJson2 = Util.getJsonDeepCopy( templateJson );
-
-		// 0. Set "activityId", "userName", "password": "4321",
-		payloadJson2.activityId = "20200214" + Util.generateRandomId(6);
-		payloadJson2.userName = "LA_TEST_PROV";
-		//payloadJson2.password = "4321";
-
-
-		// 1. Set Search Criteria.. (Later, Should be 'searchValues' = ... )
-		payloadJson2.searchValues.clientDetails = { 'phoneNumberCurrent': Util.getStr( inputsJson.phoneNumberCurrent ) };
-
-
-		// -------------------------------------
-		// 2. Set capture values..
-		// activityDate
-		var captureJson = payloadJson2.captureValues;
-		captureJson.activityDate = {
-			"capturedUTC": "2020-01-17T12:32:00.000",
-			"capturedLoc": "2020-01-17T11:32:00.000",
-			"createdOnDeviceUTC": new Date().toISOString() //"2020-06-17T12:32:30.000"
-		};
-
-		captureJson.activityId = payloadJson2.activityId;
-		// activityType, program, dc, location, activeUser
-
-		// Need to be properly populated - later..
-		captureJson.location = { "type:": "Point", "coordinates": [ -0.9969609975814819, 33.9327278137207 ] };
-		captureJson.accuracy = 100;
-		captureJson.dc = { "app": "pwa-connect", "softwareVersion": "1.3.2", "configVersion": "5" };
-		captureJson.activeUser = "qwertyuio1";
-		captureJson.activityType = "sp";
-		captureJson.program = "fpl";
-
-		// 2.1 - Set Transactions..
-		// 		- Registration (In case the record does not exists) <-- Normally, voucherCode would not be here?
-		captureJson.transactions.push( { "transactionType": "c_reg", "dataValues": inputsJson } );
-
-		// 		- In our case, issue voucher as well..
-		captureJson.transactions.push( { "transactionType": "v_iss", "dataValues": { 'voucherCode': Util.getStr( inputsJson.voucherCode ) } } );
-
-
-		return payloadJson2;
+		payloadJson = Util.getJsonDeepCopy( templateJson );
+	
+	
+		me.traverseEval( payloadJson, payloadJson, inputsJson );
+	
+		return payloadJson;
 	};
-
+	
+	
+	me.traverseEval = function( obj, payloadJson, inputsJson )
+	{
+		for ( var prop in obj ) 
+		{
+			var propVal = obj[prop];
+	
+			if ( typeof( propVal ) === "object" ) 
+			{
+				//console.log( prop, propVal );
+				me.traverseEval( propVal, payloadJson, inputsJson );
+			}
+			else if ( typeof( propVal ) === "string" ) 
+			{
+				//console.log( prop, propVal );
+				try
+				{
+					obj[prop] = eval( propVal );
+				}
+				catch( errMsg )
+				{
+					console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+				}
+			}
+		}
+	};	
 }

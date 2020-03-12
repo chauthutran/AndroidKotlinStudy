@@ -319,10 +319,7 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList )
             // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
             if ( existingItem )
             {
-                var newItemDate = $.format.date( newItem.created, "dd MMM yyyy - HH:mm" );
-                var existingItemDate = $.format.date( existingItem.created, "dd MMM yyyy - HH:mm" );
-
-                if ( newItemDate > existingItemDate ) 
+                if ( newItem.created > existingItem.created ) 
                 {
                     // Merge newItem into existingItem (it does not delete existing attributes)
                     Util.mergeJson( existingItem, newItem );
