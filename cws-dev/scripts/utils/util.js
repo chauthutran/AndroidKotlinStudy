@@ -8,7 +8,7 @@ Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
 
-Util.dateType1 = "yyyy-dd-MMTHH:mm:ss:SSS";
+Util.dateType1 = "yyyy-MM-ddTHH:mm:ss:SSS";
 
 
 Util.tryCatchContinue = function( callBack, runFunc )

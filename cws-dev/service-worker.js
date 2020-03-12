@@ -381,7 +381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "38b515922a46d39242a0a21a7685111b"
+    "revision": "e309d7c6dad01647e453e3899bb84e57"
   },
   {
     "url": "scripts/classes/activityItem.js",
@@ -409,11 +409,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "8483aabe3f6257e2821f94d11b9a5dfb"
+    "revision": "a9cfbdd6c39ab7b5f00a05a23afe115d"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "47635edf524313751e591fa0f8ab164e"
+    "revision": "e2548617893d3c23fdd78c24b44541e2"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -665,7 +665,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "77ae0f2a0b75b4957d80e04281ab2519"
+    "revision": "09bb54998115aa8eee3fdb1430c159d5"
   },
   {
     "url": "scripts/utils/util2.js",

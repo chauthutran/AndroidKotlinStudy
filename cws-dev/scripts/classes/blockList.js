@@ -392,15 +392,21 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.updateActivityCard_UI_Icon = function( activityCardLiTag, itemJson, cwsRenderObj )
     {
+        try
+        {
+            // update card 'status' (submit/fail/queue)
+            FormUtil.setStatusOnTag( $( activityCardLiTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
 
-        // update card 'status' (submit/fail/queue)
-        FormUtil.setStatusOnTag( $( activityCardLiTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
-
-        // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-        FormUtil.appendActivityTypeIcon ( $( activityCardLiTag ).find( '.listItem_icon_activityType' ) 
-            , FormUtil.getActivityType ( itemJson )
-            , FormUtil.getStatusOpt ( itemJson )
-            , cwsRenderObj );
+            // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
+            FormUtil.appendActivityTypeIcon ( $( activityCardLiTag ).find( '.listItem_icon_activityType' ) 
+                , FormUtil.getActivityType ( itemJson )
+                , FormUtil.getStatusOpt ( itemJson )
+                , cwsRenderObj );
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error on BlockList.updateActivityCard_UI_Icon, errMsg: ' + errMsg );
+        }        
     };
 
     // ===========================================================

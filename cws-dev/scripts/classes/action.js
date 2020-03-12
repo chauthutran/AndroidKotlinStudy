@@ -670,13 +670,7 @@ function Action( cwsRenderObj, blockObj )
 
 
 	me.reconfigurePayloadJson3 = function( inputsJson )
-	{
-	
-		// 1. Collect data in 'payload' variable
-		var payloadJson = {};
-		payloadJson.DATE = new Date();
-	
-	
+	{	
 		var templateJson = 
 		{
 			"activityId": "Util.dateToStr( payloadJson.DATE ) + Util.generateRandomId(6);",
@@ -718,9 +712,9 @@ function Action( cwsRenderObj, blockObj )
 	
 	
 		// hard copy from template...
-		payloadJson = Util.getJsonDeepCopy( templateJson );
-	
-	
+		var payloadJson = Util.getJsonDeepCopy( templateJson );	
+		payloadJson.DATE = new Date();
+
 		me.traverseEval( payloadJson, payloadJson, inputsJson );
 	
 		return payloadJson;
