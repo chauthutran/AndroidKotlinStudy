@@ -677,9 +677,7 @@ function Action( cwsRenderObj, blockObj )
 			"userName": "FormUtil.login_UserName;",
 	
 			"searchValues": {
-				"clientDetails": { 
-					"phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
-				}
+				"clientDetails.phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
 			},
 	
 			"captureValues": {

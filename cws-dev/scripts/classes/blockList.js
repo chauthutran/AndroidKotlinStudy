@@ -349,7 +349,8 @@ function BlockList( cwsRenderObj, blockObj )
     };
         
 
-    // Populate one Activity Item
+    // Populate one Activity Card
+    // TODO: Move this to 'ActivityItem' class (rename it as 'ActivityCard')
     me.createActivityCard = function( itemData, groupBy )
     {
         var activityCardLiTag;
@@ -364,7 +365,17 @@ function BlockList( cwsRenderObj, blockObj )
             activityCardAnchorTag.attr( 'itemId', itemData.id );
 
             // Title - date description..
-            activityCardLiTag.find( 'div.listItem_label_date' ).html( $.format.date( itemData.created, "dd MMM yyyy - HH:mm" ) );
+            var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
+            labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
+
+            // 'QUICK FIX' - Move this to template + move to other class..
+            var spanDetailTag = $( '<span style=" margin-left: 4px; font-size: 9px; font-style: italic; cursor:pointer;">detail</span>')
+            labelTag.append( spanDetailTag );
+            spanDetailTag.click( function(e) {
+                e.stopPropagation();  // Stops calling parent tags event calls..
+                console.log( itemData );
+            });
+
 
             var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
 
@@ -372,6 +383,31 @@ function BlockList( cwsRenderObj, blockObj )
             listItem_icon_syncTag.click( function(e) {                
                 e.stopPropagation();  // Stops calling parent tags event calls..
                 console.log( 'activityCard Submit Clicked - ' + itemData.id );
+
+                // <-- send request...
+                //var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
+
+                if ( SyncManagerNew.syncStart() )
+                {
+                    try
+                    {
+                        var divListItemTag = activityCardLiTag.find( 'div.listItem' );
+                        var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+
+                        SyncManagerNew.syncItem( activityItem, function( success ) {
+
+                            SyncManagerNew.syncFinish();     
+                            //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
+                        });    
+                    }
+                    catch( errMsg )
+                    {
+                        console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
+                        SyncManagerNew.syncFinish();     
+                    }
+                }
+                //}
+
             });
 
 
@@ -395,10 +431,10 @@ function BlockList( cwsRenderObj, blockObj )
         try
         {
             // update card 'status' (submit/fail/queue)
-            FormUtil.setStatusOnTag( $( activityCardLiTag ).find( 'small.syncIcon' ), itemJson, cwsRenderObj );
+            FormUtil.setStatusOnTag( activityCardLiTag.find( 'small.syncIcon' ), itemJson, cwsRenderObj );
 
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-            FormUtil.appendActivityTypeIcon ( $( activityCardLiTag ).find( '.listItem_icon_activityType' ) 
+            FormUtil.appendActivityTypeIcon ( activityCardLiTag.find( '.listItem_icon_activityType' ) 
                 , FormUtil.getActivityType ( itemJson )
                 , FormUtil.getStatusOpt ( itemJson )
                 , cwsRenderObj );

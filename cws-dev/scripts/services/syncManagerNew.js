@@ -203,10 +203,10 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
     
     if ( activityList && activityList.list )
     {
-        var myItems = activityList.list.filter( a => a.owner == FormUtil.login_UserName );
-        var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
-        var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-        uploadItems = Util.sortByKey( myQueue.concat( myFailed ), 'created', undefined, 'Decending' ); // combined list
+        var newList = activityList.list.filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
+        //var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
+        //var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
+        uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); // combined list
     }
 
     callBack( uploadItems );

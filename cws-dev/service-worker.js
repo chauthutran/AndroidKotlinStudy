@@ -381,11 +381,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "e309d7c6dad01647e453e3899bb84e57"
+    "revision": "1d06c5f794c63495b4565c42d1139b1a"
   },
   {
     "url": "scripts/classes/activityItem.js",
-    "revision": "58769be13711b8513ffe802d9b014c10"
+    "revision": "6f1e223c7a42d964470e384ed3320dc3"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -409,7 +409,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "a9cfbdd6c39ab7b5f00a05a23afe115d"
+    "revision": "150e619ccb8d85debebc95a314a71048"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -609,7 +609,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "bcf8ad174e090a8693351499835fafec"
+    "revision": "9e4ee4636aa3bd9dbf0d93d4b762d37c"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",

@@ -54,6 +54,82 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     };
 
 
+    // TODO: WILL INTEGRATE THE 'ActivityCard' Tag creation..
+    /*    
+    me.createActivityCard = function( itemData, groupBy )
+    {
+        var activityCardLiTag;
+
+        try
+        {
+            activityCardLiTag = $( me.template_ActivityCard );
+            var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
+    
+            // Probably need to populate only one of below 2
+            activityCardLiTag.attr( 'itemId', itemData.id );
+            activityCardAnchorTag.attr( 'itemId', itemData.id );
+
+            // Title - date description..
+            var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
+            labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
+
+            // 'QUICK FIX' - Move this to template + move to other class..
+            var detailTag = $( '<div style="font-size: 9px; font-style: italic; cursor:pointer;">detail</div>')
+            labelTag.append( detailTag );
+            detailTag.click( function() {
+                e.stopPropagation();  // Stops calling parent tags event calls..
+                console.log( itemData );
+            });
+
+
+            var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
+
+            // click event - for activitySubmit..
+            listItem_icon_syncTag.click( function(e) {                
+                e.stopPropagation();  // Stops calling parent tags event calls..
+                console.log( 'activityCard Submit Clicked - ' + itemData.id );
+
+                // <-- send request...
+
+            });
+
+
+            // Populate the button image & click event
+            //me.populateData_RedeemItemTag( itemData, activityCardLiTag );
+
+            me.updateActivityCard_UI_Icon( activityCardLiTag, itemData, me.cwsRenderObj );            
+        }
+        catch( errMsg )
+        {
+            activityCardLiTag = undefined;
+            console.log( 'Error on createActivityCard, errMsg: ' + errMsg );
+        }
+
+        return activityCardLiTag;        
+    };
+
+
+    me.updateActivityCard_UI_Icon = function( activityCardLiTag, itemJson, cwsRenderObj )
+    {
+        try
+        {
+            // update card 'status' (submit/fail/queue)
+            FormUtil.setStatusOnTag( activityCardLiTag.find( 'small.syncIcon' ), itemJson, cwsRenderObj );
+
+            // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
+            FormUtil.appendActivityTypeIcon ( activityCardLiTag.find( '.listItem_icon_activityType' ) 
+                , FormUtil.getActivityType ( itemJson )
+                , FormUtil.getStatusOpt ( itemJson )
+                , cwsRenderObj );
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error on BlockList.updateActivityCard_UI_Icon, errMsg: ' + errMsg );
+        }        
+    };
+    */
+
+
     // =============================================
 	// === MAIN METHODS - 'syncManager' Related ========================
     // activityItem.updateItem_UI_StartSync();
@@ -75,6 +151,9 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         // check is item loaded in screen list 
         if ( me.itemTag )
         {
+
+            // TODO: THIS FAILS..  THUS, COMMENTED OUT..
+            /*
             // stop spinning "busy" icon
             me.updateItem_UI_Animation( false, me.itemTagSyncButton );
 
@@ -84,6 +163,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             // TODO:  Update ActivityItem UI based on the updated info.
             //  - Need to get more UI changes from syncManager.endSync()?
             me.updateUI( me.itemTag, me.itemJson );
+            */
         }
     };
 
