@@ -121,42 +121,31 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
 
     // Retrieve data..
-    SyncManagerNew.downloadActivities( function( success, mongoClients ) 
+    SyncManagerNew.downloadActivities( function( downloadSuccess, mongoClients ) 
     {
         var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
         // S2. NOTE: Mark that download done as just log?
 
-        if ( !success ) { if ( callBack ) callBack( false, changeOccurred ); }
+        if ( !downloadSuccess ) 
+        { 
+            if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
+        }
         else
         {
             // For each client record, convert to activity and add it..
-            DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) {
-
-                changeOccurred = SyncManagerNew.mergeDownloadedList( cwsRenderObj._activityListData.list, newActivityItems );
-
-                //console.log( 'After Merge, going for Saveing' );
-
-                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
-                LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
-
-
-                // TODO: Only if there were changes <-- merged list, perform below
-                // + on callBack, indicate the change of data for list..
-                if ( changeOccurred )
+            DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
+            {
+                SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
                 {
-                    DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
-                        //console.log( 'After Merge, After Save.. CallBack' );
-                        if ( callBack ) callBack( true, changeOccurred );
-                    });
-                }
-                else
-                {
-                    if ( callBack ) callBack( true, changeOccurred );
-                }
-            } );
+                    // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+                    LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
+
+                    if ( callBack ) callBack( downloadSuccess, changeOccurred );
+                });
+            });
         }
-    } );    
+    });    
 };
 
 // ===================================================
@@ -192,22 +181,12 @@ SyncManagerNew.performActivity = function( itemData, callBack )
 
 SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
 {    
-    //TBP = to be processed :)
-    // get all dataItems belonging to current user, filtered for [Queued] + [Failed]
-    // TODO: if it failes to get data or some error case in 'DataManager.getData', 
-    //      Let's think about it later or test about it..
-	//DataManager.getData( Constants.storageName_redeemList, function( activityList ) {
-    var activityList = cwsRenderObj._activityListData;
-
     var uploadItems = [];
     
-    if ( activityList && activityList.list )
-    {
-        var newList = activityList.list.filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
-        //var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
-        //var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-        uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); // combined list
-    }
+    var newList = ActivityListManager.getActivityList().filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
+    //var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
+    //var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
+    uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); // combined list
 
     callBack( uploadItems );
 
@@ -299,7 +278,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 };
 
 
-SyncManagerNew.mergeDownloadedList = function( mainList, newList )
+SyncManagerNew.mergeDownloadedList = function( mainList, newList, callBack )
 {
     var changeOccurred = false;
     var newList_filtered = [];
@@ -346,9 +325,23 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList )
 
 
     // if new list to push to mainList exists, add to the list.
-    if ( newList_filtered.length > 0 ) Util.appendArray( mainList, newList_filtered );
+    if ( newList_filtered.length > 0 ) 
+    {
+        // 'changeOccurred' already set to 'true' when adding to 'newList_filtered' above.
+        Util.appendArray( mainList, newList_filtered );
+    }
 
-    return changeOccurred;
+
+    if ( changeOccurred ) 
+    {
+        ActivityListManager.saveCurrent_ActivitiesStore( function() {
+            if ( callBack ) callBack( changeOccurred );
+        });
+    } 
+    else 
+    {
+        if ( callBack ) callBack( changeOccurred );
+    }
 }; 
 
 

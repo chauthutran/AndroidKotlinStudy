@@ -336,59 +336,48 @@ function statistics( cwsRender )
     me.createLocalAnalytics = function( callBack )
     {
 
-        var myData = ( me.cwsRenderObj._activityListData ) ? me.cwsRenderObj._activityListData.list : undefined;
+        var myData = ActivityListManager.getActivityList();
 
-        if ( myData )
+
+        for (var a = 0; a < me.activityTypes.length; a++) 
         {
+            me.activityTypes[ a ].data = ( myData.filter( e=>e.activityType == me.activityTypes[ a ].name ) );
+        }
 
-            for (var a = 0; a < me.activityTypes.length; a++) 
-            {
-                me.activityTypes[ a ].data = ( myData.filter( e=>e.activityType == me.activityTypes[ a ].name ) );
-            }
+        for (var d = 0; d < me.dateGroups.length; d++) 
+        {
+            me.dateGroups[ d ].data = me.enrichDateCalculations( myData, me.dateGroups[ d ].hours );
+        }
 
-            for (var d = 0; d < me.dateGroups.length; d++) 
-            {
-                me.dateGroups[ d ].data = me.enrichDateCalculations( myData, me.dateGroups[ d ].hours );
-            }
+        /*for (var h = 0; h < me.hoursInDay.length; h++) 
+        {
+            me.hoursInDay[ h ].data = ( myData.filter( e=>e.hourInDay == me.hoursInDay[ h ].name ) );
+        }*/
 
-            /*for (var h = 0; h < me.hoursInDay.length; h++) 
-            {
-                me.hoursInDay[ h ].data = ( myData.filter( e=>e.hourInDay == me.hoursInDay[ h ].name ) );
-            }*/
-
-            for (var d = 0; d < me.popularDays.length - 1; d++)
-            {
-                me.popularDays[ d ].data = ( myData.filter( e=>e.dayInWeek == d ) );
-
-                for (var h = 0; h < me.hoursInDay.length; h++) 
-                {
-                    me.popularDays[ d ].hoursInDay[ h ].data = ( myData.filter( e => e.dayInWeek == d && e.hourInDay == me.hoursInDay[ h ].name ) );
-                }
-
-            }
-
-            me.popularDays[ 7 ].data = ( myData );
+        for (var d = 0; d < me.popularDays.length - 1; d++)
+        {
+            me.popularDays[ d ].data = ( myData.filter( e=>e.dayInWeek == d ) );
 
             for (var h = 0; h < me.hoursInDay.length; h++) 
             {
-                me.popularDays[ 7 ].hoursInDay[ h ].data = ( myData.filter( e => e.hourInDay == me.hoursInDay[ h ].name ) );
+                me.popularDays[ d ].hoursInDay[ h ].data = ( myData.filter( e => e.dayInWeek == d && e.hourInDay == me.hoursInDay[ h ].name ) );
             }
 
-            me.earliestDate = me.earliest( myData )
-            me.total = myData.length;
-
-            if ( callBack ) callBack( true );
-
         }
-        else
+
+        me.popularDays[ 7 ].data = ( myData );
+
+        for (var h = 0; h < me.hoursInDay.length; h++) 
         {
-            me.localStatsTag.append( me.getNoDataMessage() );
-
-            if ( callBack ) callBack( false );
-
+            me.popularDays[ 7 ].hoursInDay[ h ].data = ( myData.filter( e => e.hourInDay == me.hoursInDay[ h ].name ) );
         }
 
-    }
+        me.earliestDate = me.earliest( myData )
+        me.total = myData.length;
+
+        if ( callBack ) callBack( true );
+    };
+    
 
     me.earliest = function( myArr )
     {

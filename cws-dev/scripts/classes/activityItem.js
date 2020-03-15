@@ -283,9 +283,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data_saveToDB = function( itemJson, callBack )
     {
-        var activityData = me.cwsRenderObj._activityListData;
-
-        var activityItem = Util.getFromList( activityData.list, itemJson.id, "id" );
+        var activityItem = ActivityListManager.getActivityItem( "id", itemJson.id );
 
         if ( activityItem )
         {
@@ -296,7 +294,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             // activityItem.history = itemJson.history;
             activityItem.status = itemJson.status;
 
-            DataManager2.saveData_RedeemList( activityData, callBack );
+            ActivityListManager.saveCurrent_ActivitiesStore( callBack );
         }
         else
         {

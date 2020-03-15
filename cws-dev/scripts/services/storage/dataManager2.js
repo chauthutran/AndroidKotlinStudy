@@ -149,11 +149,23 @@ DataManager2.getData_RedeemList = function( callBack )
 	DataManager2.getData( Constants.storageName_redeemList, callBack );
 };
 
-// ------------------
-
 DataManager2.saveData_RedeemList = function( jsonData, callBack )
 {
 	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
+};
+
+// ------------------
+
+// NOTE: If we use user name + fixed name, this has to be only done after login..
+//  --> Which makes sense since we also need password to descript data..
+DataManager2.getData_ActivityList = function( callBack )
+{
+	DataManager2.getData( Constants.storageName_activityList, callBack );
+};
+
+DataManager2.saveData_ActivityList = function( jsonData, callBack )
+{
+	DataManager2.saveData( Constants.storageName_activityList, jsonData, callBack );
 };
 
 

@@ -25,17 +25,6 @@ function cwsRender()
 	me.loginObj;
 	me.langTermObj;
 
-	// Main 'activityItem' List Storage place
-	me._activityListData = { 'list': [] };  // TODO: THIS MUST GET loaded/Populated when the app starts!!!!
-	// QUESTION - What is 'me.activityList' in below?  Is it same data?
-
-
-	// Constants
-	// TODO: REMOVE THIS AND apply Constants.--- to all the places..
-    me.status_redeem_submit = Constants.status_redeem_submit;
-	me.status_redeem_queued = Constants.status_redeem_queued;
-	me.status_redeem_failed = Constants.status_redeem_failed;
-	me.status_redeem_paused = Constants.status_redeem_paused;
 
 	// Settings var
 	me.storage_offline_ItemNetworkAttemptLimit = Constants.storage_offline_ItemNetworkAttemptLimit; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
@@ -159,40 +148,6 @@ function cwsRender()
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
-	// --- MOVE TO IT'S OWN CLASS?? <-- AcitivityListManager?
-
-	me.getAcitityList = function()
-	{
-		return me._activityListData.list;
-	};
-
-	// Not implemented/used properly, yet.
-	me.applyAcitityListChange = function( bSaveToStorage, callBack )
-	{
-		// 1. save to storage
-		if ( bSaveToStorage )
-		{
-            DataManager2.saveData_RedeemList( cwsRenderObj._activityListData, function () {
-
-            });
-		}
-		else
-		{
-
-		}
-	
-		// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
-		FormUtil.updateStat_SyncItems( me._activityListData, function()
-		{
-			callBack( me._activityListData );
-		});	
-
-		// Refresh BlockList with new data?
-	};
-
-
-	// ---------------------------------
-
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
@@ -200,31 +155,14 @@ function cwsRender()
 		// Do 'redeemList' move from localStorage to IndexedDB (localForage version)
 		//  - Since we need password to encrypt the data..
 		DataVerMove.lsRedeemListMove( function() {
-
-			// Load the redeemList json into the main memory of this class '_activityListData.list'
-			DataManager2.getData_RedeemList( function( jsonData_FromStorage ) 
+			
+			ActivityListManager.loadActivityStoreFromStorage( function( activityStore ) 
 			{
+				callBack();
 
-				// TODO: After login, trigger the background 'syncDown'
-				//SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function() { } );
-
-				if ( jsonData_FromStorage && jsonData_FromStorage.list )
-				{
-					me._activityListData.list = jsonData_FromStorage.list;
-	
-
-					// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
-					FormUtil.updateStat_SyncItems( me._activityListData, function()
-					{
-						callBack( me._activityListData );
-					});		
-				}
-				else 
-				{
-					callBack( me._activityListData );
-				}
-			});
-	
+				// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
+				//FormUtil.updateStat_SyncItems( activityStore, function()
+			});	
 		});
 	};
 
@@ -437,9 +375,9 @@ function cwsRender()
 
 				if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
 				{
-					var mySubmit = FormUtil.records_redeem_submit; //myData.filter( a=>a.status == me.status_redeem_submit );
-					var myQueue = FormUtil.records_redeem_queued; //myData.filter( a=>a.status == me.status_redeem_queued );
-					var myFailed = FormUtil.records_redeem_failed; //myData.filter( a=>a.status == me.status_redeem_failed && (!a.networkAttempt || a.networkAttempt < me.storage_offline_ItemNetworkAttemptLimit) );
+					var mySubmit = FormUtil.records_redeem_submit; 
+					var myQueue = FormUtil.records_redeem_queued; 
+					var myFailed = FormUtil.records_redeem_failed; 
 
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
@@ -476,21 +414,21 @@ function cwsRender()
 
 		if ( submitList && submitList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": me.status_redeem_submit } ), true );
+			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_submit } ), true );
 			dataSubmit.append( submitList );
 			tr.append( tdSubmit );	
 		}
 
 		if ( queueList && queueList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": me.status_redeem_queued } ), true );
+			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_queued } ), true );
 			dataQueue.append( queueList );
 			tr.append( tdQueue );
 		}
 
 		if ( failedList && failedList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": me.status_redeem_failed } ), true );
+			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_failed } ), true );
 			dataFailed.append( failedList );
 			tr.append( tdFailed );
 

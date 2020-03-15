@@ -207,18 +207,6 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
-    // Add new Activity data <-- TODO: THIS SHOULD BE MOVED TO cwsRender or Some Class for this!!
-    me.insertNewActivityData = function( activityData, callBack )
-    {   
-        me.cwsRenderObj._activityListData.list.unshift( activityData ); // We should have a method for this in 'cwsRender' or some class.        
-
-        DataManager2.saveData_RedeemList( me.cwsRenderObj._activityListData, function () 
-        {
-            if ( callBack ) callBack();
-        } );
-    };
-
-
     me.reRender = function( callBack )
     {
         // When reRendering, if view exists, select 1st view to render the 1st view list.
@@ -226,7 +214,7 @@ function BlockList( cwsRenderObj, blockObj )
         if ( me.hasView ) me.BlockListViewObj.viewSelect_1st(); 
         else 
         {
-            var newActivityList = Util.cloneArray( me.cwsRenderObj._activityListData.list );
+            var newActivityList = Util.cloneArray( ActivityListManager.getActivityList() );
 
             me.reRenderWithList( newActivityList, callBack );    
         }
@@ -262,7 +250,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
-        me.activityList = Util.cloneArray( cwsRenderObj._activityListData.list );
+        me.activityList = Util.cloneArray( ActivityListManager.getActivityList() );
         me.blockJson = blockJson;
         
         me.hasView = ( blockJson.activityListViews && blockJson.activityListViews.length > 0 );
@@ -385,7 +373,7 @@ function BlockList( cwsRenderObj, blockObj )
                 console.log( 'activityCard Submit Clicked - ' + itemData.id );
 
                 // <-- send request...
-                //var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
+                //var ItemData_refreshed = Util.getFromList( ActivityListManager.getActivityList(), itemData.id, "id" );
 
                 if ( SyncManagerNew.syncStart() )
                 {
@@ -457,14 +445,17 @@ function BlockList( cwsRenderObj, blockObj )
         console.log( 'blockList.createNewActivity, activityData' );
         console.log( activityData );
 
+
         // 2. Add to the main list and display list
-        me.insertNewActivityData( activityData, function() 
+        // me.insertNewActivityData( activityData, function() 
+        ActivityListManager.insertNewActivity( activityData, function() 
         {
             console.log( 'added new activity' );
             if ( callBack ) callBack();
             // In sequence of actions, have this done and have next action to go to area with blockList..
             // me.reRender( callBack );
         } );
+        
     };
 
 
@@ -504,12 +495,7 @@ function BlockList( cwsRenderObj, blockObj )
             tempJsonData.history = [];
 
 
-
-
-            me.cwsRenderObj._activityListData.list.push(tempJsonData);
-            //console.log('blockList.redeemList_Add - Before saveData_RedeemList');
-
-            DataManager2.saveData_RedeemList(me.cwsRenderObj._activityListData, function () {
+            ActivityListManager.insertNewActivity( tempJsonData, function () {
 
                 //console.log('blockList.redeemList_Add - after saveData_RedeemList');
                 callBack();
@@ -592,7 +578,7 @@ function BlockList( cwsRenderObj, blockObj )
         {
             console.log( 'test2.B' );
 
-            me.setData_ForBlockList( cwsRenderObj._activityListData.list );
+            me.setData_ForBlockList( ActivityListManager.getActivityList() );
 
             // document.addEventListener('scroll', function (event) { me.loadBlockList_Data(); }, true);
 
@@ -680,7 +666,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             expandedDivTag.html( FormUtil.loaderRing() );
 
-            var itemData = Util.getFromList( me.cwsRenderObj._activityListData.list, itemID, "id" );
+            var itemData = Util.getFromList( ActivityListManager.getActivityList(), itemID, "id" );
             var trxDetails = Util2.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
             var historyDetails = Util2.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
             var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
@@ -1075,7 +1061,7 @@ function BlockList( cwsRenderObj, blockObj )
                 var divListItemTag = $( this ).parents( 'div.listItem' );
 
                 // DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( ItemData_refreshed ){                
-                var ItemData_refreshed = Util.getFromList( me.cwsRenderObj._activityListData.list, itemData.id, "id" );
+                var ItemData_refreshed = Util.getFromList( ActivityListManager.getActivityList(), itemData.id, "id" );
 
                 // TODO: 
                 //if ( ItemData_refreshed.status != Constants.status_redeem_submit )
@@ -1126,12 +1112,7 @@ function BlockList( cwsRenderObj, blockObj )
             tempJsonData.history = [];
 
 
-
-
-            me.cwsRenderObj._activityListData.list.push(tempJsonData);
-            //console.log('blockList.redeemList_Add - Before saveData_RedeemList');
-
-            DataManager2.saveData_RedeemList(me.cwsRenderObj._activityListData, function () {
+            ActivityListManager.insertNewActivity( tempJsonData, function () {
 
                 //console.log('blockList.redeemList_Add - after saveData_RedeemList');
                 callBack();
@@ -1275,7 +1256,7 @@ function BlockList( cwsRenderObj, blockObj )
     // NEW: James Ones
     me.reloadActivityList = function()
     {
-        me.setData_ForBlockList( me.cwsRenderObj._activityListData.list, true );
+        me.setData_ForBlockList( ActivityListManager.getActivityList(), true );
     }
 
     // Use Util..

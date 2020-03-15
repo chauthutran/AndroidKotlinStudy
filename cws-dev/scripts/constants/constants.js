@@ -2,6 +2,7 @@
 function Constants() {};
 
 Constants.storageName_redeemList = "redeemList";
+Constants.storageName_activityList = "activityList";    // Should add with userName..
 Constants.storageName_session = "session";
 
 Constants.status_redeem_submit = "submit"; // initialize from dcd@XX ?

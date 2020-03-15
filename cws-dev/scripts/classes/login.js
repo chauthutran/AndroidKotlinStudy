@@ -62,6 +62,7 @@ function Login( cwsRenderObj )
 	{
 		// New UI Button click
 		$( '.loginBtn' ).click( function() {
+
 			var parentTag = $( this ).parent();
 			var loginUserNameVal = parentTag.find( 'input.loginUserName' ).val();
 			var loginUserPinVal = parentTag.find( 'input.loginUserPin' ).val();
@@ -78,7 +79,7 @@ function Login( cwsRenderObj )
 			playSound("notify");
 		});
 	}
-	
+
 	me.setUpEnterKeyLogin = function()
 	{
 

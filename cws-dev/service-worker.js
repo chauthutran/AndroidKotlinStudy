@@ -437,7 +437,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "7a2af2b49829128046bf7f27c75db0b0"
+    "revision": "5b78277025e5df00e7eacc7d1d163819"
   },
   {
     "url": "scripts/classes/menu.js",

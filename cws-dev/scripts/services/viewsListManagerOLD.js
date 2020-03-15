@@ -115,7 +115,7 @@ function ViewsList( blockList )
         me.blockList_TagsLI.each( function ( key, li ) 
         {
             // NB: variable [activityItem] IS RESERVED FOR EVALUATIONS INSIDE me.viewsList_CurrentItem.query
-            var activityItem = Util.getFromList( me.blockListObj.cwsRenderObj._activityListData.list, li.getAttribute("itemid"), "id" );
+            var activityItem = Util.getFromList( ActivityListManager.getActivityList(), li.getAttribute("itemid"), "id" );
             var evaluate = me.viewListItem_Filter( me.viewsList_CurrentItem.query, activityItem );
 
             if( evaluate ) $( li ).show();
@@ -245,7 +245,7 @@ function ViewsList( blockList )
         //why do we need this [viewsList_getBlockListData_AndRunFilter] >> can't it be done by [viewsList_RunDataFetch_AndFilter]?
         me.viewsList_getBlockListData_AndRunFilter( viewsListConfig, function( filteredData ){
 
-            callBack( filteredData ); // return evalResultsFiltered ( cwsRender.__activityListData )
+            callBack( filteredData );
 
         } );
 
@@ -255,19 +255,17 @@ function ViewsList( blockList )
     {
         // 1. fetch blockList data array
         // 2. apply filters
+        var returnData = [];
 
-        var filterData = me.blockListObj.cwsRenderObj._activityListData;
-        var returnData = []; //{ 'list': [] };
+        var list = ActivityListManager.getActivityList();
 
-        if ( filterData && filterData.list )
+        for ( var i = 0; i < list.length; i++ )
         {
-            for ( var i = 0; i < filterData.list.length; i++ )
+            var item = list[ i ];
+            
+            if ( me.viewListItem_Filter( viewsListConfig.query, item ) )
             {
-                if ( me.viewListItem_Filter( viewsListConfig.query, filterData.list[ i ] ) )
-                {
-                    //returnData.list.push( filterData.list[ i ] );
-                    returnData.push( filterData.list[ i ] );
-                }
+                returnData.push( item );
             }
         }
 

@@ -600,21 +600,18 @@ DevHelper.setUp = function( cwsRenderObj )
 
 DevHelper.showActivityListData = function()
 {
-    console.log( DevHelper.cwsRenderObj._activityListData.list );
+    console.log( ActivityListManager.getActivityList() );
 };
 
 DevHelper.showActivityListStr = function()
 {
-    console.log( JSON.stringify( DevHelper.cwsRenderObj._activityListData ) );
+    console.log( JSON.stringify( { 'list': ActivityListManager.getActivityList() } ) );
 };
 
 // create load data method..
 DevHelper.loadSampleData = function() 
 {    
-    DevHelper.cwsRenderObj._activityListData.list = DevHelper.sampleData.list;
-
-    // Save to IDB
-    DataManager2.saveData_RedeemList( DevHelper.cwsRenderObj._activityListData, function () {
+    ActivityListManager.insertNewActivities( DevHelper.sampleData.list, function () {
         console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
     });
 };
@@ -637,94 +634,29 @@ DevHelper.setScheduleMsgFlag = function() { };
 // ======================================
 // === TESTING ONES BELOW ================
 
-DevHelper.payloadTest = function()
+//DevHelper.TestRequestSend( 'https://client-dev.psi-connect.org/routeWsTest' );
+//DevHelper.TestRequestSend( 'https://api-dev.psi-connect.org/PWA.locator?1?n=50&iso2=SV&c=13.6929,-89.2182&d=5000000%27' );
+
+DevHelper.TestRequestSend = function( url )
 {
-
-    // 1. Collect data in 'payload' variable
-    var payloadJson = {};
-
-    var inputsJson = {
-        "phoneNumber": "1111222333",
-        "voucherCode": "12345678",
-        "firstName": "James",
-        "lastname": "Chang"
-    };
-
-    // add today..
-    inputsJson.now = new Date();
-
-
-    var templateJson = 
+    try
     {
-        "activityId": "Util.dateToStr( inputsJson.now ) + Util.generateRandomId(6);",
-        "userName": "FormUtil.login_UserName;",
-
-        "searchValues": {
-            "clientDetails": { 
-                "phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
+        var payloadJson = {
+            "activity": { 
+                "activeUser": "james"
             }
-        },
+        };
 
-        "captureValues": {
-            "activityDate": {
-                "capturedUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );",
-                "capturedLoc": "Util.formatDateTimeStr( inputsJson.now.toString() );",
-                "createdOnDeviceUTC": "Util.formatDateTimeStr( inputsJson.now.toUTCString() );"
-            },
-            
-            "activityId": "payloadJson.activityId",
-            "activityType": "'sp'",
-            "program": "'fpl'",
-            "activeUser": "'qwertyuio1'",
-            "dc": { },
-            "location": {},
-            "transactions": [
-                {
-                    "transactionType": "'c_reg'", 
-                    "dataValues": "inputsJson"
-                },
-                {
-                    "transactionType": "'v_iss'", 
-                    "dataValues": { 
-                        "voucherCode": "Util.getStr( inputsJson.voucherCode );"	
-                    }
-                }
-            ]
-        }
-    };
+        var loadingTag = undefined;
 
+        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
-    // hard copy from template...
-    payloadJson = Util.getJsonDeepCopy( templateJson );
-
-
-    DevHelper.traverseEval( payloadJson, payloadJson, inputsJson );
-
-    return payloadJson;
-};
-
-DevHelper.traverseEval = function( obj, payloadJson, inputsJson )
-{
-    for ( var prop in obj ) 
+            console.log( success, mongoClientsJson );
+        });
+    }
+    catch( errMsg )
     {
-        var propVal = obj[prop];
-
-        if ( typeof( propVal ) === "object" ) 
-        {
-            //console.log( prop, propVal );
-            DevHelper.traverseEval( propVal, payloadJson, inputsJson );
-        }
-        else if ( typeof( propVal ) === "string" ) 
-        {
-            //console.log( prop, propVal );
-            try
-            {
-                obj[prop] = eval( propVal );
-            }
-            catch( errMsg )
-            {
-                console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
-            }
-        }
+        console.log( 'Error in DevHelper.TestRequestSend - ' + errMsg );
     }
 };
+
