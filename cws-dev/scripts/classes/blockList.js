@@ -73,6 +73,10 @@ function BlockList( cwsRenderObj, blockObj )
     me.blockList_UL_Tag;
 
     me.scrollEnabled = true;
+
+    me.pagingData = { 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
+
+
     // Constants class has scroll info..
     me.activityList_PageSize = 15;
     me.paging_lastItemCount = 0;
@@ -194,6 +198,7 @@ function BlockList( cwsRenderObj, blockObj )
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
 
             me.clearExistingList( me.blockList_UL_Tag ); // remove li.activityItemCard..
+            me.pagingDataReset( me.pagingData );
 
             // This removes the top view - if view exists..
             me.populateActivityCardList( me.activityList, me.blockList_UL_Tag );
@@ -228,22 +233,6 @@ function BlockList( cwsRenderObj, blockObj )
     {
         if ( me.scrollEnabled ) me.setScrollEvent();
     };
-
-    me.setScrollEvent = function()
-    {
-        document.addEventListener('scroll', function (event) {
-            me.scrollList();
-        });
-    };
-
-    // Get next paging amount data and display it
-    me.scrollList = function()
-    {
-        // 1. check current paging, get next paging record data..
-
-        // 2. add to the displayed list..
-    };
-
 
     // -----------------------------------------------
     // -- Related Methods...
@@ -303,6 +292,7 @@ function BlockList( cwsRenderObj, blockObj )
         }
         else
         {
+            me.pagingDataReset( me.pagingData );            
             me.populateActivityCardList( activityList, blockList_UL_Tag );
         }
     };
@@ -319,15 +309,24 @@ function BlockList( cwsRenderObj, blockObj )
     // === #1 Render() Related Methods ============
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
+    // Add paging here as well..
     me.populateActivityCardList = function( activityList, blockList_UL_Tag )
     {        
         if ( activityList.length === 0 ) 
         {
-            me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+            // if already have added emtpyList, no need to add emptyList
+            if ( me.blockList_UL_Tag.find( 'li.emptyListLi' ).length === 0 )
+            {
+                me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+            }
         }
         else
         {
-            for( var i = 0; i < activityList.length; i++ )
+            var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
+            me.setNextPagingData( me.pagingData, currPosJson );
+
+            //for( var i = 0; i < activityList.length; i++ )
+            for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
             {
                 var activityCardLiTag = me.createActivityCard( activityList[i] );
 
@@ -336,6 +335,61 @@ function BlockList( cwsRenderObj, blockObj )
         }
     };
         
+
+    // ------------------------------------
+    // --- Paging Related -------------
+
+    me.getCurrentPositionRange = function( activityListSize, pagingData )
+    {
+        var currPosJson = {};
+        
+        currPosJson.startPosIdx = pagingData.currPosition;
+        
+        var nextPageEnd = pagingData.currPosition + pagingData.pagingSize;
+        if ( nextPageEnd >= activityListSize ) nextPageEnd = activityListSize;  // if nextPageEnd is over the limit, set to limit.
+
+        currPosJson.endPos = nextPageEnd; 
+        
+        return currPosJson;
+    };
+
+
+    me.setNextPagingData = function( pagingData, currPosJson )
+    {
+        pagingData.currPosition = currPosJson.endPos;
+    };
+
+    
+    me.pagingDataReset = function( pagingData )
+    {
+        pagingData.currPosition = 0;
+    };
+
+
+    // ------------------------------------
+    // --- Scrolling Related -------------
+
+    me.setScrollEvent = function()
+    {
+        document.addEventListener('scroll', function (event) {
+            me.scrollList();
+        });
+    };
+
+    // Get next paging amount data and display it
+    me.scrollList = function()
+    {
+        // 1. Show Scrolling Effect & hide after a bit of time
+        me.cwsRenderObj.pulsatingProgress.show();                    
+        setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide(); }, 250 );
+
+        // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
+        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag );
+    };
+
+    
+    // ------------------------------------
+    // --- Create Activity Card Related -------------
 
     // Populate one Activity Card
     // TODO: Move this to 'ActivityItem' class (rename it as 'ActivityCard')
