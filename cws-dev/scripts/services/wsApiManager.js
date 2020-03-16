@@ -16,6 +16,12 @@ WsApiManager.wsApiCallListJson = {
 
 };
 
+// ==================================
+// === Temporary New Server Links
+WsApiManager.wsApi_NEW_Dev = "https://api-dev.psi-connect.org";
+
+// ==================================
+
 // psi-connect.org (NEW)
 // psi-mis.org (OLD)
 

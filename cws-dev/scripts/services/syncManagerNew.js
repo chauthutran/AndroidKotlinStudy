@@ -232,11 +232,11 @@ SyncManagerNew.downloadActivities = function( callBack )
 {
     try
     {
+        // TODO: 
         var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
-        var url = 'https://api-dev.psi-connect.org/PWA.activities';  // CORS?
-        //var url = 'http://localhost:8080/dws-dev/PWA.activities';
+        var url = WsApiManager.wsApi_NEW_Dev + '/PWA.activities';
 		var payloadJson = {
             "activity": { 
                 "activeUser": activeUser

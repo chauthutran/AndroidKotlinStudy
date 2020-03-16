@@ -25,6 +25,7 @@ ActivityListManager.getActivityList = function()
 // ActivityListManager.getActivityStore = function()  // <-- Will need if we store other data than list..
 
 
+// Called After Login
 ActivityListManager.loadActivityStoreFromStorage = function( callBack )
 {
     DataManager2.getData_ActivityList( function( jsonData_FromStorage ) {
