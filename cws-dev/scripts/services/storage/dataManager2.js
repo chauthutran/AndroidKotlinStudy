@@ -160,12 +160,13 @@ DataManager2.saveData_RedeemList = function( jsonData, callBack )
 //  --> Which makes sense since we also need password to descript data..
 DataManager2.getData_ActivityList = function( callBack )
 {
-	DataManager2.getData( Constants.storageName_activityList, callBack );
+	// TODO: Need to change 'storageName_redeemList' --> 'storageName_activityList'
+	DataManager2.getData( Constants.storageName_redeemList, callBack );
 };
 
 DataManager2.saveData_ActivityList = function( jsonData, callBack )
 {
-	DataManager2.saveData( Constants.storageName_activityList, jsonData, callBack );
+	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
 };
 
 

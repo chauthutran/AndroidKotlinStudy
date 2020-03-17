@@ -1323,65 +1323,70 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride )
 {
-	if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
+	try 
 	{
-		// read local SVG xml structure, then replace appropriate content 'holders'
-		$.get( activityType.icon.path, function(data) {
-
-			var svgObject = ( $(data)[0].documentElement );
-			var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
-
-			if ( activityType.icon.colors )
-			{
-				if ( activityType.icon.colors.background )
+		if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
+		{
+			// read local SVG xml structure, then replace appropriate content 'holders'
+			$.get( activityType.icon.path, function(data) {
+	
+				var svgObject = ( $(data)[0].documentElement );
+				var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
+	
+				if ( activityType.icon.colors )
 				{
-					$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
-					$( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
+					if ( activityType.icon.colors.background )
+					{
+						$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
+						$( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
+					}
+					if ( activityType.icon.colors.foreground )
+					{
+						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
+						$( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
+					}
+	
 				}
-				if ( activityType.icon.colors.foreground )
+	
+				if ( statusOpt && statusOpt.name == Constants.status_redeem_submit )
 				{
-					$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
-					$( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
+					$( svgObject ).css( 'opacity', '1' );
 				}
-
-			}
-
-			if ( statusOpt && statusOpt.name == Constants.status_redeem_submit )
-			{
-				$( svgObject ).css( 'opacity', '1' );
-			}
-			else
-			{
-				$( svgObject ).css( 'opacity', '0.4' );
-			}
-
-			$( iconObj ).empty();
-			$( iconObj ).append( svgObject );
-
-			if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
-			{
-				$( svgObject ).attr( 'width', svgStyle.width );
-				$( svgObject ).attr( 'height', svgStyle.height );
-			}
-
-			if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
-			{
-				var iconActivityWidth = FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width;
-				var iconStatusWidth = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
-				var iconStatusHeight = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
-
-				var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
-
-				//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
-				$( iconObj ).append( statusIconObj );
-
-				FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
-			}
-
-		});
-
+				else
+				{
+					$( svgObject ).css( 'opacity', '0.4' );
+				}
+	
+				$( iconObj ).empty();
+				$( iconObj ).append( svgObject );
+	
+				if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
+				{
+					$( svgObject ).attr( 'width', svgStyle.width );
+					$( svgObject ).attr( 'height', svgStyle.height );
+				}
+	
+				if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
+				{
+					var iconActivityWidth = FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width;
+					var iconStatusWidth = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
+					var iconStatusHeight = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
+	
+					var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
+	
+					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+					$( iconObj ).append( statusIconObj );
+	
+					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
+				}
+	
+			});
+		}
 	}
-
+	catch ( errMsg )
+	{
+		console.log( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
+	}
 }
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
@@ -1440,68 +1445,85 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 
 FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj ) 
 {
-
-	var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-
-	if ( itemData.status === Constants.status_redeem_submit )
+	try
 	{
-		imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
-	}
-	else if ( itemData.status === Constants.status_redeem_failed )
-	{
+		var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
 
-		if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
+		if ( itemData.status === Constants.status_redeem_submit )
 		{
-			imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
+			imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
 		}
-		else
+		else if ( itemData.status === Constants.status_redeem_failed )
 		{
-			if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+	
+			if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
 			{
-				imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
+				imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
 			}
 			else
 			{
-				imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
+				if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+				{
+					imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
+				}
+				else
+				{
+					imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
+				}
 			}
 		}
+		else
+		{
+			imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
+		}
+	
+		imgSyncIconTag.css ( 'transform', '' );
 	}
-	else
+	catch ( errMsg )
 	{
-		imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
+		console.log( 'Error on FormUtil.setStatusOnTag, errMsg: ' + errMsg );
 	}
-
-	imgSyncIconTag.css ( 'transform', '' );
-
 }
 
 
 FormUtil.getActivityType = function( itemData )
 {
-	var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
-
-	for ( var i=0; i< opts.length; i++ )
+	try
 	{
-		if ( opts[i].name == itemData.activityType )
-		{
-			return opts[i];
-		}
-	}
+		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
 
+		for ( var i=0; i< opts.length; i++ )
+		{
+			if ( opts[i].name == itemData.activityType )
+			{
+				return opts[i];
+			}
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error on FormUtil.getActivityType, errMsg: ' + errMsg );
+	}
 }
 
 FormUtil.getStatusOpt = function( itemData )
 {
-	var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
-
-	for ( var i=0; i< opts.length; i++ )
+	try
 	{
-		if ( opts[i].name == itemData.status )
+		var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
+
+		for ( var i=0; i< opts.length; i++ )
 		{
-			return opts[i];
+			if ( opts[i].name == itemData.status )
+			{
+				return opts[i];
+			}
 		}
 	}
-
+	catch ( errMsg )
+	{
+		console.log( 'Error on FormUtil.getStatusOpt, errMsg: ' + errMsg );
+	}
 }
 
 FormUtil.listItemActionUpdate = function( itemID, prop, value )

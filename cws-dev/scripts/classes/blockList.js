@@ -70,36 +70,22 @@ function BlockList( cwsRenderObj, blockObj )
     me.blockJson;   
 
     me.activityList = [];
-    me.blockList_UL_Tag;
+
+    me.hasView = false;  
+    me.BlockListViewObj;
 
     me.scrollEnabled = true;
+    me.lastScrollTop = 0;  // For tracking scroll up vs down
 
     me.pagingData = { 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
 
+    // -------- Tags --------------------------
 
-    // Constants class has scroll info..
-    me.activityList_PageSize = 15;
-    me.paging_lastItemCount = 0;
+    me.blockList_UL_Tag;
+    me.divSyncDownTag = $('#divSyncDown');
+    me.imgSyncDownTag = $('#imgSyncDown');
 
-    me.hasView = false;  
-
-    me.recordsLoading = 0;
-    me.recordCounter = 0;
-
-
-    me.options;
-    me.blockTag;
-
-    me.groupByItems;
-    me.showGroupBy = false;
-    me.debugMode = StatusInfoManager.debugMode; //( ( location.href ).indexOf( '.psi-mis.org' ) < 0 || ( location.href ).indexOf( 'cws-' ) >= 0 );
-
-    // Remove
-    me.viewsListFilterObj;
-    me.viewsListSorterObj;
-
-
-    me.BlockListViewObj;
+    // --------- Templates --------------------
 
     me.template_ActivityCard = `<li itemid="" class="activityItemCard">
         <a class="expandable" itemid="" style="padding:4px;">
@@ -141,15 +127,9 @@ function BlockList( cwsRenderObj, blockObj )
         </a>
     </li>`;
 
-    
     me.template_ActivityCardEmpty = `<li class="emptyListLi activityItemCard">
             <a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="${Util.termName_listEmpty}">List is empty.</a>
         </li>`;
-
-    // -------- Tags --------------------------
-
-    me.divSyncDownTag = $('#divSyncDown');
-    me.imgSyncDownTag = $('#imgSyncDown');
 
 
     // ===========================================================
@@ -194,6 +174,7 @@ function BlockList( cwsRenderObj, blockObj )
         if ( me.blockList_UL_Tag )
         {
             $( window ).scrollTop( 0 ); // Scroll top
+            me.lastScrollTop = 0;
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
 
@@ -371,10 +352,30 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.setScrollEvent = function()
     {
-        document.addEventListener('scroll', function (event) {
-            me.scrollList();
+        //Infinite Scroll
+        $(window).on( "scroll", function () 
+        {
+            var currScrollTop = $(window).scrollTop();
+            var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
+            me.lastScrollTop = currScrollTop;
+
+            if ( scrollDirection === 'Down' )
+            {
+                //page height
+                var scrollHeight = $(document).height();
+
+                //scroll position
+                var scrollPos = $(window).height() + $(window).scrollTop();
+
+                // fire if the scroll position is 300 pixels above the bottom of the page
+                if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
+
+                    me.scrollList();
+                }
+            }
         });
     };
+
 
     // Get next paging amount data and display it
     me.scrollList = function()
@@ -408,7 +409,7 @@ function BlockList( cwsRenderObj, blockObj )
 
             // Title - date description..
             var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
-            labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
+            if ( itemData.created ) labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
 
             // 'QUICK FIX' - Move this to template + move to other class..
             var spanDetailTag = $( '<span style=" margin-left: 4px; font-size: 9px; font-style: italic; cursor:pointer;">detail</span>')
@@ -535,7 +536,8 @@ function BlockList( cwsRenderObj, blockObj )
 
     me.activityList_Add = function (submitJson, status, callBack) {
 
-        try {
+        try 
+        {
             var dateTimeStr = (new Date()).toISOString();
             var tempJsonData = {};
 
@@ -576,103 +578,6 @@ function BlockList( cwsRenderObj, blockObj )
         // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
         //       pwa MUST re-initialize 'syncManager' queue+fail arrays
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -----------------------------------------------------------------------
-    // -----------------------------------------------------------------------
-    // -----------------------------------------------------------------------
-    // -- OLD CODES BELOW..
-
-    me.setActivityListData = function( activityList )
-    {
-        me.activityList = Util.cloneArray( activityList );
-    }
-
-    // For each item/data, populate activity..
-
-    // Populate Data..
-    // Render Activities..
-
-
-    // -================================================
-
-
-    me.renderBlockList_Content = function( blockTag, cwsRenderObj, blockObj, callBack )
-    {
-        var blockList_UL_Tag = me.initializeBlockList_UI( blockTag );
-
-        if ( me.hasViewsList( blockObj ) ) 
-        {
-            me.initializeViewsList_ClassesAndData( function() {
-
-                document.addEventListener('scroll', function (event) {
-
-                    // blockList_UL_Tag  <-- probably need to pass this...
-                    me.loadBlockList_Data();
-
-                }, true);
-
-                if ( callBack ) callBack();
-            });
-        }
-        else
-        {
-            console.log( 'test2.B' );
-
-            me.setData_ForBlockList( ActivityListManager.getActivityList() );
-
-            // document.addEventListener('scroll', function (event) { me.loadBlockList_Data(); }, true);
-
-            me.populateActivityListData( me.activityList, blockList_UL_Tag );
-            //me.loadBlockList_Data();
-
-            if ( callBack ) callBack();
-        }
-
-        return blockList_UL_Tag;
-    }
-
-
-
-
-    // New Method - like 'loadBlockList_Data...
-    me.populateActivityListData = function( activityList, blockList_UL_Tag )
-    {
-        for( var i = 0; i < activityList.length; i++ )
-        {
-            var activityItem = activityList[i];
-            var listGroup;
-
-            activityItem.hours = Util.ageHours( activityItem.created );
-
-            if ( me.showGroupBy )
-            {
-                // add generic groupBy code here abouts (when the time comes)
-                listGroup = me.evalCreateGroupBy_Block( activityItem.hours, blockList_UL_Tag )
-            }
-
-            console.log( 'test z1' );
-
-            me.createActivityCard( activityItem, blockList_UL_Tag, listGroup );
-
-            me.recordCounter += 1;
-        }        
-    };
-
-
 
 
     // --------------------------------------
@@ -704,726 +609,6 @@ function BlockList( cwsRenderObj, blockObj )
             console.log( 'syncDownload returned with failure..');
         }
     };
-
-    // ===========================================================
-
-    // ===========================================================
-
-
-    me.blockListCard_Handle_ShowMore_Contents = function( expandedDivTag, moreDivTag, itemID  )
-    {
-        expandedDivTag.toggleClass( 'act-l-more-open' );  
-
-        if ( expandedDivTag.hasClass( 'act-l-more-open' ) )
-        {
-            moreDivTag.find( 'span' ).html( 'see less' );
-
-            expandedDivTag.html( FormUtil.loaderRing() );
-
-            var itemData = Util.getFromList( ActivityListManager.getActivityList(), itemID, "id" );
-            var trxDetails = Util2.activityListPreviewTable( 'transaction', me.getTrxDetails( itemData, 'name:value' ) );
-            var historyDetails = Util2.activityListPreviewTable( 'upload history', me.getTrxHistoryDetails ( itemData.history, 'name:value' ) );
-            var prevDetails = Util.jsonToArray ( itemData.data.previewJson, 'name:value' );
-
-            expandedDivTag.empty();
-
-            expandedDivTag.append( trxDetails );
-            expandedDivTag.append( historyDetails );
-
-            if ( prevDetails && prevDetails.length )
-            {
-                expandedDivTag.append( Util2.activityListPreviewTable( 'preview', prevDetails ) );
-            } 
-
-        }
-        else
-        {
-            moreDivTag.find( 'span' ).html( 'see more' );
-        }
-    }
-
-
-    me.blockListCard_ShowPhoneIcon_Check = function( itemData, targTag )
-    {
-        var activityType = FormUtil.getActivityType ( itemData );
-
-        if ( activityType && activityType.calls )
-        {
-            var phoneNumber = itemData.data.payloadJson[ activityType.calls.phoneNumberField ];
-            var evalConditions = activityType.calls.evalConditions;
-
-            if ( evalConditions )
-            {
-                var paylDetails = Util.jsonToArray ( itemData.data.payloadJson, 'name:value' );
-
-                for( var i = 0; ( i < evalConditions.length ) ; i++ )
-                {
-                    var phoneCondition = evalConditions[ i ].condition;
-
-                    me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
-
-                        if ( passConditionTest )
-                        {
-                            var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
-    
-                            cellphoneTag.click( function(e) {
-    
-                                e.stopPropagation();
-    
-                                if ( Util.isMobi() )
-                                {
-                                    window.location.href = `tel:${phoneNumber}`;
-                                }
-                                else
-                                {
-                                    alert( phoneNumber );
-                                }
-                            });
-
-                            targTag.append( cellphoneTag );
-                        }
-                    })
-                }
-            }
-        }
-    };
-
-
-    me.clearBlockList_UI_ForReload = function()
-    {
-        me.clearBlockListResults()
-
-        $( window ).scrollTop( 0 );
-    }
-
-
-    me.loadBlockList_Data = function( callBack )
-    {
-        var activityList = me.activityList;
-
-        console.log( 'test2.C' );
-        console.log( activityList );
-
-
-        me.AddToBlockList_NextPage( activityList, callBack );
-
-        /*
-        me.addToBlockList_Allowed_Check( function(){
-
-            // if groupBy in use --> only allow adding of items if bottom group is Exanded (open)
-            var liGroupBys = me.blockList_UL_Tag.find( 'li.activityItemGroup' );
-
-            if ( liGroupBys.length > 0 ) // if list already loaded with GroupBy sections
-            {
-                if ( $( liGroupBys[ liGroupBys.length-1 ] ).hasClass( 'opened' ) )
-                {
-                    me.AddToBlockList_NextPage( activityList, callBack );
-                }
-            }
-            else
-            {
-                me.AddToBlockList_NextPage( activityList, callBack );
-            }
-
-        }, function(){
-            if ( me.activityList.length === 0 )
-            {
-                me.showList_EmptyTag()
-            }
-        });
-        */
-    }
-
-
-
-
-
-    me.addToBlockList_Allowed_Check = function( callBackPass, callBackFail )
-    {
-        var check_recordsExistForLoading = ( me.activityList.length > 0 );
-        var check_recordsCanStillBeLoaded = ! ( parseFloat( me.recordCounter ) >= parseFloat( me.activityList.length ) ); //me.blockList_Scrolling_LimitReached;
-        var check_blockListScreenIsLoaded = me.blockList_UL_Tag && me.blockList_UL_Tag.is(':visible');
-        var check_blockListNotAlreadyScrolling = ( FormUtil.syncRunning === undefined || FormUtil.syncRunning === 0 );
-        var check_scrollBar_NotAtTopOfScreen = ( ( $( window ).scrollTop() + $( window ).height() + 85) > $( document ).height() );
-        var check_blockList_NotLoadingRecords = ( me.recordsLoading == 0 );
-
-        var Pass = ( check_recordsExistForLoading &&
-                    check_recordsCanStillBeLoaded && 
-                    check_blockListScreenIsLoaded && 
-                    check_blockListNotAlreadyScrolling && 
-                    check_scrollBar_NotAtTopOfScreen &&
-                    check_blockList_NotLoadingRecords );
-
-        if ( Pass )
-        {  
-            callBackPass();
-        }
-        else
-        {
-            callBackFail();
-        }
-    }
-
-
-    me.AddToBlockList_NextPage = function( blockListData, callBack )
-    {
-        me.cwsRenderObj.pulsatingProgress.show();
-        me.recordsLoading = 1;
-
-        me.getBlockList_NextPage( blockListData, function( refreshed_DataList, recordFrom, recordTo ){
-
-
-            console.log( 'refreshed_DataList: ' );
-            console.log( refreshed_DataList );
-
-            
-            // add viewsSort_CurrentItem.field > here to auto sort (not by created data)
-            if ( ( refreshed_DataList === undefined || refreshed_DataList.length == 0 ) && ( blockListData === undefined || blockListData.length == 0 ) )
-            {
-                me.showList_EmptyTag();
-            }
-
-            for( var i = 0; i < refreshed_DataList.length; i++ )
-            {
-                var activityItem = refreshed_DataList[i];
-                var listGroup;
-
-                activityItem.hours = Util.ageHours( activityItem.created );
-
-                if ( me.showGroupBy )
-                {
-                    // add generic groupBy code here abouts (when the time comes)
-                    listGroup = me.evalCreateGroupBy_Block( activityItem.hours, me.blockList_UL_Tag )
-                }
-
-                me.createActivityCard( activityItem, me.blockList_UL_Tag, listGroup );
-
-                me.recordCounter += 1;
-            }
-
-
-            // TODO: COMMENTED OUT TEMP
-            //FormUtil.setUpTabAnchorUI( me.blockList_UL_Tag, '.expandable', 'click' ); // add click event (expander to show voucher details) to newly created items
-
-
-            me.scrollingRecordLimitReached_Check();
-
-            // UX timeout
-            setTimeout( function() {
-                me.cwsRenderObj.pulsatingProgress.hide();
-            }, 250 );
-
-            me.recordsLoading = 0;
-
-            if ( callBack ) callBack( recordFrom, recordTo, blockListData.length );
-
-        });
-
-    }
-
-    me.scrollingRecordLimitReached_Check = function()
-    {
-        //me.blockList_Scrolling_LimitReached = ( parseFloat( me.recordCounter ) == parseFloat( me.activityList.length ) );
-
-        // record (display count) limit reached
-        if ( parseFloat( me.recordCounter ) >= parseFloat( me.activityList.length ) )
-        {
-            $( document ).off( 'scroll' );
-        }
-    }
-
-	me.checkCondition = function( evalCondition, arrData, callBack )
-	{
-		var result = false;
-
-		if ( evalCondition )
-		{
-			try
-			{
-				var afterCondStr = me.conditionVarToVal( evalCondition, arrData );
-
-                result = eval( afterCondStr );	
-			}
-			catch(ex) 
-			{
-				console.log( 'Failed during condition eval: ' );
-				console.log( ex );
-			}
-		}
-
-		if ( callBack ) callBack( result );
-	};
-
-	
-	me.conditionVarToVal = function( evalCondition, arrData )
-	{
-        var evalString = evalCondition;
-
-        for ( var i = 0; i < arrData.length; i++ )
-		{
-            var idStr = arrData[i];
-
-            evalString = Util.replaceAll( evalString, '$$(' + idStr.name + ')', idStr.value );
-		}
-
-		return evalString;
-    }
-
-    
-    me.getTrxDetails = function( dataObj, designLayout )
-    {
-        var ret = {};
-        var fldList = 'id:id,created:dateCreated,network:createdOnline,networkAttempt:uploadAttempts,status:recordStatus,returnJson.response:lastError';
-        var arrFld = fldList.split(',');
-
-        for ( var i=0; i< arrFld.length; i++ )
-        {
-            var fld = arrFld[ i ].split( ':' );
-
-            if ( fld[ 0 ].indexOf( '.' ) > 0 )
-            {
-                var splitFlds = fld[ 0 ].split( '.' );
-
-                if ( dataObj[ splitFlds[ 0 ]] && dataObj[ splitFlds[ 0 ]][ splitFlds[ 1 ] ] ) ret[ fld[ 1 ]] = dataObj[ splitFlds[ 0 ]][ splitFlds[ 1 ] ];
-            }
-            else
-            {
-                if ( dataObj[ fld[ 0 ]] ) ret[ fld[ 1 ]] = dataObj[ fld[ 0 ] ];
-            }
-            
-        }
-
-        return Util.jsonToArray( ret, designLayout ); 
-
-    }
-
-    me.getTrxHistoryDetails = function( dataObj, designLayout )
-    {
-        var ret = {};
-
-        if ( dataObj && dataObj.length )
-        {
-            for ( var i=0; i< dataObj.length; i++ )
-            {
-                ret[ ( i + 1) + '.attempt' ] = dataObj[ i ][ 'syncAttempt' ] ;
-                ret[ ( i + 1) + '.succeeded' ] = dataObj[ i ][ 'success' ] ;
-                ret[ ( i + 1) + '.server_response' ] = ( dataObj[ i ][ 'returnJson' ] && dataObj[ i ][ 'returnJson' ][ 'response' ] ? dataObj[ i ][ 'returnJson' ][ 'response' ] : '' ) ;
-            }
-
-            return Util.jsonToArray( ret, designLayout ); 
-        }
-
-    }
-
-    me.getListDataPreview = function( dataJson, previewConfig )
-    {
-        if ( previewConfig )
-        {
-            var dataRet = $( '<div class="previewData listDataPreview" ></div>' );
-
-            for ( var i=0; i< previewConfig.length; i++ ) 
-            {
-                var dat = me.mergePreviewData( previewConfig[ i ], dataJson );
-                dataRet.append ( $( '<div class="listDataItem" >' + dat + '</div>' ) );
-            }
-
-        }
-
-        return dataRet;
-
-    }
-
-    me.mergePreviewData = function ( previewField, Json )
-    {
-        var ret = '';
-        var flds = previewField.split( ' ' );
-
-        if ( flds.length )
-        {
-            for ( var f=0; f < flds.length; f++ )
-            {
-                for ( var key in Json ) 
-                {
-                    if ( flds[f] == key && Json[ key ] )
-                    {
-                        ret += flds[ f ] + ' ';
-                        ret = ret.replace( flds[f] , Json[ key ] );
-                    }
-                }
-            }
-        }
-        else
-        {
-            if ( previewField.length )
-            {
-                ret = previewField;
-
-                for ( var key in Json ) 
-                {
-                    if ( previewField == key && Json[ key ] )
-                    {
-                        ret = ret.replace( previewField , Json[ key ] );
-                    }
-                }
-            }
-        }
-
-        return ret;
-
-    }
-
-    me.populateData_RedeemItemTag = function( itemData, itemLiTag )
-    {    
-        // NOTE: Good place to create ActivityItem class.
-        //      - But for efficiency, we are creating it when 'click' event happens
-
-        var statusSecDivTag = itemLiTag.find( 'div.icons-status' );
-
-        FormUtil.setStatusOnTag( statusSecDivTag, itemData, me.cwsRenderObj ); 
-
-        // Click Events 
-        //me.submitButtonListUpdate( statusSecDivTag, itemLiTag, itemData );
-    }
-
-    me.setContentDivClick = function( contentDivTag )
-    {
-        contentDivTag.click( function() {
-
-            console.log( 'setContentDivClick clicked' );
-
-            contentDivClickedTag = $( this );
-
-            var itemId = contentDivClickedTag.attr( 'itemId' );
-            var itemClicked = Util.getFromList( me.activityList, itemId, "id" );
-
-        });        
-    }
-
-    // NOTE: JAMES/GREG --> SyncManagerNew.syncItem calling place..
-    me.submitButtonListUpdate = function( statusSecDivTag, itemLiTag, itemData )
-    {
-        // TODO: Find a way to reset/clear previous events, etc and add new one as needed
-        if ( itemData.status != Constants.status_redeem_submit )
-        {
-            // TODO: Find a way to reset/clear previous events, etc and add new one as needed
-            var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-
-            imgSyncIconTag.click( function(e) {
-
-                e.stopPropagation();
-
-                var divListItemTag = $( this ).parents( 'div.listItem' );
-
-                // DataManager2.getItemFromData( Constants.storageName_redeemList, itemData.id, function( ItemData_refreshed ){                
-                var ItemData_refreshed = Util.getFromList( ActivityListManager.getActivityList(), itemData.id, "id" );
-
-                // TODO: 
-                //if ( ItemData_refreshed.status != Constants.status_redeem_submit )
-                //{
-                if ( SyncManagerNew.syncStart() )
-                {
-                    try
-                    {
-                        var activityItem = new ActivityItem( ItemData_refreshed, divListItemTag, me.cwsRenderObj );
-
-                        SyncManagerNew.syncItem( activityItem, function( success ) {
-
-                            SyncManagerNew.syncFinish();     
-                            //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
-                        });    
-                    }
-                    catch( errMsg )
-                    {
-                        console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
-                        SyncManagerNew.syncFinish();     
-                    }
-                }
-                //}
-
-            });
-        }
-    }
-
-	// =============================================
-
-	// =============================================
-	// === OTHER METHODS ========================
-
-
-    me.activityList_Add = function (submitJson, status, callBack) {
-
-        try {
-            var dateTimeStr = (new Date()).toISOString();
-            var tempJsonData = {};
-
-            //tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
-            tempJsonData.created = dateTimeStr;
-            tempJsonData.id = Util.generateRandomId(); // ?? Used?
-            tempJsonData.status = status;
-            tempJsonData.data = submitJson;
-            tempJsonData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..
-            
-            tempJsonData.history = [];
-
-
-            ActivityListManager.insertNewActivity( tempJsonData, function () {
-
-                //console.log('blockList.redeemList_Add - after saveData_RedeemList');
-                callBack();
-
-                FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
-
-                    // added by Greg (2019-02-18) > test track googleAnalytics
-                    ga('send', {
-                        'hitType': 'event',
-                        'eventCategory': 'redeemList_Add',
-                        'eventAction': analyticsEvent,
-                        'eventLabel': FormUtil.gAnalyticsEventLabel()
-                    });
-                });
-
-            });
-        }
-
-        catch (errMsg) {
-            // Temporarily use 'alert' to get noticed about this...  for now..
-            alert('ERROR during blockList.redeemList_Add, errMsg: ' + errMsg);
-        }
-
-        // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
-        //       pwa MUST re-initialize 'syncManager' queue+fail arrays
-    }
-
-    me.updateDivStatusColor = function( status, divTag )
-    {
-        // Set background color of Div
-        var divBgColor = "";
-
-        if ( status === Constants.status_redeem_submit ) divBgColor = 'LightGreen';
-        else if ( status === Constants.status_redeem_queued ) divBgColor = 'LightGray';
-        else if ( status === Constants.status_redeem_failed ) divBgColor = 'Tomato';
-
-        if ( divBgColor != "" ) divTag.css( 'background-color', divBgColor );         
-    }
-
-    me.lastActivityType = function( json, defVal )
-    {
-        if ( json )
-        {
-            for ( var i = json.length; i--; )
-            {
-                if ( json[ i ].defJson && json[ i ].defJson.activityType )
-                {
-                    return json[ i ].defJson.activityType;
-                }
-            }
-        }
-        else
-        {
-            return defVal;
-        }
-    }
-
-
-    me.showList_EmptyTag = function()
-    {
-        var liTag = $( '<li class="emptyListLi"></li>' );
-        var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="' + Util.termName_listEmpty + '">List is empty.</a>' );
-
-        liTag.append( spanTag );
-        me.blockList_UL_Tag.append( liTag );
-    };
-
-    me.showList_EndTag = function()
-    {
-        var liTag = $( '<li class="endOfListLi"></li>' );
-        var spanTag = $( '<a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="' + Util.termName_listEmpty + '">End of list</a>' );
-
-        liTag.append( spanTag );
-        me.blockList_UL_Tag.append( liTag );
-    };
-
-    me.evalCreateGroupBy_Block = function( ageHours, targTag )
-    {
-        var retGroup = '';
-        for ( var g=0; g < me.groupByItems.length; g++ )
-        {
-            if ( ( parseInt( ageHours ) < parseInt( me.groupByItems[ g ].hours ) ) )
-            {
-                retGroup = me.groupByItems[ g ].hours;
-
-                if ( me.groupByItems[ g ].created == 0 )
-                {
-                    var liContentTag = $( '<li class="activityItemGroup opened"></li>' );
-                    var anchorTag = $( '<a class="activityItemGroupSection" peGroup="' + retGroup + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + me.groupByItems[ g ].name + '</a>' );
-
-                    targTag.append( liContentTag );
-                    liContentTag.append( anchorTag );
-
-                    anchorTag.click( function() {
-
-                        var imgTag = this.children[ 0 ];
-                        var groupByClickTag = $( this );
-
-                        me.toggleGroupBy_Contents( groupByClickTag.parent().parent(), 'groupBy', retGroup );
-
-                        groupByClickTag.parent()[ 0 ].classList.toggle( "opened" );
-
-                        imgTag.classList.toggle( "rotateImg" );
-
-                    });
-
-                    me.groupByItems[ g ].created = 1;
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-        return retGroup;
-    }
-
-    me.toggleGroupBy_Contents = function( parentTag, attrName, attrVal )
-    {        
-        var liArr = parentTag.find( 'li' );
-
-        for( var i = 0; i < liArr.length ; i++ )
-        {
-            if ( liArr[ i ] && $( liArr[ i ] ).attr( attrName ) && $( liArr[ i ] ).attr( attrName ) == attrVal )
-            {
-                $( liArr[ i ] ).css( 'display', ( $( liArr[ i ] ).css( 'display' ) == 'none' ) ? 'block' : 'none' );
-            }
-        }
-
-    }
-
-	// =============================================
-
-
-	// =============================================
-	// === EVENTS METHODS ========================
-
-
-    // ------------------------------------------------
-    // NEW: James Ones
-    me.reloadActivityList = function()
-    {
-        me.setData_ForBlockList( ActivityListManager.getActivityList(), true );
-    }
-
-    // Use Util..
-    me.appendData_ActivityList = function( additionalList )
-    {
-        //Util.mergeArray();
-    }
-
-
-    //
-    // ----------------------------------------------
-
-    me.setData_ForBlockList = function( activityList, withRefesh )
-    {
-        me.paging_lastItm = 0;
-        me.recordCounter = 0;
-        me.activityList = Util.cloneArray( activityList ); //[...activityList];
-
-        if ( withRefesh )
-        {
-            me.loadBlockList_Data();
-        }
-    }
-
-    me.hasViewsList = function()
-    {
-        return ( me.blockObj.blockJson.activityListViews && me.blockObj.blockJson.activityListViews.length );
-    }
-
-    me.initializeViewsList_ClassesAndData = function( callBack ) //viewList
-    {
-        me.viewsListFilterObj = new ViewsListFilter( me, function( defaultView, filteredData ){
-
-            me.viewsListSorterObj = new ViewsListSorter( me );
-
-            me.viewsListSorterObj.runApply_SortList( defaultView, filteredData, function( sortedData ){
-
-                me.setData_ForBlockList( sortedData, true );
-
-                callBack();
-        
-            } );
-
-        } );
-    }
-
-
-    // OBSOLETE - TO BE REMOVED..
-    me.createViewsList_UI = function( viewsContainerTag )
-    {
-        me.blockList_UL_Tag.append( viewsContainerTag );
-    }
-
-    me.createPager_UI = function( pagerBlockTag )
-    {
-        me.blockList_UL_Tag.append( pagerBlockTag );
-    }
-
-    // OBSOLETE - TO BE REMOVED...
-    me.switchFilter = function( viewName )
-    {
-        me.clearBlockList_UI_ForReload();
-
-        me.viewsListFilterObj.runApply_ViewsListFilter( viewName, function( viewItem, filteredData ){
-
-            me.viewsListSorterObj.runApply_SortList( viewItem, filteredData, function( sortedData ){
-
-                me.setData_ForBlockList( sortedData, true );
-
-            } );
-
-        } );
-
-    }
-
-    me.switchSorter = function( thisSortTag )
-    {
-        me.clearBlockList_UI_ForReload();
-
-        me.viewsListSorterObj.switch_ApplyNewSort( thisSortTag, function( sortedData ){
-
-            me.setData_ForBlockList( sortedData, true );
-
-        } );
-
-    }
-
-    me.clearBlockListResults = function()
-    {
-        me.blockList_UL_Tag.find( 'li.activityItemCard' ).remove();
-        me.blockList_UL_Tag.find( 'li.activityItemGroup' ).remove();
-        me.blockList_UL_Tag.find( 'li.emptyListLi' ).remove();
-        me.blockList_UL_Tag.find( 'li.endOfListLi' ).remove();
-    };
-
-    me.getBlockList_NextPage = function( dataList, callBack )
-    {
-        console.log( 'dataList: ' );
-        console.log( dataList );
-
-        var pageFrom = me.paging_lastItm;
-        var pageUntil = ( parseInt( me.paging_lastItm + Constants.activityList_PageSize ) < dataList.length ) ? parseInt( me.paging_lastItm + Constants.activityList_PageSize ) : dataList.length; 
-        var pageResults = [];
-
-        for ( var i = pageFrom; i < pageUntil; i++ )
-        {
-            pageResults.push( dataList[ i ] );
-        }
-
-        me.paging_lastItm = i;
-
-        if ( callBack ) callBack( pageResults, ( pageResults.length) ? 1 : 0, i );
-    }
 
     // =============================================
 
