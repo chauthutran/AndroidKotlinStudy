@@ -1,21 +1,29 @@
 // -------------------------------------------
 // -- BlockForm Class/Methods
-function BlockForm( cwsRenderObj, blockObj )
+function BlockForm( cwsRenderObj, blockObj, actionJson )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
+	me.actionJson = actionJson;
+
+	me.payloadConfigSelection;
 	me.formJsonArr;
 	me._childTargetActionDelay = 400;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
 	
-	me.initialize = function() { }
+	me.initialize = function() 
+	{ 
+		// if 'actionJson' were passed (by clickAction), and if payloadConfig exists in action, set it.
+		if ( me.actionJson ) me.payloadConfigSelection = me.actionJson.payloadConfig;
+	}
 
 	me.render = function( formDef, blockTag, passedData )
 	{
+
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, me.cwsRenderObj.configJson.definitionForms );
 		var formGrps = me.cwsRenderObj.configJson.definitionFormGroups;
 
@@ -81,11 +89,11 @@ function BlockForm( cwsRenderObj, blockObj )
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
+					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
 				}
 				else
 				{
-					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData );
+					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
 				}
 
 			}
@@ -206,7 +214,7 @@ function BlockForm( cwsRenderObj, blockObj )
 
 
 	// Old UI Used Method
-	me.renderInput = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
+	me.renderInput = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
 	{
 		var divInputTag = $( '<div class="inputDiv"></div>' );
 
@@ -217,13 +225,13 @@ function BlockForm( cwsRenderObj, blockObj )
 
 		divInputTag.append( titleDivTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData, payloadConfigSelection );
 
 		formDivSecTag.append( divInputTag );
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData )
+	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
 	{
 
 		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
@@ -232,7 +240,7 @@ function BlockForm( cwsRenderObj, blockObj )
 		spanTitleTag.text( formItemJson.defaultName );
 		divInputTag.append( spanTitleTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData );
+		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData, payloadConfigSelection );
 
 		formDivSecTag.append( divInputTag );
 	}
@@ -247,10 +255,14 @@ function BlockForm( cwsRenderObj, blockObj )
 		)	
 	}
 
-	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData )
+	// TODO: JAMES: 'payloadConfig' is passed and 'FormUtil.setTagVal' should be handled...
+	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection )
 	{
-		if ( formItemJson !== undefined )
+		if ( formItemJson )
 		{
+			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
+			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
+
 			var entryTag;
 			var bSkipControlAppend = false;
 			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
@@ -577,7 +589,19 @@ function BlockForm( cwsRenderObj, blockObj )
 			}
 
 		}
-	}
+	};
+
+	
+	me.setFormItemJson_DefaultValue_PayloadConfigSelection = function( formItemJson, payloadConfigSelection )
+	{
+		if ( formItemJson 
+			&& formItemJson.defaultValue 
+			&& formItemJson.defaultValue.payloadConfigEval )
+		{
+			formItemJson.defaultValue.payloadConfigSelection = payloadConfigSelection;
+		}
+	};
+
 
 	me.evalFormInputFunctions = function( formDivSecTag )
 	{
@@ -911,6 +935,7 @@ function BlockForm( cwsRenderObj, blockObj )
 	// ----------------------------------------------------
 
 
+	// PopulateFormData by passed in json (Not by config, but by external data)
 	me.populateFormData = function( passedData, formDivSecTag )
 	{
 		//console.log( passedData );

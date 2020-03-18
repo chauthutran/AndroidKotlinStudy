@@ -245,21 +245,20 @@ function Action( cwsRenderObj, blockObj )
 					// Hide block if action is doing 'openBlock'
 					me.blockObj.hideBlock();
 
-					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true } );	
+					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true }, clickActionJson );	
 					newBlockObj.render();
 
 					if ( clickActionJson.payloadConfig )
 					{
+						// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
 						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
+						// NOT SURE IF THIS IS PROPER PLACE..
 						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
 					}
 					else
 					{
 						FormUtil.block_payloadConfig = '';
 					}
-
-					
-
 				}
 
 				if ( afterActionFunc ) afterActionFunc();

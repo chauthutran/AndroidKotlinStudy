@@ -837,38 +837,83 @@ FormUtil.checkTag_CheckBox = function( tag )
 	return isType;
 }
 
+
 FormUtil.setTagVal = function( tag, val, returnFunc )
 {
-	if( val !== undefined ) // && val !== '' )
+	// 'val' could be optionally object.
+	//		- If object, then we usually pass val with defaultValue Object..
+	//				For further eval the different types of defaults
+	//			- 'payloadConfigEval'  <-- object
+	//			- 'eval' <-- simple value eval
+
+	if ( val )
 	{
-		if ( FormUtil.checkTag_CheckBox( tag ) )
+		var valType = typeof( val );
+
+		if ( valType === "object" ) 
 		{
-			tag.prop( 'checked', ( val === 'true' || val === true ) ); 
+			// Object type json val set to inputTag
+			var valJson = val;
+			var finalVal = '';
+
+			// Normally for 'defaultValue' json def object
+
+			// 'paylaodConfigSelection' is added to 'defaultValue' config in blockForm.setFormItemJson_DefaultValue_PayloadConfigSelection();
+			if ( valJson.payloadConfigEval && valJson.paylaodConfigSelection )
+			{
+				finalVal = FormUtil.eval( valJson.payloadConfigEval[ valJson.paylaodConfigSelection ] );
+			} 
+			else if ( valJson.eval ) 
+			{
+				finalVal = FormUtil.eval( valJson.eval );
+			}
+
+			tag.val( finalVal );
 		}
 		else
 		{
+			// Non-Object types value set to inputTag
 
-			if ( val.toString().length )
+			// CheckBox 
+			if ( FormUtil.checkTag_CheckBox( tag ) )
 			{
-				if ( val.indexOf( '{' ) && val.indexOf( '}' ) )
+				tag.prop( 'checked', ( val === 'true' || val === true ) ); 
+			}
+			else
+			{
+				// Special eval key type field - '{ ~~~ }'
+				if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
 				{
 					FormUtil.evalReservedField( tag, val );
 				}
 				else
 				{
 					tag.val( val );
-				}
+				}				
 			}
-			else
-			{
-				tag.val( val );
-			}
-			
 		}
 
 		if ( returnFunc ) returnFunc();
 	}
-}
+};
+
+
+FormUtil.eval = function( val )
+{
+	var evalVal = '';
+
+	try
+	{
+		if ( val ) evalVal = eval( val );
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error on FormUtil.eval, value: ' + val + ', errMsg: ' + errMsg );
+	}	
+
+	return evalVal;
+};
+
 
 FormUtil.dispatchOnChangeEvent = function( targetControl )
 {

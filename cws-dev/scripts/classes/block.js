@@ -1,13 +1,13 @@
 // -------------------------------------------
 // -- Block Class/Methods
-function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options )
-{
+function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options, actionJson )
+{	
 	var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 
 	me.blockType = ( blockJson ) ? blockJson.blockType : undefined;
-	me.blockJson = blockJson;
+	me.blockJson =  Util.getJsonDeepCopy( blockJson );  // Make a deep copy so that changes to blockJson does not affect original config
 	me.blockId = blockId;	// TODO: Should be 'blockName' but since used in config as 'blockId', need to replace together..
 	// TODO: CHANGE ABOVE 'blockId' with Greg
 
@@ -15,6 +15,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	me.parentTag = parentTag;
 	me.passedData = passedData;
 	me.options = options;
+	me.actionJson = actionJson; // if block were created from 'action', the clickActionJson data(config) passed.  Use it when rendering
 
 	me.blockTag;
 
@@ -82,7 +83,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	{
 		me.actionObj = new Action( me.cwsRenderObj, me );
 		me.validationObj = new Validation( me.cwsRenderObj, me );
-		me.blockFormObj = new BlockForm( me.cwsRenderObj, me );
+		me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
 		me.blockListObj = new BlockList( me.cwsRenderObj, me );
 		me.dataListObj = new DataList( me.cwsRenderObj, me );
 		me.blockButtonObj = new BlockButton( me.cwsRenderObj, me );
