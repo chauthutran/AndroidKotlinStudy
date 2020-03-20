@@ -818,7 +818,7 @@ div.select::before {
   align-items: center;
   justify-content: center;
   top: 6px;
-  right: 4%;
+  right: 2%;
   bottom: 0;
   padding: 0px 4px;
   background-color: #fff;
@@ -855,7 +855,7 @@ div.settingsSelect::before {
   border-radius: 18px;
 }
 select {
-  width: 96%;
+  width: 99%;
   height: 2em; /* 100%; */
   margin: 0;
   padding: 0 0 0 .5em;
@@ -1302,15 +1302,14 @@ div.loginBtn {
 
 .viewsListContainerTag > div {
   margin: 0;
+  width: 100% !important;
 }
 
 .viewsListContainerTag > div > select {
   width: 100% !important;
 }
-.viewsListContainerSelect {
-  flex-grow:1;
-}
-.viewsListContainerSelect::before {
+
+.viewsListSelector::before {
   right: 1% !important;
 }
 .viewsSorter {

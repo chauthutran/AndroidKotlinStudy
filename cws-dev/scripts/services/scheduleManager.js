@@ -148,7 +148,19 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 				//clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
 
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
-				if ( changeOccurred ) alert( 'SyncDown changed list.  Please refresh the list.' );
+				if ( changeOccurred )
+				{
+					var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+					$( btnRefresh ).click ( () => {
+						cwsRenderObj.renderArea( cwsRenderObj.areaList[ 0 ].id );
+					});
+
+					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, true );
+					//alert( 'SyncDown changed list.  Please refresh the list.' );
+
+				}
+
 			} 
 			else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
 		});

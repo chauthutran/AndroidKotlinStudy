@@ -1393,7 +1393,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				}
 	
-				if ( statusOpt && statusOpt.name == Constants.status_redeem_submit )
+				if ( statusOpt && statusOpt.name !== Constants.status_redeem_queued && statusOpt.name !== Constants.status_redeem_failed )
 				{
 					$( svgObject ).css( 'opacity', '1' );
 				}
@@ -1533,6 +1533,7 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 
 FormUtil.getActivityType = function( itemData )
 {
+	var returnOpt;
 	try
 	{
 		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
@@ -1541,14 +1542,90 @@ FormUtil.getActivityType = function( itemData )
 		{
 			if ( opts[i].name == itemData.activityType )
 			{
-				return opts[i];
+				returnOpt = opts[i];
+				break;
 			}
-		}	
+		}
+
+		if ( returnOpt )
+		{
+			return ( returnOpt );
+		}
+		else
+		{
+			return ( FormUtil.getActivityTypeComposition( itemData ) )
+		}
 	}
 	catch ( errMsg )
 	{
 		console.log( 'Error on FormUtil.getActivityType, errMsg: ' + errMsg );
 	}
+}
+
+FormUtil.getActivityTypeComposition = function( itemData )
+{
+	var returnOpt;
+	try
+	{
+		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+
+		if ( itemData.data && 
+				itemData.data.payloadJson && 
+				itemData.data.payloadJson.captureValues &&
+				itemData.data.payloadJson.captureValues.program &&
+				itemData.data.payloadJson.captureValues.activityType )
+		{
+			var optActTypeMatch = ( itemData.data.payloadJson.captureValues.program + '-' + 
+									itemData.data.payloadJson.captureValues.activityType ).toLocaleUpperCase();
+
+			// i.e. both program + activityType contain some value
+			if ( ( optActTypeMatch ).length > 2 )
+			{
+				for ( var i=0; i< opts.length; i++ )
+				{
+					if ( opts[i].name == optActTypeMatch )
+					{
+						returnOpt = opts[i];
+						break;
+					}
+				}
+
+				if ( returnOpt )
+				{
+					return ( returnOpt );
+				}
+				else
+				{
+					//Greg: make one up? N/A ?
+					return ( FormUtil.getActivityTypeNA( itemData ) );
+				}
+			}
+		}
+		else
+		{
+			//Greg: make one up? N/A ?
+			return ( FormUtil.getActivityTypeNA( itemData ) );
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error on FormUtil.getActivityTypeComposition, errMsg: ' + errMsg );
+	}
+}
+
+FormUtil.getActivityTypeNA = function( itemData )
+{
+	var retObj = { previewData: [], name: 'Unknown', icon: { path: 'images/na.svg' }, term: '', label: '' };
+
+	if ( itemData.data && itemData.data.previewData )
+	{
+		for ( var i=0; i< itemData.data.previewData.length; i++ )
+		{
+			retObj.previewData.push( itemData.data.previewData[ i ] );
+		}
+	}
+
+	return retObj;
 }
 
 FormUtil.getStatusOpt = function( itemData )

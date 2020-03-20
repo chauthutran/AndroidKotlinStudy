@@ -24,6 +24,7 @@ function cwsRender()
 	me.registrationObj;
 	me.loginObj;
 	me.langTermObj;
+	//me.sessionObj; // NEW PROPOSAL
 
 
 	// Settings var
@@ -80,7 +81,7 @@ function cwsRender()
 
 	me.setInitialData = function()
 	{
-		me.manifest = FormUtil.getManifest();
+		//me.manifest = FormUtil.getManifest();
 
 		me.updateFromSession();
 	}
@@ -680,6 +681,8 @@ function cwsRender()
 			if ( lastSession )
 			{
 				$( 'input.loginUserName' ).val( lastSession.user );	
+				$( 'input.loginUserName' ).attr( 'readonly',true );
+				$( 'div.loginSwitchUserNotification' ).show();
 			}
 		});
 

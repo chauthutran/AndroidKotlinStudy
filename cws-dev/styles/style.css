@@ -237,7 +237,7 @@ select option {
   text-align: right;
   font-size: 10px;
   box-sizing: border-box;
-  /* display: none; */
+  display: none;
 }
 
 .act-l {
@@ -1459,7 +1459,7 @@ img.imgMore
    }
    .container--optionsSymbol{
        font-family: 'Rubik', Arial;
-       background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+       /* background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff ); */
        height: 300px;
        position: relative;
        padding: .5em;

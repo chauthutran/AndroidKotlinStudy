@@ -525,6 +525,10 @@
         text-align: left;
       }
 
+      div.select::before {
+        right: 1% !important;
+      }
+
     }
     /* ======================= */
 

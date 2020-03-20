@@ -136,14 +136,13 @@ function BlockList( cwsRenderObj, blockObj )
     // === Main Features =========================
 
     // ----------------------------
-    me.initialize = function() 
-    {
-        me.setClassEvents();
-    };
+    me.initialize = function() { };
 
     me.initialSetup = function( blockJson )
     {
         me.setUpInitialData( me.cwsRenderObj, blockJson );
+
+        me.setClassEvents();
     }
 
     // -----------------------------------------------
@@ -291,7 +290,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, blockList_UL_Tag )
+    me.populateActivityCardList = function( activityList, blockList_UL_Tag, callBack )
     {        
         if ( activityList.length === 0 ) 
         {
@@ -314,6 +313,8 @@ function BlockList( cwsRenderObj, blockObj )
                 if ( activityCardLiTag ) blockList_UL_Tag.append( activityCardLiTag );        
             }    
         }
+
+        if ( callBack ) callBack();
     };
         
 
@@ -355,22 +356,26 @@ function BlockList( cwsRenderObj, blockObj )
         //Infinite Scroll
         $(window).on( "scroll", function () 
         {
-            var currScrollTop = $(window).scrollTop();
-            var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
-            me.lastScrollTop = currScrollTop;
+            // Scroll should be applicable only if there are activities
+            if ( me.activityList.length > 0 )
+            {                    
+                var currScrollTop = $(window).scrollTop();
+                var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
+                me.lastScrollTop = currScrollTop;
 
-            if ( scrollDirection === 'Down' )
-            {
-                //page height
-                var scrollHeight = $(document).height();
+                if ( scrollDirection === 'Down' )
+                {
+                    //page height
+                    var scrollHeight = $(document).height();
 
-                //scroll position
-                var scrollPos = $(window).height() + $(window).scrollTop();
+                    //scroll position
+                    var scrollPos = $(window).height() + $(window).scrollTop();
 
-                // fire if the scroll position is 300 pixels above the bottom of the page
-                if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
+                    // fire if the scroll position is 100 pixels above the bottom of the page
+                    if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
 
-                    me.scrollList();
+                        me.scrollList();
+                    }
                 }
             }
         });
@@ -382,10 +387,13 @@ function BlockList( cwsRenderObj, blockObj )
     {
         // 1. Show Scrolling Effect & hide after a bit of time
         me.cwsRenderObj.pulsatingProgress.show();                    
-        setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide(); }, 250 );
 
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag );
+        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag, function(){
+
+            setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide(); }, 250 );
+
+        } );
     };
 
     
@@ -411,6 +419,7 @@ function BlockList( cwsRenderObj, blockObj )
             var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
             if ( itemData.created ) labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
 
+            
             // 'QUICK FIX' - Move this to template + move to other class..
             var spanDetailTag = $( '<span style=" margin-left: 4px; font-size: 9px; font-style: italic; cursor:pointer;">detail</span>')
             labelTag.append( spanDetailTag );
@@ -420,42 +429,17 @@ function BlockList( cwsRenderObj, blockObj )
             });
 
 
-            var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
-
             // click event - for activitySubmit..
-            listItem_icon_syncTag.click( function(e) {                
+            var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
+            listItem_icon_syncTag.click( function( e ) 
+            {
                 e.stopPropagation();  // Stops calling parent tags event calls..
-                console.log( 'activityCard Submit Clicked - ' + itemData.id );
-
-                // <-- send request...
-                //var ItemData_refreshed = Util.getFromList( ActivityListManager.getActivityList(), itemData.id, "id" );
-
-                if ( SyncManagerNew.syncStart() )
-                {
-                    try
-                    {
-                        var divListItemTag = activityCardLiTag.find( 'div.listItem' );
-                        var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
-
-                        SyncManagerNew.syncItem( activityItem, function( success ) {
-
-                            SyncManagerNew.syncFinish();     
-                            //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
-                        });    
-                    }
-                    catch( errMsg )
-                    {
-                        console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
-                        SyncManagerNew.syncFinish();     
-                    }
-                }
-                //}
-
-            });
+                me.activitySubmitSyncClick( itemData, activityCardLiTag.find( 'div.listItem' ) ); 
+            });                
 
 
-            // Populate the button image & click event
-            //me.populateData_RedeemItemTag( itemData, activityCardLiTag );
+            // GREG change
+            me.updateActivityCard_UI_Preview( itemData, activityCardLiTag );
 
             me.updateActivityCard_UI_Icon( activityCardLiTag, itemData, me.cwsRenderObj );            
         }
@@ -469,6 +453,104 @@ function BlockList( cwsRenderObj, blockObj )
     };
 
 
+    me.activitySubmitSyncClick = function( itemData, divListItemTag )
+    {        
+        if ( SyncManagerNew.syncStart() )
+        {
+            try
+            {
+                var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+    
+                SyncManagerNew.syncItem( activityItem, function( success ) {
+    
+                    SyncManagerNew.syncFinish();     
+                    //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
+                });    
+            }
+            catch( errMsg )
+            {
+                console.log( 'ERROR on running on activityItem Sync, errMsg - ' + errMsg );
+                SyncManagerNew.syncFinish();     
+            }
+        }
+    };
+                
+
+    me.updateActivityCard_UI_Preview = function( itemData, activityCardLiTag )
+    {
+        var activityType = FormUtil.getActivityType ( itemData );
+
+
+        // GREG: WHY DO WE USE 'previewJson' in 'data'!!!!  Why do we need it?
+        var previewDivTag = me.getListDataPreview( itemData.data.previewJson, activityType.previewData );
+
+        //console.log( itemData );
+        //console.log( activityType.previewData );
+        //console.log( previewDivTag );
+
+        activityCardLiTag.find( '.listDataPreview' ).empty().append( previewDivTag );
+    };
+
+
+    // GREG CHANGES
+    me.getListDataPreview = function( dataJson, previewConfig )
+    {
+        if ( previewConfig )
+        {
+            var dataRet = $( '<div class="previewData listDataPreview" ></div>' );
+
+            for ( var i=0; i< previewConfig.length; i++ ) 
+            {
+                var dat = me.mergePreviewData( previewConfig[ i ], dataJson );
+                dataRet.append ( $( '<div class="listDataItem" >' + dat + '</div>' ) );
+            }
+
+        }
+
+        return dataRet;
+    };
+
+
+    // GREG CHANGES
+    me.mergePreviewData = function ( previewField, Json )
+    {
+        var ret = '';
+        var flds = previewField.split( ' ' );
+
+        if ( flds.length )
+        {
+            for ( var f=0; f < flds.length; f++ )
+            {
+                for ( var key in Json ) 
+                {
+                    if ( flds[f] == key && Json[ key ] )
+                    {
+                        ret += flds[ f ] + ' ';
+                        ret = ret.replace( flds[f] , Json[ key ] );
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ( previewField.length )
+            {
+                ret = previewField;
+
+                for ( var key in Json ) 
+                {
+                    if ( previewField == key && Json[ key ] )
+                    {
+                        ret = ret.replace( previewField , Json[ key ] );
+                    }
+                }
+            }
+        }
+
+        return ret;
+    };
+
+    
     me.updateActivityCard_UI_Icon = function( activityCardLiTag, itemJson, cwsRenderObj )
     {
         try
@@ -488,8 +570,9 @@ function BlockList( cwsRenderObj, blockObj )
         }        
     };
 
+
     // ===========================================================
-    // === Exposoed to Outside Methods ============
+    // === Exposed to Outside Methods ============
 
     // Add new activity to the list <-- from/by action
     me.createNewActivity = function( dataJson, statusStr, callBack )

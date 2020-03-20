@@ -334,6 +334,14 @@ function Login( cwsRenderObj )
 
 		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
 
+		me.loginAfter_UI_Update();
+	};
+
+
+	me.loginAfter_UI_Update = function()
+	{
+		$( 'input.loginUserName' ).attr( 'readonly',true );
+		$( 'div.loginSwitchUserNotification' ).show();
 		FormUtil.hideProgressBar();
 	}
 

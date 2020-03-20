@@ -173,6 +173,9 @@
                             </tr>
                             <tr>
                               <td colspan=2 style="text-align: right;">
+                                <div class="loginSwitchUserNotification" style="display:none;padding: 16px;margin: 8px;text-align: center;border-radius: 8px;background-color: #f8f8f8;border: 2px solid gainsboro;">
+                                  To change user code, first clear your app/site data.
+                                </div>
                                 <select id='dbStorageSelector' style='max-width:150px;'>
                                   <option value='localStorage'>Local Storage</option>
                                   <option value='indexdb' selected>IndexDB</option>
@@ -272,7 +275,7 @@
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
-                        <div id="settingsInfo_DivnetworkSelect" style="display:none;max-width: 250px;" class="select">
+                        <div id="settingsInfo_DivnetworkSelect" style="display:none;max-width: 250px;" class="settingsSelect">
                           <select id="settingsInfo_networkSync" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
                         </div>
                       </td>
@@ -310,7 +313,7 @@
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
-                        <div id="settingsInfo_DivLangSelect" style="display:none;max-width: 250px;" class="select">
+                        <div id="settingsInfo_DivLangSelect" style="display:none;max-width: 250px;" class="settingsSelect">
                           <select id="settingsInfo_langSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
                         </div>
                       </td>
@@ -366,7 +369,7 @@
                   <table style="width:100%;border-spacing:0;">
                     <tr>
                       <td>
-                        <div id="settingsInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="select">
+                        <div id="settingsInfo_DivThemeSelect" style="display:none;max-width: 250px;" class="settingsSelect">
                           <select id="settingsInfo_ThemeSelect" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
                         </div>
                       </td>
@@ -405,7 +408,7 @@
                   <tr>
                     <td>
                       
-                      <div id="settingsInfo_DivlogoutSelect" style="display:none;max-width: 250px;" class="select">
+                      <div id="settingsInfo_DivlogoutSelect" style="display:none;max-width: 250px;" class="settingsSelect">
                         <select id="settingsInfo_logoutDelay" class="selector form-type-text" style="padding-left:0;padding-top:0;max-width: 250px;"></select>
                       </div>
 
