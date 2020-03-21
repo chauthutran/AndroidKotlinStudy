@@ -17,32 +17,25 @@ function Action( cwsRenderObj, blockObj )
 	// ------------------------------------
 
 	// Same level as 'render' in other type of class
-	me.handleClickActions = function( btnTag, btnOnClickActions )
+	me.handleClickActions = function( btnTag, btnOnClickActions, blockDivTag, formDivSecTag )
 	{		
-		var blockDivTag = btnTag.closest( '.block' );
-		var formDivSecTag = blockDivTag.find( '.formDivSec' );
-
 		if ( formDivSecTag.attr( 'data-fields') != undefined )
 		{
 			me.handleSequenceIncrCommits( formDivSecTag );
 		}
 
-		// NOTE: TRAN VALIDATION
-		if( me.blockObj.validationObj.checkFormEntryTagsData( formDivSecTag ) )
-		{
-			var dataPass = {};
+		var dataPass = {};
 
-			if ( !me.btnClickedAlready( btnTag ) )
-			{
-				me.btnClickMarked( btnTag );
-				me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
-					me.clearBtn_ClickedMark( btnTag );
-				} );
-			}
-			else
-			{
-				//console.log( 'Btn already clicked/in process' );
-			}
+		if ( !me.btnClickedAlready( btnTag ) )
+		{
+			me.btnClickMarked( btnTag );
+			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+				me.clearBtn_ClickedMark( btnTag );
+			} );
+		}
+		else
+		{
+			//console.log( 'Btn already clicked/in process' );
 		}
 	}
 
@@ -110,28 +103,19 @@ function Action( cwsRenderObj, blockObj )
 		}
 	}
 
-	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx )
+	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag )
 	{		
-		// NOTE: 'clickedItemData' will be passed to block as 'passedData'
+		var dataPass = {};
 
-		var blockDivTag = btnTag.closest( 'div.block' );
-		var itemBlockTag = btnTag.closest( '.itemBlock' );
-
-		// NOTE: TRAN VALIDATION
-		if( me.blockObj.validationObj.checkFormEntryTagsData( itemBlockTag ) )
+		if ( !me.btnClickedAlready( btnTag ) )
 		{
-			var dataPass = {};
-
-			if ( !me.btnClickedAlready( btnTag ) )
-			{
-				me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
-					me.clearBtn_ClickedMark( btnTag );					
-				} );
-			}
-			else
-			{
-				console.log( 'Btn already clicked/in process' );
-			}
+			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+				me.clearBtn_ClickedMark( btnTag );					
+			} );
+		}
+		else
+		{
+			console.log( 'Btn already clicked/in process' );
 		}
 	}
 
@@ -180,7 +164,7 @@ function Action( cwsRenderObj, blockObj )
 			if ( clickActionJson.actionType === "evaluation" )
 			{
 				//console.log( blockPassingData.displayData );
-				blockPassingData.displayData = me.blockObj.dataListObj.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
+				blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
 				//console.log( blockPassingData.displayData );
 
 				if ( afterActionFunc ) afterActionFunc();
@@ -410,7 +394,7 @@ function Action( cwsRenderObj, blockObj )
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
 						{
-							me.blockObj.blockListObj.createNewActivity( submitJson, Constants.status_redeem_queued, function()
+							ActivityListManager.createNewActivity( submitJson, Constants.status_redeem_queued, function()
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 
@@ -432,7 +416,7 @@ function Action( cwsRenderObj, blockObj )
 							// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
 							if ( clickActionJson.redeemListInsert === "true" )
 							{
-								me.blockObj.blockListObj.redeemList_Add( submitJson, Constants.status_redeem_submit );
+								ActivityListManager.createNewActivity( submitJson, Constants.status_redeem_submit );
 							}
 	
 							FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
@@ -561,8 +545,45 @@ function Action( cwsRenderObj, blockObj )
 		}
 		
 		return url;
-	}
+	};
   
+	
+    me.actionEvaluateExpression = function( jsonList, actionExpObj )
+    {
+        //for( var a = 0; a < actionTypeObj.length; a++ )
+        {
+            var expString = actionExpObj.expression;
+
+            for( var i = 0; i < jsonList.length; i++ )
+            {
+                var myCondTest = expString.replace( new RegExp( '[$${]', 'g'), "" ).replace( new RegExp( '}', 'g'), "" );
+    
+                for( var p = 0; p < jsonList[ i ].length; p++ )
+                {
+                    var regFind = new RegExp(jsonList[ i ][ p ].id, 'g');
+                    myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
+                }
+
+                //console.log( expString );
+                //console.log( myCondTest );
+    
+                var result =  eval( myCondTest );
+
+                if ( actionExpObj.attribute )
+                {
+                    jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
+                }
+                else
+                {
+                    jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
+                }
+    
+            }
+        }
+
+        return jsonList;
+    };
+
 	// ========================================================
 	
 	me.btnClickedAlready = function( btnTag )

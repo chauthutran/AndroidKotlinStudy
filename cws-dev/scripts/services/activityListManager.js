@@ -83,3 +83,44 @@ ActivityListManager.insertNewActivities = function( newActivities, callBack )
 // ===================================================
 // === OTHERS Methods =============
 
+
+// Not sure below should be here or create it's own class..
+
+// Add new activity to the list <-- from/by action
+ActivityListManager.createNewActivity = function( dataJson, statusStr, callBack )
+{
+    // 1. create proper json for adding to the activityList
+    var activityData = ActivityListManager.generateActivityData( dataJson, statusStr );
+
+    console.log( 'blockList.createNewActivity, activityData' );
+    console.log( activityData );
+
+
+    // 2. Add to the main list and display list
+    // me.insertNewActivityData( activityData, function() 
+    ActivityListManager.insertNewActivity( activityData, function() 
+    {
+        console.log( 'added new activity' );
+        if ( callBack ) callBack();
+        // In sequence of actions, have this done and have next action to go to area with blockList..
+        // me.reRender( callBack );
+    } );
+    
+};
+
+
+ActivityListManager.generateActivityData = function( dataJson, statusStr )
+{
+    var activityData = {};
+
+    //activityData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
+    activityData.created = Util.formatDateTimeStr( dataJson.payloadJson.DATE.toString() );
+    activityData.id = dataJson.payloadJson.activityId;
+    activityData.status = statusStr;
+    activityData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..        
+    activityData.history = [];
+
+    activityData.data = dataJson;
+
+    return activityData;
+};

@@ -61,13 +61,13 @@
 //
 //
 // -------------------------------------------------
-function BlockList( cwsRenderObj, blockObj ) 
+function BlockList( cwsRenderObj, blockObj, blockJson ) 
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;     
-    me.blockJson;   
+    me.blockJson = blockJson;   
 
     me.activityList = [];
 
@@ -136,16 +136,14 @@ function BlockList( cwsRenderObj, blockObj )
     // === Main Features =========================
 
     // ----------------------------
-    me.initialize = function() { };
+    me.initialize = function() 
+    { 
+        me.setUpInitialData( me.cwsRenderObj, me.blockJson );
 
-    me.initialSetup = function( blockJson )
-    {
-        me.setUpInitialData( me.cwsRenderObj, blockJson );
+        me.setClassEvents( me.cwsRenderObj );
+    };
 
-        me.setClassEvents();
-    }
-
-    // -----------------------------------------------
+    // --------------------------------------- --------
 
     //  Render BlockList
     me.render = function( blockTag, passedData, options )
@@ -209,9 +207,9 @@ function BlockList( cwsRenderObj, blockObj )
     // -----------------------------------------------
     // -- Class Events ...
 
-    me.setClassEvents = function()
+    me.setClassEvents = function( cwsRenderObj )
     {
-        if ( me.scrollEnabled ) me.setScrollEvent();
+        if ( me.scrollEnabled ) cwsRenderObj.setScrollEvent( me.setScrollEvent );
     };
 
     // -----------------------------------------------
@@ -220,7 +218,7 @@ function BlockList( cwsRenderObj, blockObj )
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
         me.activityList = Util.cloneArray( ActivityListManager.getActivityList() );
-        me.blockJson = blockJson;
+        //me.blockJson = blockJson;
         
         me.hasView = ( blockJson.activityListViews && blockJson.activityListViews.length > 0 );
     };
@@ -290,7 +288,7 @@ function BlockList( cwsRenderObj, blockObj )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, blockList_UL_Tag, callBack )
+    me.populateActivityCardList = function( activityList, blockList_UL_Tag, scrollStartFunc, scrollEndFunc )
     {        
         if ( activityList.length === 0 ) 
         {
@@ -303,18 +301,23 @@ function BlockList( cwsRenderObj, blockObj )
         else
         {
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
-            me.setNextPagingData( me.pagingData, currPosJson );
+            me.setNextPagingData( me.pagingData, currPosJson );            
 
-            //for( var i = 0; i < activityList.length; i++ )
-            for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
+            if ( !currPosJson.endAlreadyReached )
             {
-                var activityCardLiTag = me.createActivityCard( activityList[i] );
+                if ( scrollStartFunc ) scrollStartFunc();
 
-                if ( activityCardLiTag ) blockList_UL_Tag.append( activityCardLiTag );        
-            }    
+                //for( var i = 0; i < activityList.length; i++ )
+                for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
+                {
+                    var activityCardLiTag = me.createActivityCard( activityList[i] );
+    
+                    if ( activityCardLiTag ) blockList_UL_Tag.append( activityCardLiTag );        
+                }    
+    
+                if ( scrollEndFunc ) scrollEndFunc();    
+            }
         }
-
-        if ( callBack ) callBack();
     };
         
 
@@ -326,12 +329,14 @@ function BlockList( cwsRenderObj, blockObj )
         var currPosJson = {};
         
         currPosJson.startPosIdx = pagingData.currPosition;
-        
+                
         var nextPageEnd = pagingData.currPosition + pagingData.pagingSize;
         if ( nextPageEnd >= activityListSize ) nextPageEnd = activityListSize;  // if nextPageEnd is over the limit, set to limit.
 
         currPosJson.endPos = nextPageEnd; 
         
+        currPosJson.endAlreadyReached = ( currPosJson.startPosIdx === currPosJson.endPos );
+
         return currPosJson;
     };
 
@@ -354,46 +359,45 @@ function BlockList( cwsRenderObj, blockObj )
     me.setScrollEvent = function()
     {
         //Infinite Scroll
-        $(window).on( "scroll", function () 
-        {
-            // Scroll should be applicable only if there are activities
-            if ( me.activityList.length > 0 )
-            {                    
-                var currScrollTop = $(window).scrollTop();
-                var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
-                me.lastScrollTop = currScrollTop;
 
-                if ( scrollDirection === 'Down' )
-                {
-                    //page height
-                    var scrollHeight = $(document).height();
+        // Scroll only if this tag is visible, and there are activities
+        if ( me.blockList_UL_Tag.visible() && me.activityList.length > 0 )
+        {                    
+            var currScrollTop = $(window).scrollTop();
+            var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
+            me.lastScrollTop = currScrollTop;
 
-                    //scroll position
-                    var scrollPos = $(window).height() + $(window).scrollTop();
+            if ( scrollDirection === 'Down' )
+            {
+                //page height
+                var scrollHeight = $(document).height();
 
-                    // fire if the scroll position is 100 pixels above the bottom of the page
-                    if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
+                //scroll position
+                var scrollPos = $(window).height() + $(window).scrollTop();
 
-                        me.scrollList();
-                    }
+                // fire if the scroll position is 100 pixels above the bottom of the page
+                if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
+
+                    me.scrollList();
                 }
             }
-        });
+        }
     };
 
 
     // Get next paging amount data and display it
     me.scrollList = function()
     {
-        // 1. Show Scrolling Effect & hide after a bit of time
-        me.cwsRenderObj.pulsatingProgress.show();                    
-
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag, function(){
+        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag, function() {
+
+            me.cwsRenderObj.pulsatingProgress.show();
+            
+        }, function() {
 
             setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide(); }, 250 );
 
-        } );
+        });
     };
 
     
@@ -573,45 +577,6 @@ function BlockList( cwsRenderObj, blockObj )
 
     // ===========================================================
     // === Exposed to Outside Methods ============
-
-    // Add new activity to the list <-- from/by action
-    me.createNewActivity = function( dataJson, statusStr, callBack )
-    {
-        // 1. create proper json for adding to the activityList
-        var activityData = me.generateActivityData( dataJson, statusStr );
-
-        console.log( 'blockList.createNewActivity, activityData' );
-        console.log( activityData );
-
-
-        // 2. Add to the main list and display list
-        // me.insertNewActivityData( activityData, function() 
-        ActivityListManager.insertNewActivity( activityData, function() 
-        {
-            console.log( 'added new activity' );
-            if ( callBack ) callBack();
-            // In sequence of actions, have this done and have next action to go to area with blockList..
-            // me.reRender( callBack );
-        } );
-        
-    };
-
-
-    me.generateActivityData = function( dataJson, statusStr )
-    {
-        var activityData = {};
-
-        //activityData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
-        activityData.created = Util.formatDateTimeStr( dataJson.payloadJson.DATE.toString() );
-        activityData.id = dataJson.payloadJson.activityId;
-        activityData.status = statusStr;
-        activityData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..        
-        activityData.history = [];
-
-        activityData.data = dataJson;
-
-        return activityData;
-    };
 
     // =============================================
     // === OTHER METHODS ========================

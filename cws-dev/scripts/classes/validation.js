@@ -1,11 +1,11 @@
-
-function Validation( cwsRenderObj, blockObj, pageTag )
+// This could be static class - Need to set it up for 'cwsRenderObj' after cwsRenderObj
+function Validation( cwsRenderObj ) //, blockObj, pageTag )
 {
 	var me = this;
 
 	me.cwsRenderObj = cwsRenderObj;
-	me.blockObj = blockObj;
-	me.pageTag = pageTag;
+	//me.blockObj = blockObj;
+	//me.pageTag = pageTag;
 
 	me.COLOR_WARNING = "#f19c9c";
 	
@@ -19,7 +19,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
                 me.checkValidations( inputTag );
             });
         });
-    }
+    };
 
 	// ================================
 	// == Tag Validations
@@ -77,8 +77,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 
 		// If the validation attribute is present in the tag and not empty string or set to false
 		if ( validationAttr && validationAttr !== 'false' )
-		{									
-
+		{
 			if ( type == 'mandatory' ) valid = me.checkRequiredValue( tag, divTag, type );
 			else if ( type == 'minlength' ) valid = me.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
 			else if ( type == 'maxlength' ) valid = me.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
@@ -90,7 +89,7 @@ function Validation( cwsRenderObj, blockObj, pageTag )
 			else if ( type == 'patterns' ) valid = me.checkValue_RegxRules( tag, divTag, type );
 
 			if ( !valid ) tag.attr( 'valid', false );
-		}		
+		}
 	};
 	
 	

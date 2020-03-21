@@ -1,11 +1,12 @@
 // -------------------------------------------
 // -- BlockForm Class/Methods
-function BlockForm( cwsRenderObj, blockObj, actionJson )
+function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
+	me.validationObj = validationObj;
 	me.actionJson = actionJson;
 
 	me.payloadConfigSelection;
@@ -21,6 +22,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( me.actionJson ) me.payloadConfigSelection = me.actionJson.payloadConfig;
 	}
 
+
+	// TODO: render() should do - clear previous tags, and create tags newly.
+	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
 	me.render = function( formDef, blockTag, passedData )
 	{
 
@@ -104,7 +108,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			me.evalFormGroupDisplayStatus( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
-			me.blockObj.validationObj.setUp_Events( formDivSecTag );
+			me.validationObj.setUp_Events( formDivSecTag );
 
 			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 			setTimeout( function(){

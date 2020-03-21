@@ -20,8 +20,11 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	me.blockTag;
 
 	// -- Sub class objects -----
-	me.actionObj;
-	me.validationObj;
+	//me.actionObj; // <-- Moved to inside of blockButton class..
+	
+	me.validationObj;  // <-- Should be static Class/Method..
+
+	// TODO: Below reference might be obsolete
 	me.blockFormObj;
 	me.blockListObj;
 	me.dataListObj;
@@ -37,29 +40,55 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	{
 		me.setInitialData();
 
-		me.createSubClasses();				
+		me.validationObj = new Validation( me.cwsRenderObj, me );
+		//me.createSubClasses();				
 	}
 
 	me.render = function()
 	{
+		// Form BlockTag generate/assign
+		me.clearClassTag( me.blockId, me.parentTag );
+		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
+
+
 		if ( me.blockJson )
 		{
 			// Render Form
-			if ( me.blockJson.form ) me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
+			if ( me.blockJson.form ) 
+			{
+				// TODO: me.blockFormObj should be change to var blockFormObj = new --
+				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.validationObj, me.actionJson );
+				me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
+			}
+
 
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
 			if ( me.blockJson.list === 'redeemList' || me.blockJson.list === 'activityList' )
 			{
-				me.blockListObj.initialSetup( me.blockJson );
+				me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockJson );
 				me.blockListObj.render( me.blockTag, me.passedData, me.options );
 			}
-			else if ( me.blockJson.list === 'dataList' ) me.dataListObj.render( me.blockJson, me.blockTag, me.passedData, me.options );
+			else if ( me.blockJson.list === 'dataList' )
+			{
+				me.dataListObj = new DataList( me.cwsRenderObj, me );
+				me.dataListObj.render( me.blockJson, me.blockTag, me.passedData, me.options );
+			} 
+
 
 			// Render Buttons
-			if ( me.blockJson.buttons ) me.blockButtonObj.render( me.blockJson.buttons, me.blockTag, undefined );
+			if ( me.blockJson.buttons ) 
+			{
+				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me, me.validationObj );
+				me.blockButtonObj.render( me.blockJson.buttons, me.blockTag, undefined );
+			}
+
 
 			// Render Msg
-			if ( me.blockJson.message ) me.blockMsgObj.render( me.blockJson.message, me.blockTag, me.passedData );
+			if ( me.blockJson.message ) 
+			{
+				me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
+				me.blockMsgObj.render( me.blockJson.message, me.blockTag, me.passedData );
+			}
 		}
 
 		me.cwsRenderObj.langTermObj.translatePage();
@@ -74,20 +103,12 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 		me.cwsRenderObj.blocks[ me.blockId ] = me;  // add this block object to the main block memory list - for global referencing
 
 		if ( me.blockJson ) me.blockType = me.blockJson.blockType;
-
-		// Form BlockTag generate/assign
-		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
 	}
 
 	me.createSubClasses = function()
 	{
-		me.actionObj = new Action( me.cwsRenderObj, me );
-		me.validationObj = new Validation( me.cwsRenderObj, me );
-		me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
-		me.blockListObj = new BlockList( me.cwsRenderObj, me );
-		me.dataListObj = new DataList( me.cwsRenderObj, me );
-		me.blockButtonObj = new BlockButton( me.cwsRenderObj, me );
-		me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
+		//me.actionObj = new Action( me.cwsRenderObj, me );
+		//me.validationObj = new Validation( me.cwsRenderObj, me );
 	}
 
 	//me.setEvents_OnInit = function() { }
@@ -102,6 +123,13 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
+
+	me.clearClassTag = function( blockId, parentTag )
+    {
+        // Clear any previous ones of this class
+        parentTag.find( 'div.block[blockId="' + blockId + '"]' ).remove();
+	};
+	
 
 	me.createBlockTag = function( blockId, blockType, parentTag )
 	{

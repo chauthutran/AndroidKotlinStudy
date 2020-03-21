@@ -1,16 +1,20 @@
 // -------------------------------------------
 // -- BlockButton Class/Methods
-function BlockButton( cwsRenderObj, blockObj )
+function BlockButton( cwsRenderObj, blockObj, validationObj )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
+	me.validationObj = validationObj;
+	me.actionObj;
 		
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
-	me.initialize = function() {}
+	me.initialize = function() {
+		me.actionObj = new Action( me.cwsRenderObj, me.blockObj );
+	}
 
 	me.render = function( buttonsJson, blockTag, passedData )
 	{
@@ -215,57 +219,68 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
+					var blockDivTag = btnTag.closest( '.block' );
+					var formDivSecTag = blockDivTag.find( '.formDivSec' );
+			
+					// NOTE: TRAN VALIDATION
+					if( me.validationObj.checkFormEntryTagsData( formDivSecTag ) )
+					{				
+						// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
+						//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
+						ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-					// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
-					//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
-					ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
+						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+						if ( btnJson.buttonType === 'listRightImg' )
+						{
+							var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+							btnTag.hide();
+							btnTag.parent().append( loadingTag );
+						} 
 
-					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-					if ( btnJson.buttonType === 'listRightImg' )
-					{
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-						btnTag.hide();
-						btnTag.parent().append( loadingTag );
-					} 
-
-					me.blockObj.actionObj.handleClickActions( $( this ), btnJson.onClick );
-
+						me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
+					}
 				});
 			}
 			else if( btnJson.onClickItem !== undefined )
 			{
 				btnTag.click( function() 
 				{
-					// TODO: ACTIVITY ADDING
-					ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
-
-					// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-					if ( btnJson.buttonType === 'listRightImg' )
+					//var btnTag = $( this );
+					var blockDivTag = btnTag.closest( 'div.block' );
+					var itemBlockTag = btnTag.closest( '.itemBlock' );
+						
+					if( me.validationObj.checkFormEntryTagsData( itemBlockTag ) )
 					{
-						// TODO: GREG <-- You can use .closest( '.---' ) instead
-						var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
+						// TODO: ACTIVITY ADDING
+						ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-						for( var i = 0; i < parentDiv.children.length; i++ )
+						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
+						if ( btnJson.buttonType === 'listRightImg' )
 						{
-							let tbl = parentDiv.children[i];
+							// TODO: GREG <-- You can use .closest( '.---' ) instead
+							var parentDiv = btnTag.parent().parent().parent().parent().parent()[0];
 
-							if ( tbl != btnTag.parent().parent().parent().parent()[0] )
+							for( var i = 0; i < parentDiv.children.length; i++ )
 							{
-								$( tbl ).css('opacity','0.4');
+								let tbl = parentDiv.children[i];
+
+								if ( tbl != btnTag.parent().parent().parent().parent()[0] )
+								{
+									$( tbl ).css('opacity','0.4');
+								}
+
 							}
 
-						}
+							var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+							btnTag.hide();
+							btnTag.parent().append( loadingTag );
+						} 
 
-						var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-						btnTag.hide();
-						btnTag.parent().append( loadingTag );
-					} 
-
-					var idx = $( this ).closest(".itemBlock").attr("idx");
-					me.blockObj.actionObj.handleItemClickActions( $( this ), btnJson.onClickItem, idx );
-					// , passedData ); <-- 'passedData' is not used anymore.
-					//	It retrieves from DHIS/WebService (making retrieveByClientId call) (using clientId again..)
-
+						var idx = btnTag.closest(".itemBlock").attr("idx");
+						me.actionObj.handleItemClickActions( btnTag, btnJson.onClickItem, idx, blockDivTag, itemBlockTag );
+						// , passedData ); <-- 'passedData' is not used anymore.
+						//	It retrieves from DHIS/WebService (making retrieveByClientId call) (using clientId again..)
+					}
 				});
 			}
 		}

@@ -230,42 +230,8 @@ function DataList( cwsRenderObj, blockObj )
         }
     }
 
-    me.actionEvaluateExpression = function( jsonList, actionExpObj )
-    {
-        //for( var a = 0; a < actionTypeObj.length; a++ )
-        {
-            var expString = actionExpObj.expression;
 
-            for( var i = 0; i < jsonList.length; i++ )
-            {
-                var myCondTest = expString.replace( new RegExp( '[$${]', 'g'), "" ).replace( new RegExp( '}', 'g'), "" );
-    
-                for( var p = 0; p < jsonList[ i ].length; p++ )
-                {
-                    var regFind = new RegExp(jsonList[ i ][ p ].id, 'g');
-                    myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
-                }
-
-                if ( me.debugMode ) console.log( expString );
-                if ( me.debugMode ) console.log( myCondTest );
-    
-                var result =  eval( myCondTest );
-
-                if ( actionExpObj.attribute )
-                {
-                    jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
-                }
-                else
-                {
-                    jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
-                }
-    
-            }
-        }
-
-        return jsonList;
-    }
-
+    // TODO: NOT USED ANYMORE?
     me.actionExpressionEvaluate = function( jsonList, actionTypeObj )
     {
         for( var a = 0; a < actionTypeObj.length; a++ )

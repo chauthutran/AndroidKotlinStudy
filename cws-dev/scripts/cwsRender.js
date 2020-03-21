@@ -116,20 +116,24 @@ function cwsRender()
 			if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
 			// DataManager.saveData(  'networkSync',  data );
 		});
-
-	}
+	};
 
 	me.setPageHeaderEvents = function()
 	{
+		me.configureMobileMenuIcon();		
+	};
 
-		me.configureMobileMenuIcon();
-		
-	}
 
-	me.setOtherEvents = function()
+	me.setOtherEvents = function() 
+	{ };
+
+
+	// This or other classes use this to control the scrolling..
+	me.setScrollEvent = function( setScrollEvent )
 	{
+        $(window).off( "scroll" ).on( "scroll", setScrollEvent );
+	};
 
-	}
 
 	// -------------------------
 
