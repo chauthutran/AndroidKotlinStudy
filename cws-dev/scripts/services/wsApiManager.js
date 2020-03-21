@@ -12,6 +12,12 @@ WsApiManager.wsApiListJson = {
     //use 'eRefWSDev4' (4) when server issues exist
 };
 
+// HOW DO WE DO SWITCHING ABOVE??
+// --> USE NEW URL ARLEADY <-- BRING IT FROM 1.2 IN STAGING!!!
+// LOGIN ENDPOINT NAME SHOULD BE IN CONFIG!!!
+// AVAILABLE, LANGTERM, ETC SHOULD ALL BE IN CONFIG!!!
+
+
 WsApiManager.wsApiCallListJson = {
 
 };
