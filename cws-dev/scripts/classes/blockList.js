@@ -124,6 +124,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     </tr>
                 </table>
             </div>
+
+            <div class="act-l" style="display:none;">
+                <div class="act-l-more">
+                    <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span term="">see more</span>
+                </div>
+                <div class="act-l-expander" style="display:none;">
+                    james Testing..
+                </div>
+            </div>
         </a>
     </li>`;
 
@@ -414,7 +423,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {
             activityCardLiTag = $( me.template_ActivityCard );
             var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
-    
+            var contentDivTag = activityCardLiTag.find( 'div.listItem' );
+            var divSeeMoreTag = contentDivTag.find( 'div.act-l' );
+            var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
+            var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
+
+
             // Probably need to populate only one of below 2
             activityCardLiTag.attr( 'itemId', itemData.id );
             activityCardAnchorTag.attr( 'itemId', itemData.id );
@@ -440,6 +454,28 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 e.stopPropagation();  // Stops calling parent tags event calls..
                 me.activitySubmitSyncClick( itemData, activityCardLiTag.find( 'div.listItem' ) ); 
             });                
+
+
+            // Div ActivityCard main content Div click --> By toggling class, Shows hidden div about 'showMore'
+            contentDivTag.click( function() {
+                e.stopPropagation();
+
+                console.log( 'contentDivTag clicked' );
+                
+                activityCardAnchorTag.toggleClass( 'expanded' ); // TODO: Later, remove all other 'expanded'
+                // Need to switch 'see more' to 'see less' and visa versa..
+            });    
+            
+
+            // divSeeMoreBtnTag click to display more/less --> By toggling class
+            divSeeMoreBtnTag.click( function() {
+                e.stopPropagation();
+
+                console.log( 'divSeeMoreBtnTag clicked' );
+
+                divSeeMoreContentTag.toggleClass( 'act-l-more-open' );
+            });
+
 
 
             // GREG change
