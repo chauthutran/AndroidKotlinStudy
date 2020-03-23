@@ -125,12 +125,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 </table>
             </div>
 
-            <div class="act-l" style="display:none;">
+            <div class="act-l">
                 <div class="act-l-more">
                     <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span term="">see more</span>
                 </div>
                 <div class="act-l-expander" style="display:none;">
-                    james Testing..
                 </div>
             </div>
         </a>
@@ -370,7 +369,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         //Infinite Scroll
 
         // Scroll only if this tag is visible, and there are activities
-        if ( me.blockList_UL_Tag.visible() && me.activityList.length > 0 )
+        if ( me.blockList_UL_Tag.is( ":visible" ) && me.activityList.length > 0 )
         {                    
             var currScrollTop = $(window).scrollTop();
             var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
@@ -424,10 +423,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             activityCardLiTag = $( me.template_ActivityCard );
             var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
             var contentDivTag = activityCardLiTag.find( 'div.listItem' );
-            var divSeeMoreTag = contentDivTag.find( 'div.act-l' );
+            var divSeeMoreTag = activityCardAnchorTag.find( 'div.act-l' );
             var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
             var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
-
 
             // Probably need to populate only one of below 2
             activityCardLiTag.attr( 'itemId', itemData.id );
@@ -437,11 +435,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
             if ( itemData.created ) labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
 
-            
+
             // 'QUICK FIX' - Move this to template + move to other class..
             var spanDetailTag = $( '<span style=" margin-left: 4px; font-size: 9px; font-style: italic; cursor:pointer;">detail</span>')
             labelTag.append( spanDetailTag );
-            spanDetailTag.click( function(e) {
+            spanDetailTag.click( function( e ) {
                 e.stopPropagation();  // Stops calling parent tags event calls..
                 console.log( itemData );
             });
@@ -457,7 +455,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
             // Div ActivityCard main content Div click --> By toggling class, Shows hidden div about 'showMore'
-            contentDivTag.click( function() {
+            contentDivTag.click( function( e ) {
                 e.stopPropagation();
 
                 console.log( 'contentDivTag clicked' );
@@ -468,12 +466,23 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             
 
             // divSeeMoreBtnTag click to display more/less --> By toggling class
-            divSeeMoreBtnTag.click( function() {
+            divSeeMoreBtnTag.click( function( e ) {
                 e.stopPropagation();
 
                 console.log( 'divSeeMoreBtnTag clicked' );
 
                 divSeeMoreContentTag.toggleClass( 'act-l-more-open' );
+
+                if ( divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
+                {
+                    var jsonViewer = new JSONViewer();
+                    divSeeMoreContentTag.append( jsonViewer.getContainer() );
+                    jsonViewer.showJSON( itemData.data.payloadJson.captureValues );
+                }
+                else
+                {
+                    divSeeMoreContentTag.html( '' );
+                }
             });
 
 
