@@ -44,6 +44,10 @@ self.__precacheManifest = [
     "revision": "09cdc7e9db19e9d5b794200c35df7c32"
   },
   {
+    "url": "css/styleNew.css",
+    "revision": "e5b8a7fa3be7d6f10035898b0b1c1748"
+  },
+  {
     "url": "images/about.svg",
     "revision": "15b2f8e409f6a038f54ab20b993bd249"
   },
@@ -377,7 +381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "9b4d851b0f81c51fbaec62693d4bb208"
+    "revision": "073d31be147309118b3d88974bafbd48"
   },
   {
     "url": "redeemGen.html",
@@ -421,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "cf1d5d4d58e2bb73749f9655f070ec9b"
+    "revision": "9a650587c997004832e556786c10b4fa"
   },
   {
     "url": "scripts/classes/blockListView.js",
