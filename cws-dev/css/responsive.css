@@ -18,7 +18,11 @@
     }
 
     ul li {
-      font-size: 0.7em;
+      /* font-size: 0.7em; - JAMES CHANGE, COMMENTED OUT*/
+    }
+
+    .imgBtnLabel {
+      font-size: 0.8em;
     }
 
     ul li .expandable {

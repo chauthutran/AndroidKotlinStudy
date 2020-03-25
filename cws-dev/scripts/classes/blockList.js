@@ -477,7 +477,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 {
                     var jsonViewer = new JSONViewer();
                     divSeeMoreContentTag.append( jsonViewer.getContainer() );
-                    jsonViewer.showJSON( itemData.data.payloadJson.captureValues );
+                    jsonViewer.showJSON( me.formatJsonForDisplay( itemData ) );
                 }
                 else
                 {
@@ -499,6 +499,36 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
 
         return activityCardLiTag;        
+    };
+
+
+    me.formatJsonForDisplay = function( itemData )
+    {
+        var jsonShow = {};
+
+        try
+        {
+            var tranList = itemData.data.payloadJson.captureValues.transactions;
+
+            for( var i = 0; i < tranList.length; i++ )
+            {
+                var tranData = tranList[i].dataValues;
+
+                if ( tranData )
+                {
+                    for ( var prop in tranData ) 
+                    {
+                        jsonShow[ prop ] = tranData[ prop ];
+                    }
+                }
+            }
+        }
+        catch ( errMsg )
+        {
+            console.log( 'Error during BlockList.formatJsonForDisplay, errMsg: ' + errMsg );
+        }
+
+        return jsonShow;
     };
 
 

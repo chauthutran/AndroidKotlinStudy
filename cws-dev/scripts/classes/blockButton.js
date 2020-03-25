@@ -171,7 +171,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 					var liTabTag = divTag.find( 'ul.tabs li[tabId="' + btnNo + '"]' );
 					var aContentTag = divTag.find( 'ul.tab_content li[tabId="' + btnNo + '"] a.expandable' );
 
-					liTabTag.append( $('<img src="' + btnJson.imageSrc + '" class="tab-image"><label ' + FormUtil.getTermAttr( btnJson ) + '>' + btnJson.defaultLabel + '</label>' ) );
+					liTabTag.append( $('<img src="' + btnJson.imageSrc + '" class="tab-image"><label class="imgBtnLabel" ' + FormUtil.getTermAttr( btnJson ) + '>' + btnJson.defaultLabel + '</label>' ) );
 					aContentTag.append( $('<div class="icon-row"><img src="' + btnJson.imageSrc + '"><span ' + FormUtil.getTermAttr( btnJson ) + '>' + btnJson.defaultLabel + '</span></div>') );
 					aContentTag.append( $('<div class="icon-arrow"><img class="expandable-arrow" src="images/arrow_down.svg"></div>') );
 
