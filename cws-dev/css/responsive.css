@@ -84,7 +84,7 @@
 
     ul li .expandable.expanded {
       color: #333;
-      font-weight: 800;
+      /*font-weight: 800;*/
       /* margin-bottom:5px; */
       box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
       background: rgb(251,251,251);

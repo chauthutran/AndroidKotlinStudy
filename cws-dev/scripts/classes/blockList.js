@@ -103,10 +103,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                         </td>
 
                         <td class="listItem_data_preview">
-                            <div class="listItem_label_date">---Date---</div>
-                            <div class="previewData listDataPreview">
-                                <div class="listDataItem">birthYear </div>
-                                <div class="listDataItem">walkIn_motherName treatment reason </div>
+                            <div class="divListItemContent">
+                                <div class="listItem_label_date">---Date---</div>
                             </div>
                         </td>
 
@@ -423,9 +421,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             activityCardLiTag = $( me.template_ActivityCard );
             var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
             var contentDivTag = activityCardLiTag.find( 'div.listItem' );
+
+            var divListItemContentTag = activityCardLiTag.find( 'div.divListItemContent' );
+
+            // --- See More Related Tags
             var divSeeMoreTag = activityCardAnchorTag.find( 'div.act-l' );
             var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
             var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
+
 
             // Probably need to populate only one of below 2
             activityCardLiTag.attr( 'itemId', itemData.id );
@@ -436,13 +439,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             if ( itemData.created ) labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
 
 
-            // 'QUICK FIX' - Move this to template + move to other class..
-            var spanDetailTag = $( '<span style=" margin-left: 4px; font-size: 9px; font-style: italic; cursor:pointer;">detail</span>')
-            labelTag.append( spanDetailTag );
-            spanDetailTag.click( function( e ) {
-                e.stopPropagation();  // Stops calling parent tags event calls..
-                console.log( itemData );
-            });
+            var itemTransJson = me.formatJsonForDisplay( itemData );
 
 
             // click event - for activitySubmit..
@@ -451,33 +448,32 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             {
                 e.stopPropagation();  // Stops calling parent tags event calls..
                 me.activitySubmitSyncClick( itemData, activityCardLiTag.find( 'div.listItem' ) ); 
-            });                
+            });
 
 
             // Div ActivityCard main content Div click --> By toggling class, Shows hidden div about 'showMore'
-            contentDivTag.click( function( e ) {
-                e.stopPropagation();
-
-                console.log( 'contentDivTag clicked' );
-                
-                activityCardAnchorTag.toggleClass( 'expanded' ); // TODO: Later, remove all other 'expanded'
+            contentDivTag.click( function( e ) 
+            {
+                e.stopPropagation();                
+                activityCardAnchorTag.toggleClass( 'expanded' ); 
+                // TODO: Later, remove all other 'expanded'
                 // Need to switch 'see more' to 'see less' and visa versa..
-            });    
+            });
             
 
             // divSeeMoreBtnTag click to display more/less --> By toggling class
-            divSeeMoreBtnTag.click( function( e ) {
+            divSeeMoreBtnTag.click( function( e ) 
+            {
                 e.stopPropagation();
-
-                console.log( 'divSeeMoreBtnTag clicked' );
-
                 divSeeMoreContentTag.toggleClass( 'act-l-more-open' );
 
                 if ( divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
                 {
+                    console.log( itemData );
+
                     var jsonViewer = new JSONViewer();
                     divSeeMoreContentTag.append( jsonViewer.getContainer() );
-                    jsonViewer.showJSON( me.formatJsonForDisplay( itemData ) );
+                    jsonViewer.showJSON( itemTransJson );
                 }
                 else
                 {
@@ -486,9 +482,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             });
 
 
+            me.setActivityContentDisplay( itemData, itemTransJson, divListItemContentTag, me.cwsRenderObj.configJson );
 
             // GREG change
-            me.updateActivityCard_UI_Preview( itemData, activityCardLiTag );
+            //me.updateActivityCard_UI_Preview( itemData, activityCardLiTag );
 
             me.updateActivityCard_UI_Icon( activityCardLiTag, itemData, me.cwsRenderObj );            
         }
@@ -499,6 +496,38 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
 
         return activityCardLiTag;        
+    };
+
+
+    me.setActivityContentDisplay = function( activityItem, activityTrans, divListItemContentTag, configJson )
+    {
+        var displaySettings = ConfigUtil.getActivityDisplaySettings( configJson );
+
+        //console.log( 'displaySettings: ', displaySettings );
+
+        for( var i = 0; i < displaySettings.length; i++ )
+        {
+            // Need 'activityItem', 'activityTrans'
+            var dispSettingEvalStr = displaySettings[ i ];
+            var displayEvalResult = "------------";
+
+            try
+            {
+                displayEvalResult = eval( dispSettingEvalStr );
+                //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
+            }
+            catch ( errMsg )
+            {
+                console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
+            }
+
+            divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
+
+            //"displaySetting": [
+            //    "'<b><i>' + activityItem.created + '</i></b>'",
+            //    "activityTrans.firstName + ' ' + activityTrans.lastName"
+            // ],
+        }
     };
 
 

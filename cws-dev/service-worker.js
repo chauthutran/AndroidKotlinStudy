@@ -25,7 +25,7 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "css/json-viewer.css",
-    "revision": "0ec8457d5b10dd2d7dd1a94841f520d8"
+    "revision": "b689ea46f7c937788761030dc0a641b4"
   },
   {
     "url": "css/mdDateTimePicker.min.css",
@@ -37,7 +37,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "cd2df1ff05de9edcc656bfebf9c6e917"
+    "revision": "849b62c11acbaa0313e467abc88fb7e0"
   },
   {
     "url": "css/style.css",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "d044dfbb0a10e59d26d8068487d4d4df"
+    "revision": "895c8c6e7b41d83d4646364b9b17938c"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -501,7 +501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.min.js",
-    "revision": "bbcf3bf05fa6cb58a67cfd0498f00d23"
+    "revision": "475f3bdf8d1211c09e8b8f1d83539d27"
   },
   {
     "url": "scripts/libraries/jquery-autocomplete.js",
@@ -513,7 +513,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/jquery-ui.min.js",
-    "revision": "0a497d4661df7b82feee14332ce0bdaf"
+    "revision": "7ea717799ef7fa610f53ea03784ff68e"
   },
   {
     "url": "scripts/libraries/jquery.blockUI.js",
@@ -525,7 +525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/json-viewer.js",
-    "revision": "fd884f75cd6c3a0e7c6f887bfcebb2ea"
+    "revision": "7ca03571ef1b2e5d8c2e3fc0622e0948"
   },
   {
     "url": "scripts/libraries/llqrcode.js",
@@ -649,7 +649,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/configUtil.js",
-    "revision": "fa728c15fe1f4ad76a097d4e998d9b1a"
+    "revision": "ab1aa44183715ae6d36778fda27d06ba"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -657,7 +657,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "647971787ff15544d3508db2996746d8"
+    "revision": "8b92e37b282dc50a827a89d03fabaa61"
   },
   {
     "url": "scripts/utils/inputUtil.js",

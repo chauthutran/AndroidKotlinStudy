@@ -110,3 +110,29 @@ ConfigUtil.configUserRole = function( configJson, callBack )
     }
 
 };
+
+
+ConfigUtil.getActivityDisplaySettings = function( configJson )
+{
+    var displaySettings = [ 
+        "'<b><i>' + activityItem.created + '</i></b>'"
+    ];
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.redeemDefs
+            && configJson.settings.redeemDefs.displaySettings )
+        {
+            displaySettings = configJson.settings.redeemDefs.displaySettings;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error in ConfigUtil.getActivityDisplaySettings, errMsg: ' + errMsg );
+    }
+
+
+    return displaySettings;
+};
+

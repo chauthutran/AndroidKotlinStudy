@@ -1370,7 +1370,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 {
 	try 
 	{
-		if ( iconObj ) //while sync action runs, the current iconObj object may not be rendered on the screen
+		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen
 		{
 			// read local SVG xml structure, then replace appropriate content 'holders'
 			$.get( activityType.icon.path, function(data) {
@@ -1597,14 +1597,14 @@ FormUtil.getActivityTypeComposition = function( itemData )
 				else
 				{
 					//Greg: make one up? N/A ?
-					return ( FormUtil.getActivityTypeNA( itemData ) );
+					return undefined; //( FormUtil.getActivityTypeNA( itemData ) );
 				}
 			}
 		}
 		else
 		{
 			//Greg: make one up? N/A ?
-			return ( FormUtil.getActivityTypeNA( itemData ) );
+			return undefined; //( FormUtil.getActivityTypeNA( itemData ) );
 		}
 	}
 	catch ( errMsg )
