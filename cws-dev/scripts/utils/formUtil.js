@@ -47,9 +47,36 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 	}
 
 	return objJson;
-}
+};
 
-FormUtil.generateInputJson = function( formDivSecTag, getValList )
+
+// Temp use by 'dataList' for now - might populate it fully for more common use
+FormUtil.renderInputTag = function( dataJson, containerDivTag )
+{
+	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
+
+	if ( dataJson.display ) entryTag.attr( 'display', dataJson.display );
+
+	// If 'defaultValue' exists, set val
+	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
+
+	// If containerDivTag was passed in, append to it.
+	if ( containerDivTag )
+	{
+		containerDivTag.append( entryTag );
+
+		// Set Tag Visibility
+		if ( dataJson.display === "hiddenVal" || dataJson.display === "none" )
+		{
+			containerDivTag.hide();
+		}
+	}
+
+	return entryTag;
+};
+
+
+FormUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup )
 {
 	// Input Tag values
 	var inputsJson = {};
@@ -60,6 +87,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 		var inputTag = $(this);	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
+		var dataGroup = inputTag.attr( 'dataGroup' );
 		var getVal_visible = false;
 		var getVal = false;
 
@@ -84,12 +112,59 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList )
 			var val = FormUtil.getTagVal( inputTag );
 			if ( val === null || val === undefined ) val = '';
 
+			if ( formsJsonGroup )
+			{
+				// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
+				// Add to 'formsJsonGroup' object - to be used in payloadTemplate
+				// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
+				nameVal = FormUtil.setFormsJsonGroup( nameVal, dataGroup, formsJsonGroup );
+			}
+
 			inputsJson[ nameVal ] = val;
 		}
 	});		
 
 	return inputsJson;
+};
+
+
+FormUtil.setFormsJsonGroup = function( nameVal, dataGroup, formsJsonGroup )
+{
+	// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
+	// Add to 'formsJsonGroup' object - to be used in payloadTemplate
+	// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
+
+	try
+	{
+		// if '.' has in 'nameVal', mark it as group..
+		// if dataGroup exists, put it ..
+		if ( nameVal.indexOf( '.' ) > 0 )
+		{
+			var splitNames = nameVal.split( '.' );
+			var groupName = splitNames[0];
+			nameVal = nameVal.substr( groupName.length + 1 );  // THIS ALSO AFFECTS BELOW inputsJson nameVal as well.
+
+			if ( !formsJsonGroup[ groupName ] ) formsJsonGroup[ groupName ] = {};
+
+			formsJsonGroup[ groupName ].nameVal = val;
+		}
+
+		if ( dataGroup ) 
+		{
+			if ( !formsJsonGroup[ dataGroup ] ) formsJsonGroup[ dataGroup ] = {};
+
+			formsJsonGroup[ dataGroup ].nameVal = val;
+		}
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error in FormUtil.setFormsJsonGroup, errMsg: ' + errMsg );
+	}
+
+	return nameVal;
 }
+
+
 
 FormUtil.inputPreviewLabel = function( formInput )
 {
@@ -345,31 +420,6 @@ FormUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, fill
 			
 		}
 	}
-}
-
-// Temp use by 'dataList' for now - might populate it fully for more common use
-FormUtil.renderInputTag = function( dataJson, containerDivTag )
-{
-	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
-
-	if ( dataJson.display ) entryTag.attr( 'display', dataJson.display );
-
-	// If 'defaultValue' exists, set val
-	FormUtil.setTagVal( entryTag, dataJson.defaultValue );
-
-	// If containerDivTag was passed in, append to it.
-	if ( containerDivTag )
-	{
-		containerDivTag.append( entryTag );
-
-		// Set Tag Visibility
-		if ( dataJson.display === "hiddenVal" || dataJson.display === "none" )
-		{
-			containerDivTag.hide();
-		}
-	}
-
-	return entryTag;
 }
 
 

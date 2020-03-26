@@ -284,7 +284,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
 			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" class="form-type-text inputValidation" type="text" ' + autoComplete + ' />' );
 				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
@@ -295,7 +295,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
-				entryTag = $( '<select class="selector inputValidation" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" ></select>' );
+				entryTag = $( '<select class="selector inputValidation" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" ></select>' );
 
 				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
@@ -318,9 +318,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				var btnSelect = $('<button term="" class="acceptButton">SELECT</button>');
 				var btnDisagree = $('<button term="" class="declineButton">CANCEL</button>');
-				
-				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" />'  ); //	Input with property "name" for to be send
-				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '"type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' ); //	Input for to be shown in the app
+
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+				let input = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="hidden" />'  ); //	Input with property "name" for to be send
+				let inputShow = $( '<input name="real_' + formItemJson.id + '" uid="real_' + formItemJson.uid + '" dataGroup="real_' + formItemJson.dataGroup + '" type="text" class="autoCompleteInput inputValidation"  ' + autoComplete + ' />' ); //	Input for to be shown in the app
 				let options = new OptionsManager( { name: formItemJson.uid, data: arr, search:true } ); 
 
 				var labelTerm = me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term )
@@ -367,9 +368,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					data.push( { value: year-i, text: year-i } );
 				}
 
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
 				var component = $(`
 							<div class="containerSymbol">
-								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" />
+								<input id="input_${rndID}" type="text" class="inputTrue" name="${formItemJson.id}" uid="${formItemJson.uid}" dataGroup="${formItemJson.dataGroup}" />
 								<input id="show_${rndID}" type="text" class="inputShow form-type-text inputValidation" isNumber="true" ${autoComplete} >
 								<div class="container--modalSymbol">
 									<div class="modalSymbol">
@@ -421,7 +423,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					return acum;
 				}, [] ).join( dtmSeparator );
 
-				entryTag = $( '<input data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+				entryTag = $( '<input data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" class="form-type-text inputValidation" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
 
 				wrapperInput.append( entryTag );
 				wrapperDad.append( wrapperInput, button );
@@ -476,7 +479,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				var container = $( '<div class="inputValidation inputRadio"></div>' );
 
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="RADIO ' + formItemJson.id + '" type="hidden" >' );
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" class="RADIO ' + formItemJson.id + '" type="hidden" >' );
 
 				Util2.populateRadios( formItemJson, container, optionList );
 
@@ -498,7 +502,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				Util2.populateDropdown_MultiCheckbox( formItemJson, ul, optionList );
 
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" class="MULTI_CHECKBOX ' + formItemJson.id + '" type="hidden" />' );
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" class="MULTI_CHECKBOX ' + formItemJson.id + '" type="hidden" />' );
 
 				divContentTag.append( entryTag, ul ); 
 
@@ -552,7 +557,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			else if ( formItemJson.controlType === "IMAGE" )
 			{
 				var divSelectTag = $( '<div class="imgQRInput"></div>' );
-				var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" style="display:none" />' );
+				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+				var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" style="display:none" />' );
 				var imgDisplay = $( '<img name="imgPreview_' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="">' );
 
 				divSelectTag.append( entryTag );

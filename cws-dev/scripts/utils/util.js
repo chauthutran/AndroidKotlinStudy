@@ -44,12 +44,44 @@ Util.appendArray = function( mainArr, newArr )
 	Util.mergeArrays( mainArr, newArr );
 };
 
+Util.getCombinedArrays = function( arr1, arr2 )
+{
+	var combinedArr = [];
+
+	for ( var i = 0; i < arr1.length; i++ ) combinedArr.push( arr1[ i ] );
+	for ( var i = 0; i < arr2.length; i++ ) combinedArr.push( arr2[ i ] );
+
+	return combinedArr;
+};
+
 Util.mergeJson = function( destObj, srcObj )
 {
 	for( var key in srcObj )
 	{
 		destObj[key] = srcObj[key];
 	}	
+};
+
+Util.getCombinedJson = function( obj1, obj2 )
+{
+	var combinedObj = {};
+
+	for( var key in obj1 ) combinedObj[key] = obj1[key];
+	for( var key in obj2 ) combinedObj[key] = obj2[key];
+
+	return combinedObj;
+};
+
+Util.getCombinedJsonInArr = function( objArr )
+{
+	var combinedObj = {};
+
+	for ( var i = 0; i < objArr.length; i++ ) 
+	{
+		Util.mergeJson( combinedObj, objArr[i] );
+	}
+
+	return combinedObj;
 };
 
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.

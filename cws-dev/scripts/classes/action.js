@@ -357,7 +357,8 @@ function Action( cwsRenderObj, blockObj )
 				//console.log( ActivityUtil.getActivityList() );
 
 				// Temporarily move before 'handlePayloadPreview' - since version 1 
-				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag );
+				var formsJsonGroup = {};
+				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
 
 
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
@@ -365,9 +366,7 @@ function Action( cwsRenderObj, blockObj )
 					var currBlockId = blockDivTag.attr( 'blockId' );
 
 					//var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag );
-
-
-					var previewJson = FormUtil.generateInputJson( formDivSecTag );
+					//var previewJson = FormUtil.generateInputJson( formDivSecTag );
 
 					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
 
@@ -388,8 +387,9 @@ function Action( cwsRenderObj, blockObj )
 						submitJson.actionJson = clickActionJson;
 						submitJson.url = url;
 						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
-						submitJson.payloadJson = me.reconfigurePayloadJson3( inputsJson, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
+						submitJson.payloadJson = me.reconfigurePayloadJson3( inputsJson, formsJsonGroup, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
 
+						console.log( 'submitJson.payloadJson', submitJson.payloadJson );
 						
 						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
 						if ( clickActionJson.redeemListInsert === "true" )
@@ -449,12 +449,8 @@ function Action( cwsRenderObj, blockObj )
 	
 							});
 						}
-						
 					}
-
-
-				} )
-
+				} );
 			}
 		}
 	}
@@ -603,7 +599,7 @@ function Action( cwsRenderObj, blockObj )
 
 	// ========================================================
 	
-	me.generateInputJsonByType = function( clickActionJson, formDivSecTag )
+	me.generateInputJsonByType = function( clickActionJson, formDivSecTag, formsJsonGroup )
 	{
 		var inputsJson;
 
@@ -614,12 +610,115 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody );
+			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody, formsJsonGroup );
 		}		
 
 		return inputsJson;
 	}
 
+
+	// 1. We need to get dcdConfig data..
+	// 2. Need to get 'definitionPayloadTemplate'
+	// 3. Need actionDef property <-- which fires this..
+	me.reconfigurePayloadJson3 = function( formsJson, formsJsonGroup, clickActionJson, definitionPayloadTemplates )
+	{	
+		var payloadJson;
+	
+		// If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
+		//		Otherwise, simply use 'formsJson' as payloadJson.
+		if ( clickActionJson.payloadTemplate
+			&& definitionPayloadTemplates 
+			&& definitionPayloadTemplates[ clickActionJson.payloadTemplate ] )
+		{
+			var payloadTemplate = definitionPayloadTemplates[ clickActionJson.payloadTemplate ];
+
+			// hard copy from payloadTemplate...
+			payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
+			payloadJson.DATE = new Date();
+
+			me.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
+		}
+		else 
+		{
+			payloadJson = formsJson;			
+		}
+		
+		return payloadJson;
+	};
+	
+	
+	me.traverseEval = function( obj, payloadJson, formsJsonGroup, formsJson, iDepth, limit )
+	{
+		if ( iDepth === limit )
+		{
+			console.log( 'Error in Action.traverseEval, Traverse depth limit has reached: ' + iDepth );
+		}
+		else
+		{
+			for ( var prop in obj ) 
+			{
+				var propVal = obj[prop];
+		
+				if ( typeof( propVal ) === "object" ) 
+				{
+					//console.log( prop, propVal );
+					me.traverseEval( propVal, payloadJson, formsJsonGroup, formsJson, iDepth++, limit );
+				}
+				else if ( typeof( propVal ) === "string" ) 
+				{
+					//console.log( prop, propVal );
+					try
+					{
+						obj[prop] = eval( propVal );
+					}
+					catch( errMsg )
+					{
+						console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+					}
+				}
+			}
+		}
+	};	
+
+
+	/*
+	var templateJson = 
+	{
+		"activityId": "Util.dateToStr( payloadJson.DATE ) + Util.generateRandomId(6);",
+		"userName": "FormUtil.login_UserName;",
+
+		"searchValues": {
+			"clientDetails.phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
+		},
+
+		"captureValues": {
+			"activityDate": {
+				"capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
+				"capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
+				"createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
+			},
+			
+			"activityId": "payloadJson.activityId",
+			"activityType": "'FPL-SP'",
+			"program": "'fpl'",
+			"activeUser": "'qwertyuio1'",
+			"activeUserOu": "payloadJson.userName",
+			"dc": { },
+			"location": {},
+			"transactions": [
+				{
+					"transactionType": "'c_reg'", 
+					"dataValues": "inputsJson"
+				},
+				{
+					"transactionType": "'v_iss'", 
+					"dataValues": { 
+						"voucherCode": "Util.getStr( inputsJson.voucherCode );"	
+					}
+				}
+			]
+		}
+	};
 
 	// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
 	me.reconfigurePayloadJson2 = function( inputsJson )
@@ -691,108 +790,6 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 
-	// 1. We need to get dcdConfig data..
-	// 2. Need to get 'definitionPayloadTemplate'
-	// 3. Need actionDef property <-- which fires this..
-	me.reconfigurePayloadJson3 = function( inputsJson, clickActionJson, definitionPayloadTemplates )
-	{	
-		var payloadJson;
-	
-		// If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
-		//		Otherwise, simply use 'inputsJson' as payloadJson.
-		if ( clickActionJson.payloadTemplate
-			&& definitionPayloadTemplates 
-			&& definitionPayloadTemplates[ clickActionJson.payloadTemplate ] )
-		{
-			var payloadTemplate = definitionPayloadTemplates[ clickActionJson.payloadTemplate ];
-
-			// hard copy from payloadTemplate...
-			payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
-			payloadJson.DATE = new Date();
-
-			me.traverseEval( payloadJson, payloadJson, inputsJson, 0, 30 );
-		}
-		else 
-		{
-			payloadJson = inputsJson;			
-		}
-		
-		return payloadJson;
-	};
-	
-	
-	me.traverseEval = function( obj, payloadJson, inputsJson, iDepth, limit )
-	{
-		if ( iDepth === limit )
-		{
-			console.log( 'Error in Action.traverseEval, Traverse depth limit has reached: ' + iDepth );
-		}
-		else
-		{
-			for ( var prop in obj ) 
-			{
-				var propVal = obj[prop];
-		
-				if ( typeof( propVal ) === "object" ) 
-				{
-					//console.log( prop, propVal );
-					me.traverseEval( propVal, payloadJson, inputsJson, iDepth++, limit );
-				}
-				else if ( typeof( propVal ) === "string" ) 
-				{
-					//console.log( prop, propVal );
-					try
-					{
-						obj[prop] = eval( propVal );
-					}
-					catch( errMsg )
-					{
-						console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
-					}
-				}
-			}
-		}
-	};	
-
-
-	/*
-	var templateJson = 
-	{
-		"activityId": "Util.dateToStr( payloadJson.DATE ) + Util.generateRandomId(6);",
-		"userName": "FormUtil.login_UserName;",
-
-		"searchValues": {
-			"clientDetails.phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
-		},
-
-		"captureValues": {
-			"activityDate": {
-				"capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
-				"capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
-				"createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
-			},
-			
-			"activityId": "payloadJson.activityId",
-			"activityType": "'FPL-SP'",
-			"program": "'fpl'",
-			"activeUser": "'qwertyuio1'",
-			"activeUserOu": "payloadJson.userName",
-			"dc": { },
-			"location": {},
-			"transactions": [
-				{
-					"transactionType": "'c_reg'", 
-					"dataValues": "inputsJson"
-				},
-				{
-					"transactionType": "'v_iss'", 
-					"dataValues": { 
-						"voucherCode": "Util.getStr( inputsJson.voucherCode );"	
-					}
-				}
-			]
-		}
-	};
 	*/
 
 }
