@@ -499,6 +499,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.setActivityContentDisplay = function( activityItem, activityTrans, divListItemContentTag, configJson )
     {
         var displaySettings = ConfigUtil.getActivityDisplaySettings( configJson );
+        var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
 
         //console.log( 'displaySettings: ', displaySettings );
 
@@ -506,11 +507,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {
             // If displaySettings does not exists, simply display the date label <-- fixed display
             // Title - date description..
-            var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
             if ( activityItem.created ) divLabelTag.html( $.format.date( activityItem.created, "MMM dd, yyyy - HH:mm" ) );
         }
         else
         {
+            divLabelTag.remove();
             //"displaySetting": [
             //    "'<b><i>' + activityItem.created + '</i></b>'",
             //    "activityTrans.firstName + ' ' + activityTrans.lastName"
