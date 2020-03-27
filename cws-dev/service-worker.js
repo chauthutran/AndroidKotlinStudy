@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "895c8c6e7b41d83d4646364b9b17938c"
+    "revision": "52be1aaf17d38687b0397c7e9e3e8113"
   },
   {
     "url": "scripts/classes/blockListView.js",

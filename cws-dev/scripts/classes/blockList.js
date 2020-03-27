@@ -434,10 +434,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             activityCardLiTag.attr( 'itemId', itemData.id );
             activityCardAnchorTag.attr( 'itemId', itemData.id );
 
-            // Title - date description..
-            var labelTag = activityCardLiTag.find( 'div.listItem_label_date' );
-            if ( itemData.created ) labelTag.html( $.format.date( itemData.created, "MMM dd, yyyy - HH:mm" ) );
-
 
             var itemTransJson = me.formatJsonForDisplay( itemData );
 
@@ -482,6 +478,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             });
 
 
+            // ActivityCard data display (preview)
             me.setActivityContentDisplay( itemData, itemTransJson, divListItemContentTag, me.cwsRenderObj.configJson );
 
             // GREG change
@@ -505,29 +502,39 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         //console.log( 'displaySettings: ', displaySettings );
 
-        for( var i = 0; i < displaySettings.length; i++ )
+        if ( !displaySettings )
         {
-            // Need 'activityItem', 'activityTrans'
-            var dispSettingEvalStr = displaySettings[ i ];
-            var displayEvalResult = "------------";
-
-            try
-            {
-                displayEvalResult = eval( dispSettingEvalStr );
-                //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
-            }
-            catch ( errMsg )
-            {
-                console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
-            }
-
-            divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
-
+            // If displaySettings does not exists, simply display the date label <-- fixed display
+            // Title - date description..
+            var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
+            if ( activityItem.created ) divLabelTag.html( $.format.date( activityItem.created, "MMM dd, yyyy - HH:mm" ) );
+        }
+        else
+        {
             //"displaySetting": [
             //    "'<b><i>' + activityItem.created + '</i></b>'",
             //    "activityTrans.firstName + ' ' + activityTrans.lastName"
             // ],
-        }
+
+            for( var i = 0; i < displaySettings.length; i++ )
+            {
+                // Need 'activityItem', 'activityTrans'
+                var dispSettingEvalStr = displaySettings[ i ];
+                var displayEvalResult = "------------";
+    
+                try
+                {
+                    displayEvalResult = eval( dispSettingEvalStr );
+                    //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
+                }
+                catch ( errMsg )
+                {
+                    console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
+                }
+    
+                divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );    
+            }
+        }                    
     };
 
 
