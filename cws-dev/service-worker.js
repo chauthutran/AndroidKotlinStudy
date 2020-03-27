@@ -37,7 +37,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/responsive.css",
-    "revision": "849b62c11acbaa0313e467abc88fb7e0"
+    "revision": "e109ba7359385d0afd83176a97f7b918"
   },
   {
     "url": "css/style.css",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "52be1aaf17d38687b0397c7e9e3e8113"
+    "revision": "e9931b6ec3c2efbfd2d1cfe9305aed01"
   },
   {
     "url": "scripts/classes/blockListView.js",
