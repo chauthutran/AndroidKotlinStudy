@@ -121,7 +121,7 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
 
     // Retrieve data..
-    SyncManagerNew.downloadActivities( function( downloadSuccess, mongoClients ) 
+    SyncManagerNew.downloadClients( function( downloadSuccess, mongoClients ) 
     {
         var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
@@ -134,16 +134,18 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         else
         {
             // For each client record, convert to activity and add it..
-            DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
-            {
-                SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
-                {
-                    // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
-                    LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
+            //DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
+            //{
 
-                    if ( callBack ) callBack( downloadSuccess, changeOccurred );
-                });
+            SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
+            {
+                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+                LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
+
+                if ( callBack ) callBack( downloadSuccess, changeOccurred );
             });
+
+            //});
         }
     });    
 };
@@ -226,6 +228,50 @@ SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderO
 
 // ===================================================
 // === 2. 'syncDown' Related Methods =============
+
+// Perform Server Operation..
+SyncManagerNew.downloadClients = function( callBack )
+{
+    try
+    {
+        // TODO: 
+        var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var dateRange_gtStr;
+        //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
+        var url = WsApiManager.wsApi_NEW_Dev + '/PWA.syncDown';
+		var payloadJson = {
+            "activities": { "$elemMatch": { "activeUser": activeUser } } 
+        };
+
+        // If last download date exists, search after that. Otherwise, get all
+        var lastDownloadDateISOStr = LocalStgMng.lastDownload_Get();
+
+        if ( lastDownloadDateISOStr ) 
+        { 
+            dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
+            payloadJson.updated = { "$gte": dateRange_gtStr };
+        }
+
+
+        var loadingTag = undefined;
+
+        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
+
+            // NOTE: IMPORTANT:
+            // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
+            if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
+
+            callBack( success, mongoClientsJson );
+        });        
+    }
+    catch( errMsg )
+    {
+        console.log( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
+        callBack( false );
+    }
+};
+
+
 
 // Perform Server Operation..
 SyncManagerNew.downloadActivities = function( callBack )
@@ -335,6 +381,77 @@ SyncManagerNew.mergeDownloadedList = function( mainList, newList, callBack )
     if ( changeOccurred ) 
     {
         ActivityListManager.saveCurrent_ActivitiesStore( function() {
+            if ( callBack ) callBack( changeOccurred );
+        });
+    } 
+    else 
+    {
+        if ( callBack ) callBack( changeOccurred );
+    }
+}; 
+
+
+
+SyncManagerNew.mergeDownloadedClients = function( mainList, newList, callBack )
+{
+    var changeOccurred = false;
+    var newList_filtered = [];
+
+    // Check list for matching client
+
+    //  If does not exists in mainList, put into the mainList..
+    //  If exists, and if new one is later one, copy the content into main item (merging) 
+
+    for ( var i = 0; i < newList.length; i++ )
+    {        
+        var newItem = newList[i];
+        var existingItem = Util.getFromList( mainList, newItem._id, "_id" );
+
+        try
+        {
+            // If matching id item(activity) already exists in device, 
+            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
+            if ( existingItem )
+            {
+                if ( newItem.updated > existingItem.updated ) 
+                {
+                    // Merge newItem into existingItem (it does not delete existing attributes)
+                    // Also, should not change reference, thus only change contents rather than straight assignment
+                    Util.mergeJson( existingItem, newItem );
+                    //console.log( 'Item content merged' );
+                    changeOccurred = true;
+                }
+                //else console.log( 'Item content not merged - new one not latest..' );
+            }
+            else
+            {
+                // If not existing on device, simply add it.
+                newList_filtered.push( newItem );
+                //console.log( 'Item content merged' );
+                changeOccurred = true;
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
+            console.log( newItem );
+            console.log( existingItem );
+        }
+    }
+
+
+    // if new list to push to mainList exists, add to the list.
+    if ( newList_filtered.length > 0 ) 
+    {
+        // 'changeOccurred' already set to 'true' when adding to 'newList_filtered' above.
+        Util.appendArray( mainList, newList_filtered );
+    }
+
+
+    if ( changeOccurred ) 
+    {
+        // Need to create clientListManager..
+        ClientListManager.saveCurrent_ClientStore( function() {
             if ( callBack ) callBack( changeOccurred );
         });
     } 
