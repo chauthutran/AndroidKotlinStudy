@@ -12,8 +12,10 @@ function ClientListManager()  {};
 
 ClientListManager._clientsStore = { 'list': [] };
 ClientListManager._activityList = [];
-ClientListManager._userLoginId;  // ??
-ClientListManager._userLoginPwd;
+ClientListManager._activityToClient = {};  // 
+
+//ClientListManager._userLoginId;  // ??
+//ClientListManager._userLoginPwd;
 
 // ===================================================
 // === MAIN FEATURES =============
@@ -25,19 +27,35 @@ ClientListManager.getClientList = function()
     return ClientListManager._clientsStore.list;
 };
 
-// ClientListManager.getActivityStore = function()  // <-- Will need if we store other data than list..
 
-
-ClientListManager.updateActivityListFromClient = function()
+ClientListManager.setActivityListNMap_FromClients = function()
 {
-    return ClientListManager._clientsStore.list;
+    var clientList = ClientListManager.getClientList();
 
+    // Reset the activityList and mapping to client
+    ClientListManager._activityList = [];
+    ClientListManager._activityToClient = {};
 
+    for ( var i = 0; i < clientList.length; i++ )
+    {        
+        var client = clientList[i];
+
+        if ( client.activities ) 
+        {
+            for ( var x = 0; x < client.activities.length; x++ )
+            {
+                var activity = client.activities[ x ];
+                ClientListManager._activityList.push( activity );
+
+                if ( activity.activityId ) ClientListManager._activityToClient[ activity.activityId ] = client;
+            }    
+        }
+    }
 };
 
 
 // Called After Login
-ClientListManager.loadClientsStoreFromStorage = function( callBack )
+ClientListManager.loadClientsStore_FromStorage = function( callBack )
 {
     DataManager2.getData_ClientsStore( function( jsonData_FromStorage ) {
 
@@ -57,6 +75,12 @@ ClientListManager.saveCurrent_ClientsStore = function( callBack )
     DataManager2.saveData_ClientsStore( ClientListManager._clientsStore, callBack );
 };
 
+
+
+// --------------------------------------------
+// -------- Below are not implemented properly
+
+/*
 
 // Get single client Item (by property value search) from the list
 ClientListManager.getClientItem = function( propName, propVal )
@@ -90,6 +114,7 @@ ClientListManager.insertNewActivities = function( newActivities, callBack )
 
 // blockList.mergeDownloadedList does it's own saving/modify..
 // ClientListManager.mergeActivities = function( newActivity, callBack )
+
 
 // ===================================================
 // === OTHERS Methods =============
@@ -136,7 +161,7 @@ ClientListManager.generateActivityData = function( dataJson, statusStr )
     return activityData;
 };
 
-
+*/
 
 // =======================================================
 
@@ -145,41 +170,36 @@ ClientListManager.generateActivityData = function( dataJson, statusStr )
 //  1. simply check 'updated' and save to storage..  
 //
 //
-ClientListManager.mergeDownloadedClients = function( newList, callBack )
+ClientListManager.mergeDownloadedClients = function( mongoClients, callBack )
 {
-    var mainList = ClientListManager.getClientList();
+    var pwaClients = ClientListManager.getClientList();
     var changeOccurred = false;
-    var newList_filtered = [];
+    var newClients = [];
 
     // Check list for matching client
 
-    //  If does not exists in mainList, put into the mainList..
+    //  If does not exists in pwaClients, put into the pwaClients..
     //  If exists, and if new one is later one, copy the content into main item (merging) 
 
-    for ( var i = 0; i < newList.length; i++ )
+    for ( var i = 0; i < mongoClients.length; i++ )
     {        
-        var newItem = newList[i];
-        var existingItem = Util.getFromList( mainList, newItem._id, "_id" );
+        var mongoClient = mongoClients[i];
+        var pwaClient = Util.getFromList( pwaClients, mongoClient._id, "_id" );
 
         try
         {
             // If matching id item(activity) already exists in device, 
             // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
-            if ( existingItem )
+            if ( pwaClient )
             {
-                if ( newItem.updated > existingItem.updated ) 
+                if ( mongoClient.updated > pwaClient.updated ) 
                 {
+                    // Get activities in mongoClient that does not exists...
+                    ClientListManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities );
 
-                    // TODO: Need to rewrite the client .. just reusing the object container...
-
-                    // IDEA: WHAT ABOUT WE JUST OVERWRITE THEM AND REFRESH THE LIST??
-
-                    ClientListManager.setClientPWAFormat( newItem );
-
-                    existingItem = newItem;  // IMPORETANT NOTE: Reference Changed, thus, need refresh!!!
-
-                    //Util.mergeJson( existingItem, newItem );
-                    // NOTE: Activity List Refrences would also get changed 
+                    // Update clientDetail from mongoClient
+                    pwaClient.clientDetails = mongoClient.clientDetails;
+                    pwaClient.updated = mongoClient.updated;
 
                     changeOccurred = true;
                 }
@@ -187,36 +207,33 @@ ClientListManager.mergeDownloadedClients = function( newList, callBack )
             }
             else
             {
-                // TODO: Need to add 'searchValues' & 'captureValues' in each activities...
-
-
-
-
                 // If not existing on device, simply add it.
-                newList_filtered.push( newItem );
+                newClients.push( mongoClient );
+
                 //console.log( 'Item content merged' );
                 changeOccurred = true;
             }
         }
         catch( errMsg )
         {
-            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
-            console.log( newItem );
-            console.log( existingItem );
+            console.log( 'Error during ClientListManager.mergeDownloadedClients', mongoClient, pwaClient );
         }
     }
 
 
-    // if new list to push to mainList exists, add to the list.
-    if ( newList_filtered.length > 0 ) 
+    // if new list to push to pwaClients exists, add to the list.
+    if ( newClients.length > 0 ) 
     {
-        // 'changeOccurred' already set to 'true' when adding to 'newList_filtered' above.
-        Util.appendArray( mainList, newList_filtered );
+        Util.appendArray( pwaClients, newClients );
     }
 
 
     if ( changeOccurred ) 
     {
+        // Need to update the activityList and activity-client mapping list..
+        // Update the list...
+        ClientListManager.setActivityListNMap_FromClients();
+
         // Need to create clientListManager..
         ClientListManager.saveCurrent_ClientsStore( function() {
             if ( callBack ) callBack( changeOccurred );
@@ -227,6 +244,41 @@ ClientListManager.mergeDownloadedClients = function( newList, callBack )
         if ( callBack ) callBack( changeOccurred );
     }
 }; 
+
+
+ClientListManager.mergeDownloadedActivities = function( mongoActivities, pwaActivities )
+{
+    var newActivities = [];
+
+    for ( var i = 0; i < mongoActivities.length; i++ )
+    {        
+        var mongoActivity = mongoActivities[i];
+        var pwaActivity = Util.getFromList( pwaActivities, mongoActivity.activityId, "activityId" );
+
+        try
+        {
+            // Only the ones (mongo) that does not exists in PWA, add to the list..
+            if ( !pwaActivity )
+            {
+                newActivities.push( mongoActivity );
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error during ClientListManager.mergeDownloadedActivities: ', mongoActivity, pwaActivity );
+        }
+    }
+
+    // if new list to push to pwaActivities exists, add to the list.
+    if ( newActivities.length > 0 ) 
+    {
+        Util.appendArray( pwaActivities, newActivities );
+    }
+
+    // Return the number of added ones.
+    return newActivities.length;
+};
+
 
 ClientListManager.setClientPWAFormat = function( newClient )
 {
@@ -268,19 +320,24 @@ ClientListManager.setActivityPWAFormat = function( newActivity )
     }
 };
 
-// When sync, do we do client level?  or activity level?
-//      --> for new activity, we download..
-//      --> for existing activity not yet submitted, we also need to update this...
 
+//     NOTE:
+//          'searchValues' & 'captureValues' only exists on draft ready for Sync Item.
+//          Once synced, it will be removed since it will get Mongo updated one
+//               - which does not have 'searchValues' & 'captureValues' format.
 
 // Merge Cases:
 
 //      1. New Device: 
 //          Get All Clients with the activeUser Id..
 //              --> no date range..
+//              - But if clients data exists on PWA, we need merging..
+//                  if 'updated' is later on mongo side, get activities that PWA does not have..
+//                  and update the PWA client details (from mongo one)
+//                  - Otherwise, if PWA 'updated' is same or higher(Not possible), do not do update?
 //
 //      2. SyncDown with date
-//          Add clientId, but with Date range.. 
+//          In search json, 'find', do by clientId, but with Date range.. 
 //              --> new clients  <-- simply add to client list
 //              --> existing client with differnt update
 //                  - follow mongoDB data!!!
@@ -294,10 +351,7 @@ ClientListManager.setActivityPWAFormat = function( newActivity )
 //              '_id' : clientId.
 //              For activity, generate activityId and send 'activityId' : activityId <-- in search..
 //              <-- If client not found, new client case.  If found, but activity not found, new activity case.
-//
-//          B. 
-//          - one new activity REDEEM case
-//              clientId
+//              After mongo SyncUp, get mongo info and save here..
 //              
 //
 //    If client detail is updated, it will be by/through activity.  Thus, we can simply check 'update'

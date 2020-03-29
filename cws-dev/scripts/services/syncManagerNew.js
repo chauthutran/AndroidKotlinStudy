@@ -133,28 +133,16 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         }
         else
         {
-            // For each client record, convert to activity and add it..
             //DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
-            //{
-
-            ClientListManager.mergeDownloadedClients( mongoClients, function( changeOccurred ) 
+            //SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
+            ClientListManager.mergeDownloadedClients( mongoClients, function( changeOccurred_atMerge ) 
             {
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
 
-                if ( callBack ) callBack( downloadSuccess, changeOccurred );
+                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge );
             });
-
             
-            //SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
-            //{
-                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
-            //    LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
-
-            //    if ( callBack ) callBack( downloadSuccess, changeOccurred );
-            //});
-
-            //});
         }
     });    
 };
