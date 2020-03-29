@@ -30,11 +30,13 @@ DataManager2.getData = function( secName, callBack )
 	var storageTypeStr = DataManager2.getStorageType( secName );
 	DataManager2.getDataByStorageType( storageTypeStr, secName, callBack );
 };
+
 // GetData - IndexedDB
 DataManager2.getData_IDB = function( secName, callBack ) 
 {
 	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, callBack );
 };
+
 // GetData - LocalStorage
 DataManager2.getData_LS = function( secName, callBack ) 
 {
@@ -167,6 +169,18 @@ DataManager2.getData_ActivityList = function( callBack )
 DataManager2.saveData_ActivityList = function( jsonData, callBack )
 {
 	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
+};
+
+// ---------------------------------
+
+DataManager2.getData_ClientsStore = function( callBack )
+{
+	DataManager2.getData_IDB( Constants.storageName_clientList + '_' + FormUtil.login_UserName, callBack );
+};
+
+DataManager2.saveData_ClientsStore = function( jsonData, callBack )
+{
+	DataManager2.saveData_IDB( Constants.storageName_clientList + '_' + FormUtil.login_UserName, jsonData, callBack );
 };
 
 
@@ -452,6 +466,7 @@ DataManager2.getIV = function( callBack )
 	{
 		DataManager2.getSessionData( function( data ) { 
 
+			// NOTE: DOES NOT GET USED ANYMORE!!
 			if ( data && data.user )
 			{
 				if ( callBack ) callBack( Util.decrypt( FormUtil.getUserSessionAttr( data.user,'pin' ), 4) );

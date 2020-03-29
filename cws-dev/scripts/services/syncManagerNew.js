@@ -137,13 +137,22 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
             //DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
             //{
 
-            SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
+            ClientListManager.mergeDownloadedClients( mongoClients, function( changeOccurred ) 
             {
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
 
                 if ( callBack ) callBack( downloadSuccess, changeOccurred );
             });
+
+            
+            //SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
+            //{
+                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+            //    LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
+
+            //    if ( callBack ) callBack( downloadSuccess, changeOccurred );
+            //});
 
             //});
         }
