@@ -51,7 +51,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.blockList_UL_Tag = blockList_UL_Tag;
     me.viewListNames = viewListNames;
 
-    me.mainList; // = ActivityListManager.getActivityList();
+    me.mainList;
     me.viewsDefinitionList; // = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
     me.viewListDefs = [];
 
@@ -136,7 +136,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
     me.setUpInitialData = function()
     {
-        me.mainList = ActivityListManager.getActivityList();
+        me.mainList = ActivityDataManager.getActivityList();
         me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
 
         // Set Filter View name list and those view's definition info.

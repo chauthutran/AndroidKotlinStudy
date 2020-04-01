@@ -218,7 +218,11 @@ Util.unselectAllOption = function ( listTag ) {
 
 Util.getJsonDeepCopy = function( jsonObj )
 {
-	return JSON.parse( JSON.stringify( jsonObj ) );
+	var newJsonObj;
+
+	if ( jsonObj ) newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+
+	return newJsonObj;
 };
 
 
@@ -355,7 +359,7 @@ Util.getFromListByName = function( list, name )
 
 	for( i = 0; i < list.length; i++ )
 	{
-		if ( list[i].name == name )
+		if ( list[i].name === name )
 		{
 			item = list[i];
 			break;

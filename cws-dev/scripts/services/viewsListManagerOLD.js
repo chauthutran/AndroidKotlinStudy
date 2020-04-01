@@ -115,7 +115,7 @@ function ViewsList( blockList )
         me.blockList_TagsLI.each( function ( key, li ) 
         {
             // NB: variable [activityItem] IS RESERVED FOR EVALUATIONS INSIDE me.viewsList_CurrentItem.query
-            var activityItem = Util.getFromList( ActivityListManager.getActivityList(), li.getAttribute("itemid"), "id" );
+            var activityItem = Util.getFromList( ActivityDataManager.getActivityList(), li.getAttribute("itemid"), "id" );
             var evaluate = me.viewListItem_Filter( me.viewsList_CurrentItem.query, activityItem );
 
             if( evaluate ) $( li ).show();
@@ -257,7 +257,7 @@ function ViewsList( blockList )
         // 2. apply filters
         var returnData = [];
 
-        var list = ActivityListManager.getActivityList();
+        var list = ActivityDataManager.getActivityList();
 
         for ( var i = 0; i < list.length; i++ )
         {

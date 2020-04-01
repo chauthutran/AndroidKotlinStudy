@@ -1,0 +1,295 @@
+// =========================================
+// -------------------------------------------------
+//     ClientDataManager
+//          - keeps client list data & has methods related to that.
+//
+// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
+//
+//
+// -------------------------------------------------
+
+function ClientDataManager()  {};
+
+ClientDataManager._clientsStore = { 'list': [] };
+ClientDataManager._clientsIdx = {};
+ClientDataManager._commonPayloadClientId = "CommonPayloadClient";
+//ClientDataManager._userLoginId;  // ??
+//ClientDataManager._userLoginPwd;
+
+ClientDataManager.template_Client = {
+    '_id': '',
+    'clientDetails': {},
+    'activities': []        
+};
+
+// ===================================================
+// === MAIN FEATURES =============
+
+// ----- Get  Client ----------------
+
+// Get ClientList from memory
+ClientDataManager.getClientList = function()
+{
+    return ClientDataManager._clientsStore.list;
+};
+
+
+// Get single client Item (by property value search) from the list
+// TODO: SHOULD BE OBSOLETE
+ClientDataManager.getClientItem = function( propName, propVal )
+{
+    return Util.getFromList( ClientDataManager.getClientList(), propVal, propName );    
+};
+
+ClientDataManager.getClientById = function( idStr )
+{
+    return ClientDataManager._clientsIdx[ idStr ];
+};
+
+
+// ----- Insert Client ----------------
+
+ClientDataManager.insertClient = function( client )
+{
+    ClientDataManager.insertClients( [ client ] );
+};
+
+ClientDataManager.insertClients = function( clients )
+{
+    // Add to the beginning of the list..
+    var list = ClientDataManager.getClientList();
+
+    // Due to using 'unshift' to add to top, we are pushing the back of newActivities list item.
+    for ( var i = clients.length - 1; i >= 0; i-- )
+    {
+        var client = clients[ i ];
+        list.unshift( client );         
+        ClientDataManager.addClientIndex( client );
+        ActivityDataManager.addToActivityList_NIndexes( client );
+    }
+    // NOTE: Not automatically saved. Manually call 'save' after insert.
+};
+
+ClientDataManager.createCommonPayloadClient = function()
+{
+    // Call it from template?
+    var commonPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
+
+    commonPayloadClient._id = ClientDataManager._commonPayloadClientId;
+
+    ClientDataManager.insertClient( commonPayloadClient );
+
+    return commonPayloadClient;
+};
+
+ClientDataManager.getCommonPayloadClient = function()
+{
+    // If Common Payload Client already exists, return that client.
+    // If not, create one, add to the list.
+    var commonPayloadClient = ClientDataManager.getClientById( ClientDataManager._commonPayloadClientId );
+
+    if ( !commonPayloadClient ) commonPayloadClient = ClientDataManager.createCommonPayloadClient();
+
+    return commonPayloadClient;
+    // Do not need to save to storage (IDB) since the caller will save it if there are any addition to here.
+};
+
+// --------------------------------------------
+
+// Called After Login
+ClientDataManager.loadClientsStore_FromStorage = function( callBack )
+{
+    DataManager2.getData_ClientsStore( function( jsonData_FromStorage ) {
+
+        if ( jsonData_FromStorage && jsonData_FromStorage.list )
+        {
+            ClientDataManager._clientsStore.list = jsonData_FromStorage.list;
+            ClientDataManager.regenClientIndex();
+        }
+
+        if ( callBack ) callBack( ClientDataManager._clientsStore );
+    });
+};
+
+
+// After making changes to the list/activityStore (directly), call this to save to storage (IndexedDB)
+ClientDataManager.saveCurrent_ClientsStore = function( callBack )
+{
+    DataManager2.saveData_ClientsStore( ClientDataManager._clientsStore, callBack );
+};
+
+
+// ---------- Client Index..
+
+ClientDataManager.regenClientIndex = function()
+{
+    ClientDataManager._clientsIdx = {};
+
+    var clientList = ClientDataManager._clientsStore.list;
+
+    for ( var i = 0; i < clientList.length; i++ )
+    {
+        ClientDataManager.addClientIndex( clientList[ i ] );
+    }
+};
+
+
+ClientDataManager.addClientIndex = function( client )
+{
+    if ( client._id )
+    {
+        ClientDataManager._clientsIdx[ client._id ] = client;
+    }
+};
+
+// ======================================================
+// === MERGE RELATED =====================
+
+ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
+{
+    var pwaClients = ClientDataManager.getClientList();
+    var changeOccurred = false;
+    var updateOccurred = false;
+    var newClients = [];
+
+    // Check list for matching client
+
+    //  If does not exists in pwaClients, put into the pwaClients..
+    //  If exists, and if new one is later one, copy the content into main item (merging) 
+
+    for ( var i = 0; i < mongoClients.length; i++ )
+    {        
+        var mongoClient = mongoClients[i];
+        // TODO: This pwaClientList should be indexed on 'clientDataManager' for performance..
+        var pwaClient = Util.getFromList( pwaClients, mongoClient._id, "_id" );
+
+        try
+        {
+            // If matching id item(activity) already exists in device, 
+            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
+            if ( pwaClient )
+            {
+                if ( mongoClient.updated > pwaClient.updated ) 
+                {
+                    // Get activities in mongoClient that does not exists...
+                    ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient );
+
+                    // Update clientDetail from mongoClient
+                    pwaClient.clientDetails = mongoClient.clientDetails;
+                    pwaClient.updated = mongoClient.updated;
+
+                    changeOccurred = true;
+                    updateOccurred = true;
+                }
+                //else console.log( 'Item content not merged - new one not latest..' );
+            }
+            else
+            {
+                // If not existing on device, simply add it.
+                newClients.push( mongoClient );
+
+                //console.log( 'Item content merged' );
+                changeOccurred = true;
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error during ClientDataManager.mergeDownloadedClients', mongoClient, pwaClient );
+        }
+    }
+
+
+    if ( changeOccurred ) 
+    {
+        // if new list to push to pwaClients exists, add to the list.
+        if ( newClients.length > 0 ) 
+        {
+            ClientDataManager.insertClients( newClients, callBack );        
+        }        
+
+        // Need to create ClientDataManager..
+        ClientDataManager.saveCurrent_ClientsStore( function() {
+            if ( callBack ) callBack( changeOccurred );
+        });
+    } 
+    else 
+    {
+        if ( callBack ) callBack( changeOccurred );
+    }
+}; 
+
+
+
+// --------------------------------------------
+// -------- Below are not implemented properly
+
+
+// --------------------------------------
+// -- Ways to add data to main list
+
+// ===================================================
+// === OTHERS Methods =============
+
+
+// =======================================================
+
+
+//     NOTE:
+//          'searchValues' & 'captureValues' only exists on draft ready for Sync Item.
+//          Once synced, it will be removed since it will get Mongo updated one
+//               - which does not have 'searchValues' & 'captureValues' format.
+
+// Merge Cases:
+
+//      1. New Device: 
+//          Get All Clients with the activeUser Id..
+//              --> no date range..
+//              - But if clients data exists on PWA, we need merging..
+//                  if 'updated' is later on mongo side, get activities that PWA does not have..
+//                  and update the PWA client details (from mongo one)
+//                  - Otherwise, if PWA 'updated' is same or higher(Not possible), do not do update?
+//
+//      2. SyncDown with date
+//          In search json, 'find', do by clientId, but with Date range.. 
+//              --> new clients  <-- simply add to client list
+//              --> existing client with differnt update
+//                  - follow mongoDB data!!!
+//
+//              - Update client List and activity List..
+//
+//      3. SyncUp
+//          - one new activity ISS case
+//          - How do we tell if client of this activity exists?
+//          A. if PWA store has client, online/offline, use this client Id in search
+//              '_id' : clientId.
+//              For activity, generate activityId and send 'activityId' : activityId <-- in search..
+//              <-- If client not found, new client case.  If found, but activity not found, new activity case.
+//              After mongo SyncUp, get mongo info and save here..
+//              
+//
+//    If client detail is updated, it will be by/through activity.  Thus, we can simply check 'update'
+//          date.  See which one is later one, and simply take the client Detail update..
+//          - Which means, for 'SyncDown', if same client exists, it should always get mongo's clientDetail 
+//            and overwrite to PWA one - if mongo one is later one.
+//
+//    If the 'updated' date is different, 
+//      even if PWA one is later one, there could be case there both got updated, THUS
+//    IF 'updated' is same, no changes..
+//    IF DIFF, we look at activities...
+//          --> ** We do not need to check activity ID since it is only created or not.
+//          We only get activities not exists in both mongo and PWA
+//          And run them in order <-- by activityDate (UTC)?
+//              --> But PWA one would not have mongoUTC date, thus, these are still pending ones...
+//                  <-- Not influence details..
+
+//          Thus, we only get the mongo ones that does not exist in PWA 
+//              + update client detail...
+//              + add these activities on PWA activity list.
+//              - while keeping the not, yet, submitted activities...
+//
+//
+//      ** 'SyncUp'
+//          - We only save 'updated' time mark if we successfully get mongo save confirmation!!
+//              --> Better, yet, get it from mongo, so that the 'updated' date is same..
+//
+//

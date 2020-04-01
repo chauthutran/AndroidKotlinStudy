@@ -53,6 +53,47 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
         }
     };
 
+    // ----------------------------------------------------
+
+    // Perform Submit Operation..
+    me.performActivity = function( activityJson, callBack )
+    {
+        try
+        {
+            activityJson.processing
+
+
+            // if the activity type is 'redeem'..
+            //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
+            FormUtil.submitRedeem( activityJson.processing.url
+                , itemData.data.payloadJson
+                , itemData.data.actionJson
+                , undefined
+                , function( success, returnJson ) {
+                callBack( success, returnJson );
+            });
+
+            //FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
+
+
+            FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
+            {
+                if ( returnFunc ) returnFunc( success, returnJson );
+                if ( asyncCall ) asyncCall( returnJson );
+                if ( syncCall ) syncCall();
+            });            
+
+
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error in ActivityItem.performActivity - ' + errMsg );
+            callBack( false );
+        }
+    };
+
+
+
 
     // TODO: WILL INTEGRATE THE 'ActivityCard' Tag creation..
     /*    
@@ -283,7 +324,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_Data_saveToDB = function( itemJson, callBack )
     {
-        var activityItem = ActivityListManager.getActivityItem( "id", itemJson.id );
+        var activityItem = ActivityDataManager.getActivityItem( "activityId", itemJson.activityId );
 
         if ( activityItem )
         {
@@ -294,7 +335,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
             // activityItem.history = itemJson.history;
             activityItem.status = itemJson.status;
 
-            ActivityListManager.saveCurrent_ActivitiesStore( callBack );
+            ClientDataManager.saveCurrent_ClientsStore( callBack );
         }
         else
         {

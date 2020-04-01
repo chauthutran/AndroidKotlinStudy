@@ -336,7 +336,7 @@ function statistics( cwsRender )
     me.createLocalAnalytics = function( callBack )
     {
 
-        var myData = ActivityListManager.getActivityList();
+        var myData = ActivityDataManager.getActivityList();
 
 
         for (var a = 0; a < me.activityTypes.length; a++) 

@@ -40,7 +40,7 @@ SyncManagerNew.blockListObj;  // If
 // === MAIN 2 FEATURES =============
 
 // 1. Run 'sync' on a activityItem
-SyncManagerNew.syncItem = function( activityItem, callBack )
+SyncManagerNew.syncUpItem = function( activityItem, callBack )
 {
     try
     {
@@ -71,7 +71,7 @@ SyncManagerNew.syncItem = function( activityItem, callBack )
     catch( errMsg )
     {
         // NOTE: Even with error, we want to return with 'callBack' since we want next item to continue if multiple run case.
-        console.log( 'Error happened during SyncManagerNew.syncItem - ' + errMsg );
+        console.log( 'Error happened during SyncManagerNew.syncUpItem - ' + errMsg );
         callBack( false );
     }
 };
@@ -90,7 +90,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             // get activityItems (for upload) > not already uploaded (to be processed)
             SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( itemDataList ){
     
-                SyncManagerNew.syncItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
+                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
     
                     console.log( 'syncAll finished' );
                     SyncManagerNew.syncFinish();
@@ -134,8 +134,8 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         else
         {
             //DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
-            //SyncManagerNew.mergeDownloadedList( ActivityListManager.getActivityList(), newActivityItems, function( changeOccurred ) 
-            ClientListManager.mergeDownloadedClients( mongoClients, function( changeOccurred_atMerge ) 
+            //SyncManagerNew.mergeDownloadedList( ----.getActivityList(), newActivityItems, function( changeOccurred ) 
+            ClientDataManager.mergeDownloadedClients( mongoClients, function( changeOccurred_atMerge ) 
             {
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
@@ -148,30 +148,11 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 };
 
 // ===================================================
-// === 1. 'syncItem' Related Methods =============
+// === 1. 'syncUpItem' Related Methods =============
 
 SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
 {
     return ConnManagerNew.isAppMode_Online();
-};
-
-
-// Perform Server Operation..
-SyncManagerNew.performActivity = function( itemData, callBack )
-{
-    try
-    {
-        // if the activity type is 'redeem'..
-        //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
-        FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
-            callBack( success, returnJson );
-        });
-    }
-    catch( errMsg )
-    {
-        console.log( 'Error in SyncManagerNew.performActivity - ' + errMsg );
-        callBack( false );
-    }
 };
 
 
@@ -182,7 +163,7 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
 {    
     var uploadItems = [];
     
-    var newList = ActivityListManager.getActivityList().filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
+    var newList = ActivityDataManager.getActivityList().filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
     //var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
     //var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
     uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); // combined list
@@ -192,7 +173,7 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
 	//});
 };
 
-SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
+SyncManagerNew.syncUpItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
 {
     // length is 1  index 'i' = 0; next time 'i' = 1
     if ( itemDataList.length <= i )
@@ -209,7 +190,7 @@ SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderO
         var activityItem = new ActivityItem( itemData, divItemTag, cwsRenderObj );
 
         // Process the item
-        SyncManagerNew.syncItem( activityItem, function( success ) {
+        SyncManagerNew.syncUpItem( activityItem, function( success ) {
 
             if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
 
@@ -217,7 +198,7 @@ SyncManagerNew.syncItem_RecursiveProcess = function( itemDataList, i, cwsRenderO
             FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
 
             // Process next item.
-            SyncManagerNew.syncItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
+            SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
         });
     }
 };
@@ -319,144 +300,6 @@ SyncManagerNew.downloadActivities = function( callBack )
         callBack( false );
     }
 };
-
-
-SyncManagerNew.mergeDownloadedList = function( mainList, newList, callBack )
-{
-    var changeOccurred = false;
-    var newList_filtered = [];
-
-    // Check list for matching activityId
-    //  If does not exists in mainList, put into the mainList..
-    //  If exists, and if new one is later one, copy the content into main item (merging) 
-
-    for ( var i = 0; i < newList.length; i++ )
-    {        
-        var newItem = newList[i];
-        var existingItem = Util.getFromList( mainList, newItem.id, "id" );
-
-        try
-        {
-            // If matching id item(activity) already exists in device, 
-            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
-            if ( existingItem )
-            {
-                if ( newItem.created > existingItem.created ) 
-                {
-                    // Merge newItem into existingItem (it does not delete existing attributes)
-                    Util.mergeJson( existingItem, newItem );
-                    //console.log( 'Item content merged' );
-                    changeOccurred = true;
-                }
-                //else console.log( 'Item content not merged - new one not latest..' );
-            }
-            else
-            {
-                // If not existing on device, simply add it.
-                newList_filtered.push( newItem );
-                //console.log( 'Item content merged' );
-                changeOccurred = true;
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
-            console.log( newItem );
-            console.log( existingItem );
-        }
-    }
-
-
-    // if new list to push to mainList exists, add to the list.
-    if ( newList_filtered.length > 0 ) 
-    {
-        // 'changeOccurred' already set to 'true' when adding to 'newList_filtered' above.
-        Util.appendArray( mainList, newList_filtered );
-    }
-
-
-    if ( changeOccurred ) 
-    {
-        ActivityListManager.saveCurrent_ActivitiesStore( function() {
-            if ( callBack ) callBack( changeOccurred );
-        });
-    } 
-    else 
-    {
-        if ( callBack ) callBack( changeOccurred );
-    }
-}; 
-
-
-
-SyncManagerNew.mergeDownloadedClients = function( mainList, newList, callBack )
-{
-    var changeOccurred = false;
-    var newList_filtered = [];
-
-    // Check list for matching client
-
-    //  If does not exists in mainList, put into the mainList..
-    //  If exists, and if new one is later one, copy the content into main item (merging) 
-
-    for ( var i = 0; i < newList.length; i++ )
-    {        
-        var newItem = newList[i];
-        var existingItem = Util.getFromList( mainList, newItem._id, "_id" );
-
-        try
-        {
-            // If matching id item(activity) already exists in device, 
-            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
-            if ( existingItem )
-            {
-                if ( newItem.updated > existingItem.updated ) 
-                {
-                    // Merge newItem into existingItem (it does not delete existing attributes)
-                    // Also, should not change reference, thus only change contents rather than straight assignment
-                    Util.mergeJson( existingItem, newItem );
-                    //console.log( 'Item content merged' );
-                    changeOccurred = true;
-                }
-                //else console.log( 'Item content not merged - new one not latest..' );
-            }
-            else
-            {
-                // If not existing on device, simply add it.
-                newList_filtered.push( newItem );
-                //console.log( 'Item content merged' );
-                changeOccurred = true;
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'Error during SyncManagerNew.mergeDownloadedList: ' );
-            console.log( newItem );
-            console.log( existingItem );
-        }
-    }
-
-
-    // if new list to push to mainList exists, add to the list.
-    if ( newList_filtered.length > 0 ) 
-    {
-        // 'changeOccurred' already set to 'true' when adding to 'newList_filtered' above.
-        Util.appendArray( mainList, newList_filtered );
-    }
-
-
-    if ( changeOccurred ) 
-    {
-        // Need to create clientListManager..
-        ClientListManager.saveCurrent_ClientStore( function() {
-            if ( callBack ) callBack( changeOccurred );
-        });
-    } 
-    else 
-    {
-        if ( callBack ) callBack( changeOccurred );
-    }
-}; 
 
 
 // ===================================================

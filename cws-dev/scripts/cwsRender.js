@@ -159,15 +159,12 @@ function cwsRender()
 	{
 		// Do 'redeemList' move from localStorage to IndexedDB (localForage version)
 		//  - Since we need password to encrypt the data..
-		DataVerMove.lsRedeemListMove( function() {
-			
-			ActivityListManager.loadActivityStoreFromStorage( function( activityStore ) 
-			{
-				callBack();
+		DataVerMove.lsRedeemListMove( function() {			
 
-				// SetUp/Organize Sync Related data - should be named 'setUpSyncInfo/Status'..?
-				//FormUtil.updateStat_SyncItems( activityStore, function()
-			});	
+			ClientDataManager.loadClientsStore_FromStorage( function() {
+
+				ActivityDataManager.regenActivityList_NIndexes();
+			});
 		});
 	};
 

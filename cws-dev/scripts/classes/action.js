@@ -352,115 +352,36 @@ function Action( cwsRenderObj, blockObj )
 			}
 			else if ( clickActionJson.actionType === "sendToWS" )
 			{
-				// DEBUG: JAMES:
-				//console.log( '=====> sendToWS ActivityListData: ' );
-				//console.log( ActivityUtil.getActivityList() );
-
 				// Temporarily move before 'handlePayloadPreview' - since version 1 
 				var formsJsonGroup = {};
 				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
 
-
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
+					//var currBlockId = blockDivTag.attr( 'blockId' );
 
-					var currBlockId = blockDivTag.attr( 'blockId' );
+					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
 
-					//var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag );
-					//var previewJson = FormUtil.generateInputJson( formDivSecTag );
+					var activityJson = ActivityDataManager.generateActivityPayloadJson( inputsJson, formsJsonGroup, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
 
-					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );
-
-					// Voucher Status add to payload
-					if ( clickActionJson.voucherStatus )
+					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
+					//if ( clickActionJson.redeemListInsert === "true" )
+					ActivityDataManager.createNewPayloadActivity( activityJson, function()
 					{
-						inputsJson.voucherStatus = clickActionJson.voucherStatus;
-					}
+						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 
-					// generate url
-					var url = me.generateWsUrl( inputsJson, clickActionJson );
-	
-					if ( url !== undefined )
-					{
-						var submitJson = {};
-						//submitJson.payloadJson = inputsJson;
-						//submitJson.previewJson = previewJson;
-						submitJson.actionJson = clickActionJson;
-						submitJson.url = url;
-						// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
-						submitJson.payloadJson = me.reconfigurePayloadJson3( inputsJson, formsJsonGroup, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
+						if ( afterActionFunc ) afterActionFunc();
+					} );
 
-						console.log( 'submitJson.payloadJson', submitJson.payloadJson );
-						
-						// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-						if ( clickActionJson.redeemListInsert === "true" )
-						{
-							ActivityListManager.createNewActivity( submitJson, Constants.status_redeem_queued, function()
-							{
-								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-
-								if ( afterActionFunc ) afterActionFunc();
-							} );
-
-						}
-						else if ( clickActionJson.url !== undefined )
-						{					
-							// NOTE: Not used anymore case.  We would add
-
-							// generate url
-							var url = me.generateWsUrl( inputsJson, clickActionJson );
-	
-							// Loading Tag part..
-							var loadingTag = FormUtil.generateLoadingTag( btnTag );
-	
-							// NOTE: This form data is saved in owner form block
-							// TODO: THIS SHOULD BE ADDED TO 'QUEUE' AND LATER CHANGED TO 'SUBMIT'
-							if ( clickActionJson.redeemListInsert === "true" )
-							{
-								ActivityListManager.createNewActivity( submitJson, Constants.status_redeem_submit );
-							}
-	
-							FormUtil.submitRedeem( url, inputsJson, clickActionJson, loadingTag, function( success, redeemReturnJson ) {
-								// final call..
-								//actionIndex++;
-								if ( !redeemReturnJson ) redeemReturnJson = {};
-	
-								FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
-	
-								var resultStr = "success";
-	
-								if ( success )
-								{
-									dataPass.prevWsReplyData = redeemReturnJson;
-	
-									// This will be picked up by 'processWSResult' action (next action to this one)
-	
-									//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
-								}
-								else
-								{
-									// MISSING TRANSLATION
-									MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
-									// Should we stop at here?  Or continue with subActions?
-	
-									var resultStr = "actionFailed";
-								}
-	
-								if ( afterActionFunc ) afterActionFunc( resultStr );
-	
-							});
-						}
-					}
-				} );
+				});
 			}
 		}
-	}
+	};
+
 
 	me.handlePayloadPreview = function( formDefinition, clickActionJson, formDivSecTag, btnTag, callBack )
 	{
-
 		if ( clickActionJson.redeemListInsert === "true" )
 		{
-
 			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
 			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
 
@@ -483,66 +404,20 @@ function Action( cwsRenderObj, blockObj )
 						if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
 					}
 	
-				} );
+				});
 			}
 			else
 			{
 				if ( callBack ) callBack();
 			}
-
 		}
 		else
 		{
 			if ( callBack ) callBack();
 		}
-
-	}
-
-
-	// This has moved from FormUtil
-	me.generateWsUrl = function( inputsJson, actionJson )
-	{
-		var url;
-
-		if ( actionJson.url !== undefined || WsApiManager.isSite_psiConnect  )
-		{
-			if ( WsApiManager.isSite_psiConnect && actionJson.dws && actionJson.dws.url )
-			{
-				url = WsApiManager.composeWsFullUrl( actionJson.dws.url );
-			}
-			else
-			{
-				url = WsApiManager.composeWsFullUrl( actionJson.url );
-			}
-
-			if ( actionJson.urlParamNames !== undefined 
-				&& actionJson.urlParamInputs !== undefined 
-				&& actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
-			{
-				var paramAddedCount = 0;
-		
-				for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
-				{
-					var paramName = actionJson.urlParamNames[i];
-					var inputName = actionJson.urlParamInputs[i];
-		
-					if ( inputsJson[ inputName ] !== undefined )
-					{
-						var value = inputsJson[ inputName ];
-		
-						url += ( paramAddedCount == 0 ) ? '?': '&';
-		
-						url += paramName + '=' + value;
-					}
-		
-					paramAddedCount++;
-				}
-			}
-		}
-		
-		return url;
 	};
-  
+
+
 	
     me.actionEvaluateExpression = function( jsonList, actionExpObj )
     {
@@ -613,183 +488,11 @@ function Action( cwsRenderObj, blockObj )
 			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody, formsJsonGroup );
 		}		
 
+		// Voucher Status add to payload - if ( clickActionJson.voucherStatus ) 
+		inputsJson.voucherStatus = clickActionJson.voucherStatus;
+
 		return inputsJson;
 	}
 
-
-	// 1. We need to get dcdConfig data..
-	// 2. Need to get 'definitionPayloadTemplate'
-	// 3. Need actionDef property <-- which fires this..
-	me.reconfigurePayloadJson3 = function( formsJson, formsJsonGroup, clickActionJson, definitionPayloadTemplates )
-	{	
-		var payloadJson;
-	
-		// If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
-		//		Otherwise, simply use 'formsJson' as payloadJson.
-		if ( clickActionJson.payloadTemplate
-			&& definitionPayloadTemplates 
-			&& definitionPayloadTemplates[ clickActionJson.payloadTemplate ] )
-		{
-			var payloadTemplate = definitionPayloadTemplates[ clickActionJson.payloadTemplate ];
-
-			// hard copy from payloadTemplate...
-			payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
-			payloadJson.DATE = new Date();
-
-			me.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
-		}
-		else 
-		{
-			payloadJson = formsJson;			
-		}
-		
-		return payloadJson;
-	};
-	
-	
-	me.traverseEval = function( obj, payloadJson, formsJsonGroup, formsJson, iDepth, limit )
-	{
-		if ( iDepth === limit )
-		{
-			console.log( 'Error in Action.traverseEval, Traverse depth limit has reached: ' + iDepth );
-		}
-		else
-		{
-			for ( var prop in obj ) 
-			{
-				var propVal = obj[prop];
-		
-				if ( typeof( propVal ) === "object" ) 
-				{
-					//console.log( prop, propVal );
-					me.traverseEval( propVal, payloadJson, formsJsonGroup, formsJson, iDepth++, limit );
-				}
-				else if ( typeof( propVal ) === "string" ) 
-				{
-					//console.log( prop, propVal );
-					try
-					{
-						obj[prop] = eval( propVal );
-					}
-					catch( errMsg )
-					{
-						console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
-					}
-				}
-			}
-		}
-	};	
-
-
-	/*
-	var templateJson = 
-	{
-		"activityId": "Util.dateToStr( payloadJson.DATE ) + Util.generateRandomId(6);",
-		"userName": "FormUtil.login_UserName;",
-
-		"searchValues": {
-			"clientDetails.phoneNumberCurrent": "Util.getStr( inputsJson.phoneNumber );"
-		},
-
-		"captureValues": {
-			"activityDate": {
-				"capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
-				"capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
-				"createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
-			},
-			
-			"activityId": "payloadJson.activityId",
-			"activityType": "'FPL-SP'",
-			"program": "'fpl'",
-			"activeUser": "'qwertyuio1'",
-			"activeUserOu": "payloadJson.userName",
-			"dc": { },
-			"location": {},
-			"transactions": [
-				{
-					"transactionType": "'c_reg'", 
-					"dataValues": "inputsJson"
-				},
-				{
-					"transactionType": "'v_iss'", 
-					"dataValues": { 
-						"voucherCode": "Util.getStr( inputsJson.voucherCode );"	
-					}
-				}
-			]
-		}
-	};
-
-	// NEW: JAMES: TEMPORARY PAYLOAD STRUCTURE/TEMPLATE GEN...
-	me.reconfigurePayloadJson2 = function( inputsJson )
-	{
-		var templateJson = 
-		{
-			"activityId": "",
-			"userName": "",
-
-			"searchValues": {
-				"clientDetails": { }
-			},
-
-			"captureValues": {
-				"activityDate": {},
-				"activityId": "payload.activityDateId",
-				"activityType": "",
-				"program": "",
-				"activeUser": "",
-				"dc": { },
-				"location": {},
-				"transactions": []
-			}
-		};
-
-		// hard copy from template...
-		var payloadJson2 = Util.getJsonDeepCopy( templateJson );
-
-		// 0. Set "activityId", "userName", "password": "4321",
-		payloadJson2.activityId = "20200214" + Util.generateRandomId(6);
-		payloadJson2.userName = "LA_TEST_PROV";
-		//payloadJson2.password = "4321";
-
-
-		// 1. Set Search Criteria.. (Later, Should be 'searchValues' = ... )
-		payloadJson2.searchValues.clientDetails = { 'phoneNumberCurrent': Util.getStr( inputsJson.phoneNumberCurrent ) };
-
-
-		// -------------------------------------
-		// 2. Set capture values..
-		// activityDate
-		var captureJson = payloadJson2.captureValues;
-		captureJson.activityDate = {
-			"capturedUTC": "2020-01-17T12:32:00.000",
-			"capturedLoc": "2020-01-17T11:32:00.000",
-			"createdOnDeviceUTC": new Date().toISOString() //"2020-06-17T12:32:30.000"
-		};
-
-		captureJson.activityId = payloadJson2.activityId;
-		// activityType, program, dc, location, activeUser
-
-		// Need to be properly populated - later..
-		captureJson.location = { "type:": "Point", "coordinates": [ -0.9969609975814819, 33.9327278137207 ] };
-		captureJson.accuracy = 100;
-		captureJson.dc = { "app": "pwa-connect", "softwareVersion": "1.3.2", "configVersion": "5" };
-		captureJson.activeUser = "qwertyuio1";
-		captureJson.activityType = "sp";
-		captureJson.program = "fpl";
-
-		// 2.1 - Set Transactions..
-		// 		- Registration (In case the record does not exists) <-- Normally, voucherCode would not be here?
-		captureJson.transactions.push( { "transactionType": "c_reg", "dataValues": inputsJson } );
-
-		// 		- In our case, issue voucher as well..
-		captureJson.transactions.push( { "transactionType": "v_iss", "dataValues": { 'voucherCode': Util.getStr( inputsJson.voucherCode ) } } );
-
-
-		return payloadJson2;
-	};
-
-
-	*/
 
 }

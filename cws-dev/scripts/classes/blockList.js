@@ -203,7 +203,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         if ( me.hasView ) me.BlockListViewObj.viewSelect_1st(); 
         else 
         {
-            var newActivityList = Util.cloneArray( ActivityListManager.getActivityList() );
+            var newActivityList = Util.cloneArray( ActivityDataManager.getActivityList() );
 
             me.reRenderWithList( newActivityList, callBack );    
         }
@@ -223,7 +223,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
-        me.activityList = Util.cloneArray( ActivityListManager.getActivityList() );
+        me.activityList = Util.cloneArray( ActivityDataManager.getActivityList() );
         //me.blockJson = blockJson;
         
         me.hasView = ( blockJson.activityListViews && blockJson.activityListViews.length > 0 );
@@ -430,6 +430,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
 
 
+
+            // get/set json from 2 types...  <-- Set it as one type now!!!
+
+
+
+            
+
             // Probably need to populate only one of below 2
             activityCardLiTag.attr( 'itemId', itemData.id );
             activityCardAnchorTag.attr( 'itemId', itemData.id );
@@ -569,15 +576,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.activitySubmitSyncClick = function( itemData, divListItemTag )
+    me.activitySubmitSyncClick = function( activityJson, divListItemTag )
     {        
         if ( SyncManagerNew.syncStart() )
         {
             try
             {
-                var activityItem = new ActivityItem( itemData, divListItemTag, me.cwsRenderObj );
+                var activityItem = new ActivityItem( activityJson, divListItemTag, me.cwsRenderObj );
     
-                SyncManagerNew.syncItem( activityItem, function( success ) {
+                SyncManagerNew.syncUpItem( activityItem, function( success ) {
     
                     SyncManagerNew.syncFinish();     
                     //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        
@@ -692,52 +699,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // =============================================
     // === OTHER METHODS ========================
-
-
-    me.activityList_Add = function (submitJson, status, callBack) {
-
-        try 
-        {
-            var dateTimeStr = (new Date()).toISOString();
-            var tempJsonData = {};
-
-            //tempJsonData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
-            tempJsonData.created = dateTimeStr;
-            tempJsonData.id = Util.generateRandomId(); // ?? Used?
-            tempJsonData.status = status;
-            tempJsonData.data = submitJson;
-            tempJsonData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..
-            
-            tempJsonData.history = [];
-
-
-            ActivityListManager.insertNewActivity( tempJsonData, function () {
-
-                //console.log('blockList.redeemList_Add - after saveData_RedeemList');
-                callBack();
-
-                FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
-
-                    // added by Greg (2019-02-18) > test track googleAnalytics
-                    ga('send', {
-                        'hitType': 'event',
-                        'eventCategory': 'redeemList_Add',
-                        'eventAction': analyticsEvent,
-                        'eventLabel': FormUtil.gAnalyticsEventLabel()
-                    });
-                });
-
-            });
-        }
-
-        catch (errMsg) {
-            // Temporarily use 'alert' to get noticed about this...  for now..
-            alert('ERROR during blockList.redeemList_Add, errMsg: ' + errMsg);
-        }
-
-        // Greg: consider adding a loop back into FormUtil.updateSyncListItems() ? OR naturally let blockList handle this as it seems to be the next step 
-        //       pwa MUST re-initialize 'syncManager' queue+fail arrays
-    }
 
 
     // --------------------------------------
