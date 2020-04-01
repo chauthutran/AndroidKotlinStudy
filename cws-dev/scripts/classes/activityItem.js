@@ -60,29 +60,22 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     {
         try
         {
-            activityJson.processing
+           var processing = Util.getJsonDeepCopy( activityJson.processing );
 
+           delete activityJson.processing;
 
-            // if the activity type is 'redeem'..
-            //FormUtil.submitRedeem( itemData, undefined, function( success, returnJson ) {
-            FormUtil.submitRedeem( activityJson.processing.url
-                , itemData.data.payloadJson
-                , itemData.data.actionJson
-                , undefined
-                , function( success, returnJson ) {
-                callBack( success, returnJson );
-            });
+            var loadingTag = undefined;
 
-            //FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
+            var payload = {
+                'searchValues': processing.searchValues,
+                'captureValues': actionJson
+            };
 
-
-            FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
+            FormUtil.wsSubmitGeneral( processing.url, payload, loadingTag, function( success, returnJson )
             {
-                if ( returnFunc ) returnFunc( success, returnJson );
-                if ( asyncCall ) asyncCall( returnJson );
-                if ( syncCall ) syncCall();
+                callBack( success, returnJson );
             });            
-
+            //FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
 
         }
         catch( errMsg )

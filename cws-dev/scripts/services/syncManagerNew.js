@@ -51,7 +51,7 @@ SyncManagerNew.syncUpItem = function( activityItem, callBack )
             activityItem.updateItem_UI_StartSync();
 
             // Calls Server
-            SyncManagerNew.performActivity( activityItem.itemJson, function( success, responseJson ) {
+            activityItem.performActivity( activityItem.itemJson, function( success, responseJson ) {
 
                 // mark in activityItem of success...
                 activityItem.updateItem_Data( success, responseJson, function() {

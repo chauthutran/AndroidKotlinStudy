@@ -412,7 +412,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // Populate one Activity Card
     // TODO: Move this to 'ActivityItem' class (rename it as 'ActivityCard')
-    me.createActivityCard = function( itemData, groupBy )
+    me.createActivityCard = function( activityJson, groupBy )
     {
         var activityCardLiTag;
 
@@ -435,14 +435,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
 
-            
 
             // Probably need to populate only one of below 2
-            activityCardLiTag.attr( 'itemId', itemData.id );
-            activityCardAnchorTag.attr( 'itemId', itemData.id );
+            activityCardLiTag.attr( 'itemId', activityJson.activityId );
+            activityCardAnchorTag.attr( 'itemId', activityJson.activityId );
 
 
-            var itemTransJson = me.formatJsonForDisplay( itemData );
+            var activityTrans = me.getCombinedTrans( activityJson );
 
 
             // click event - for activitySubmit..
@@ -450,7 +449,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             listItem_icon_syncTag.click( function( e ) 
             {
                 e.stopPropagation();  // Stops calling parent tags event calls..
-                me.activitySubmitSyncClick( itemData, activityCardLiTag.find( 'div.listItem' ) ); 
+                me.activitySubmitSyncClick( activityJson, activityCardLiTag.find( 'div.listItem' ) ); 
             });
 
 
@@ -472,11 +471,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
                 if ( divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
                 {
-                    console.log( itemData );
+                    console.log( activityJson );
 
                     var jsonViewer = new JSONViewer();
                     divSeeMoreContentTag.append( jsonViewer.getContainer() );
-                    jsonViewer.showJSON( itemTransJson );
+                    jsonViewer.showJSON( activityTrans );
                 }
                 else
                 {
@@ -486,12 +485,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
             // ActivityCard data display (preview)
-            me.setActivityContentDisplay( itemData, itemTransJson, divListItemContentTag, me.cwsRenderObj.configJson );
+            me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, me.cwsRenderObj.configJson );
 
             // GREG change
-            //me.updateActivityCard_UI_Preview( itemData, activityCardLiTag );
+            //me.updateActivityCard_UI_Preview( activityJson, activityCardLiTag );
 
-            me.updateActivityCard_UI_Icon( activityCardLiTag, itemData, me.cwsRenderObj );            
+            me.updateActivityCard_UI_Icon( activityCardLiTag, activityJson, me.cwsRenderObj );            
         }
         catch( errMsg )
         {
@@ -509,6 +508,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
 
         //console.log( 'displaySettings: ', displaySettings );
+        var activity = activityItem;  // also, declare 'activity', so that it can be used...?
+
 
         if ( !displaySettings )
         {
@@ -524,6 +525,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             //    "activityTrans.firstName + ' ' + activityTrans.lastName"
             // ],
 
+            // <-- Should be activity.activityDate.deviceDate, activity.firstName, activity.lastName..
+
+            
             for( var i = 0; i < displaySettings.length; i++ )
             {
                 // Need 'activityItem', 'activityTrans'
@@ -546,13 +550,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.formatJsonForDisplay = function( itemData )
+    me.getCombinedTrans = function( activityJson )
     {
         var jsonShow = {};
 
         try
         {
-            var tranList = itemData.data.payloadJson.captureValues.transactions;
+            var tranList = activityJson.transactions;
 
             for( var i = 0; i < tranList.length; i++ )
             {
@@ -569,7 +573,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         catch ( errMsg )
         {
-            console.log( 'Error during BlockList.formatJsonForDisplay, errMsg: ' + errMsg );
+            console.log( 'Error during BlockList.getCombinedTrans, errMsg: ' + errMsg );
         }
 
         return jsonShow;
