@@ -222,7 +222,7 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
 
     me.updateItem_UI_Icons = function( itemJson, cwsRenderObj )
     {
-        // update card 'status' (submit/fail/queue)
+        // update card 'status' (submit/fail/queue)  <--- TODO: This should be marked as 'Synced'!!!  <-- Only on success
         FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + itemJson.id ).find( 'div.icons-status' ), itemJson, cwsRenderObj );
 
         // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)

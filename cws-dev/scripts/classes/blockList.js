@@ -429,13 +429,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
             var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
 
-
-
-            // get/set json from 2 types...  <-- Set it as one type now!!!
-
-
-
-
             // Probably need to populate only one of below 2
             activityCardLiTag.attr( 'itemId', activityJson.activityId );
             activityCardAnchorTag.attr( 'itemId', activityJson.activityId );
@@ -513,21 +506,35 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         if ( !displaySettings )
         {
+            /*
+            "activityDate": {
+                "capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
+                "capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
+                "createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
+             },
+             */
+
             // If displaySettings does not exists, simply display the date label <-- fixed display
             // Title - date description..
-            if ( activityItem.created ) divLabelTag.html( $.format.date( activityItem.created, "MMM dd, yyyy - HH:mm" ) );
+
+            if ( activity.activityDate && activity.activityDate.createdOnDeviceUTC ) 
+            {
+                var localDateTimeObj = Util.dateUTCToLocal( activity.activityDate.createdOnDeviceUTC );
+                divLabelTag.html( $.format.date( localDateTimeObj, "MMM dd, yyyy - HH:mm" ) );
+            }
         }
         else
         {
+            // If custom config display, remove 
             divLabelTag.remove();
             //"displaySetting": [
-            //    "'<b><i>' + activityItem.created + '</i></b>'",
-            //    "activityTrans.firstName + ' ' + activityTrans.lastName"
+            //    "'<b><i>' + $.format.date( Util.dateUTCToLocal( activity.activityDate.createdOnDeviceUTC ), 'MMM dd, yyyy - HH:mm' ) + '</i></b>'",
+            //    "activity.firstName + ' ' + activity.lastName"
             // ],
 
             // <-- Should be activity.activityDate.deviceDate, activity.firstName, activity.lastName..
 
-            
+
             for( var i = 0; i < displaySettings.length; i++ )
             {
                 // Need 'activityItem', 'activityTrans'
@@ -678,17 +685,17 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
     
-    me.updateActivityCard_UI_Icon = function( activityCardLiTag, itemJson, cwsRenderObj )
+    me.updateActivityCard_UI_Icon = function( activityCardLiTag, activityJson, cwsRenderObj )
     {
         try
         {
             // update card 'status' (submit/fail/queue)
-            FormUtil.setStatusOnTag( activityCardLiTag.find( 'small.syncIcon' ), itemJson, cwsRenderObj );
+            FormUtil.setStatusOnTag( activityCardLiTag.find( 'small.syncIcon' ), activityJson.processing, cwsRenderObj );
 
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
             FormUtil.appendActivityTypeIcon ( activityCardLiTag.find( '.listItem_icon_activityType' ) 
-                , FormUtil.getActivityType ( itemJson )
-                , FormUtil.getStatusOpt ( itemJson )
+                , FormUtil.getActivityType ( activityJson )
+                , FormUtil.getStatusOpt ( activityJson )
                 , cwsRenderObj );
         }
         catch( errMsg )

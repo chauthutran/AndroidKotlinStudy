@@ -56,10 +56,13 @@ Util.getCombinedArrays = function( arr1, arr2 )
 
 Util.mergeJson = function( destObj, srcObj )
 {
-	for( var key in srcObj )
+	if ( srcObj )
 	{
-		destObj[key] = srcObj[key];
-	}	
+		for( var key in srcObj )
+		{
+			destObj[key] = srcObj[key];
+		}		
+	}
 };
 
 Util.getCombinedJson = function( obj1, obj2 )
@@ -877,6 +880,25 @@ Util.formatDateTimeStr = function( dateStr, dateType )
 	if ( !dateType ) dateType = Util.dateType1;
 
 	return $.format.date( dateStr, dateType );
+};
+
+Util.dateUTCToLocal = function( dateStr )
+{
+	var localDateObj;
+
+	try
+	{
+		// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
+		if ( dateStr.indexOf( 'Z' ) === -1 ) dateStr += 'Z';
+
+		localDateObj = new Date( dateStr );
+	}
+	catch ( errMsg )
+	{
+		localDateObj = new Date();
+	}
+
+	return localDateObj;
 };
 
 // Date Formatting Related

@@ -164,6 +164,8 @@ function cwsRender()
 			ClientDataManager.loadClientsStore_FromStorage( function() {
 
 				ActivityDataManager.regenActivityList_NIndexes();
+
+				callBack();
 			});
 		});
 	};

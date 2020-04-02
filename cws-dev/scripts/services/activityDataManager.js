@@ -44,6 +44,19 @@ ActivityDataManager.getActivityById = function( activityId )
 
 
 // ---------------------------------------
+// --- Remove Activity
+
+// After 'syncUp', remove the payload <-- after syncDown?
+ActivityDataManager.removePayloadActivityById = function( activityId )
+{
+    // 1. remove index?
+    // 2. remove from array List
+    // 3. save entire data?   <-- or after merge, we could save..
+};
+
+
+
+// ---------------------------------------
 // --- Insert Activity
 
 

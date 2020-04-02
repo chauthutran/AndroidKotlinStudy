@@ -1544,34 +1544,38 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 	{
 		var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
 
-		if ( itemData.status === Constants.status_redeem_submit )
+		if ( itemData )
 		{
-			imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
-		}
-		else if ( itemData.status === Constants.status_redeem_failed )
-		{
-	
-			if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
+
+			if ( itemData.status === Constants.status_redeem_submit )
 			{
-				imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
+				imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
 			}
-			else
+			else if ( itemData.status === Constants.status_redeem_failed )
 			{
-				if ( itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+		
+				if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
 				{
-					imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
+					imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
 				}
 				else
 				{
-					imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
+					if ( itemData.networkAttempt && itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
+					{
+						imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
+					}
+					else
+					{
+						imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
+					}
 				}
 			}
+			else
+			{
+				imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
+			}	
 		}
-		else
-		{
-			imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
-		}
-	
+
 		imgSyncIconTag.css ( 'transform', '' );
 	}
 	catch ( errMsg )
@@ -1590,7 +1594,7 @@ FormUtil.getActivityType = function( itemData )
 
 		for ( var i=0; i< opts.length; i++ )
 		{
-			if ( opts[i].name == itemData.activityType )
+			if ( opts[i].name === itemData.activityType )
 			{
 				returnOpt = opts[i];
 				break;
@@ -1686,7 +1690,7 @@ FormUtil.getStatusOpt = function( itemData )
 
 		for ( var i=0; i< opts.length; i++ )
 		{
-			if ( opts[i].name == itemData.status )
+			if ( opts[i].name === itemData.status )
 			{
 				return opts[i];
 			}
