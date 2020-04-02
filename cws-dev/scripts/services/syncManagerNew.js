@@ -39,8 +39,8 @@ SyncManagerNew.blockListObj;  // If
 // ===================================================
 // === MAIN 2 FEATURES =============
 
-// 1. Run 'sync' on a activityItem
-SyncManagerNew.syncUpItem = function( activityItem, callBack )
+// 1. Run 'sync' on a activityItemObj
+SyncManagerNew.syncUpItem = function( activityItemObj, callBack )
 {
     try
     {
@@ -48,15 +48,15 @@ SyncManagerNew.syncUpItem = function( activityItem, callBack )
         if ( SyncManagerNew.checkCondition_SyncReady() )
         {
             // run UI animations
-            activityItem.updateItem_UI_StartSync();
+            activityItemObj.updateItem_UI_StartSync();
 
             // Calls Server
-            activityItem.performActivity( activityItem.itemJson, function( success, responseJson ) {
+            activityItemObj.performActivity( activityItemObj.itemJson, function( success, responseJson ) {
 
-                // mark in activityItem of success...
-                activityItem.updateItem_Data( success, responseJson, function() {
+                // mark in activityItemObj of success...
+                activityItemObj.updateItem_Data( success, responseJson, function() {
 
-                    activityItem.updateItem_UI_FinishSync();
+                    activityItemObj.updateItem_UI_FinishSync();
 
                     callBack( success );
                 } );

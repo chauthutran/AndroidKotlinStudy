@@ -101,6 +101,7 @@ ClientDataManager.loadClientsStore_FromStorage = function( callBack )
 {
     DataManager2.getData_ClientsStore( function( jsonData_FromStorage ) {
 
+        console.log( ' DataManager2.getData_ClientsStore - ' + jsonData_FromStorage );
         if ( jsonData_FromStorage && jsonData_FromStorage.list )
         {
             ClientDataManager._clientsStore.list = jsonData_FromStorage.list;

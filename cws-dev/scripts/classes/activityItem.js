@@ -60,9 +60,9 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
     {
         try
         {
-           var processing = Util.getJsonDeepCopy( activityJson.processing );
+            var processing = Util.getJsonDeepCopy( activityJson.processing );
 
-           delete activityJson.processing;
+            delete activityJson.processing;
 
             var loadingTag = undefined;
 
@@ -71,6 +71,11 @@ function ActivityItem( itemJson, itemTag, cwsRenderObj )
                 'captureValues': actionJson
             };
 
+
+            console.log( 'ActivityItem performActivity payload: ' );
+            console.log( payload );
+
+            
             FormUtil.wsSubmitGeneral( processing.url, payload, loadingTag, function( success, returnJson )
             {
                 callBack( success, returnJson );

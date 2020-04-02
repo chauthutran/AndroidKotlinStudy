@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "508e76fd78b01ba8baca0fd83670b166"
+    "revision": "305bfe80b4c0f7175e03bafb2de2a8f3"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -553,7 +553,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "ea638917a6d25ac31550afa8bfe83d00"
+    "revision": "b28f2a9f95b6e587c9405e848296cee5"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -561,7 +561,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/clientDataManager.js",
-    "revision": "96e6703e6c565c9378fd4ff0898672a5"
+    "revision": "e9b9d5494fe569dcd546cb51b2a94794"
   },
   {
     "url": "scripts/services/connManager.js",
@@ -577,7 +577,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/dataVerMove.js",
-    "revision": "0bb5d177a77744d17286d3cd7cbbe6e5"
+    "revision": "f47832bb5f433a41de24785012421824"
   },
   {
     "url": "scripts/services/devHelper.js",
@@ -617,7 +617,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
-    "revision": "a3b61eb0f11dd7fd11b0c134dbad27f3"
+    "revision": "9fca3bcce8ac89ee3177d1b044141ef2"
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
@@ -661,7 +661,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "df296f614fe0ad6dde550e3fb0e49536"
+    "revision": "1aab7a4a4d1590d21d576eaad85bdd1c"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -693,7 +693,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "4674085f91404553a8dd52b5065b0260"
+    "revision": "452b857b27c4efa23fb357dd63a175dc"
   },
   {
     "url": "scripts/utils/util2.js",

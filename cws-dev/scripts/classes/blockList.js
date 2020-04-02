@@ -495,25 +495,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.setActivityContentDisplay = function( activityItem, activityTrans, divListItemContentTag, configJson )
+    me.setActivityContentDisplay = function( activity, activityTrans, divListItemContentTag, configJson )
     {
         var displaySettings = ConfigUtil.getActivityDisplaySettings( configJson );
         var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
 
-        //console.log( 'displaySettings: ', displaySettings );
-        var activity = activityItem;  // also, declare 'activity', so that it can be used...?
-
+        var activityItem = activity;  // Temporarily backward compatible..
 
         if ( !displaySettings )
         {
-            /*
-            "activityDate": {
-                "capturedUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );",
-                "capturedLoc": "Util.formatDateTimeStr( payloadJson.DATE.toString() );",
-                "createdOnDeviceUTC": "Util.formatDateTimeStr( payloadJson.DATE.toUTCString() );"
-             },
-             */
-
             // If displaySettings does not exists, simply display the date label <-- fixed display
             // Title - date description..
 
@@ -529,15 +519,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             divLabelTag.remove();
             //"displaySetting": [
             //    "'<b><i>' + $.format.date( Util.dateUTCToLocal( activity.activityDate.createdOnDeviceUTC ), 'MMM dd, yyyy - HH:mm' ) + '</i></b>'",
-            //    "activity.firstName + ' ' + activity.lastName"
+            //    "activityTrans.firstName + ' ' + activityTrans.lastName"
             // ],
-
-            // <-- Should be activity.activityDate.deviceDate, activity.firstName, activity.lastName..
-
 
             for( var i = 0; i < displaySettings.length; i++ )
             {
-                // Need 'activityItem', 'activityTrans'
+                // Need 'activity', 'activityTrans'
                 var dispSettingEvalStr = displaySettings[ i ];
                 var displayEvalResult = "------------";
     
@@ -593,9 +580,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {
             try
             {
-                var activityItem = new ActivityItem( activityJson, divListItemTag, me.cwsRenderObj );
+                var activityItemObj = new ActivityItem( activityJson, divListItemTag, me.cwsRenderObj );
     
-                SyncManagerNew.syncUpItem( activityItem, function( success ) {
+                SyncManagerNew.syncUpItem( activityItemObj, function( success ) {
     
                     SyncManagerNew.syncFinish();     
                     //console.log( 'BlockList submitButtonListUpdate: isSuccess - ' + success );        

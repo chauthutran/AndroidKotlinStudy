@@ -117,7 +117,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup
 				// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
 				// Add to 'formsJsonGroup' object - to be used in payloadTemplate
 				// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
-				nameVal = FormUtil.setFormsJsonGroup( nameVal, dataGroup, formsJsonGroup );
+				nameVal = FormUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formsJsonGroup );
 			}
 
 			inputsJson[ nameVal ] = val;
@@ -128,7 +128,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup
 };
 
 
-FormUtil.setFormsJsonGroup = function( nameVal, dataGroup, formsJsonGroup )
+FormUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJsonGroup )
 {
 	// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
 	// Add to 'formsJsonGroup' object - to be used in payloadTemplate
@@ -137,7 +137,6 @@ FormUtil.setFormsJsonGroup = function( nameVal, dataGroup, formsJsonGroup )
 	try
 	{
 		// if '.' has in 'nameVal', mark it as group..
-		// if dataGroup exists, put it ..
 		if ( nameVal.indexOf( '.' ) > 0 )
 		{
 			var splitNames = nameVal.split( '.' );
@@ -146,19 +145,20 @@ FormUtil.setFormsJsonGroup = function( nameVal, dataGroup, formsJsonGroup )
 
 			if ( !formsJsonGroup[ groupName ] ) formsJsonGroup[ groupName ] = {};
 
-			formsJsonGroup[ groupName ].nameVal = val;
+			formsJsonGroup[ groupName ][ nameVal ] = val;
 		}
 
+		// if dataGroup exists, put it ..
 		if ( dataGroup ) 
 		{
 			if ( !formsJsonGroup[ dataGroup ] ) formsJsonGroup[ dataGroup ] = {};
 
-			formsJsonGroup[ dataGroup ].nameVal = val;
+			formsJsonGroup[ dataGroup ][ nameVal ] = val;
 		}
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error in FormUtil.setFormsJsonGroup, errMsg: ' + errMsg );
+		console.log( 'Error in FormUtil.setFormsJsonGroup_Val, errMsg: ' + errMsg );
 	}
 
 	return nameVal;
@@ -215,7 +215,6 @@ FormUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 		{
 			if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
 			{
-				console.log( inputTag[ 0 ].nodeName );
 				var inputLabel = FormUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
 			}
 

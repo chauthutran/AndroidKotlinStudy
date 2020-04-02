@@ -210,6 +210,8 @@ ActivityDataManager.createNewPayloadActivity = function( activityJson, callBack 
 
     ActivityDataManager.insertActivityToClient( activityJson, commonPayloadClient );
 
+    console.log( 'ActivityDataManager.createNewPayloadActivity, clientStore: ', ClientDataManager._clientsStore );
+
     ClientDataManager.saveCurrent_ClientsStore( callBack );    
 };
 

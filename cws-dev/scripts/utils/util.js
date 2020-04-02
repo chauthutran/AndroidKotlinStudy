@@ -8,7 +8,7 @@ Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
 
-Util.dateType1 = "yyyy-MM-ddTHH:mm:ss:SSS";
+Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 
 Util.tryCatchContinue = function( callBack, runFunc )
@@ -888,10 +888,22 @@ Util.dateUTCToLocal = function( dateStr )
 
 	try
 	{
+		console.log( dateStr );
+		console.log( dateStr.indexOf( 'Z' ) );
+
+
 		// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
-		if ( dateStr.indexOf( 'Z' ) === -1 ) dateStr += 'Z';
+		if ( dateStr.indexOf( 'Z' ) === -1 ) 
+		{
+			console.log( 'Z added' );
+			dateStr += 'Z';
+		}
+
+		console.log( dateStr );
 
 		localDateObj = new Date( dateStr );
+
+		console.log( localDateObj );
 	}
 	catch ( errMsg )
 	{

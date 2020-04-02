@@ -24,17 +24,15 @@ DataManager2.indexedDBopenResponseTime;// response delay times
 // ------------------------------------------------
 // -------- GET Methods --------------
 
-// -- GetData - storage type decided by 'secName'
-DataManager2.getData = function( secName, callBack ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	DataManager2.getDataByStorageType( storageTypeStr, secName, callBack );
-};
-
 // GetData - IndexedDB
 DataManager2.getData_IDB = function( secName, callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, callBack );
+	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, function( data ) {
+
+		var descriptedJson = DataManager2.decriptData( data );
+
+		callBack( descriptedJson );
+	});
 };
 
 // GetData - LocalStorage
@@ -47,65 +45,67 @@ DataManager2.getData_LS = function( secName, callBack )
 DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack ) 
 {
 	StorageMng.getItem( storageTypeStr, secName, function( err, data )
-	{
-		
-		if ( data && DataManager2.protectedContainer( secName ) )
-		{
-			DataManager2.getIV( function( iv ){
-
-				// IndexdbDataManager2.trackOpenEventDelay( false );
-				var jsonData;
-
-				try
-				{
-					// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
-					jsonData = JSON.parse( CryptoJS.enc.Utf8.stringify( CryptoJS.AES.decrypt( data.toString(), iv, 
-					{
-						keySize: 128 / 8,
-						iv: iv,
-						mode: CryptoJS.mode.CBC,
-						padding: CryptoJS.pad.Pkcs7
-					} ) ) );	
-				}
-				catch ( errMsg )
-				{
-					alert( 'Error during data decryption with current password.  If User has been changed, clear all data to resolve this issue.' );
-				}
-
-				if ( callBack ) callBack( jsonData );
-
-			} )
-
-		}
-		// else
-		// {
-		// 	jsonData = JSON.parse( data.value );// TRAN COMMENT : In data object doesn't have "value" key
-
-		// 	if ( callBack ) callBack( data.value );
-		// }
-		else
-		{
-			if ( callBack ) callBack( data );
-		}
-		
+	{		
+		if ( callBack ) callBack( data );		
 	});
-}
+};
 
+
+// ------------------------------------------------
+// -------- Encrypt/Decript Methods --------------
+DataManager2.encryptData = function( dataJson )
+{
+	var iv = FormUtil.login_Password;
+
+	var encryptedDataStr = CryptoJS.AES.encrypt( JSON.stringify( dataJson ), iv, {
+		keySize: 128 / 8,
+		iv: iv,
+		mode: CryptoJS.mode.CBC,
+		padding: CryptoJS.pad.Pkcs7
+	}).toString();
+
+	return encryptedDataStr;
+};
+
+DataManager2.decriptData = function( data )
+{
+	var jsonData = data;
+
+	if ( data )
+	{
+		// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
+		try
+		{
+			var iv = FormUtil.login_Password;
+
+			var descriptedVal = CryptoJS.AES.decrypt( data.toString(), iv, {
+				keySize: 128 / 8,
+				iv: iv,
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7
+			});
+
+			var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+
+			jsonData = JSON.parse( utf8StrVal );	
+		}
+		catch ( errMsg )
+		{
+			alert( 'Error during data decryption with current password.  If User has been changed, clear all data to resolve this issue.' );
+		}
+	}
+
+	return jsonData;
+};
 
 // ------------------------------------------------
 // -------- SAVE Methods --------------
 
-// -- SaveData - storage type decided by 'secName'
-DataManager2.saveData = function( secName, jsonData, retFunc ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	DataManager2.saveDataByStorageType( storageTypeStr, secName, jsonData, retFunc );
-};
-
 // saveData - IndexedDB
 DataManager2.saveData_IDB = function( secName, jsonData, retFunc ) 
 {
-	DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, secName, jsonData, retFunc );
+	var encryptedDataStr = DataManager2.encryptData( jsonData );
+	DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, secName, encryptedDataStr, retFunc );
 };
 
 // saveData - LocalStorage
@@ -115,46 +115,19 @@ DataManager2.saveData_LS = function( secName, jsonData, retFunc )
 };
 
 // Base SaveData - by storage type
-DataManager2.saveDataByStorageType = function( storageTypeStr, secName, jsonData, callBack ) 
+DataManager2.saveDataByStorageType = function( storageTypeStr, secName, data, callBack ) 
 {		
-	if( storageTypeStr == StorageMng.StorageType_IndexedDB )
-	{
-		DataManager2.getIV( function( iv ){
-
-			var pushData = CryptoJS.AES.encrypt( JSON.stringify( jsonData ), iv,
-			{
-				keySize: 128 / 8,
-				iv: iv,
-				mode: CryptoJS.mode.CBC,
-				padding: CryptoJS.pad.Pkcs7
-			}).toString();
-
-			StorageMng.setItem( storageTypeStr, secName, pushData, function() {
-				if ( callBack ) callBack( pushData );
-			});
-		} )
-		
-	}
-	else
-	{
-		StorageMng.setItem( storageTypeStr, secName, jsonData, function() {
-			if( callBack ) callBack( jsonData );
-		});
-	}
+	StorageMng.setItem( storageTypeStr, secName, data, function() {
+		if ( callBack ) callBack( data );
+	});		
 }
 
 // ------------------------------------------------
 // -------- Get/Save Specific Operations Methods --------------
 
-DataManager2.getData_RedeemList = function( callBack )
-{
-	DataManager2.getData( Constants.storageName_redeemList, callBack );
-};
+DataManager2.getData_RedeemList = function( callBack ) { };
 
-DataManager2.saveData_RedeemList = function( jsonData, callBack )
-{
-	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
-};
+DataManager2.saveData_RedeemList = function( jsonData, callBack ) { };
 
 // ------------------
 
@@ -175,12 +148,14 @@ DataManager2.saveData_ActivityList = function( jsonData, callBack )
 
 DataManager2.getData_ClientsStore = function( callBack )
 {
-	DataManager2.getData_IDB( Constants.storageName_clientList + '_' + FormUtil.login_UserName, callBack );
+	var keyName = Constants.storageName_clientList + '_' + FormUtil.login_UserName;
+	DataManager2.getData_IDB( keyName, callBack );
 };
 
 DataManager2.saveData_ClientsStore = function( jsonData, callBack )
 {
-	DataManager2.saveData_IDB( Constants.storageName_clientList + '_' + FormUtil.login_UserName, jsonData, callBack );
+	var keyName = Constants.storageName_clientList + '_' + FormUtil.login_UserName;
+	DataManager2.saveData_IDB( keyName, jsonData, callBack );
 };
 
 
@@ -234,138 +209,6 @@ DataManager2.deleteDataByStorageType = function( storageTypeStr, secName )
 		console.log( secName + " DELETE successfully !!!");
 	} );
 };
-
-
-DataManager2.getOrCreateData = function( secName, callBack ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	StorageMng.getItem( storageTypeStr, secName, function( err, jsonInfo ){
-		if ( !jsonInfo ) jsonInfo = {};
-		if( callBack ) callBack( jsonInfo );
-	});
-	
-	// if ( DataManager2.protectedContainer( secName ) )
-	// {
-	// 	IndexdbDataManager2.getOrCreateData( secName, callBack );
-	// }
-	// else
-	// {
-	// 	LocalStorageDataManager2.getOrCreateData( secName, callBack );
-	// }
-};
-
-DataManager2.deleteData = function( secName ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	StorageMng.removeItem ( storageTypeStr, secName, function(){ 
-		console.log( secName + " DELETE successfully !!!");
-	} );
-
-	// LocalStorageDataManager2.deleteData( secName );
-	// IndexdbDataManager2.deleteData( secName );
-};
-
-// -------------------------------------
-// ---- List Item Data Save/Get/Delete ---
-
-DataManager2.insertDataItem = function( secName, jsonInsertData, retFunc ) 
-{
-	var storageTypeStr = DataManager2.getStorageType( secName );
-	StorageMng.removeItem ( storageTypeStr, secName, function(){ } );
-
-	DataManager2.getOrCreateData( secName, function( jsonMainData ){
-		if ( jsonMainData.list === undefined ) jsonMainData.list = [];
-		jsonMainData.list.push( jsonInsertData );
-		DataManager2.saveData( secName, jsonMainData, retFunc );
-	} );
-
-};
-
-
-DataManager2.getItemFromData = function( secName, id, callBack ) 
-{
-	var itemData;
-
-	if ( secName && id )
-	{
-		DataManager2.getOrCreateData( secName, function( jsonMainData ){
-
-			if ( DataManager2.protectedContainer( secName ) )
-			{
-				var decrData = jsonMainData; 
-
-				itemData = Util.getFromList( decrData.list, id, "id" );
-
-				if ( callBack ) callBack( itemData );
-
-			}
-			else if ( jsonMainData.list !== undefined ) 
-			{			
-				itemData = Util.getFromList( jsonMainData.list, id, "id" );
-
-				if ( callBack ) callBack( itemData );
-			}
-			else
-			{
-				if ( callBack ) callBack();
-			}
-
-		} );
-	}
-	else
-	{
-		if ( callBack ) callBack();
-	}
-};
-
-
-DataManager2.updateItemFromData = function( secName, id, jsonDataItem ) 
-{
-	if ( secName && id )
-	{
-		var storageTypeStr = DataManager2.getStorageType( secName );
-		DataManager2.getOrCreateData( storageTypeStr, secName, function( jsonMainData ){
-			// if ( !jsonMainData ) lastSessionAll = {};
-			
-			// We assume that this has 'list' as jsonArray (of data)
-			if ( jsonMainData.list !== undefined ) 
-			{			
-				var itemData = Util.getFromList( jsonMainData.list, id, "id" );
-
-				Util.copyProperties( jsonDataItem, itemData );
-
-				// var pushData = JSON.stringify( jsonMainData );
-				DataManager2.saveItem( storageTypeStr, secName, jsonMainData ).then( function( jsonInfo ) {
-					console.log( ' ===== Save data SUCCESS!!! ====='  );
-	
-				}).catch( function(err) {
-					console.log( ' ===== ERROR ====='  );
-					console.log( err );
-				});
-			}
-			else
-			{
-				console.log ( 'failed `jsonMainData.list !== undefined`: ' + secName + ' ' + id  );
-			}
-		
-		});
-	}
-	else
-	{
-		console.log ( 'failed `IndexdbDataManager2.updateItemFromData` on secName && id: ' + secName + ' ' + id  );
-	}
-
-	
-	// if ( DataManager2.protectedContainer( secName ) )
-	// {
-	// 	IndexdbDataManager2.updateItemFromData( secName, id, jsonDataItem );
-	// }
-	// else
-	// {
-	// 	LocalStorageDataManager2.updateItemFromData( secName, id, jsonDataItem );
-	// }
-};
-
 
 // =========================
 
@@ -435,15 +278,6 @@ DataManager2.getSessionDataValue = function( prop, defval, callBack )
 DataManager2.clearSessionStorage = function()
 {
 	DataManager2.deleteDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session );
-
-	// //if( DataManager2.dbStorageType == DataManager2.dbStorageType_localStorage )
-	// {
-	//  	LocalStorageDataManager2.clearSessionStorage();
-	// }
-	// /*else
-	// {
-	// 	IndexdbDataManager2.clearSessionStorage();
-	// }*/
 }
 
 // -------------------------------------
@@ -455,7 +289,7 @@ DataManager2.getStorageType = function( secName )
 	return storageTypeStr;
 }
 
-
+/*
 DataManager2.getIV = function( callBack )
 {
 	if ( FormUtil.login_Password ) 
@@ -478,8 +312,9 @@ DataManager2.getIV = function( callBack )
 
 		} )
 	}
+};
+*/
 
-}
 
 DataManager2.protectedContainer = function( secName )
 {
