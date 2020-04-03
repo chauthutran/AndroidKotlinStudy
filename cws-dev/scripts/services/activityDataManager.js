@@ -49,12 +49,26 @@ ActivityDataManager.getActivityById = function( activityId )
 // After 'syncUp', remove the payload <-- after syncDown?
 ActivityDataManager.removePayloadActivityById = function( activityId )
 {
-    // 1. remove index?
-    // 2. remove from array List
-    // 3. save entire data?   <-- or after merge, we could save..
+    try
+    {
+        // 1. remove from activityList
+        Util.RemoveFromArray( ActivityDataManager._activityList, "activityId", activityId );
+
+        // 2. remove from activityClientMap, 3. remove from client activities
+        if ( ActivityDataManager._activityToClient[ activityId ] )
+        {
+            var client = ActivityDataManager._activityToClient[ activityId ];
+
+            delete ActivityDataManager._activityToClient[ activityId ];
+
+            Util.RemoveFromArray( client.activities, "activityId", activityId );
+        }    
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+    }
 };
-
-
 
 // ---------------------------------------
 // --- Insert Activity

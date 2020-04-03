@@ -888,22 +888,13 @@ Util.dateUTCToLocal = function( dateStr )
 
 	try
 	{
-		console.log( dateStr );
-		console.log( dateStr.indexOf( 'Z' ) );
-
-
 		// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
 		if ( dateStr.indexOf( 'Z' ) === -1 ) 
 		{
-			console.log( 'Z added' );
 			dateStr += 'Z';
 		}
 
-		console.log( dateStr );
-
 		localDateObj = new Date( dateStr );
-
-		console.log( localDateObj );
 	}
 	catch ( errMsg )
 	{

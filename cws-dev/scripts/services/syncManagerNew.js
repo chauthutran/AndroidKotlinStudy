@@ -39,44 +39,6 @@ SyncManagerNew.blockListObj;  // If
 // ===================================================
 // === MAIN 2 FEATURES =============
 
-// 1. Run 'sync' on a activityItemObj
-SyncManagerNew.syncUpItem = function( activityItemObj, callBack )
-{
-    try
-    {
-        // if there is error, it will be handled within the method..
-        if ( SyncManagerNew.checkCondition_SyncReady() )
-        {
-            // run UI animations
-            activityItemObj.updateItem_UI_StartSync();
-
-            // Calls Server
-            activityItemObj.performActivity( activityItemObj.itemJson, function( success, responseJson ) {
-
-                // mark in activityItemObj of success...
-                activityItemObj.updateItem_Data( success, responseJson, function() {
-
-                    activityItemObj.updateItem_UI_FinishSync();
-
-                    callBack( success );
-                } );
-            });
-        }
-        else
-        {
-            console.log( 'checkCondition_SyncReady Failed' );
-            callBack( false );
-        }
-    }
-    catch( errMsg )
-    {
-        // NOTE: Even with error, we want to return with 'callBack' since we want next item to continue if multiple run case.
-        console.log( 'Error happened during SyncManagerNew.syncUpItem - ' + errMsg );
-        callBack( false );
-    }
-};
-
-
 // 2. Run 'sync' on All activityItems
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
@@ -126,6 +88,8 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
         // S2. NOTE: Mark that download done as just log?
+
+        console.log( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
 
         if ( !downloadSuccess ) 
         { 
@@ -183,16 +147,13 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( itemDataList, i, cwsRende
     }
     else
     {
-        var itemData = itemDataList[i];       
+        var itemData = itemDataList[i];         
+        
+        var activityCardObj = new ActivityCard( itemData.activityId, cwsRenderObj );
 
-        var divItemTag = $( '#listItem_table_' + itemData.id ).parent( 'div.listItem' );
+        activityCardObj.performSyncUp( function( success ) {
 
-        var activityItem = new ActivityItem( itemData, divItemTag, cwsRenderObj );
-
-        // Process the item
-        SyncManagerNew.syncUpItem( activityItem, function( success ) {
-
-            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.id );
+            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.activityId );
 
             // update on progress bar
             FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
@@ -217,7 +178,10 @@ SyncManagerNew.downloadClients = function( callBack )
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
         var url = WsApiManager.wsApi_NEW_Dev + '/PWA.syncDown';
-		var payloadJson = {
+
+        var payloadJson = { 'find': {} };
+
+        payloadJson.find = {
             "activities": { "$elemMatch": { "activeUser": activeUser } } 
         };
 
@@ -227,7 +191,7 @@ SyncManagerNew.downloadClients = function( callBack )
         if ( lastDownloadDateISOStr ) 
         { 
             dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
-            payloadJson.updated = { "$gte": dateRange_gtStr };
+            payloadJson.find.updated = { "$gte": dateRange_gtStr };
         }
 
 
@@ -237,7 +201,7 @@ SyncManagerNew.downloadClients = function( callBack )
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
-            if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
+            //if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
 
             callBack( success, mongoClientsJson );
         });        
