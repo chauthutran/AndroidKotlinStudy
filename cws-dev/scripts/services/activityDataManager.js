@@ -295,6 +295,18 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
         payloadJson.DATE = dateTimeObj; //new Date();
 
         ActivityDataManager.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
+
+
+        try
+        {
+            // Temporary - replace activeUserId..
+            payloadJson.captureValues.activeUser = Constants.fixedActiveUserId;
+        }
+        catch ( errMsg )
+        {
+            console.log( 'Error during payloadJson.captureValues.activeUser set, errMsg: ' + errMsg );
+        }
+            
     }
     else 
     {

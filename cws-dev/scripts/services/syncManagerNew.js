@@ -83,11 +83,15 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
 
     // Retrieve data..
-    SyncManagerNew.downloadClients( function( downloadSuccess, mongoClients ) 
+    SyncManagerNew.downloadClients( function( downloadSuccess, returnJson ) 
     {
         var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
         // S2. NOTE: Mark that download done as just log?
+        var mongoClients = [];
+        
+        if ( returnJson && returnJson.response && returnJson.response.dataList ) mongoClients = returnJson.response.dataList;
+
 
         console.log( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
 
@@ -174,7 +178,7 @@ SyncManagerNew.downloadClients = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var activeUser = Constants.fixedActiveUserId; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
         var url = WsApiManager.wsApi_NEW_Dev + '/PWA.syncDown';
@@ -197,13 +201,13 @@ SyncManagerNew.downloadClients = function( callBack )
 
         var loadingTag = undefined;
 
-        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
+        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson ) {
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
             //if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
 
-            callBack( success, mongoClientsJson );
+            callBack( success, returnJson );
         });        
     }
     catch( errMsg )
@@ -221,7 +225,7 @@ SyncManagerNew.downloadActivities = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = "qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var activeUser = Constants.fixedActiveUserId; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
         var url = WsApiManager.wsApi_NEW_Dev + '/PWA.activities';

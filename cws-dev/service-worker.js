@@ -489,7 +489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "349f1b2e2e030c4e42b3b7f65ce1e1b7"
+    "revision": "1d1e8db34750c4dd799fd74307257e15"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -553,7 +553,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "1eccc413e58f3455f6718b7caf2fdf90"
+    "revision": "6938031c8a3ce4defa99b943142544c7"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -637,7 +637,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "d9fea6a9e5d022e559d949b9c08ba49f"
+    "revision": "6c165c4f0c2dc52c0324ed8ba9b98a20"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
