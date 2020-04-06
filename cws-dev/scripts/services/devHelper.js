@@ -10,7 +10,120 @@ function DevHelper() {};
 
 DevHelper.cwsRenderObj;
 
-DevHelper.sampleDataList = [
+DevHelper.sampleDataList = [{
+    "clientDetails": {
+        "firstName": "James",
+        "lastName": "Chang",
+        "phoneNumber": "6543222212",
+        "clientId": "",
+        "age": "14"
+    },
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20200406_093050000",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-04-06T09:31:02.488",
+            "capturedUTC": "2020-04-06T09:30:50.000",
+            "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
+            "capturedLoc": "2020-04-06T18:30:50.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "FPL-SP",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "James",
+                "lastName": "Chang",
+                "phoneNumber": "6543222212",
+                "clientId": "",
+                "age": "14"
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "12345555"
+            }
+        }],
+        "dc": {}
+    }],
+    "_id": "5e8af6d6f39ff8047ee4f3e5",
+    "updated": "2020-04-06T09:31:02.488"
+}, {
+    "_id": "CommonPayloadClient",
+    "clientDetails": {},
+    "activities": []
+}, {
+    "clientDetails": {
+        "firstName": "James",
+        "lastName": "Chang",
+        "phoneNumber": "4444555511",
+        "clientId": "",
+        "age": "32"
+    },
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20200403_081636000",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-04-03T08:17:06.877",
+            "capturedUTC": "2020-04-03T08:16:36.000",
+            "createdOnDeviceUTC": "2020-04-03T08:16:36.000",
+            "capturedLoc": "2020-04-03T17:16:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "FPL-SP",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "James",
+                "lastName": "Chang",
+                "phoneNumber": "4444555511",
+                "clientId": "",
+                "age": "32"
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "33334444"
+            }
+        }],
+        "dc": {}
+    }, {
+        "activityId": "LA_TEST_PROV_20200403_081820000",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-04-03T08:18:22.169",
+            "capturedUTC": "2020-04-03T08:18:20.000",
+            "createdOnDeviceUTC": "2020-04-03T08:18:20.000",
+            "capturedLoc": "2020-04-03T17:18:20.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "FPL-SP",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "James",
+                "lastName": "Chang",
+                "phoneNumber": "4444555511",
+                "clientId": "",
+                "age": "32"
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "44445555"
+            }
+        }],
+        "dc": {}
+    }],
+    "_id": "5e86f102f39ff8047ee4f2b6",
+    "updated": "2020-04-03T08:18:22.169"
+}];
+
+/*
+[
 {
     "_id": "5e397b9f24ed1b04adb81137",
     "updated": "2020-01-17T12:32:30.000",
@@ -135,7 +248,7 @@ DevHelper.sampleDataList = [
         }
     }]
 }];
-
+*/
 
 // =======================================
 

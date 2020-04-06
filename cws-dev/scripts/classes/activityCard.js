@@ -74,21 +74,26 @@ function ActivityCard( activityId, cwsRenderObj )
                 var divSeeMoreIconBtnTag = divSeeMoreTag.find( 'div.act-l-expander' );
                 var divSeeMoreContentTag = activityCardLiTag.find( 'div.act-preview' );
     
-    
-                
-
+                    
                 var activityTrans = me.getCombinedTrans( activityJson );
+                // activity
+                //      - tran1
+                //      - tran2
 
+
+                // 1. activityType (Icon) display
+                me.activityTypeDisplay( activityCardLiTag, activityJson );
                 
-                // 1. ActivityCard data display (preview)
+                // 2. middel body display (preview)
                 me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, me.cwsRenderObj.configJson );
 
 
-                // 2. 'SyncUp' Button Related
+                // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit..
                 var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
                 listItem_icon_syncTag.off( 'click' );
                 
+                // If there is 'processing' json in activityJson, it means there is something to be processed.
                 if ( activityJson.processing )
                 {
                     activityCardLiTag.find( '.divListItem_icon_sync' ).show();
@@ -101,7 +106,7 @@ function ActivityCard( activityId, cwsRenderObj )
                     });    
 
                     // Icons Render
-                    me.updateActivityCard_UI_Icon( activityCardLiTag, activityJson, me.cwsRenderObj );                         
+                    me.syncUpStatusDisplay( activityCardLiTag, activityJson, me.cwsRenderObj );                         
                 }
                 else
                 {
@@ -109,7 +114,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 }
     
     
-                // 3. 'SeeMore' Related - divSeeMoreBtnTag click to display more/less --> By toggling class
+                // 4. 'SeeMore' Related - divSeeMoreBtnTag click to display more/less --> By toggling class
                 contentDivTag.off( 'click' );
                 contentDivTag.on( 'click', function( e ) 
                 {
@@ -272,26 +277,79 @@ function ActivityCard( activityId, cwsRenderObj )
             }
         }
     };
-                
+              
     
-    me.updateActivityCard_UI_Icon = function( activityCardLiTag, activityJson, cwsRenderObj )
+    // -------------------------------
+    // --- Display Icon/Content related..
+    
+    me.syncUpStatusDisplay = function( activityCardLiTag, activityJson )
     {
         try
         {
-            // update card 'status' (submit/fail/queue)
-            FormUtil.setStatusOnTag( activityCardLiTag.find( 'small.syncIcon' ), activityJson.processing, cwsRenderObj );
+            // 1. Does it find hte matching status?
+            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, FormUtil.dcdConfig );
+            if ( activitySyncUpStatusConfig ) activityCardLiTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
-            // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-            FormUtil.appendActivityTypeIcon ( activityCardLiTag.find( '.listItem_icon_activityType' ) 
-                , FormUtil.getActivityType ( activityJson )
-                , FormUtil.getStatusOpt ( activityJson )
-                , cwsRenderObj );
+            me.setActivitySyncUpStatus( activityCardLiTag, activityJson.processing );
         }
         catch( errMsg )
         {
-            console.log( 'Error on BlockList.updateActivityCard_UI_Icon, errMsg: ' + errMsg );
+            console.log( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
         }        
     };
+
+
+    me.activityTypeDisplay = function( activityCardLiTag, activityJson )
+    {
+        try
+        {
+            var activityTypeConfig = ConfigUtil.getActivityTypeConfig( activityJson, FormUtil.dcdConfig );
+    
+            var activityTypeTdTag = activityCardLiTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
+
+            // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
+            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, FormUtil.dcdConfig );
+
+            // TODO: Bring this method up from 'formUtil' to 'activityCard'?
+            // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
+            FormUtil.appendActivityTypeIcon ( activityTypeTdTag
+                , activityTypeConfig
+                , activitySyncUpStatusConfig );
+                
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
+        }        
+    };                
+
+        
+    me.setActivitySyncUpStatus = function( activityCardLiTag, activityProcessing ) 
+    {
+        try
+        {
+            var imgSyncIconTag = activityCardLiTag.find( 'small.syncIcon img' );
+
+            if ( activityProcessing.status === Constants.status_redeem_queued )
+            {
+                imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
+            }
+            else if ( activityProcessing.status === Constants.status_redeem_failed )
+            {        
+                imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
+                //imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
+            }
+
+            imgSyncIconTag.css ( 'transform', '' );
+        }
+        catch ( errMsg )
+        {
+            console.log( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
+        }
+    };
+
+
+    // -------------------------------
 
 
     // Perform Submit Operation..
@@ -345,19 +403,6 @@ function ActivityCard( activityId, cwsRenderObj )
 
 
     // =============================================
-    // TODO: WILL INTEGRATE THE 'ActivityCard' Tag creation..
-       
-    //me.createActivityCard = function( itemData, groupBy )
-    //{
-    //    .......
-    //    return activityCardLiTag;        
-    //};
-
-    //me.updateActivityCard_UI_Icon = function( activityCardLiTag, activityJson, cwsRenderObj )
-    //{
-    //    .......
-    //};
-
 
     me.syncUpResponseHandle = function( success, responseJson, callBack )
     {

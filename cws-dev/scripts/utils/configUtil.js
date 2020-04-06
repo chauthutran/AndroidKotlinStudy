@@ -136,3 +136,45 @@ ConfigUtil.getActivityDisplaySettings = function( configJson )
     return displaySettings;
 };
 
+
+ConfigUtil.getActivitySyncUpStatusConfig = function( activityJson, configJson )
+{
+    var activityStatusConfig;
+
+	try
+	{        
+        if ( activityJson.processing )
+        {
+            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
+        }
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error on ConfigUtil.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+    }
+    
+    return activityStatusConfig;
+};
+
+
+ConfigUtil.getActivityTypeConfig = function( activityJson, configJson )
+{
+	var activityTypeConfig;
+
+    try
+	{
+        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.activityType, 'name' );
+
+        // Removed - if matching acitivity type config does not exists, compose activity type based on 'program'..
+        // FormUtil.getActivityTypeComposition = function( itemData )
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error on ConfigUtil.getActivityTypeConfig, errMsg: ' + errMsg );
+    }
+    
+    return activityTypeConfig;
+};
+
+
+

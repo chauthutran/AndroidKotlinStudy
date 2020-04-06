@@ -1471,6 +1471,8 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 					$( iconObj ).append( statusIconObj );
 	
+
+					// This is SyncUp status icon (placed right below ActivityType icon.)
 					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
 				}
 	
@@ -1584,6 +1586,7 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 }
 
 
+// OBSOLETE - PROBABLY
 FormUtil.getActivityType = function( itemData )
 {
 	var returnOpt;
@@ -1615,6 +1618,8 @@ FormUtil.getActivityType = function( itemData )
 	}
 }
 
+
+// OBSOLETE - PROBABLY
 FormUtil.getActivityTypeComposition = function( itemData )
 {
 	var returnOpt;
