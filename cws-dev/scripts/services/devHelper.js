@@ -52,7 +52,42 @@ DevHelper.sampleDataList = [{
 }, {
     "_id": "CommonPayloadClient",
     "clientDetails": {},
-    "activities": []
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20200406_093536000",
+        "activityDate": {
+            "capturedUTC": "2020-04-06T09:35:36.000",
+            "createdOnDeviceUTC": "2020-04-06T09:35:36.000",
+            "capturedLoc": "2020-04-06T18:35:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "FPL-SP",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "James",
+                "lastName": "Chang",
+                "age": "44",
+                "phoneNumber": "8888555511",
+                "clientId": ""
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "999933333"
+            }
+        }],
+        "dc": {},
+        "processing": {
+            "status": "queued",
+            "history": [],
+            "url": "https://api-dev.psi-connect.org/PWA.syncUp",
+            "searchValues": {
+                "clientDetails.phoneNumber": "8888555511"
+            }
+        }
+    }]
 }, {
     "clientDetails": {
         "firstName": "James",
