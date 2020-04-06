@@ -18,7 +18,7 @@
     }
 
     ul li {
-      font-size: 0.7em;  /* JAMES: TODO: NOT GOOD */
+      font-size: 0.75em;  /* JAMES: TODO: NOT GOOD */
     }
 
     /*.imgBtnLabel {
@@ -111,8 +111,7 @@
       display: none;
     }
     ul li .expandable.expanded .act-l {
-      display:block;
-      /*width: auto;*/
+      display: inline-flex;;
     }
 
     #color-theroy .pgcolor-theroy {
@@ -120,6 +119,14 @@
     }
 
     .expanded {
+      display: none;
+    }
+
+    .expandable > div.act-preview {
+      display: none;
+    }
+
+    .expandable > div.act-preview {
       display: none;
     }
 
@@ -162,13 +169,19 @@
     }
 
     .icons-status {
-      clear: both;
-      /*float: right;*/
+      /*clear: both;
       position: relative;
       text-align: right;
       width: 40px;
       box-sizing: border-box;
-      left:10px;
+      left:10px;*/
+      clear: both;
+      float: right;
+      /* position: relative; */
+      text-align: center;
+      width: 50px;
+      box-sizing: border-box;
+      /* left: 10px;*/
     }
 
     .title-act-mobile {
@@ -288,20 +301,25 @@
         padding: 12px 0 6px 15px;
         /* box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1) */
       }
+      .act-l-expander {
+        width: 25px;
+      }
   
       ul li .expandable {
         /* margin: 40px 0 0 0; */
       }
 
-      .listItem_label_date{
-        font-weight:400;
-        /*padding:0 2px;*/
+      .listItem_label_title{
+        /*font-weight:400;*/
         position: relative;
         top: -2px;
       }
 
       ul.tab__content_act > li.emptyListLi > .expandable {
         /*margin: 40px 0 0 0;*/
+      }
+      ul.tab__content_act {
+        padding-top: 48px;
       }
 
       .title-act-mobile {
@@ -329,8 +347,8 @@
         width:20px;
         height:24px;
         position:relative;
-        top: -2px; /*-2px;*/
-        left: -2px;
+        top: 8px; /*-2px;*/
+        right: 10px;
       }
 
       .icons-status {
@@ -362,7 +380,7 @@
         text-align: right;
       }
       .viewsFilterAndSortContainer {
-	padding-top: 50px;
+	      padding-top: 50px;
       }
 
     }
@@ -467,8 +485,11 @@
         padding: 12px 0 6px 15px;
         /* box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1) */
       }
-  
-      .listItem_label_date{
+      .act-l-expander {
+        width: 40px;
+      }
+
+      .listItem_label_title{
         font-weight:400;
         /*padding:0 2px;*/
         position: relative;
@@ -486,7 +507,7 @@
   
       .act-r {
         float: right;
-        text-align: right;
+        text-align: center;
         font-size: calc(9px + 0.2vw);
         box-sizing: border-box;
       }
@@ -499,8 +520,8 @@
         width:24px;
         height:24px;
         position:relative;
-        top: 0; /* -12px;*/
-        left: -1px;
+        top: 8px; /* -12px;*/
+        /*right: 10px;*/
       }
 
       .modalSymbol{
@@ -532,6 +553,7 @@
       div.select::before {
         right: 1% !important;
       }
+
 
     }
     /* ======================= */
@@ -581,5 +603,6 @@
       .inputDivRadio {
         width: 97%;
       }
+
     }
     /* ==================================== */

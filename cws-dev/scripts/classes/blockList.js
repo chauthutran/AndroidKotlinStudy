@@ -109,10 +109,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                         </td>
 
                         <td class="listItem_voucher_status">
-                            <div class="act-r"><span id="listItem_queueStatus">success</span></div>
                         </td>
 
                         <td class="listItem_action_sync">
+                            <div class="act-r">
+                                <span class="listItem_statusOption">statusText</span>
+                            </div>
+
                             <div class="icons-status divListItem_icon_sync">
                                 <small class="syncIcon">
                                     <img src="images/sync-n.svg" class="listItem_icon_sync" />
@@ -125,11 +128,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
             <div class="act-l">
                 <div class="act-l-more">
-                    <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span term="">see more</span>
+                    <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span class="act_btn_showDetails" term="">see more</span>
                 </div>
-                <div class="act-l-expander" style="display:none;">
+                <div class="act-l-expander">
+                    <img class="expandable-arrow" src="images/arrow_down.svg" >
                 </div>
             </div>
+
+            <div class="act-preview"></div>
+
         </a>
     </li>`;
 

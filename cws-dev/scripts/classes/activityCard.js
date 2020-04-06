@@ -70,8 +70,13 @@ function ActivityCard( activityId, cwsRenderObj )
                 // --- See More Related Tags
                 var divSeeMoreTag = activityCardLiTag.find( 'div.act-l' );
                 var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
-                var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
-        
+                //var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
+                var divSeeMoreIconBtnTag = divSeeMoreTag.find( 'div.act-l-expander' );
+                var divSeeMoreContentTag = activityCardLiTag.find( 'div.act-preview' );
+    
+    
+                
+
                 var activityTrans = me.getCombinedTrans( activityJson );
 
                 
@@ -108,10 +113,33 @@ function ActivityCard( activityId, cwsRenderObj )
                 contentDivTag.off( 'click' );
                 contentDivTag.on( 'click', function( e ) 
                 {
-                    e.stopPropagation();                
+                    e.stopPropagation();         
+
+                    // remove all other 'expanded' tags (and run click > hideMoreDetails if preview is showing)
+                    var blockListUlTag = activityCardLiTag.closest( 'ul.tab__content_act' );
+                    blockListUlTag.find('a.expanded').each( function(){
+
+                        if ( $( this ) !== activityCardAnchorTag ) 
+                        {
+                            if ( $( this ).find( 'div.act-preview' ).hasClass( 'act-l-more-open' ) )
+                            {
+                                $( this ).find( 'div.act-l-expander' ).click();
+                            }
+                            $( this ).toggleClass( 'expanded' );
+                        }
+
+                    });
+
+                    // run click event to flip arrowIcon (if already showing)
+                    if ( activityCardAnchorTag.hasClass( 'expanded' ) && divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
+                    {
+                        divSeeMoreBtnTag.click();
+                    }
+    
                     activityCardAnchorTag.toggleClass( 'expanded' ); 
                 });
 
+                
                 divSeeMoreBtnTag.off( 'click' );
                 divSeeMoreBtnTag.on( 'click', function( e ) 
                 {

@@ -235,9 +235,9 @@ select option {
 .act-r {
   /* float: right; */
   text-align: right;
-  font-size: 10px;
   box-sizing: border-box;
-  display: none;
+  color: #B1B1B1;
+  padding: 4px;
 }
 
 .act-l {
@@ -248,15 +248,18 @@ select option {
   font-weight:400;
   /* top: -6px; */
   cursor: pointer;
+  justify-content: space-between;
+
 }
 
 .act-l-more-open {
-  height: 150px;
-  width: auto;
-  overflow-y: scroll;
+  height: fit-content; /* 150px; */
+  width: 100%;
+  overflow-y: auto;
   display: block !important;
   padding: 10px 15px;
   border-top: 2px solid #DCDCDC;
+  border-bottom: 2px solid #DCDCDC;
 }
 
 .act-l-more-open > table {
@@ -269,6 +272,13 @@ select option {
   padding: 2px 2px 2px 4px;
 }
 
+.act-l-expander {
+  /*position: fixed;*/
+}
+
+.act-preview {
+  display: none;
+}
 /* =========================== */
 
 /* =========================== */

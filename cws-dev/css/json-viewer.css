@@ -9,6 +9,8 @@
 	margin: 0 0 0 1px;
 	border-left: 1px dotted #ccc;
 	padding-left: 2em;
+	font-size: calc(12px + 0.5vw) !important;
+	line-height: calc(12px + 0.5vw);
 }
 
 .json-viewer .hide {

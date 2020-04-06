@@ -714,11 +714,16 @@ act {
 }
 
 .listItem_action_sync{
-  width:50px;
+  width:70px;
   position:relative;
-  top:-2px;
+  top:-16px;
+  text-align: right;
 }
 
+.listItem_statusOption {
+  font-weight: 400 !important;
+  font-size: 0.7rem; /*0.875rem*/
+}
 
 img.listItem_icon_sync{
   width:28px;
