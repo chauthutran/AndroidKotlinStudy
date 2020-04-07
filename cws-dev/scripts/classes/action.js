@@ -361,20 +361,74 @@ function Action( cwsRenderObj, blockObj )
 
 					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
 
-					var activityJson = ActivityDataManager.generateActivityPayloadJson( inputsJson, formsJsonGroup, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
-
-					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					//if ( clickActionJson.redeemListInsert === "true" )
-					ActivityDataManager.createNewPayloadActivity( activityJson, function()
+					// If 'Activity' generate case, add to list
+					if ( clickActionJson.redeemListInsert === "true" )
+					{						
+						ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, clickActionJson, function( activityJson )
+						{
+							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+	
+							if ( afterActionFunc ) afterActionFunc();
+						} );	
+					}
+					else
 					{
-						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-
-						if ( afterActionFunc ) afterActionFunc();
-					} );
-
+						// Immediate Submit to Webservice case
+						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+					}
 				});
 			}
 		}
+	};
+
+
+	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
+	{
+		if ( actionDefJson.url )
+		{					
+			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
+
+			// generate url
+			var url = ActivityDataManager.generateWsUrl( formsJson, actionDefJson );
+
+			// Loading Tag part..
+			var loadingTag = FormUtil.generateLoadingTag( btnTag );
+
+			FormUtil.submitRedeem( url, formsJson, actionDefJson, loadingTag, function( success, redeemReturnJson ) {
+				// final call..
+				//actionIndex++;
+				if ( !redeemReturnJson ) redeemReturnJson = {};
+
+				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
+
+				var resultStr = "success";
+
+				if ( success )
+				{
+					dataPass.prevWsReplyData = redeemReturnJson;
+
+					// NOT USED ANYMORE?
+					// This will be picked up by 'processWSResult' action (next action to this one)
+					//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
+				}
+				else
+				{
+					// MISSING TRANSLATION
+					MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
+					// Should we stop at here?  Or continue with subActions?
+
+					var resultStr = "actionFailed";
+				}
+
+				if ( afterActionFunc ) afterActionFunc( resultStr );
+
+			});
+		}
+		else
+		{
+			MsgManager.notificationMessage ( 'Process Failed - no url!!', 'notificationDark', undefined, '', 'right', 'top' );
+			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
+		}		
 	};
 
 

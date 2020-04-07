@@ -195,12 +195,13 @@ ActivityDataManager.generateActivityData = function( dataJson, statusStr )
 // --------------------------------------
 // -- Ways to add data to main list
 
-ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJsonGroup, actionDefJson, payloadTemplates )
+ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJsonGroup, actionDefJson )
 {
     var activityJson = {};
     var createdDT = new Date();
 
-    var payload = ActivityDataManager.generatePayload( createdDT, formsJson, formsJsonGroup, actionDefJson, payloadTemplates );
+    // Generate 'payload' json either by 'template' or as formsJson (payload v1/v2)
+    var payload = ActivityDataManager.generatePayload( createdDT, formsJson, formsJsonGroup, actionDefJson );
 
     activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
 
@@ -218,15 +219,19 @@ ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJson
 
 
 // Add new activity to commonPayloadClient
-ActivityDataManager.createNewPayloadActivity = function( activityJson, callBack )
+ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGroup, actionDefJson, callBack )
 {
+    var activityJson = ActivityDataManager.generateActivityPayloadJson( formsJson, formsJsonGroup, actionDefJson );
+
     var commonPayloadClient = ClientDataManager.getCommonPayloadClient();
 
     ActivityDataManager.insertActivityToClient( activityJson, commonPayloadClient );
 
-    console.log( 'ActivityDataManager.createNewPayloadActivity, clientStore: ', ClientDataManager._clientsStore );
+    //console.log( 'ActivityDataManager.createNewPayloadActivity, clientStore: ', ClientDataManager._clientsStore );
 
-    ClientDataManager.saveCurrent_ClientsStore( callBack );    
+    ClientDataManager.saveCurrent_ClientsStore( function() {
+        if ( callBack ) callBack( activityJson );    
+    });
 };
 
 
@@ -278,24 +283,25 @@ ActivityDataManager.generateWsUrl = function( inputsJson, actionJson )
 // 1. We need to get dcdConfig data..
 // 2. Need to get 'definitionPayloadTemplate'
 // 3. Need actionDef property <-- which fires this..
-ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, actionDefJson, definitionPayloadTemplates )
+ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, actionDefJson )
 {	
     var payloadJson;
+
+    var payloadTemplates = FormUtil.dcdConfig.definitionPayloadTemplates;
 
     // If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
     //		Otherwise, simply use 'formsJson' as payloadJson.
     if ( actionDefJson.payloadTemplate
-        && definitionPayloadTemplates 
-        && definitionPayloadTemplates[ actionDefJson.payloadTemplate ] )
+        && payloadTemplates 
+        && payloadTemplates[ actionDefJson.payloadTemplate ] )
     {
-        var payloadTemplate = definitionPayloadTemplates[ actionDefJson.payloadTemplate ];
+        var payloadTemplate = payloadTemplates[ actionDefJson.payloadTemplate ];
 
         // hard copy from payloadTemplate...
         payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
         payloadJson.DATE = dateTimeObj; //new Date();
 
         ActivityDataManager.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
-
 
         try
         {
@@ -312,6 +318,9 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
     {
         payloadJson = formsJson;			
     }
+
+
+    // At the end of the payload generation, it should have 'searchValues' & 'captureValues'
 
     return payloadJson;
 };

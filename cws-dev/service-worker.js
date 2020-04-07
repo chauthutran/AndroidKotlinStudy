@@ -557,7 +557,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "6938031c8a3ce4defa99b943142544c7"
+    "revision": "a1121e2b6ca2a7a2249af6abe08a24ce"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -585,7 +585,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "96c28ebaf3c367407dae507fb7a2a78c"
+    "revision": "2fac773e7ddded2ddc2788e7db338db8"
   },
   {
     "url": "scripts/services/formMsgManager.js",
