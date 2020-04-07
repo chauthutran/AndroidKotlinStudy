@@ -399,17 +399,13 @@ function Action( cwsRenderObj, blockObj )
 				//actionIndex++;
 				if ( !redeemReturnJson ) redeemReturnJson = {};
 
-				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDef );
+				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );
 
 				var resultStr = "success";
 
 				if ( success )
 				{
 					dataPass.prevWsReplyData = redeemReturnJson;
-
-					// NOT USED ANYMORE?
-					// This will be picked up by 'processWSResult' action (next action to this one)
-					//me.recurrsiveActions( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, clickedItemData, returnFunc );	
 				}
 				else
 				{

@@ -401,7 +401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "6f9445def8bd11db7fa55b098d8788ab"
+    "revision": "52a7d9b4839378200c91668688483b93"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -557,7 +557,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "a1121e2b6ca2a7a2249af6abe08a24ce"
+    "revision": "902d7353356637134d7ce9b1f1363791"
   },
   {
     "url": "scripts/services/cacheManager.js",
