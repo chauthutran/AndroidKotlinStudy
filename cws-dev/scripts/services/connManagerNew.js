@@ -110,7 +110,7 @@ ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 	{
 		if ( statusInfo.networkConn.online_Stable )
 		{
-			FormUtil.getDataServerAvailable( function ( success, jsonData ) {
+			WsCallManager.getDataServerAvailable( function ( success, jsonData ) {
 
 				// if check succeeds with valid [jsonData] payload
 				if ( success && jsonData && jsonData.available != undefined ) 

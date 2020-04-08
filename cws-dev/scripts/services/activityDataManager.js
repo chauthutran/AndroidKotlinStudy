@@ -234,51 +234,6 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
     });
 };
 
-
-// This has moved from FormUtil
-ActivityDataManager.generateWsUrl = function( inputsJson, actionJson )
-{
-    var url;
-
-    if ( actionJson.url !== undefined || WsApiManager.isSite_psiConnect  )
-    {
-        if ( WsApiManager.isSite_psiConnect && actionJson.dws && actionJson.dws.url )
-        {
-            url = WsApiManager.composeWsFullUrl( actionJson.dws.url );
-        }
-        else
-        {
-            url = WsApiManager.composeWsFullUrl( actionJson.url );
-        }
-
-        if ( actionJson.urlParamNames !== undefined 
-            && actionJson.urlParamInputs !== undefined 
-            && actionJson.urlParamNames.length == actionJson.urlParamInputs.length )
-        {
-            var paramAddedCount = 0;
-    
-            for ( var i = 0; i < actionJson.urlParamNames.length; i++ )
-            {
-                var paramName = actionJson.urlParamNames[i];
-                var inputName = actionJson.urlParamInputs[i];
-    
-                if ( inputsJson[ inputName ] !== undefined )
-                {
-                    var value = inputsJson[ inputName ];
-    
-                    url += ( paramAddedCount == 0 ) ? '?': '&';
-    
-                    url += paramName + '=' + value;
-                }
-    
-                paramAddedCount++;
-            }
-        }
-    }
-    
-    return url;
-};
-  
 	
 // 1. We need to get dcdConfig data..
 // 2. Need to get 'definitionPayloadTemplate'

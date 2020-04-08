@@ -144,7 +144,7 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_network_Text' ).html( ( me.aboutInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
 
-            syncManager.reinitialize ( me.cwsRenderObj );
+            //syncManager.reinitialize ( me.cwsRenderObj );
 
         });
 

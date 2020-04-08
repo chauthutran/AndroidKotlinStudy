@@ -360,7 +360,7 @@ DevHelper.TestRequestSend = function( url )
 
         var loadingTag = undefined;
 
-        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
+        WsCallManager.requestPost( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
             console.log( success, mongoClientsJson );
         });

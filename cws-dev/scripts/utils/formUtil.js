@@ -458,168 +458,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
 
-// POST Request required json prepare
-FormUtil.getFetchWSJson = function( payloadJson, headerJson )
-{
-	if ( WsApiManager.useDWS() )
-	{
-		var fetchJson = {
-			method: 'POST', 
-			headers: { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' },
-		    body: '{}'
-	   };
-	}
-	else
-	{
-		var fetchJson = {
-			method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
-		   ,body: '{}'
-	   };
-	}
-
-	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
-	{
-		if ( ! WsApiManager.useDWS() )
-		{
-			payloadJson.userName = payloadJson.submitLogin_usr;
-			payloadJson.password = payloadJson.submitLogin_pwd;	
-		}
-	}
-	else
-	{
-		payloadJson.userName = FormUtil.login_UserName;
-		payloadJson.password = FormUtil.login_Password;
-	}
-
-	if ( payloadJson ) fetchJson.body = JSON.stringify( payloadJson );
-	
-	return fetchJson;
-}
-
-// GET Request to Web Service..
-FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
-{
-	/*if ( WsApiManager.useDWS() )
-	{
-		var url = WsApiManager.composeWsFullUrl( apiPath );
-
-		RESTUtil.retrieveDWSJson( url, function( success, returnJson )
-		{
-			if ( loadingTag ) loadingTag.remove();
-
-			if ( returnFunc ) returnFunc( returnJson );
-		});
-	}
-	else
-	{
-
-		var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-		RESTUtil.retrieveJson( url, function( success, returnJson )
-		{
-			if ( loadingTag ) loadingTag.remove();
-
-			if ( returnFunc ) returnFunc( returnJson );
-		});
-
-	}*/
-	
-	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-	RESTUtil.retrieveJson( url, function( success, returnJson )
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( returnJson );
-	});
-}
-
-// POST Request to Web Service..
-FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
-{	
-	var url; 
-
-	//if apiPath already contains correctly formed path, do not change 
-	if ( apiPath.indexOf( WsApiManager.domain_psiConnect ) < 0 && apiPath.indexOf( WsApiManager.domain_psiMIS ) < 0 )
-	{
-		url = WsApiManager.composeWsFullUrl( apiPath );
-	}
-	else
-	{
-		url = apiPath;
-	}
-
-	// Send the POST reqesut	
-	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( success, returnJson );
-	});
-}
-
-// --- --- --- ---
-
-FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
-{
-	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
-	{
-		if ( returnFunc ) returnFunc( success, returnJson );
-		if ( asyncCall ) asyncCall( returnJson );
-		if ( syncCall ) syncCall();
-	});
-}
-
-
-FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
-{
-	console.log( userName + ':' + password );
-	if ( WsApiManager.useDWS() )
-	{
-		var apiPath = ( '/PWA.loginCheck' ); //WsApiManager.composeWsFullUrl
-
-		var payloadJson = { 
-			'userName': userName,
-			'password': password,
-			'pwaStage': WsApiManager.stageName()  
-		};
-		//WsApiManager.getStageName()
-	}
-	else
-	{
-		var apiPath = ( '/api/loginCheck' ); //WsApiManager.composeWsFullUrl
-
-		var payloadJson = { 'submitLogin': true
-			, 'submitLogin_usr': userName
-			, 'submitLogin_pwd': password
-			, 'dcConfigGet': 'Y'
-			, pwaStage: WsApiManager.getStageName() 
-		};
-
-	}
-
-	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
-	{
-
-		if ( success )
-		{
-			// Check the login success message in content.. ..			
-			var loginStatus = ( returnJson && returnJson.loginStatus );
-
-			if ( loginStatus )
-			{
-				FormUtil.login_UserName = userName;
-				FormUtil.login_Password = password;
-				FormUtil.orgUnitData = returnJson.orgUnitData;
-				FormUtil.dcdConfig = returnJson.dcdConfig;
-			}
-
-			if ( returnFunc ) returnFunc( loginStatus, returnJson );
-		}
-	});
-}
-
-
 // -----------------------------------
 // ---- Login And Fetch WS Related ------
 
@@ -627,19 +465,6 @@ FormUtil.setLogin = function( userName, password )
 {
 	FormUtil.login_UserName = userName;
 	FormUtil.login_Password = password;	
-}
-
-FormUtil.checkLoginSubmitCase = function( payloadJson )
-{
-	if ( WsApiManager.useDWS() )
-	{
-		return ( payloadJson && payloadJson.pwaStage );
-	}
-	else
-	{
-		return ( payloadJson && payloadJson.submitLogin );
-	}
-	
 }
 
 FormUtil.checkLogin = function()
@@ -840,37 +665,6 @@ FormUtil.getRedeemPayload = function( id ) {
 
 }
 
-
-FormUtil.getAppInfo = function( returnFunc )
-{	
-	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
-
-	RESTUtil.retrieveJson( url, returnFunc );
-}
-
-FormUtil.getDataServerAvailable = function( returnFunc )
-{
-
-	if ( WsApiManager.useDWS() )
-	{
-		var url = WsApiManager.composeWsFullUrl( '/PWA.available' );
-		RESTUtil.retrieveDWSJson( url, returnFunc );
-	}
-	else
-	{
-		var url = WsApiManager.composeWsFullUrl( '/api/available' );
-		
-		if ( WsApiManager.isDebugMode ) console.log( '~ 1 : api/available  ' );
-
-		//RESTUtil.retrieveJson( url, returnFunc );
-		RESTUtil.retrieveJson( url, function()
-		{
-			if ( WsApiManager.isDebugMode ) console.log( '~ 2 : api/available  ' );
-			RESTUtil.retrieveJson( url, returnFunc );
-		} );	
-	}
-
-}
 
 // ======================================
 
@@ -1314,8 +1108,8 @@ FormUtil.updateStat_SyncItems = function( redList, retFunc )
 	FormUtil.records_redeem_queued = myQueue.length;
 	FormUtil.records_redeem_failed = myFailed.length;
 
-	syncManager.dataQueued = myQueue;
-	syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
+	//syncManager.dataQueued = myQueue;
+	//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
 		
 	retFunc( returnList );
 }

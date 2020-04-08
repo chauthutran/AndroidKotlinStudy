@@ -394,9 +394,9 @@ function Action( cwsRenderObj, blockObj )
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			FormUtil.submitRedeem( url, formsJson, actionDefJson, loadingTag, function( success, redeemReturnJson ) {
-				// final call..
-				//actionIndex++;
+			
+			WsCallManager.requestPost( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
+
 				if ( !redeemReturnJson ) redeemReturnJson = {};
 
 				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );

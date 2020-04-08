@@ -182,7 +182,7 @@ function Login( cwsRenderObj )
 			// ONLINE Login
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			FormUtil.submitLogin( userName, password, loadingTag, function( success, loginData ) 
+			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
 				console.log( loginData );
 				if ( success )

@@ -397,7 +397,7 @@ syncManager.syncItemData = function( listItem, btnTag, callBack )
             itemData.syncActionStarted = 1;
 
             //itemData.state = 1; //added to avoid duplicate calls sometimes occurring??? 1=in use, 0=unused
-            FormUtil.submitRedeem( itemData.data.url, itemData.data.payloadJson, itemData.data.actionJson, undefined, function( success, returnJson ) {
+            WsCallManager.requestPost( itemData.data.url, itemData.data.payloadJson, undefined, function( success, returnJson ) {
 
                 // network conditions deteriorate during sync process run
                 if ( !success 

@@ -773,7 +773,7 @@ function cwsRender()
 		me.navDrawerDivTag.empty();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
-		syncManager.evalSyncConditions();
+		//syncManager.evalSyncConditions();
 
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
 		{

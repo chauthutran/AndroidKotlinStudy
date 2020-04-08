@@ -209,7 +209,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 				{
 
 					// 
-					FormUtil.getDataServerAvailable( function( success, jsonData ) 
+					WsCallManager.getDataServerAvailable( function( success, jsonData ) 
 					{
 
 						if ( success && jsonData && jsonData.available != undefined )
@@ -279,7 +279,7 @@ ConnManager.runScheduledConnTest = function( returnFunc )
 				if ( ConnManager.networkOnline_CurrState )
 				{
 
-					FormUtil.getDataServerAvailable( function( success, jsonData ) 
+					WsCallManager.getDataServerAvailable( function( success, jsonData ) 
 					{
 						if ( success && jsonData && jsonData.available != undefined )
 						{
@@ -548,7 +548,7 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 		var userName = FormUtil.login_UserName;
 		var userPin = FormUtil.login_Password;
 
-		FormUtil.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
+		WsCallManager.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
 		{
 			if ( success )
 			{
