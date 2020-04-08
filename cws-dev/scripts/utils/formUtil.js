@@ -4,14 +4,7 @@
 function FormUtil() {}
 
 
-FormUtil.staticWSpath = '';
-
-FormUtil.login_UserName = '';
-FormUtil.login_Password = '';
-FormUtil.login_server = '';
 FormUtil.login_UserRole = [];
-FormUtil.orgUnitData;
-FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
@@ -317,8 +310,8 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 		}
 
-		inputsJson[ 'userName' ] = FormUtil.login_UserName;
-		inputsJson[ 'password' ] = FormUtil.login_Password;
+		inputsJson[ 'userName' ] = SessionManager.sessionData.login_UserName;
+		inputsJson[ 'password' ] = SessionManager.sessionData.login_Password;
 
 	  if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
 		{
@@ -463,22 +456,21 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 
 FormUtil.setLogin = function( userName, password )
 {
-	FormUtil.login_UserName = userName;
-	FormUtil.login_Password = password;	
+	SessionManager.sessionData.login_UserName = userName;
+	SessionManager.sessionData.login_Password = password;	
 }
 
 FormUtil.checkLogin = function()
 {
-	return ( FormUtil.login_UserName.toString().length * FormUtil.login_Password.toString().length );
+	return ( SessionManager.sessionData.login_UserName.toString().length * SessionManager.sessionData.login_Password.toString().length );
 }
 
 FormUtil.undoLogin = function()
 {
-	FormUtil.login_UserName = '';
-	FormUtil.login_Password = '';	
-	FormUtil.login_server = '';
-	FormUtil.dcdConfig = undefined;
-	FormUtil.orgUnitData = undefined;
+	SessionManager.sessionData.login_UserName = '';
+	SessionManager.sessionData.login_Password = '';	
+	SessionManager.sessionData.dcdConfig = undefined;
+	SessionManager.sessionData.orgUnitData = undefined;
 
 	$( 'input.loginUserPin' ).val( '' );
 	$( 'input.loginUserPinNumeric' ).val( '' );
@@ -1098,7 +1090,7 @@ FormUtil.updateStat_SyncItems = function( redList, retFunc )
 	FormUtil.records_redeem_failed = 0;
 
 
-	var returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
+	var returnList = redList.list.filter( a => a.owner == SessionManager.sessionData.login_UserName );
 
 	var myQueue = returnList.filter( a=>a.status == Constants.status_redeem_queued );
 	var myFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );
@@ -1219,7 +1211,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$.get( activityType.icon.path, function(data) {
 	
 				var svgObject = ( $(data)[0].documentElement );
-				var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
+				var svgStyle = ( iconStyleOverride ? iconStyleOverride : SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize );
 	
 				if ( activityType.icon.colors )
 				{
@@ -1248,7 +1240,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 				$( iconObj ).empty();
 				$( iconObj ).append( svgObject );
 	
-				if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
+				if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
 				{
 					$( svgObject ).attr( 'width', svgStyle.width );
 					$( svgObject ).attr( 'height', svgStyle.height );
@@ -1256,13 +1248,13 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 				{
-					var iconActivityWidth = FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width;
-					var iconStatusWidth = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
-					var iconStatusHeight = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
+					var iconActivityWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width;
+					var iconStatusWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width;
+					var iconStatusHeight = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height;
 	
 					var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
 	
-					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 					$( iconObj ).append( statusIconObj );
 	
 
@@ -1281,7 +1273,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
-	if ( FormUtil.dcdConfig )
+	if ( SessionManager.sessionData.dcdConfig )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
@@ -1315,13 +1307,13 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 					$( targetObj ).empty();
 					$( targetObj ).append( svgObject );
 
-					if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+					if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize )
 					{
-						$( svgObject ).attr( 'width', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width );
-						$( svgObject ).attr( 'height', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height );
+						$( svgObject ).attr( 'width', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width );
+						$( svgObject ).attr( 'height', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height );
 		
-						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
 					}
 	
 				});
@@ -1386,7 +1378,7 @@ FormUtil.getActivityType = function( itemData )
 	var returnOpt;
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1419,7 +1411,7 @@ FormUtil.getActivityTypeComposition = function( itemData )
 	var returnOpt;
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
 
 		if ( itemData.data && 
 				itemData.data.payloadJson && 
@@ -1484,7 +1476,7 @@ FormUtil.getStatusOpt = function( itemData )
 {
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusOptions;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1512,11 +1504,11 @@ FormUtil.gAnalyticsEventAction = function( returnFunc )
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
-		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 	else
 	{
-		ret = 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:none;userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 
 	if ( returnFunc ) returnFunc( ret );
@@ -1720,7 +1712,7 @@ FormUtil.getGeoLocationIndex = function( separator, group )
 	// numberic prefix is accuracy down to metres (THIS SHOULD CHANGE TO SOMETHING MORE MEANINGFUL )
 
 	var sep = ( separator ? separator : '_')
-	var retIdx = FormUtil.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
+	var retIdx = SessionManager.sessionData.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
 	var dtmNow = $.format.date( new Date(), "yyyymmdd" );
 	var ArrCoords = FormUtil.geoLocationLatLon.split( ',' );
 
@@ -2035,7 +2027,7 @@ FormUtil.getMyDetails = function( callBack )
 {
 	//https://cws-dhis.psi-mis.org/dws/locator.api/?code=
 	//https://pwa.psi-connect.org/ws/dws/locator.api/?code=
-	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + FormUtil.login_UserName;
+	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + SessionManager.sessionData.login_UserName;
 
 	var payload = {
 		"action-details": 2,
@@ -2088,8 +2080,8 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 	if ( useAPI != undefined && useAPI == true )
 	{
 
-		var myD_username = 'pwa'; //FormUtil.login_UserName;
-		var myD_password = '529n3KpyjcNcBMsP'; //FormUtil.login_Password;
+		var myD_username = 'pwa'; //SessionManager.sessionData.login_UserName;
+		var myD_password = '529n3KpyjcNcBMsP'; //SessionManager.sessionData.login_Password;
 		var server_url = 'https://replica.psi-mis.org/' + 'locator/api/1?code=NP-OHF-3122';
 
 		if ( 1 == 1)

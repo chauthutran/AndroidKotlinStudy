@@ -252,7 +252,7 @@ function statisticsOld( cwsRender )
 		newData.lastFetch = (new Date() ).toISOString();
 		newSaveObj.mySession.statistics = newData;
 
-		DataManager.saveData( FormUtil.login_UserName, newSaveObj );
+		DataManager.saveData( SessionManager.sessionData.login_UserName, newSaveObj );
 	}
 
 	me.populatePlaceholderData = function()

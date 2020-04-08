@@ -19,9 +19,9 @@ function favIcons( cwsRender )
 
     me.initialize = function() 
     {
-        if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList )
+        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList )
         {
-            me.createIconButtons( FormUtil.dcdConfig.favList );
+            me.createIconButtons( SessionManager.sessionData.dcdConfig.favList );
         }
 
         return me;

@@ -450,7 +450,7 @@ function cwsRender()
 
 		DataManager.getSessionData( function( userSessionJson ) {
 			//var userSessionJson = DataManager.getSessionData();
-			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
+			var userName = ( SessionManager.sessionData.login_UserName && FormUtil.checkLogin() ) ? SessionManager.sessionData.login_UserName : "";
 			var startMenuTag;
 
 			$( '#navDrawerDiv' ).empty();
@@ -905,7 +905,7 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
-        if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList  )
         {
             me.favIconsObj = new favIcons( me );
 

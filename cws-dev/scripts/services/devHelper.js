@@ -330,7 +330,7 @@ DevHelper.loadSampleData = function()
 
 DevHelper.showActivityCardConfigs = function()
 {
-    console.log( FormUtil.dcdConfig.settings.redeemDefs );
+    console.log( SessionManager.sessionData.dcdConfig.settings.redeemDefs );
 }
 
 // =======================================

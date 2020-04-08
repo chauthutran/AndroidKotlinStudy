@@ -287,7 +287,7 @@ function ActivityCard( activityId, cwsRenderObj )
         try
         {
             // 1. Does it find hte matching status?
-            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, FormUtil.dcdConfig );
+            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, SessionManager.sessionData.dcdConfig );
             if ( activitySyncUpStatusConfig ) activityCardLiTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
             me.setActivitySyncUpStatus( activityCardLiTag, activityJson.processing );
@@ -303,12 +303,12 @@ function ActivityCard( activityId, cwsRenderObj )
     {
         try
         {
-            var activityTypeConfig = ConfigUtil.getActivityTypeConfig( activityJson, FormUtil.dcdConfig );
+            var activityTypeConfig = ConfigUtil.getActivityTypeConfig( activityJson, SessionManager.sessionData.dcdConfig );
     
             var activityTypeTdTag = activityCardLiTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
 
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
-            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, FormUtil.dcdConfig );
+            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, SessionManager.sessionData.dcdConfig );
 
             // TODO: Bring this method up from 'formUtil' to 'activityCard'?
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)

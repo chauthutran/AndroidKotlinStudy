@@ -242,7 +242,7 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
 {	
     var payloadJson;
 
-    var payloadTemplates = FormUtil.dcdConfig.definitionPayloadTemplates;
+    var payloadTemplates = SessionManager.sessionData.dcdConfig.definitionPayloadTemplates;
 
     // If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
     //		Otherwise, simply use 'formsJson' as payloadJson.
@@ -261,7 +261,7 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
         try
         {
             // Temporary - replace activeUserId..
-            payloadJson.captureValues.activeUser = Constants.fixedActiveUserId;
+            payloadJson.captureValues.activeUser = SessionManager.sessionData.login_UserName;
         }
         catch ( errMsg )
         {

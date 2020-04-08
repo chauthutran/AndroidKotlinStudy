@@ -478,8 +478,8 @@ Util2.dateToMyFormat = function( date, myFormat )
 
 Util2.newLocalSequence = function( pattern, commitSEQIncr )
 {
-	//var jsonUserData = DataManager.getData( FormUtil.login_UserName );
-	DataManager.getData( FormUtil.login_UserName, function( jsonUserData ){
+	//var jsonUserData = DataManager.getData( SessionManager.sessionData.login_UserName );
+	DataManager.getData( SessionManager.sessionData.login_UserName, function( jsonUserData ){
 
 		var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
 		var ret;
@@ -525,7 +525,7 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 	
 					if ( commitSEQIncr != undefined && commitSEQIncr == true )
 					{
-						DataManager.saveData( FormUtil.login_UserName, jsonUserData );
+						DataManager.saveData( SessionManager.sessionData.login_UserName, jsonUserData );
 					}
 	
 					return Util.paddNumeric( ret, arrParm[1] );

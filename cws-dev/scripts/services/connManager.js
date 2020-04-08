@@ -542,11 +542,11 @@ ConnManager.getDcdConfigVersion = function( returnFunc )
 {
 	if ( localStorage.getItem(Constants.storageName_session) !== null && FormUtil.checkLogin() )
 	{
-		console.log( 'ConnManager.getDcdConfigVersion - FormUtil.login_UserName/Password: ' + FormUtil.login_UserName + ', ' + FormUtil.login_Password );
+		console.log( 'ConnManager.getDcdConfigVersion - SessionManager.sessionData.login_UserName/Password: ' + SessionManager.sessionData.login_UserName + ', ' + SessionManager.sessionData.login_Password );
 
 		var loadingTag = undefined;
-		var userName = FormUtil.login_UserName;
-		var userPin = FormUtil.login_Password;
+		var userName = SessionManager.sessionData.login_UserName;
+		var userPin = SessionManager.sessionData.login_Password;
 
 		WsCallManager.submitLogin( userName, userPin, loadingTag, function( success, loginData ) 
 		{

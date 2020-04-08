@@ -57,11 +57,13 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 
 			if ( hasLoginStatus )
 			{
-                // TODO: SHOULD BE 'Session' class below!!
-				FormUtil.login_UserName = userName;
-				FormUtil.login_Password = password;
-				FormUtil.orgUnitData = returnJson.orgUnitData;
-				FormUtil.dcdConfig = returnJson.dcdConfig;
+				var sessionInfo = { login_UserName: userName,
+				    login_Password: password,
+                    orgUnitData: returnJson.orgUnitData,
+                    dcdConfig: returnJson.dcdConfig
+                };
+                
+                SessionManager.updateSessionData( sessionInfo );
 			}
 
 			if ( returnFunc ) returnFunc( hasLoginStatus, returnJson );

@@ -178,7 +178,7 @@ SyncManagerNew.downloadClients = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = Constants.fixedActiveUserId; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
+        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
 
@@ -224,7 +224,7 @@ SyncManagerNew.downloadActivities = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = Constants.fixedActiveUserId; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
 		var payloadJson = {

@@ -86,7 +86,7 @@ ConfigUtil.getAllAreaList = function( configJson )
 ConfigUtil.configUserRole = function( configJson, callBack )
 {
     var defRoles = configJson.definitionUserRoles;
-    var userGroupRole = FormUtil.orgUnitData.orgUnit.organisationUnitGroups;
+    var userGroupRole = SessionManager.sessionData.orgUnitData.orgUnit.organisationUnitGroups;
 
     if ( defRoles && userGroupRole )
     {

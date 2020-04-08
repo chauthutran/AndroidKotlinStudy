@@ -258,17 +258,17 @@ function Login( cwsRenderObj )
 			// Set Logged in orgUnit info
 			if ( loginData.orgUnitData )
 			{
-				if ( FormUtil.orgUnitData != loginData.orgUnitData) FormUtil.orgUnitData = loginData.orgUnitData;
+				if ( SessionManager.sessionData.orgUnitData != loginData.orgUnitData) SessionManager.sessionData.orgUnitData = loginData.orgUnitData;
 
 				me.loggedInDivTag.show();
 				me.spanOuNameTag.show();
-				me.spanOuNameTag.text( ' ' + FormUtil.orgUnitData.userName + ' ' ).attr( 'title', FormUtil.orgUnitData.ouName );	
+				me.spanOuNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );	
 			} 
 
 			// Load config and continue the CWS App process
 			if ( loginData.dcdConfig ) 
 			{
-				FormUtil.dcdConfig = loginData.dcdConfig; 
+				SessionManager.sessionData.dcdConfig = loginData.dcdConfig; 
 				// call CWS start with this config data..
 				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 
@@ -289,11 +289,11 @@ function Login( cwsRenderObj )
 					var newSaveObj = Object.assign( {} , loginData);
 		
 					FormUtil.defaultLanguage( function( defaultLang ){
-						newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, server: FormUtil.login_server, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
+						newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
 		
 						DataManager.saveData( me._userName, newSaveObj );
 			
-						FormUtil.dcdConfig = newSaveObj.dcdConfig; 
+						SessionManager.sessionData.dcdConfig = newSaveObj.dcdConfig; 
 		
 						me.loginAfter();
 					});
@@ -312,12 +312,10 @@ function Login( cwsRenderObj )
 
 
 			// TODO: THIS IS USED?
-			DataManager.getData( 'syncList', function( syncData ){
-
+			//DataManager.getData( 'syncList', function( syncData ){
 				// if previously run Sync process 'crashed' without saving results > update results
-				if ( syncData ) syncManager.mergeSyncListWithIndexDB();
-
-			});
+				//if ( syncData ) syncManager.mergeSyncListWithIndexDB();
+			//});
 
 			$( 'nav' ).show();
 
