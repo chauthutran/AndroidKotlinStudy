@@ -355,6 +355,7 @@ function Action( cwsRenderObj, blockObj )
 				// Temporarily move before 'handlePayloadPreview' - since version 1 
 				var formsJsonGroup = {};
 				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+				var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
 
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 					//var currBlockId = blockDivTag.attr( 'blockId' );
@@ -364,7 +365,7 @@ function Action( cwsRenderObj, blockObj )
 					// If 'Activity' generate case, add to list
 					if ( clickActionJson.redeemListInsert === "true" )
 					{						
-						ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, clickActionJson, function( activityJson )
+						ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
 						{
 							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 	
@@ -510,17 +511,17 @@ function Action( cwsRenderObj, blockObj )
 	me.btnClickedAlready = function( btnTag )
 	{
 		return btnTag.hasClass( 'clicked' );
-	}
+	};
 
 	me.btnClickMarked = function( btnTag )
 	{
 		btnTag.addClass( 'clicked' );
-	}
+	};
 
 	me.clearBtn_ClickedMark = function( btnTag )
 	{
 		btnTag.removeClass( 'clicked' );
-	}
+	};
 
 	// ========================================================
 	
@@ -542,7 +543,24 @@ function Action( cwsRenderObj, blockObj )
 		inputsJson.voucherStatus = clickActionJson.voucherStatus;
 
 		return inputsJson;
-	}
+	};
 
+
+	me.getBlockInfo_Attr = function( blockDivTag )
+	{
+		var blockInfo = { 'activityType': '' };
+
+		if ( blockDivTag )
+		{
+			var activityType = blockDivTag.attr( 'activityType' );
+
+			if ( activityType )
+			{
+				blockInfo.activityType = activityType;
+			}
+		}
+
+		return blockInfo;
+	};
 
 }

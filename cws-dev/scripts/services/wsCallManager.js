@@ -50,8 +50,6 @@ WsCallManager.localhostProxyCaseHandle = function( url, requestOption )
         //requestOption.headers[ 'Target-URL' ] = url;
 
         url = WsCallManager.localhostProxyUrl + '/' + url;
-
-        console.log( 'proxy Url: ' + url );
     }
     
     return url;

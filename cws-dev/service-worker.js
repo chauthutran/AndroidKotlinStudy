@@ -613,7 +613,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "bfaccd4fb342f87aa9f1d597e27a6b00"
+    "revision": "ddd6884c137e1021342d04ea55cb2387"
   },
   {
     "url": "scripts/services/sessionManager.js",
@@ -657,7 +657,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/wsCallManager.js",
-    "revision": "c8d7aea8ab70c03130fecf04f0a036df"
+    "revision": "c70a32ceb9848c64fa51ee4a30c8f44b"
   },
   {
     "url": "scripts/utils/activityUtil.js",

@@ -32,7 +32,7 @@ ScheduleManager.timerID_scheduleSyncAllRun;
 ScheduleManager.timerID_showHideSyncAllButtonUI;
 ScheduleManager.timerID_trackConnectionType;
 ScheduleManager.timerID_syncDownRunOnce;
-
+ScheduleManager.timerID_serverAvilableCheck;
 
 // === PART 1. Schedule Call/Start Methods =============
 
@@ -59,6 +59,7 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 
 ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 {
+	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
 	clearInterval ( ScheduleManager.timerID_showHideSyncAllButtonUI );
 	clearInterval ( ScheduleManager.timerID_scheduleSyncAllRun );
 	//clearInterval ( ScheduleManager.timerID_trackConnectionType );
@@ -86,7 +87,7 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 	if ( ! NotRunRightAway ) ConnManagerNew.scheduled_checkNSet_ServerAvailable();
 
 	// 30 seconds
-	setInterval( ConnManagerNew.scheduled_checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
+	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.scheduled_checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
 
 };
 

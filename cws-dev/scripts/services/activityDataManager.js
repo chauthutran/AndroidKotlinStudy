@@ -195,13 +195,13 @@ ActivityDataManager.generateActivityData = function( dataJson, statusStr )
 // --------------------------------------
 // -- Ways to add data to main list
 
-ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJsonGroup, actionDefJson )
+ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJsonGroup, blockInfo, actionDefJson )
 {
     var activityJson = {};
     var createdDT = new Date();
 
     // Generate 'payload' json either by 'template' or as formsJson (payload v1/v2)
-    var payload = ActivityDataManager.generatePayload( createdDT, formsJson, formsJsonGroup, actionDefJson );
+    var payload = ActivityDataManager.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, actionDefJson );
 
     activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
 
@@ -219,15 +219,13 @@ ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJson
 
 
 // Add new activity to commonPayloadClient
-ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGroup, actionDefJson, callBack )
+ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGroup, blockInfo, actionDefJson, callBack )
 {
-    var activityJson = ActivityDataManager.generateActivityPayloadJson( formsJson, formsJsonGroup, actionDefJson );
+    var activityJson = ActivityDataManager.generateActivityPayloadJson( formsJson, formsJsonGroup, blockInfo, actionDefJson );
 
     var commonPayloadClient = ClientDataManager.getCommonPayloadClient();
 
     ActivityDataManager.insertActivityToClient( activityJson, commonPayloadClient );
-
-    //console.log( 'ActivityDataManager.createNewPayloadActivity, clientStore: ', ClientDataManager._clientsStore );
 
     ClientDataManager.saveCurrent_ClientsStore( function() {
         if ( callBack ) callBack( activityJson );    
@@ -238,7 +236,7 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
 // 1. We need to get dcdConfig data..
 // 2. Need to get 'definitionPayloadTemplate'
 // 3. Need actionDef property <-- which fires this..
-ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, actionDefJson )
+ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, actionDefJson )
 {	
     var payloadJson;
 
