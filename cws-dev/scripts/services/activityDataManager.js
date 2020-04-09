@@ -239,6 +239,7 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
 ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, actionDefJson )
 {	
     var payloadJson;
+    var INFO = {};
 
     var payloadTemplates = SessionManager.sessionData.dcdConfig.definitionPayloadTemplates;
 
@@ -249,11 +250,14 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
         && payloadTemplates[ actionDefJson.payloadTemplate ] )
     {
         var payloadTemplate = payloadTemplates[ actionDefJson.payloadTemplate ];
-
-        // hard copy from payloadTemplate...
         payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
-        payloadJson.DATE = dateTimeObj; //new Date();
 
+        // In config/payloadTemplat, we will use below info
+        INFO.date = dateTimeObj;
+        Util.mergeJson( INFO, SessionManager.sessionData ); // = { login_UserName: '',
+        Util.mergeJson( INFO, blockInfo ); // activityType
+
+        // Go through each line of config template strings and perform eval to set 
         ActivityDataManager.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
 
         try
