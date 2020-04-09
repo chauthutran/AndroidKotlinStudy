@@ -12,6 +12,7 @@ function WsCallManager() {}
 WsCallManager.domain_psiConnect = '.psi-connect.org';  // change to '.psi-connect.org';
 
 WsCallManager.wsOriginUrl = '';  // get set when start..
+WsCallManager.localhostProxyUrl = 'http://localhost:3020';
 
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
@@ -19,7 +20,7 @@ WsCallManager.wsUrlList = {
     'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev'
 };
 
-WsCallManager.requestBasicAuth = { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' };
+WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A='; // { 'Authorization': 
 
 
 // ============================================
@@ -29,15 +30,31 @@ WsCallManager.setWsOriginUrl = function()
 {
     var originUrl = window.location.origin;  // https://pwa.psi-connect.. OR http://localhsot
 
-    var stageName = 'dev';  // Set as 'dev' as default.
+    var stageName = 'dev';  // Default to 'dev'.
 
     // use current site 
-    if ( originUrl.indexOf( 'http://localhost' ) === 0 ) stageName = 'dev';
+    // localhost is set to use 'stage'
+    if ( originUrl.indexOf( 'http://localhost' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
     
     WsCallManager.wsOriginUrl = WsCallManager.wsUrlList[ stageName ];
+};
+
+
+WsCallManager.localhostProxyCaseHandle = function( url, requestOption )
+{
+    if ( window.location.origin.indexOf( 'http://localhost' ) === 0 )
+    {
+        //requestOption.headers[ 'Target-URL' ] = url;
+
+        url = WsCallManager.localhostProxyUrl + '/' + url;
+
+        console.log( 'proxy Url: ' + url );
+    }
+    
+    return url;
 };
 
 
@@ -91,9 +108,13 @@ WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFu
     var url = WsCallManager.composeWsFullUrl( apiPath );
 
     var requestOption = {
-        headers: WsCallManager.requestBasicAuth,
+        headers: {
+            'Authorization': WsCallManager.requestBasicAuth
+        },        
         body: JSON.stringify( payloadJson )
     };
+
+    url = WsCallManager.localhostProxyCaseHandle( url, requestOption );
 
 	// Send the POST reqesut	
 	RESTUtil.performPost( url, requestOption, function( success, returnJson ) 
@@ -109,8 +130,12 @@ WsCallManager.requestGet = function( apiPath, loadingTag, returnFunc )
     var url = WsCallManager.composeWsFullUrl( apiPath );
 
     var requestOption = {
-        headers: WsCallManager.requestBasicAuth
+        headers: {
+            'Authorization': WsCallManager.requestBasicAuth
+        }
     };
+
+    url = WsCallManager.localhostProxyCaseHandle( url, requestOption );
 
 	// Send the POST reqesut	
 	RESTUtil.performGet( url, requestOption, function( success, returnJson ) 

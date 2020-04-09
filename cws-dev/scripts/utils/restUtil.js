@@ -9,7 +9,7 @@ function RESTUtil() {}
 RESTUtil.performGet = function( url, requestOption, returnFunc )
 {
     var requestData = {
-        method: 'GET', 
+        method: 'GET'
     };
 
     if ( requestOption ) Util.mergeJson( requestData, requestOption );
