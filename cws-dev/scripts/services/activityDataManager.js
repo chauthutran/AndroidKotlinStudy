@@ -256,6 +256,7 @@ ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJso
         INFO.date = dateTimeObj;
         Util.mergeJson( INFO, SessionManager.sessionData ); // = { login_UserName: '',
         Util.mergeJson( INFO, blockInfo ); // activityType
+        DevHelper.setINFO_ForConsoleDisplay( INFO ); 
 
         // Go through each line of config template strings and perform eval to set 
         ActivityDataManager.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
