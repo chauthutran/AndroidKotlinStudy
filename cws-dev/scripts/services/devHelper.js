@@ -254,3 +254,18 @@ DevHelper.TestRequestSend = function( url )
     }
 };
 
+DevHelper.testRun = function()
+{
+    var dest = { 'a1': [ { 'name': 'james' }, { 'name': 'mark' } ],
+        'a2': 'james',
+        'o1': { 'name': 'james', 'child': { 'age': 12, 'weight': 30 } }
+          };
+    var obj = { 'a1': [ { 'name': 'james1' }, { 'name': 'mark1' } ],
+          'a2': 'mark',
+          'a3': 'mark2',
+          'o1': { 'name': 'mark', 'child': { 'age': 20, 'height': '23' }, 'hobby': 'fly' }
+          };
+    Util.mergeDeep( dest, obj );
+
+    console.log( dest );
+};

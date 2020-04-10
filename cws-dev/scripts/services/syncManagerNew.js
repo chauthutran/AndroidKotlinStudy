@@ -180,7 +180,6 @@ SyncManagerNew.downloadClients = function( callBack )
         // TODO: 
         var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
-        //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
 
         var payloadJson = { 'find': {} };
 

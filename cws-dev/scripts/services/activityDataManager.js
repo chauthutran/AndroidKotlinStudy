@@ -24,7 +24,6 @@ ActivityDataManager.getActivityList = function()
 };
 
 
-
 // ** Problem with 2 type of data..
 // <-- when we list things, the viewer and others need to sort based on that?
 //  <-- 
@@ -170,28 +169,6 @@ ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaAc
     return newActivities.length;
 };
 
-
-// ------------------------------------
-// --- TODO - MODIFY!!!
-
-/*
-ActivityDataManager.generateActivityData = function( dataJson, statusStr )
-{
-    var activityData = {};
-
-    //activityData.title = 'added' + ' [' + dateTimeStr + ']'; // MISSING TRANSLATION
-    activityData.created = Util.formatDateTimeStr( dataJson.payloadJson.DATE.toString() );
-    activityData.id = dataJson.payloadJson.activityId;
-    activityData.status = statusStr;
-    activityData.activityType = "FPL-FU"; // Need more discussion or easier way to get this..        
-    activityData.history = [];
-
-    activityData.data = dataJson;
-
-    return activityData;
-};
-*/
-
 // --------------------------------------
 // -- Ways to add data to main list
 
@@ -201,7 +178,7 @@ ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJson
     var createdDT = new Date();
 
     // Generate 'payload' json either by 'template' or as formsJson (payload v1/v2)
-    var payload = ActivityDataManager.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, actionDefJson );
+    var payload = PayloadTemplateHelper.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, actionDefJson.payloadTemplate );
 
     activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
 
@@ -231,136 +208,3 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
         if ( callBack ) callBack( activityJson );    
     });
 };
-
-	
-// 1. We need to get dcdConfig data..
-// 2. Need to get 'definitionPayloadTemplate'
-// 3. Need actionDef property <-- which fires this..
-ActivityDataManager.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, actionDefJson )
-{	
-    var payloadJson;
-    var INFO = {};
-
-    var payloadTemplates = SessionManager.sessionData.dcdConfig.definitionPayloadTemplates;
-
-    // If 'ActionJson' has "payloadTemplate": "clientActivity1", use it as template.
-    //		Otherwise, simply use 'formsJson' as payloadJson.
-    if ( actionDefJson.payloadTemplate
-        && payloadTemplates 
-        && payloadTemplates[ actionDefJson.payloadTemplate ] )
-    {
-        var payloadTemplate = payloadTemplates[ actionDefJson.payloadTemplate ];
-        payloadJson = Util.getJsonDeepCopy( payloadTemplate );	
-
-        // In config/payloadTemplat, we will use below info
-        INFO.date = dateTimeObj;
-        Util.mergeJson( INFO, SessionManager.sessionData ); // = { login_UserName: '',
-        Util.mergeJson( INFO, blockInfo ); // activityType
-        DevHelper.setINFO_ForConsoleDisplay( INFO ); 
-
-        // Go through each line of config template strings and perform eval to set 
-        ActivityDataManager.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, 0, 30 );
-
-        try
-        {
-            // Temporary - replace activeUserId..
-            payloadJson.captureValues.activeUser = SessionManager.sessionData.login_UserName;
-        }
-        catch ( errMsg )
-        {
-            console.log( 'Error during payloadJson.captureValues.activeUser set, errMsg: ' + errMsg );
-        }
-            
-    }
-    else 
-    {
-        payloadJson = formsJson;			
-    }
-
-
-    // At the end of the payload generation, it should have 'searchValues' & 'captureValues'
-
-    return payloadJson;
-};
-
-
-ActivityDataManager.traverseEval = function( obj, payloadJson, formsJsonGroup, formsJson, iDepth, limit )
-{
-    if ( iDepth === limit )
-    {
-        console.log( 'Error in ActivityDataManager.traverseEval, Traverse depth limit has reached: ' + iDepth );
-    }
-    else
-    {
-        for ( var prop in obj ) 
-        {
-            var propVal = obj[prop];
-    
-            if ( typeof( propVal ) === "object" ) 
-            {
-                //console.log( prop, propVal );
-                ActivityDataManager.traverseEval( propVal, payloadJson, formsJsonGroup, formsJson, iDepth++, limit );
-            }
-            else if ( typeof( propVal ) === "string" ) 
-            {
-                //console.log( prop, propVal );
-                try
-                {
-                    obj[prop] = eval( propVal );
-                }
-                catch( errMsg )
-                {
-                    console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
-                }
-            }
-        }
-    }
-};	
-
-
-/*
-‘Activity’: {
-   [activityData]
-}
-
-[activityData]
-{
-   ‘activityId’
-   ‘activityDate’: { --- }  <--
-   ‘activityType’
-   ‘activeUser’
-   ‘transactions’: [ ---- ]
-}
-*/
-
-
-// <-- EXISTING ACTIVITY LIST STRUCTURE!!!
-
-// WE SHOULD GO WITH 2 STRUCTURE... 
-//  1. Not Submitted 
-//      - payload Structure with 
-//       'payloadJson' - search/captureValues, url, actionJson, etc..
-//       
-//      - Check 'status' or data signiture - to check if the data is 'not submitted'..
-//      - if 'status' is not 
-//
-//      '      
-//
-
-
-/*        "displaySettings": [
-            "'<b><i>' + activityItem.created + '</i></b>'",
-            "activityTrans.firstName + ' ' + activityTrans.lastName"
-         ],
-*/
-
-
-//  2. Submitted 
-//      - mongoDB submittied ones <-- Already
-//
-//      - { 'activityId': ---, 'transactions': --- }  <-- This will be 'PROCESSED' activity card.
-//      - How to display this?  Need 'status', 'activityType', 'created'
-//   
-//      OPTION.  
-//          - We can create new json and populate 'created'...  but, no good?
-//          - Modify 'Not Submitted' formatting..

@@ -65,6 +65,67 @@ Util.mergeJson = function( destObj, srcObj )
 	}
 };
 
+Util.mergeDeep = function ( dest, obj ) 
+{
+	Object.keys( obj ).forEach( key => {
+
+		var dVal = dest[key];
+		var oVal = obj[key];
+
+		if ( Array.isArray( dVal ) && Array.isArray( oVal ) ) 
+		{
+			Util.mergeArrays( dVal, oVal );			
+			//dest[key] = pVal.concat(...oVal);
+		} 
+		else if ( Util.isObject( dVal ) && Util.isObject( oVal ) ) 
+		{
+			//dest[key] = 
+			Util.mergeDeep( dVal, oVal );
+		} 
+		else 
+		{
+			dest[key] = oVal;
+		}
+	});
+
+	//return prev;
+};
+
+Util.isObject = function( obj )
+{
+	return ( typeof obj === 'object' );
+};
+
+
+// Performs a deep merge of objects and returns new object. Does not modify objects
+Util.mergeDeep_v2 = function (...objects) 
+{
+	const isObject = obj => obj && typeof obj === 'object';
+
+	return objects.reduce( ( prev, obj ) => 
+	{
+		Object.keys( obj ).forEach( key => {
+			const pVal = prev[key];
+			const oVal = obj[key];
+
+			if ( Array.isArray( pVal ) && Array.isArray( oVal ) ) 
+			{
+				prev[key] = pVal.concat(...oVal);
+			} 
+			else if ( isObject( pVal ) && isObject( oVal ) ) 
+			{
+				prev[key] = Util.mergeDeep_v2( pVal, oVal );
+			} 
+			else 
+			{
+				prev[key] = oVal;
+			}
+		});
+
+		return prev;
+	}, {});
+};
+
 Util.getCombinedJson = function( obj1, obj2 )
 {
 	var combinedObj = {};

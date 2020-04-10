@@ -157,17 +157,11 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
     //  If does not exists in pwaClients, put into the pwaClients..
     //  If exists, and if new one is later one, copy the content into main item (merging) 
 
-    console.log( 'ClientDataManager.mergeDownloadedClients' );
-    console.log( mongoClients );
-
     for ( var i = 0; i < mongoClients.length; i++ )
     {        
         var mongoClient = mongoClients[i];
         // TODO: This pwaClientList should be indexed on 'clientDataManager' for performance..
         var pwaClient = Util.getFromList( pwaClients, mongoClient._id, "_id" );
-
-        console.log( 'mongoClient: ' );
-        console.log( mongoClient );
 
         try
         {
@@ -175,12 +169,8 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
             // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
             if ( pwaClient )
             {
-                console.log( 'pwaClient compare' );
-
                 if ( mongoClient.updated > pwaClient.updated ) 
                 {
-                    console.log( 'client merged' );
-
                     // Get activities in mongoClient that does not exists...
                     ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient );
 
@@ -191,16 +181,12 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
                     changeOccurred = true;
                     updateOccurred = true;
                 }
-                //else console.log( 'Item content not merged - new one not latest..' );
             }
             else
             {
-                console.log( 'mongoClient Pushed' );
-                
                 // If not existing on device, simply add it.
                 newClients.push( mongoClient );
 
-                //console.log( 'Item content merged' );
                 changeOccurred = true;
             }
         }
@@ -216,8 +202,6 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
         // if new list to push to pwaClients exists, add to the list.
         if ( newClients.length > 0 ) 
         {
-            console.log( 'insert newClients' );
-
             ClientDataManager.insertClients( newClients, callBack );        
         }        
 
