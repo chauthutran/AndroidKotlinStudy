@@ -13,7 +13,7 @@ function cwsRender()
 	me.pulsatingProgress = $( '#pulsatingCircle' );
 
 	// global variables
-	me.configJson;
+	//me.configJson;
 	me.areaList = [];
 	me.manifest;
 	me.favIconsObj;
@@ -204,7 +204,7 @@ function cwsRender()
 			{
 				me.clearMenuClickStyles();
 
-				me.areaList = ConfigUtil.getAllAreaList( me.configJson );
+				me.areaList = ConfigManager.getAllAreaList();
 
 				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
 
@@ -218,7 +218,7 @@ function cwsRender()
 					// added by Greg (2018/12/10)
 					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
-					var startBlockObj = new Block( me, me.configJson.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+					var startBlockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 					startBlockObj.render();  // should been done/rendered automatically?
 
 					// Change start area mark based on last user info..
@@ -238,11 +238,11 @@ function cwsRender()
 	{
 		if ( options )
 		{
-			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
+			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
 		}
 		else
 		{
-			var blockObj = new Block( me, me.configJson.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
+			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
 		blockObj.render();
@@ -257,22 +257,15 @@ function cwsRender()
 
 	// --------------------------------------
 	// -- START POINT (FROM LOGIN) METHODS
-	me.startWithConfigLoad = function( configJson )
+	me.startWithConfigLoad = function()
 	{
-
-		me.configJson = configJson;
-		ConfigUtil.setConfigJson( me.configJson );
-
-		//setTimeout( function(){
-			me.startBlockExecute( me.configJson );
-		//}, 500 )
-
+		me.startBlockExecute();
 	}
 
-	me.startBlockExecute = function( configJson, initializationInstructions )
+	me.startBlockExecute = function( initializationInstructions )
 	{
 		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
-		ConfigUtil.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), configJson, function( areaList ){
+		ConfigManager.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), function( areaList ){
 
 			if ( areaList )
 			{
@@ -306,6 +299,9 @@ function cwsRender()
 
 	me.startBlockExecuteAgain = function()
 	{
+		me.startBlockExecute();
+
+		/*
 		DataManager.getUserConfigData( function( userData ){
 
 			if ( userData != undefined )
@@ -326,6 +322,7 @@ function cwsRender()
 			}
 
 		});
+		*/
 	}
 
 	// ----------------------------------
@@ -450,7 +447,7 @@ function cwsRender()
 
 		DataManager.getSessionData( function( userSessionJson ) {
 			//var userSessionJson = DataManager.getSessionData();
-			var userName = ( FormUtil.login_UserName && FormUtil.checkLogin() ) ? FormUtil.login_UserName : "";
+			var userName = ( SessionManager.sessionData.login_UserName && FormUtil.checkLogin() ) ? SessionManager.sessionData.login_UserName : "";
 			var startMenuTag;
 
 			$( '#navDrawerDiv' ).empty();
@@ -580,11 +577,14 @@ function cwsRender()
 	// Yes, it will be nice. : )
 	me.renderDefaultTheme = function ()
 	{
-		if ( me.configJson && me.configJson.settings && me.configJson.settings.theme && me.configJson.themes )
+		if ( SessionManager.sessionData.dcdConfig 
+			&& SessionManager.sessionData.dcdConfig.settings 
+			&& SessionManager.sessionData.dcdConfig.settings.theme 
+			&& SessionManager.sessionData.dcdConfig.themes )
 		{
-			console.log( 'Updating to theme: ' + me.configJson.settings.theme);
+			console.log( 'Updating to theme: ' + SessionManager.sessionData.dcdConfig.settings.theme);
 
-			var defTheme = me.getThemeConfig( me.configJson.themes, me.configJson.settings.theme );
+			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -773,7 +773,7 @@ function cwsRender()
 		me.navDrawerDivTag.empty();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
-		syncManager.evalSyncConditions();
+		//syncManager.evalSyncConditions();
 
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
 		{
@@ -905,7 +905,7 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
-        if ( FormUtil.dcdConfig && FormUtil.dcdConfig.favList  )
+        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList  )
         {
             me.favIconsObj = new favIcons( me );
 

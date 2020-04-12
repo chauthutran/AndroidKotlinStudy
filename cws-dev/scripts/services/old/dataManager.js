@@ -50,7 +50,7 @@ DataManager.getData = function( secName, callBack )
 			if ( secName == 'redeemList' && data && data.list )
 			{
 
-				var returnList = data.list.filter( a => a.owner == FormUtil.login_UserName );
+				var returnList = data.list.filter( a => a.owner == SessionManager.sessionData.login_UserName );
 				var myQueue = returnList.filter( a=>a.status == Constants.status_redeem_queued );
 				var myFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
 				var mySubmit = returnList.filter( a=>a.status == Constants.status_redeem_submit );
@@ -59,8 +59,8 @@ DataManager.getData = function( secName, callBack )
 				FormUtil.records_redeem_queued = myQueue.length;
 				FormUtil.records_redeem_failed = myFailed.length;
 
-				syncManager.dataQueued = myQueue;
-				syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+				//syncManager.dataQueued = myQueue;
+				//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
 
 			}
 

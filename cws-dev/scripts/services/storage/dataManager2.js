@@ -55,7 +55,7 @@ DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack 
 // -------- Encrypt/Decript Methods --------------
 DataManager2.encryptData = function( dataJson )
 {
-	var iv = FormUtil.login_Password;
+	var iv = SessionManager.sessionData.login_Password;
 
 	var encryptedDataStr = CryptoJS.AES.encrypt( JSON.stringify( dataJson ), iv, {
 		keySize: 128 / 8,
@@ -76,7 +76,7 @@ DataManager2.decriptData = function( data )
 		// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
 		try
 		{
-			var iv = FormUtil.login_Password;
+			var iv = SessionManager.sessionData.login_Password;
 
 			var descriptedVal = CryptoJS.AES.decrypt( data.toString(), iv, {
 				keySize: 128 / 8,
@@ -148,13 +148,13 @@ DataManager2.saveData_ActivityList = function( jsonData, callBack )
 
 DataManager2.getData_ClientsStore = function( callBack )
 {
-	var keyName = Constants.storageName_clientList + '_' + FormUtil.login_UserName;
+	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
 	DataManager2.getData_IDB( keyName, callBack );
 };
 
 DataManager2.saveData_ClientsStore = function( jsonData, callBack )
 {
-	var keyName = Constants.storageName_clientList + '_' + FormUtil.login_UserName;
+	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
 	DataManager2.saveData_IDB( keyName, jsonData, callBack );
 };
 
@@ -292,9 +292,9 @@ DataManager2.getStorageType = function( secName )
 /*
 DataManager2.getIV = function( callBack )
 {
-	if ( FormUtil.login_Password ) 
+	if ( SessionManager.sessionData.login_Password ) 
 	{ 
-		if ( callBack ) callBack( FormUtil.login_Password );
+		if ( callBack ) callBack( SessionManager.sessionData.login_Password );
 	}
 	else
 	{

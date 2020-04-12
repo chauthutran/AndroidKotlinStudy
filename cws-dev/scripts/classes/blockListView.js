@@ -52,7 +52,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.viewListNames = viewListNames;
 
     me.mainList;
-    me.viewsDefinitionList; // = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list
+    me.viewsDefinitionList; // = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list
     me.viewListDefs = [];
 
     me.viewDef_Selected;  // Need to set 'undefined' when view is cleared?
@@ -137,7 +137,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.setUpInitialData = function()
     {
         me.mainList = ActivityDataManager.getActivityList();
-        me.viewsDefinitionList = FormUtil.dcdConfig.definitionActivityListViews; // full complete view def list    
+        me.viewsDefinitionList = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list    
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..

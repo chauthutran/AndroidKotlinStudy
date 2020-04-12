@@ -4,14 +4,7 @@
 function FormUtil() {}
 
 
-FormUtil.staticWSpath = '';
-
-FormUtil.login_UserName = '';
-FormUtil.login_Password = '';
-FormUtil.login_server = '';
 FormUtil.login_UserRole = [];
-FormUtil.orgUnitData;
-FormUtil.dcdConfig;
 
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
@@ -317,8 +310,8 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 
 		}
 
-		inputsJson[ 'userName' ] = FormUtil.login_UserName;
-		inputsJson[ 'password' ] = FormUtil.login_Password;
+		inputsJson[ 'userName' ] = SessionManager.sessionData.login_UserName;
+		inputsJson[ 'password' ] = SessionManager.sessionData.login_Password;
 
 	  if ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 )
 		{
@@ -458,202 +451,20 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
 
-// POST Request required json prepare
-FormUtil.getFetchWSJson = function( payloadJson, headerJson )
-{
-	if ( WsApiManager.useDWS() )
-	{
-		var fetchJson = {
-			method: 'POST', 
-			headers: { 'Authorization': 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=' },
-		    body: '{}'
-	   };
-	}
-	else
-	{
-		var fetchJson = {
-			method: 'POST' //,headers: { 'usr': '', 'pwd': '' }  <-- do not use this due to disabled CORS case not passing headers var.
-		   ,body: '{}'
-	   };
-	}
-
-	if ( FormUtil.checkLoginSubmitCase( payloadJson ) )
-	{
-		if ( ! WsApiManager.useDWS() )
-		{
-			payloadJson.userName = payloadJson.submitLogin_usr;
-			payloadJson.password = payloadJson.submitLogin_pwd;	
-		}
-	}
-	else
-	{
-		payloadJson.userName = FormUtil.login_UserName;
-		payloadJson.password = FormUtil.login_Password;
-	}
-
-	if ( payloadJson ) fetchJson.body = JSON.stringify( payloadJson );
-	
-	return fetchJson;
-}
-
-// GET Request to Web Service..
-FormUtil.wsRetrievalGeneral = function( apiPath, loadingTag, returnFunc )
-{
-	/*if ( WsApiManager.useDWS() )
-	{
-		var url = WsApiManager.composeWsFullUrl( apiPath );
-
-		RESTUtil.retrieveDWSJson( url, function( success, returnJson )
-		{
-			if ( loadingTag ) loadingTag.remove();
-
-			if ( returnFunc ) returnFunc( returnJson );
-		});
-	}
-	else
-	{
-
-		var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-		RESTUtil.retrieveJson( url, function( success, returnJson )
-		{
-			if ( loadingTag ) loadingTag.remove();
-
-			if ( returnFunc ) returnFunc( returnJson );
-		});
-
-	}*/
-	
-	var url = WsApiManager.composeWsFullUrl( apiPath ); //  queryLoc --> '/api/loginCheck'
-
-	RESTUtil.retrieveJson( url, function( success, returnJson )
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( returnJson );
-	});
-}
-
-// POST Request to Web Service..
-FormUtil.wsSubmitGeneral = function( apiPath, payloadJson, loadingTag, returnFunc )
-{	
-	var url; 
-
-	//if apiPath already contains correctly formed path, do not change 
-	if ( apiPath.indexOf( WsApiManager.domain_psiConnect ) < 0 && apiPath.indexOf( WsApiManager.domain_psiMIS ) < 0 )
-	{
-		url = WsApiManager.composeWsFullUrl( apiPath );
-	}
-	else
-	{
-		url = apiPath;
-	}
-
-	// Send the POST reqesut	
-	RESTUtil.performREST( url, FormUtil.getFetchWSJson( payloadJson ), function( success, returnJson ) 
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( success, returnJson );
-	});
-}
-
-// --- --- --- ---
-
-FormUtil.submitRedeem = function( apiPath, payloadJson, actionJson, loadingTag, returnFunc, asyncCall, syncCall )
-{
-	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
-	{
-		if ( returnFunc ) returnFunc( success, returnJson );
-		if ( asyncCall ) asyncCall( returnJson );
-		if ( syncCall ) syncCall();
-	});
-}
-
-
-FormUtil.submitLogin = function( userName, password, loadingTag, returnFunc )
-{
-	console.log( userName + ':' + password );
-	if ( WsApiManager.useDWS() )
-	{
-		var apiPath = ( '/PWA.loginCheck' ); //WsApiManager.composeWsFullUrl
-
-		var payloadJson = { 
-			'userName': userName,
-			'password': password,
-			'pwaStage': WsApiManager.stageName()  
-		};
-		//WsApiManager.getStageName()
-	}
-	else
-	{
-		var apiPath = ( '/api/loginCheck' ); //WsApiManager.composeWsFullUrl
-
-		var payloadJson = { 'submitLogin': true
-			, 'submitLogin_usr': userName
-			, 'submitLogin_pwd': password
-			, 'dcConfigGet': 'Y'
-			, pwaStage: WsApiManager.getStageName() 
-		};
-
-	}
-
-	FormUtil.wsSubmitGeneral( apiPath, payloadJson, loadingTag, function( success, returnJson )
-	{
-
-		if ( success )
-		{
-			// Check the login success message in content.. ..			
-			var loginStatus = ( returnJson && returnJson.loginStatus );
-
-			if ( loginStatus )
-			{
-				FormUtil.login_UserName = userName;
-				FormUtil.login_Password = password;
-				FormUtil.orgUnitData = returnJson.orgUnitData;
-				FormUtil.dcdConfig = returnJson.dcdConfig;
-			}
-
-			if ( returnFunc ) returnFunc( loginStatus, returnJson );
-		}
-	});
-}
-
-
 // -----------------------------------
 // ---- Login And Fetch WS Related ------
 
-FormUtil.setLogin = function( userName, password )
-{
-	FormUtil.login_UserName = userName;
-	FormUtil.login_Password = password;	
-}
-
-FormUtil.checkLoginSubmitCase = function( payloadJson )
-{
-	if ( WsApiManager.useDWS() )
-	{
-		return ( payloadJson && payloadJson.pwaStage );
-	}
-	else
-	{
-		return ( payloadJson && payloadJson.submitLogin );
-	}
-	
-}
-
 FormUtil.checkLogin = function()
 {
-	return ( FormUtil.login_UserName.toString().length * FormUtil.login_Password.toString().length );
+	return ( SessionManager.sessionData.login_UserName.toString().length * SessionManager.sessionData.login_Password.toString().length );
 }
 
 FormUtil.undoLogin = function()
 {
-	FormUtil.login_UserName = '';
-	FormUtil.login_Password = '';	
-	FormUtil.login_server = '';
-	FormUtil.dcdConfig = undefined;
-	FormUtil.orgUnitData = undefined;
+	SessionManager.sessionData.login_UserName = '';
+	SessionManager.sessionData.login_Password = '';	
+	SessionManager.sessionData.dcdConfig = undefined;
+	SessionManager.sessionData.orgUnitData = undefined;
 
 	$( 'input.loginUserPin' ).val( '' );
 	$( 'input.loginUserPinNumeric' ).val( '' );
@@ -840,37 +651,6 @@ FormUtil.getRedeemPayload = function( id ) {
 
 }
 
-
-FormUtil.getAppInfo = function( returnFunc )
-{	
-	var url = WsApiManager.composeWsFullUrl( '/api/getPWAInfo' );
-
-	RESTUtil.retrieveJson( url, returnFunc );
-}
-
-FormUtil.getDataServerAvailable = function( returnFunc )
-{
-
-	if ( WsApiManager.useDWS() )
-	{
-		var url = WsApiManager.composeWsFullUrl( '/PWA.available' );
-		RESTUtil.retrieveDWSJson( url, returnFunc );
-	}
-	else
-	{
-		var url = WsApiManager.composeWsFullUrl( '/api/available' );
-		
-		if ( WsApiManager.isDebugMode ) console.log( '~ 1 : api/available  ' );
-
-		//RESTUtil.retrieveJson( url, returnFunc );
-		RESTUtil.retrieveJson( url, function()
-		{
-			if ( WsApiManager.isDebugMode ) console.log( '~ 2 : api/available  ' );
-			RESTUtil.retrieveJson( url, returnFunc );
-		} );	
-	}
-
-}
 
 // ======================================
 
@@ -1120,6 +900,7 @@ FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 
 }
 
+/* - Not used anymore?
 FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
 	var sessionData = localStorage.getItem(Constants.storageName_session);
@@ -1152,6 +933,8 @@ FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 		localStorage.setItem( Constants.storageName_session, JSON.stringify( SessionObj ) );
 	}
 }
+*/
+
 
 FormUtil.getLastPayload = function( namedPayload )
 {
@@ -1304,7 +1087,7 @@ FormUtil.updateStat_SyncItems = function( redList, retFunc )
 	FormUtil.records_redeem_failed = 0;
 
 
-	var returnList = redList.list.filter( a => a.owner == FormUtil.login_UserName );
+	var returnList = redList.list.filter( a => a.owner == SessionManager.sessionData.login_UserName );
 
 	var myQueue = returnList.filter( a=>a.status == Constants.status_redeem_queued );
 	var myFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed ); //&& (!a.networkAttempt || a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );
@@ -1314,8 +1097,8 @@ FormUtil.updateStat_SyncItems = function( redList, retFunc )
 	FormUtil.records_redeem_queued = myQueue.length;
 	FormUtil.records_redeem_failed = myFailed.length;
 
-	syncManager.dataQueued = myQueue;
-	syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
+	//syncManager.dataQueued = myQueue;
+	//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
 		
 	retFunc( returnList );
 }
@@ -1425,7 +1208,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$.get( activityType.icon.path, function(data) {
 	
 				var svgObject = ( $(data)[0].documentElement );
-				var svgStyle = ( iconStyleOverride ? iconStyleOverride : FormUtil.dcdConfig.settings.redeemDefs.activityIconSize );
+				var svgStyle = ( iconStyleOverride ? iconStyleOverride : SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize );
 	
 				if ( activityType.icon.colors )
 				{
@@ -1454,7 +1237,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 				$( iconObj ).empty();
 				$( iconObj ).append( svgObject );
 	
-				if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
+				if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
 				{
 					$( svgObject ).attr( 'width', svgStyle.width );
 					$( svgObject ).attr( 'height', svgStyle.height );
@@ -1462,15 +1245,17 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 				{
-					var iconActivityWidth = FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width;
-					var iconStatusWidth = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width;
-					var iconStatusHeight = FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height;
+					var iconActivityWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width;
+					var iconStatusWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width;
+					var iconStatusHeight = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height;
 	
 					var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
 	
-					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( FormUtil.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 					$( iconObj ).append( statusIconObj );
 	
+
+					// This is SyncUp status icon (placed right below ActivityType icon.)
 					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
 				}
 	
@@ -1485,7 +1270,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
-	if ( FormUtil.dcdConfig )
+	if ( SessionManager.sessionData.dcdConfig )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
@@ -1519,13 +1304,13 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 					$( targetObj ).empty();
 					$( targetObj ).append( svgObject );
 
-					if ( FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings && FormUtil.dcdConfig.settings.redeemDefs && FormUtil.dcdConfig.settings.redeemDefs.statusIconSize )
+					if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize )
 					{
-						$( svgObject ).attr( 'width', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width );
-						$( svgObject ).attr( 'height', FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height );
+						$( svgObject ).attr( 'width', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width );
+						$( svgObject ).attr( 'height', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height );
 		
-						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, FormUtil.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
 					}
 	
 				});
@@ -1584,12 +1369,13 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 }
 
 
+// OBSOLETE - PROBABLY
 FormUtil.getActivityType = function( itemData )
 {
 	var returnOpt;
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1615,12 +1401,14 @@ FormUtil.getActivityType = function( itemData )
 	}
 }
 
+
+// OBSOLETE - PROBABLY
 FormUtil.getActivityTypeComposition = function( itemData )
 {
 	var returnOpt;
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
 
 		if ( itemData.data && 
 				itemData.data.payloadJson && 
@@ -1685,7 +1473,7 @@ FormUtil.getStatusOpt = function( itemData )
 {
 	try
 	{
-		var opts = FormUtil.dcdConfig.settings.redeemDefs.statusOptions;
+		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusOptions;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1713,11 +1501,11 @@ FormUtil.gAnalyticsEventAction = function( returnFunc )
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
-		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 	else
 	{
-		ret = 'country:none;userName:' + FormUtil.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:none;userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 
 	if ( returnFunc ) returnFunc( ret );
@@ -1921,7 +1709,7 @@ FormUtil.getGeoLocationIndex = function( separator, group )
 	// numberic prefix is accuracy down to metres (THIS SHOULD CHANGE TO SOMETHING MORE MEANINGFUL )
 
 	var sep = ( separator ? separator : '_')
-	var retIdx = FormUtil.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
+	var retIdx = SessionManager.sessionData.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
 	var dtmNow = $.format.date( new Date(), "yyyymmdd" );
 	var ArrCoords = FormUtil.geoLocationLatLon.split( ',' );
 
@@ -2236,7 +2024,7 @@ FormUtil.getMyDetails = function( callBack )
 {
 	//https://cws-dhis.psi-mis.org/dws/locator.api/?code=
 	//https://pwa.psi-connect.org/ws/dws/locator.api/?code=
-	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + FormUtil.login_UserName;
+	var targetURL = 'https://pwa.psi-connect.org/ws/dws/locator.api/?code=' + SessionManager.sessionData.login_UserName;
 
 	var payload = {
 		"action-details": 2,
@@ -2289,8 +2077,8 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 	if ( useAPI != undefined && useAPI == true )
 	{
 
-		var myD_username = 'pwa'; //FormUtil.login_UserName;
-		var myD_password = '529n3KpyjcNcBMsP'; //FormUtil.login_Password;
+		var myD_username = 'pwa'; //SessionManager.sessionData.login_UserName;
+		var myD_password = '529n3KpyjcNcBMsP'; //SessionManager.sessionData.login_Password;
 		var server_url = 'https://replica.psi-mis.org/' + 'locator/api/1?code=NP-OHF-3122';
 
 		if ( 1 == 1)

@@ -168,7 +168,7 @@ function ViewsList( blockList )
 
     me.createViewsList_Items = function ( arrViews )
     {
-        me.viewsList_Items = me.getViewControllersFromList( arrViews, FormUtil.dcdConfig.definitionActivityListViews );
+        me.viewsList_Items = me.getViewControllersFromList( arrViews, SessionManager.sessionData.dcdConfig.definitionActivityListViews );
 
         me.createViewsList_ItemsNEvents( me.viewsList_Items, me.select );
     }

@@ -153,7 +153,7 @@ function Action( cwsRenderObj, blockObj )
 	{
 		// TODO: all the blockDivTag related should be done by 'block' class method
 
-		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, me.cwsRenderObj.configJson.definitionActions );
+		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, SessionManager.sessionData.dcdConfig.definitionActions );
 
 		// ACTIVITY ADDING
 		var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
@@ -218,7 +218,7 @@ function Action( cwsRenderObj, blockObj )
 			{
 				if ( clickActionJson.blockId !== undefined )
 				{
-					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, me.cwsRenderObj.configJson.definitionBlocks );
+					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, SessionManager.sessionData.dcdConfig.definitionBlocks );
 
 					// 'blockPassingData' exists is called from 'processWSResult' actions
 					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
@@ -237,7 +237,7 @@ function Action( cwsRenderObj, blockObj )
 						// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
 						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
 						// NOT SURE IF THIS IS PROPER PLACE..
-						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, me.cwsRenderObj.configJson.definitionForms[ blockJson.form ] );
+						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, SessionManager.sessionData.dcdConfig.definitionForms[ blockJson.form ] );
 					}
 					else
 					{
@@ -355,26 +355,77 @@ function Action( cwsRenderObj, blockObj )
 				// Temporarily move before 'handlePayloadPreview' - since version 1 
 				var formsJsonGroup = {};
 				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+				var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
 
 				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 					//var currBlockId = blockDivTag.attr( 'blockId' );
 
 					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
 
-					var activityJson = ActivityDataManager.generateActivityPayloadJson( inputsJson, formsJsonGroup, clickActionJson, me.cwsRenderObj.configJson.definitionPayloadTemplates );
-
-					// USE OFFLINE 1st STRATEGY FOR REDEEMLIST INSERTS (dataSync manager will ensure records are added via WS)
-					//if ( clickActionJson.redeemListInsert === "true" )
-					ActivityDataManager.createNewPayloadActivity( activityJson, function()
+					// If 'Activity' generate case, add to list
+					if ( clickActionJson.redeemListInsert === "true" )
+					{						
+						ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+						{
+							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+	
+							if ( afterActionFunc ) afterActionFunc();
+						} );	
+					}
+					else
 					{
-						dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-
-						if ( afterActionFunc ) afterActionFunc();
-					} );
-
+						// Immediate Submit to Webservice case
+						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+					}
 				});
 			}
 		}
+	};
+
+
+	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
+	{
+		if ( actionDefJson.url )
+		{					
+			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
+
+			// generate url
+			var url = ActivityDataManager.generateWsUrl( formsJson, actionDefJson );
+
+			// Loading Tag part..
+			var loadingTag = FormUtil.generateLoadingTag( btnTag );
+
+			
+			WsCallManager.requestPost( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
+
+				if ( !redeemReturnJson ) redeemReturnJson = {};
+
+				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );
+
+				var resultStr = "success";
+
+				if ( success )
+				{
+					dataPass.prevWsReplyData = redeemReturnJson;
+				}
+				else
+				{
+					// MISSING TRANSLATION
+					MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
+					// Should we stop at here?  Or continue with subActions?
+
+					var resultStr = "actionFailed";
+				}
+
+				if ( afterActionFunc ) afterActionFunc( resultStr );
+
+			});
+		}
+		else
+		{
+			MsgManager.notificationMessage ( 'Process Failed - no url!!', 'notificationDark', undefined, '', 'right', 'top' );
+			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
+		}		
 	};
 
 
@@ -460,17 +511,17 @@ function Action( cwsRenderObj, blockObj )
 	me.btnClickedAlready = function( btnTag )
 	{
 		return btnTag.hasClass( 'clicked' );
-	}
+	};
 
 	me.btnClickMarked = function( btnTag )
 	{
 		btnTag.addClass( 'clicked' );
-	}
+	};
 
 	me.clearBtn_ClickedMark = function( btnTag )
 	{
 		btnTag.removeClass( 'clicked' );
-	}
+	};
 
 	// ========================================================
 	
@@ -492,7 +543,24 @@ function Action( cwsRenderObj, blockObj )
 		inputsJson.voucherStatus = clickActionJson.voucherStatus;
 
 		return inputsJson;
-	}
+	};
 
+
+	me.getBlockInfo_Attr = function( blockDivTag )
+	{
+		var blockInfo = { 'activityType': '' };
+
+		if ( blockDivTag )
+		{
+			var activityType = blockDivTag.attr( 'activityType' );
+
+			if ( activityType )
+			{
+				blockInfo.activityType = activityType;
+			}
+		}
+
+		return blockInfo;
+	};
 
 }

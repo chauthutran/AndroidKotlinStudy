@@ -116,9 +116,9 @@ IndexdbDataManager.trackOpenEventDelay = function( lastEntry )
 
 IndexdbDataManager.getIV = function( callBack )
 {
-	if ( FormUtil.login_Password ) 
+	if ( SessionManager.sessionData.login_Password ) 
 	{ 
-		if ( callBack ) callBack( FormUtil.login_Password );
+		if ( callBack ) callBack( SessionManager.sessionData.login_Password );
 	}
 	else
 	{

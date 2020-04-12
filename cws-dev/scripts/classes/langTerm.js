@@ -85,22 +85,14 @@ function LangTerm( cwsRenderObj )
 	me.retrieveAllLangTermInner = function( returnFunc )
 	{
 
-		if ( WsApiManager.useDWS() )
-		{
-			var queryLoc = '/PWA.langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
-			var dailyCache = '/PWA.dailyCache';
-		}
-		else
-		{
-			var queryLoc = '/api/langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
-			var dailyCache = '/api/dailyCache';
-		}
+		var queryLoc = '/PWA.langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
+		var dailyCache = '/PWA.dailyCache';
 
 		var loadingTag = undefined;
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
 		// config should also note all the 'term' into tags..
-		FormUtil.wsRetrievalGeneral( queryLoc, loadingTag, function( returnJson )
+		WsCallManager.requestGet( queryLoc, loadingTag, function( returnJson )
 		{
 			if ( returnJson )
 			{
@@ -112,7 +104,7 @@ function LangTerm( cwsRenderObj )
 				if ( me.debugMode ) console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
-				FormUtil.wsSubmitGeneral( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
+				WsCallManager.requestPost( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
 					if ( success && allLangTermsJson )
 					{
 						

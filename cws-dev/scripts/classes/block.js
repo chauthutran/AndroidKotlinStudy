@@ -1,13 +1,13 @@
 // -------------------------------------------
 // -- Block Class/Methods
-function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options, actionJson )
+function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, options, actionJson )
 {	
 	var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 
-	me.blockType = ( blockJson ) ? blockJson.blockType : undefined;
-	me.blockJson =  Util.getJsonDeepCopy( blockJson );  // Make a deep copy so that changes to blockJson does not affect original config
+	me.blockType = ( blockDefJson ) ? blockDefJson.blockType : undefined;
+	me.blockDefJson =  Util.getJsonDeepCopy( blockDefJson );  // Make a deep copy so that changes to blockDefJson does not affect original config
 	me.blockId = blockId;	// TODO: Should be 'blockName' but since used in config as 'blockId', need to replace together..
 	// TODO: CHANGE ABOVE 'blockId' with Greg
 
@@ -48,46 +48,46 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	{
 		// Form BlockTag generate/assign
 		me.clearClassTag( me.blockId, me.parentTag );
-		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.parentTag );
+		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.blockDefJson, me.parentTag );
 
 
-		if ( me.blockJson )
+		if ( me.blockDefJson )
 		{
 			// Render Form
-			if ( me.blockJson.form ) 
+			if ( me.blockDefJson.form ) 
 			{
 				// TODO: me.blockFormObj should be change to var blockFormObj = new --
 				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.validationObj, me.actionJson );
-				me.blockFormObj.render( me.blockJson.form, me.blockTag, me.passedData );
+				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
 			}
 
 
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
-			if ( me.blockJson.list === 'redeemList' || me.blockJson.list === 'activityList' )
+			if ( me.blockDefJson.list === 'redeemList' || me.blockDefJson.list === 'activityList' )
 			{
-				me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockJson );
+				me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );
 				me.blockListObj.render( me.blockTag, me.passedData, me.options );
 			}
-			else if ( me.blockJson.list === 'dataList' )
+			else if ( me.blockDefJson.list === 'dataList' )
 			{
 				me.dataListObj = new DataList( me.cwsRenderObj, me );
-				me.dataListObj.render( me.blockJson, me.blockTag, me.passedData, me.options );
+				me.dataListObj.render( me.blockDefJson, me.blockTag, me.passedData, me.options );
 			} 
 
 
 			// Render Buttons
-			if ( me.blockJson.buttons ) 
+			if ( me.blockDefJson.buttons ) 
 			{
 				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me, me.validationObj );
-				me.blockButtonObj.render( me.blockJson.buttons, me.blockTag, undefined );
+				me.blockButtonObj.render( me.blockDefJson.buttons, me.blockTag, undefined );
 			}
 
 
 			// Render Msg
-			if ( me.blockJson.message ) 
+			if ( me.blockDefJson.message ) 
 			{
 				me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
-				me.blockMsgObj.render( me.blockJson.message, me.blockTag, me.passedData );
+				me.blockMsgObj.render( me.blockDefJson.message, me.blockTag, me.passedData );
 			}
 		}
 
@@ -102,7 +102,7 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 		me.cwsRenderObj.blocks[ me.blockUid ] = me;  // add this block object to the main block memory list - for global referencing
 		me.cwsRenderObj.blocks[ me.blockId ] = me;  // add this block object to the main block memory list - for global referencing
 
-		if ( me.blockJson ) me.blockType = me.blockJson.blockType;
+		if ( me.blockDefJson ) me.blockType = me.blockDefJson.blockType;
 	}
 
 	me.createSubClasses = function()
@@ -131,9 +131,9 @@ function Block( cwsRenderObj, blockJson, blockId, parentTag, passedData, options
 	};
 	
 
-	me.createBlockTag = function( blockId, blockType, parentTag )
-	{
-		var blockTag = $( '<div class="block" blockId="' + blockId + '"></div>' );
+	me.createBlockTag = function( blockId, blockType, blockDefJson, parentTag )
+	{		
+		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
 		blockTag.addClass( blockType );
 
 		// If 'me.options.notClear' exists and set to be true, do not clear the parent Tag contents

@@ -139,7 +139,7 @@ function statisticsOld( cwsRender )
 		var apiPath = "/client/reportProv?pe=" + me.periodOpts.join(";");
 		var payloadJson = { 'userName': $( 'input.loginUserName' ).val(), 'password': $( 'input.loginUserPin' ).val() };
 
-		FormUtil.wsSubmitGeneral( apiPath, payloadJson, undefined, function( success, response )
+		WsCallManager.requestPost( apiPath, payloadJson, undefined, function( success, response )
 		{
 
 			if ( success )
@@ -252,7 +252,7 @@ function statisticsOld( cwsRender )
 		newData.lastFetch = (new Date() ).toISOString();
 		newSaveObj.mySession.statistics = newData;
 
-		DataManager.saveData( FormUtil.login_UserName, newSaveObj );
+		DataManager.saveData( SessionManager.sessionData.login_UserName, newSaveObj );
 	}
 
 	me.populatePlaceholderData = function()

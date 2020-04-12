@@ -178,10 +178,8 @@ SyncManagerNew.downloadClients = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = Constants.fixedActiveUserId; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
+        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
-        //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
-        var url = WsApiManager.wsApi_NEW_Dev + '/PWA.syncDown';
 
         var payloadJson = { 'find': {} };
 
@@ -201,7 +199,7 @@ SyncManagerNew.downloadClients = function( callBack )
 
         var loadingTag = undefined;
 
-        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, returnJson ) {
+        WsCallManager.requestPost( '/PWA.syncDown', payloadJson, loadingTag, function( success, returnJson ) {
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
@@ -225,10 +223,9 @@ SyncManagerNew.downloadActivities = function( callBack )
     try
     {
         // TODO: 
-        var activeUser = Constants.fixedActiveUserId; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
+        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
         var dateRange_gtStr;
         //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
-        var url = WsApiManager.wsApi_NEW_Dev + '/PWA.activities';
 		var payloadJson = {
             "activity": { 
                 "activeUser": activeUser
@@ -251,7 +248,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 
         var loadingTag = undefined;
 
-        FormUtil.wsSubmitGeneral( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
+        WsCallManager.requestPost( '/PWA.activities', payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
@@ -306,8 +303,8 @@ SyncManagerNew.hideProgressBar = function()
 
     FormUtil.hideProgressBar();
 
-    $( syncManager.subProgressBar ).removeClass( 'determinate' );
-    $( syncManager.subProgressBar ).addClass( 'indeterminate' );
+    //$( syncManager.subProgressBar ).removeClass( 'determinate' );
+    //$( syncManager.subProgressBar ).addClass( 'indeterminate' );
 }
 
 SyncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSyncButton )

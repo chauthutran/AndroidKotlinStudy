@@ -27,6 +27,9 @@
 
   function startApp() 
   {
+
+    WsCallManager.setWsOriginUrl();
+
     // app startup event setup (for listeners)
     window.addEventListener('appinstalled', App_installed_done);
 

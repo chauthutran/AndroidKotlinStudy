@@ -485,7 +485,7 @@ function DataList( cwsRenderObj, blockObj )
 
     me.resolvedefinitionField = function( objFieldData )
     {
-        var dcd = FormUtil.dcdConfig;
+        var dcd = SessionManager.sessionData.dcdConfig;
         var retName = '';
 
         if ( dcd && dcd.definitionFields )
@@ -523,7 +523,7 @@ function DataList( cwsRenderObj, blockObj )
 
     me.resolvedefinitionOptionValue = function( val )
     {
-        var dcd = FormUtil.dcdConfig;
+        var dcd = SessionManager.sessionData.dcdConfig;
         var ret = '';
 
         if ( dcd && dcd.definitionOptions )

@@ -38,7 +38,7 @@ function settingsApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateSettingsPageData( me.cwsRenderObj.configJson ); //DataManager.getUserConfigData()
+        me.populateSettingsPageData( SessionManager.sessionData.dcdConfig ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -202,11 +202,11 @@ function settingsApp( cwsRender )
         {    
             FormUtil.showProgressBar();
 
-            var thisConfig = me.cwsRenderObj.configJson;
+            var thisConfig = SessionManager.sessionData.dcdConfig;
 
             thisConfig.settings.theme = me.settingsInfo_ThemeSelectTag.val();
 
-            me.cwsRenderObj.configJson = thisConfig;
+            SessionManager.sessionData.dcdConfig = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#settingsInfo_theme_Text' ).html( me.settingsInfo_ThemeSelectTag.val() );
@@ -222,7 +222,7 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_network_Text' ).html( ( me.settingsInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.settingsInfo_NetworkSync.val() ) );
 
-            syncManager.reinitialize ( me.cwsRenderObj );
+            //syncManager.reinitialize ( me.cwsRenderObj );
 
         });
 
@@ -236,7 +236,7 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_logout_Text' ).html( ( me.settingsInfo_logoutDelay.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getLogoutOptions(), me.settingsInfo_logoutDelay.val() ) );
 
-            syncManager.reinitialize ( me.cwsRenderObj );
+            //syncManager.reinitialize ( me.cwsRenderObj );
 
             var sessData = JSON.parse(localStorage.getItem( "session" ));
 

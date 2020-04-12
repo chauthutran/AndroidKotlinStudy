@@ -77,7 +77,7 @@ WsApiManager.setupWsApiVariables = function( returnFunc )
 
     WsApiManager.wsName = WsApiManager.getWSNameFromUrl( WsApiManager.wsApiUrl );
 
-    WsApiManager.serverUrl = WsApiManager.getServerUrl( WsApiManager.wsApiUrl, WsApiManager.wsName );
+    //WsApiManager.serverUrl = WsApiManager.getServerUrl( WsApiManager.wsApiUrl, WsApiManager.wsName );
 
     //FormUtil._getPWAInfo = WsApiManager.wsApiUrl;  // Does not get used?
 
@@ -126,6 +126,7 @@ WsApiManager.getWSNameFromUrl = function( wsUrl )
     return wsName;
 };
 
+/*
 WsApiManager.getServerUrl = function( wsUrl, wsName ) 
 {
     var serverUrl = '';
@@ -142,6 +143,8 @@ WsApiManager.getServerUrl = function( wsUrl, wsName )
 
     return serverUrl;
 };
+*/
+
 
 WsApiManager.composeWsFullUrl = function( subUrl )
 {
@@ -173,6 +176,7 @@ WsApiManager.composeWsFullUrl = function( subUrl )
 
 };
 
+/*
 WsApiManager.getServerUrl = function()
 {
 	var serverUrl = "";
@@ -188,6 +192,7 @@ WsApiManager.getServerUrl = function()
 
 	return serverUrl;
 };
+*/
 
 WsApiManager.getSubDomainName_PsiOrg = function()
 {
