@@ -38,7 +38,7 @@ function settingsApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateSettingsPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
+        me.populateSettingsPageData( SessionManager.sessionData.dcdConfig ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -202,12 +202,11 @@ function settingsApp( cwsRender )
         {    
             FormUtil.showProgressBar();
 
-            var thisConfig = ConfigManager.getConfigJson();
+            var thisConfig = SessionManager.sessionData.dcdConfig;
 
             thisConfig.settings.theme = me.settingsInfo_ThemeSelectTag.val();
 
-            // NOTE: TODO: login dcdConfig overwrite this, thus..
-
+            SessionManager.sessionData.dcdConfig = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#settingsInfo_theme_Text' ).html( me.settingsInfo_ThemeSelectTag.val() );

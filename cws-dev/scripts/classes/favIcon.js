@@ -19,10 +19,9 @@ function favIcons( cwsRender )
 
     me.initialize = function() 
     {
-        var configJson = ConfigManager.getConfigJson();
-        if ( configJson && configJson.favList )
+        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList )
         {
-            me.createIconButtons( configJson.favList );
+            me.createIconButtons( SessionManager.sessionData.dcdConfig.favList );
         }
 
         return me;
