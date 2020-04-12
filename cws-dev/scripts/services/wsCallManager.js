@@ -33,6 +33,7 @@ WsCallManager.setWsOriginUrl = function()
     // use current site 
     // localhost is set to use 'stage'
     if ( originUrl.indexOf( 'http://localhost' ) === 0 ) stageName = 'stage';
+    else if ( originUrl.indexOf( 'http://127.0.0.1:' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
@@ -43,7 +44,7 @@ WsCallManager.setWsOriginUrl = function()
 
 WsCallManager.localhostProxyCaseHandle = function( url, requestOption )
 {
-    if ( window.location.origin.indexOf( 'http://localhost' ) === 0 )
+    if ( window.location.origin.indexOf( 'http://localhost' ) === 0 || window.location.origin.indexOf( 'http://127.0.0.1:' ) === 0 )
     {
         //requestOption.headers[ 'Target-URL' ] = url;
 

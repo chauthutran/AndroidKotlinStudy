@@ -52,8 +52,8 @@ function ActivityCard( activityId, cwsRenderObj )
     {        
         var activityCardLiTag = me.getActivityCardLiTag();
 
-        console.log( 'render' );
-        console.log( 'activityCardLiTag' );
+        //console.log( 'render' );
+        //console.log( 'activityCardLiTag' );
 
         // If tag is visible (has been created), perform render
         if ( activityCardLiTag )
@@ -81,10 +81,10 @@ function ActivityCard( activityId, cwsRenderObj )
                 //      - tran2
 
 
-                // 1. activityType (Icon) display
+                // 1. activityType (Icon) display (LEFT SIDE)
                 me.activityTypeDisplay( activityCardLiTag, activityJson );
                 
-                // 2. middel body display (preview)
+                // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, SessionManager.sessionData.dcdConfig );
 
 
@@ -96,7 +96,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 // If there is 'processing' json in activityJson, it means there is something to be processed.
                 if ( activityJson.processing )
                 {
-                    activityCardLiTag.find( '.divListItem_icon_sync' ).show();
+                    activityCardLiTag.find( '.listItem_icon_sync' ).show();
 
                     listItem_icon_syncTag.on( 'click', function( e ) 
                     {
@@ -110,7 +110,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 }
                 else
                 {
-                    activityCardLiTag.find( '.divListItem_icon_sync' ).hide();
+                    activityCardLiTag.find( '.listItem_icon_sync' ).hide();
                 }
     
     
@@ -150,6 +150,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 {
                     e.stopPropagation();
                     divSeeMoreContentTag.toggleClass( 'act-l-more-open' );
+                    divSeeMoreIconBtnTag.find( '.expandable-arrow' ).toggleClass( 'flipVertical' ); // flip downArrow
     
                     if ( divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
                     {
@@ -164,6 +165,9 @@ function ActivityCard( activityId, cwsRenderObj )
                     {
                         divSeeMoreContentTag.html( '' );
                     }
+                });
+                divSeeMoreIconBtnTag.click( function(){
+                    divSeeMoreBtnTag.click();
                 });           
 
             }
@@ -177,10 +181,19 @@ function ActivityCard( activityId, cwsRenderObj )
 
     me.setActivityContentDisplay = function( activity, activityTrans, divListItemContentTag, configJson )
     {
-        var displaySettings = ConfigManager.getActivityDisplaySettings();
-        var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
+        //var displaySettings = ConfigManager.getActivityDisplaySettings();
+        var divLabelTag = divListItemContentTag.find( 'div.listItem_label_title' );
 
         var activityItem = activity;  // Temporarily backward compatible..
+        var activitySettings = FormUtil.getActivityType( activity ); 
+        if ( activitySettings && activitySettings.displaySettings )
+        {
+            var displaySettings = activitySettings.displaySettings;
+        }
+        else
+        {
+            var displaySettings = ConfigManager.getActivityDisplaySettings();
+        }
 
         if ( !displaySettings )
         {
@@ -218,12 +231,14 @@ function ActivityCard( activityId, cwsRenderObj )
                 divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );    
             }
 
-            //"displaySetting": [
-            //    "'<b><i>' + $.format.date( Util.dateUTCToLocal( activity.activityDate.createdOnDeviceUTC ), 'MMM dd, yyyy - HH:mm' ) + '</i></b>'",
-            //    "activityTrans.firstName + ' ' + activityTrans.lastName"
-            // ],
+        }
 
+        if ( activitySettings && activitySettings.previewData )
+        {
+            var previewDivTag = me.getListPreviewData( activityTrans, activitySettings.previewData );
+            divListItemContentTag.append( previewDivTag );    
         }                    
+        divListItemContentTag.html( divListItemContentTag.html().replace( /undefined/g, '' ) )
     };
 
 
@@ -323,7 +338,54 @@ function ActivityCard( activityId, cwsRenderObj )
         }        
     };                
 
+    me.getListPreviewData = function( dataJson, previewConfig )
+    { 
+        if ( previewConfig )
+        {
+            var dataRet = $( '<div class="previewData listDataPreview" ></div>' );
         
+            for ( var i=0; i< previewConfig.length; i++ ) 
+            {
+                var dat = me.mergePreviewData( previewConfig[ i ], dataJson );
+                dataRet.append ( $( '<div class="listDataItem" >' + dat + '</div>' ) );
+            }
+        }
+        return dataRet;
+    };
+    me.mergePreviewData = function ( previewField, Json )
+    {
+        var ret = '';
+        var flds = previewField.split( ' ' );
+        if ( flds.length )
+        {
+            for ( var f=0; f < flds.length; f++ )
+            {
+                for ( var key in Json ) 
+                {
+                    if ( flds[f] == key && Json[ key ] )
+                    {
+                        ret += flds[ f ] + ' ';
+                        ret = ret.replace( flds[f] , Json[ key ] );
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ( previewField.length )
+            {
+                ret = previewField;
+                for ( var key in Json ) 
+                {
+                    if ( previewField == key && Json[ key ] )
+                    {
+                        ret = ret.replace( previewField , Json[ key ] );
+                    }
+                }
+            }
+        }
+        return ret;
+    };
     me.setActivitySyncUpStatus = function( activityCardLiTag, activityProcessing ) 
     {
         try
@@ -378,8 +440,8 @@ function ActivityCard( activityId, cwsRenderObj )
                     'captureValues': activityJson
                 };
     
-                console.log( 'ActivityCard syncUp payload: ' );
-                console.log( payload );
+                //console.log( 'ActivityCard syncUp payload: ' );
+                //console.log( payload );
                 
                 var loadingTag = undefined;
                 //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )

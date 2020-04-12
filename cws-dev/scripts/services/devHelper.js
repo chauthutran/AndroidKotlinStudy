@@ -20,7 +20,7 @@ DevHelper.sampleDataList = [{
         "age": "14"
     },
     "activities": [{
-        "activityId": "LA_TEST_PROV_20200406_093050000",
+        "activityId": "LA_TEST_PROV_20200406_093052500",
         "activityDate": {
             "createdOnMdbUTC": "2020-04-06T09:31:02.488",
             "capturedUTC": "2020-04-06T09:30:50.000",
@@ -30,7 +30,7 @@ DevHelper.sampleDataList = [{
         "activeUser": "qwertyuio3",
         "location": {},
         "program": "fpl",
-        "activityType": "FPL-SP",
+        "activityType": "eVoucher",
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
@@ -51,72 +51,35 @@ DevHelper.sampleDataList = [{
     "_id": "5e8af6d6f39ff8047ee4f3e5",
     "updated": "2020-04-06T09:31:02.488"
 }, {
-    "_id": "CommonPayloadClient",
-    "clientDetails": {},
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20200406_093536000",
-        "activityDate": {
-            "capturedUTC": "2020-04-06T09:35:36.000",
-            "createdOnDeviceUTC": "2020-04-06T09:35:36.000",
-            "capturedLoc": "2020-04-06T18:35:36.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "FPL-SP",
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "James",
-                "lastName": "Chang",
-                "age": "44",
-                "phoneNumber": "8888555511",
-                "clientId": ""
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "999933333"
-            }
-        }],
-        "dc": {},
-        "processing": {
-            "status": "queued",
-            "history": [],
-            "url": "https://api-dev.psi-connect.org/PWA.syncUp",
-            "searchValues": {
-                "clientDetails.phoneNumber": "8888555511"
-            }
-        }
-    }]
-}, {
     "clientDetails": {
-        "firstName": "James",
+        "firstName": "Greg",
         "lastName": "Chang",
-        "phoneNumber": "4444555511",
+        "phoneNumber": "27732462992",
         "clientId": "",
-        "age": "32"
+        "age": "47",
+        "hairStyle": "braids"
     },
     "activities": [{
-        "activityId": "LA_TEST_PROV_20200403_081636000",
+        "activityId": "LA_TEST_PROV_20200405_081636001",
         "activityDate": {
-            "createdOnMdbUTC": "2020-04-03T08:17:06.877",
-            "capturedUTC": "2020-04-03T08:16:36.000",
-            "createdOnDeviceUTC": "2020-04-03T08:16:36.000",
-            "capturedLoc": "2020-04-03T17:16:36.000"
+            "createdOnMdbUTC": "2020-04-05T08:17:06.877",
+            "capturedUTC": "2020-04-05T08:16:35.000",
+            "createdOnDeviceUTC": "2020-04-05T08:16:35.000",
+            "capturedLoc": "2020-04-05T17:16:35.000"
         },
         "activeUser": "qwertyuio3",
         "location": {},
         "program": "fpl",
-        "activityType": "FPL-SP",
+        "activityType": "WalkInA",
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
-                "firstName": "James",
+                "firstName": "Greg",
                 "lastName": "Chang",
-                "phoneNumber": "4444555511",
+                "phoneNumber": "27732462992",
                 "clientId": "",
-                "age": "32"
+                "age": "47",
+                "hairStyle": "braids"
             }
         }, {
             "transactionType": "v_iss",
@@ -125,37 +88,132 @@ DevHelper.sampleDataList = [{
             }
         }],
         "dc": {}
-    }, {
-        "activityId": "LA_TEST_PROV_20200403_081820000",
+    }],
+    "_id": "5e86f102f39ff8047ee4f2b2",
+    "updated": "2020-04-05T08:18:22.169"
+}, {
+    "clientDetails": {
+        "firstName": "Mary",
+        "lastName": "Canary",
+        "phoneNumber": "0839891685",
+        "clientId": "",
+        "age": "23",
+        "hairStyle": "bun"
+    },
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20200407_081636003",
         "activityDate": {
-            "createdOnMdbUTC": "2020-04-03T08:18:22.169",
-            "capturedUTC": "2020-04-03T08:18:20.000",
-            "createdOnDeviceUTC": "2020-04-03T08:18:20.000",
-            "capturedLoc": "2020-04-03T17:18:20.000"
+            "createdOnMdbUTC": "2020-04-07T08:17:06.877",
+            "capturedUTC": "2020-04-07T08:16:31.000",
+            "createdOnDeviceUTC": "2020-04-07T08:16:31.000",
+            "capturedLoc": "2020-04-07T17:16:31.000"
         },
         "activeUser": "qwertyuio3",
         "location": {},
         "program": "fpl",
-        "activityType": "FPL-SP",
+        "activityType": "PhoneVoucher",
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
-                "firstName": "James",
-                "lastName": "Chang",
-                "phoneNumber": "4444555511",
+                "firstName": "Mary",
+                "lastName": "Canary",
+                "phoneNumber": "0839891685",
                 "clientId": "",
-                "age": "32"
+                "age": "23",
+                "hairStyle": "bun"
             }
         }, {
             "transactionType": "v_iss",
             "dataValues": {
-                "voucherCode": "44445555"
+                "voucherCode": "112233445588"
             }
         }],
         "dc": {}
     }],
     "_id": "5e86f102f39ff8047ee4f2b6",
-    "updated": "2020-04-03T08:18:22.169"
+    "updated": "2020-04-07T08:18:22.169"
+}, {
+    "clientDetails": {
+        "firstName": "Roger",
+        "lastName": "Wolf",
+        "phoneNumber": "0734471959",
+        "clientId": "",
+        "age": "32",
+        "hairStyle": "bangs"
+    },
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20200406_091636003",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-04-06T08:17:06.877",
+            "capturedUTC": "2020-04-06T08:16:36.000",
+            "createdOnDeviceUTC": "2020-04-06T08:16:36.000",
+            "capturedLoc": "2020-04-06T17:16:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "WalkInB",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "Roger",
+                "lastName": "Wolf",
+                "phoneNumber": "0734471959",
+                "clientId": "",
+                "age": "32",
+                "hairStyle": "bangs"
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "112233445589"
+            }
+        }],
+        "dc": {}
+    }],
+    "_id": "5e86f102f39ff8047ee4f2D6",
+    "updated": "2020-04-06T09:18:22.169"
+}, {
+    "clientDetails": {
+        "firstName": "Jackson",
+        "lastName": "Pollock",
+        "phoneNumber": "0798985543",
+        "clientId": "",
+        "age": "65",
+        "hairStyle": "bob"
+    },
+    "activities": [{
+        "activityId": "LA_TEST_PROV_20191230_081706001",
+        "activityDate": {
+            "createdOnMdbUTC": "2019-12-30T08:17:06.877",
+            "capturedUTC": "2019-12-30T08:16:36.000",
+            "createdOnDeviceUTC": "2019-12-30T08:16:36.000",
+            "capturedLoc": "2019-12-30T17:16:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "WalkInB",
+        "transactions": [{
+            "transactionType": "c_reg",
+            "dataValues": {
+                "firstName": "Jackson",
+                "lastName": "Pollock",
+                "phoneNumber": "0798985543",
+                "clientId": "",
+                "age": "65",
+                "hairStyle": "bob"
+            }
+        }, {
+            "transactionType": "v_iss",
+            "dataValues": {
+                "voucherCode": "1010101010101"
+            }
+        }],
+        "dc": {}
+    }],
+    "_id": "5e86f102f39ff8047ee4f2D6",
+    "updated": "2019-12-30T08:17:06.876"
 }];
 
 // =======================================

@@ -718,6 +718,7 @@ act {
   position:relative;
   top:-16px;
   text-align: right;
+  display: contents;
 }
 
 .listItem_statusOption {
@@ -1412,4 +1413,35 @@ div.viewsListSelect::before {
 }
 .pagerInfo{
 
+}
+li.blockListGroupBy {
+  margin-bottom: 4px;
+}
+li.blockListGroupBy > a {
+  position: relative;
+  border-left-width: 6;
+  background-image: linear-gradient( #fff, #f5f5f5 );
+  padding: 10px 8px 8px 8px;
+  font-size:10pt;
+  color: #333;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  height:auto;
+  border-top: #FFF .5px solid;
+  border-bottom: #CCC .5px solid;
+  box-sizing: border-box;
+  font-weight: 400;
+}
+li.blockListGroupBy > a:after,
+li.blockListGroupBy > a:before {
+  top: 40%;
+  left: 88%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  box-sizing: border-box;
 }

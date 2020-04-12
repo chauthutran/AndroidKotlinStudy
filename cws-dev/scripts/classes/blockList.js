@@ -98,22 +98,20 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                             <div style="overflow-y:hidden;" class="listItem">&nbsp;</div>
                         </td>
 
-                        <td class="listItem_icon_activityType" style="width: 60px;">
+                        <td class="listItem_icon_activityType">
                             <div style="width: 56px;"></div>
                         </td>
 
                         <td class="listItem_data_preview">
                             <div class="divListItemContent">
-                                <div class="listItem_label_date">---Date---</div>
+                                <div class="listItem_label_title">---Date---</div>
                             </div>
                         </td>
 
-                        <td class="listItem_voucher_status">
-                        </td>
 
                         <td class="listItem_action_sync">
                             <div class="act-r">
-                                <span class="listItem_statusOption">statusText</span>
+                                <div class="listItem_statusOption"></div>
                             </div>
 
                             <div class="icons-status divListItem_icon_sync">
@@ -291,6 +289,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.clearExistingList = function( blockList_UL_Tag )
     {
         blockList_UL_Tag.find( 'li.activityItemCard' ).remove();
+        blockList_UL_Tag.find( 'li.blockListGroupBy' ).remove();
     };
 
 
@@ -324,8 +323,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
                 {
                     var activityJson = activityList[i];
+                    var groupByGroupIdxVal = '';
                     
-                    var activityCardObj = me.createActivityCard( activityJson, blockList_UL_Tag );
+                    if ( me.hasView && me.BlockListViewObj.groupByGroups.length )
+                    {
+                        groupByGroupIdxVal = me.evalCreateGroupByGroup( activityJson, blockList_UL_Tag, me.BlockListViewObj );
+                    }
+                    var activityCardObj = me.createActivityCard( activityJson, blockList_UL_Tag, groupByGroupIdxVal );
 
                     activityCardObj.render();
                 }    
@@ -333,6 +337,56 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 if ( scrollEndFunc ) scrollEndFunc();    
             }
         }
+    };
+    me.evalCreateGroupByGroup = function( activityJson, targTag, blockListViewObj )
+    {
+        var retGroup = '';
+        for ( var g=0; g < blockListViewObj.groupByGroups.length; g++ )
+        {
+            if ( activityJson.groupBy[ blockListViewObj.viewDef_Selected.groupBy ] === blockListViewObj.groupByGroups[ g ].id )
+            {
+                retGroup = blockListViewObj.groupByGroups[ g ].id;
+                if ( ! blockListViewObj.groupByGroups[ g ].created )
+                {
+                    var liContentTag = $( '<li class="blockListGroupBy opened"></li>' );
+                    var anchorTag = $( '<a class="blockListGroupBySection" groupBy="' + ( blockListViewObj.groupByGroups[ g ].id ).toUpperCase() + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + ( blockListViewObj.groupByGroups[ g ].name ) + '</a>' );
+                    targTag.append( liContentTag );
+                    liContentTag.append( anchorTag );
+                    anchorTag.click( function() {
+                        var imgTag = this.children[ 0 ];
+                        var groupByClickTag = $( this );
+                        me.evalToggleCalGroupCards( targTag, 'groupBy', blockListViewObj.groupByGroups[ g ].id );
+                        groupByClickTag.parent()[ 0 ].classList.toggle( "opened" );
+                        imgTag.classList.toggle( "rotateImg" );
+                    });
+                    blockListViewObj.groupByGroups[ g ][ 'created' ] = 1;
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return retGroup;
+    };
+    me.evalToggleCalGroupCards = function( parentTag, attrName, attrVal )
+    {        
+        parentTag.find( 'li.activityItemCard' ).each( function(){ 
+            var li = $( this );
+            console.log( li.attr( attrName ) + ' == ' + attrVal );
+            if ( li.attr( attrName ) == attrVal )
+            {
+                if ( li.is( ':visible' ) )
+                {
+                    li.hide();
+                }
+                else
+                {
+                    li.show();
+                }
+            }
+        });
     };
         
 
@@ -419,7 +473,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Create Activity Card Related -------------
 
-    me.createActivityCard = function( activityJson, blockList_UL_Tag, groupBy )
+    me.createActivityCard = function( activityJson, blockList_UL_Tag, groupByIdxVal )
     {
         var activityCardLiTag = $( me.template_ActivityCard );
         blockList_UL_Tag.append( activityCardLiTag );     
@@ -429,6 +483,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         activityCardLiTag.attr( 'itemId', activityJson.activityId );
         activityCardAnchorTag.attr( 'itemId', activityJson.activityId );
       
+        if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardLiTag.attr( 'groupBy', groupByIdxVal );
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
     }
 

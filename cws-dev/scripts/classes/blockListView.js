@@ -54,6 +54,8 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.mainList;
     me.viewsDefinitionList; // = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list
     me.viewListDefs = [];
+    me.groupByDefinitionList;
+    me.groupByGroups = [];
 
     me.viewDef_Selected;  // Need to set 'undefined' when view is cleared?
 
@@ -91,7 +93,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
                 <ul class="ulSortOrder"></ul>
             </div>
 
-        </div>`
+        </div>`;
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
     me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
@@ -138,6 +140,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         me.mainList = ActivityDataManager.getActivityList();
         me.viewsDefinitionList = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list    
+        me.groupByDefinitionList = JSON.parse( JSON.stringify( SessionManager.sessionData.dcdConfig.definitionGroupBy ) ); // full complete view def list
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
@@ -263,11 +266,91 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
             // Below eval use 'activityItem' object, thus, we need to declare it..
             if ( me.evalQueryCondition( viewDef.query, activityItem ) )
             {
+                if ( me.hasGroupBy() ) 
+                {
+                    activityItem = me.evalGroupByCondition( viewDef.groupBy, activityItem );
+                }
                 filteredData.push( activityItem );
             }
         }
 
+        if ( me.hasGroupBy() )
+        {
+            me.setGroupBy_GroupsAndFilterValues( viewDef, filteredData );
+        }
         return filteredData;
+    };
+    me.setGroupBy_GroupsAndFilterValues = function( viewDef, mainList )
+    {
+        me.groupByGroups = []; //(re)set to empty array
+        if ( me.hasGroupBy() &&
+             me.groupByDefinitionList[ viewDef.groupBy ].groupType && 
+             me.groupByDefinitionList[ viewDef.groupBy ].groupType === 'unique' )
+        {
+            me.groupByGroups = me.getGroupByGroups_FromUniqueValues( viewDef.groupBy, mainList );
+        }
+        else if ( me.hasGroupBy() )
+        {
+            me.groupByGroups = JSON.parse( JSON.stringify( me.groupByDefinitionList[ viewDef.groupBy ].groups ));
+        }
+        for ( var i = 0; i < mainList.length; i++ )
+        {
+            var activityItem = mainList[ i ];
+            var groupByResult = activityItem[ viewDef.groupBy ];
+            if ( ! activityItem[ 'groupBy' ] ) activityItem[ 'groupBy' ] = {};
+            activityItem[ 'groupBy' ] [ viewDef.groupBy ] = me.getAttributeFromGroupBy_Group( groupByResult, 'id' ).toUpperCase();
+        }
+    }
+    me.clearGroupBy_UsedInBlockList_status = function()
+    {
+        for ( var i = 0; i < me.groupByGroups.length; i++ )
+        {
+            me.groupByGroups[ i ].created = 0;
+        }
+    }
+    me.getAttributeFromGroupBy_Group = function( evalField, attr )
+    {
+        for ( var i = 0; i < me.groupByGroups.length; i++ )
+        {
+            if ( eval( me.groupByGroups[ i ].eval ) )
+            {
+                return ( me.groupByGroups[ i ][ attr ] );
+            }
+        }
+    }
+    me.getGroupByGroups_FromUniqueValues = function( groupBy, mainList )
+    {
+        var ret = [];
+        var matches = [];
+        for ( var i = 0; i < mainList.length; i++ )
+        {
+            var activityItem = mainList[ i ];
+            if ( ! matches.includes( activityItem[ groupBy ] ) )
+            {
+                matches.push( activityItem[ groupBy ] );
+                ret.push( { "id": ( activityItem[ groupBy ] ).toString().trim().toUpperCase(), "name": activityItem[ groupBy ].toString().trim(), "term": "",  "eval": " evalField === " + ( isNaN( activityItem[ groupBy ] ) ? "'" + activityItem[ groupBy ] + "'" : activityItem[ groupBy ] ), "created": 0 } );
+            }
+        }
+        return ret;
+    }
+    me.evalGroupByCondition = function( groupBy, activityItem )
+    {
+        var evalField = me.groupByDefinitionList[ groupBy ].evalField; // Variable 'evalField' expected within 'query' statement  <  do not rename
+        var activity = activityItem; // Variable 'activity' expected within 'query' statement  <  do not rename
+        var groupByResult = eval( evalField );
+        if ( groupByResult === undefined )
+        {
+            groupByResult = 'undefined';
+        }
+        else
+        {
+            if( typeof( groupByResult ) === 'number' && isNaN( groupByResult ) )
+            {
+                groupByResult = 'NaN';
+            }
+        }
+        activityItem[ groupBy ] = groupByResult;
+        return activityItem;
     };
 
     me.evalQueryCondition = function( query, activityItem )
@@ -334,7 +417,15 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         try 
         {
+            if ( me.hasGroupBy() )
+            {
+                me.evalGroupBySort( sortDef.field, viewFilteredList, me.viewDef_Selected.groupBy, sortDef.order.toLowerCase() );
+            }
+            else
+            {
            me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
+            }
+            me.updateSortLiTag( $( me.sortListUlTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
         }
         catch ( errMsg ) 
         {
@@ -361,6 +452,20 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         });          
     };
 
+    me.evalGroupBySort = function( fieldEvalStr, list, groupBy, orderStr )
+    {
+        var isDescending = orderStr.indexOf( 'desc' );
+        list.sort( function(a, b) {
+            var sortEval = ( ! isDescending ) ? '( a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' < b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' ) ? -1 : ' +
+                                ' ( b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' < a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' ) ? 1 ' +
+                                ' : 0 '
+                            : '( a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' > b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ') ? -1 : ' +
+                                ' ( b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' > a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' ) ? 1 ' +
+                                ' : 0 ';
+            return eval( sortEval );
+        });
+        console.log( list );
+    };
 
     // ---------------------------------------------------------
     // -- Events Related
@@ -405,6 +510,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
             {
                 me.sortList( sortDef, me.viewFilteredList );                        
 
+                me.clearGroupBy_UsedInBlockList_status();
                 // TODO:
                 //      - This should call 'setActivityListNRender()'
                 me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..            
@@ -412,6 +518,24 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         });
     };
 
+    me.updateSortLiTag = function( sortTag )
+    {
+        for ( var i = 0; i < me.viewDef_Selected.sort.length; i++ )
+        {
+            if ( $( sortTag ).attr( 'sortid' ) === me.viewDef_Selected.sort[ i ].id )
+            {
+                $( me.sortListUlTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","bolder");
+            }
+            else
+            {
+                $( me.sortListUlTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
+            }
+        }
+    }
+    me.hasGroupBy = function()
+    {
+        return ( ( me.viewDef_Selected.groupBy ) && ( me.viewDef_Selected.groupBy !== '' ) );
+    }
     // =-===============================
 
     me.initialize();

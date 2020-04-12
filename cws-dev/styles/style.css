@@ -230,6 +230,8 @@ select option {
 
 .listItem_icon_activityType {
   vertical-align: top;
+  width: 60px;
+  height:86px;
 }
 
 .act-r {
@@ -238,6 +240,7 @@ select option {
   box-sizing: border-box;
   color: #B1B1B1;
   padding: 4px;
+  width: 60px;
 }
 
 .act-l {
