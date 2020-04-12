@@ -28,8 +28,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	me.render = function( formDef, blockTag, passedData )
 	{
 
-		var formJsonArr = FormUtil.getObjFromDefinition( formDef, me.cwsRenderObj.configJson.definitionForms );
-		var formGrps = me.cwsRenderObj.configJson.definitionFormGroups;
+		var formJsonArr = FormUtil.getObjFromDefinition( formDef, SessionManager.sessionData.dcdConfig.definitionForms );
+		var formGrps = SessionManager.sessionData.dcdConfig.definitionFormGroups;
 
 		me.formJsonArr = formJsonArr;
 
@@ -291,7 +291,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}			
 			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
 			{
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, SessionManager.sessionData.dcdConfig.definitionOptions );
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
@@ -308,7 +308,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" )
 			{
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, SessionManager.sessionData.dcdConfig.definitionOptions );
 
 				Util.decodeURI_ItemList(optionList, "defaultName")
 
@@ -473,7 +473,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				divInputTag.addClass( 'inputDivRadio' );
 
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, SessionManager.sessionData.dcdConfig.definitionOptions );
 
 				Util.decodeURI_ItemList( optionList, "defaultName" );
 
@@ -489,7 +489,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 			else if ( formItemJson.controlType === "MULTI_CHECKBOX")
 			{
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, me.cwsRenderObj.configJson.definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, SessionManager.sessionData.dcdConfig.definitionOptions );
 
 				Util.decodeURI_ItemList( optionList, "defaultName" )
 
@@ -726,7 +726,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			for( var i in formItemJson.rules )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
-				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, me.cwsRenderObj.configJson.definitionRules );
+				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, SessionManager.sessionData.dcdConfig.definitionRules );
 
 				if ( ruleJson.name )
 				{

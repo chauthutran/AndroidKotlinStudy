@@ -70,17 +70,6 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 			// Check the login success message in content.. ..			
 			var hasLoginStatus = ( returnJson && returnJson.loginStatus );
 
-			if ( hasLoginStatus )
-			{
-				var sessionInfo = { login_UserName: userName,
-				    login_Password: password,
-                    orgUnitData: returnJson.orgUnitData,
-                    dcdConfig: returnJson.dcdConfig
-                };
-                
-                SessionManager.updateSessionData( sessionInfo );
-			}
-
 			if ( returnFunc ) returnFunc( hasLoginStatus, returnJson );
         }
         else

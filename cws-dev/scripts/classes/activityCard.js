@@ -85,7 +85,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 me.activityTypeDisplay( activityCardLiTag, activityJson );
                 
                 // 2. middel body display (preview)
-                me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, me.cwsRenderObj.configJson );
+                me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, SessionManager.sessionData.dcdConfig );
 
 
                 // 3. 'SyncUp' Button Related
@@ -177,7 +177,7 @@ function ActivityCard( activityId, cwsRenderObj )
 
     me.setActivityContentDisplay = function( activity, activityTrans, divListItemContentTag, configJson )
     {
-        var displaySettings = ConfigUtil.getActivityDisplaySettings( configJson );
+        var displaySettings = ConfigManager.getActivityDisplaySettings();
         var divLabelTag = divListItemContentTag.find( 'div.listItem_label_date' );
 
         var activityItem = activity;  // Temporarily backward compatible..
@@ -287,7 +287,7 @@ function ActivityCard( activityId, cwsRenderObj )
         try
         {
             // 1. Does it find hte matching status?
-            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, SessionManager.sessionData.dcdConfig );
+            var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
             if ( activitySyncUpStatusConfig ) activityCardLiTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
             me.setActivitySyncUpStatus( activityCardLiTag, activityJson.processing );
@@ -303,12 +303,12 @@ function ActivityCard( activityId, cwsRenderObj )
     {
         try
         {
-            var activityTypeConfig = ConfigUtil.getActivityTypeConfig( activityJson, SessionManager.sessionData.dcdConfig );
+            var activityTypeConfig = ConfigManager.getActivityTypeConfig( activityJson );
     
             var activityTypeTdTag = activityCardLiTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
 
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
-            var activitySyncUpStatusConfig = ConfigUtil.getActivitySyncUpStatusConfig( activityJson, SessionManager.sessionData.dcdConfig );
+            var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
 
             // TODO: Bring this method up from 'formUtil' to 'activityCard'?
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)

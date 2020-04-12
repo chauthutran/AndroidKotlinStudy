@@ -1,53 +1,88 @@
 // -------------------------------------------
-// -- ConfigUtil Class/Methods
+// -- ConfigManager Class/Methods
 
-function ConfigUtil() {}
+// -- 1. Define the loading place clearly
+//      - On login..  <-- undernearth the call..
+//      2. Remove other points..
 
-ConfigUtil.configJson = {};     // store the configJson here when first loading config?
-ConfigUtil.configSetting = {};
+
+function ConfigManager() {}
+
+ConfigManager.configJson = {};     // store the configJson here when first loading config?
+ConfigManager.configSetting = {};
+
+// -- Default Configs -----
+// ----- If not on download config, place below default to 'config' json.
+
+ConfigManager.syncSetting_Default = {
+    "syncDown": {
+        "clientSearch": {
+            "mainSearch": {
+                "activities": {
+                    "$elemMatch": {
+                        "activeUser": INFO.login_UserName
+                    }
+                }
+            },
+            "dateSearch": {
+                "updated": {
+                    "$gte": INFO.dateRange_gtStr
+                }
+            }
+        },
+        "url": "/PWA.syncDown",
+        "syncDownPoint": "login",
+        "enable": true    
+    },
+    "syncUp": {
+        "dateField": "updated"
+    }
+};
+
 
 // ==== Methods ======================
 
-ConfigUtil.getDsConfigJson = function( dsConfigLoc, returnFunc )
+ConfigManager.getDsConfigJson = function( dsConfigLoc, returnFunc )
 {    
     RESTUtil.retrieveJson( dsConfigLoc, returnFunc );
 };
 
-ConfigUtil.setConfigJson = function ( configJson ) 
+ConfigManager.getConfigJson = function () 
 {
-    ConfigUtil.configJson = configJson;
+    return ConfigManager.configJson;
 };  
 
-ConfigUtil.setSettingsJson = function( configJson )
+ConfigManager.setConfigJson = function ( configJson ) 
 {
-    ConfigUtil.configSetting = configJson.settings;
+    ConfigManager.configJson = configJson;
+};  
+
+ConfigManager.setSettingsJson = function( configJson )
+{
+    ConfigManager.configSetting = configJson.settings;
 };
 
-ConfigUtil.getSettings = function( settingName )
+ConfigManager.getSettings = function( settingName )
 {
     if ( settingName )
     {
-        return ConfigUtil.configSetting[ settingName ];
+        return ConfigManager.configSetting[ settingName ];
     }   
     else
     {
-        return ConfigUtil.configSetting;
+        return ConfigManager.configSetting;
     } 
 }
 
 
-ConfigUtil.getMsgAutoHide = function( configJson )
-{
-    ConfigUtil.configSetting = configJson.settings;
-};
-
-
 // ------------------------------------
 
-ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
+ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 {
-    ConfigUtil.configUserRole( configJson, function(){
+    var configJson = ConfigManager.configJson;
 
+    ConfigManager.configUserRole( function()
+    {
          var compareList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
          var retAreaList = [];
 
@@ -76,16 +111,16 @@ ConfigUtil.getAreaListByStatus = function( bOnline, configJson, callBack )
 
 };
 
-ConfigUtil.getAllAreaList = function( configJson )
+ConfigManager.getAllAreaList = function()
 {
     var combinedAreaList = [];
 
-    return combinedAreaList.concat( configJson.areas.online, configJson.areas.offline );
+    return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
 };
 
-ConfigUtil.configUserRole = function( configJson, callBack )
+ConfigManager.configUserRole = function( callBack )
 {
-    var defRoles = configJson.definitionUserRoles;
+    var defRoles = ConfigManager.configJson.definitionUserRoles;
     var userGroupRole = SessionManager.sessionData.orgUnitData.orgUnit.organisationUnitGroups;
 
     if ( defRoles && userGroupRole )
@@ -112,8 +147,10 @@ ConfigUtil.configUserRole = function( configJson, callBack )
 };
 
 
-ConfigUtil.getActivityDisplaySettings = function( configJson )
+ConfigManager.getActivityDisplaySettings = function()
 {
+    var configJson = ConfigManager.configJson;
+
     var displaySettings = [ 
         "'<b><i>' + activityItem.created + '</i></b>'"
     ];
@@ -129,7 +166,7 @@ ConfigUtil.getActivityDisplaySettings = function( configJson )
     }
     catch ( errMsg )
     {
-        console.log( 'Error in ConfigUtil.getActivityDisplaySettings, errMsg: ' + errMsg );
+        console.log( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
     }
 
 
@@ -137,9 +174,10 @@ ConfigUtil.getActivityDisplaySettings = function( configJson )
 };
 
 
-ConfigUtil.getActivitySyncUpStatusConfig = function( activityJson, configJson )
+ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 {
     var activityStatusConfig;
+    var configJson = ConfigManager.configJson;
 
 	try
 	{        
@@ -150,16 +188,17 @@ ConfigUtil.getActivitySyncUpStatusConfig = function( activityJson, configJson )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on ConfigUtil.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+		console.log( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
     }
     
     return activityStatusConfig;
 };
 
 
-ConfigUtil.getActivityTypeConfig = function( activityJson, configJson )
+ConfigManager.getActivityTypeConfig = function( activityJson )
 {
 	var activityTypeConfig;
+    var configJson = ConfigManager.configJson;
 
     try
 	{
@@ -170,7 +209,7 @@ ConfigUtil.getActivityTypeConfig = function( activityJson, configJson )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on ConfigUtil.getActivityTypeConfig, errMsg: ' + errMsg );
+		console.log( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
     
     return activityTypeConfig;

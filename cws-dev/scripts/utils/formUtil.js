@@ -454,12 +454,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // -----------------------------------
 // ---- Login And Fetch WS Related ------
 
-FormUtil.setLogin = function( userName, password )
-{
-	SessionManager.sessionData.login_UserName = userName;
-	SessionManager.sessionData.login_Password = password;	
-}
-
 FormUtil.checkLogin = function()
 {
 	return ( SessionManager.sessionData.login_UserName.toString().length * SessionManager.sessionData.login_Password.toString().length );
@@ -906,6 +900,7 @@ FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )
 
 }
 
+/* - Not used anymore?
 FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 {
 	var sessionData = localStorage.getItem(Constants.storageName_session);
@@ -938,6 +933,8 @@ FormUtil.setLastPayload = function( payloadName, jsonData, optClear )
 		localStorage.setItem( Constants.storageName_session, JSON.stringify( SessionObj ) );
 	}
 }
+*/
+
 
 FormUtil.getLastPayload = function( namedPayload )
 {

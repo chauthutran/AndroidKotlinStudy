@@ -16,8 +16,8 @@ function Login( cwsRenderObj )
 
   	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
-	me._pHash = '';
-	me._staySignedIn = false;
+	//me._pHash = '';
+	//me._staySignedIn = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -148,9 +148,11 @@ function Login( cwsRenderObj )
 					//var loginData = DataManager.getData( userName );
 					DataManager.getData( userName, function( loginData ) {
 
-						if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
-
-						FormUtil.setLogin( userName, password ); /* Added by Greg: 2018/11/27 */
+						//if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
+						SessionManager.updateUserSessionToStorage( loginData, userName );
+						
+						// load to session in memory
+						SessionManager.loadDataInSession( userName, password, loginData );
 
 						me.loginSuccessProcess( loginData );
 
@@ -184,10 +186,13 @@ function Login( cwsRenderObj )
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
-				console.log( loginData );
 				if ( success )
 				{
-					me._pHash = Util.encrypt(password,4);
+					SessionManager.saveUserSessionToStorage( loginData, userName, password );
+
+					// load to session in memory
+					SessionManager.loadDataInSession( userName, password, loginData );
+
 					me.loginSuccessProcess( loginData );
 				}
 				else
@@ -243,63 +248,26 @@ function Login( cwsRenderObj )
 
 	me.loginSuccessProcess = function( loginData ) 
 	{		
-		var dtmNow = ( new Date() ).toISOString();
-
-		console.log( ' ===> Login.loginSuccessProcess before');
-		// NOTE: JAMES:
-		//	- After Login, we are loading 'redeemList' data into cwsObject.
-		me.cwsRenderObj.loadActivityListData_AfterLogin( function() {
-
-			console.log( ' ===> Login.loginSuccessProcess = loadActivityListData_AfterLogin' );
-
+		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
+		{
 			me.closeForm();
 			me.pageTitleDivTab.hide(); 
 
 			// Set Logged in orgUnit info
 			if ( loginData.orgUnitData )
 			{
-				if ( SessionManager.sessionData.orgUnitData != loginData.orgUnitData) SessionManager.sessionData.orgUnitData = loginData.orgUnitData;
-
 				me.loggedInDivTag.show();
 				me.spanOuNameTag.show();
-				me.spanOuNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );	
+				me.spanOuNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );
 			} 
 
 			// Load config and continue the CWS App process
 			if ( loginData.dcdConfig ) 
 			{
-				SessionManager.sessionData.dcdConfig = loginData.dcdConfig; 
 				// call CWS start with this config data..
 				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 
-				var dtmNow = ( new Date() ).toISOString();
-
-				// if session data exists, update the lastUpdated date else create new session data
-				if ( loginData.mySession ) 
-				{
-					loginData.mySession.lastUpdated = dtmNow;
-					loginData.mySession.stayLoggedIn = me._staySignedIn;
-		
-					DataManager.saveData( me._userName, loginData );	
-		
-					me.loginAfter();
-				}
-				else
-				{
-					var newSaveObj = Object.assign( {} , loginData);
-		
-					FormUtil.defaultLanguage( function( defaultLang ){
-						newSaveObj.mySession = { createdDate: dtmNow, lastUpdated: dtmNow, pin: me._pHash, stayLoggedIn: false, theme: loginData.dcdConfig.settings.theme, language: defaultLang };
-		
-						DataManager.saveData( me._userName, newSaveObj );
-			
-						SessionManager.sessionData.dcdConfig = newSaveObj.dcdConfig; 
-		
-						me.loginAfter();
-					});
-
-				}
-
+				me.loginAfter();
 			}
 			else
 			{
@@ -308,14 +276,6 @@ function Login( cwsRenderObj )
 
 				//me.loginAfter();
 			}
-
-
-
-			// TODO: THIS IS USED?
-			//DataManager.getData( 'syncList', function( syncData ){
-				// if previously run Sync process 'crashed' without saving results > update results
-				//if ( syncData ) syncManager.mergeSyncListWithIndexDB();
-			//});
 
 			$( 'nav' ).show();
 
