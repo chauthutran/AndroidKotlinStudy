@@ -272,14 +272,13 @@ function Login( cwsRenderObj )
 			{
 				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
-
-				//me.loginAfter();
 			}
 
 			$( 'nav' ).show();
 
 		});
-	}
+	};
+	
 
 	me.loginAfter = function()
 	{

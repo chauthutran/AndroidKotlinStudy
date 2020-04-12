@@ -39,6 +39,164 @@ ConfigManager.syncSetting_Default = {
     }
 };
 
+ConfigManager.setting_Default = {
+    "message":{  
+       "autoHide":true,
+       "autoHideTime":"5000",
+       "networkFailedMsgType":"alertMsg"
+    },
+    "theme":"default",
+    "redeemDefs":{  
+       "statusOptions":[
+          {  
+             "name":"submit",
+             "label":"Sync",
+             "icon":{  
+                "path":"images/completed.svg",
+                "colors":{  
+                   "background":"#7DD11F",
+                   "foreground":"#ffffff"
+                }
+             }
+          },
+          {  
+             "name":"queued",
+             "label":"Pending",
+             "icon":{  
+                "path":"images/pending.svg",
+                "colors":{  
+                   "background":"#6FCF97",
+                   "foreground":"#4F4F4F"
+                }
+             }
+          },
+          {  
+             "name":"failed",
+             "label":"Sync error",
+             "icon":{  
+                "path":"images/failed.svg",
+                "colors":{
+                   "background":"#FFFFFF",
+                   "foreground":"#FF2B2B"
+                }
+             }
+          },
+          {
+             "name": "downloaded",
+             "label": "historic[1]",
+             "icon": {
+                "path": "images/arrow-circle-down.svg",
+                "colors": {
+                   "background": "#FFFFFF",
+                   "foreground": "#808080"
+                }
+             }
+          }
+       ],
+       "statusIconSize":{  
+          "width":24,
+          "height":24
+       },
+       "activityIconSize":{  
+          "width":56,
+          "height":56
+       },
+
+       "displaySettings": [
+          "'<b><i>' + activityItem.activityDate.capturedLoc + '</i></b>'",
+          "activityTrans.firstName + ' ' + activityTrans.lastName"
+       ],
+       "activityTypes":[  
+          {  
+             "name":"FPL-SP",
+             "term":"",
+             "label":"FPL-SP",
+             "icon":{  
+                "path":"images/act_col.svg",
+                "colors":{  
+                   "background":"#009C99",
+                   "foreground":"#FEFFD1"
+                }
+             },
+             "previewData":[  
+                "age phoneNumber",
+                "hairStyle"
+             ],
+             "displaySettings": [
+                "'<u>' + activityItem.activityDate.capturedLoc + '</u>: <i>' + activityItem.activityId + '</i>'",
+                "activityTrans.activityType"
+             ]
+          },{  
+             "name":"eVoucher",
+             "term":"",
+             "label":"eVoucher",
+             "icon":{  
+                "path":"images/act_col.svg",
+                "colors":{  
+                   "background":"#6FCF97",
+                   "foreground":"#4F4F4F"
+                }
+             },
+             "previewData":[  
+                "age phoneNumber",
+                "voucherCode"
+             ],
+             "displaySettings": [
+                "'<b><i>' + activityItem.activityDate.capturedLoc + '</i></b>'",
+                "activityTrans.firstName + ' ' + activityTrans.lastName"
+             ]
+          },
+          {  
+             "name":"WalkInB",
+             "term":"",
+             "label":"Voucher: Walk In",
+             "icon":{  
+                "path":"images/act_col.svg",
+                "colors":{  
+                   "background":"#6FCF97",
+                   "foreground":"#4F4F4F"
+                }
+             },
+             "previewData":[  
+                "phoneNumber",
+                "<strong>age</strong>"
+             ]
+          },
+          {  
+             "name":"WalkInA",
+             "term":"",
+             "label":"Walk In",
+             "icon":{  
+                "path":"images/arrows_col.svg",
+                "colors":{  
+                   "background":"#ffc61d",
+                   "foreground":"#1C1C1C"
+                }
+             },
+             "previewData":[  
+                "<strong>age</strong>",
+                "phoneNumber"
+             ]
+          },
+          {  
+             "name":"PhoneVoucher",
+             "term":"",
+             "label":"Phone Voucher",
+             "icon":{  
+                "path":"images/act_col.svg",
+                "colors":{  
+                   "background":"#ffc61d",
+                   "foreground":"#1C1C1C"
+                }
+             },
+             "previewData":[  
+                "<u>lastName, firstName",
+                "voucherCode"
+             ]
+          }
+       ]
+    }
+};
 
 // ==== Methods ======================
 
@@ -55,7 +213,11 @@ ConfigManager.getConfigJson = function ()
 ConfigManager.setConfigJson = function ( configJson ) 
 {
     ConfigManager.configJson = configJson;
-};  
+
+    // TODO: If default config parts do not exists, insert them....
+    // ConfigManager.syncSetting_Default = {
+    // ConfigManager.setting_Default = {    
+};
 
 ConfigManager.setSettingsJson = function( configJson )
 {

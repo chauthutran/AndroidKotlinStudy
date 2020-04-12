@@ -1,5 +1,8 @@
 // -------------------------------------------
 // -- SessionManager Class/Methods
+// --- On memory session ---
+// ----- and started to have methods to save to localStage, but don't know how it will be managed in future..
+// ---------
 
 function SessionManager() {}
 
@@ -25,9 +28,11 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 	
 	// TODO: Need to set 'configManager'
 	ConfigManager.setConfigJson( SessionManager.sessionData.dcdConfig );
-
 };
 
+// --------------------------------------------------
+
+// -- Called after login --> to update the 'User' session data in localStorage.
 SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
 {
 	// NOTE!!!!
@@ -51,7 +56,7 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 	});
 };
 
-
+// -- Called after offline login --> updates just datetime..
 SessionManager.updateUserSessionToStorage = function( loginData, userName )
 {
 	var dtmNow = ( new Date() ).toISOString();

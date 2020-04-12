@@ -9,8 +9,6 @@
 
 function WsCallManager() {}
 
-WsCallManager.domain_psiConnect = '.psi-connect.org';  // change to '.psi-connect.org';
-
 WsCallManager.wsOriginUrl = '';  // get set when start..
 WsCallManager.localhostProxyUrl = 'http://localhost:3020';
 
