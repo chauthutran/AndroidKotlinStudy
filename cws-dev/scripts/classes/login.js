@@ -235,7 +235,6 @@ function Login( cwsRenderObj )
 	};
 
 
-
 	me.regetDCDconfig = function()
 	{
 		var userName = JSON.parse( localStorage.getItem(Constants.storageName_session) ).user;

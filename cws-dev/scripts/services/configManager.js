@@ -20,13 +20,13 @@ ConfigManager.syncSetting_Default = {
             "mainSearch": {
                 "activities": {
                     "$elemMatch": {
-                        "activeUser": INFO.login_UserName
+                        "activeUser": "INFO.login_UserName"
                     }
                 }
             },
             "dateSearch": {
                 "updated": {
-                    "$gte": INFO.dateRange_gtStr
+                    "$gte": "INFO.dateRange_gtStr"
                 }
             }
         },

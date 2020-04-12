@@ -24,7 +24,7 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 	Util.mergeJson( SessionManager.sessionData, newSessionInfo );
 	
 	// TODO: Need to set 'configManager'
-	ConfigManager.setConfigJson( SessionManager.sessionData );
+	ConfigManager.setConfigJson( SessionManager.sessionData.dcdConfig );
 
 };
 
