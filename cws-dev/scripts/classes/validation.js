@@ -95,7 +95,7 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 	
 	me.getMessage = function( type, defaultMessage )
 	{
-		var message = SessionManager.sessionData.dcdConfig.definitionMessages[type];
+		var message = ConfigManager.getConfigJson().definitionMessages[type];
 		if( message === undefined )
 		{
 			message = defaultMessage;

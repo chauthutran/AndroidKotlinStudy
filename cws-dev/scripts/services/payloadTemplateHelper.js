@@ -17,7 +17,7 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
 
     try
     {
-        var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, SessionManager.sessionData.dcdConfig.definitionPayloadTemplates );
+        var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, ConfigManager.getConfigJson().definitionPayloadTemplates );
         
         var INFO = PayloadTemplateHelper.getINFO( dateTimeObj, blockInfo );
         DevHelper.setINFO_ForConsoleDisplay( INFO ); 

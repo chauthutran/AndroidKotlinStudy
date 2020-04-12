@@ -261,7 +261,7 @@ DevHelper.loadSampleData = function()
 
 DevHelper.showActivityCardConfigs = function()
 {
-    console.log( SessionManager.sessionData.dcdConfig.settings.redeemDefs );
+    console.log( ConfigManager.getConfigJson().settings.redeemDefs );
 };
 
 DevHelper.showINFO = function()

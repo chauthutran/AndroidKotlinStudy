@@ -85,7 +85,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 me.activityTypeDisplay( activityCardLiTag, activityJson );
                 
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, SessionManager.sessionData.dcdConfig );
+                me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, ConfigManager.getConfigJson() );
 
 
                 // 3. 'SyncUp' Button Related

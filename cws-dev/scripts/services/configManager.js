@@ -219,6 +219,15 @@ ConfigManager.setConfigJson = function ( configJson )
     // ConfigManager.setting_Default = {    
 };
 
+
+ConfigManager.clearConfigJson = function () 
+{
+    ConfigManager.configJson = {};
+    ConfigManager.configSetting = {};
+};
+
+// ---------------------------
+
 ConfigManager.setSettingsJson = function( configJson )
 {
     ConfigManager.configSetting = configJson.settings;

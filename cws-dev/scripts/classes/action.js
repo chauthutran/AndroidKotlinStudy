@@ -153,7 +153,7 @@ function Action( cwsRenderObj, blockObj )
 	{
 		// TODO: all the blockDivTag related should be done by 'block' class method
 
-		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, SessionManager.sessionData.dcdConfig.definitionActions );
+		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
 		// ACTIVITY ADDING
 		var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
@@ -218,7 +218,7 @@ function Action( cwsRenderObj, blockObj )
 			{
 				if ( clickActionJson.blockId !== undefined )
 				{
-					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, SessionManager.sessionData.dcdConfig.definitionBlocks );
+					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 					// 'blockPassingData' exists is called from 'processWSResult' actions
 					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
@@ -237,7 +237,7 @@ function Action( cwsRenderObj, blockObj )
 						// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
 						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
 						// NOT SURE IF THIS IS PROPER PLACE..
-						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, SessionManager.sessionData.dcdConfig.definitionForms[ blockJson.form ] );
+						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
 					}
 					else
 					{

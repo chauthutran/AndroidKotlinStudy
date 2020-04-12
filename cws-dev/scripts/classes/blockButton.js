@@ -105,7 +105,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 
 	me.renderBlockButton = function( btnNo, btnData, divTag, passedData )
 	{
-		var btnJson = FormUtil.getObjFromDefinition( btnData, SessionManager.sessionData.dcdConfig.definitionButtons );
+		var btnJson = FormUtil.getObjFromDefinition( btnData, ConfigManager.getConfigJson().definitionButtons );
 		var btnTag = me.generateBtnTag( btnNo, btnJson, btnData, divTag );
 			
 		// this is not used on mainTab case..
@@ -291,12 +291,12 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 	{
 		if ( onClick && onClick.length > 0 )
 		{
-			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, SessionManager.sessionData.dcdConfig.definitionActions );
+			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, ConfigManager.getConfigJson().definitionActions );
 			var actionJson = Util.getFromList( actionJsonArr, 'openBlock', 'actionType' );
 
 			if ( actionJson && actionJson.blockId !== undefined )
 			{
-				var blockJson = FormUtil.getObjFromDefinition( actionJson.blockId, SessionManager.sessionData.dcdConfig.definitionBlocks );
+				var blockJson = FormUtil.getObjFromDefinition( actionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 				// Create the block and render it.
 				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );	
@@ -305,7 +305,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 				if ( actionJson.payloadConfig )
 				{
 					FormUtil.block_payloadConfig = actionJson.payloadConfig;
-					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, SessionManager.sessionData.dcdConfig.definitionForms[ blockJson.form ] );
+					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
 				}
 				else
 				{

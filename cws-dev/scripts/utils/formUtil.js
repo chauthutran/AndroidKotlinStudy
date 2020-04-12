@@ -459,17 +459,6 @@ FormUtil.checkLogin = function()
 	return ( SessionManager.sessionData.login_UserName.toString().length * SessionManager.sessionData.login_Password.toString().length );
 }
 
-FormUtil.undoLogin = function()
-{
-	SessionManager.sessionData.login_UserName = '';
-	SessionManager.sessionData.login_Password = '';	
-	SessionManager.sessionData.dcdConfig = undefined;
-	SessionManager.sessionData.orgUnitData = undefined;
-
-	$( 'input.loginUserPin' ).val( '' );
-	$( 'input.loginUserPinNumeric' ).val( '' );
-}
-
 // ---------------------------------------------------------
 
 FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
@@ -1208,7 +1197,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$.get( activityType.icon.path, function(data) {
 	
 				var svgObject = ( $(data)[0].documentElement );
-				var svgStyle = ( iconStyleOverride ? iconStyleOverride : SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize );
+				var svgStyle = ( iconStyleOverride ? iconStyleOverride : ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize );
 	
 				if ( activityType.icon.colors )
 				{
@@ -1237,7 +1226,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 				$( iconObj ).empty();
 				$( iconObj ).append( svgObject );
 	
-				if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && svgStyle && $(iconObj).html() )
+				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && svgStyle && $(iconObj).html() )
 				{
 					$( svgObject ).attr( 'width', svgStyle.width );
 					$( svgObject ).attr( 'height', svgStyle.height );
@@ -1245,13 +1234,13 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 				{
-					var iconActivityWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width;
-					var iconStatusWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width;
-					var iconStatusHeight = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height;
+					var iconActivityWidth = ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize.width;
+					var iconStatusWidth = ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width;
+					var iconStatusHeight = ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height;
 	
 					var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
 	
-					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
+					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
 					$( iconObj ).append( statusIconObj );
 	
 
@@ -1270,7 +1259,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
-	if ( SessionManager.sessionData.dcdConfig )
+	if ( ConfigManager.getConfigJson() )
 	{
 		if ( skipGet != undefined && skipGet == true )
 		{
@@ -1304,13 +1293,13 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 					$( targetObj ).empty();
 					$( targetObj ).append( svgObject );
 
-					if ( SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings && SessionManager.sessionData.dcdConfig.settings.redeemDefs && SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize )
+					if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize )
 					{
-						$( svgObject ).attr( 'width', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width );
-						$( svgObject ).attr( 'height', SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height );
+						$( svgObject ).attr( 'width', ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width );
+						$( svgObject ).attr( 'height', ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height );
 		
-						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width ) );
-						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.height ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width ) );
+						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height ) );
 					}
 	
 				});
@@ -1375,7 +1364,7 @@ FormUtil.getActivityType = function( itemData )
 	var returnOpt;
 	try
 	{
-		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1408,7 +1397,7 @@ FormUtil.getActivityTypeComposition = function( itemData )
 	var returnOpt;
 	try
 	{
-		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityTypes;
+		var opts = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
 
 		if ( itemData.data && 
 				itemData.data.payloadJson && 
@@ -1473,7 +1462,7 @@ FormUtil.getStatusOpt = function( itemData )
 {
 	try
 	{
-		var opts = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusOptions;
+		var opts = ConfigManager.getConfigJson().settings.redeemDefs.statusOptions;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -1709,7 +1698,7 @@ FormUtil.getGeoLocationIndex = function( separator, group )
 	// numberic prefix is accuracy down to metres (THIS SHOULD CHANGE TO SOMETHING MORE MEANINGFUL )
 
 	var sep = ( separator ? separator : '_')
-	var retIdx = SessionManager.sessionData.dcdConfig.countryCode + sep + ( group ? group : 'ALL' ) + sep;
+	var retIdx = ConfigManager.getConfigJson().countryCode + sep + ( group ? group : 'ALL' ) + sep;
 	var dtmNow = $.format.date( new Date(), "yyyymmdd" );
 	var ArrCoords = FormUtil.geoLocationLatLon.split( ',' );
 

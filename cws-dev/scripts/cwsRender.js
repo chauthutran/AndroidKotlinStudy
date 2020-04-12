@@ -218,7 +218,7 @@ function cwsRender()
 					// added by Greg (2018/12/10)
 					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
-					var startBlockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 					startBlockObj.render();  // should been done/rendered automatically?
 
 					// Change start area mark based on last user info..
@@ -238,11 +238,11 @@ function cwsRender()
 	{
 		if ( options )
 		{
-			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
 		}
 		else
 		{
-			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
 		blockObj.render();
@@ -577,14 +577,16 @@ function cwsRender()
 	// Yes, it will be nice. : )
 	me.renderDefaultTheme = function ()
 	{
-		if ( SessionManager.sessionData.dcdConfig 
-			&& SessionManager.sessionData.dcdConfig.settings 
-			&& SessionManager.sessionData.dcdConfig.settings.theme 
-			&& SessionManager.sessionData.dcdConfig.themes )
-		{
-			console.log( 'Updating to theme: ' + SessionManager.sessionData.dcdConfig.settings.theme);
+		var configJson = ConfigManager.getConfigJson();
 
-			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
+		if ( configJson 
+			&& configJson.settings 
+			&& configJson.settings.theme 
+			&& configJson.themes )
+		{
+			console.log( 'Updating to theme: ' + configJson.settings.theme);
+
+			var defTheme = me.getThemeConfig( configJson.themes, configJson.settings.theme );
 
 			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -736,11 +738,13 @@ function cwsRender()
 
 	me.logOutProcess = function()
 	{
-		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-
-		FormUtil.undoLogin();
+		// NOTE: Maybe use 'loginObj' method?
+		SessionManager.unloadDataInSession();
 		sessionStorage.clear();
 		ScheduleManager.stopSchedules_AfterLogOut();
+		
+		$( 'input.loginUserPin' ).val( '' );
+		$( 'input.loginUserPinNumeric' ).val( '' );
 
 		// change to session Management process > forced reload of app (detect new version + forced login)
 		var SWinfoObj = localStorage.getItem( 'swInfo' );
@@ -905,7 +909,9 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
-        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList  )
+		var configJson = ConfigManager.getConfigJson();
+
+        if ( configJson && configJson.favList )
         {
             me.favIconsObj = new favIcons( me );
 

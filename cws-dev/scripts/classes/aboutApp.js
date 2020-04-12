@@ -36,7 +36,7 @@ function aboutApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateAboutPageData( SessionManager.sessionData.dcdConfig ); //DataManager.getUserConfigData()
+        me.populateAboutPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -118,17 +118,16 @@ function aboutApp( cwsRender )
         });
 
 
-
-  
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
             FormUtil.showProgressBar();
 
-            var thisConfig = SessionManager.sessionData.dcdConfig;
+            var thisConfig = ConfigManager.getConfigJson();
 
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
 
-            SessionManager.sessionData.dcdConfig = thisConfig;
+            // NOTE: TODO: this does not get saved since each login overwrites the config..
+
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#aboutInfo_theme_Text' ).html( me.aboutInfo_ThemeSelectTag.val() );

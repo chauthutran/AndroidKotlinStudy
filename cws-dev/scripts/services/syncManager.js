@@ -746,12 +746,6 @@ syncManager.syncOfflineData = function( btnTag )
                             FormUtil.updateProgressWidth( 0 );
                             FormUtil.showProgressBar( 0 );
 
-                            //if ( !SessionManager.sessionData.dcdConfig ) 
-                            //{
-                            //    SessionManager.sessionData.dcdConfig = JSON.parse( DataManager.getData ( Constants.storageName_redeemList ) ).dcdConfig;
-                            //    MsgManager.msgAreaShow( 'syncManager > reloading SessionManager.sessionData.dcdConfig :(' );
-                            //} 
-
                             if ( syncManager.pauseProcess )
                             {
                                 syncManager.pauseProcess = 0;

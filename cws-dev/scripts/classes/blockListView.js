@@ -52,7 +52,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.viewListNames = viewListNames;
 
     me.mainList;
-    me.viewsDefinitionList; // = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list
+    me.viewsDefinitionList; // = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list
     me.viewListDefs = [];
     me.groupByDefinitionList;
     me.groupByGroups = [];
@@ -139,8 +139,8 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.setUpInitialData = function()
     {
         me.mainList = ActivityDataManager.getActivityList();
-        me.viewsDefinitionList = SessionManager.sessionData.dcdConfig.definitionActivityListViews; // full complete view def list    
-        me.groupByDefinitionList = JSON.parse( JSON.stringify( SessionManager.sessionData.dcdConfig.definitionGroupBy ) ); // full complete view def list
+        me.viewsDefinitionList = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list    
+        me.groupByDefinitionList = JSON.parse( JSON.stringify( ConfigManager.getConfigJson().definitionGroupBy ) ); // full complete view def list
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
