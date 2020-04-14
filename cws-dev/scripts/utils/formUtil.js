@@ -1949,8 +1949,9 @@ FormUtil.createNumberLoginPinPad = function()
         }
 	});
 
-	const PWD_INPUT_PADDING_LEFT = 10;
-	const CHAR_SPACING_WIDTH = 5;
+	const PWD_INPUT_PADDING_TOP = 2;
+	const PWD_INPUT_PADDING_LEFT = 0;
+	const CHAR_SPACING_WIDTH = 12;
 
 	$( "#passReal" ).keyup( function( event ) {
 		$('#pass').val( $('#passReal').val() );
@@ -1960,11 +1961,11 @@ FormUtil.createNumberLoginPinPad = function()
 	$( "#pass" ).focus( function() {
 		$('#passReal').focus();
 		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
-		$('#passReal').css( 'top', $('#pass').position().top + 8 );
+		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
 	});
 
 	setTimeout( function() {
-		$('#passReal').css( 'top', $('#pass').position().top + 12 );
+		$('#passReal').css( 'top', $('#pass').position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
 		$('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );
 	}, 500 );
 

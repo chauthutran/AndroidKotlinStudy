@@ -14,7 +14,7 @@ FormMsgManager.cssBlock_Body = {
     ,'left': '50%'
     ,'top': '50%'
     ,'width': '70px'
-    ,'height': '74px'
+    ,'height': 'auto' //74px
     ,'margin-left' : ( ( $('nav.bg-color-program').width() <= 450 && ( $(document).height() <= 1000 ) ) ? '-10%' : ( ( $('nav.bg-color-program').width() <= 1000 ) ? '-5%' : '-3%' ) ) 
     ,'margin-top' : ( ( $(document).height() <= 650 && $('nav.bg-color-program').width() <= 800 ) ? '-11%' : ( ( $(document).height() <= 1000 ) ? '-6%' : '-3%' ) )
     ,'white-space': 'normal'

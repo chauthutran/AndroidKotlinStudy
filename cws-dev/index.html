@@ -61,13 +61,14 @@
     <link rel="manifest" href="manifest.json" >
 
     <link rel="stylesheet" type="text/css" href="styles/jquery-autocomplete.css" >
-    <link rel="stylesheet" type="text/css" href="styles/jquery-ui.css" >
-    <link rel="stylesheet" type="text/css" href="styles/style.css" >
-    <link rel="stylesheet" type="text/css" href="css/style.css" >
-    <!--link rel="stylesheet" type="text/css" href="css/styleNew.css" -->
-    <link rel="stylesheet" type="text/css" href="css/responsive.css" >
+  <!-- <link rel="stylesheet" type="text/css" href="styles/jquery-ui.css"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="styles/style.css" > -->
+  <!-- <link rel="stylesheet" type="text/css" href="css/style.css" > -->
+	  <link rel="stylesheet" type="text/css" href="css/styleNew.css">
+  <!-- <link rel="stylesheet" type="text/css" href="css/responsive.css" > -->
     <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
     <link rel="stylesheet" type="text/css" href="css/json-viewer.css" >
+
 
     <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
 
@@ -102,13 +103,19 @@
               <div id="divOptionalNav" class="icons-status" style="display:none;"></div>
             </td>
             <td>
-              <div id="divSyncDown" class="icons-status" style="display:none;"><img id="imgSyncDown" src="images/sync-error.svg" alt="sync down"></div>
+              <div id="divSyncDown" class="icons-status" style="display:none;">
+				<img id="imgSyncDown" src="images/sync-error.svg" alt="sync down">
+              </div>
             </td>
             <td>
-              <div id="divAppDataSyncStatus" class="icons-status" style="display:none;"><img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner"></div>
+              <div id="divAppDataSyncStatus" class="icons-status" style="display:none;">
+			  	<img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner">
+              </div>
             </td>
             <td>
-              <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;"><img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus" style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/></div>
+              <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;">
+			  	<img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus" style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/>
+              </div>
               <div style="margin-top: -22px; margin-left: 6px; width: 28px;">
                 <div id="divStatusDot_network" style="color: #ccc; font-weight: bold; margin-left: 2px; display: inline-block;" title="Network Status">.</div>
                 <div id="divStatusDot_networkStable" style="color: #ccc; font-weight: bold; margin-left: 2px; display: inline-block;" title="NetworkStable Status">.</div>
@@ -128,8 +135,6 @@
     <!-- LOGIN FORM DIV -->
     <div id="loginFormDiv" style="display:none;">
 
-        <div name="top-body" class="bodytop bg-color-program-son"></div>
-        <section class="wrapper-log">
 
           <!-- LARGE WIDTH MODE DISPLAY -->
           <!-- <ul class="tabs">
@@ -139,64 +144,64 @@
             </li>
           </ul> -->
 
-          <div class="menu-wrapper">
-            <ul class="tab_content">
-             <!-- <li tabId="1" class="active" style="display: list-item;"> -->
-                <a class="expandable expanded" id="s-opt" style="">
+<div class="wrapper">
+  <div class="login_title">
+    <h1>PSI - workforce app</h1>
                   <!-- <div class="icon-row"><img term="login_title" src="images/key.svg" alt="key"> Login </div> -->
-                </a>
-                <div>
-                  <ul class="content_log">
-                    <li>
-                      <div style="padding: 10% 0 0 0;text-align: center;background-color:#fff;">
-
-                          <img src="images/Connect.svg" id='ConnectingWithSara' class='logoOnline'>
-                          <div class="" term="" id="Connect">CONNECT</div>
-
-                        <div class="tb-content-d-log">
-                          <label term="login_userName" class="from-string">User code</label><input autocomplete="off" class="form-type-text loginUserName" type="text" tabindex="0" >
+  </div>
+  <div class="login_logo-content">
+    <div  id='ConnectingWithSara' class="login_logo__image logoOnline"></div>
+  </div>
+  <div class="login_data">
+    <div class="login_data__fields">
+      <div class="field">
+        <div class="field__label">
+          <label term="login_userName">User code</label><span>*</span>
+        </div>
+        <div class="fiel__controls">
+          <div class="field__left">
+            <input class="auto_compl loginUserName" type="text" autocomplete="off" mandatory="true" placeholder="Enter your user code" tabindex="1">
                         </div>
-                        <div class="tb-content-d-log">
-                          <label term="login_password" class="from-string">PIN</label><input type="password" class="form-type-text loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" tabindex="0" autocomplete="off" ><input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required="" data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone" autocomplete="off" style="position:absolute;width:0px !important;height:18px !important;padding:0 !important;margin:0 !important;">
+          <div class="field__right"></div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field__label">
+          <label term="login_password">PIN</label><span>*</span>
                         </div>
-
-                        <div term="login_btn_login" class="tb-content-buttom btn divBtn loginBtn" style="width:95%;">LOG IN</div>
-                        <div style="text-align: center; margin:0 0 6px 0;">
-
-                          <table style='width:100%'>
-                            <tr>
-                              <td style='text-align:right;'>
-                                <span class="padding">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                <span id="spanVersion" title="" style="font-size: 11px;color:#95989A">v</span>
-                              </td>
-                              <td style='width:12px;text-align:center;'>
-                                <img id='appShare' src='images/outline-share-24px.svg' style='display:none;width:20px;height:20px;display:none' alt="appShare">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan=2 style="text-align: right;">
-                                <div class="loginSwitchUserNotification" style="display:none;padding: 16px;margin: 8px;text-align: center;border-radius: 8px;background-color: #f8f8f8;border: 2px solid gainsboro;">
-                                  To change user code, first clear your app/site data.
+        <div class="fiel__controls">
+          <div class="field__left">
+            <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="off" mandatory="true" tabindex="2">
+            <input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required="" data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone" autocomplete="off">
+          </div>
+          <div class="field__right"></div>
+        </div>
+      </div>
+    </div>
+    <div class="login_data__more">
+      <label id="spanVersion">Version #.#</label>
+      <a href="#">Forgot your PIN?</a>
+    </div>
                                 </div>
-                                <select id='dbStorageSelector' style='max-width:150px;'>
-                                  <option value='localStorage'>Local Storage</option>
-                                  <option value='indexdb' selected>IndexDB</option>
-                                </select>
-                            </td>
-                            </tr>
-                          </table>
-
+  <div class="login_buttons">
+    <div class="login_buttons__container">
+      <div class="button l-emphasis button-full_width advOptBtn">
+        <div class="button__container">
+          <div class="button-label">Advance options</div>
+        </div>
+      </div>
+      <div class="button h-emphasis button-full_width loginBtn" tabindex="3">
+        <div class="button__container ">
+          <div class="button-label">Login</div>
                         </div>
                       </div>
-                    </li>
-                  </ul>
+    </div>
                 </div>
               <!-- </li> -->
-            </ul>
 
           </div>
 
-        </section>
+
 
     </div>
 
@@ -775,6 +780,7 @@
 
     <div id="focusRelegator" style="background-color: #000;opacity: 0.4;position: fixed;top:0;left:0;width: 100%;height: 100%;display: none;"></div>
 
+  <div class="scrim"></div>
     <script type="text/javascript" src="scripts/constants/constants.js"></script>
 
     <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>

@@ -105,8 +105,8 @@ function Login( cwsRenderObj )
 		//$( '#nav-toggle' ).hide();
 		$( '#loggedInDiv' ).hide();		
 
-		me.pageTitleDivTab.show();
-		me.pageTitleDivTab.html ( 'CONNECT' );
+		//me.pageTitleDivTab.show();
+		//me.pageTitleDivTab.html ( 'CONNECT' );
 		/* END > Added by Greg (2018/12/10) */
 
 
