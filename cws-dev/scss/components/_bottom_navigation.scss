@@ -1,0 +1,63 @@
+.btm_nav {
+    top: 0;
+    display: -webkit-box;
+    display: flex;
+    vertical-align: middle;
+    width: 100%;
+    height: 56px;
+    text-align: center;
+    overflow-y: hidden;
+    overflow-x: auto;
+    background-color: $color-background;
+    @include box-sizing(border-box);
+
+    .btm_nav__content {
+        width: 100%;
+        max-width: 672px;
+        min-width: 320;
+        margin: auto;
+        @include box-sizing(border-box);
+
+        .btm_nav__section {
+            float: left;
+            cursor: pointer;
+            width: calc(100%/4);
+            max-width: 168px;
+            min-width: 80px;
+            height: 56px;
+            text-align: center;
+            padding-top: 8px;
+            padding-bottom: 7px;
+            //background-color: $color-background;
+            @include box-sizing(border-box);
+            &:hover{
+                background-color: rgba($color-typ-dark,0.10);
+            }
+            .btm_nav__section-icon{
+                @include btm-nav-section-icon;
+            }
+
+            #i_services {
+                @include background-image('services_u');
+            }
+            #i_eLearning {
+                @include background-image('eLearning_u');
+            }
+            #i_Stats {
+                @include background-image('stats_u');
+            }
+            #i_Profile {
+                @include background-image('profile_u');
+            }
+
+            .btm_nav__section-label {
+                @include font-size(12px);
+                padding: 5 12px 0 12px;
+                line-height: 12px;
+                font-weight: 400;
+                color: $color-typ-dark;
+                @include box-sizing(border-box);
+            }
+        }
+    }
+}

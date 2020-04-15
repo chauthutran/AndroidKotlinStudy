@@ -11,7 +11,7 @@ function Login( cwsRenderObj )
 	me.menuTopDivTag; // = $( '#menuTopDiv' ); //edited by Greg (2018/12/10)
 
 	me.loggedInDivTag = $( '#loggedInDiv' );
-	me.spanOuNameTag = $( '#spanOuName' );
+	me.navTitleUserNameTag = $( '.Nav__Title' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
 
   	// Greg added: 2018/11/23 -- below 3 lines
@@ -63,7 +63,7 @@ function Login( cwsRenderObj )
 		// New UI Button click
 		$( '.loginBtn' ).click( function() {
 
-			var parentTag = $( this ).parent();
+			var parentTag = $( 'div.login_data' );
 			var loginUserNameVal = parentTag.find( 'input.loginUserName' ).val();
 			var loginUserPinVal = parentTag.find( 'input.loginUserPin' ).val();
 
@@ -96,7 +96,7 @@ function Login( cwsRenderObj )
 		me.loginFormDivTag.show( 'fast' );
 
 		/* START > Added by Greg (2018/12/10) */
-		var divIcon = $( 'div.logo_top' );
+		//var divIcon = $( 'div.logo_top' );
 		if ( ! me.loginFormDivTag.is( ":visible" ) )
         {
             me.loginFormDivTag.show();
@@ -182,7 +182,7 @@ function Login( cwsRenderObj )
 		else
 		{
 			// ONLINE Login
-			var loadingTag = FormUtil.generateLoadingTag( btnTag );
+			var loadingTag = FormUtil.generateLoadingTag( btnTag.children() );
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
@@ -256,8 +256,8 @@ function Login( cwsRenderObj )
 			if ( loginData.orgUnitData )
 			{
 				me.loggedInDivTag.show();
-				me.spanOuNameTag.show();
-				me.spanOuNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );
+				me.navTitleUserNameTag.show();
+				me.navTitleUserNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );
 			} 
 
 			// Load config and continue the CWS App process
@@ -274,7 +274,8 @@ function Login( cwsRenderObj )
 				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 			}
 
-			$( 'nav' ).show();
+			//$( 'nav' ).show();
+			$( 'nav' ).css( 'display', 'flex' );
 
 		});
 	};
@@ -298,6 +299,8 @@ function Login( cwsRenderObj )
 	{
 		$( 'input.loginUserName' ).attr( 'readonly',true );
 		$( 'div.loginSwitchUserNotification' ).show();
+		$( 'div.Nav__icon' ).addClass( 'closed' );
+
 		FormUtil.hideProgressBar();
 	}
 

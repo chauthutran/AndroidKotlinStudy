@@ -1,0 +1,208 @@
+$tab__head-width: 100%;
+$tab__container-width: 100%;
+$border-color :#ccc;
+$border-color-active :$color-p;
+$tab-hover-bg :#f5f5f5;
+$tab-head-color :#333;
+$active-tab :$color-p;
+
+
+.tab_fs {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 50%;
+    min-width: 558px;
+    height: 48px;
+    margin: 0 auto;
+    border-bottom: 1px solid $tab-hover-bg;
+    @include shadow-b(2px 2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+
+
+    @include p-device(240) {
+        width: 100%;
+    }
+
+    @include l-device(320) {
+        width: 100%;
+    }
+
+    @include rwd-min(560) {
+        width: 50%;
+    }
+
+    .tab_fs__head {
+        display: block;
+        margin: 0 0 8px 0;
+        padding: 0;
+        list-style: none;
+        width: $tab__head-width;
+
+        @include p-device(240) {
+            width: 100%;
+            margin: 0;
+        }
+
+        @include l-device(320) {
+            width: 100%;
+            margin: 0;
+        }
+
+        li {
+            float: left;
+            cursor: pointer;
+            padding: 0px 20px;
+            border-bottom: 0px;
+            overflow: hidden;
+            opacity: 0.5;
+            line-height: 48px;
+            color: $tab-head-color;
+            text-transform: uppercase;
+
+            @include p-device(240) {
+                width: 100%;
+                text-transform: capitalize;
+                margin: 0;
+                padding: 0px 8px;
+                display: none;
+            }
+
+            @include l-device(320) {
+                width: 100%;
+                text-transform: capitalize;
+                margin: 0;
+                padding: 0px 8px;
+                display: none;
+            }
+
+            @include rwd-min(560) {
+                width: auto;
+                position: relative;
+                display: block;
+                padding: 0px 20px;
+            }
+
+            .tab_fs__head-icon {
+                float: left;
+                width: 24px;
+                height: 24px;
+                margin: 12px 8px;
+                @include box-sizing(border-box);
+            }
+
+            &:hover {
+                border-bottom: 2px solid $tab-hover-bg;
+                color: #000;
+            }
+
+            &.active {
+                border-bottom: 2px solid $border-color-active;
+                display: block;
+                opacity: 1;
+            }
+
+            ul {
+                width: 100%;
+                min-width: 240px;
+                padding: 0;
+                display: none;
+                position: absolute;
+                background-color: $color-background;
+
+                li {
+                    padding: 0;
+                    width: 100%;
+                    min-width: 240px;
+                    position: relative;
+                    background-color: $color-background;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+.tab_fs__container {
+    //display: none;
+    margin: 8px 0;
+    width: $tab__container-width;
+    height: auto;
+    overflow: hidden;
+    @include box-sizing(border-box);
+
+    @include p-device(240) {
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0);
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+
+    @include l-device(320) {
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0);
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+
+    @include rwd-min(560) {
+        margin: 0 auto;
+        width: 50%;
+        min-width: 558px;
+        padding: 0 12px;
+        background-color: #FFF;
+        border-bottom-left-radius: $radius;
+        border-bottom-right-radius: $radius;
+        @include shadow-b(2px 2px 5px 0px $color-shadow);
+    }
+
+    .tab_fs__container-content {
+        @include box-sizing(border-box);
+
+        @include rwd-min(560) {
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+            padding: 16px 0 4px;
+        }
+
+        .field {
+
+            @include p-device(240) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include l-device(320) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include rwd-min(560) {
+                width: calc(50% - 8px);
+                margin: 0 4px 12px;
+            }
+
+        }
+
+        .button {
+
+            @include p-device(240) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include l-device(320) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include rwd-min(560) {
+                width: calc(50% - 8px);
+                margin: 0 4px 12px;
+            }
+        }
+    }
+}

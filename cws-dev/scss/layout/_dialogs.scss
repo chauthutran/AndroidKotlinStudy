@@ -1,0 +1,138 @@
+dialog {
+    display: none;
+    float: left;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1700;
+    -webkit-transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    padding: 0 0 0 24px;
+    border-radius: $radius;
+    border: 0;
+    max-width: 450px;
+    @include box-sizing(border-box);
+
+    @include rwd-max(488) {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    &::-webkit-backdrop {
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    &::backdrop {
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    &::-webkit-backdrop {
+        -webkit-animation: show 500ms ease;
+                animation: show 500ms ease;
+    }
+
+    &[open],
+    &::backdrop {
+        -webkit-animation: show 500ms ease;
+                animation: show 500ms ease;
+    }
+
+    .dialog__title {
+        width: 100%;
+        min-height: 48px;
+        padding-right: 16px;
+        @include box-sizing(border-box);
+
+        label {
+            @include font-size(20px);
+            line-height: 24px;
+            font-family: $typ-default;
+            font-style: normal;
+            font-weight: 500;
+            margin-top: 16px;
+            color: $color-typ-pl;
+            display: block;
+
+            @include rwd-max(240) {
+                @include font-size(16px);
+                line-height: 24px;
+                font-family: $typ-default;
+                font-style: normal;
+                font-weight: 500;
+                margin-top: 16px;
+            }
+        }
+    }
+
+    .dialog__search {
+        width: 95%;
+        height: 48px;
+    }
+
+    .dialog__list {
+        clear: both;
+        text-align: left;
+        width: 100%;
+        @include box-sizing(border-box);
+    }
+
+    .dialog__status {
+        width: 100%;
+        text-align: center;
+
+        .dialog__status-img {
+            display: inline-block;
+            width: 162px;
+            height: 162px;
+            margin: 0 auto;
+            cursor: pointer;
+            @include background-image('cloud_offline');
+            @include box-sizing(border-box);
+            @include rwd-max(240) {
+                display: none;
+            }
+        }
+    }
+
+    .dialog__text {
+        clear: both;
+        height: auto;
+        line-height: 20px;
+        max-height: 300px;
+        font-family: $typ-default;
+        font-style: normal;
+        font-weight: 500;
+        color: rgba($color-typ-pl, 60%);
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-right: 8px;
+        @include font-size(16px);
+        @include box-sizing(border-box);
+
+        @include rwd-max(240) {
+            max-height: 80px;
+        }
+    }
+
+    .dialog__action {
+        float: right;
+        height: auto;
+        min-height: 52px;
+        padding: 8px 8px 0 8px;
+        @include box-sizing(border-box);
+
+        div {
+            float: left;
+        }
+
+        @include rwd-max(488) {
+            max-width: 200px;
+
+            div {
+                float: right;
+            }
+        }
+    }
+}

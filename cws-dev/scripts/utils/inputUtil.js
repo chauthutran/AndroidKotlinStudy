@@ -392,13 +392,13 @@ function inputMonitor( cwsRenderObj )
 
                 if ( currentX <= expectedNavDrawerWidth )
                 {
-                    $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                    $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                    if ( $( '#navDrawerDiv' ).css( 'width') !== expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                    if ( $( '#navDrawerDiv' ).css( 'left') !== (currentX - expectedNavDrawerWidth) + 'px' ) $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
                 }
                 else
                 {
-                    $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                    $( '#navDrawerDiv' ).css( 'left', '0px' );
+                    if ( $( '#navDrawerDiv' ).css( 'width' ) !== expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                    if ( $( '#navDrawerDiv' ).css( 'left' ) !== '0px' ) $( '#navDrawerDiv' ).css( 'left', '0px' );
                 }
 
                 if ( !navDrawerVisibleOnMove ) $( '#navDrawerDiv' ).show();
@@ -417,8 +417,8 @@ function inputMonitor( cwsRenderObj )
                 if ( ! $( '#focusRelegator').is(':visible') )
                 {
                     $( '#focusRelegator').show();
-                    $( '#focusRelegator' ).css( 'zIndex',100 );
-                    $( '#navDrawerDiv' ).css('zIndex',200 );
+                    if ( $( '#focusRelegator' ).css( 'zIndex') !== 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
+                    if ( $( '#navDrawerDiv' ).css( 'zIndex') !== 200 ) $( '#navDrawerDiv' ).css('zIndex',200 );
                 }
                 else
                 {
@@ -434,11 +434,11 @@ function inputMonitor( cwsRenderObj )
                 if ( currentX > expectedNavDrawerWidth )
                 {
                     if ( ! $( '#navDrawerDiv' ).css( 'left' ) != '0px' ) $( '#navDrawerDiv' ).css( 'left', '0px' );
-                    $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                    if ( $( '#navDrawerDiv' ).css( 'width' ) !== expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                 }
                 else
                 {
-                    $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                    if ( $( '#navDrawerDiv' ).css( 'left' ) !== (currentX - expectedNavDrawerWidth) + 'px' ) $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
                     if ( ! $( '#navDrawerDiv' ).css( 'width' ) != expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                 }
 
@@ -454,11 +454,11 @@ function inputMonitor( cwsRenderObj )
                     if ( currentX > expectedNavDrawerWidth )
                     {
                         if ( ! $( '#navDrawerDiv' ).css( 'left' ) != '0px' ) $( '#navDrawerDiv' ).css( 'left', '0px' );
-                        $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
+                        if ( $( '#navDrawerDiv' ).css( 'width' ) !== expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                     }
                     else
                     {
-                        $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
+                        if ( $( '#navDrawerDiv' ).css( 'left' ) !== (currentX - expectedNavDrawerWidth) + 'px' ) $( '#navDrawerDiv' ).css( 'left', (currentX - expectedNavDrawerWidth) + 'px' );
                         if ( ! $( '#navDrawerDiv' ).css( 'width' ) != expectedNavDrawerWidth + 'px' ) $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                     }
 
@@ -542,7 +542,7 @@ function inputMonitor( cwsRenderObj )
             {
                 // showing menu
                 $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                $( '#nav-toggle' ).click();
+                $( 'div.Nav__icon' ).click();
             }
             else    // menu NOT dragged (LEFT-to-RIGHT) wider than minimum width threshold >> HIDE
             {
@@ -566,7 +566,7 @@ function inputMonitor( cwsRenderObj )
             {
                 // closing menu (called click event)
                 if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
-                $( '#nav-toggle' ).click(); //clicked to close menu
+                $( 'div.Nav__icon' ).click(); //clicked to close menu
             }
             else
             {

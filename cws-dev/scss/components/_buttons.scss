@@ -1,0 +1,135 @@
+.button {
+    float: left;
+    //width: 100%;
+    min-width: 64px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: $radius;
+    letter-spacing: 1pt; 
+    @include box-sizing(border-box);
+
+    .button__container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        @include box-sizing(border-box);
+
+        .button-icon {
+            float: left;
+            width: 24px;
+            height: 24px;
+            -webkit-box-align: center;
+                    align-items: center;
+            margin: 12px 8px 0 0;
+            @include background-image('placeholder_w');
+            @include box-sizing(border-box);
+        }
+
+        .button-label {
+            display: table;
+            min-width: 64px;
+            @include font-size(16px);
+            text-align: center;
+            font-style: normal;
+            line-height: 48px;
+            text-transform: uppercase;
+            color: $color-typ-s;
+            @include box-sizing(border-box);
+        }
+    }
+}
+
+.button-outline {
+    float: left;
+    //width: 100%;
+    min-width: 64px;
+    height: 48px;
+    min-height: 48px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+    border-radius: $radius;
+    @include box-sizing(border-box);
+
+    .button__container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        @include box-sizing(border-box);
+
+        .button-icon {
+            float: left;
+            width: 24px;
+            height: 24px;
+            -webkit-box-align: center;
+                    align-items: center;
+            margin: 12px 8px 0 0;
+            @include background-image('placeholder_w');
+            @include box-sizing(border-box);
+        }
+
+        .button-label {
+            display: table;
+            min-width: 64px;
+            @include font-size(16px);
+            text-align: center;
+            font-style: normal;
+            line-height: 48px;
+            text-transform: uppercase;
+            @include box-sizing(border-box);
+        }
+    }
+}
+
+.button-text {
+    float: left;
+    //width: 100%;
+    min-width: 64px;
+    height: 48px;
+    min-height: 48px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+    border-radius: $radius;
+    @include box-sizing(border-box);
+
+    .button__container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        @include box-sizing(border-box);
+
+        .button-icon {
+            float: left;
+            width: 24px;
+            height: 24px;
+            -webkit-box-align: center;
+                    align-items: center;
+            margin: 12px 8px 0 0;
+            @include background-image('placeholder_w');
+            @include box-sizing(border-box);
+        }
+
+        .button-label {
+            display: table;
+            min-width: 64px;
+            @include font-size(16px);
+            text-align: center;
+            font-style: normal;
+            line-height: 48px;
+            text-transform: uppercase;
+            @include box-sizing(border-box);
+        }
+    }
+}
+
+.button-in_line {
+    margin: 0 0 12px 8px;
+}
+
+.button-full_width {
+    width: 100%;
+    margin-bottom: 12px;
+}

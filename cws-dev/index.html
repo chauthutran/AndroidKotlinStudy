@@ -79,24 +79,11 @@
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
 
-  <nav class="bg-color-program">
-      <div class='logo_top nav_child headerLogo'>
-        <a id="nav-toggle" href="#" aria-label="MENU"><span></span></a>      
-      </div>
+  <nav class="Nav1">
+      <div class='Nav__icon'></div>
+      <div class='Nav__Title'></div>
 
-      <div class='logo_desc nav_child'>
-        <div>
-          <div class="logo-desc-all" style='color:rgba(51, 51, 51, 0.87);font-size: 18px;;font-weight:normal;letter-spacing: -0.01em;position: fixed;left: 54%;top:16px;margin-left: -37.5%;'></div>
-        </div>
-        <div>
-          <div id="preload" style="display: none"><img src='images/baseline-cloud_off-24px.svg' ><img src='images/Connect.svg' ></div>
-          <div id="loggedInDiv" style="display: none; cursor: pointer;">
-            <span id="spanOuName" >[LogIn]</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="pwa_tools" style="float: right; margin-right: 3px; margin-top: 5px;">
+      <div class="nav_tools" style="float: right; margin-right: 3px; margin-top: 5px;">
         <table class="topIconsTbl" style="border-spacing: 0px;">
           <tr>
             <td>
@@ -104,17 +91,17 @@
             </td>
             <td>
               <div id="divSyncDown" class="icons-status" style="display:none;">
-				<img id="imgSyncDown" src="images/sync-error.svg" alt="sync down">
+				        <img id="imgSyncDown" src="images/sync-error.svg" alt="sync down">
               </div>
             </td>
             <td>
               <div id="divAppDataSyncStatus" class="icons-status" style="display:none;">
-			  	<img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner">
+			  	      <img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner">
               </div>
             </td>
             <td>
               <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;">
-			  	<img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus" style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/>
+			  	      <img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus" style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;"/>
               </div>
               <div style="margin-top: -22px; margin-left: 6px; width: 28px;">
                 <div id="divStatusDot_network" style="color: #ccc; font-weight: bold; margin-left: 2px; display: inline-block;" title="Network Status">.</div>
@@ -128,7 +115,7 @@
 
     </nav>
 
-    <div id="navDrawerDiv" class="menu-mobile transitionSmooth" style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+    <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
 
     <div id="divProgressBar" class="progress"><div id="divProgressInfo" class="indeterminate"></div></div>
 

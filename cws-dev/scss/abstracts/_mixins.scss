@@ -1,0 +1,266 @@
+// Small devices
+@mixin sm {
+    @media (min-width: #{$screen-sm-min}) {
+        @content;
+    }
+}
+
+// Medium devices
+@mixin md {
+    @media (min-width: #{$screen-md-min}) {
+        @content;
+    }
+}
+
+// Large devices
+@mixin lg {
+    @media (min-width: #{$screen-lg-min}) {
+        @content;
+    }
+}
+
+// Extra large devices
+@mixin xl {
+    @media (min-width: #{$screen-xl-min}) {
+        @content;
+    }
+}
+
+// Extra small devices
+@mixin xs {
+    @media (max-width: #{$screen-xs-max}) {
+        @content;
+    }
+}
+
+// Custom devices
+@mixin rwd-max($screen) {
+    @media (max-width: $screen+'px') {
+        @content;
+    }
+}
+
+@mixin rwd-min($screen) {
+    @media (min-width: $screen+'px') {
+        @content;
+    }
+}
+
+// Custom devices
+@mixin p-device($breakpoint) {
+    
+    @media (orientation: portrait) {
+        @media (min-width: $breakpoint+'px') {
+            @content;
+        }
+    }
+}
+
+@mixin l-device($breakpoint) {
+    @media (orientation: landscape) {
+        @media (min-width: $breakpoint+'px') {
+            @content;
+        }
+    }
+}
+
+@mixin box-sizing($box) {
+    box-sizing: $box;
+    -webkit-box-sizing: $box;
+    -moz-box-sizing: $box;
+}
+
+@mixin appearance($appe) {
+    appearance: $appe;
+    -webkit-appearance: $appe;
+    -moz-appearance: $appe;
+}
+
+@mixin position($sticky) {
+    position: $sticky;
+    position: -webkit-+$sticky;
+}
+
+@mixin shadow-b($shadow) {
+    -webkit-box-shadow: $shadow;
+    -moz-box-shadow: $shadow;
+    box-shadow: $shadow;
+}
+
+@mixin user-select($u-select) {
+    user-select: $u-select;
+    -webkit-user-select: $u-select;
+    -moz-user-select: $u-select;
+    -ms-user-select: $u-select;
+}
+
+//Typography font-size
+@function calculateRem($size) {
+    $remSize: $size / 16px;
+    @return $remSize * 1rem;
+}
+
+@mixin font-size($size) {
+    font-size: calculateRem($size);
+}
+
+// components
+@mixin comp-tf-sc {
+    float: left;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    margin: $field-margin;
+    border: 1px solid $comp-border;
+    border-radius: $radius;
+    background-color: rgba($color-typ-sl, 0.009);
+    text-align: left;
+    @include box-sizing(border-box);
+}
+
+// buttons
+@mixin button($colors...) {
+    @if $buttons {
+        .button {
+            background-color: map-get($button-colors, nth($colors, 1));
+
+            &:hover {
+                background-color: rgb(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+                        background-color: map-get($button-colors, nth($colors, $i));
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                background-color: rgb(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .button-outline {
+            border: 1px solid map-get($button-colors, nth($colors, 1));
+
+            .button-label {
+                color: map-get($button-colors, nth($colors, 1));
+            }
+
+            &:hover {
+                border: 1px solid rgb(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+                        border: 1px solid map-get($button-colors, nth($colors, $i));
+
+                        .button-label {
+                            color: map-get($button-colors, nth($colors, $i));
+                        }
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                border: 1px solid rgb(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .button-text {
+
+            .button-label {
+                color: map-get($button-colors, nth($colors, 1));
+            }
+
+            &:hover {
+                color: rgb(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+
+                        .button-label {
+                            color: map-get($button-colors, nth($colors, $i));
+                        }
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                color: rgb(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+// Bottom navigation
+@mixin btm-nav-section-icon {
+    margin: auto;
+    width: 24px;
+    height: 24px;
+    //background-color: $color-background;
+    @include box-sizing(border-box);
+}
+
+// background images
+$fallback-extension: 'png' !default;
+$retina-suffix: '@2x';
+
+@mixin background-image($name, $size:false) {
+    background-image: url(#{$image-path}/#{$name}.svg);
+
+    @if($size) {
+        background-size: $size;
+    }
+
+    .no-svg & {
+        background-image: url(#{$image-path}/#{$name}.#{$fallback-extension});
+
+        @media only screen and (-moz-min-device-pixel-ratio: 1.5),
+        only screen and (-o-min-device-pixel-ratio: 3/2),
+        only screen and (-webkit-min-device-pixel-ratio: 1.5),
+        only screen and (min-device-pixel-ratio: 1.5) {
+            background-image: url(#{$image-path}/#{$name}#{$retina-suffix}.#{$fallback-extension});
+        }
+    }
+}
+
+@mixin radio-structure($color) {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 0;
+    top: -1px;
+    border-radius: 50%;
+    border: 2px solid $color;
+}

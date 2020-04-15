@@ -487,7 +487,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 
-			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			//if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				thisTag.removeClass( 'active' );
 
@@ -526,7 +527,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			thisTag.css('zIndex',199);
 
-			if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			//if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
 				subListIconsTag.show();

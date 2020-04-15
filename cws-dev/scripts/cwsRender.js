@@ -7,9 +7,9 @@ function cwsRender()
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	me.menuAppMenuIconTag = $( '#nav-toggle' );
+	/*me.menuAppMenuIconTag = $( '#nav-toggle' );*/
 	me.loggedInDivTag = $( '#loggedInDiv' );
-	me.headerLogoTag = $( '.headerLogo' );
+	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
 	me.pulsatingProgress = $( '#pulsatingCircle' );
 
 	// global variables
@@ -330,12 +330,11 @@ function cwsRender()
 	
 	me.configureMobileMenuIcon = function()
 	{
-		var destArea = $( 'div.headerLogo');
+		var destArea = $( 'div.Nav__icon');
 
 		if ( destArea )
 		{
-			document.querySelector( "#nav-toggle" )
-			 .addEventListener( "click", function() {
+			destArea.on( "click", function() {
 				this.classList.toggle( "active" );
 				if ( $( this ).hasClass( 'active' ) )
 				{
@@ -343,7 +342,7 @@ function cwsRender()
 				}
 			});
 
-			FormUtil.setClickSwitchEvent( me.menuAppMenuIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
+			FormUtil.setClickSwitchEvent( me.navDrawerShowIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
 		}
 
 	}
@@ -364,11 +363,11 @@ function cwsRender()
 
 					if( userData != undefined && userData.orgUnitData != undefined )
 					{
-						$( '#divNavDrawerOUlongName' ).html( userData.orgUnitData.orgUnit.name );
+						$( '.navigation__user' ).html( userData.orgUnitData.orgUnit.name );
 					}
 					else
 					{
-						$( '#divNavDrawerOUlongName' ).html( '' );
+						$( '.navigation__user' ).html( '' );
 					}
 
 				});
@@ -382,7 +381,7 @@ function cwsRender()
 
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
-					$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
+					//$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
 
 				}
 
@@ -453,33 +452,30 @@ function cwsRender()
 			$( '#navDrawerDiv' ).empty();
 
 			// clear the list first
-			me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
+			//me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
 			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-			var navMenuHead = $( '<div id="navMenuHead" />' );
-			var navMenuTbl = $( '<table id="navDrawerHeader" />' );
-			var tr = $( '<tr />' );
-			var tdLeft = $( '<td class="menuHeadLeft" />' );
-			var tdRight = $( '<td class="menuHeadRight" />' );
+			var navMenuHead = $( '<div class="navigation__header" />' );
+			var navMenuLogo = $( '<div class="navigation__logo" />' );
+			var navMenuUser = $( '<div class="navigation__user" />' );
+			var navMenuClose = $( '<div class="navigation__close" />' );
+
 
 			me.navDrawerDivTag.append ( navMenuHead );
-			navMenuHead.append ( navMenuTbl );
-			navMenuTbl.append ( tr );
-			tr.append ( tdLeft );
-			tr.append ( tdRight );
+			navMenuHead.append ( navMenuLogo );
+			navMenuHead.append ( navMenuUser );
+			navMenuHead.append ( navMenuClose );
+			//navMenuHead.append ( $( '<div id="divNavDrawerSummaryData" class="" />' ) );
 
-			var navMenuLogo = $( '<img src="images/logo.svg" />' );
+			var navMenuItems = $( '<div class="navigation__items" />');
+			//var navItemsUL = $( '<ul />');
+			//navMenuItems.append( navItemsUL );
 
-			tdLeft.append ( navMenuLogo );
-			tdRight.append ( $( '<div id="divNavDrawerOUName" >' + userName + '</div>') );
-			tdRight.append ( $( '<div id="divNavDrawerOUlongName" />' ) );
+			var navMenuTbl = $( '<table class="navigation__items" style="border-spacing: 0;" />');
+			//var navItemsUL = $( '<ul />');
 
-			 var tr = $( '<tr />' );
-			var td = $( '<td colspan=2 style="height:20px;" />' );
+			navMenuItems.append( navMenuTbl );
 
-			navMenuTbl.append ( tr );
-			tr.append ( td );
-			td.append ( $( '<div id="divNavDrawerSummaryData" />') );
 
 			// Add the menu rows
 			if ( areaList )
@@ -487,16 +483,27 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
-					var menuStyle = (( area.group != undefined ) ? ( area.group == false ? 'border-bottom: 0;' : '' ) : 'border-bottom: 0;' );
-					var menuTag = $( '<table class="menu-mobile-row" areaId="' + area.id + '" style="' + menuStyle + '"><tr><td class="menu-mobile-icon"> <img src="images/' + area.icon + '.svg"> </td> <td class="menu-mobile-label" ' + FormUtil.getTermAttr( area ) + '>' + area.name + '</td></tr></table>' );				
+					var menuStyle = (( area.group != undefined ) ? ( area.group == false ? 'border-bottom: 0;' : 'border-bottom: 1px solid rgba(82, 134, 230, 0.1);' ) : 'border-bottom: 0;' );
+					//var menuLI = $( '<li areaId="' + area.id + '" ' + ( ( menuStyle ) ? 'style="' + menuStyle + '"' : '')  + ' />' );
+					var menuLI = $( '<tr class="menu-area" areaId="' + area.id + '" style="height:50px;margin:4px;' + menuStyle + '" />' );
 
-					me.setupMenuTagClick( menuTag );
+					menuLI.append( $( '<td class="navigation__items-icon menu-mobile-icon" style="padding:16px 16px;" >' + '<img src="images/' + area.icon + '.svg">' + '</td>' ) );
+					menuLI.append( $( '<td style="width: 90%;"> <a style="text-decoration:none;color:#000;" href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a></td>' ) );
 
-					me.navDrawerDivTag.append( menuTag );
+					me.setupMenuTagClick( menuLI );
 
-					if ( area.startArea ) startMenuTag = menuTag;
+					//navItemsUL.append( menuLI );
+					navMenuTbl.append( menuLI );
+
+					if ( area.startArea ) startMenuTag = menuLI;
 				}	
 			}
+
+			me.navDrawerDivTag.append( navMenuItems );
+
+			navMenuClose.on( 'click', function(){
+				$( 'div.Nav__icon' ).click();
+			});
 
 /*
 			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
@@ -506,7 +513,7 @@ function cwsRender()
 			else
 			{
 				$( '#menu_userNetworkMode' ).remove();
-			}
+			}stat
 */
 			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
@@ -586,14 +593,16 @@ function cwsRender()
 
 			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
 
-			$( 'nav.bg-color-program' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '#spanOuName' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( '#divNavDrawerOUName' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( 'nav.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
+
+			/* OLD STYLING: remove? */
+			//$( '.navigation__user' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '#divNavDrawerOUName' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '.navigation__user' ).css( 'color', defTheme.navTop.colors.foreground );
 			//$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
-			$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
+			//$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
 			//$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
 			//$( 'div.menu-mobile' ).css( 'background-color', defTheme.navDrawer.colors.background );
@@ -723,8 +732,10 @@ function cwsRender()
 
 	me.clearMenuClickStyles = function()
 	{
-		$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
-		$( 'table.menu-mobile-row' ).css( 'opacity', '0.8' );
+		//$( 'table.menu-mobile-row' ).css( 'background-color', '#FFF' );
+		//$( 'table.menu-mobile-row' ).css( 'opacity', '0.8' );
+		$( '.menu-area' ).css( 'background-color', '#FFF' );
+		$( '.menu-area' ).css( 'opacity', '0.8' );
 	}
 
 	me.updateMenuClickStyles = function( areaId )
@@ -798,9 +809,9 @@ function cwsRender()
 
 	me.clearMenuPlaceholders = function()
 	{
-		$( '#divNavDrawerOUName' ).html( '' );
-		$( '#divNavDrawerOUlongName' ).html( '' );
-		$( '#divNavDrawerSummaryData' ).html( '' );
+		$( '.navigation__user' ).html( '' );
+		$( '.Nav__Title' ).html( '' );
+		//$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
@@ -846,8 +857,8 @@ function cwsRender()
 		// hide the menu
 		if ( me.navDrawerDivTag.is( ":visible" ) )
 		{
-			me.menuAppMenuIconTag.click();
-			me.menuAppMenuIconTag.css( 'width', 0 );
+			me.navDrawerShowIconTag.click();
+			me.navDrawerDivTag.css( 'width', 0 );
 
 			$('#nav-toggle').removeClass('active');
 		}		

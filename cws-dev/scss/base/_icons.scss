@@ -1,0 +1,43 @@
+.i-metod_provision{
+    @include background-image('provision');
+}
+
+.i-follow_up{
+    @include background-image('follow-up');
+}
+
+.i-safe_abortion{
+    @include background-image('safe-abortion');
+}
+
+.i-statistics{
+    @include background-image('statistics');
+}
+
+.i-settings{
+    @include background-image('settings');
+}
+
+.i-may_details{
+    @include background-image('may_details');
+}
+
+.i-about{
+    @include background-image('about');
+}
+
+.i-logout{
+    @include background-image('logout');
+}
+
+.i-by_voucher{
+    @include background-image('by_voucher');
+}
+
+.i-by_phone_number{
+    @include background-image('by_phone_number');
+}
+
+.i-by_client_details{
+    @include background-image('by_client_details');
+}

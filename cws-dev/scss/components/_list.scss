@@ -1,0 +1,133 @@
+.list {
+    width: 100%;
+    background-color: $color-background;
+    td {
+        border: 0;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #FBFBFB;
+    }
+
+    tr:nth-child(even) {
+        background-color: #FFF;
+    }
+
+    tr:hover {
+        background-color: #f2f2f2;
+        cursor:pointer;
+    }
+
+    .list_three_line {
+        width: 100%;
+        height: 88px;
+        min-height: 88px;
+        padding: 16px 8px;
+        letter-spacing: 1pt;
+        //background-color: $color-background;
+        @include box-sizing(border-box);
+
+        @include rwd-max(380) {
+            min-height: 132px;
+            height: 150px;
+        }
+        @include rwd-max(240) {
+            height: 180px;
+        }
+
+        .list_three_line__container {
+            width: 100%;
+            @include box-sizing(border-box);
+
+            .list_three_line-suppor_visuals {
+                //support
+                float: left;
+                width: 40px;
+                height: 40px;
+                -webkit-box-align: center;
+                        align-items: center;
+                border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);
+                @include background-image('provision');
+                @include box-sizing(border-box);
+            }
+
+            .list_three_item_content {
+                float: left;
+                width: calc(100% - 164px);
+                margin-right: 8px;
+                height: auto;
+                text-align: left;
+                line-height: 18px;
+                @include font-size(14px);
+                @include box-sizing(border-box);
+
+                @include rwd-max(380) {
+                    width: calc(100% - 56px);
+                    border-bottom: 1px solid #ccc;
+                    margin-bottom: 12px;
+                }
+
+                .list_three_line-date {
+                    font-weight: 500;
+                    @include box-sizing(border-box);
+                }
+
+                .list_three_line-text {
+                    @include box-sizing(border-box);
+                }
+            }
+
+            .list_three_item_cta {
+                float: left;
+
+                @include rwd-max(380) {
+                    float: right;
+                    margin-right: 8px;
+                    width: calc(100% - 56px);
+                }
+
+                .list_three_item_status {
+                    color: $comp-border;
+                    text-align: right;
+                    line-height: 10px;
+                    line-height: 18px;
+                    @include font-size(14px);
+                    @include box-sizing(border-box);
+                }
+
+                .list_three_item_cta1 {
+                    float: left;
+                    width: 36px;
+                    height: 36px;
+                    -webkit-box-align: center;
+                            align-items: center;
+                    margin-right: 32px;
+                    cursor: pointer;
+                    @include background-image('phone');
+                    @include box-sizing(border-box);
+
+                    @include rwd-max(380) {
+                        margin-right: 32;
+                    }
+                }
+
+                .list_three_item_cta2 {
+                    float: left;
+                    width: 36px;
+                    height: 36px;
+                    -webkit-box-align: center;
+                            align-items: center;
+                    cursor: pointer;
+                    @include background-image('sync-pending');
+                    @include box-sizing(border-box);
+
+                    @include rwd-max(380) {
+                        float: right;
+                    }
+                }
+            }
+        }
+    }
+}
