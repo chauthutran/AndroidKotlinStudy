@@ -54,6 +54,7 @@ function Login( cwsRenderObj )
 	me.setLoginFormEvents = function()
 	{
 		me.setLoginBtnClick();
+		me.setAdvOptBtnClick();
 	}
 
 	// ---------------------------
@@ -71,12 +72,84 @@ function Login( cwsRenderObj )
 			me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
 		});
 
+	}
 		// dev/test code for Pilar (Greg: 2019/08/06)
-		$( '#loginFormDiv' ).find( '.icon-row' ).click( function() {
-			playSound("notify");
+	me.setAdvOptBtnClick = function()
+	{
+		$( '.advOptBtn' ).click( function() {
+
+			$('.scrim').show();
+
+			$( 'body' ).append (
+			`
+			<div id="advOpt" class="login_buttons" style="background-color: white">
+			<label>Advance options</label>
+			<div class="login_buttons__container">
+			  <div class="button h-emphasis button-full_width switchToStagBtn" >
+				<div class="button__container ">
+				  <div class="button-label">switch to Staging</div>
+				</div>
+			  </div>
+			  <div class="button h-emphasis button-full_width demoBtn" >
+				<div class="button__container ">
+				  <div class="button-label">Demo mode</div>
+				</div>
+			  </div>
+			  <div class="button h-emphasis button-full_width changeUserBtn" >
+				<div class="button__container ">
+				  <div class="button-label">Change user</div>
+				</div>
+			  </div>
+			</div>
+		  	</div>
+			`
+		  );
+		  $(".scrim").click(function () {
+			$('.scrim').css('display', 'none');
+			$('#advOpt').remove()
+			$('dialog').remove()
 		});
-		$( '#loginFormDiv' ).find( 'ul.tabs' ).click( function() {
-			playSound("notify");
+		$(".switchToStagBtn").click(function () {
+			alert('switchToStagBtn')
+		});
+		$(".demoBtn").click(function () {
+			alert('demo')
+			$('dialog').remove()
+		});
+		$(".changeUserBtn").click(function () {
+			$('.scrim').append (
+				`
+				<dialog id="dialog_alert">
+				<div class="dialog__title"><label>Change user</label></div>
+				<div class="dialog__text">Changing user will delete all data for %username, including any data not syncronized. </div>
+				<div class="dialog__text warning">Are you sure that you want to delete the data for %username and allow new user login ? </div>
+				<div class="dialog__action">
+				  <div id="dialog_act2" class="button-text warning">
+					<div class="button__container">
+					  <div class="button-label">ACCEPT</div>
+					</div>
+				  </div>
+				  <div id="dialog_act1" class="button-text primary">
+					<div class="button__container">
+					  <div class="button-label">CANCEL</div>
+					</div>
+				  </div>
+				</div>
+			  </dialog>
+				`
+			);
+			$('#advOpt').remove();
+			$('#dialog_alert').css('display', 'block');
+
+			$("#dialog_act2").click(function () {
+				localStorage.clear();
+				sessionStorage.clear();
+				DataManager.dropMyIndexedDB_CAUTION_DANGEROUS()
+				$('.scrim').css('display', 'none');
+				$('#advOpt').remove()
+				$('dialog').remove()
+			});
+		});
 		});
 	}
 
