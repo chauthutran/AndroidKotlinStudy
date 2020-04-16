@@ -672,12 +672,12 @@ div.fixed_father {
 
 .menu-mobile-icon {
   position: relative;
-  left: 16px;
+  /* left: 16px; */
   width: 40px;
 }
 
 .menu-mobile-icon > img {
-  opacity: 0.54;
+  opacity: 0.85; /* 0.54 */
 }
 
 .menu-mobile-label{

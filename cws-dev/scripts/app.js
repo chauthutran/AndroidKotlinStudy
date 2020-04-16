@@ -20,6 +20,8 @@
 
   _swManagerObj.run( function(){
 
+    App_UI_startUp_Progress( '25%' );
+
     startApp();
 
   } );   
@@ -39,10 +41,13 @@
     
     DevHelper.setUp( _cwsRenderObj );
 
+    App_UI_startUp_Progress( '50%' );
 
     try {
 
       WsApiManager.setupWsApiVariables( function () {
+
+        App_UI_startUp_Progress( '75%' );
 
         ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj, function () {
 
@@ -50,11 +55,17 @@
 
           App_syncIcon_UI_event();
 
+          App_UI_startUp_Progress( '80%' );
+
           _cwsRenderObj.render();
 
           FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
+          App_UI_startUp_Progress( '90%' );
+
           App_checkUpdates_found_prompt();
+
+          App_UI_startUp_Progress( '100%' );
 
           App_UI_startUp_done();
 
@@ -75,6 +86,9 @@
   {
     // show PWA (loading) screen
     FormMsgManager.appBlockTemplate('appLoad');
+
+    App_UI_startUp_Progress( '10%' );
+
   }
 
   function App_UI_startUp_done()
@@ -86,6 +100,11 @@
 
     }, 500)
 
+  }
+
+  function App_UI_startUp_Progress( perc )
+  {
+    $( 'div.startUpProgress' ).css( 'width', perc );
   }
 
   function App_version_UI_Update()

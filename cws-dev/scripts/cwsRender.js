@@ -7,8 +7,8 @@ function cwsRender()
 	// Tags
 	me.renderBlockTag = $( '#renderBlock' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	/*me.menuAppMenuIconTag = $( '#nav-toggle' );*/
-	me.loggedInDivTag = $( '#loggedInDiv' );
+	/* me.menuAppMenuIconTag = $( '#nav-toggle' );*/
+	/* me.loggedInDivTag = $( '#loggedInDiv' ); */
 	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
 	me.pulsatingProgress = $( '#pulsatingCircle' );
 
@@ -120,7 +120,7 @@ function cwsRender()
 
 	me.setPageHeaderEvents = function()
 	{
-		me.configureMobileMenuIcon();		
+		me.setNavMenuIconEvents();		
 	};
 
 
@@ -184,9 +184,9 @@ function cwsRender()
 			if (areaId === 'logOut') me.logOutProcess();
 			else if ( areaId === 'statisticsPage') 
 			{
-				me.clearMenuClickStyles();
+				//me.clearMenuClickStyles();
 				me.statisticsObj.render();
-				me.updateMenuClickStyles( areaId );
+				//me.updateMenuClickStyles( areaId );
 			}
 			else if ( areaId === 'settingsPage')
 			{
@@ -202,7 +202,7 @@ function cwsRender()
 			}
 			else
 			{
-				me.clearMenuClickStyles();
+				//me.clearMenuClickStyles();
 
 				me.areaList = ConfigManager.getAllAreaList();
 
@@ -225,7 +225,7 @@ function cwsRender()
 					me.trackUserLocation( selectedArea );				
 				}
 
-				me.updateMenuClickStyles( areaId );
+				//me.updateMenuClickStyles( areaId );
 
 			}
 
@@ -328,22 +328,21 @@ function cwsRender()
 	// ----------------------------------
 
 	
-	me.configureMobileMenuIcon = function()
+	me.setNavMenuIconEvents = function()
 	{
-		var destArea = $( 'div.Nav__icon');
 
-		if ( destArea )
-		{
-			destArea.on( "click", function() {
-				this.classList.toggle( "active" );
-				if ( $( this ).hasClass( 'active' ) )
-				{
-					me.updateNavDrawerHeaderContent();
-				}
-			});
+		me.navDrawerShowIconTag.on( "click", function() {
 
-			FormUtil.setClickSwitchEvent( me.navDrawerShowIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
-		}
+			this.classList.toggle( "active" );
+
+			if ( $( this ).hasClass( 'active' ) )
+			{
+				me.updateNavDrawerHeaderContent();
+			}
+
+		});
+
+		FormUtil.setClickSwitchEvent( me.navDrawerShowIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
 
 	}
 
@@ -496,6 +495,18 @@ function cwsRender()
 					navMenuTbl.append( menuLI );
 
 					if ( area.startArea ) startMenuTag = menuLI;
+
+					console.log( area.group );
+					if ( area.group === true )
+					{
+						var menuLI = $( '<tr class="menu-area" style="height:5px;margin:4px;" />' );
+						var menuTD = $( '<td colspan=2 " />' );
+						var groupRow = $( '<hr>' );
+
+						menuLI.append( menuTD );
+						menuTD.append( groupRow );
+						navMenuTbl.append( menuLI );
+					}
 				}	
 			}
 
@@ -593,8 +604,8 @@ function cwsRender()
 
 			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
 
-			//$( 'nav.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
+			$( 'nav.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
+			$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
 
 			/* OLD STYLING: remove? */
 			//$( '.navigation__user' ).css( 'background-color', defTheme.navTop.colors.background );
@@ -778,8 +789,10 @@ function cwsRender()
 
 	me.closeLoginSession = function()
 	{
-		me.loginObj.spanOuNameTag.text( '' );
-		me.loginObj.spanOuNameTag.hide();
+		//me.loginObj.spanOuNameTag.text( '' );
+		//me.loginObj.spanOuNameTag.hide();
+		$( 'div.Nav__Title').html( '' );
+
 		me.clearMenuPlaceholders();
 		me.navDrawerDivTag.empty();
 		me.renderDefaultTheme();

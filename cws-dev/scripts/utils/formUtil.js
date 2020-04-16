@@ -474,6 +474,8 @@ FormUtil.undoLogin = function()
 
 FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
 {
+	mainIconTag.off( 'click' ); //clear existing click events
+
 	mainIconTag.on('click', function( event )
 	{
 		event.preventDefault();
@@ -482,12 +484,13 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 		var className_Open = openCloseClass[0];
 		var className_Close = openCloseClass[1];
 
+		// ALREADY OPEN 
 		if ( thisTag.hasClass( className_Open ) )
 		{
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 
-			//if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			// CLOSE NAVMENU (clicked from navHeader bar)
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				thisTag.removeClass( 'active' );
@@ -527,12 +530,12 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			thisTag.css('zIndex',199);
 
-			//if ( thisTag.attr( 'id' ) == 'nav-toggle' )
+			// OPEN/SHOW NAVMENU (clicked from navHeader bar)
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
 				subListIconsTag.show();
-				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth + 'px' ));
+				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 				subListIconsTag.css( 'left', '0px' );
 
 				if ( $( 'div.floatListMenuSubIcons' ).hasClass( className_Open ) )
@@ -561,12 +564,33 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 					thisTag.click();
 				});
 
+				if ( $( '#focusRelegator').css( 'opacity' ) !== Constants.focusRelegator_MaxOpacity ) $( '#focusRelegator').css( 'opacity', Constants.focusRelegator_MaxOpacity );
+
 				$( '#focusRelegator').show();
+
+				//if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, '#focusRelegator' );
 
 			}
 
 		} 
 	});	
+}
+
+FormUtil.setStackOrder = function( arrObjTags )
+{
+	var stackFrom = FormUtil.screenMaxZindex();
+	console.log( arrObjTags );
+	for ( var i = 0; i < arrObjTags.length; i++ )
+	{
+		var stackObj = arrObjTags[ i ];
+
+		if ( stackObj )
+		{
+			stackFrom += 1;
+			$( stackObj ).css( 'zIndex', stackFrom );
+		}
+
+	}
 }
 
 FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
@@ -1961,9 +1985,14 @@ FormUtil.createNumberLoginPinPad = function()
 	});
 
 	$( "#pass" ).focus( function() {
+		if ( ! $( '#passReal' ).is( ':visible') ) $( '#passReal' ).show();
 		$('#passReal').focus();
 		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
 		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
+	});
+
+	$( "input.loginUserName" ).focus( function() {
+		$( '#passReal' ).hide();
 	});
 
 	setTimeout( function() {

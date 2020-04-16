@@ -1,7 +1,7 @@
-#ConnectingWithSara {
+/*#ConnectingWithSara {
   width:80px;
   height:80px;
-}
+}*/
 #Connect {
   font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
   font-style: normal;
@@ -392,8 +392,8 @@ div.errorMsgArrow
 
 .transitionSmooth
 {
-  -webkit-transition: all 250ms, -webkit-transform 250ms; /* Safari */ 
-  transition: all 250ms, transform 250ms;
+  -webkit-transition: all 450ms, -webkit-transform 450ms; /* Safari */ 
+  transition: all 450ms, transform 450ms;
   position: fixed;
 }
 

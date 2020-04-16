@@ -4,8 +4,8 @@ function FormMsgManager() {}
 
 // --- App block/unblock ---
 FormMsgManager.cssBlock_Body = { 
-    border: 'none'
-    ,padding: '15px 10px'
+    border: '1px solid rgba(0,0,0,0.25)'
+    ,padding: '15px 12px'
     ,'-webkit-border-radius': '4px'
     ,'-moz-border-radius': '4px'
     ,opacity: .9
@@ -47,7 +47,7 @@ FormMsgManager.appBlockTemplate = function( template )
 
     if ( template == 'appLoad' )
     {
-        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'>";
+        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important' };
     }
     else if ( template == 'appLoadProgress' )

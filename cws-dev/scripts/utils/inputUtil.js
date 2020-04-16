@@ -1,5 +1,16 @@
 // =========================================
-// === Message with entire screen blocking
+// === device "touch" input manager
+
+/*
+    1. initiate touchstart ( touchStart() )
+     1.1 determine object with touch-focus ( based on loggedIn status )
+     1.2 set values/defaults based on 1.1
+
+    2. do something with object being "touchmove" ( touchMove() )
+
+    3. do something with interface/object at end of touchend ( touchEnd() )
+*/
+
 function inputMonitor( cwsRenderObj ) 
 {
     var me = this;
@@ -9,8 +20,8 @@ function inputMonitor( cwsRenderObj )
 
     if ( Util.isMobi() )
     {
-        document.addEventListener("touchstart", startTouch, false);
-        document.addEventListener("touchmove", moveTouch, false);
+        document.addEventListener("touchstart", touchStart, false);
+        document.addEventListener("touchmove", touchMove, false);
         document.addEventListener("touchend", touchEnd, false);
     }
     else
@@ -43,9 +54,9 @@ function inputMonitor( cwsRenderObj )
     var diffY = null;
 
     var dragXoffsetLimit = 0;
-    var startTouchTargetTag;
-    var startTouchParentTag;
-    var startTouchTargetWidth;
+    var touchStartTargetTag;
+    var touchStartParentTag;
+    var touchStartTargetWidth;
     var listItemFillerBlock;
 
     var listItemDragEnabled = false;
@@ -54,7 +65,7 @@ function inputMonitor( cwsRenderObj )
 
     inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins;
 
-    function startTouch(e) 
+    function touchStart(e) 
     {
         //console.log( $( e.touches[0].target ) );
         me.initialiseTouchDefaults( e );
@@ -65,7 +76,7 @@ function inputMonitor( cwsRenderObj )
             //me.initialiseListItemVars();
         }
 
-        me.detectFocusRelegatorInitialState();
+        me.setFocusRelegatorInitialState();
 
         if ( FormUtil.checkLogin() ) cwsRenderInputMon.updateNavDrawerHeaderContent();
 
@@ -103,7 +114,7 @@ function inputMonitor( cwsRenderObj )
 
     }
 
-    function moveTouch(e) 
+    function touchMove(e) 
     {
 
         if ( !loggedIn || (initialX === null ) || (initialY === null) || ( e.touches[0].clientX == null) )
@@ -111,9 +122,9 @@ function inputMonitor( cwsRenderObj )
             return;
         }
 
-        me.updateMoveTouchVars( e );
+        me.updatetouchMoveVars( e );
 
-        if ( startTouchTargetTag && startTagRedeemListItem )
+        if ( touchStartTargetTag && startTagRedeemListItem )
         {
             //DO NOT REMOVE: temp disabled (2019/06/13)
             //me.moveListItem(); // redeemList item is target object
@@ -165,11 +176,11 @@ function inputMonitor( cwsRenderObj )
         initialX = e.touches[0].clientX;
         initialY = e.touches[0].clientY;
 
-        startTouchTargetTag = undefined; 
-        startTouchParentTag = undefined;
+        touchStartTargetTag = undefined; 
+        touchStartParentTag = undefined;
         listItemFillerBlock = undefined;
 
-        startTouchTargetWidth = 0;
+        touchStartTargetWidth = 0;
         listItemDragEnabled = false;
         startTagRedeemListItem = false;
         listItemWasExpanded = false;
@@ -231,8 +242,8 @@ function inputMonitor( cwsRenderObj )
 
             if ( startTagRedeemListItem )
             {
-                startTouchTargetTag = $( e.touches[0].target ).closest( 'a');
-                startTouchTargetWidth = $( startTouchTargetTag ).width();    
+                touchStartTargetTag = $( e.touches[0].target ).closest( 'a');
+                touchStartTargetWidth = $( touchStartTargetTag ).width();    
             }
 
         }
@@ -245,69 +256,76 @@ function inputMonitor( cwsRenderObj )
 
     }
 
-    me.detectFocusRelegatorInitialState = function()
+    me.setFocusRelegatorInitialState = function()
     {
-        if ( $( '#focusRelegator' ).is( ':visible' ) && $( '#navDrawerDiv' ).css( 'zIndex' ) < $( '#focusRelegator' ).css( 'zIndex' ) )
+        if ( $( '#focusRelegator' ).is( ':visible' ) )
         {
-            //$( '#navDrawerDiv' ).css( 'zIndex', $( '#focusRelegator' ).css( 'zIndex' ) );
-            $( '#navDrawerDiv' ).css( 'zIndex', FormUtil.screenMaxZindex() +1 );
-            $( '#focusRelegator' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
+            if ( $( '#navDrawerDiv' ).css( 'zIndex' ) < $( '#focusRelegator' ).css( 'zIndex' ) )
+            {
+                //$( '#navDrawerDiv' ).css( 'zIndex', $( '#focusRelegator' ).css( 'zIndex' ) );
+                $( '#navDrawerDiv' ).css( 'zIndex', FormUtil.screenMaxZindex() +1 );
+                $( '#focusRelegator' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
+            }
+        }
+        else
+        {
+            $( '#focusRelegator' ).css( 'opacity', 0);
         }
     }
 
     me.initialiseListItemVars = function()
     {
-        startTouchParentTag = $( startTouchTargetTag ).parent();
-        listItemFillerBlock = $( '<a id="filler_' + startTouchTargetTag.attr( 'itemid' ) + '" class="expandable" style="z-Index: 0;" />' );
+        touchStartParentTag = $( touchStartTargetTag ).parent();
+        listItemFillerBlock = $( '<a id="filler_' + touchStartTargetTag.attr( 'itemid' ) + '" class="expandable" style="z-Index: 0;" />' );
 
-        $( listItemFillerBlock ).css( 'height', $( startTouchTargetTag ).innerHeight() );
+        $( listItemFillerBlock ).css( 'height', $( touchStartTargetTag ).innerHeight() );
         $( listItemFillerBlock ).css( 'background-color', 'rgba(0, 0, 0, 0)' );
-        $( listItemFillerBlock ).css( 'zIndex', ( $( startTouchTargetTag ).css( 'zIndex' ) -1 ) );
+        $( listItemFillerBlock ).css( 'zIndex', ( $( touchStartTargetTag ).css( 'zIndex' ) -1 ) );
 
-        $( startTouchTargetTag ).attr( 'initBorderBottomColor', $( startTouchTargetTag ).css( 'border-bottom-color' ) );
-        $( startTouchTargetTag ).attr( 'initTop', $( startTouchTargetTag ).offset().top );
-        $( startTouchTargetTag ).attr( 'initLeft', $( startTouchTargetTag ).offset().left );
-        $( startTouchTargetTag ).attr( 'initZindex', $( startTouchTargetTag ).css( 'zIndex' ) );
+        $( touchStartTargetTag ).attr( 'initBorderBottomColor', $( touchStartTargetTag ).css( 'border-bottom-color' ) );
+        $( touchStartTargetTag ).attr( 'initTop', $( touchStartTargetTag ).offset().top );
+        $( touchStartTargetTag ).attr( 'initLeft', $( touchStartTargetTag ).offset().left );
+        $( touchStartTargetTag ).attr( 'initZindex', $( touchStartTargetTag ).css( 'zIndex' ) );
 
-        $( startTouchTargetTag ).css( 'width', 'fit-content' );
-        $( startTouchTargetTag ).css( 'background-color', '#fff' );
+        $( touchStartTargetTag ).css( 'width', 'fit-content' );
+        $( touchStartTargetTag ).css( 'background-color', '#fff' );
 
-        $( startTouchTargetTag ).parent().append( listItemFillerBlock );
-        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + startTouchTargetTag.attr( 'itemid' ) + '"><!-- send to<br>nearby<br>device? --></td><td style="border-left:0px solid #F5F5F5;padding-left:5px;width:40px;" id="dragItem_action_response_' + startTouchTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="images/entry.svg" id="filler_icon_' + startTouchTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
+        $( touchStartTargetTag ).parent().append( listItemFillerBlock );
+        $( listItemFillerBlock ).append( $( '<table class="" style="width:100%;height:100%;padding:10px 0 10px 0;font-size:12px;color:#fff;vertical-align:middle;"><tr><td style="width:60px;text-align:center;" id="filler_message_' + touchStartTargetTag.attr( 'itemid' ) + '"><!-- send to<br>nearby<br>device? --></td><td style="border-left:0px solid #F5F5F5;padding-left:5px;width:40px;" id="dragItem_action_response_' + touchStartTargetTag.attr( 'itemid' ) + '"></td><td style="text-align:left;"><img src="images/entry.svg" id="filler_icon_' + touchStartTargetTag.attr( 'itemid' ) + '" style="width:30px;height:30px;filter: invert(100%);display:none;"></td></tr></table>' ) );
 
-        $( 'body' ).append(  $( startTouchTargetTag ).detach() );
+        $( 'body' ).append(  $( touchStartTargetTag ).detach() );
 
-        $( startTouchTargetTag ).css( 'position', 'absolute' );
-        $( startTouchTargetTag ).css( 'left', (initialX) + 'px' );
-        $( startTouchTargetTag ).css( 'top', $( startTouchTargetTag ).attr( 'initTop' ) + 'px' );
+        $( touchStartTargetTag ).css( 'position', 'absolute' );
+        $( touchStartTargetTag ).css( 'left', (initialX) + 'px' );
+        $( touchStartTargetTag ).css( 'top', $( touchStartTargetTag ).attr( 'initTop' ) + 'px' );
 
 
-        $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'width', '' );
-        //$( startTouchTargetTag ).css( 'width', $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).width() + 'px' );
-        $( '#listItem_voucher_status_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
-        $( '#listItem_action_sync_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
-        $( '#listItem_trExpander_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
+        $( '#listItem_table_' + touchStartTargetTag.attr( 'itemid' ) ).css( 'width', '' );
+        //$( touchStartTargetTag ).css( 'width', $( '#listItem_table_' + touchStartTargetTag.attr( 'itemid' ) ).width() + 'px' );
+        $( '#listItem_voucher_status_' + touchStartTargetTag.attr( 'itemid' ) ).hide();
+        $( '#listItem_action_sync_' + touchStartTargetTag.attr( 'itemid' ) ).hide();
+        $( '#listItem_trExpander_' + touchStartTargetTag.attr( 'itemid' ) ).hide();
         
-        listItemWasExpanded = ( $( '#listItem_networkResults_' + startTouchTargetTag.attr( 'itemid' ) ).is(':visible') );
+        listItemWasExpanded = ( $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).is(':visible') );
 
         if ( listItemWasExpanded)
         {
-            $( '#listItem_networkResults_' + startTouchTargetTag.attr( 'itemid' ) ).hide();
+            $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).hide();
         }
 
-        startTouchTargetTag.find( 'div.whitecarbon' ).css( 'width', '15px' );
+        touchStartTargetTag.find( 'div.whitecarbon' ).css( 'width', '15px' );
 
-        $( startTouchTargetTag ).css( 'width', 'fit-content' );
+        $( touchStartTargetTag ).css( 'width', 'fit-content' );
 
-        if ( ! $( startTouchTargetTag ).hasClass( 'transitionRapid' ) )
+        if ( ! $( touchStartTargetTag ).hasClass( 'transitionRapid' ) )
         {
-            $( startTouchTargetTag ).addClass( 'transitionRapid' );
-            $( startTouchTargetTag ).addClass( 'cardShadow' );
-            $( startTouchTargetTag ).addClass( 'rounded' );
+            $( touchStartTargetTag ).addClass( 'transitionRapid' );
+            $( touchStartTargetTag ).addClass( 'cardShadow' );
+            $( touchStartTargetTag ).addClass( 'rounded' );
         }
     }
     
-    me.updateMoveTouchVars = function( e )
+    me.updatetouchMoveVars = function( e )
     {
         currentX = e.touches[0].clientX;
         currentY = e.touches[0].clientY;
@@ -353,26 +371,26 @@ function inputMonitor( cwsRenderObj )
 
     me.moveListItem = function()
     {
-        if ( currentX <= ( dragXoffsetLimit + startTouchTargetWidth - $( startTouchTargetTag ).width() ) )
+        if ( currentX <= ( dragXoffsetLimit + touchStartTargetWidth - $( touchStartTargetTag ).width() ) )
         {
-            $( startTouchTargetTag ).css( 'left', (currentX) + 'px' );
+            $( touchStartTargetTag ).css( 'left', (currentX) + 'px' );
         }
 
-        if ( $( startTouchTargetTag ).css( 'top' ) != $( startTouchTargetTag ).attr( 'initTop' ) + 'px' )
+        if ( $( touchStartTargetTag ).css( 'top' ) != $( touchStartTargetTag ).attr( 'initTop' ) + 'px' )
         {
-            $( startTouchTargetTag ).css( 'top', $( startTouchTargetTag ).attr( 'initTop' ) + 'px' );
+            $( touchStartTargetTag ).css( 'top', $( touchStartTargetTag ).attr( 'initTop' ) + 'px' );
         }
 
-        $( listItemFillerBlock ).css( 'background-color', 'rgba(0, 0, 0, ' + ( ( ((currentX - dragXoffsetLimit) / startTouchTargetWidth ) <= 0.5) ? ((currentX - dragXoffsetLimit) / startTouchTargetWidth ) : 0.5 ) + ')' );
+        $( listItemFillerBlock ).css( 'background-color', 'rgba(0, 0, 0, ' + ( ( ((currentX - dragXoffsetLimit) / touchStartTargetWidth ) <= 0.5) ? ((currentX - dragXoffsetLimit) / touchStartTargetWidth ) : 0.5 ) + ')' );
         $( listItemFillerBlock ).css( 'border-bottom-color', 'none' );
 
-        if ( currentX > ( dragXoffsetLimit + ( startTouchTargetWidth / 3 ) ) )
+        if ( currentX > ( dragXoffsetLimit + ( touchStartTargetWidth / 3 ) ) )
         {
-            $( '#dragItem_action_response_' + startTouchTargetTag.attr( 'itemid' ) ).html( '<!--Y-->' );
+            $( '#dragItem_action_response_' + touchStartTargetTag.attr( 'itemid' ) ).html( '<!--Y-->' );
         }
         else
         {
-            $( '#dragItem_action_response_' + startTouchTargetTag.attr( 'itemid' ) ).html( '<!--N-->' );
+            $( '#dragItem_action_response_' + touchStartTargetTag.attr( 'itemid' ) ).html( '<!--N-->' );
         }
     }
 
@@ -388,7 +406,7 @@ function inputMonitor( cwsRenderObj )
 
             if ( navDrawerVisibleOnStart )
             {
-                $( '#focusRelegator' ).css( 'opacity', 0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                $( '#focusRelegator' ).css( 'opacity', Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                 if ( currentX <= expectedNavDrawerWidth )
                 {
@@ -413,10 +431,15 @@ function inputMonitor( cwsRenderObj )
             /* run navDrawer slide-expand (eval) for right-swipe ONLY if starting Xposition < 50px */
             if ( initialX < dragXoffsetLimit )
             {
+                if ( navDrawerVisibleOnMove )
+                {
+                    $( '#focusRelegator' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                }
 
                 if ( ! $( '#focusRelegator').is(':visible') )
                 {
                     $( '#focusRelegator').show();
+                    //$( '#focusRelegator').css( 'display', 'block' );
                     if ( $( '#focusRelegator' ).css( 'zIndex') !== 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
                     if ( $( '#navDrawerDiv' ).css( 'zIndex') !== 200 ) $( '#navDrawerDiv' ).css('zIndex',200 );
                 }
@@ -424,11 +447,6 @@ function inputMonitor( cwsRenderObj )
                 {
                     if ( $( '#focusRelegator' ).css( 'zIndex' ) != 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
                     if ( $( '#navDrawerDiv' ).css( 'zIndex' ) != 200 ) $( '#focusRelegator' ).css( 'zIndex',200 );
-                }
-
-                if ( navDrawerVisibleOnMove )
-                {
-                    $( '#focusRelegator' ).css( 'opacity',0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
                 }
 
                 if ( currentX > expectedNavDrawerWidth )
@@ -449,7 +467,7 @@ function inputMonitor( cwsRenderObj )
             {
                 if ( navDrawerVisibleOnStart )
                 {
-                    $( '#focusRelegator' ).css( 'opacity',0.4 * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                    $( '#focusRelegator' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                     if ( currentX > expectedNavDrawerWidth )
                     {
@@ -470,44 +488,44 @@ function inputMonitor( cwsRenderObj )
 
     me.touchEndListItem = function( e )
     {
-        var bArchive = ( currentX > ( dragXoffsetLimit + ( startTouchTargetWidth / 3 ) ) );
+        var bArchive = ( currentX > ( dragXoffsetLimit + ( touchStartTargetWidth / 3 ) ) );
 
         $( listItemFillerBlock ).remove();
 
-        $( startTouchTargetTag ).removeClass( 'transitionRapid' );
-        $( startTouchTargetTag ).removeClass( 'cardShadow' );
-        $( startTouchTargetTag ).removeClass( 'rounded' );
-        $( startTouchTargetTag ).addClass( 'transitionSmooth' );
-        $( startTouchTargetTag ).detach();
+        $( touchStartTargetTag ).removeClass( 'transitionRapid' );
+        $( touchStartTargetTag ).removeClass( 'cardShadow' );
+        $( touchStartTargetTag ).removeClass( 'rounded' );
+        $( touchStartTargetTag ).addClass( 'transitionSmooth' );
+        $( touchStartTargetTag ).detach();
 
         //reset: snap back to left position with other defaults
-        $( startTouchParentTag ).append( startTouchTargetTag );          
+        $( touchStartParentTag ).append( touchStartTargetTag );          
 
-        $( startTouchTargetTag ).css( 'left', 'auto' );
-        $( startTouchTargetTag ).css( 'top', 'initial' );
-        $( startTouchTargetTag ).css( 'width', '100%' );
-        $( startTouchTargetTag ).css( 'position', 'relative' );
-        $( startTouchTargetTag ).css( 'border-bottom-color', $( startTouchTargetTag ).attr( 'initBorderBottomColor' ) );
-        $( startTouchTargetTag ).css( 'background-Color', 'initial' );
+        $( touchStartTargetTag ).css( 'left', 'auto' );
+        $( touchStartTargetTag ).css( 'top', 'initial' );
+        $( touchStartTargetTag ).css( 'width', '100%' );
+        $( touchStartTargetTag ).css( 'position', 'relative' );
+        $( touchStartTargetTag ).css( 'border-bottom-color', $( touchStartTargetTag ).attr( 'initBorderBottomColor' ) );
+        $( touchStartTargetTag ).css( 'background-Color', 'initial' );
 
-        startTouchTargetTag.find( 'div.listItem' ).css( 'width', '100%' );
+        touchStartTargetTag.find( 'div.listItem' ).css( 'width', '100%' );
 
 
-        $( '#listItem_table_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'width', '100%' );
-        $( '#listItem_voucher_status_' + startTouchTargetTag.attr( 'itemid' ) ).show();
-        $( '#listItem_action_sync_' + startTouchTargetTag.attr( 'itemid' ) ).show();
-        $( '#listItem_trExpander_' + startTouchTargetTag.attr( 'itemid' ) ).show();
+        $( '#listItem_table_' + touchStartTargetTag.attr( 'itemid' ) ).css( 'width', '100%' );
+        $( '#listItem_voucher_status_' + touchStartTargetTag.attr( 'itemid' ) ).show();
+        $( '#listItem_action_sync_' + touchStartTargetTag.attr( 'itemid' ) ).show();
+        $( '#listItem_trExpander_' + touchStartTargetTag.attr( 'itemid' ) ).show();
 
         if ( listItemWasExpanded)
         {
-            $( '#listItem_networkResults_' + startTouchTargetTag.attr( 'itemid' ) ).show();
-            $( '#listItem_networkResults_' + startTouchTargetTag.attr( 'itemid' ) ).css( 'display', '' ); // required due to newly created hardcoded display setting 
+            $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).show();
+            $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).css( 'display', '' ); // required due to newly created hardcoded display setting 
         }
 
-        FormUtil.listItemActionUpdate( startTouchTargetTag.attr( 'itemid' ), 'archive', bArchive );
+        FormUtil.listItemActionUpdate( touchStartTargetTag.attr( 'itemid' ), 'archive', bArchive );
 
         setTimeout( function() {
-            $( startTouchTargetTag ).removeClass( 'transitionSmooth' );
+            $( touchStartTargetTag ).removeClass( 'transitionSmooth' );
         }, 500 );
 
     }
@@ -531,7 +549,7 @@ function inputMonitor( cwsRenderObj )
         }
 
         $( '#navDrawerDiv' ).css( 'left', '0px' );
-        $( '#focusRelegator').css( 'opacity', 0.4 );
+        $( '#focusRelegator').css( 'opacity', Constants.focusRelegator_MaxOpacity );
 
         /* MENU HIDDEN/CLOSED > CHECK SWIPE OPEN THRESHOLDS */
         if ( ! navDrawerVisibleOnStart && ( initialX < dragXoffsetLimit ) ) // wasn't shown at start of swipe + swipe started within 50px of left part of screen
@@ -555,6 +573,7 @@ function inputMonitor( cwsRenderObj )
                 }, 500 );
 
                 $( '#focusRelegator').hide();
+                //$( '#focusRelegator').css( 'display', 'none' );
 
             }
         }
@@ -573,6 +592,7 @@ function inputMonitor( cwsRenderObj )
                 // staying open   
                 $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
                 $( '#focusRelegator').show();
+                //$( '#focusRelegator').css( 'display', 'block' );
             }
         }
 

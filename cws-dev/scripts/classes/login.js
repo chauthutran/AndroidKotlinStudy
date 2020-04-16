@@ -53,14 +53,19 @@ function Login( cwsRenderObj )
 
 	me.setLoginFormEvents = function()
 	{
-		me.setLoginBtnClick();
+		me.setLoginBtnEvents();
 		me.setAdvOptBtnClick();
 	}
 
 	// ---------------------------
 
-	me.setLoginBtnClick = function()
+	me.setLoginBtnEvents = function()
 	{
+
+		$( '.loginBtn' ).focus( function() {
+			$( '#passReal' ).hide();
+		});
+
 		// New UI Button click
 		$( '.loginBtn' ).click( function() {
 
@@ -206,7 +211,7 @@ function Login( cwsRenderObj )
 
 		me._userName = userName;
 
-		parentTag.find( 'div.loadingImg' ).remove();
+		//parentTag.find( 'div.loadingImg' ).remove();
 
 		// ONLINE vs OFFLINE HANDLING
 		//if ( ! ConnManager.networkSyncConditions() )
@@ -256,6 +261,7 @@ function Login( cwsRenderObj )
 		{
 			// ONLINE Login
 			var loadingTag = FormUtil.generateLoadingTag( btnTag.children() );
+			//$( '#ConnectingWithSara' ).rotate({ count:6, forceJS: true, startDeg: 0, duration: 0.5 });
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
@@ -275,6 +281,7 @@ function Login( cwsRenderObj )
 					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
 				}
+
 			} );
 		}
 
