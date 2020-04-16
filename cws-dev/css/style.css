@@ -706,11 +706,29 @@ act {
 }
 
 .listItem_data_preview {
-  vertical-align:top;
-  /* padding:6px 2px; */
+  /*vertical-align:top;
   white-space:nowrap;
   cursor: default;
-  height: min-content;
+  height: min-content;*/
+  
+  /*position: absolute;
+  height: 56px;
+  left: 80px;
+  right: 125px;
+  top: 8px;*/
+  
+  font-family: Rubik;
+  font-style: normal;
+  /*font-weight: 300;
+  /*font-size: 12px; /* 14px */
+  vertical-align: top;
+  /* line-height: 20px; */
+  /* or 143% */
+  
+  
+  /* Primary Dark text */
+  
+  color: rgba(51, 51, 51, 0.87);
 }
 
 .listItem_voucher_status {

@@ -88,7 +88,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // --------- Templates --------------------
 
     me.template_ActivityCard = `<li itemid="" class="activityItemCard">
-        <a class="expandable" itemid="" style="padding:4px;">
+        <a class="expandable" itemid="" >
 
             <div class="icon-row listItem">
 
