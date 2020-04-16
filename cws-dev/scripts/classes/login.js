@@ -211,7 +211,7 @@ function Login( cwsRenderObj )
 
 		me._userName = userName;
 
-		//parentTag.find( 'div.loadingImg' ).remove();
+		parentTag.find( 'div.loadingImg' ).remove();
 
 		// ONLINE vs OFFLINE HANDLING
 		//if ( ! ConnManager.networkSyncConditions() )
@@ -260,8 +260,9 @@ function Login( cwsRenderObj )
 		else
 		{
 			// ONLINE Login
-			var loadingTag = FormUtil.generateLoadingTag( btnTag.children() );
-			//$( '#ConnectingWithSara' ).rotate({ count:6, forceJS: true, startDeg: 0, duration: 0.5 });
+			//var loadingTag = FormUtil.generateLoadingTag( btnTag.children() );
+			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( 'div.loginBtnInner' ) );
+			//$( '#ConnectingWithSara' ).rotate({ count:6, forceJS: true, startDeg: 0, endDeg: 360, duration: 0.5 });
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
@@ -280,6 +281,7 @@ function Login( cwsRenderObj )
 
 					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+					//$( '#ConnectingWithSara' ).stop(); //{ endDeg: 360, duration: 0.1 });
 				}
 
 			} );
@@ -356,6 +358,9 @@ function Login( cwsRenderObj )
 
 			//$( 'nav' ).show();
 			$( 'nav' ).css( 'display', 'flex' );
+
+			// added by Greg: to 'repair' the innerText of Login button (which by this point should hold spinning/progress icon)
+			me.cwsRenderObj.langTermObj.translatePage();
 
 		});
 	};

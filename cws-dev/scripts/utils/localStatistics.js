@@ -399,7 +399,8 @@ function statistics( cwsRender )
         {
             for (var i = 0; i < myArr.length; i++) 
             {
-                var dtmThis = new Date( myArr[ i ].created );
+                //var dtmThis = new Date( myArr[ i ].created );
+                var dtmThis = new Date( myArr[ i ].activityDate.createdOnDeviceUTC );
 
                 myArr[ i ].ageHours = parseFloat( me.dtmNow - dtmThis.getTime() ) / 1000 / 60 / 60;
                 myArr[ i ].hourInDay = ( dtmThis.getHours() );

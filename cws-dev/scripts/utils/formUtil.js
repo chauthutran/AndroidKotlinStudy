@@ -1975,7 +1975,7 @@ FormUtil.createNumberLoginPinPad = function()
         }
 	});
 
-	const PWD_INPUT_PADDING_TOP = 2;
+	const PWD_INPUT_PADDING_TOP = 0;
 	const PWD_INPUT_PADDING_LEFT = 0;
 	const CHAR_SPACING_WIDTH = 12;
 
