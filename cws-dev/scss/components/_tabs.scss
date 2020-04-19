@@ -12,7 +12,7 @@ $active-tab :$color-p;
     flex-direction: column;
     justify-content: flex-start;
     width: 50%;
-    min-width: 558px;
+    min-width: 600px;
     height: 48px;
     margin: 0 auto;
     border-bottom: 1px solid $tab-hover-bg;
@@ -38,6 +38,8 @@ $active-tab :$color-p;
         padding: 0;
         list-style: none;
         width: $tab__head-width;
+        //overflow-y: scroll;
+        @include box-sizing(border-box);
 
         @include p-device(240) {
             width: 100%;
@@ -59,6 +61,7 @@ $active-tab :$color-p;
             line-height: 48px;
             color: $tab-head-color;
             text-transform: uppercase;
+            @include box-sizing(border-box);
 
             @include p-device(240) {
                 width: 100%;
@@ -76,11 +79,12 @@ $active-tab :$color-p;
                 display: none;
             }
 
-            @include rwd-min(560) {
+            @include rwd-min(600) {
                 width: auto;
                 position: relative;
                 display: block;
                 padding: 0px 20px;
+                @include box-sizing(border-box);
             }
 
             .tab_fs__head-icon {
@@ -121,6 +125,22 @@ $active-tab :$color-p;
             }
         }
     }
+
+    .tab_fs__head-icon_exp{
+        position: absolute;
+        top: 68px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        @include background-image('arrow_drop_down');
+        @include box-sizing(border-box);
+        @include p-device(600) {
+            display: none;
+        }
+        @include l-device(600) {
+            display: none;
+        }
+    }
 }
 
 .tab_fs__container {
@@ -147,10 +167,10 @@ $active-tab :$color-p;
         box-shadow: none;
     }
 
-    @include rwd-min(560) {
+    @include rwd-min(600) {
         margin: 0 auto;
         width: 50%;
-        min-width: 558px;
+        min-width: 600px;
         padding: 0 12px;
         background-color: #FFF;
         border-bottom-left-radius: $radius;
@@ -161,7 +181,7 @@ $active-tab :$color-p;
     .tab_fs__container-content {
         @include box-sizing(border-box);
 
-        @include rwd-min(560) {
+        @include rwd-min(600) {
             width: 100%;
             height: auto;
             overflow: hidden;

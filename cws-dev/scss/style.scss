@@ -19,7 +19,9 @@
 'components/_list.scss',
 'components/_snackbars.scss',
 'components/_selector.scss',
-'components/_tabs.scss';
+'components/_tabs.scss',
+'components/_sheets_bottom.scss',
+'components/_card.scss';
 /*
 'components/_menus.scss',
 'components/_nav_rail.scss',
@@ -121,6 +123,16 @@ hr {
 }
 
 .scrim {
+  display: none;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  background-color: rgb($color-typ-sl, 35%);
+}
+
+.sheet_bottom-scrim {
   display: none;
   position: fixed;
   height: 100vh;
@@ -242,3 +254,8 @@ select:-webkit-autofill:focus {
   //background-color: orange;
   @include box-sizing(border-box);
 }
+
+.color_status_pending{color: $color_sync_pending;}
+.color_status_pending_msg{color: $color_sync_pending_msg;}
+.color_status_sync{color: $color_sync;}
+.color_status_error{color: $color_error;}

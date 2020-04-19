@@ -49,7 +49,6 @@
                 border-radius: 50%;
                 margin-right: 8px;
                 background-color: rgba($color-sl, 40%);
-                @include background-image('provision');
                 @include box-sizing(border-box);
             }
 
@@ -120,7 +119,7 @@
                     -webkit-box-align: center;
                             align-items: center;
                     cursor: pointer;
-                    @include background-image('sync-pending');
+                    @include background-image('sync-pending_36');
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {

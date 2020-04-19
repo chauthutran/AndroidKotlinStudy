@@ -340,6 +340,7 @@ function Login( cwsRenderObj )
 				me.loggedInDivTag.show();
 				me.navTitleUserNameTag.show();
 				me.navTitleUserNameTag.text( ' ' + SessionManager.sessionData.orgUnitData.userName + ' ' ).attr( 'title', SessionManager.sessionData.orgUnitData.ouName );
+				$( 'div.navigation__user').html( SessionManager.sessionData.orgUnitData.userName );
 			} 
 
 			// Load config and continue the CWS App process

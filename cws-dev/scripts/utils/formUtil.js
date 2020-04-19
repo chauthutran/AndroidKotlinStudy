@@ -503,6 +503,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				}, 500 );
 
 				$( '#focusRelegator').hide();
+
+				//do not set zIndex for navDrawer (subListIconsTag) > navHeader (nav.Nav1) shows above closing menu
 			}
 			else 
 			{
@@ -516,9 +518,10 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				{
 					subListIconsTag.css( 'opacity', '0' );
 				}
-			}
 
-			subListIconsTag.css( 'zIndex', 1);
+				subListIconsTag.css( 'zIndex', 1);
+
+			}
 
 		}
 		else 
@@ -533,7 +536,8 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			// OPEN/SHOW NAVMENU (clicked from navHeader bar)
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
-				subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
+				//subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
+				subListIconsTag.css('zIndex', parseInt( $( 'nav.Nav1').css('zIndex') ) + 1 );
 				subListIconsTag.show();
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 				subListIconsTag.css( 'left', '0px' );
@@ -568,12 +572,19 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 				$( '#focusRelegator').show();
 
-				//if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, '#focusRelegator' );
+				if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, '#focusRelegator' );
 
 			}
 
 		} 
 	});	
+}
+
+FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
+{
+	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
+
+	$( targetTag ).css( 'zIndex', newZidx );
 }
 
 FormUtil.setStackOrder = function( arrObjTags )
@@ -1786,12 +1797,12 @@ FormUtil.screenMaxZindex = function(parent, limit)
         if (deepCss(who,"position") !== "static") {
             temp = deepCss(who,"z-index");
             if (temp == "auto") { // positioned and z-index is auto, a new stacking context for opacity < 0. Further When zindex is auto ,it shall be treated as zindex = 0 within stacking context.
-                (opacity < 1)? temp=0:temp = FormUtil.screenMaxZindex(who);
+                (opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
             } else {
                 temp = parseInt(temp, 10) || 0;
             }
         } else { // non-positioned element, a new stacking context for opacity < 1 and zindex shall be treated as if 0
-            (opacity < 1)? temp=0:temp = FormUtil.screenMaxZindex(who);
+            (opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
         }
         if (temp > max && temp <= limit) max = temp;                
     }

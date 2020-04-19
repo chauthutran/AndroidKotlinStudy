@@ -1,0 +1,798 @@
+.sheet_bottom-fs {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 60%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: 80%;
+    }
+
+    @include p-device(320) {
+        height: 80%;
+        max-height: 280px;
+    }
+
+    @include p-device(384) {
+        max-height: 270px;
+    }
+
+    .cta_buttons-text {
+        float: left;
+        width: 100%;
+        height: auto;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        @include box-sizing(border-box);
+    }
+
+    @include sync_all();
+
+    .bottom__wrapper {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 48px);
+    }
+
+    .bottom__wrapper-btn {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 170px);
+
+        @include p-device(240) {
+            height: calc(100% - 170px);
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 170px);
+        }
+
+        @include p-device(360) {
+            height: calc(100% - 100px);
+        }
+    }
+
+    .sheet_bottom_card {
+        width: 100%;
+        height: auto;
+        @include box-sizing(border-box);
+
+        .sheet_bottom_card__container {
+            width: 100%;
+            height: 48px;
+            margin-bottom: 8px;
+            @include box-sizing(border-box);
+
+            .sheet_bottom_card-suppor_visuals {
+                float: left;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);
+                @include box-sizing(border-box);
+            }
+
+            .sheet_bottom_card_content {
+                float: left;
+                width: calc(100% - 172px);
+                margin-right: 8px;
+                height: auto;
+                text-align: left;
+                line-height: 16px;
+                @include font-size(12px);
+                @include box-sizing(border-box);
+
+                @include rwd-max(380) {
+                    width: calc(100% - 64px);
+                    border-bottom: none;
+                    margin-bottom: 12px;
+                }
+
+                .sheet_bottom_card-date {
+                    font-weight: 500;
+                    @include box-sizing(border-box);
+                }
+
+                .sheet_bottom_card-text {
+                    @include box-sizing(border-box);
+                }
+            }
+        }
+    }
+}
+
+.sheet_bottom-s {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 60%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: 80%;
+    }
+
+    @include p-device(320) {
+        height: 80%;
+        max-height: 260px;
+    }
+
+    @include p-device(360) {
+        max-height: 240px;
+    }
+
+    @include p-device(411) {
+        max-height: 230px;
+    }
+
+    @include p-device(600) {
+        max-height: 210px;
+    }
+
+    .cta_buttons-text {
+        float: left;
+        width: 100%;
+        height: auto;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        @include box-sizing(border-box);
+    }
+
+    @include sync_all();
+
+    .bottom__wrapper {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 48px);
+    }
+
+    .bottom__wrapper-btn {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 170px);
+
+        @include p-device(240) {
+            height: calc(100% - 170px);
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 170px);
+        }
+
+        @include p-device(360) {
+            height: calc(100% - 100px);
+        }
+    }
+
+    .sheet_bottom_card {
+        width: 100%;
+        height: auto;
+        @include box-sizing(border-box);
+
+        .sheet_bottom_card__container {
+            width: 100%;
+            height: 48px;
+            margin-bottom: 8px;
+            @include box-sizing(border-box);
+
+            .sheet_bottom_card-suppor_visuals {
+                float: left;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);
+                @include box-sizing(border-box);
+            }
+
+            .sheet_bottom_card_content {
+                float: left;
+                width: calc(100% - 172px);
+                margin-right: 8px;
+                height: auto;
+                text-align: left;
+                line-height: 16px;
+                @include font-size(12px);
+                @include box-sizing(border-box);
+
+                @include rwd-max(380) {
+                    width: calc(100% - 64px);
+                    border-bottom: none;
+                    margin-bottom: 12px;
+                }
+
+                .sheet_bottom_card-date {
+                    font-weight: 500;
+                    @include box-sizing(border-box);
+                }
+
+                .sheet_bottom_card-text {
+                    @include box-sizing(border-box);
+                }
+            }
+        }
+    }
+}
+
+.sheet_bottom-sbtn {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 80%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: calc(100% - 74px);
+        padding: 0 8px;
+    }
+
+    @include l-device(320) {
+        padding: 0 8px;
+
+        .button-text {
+            height: 36px;
+            min-height: 36px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 36px;
+                    @include font-size(15px);
+                    line-height: 36px;
+                }
+            }
+        }
+    }
+
+    @include l-device(480) {
+        padding: 0 8px;
+        max-height: 280px;
+
+        .button-text {
+            height: 48px;
+            min-height: 48px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 48px;
+                    @include font-size(18px);
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    @include l-device(480) {
+        max-height: 280px;
+    }
+
+    @include l-device(598) {
+        padding: 0 8px;
+        max-height: 240px;
+    }
+
+    @include l-device(598) {
+        padding: 0 8px;
+        max-height: 240px;
+    }
+
+    @include p-device(320) {
+        height: 80%;
+        max-height: 350px;
+    }
+
+    @include p-device(360) {
+        height: 60%;
+        max-height: 280px;
+    }
+
+    @include p-device(384) {
+        max-height: 270px;
+    }
+
+    @include p-device(400) {
+        max-height: 280px;//###
+    }
+
+    .cta_buttons-text {
+        float: left;
+        width: 100%;
+        height: auto;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        @include box-sizing(border-box);
+    }
+
+    @include sync_all();
+
+    .bottom__wrapper {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 48px);
+    }
+
+    .bottom__wrapper-btn {
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 170px);
+
+        @include p-device(240) {
+            height: calc(100% - 170px);
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 170px);
+        }
+
+        @include l-device(320) {
+            height: calc(100% - 100px);
+        }
+
+        @include l-device(480) {
+            height: calc(100% - 110px);
+        }
+
+        @include p-device(360) {
+            height: calc(100% - 100px);
+        }
+    }
+
+    .sheet_bottom_card {
+        width: 100%;
+        height: auto;
+        @include box-sizing(border-box);
+
+        .sheet_bottom_card__container {
+            width: 100%;
+            height: 48px;
+            margin-bottom: 8px;
+            @include box-sizing(border-box);
+
+            .sheet_bottom_card-suppor_visuals {
+                float: left;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);
+                @include box-sizing(border-box);
+            }
+
+            .sheet_bottom_card_content {
+                float: left;
+                width: calc(100% - 172px);
+                margin-right: 8px;
+                height: auto;
+                text-align: left;
+                line-height: 16px;
+                @include font-size(12px);
+                @include box-sizing(border-box);
+
+                @include rwd-max(380) {
+                    width: calc(100% - 64px);
+                    border-bottom: none;
+                    margin-bottom: 12px;
+                }
+
+                .sheet_bottom_card-date {
+                    font-weight: 500;
+                    @include box-sizing(border-box);
+                }
+
+                .sheet_bottom_card-text {
+                    @include box-sizing(border-box);
+                }
+            }
+        }
+    }
+}
+
+.sheet_bottom-btn2 {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 80%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: calc(100% - 174px);
+        padding: 0 8px;
+    }
+
+    @include l-device(320) {
+        height: 52%;
+        padding: 0 8px;
+
+        .button {
+            height: 36px;
+            min-height: 36px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 36px;
+                    @include font-size(16px);
+                    line-height: 36px;
+                }
+            }
+        }
+    }
+
+    @include p-device(320) {
+        max-height: 164px;
+    }
+
+    @include l-device(480) {
+        height: 54%;
+        padding: 0 8px;
+
+        .button {
+            height: 48px;
+            min-height: 48px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 48px;
+                    @include font-size(16px);
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    @include l-device(360) {
+        max-height: 218px;
+    }
+
+    @include l-device(598) {
+        max-height: 170px;
+    }
+
+    .sbtt-btn__header {
+        width: 100%;
+        height: 34px;
+        @include box-sizing(border-box);
+
+        @include p-device(240) {
+            height: 34px;
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 224px);
+        }
+
+        .sbtt-btn__header_title {
+            float: left;
+            width: 100%;
+
+            @include p-device(240) {
+                line-height: 18px;
+                margin-top: 8px;
+                @include font-size(16px);
+            }
+
+            @include p-device(320) {
+                height: 40px;
+                line-height: 36px;
+                @include font-size(20px);
+            }
+
+            @include l-device(320) {
+                line-height: 20px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+
+            @include l-device(480) {
+                height: 48px;
+                line-height: 36px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+        }
+    }
+
+    .cta_buttons {
+        float: left;
+        width: 100%;
+        padding-bottom: 8px;
+        @include box-sizing(border-box);
+
+        .button {
+            float: left;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+}
+
+.sheet_bottom-btn3 {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 80%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: calc(100% - 118px);
+        padding: 0 8px;
+    }
+
+    @include l-device(320) {
+        height: 70%;
+        padding: 0 8px;
+
+        .button {
+            height: 36px;
+            min-height: 36px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 36px;
+                    @include font-size(16px);
+                    line-height: 36px;
+                }
+            }
+        }
+    }
+
+    @include p-device(320) {
+        max-height: 218px;
+    }
+
+    @include l-device(480) {
+        height: 70%;
+        padding: 0 8px;
+
+        .button {
+            height: 48px;
+            min-height: 48px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 48px;
+                    @include font-size(16px);
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    @include l-device(360) {
+        max-height: 218px;
+    }
+
+    @include l-device(598) {
+        max-height: 224px;
+    }
+
+    .sbtt-btn__header {
+        width: 100%;
+        height: 34px;
+        @include box-sizing(border-box);
+
+        @include p-device(240) {
+            height: 34px;
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 224px);
+        }
+
+        .sbtt-btn__header_title {
+            float: left;
+            width: 100%;
+
+            @include p-device(240) {
+                line-height: 18px;
+                margin-top: 8px;
+                @include font-size(16px);
+            }
+
+            @include p-device(320) {
+                height: 40px;
+                line-height: 36px;
+                @include font-size(20px);
+            }
+
+            @include l-device(320) {
+                line-height: 20px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+
+            @include l-device(480) {
+                height: 48px;
+                line-height: 36px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+        }
+    }
+
+    .cta_buttons {
+        float: left;
+        width: 100%;
+        padding-bottom: 8px;
+        @include box-sizing(border-box);
+
+        .button {
+            float: left;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+}
+
+.sheet_bottom-btn4 {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 80%;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1999;
+    max-height: 270px;
+    @include shadow-b(-2px -2px 5px 0px $color-shadow);
+    @include box-sizing(border-box);
+    background-color: #FFF;
+
+    @include p-device(240) {
+        height: calc(100% - 62px);
+        padding: 0 8px;
+    }
+
+    @include l-device(320) {
+        height: 80%;
+        padding: 0 8px;
+
+        .button {
+            height: 36px;
+            min-height: 36px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 36px;
+                    @include font-size(16px);
+                    line-height: 36px;
+                }
+            }
+        }
+    }
+
+    @include p-device(320) {
+        max-height: 274px;
+    }
+
+    @include l-device(480) {
+        height: 85%;
+        padding: 0 8px;
+
+        .button {
+            height: 48px;
+            min-height: 48px;
+
+            .button__container {
+
+                .button-label {
+                    min-width: 48px;
+                    @include font-size(16px);
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    @include p-device(360) {
+        max-height: 274px;
+    }
+
+    @include p-device(384) {
+        max-height: 273px;
+    }
+
+    @include p-device(393) {
+        max-height: 274px;
+    }
+
+    .sbtt-btn__header {
+        width: 100%;
+        height: 34px;
+        @include box-sizing(border-box);
+
+        @include p-device(240) {
+            height: 34px;
+        }
+
+        @include l-device(320) {
+            height: 18px;
+        }
+
+        @include l-device(533) {
+            height: 36px;
+        }
+
+        @include p-device(320) {
+            height: calc(100% - 224px);
+        }
+
+        .sbtt-btn__header_title {
+            float: left;
+            width: 100%;
+
+            @include p-device(240) {
+                line-height: 18px;
+                margin-top: 8px;
+                @include font-size(16px);
+            }
+
+            @include p-device(320) {
+                line-height: 25px;
+                margin-top: 8px;
+                @include font-size(20px);
+            }
+
+            @include l-device(480) {
+                line-height: 20px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+
+            @include l-device(533) {
+                line-height: 36px;
+                margin-top: 8px;
+                @include font-size(18px);
+            }
+        }
+    }
+
+    .cta_buttons {
+        float: left;
+        width: 100%;
+        padding-bottom: 8px;
+        @include box-sizing(border-box);
+
+        .button {
+            float: left;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+}

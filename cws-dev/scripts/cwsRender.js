@@ -467,13 +467,13 @@ function cwsRender()
 			//navMenuHead.append ( $( '<div id="divNavDrawerSummaryData" class="" />' ) );
 
 			var navMenuItems = $( '<div class="navigation__items" />');
-			//var navItemsUL = $( '<ul />');
-			//navMenuItems.append( navItemsUL );
+			var navItemsUL = $( '<ul />');
+			navMenuItems.append( navItemsUL );
 
-			var navMenuTbl = $( '<table class="navigation__items" style="border-spacing: 0;" />');
+			//var navMenuTbl = $( '<table class="navigation__items" style="border-spacing: 0;" />');
 			//var navItemsUL = $( '<ul />');
 
-			navMenuItems.append( navMenuTbl );
+			//navMenuItems.append( navMenuTbl );
 
 
 			// Add the menu rows
@@ -482,30 +482,22 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
-					var menuStyle = (( area.group != undefined ) ? ( area.group == false ? 'border-bottom: 0;' : 'border-bottom: 1px solid rgba(82, 134, 230, 0.1);' ) : 'border-bottom: 0;' );
-					//var menuLI = $( '<li areaId="' + area.id + '" ' + ( ( menuStyle ) ? 'style="' + menuStyle + '"' : '')  + ' />' );
-					var menuLI = $( '<tr class="menu-area" areaId="' + area.id + '" style="height:50px;margin:4px;' + menuStyle + '" />' );
+					var menuLI = $( '<li areaId="' + area.id + '" />' );
 
-					menuLI.append( $( '<td class="navigation__items-icon menu-mobile-icon" style="padding:16px 16px;" >' + '<img src="images/' + area.icon + '.svg">' + '</td>' ) );
-					menuLI.append( $( '<td style="width: 90%;"> <a style="text-decoration:none;color:#000;" href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a></td>' ) );
+					menuLI.append( $( '<div class="navigation__items-icon" >' + '<img src="images/' + area.icon + '.svg">' + '</div>' ) );
+					menuLI.append( $( '<a style="text-decoration:none;color:#000;" href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
+
+					navItemsUL.append( menuLI );
 
 					me.setupMenuTagClick( menuLI );
 
-					//navItemsUL.append( menuLI );
-					navMenuTbl.append( menuLI );
-
 					if ( area.startArea ) startMenuTag = menuLI;
 
-					console.log( area.group );
-					if ( area.group === true )
+					if ( area && area.group === true )
 					{
-						var menuLI = $( '<tr class="menu-area" style="height:5px;margin:4px;" />' );
-						var menuTD = $( '<td colspan=2 " />' );
 						var groupRow = $( '<hr>' );
 
-						menuLI.append( menuTD );
-						menuTD.append( groupRow );
-						navMenuTbl.append( menuLI );
+						navItemsUL.append( groupRow );
 					}
 				}	
 			}

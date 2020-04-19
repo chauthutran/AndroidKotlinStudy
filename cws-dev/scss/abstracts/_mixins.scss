@@ -48,7 +48,7 @@
 
 // Custom devices
 @mixin p-device($breakpoint) {
-    
+
     @media (orientation: portrait) {
         @media (min-width: $breakpoint+'px') {
             @content;
@@ -263,4 +263,129 @@ $retina-suffix: '@2x';
     top: -1px;
     border-radius: 50%;
     border: 2px solid $color;
+}
+
+
+@-webkit-keyframes rotation-right {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-webkit-keyframes rotation-left {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(-359deg);
+    }
+}
+
+.rot_r_anim {
+    -webkit-animation: rotation-right 2s infinite linear;
+}
+
+.rot_l_anim {
+    -webkit-animation: rotation-left 2s infinite linear;
+}
+
+@mixin sync_all () {
+    .sync_all {
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        @include box-sizing(border-box);
+
+        .sync_all__header {
+            width: 100%;
+            height: 48px;
+            @include box-sizing(border-box);
+
+            .sync_all__header_title {
+                float: left;
+                width: calc(100% - 80px);
+                text-align: left;
+                color: $color-typ-dark;
+
+                @include p-device(240) {
+                    height: 36px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+
+                @include p-device(320) {
+                    height: 40px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+
+                @include l-device(320) {
+                    height: 36px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+            }
+
+            .sync_all__anim {
+                float: right;
+                width: 36px;
+                height: 36px;
+                margin: 0px 8px 0 0;
+                @include box-sizing(border-box);
+            }
+        }
+
+        .bottom__wrapper {
+            overflow-x: hidden;
+            width: 100%;
+
+            .sync_all__section {
+                float: left;
+                width: 100%;
+                height: auto;
+                @include box-sizing(border-box);
+
+                .sync_all__section_title {
+                    float: left;
+                    width: 100%;
+                    font-weight: 500;
+                    line-height: 18px;
+                    text-align: left;
+                    margin-top: 8px;
+                    color: $color-typ-dark;
+                    @include font-size(16px);
+                }
+
+                .sync_all__section_log {
+                    float: left;
+                    width: calc(100% - 16px);
+                    padding: 8px 8px 0 16px;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-align: left;
+                    color: $color-typ-dark;
+                    @include font-size(16px);
+                }
+
+                .sync_all__section_msg {
+                    float: left;
+                    width: 100%;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-align: right;
+                    margin-top: 8px;
+                    color: $color-typ-dark;
+                    @include font-size(15px);
+                }
+            }
+        }
+    }
 }

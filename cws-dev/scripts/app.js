@@ -67,7 +67,7 @@
 
           App_UI_startUp_Progress( '100%' );
 
-          App_UI_startUp_done();
+          App_UI_startUp_ready();
 
         });
 
@@ -91,12 +91,14 @@
 
   }
 
-  function App_UI_startUp_done()
+  function App_UI_startUp_ready()
   {
     // hide PWA (loading) screen: timeout used for delay (UI effect)
     setTimeout(function () {
 
       FormMsgManager.appUnblock();
+
+      $( 'input.loginUserName' ).focus();
 
     }, 500)
 

@@ -63,12 +63,15 @@
 
   <link rel="stylesheet" type="text/css" href="styles/jquery-autocomplete.css">
   <link rel="stylesheet" type="text/css" href="styles/jquery-ui.css">
-  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <!-- <link rel="stylesheet" type="text/css" href="styles/style.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="css/styleNew.css">
-  <link rel="stylesheet" type="text/css" href="css/responsive.css">
+  <link rel="stylesheet" type="text/css" href="css/responsive.css"> -->
+  <link rel="stylesheet" type="text/css" href="css/pwa.css">
   <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
   <link rel="stylesheet" type="text/css" href="css/json-viewer.css">
+
+  <link rel="stylesheet" href="css/style.css" >
 
 
   <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
@@ -85,7 +88,7 @@
     <div class='Nav__icon'></div>
     <div class='Nav__Title'></div>
 
-    <div class="nav_tools" style="float: right; margin-right: 3px; margin-top: 5px;">
+    <div class="Nav__Tools" style="position: fixed;margin-right: 3px;margin-top: 5px;right: 0;">
       <table class="topIconsTbl" style="border-spacing: 0px;">
         <tr>
           <td>
@@ -172,10 +175,10 @@
             <div class="fiel__controls">
               <div class="field__left">
                 <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
-                  autocomplete="off" mandatory="true" tabindex="2">
+                  autocomplete="off" mandatory="true">
                 <input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required=""
                   data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone"
-                  autocomplete="off">
+                  autocomplete="off" tabindex="2">
               </div>
               <div class="field__right"></div>
             </div>
@@ -183,7 +186,7 @@
         </div>
         <div class="login_data__more">
           <label id="spanVersion">Version #.#</label>
-          <a href="#">Forgot your PIN?</a>
+          <!-- <a href="#">Forgot your PIN?</a> -->
         </div>
       </div>
       <div class="login_buttons">

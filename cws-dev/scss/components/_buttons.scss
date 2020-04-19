@@ -133,3 +133,55 @@
     width: 100%;
     margin-bottom: 12px;
 }
+
+.button-min_width-left {
+    width: calc(50% - 4px);
+    margin-right: 4px;
+
+    @include p-device($breakpoint_240) {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    @include l-device($breakpoint_320) {
+        width: 48%;
+        margin-top: 8px;
+        margin-right: 4px;
+    }
+
+    @include p-device($breakpoint_360) {
+        width: calc(50% - 6px);
+        margin-right: 4px;
+    }
+
+    @include l-device($breakpoint_480) {
+        width: calc(50% - 6px);
+        margin-right: 4px;
+    }
+}
+
+.button-min_width-right {
+    width: calc(50% - 4px);
+    margin-left: 4px;
+
+    @include p-device($breakpoint_240) {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    @include l-device($breakpoint_320) {
+        width: 48%;
+        margin-top: 8px;
+        margin-left: 4px;
+    }
+
+    @include p-device($breakpoint_360) {
+        width: calc(50% - 6px);
+        margin-left: 4px;
+    }
+
+    @include l-device($breakpoint_480) {
+        width: calc(50% - 6px);
+        margin-left: 4px;
+    }
+}

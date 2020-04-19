@@ -1,43 +1,107 @@
-.i-metod_provision{
+.i-metod_provision {
     @include background-image('provision');
 }
 
-.i-follow_up{
+.i-metod_provision_40 {
+    @include background-image('provision_40');
+}
+
+.i-metod_provision_48 {
+    @include background-image('provision_48');
+}
+
+.i-avatar_48 {
+    @include background-image('gabrielle_48');
+}
+
+.i-follow_up {
     @include background-image('follow-up');
 }
 
-.i-safe_abortion{
+.i-safe_abortion {
     @include background-image('safe-abortion');
 }
 
-.i-statistics{
+.i-statistics {
     @include background-image('statistics');
 }
 
-.i-settings{
+.i-settings {
     @include background-image('settings');
 }
 
-.i-may_details{
+.i-may_details {
     @include background-image('may_details');
 }
 
-.i-about{
+.i-about {
     @include background-image('about');
 }
 
-.i-logout{
+.i-logout {
     @include background-image('logout');
 }
 
-.i-by_voucher{
+.i-by_voucher {
     @include background-image('by_voucher');
 }
 
-.i-by_phone_number{
+.i-by_phone_number {
     @include background-image('by_phone_number');
 }
 
-.i-by_client_details{
+.i-by_client_details {
     @include background-image('by_client_details');
+}
+
+.i-payloads_24 {
+    @include background-image('payload_24');
+}
+
+.i-details_24 {
+    @include background-image('details_24');
+}
+
+.i-synchronized_24 {
+    @include background-image('synchronized_24');
+}
+
+.i-sync_24 {
+    @include background-image('sync_24');
+}
+
+.i-sync-pending_24 {
+    @include background-image('sync-pending_24');
+}
+
+.i-sync-postponed_24 {
+    @include background-image('sync-postponed_24');
+}
+
+.i-sync-error_24 {
+    @include background-image('sync-error_24');
+}
+
+.i-sync-read-message_24 {
+    @include background-image('sync-read-message_24');
+}
+
+.i-sync_36 {
+    @include background-image('sync_36');
+}
+
+.i-sync-pending_36 {
+    @include background-image('sync-pending_36');
+}
+
+.i-sync-postponed_36 {
+    @include background-image('sync-postponed_36');
+}
+
+.i-sync-error_36 {
+    @include background-image('sync-error_36');
+}
+
+.i-sync-read-message_36 {
+    @include background-image('sync-read-message_36');
 }
