@@ -258,18 +258,18 @@ function inputMonitor( cwsRenderObj )
 
     me.setFocusRelegatorInitialState = function()
     {
-        if ( $( '#focusRelegator' ).is( ':visible' ) )
+        if ( $( 'div.scrim' ).is( ':visible' ) )
         {
-            if ( $( '#navDrawerDiv' ).css( 'zIndex' ) < $( '#focusRelegator' ).css( 'zIndex' ) )
+            if ( $( '#navDrawerDiv' ).css( 'zIndex' ) < $( 'div.scrim' ).css( 'zIndex' ) )
             {
-                //$( '#navDrawerDiv' ).css( 'zIndex', $( '#focusRelegator' ).css( 'zIndex' ) );
+                //$( '#navDrawerDiv' ).css( 'zIndex', $( 'div.scrim' ).css( 'zIndex' ) );
                 $( '#navDrawerDiv' ).css( 'zIndex', FormUtil.screenMaxZindex() +1 );
-                $( '#focusRelegator' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
+                $( 'div.scrim' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
             }
         }
         else
         {
-            $( '#focusRelegator' ).css( 'opacity', 0);
+            $( 'div.scrim' ).css( 'opacity', 0);
         }
     }
 
@@ -406,7 +406,7 @@ function inputMonitor( cwsRenderObj )
 
             if ( navDrawerVisibleOnStart )
             {
-                $( '#focusRelegator' ).css( 'opacity', Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                $( 'div.scrim' ).css( 'opacity', Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                 if ( currentX <= expectedNavDrawerWidth )
                 {
@@ -433,21 +433,17 @@ function inputMonitor( cwsRenderObj )
             {
                 if ( navDrawerVisibleOnMove )
                 {
-                    $( '#focusRelegator' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                    $( 'div.scrim' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
                 }
 
-                if ( ! $( '#focusRelegator').is(':visible') )
+                if ( ! $( 'div.scrim').is(':visible') )
                 {
-                    $( '#focusRelegator').show();
-                    //$( '#focusRelegator').css( 'display', 'block' );
-                    if ( $( '#focusRelegator' ).css( 'zIndex') !== 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
-                    if ( $( '#navDrawerDiv' ).css( 'zIndex') !== 200 ) $( '#navDrawerDiv' ).css('zIndex',200 );
+                    $( 'div.scrim').show();
+                    //$( 'div.scrim').css( 'display', 'block' );
                 }
-                else
-                {
-                    if ( $( '#focusRelegator' ).css( 'zIndex' ) != 100 ) $( '#focusRelegator' ).css( 'zIndex',100 );
-                    if ( $( '#navDrawerDiv' ).css( 'zIndex' ) != 200 ) $( '#focusRelegator' ).css( 'zIndex',200 );
-                }
+
+                if ( $( 'div.scrim' ).css( 'zIndex') !== 100 ) $( 'div.scrim' ).css( 'zIndex', 100 );
+                if ( $( '#navDrawerDiv' ).css( 'zIndex') !== 1501 ) $( '#navDrawerDiv' ).css('zIndex', 1501 ); //200
 
                 if ( currentX > expectedNavDrawerWidth )
                 {
@@ -467,7 +463,7 @@ function inputMonitor( cwsRenderObj )
             {
                 if ( navDrawerVisibleOnStart )
                 {
-                    $( '#focusRelegator' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
+                    $( 'div.scrim' ).css( 'opacity',Constants.focusRelegator_MaxOpacity * (( ( currentX > expectedNavDrawerWidth) ? expectedNavDrawerWidth : currentX) / expectedNavDrawerWidth) );
 
                     if ( currentX > expectedNavDrawerWidth )
                     {
@@ -549,7 +545,7 @@ function inputMonitor( cwsRenderObj )
         }
 
         $( '#navDrawerDiv' ).css( 'left', '0px' );
-        $( '#focusRelegator').css( 'opacity', Constants.focusRelegator_MaxOpacity );
+        $( 'div.scrim').css( 'opacity', Constants.focusRelegator_MaxOpacity );
 
         /* MENU HIDDEN/CLOSED > CHECK SWIPE OPEN THRESHOLDS */
         if ( ! navDrawerVisibleOnStart && ( initialX < dragXoffsetLimit ) ) // wasn't shown at start of swipe + swipe started within 50px of left part of screen
@@ -572,8 +568,8 @@ function inputMonitor( cwsRenderObj )
                     $( '#navDrawerDiv' ).hide();
                 }, 500 );
 
-                $( '#focusRelegator').hide();
-                //$( '#focusRelegator').css( 'display', 'none' );
+                $( 'div.scrim').hide();
+                //$( 'div.scrim').css( 'display', 'none' );
 
             }
         }
@@ -584,15 +580,15 @@ function inputMonitor( cwsRenderObj )
             if ( currentX < thresholdNavDrawerWidth ) // menu dragged beyond minimum width threshold >> clicking HIDE
             {
                 // closing menu (called click event)
-                if ( $( '#focusRelegator').is(':visible') ) $( '#focusRelegator').hide();
+                if ( $( 'div.scrim').is(':visible') ) $( 'div.scrim').hide();
                 $( 'div.Nav__icon' ).click(); //clicked to close menu
             }
             else
             {
                 // staying open   
                 $( '#navDrawerDiv' ).css( 'width', expectedNavDrawerWidth + 'px' );
-                $( '#focusRelegator').show();
-                //$( '#focusRelegator').css( 'display', 'block' );
+                $( 'div.scrim').show();
+                //$( 'div.scrim').css( 'display', 'block' );
             }
         }
 

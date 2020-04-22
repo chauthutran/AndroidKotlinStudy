@@ -79,6 +79,8 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			if ( me.blockDefJson.buttons ) 
 			{
 				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me, me.validationObj );
+				//console.log( me.blockTag );
+				console.log( me.blockDefJson.buttons );
 				me.blockButtonObj.render( me.blockDefJson.buttons, me.blockTag, undefined );
 			}
 
@@ -127,12 +129,16 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.clearClassTag = function( blockId, parentTag )
     {
         // Clear any previous ones of this class
-        parentTag.find( 'div.block[blockId="' + blockId + '"]' ).remove();
+		parentTag.find( 'div.block[blockId="' + blockId + '"]' ).remove(); //Greg: remove for v1.3?
+		parentTag.removeAttr( 'blockId' );
+		parentTag.removeAttr( 'activityType' );
+		parentTag.empty();
 	};
 	
 
 	me.createBlockTag = function( blockId, blockType, blockDefJson, parentTag )
-	{		
+	{
+		//var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
 		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
 		blockTag.addClass( blockType );
 
@@ -141,12 +147,17 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		{
 			// Clear any existing block - not always..  We could have option to hide instead for 'back' feature.
 			parentTag.find( 'div.block' ).remove();
+			parentTag.find( 'div.wrapper' ).empty();
 		}
 
 		// Put it under parentTag
-		parentTag.append( blockTag.addClass( 'blockStyle' ) );		
-		
-		return blockTag;
+		parentTag.find( 'div.wrapper' ).append( blockTag.addClass( 'blockStyle' ) );		
+
+		parentTag.attr( 'blockId', blockId );
+		parentTag.attr( 'activityType', blockDefJson.activityType );
+
+		//return blockTag;
+		return parentTag;
 	}
 
 	me.hideBlock = function()

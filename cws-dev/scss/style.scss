@@ -1,5 +1,5 @@
-@import 'themes/_theme_default.scss';
-//'components/_theme.scss'
+@import 'themes/_theme_default.scss',
+'themes/_colors.scss';
 
 @import 'abstracts/_setting.scss',
 'abstracts/_mixins.scss';
@@ -12,7 +12,7 @@
 //'base/_animations.scss'
 
 @import 'components/_buttons.scss',
-'components/chips.scss',
+'components/_chips.scss',
 'components/_nav-drawer.scss',
 'components/_text_Fields.scss',
 'components/_bottom_navigation.scss',
@@ -21,14 +21,13 @@
 'components/_selector.scss',
 'components/_tabs.scss',
 'components/_sheets_bottom.scss',
-'components/_card.scss';
-/*
+'components/_card.scss',
+'components/_fab.scss';
+/* 
 'components/_menus.scss',
 'components/_nav_rail.scss',
 'components/_pickers.scss',
-'components/_sheet_bottom.scss',
 'components/_sheet_side.scss',
-'components/_tabs.scss',
 'components/_tooltips.scss',
 */
 
@@ -48,6 +47,7 @@
 
 
 @import 'layout/_app_bar_top.scss',
+'layout/_app_bar_top_two.scss',
 'layout/_cols.scss',
 'layout/_grid.scss',
 'layout/_login.scss',
@@ -119,7 +119,7 @@ footer {
 }
 
 hr {
-  border-top: 1px solid rgb($color-pl, 0.1);
+  border-top: 1px solid rgba($color-pl, 0.1);
 }
 
 .scrim {
@@ -129,7 +129,7 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  background-color: rgb($color-typ-sl, 35%);
+  background-color: rgba($color-typ-sl, 35%);
 }
 
 .sheet_bottom-scrim {
@@ -139,7 +139,7 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  background-color: rgb($color-typ-sl, 35%);
+  background-color: rgba($color-typ-sl, 35%);
 }
 
 input,

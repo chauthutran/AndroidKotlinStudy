@@ -84,6 +84,7 @@
 
   function App_UI_startUp_loading()
   {
+
     // show PWA (loading) screen
     FormMsgManager.appBlockTemplate('appLoad');
 
@@ -107,6 +108,7 @@
   function App_UI_startUp_Progress( perc )
   {
     $( 'div.startUpProgress' ).css( 'width', perc );
+    //$( 'div.Nav__Title' ).html( perc );
   }
 
   function App_version_UI_Update()

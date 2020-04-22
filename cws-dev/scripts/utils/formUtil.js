@@ -502,7 +502,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 					subListIconsTag.hide(); 
 				}, 500 );
 
-				$( '#focusRelegator').hide();
+				$( 'div.scrim').hide();
 
 				//do not set zIndex for navDrawer (subListIconsTag) > navHeader (nav.Nav1) shows above closing menu
 			}
@@ -512,7 +512,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 				if ( ! $( '#navDrawerDiv' ).is( ':visible' ) )
 				{
-					$( '#focusRelegator').hide();
+					$( 'div.scrim').hide();
 				}
 				else
 				{
@@ -529,7 +529,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Close );
 			thisTag.addClass( className_Open );
 
-			$( '#focusRelegator').css('zIndex',100);
+			$( 'div.scrim').css('zIndex',100);
 
 			thisTag.css('zIndex',199);
 
@@ -557,9 +557,9 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( className_Open.indexOf( 'imggroupBy' ) < 0 )
 			{
 
-				$( '#focusRelegator').off( 'click' ); //clear existing click events
+				$( 'div.scrim').off( 'click' ); //clear existing click events
 
-				$( '#focusRelegator').on( 'click' , function( event )
+				$( 'div.scrim').on( 'click' , function( event )
 				{
 					thisTag.css('zIndex',1);
 
@@ -568,11 +568,11 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 					thisTag.click();
 				});
 
-				if ( $( '#focusRelegator').css( 'opacity' ) !== Constants.focusRelegator_MaxOpacity ) $( '#focusRelegator').css( 'opacity', Constants.focusRelegator_MaxOpacity );
+				if ( $( 'div.scrim').css( 'opacity' ) !== Constants.focusRelegator_MaxOpacity ) $( 'div.scrim').css( 'opacity', Constants.focusRelegator_MaxOpacity );
 
-				$( '#focusRelegator').show();
+				$( 'div.scrim').show();
 
-				if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, '#focusRelegator' );
+				if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, 'div.scrim' );
 
 			}
 
@@ -581,14 +581,14 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 }
 
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
-{
+{	//test code added by Greg
 	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
-
+	console.log( $( targetTag ).css( 'zIndex' ), targetTag );
 	$( targetTag ).css( 'zIndex', newZidx );
 }
 
 FormUtil.setStackOrder = function( arrObjTags )
-{
+{	//test code added by Greg
 	var stackFrom = FormUtil.screenMaxZindex();
 	console.log( arrObjTags );
 	for ( var i = 0; i < arrObjTags.length; i++ )
@@ -604,32 +604,82 @@ FormUtil.setStackOrder = function( arrObjTags )
 	}
 }
 
+FormUtil.showScreenStackOrder = function( parent )
+{	//test code added by Greg
+
+	var parentObj = parent || document.body;
+	var children = parentObj.childNodes, length = children.length;
+	var arrStacks = [], i = 0;
+
+
+	function deepCss(who, css) {
+		var sty, val, dv= document.defaultView || window;
+		if (who.nodeType == 1) {
+			sty = css.replace(/\-([a-z])/g, function(a, b){
+				return b.toUpperCase();
+			});
+			if ( sty && who && who.style[sty] )
+			{
+				val = who.style[sty];
+				if (!val) {
+					if(who.currentStyle) val= who.currentStyle[sty];
+					else if (dv.getComputedStyle) {
+						val= dv.getComputedStyle(who,"").getPropertyValue(css);
+					}
+				}
+			}
+		}
+		return val || "";
+	}
+	console.log( length );
+
+    while(i<length){
+		who = children[i++];
+		//console.log( who );
+        if (who.nodeType != 1) continue; // element nodes only
+		//opacity = deepCss(who,"opacity");
+		if ( $( who ).is( ':visible' ) )
+		{
+			if (deepCss(who,"position") !== "static") {
+				temp = deepCss(who,"z-index");
+				if (temp == "auto") { // positioned and z-index is auto, a new stacking context for opacity < 0. Further When zindex is auto ,it shall be treated as zindex = 0 within stacking context.
+					(opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
+				} else {
+					temp = parseInt(temp, 10) || 0;
+				}
+			} else { // non-positioned element, a new stacking context for opacity < 1 and zindex shall be treated as if 0
+				(opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
+			}
+			console.log( who, temp );
+		}
+
+    }
+
+}
+
 FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 {	
-	var clickedTab = tag.find(".tabs > .active");
-	var tabWrapper = tag.find(".tab_content");
-	var activeTab = tabWrapper.find(".active");
-	var activeTabHeight = activeTab.outerHeight();
-	var tabContentLiTags = tabWrapper.children( 'li' );
 
-	activeTab.show();
-	tabWrapper.height(activeTabHeight);
-	
-	// Tab view (Larger view) 'ul'/'li' click event handler setup
-	tag.find(".tabs > li").on("click", function() 
+	tag.find( 'li' ).on( 'click', function() 
 	{
-		var tab_select = $(this).attr('tabId'); 
+		var tab_select = $( this ).attr( 'rel' ); 
 
-		tag.find('.active').removeClass('active');  // both 'tabs' and 'tab_Content'
-		
-		$(this).addClass('active');
+		tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
-		var activeTab = tag.find( ".tab_content > li[tabId='" + tab_select + "']");
+		//tag.siblings().find( '.active' ).empty();
+		tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
-		activeTab.addClass("active");
-		activeTab.children('.expandable').click();
-		activeTabHeight = activeTab.outerHeight();
-		activeTab.show();
+		tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
+			$( element ).hide();
+		}); 
+
+		$( this ).addClass( 'active' );
+
+		var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
+
+		activeTab.addClass( 'active' );
+		activeTab.fadeIn(); //show();
+
 	});
 
 	// prevent multiple click events being created when listPage scrolling triggers append of new 'expandable' items
@@ -1978,7 +2028,21 @@ FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldI
 
 FormUtil.createNumberLoginPinPad = function()
 {
-	// create numeric input keypad > untidy implementation but it works
+	// creates numeric (only) keypad under android > untidy implementation but it works
+
+	const PWD_INPUT_PADDING_TOP = 0;
+	const PWD_INPUT_PADDING_LEFT = 0;
+	const CHAR_SPACING_WIDTH = 12;
+
+	// clear existing events
+	$( "#passReal" ).off( 'keydown' );
+	$( "#passReal" ).off( 'keyup' );
+
+	$( "#pass" ).off( 'focus' );
+	$( "input.loginUserName" ).off( 'focus' );
+
+
+	// backspace/delete button event (clears pin value)
 	$( "#passReal" ).keydown( function( event ) {
         if ( event.keyCode == 8 || event.keyCode == 46 ) {
           $( "#passReal" ).val( '' );
@@ -1986,10 +2050,7 @@ FormUtil.createNumberLoginPinPad = function()
         }
 	});
 
-	const PWD_INPUT_PADDING_TOP = 0;
-	const PWD_INPUT_PADDING_LEFT = 0;
-	const CHAR_SPACING_WIDTH = 12;
-
+	// updates password value and repositions "blinker" with (now) longer text
 	$( "#passReal" ).keyup( function( event ) {
 		$('#pass').val( $('#passReal').val() );
 		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
@@ -1997,15 +2058,25 @@ FormUtil.createNumberLoginPinPad = function()
 
 	$( "#pass" ).focus( function() {
 		if ( ! $( '#passReal' ).is( ':visible') ) $( '#passReal' ).show();
-		$('#passReal').focus();
 		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
+		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
+		$('#passReal').focus();
+	});
+
+	$( "#passReal" ).focus( function( event ) {
+		$('#passReal').css( 'height', '20px' );
 		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
 	});
 
-	$( "input.loginUserName" ).focus( function() {
-		$( '#passReal' ).hide();
+	$( "#passReal" ).blur( function( event ) {
+		$('#passReal').css( 'height', '0px' );
 	});
 
+	/*$( "input.loginUserName" ).focus( function() {
+		$( '#passReal' ).hide();
+	});*/
+
+	// startup position of blinker in relation to login screen layout (will cause problems if page gets resized)
 	setTimeout( function() {
 		$('#passReal').css( 'top', $('#pass').position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
 		$('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );

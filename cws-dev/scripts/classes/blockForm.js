@@ -93,7 +93,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					me.renderInput_TabContent( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
+					me.renderInputFieldControls( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
 				}
 				else
 				{
@@ -125,7 +125,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		for( var i = 0; i < dvGroups.length; i++ )
 		{
-			var inpCtls  = $( dvGroups[ i ] ).find("div.inputDiv");
+			var inpCtls  = $( dvGroups[ i ] ).find("div.field");
 			var sumDisplay = 0;
 
 			for( var c = 0; c < inpCtls.length; c++ )
@@ -235,18 +235,29 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	}
 	
 	// New UI Used Method
-	me.renderInput_TabContent = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
+	me.renderInputFieldControls = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
 	{
 
-		var divInputTag = $( '<div class="tb-content-d inputDiv"></div>' );
+		var divInputFieldTag = $( '<div class="field" />' );
+		var divFieldLabelTag = $( '<div class="field__label" />' );
+		var divFieldControlTag = $( '<div class="fiel__controls" />' );
 
-		var spanTitleTag = $( '<label ' + FormUtil.getTermAttr( formItemJson ) + ' class="from-string titleDiv"></label>' );
-		spanTitleTag.text( formItemJson.defaultName );
-		divInputTag.append( spanTitleTag );
+		divInputFieldTag.append( divFieldLabelTag );
+		divInputFieldTag.append( divFieldControlTag );
 
-		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData, payloadConfigSelection );
+		var fieldLabelTag = $( '<label ' + FormUtil.getTermAttr( formItemJson ) + ' />' ); // class="from-string titleDiv"></label
+		fieldLabelTag.text( formItemJson.defaultName );
+		divFieldLabelTag.append( fieldLabelTag );
 
-		formDivSecTag.append( divInputTag );
+		var divFieldControlLeftTag = $( '<div class="field__left" />' );
+		var divFieldControlRightTag = $( '<div class="field__right" />' );
+
+		divFieldControlTag.append( divFieldControlLeftTag );
+		divFieldControlTag.append( divFieldControlRightTag );
+
+		me.renderInputTag( formItemJson, divFieldControlLeftTag, formTag, formFull_IdList, passedData, payloadConfigSelection, divInputFieldTag );
+
+		formDivSecTag.append( divInputFieldTag );
 	}
 
 	me.getFormControlRule = function ( formItemJson, attr )
@@ -260,7 +271,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	}
 
 	// TODO: JAMES: 'payloadConfig' is passed and 'FormUtil.setTagVal' should be handled...
-	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection )
+	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag )
 	{
 		if ( formItemJson )
 		{
@@ -568,7 +579,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 
 			// Setup events and visibility and rules
-			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData );
+			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData, fieldContainerTag );
 
 			if ( formItemJson.scanQR != undefined )
 			{
@@ -649,7 +660,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	}
 
 
-	me.setEventsAndRules = function( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData)
+	me.setEventsAndRules = function( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData, fieldContainerTag )
 	{
 		if ( entryTag )
 		{
@@ -666,20 +677,14 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		me.addStylesForField( divInputTag, formItemJson );
 
 		// Set Tag Visibility
-		if ( formItemJson.display === "hiddenVal" )
+		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
 		{
+			fieldContainerTag.hide();
 			divInputTag.hide();
-			if ( entryTag == undefined ) console.log ( formItemJson ) ;
+
 			entryTag.attr( 'display', 'hiddenVal' );
 
-			if ( formItemJson.display === "hiddenVal" )
-			{
-
-			}
-		}
-		else if ( formItemJson.display === "none" )
-		{
-			divInputTag.hide();
+			if ( entryTag == undefined ) console.log ( formItemJson ) ;
 
 		}
 
@@ -707,10 +712,16 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		if( formItemJson.styles !== undefined )
 		{
-			for( var i in formItemJson.styles )
+			for ( var i = 0; i < formItemJson.styles.length; i++ )
 			{
 				var styleDef = formItemJson.styles[i];
-				entryTag.css( styleDef.name, styleDef.value );
+				//entryTag.css( styleDef.name, styleDef.value );
+				console.log( styleDef )
+
+				entryTag.each( function( index, element ){
+					$( element ).attr( styleDef.name, styleDef.value );
+					console.log( $( element ) );
+				}); 
 			}
 		}
 
@@ -723,7 +734,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		if( formItemJson.rules !== undefined )
 		{
-			for( var i in formItemJson.rules )
+			for ( var i = 0; i < formItemJson.rules.length; i++ )
 			{
 				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
 				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, SessionManager.sessionData.dcdConfig.definitionRules );
@@ -734,8 +745,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
-						var titleTag = divInputTag.find( ".titleDiv" );
-						titleTag.after( $( "<span class='redStar'> * </span>" ) );
+						//var titleTag = divInputTag.find( ".titleDiv" );
+						//titleTag.after( $( "<span class='redStar'> * </span>" ) );
+						var titleTag = divInputTag.closest( 'div.field' ).find( 'div.field__label' );
+						titleTag.append( $( "<span>*</span>" ) );
 					}
 				}	
 				else if ( ruleJson.pattern )
@@ -948,7 +961,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	// PopulateFormData by passed in json (Not by config, but by external data)
 	me.populateFormData = function( passedData, formDivSecTag )
 	{
-		//console.log( passedData );
 
 		if ( passedData !== undefined && passedData.resultData !== undefined )
 		{

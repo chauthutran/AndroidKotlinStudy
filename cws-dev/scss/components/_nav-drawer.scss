@@ -8,8 +8,8 @@
     background-color: $color-background;
     overflow-x: hidden;
     overflow-y: hidden;
-    -webkit-transition: 0.5s;
-    transition: 0.5s;
+    /*-webkit-transition: 0.5s;
+    transition: 0.5s;*/
     @include shadow-b(2px 2px 5px 0px $color-shadow);
 
     .navigation__header {
@@ -20,7 +20,7 @@
         height: 100px;
         margin-bottom: 10px;
         padding: 16px;
-        background-color: rgb($color-pl, 0.1);
+        background-color: rgba($color-pl, 0.1);
         @include box-sizing(border-box);
 
         .navigation__logo {

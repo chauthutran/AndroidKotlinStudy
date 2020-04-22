@@ -5,7 +5,8 @@ function cwsRender()
 	var me = this;
 
 	// Tags
-	me.renderBlockTag = $( '#renderBlock' );
+	//me.renderBlockTag = $( '#renderBlock' );
+	me.renderBlockTag = $( '#pageDiv' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	/* me.menuAppMenuIconTag = $( '#nav-toggle' );*/
 	/* me.loggedInDivTag = $( '#loggedInDiv' ); */
@@ -470,12 +471,6 @@ function cwsRender()
 			var navItemsUL = $( '<ul />');
 			navMenuItems.append( navItemsUL );
 
-			//var navMenuTbl = $( '<table class="navigation__items" style="border-spacing: 0;" />');
-			//var navItemsUL = $( '<ul />');
-
-			//navMenuItems.append( navMenuTbl );
-
-
 			// Add the menu rows
 			if ( areaList )
 			{
@@ -484,8 +479,8 @@ function cwsRender()
 					var area = areaList[i];
 					var menuLI = $( '<li areaId="' + area.id + '" />' );
 
-					menuLI.append( $( '<div class="navigation__items-icon" >' + '<img src="images/' + area.icon + '.svg">' + '</div>' ) );
-					menuLI.append( $( '<a style="text-decoration:none;color:#000;" href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
+					menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
+					menuLI.append( $( '<a href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
 
 					navItemsUL.append( menuLI );
 
@@ -723,7 +718,7 @@ function cwsRender()
 	{
 		me.pulsatingProgress.hide();
 		$( '#divProgressBar' ).hide();
-		$( '#focusRelegator' ).hide();
+		$( 'div.scrim' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
 		$( '#detailsFormDiv' ).hide();
@@ -925,11 +920,11 @@ function cwsRender()
         {
             me.favIconsObj = new favIcons( me );
 
-            me.setFloatingListMenuIconEvents( $( '#pageDiv' ).find( '.floatListMenuIcon' ), $( '#pageDiv' ).find( '.floatListMenuSubIcons' ) );
+            me.setFloatingListMenuIconEvents( me.renderBlockTag.find( '.floatListMenuIcon' ), me.renderBlockTag.find( '.floatListMenuSubIcons' ) );
         }
         else
         {
-            $( '#pageDiv' ).find( '.floatListMenuIcon' ).hide();
+            me.renderBlockTag.find( '.floatListMenuIcon' ).hide();
         }
 	};
 

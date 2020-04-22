@@ -85,6 +85,7 @@ function Login( cwsRenderObj )
 
 			$('.scrim').show();
 
+			// create and reference templatesManager here:
 			$( 'body' ).append (
 			`
 			<div id="advOpt" class="login_buttons" style="background-color: white">

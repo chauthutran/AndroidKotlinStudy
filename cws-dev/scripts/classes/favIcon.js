@@ -238,11 +238,16 @@ function favIcons( cwsRender )
 
     me.setFavIconClickTarget = function( favTarget, targetID )
     {
+        // Greg: you modified this code 2020-04-22 @ 08h43 (maybe revert?)
+        $( '#favIcon_'+targetID ).off( 'click' );
+
         // Weird > bindings being lost after 1st click event: solved
-        $(document).on('click', '#favIcon_'+targetID, function() {
+        //$(document).on('click', '#favIcon_'+targetID, function() {
+
+        $( '#favIcon_'+targetID ).click( function() {
             if ( favTarget.blockId )
             {
-                $( '#focusRelegator').hide();
+                $( 'div.scrim').hide();
                 me.cwsRenderObj.renderBlock( favTarget.blockId, favTarget.options )
             }
 

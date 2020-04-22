@@ -32,24 +32,25 @@
 
     .fiel__controls {
         display: flex;
-    }
 
-    .field__right {
-        display: none;
-        float: right;
-        width: 24px;
-        height: 24px;
-        align-items: center;
-        margin-right: 7px;
-        cursor: pointer;
-        @include background-image('close');
-        @include box-sizing(border-box);
+        .field__right {
+            display: none;
+            float: right;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            margin-right: 7px;
+            cursor: pointer;
+            @include background-image('close');
+            @include box-sizing(border-box);
+        }
     }
 
     .field__selector {
         width: calc(100% - 6px);
         padding-left: 2px;
         @include box-sizing(border-box);
+        
     }
 
     .field__selector-label {
