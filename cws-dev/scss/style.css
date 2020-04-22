@@ -5927,6 +5927,8 @@ h6 {
   background-repeat: no-repeat;
   background-size: 100%;
   position: relative;
+  -webkit-transition: all 1s ease;
+  transition: all 1s ease;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;

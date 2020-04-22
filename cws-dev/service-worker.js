@@ -41,7 +41,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "c13bd6c8cf14e913924a6ed6d3ff721e"
+    "revision": "d53d0e9902ea79c26c4a17a9edd6e853"
   },
   {
     "url": "images/about.png",
@@ -1501,7 +1501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "c13bd6c8cf14e913924a6ed6d3ff721e"
+    "revision": "d53d0e9902ea79c26c4a17a9edd6e853"
   },
   {
     "url": "sounds/beep.mp3",
