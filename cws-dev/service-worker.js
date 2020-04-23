@@ -1165,7 +1165,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "0edc5a08a7aeaad509b56dbe18c4380c"
+    "revision": "e7c9f553ddb8b4204f76c9568340057e"
   },
   {
     "url": "redeemGen.html",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "2d0715c718f539d2759ff35b5891ccef"
+    "revision": "7746a3e02ec69b7e532fdadb2ee67b49"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1277,7 +1277,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "c931af58899493c56a909c6f13ff19ae"
+    "revision": "c0897295629c76c3addc7b04d4732d59"
   },
   {
     "url": "scripts/libraries/aes.js",

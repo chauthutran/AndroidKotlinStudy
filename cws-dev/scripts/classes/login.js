@@ -387,6 +387,8 @@ function Login( cwsRenderObj )
 		$( 'input.loginUserName' ).attr( 'readonly',true );
 		$( 'div.loginSwitchUserNotification' ).show();
 		$( 'div.Nav__icon' ).addClass( 'closed' );
+		$( '#loginField' ).hide();
+		$( '<h4>'+ $( 'input.loginUserName' ).val() +'<h4>' ).insertBefore( $('#loginField') );
 
 		FormUtil.hideProgressBar();
 	}
