@@ -24,6 +24,7 @@ FormUtil.records_redeem_queued = 0;
 FormUtil.records_redeem_failed = 0;
 FormUtil.syncRunning = 0;
 
+FormUtil.orientation;
 // ==== Methods ======================
 
 FormUtil.getObjFromDefinition = function( def, definitions )
@@ -658,29 +659,52 @@ FormUtil.showScreenStackOrder = function( parent )
 }
 
 FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
-{	
+{
 
-	tag.find( 'li' ).on( 'click', function() 
+	tag.find( 'li' ).on( 'click', function()
 	{
+		console.log( $( this ) );
 		var tab_select = $( this ).attr( 'rel' ); 
 
-		tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
+		console.log( $(this) );
 
-		//tag.siblings().find( '.active' ).empty();
-		tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
+		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568)
+		{
+			console.log( 'got here' );
+			console.log( $(this).find("ul") );
+            if ($(this).find("ul").is(':visible')) {
+                $(this).find("ul").css('display', 'none');
+                $(this).find("li").css('display', 'none');
+                $(this).next("ul").toggle();
+            } else {
+                $(this).find("ul").css('display', 'block');
+                $(this).find("li").css('display', 'block');
+                $(this).next("ul").toggle();
+			}
 
-		tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
-			$( element ).hide();
-		}); 
+		}
+		else
+		{
+			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
-		$( this ).addClass( 'active' );
-
-		var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
-
-		activeTab.addClass( 'active' );
-		activeTab.fadeIn(); //show();
+			//tag.siblings().find( '.active' ).empty();
+			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
+	
+			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
+				$( element ).hide();
+			}); 
+	
+			$( this ).addClass( 'active' );
+	
+			var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
+	
+			activeTab.addClass( 'active' );
+			activeTab.fadeIn(); //show();
+		}
 
 	});
+
+
 
 	// prevent multiple click events being created when listPage scrolling triggers append of new 'expandable' items
 	if ( targetOff && eventName ) 
@@ -717,6 +741,90 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 	});
 }
 
+
+FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
+{	
+
+	tag.find( 'li' ).on( 'click', function()
+	{
+		var tab_select = $( this ).attr( 'rel' ); 
+		//check for class 2ndary - always run ELSE statement
+		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568 && tag.find( '.active' ).length )
+		{
+			console.log( 'got here' );
+            if ($(this).find("ul").is(':visible')) {
+                $(this).find("ul").css('display', 'none');
+                $(this).find("li").css('display', 'none');
+                $(this).next("ul").toggle();
+            } else {
+                $(this).find("ul").css('display', 'block');
+                $(this).find("li").css('display', 'block');
+                $(this).next("ul").toggle();
+			}
+
+		}
+		else
+		{
+			console.log( $( this ) );
+			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
+
+			//tag.siblings().find( '.active' ).empty();
+			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
+	
+			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
+				$( element ).hide();
+			}); 
+	
+			$( this ).addClass( 'active' );
+	
+			var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
+	
+			activeTab.addClass( 'active' );
+			activeTab.fadeIn(); //show();
+		}
+
+	});
+
+};
+
+FormUtil.orientation = function() {
+
+	switch ( window.orientation ) {
+		case -90:
+			return '';
+		case 90:
+			return 'landscape';
+			break;
+		default:
+			return 'portrait';
+			break;
+	}
+}
+/*
+$(".tab_fs__head li").click(function () {
+
+	if (FormUtil.orientation == 'portrait' && $(window).width() <= 568) {
+		if ($(this).find("ul").is(':visible')) {
+			$(this).find("ul").css('display', 'none');
+			$(this).find("li").css('display', 'none');
+			$(this).next("ul").toggle();
+		} else {
+			$(this).find("ul").css('display', 'block');
+			$(this).find("li").css('display', 'block');
+			$(this).next("ul").toggle();
+		}
+	} else {
+		$(".tab_fs__container-content").hide();
+		var activeTab = $(this).attr("rel");
+		$("#" + activeTab).fadeIn();
+		$(".tab_fs__head li").removeClass("active");
+		$(this).addClass("active");
+		$(this).find("ul").css('display', 'block');
+		$(this).find("li").css('display', 'block');
+		console.log('2');
+	}
+});
+*/
 FormUtil.getUserSessionAttr = function( usr, attr ) {
 
 	var lastSessionAll = JSON.parse(localStorage.getItem(usr))

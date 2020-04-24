@@ -128,9 +128,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 <div class="act-l-more">
                     <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span class="act_btn_showDetails" term="">see more</span>
                 </div>
-                <div class="act-l-expander">
+                <!-- <div class="act-l-expander">
                     <img class="expandable-arrow" src="images/arrow_down.svg" >
-                </div>
+                </div> -->
             </div>
 
             <div class="act-preview"></div>
@@ -139,7 +139,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     </li>`;
 
     me.template_ActivityCardEmpty = `<li class="emptyListLi activityItemCard">
-            <a class="expandable" style="min-height: 60px; padding: 23px; color: #888;" term="${Util.termName_listEmpty}">List is empty.</a>
+            <a class="expandable" style="" term="${Util.termName_listEmpty}">List is empty.</a>
         </li>`;
 
 
@@ -244,12 +244,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.setClassContainerTag = function( blockTag )
     {
         // Block/BlockList HTML related setup
-        var listDivTag = $( '#listTemplateDiv > div.listDiv' ).clone(); // Copy from list html template located in index.html
+        var listDivTag = $( '#listTemplateDiv > div.wrapper' ).clone(); // Copy from list html template located in index.html
         blockTag.append( listDivTag );
 
         var blockList_UL_Tag = listDivTag.find( 'ul.tab__content_act');
 
-        FormUtil.setUpTabAnchorUI( blockList_UL_Tag ); // Set click event + heights
+        FormUtil.setUpTabAnchorUI( blockList_UL_Tag ); // Set click event +e heights
         
         return blockList_UL_Tag;
     };
@@ -348,16 +348,23 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 retGroup = blockListViewObj.groupByGroups[ g ].id;
                 if ( ! blockListViewObj.groupByGroups[ g ].created )
                 {
-                    var liContentTag = $( '<li class="blockListGroupBy opened"></li>' );
-                    var anchorTag = $( '<a class="blockListGroupBySection" groupBy="' + ( blockListViewObj.groupByGroups[ g ].id ).toUpperCase() + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + ( blockListViewObj.groupByGroups[ g ].name ) + '</a>' );
+                    var liContentTag = $( '<li class="blockListGroupBy opened" />' );
+                    //var anchorTag = $( '<a class="blockListGroupBySection" groupBy="' + ( blockListViewObj.groupByGroups[ g ].id ).toUpperCase() + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + ( blockListViewObj.groupByGroups[ g ].name ) + '</a>' );
+                    var anchorTag = $( '<a class="blockListGroupBySection" />' );
+
+                    //anchorTag.css( 'background', 'url(images/arrow_up.svg)' );
+                    anchorTag.text( blockListViewObj.groupByGroups[ g ].name  );
+
                     targTag.append( liContentTag );
                     liContentTag.append( anchorTag );
+
                     anchorTag.click( function() {
-                        var imgTag = this.children[ 0 ];
+                        //var imgTag = this.children[ 0 ];
                         var groupByClickTag = $( this );
                         me.evalToggleCalGroupCards( targTag, 'groupBy', blockListViewObj.groupByGroups[ g ].id );
                         groupByClickTag.parent()[ 0 ].classList.toggle( "opened" );
-                        imgTag.classList.toggle( "rotateImg" );
+                        //imgTag.classList.toggle( "rotateImg" );
+                        //groupByClickTag.classList.toggle( "rotateImg" );
                     });
                     blockListViewObj.groupByGroups[ g ][ 'created' ] = 1;
                     break;

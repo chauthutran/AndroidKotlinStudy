@@ -3413,6 +3413,11 @@ h6 {
   }
 }
 
+.tab_fs__container .tab_fs__container-content .field--elem:active,
+.tab_fs__container .tab_fs__container-content .field__variation--active .tab_fs__container .tab_fs__container-content .field--elem {
+  border: 1px solid #2c98f0;
+}
+
 @media (orientation: portrait) and (min-width: 240px) {
   .tab_fs__container .tab_fs__container-content .field {
     width: 100%;
@@ -6832,6 +6837,7 @@ hr {
   bottom: 0;
   left: 0;
   background-color: black;
+  opacity: 0.4;
 }
 
 .sheet_bottom-scrim {

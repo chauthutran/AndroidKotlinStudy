@@ -245,6 +245,7 @@ function favIcons( cwsRender )
         //$(document).on('click', '#favIcon_'+targetID, function() {
 
         $( '#favIcon_'+targetID ).click( function() {
+            console.log( favTarget );
             if ( favTarget.blockId )
             {
                 $( 'div.scrim').hide();

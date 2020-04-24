@@ -84,6 +84,9 @@ function Login( cwsRenderObj )
 		$( '.advOptBtn' ).click( function() {
 
 			$('.scrim').show();
+			$('.scrim').css( 'opacity', '0.4' );
+			$('.scrim').css( 'z-Index', '109' );
+
 
 			// create and reference templatesManager here:
 			$( 'body' ).append (
@@ -110,13 +113,14 @@ function Login( cwsRenderObj )
 		  	</div>
 			`
 		  );
+
 		  $(".scrim").click(function () {
 			$('.scrim').css('display', 'none');
-			$('#advOpt').remove()
-			$('dialog').remove()
+			$('#advOpt').remove();
+			$('dialog').remove();
 		});
 		$(".switchToStagBtn").click(function () {
-			alert('switchToStagBtn')
+			alert('switchToStagBtn');
 		});
 		$(".demoBtn").click(function () {
 			alert('demo')
@@ -388,6 +392,7 @@ function Login( cwsRenderObj )
 		$( 'div.loginSwitchUserNotification' ).show();
 		$( 'div.Nav__icon' ).addClass( 'closed' );
 		$( '#loginField' ).hide();
+		$( '.login_data__fields').find( 'h4' ).remove();
 		$( '<h4>'+ $( 'input.loginUserName' ).val() +'<h4>' ).insertBefore( $('#loginField') );
 
 		FormUtil.hideProgressBar();

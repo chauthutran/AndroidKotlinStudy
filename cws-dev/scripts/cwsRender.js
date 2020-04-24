@@ -686,10 +686,9 @@ function cwsRender()
 
 	me.handleLastSession = function( nextFunc )
 	{
-		console.log( 'got here ');
 		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
 		DataManager.getSessionData( function(lastSession) {
-			console.log( lastSession );
+
 			if ( lastSession )
 			{
 				$( 'input.loginUserName' ).val( lastSession.user );	

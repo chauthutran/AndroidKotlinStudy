@@ -244,9 +244,9 @@
 
       <main class="container">
 
-        <div id="settingsContentDiv " class="settingsListDiv listDiv" style="position:relative;text-align:left;">
+        <div id="settingsContentDiv " class="settingsListDiv tab_fs" style="position:relative;text-align:left;">
 
-          <ul class="o-one ">
+          <ul class="tab_fs__head ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
               <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
                 class="btnSettingsBack" alt="arrowLeft">
@@ -262,7 +262,7 @@
             <label class="aboutHeader" term="menu_settings">Settings</label>
           </div>
 
-          <ul class="tab__content_act">
+          <ul class="tab_fs__container">
 
             <li class="settingsTopfiller" style="width: 97%;"></li>
 
@@ -546,9 +546,9 @@
 
       <main class="container">
 
-        <div id="aboutContentDiv " class="aboutListDiv listDiv" style="position:relative;text-align:left;">
+        <div id="aboutContentDiv " class="aboutListDiv tab_fs" style="position:relative;text-align:left;">
 
-          <ul class="o-one ">
+          <ul class="tab_fs__head ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
               <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
                 class="btnAboutBack" alt="arrowLeft">
@@ -564,7 +564,7 @@
             <label class="aboutHeader" term="menu_about">About</label>
           </div>
 
-          <ul class="tab__content_act">
+          <ul class="tab_fs__container">
 
             <li class="settingsTopfiller" style="width: 97%;"></li>
 
@@ -684,9 +684,9 @@
     <section class="wrapper">
       <main class="container">
 
-        <div id="statisticsContentDiv " class="statisticsDiv listDiv" style="position:relative;text-align:left;">
+        <div id="statisticsContentDiv " class="statisticsDiv tab_fs" style="position:relative;text-align:left;">
 
-          <ul class="o-one ">
+          <ul class="tab_fs__head ">
             <li class="inputDiv active">
               <img src="images/statistics.svg" class="tab-image">
               <label class="aboutHeader" term="menu_statistics">Statistics</label>
@@ -699,7 +699,7 @@
             <label class="statisticsHeader" term="menu_statistics">Statistics</label>
           </div>
 
-          <ul class="tab__content_act">
+          <ul class="tab_fs__container">
 
             <li class="settingsTopfiller" style="width: 97%;"></li>
 
@@ -718,26 +718,31 @@
   <!-- LIST, FLOATING ICON TEMPLATE DIV -->
   <div id="listTemplateDiv" style="display:none;">
 
-    <div class="listDiv">
+    <div class="wrapper">
 
-      <ul class="o-one">
-        <li class="active">
-          <img src='images/active.svg' class="tab-image" alt="active">
-          <label term="menu_list"> Active</label>
-        </li>
-      </ul>
+      <div class="tab_fs">
 
-      <ul class="tab__content_act"></ul>
+        <ul class="tab_fs__head">
 
-      <div class="title-act-mobile"><img src='images/active.svg' class="tab-image" alt="active">
-        <label term="menu_list"> Active</label>
+          <li rel="blockList" class="active">
+            <div class="tab_fs__head-icon" style="background: url(images/active.svg);"></div>
+            <span>Records List</span>
+          </li>
+        </ul>
+
       </div>
 
-      <div class="floatListMenuIcon fixed_father pointer off" onselectstart="return false">
-        <img class="buttom-plus" src="images/plus.svg" alt="plus">
-      </div>
+      <div class="tab_fs__container">
 
-      <div class="floatListMenuSubIcons fixed_child" onselectstart="return false"></div>
+        <ul id="blockList" class="tab__content_act"></ul>
+
+        <div class="floatListMenuIcon fixed_father pointer off" onselectstart="return false">
+          <img class="buttom-plus" src="images/plus.svg" alt="plus">
+        </div>
+
+        <div class="floatListMenuSubIcons fixed_child" onselectstart="return false"></div>
+
+      </div>
 
     </div>
 
@@ -756,7 +761,7 @@
     <section class="wrapper">
       <main class="container">
         <div id="detailsContentDiv " class="detailsListDiv listDiv" style="position:relative;text-align:left;">
-          <ul class="o-one ">
+          <ul class="tab_fs__head ">
             <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
               <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
                 class="btnMyDetailsBack" alt="arrowLeft">
@@ -770,7 +775,7 @@
             <img src="images/my_details.svg" class="tab-image" alt="active">
             <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
           </div>
-          <ul class="tab__content_act" style="background-color: #fff;padding: 16px;">
+          <ul class="tab_fs__container" style="background-color: #fff;padding: 16px;">
             <li class="settingsTopfiller" style="width: 97%;"></li>
             <li>
               <table class="previewCard" id="" style="width: 100%">

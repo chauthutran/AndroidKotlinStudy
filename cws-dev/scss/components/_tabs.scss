@@ -190,6 +190,17 @@ $active-tab :$color-p;
 
         .field {
 
+            $this: &;
+
+            &--elem {
+
+                &:active,
+                #{$this}__variation--active & {
+                  border: 1px solid rgb( 44, 152, 240 );
+                }
+
+            }
+
             @include p-device(240) {
                 width: 100%;
                 margin: 0 0 8px;

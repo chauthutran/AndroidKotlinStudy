@@ -716,11 +716,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			{
 				var styleDef = formItemJson.styles[i];
 				//entryTag.css( styleDef.name, styleDef.value );
-				console.log( styleDef )
 
 				entryTag.each( function( index, element ){
 					$( element ).attr( styleDef.name, styleDef.value );
-					console.log( $( element ) );
 				}); 
 			}
 		}

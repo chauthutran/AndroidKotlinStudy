@@ -74,26 +74,32 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.sortListUlTag; // sortList_TagUL
 
     me.containerTagTemplate = `
-        <div class="viewsFilterAndSortContainer inputDiv">
+        <li class="viewsFilterAndSortContainer inputDiv">
 
-            <div class="viewsFilter">
+            <div class="field">
+                <div class="field__label">
+                    <label term="" class="">Select a view</label>
+                </div>
 
-                <label term="" class="from-string titleDiv">Select a view</label>
-
-                <div class="viewsListContainerTag">
-                    <div class="select viewsListContainerSelect">
-                        <select class="selector selViewsListSelector"></select>
+                <div class="fiel__controls">
+                    <div class="field__left">
+                        <div class="viewsListContainerTag">
+                            <div class="select viewsListContainerSelect">
+                                <select class="selector selViewsListSelector"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field__right" style="display:block">
+                        <div class="viewsSorter">
+                            <button class="buttonSortOrder"></button>
+                            <ul class="ulSortOrder"></ul>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <div class="viewsSorter">
-                <button class="buttonSortOrder"></button>
-                <ul class="ulSortOrder"></ul>
-            </div>
-
-        </div>`;
+        </li>`;
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
     me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
@@ -480,6 +486,9 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
     me.setSortOtherEvents = function( sortListButtonTag )
     {
+        sortListButtonTag.off( 'click' );
+        $( document ).off( 'click' );
+
         sortListButtonTag.click( function() {
             me.sortListUlTag.css( "display", "flex" );
         });
@@ -492,6 +501,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
                 me.sortListUlTag.hide();
             }
         });
+
 
         // me.sortListUlTag click events are created when we create sort list from selected view
     };

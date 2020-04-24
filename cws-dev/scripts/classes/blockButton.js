@@ -8,7 +8,16 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 	me.blockObj = blockObj;
 	me.validationObj = validationObj;
 	me.actionObj;
-		
+
+	me.divTabsContainer = ` <div class="tab_fs" /> `;
+	me.divTabsTargetContainer = ` <div class="tab_fs__container" /> `;
+	me.ulTabsHead = ` <ul class="tab_fs__head" /> `;
+	me.divHeadIcon = ` <div class="tab_fs__head-icon" /> `;
+	me.divHeadIconExp = ` <div class="tab_fs__head-icon_exp" /> `;
+	me.divHeadTextSpan = ` <span /> `;
+	me.liTab2ndary = ` <li class="2ndary" style="display:none" /> `;
+	me.divTabsTargetElement = ` <div class="tab_fs__container-content" /> `;
+
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
@@ -19,37 +28,78 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 	me.render = function( buttonsJson, blockTag, passedData )
 	{
 
+		var btnTabsUlTag;
+
 		if ( buttonsJson !== undefined )
 		{
 
 			// STEP 1. IF 'MAIN TAB' MODE, RENDER ALL THE TABS AND CONTENTS (AND ANCHOR TABS AS WELL)
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
 			{
-				var btnTabsContainerTag = $( '<div class="tab_fs" />' );
+				var btnTabsContainerTag = $( me.divTabsContainer );
 				blockTag.append( btnTabsContainerTag );
 	
-				var btnContentContainerTag = $( '<div class="tab_fs__container" />' );
+				var btnContentContainerTag = $( me.divTabsTargetContainer );
 				blockTag.append( btnContentContainerTag );
 
 				// Main Tab Part
-				var ulTagTag = $( '<ul class="tab_fs__head" />' );
-				btnTabsContainerTag.append( ulTagTag );
+				btnTabsUlTag = $( me.ulTabsHead );
+				btnTabsContainerTag.append( btnTabsUlTag );
 
-				var expIconTag = $( '<div class="tab_fs__head-icon_exp" />' );
+				var expIconTag = $( me.divHeadIconExp );
 				btnTabsContainerTag.append( expIconTag );
 
 				// SETUP EMPTY PLACE HOLDERS FOR TABS + TAB-CONTENT (pregenerated)
 				for( var i = 0; i < buttonsJson.length; i++ )
 				{
-					//var tabNo = i + 1;
-					var liTabTag = $( '<li rel="' + buttonsJson[ i ] + '" />' );
-					var dvTabContentTag = $( '<div class="tab_fs__head-icon" />' );
-					var dvContentTag = $( '<div id="' + buttonsJson[ i ] + '" class="tab_fs__container-content" />' );
+					// MAIN DISPLAY TAB
+					var liTabTag = $( '<li class="primary" />' );
+					var dvTabContentTag = $( me.divHeadIcon );
+					var spTabTextTag = $( me.divHeadTextSpan );
+					var dvContentTag = $( me.divTabsTargetElement );
 
-					ulTagTag.append( liTabTag );
+					liTabTag.attr( 'rel', buttonsJson[ i ] );
+					dvTabContentTag.attr( 'rel', buttonsJson[ i ] );
+					spTabTextTag.attr( 'rel', buttonsJson[ i ] );
+
+					dvContentTag.attr( 'id', buttonsJson[ i ] );
+					
+					btnTabsUlTag.append( liTabTag );
 					liTabTag.append( dvTabContentTag );
+					liTabTag.append( spTabTextTag );
 					btnContentContainerTag.append( dvContentTag );
+
+					if ( btnTabsUlTag )
+					{
+						// SECONDARY DISPLAY TAB (hidden, but shown for small screen layout)
+						let ulTabTag = $( '<ul style="display:none" />' );
+		
+						for( var a = 0; a < buttonsJson.length; a++ )
+						{
+							if ( a !== i )
+							{
+								var li2ndaryTabTag = $( me.liTab2ndary );
+								var dv2ndaryTabContentTag = $( me.divHeadIcon );
+								var sp2ndaryTabTextTag = $( me.divHeadTextSpan );
+		
+								li2ndaryTabTag.attr( 'rel', buttonsJson[ a ] );
+								dv2ndaryTabContentTag.attr( 'rel', buttonsJson[ a ] );
+								sp2ndaryTabTextTag.attr( 'rel', buttonsJson[ a ] );
+
+								li2ndaryTabTag.append( dv2ndaryTabContentTag );
+								li2ndaryTabTag.append( sp2ndaryTabTextTag );
+								ulTabTag.append( li2ndaryTabTag );
+							}
+						}
+
+						btnTabsUlTag.find( 'li.primary[rel=' + buttonsJson[ i ] + ']' ).append( ulTabTag );
+
+					}
+
+
 				}
+
+
 			}
 			else if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 			{
@@ -57,21 +107,24 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 				btnTabsContainerTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
 			}
 
+			var btnArr = Util.cloneArray( buttonsJson );
+
 			// Main Render: block button tag generate
 			for( var i = 0; i < buttonsJson.length; i++ )
 			{
 				me.renderBlockButton( i + 1, buttonsJson[i], btnTabsContainerTag, passedData );
 			}
 
+
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
 			{
 				// Setup the tab click for opening tab content area
-				FormUtil.setUpTabAnchorUI( btnTabsContainerTag );	
+				FormUtil.setUpNewUITab( btnTabsContainerTag ); //expIconTag
 
 				// Click on 1st/Last-Recorded tab.
 				setTimeout( function() 
 				{
-					btnTabsContainerTag.find( 'li:first-child' ).click();
+					btnTabsContainerTag.find( 'li:first' ).click();
 
 				}, 100 );
 
@@ -106,8 +159,6 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 
 			});
 
-			//divTag.append( btnTag );
-
 		}
 	}
 
@@ -119,29 +170,21 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 		{
 			if ( btnJson.buttonType === 'radioButton' )
 			{
-				/*if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
-				{
-					btnTag = $( '<div class="tb-content-buttom ">' + btnJson.defaultLabel + '</div>' );
-				}
-				else*/
-				{
-					btnTag = $( '<div style="padding:14px;" class=""><input type="radio" class="stayLoggedIn" style="width: 1.4em; height: 1.4em;">'
-						+ '<span ' + FormUtil.getTermAttr( btnJson ) + ' style="vertical-align: top; margin-left: 5px; ">' + btnJson.defaultLabel + '</span></div>' );
-				}
+				btnTag = $( '<div style="padding:14px;" class=""><input type="radio" class="stayLoggedIn" style="width: 1.4em; height: 1.4em;">'
+					+ '<span ' + FormUtil.getTermAttr( btnJson ) + ' style="vertical-align: top; margin-left: 5px; ">' + btnJson.defaultLabel + '</span></div>' );
 			}
 			else if ( btnJson.buttonType === 'imageButton' )
 			{
-				// NEW - added 'tabs' style..
+				// New UI Tab Button
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
 				{
-					// Append on your own ( both li and anchor )
-					var liTabTag = divTag.find( 'li[rel="' + btnData + '"]' );
-					var liDivTag = liTabTag.find( 'div' );
+					var liTabTag = divTag.find( 'li[rel=' + btnData + ']' );
+					var liDivTag = divTag.find( 'div[rel=' + btnData + ']' );
+					var liSpanTag = divTag.find( 'span[rel=' + btnData + ']' );
 
 					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
-					liTabTag.append( $( '<span>' + btnJson.defaultLabel + '</span>' ) );
-
-					btnTag = liTabTag; //aContentTag;
+					liSpanTag.text( btnJson.defaultLabel );
+					btnTag = liTabTag;
 				}
 				else
 				{
@@ -181,7 +224,6 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 			btnTag = $( '<div class="btnType unknown">' + caseNA + '</div>' );
 		}
 
-		console.log( btnTag );
 		return btnTag;
 	}
 
