@@ -78,7 +78,7 @@ FormUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup
 
 	inputTags.each( function()
 	{		
-		var inputTag = $(this);	
+		var inputTag = $( this );	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
 		var dataGroup = inputTag.attr( 'dataGroup' );
@@ -257,7 +257,7 @@ FormUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 	{
 		inputTags.each( function()
 		{		
-			var inputTag = $(this);	
+			var inputTag = $( this );	
 			var attrDataTargets = inputTag.attr( 'datatargets' );
 
 			if ( attrDataTargets )
@@ -481,7 +481,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 	{
 		event.preventDefault();
 
-		var thisTag = $(this);
+		var thisTag = $( this );
 		var className_Open = openCloseClass[0];
 		var className_Close = openCloseClass[1];
 
@@ -666,20 +666,20 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		console.log( $( this ) );
 		var tab_select = $( this ).attr( 'rel' ); 
 
-		console.log( $(this) );
+		console.log( $( this ) );
 
 		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568)
 		{
 			console.log( 'got here' );
-			console.log( $(this).find("ul") );
-            if ($(this).find("ul").is(':visible')) {
-                $(this).find("ul").css('display', 'none');
-                $(this).find("li").css('display', 'none');
-                $(this).next("ul").toggle();
+			console.log( $( this ).find( 'ul' ) );
+            if ($( this ).find( 'ul' ).is(':visible')) {
+                $( this ).find( 'ul' ).css('display', 'none');
+                $( this ).find( 'li' ).css('display', 'none');
+                $( this ).next( 'ul' ).toggle();
             } else {
-                $(this).find("ul").css('display', 'block');
-                $(this).find("li").css('display', 'block');
-                $(this).next("ul").toggle();
+                $( this ).find( 'ul' ).css('display', 'block');
+                $( this ).find( 'li' ).css('display', 'block');
+                $( this ).next( 'ul' ).toggle();
 			}
 
 		}
@@ -734,8 +734,8 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 		}
 		else
 		{
-			$(this).addClass('expanded');
-			$(this).find( ".expandable-arrow" ).attr('src','./images/arrow_up.svg');
+			$( this ).addClass('expanded');
+			$( this ).find( ".expandable-arrow" ).attr('src','./images/arrow_up.svg');
 		}
 
 	});
@@ -747,40 +747,51 @@ FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 
 	tag.find( 'li' ).on( 'click', function()
 	{
-		var tab_select = $( this ).attr( 'rel' ); 
-		//check for class 2ndary - always run ELSE statement
-		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568 && tag.find( '.active' ).length )
+		var Secondary = $( this ).hasClass( '2ndary' );
+
+		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568 && tag.find( '.active' ).length && ! Secondary )
 		{
 			console.log( 'got here' );
-            if ($(this).find("ul").is(':visible')) {
-                $(this).find("ul").css('display', 'none');
-                $(this).find("li").css('display', 'none');
-                $(this).next("ul").toggle();
+            if ($( this ).find( 'ul' ).is(':visible')) {
+                $( this ).find( 'ul' ).css('display', 'none');
+                $( this ).find( 'li' ).css('display', 'none');
+                $( this ).next( 'ul' ).toggle();
             } else {
-                $(this).find("ul").css('display', 'block');
-                $(this).find("li").css('display', 'block');
-                $(this).next("ul").toggle();
+                $( this ).find( 'ul' ).css('display', 'block');
+                $( this ).find( 'li' ).css('display', 'block');
+                $( this ).next( 'ul' ).toggle();
 			}
 
 		}
 		else
 		{
-			console.log( $( this ) );
 			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
-
-			//tag.siblings().find( '.active' ).empty();
 			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
-	
+
 			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
 				$( element ).hide();
 			}); 
-	
-			$( this ).addClass( 'active' );
-	
+
+			var tab_select = $( this ).attr( 'rel' ); 
 			var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
-	
+
+			if ( ! Secondary )
+			{
+				$( this ).addClass( 'active' );
+			}
+			else
+			{
+                $( this ).find( 'ul.2ndary' ).css('display', 'none');
+                $( this ).find( 'li.2ndary' ).css('display', 'none');
+				$( this ).next( 'ul' ).toggle();
+
+				$( this ).closest( 'li.primary' ).siblings( 'li[rel=' + tab_select + ']' ).addClass( 'active' );
+			}
+
 			activeTab.addClass( 'active' );
 			activeTab.fadeIn(); //show();
+
+
 		}
 
 	});
@@ -800,31 +811,7 @@ FormUtil.orientation = function() {
 			break;
 	}
 }
-/*
-$(".tab_fs__head li").click(function () {
 
-	if (FormUtil.orientation == 'portrait' && $(window).width() <= 568) {
-		if ($(this).find("ul").is(':visible')) {
-			$(this).find("ul").css('display', 'none');
-			$(this).find("li").css('display', 'none');
-			$(this).next("ul").toggle();
-		} else {
-			$(this).find("ul").css('display', 'block');
-			$(this).find("li").css('display', 'block');
-			$(this).next("ul").toggle();
-		}
-	} else {
-		$(".tab_fs__container-content").hide();
-		var activeTab = $(this).attr("rel");
-		$("#" + activeTab).fadeIn();
-		$(".tab_fs__head li").removeClass("active");
-		$(this).addClass("active");
-		$(this).find("ul").css('display', 'block');
-		$(this).find("li").css('display', 'block');
-		console.log('2');
-	}
-});
-*/
 FormUtil.getUserSessionAttr = function( usr, attr ) {
 
 	var lastSessionAll = JSON.parse(localStorage.getItem(usr))
@@ -1978,7 +1965,7 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 
 	inputTags.each( function()
 	{		
-		var inputTag = $(this);	
+		var inputTag = $( this );	
 		var attrDisplay = inputTag.attr( 'display' );
 		var nameVal = inputTag.attr( 'name' );
 		var getVal_visible = false;
@@ -2088,7 +2075,7 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 
 	inputTags.each( function()
 	{		
-		var inputTag = $(this);
+		var inputTag = $( this );
 		var dataTarg = FormUtil.getFormFieldPayloadConfigDataTarget( payloadConfig, inputTag.attr( 'name' ), formDefinition )
 
 		if ( dataTarg )

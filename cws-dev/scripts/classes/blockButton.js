@@ -15,6 +15,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 	me.divHeadIcon = ` <div class="tab_fs__head-icon" /> `;
 	me.divHeadIconExp = ` <div class="tab_fs__head-icon_exp" /> `;
 	me.divHeadTextSpan = ` <span /> `;
+	me.ulTab2ndary = ` <ul class="2ndary" style="display:none" /> `;
 	me.liTab2ndary = ` <li class="2ndary" style="display:none" /> `;
 	me.divTabsTargetElement = ` <div class="tab_fs__container-content" /> `;
 
@@ -72,7 +73,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 					if ( btnTabsUlTag )
 					{
 						// SECONDARY DISPLAY TAB (hidden, but shown for small screen layout)
-						let ulTabTag = $( '<ul style="display:none" />' );
+						let ulTabTag = $( me.ulTab2ndary );
 		
 						for( var a = 0; a < buttonsJson.length; a++ )
 						{
