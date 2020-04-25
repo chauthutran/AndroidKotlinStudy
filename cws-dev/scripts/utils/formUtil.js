@@ -745,23 +745,25 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 {	
 
-	tag.find( 'li' ).on( 'click', function()
+	tag.find( 'li' ).on( 'click', function( e)
 	{
-		var Secondary = $( this ).hasClass( '2ndary' );
 
-		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568 && tag.find( '.active' ).length && ! Secondary )
+		e.stopPropagation();
+
+		var Primary = $( this ).hasClass( 'primary' );
+		var Secondary = $( this ).hasClass( '2ndary' );
+		var ulOptionsPopup = $( this ).find( 'ul' );
+
+		if ( FormUtil.orientation() === 'portrait' && $( window ).width() <= 568 && $( this ).hasClass( 'active' )  ) // class 'active' will always be li.primary
 		{
-			console.log( 'got here' );
-            if ($( this ).find( 'ul' ).is(':visible')) {
-                $( this ).find( 'ul' ).css('display', 'none');
+            if ( ulOptionsPopup.is(':visible') ) {
+                ulOptionsPopup.css('display', 'none');
                 $( this ).find( 'li' ).css('display', 'none');
-                $( this ).next( 'ul' ).toggle();
             } else {
-                $( this ).find( 'ul' ).css('display', 'block');
+                ulOptionsPopup.css('display', 'block');
                 $( this ).find( 'li' ).css('display', 'block');
                 $( this ).next( 'ul' ).toggle();
 			}
-
 		}
 		else
 		{
@@ -770,29 +772,30 @@ FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 
 			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
 				$( element ).hide();
-			}); 
+			});
 
-			var tab_select = $( this ).attr( 'rel' ); 
+			var tab_select = $( this ).attr( 'rel' );
 			var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
 
-			if ( ! Secondary )
+			if ( Primary )
 			{
-				$( this ).addClass( 'active' );
+				if ( ! $( this ).hasClass( 'active' ) ) $( this ).addClass( 'active' );
 			}
 			else
 			{
-                $( this ).find( 'ul.2ndary' ).css('display', 'none');
-                $( this ).find( 'li.2ndary' ).css('display', 'none');
-				$( this ).next( 'ul' ).toggle();
+				ulOptionsPopup.hide();
+				$( "ul.2ndary" ).hide();
+				$( "li.2ndary" ).hide();
 
 				$( this ).closest( 'li.primary' ).siblings( 'li[rel=' + tab_select + ']' ).addClass( 'active' );
 			}
 
-			activeTab.addClass( 'active' );
+			if ( ! activeTab.hasClass( 'active' ) ) activeTab.addClass( 'active' );
 			activeTab.fadeIn(); //show();
 
-
 		}
+
+		e.stopPropagation();
 
 	});
 

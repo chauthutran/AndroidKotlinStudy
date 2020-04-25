@@ -53,7 +53,18 @@ input.loginUserPinNumeric:focus
     opacity: 0;
   }
 }
-/* 2. animated CWS logo spin*/
+/* 2. logo greyscale for offline/online */
+.logoOffline {
+  -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+  filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+  transition: all 1.5s ease;
+}
+.logoOnline {
+  -webkit-filter: grayscale(0); /* Google Chrome, Safari 6+ & Opera 15+ */
+  filter: grayscale(0); /* Microsoft Edge and Firefox 35+ */
+  transition: all 1s ease;
+}
+/* 3. animated CWS logo spin*/
 .cwsLogoRotateY{
   width: 100%;
   -webkit-animation:spin 1s linear infinite;
@@ -74,7 +85,7 @@ input.loginUserPinNumeric:focus
 @-moz-keyframes cwsLogoRotate { 75% { -moz-transform: rotate(90deg); } }
 @-webkit-keyframes cwsLogoRotate { 75% { -webkit-transform: rotate(90deg); } }
 @keyframes cwsLogoRotate { 50% { -webkit-transform: rotate(320deg); transform:rotate(320deg); opacity:0.75; } 66.6% { -webkit-transform: rotate(330deg); transform:rotate(330deg);opacity:0.9; } 80% { -webkit-transform: rotate(340deg); transform:rotate(340deg); opacity:1; } 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); opacity:1; }  }
-/* 3. loading CWS popup progressBar */
+/* 4. loading CWS popup progressBar */
 .startUpProgress
 {
   background-color: rgba( 71, 83, 163,0.75);
