@@ -591,7 +591,7 @@ function cwsRender()
 
 			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
 
-			$( 'nav.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
+			$( '.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
 			$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
 
 			/* OLD STYLING: remove? */

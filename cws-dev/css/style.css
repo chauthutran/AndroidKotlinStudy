@@ -5472,7 +5472,7 @@ h6 {
   position: -webkit-sticky;
   top: 0;
   display: -webkit-box;
-  display: none;
+  display: flex;
   vertical-align: middle;
   width: 100%;
   height: 56px;

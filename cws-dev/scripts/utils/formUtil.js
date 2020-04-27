@@ -505,7 +505,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 				$( 'div.scrim').hide();
 
-				//do not set zIndex for navDrawer (subListIconsTag) > navHeader (nav.Nav1) shows above closing menu
+				//do not set zIndex for navDrawer (subListIconsTag) > navHeader (.Nav1) shows above closing menu
 			}
 			else 
 			{
@@ -538,7 +538,7 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				//subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
-				subListIconsTag.css('zIndex', parseInt( $( 'nav.Nav1').css('zIndex') ) + 1 );
+				subListIconsTag.css('zIndex', parseInt( $( '.Nav1').css('zIndex') ) + 1 );
 				subListIconsTag.show();
 				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 				subListIconsTag.css( 'left', '0px' );

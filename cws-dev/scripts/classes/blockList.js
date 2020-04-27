@@ -320,7 +320,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
     {
-        /*
+        
         if ( hasView )
         {
             me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockJson.activityListViews );
@@ -331,10 +331,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
-            */
             me.pagingDataReset( me.pagingData );            
             me.populateActivityCardList( activityList, listTableTbodyTag );
-        //}
+        }
     };
 
     me.clearExistingList = function( listTableTbodyTag )
@@ -543,7 +542,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
       
         if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardTrTag.attr( 'groupBy', groupByIdxVal );
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
-    }
+    };
 
 
     // ===========================================================
@@ -563,11 +562,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         imgSyncDownTag.off( "click" ).click( () => {
 
+            $( 'div.Nav2' ).show();
+
             //SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
 
             // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
-            $('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
-            $('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
+            //$('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
+            //$('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
         });
 
         $(".sheet_bottom-scrim").click(function () {

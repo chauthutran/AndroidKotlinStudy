@@ -82,7 +82,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
       <div class="fiel__controls">
         <div class="field__selector">
           <select class="selViewsListSelector" mandatory="true">
-            <option selected="" disabled="disabled">Select an option</option>
           </select>
         </div>
         <div class="field__right" style="display: block;"></div>
@@ -98,6 +97,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         <div class="menu_item_text">Option line</div>
       </div>
     </div>`;
+
+    //             <option selected="" disabled="disabled">Select an option</option>
 
     /*
         <select mandatory="true">
@@ -305,19 +306,27 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         //var viewDef = me.getViewsItemConfig( viewName );
         me.viewDef_Selected = Util.getFromList( viewListDefs, viewName, "id" );
 
-        me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
+        if ( me.viewDef_Selected )
+        {
+            me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
         
 
-        // Populate Sort List - based on viewDef..
-        me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort ); 
+            // Populate Sort List - based on viewDef..
+            me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort ); 
+    
+    
+            // Sort with 1st one..
+            me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );    
+        }
+        else
+        {
+            console.log( 'Selected View definition not found!' );
+        }   
 
-
-        // Sort with 1st one..
-        me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );
-
-
+    
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..     
+        me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..  
+
     };
 
 
@@ -611,7 +620,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             {
                 me.sortList( sortDef, me.viewFilteredList );                        
 
-                me.clearGroupBy_UsedInBlockList_status();
+                //me.clearGroupBy_UsedInBlockList_status();
+                
                 // TODO:
                 //      - This should call 'setActivityListNRender()'
                 me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..            
@@ -619,7 +629,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         });
     };
 
-    
+
     // NOTE: Not used anymore?
     me.updateSortLiTag = function( sortTag )
     {
