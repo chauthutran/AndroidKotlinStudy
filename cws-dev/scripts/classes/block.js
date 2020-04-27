@@ -46,6 +46,10 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 	me.render = function()
 	{
+		// TEMP - For now, set 'Nav2' visible reset/hide here.. - should move to 'area'?
+		$( 'div.Nav2' ).hide();
+
+
 		// Form BlockTag generate/assign
 		me.clearClassTag( me.blockId, me.parentTag );
 		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.blockDefJson, me.parentTag );
