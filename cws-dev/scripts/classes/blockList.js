@@ -320,6 +320,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
     {
+        /*
         if ( hasView )
         {
             me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockJson.activityListViews );
@@ -330,9 +331,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
+            */
             me.pagingDataReset( me.pagingData );            
             me.populateActivityCardList( activityList, listTableTbodyTag );
-        }
+        //}
     };
 
     me.clearExistingList = function( listTableTbodyTag )

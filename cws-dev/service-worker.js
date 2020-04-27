@@ -1165,7 +1165,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b70110511806d5da33f4f6a11ed916cf"
+    "revision": "377d61ed0541e14dae244f4042518dc1"
   },
   {
     "url": "redeemGen.html",
@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "32b31cefb9a629b194fee74f6d9a3159"
+    "revision": "97bc9428d7614d41104a7ec8f33dc423"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -1209,11 +1209,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "03f75b7e4e4c145d3c13d2a3d01c543b"
+    "revision": "b8e773dfd37ca2e44eac1a9860bfed83"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "62b2d073d33ef807b4b1b56c9d3eb1da"
+    "revision": "6f2728b5367851685ca7ec7e016fbefb"
   },
   {
     "url": "scripts/classes/blockMsg.js",
