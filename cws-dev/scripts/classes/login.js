@@ -363,7 +363,7 @@ function Login( cwsRenderObj )
 			}
 
 			//$( 'nav' ).show();
-			$( 'nav' ).css( 'display', 'flex' );
+			$( '.Nav1' ).css( 'display', 'flex' );
 
 			// added by Greg: to 'repair' the innerText of Login button (which by this point should hold spinning/progress icon)
 			me.cwsRenderObj.langTermObj.translatePage();
