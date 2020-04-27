@@ -81,12 +81,51 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // -------- Tags --------------------------
 
-    me.blockList_UL_Tag;
+    me.listTableTbodyTag;    // was me.blockList_UL_Tag;
     me.divSyncDownTag = $('#divSyncDown');
     me.imgSyncDownTag = $('#imgSyncDown');
 
     // --------- Templates --------------------
 
+
+    me.template_listTableTag = `<table class="list">
+        <tbody>
+        </tbody>
+    </table>`;
+
+    me.tempalte_trActivityTag = `<tr class="activity">
+        <td>
+            <div class="list_three_line">
+
+                <div class="list_three_line__container">
+
+                    <div class="list_three_line-suppor_visuals i-metod_provision_40"></div>
+
+                    <div class="list_three_item_content">
+                        <div class="list_three_line-date">24 Feb 2020 - 13:15</div>
+                        <div class="list_three_line-text"><b>Greg R.</b> | Male 21<br>
+                        Service: 3x Pills</div>
+                    </div>
+
+                    <div class="list_three_item_cta">
+                        <div class="list_three_item_status color_status_pending">Pending</div>
+                        <div class="list_three_item_cta1"></div>
+                        <div class="list_three_item_cta2"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </td>
+    </tr>`;
+
+    me.tempalte_trActivityEmptyTag = `<tr class="activity emptyList">
+        <td>
+            <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
+        </td>
+    </tr>`;
+
+    
     me.template_ActivityCard = `<li itemid="" class="activityItemCard">
         <a class="expandable" itemid="" >
 
@@ -161,7 +200,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {        
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( blockTag );        
-        me.blockList_UL_Tag = me.setClassContainerTag( blockTag );
+
+        me.listTableTbodyTag = me.setClassContainerTag( blockTag );
+
         // Other Initial Render Setups - syncDown setup, favIcons, etc..
         me.otherInitialRenderSetup( me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
 
@@ -169,7 +210,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         me.setClassVariableTags( blockTag );
 
         // Populate controls - ActivityLists, viewFilter/sort, related.
-        me.populateControls( me.blockJson, me.hasView, me.activityList, me.blockList_UL_Tag );
+        me.populateControls( me.blockJson, me.hasView, me.activityList, me.listTableTbodyTag );
 
         // Events handling
         //me.setRenderEvents();
@@ -179,18 +220,18 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // Used by viewFilter.. - 
     me.reRenderWithList = function( newActivityList, callBack )
     {
-        if ( me.blockList_UL_Tag )
+        if ( me.listTableTbodyTag )
         {
             $( window ).scrollTop( 0 ); // Scroll top
             me.lastScrollTop = 0;
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
 
-            me.clearExistingList( me.blockList_UL_Tag ); // remove li.activityItemCard..
+            me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
             me.pagingDataReset( me.pagingData );
 
             // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.blockList_UL_Tag );
+            me.populateActivityCardList( me.activityList, me.listTableTbodyTag );
 
             if ( callBack ) callBack();
         }
@@ -238,20 +279,28 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.clearClassTag = function( blockTag )
     {
         // Clear any previous ones of this class
-        blockTag.find( 'div.listDiv' ).remove();
+        blockTag.find( 'table.list' ).remove();
     };
 
     me.setClassContainerTag = function( blockTag )
     {
+        var listTableTag = $( me.template_listTableTag );
+        
+        blockTag.append( listTableTag );
+
+        /*
         // Block/BlockList HTML related setup
         var listDivTag = $( '#listTemplateDiv > div.wrapper' ).clone(); // Copy from list html template located in index.html
         blockTag.append( listDivTag );
 
-        var blockList_UL_Tag = listDivTag.find( 'ul.tab__content_act');
+        var listTableTag = listDivTag.find( 'ul.tab__content_act');
 
-        FormUtil.setUpTabAnchorUI( blockList_UL_Tag ); // Set click event +e heights
+        FormUtil.setUpTabAnchorUI( listTableTag ); // Set click event +e heights
         
-        return blockList_UL_Tag;
+        return listTableTag;
+        */
+
+        return listTableTag.find( 'tbody' );
     };
 
 
@@ -269,11 +318,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.populateControls = function ( blockJson, hasView, activityList, blockList_UL_Tag )
+    me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
     {
         if ( hasView )
         {
-            me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockList_UL_Tag, blockJson.activityListViews );
+            me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockJson.activityListViews );
             me.BlockListViewObj.render();
 
             // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityCardList' with some clean up )?
@@ -282,14 +331,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         else
         {
             me.pagingDataReset( me.pagingData );            
-            me.populateActivityCardList( activityList, blockList_UL_Tag );
+            me.populateActivityCardList( activityList, listTableTbodyTag );
         }
     };
 
-    me.clearExistingList = function( blockList_UL_Tag )
+    me.clearExistingList = function( listTableTbodyTag )
     {
-        blockList_UL_Tag.find( 'li.activityItemCard' ).remove();
-        blockList_UL_Tag.find( 'li.blockListGroupBy' ).remove();
+        listTableTbodyTag.find( 'tr.activity' ).remove();
+        //listTableTbodyTag.find( 'li.blockListGroupBy' ).remove();
     };
 
 
@@ -300,14 +349,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, blockList_UL_Tag, scrollStartFunc, scrollEndFunc )
+    me.populateActivityCardList = function( activityList, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
     {        
         if ( activityList.length === 0 ) 
         {
             // if already have added emtpyList, no need to add emptyList
-            if ( me.blockList_UL_Tag.find( 'li.emptyListLi' ).length === 0 )
+            if ( me.listTableTbodyTag.find( 'tr.emptyList' ).length === 0 )
             {
-                me.blockList_UL_Tag.append( $( me.template_ActivityCardEmpty ) );
+                me.listTableTbodyTag.append( $( me.tempalte_trActivityEmptyTag ) );
             }
         }
         else
@@ -325,11 +374,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     var activityJson = activityList[i];
                     var groupByGroupIdxVal = '';
                     
-                    if ( me.hasView && me.BlockListViewObj.groupByGroups.length )
-                    {
-                        groupByGroupIdxVal = me.evalCreateGroupByGroup( activityJson, blockList_UL_Tag, me.BlockListViewObj );
-                    }
-                    var activityCardObj = me.createActivityCard( activityJson, blockList_UL_Tag, groupByGroupIdxVal );
+                    //if ( me.hasView && me.BlockListViewObj.groupByGroups.length )
+                    //{
+                    //    groupByGroupIdxVal = me.evalCreateGroupByGroup( activityJson, listTableTbodyTag, me.BlockListViewObj );
+                    //}
+
+                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, groupByGroupIdxVal );
 
                     activityCardObj.render();
                 }    
@@ -338,6 +388,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             }
         }
     };
+
+    /*
     me.evalCreateGroupByGroup = function( activityJson, targTag, blockListViewObj )
     {
         var retGroup = '';
@@ -395,7 +447,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             }
         });
     };
-        
+    */
 
     // ------------------------------------
     // --- Paging Related -------------
@@ -437,7 +489,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         //Infinite Scroll
 
         // Scroll only if this tag is visible, and there are activities
-        if ( me.blockList_UL_Tag.is( ":visible" ) && me.activityList.length > 0 )
+        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 )
         {                    
             var currScrollTop = $(window).scrollTop();
             var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
@@ -465,7 +517,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.scrollList = function()
     {
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.blockList_UL_Tag, function() {
+        me.populateActivityCardList( me.activityList, me.listTableTbodyTag, function() {
 
             me.cwsRenderObj.pulsatingProgress.show();
             
@@ -480,17 +532,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Create Activity Card Related -------------
 
-    me.createActivityCard = function( activityJson, blockList_UL_Tag, groupByIdxVal )
+    me.createActivityCard = function( activityJson, listTableTbodyTag, groupByIdxVal )
     {
-        var activityCardLiTag = $( me.template_ActivityCard );
-        blockList_UL_Tag.append( activityCardLiTag );     
+        var activityCardTrTag = $( me.tempalte_trActivityTag );
+        listTableTbodyTag.append( activityCardTrTag );     
 
-        var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
-
-        activityCardLiTag.attr( 'itemId', activityJson.activityId );
-        activityCardAnchorTag.attr( 'itemId', activityJson.activityId );
+        activityCardTrTag.attr( 'itemId', activityJson.activityId );
       
-        if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardLiTag.attr( 'groupBy', groupByIdxVal );
+        if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardTrTag.attr( 'groupBy', groupByIdxVal );
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
     }
 
@@ -512,7 +561,16 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         imgSyncDownTag.off( "click" ).click( () => {
 
-            SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
+            //SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
+
+            // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
+            $('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
+            $('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
+        });
+
+        $(".sheet_bottom-scrim").click(function () {
+            $('.sheet_bottom-fs').css('display', 'none');
+            $('.sheet_bottom-scrim').css('display', 'none');
         });
     };
 

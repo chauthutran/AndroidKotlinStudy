@@ -42,13 +42,14 @@
 //          4. Sort Populate and Event - are done when 'view' is selected due to each view has sorting list & definitions
 //
 // =========================================
-function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames )
+function BlockListView( cwsRenderObj, blockList, viewListNames )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
     me.blockListObj = blockList;
-    me.blockList_UL_Tag = blockList_UL_Tag;
+    //me.blockList_UL_Tag = blockList_UL_Tag;
+    me.nav2Tag;
     me.viewListNames = viewListNames;
 
     me.mainList;
@@ -71,9 +72,61 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
     // Sort Related Tag
     me.sortListButtonTag; // sortList_Tagbutton
-    me.sortListUlTag; // sortList_TagUL
+    me.sortListDivTag; //     me.sortListUlTag; // sortList_TagUL
+
+    //<div class="Nav2" style="display:none;"></div>
 
     me.containerTagTemplate = `
+    <div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+      <div class="field__label"><label>Label</label><span>*</span></div>
+      <div class="fiel__controls">
+        <div class="field__selector">
+          <select class="selViewsListSelector" mandatory="true">
+            <option selected="" disabled="disabled">Select an option</option>
+          </select>
+        </div>
+        <div class="field__right" style="display: block;"></div>
+      </div>
+    </div>
+    <div class="Nav2__icon" style="transform: rotate(0deg);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.62497 2V21.0951L5.87888 19.349C5.73243 19.2026 5.49407 19.2026 5.34763 19.349C5.20118 19.4954 5.20118 19.7324 5.34763 19.8789L7.73435 22.2656C7.88081 22.4121 8.11783 22.4121 8.26429 22.2656L10.651 19.8789C10.7975 19.7324 10.7975 19.4954 10.651 19.349C10.5046 19.2026 10.2675 19.2026 10.1211 19.349L8.37497 21.0951V2H7.62497ZM16 2C15.904 2 15.8089 2.03615 15.7356 2.10937L13.3489 4.49609C13.2025 4.64254 13.2025 4.87959 13.3489 5.02604C13.4953 5.17249 13.7324 5.17249 13.8789 5.02604L15.625 3.27995V22.375H16.375V3.27995L18.1211 5.02604C18.2675 5.17249 18.5059 5.17249 18.6523 5.02604C18.7988 4.87959 18.7988 4.64254 18.6523 4.49609L16.2656 2.10937C16.1924 2.03615 16.0959 2 16 2Z" class="c_50"></path>
+      </svg>
+    </div>
+    <div class="Menus_display" style="display: none;">
+      <div class="menu_item_comtainer">
+        <div class="menu_item_text">Option line</div>
+      </div>
+    </div>`;
+
+    /*
+        <select mandatory="true">
+            <option selected="" disabled="disabled">Select an option</option>
+            <option value="Option1">View 1</option>
+            <option value="Option2">View 2</option>
+            <option value="Option3">View 3</option>
+            <option value="Option4">View 4</option>
+            <option value="Option5">View 5</option>
+          </select>
+
+        <div class="Menus_display" style="display: none;">
+        <div class="menu_item_comtainer">
+            <div class="menu_item_text">Option line</div>
+        </div>
+        <div class="menu_item_comtainer">
+            <div class="menu_item_text">And other option line..</div>
+        </div>
+        <div class="menu_item_comtainer">
+            <div class="menu_item_text">And other option line..</div>
+        </div>
+        <div class="menu_item_comtainer">
+            <div class="menu_item_text">And other option line..</div>
+        </div>
+        </div>          
+    */
+
+
+    /* `
         <li class="viewsFilterAndSortContainer inputDiv">
 
             <div class="field">
@@ -99,16 +152,23 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
             </div>
 
-        </li>`;
+        </li>`;*/
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
-    me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
+    //me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
 
+    me.sortDivTagTemplate = `<div class="menu_item_comtainer" sortid="">
+        <div class="menu_item_text">Option line</div>
+    </div>`;
+    
+    //`<li class="liSort" sortid="" ></li>`;
 
     // ----------------------------
 
     me.initialize = function()
     {
+        me.nav2Tag = $( 'div.Nav2' ).show();
+
         me.setUpInitialData();
     };
     
@@ -117,11 +177,11 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     me.render = function()
     {
         // Clear previous UI & Set containerTag with templates
-        me.clearClassTag( me.blockList_UL_Tag );        
-        me.setClassContainerTag( me.blockList_UL_Tag, me.containerTagTemplate );
+        me.clearClassTag( me.nav2Tag );        
+        me.setClassContainerTag( me.nav2Tag, me.containerTagTemplate );
 
         // Set viewList/sort related class variables
-        me.setClassVariableTags( me.blockList_UL_Tag );
+        me.setClassVariableTags( me.nav2Tag );
         
         // Populate controls - view related.  Sort related are done in view select event handling.
         me.populateControls( me.viewListDefs, me.viewSelectTag );
@@ -155,25 +215,25 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
     // -----------------
 
-    me.clearClassTag = function( blockList_UL_Tag )
+    me.clearClassTag = function( nav2Tag )
     {
-        // Clear any previous ones of this class
-        blockList_UL_Tag.find( 'div.viewsFilterAndSortContainer' ).remove();
+        nav2Tag.html( '' );
     };
 
-    me.setClassContainerTag = function( blockList_UL_Tag, containerTagTemplate )
+    me.setClassContainerTag = function( nav2Tag, containerTagTemplate )
     {
         // Set HTML from template 
-        blockList_UL_Tag.append( containerTagTemplate );
+        nav2Tag.append( containerTagTemplate );
     };
 
-    me.setClassVariableTags = function ( blockList_UL_Tag )
+    me.setClassVariableTags = function ( nav2Tag )
     {
         // View Filter Tags
-        me.viewSelectTag = blockList_UL_Tag.find( 'select.selViewsListSelector' );
+        me.viewSelectTag = nav2Tag.find( 'select.selViewsListSelector' );
+
         // Sort Related Tags
-        me.sortListButtonTag = blockList_UL_Tag.find( 'button.buttonSortOrder' ); // sortList_Tagbutton
-        me.sortListUlTag = blockList_UL_Tag.find( 'ul.ulSortOrder' ); // sortList_TagUL
+        me.sortListButtonTag = nav2Tag.find( 'div.Nav2__icon' ); // sortList_Tagbutton
+        me.sortListDivTag = nav2Tag.find( 'div.Menus_display' ); // sortList_TagUL
     };
 
 
@@ -249,7 +309,7 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         
 
         // Populate Sort List - based on viewDef..
-        me.populateSorts( me.sortListUlTag, me.viewDef_Selected.sort ); 
+        me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort ); 
 
 
         // Sort with 1st one..
@@ -272,20 +332,25 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
             // Below eval use 'activityItem' object, thus, we need to declare it..
             if ( me.evalQueryCondition( viewDef.query, activityItem ) )
             {
-                if ( me.hasGroupBy() ) 
-                {
-                    activityItem = me.evalGroupByCondition( viewDef.groupBy, activityItem );
-                }
+                //if ( me.hasGroupBy() ) 
+                //{
+                //    activityItem = me.evalGroupByCondition( viewDef.groupBy, activityItem );
+                //}
                 filteredData.push( activityItem );
             }
         }
 
-        if ( me.hasGroupBy() )
-        {
-            me.setGroupBy_GroupsAndFilterValues( viewDef, filteredData );
-        }
+        //if ( me.hasGroupBy() )
+        //{
+        //    me.setGroupBy_GroupsAndFilterValues( viewDef, filteredData );
+        //}
+
+        
         return filteredData;
     };
+
+
+    /*
     me.setGroupBy_GroupsAndFilterValues = function( viewDef, mainList )
     {
         me.groupByGroups = []; //(re)set to empty array
@@ -358,6 +423,8 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         activityItem[ groupBy ] = groupByResult;
         return activityItem;
     };
+    */
+
 
     me.evalQueryCondition = function( query, activityItem )
     {
@@ -378,9 +445,10 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     // -------------------------------------
     // -- Sorting Operation Related
 
-    me.populateSorts = function ( sortListUlTag, sortList )
+    me.populateSorts = function ( sortListDivTag, sortList )
     {
-        sortListUlTag.empty();
+        //sortListDivTag.html( '' );
+        sortListDivTag.find( 'div.menu_item_comtainer' ).remove();
         
         if ( sortList )
         {
@@ -388,25 +456,26 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
             {
 
                 var sortDef = sortList[ i ];
-                var liTag = $( me.sortLiTagTemplate );
+                var divTag = $( me.sortDivTagTemplate );
 
-                liTag.attr( 'sortid', sortDef.id );
-                liTag.html( sortDef.name );
+                divTag.attr( 'sortid', sortDef.id );
+                divTag.find( 'div.menu_item_text' ).html( sortDef.name );
 
-                sortListUlTag.append( liTag );
+                sortListDivTag.append( divTag );
 
-                me.setSortLiTagClickEvent( liTag, me.viewDef_Selected.sort );
+                me.setSortDivTagClickEvent( divTag, me.viewDef_Selected.sort );
 
-                if ( sortDef.groupAfter != undefined && sortDef.groupAfter === 'true' )
-                {
-                    var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
-                    sortListUlTag.append( liGroup );
-                }
+                // TODO: DO THIS LATER
+                //if ( sortDef.groupAfter != undefined && sortDef.groupAfter === 'true' )
+                //{
+                //    var liGroup = $(`<li><hr class="filterGroupHR"></li>`);
+                //    sortListDivTag.append( liGroup );
+                //}
             }
         }
 
         // For below, we can use .css to mark the bold for selected.
-        // me.updateMenuItem_Tag( me.sortListUlTag.children()[0] );
+        // me.updateMenuItem_Tag( me.sortListDivTag.children()[0] );
     };
 
 
@@ -423,15 +492,18 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
     {
         try 
         {
-            if ( me.hasGroupBy() )
-            {
-                me.evalGroupBySort( sortDef.field, viewFilteredList, me.viewDef_Selected.groupBy, sortDef.order.toLowerCase() );
-            }
-            else
-            {
-           me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
-            }
-            me.updateSortLiTag( $( me.sortListUlTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
+            //if ( me.hasGroupBy() )
+            //{
+            //    me.evalGroupBySort( sortDef.field, viewFilteredList, me.viewDef_Selected.groupBy, sortDef.order.toLowerCase() );
+            //}
+            //else
+            //{
+                
+            me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
+            //}
+
+            // TODO: There is no updated sort visual for now
+            //me.updateSortLiTag( $( me.sortListDivTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
         }
         catch ( errMsg ) 
         {
@@ -486,11 +558,30 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
 
     me.setSortOtherEvents = function( sortListButtonTag )
     {
+        $(".Nav2__icon").click(function () {
+            if ($('.Menus_display').is(':visible')) {
+                $('.Menus_display').css('display', 'none');
+                $('.fab-wrapper').show();
+                $('.Nav2__icon').css('transform', 'rotate(0deg)');
+            } else {
+                $('.Menus_display').css('display', 'table-row');
+                $('.fab-wrapper').css('display', 'none');
+                $('.Nav2__icon').css('transform', 'rotate(180deg)');
+            }
+        });
+    
+        $(".menu_item_comtainer").click(function () {
+            $('.Menus_display').css('display', 'none');
+            $('.Nav2__icon').css('transform', 'rotate(0deg)');
+            $('.fab-wrapper').show();
+        });
+
+        /*
         sortListButtonTag.off( 'click' );
         $( document ).off( 'click' );
 
         sortListButtonTag.click( function() {
-            me.sortListUlTag.css( "display", "flex" );
+            me.sortListDivTag.css( "display", "flex" );
         });
 
         $( document ).click( function( event ) 
@@ -498,18 +589,18 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
             // If click target is not sortButton, hide the UL;            
             if ( event.target != me.sortListButtonTag[0] )
             {
-                me.sortListUlTag.hide();
+                me.sortListDivTag.hide();
             }
         });
+        */
 
-
-        // me.sortListUlTag click events are created when we create sort list from selected view
+        // me.sortListDivTag click events are created when we create sort list from selected view
     };
 
 
-    me.setSortLiTagClickEvent = function( liTag, sortDefs )
+    me.setSortDivTagClickEvent = function( divTag, sortDefs )
     {
-        liTag.click( function()
+        divTag.click( function()
         {
             var sortId = $( this ).attr( 'sortid' );
 
@@ -528,17 +619,19 @@ function BlockListView( cwsRenderObj, blockList, blockList_UL_Tag, viewListNames
         });
     };
 
+    
+    // NOTE: Not used anymore?
     me.updateSortLiTag = function( sortTag )
     {
         for ( var i = 0; i < me.viewDef_Selected.sort.length; i++ )
         {
             if ( $( sortTag ).attr( 'sortid' ) === me.viewDef_Selected.sort[ i ].id )
             {
-                $( me.sortListUlTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","bolder");
+                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","bolder");
             }
             else
             {
-                $( me.sortListUlTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
+                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
             }
         }
     }
