@@ -108,7 +108,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     </div>
 
                     <div class="list_three_item_cta">
-                        <div class="list_three_item_status color_status_pending">Pending</div>
+                        <div class="list_three_item_status"></div>
                         <div class="list_three_item_cta1"></div>
                         <div class="list_three_item_cta2"></div>
                     </div>
@@ -562,13 +562,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         imgSyncDownTag.off( "click" ).click( () => {
 
-            $( 'div.Nav2' ).show();
 
             //SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
 
             // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
-            //$('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
-            //$('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
+            $('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
+            $('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
         });
 
         $(".sheet_bottom-scrim").click(function () {

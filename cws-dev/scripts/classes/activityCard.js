@@ -36,45 +36,47 @@ function ActivityCard( activityId, cwsRenderObj )
    
     // ----------------------------------------------------
    
-    me.getActivityCardLiTag = function()
+    me.getActivityCardTrTag = function()
     {
-        return $( 'li.activityItemCard[itemid="' + me.activityId + '"]' );
+        return $( 'tr.activity[itemid="' + me.activityId + '"]' );
     };
 
     me.getSyncButtonTag = function()
     {
-        return me.getActivityCardLiTag().find( '.listItem_icon_sync' );
+        return me.getActivityCardTrTag().find( '.list_three_item_cta2' );
     };
     
     // ----------------------------------------------------
 
     me.render = function()
     {        
-        var activityCardLiTag = me.getActivityCardLiTag();
+        var activityCardTrTag = me.getActivityCardTrTag();
 
         //console.log( 'render' );
-        //console.log( 'activityCardLiTag' );
+        //console.log( 'activityCardTrTag' );
 
         // If tag is visible (has been created), perform render
-        if ( activityCardLiTag )
+        if ( activityCardTrTag )
         {
             var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );
 
             try
             {
-                var divListItemContentTag = activityCardLiTag.find( 'div.divListItemContent' );
-                var activityCardAnchorTag = activityCardLiTag.find( 'a.expandable' );
-                var contentDivTag = activityCardLiTag.find( 'div.listItem' );
+                var divListItemContentTag = activityCardTrTag.find( 'div.list_three_item_content' );
 
 
+                // NOT APPLICABLE...
+                var activityCardAnchorTag = activityCardTrTag.find( 'a.expandable' );
+                var contentDivTag = activityCardTrTag.find( 'div.listItem' );
                 // --- See More Related Tags
-                var divSeeMoreTag = activityCardLiTag.find( 'div.act-l' );
+                var divSeeMoreTag = activityCardTrTag.find( 'div.act-l' );
                 var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
                 //var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
                 var divSeeMoreIconBtnTag = divSeeMoreTag.find( 'div.act-l-expander' );
-                var divSeeMoreContentTag = activityCardLiTag.find( 'div.act-preview' );
+                var divSeeMoreContentTag = activityCardTrTag.find( 'div.act-preview' );
     
                     
+
                 var activityTrans = me.getCombinedTrans( activityJson );
                 // activity
                 //      - tran1
@@ -82,7 +84,7 @@ function ActivityCard( activityId, cwsRenderObj )
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityCardLiTag, activityJson );
+                me.activityTypeDisplay( activityCardTrTag, activityJson );
                 
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, SessionManager.sessionData.dcdConfig );
@@ -90,13 +92,15 @@ function ActivityCard( activityId, cwsRenderObj )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit..
-                var listItem_icon_syncTag = activityCardLiTag.find( '.listItem_icon_sync' );
+                var listItem_icon_syncTag = activityCardTrTag.find( '.list_three_item_cta2' );
                 listItem_icon_syncTag.off( 'click' );
                 
                 // If there is 'processing' json in activityJson, it means there is something to be processed.
                 if ( activityJson.processing )
                 {
-                    activityCardLiTag.find( '.listItem_icon_sync' ).show();
+                    //listItem_icon_syncTag.show();                    
+                    listItem_icon_syncTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
+                    activityCardTrTag.find( '.list_three_item_status' ).html( 'Pending' );
 
                     listItem_icon_syncTag.on( 'click', function( e ) 
                     {
@@ -105,12 +109,12 @@ function ActivityCard( activityId, cwsRenderObj )
                         me.activitySubmitSyncClick(); 
                     });    
 
-                    // Icons Render
-                    me.syncUpStatusDisplay( activityCardLiTag, activityJson, me.cwsRenderObj );                         
+                    // Icons Render  <-- Need to populate with new design..
+                    me.syncUpStatusDisplay( activityCardTrTag, activityJson, me.cwsRenderObj );                         
                 }
                 else
                 {
-                    activityCardLiTag.find( '.listItem_icon_sync' ).hide();
+                    activityCardTrTag.find( '.listItem_icon_sync' ).hide();
                 }
     
     
@@ -121,7 +125,7 @@ function ActivityCard( activityId, cwsRenderObj )
                     e.stopPropagation();         
 
                     // remove all other 'expanded' tags (and run click > hideMoreDetails if preview is showing)
-                    var blockListUlTag = activityCardLiTag.closest( 'ul.tab__content_act' );
+                    var blockListUlTag = activityCardTrTag.closest( 'ul.tab__content_act' );
                     blockListUlTag.find('a.expanded').each( function(){
 
                         if ( $( this ) !== activityCardAnchorTag ) 
@@ -182,7 +186,7 @@ function ActivityCard( activityId, cwsRenderObj )
     me.setActivityContentDisplay = function( activity, activityTrans, divListItemContentTag, configJson )
     {
         //var displaySettings = ConfigManager.getActivityDisplaySettings();
-        var divLabelTag = divListItemContentTag.find( 'div.listItem_label_title' );
+        var divLabelTag = divListItemContentTag.find( 'div.list_three_line-date' );
 
         var activityItem = activity;  // Temporarily backward compatible..
         var activitySettings = FormUtil.getActivityType( activity ); 
@@ -210,7 +214,7 @@ function ActivityCard( activityId, cwsRenderObj )
         {
             // If custom config display, remove 
             divLabelTag.remove();
-            divListItemContentTag.find( 'div.activityContentDisplay' ).remove();
+            var divItemInfoTag = divListItemContentTag.find( 'div.list_three_line-text' ).html( '' );
             
             for( var i = 0; i < displaySettings.length; i++ )
             {
@@ -228,7 +232,7 @@ function ActivityCard( activityId, cwsRenderObj )
                     console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
                 }
     
-                divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );    
+                divItemInfoTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );    
             }
 
         }
@@ -237,7 +241,8 @@ function ActivityCard( activityId, cwsRenderObj )
         {
             var previewDivTag = me.getListPreviewData( activityTrans, activitySettings.previewData );
             divListItemContentTag.append( previewDivTag );    
-        }                    
+        }                
+
         divListItemContentTag.html( divListItemContentTag.html().replace( /undefined/g, '' ) )
     };
 
@@ -297,15 +302,15 @@ function ActivityCard( activityId, cwsRenderObj )
     // -------------------------------
     // --- Display Icon/Content related..
     
-    me.syncUpStatusDisplay = function( activityCardLiTag, activityJson )
+    me.syncUpStatusDisplay = function( activityCardTrTag, activityJson )
     {
         try
         {
             // 1. Does it find hte matching status?
             var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
-            if ( activitySyncUpStatusConfig ) activityCardLiTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
+            if ( activitySyncUpStatusConfig ) activityCardTrTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
-            me.setActivitySyncUpStatus( activityCardLiTag, activityJson.processing );
+            me.setActivitySyncUpStatus( activityCardTrTag, activityJson.processing );
         }
         catch( errMsg )
         {
@@ -314,13 +319,13 @@ function ActivityCard( activityId, cwsRenderObj )
     };
 
 
-    me.activityTypeDisplay = function( activityCardLiTag, activityJson )
+    me.activityTypeDisplay = function( activityCardTrTag, activityJson )
     {
         try
         {
             var activityTypeConfig = ConfigManager.getActivityTypeConfig( activityJson );
     
-            var activityTypeTdTag = activityCardLiTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
+            var activityTypeTdTag = activityCardTrTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
 
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
             var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
@@ -386,11 +391,11 @@ function ActivityCard( activityId, cwsRenderObj )
         }
         return ret;
     };
-    me.setActivitySyncUpStatus = function( activityCardLiTag, activityProcessing ) 
+    me.setActivitySyncUpStatus = function( activityCardTrTag, activityProcessing ) 
     {
         try
         {
-            var imgSyncIconTag = activityCardLiTag.find( 'small.syncIcon img' );
+            var imgSyncIconTag = activityCardTrTag.find( 'small.syncIcon img' );
 
             if ( activityProcessing.status === Constants.status_redeem_queued )
             {
@@ -424,12 +429,12 @@ function ActivityCard( activityId, cwsRenderObj )
         }
         else
         {
-            var activityCardLiTag = me.getActivityCardLiTag();
+            var activityCardTrTag = me.getActivityCardTrTag();
 
             try
             {
                 // run UI animations
-                if ( activityCardLiTag ) me.updateItem_UI_StartSync();
+                if ( activityCardTrTag ) me.updateItem_UI_StartSync();
     
                 var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );            
                 var processing = Util.getJsonDeepCopy( activityJson.processing );
@@ -447,7 +452,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
                 WsCallManager.requestPost( processing.url, payload, loadingTag, function( success, responseJson )
                 {
-                    if ( activityCardLiTag ) me.updateItem_UI_FinishSync();
+                    if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
                     
                     me.syncUpResponseHandle( success, responseJson, callBack );
                 });            
@@ -455,7 +460,7 @@ function ActivityCard( activityId, cwsRenderObj )
             }
             catch( errMsg )
             {
-                if ( activityCardLiTag ) me.updateItem_UI_FinishSync();
+                if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
     
                 console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
                 callBack( false );

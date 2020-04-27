@@ -3066,19 +3066,16 @@ h6 {
   -ms-flex-align: center;
       align-items: center;
   cursor: pointer;
-  background-image: url(../images//sync-pending_36.svg);
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
 
 .no-svg .list .list_three_line .list_three_line__container .list_three_item_cta .list_three_item_cta2 {
-  background-image: url(../images//sync-pending_36.png);
 }
 
 @media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
   .no-svg .list .list_three_line .list_three_line__container .list_three_item_cta .list_three_item_cta2 {
-    background-image: url(../images//sync-pending_36@2x.png);
   }
 }
 
