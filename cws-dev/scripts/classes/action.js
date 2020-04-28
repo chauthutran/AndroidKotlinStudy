@@ -389,13 +389,18 @@ function Action( cwsRenderObj, blockObj )
 		{					
 			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
 
-			// generate url
-			var url = ActivityDataManager.generateWsUrl( formsJson, actionDefJson );
+			// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
+			var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
 
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			
+			// If search by voucher/phone number go '/dc/search--' by dws, we need to add userName and password in payload
+			// NOTE: TODO: We should have a flag for this?  in 'actionDefJson', add login_Password?
+			formsJson.password = SessionManager.sessionData.login_Password;
+			formsJson.userName = SessionManager.sessionData.login_UserName;
+
+
 			WsCallManager.requestPost( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
 
 				if ( !redeemReturnJson ) redeemReturnJson = {};
