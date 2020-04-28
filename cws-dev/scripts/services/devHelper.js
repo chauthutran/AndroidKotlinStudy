@@ -31,6 +31,13 @@ DevHelper.sampleDataList = [{
         "location": {},
         "program": "fpl",
         "activityType": "eVoucher",
+        "processing": {
+            "created": "2020-04-06T18:30:50.000",
+            "status": "submit",
+            "history": [
+                { "status": "submit", "dateTime": "2020-04-06T18:30:50.000", "msg": "Downloaded" }
+            ]
+        },
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
@@ -71,6 +78,15 @@ DevHelper.sampleDataList = [{
         "location": {},
         "program": "fpl",
         "activityType": "WalkInA",
+        "processing": {
+            "created": "2020-04-05T17:16:35.000",
+            "status": "queued",
+            "history": [
+                { "status": "queued", "dateTime": "2020-04-05T17:16:35.000", "msg": "Created in PWA app" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
@@ -112,6 +128,16 @@ DevHelper.sampleDataList = [{
         "location": {},
         "program": "fpl",
         "activityType": "PhoneVoucher",
+        "processing": {
+            "created": "2020-04-05T17:16:35.000",
+            "status": "failed",
+            "history": [
+                { "status": "queued", "dateTime": "2020-04-05T17:16:35.000", "msg": "Created in PWA app" }
+                ,{ "status": "failed", "dateTime": "2020-04-07T17:16:35.000", "msg": "Error msg... - more detail with responseCode" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
@@ -153,6 +179,15 @@ DevHelper.sampleDataList = [{
         "location": {},
         "program": "fpl",
         "activityType": "WalkInB",
+        "processing": {
+            "created": "2020-04-06T17:16:35.000",
+            "status": "submit",
+            "history": [
+                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "msg": "Synced - new add" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {
@@ -194,6 +229,15 @@ DevHelper.sampleDataList = [{
         "location": {},
         "program": "fpl",
         "activityType": "WalkInB",
+        "processing": {
+            "created": "2019-12-30T17:16:35.000",
+            "status": "submit",
+            "history": [
+                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "msg": "Downloaded" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
         "transactions": [{
             "transactionType": "c_reg",
             "dataValues": {

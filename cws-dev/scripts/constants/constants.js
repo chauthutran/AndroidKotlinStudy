@@ -10,7 +10,7 @@ Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
 Constants.status_queued = "queued"; // initialize from dcd@XX ?
 Constants.status_failed = "failed"; // initialize from dcd@XX ?
 Constants.status_hold = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
-//Constants.status_downloaded = "downloaded"; // DO NOT NEED THIS - SAME AS 'synced'
+Constants.status_downloaded = "downloaded"; // DO NOT NEED THIS - SAME AS 'synced'?
 
 //Constants.fixedActiveUserId = "qwertyuio3"; // Replaced with SessionManager.sessionData.login_UserName
 

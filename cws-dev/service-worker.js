@@ -1173,7 +1173,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "1169c6fbd80bb448fbb5bb762c0e0cdf"
+    "revision": "aa71d3289c21d916f66b4cfb97283ea4"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1449,7 +1449,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/wsCallManager.js",
-    "revision": "15160ef60f7dac18d31b5991fb3758e9"
+    "revision": "f1c58ff56a2fb1ff154a1e7e7e78cced"
   },
   {
     "url": "scripts/utils/activityUtil.js",
