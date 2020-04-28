@@ -12,7 +12,7 @@
   const _cwsRenderObj = new cwsRender();
   const _swManagerObj = new swManager( _cwsRenderObj );
 
-  var debugMode = WsApiManager.isDebugMode;
+  var debugMode = false; //WsApiManager.isDebugMode;
 
   // ----------------------------------------------------
 
@@ -30,7 +30,7 @@
   function startApp() 
   {
 
-    WsCallManager.setWsOriginUrl();
+    WsCallManager.setWsTarget();
 
     // app startup event setup (for listeners)
     window.addEventListener('appinstalled', App_installed_done);
@@ -45,7 +45,7 @@
 
     try {
 
-      WsApiManager.setupWsApiVariables( function () {
+      //WsApiManager.setupWsApiVariables( function () {
 
         App_UI_startUp_Progress( '75%' );
 
@@ -71,7 +71,7 @@
 
         });
 
-      });
+      //});
     }
     catch( err )
     {

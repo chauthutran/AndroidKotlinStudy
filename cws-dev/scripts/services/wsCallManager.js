@@ -9,12 +9,14 @@
 
 function WsCallManager() {}
 
-WsCallManager.wsOriginUrl = '';  // get set when start..
+WsCallManager.wsTargetUrl = '';  // get set when start..
 WsCallManager.localhostProxyUrl = 'http://localhost:3020';
+WsCallManager.isLocalDevCase = false;
 
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
+    'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
     'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev'
 };
 
@@ -24,34 +26,23 @@ WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A='; // { 'Aut
 // ============================================
 // Setup / Set on Start of App Related ========
 
-WsCallManager.setWsOriginUrl = function()
+WsCallManager.setWsTarget = function()
 {
     var originUrl = window.location.origin;  // https://pwa.psi-connect.. OR http://localhsot
+
+    WsCallManager.isLocalDevCase = WsCallManager.checkLocalDevCase( originUrl );
 
     var stageName = 'dev';  // Default to 'dev'.
 
     // use current site 
     // localhost is set to use 'stage'
-    if ( originUrl.indexOf( 'http://localhost' ) === 0 ) stageName = 'stage';
-    else if ( originUrl.indexOf( 'http://127.0.0.1:' ) === 0 ) stageName = 'stage';
+    if ( WsCallManager.isLocalDevCase ) stageName = 'dev';
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
+    else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
     
-    WsCallManager.wsOriginUrl = WsCallManager.wsUrlList[ stageName ];
-};
-
-
-WsCallManager.localhostProxyCaseHandle = function( url, requestOption )
-{
-    if ( window.location.origin.indexOf( 'http://localhost' ) === 0 || window.location.origin.indexOf( 'http://127.0.0.1:' ) === 0 )
-    {
-        //requestOption.headers[ 'Target-URL' ] = url;
-
-        url = WsCallManager.localhostProxyUrl + '/' + url;
-    }
-    
-    return url;
+    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
 };
 
 
@@ -100,7 +91,7 @@ WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFu
         body: JSON.stringify( payloadJson )
     };
 
-    url = WsCallManager.localhostProxyCaseHandle( url, requestOption );
+    url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
 	// Send the POST reqesut	
 	RESTUtil.performPost( url, requestOption, function( success, returnJson ) 
@@ -121,7 +112,7 @@ WsCallManager.requestGet = function( apiPath, loadingTag, returnFunc )
         }
     };
 
-    url = WsCallManager.localhostProxyCaseHandle( url, requestOption );
+    url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
 	// Send the POST reqesut	
 	RESTUtil.performGet( url, requestOption, function( success, returnJson ) 
@@ -134,6 +125,33 @@ WsCallManager.requestGet = function( apiPath, loadingTag, returnFunc )
 
 // ========================================
 
+// Used to force the ws target - by console
+WsCallManager.forceWsTarget = function( stageName )
+{
+    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
+    WsCallManager.isLocalDevCase = true; // if changed to 'stage' (from 'dev'), we should also use 'cors' redirection service.
+};
+
+
+WsCallManager.checkLocalDevCase = function( originUrl )
+{
+    return ( originUrl.indexOf( 'http://localhost' ) === 0 
+    || originUrl.indexOf( 'http://127.0.0.1:' ) === 0 );
+};
+
+
+WsCallManager.localhostProxyCaseHandle = function( url ) //, requestOption )
+{
+    if ( WsCallManager.isLocalDevCase )
+    {
+        //requestOption.headers[ 'Target-URL' ] = url;
+        url = WsCallManager.localhostProxyUrl + '/' + url;
+    }
+    
+    return url;
+};
+
+// -----------------------------------------
 
 WsCallManager.composeWsFullUrl = function( targetUrl )
 {
@@ -145,7 +163,7 @@ WsCallManager.composeWsFullUrl = function( targetUrl )
     else
     {
         // If partial data, add ws origin..
-        return WsCallManager.wsOriginUrl + targetUrl;        
+        return WsCallManager.wsTargetUrl + targetUrl;        
     }
 };
 

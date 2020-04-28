@@ -1165,7 +1165,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "e524b551b022a18e078131b618875bf7"
+    "revision": "a4db80b8526e74f17e334bad46797f46"
   },
   {
     "url": "redeemGen.html",
@@ -1181,11 +1181,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "e8f1a5c7467b764a8faeed5a32d11a8d"
+    "revision": "5c5f39d381d6ae300242c27302dcac1b"
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "649b5d7202e7e25b9f24915e9ee546eb"
+    "revision": "1aa7a7a669eb649cf4f38c066f2b8267"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1341,7 +1341,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "7756cb8da92dc6d338bb3ad1b70f3e49"
+    "revision": "e74f5968b20df81a99b6203241dd9780"
   },
   {
     "url": "scripts/services/cacheManager.js",
