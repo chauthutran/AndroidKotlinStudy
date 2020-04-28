@@ -126,7 +126,16 @@ function cwsRender()
 
 
 	me.setOtherEvents = function() 
-	{ };
+	{ 
+
+		// msg hide click event
+		$( '.sheet_bottom-scrim' ).click( function () 
+		{
+            $( '.sheet_bottom-fs' ).css( 'display', 'none' );
+            $( '.sheet_bottom-scrim' ).css( 'display', 'none' );
+		});
+				
+	};
 
 
 	// This or other classes use this to control the scrolling..
@@ -414,21 +423,21 @@ function cwsRender()
 
 		if ( submitList && submitList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_submit } ), true );
+			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": Constants.status_submit } ), true );
 			dataSubmit.append( submitList );
 			tr.append( tdSubmit );	
 		}
 
 		if ( queueList && queueList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_queued } ), true );
+			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": Constants.status_queued } ), true );
 			dataQueue.append( queueList );
 			tr.append( tdQueue );
 		}
 
 		if ( failedList && failedList > 0 )
 		{
-			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": Constants.status_redeem_failed } ), true );
+			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": Constants.status_failed } ), true );
 			dataFailed.append( failedList );
 			tr.append( tdFailed );
 

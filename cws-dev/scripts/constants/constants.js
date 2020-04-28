@@ -6,16 +6,11 @@ Constants.storageName_activityList = "activityList";    // Should add with userN
 Constants.storageName_clientList = "clientList";
 Constants.storageName_session = "session";
 
-Constants.status_redeem_submit = "submit"; // initialize from dcd@XX ?
-Constants.status_redeem_queued = "queued"; // initialize from dcd@XX ?
-Constants.status_redeem_failed = "failed"; // initialize from dcd@XX ?
-Constants.status_redeem_paused = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
-
-Constants.status_submit = "submit"; // initialize from dcd@XX ?
+Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
 Constants.status_queued = "queued"; // initialize from dcd@XX ?
 Constants.status_failed = "failed"; // initialize from dcd@XX ?
 Constants.status_hold = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
-Constants.status_downloaded = "downloaded"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)
+//Constants.status_downloaded = "downloaded"; // DO NOT NEED THIS - SAME AS 'synced'
 
 //Constants.fixedActiveUserId = "qwertyuio3"; // Replaced with SessionManager.sessionData.login_UserName
 

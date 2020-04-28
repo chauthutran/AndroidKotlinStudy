@@ -184,7 +184,7 @@ ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJson
 
     activityJson.processing = { 
         //'created': Util.formatDateTimeStr( createdDT.toString() ),
-        'status': Constants.status_redeem_queued,
+        'status': Constants.status_queued,
         'history': [],
         'url': ActivityDataManager.generateWsUrl( formsJson, actionDefJson ),
         'searchValues': payload.searchValues

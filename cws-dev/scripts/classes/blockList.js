@@ -570,10 +570,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             $('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
         });
 
+        /*
         $(".sheet_bottom-scrim").click(function () {
             $('.sheet_bottom-fs').css('display', 'none');
             $('.sheet_bottom-scrim').css('display', 'none');
         });
+        */
     };
 
 

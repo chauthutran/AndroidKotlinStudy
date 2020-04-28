@@ -252,9 +252,9 @@ function statistics( cwsRender )
     {
         var retArr = [];
 
-        retArr.push( { name: Constants.status_redeem_submit } );
-        retArr.push( { name: Constants.status_redeem_queued } );
-        retArr.push( { name: Constants.status_redeem_failed } );
+        retArr.push( { name: Constants.status_submit } );
+        retArr.push( { name: Constants.status_queued } );
+        retArr.push( { name: Constants.status_failed } );
 
         return retArr;
     }*/
@@ -550,7 +550,7 @@ function statistics( cwsRender )
 
             divIconText.html( arrObj[ i ].name );
 
-            FormUtil.appendActivityTypeIcon ( divIconObj, FormUtil.getActivityType( { activityType: arrObj[ i ].name } ), { name: Constants.status_redeem_submit }, me.cwsRenderObj, { width:38, height: 38 } );
+            FormUtil.appendActivityTypeIcon ( divIconObj, FormUtil.getActivityType( { activityType: arrObj[ i ].name } ), { name: Constants.status_submit }, me.cwsRenderObj, { width:38, height: 38 } );
 
         }
 
@@ -605,7 +605,7 @@ function statistics( cwsRender )
 
             tdIcon.append( divIconObj );
 
-            FormUtil.appendActivityTypeIcon ( divIconObj, actType, { name: Constants.status_redeem_submit }, me.cwsRenderObj, { width:48, height: 48 } );
+            FormUtil.appendActivityTypeIcon ( divIconObj, actType, { name: Constants.status_submit }, me.cwsRenderObj, { width:48, height: 48 } );
 
             divIconText.html( arrObj[ i ].name );
             tdIcon.append( divIconText );

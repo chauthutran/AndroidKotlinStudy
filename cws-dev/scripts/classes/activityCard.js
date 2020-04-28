@@ -91,33 +91,11 @@ function ActivityCard( activityId, cwsRenderObj )
 
 
                 // 3. 'SyncUp' Button Related
-                // click event - for activitySubmit..
-                var listItem_icon_syncTag = activityCardTrTag.find( '.list_three_item_cta2' );
-                listItem_icon_syncTag.off( 'click' );
+                // click event - for activitySubmit.., icon/text populate..
+                me.setupSyncBtn( activityCardTrTag, activityJson );
+
                 
-                // If there is 'processing' json in activityJson, it means there is something to be processed.
-                if ( activityJson.processing )
-                {
-                    //listItem_icon_syncTag.show();                    
-                    listItem_icon_syncTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
-                    activityCardTrTag.find( '.list_three_item_status' ).html( 'Pending' );
 
-                    listItem_icon_syncTag.on( 'click', function( e ) 
-                    {
-                        e.stopPropagation();  // Stops calling parent tags event calls..
-    
-                        me.activitySubmitSyncClick(); 
-                    });    
-
-                    // Icons Render  <-- Need to populate with new design..
-                    me.syncUpStatusDisplay( activityCardTrTag, activityJson, me.cwsRenderObj );                         
-                }
-                else
-                {
-                    activityCardTrTag.find( '.listItem_icon_sync' ).hide();
-                }
-    
-    
                 // 4. 'SeeMore' Related - divSeeMoreBtnTag click to display more/less --> By toggling class
                 contentDivTag.off( 'click' );
                 contentDivTag.on( 'click', function( e ) 
@@ -180,6 +158,100 @@ function ActivityCard( activityId, cwsRenderObj )
                 console.log( 'Error on ActivityCard.render, errMsg: ' + errMsg );
             }
         }
+    };
+
+
+    me.setupSyncBtn = function( activityCardTrTag, activityJson )
+    {
+        var divSyncIconTag = activityCardTrTag.find( '.list_three_item_cta2' );
+        var divSyncStatusTag = activityCardTrTag.find( '.list_three_item_status' );
+        
+        // reset..
+        divSyncIconTag.off( 'click' );
+        divSyncIconTag.css( 'background-image', '' );
+        divSyncStatusTag.html( '' );
+
+
+        var statusVal = ( !activityJson.processing ) ? Constants.status_submit : activityJson.processing.status;
+
+
+        if ( statusVal === Constants.status_submit )        
+        {
+            // already sync..
+            divSyncStatusTag.css( 'color', '#2aad5c' ).html( 'Sync' );
+            divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+        }
+        else if ( statusVal === Constants.status_queued )
+        {
+            divSyncStatusTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
+            divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
+        }
+        else if ( statusVal === Constants.status_failed )
+        {
+            divSyncStatusTag.css( 'color', '#FF0000' ).html( 'Sync error' );
+            divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
+        }
+
+    
+        divSyncIconTag.on( 'click', function( e ) 
+        {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+
+            me.syncInfoShow( statusVal, activityJson );
+
+            if ( statusVal === Constants.status_queued ) me.activitySubmitSyncClick(); 
+        });        
+    };
+
+    
+    me.syncInfoShow = function( statusVal, activityJson )
+    {
+        Templates.setMsgAreaBottom( function( syncInfoAreaTag ) {
+        
+            var divBottomWrapperTag = syncInfoAreaTag.find( 'div.bottom__wrapper' );
+
+
+            // activityJson.processing  <-- activityJson.appData?
+            // activityJson.processing.history..  <-- save error / downloaded / synced info..
+            // activityJson.processing.status       <-- quick info of current (last)
+
+
+            if ( activityJson.activityId === "LA_TEST_PROV_20200407_081636003" )
+            {
+
+                // results..
+                //  <-- We need to collect the response...
+
+
+                var testMsg = `
+                <div class="sync_all__section">
+
+                    <div class="sync_all__section_title">Services Deliveries 4/6</div>
+                    <div class="sync_all__section_log">
+                        20-02-01 17:07 Starting sync_all.
+                        <br>20-02-01 17:07 Synchronizing...
+                        <br>20-02-01 17:07 sync_all completed.
+                    </div>
+                </div>
+
+                <div class="sync_all__section">
+
+                    <div class="sync_all__section_title">Client details</div>
+                    <div class="sync_all__section_log">
+                        <span class="color_status_sync">Sync - read message 2</span>
+                        <br><span class="color_status_pending_msg">Sync postponed 2</span>
+                        <br><span class="color_status_error">Sync error 1</span>
+                    </div>
+                </div>
+                
+                <div class="sync_all__section_msg">Show next sync: in 32m</div>
+                `;
+        
+                divBottomWrapperTag.append( testMsg );    
+            }
+    
+        });
+
     };
 
 
@@ -357,6 +429,8 @@ function ActivityCard( activityId, cwsRenderObj )
         }
         return dataRet;
     };
+
+    
     me.mergePreviewData = function ( previewField, Json )
     {
         var ret = '';
@@ -391,17 +465,19 @@ function ActivityCard( activityId, cwsRenderObj )
         }
         return ret;
     };
+
+
     me.setActivitySyncUpStatus = function( activityCardTrTag, activityProcessing ) 
     {
         try
         {
             var imgSyncIconTag = activityCardTrTag.find( 'small.syncIcon img' );
 
-            if ( activityProcessing.status === Constants.status_redeem_queued )
+            if ( activityProcessing.status === Constants.status_queued )
             {
                 imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
             }
-            else if ( activityProcessing.status === Constants.status_redeem_failed )
+            else if ( activityProcessing.status === Constants.status_failed )
             {        
                 imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
                 //imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
