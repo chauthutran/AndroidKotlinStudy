@@ -2957,14 +2957,14 @@ h6 {
 
 .list .list_three_line .list_three_line__container .list_three_line-suppor_visuals {
   float: left;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   -webkit-box-align: center;
   -ms-flex-align: center;
       align-items: center;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #5e92f3;
+  /*border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -2973,14 +2973,14 @@ h6 {
 /* this should be stand alone? */
 .list_three_line-suppor_visuals {
   float: left;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   -webkit-box-align: center;
   -ms-flex-align: center;
       align-items: center;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #5e92f3;
+  /*border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -2988,8 +2988,9 @@ h6 {
 
 .list .list_three_line .list_three_line__container .list_three_item_content {
   float: left;
-  width: calc(100% - 164px);
+  width: calc(100% - 194px);
   margin-right: 8px;
+  padding-left: 8px;
   height: auto;
   text-align: left;
   line-height: 18px;
@@ -3082,6 +3083,8 @@ h6 {
   -ms-flex-align: center;
       align-items: center;
   cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
   background-image: url(../images//sync-pending_36.svg);
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3427,11 +3430,6 @@ h6 {
     overflow: hidden;
     padding: 16px 0 4px;
   }
-}
-
-.tab_fs__container .tab_fs__container-content .field--elem:active,
-.tab_fs__container .tab_fs__container-content .field__variation--active .tab_fs__container .tab_fs__container-content .field--elem {
-  border: 1px solid #2c98f0;
 }
 
 @media (orientation: portrait) and (min-width: 240px) {
@@ -4806,9 +4804,9 @@ h6 {
   float: left;
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #5e92f3;
+  /*border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -4816,8 +4814,8 @@ h6 {
 
 .wapper_card .card .card__sync .card__sync_content {
   float: left;
-  width: calc(100% - 172px);
-  margin-right: 8px;
+  width: calc(100% - 192px);
+  margin: 2px 0 12px 16px;
   height: auto;
   text-align: left;
   line-height: 16px;
@@ -5074,8 +5072,8 @@ h6 {
   -webkit-box-align: right;
       -ms-flex-align: right;
           align-items: right;
-  right: 16px;
-  bottom: 72px;
+  right: 25px;
+  bottom: 25px;
   width: 240;
   height: auto;
   background-color: transparent;
@@ -5115,7 +5113,7 @@ h6 {
   text-align: right;
   display: table-cell;
   word-wrap: break-word;
-  max-width: calc(100% - 80px);
+  max-width: calc(100% - 40px);
   float: right;
   height: auto;
   margin: 5px 0;

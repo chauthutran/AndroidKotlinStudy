@@ -1428,7 +1428,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					$( svgObject ).attr( 'height', svgStyle.height );
 				}
 	
-				if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
+				/*if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 				{
 					var iconActivityWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.activityIconSize.width;
 					var iconStatusWidth = SessionManager.sessionData.dcdConfig.settings.redeemDefs.statusIconSize.width;
@@ -1442,7 +1442,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 
 					// This is SyncUp status icon (placed right below ActivityType icon.)
 					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
-				}
+				}*/
 	
 			});
 		}

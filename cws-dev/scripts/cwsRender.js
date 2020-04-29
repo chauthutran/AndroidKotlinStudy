@@ -255,6 +255,8 @@ function cwsRender()
 			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
+		if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
+
 		blockObj.render();
 
 		// Greg: find a way to link back favIcon 'menu-item-ID' for current [area:online/offline]
@@ -600,8 +602,8 @@ function cwsRender()
 
 			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
 
-			$( '.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
-			$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
+			//$( '.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
+			//$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
 
 			/* OLD STYLING: remove? */
 			//$( '.navigation__user' ).css( 'background-color', defTheme.navTop.colors.background );
@@ -815,7 +817,8 @@ function cwsRender()
 			me.myDetails.hidemyDetailsPage();
 		}
 
-		$( 'nav' ).hide();
+		$( '.Nav1' ).hide();
+		$( '.Nav2' ).hide();
 	}
 
 	me.clearMenuPlaceholders = function()
@@ -931,7 +934,8 @@ function cwsRender()
         {
             me.favIconsObj = new favIcons( me );
 
-            me.setFloatingListMenuIconEvents( me.renderBlockTag.find( '.floatListMenuIcon' ), me.renderBlockTag.find( '.floatListMenuSubIcons' ) );
+			//me.favIconsObj.render();
+            //me.setFloatingListMenuIconEvents( me.renderBlockTag.find( '.fab__section' ), me.renderBlockTag.find( '.fab__child-section' ) );
         }
         else
         {

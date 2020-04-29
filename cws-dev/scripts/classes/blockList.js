@@ -99,7 +99,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
                 <div class="activityContainer list_three_line__container">
 
-                    <div class="activityIcon list_three_line-suppor_visuals i-metod_provision_40"></div>
+                    <div class="activityIcon list_three_line-suppor_visuals"></div>
 
                     <div class="activityContent list_three_item_content">
                     </div>
@@ -224,20 +224,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.setClassContainerTag = function( blockTag )
     {
         var listTableTag = $( me.template_listTableTag );
-        
+
         blockTag.append( listTableTag );
 
-        /*
-        // Block/BlockList HTML related setup
-        var listDivTag = $( '#listTemplateDiv > div.wrapper' ).clone(); // Copy from list html template located in index.html
-        blockTag.append( listDivTag );
+        var listFavButtonTag = $( Templates.favButtonContainer ); // Copy from list html template located in index.html
 
-        var listTableTag = listDivTag.find( 'ul.tab__content_act');
-
-        FormUtil.setUpTabAnchorUI( listTableTag ); // Set click event +e heights
-        
-        return listTableTag;
-        */
+        blockTag.append( listFavButtonTag );
 
         return listTableTag.find( 'tbody' );
     };
@@ -506,16 +498,16 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 var syncAll_Header = `
                   <div class="sync_all__header_title">Synchronization Services Deliveries</div>
                   <div class="sync_all__anim i-sync-pending_36 rot_l_anim"></div>`;
-
+            // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
                 var syncAll_Body = `<div class="sync_all__section">
                     <div class="sync_all__section_title">Services Deliveries 4/6</div>
                     <div class="sync_all__section_log">20-02-01 17:07 Starting sync_all.
                         <br>20-02-01 17:07 Synchronizing...
                         <br>20-02-01 17:07 sync_all completed.
                     </div>
-                </div>
+                    </div>
 
-                <div class="sync_all__section">
+                    <div class="sync_all__section">
                     <div class="sync_all__section_title">Client details</div>
                     <div class="sync_all__section_log">
                         <span class="color_status_sync">Sync - read message 2</span>

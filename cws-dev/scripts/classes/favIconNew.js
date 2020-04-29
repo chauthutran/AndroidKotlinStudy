@@ -8,84 +8,67 @@ function favIcons( cwsRender )
     me.favIconsTag; //= $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
     me.incr = 0;
 
-    me.favItemTemplate = `<div class="fab__child-section" style="display: table-row;">
-                            <div class="fab__child c_200 svgIcon" />
-                            <div class="fab__child-text" />
-                        </div>`;
 
     me.initialize = function() 
     {
         if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList )
         {
             console.log( SessionManager.sessionData.dcdConfig.favList );
-            me.createIconButtons( SessionManager.sessionData.dcdConfig.favList );
+
+            me.render( SessionManager.sessionData.dcdConfig.favList );
         }
 
         return me;
 
     }
 
-    me.createIconButtons = function( favData ) 
+    me.render = function( favData ) 
     {
-// TODO: GREG: BUG FIX HERE
-        me.configFavUserRole( ( ConnManagerNew.statusInfo.appMode === 'Online' ), favData, function( favList ){
 
-            var networkStatus = ConnManagerNew.statusInfo.appMode.toLowerCase();
+        var favList = Util.sortByKey( me.getFavAreaItems( favData ), 'id');
+        var networkStatus = ConnManagerNew.statusInfo.appMode.toLowerCase();
 
-            (favList).sort(function (a, b) {
-                var a1st = -1, b1st =  1, equal = 0; // zero means objects are equal
-                if (b.id < a.id) {
-                    return b1st;
-                }
-                else if (a.id < b.id) {
-                    return a1st;
-                }
-                else {
-                    return equal;
-                }
-            });
+        $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
 
-            //me.favIconsTag = $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
-            //me.favIconsTag.empty();
+        me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
 
-            $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
+        var favItems = localStorage.getItem( 'favIcons' );
 
-            me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
-
-            var favItems = localStorage.getItem( 'favIcons' );
-
-            me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
-
-        } );
-
+        me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
 
     }
 
-    me.configFavUserRole = function( bOnline, favData, callBack )
+    /*me.initializeOffLineIcons = function( callBack )
     {
-        var compareList = ( bOnline ) ? favData.online : favData.offline;
-        var retAreaList = [];
+        me.createRecursiveFavIcons ( favList, 0, false )
+    }*/
 
-        for ( var i=0; i< compareList.length; i++ )
+    me.getFavAreaItems = function( favData, callBack )
+    {
+        var bOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' );
+        var areaItems = ( bOnline ) ? favData.online : favData.offline;
+        var areaFavItems = [];
+
+        for ( var i=0; i< areaItems.length; i++ )
         {
-           if ( compareList[ i ].userRoles )
+           if ( areaItems[ i ].userRoles )
            {
-               for ( var p=0; p< compareList[ i ].userRoles.length; p++ )
+               for ( var p=0; p< areaItems[ i ].userRoles.length; p++ )
                {
-                   if ( FormUtil.login_UserRole.includes( compareList[ i ].userRoles[ p ] ) )
+                   if ( FormUtil.login_UserRole.includes( areaItems[ i ].userRoles[ p ] ) )
                    {
-                       retAreaList.push( compareList[ i ] );
+                       areaFavItems.push( areaItems[ i ] );
                        break;
                    }
                }
            }
            else
            {
-            retAreaList.push( compareList[ i ] );
+            areaFavItems.push( areaItems[ i ] );
            }
         }
 
-        if ( callBack ) callBack( retAreaList );
+        return areaFavItems;
     
     };
 
@@ -98,22 +81,27 @@ function favIcons( cwsRender )
             if ( bAppend && bAppend == true )
             {
                 var unqID = Util.generateRandomId();
-                var favItem = $( me.favItemTemplate );
+                var favItem = $( Templates.favButtonRowItem );
 
                 favItem.find( '.fab__child-text' ).attr( 'term', favList[ favItm ].term );
-                favItem.find( '.fab__child-text' ).attr( 'term', favList[ favItm ].term );
+                favItem.find( '.fab__child-text' ).attr( 'blockId', favList[ favItm ].target.blockId );
+                favItem.find( '.fab__child-text' ).attr( 'actionType', favList[ favItm ].target.actionType );
+                favItem.find( '.fab__child-text' ).html( favList[ favItm ].name );
 
-                var divTag = $( '<div id="favIcon_'+unqID+'" seq="' + favList[ favItm ].id + '" name="' + (favList[ favItm ].name).toString().toLowerCase().replace(' ','_') + '" class="iconClicker pointer" />');
-                var svgObject = me.fetchFavIcon( favList[ favItm ].id );
+                //var svgObject = me.fetchFavIcon( favList[ favItm ].id );
+                var svgObject = me.fetchFavIcon( favList[ 0 ].id );
 
                 $( svgObject ).attr( 'id', 'svg_'+unqID );
 
-                divTag.append( svgObject );
-                me.favIconsTag.append( divTag );
+                favItem.find( '.fab__child' ).append( svgObject );
+                //me.favIconsTag.append( favItem );
+
+                favItem.insertBefore( me.favIconsTag.find( '.fab__section' ) );
+                
 
                 if ( favList[ favItm ].target )
                 {
-                    me.setFavIconClickTarget ( favList[ favItm ].target, unqID );
+                    me.setFavIconClickTarget ( favItem, favList[ favItm ] );
 
                     if ( favList.length > ( parseInt(favItm) +1  ) && favList[ parseInt(favItm) +1  ] )
                     {
@@ -122,11 +110,15 @@ function favIcons( cwsRender )
                     else
                     {
                         me.cwsRenderObj.langTermObj.translatePage();
+
+                        me.createFavButtonShowHideEvent();
                     }
                 }
                 else
                 {
                     me.cwsRenderObj.langTermObj.translatePage();
+
+                    me.createFavButtonShowHideEvent();
                 }
             }
             else
@@ -242,23 +234,42 @@ function favIcons( cwsRender )
 
     }
 
-    me.setFavIconClickTarget = function( favTarget, targetID )
+    me.setFavIconClickTarget = function( favObjTag, favItem )
     {
         // Greg: you modified this code 2020-04-22 @ 08h43 (maybe revert?)
-        $( '#favIcon_'+targetID ).off( 'click' );
+        favObjTag.off( 'click' );
 
-        // Weird > bindings being lost after 1st click event: solved
-        //$(document).on('click', '#favIcon_'+targetID, function() {
+        favObjTag.click( function() {
 
-        $( '#favIcon_'+targetID ).click( function() {
-            console.log( favTarget );
-            if ( favTarget.blockId )
+            if ( favItem.target.blockId )
             {
-                $( 'div.scrim').hide();
-                me.cwsRenderObj.renderBlock( favTarget.blockId, favTarget.options )
+                me.cwsRenderObj.renderBlock( favItem.target.blockId, favItem.target.options )
             }
 
         });
+    }
+
+    me.createFavButtonShowHideEvent = function()
+    {
+
+        me.favIconsTag.find( 'div.fab' ).click(function () {
+
+            if ( $( '.fab__child-section' ).is( ':visible' ) ) 
+            {
+                $( '.fab__child-section' ).css( 'display', 'none' );
+                $( '.fab' ).css( 'transform', 'rotate(0deg)' );
+                $( this ).removeClass( 'w_button' );
+                $( this ).addClass( 'c_600' );
+            } 
+            else 
+            {
+                $( '.fab__child-section' ).css( 'display', 'table-row' );
+                $( '.fab' ).css( 'transform', 'rotate(45deg)' );
+                $( this ).removeClass( 'c_600' );
+                $( this ).addClass( 'w_button' );
+            }
+        });
+
     }
 
     me.storeFavIcon = function( svgObjectCode, iconID, iconName, callBack )

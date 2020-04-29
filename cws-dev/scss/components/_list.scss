@@ -42,20 +42,21 @@
             .list_three_line-suppor_visuals {
                 //support
                 float: left;
-                width: 40px;
-                height: 40px;
+                width: 56px;
+                height: 56px;
                 -webkit-box-align: center;
                         align-items: center;
-                border-radius: 50%;
+                /*border-radius: 50%;
                 margin-right: 8px;
-                background-color: rgba($color-sl, 40%);
+                background-color: rgba($color-sl, 40%);*/
                 @include box-sizing(border-box);
             }
 
             .list_three_item_content {
                 float: left;
-                width: calc(100% - 164px);
+                width: calc(100% - 194px);
                 margin-right: 8px;
+                padding-left: 8px;
                 height: auto;
                 text-align: left;
                 line-height: 18px;
@@ -119,6 +120,8 @@
                     -webkit-box-align: center;
                             align-items: center;
                     cursor: pointer;
+                    background-repeat: no-repeat;
+                    background-position: center;
                     @include background-image('sync-pending_36');
                     @include box-sizing(border-box);
 

@@ -372,3 +372,95 @@ DevHelper.testRun = function()
 
     console.log( dest );
 };
+
+DevHelper.showFullPreview = function()
+{
+    var TEST_ITEM_ID = 'LA_TEST_PROV_20200407_081636003'; //LA_TEST_PROV_20200407_081636003
+
+    // initialize
+    var sheetFull = $( 'div.sheet_full-fs' );
+    var screenHeight = document.body.clientHeight;
+
+    console.log( sheetFull );
+    console.log( cardCloseTag );
+
+    // set styles
+    sheetFull.css( 'z-index', 9999 );
+    sheetFull.css( 'position', 'absolute' );
+    sheetFull.css( 'left', '0' );
+    sheetFull.css( 'top', '0' );
+    sheetFull.css( 'width', '100%' );
+    sheetFull.css( 'height', screenHeight ); // - 56
+    sheetFull.css( 'background-color', '#fff' );
+
+
+    // clear contents
+    sheetFull.empty();
+
+
+    // populate template
+    sheetFull.html( $( Templates.activityCardFullScreen ) );
+
+    // ADD TEST/DUMMY VALUE
+    sheetFull.find( '.activity' ).attr( 'itemid', TEST_ITEM_ID )
+
+    // update card content
+    var actCard = new ActivityCard( TEST_ITEM_ID, DevHelper.cwsRenderObj, sheetFull ); //activityJson.activityId
+    console.log( actCard );
+    actCard.render();
+
+    // set other events
+    var cardCloseTag = sheetFull.find( 'img.btnBack' );
+
+    cardCloseTag.click( function(){ 
+        sheetFull.empty();
+        sheetFull.fadeOut();
+    });
+
+
+    // render
+    sheetFull.fadeIn();
+
+}
+
+    
+DevHelper.configPreviewFull = function()
+{
+    var retData = {
+        "definitionBlocks":{
+            "blockDefaultOptionsOnline":{
+                "blockType":"mainTab",
+                "buttons":[  
+                "imgBtn_SearchByVoucherOption",
+                "imgBtn_SearchByPhonenumberOption",
+                "imgBtn_DetailEnter"
+                ],
+                "message":{  
+                "defaultMessage":"You are Online"
+                }
+            }
+        },
+        "definitionButtons": {
+            "imgBtn_SearchByVoucherOption":{  
+                "defaultLabel":"By voucher",
+                "term":"tab_byVoucher",
+                "buttonType":"imageButton",
+                "imageSrc":"images/voucher.svg",
+                "onClick":[
+                   {  
+                      "actionType":"clearOtherBlocks"
+                   },
+                   {  
+                      "actionType":"openBlock",
+                      "blockId":"blockSearchByVoucher",
+                      "actionParameters":{  
+                         "jsonData":{  
+                         }
+                      }
+                   }
+                ]
+             }
+        }
+    }
+
+}

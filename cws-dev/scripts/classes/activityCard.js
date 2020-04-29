@@ -6,12 +6,13 @@
 //          - There will be cases where activity items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ActivityCard( activityId, cwsRenderObj )
+function ActivityCard( activityId, cwsRenderObj, parentTag )
 {
 	var me = this;
 
     me.activityId = activityId;
     me.cwsRenderObj = cwsRenderObj;
+    me.parentTag = parentTag;
 
     // -----------------------------------
 
@@ -33,19 +34,26 @@ function ActivityCard( activityId, cwsRenderObj )
 	// === Initialize Related ========================
 
     me.initialize = function() { };
-   
+
     // ----------------------------------------------------
-   
+
     me.getActivityCardTrTag = function()
     {
-        return $( 'tr.activity[itemid="' + me.activityId + '"]' );
+        if ( me.parentTag )
+        {
+            return $( me.parentTag ).find( '.activity[itemid="' + me.activityId + '"]' );
+        }
+        else
+        {
+            return $( 'tr.activity[itemid="' + me.activityId + '"]' );
+        }
     };
 
     me.getSyncButtonTag = function()
     {
         return me.getActivityCardTrTag().find( '.activityStatusIcon' );
     };
-    
+
     // ----------------------------------------------------
 
     me.render = function()
@@ -62,7 +70,7 @@ function ActivityCard( activityId, cwsRenderObj )
                 var activityTrans = me.getCombinedTrans( activityJson );
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                //me.activityTypeDisplay( activityCardTrTag, activityJson );
+                me.activityTypeDisplay( activityCardTrTag, activityJson );
                 
                 me.activityIconClick_displayInfo( activityCardTrTag.find( 'div.activityIcon' ), activityJson );
 
@@ -261,70 +269,9 @@ function ActivityCard( activityId, cwsRenderObj )
                 }
     
                 divActivityContentTag.append( '<div class="activityContentDisplay list_three_line-text">' + displayEvalResult + '</div>' );    
-            }                        
-        }
-
-        /*
-        //var displaySettings = ConfigManager.getActivityDisplaySettings();
-        var divLabelTag = divListItemContentTag.find( 'div.list_three_line-date' );
-
-        var activityItem = activity;  // Temporarily backward compatible..
-        var activitySettings = FormUtil.getActivityType( activity ); 
-        if ( activitySettings && activitySettings.displaySettings )
-        {
-            var displaySettings = activitySettings.displaySettings;
-        }
-        else
-        {
-            var displaySettings = ConfigManager.getActivityDisplaySettings();
-        }
-
-        if ( !displaySettings )
-        {
-            // If displaySettings does not exists, simply display the date label <-- fixed display
-            // Title - date description..
-
-            if ( activity.activityDate && activity.activityDate.createdOnDeviceUTC ) 
-            {
-                var localDateTimeObj = Util.dateUTCToLocal( activity.activityDate.createdOnDeviceUTC );
-                divLabelTag.html( $.format.date( localDateTimeObj, "MMM dd, yyyy - HH:mm" ) );
-            }
-        }
-        else
-        {
-            // If custom config display, remove 
-            divLabelTag.remove();
-            var divItemInfoTag = divListItemContentTag.find( 'div.list_three_line-text' ).html( '' );
-            
-            for( var i = 0; i < displaySettings.length; i++ )
-            {
-                // Need 'activity', 'activityTrans'
-                var dispSettingEvalStr = displaySettings[ i ];
-                var displayEvalResult = "------------";
-    
-                try
-                {
-                    displayEvalResult = eval( dispSettingEvalStr );
-                    //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
-                }
-                catch ( errMsg )
-                {
-                    console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
-                }
-    
-                divItemInfoTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );    
             }
 
         }
-
-        if ( activitySettings && activitySettings.previewData )
-        {
-            var previewDivTag = me.getListPreviewData( activityTrans, activitySettings.previewData );
-            divListItemContentTag.append( previewDivTag );    
-        }                
-
-        divListItemContentTag.html( divListItemContentTag.html().replace( /undefined/g, '' ) )
-        */
     };
 
 
@@ -406,14 +353,15 @@ function ActivityCard( activityId, cwsRenderObj )
         {
             var activityTypeConfig = ConfigManager.getActivityTypeConfig( activityJson );
     
-            var activityTypeTdTag = activityCardTrTag.find( '.listItem_icon_activityType' ); // Left side activityType part - for icon
+            var activityTypeTdTag = activityCardTrTag.find( '.activityIcon' ); // Left side activityType part - for icon
 
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
             var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
 
             // TODO: Bring this method up from 'formUtil' to 'activityCard'?
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-            FormUtil.appendActivityTypeIcon ( activityTypeTdTag
+
+            FormUtil.appendActivityTypeIcon( activityTypeTdTag
                 , activityTypeConfig
                 , activitySyncUpStatusConfig );
                 
