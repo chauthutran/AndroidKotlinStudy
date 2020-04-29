@@ -47,7 +47,7 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {
 	ScheduleManager.schedule_showHideSyncAllButtonUI(); 	//manual sync (enable)
 	ScheduleManager.schedule_syncAllRun();				//auto sync (enable)
-	
+
 	ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
 
 	//ScheduleManager.schedule_trackConnectionType();
@@ -131,9 +131,19 @@ ScheduleManager.schedule_trackConnectionType = function( NotRunRightAway )
 
 ScheduleManager.schedule_syncDownRunOnce = function( cwsRenderObj )
 {
-	// Call this.  If does not success, schedule to call
-	ScheduleManager.syncDownRunIfOnlineSchedule( cwsRenderObj );
-	//ScheduleManager.timerID_syncDownRunOnce = setInterval( ScheduleManager.syncDownRunIfOnline, ScheduleManager.interval_syncDownRunOnce, cwsRenderObj );
+	try
+	{
+		if ( ConfigManager.getSyncDownSetting().enable )
+		{
+			// Call this.  If does not success, schedule to call
+			ScheduleManager.syncDownRunIfOnlineSchedule( cwsRenderObj );
+			//ScheduleManager.timerID_syncDownRunOnce = setInterval( ScheduleManager.syncDownRunIfOnline, ScheduleManager.interval_syncDownRunOnce, cwsRenderObj );
+		}
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
+	}
 };
 
 

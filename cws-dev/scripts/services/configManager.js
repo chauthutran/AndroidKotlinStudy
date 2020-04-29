@@ -11,199 +11,47 @@ function ConfigManager() {}
 ConfigManager.configJson = {};     // store the configJson here when first loading config?
 ConfigManager.configSetting = {};
 
+ConfigManager.defaultActivityDisplaySettings = `'<b><i>' + INFO.activity.processing.created + '</i></b>'`;
+
+// configJson[sync][syncUp]
+
 // -- Default Configs -----
 // ----- If not on download config, place below default to 'config' json.
+ConfigManager.defaultJsonList = {
 
-ConfigManager.syncSetting_Default = {
-    "syncDown": {
-        "clientSearch": {
-            "mainSearch": {
-                "activities": {
-                    "$elemMatch": {
+   "syncDown": {
+      "pathNote": "settings.sync.syncDown",
+      "content": {
+         "clientSearch": {
+            "mainSearch_Eval": {
+                  "activities": {
+                     "$elemMatch": {
                         "activeUser": "INFO.login_UserName"
-                    }
-                }
+                     }
+                  }
             },
-            "dateSearch": {
-                "updated": {
-                    "$gte": "INFO.dateRange_gtStr"
-                }
+            "dateSearch_Eval": {
+                  "updated": {
+                     "$gte": "INFO.dateRange_gtStr"
+                  }
             }
-        },
-        "url": "/PWA.syncDown",
-        "syncDownPoint": "login",
-        "enable": true    
-    },
-    "syncUp": {
-        "dateField": "updated"
-    }
+         },
+         "url": "/PWA.syncDown",
+         "syncDownPoint": "login",
+         "enable": true
+      }
+   },
+
+   "mergeCompare": {
+      "pathNote": "settings.sync.mergeCompare",
+      "content": {
+         "dateCompareField": [ "updated" ]
+      }
+   }
 };
 
-ConfigManager.setting_Default = {
-    "message":{  
-       "autoHide":true,
-       "autoHideTime":"5000",
-       "networkFailedMsgType":"alertMsg"
-    },
-    "theme":"default",
-    "redeemDefs":{  
-       "statusOptions":[
-          {  
-             "name":"submit",
-             "label":"Sync",
-             "icon":{  
-                "path":"images/completed.svg",
-                "colors":{  
-                   "background":"#7DD11F",
-                   "foreground":"#ffffff"
-                }
-             }
-          },
-          {  
-             "name":"queued",
-             "label":"Pending",
-             "icon":{  
-                "path":"images/pending.svg",
-                "colors":{  
-                   "background":"#6FCF97",
-                   "foreground":"#4F4F4F"
-                }
-             }
-          },
-          {  
-             "name":"failed",
-             "label":"Sync error",
-             "icon":{  
-                "path":"images/failed.svg",
-                "colors":{
-                   "background":"#FFFFFF",
-                   "foreground":"#FF2B2B"
-                }
-             }
-          },
-          {
-             "name": "downloaded",
-             "label": "historic[1]",
-             "icon": {
-                "path": "images/arrow-circle-down.svg",
-                "colors": {
-                   "background": "#FFFFFF",
-                   "foreground": "#808080"
-                }
-             }
-          }
-       ],
-       "statusIconSize":{  
-          "width":24,
-          "height":24
-       },
-       "activityIconSize":{  
-          "width":56,
-          "height":56
-       },
-
-       "displaySettings": [
-          "'<b><i>' + activityItem.activityDate.capturedLoc + '</i></b>'",
-          "activityTrans.firstName + ' ' + activityTrans.lastName"
-       ],
-       "activityTypes":[  
-          {  
-             "name":"FPL-SP",
-             "term":"",
-             "label":"FPL-SP",
-             "icon":{  
-                "path":"images/act_col.svg",
-                "colors":{  
-                   "background":"#009C99",
-                   "foreground":"#FEFFD1"
-                }
-             },
-             "previewData":[  
-                "age phoneNumber",
-                "hairStyle"
-             ],
-             "displaySettings": [
-                "'<u>' + activityItem.activityDate.capturedLoc + '</u>: <i>' + activityItem.activityId + '</i>'",
-                "activityTrans.activityType"
-             ]
-          },{  
-             "name":"eVoucher",
-             "term":"",
-             "label":"eVoucher",
-             "icon":{  
-                "path":"images/act_col.svg",
-                "colors":{  
-                   "background":"#6FCF97",
-                   "foreground":"#4F4F4F"
-                }
-             },
-             "previewData":[  
-                "age phoneNumber",
-                "voucherCode"
-             ],
-             "displaySettings": [
-                "'<b><i>' + activityItem.activityDate.capturedLoc + '</i></b>'",
-                "activityTrans.firstName + ' ' + activityTrans.lastName"
-             ]
-          },
-          {  
-             "name":"WalkInB",
-             "term":"",
-             "label":"Voucher: Walk In",
-             "icon":{  
-                "path":"images/act_col.svg",
-                "colors":{  
-                   "background":"#6FCF97",
-                   "foreground":"#4F4F4F"
-                }
-             },
-             "previewData":[  
-                "phoneNumber",
-                "<strong>age</strong>"
-             ]
-          },
-          {  
-             "name":"WalkInA",
-             "term":"",
-             "label":"Walk In",
-             "icon":{  
-                "path":"images/arrows_col.svg",
-                "colors":{  
-                   "background":"#ffc61d",
-                   "foreground":"#1C1C1C"
-                }
-             },
-             "previewData":[  
-                "<strong>age</strong>",
-                "phoneNumber"
-             ]
-          },
-          {  
-             "name":"PhoneVoucher",
-             "term":"",
-             "label":"Phone Voucher",
-             "icon":{  
-                "path":"images/act_col.svg",
-                "colors":{  
-                   "background":"#ffc61d",
-                   "foreground":"#1C1C1C"
-                }
-             },
-             "previewData":[  
-                "<u>lastName, firstName",
-                "voucherCode"
-             ]
-          }
-       ]
-    }
-};
 
 // ==== Methods ======================
-
-ConfigManager.getDsConfigJson = function( dsConfigLoc, returnFunc )
-{    
-    RESTUtil.retrieveJson( dsConfigLoc, returnFunc );
-};
 
 ConfigManager.getConfigJson = function () 
 {
@@ -212,12 +60,23 @@ ConfigManager.getConfigJson = function ()
 
 ConfigManager.setConfigJson = function ( configJson ) 
 {
+   ConfigManager.applyDefaults( configJson, ConfigManager.defaultJsonList );
+
     ConfigManager.configJson = configJson;
 
     // TODO: If default config parts do not exists, insert them....
     // ConfigManager.syncSetting_Default = {
-    // ConfigManager.setting_Default = {    
+    // ConfigManager.settings_Default = {    
 };
+
+
+ConfigManager.clearConfigJson = function () 
+{
+    ConfigManager.configJson = {};
+    ConfigManager.configSetting = {};
+};
+
+// ---------------------------
 
 ConfigManager.setSettingsJson = function( configJson )
 {
@@ -313,9 +172,12 @@ ConfigManager.getActivityDisplaySettings = function()
 {
     var configJson = ConfigManager.configJson;
 
-    var displaySettings = [ 
-        "'<b><i>' + activityItem.created + '</i></b>'"
+    var displaySettings = [  
+      ConfigManager.defaultActivityDisplaySettings 
     ];
+
+    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
+    // "'<b><i>' + activityItem.created + '</i></b>'"
 
     try
     {
@@ -360,7 +222,7 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 ConfigManager.getActivityTypeConfig = function( activityJson )
 {
 	var activityTypeConfig;
-    var configJson = ConfigManager.configJson;
+   var configJson = ConfigManager.getConfigJson();
 
     try
 	{
@@ -378,4 +240,109 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 };
 
 
+ConfigManager.getSyncMergeDatePaths = function()
+{
+   var configJson = ConfigManager.getConfigJson();
 
+   return configJson.settings.sync.mergeCompare.dateCompareField; // var pathArr = 
+};
+
+
+ConfigManager.getSyncDownSetting = function()
+{
+   return ConfigManager.getConfigJson().settings.sync.syncDown;
+};
+
+
+// ------------------------------------------------------
+
+ConfigManager.applyDefaults = function( configJson, defaults )
+{
+   ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
+
+   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare )
+
+   // Other defaults could be placed here..
+
+};
+
+ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
+{
+   if ( syncDownJson )
+   {
+      // 1. Check if 'configJson' has the content in path.
+      //    If not exists, set the 'content' of json..
+      if ( !configJson.settings ) configJson.settings = {};
+
+      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+
+      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson.content );
+   }
+};
+
+
+// TODO: Change to 'mergeCompare'
+ConfigManager.applyDefault_mergeCompare = function( configJson, mregeCompareJson )
+{
+   if ( mregeCompareJson )
+   {
+      // 1. Check if 'configJson' has the content in path.
+      //    If not exists, set the 'content' of json..
+      if ( !configJson.settings ) configJson.settings = {};
+
+      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+
+      if ( !configJson.settings.sync.mregeCompare ) configJson.settings.sync.mregeCompare = Util.getJsonDeepCopy( mregeCompareJson.content );
+   }
+};
+// ========================================================
+
+
+// ==================================================
+
+
+/*
+ConfigManager.applyDefaultJson = function( configJson )
+{
+   // TODO: later, we might want to create a single list for this?
+
+   // Check for 
+   for ( var i = 0; i < ConfigManager.defaultJsonList.length; i++ )
+   {
+      var defaultJson = ConfigManager.defaultJsonList[ i ];
+
+      var targetLoc = configJson;
+      var resultStr = '';
+
+
+      // check if 'configJson' has this part.  If not, put it there.. (hard copy?)
+      for ( var x = 0; x < defaultJson.pathList.length; x++ )
+      {
+         var pathName = defaultJson.pathList[x];
+         var targetLoc = targetLoc[ pathName ];
+
+         var lastPath = ( defaultJson.pathList.length === ( x + 1 ) );
+         
+         // The pathList follow not found/worked in downloaded 'configJson'.  Can
+         if ( !targetLoc )
+         {
+            if ( lastPath ) resultStr = 'TargetNull';
+            else resultStr = 'TargetReachFailed';
+
+            break;
+         }
+         else
+         {
+            if ( lastPath ) resultStr = 'TargetExists';
+         }
+      }
+
+
+      if ( resultStr === 'TargetNull' )
+      {
+
+      }
+   }
+}; 
+
+*/

@@ -228,7 +228,7 @@ function cwsRender()
 					// added by Greg (2018/12/10)
 					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
-					var startBlockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 					startBlockObj.render();  // should been done/rendered automatically?
 
 					// Change start area mark based on last user info..
@@ -248,11 +248,11 @@ function cwsRender()
 	{
 		if ( options )
 		{
-			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
 		}
 		else
 		{
-			var blockObj = new Block( me, SessionManager.sessionData.dcdConfig.definitionBlocks[ blockName ], blockName, me.renderBlockTag );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag );
 		}
 
 		if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
@@ -593,14 +593,14 @@ function cwsRender()
 	// Yes, it will be nice. : )
 	me.renderDefaultTheme = function ()
 	{
-		if ( SessionManager.sessionData.dcdConfig 
-			&& SessionManager.sessionData.dcdConfig.settings 
-			&& SessionManager.sessionData.dcdConfig.settings.theme 
-			&& SessionManager.sessionData.dcdConfig.themes )
+		if ( ConfigManager.getConfigJson() 
+			&& ConfigManager.getConfigJson().settings 
+			&& ConfigManager.getConfigJson().settings.theme 
+			&& ConfigManager.getConfigJson().themes )
 		{
-			console.log( 'Updating to theme: ' + SessionManager.sessionData.dcdConfig.settings.theme);
+			console.log( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme);
 
-			var defTheme = me.getThemeConfig( SessionManager.sessionData.dcdConfig.themes, SessionManager.sessionData.dcdConfig.settings.theme );
+			var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
 
 			//$( '.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
 			//$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
@@ -930,7 +930,7 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
-        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList  )
+        if ( ConfigManager.getConfigJson() && ConfigManager.getConfigJson().favList  )
         {
             me.favIconsObj = new favIcons( me );
 

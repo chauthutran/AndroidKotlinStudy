@@ -38,7 +38,7 @@ function settingsApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateSettingsPageData( SessionManager.sessionData.dcdConfig ); //DataManager.getUserConfigData()
+        me.populateSettingsPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -202,11 +202,11 @@ function settingsApp( cwsRender )
         {    
             FormUtil.showProgressBar();
 
-            var thisConfig = SessionManager.sessionData.dcdConfig;
+            var thisConfig = ConfigManager.getConfigJson();
 
             thisConfig.settings.theme = me.settingsInfo_ThemeSelectTag.val();
 
-            SessionManager.sessionData.dcdConfig = thisConfig;
+            ConfigManager.getConfigJson() = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#settingsInfo_theme_Text' ).html( me.settingsInfo_ThemeSelectTag.val() );

@@ -36,7 +36,7 @@ function aboutApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateAboutPageData( SessionManager.sessionData.dcdConfig ); //DataManager.getUserConfigData()
+        me.populateAboutPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
         
         me.langTermObj.translatePage();
 
@@ -124,11 +124,11 @@ function aboutApp( cwsRender )
         {    
             FormUtil.showProgressBar();
 
-            var thisConfig = SessionManager.sessionData.dcdConfig;
+            var thisConfig = ConfigManager.getConfigJson();
 
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
 
-            SessionManager.sessionData.dcdConfig = thisConfig;
+            ConfigManager.getConfigJson() = thisConfig;
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#aboutInfo_theme_Text' ).html( me.aboutInfo_ThemeSelectTag.val() );

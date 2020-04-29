@@ -11,11 +11,11 @@ function favIcons( cwsRender )
 
     me.initialize = function() 
     {
-        if ( SessionManager.sessionData.dcdConfig && SessionManager.sessionData.dcdConfig.favList )
+        if ( ConfigManager.getConfigJson() && ConfigManager.getConfigJson().favList )
         {
-            console.log( SessionManager.sessionData.dcdConfig.favList );
+            console.log( ConfigManager.getConfigJson().favList );
 
-            me.render( SessionManager.sessionData.dcdConfig.favList );
+            me.render( ConfigManager.getConfigJson().favList );
         }
 
         return me;

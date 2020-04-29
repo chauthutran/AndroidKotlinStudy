@@ -77,7 +77,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityCardTrTag.find( 'div.activityContent' )
-                    , activityJson, activityTrans, SessionManager.sessionData.dcdConfig );
+                    , activityJson, activityTrans, ConfigManager.getConfigJson() );
 
 
                 // 3. 'SyncUp' Button Related
