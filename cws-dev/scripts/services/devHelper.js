@@ -373,9 +373,10 @@ DevHelper.testRun = function()
     console.log( dest );
 };
 
-DevHelper.showFullPreview = function()
+DevHelper.showFullPreview = function( activityID )
 {
-    var TEST_ITEM_ID = 'LA_TEST_PROV_20200407_081636003'; //LA_TEST_PROV_20200407_081636003
+    var ITEM_ID = ( activityID ? activityID : 'LA_TEST_PROV_20200407_081636003');  //LA_TEST_PROV_20200407_081636003
+    console.log( activityID, ITEM_ID );
 
     // initialize
     var sheetFull = $( 'div.sheet_full-fs' );
@@ -384,30 +385,32 @@ DevHelper.showFullPreview = function()
     console.log( sheetFull );
     console.log( cardCloseTag );
 
-    // set styles
+    // set initial styles
     sheetFull.css( 'z-index', 9999 );
     sheetFull.css( 'position', 'absolute' );
     sheetFull.css( 'left', '0' );
     sheetFull.css( 'top', '0' );
     sheetFull.css( 'width', '100%' );
     sheetFull.css( 'height', screenHeight ); // - 56
-    sheetFull.css( 'background-color', '#fff' );
-
-
-    // clear contents
-    sheetFull.empty();
-
+    sheetFull.css( 'background-image', 'url(../images//logo_bk.svg)' );
+    //sheetFull.css( 'background-color', '#fff' );
+    sheetFull.css( 'overflow', 'hidden' );
 
     // populate template
     sheetFull.html( $( Templates.activityCardFullScreen ) );
 
-    // ADD TEST/DUMMY VALUE
-    sheetFull.find( '.activity' ).attr( 'itemid', TEST_ITEM_ID )
+    // create tab click events
+    FormUtil.setUpNewUITab( sheetFull.find( '.tab_fs' ) ); 
 
-    // update card content
-    var actCard = new ActivityCard( TEST_ITEM_ID, DevHelper.cwsRenderObj, sheetFull ); //activityJson.activityId
-    console.log( actCard );
+    // ADD TEST/DUMMY VALUE
+    sheetFull.find( '.activity' ).attr( 'itemid', ITEM_ID )
+
+    // update card (header) contents
+    var actCard = new ActivityCard( ITEM_ID, DevHelper.cwsRenderObj, sheetFull ); //activityJson.activityId
     actCard.render();
+
+    // set tabs contents
+    var thisItm = DevHelper.setFullPreviewTabContent( ITEM_ID );
 
     // set other events
     var cardCloseTag = sheetFull.find( 'img.btnBack' );
@@ -415,52 +418,52 @@ DevHelper.showFullPreview = function()
     cardCloseTag.click( function(){ 
         sheetFull.empty();
         sheetFull.fadeOut();
+        $( '#pageDiv' ).show();
     });
 
 
     // render
     sheetFull.fadeIn();
 
+    $( '#pageDiv' ).hide();
+
 }
 
-    
-DevHelper.configPreviewFull = function()
+DevHelper.setFullPreviewTabContent = function( itemID )
 {
-    var retData = {
-        "definitionBlocks":{
-            "blockDefaultOptionsOnline":{
-                "blockType":"mainTab",
-                "buttons":[  
-                "imgBtn_SearchByVoucherOption",
-                "imgBtn_SearchByPhonenumberOption",
-                "imgBtn_DetailEnter"
-                ],
-                "message":{  
-                "defaultMessage":"You are Online"
-                }
-            }
-        },
-        "definitionButtons": {
-            "imgBtn_SearchByVoucherOption":{  
-                "defaultLabel":"By voucher",
-                "term":"tab_byVoucher",
-                "buttonType":"imageButton",
-                "imageSrc":"images/voucher.svg",
-                "onClick":[
-                   {  
-                      "actionType":"clearOtherBlocks"
-                   },
-                   {  
-                      "actionType":"openBlock",
-                      "blockId":"blockSearchByVoucher",
-                      "actionParameters":{  
-                         "jsonData":{  
-                         }
-                      }
-                   }
-                ]
-             }
+    var clientObj = ActivityDataManager._activityToClient[ itemID ];
+
+    console.log( clientObj );
+
+
+    //tab_previewDetails
+    var arrDetails = [];
+
+    for ( var key in clientObj.clientDetails ) 
+    {
+        //if ( flds[f] == key && Json[ key ] )
+        {
+            arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
         }
     }
 
+    $( '#tab_previewDetails' ).html( Util2.activityListPreviewTable( 'clientDetails: {} section', arrDetails) )
+
+
+    //tab_previewPayload
+    var objPayload = clientObj.activities;
+    var jsonViewer = new JSONViewer();
+
+    $( '#tab_previewPayload' ).append( jsonViewer.getContainer() );
+
+    jsonViewer.showJSON( objPayload );
+
+
+    //tab_previewSync
+    var objSync = [];
+
+    $( '#tab_previewSync' ).html( Util2.activityListPreviewTable( 'processing.history', objSync) )
+
+
+    return clientObj;
 }

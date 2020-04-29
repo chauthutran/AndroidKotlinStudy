@@ -124,91 +124,75 @@ Templates.template_trActivityTag = `<tr class="activity">
 
 Templates.activityCardFullScreen = `<div class="wapper_card">
  <div class="c_900" style="vertical-align:middle;height:56px;font-size:18px;line-height:24px;display:flex;align-items:center;">
-    <img src='images/arrow_back.svg' class='btnBack' style='width:28px;height:28px;padding: 0 10px;'>
+    <img src='images/arrow_back.svg' class='btnBack' style='width:28px;height:28px;padding: 0 10px;filter: invert(100%);'>
     <span>Details</span>
  </div>
  <div class="card _tab activity">
-  <div class="card__sync">
+  <div class="card__sync" style="height: 88px;min-height: 88px;padding: 8px 8px;border-bottom: 1px solid #F5F5F5;">
     <div class="card__sync_container">
       <div class="activityIcon card__sync-suppor_visuals"></div>
       <div class="activityContent card__sync_content list_three_item_content"></div>
-      <div class="card__sync_cta">
-        <div class="card__sync_status color_status_error">Error</div>
-        <div class="card__sync_cta1"></div>
-        <div class="card__sync_cta2"></div>
+      <div class="activityStatus card__sync_cta">
+        <div class="activityStatusText card__sync_status color_status_error">Error</div>
+        <div class="activityPhone card__sync_cta1"></div>
+        <div class="activityStatusIcon card__sync_cta2"></div>
       </div>
     </div>
   </div>
   <div class="tab_fs">
-    <ul class="tab_fs__head">
-      <li class="active" rel="tab1">
-        <div class="tab_fs__head-icon i-details_24"></div>Details
-        <ul>
-          <li rel="tab2">
-            <div class="tab_fs__head-icon i-payloads_24"></div>Payload
-          </li>
-          <li rel="tab3">
-            <div class="tab_fs__head-icon i-synchronized_24 "></div>Sync
-          </li>
-        </ul>
+  <ul class="tab_fs__head" style="background-color: #fff;">
+   <li class="primary active" rel="tab_previewDetails">
+    <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+    <span rel="tab_previewDetails">Details</span>
+     <ul class="2ndary" style="display:none">
+      <li class="2ndary" style="display:none" rel="tab_previewPayload">
+       <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+       <span rel="tab_previewPayload">Payload</span>
       </li>
-      <li rel="tab2">
-        <div class="tab_fs__head-icon i-payloads_24"></div>Payload
-        <ul>
-          <li rel="tab1">
-            <div class="tab_fs__head-icon i-details_24"></div>Details
-          </li>
-          <li rel="tab3">
-            <div class="tab_fs__head-icon i-synchronized_24 "></div>Sync
-          </li>
-        </ul>
+      <li class="2ndary" style="display:none" rel="tab_previewSync">
+       <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+       <span rel="tab_previewSync">Sync</span>
       </li>
-      <li rel="tab3">
-        <div class="tab_fs__head-icon i-synchronized_24 "></div>Sync
-        <ul>
-          <li rel="tab1">
-            <div class="tab_fs__head-icon i-details_24"></div>Details
-          </li>
-          <li rel="tab2">
-            <div class="tab_fs__head-icon i-payloads_24"></div>Payload
-          </li>
-        </ul>
+     </ul>
+   </li>
+   <li class="primary" rel="tab_previewPayload">
+    <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+    <span rel="tab_previewPayload">Payload</span>
+     <ul class="2ndary" style="display:none">
+      <li class="2ndary" style="display:none" rel="tab_previewDetails">
+       <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+       <span rel="tab_previewDetails">Details</span>
       </li>
-    </ul>
-    <div class="tab_fs__head-icon_exp"></div>
-  </div>
-</div>
-<div class="tab_fs__container">
-  <div id="tab1" class="tab_fs__container-content" style="">
-    <table>
-      <tbody><tr>
-        <td class="c_left">... and another line</td>
-        <td class="c_right">... and another line</td>
-      </tr>
-    </tbody></table>
-  </div>
-  <div id="tab2" class="tab_fs__container-content" style="display: none;">
-    <table>
-      <tbody><tr>
-        <td class="c_left">countryType</td>
-        <td class="c_right">DV</td>
-      </tr>
-      <tr>
-        <td class="c_left">walkn_firstName</td>
-        <td class="c_right">Rodolfo</td>
-      </tr>
-    </tbody></table>
-  </div>
-  <div id="tab3" class="tab_fs__container-content" style="display: none;">
-    <table>
-      <tbody><tr>
-        <td class="c_left">... and another line</td>
-        <td class="c_right">... and another line</td>
-      </tr>
-    </tbody></table>
-  </div>
+      <li class="2ndary" style="display:none" rel="tab_previewSync">
+       <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+       <span rel="tab_previewSync">Sync</span>
+      </li>
+     </ul>
+   </li>
+   <li class="primary" rel="tab_previewSync">
+    <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+    <span rel="tab_previewSync">Sync</span>
+     <ul class="2ndary" style="display:none">
+      <li class="2ndary" style="display:none" rel="tab_previewDetails">
+       <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+       <span rel="tab_previewDetails">Details</span>
+      </li>
+      <li class="2ndary" style="display:none" rel="tab_previewPayload">
+       <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+       <span rel="tab_previewPayload">Payload</span>
+      </li>
+     </ul>
+   </li>
+  </ul>
+  <div class="tab_fs__head-icon_exp"></div>
  </div>
+
+ <div class="tab_fs__container">
+  <div class="tab_fs__container-content active" id="tab_previewDetails" blockid="tab_previewDetails" />
+  <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
+  <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
 </div>
+
 `;
 
 /* ACTIVITY CARD FULL SCREEN PREVIEW << END */

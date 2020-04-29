@@ -60,7 +60,7 @@ DataManager.getData = function( secName, callBack )
 				FormUtil.records_redeem_failed = myFailed.length;
 
 				//syncManager.dataQueued = myQueue;
-				//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
+				//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
 
 			}
 

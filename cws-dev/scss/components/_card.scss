@@ -98,6 +98,7 @@
                     -webkit-box-align: center;
                     align-items: center;
                     cursor: pointer;
+                    background-repeat: no-repeat;
                     @include background-image('sync-error_36');
                     @include box-sizing(border-box);
 

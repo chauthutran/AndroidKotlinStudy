@@ -37,6 +37,7 @@ $active-tab :$color-p;
         margin: 0 0 8px 0;
         padding: 0;
         list-style: none;
+        z-index: 1000;
         width: $tab__head-width;
         //overflow-y: scroll;
         @include box-sizing(border-box);
@@ -179,6 +180,7 @@ $active-tab :$color-p;
     }
 
     .tab_fs__container-content {
+        overflow: auto;
         @include box-sizing(border-box);
 
         @include rwd-min(600) {

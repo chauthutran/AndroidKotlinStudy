@@ -1,6 +1,6 @@
 // -------------------------------------------
 // -- ActivityCard Class/Methods
-//      - Mainly used for syncManager run one activity item sync + 'SyncUp' - performSyncUp();
+//      - Mainly used for syncManager run one activity item sync
 //
 //      - Tags will be used if this item is displayed on the app.
 //          - There will be cases where activity items are processed (in sync)
@@ -363,7 +363,10 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
             FormUtil.appendActivityTypeIcon( activityTypeTdTag
                 , activityTypeConfig
-                , activitySyncUpStatusConfig );
+                , activitySyncUpStatusConfig
+                , undefined
+                , undefined
+                , activityJson );
                 
         }
         catch( errMsg )

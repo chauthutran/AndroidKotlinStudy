@@ -1283,7 +1283,7 @@ FormUtil.updateStat_SyncItems = function( redList, retFunc )
 	FormUtil.records_redeem_failed = myFailed.length;
 
 	//syncManager.dataQueued = myQueue;
-	//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
+	//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < Constants.storage_offline_ItemNetworkAttemptLimit) );;
 		
 	retFunc( returnList );
 }
@@ -1383,8 +1383,9 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
 };
 
-FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride )
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
+	console.log( statusOpt );
 	try 
 	{
 		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen
@@ -1410,13 +1411,20 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				}
 	
-				if ( statusOpt && statusOpt.name !== Constants.status_queued && statusOpt.name !== Constants.status_failed )
+				if ( statusOpt && statusOpt.name !== Constants.status_queued ) //&& statusOpt.name !== Constants.status_failed 
 				{
 					$( svgObject ).css( 'opacity', '1' );
 				}
 				else
 				{
-					$( svgObject ).css( 'opacity', '0.4' );
+					if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status )
+					{
+						$( svgObject ).css( 'opacity', '1' );
+					}
+					else
+					{
+						$( svgObject ).css( 'opacity', '0.4' );
+					}
 				}
 	
 				$( iconObj ).empty();

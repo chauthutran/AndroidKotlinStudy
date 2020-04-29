@@ -3219,6 +3219,7 @@ h6 {
   margin: 0 0 8px 0;
   padding: 0;
   list-style: none;
+  z-index: 1000;
   width: 100%;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3402,6 +3403,7 @@ h6 {
 }
 
 .tab_fs__container .tab_fs__container-content {
+  overflow: auto;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -4891,6 +4893,7 @@ h6 {
   -ms-flex-align: center;
       align-items: center;
   cursor: pointer;
+  background-repeat: no-repeat;
   background-image: url(../images//sync-error_36.svg);
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -5517,7 +5520,7 @@ h6 {
   -moz-box-sizing: border-box;
   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.35);
-  z-index: 1500;
+  z-index: 1499;
 }
 
 .Nav2 .Nav2__icon {
@@ -6845,7 +6848,9 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  background-color: black;
+  /*background-color: rgba($color-typ-sl, 35%);*/
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 input,

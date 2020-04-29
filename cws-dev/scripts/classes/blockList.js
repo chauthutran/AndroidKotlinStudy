@@ -470,6 +470,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         listTableTbodyTag.append( activityCardTrTag );     
 
         activityCardTrTag.attr( 'itemId', activityJson.activityId );
+
+        activityCardTrTag.find( '.activityContent' ).click( function(){
+            DevHelper.showFullPreview( activityJson.activityId );
+        });
       
         if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardTrTag.attr( 'groupBy', groupByIdxVal );
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );

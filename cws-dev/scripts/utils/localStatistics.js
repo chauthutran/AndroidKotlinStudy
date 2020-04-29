@@ -252,9 +252,9 @@ function statistics( cwsRender )
     {
         var retArr = [];
 
-        retArr.push( { name: Constants.status_submit } );
-        retArr.push( { name: Constants.status_queued } );
-        retArr.push( { name: Constants.status_failed } );
+        retArr.push( { name: Constants.status_redeem_submit } );
+        retArr.push( { name: Constants.status_redeem_queued } );
+        retArr.push( { name: Constants.status_redeem_failed } );
 
         return retArr;
     }*/

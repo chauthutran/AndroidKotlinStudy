@@ -694,7 +694,8 @@ Util2.arrayPreviewRecord = function( title, arr )
 
 Util2.activityListPreviewTable = function( title, arr )
 {
-	var ret = $( '<table class="activityListPreviewTable" />');
+	var ret = $( '<table />');
+	var tbody = $( '<tbody />');
 
 	if ( arr )
 	{
@@ -702,7 +703,7 @@ Util2.activityListPreviewTable = function( title, arr )
 		{
 			var tr = $( '<tr />');
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="" />').html( '<strong>' + title + '</strong>') );	//dataToHTMLtitle
+			tr.append( $( '<td colspan=2 />').html( '<strong>' + title + '</strong>') );	//dataToHTMLtitle
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )
@@ -711,7 +712,7 @@ Util2.activityListPreviewTable = function( title, arr )
 			{
 				var tr = $( '<tr />');
 				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="" />').html( arr[ i ].name ) );	//dataToHTMLheader
+				tr.append( $( '<td colspan=2 />').html( arr[ i ].name ) );	//dataToHTMLheader
 			}
 			else
 			{
@@ -719,15 +720,17 @@ Util2.activityListPreviewTable = function( title, arr )
 				{
 					var tr = $( '<tr />');
 					ret.append( tr );
-					tr.append( $( '<td class="leftDynamic" />').html( arr[ i ].name ) );  //dataToHTMLleft
-					tr.append( $( '<td class="rightDynamic" />').html( arr[ i ].value ) ); //dataToHTMLright
+					tr.append( $( '<td class="c_left" />').html( arr[ i ].name ) );  //dataToHTMLleft
+					tr.append( $( '<td class="c_right" />').html( arr[ i ].value ) ); //dataToHTMLright
 				}
 			}
 		}
 	
 		var tr = $( '<tr />');
-		ret.append( tr );
 		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
+
+		tbody.append( tr );
+		ret.append( tbody );
 
 	}
 
