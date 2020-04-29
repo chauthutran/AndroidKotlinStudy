@@ -70,6 +70,23 @@ ClientDataManager.insertClients = function( clients )
     // NOTE: Not automatically saved. Manually call 'save' after insert.
 };
 
+
+// Add processing info if does not exists - with 'downloaded detail'
+ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, processingInfo )
+{
+    for ( var i = 0; i < newClients; i++ )
+    {
+        var client = clients[ i ];
+
+        for ( var x = 0; x < client.activities; x++ )
+        {
+            var activity = client.activities[ x ];
+
+            ActivityDataManager.insertToProcessing( activity, processingInfo );
+        }
+    }
+};
+
 ClientDataManager.createCommonPayloadClient = function()
 {
     // Call it from template?
@@ -145,7 +162,7 @@ ClientDataManager.addClientIndex = function( client )
 // ======================================================
 // === MERGE RELATED =====================
 
-ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
+ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInfo, callBack )
 {
     var pwaClients = ClientDataManager.getClientList();
     var changeOccurred = false;
@@ -159,6 +176,8 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
 
     for ( var i = 0; i < mongoClients.length; i++ )
     {        
+        // OPTION 1.  We can simply add the download info to all activities in Monogo?
+
         var mongoClient = mongoClients[i];
         // TODO: This pwaClientList should be indexed on 'clientDataManager' for performance..
         var pwaClient = Util.getFromList( pwaClients, mongoClient._id, "_id" );
@@ -172,7 +191,8 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
                 if ( mongoClient.updated > pwaClient.updated ) 
                 {
                     // Get activities in mongoClient that does not exists...
-                    ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient );
+                    ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient
+                        , Util.getJsonDeepCopy( processingInfo ) );
 
                     // Update clientDetail from mongoClient
                     pwaClient.clientDetails = mongoClient.clientDetails;
@@ -202,7 +222,9 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, callBack )
         // if new list to push to pwaClients exists, add to the list.
         if ( newClients.length > 0 ) 
         {
-            ClientDataManager.insertClients( newClients, callBack );        
+            ClientDataManager.clientsActivities_AddProcessingInfo( newClients, processingInfo );
+
+            ClientDataManager.insertClients( newClients );        
         }        
 
         // Need to create ClientDataManager..

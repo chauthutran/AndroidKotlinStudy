@@ -101,9 +101,11 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         }
         else
         {
-            //DataFormatConvert.convertToActivityItems( mongoClients, function( newActivityItems ) 
-            //SyncManagerNew.mergeDownloadedList( ----.getActivityList(), newActivityItems, function( changeOccurred ) 
-            ClientDataManager.mergeDownloadedClients( mongoClients, function( changeOccurred_atMerge ) 
+            // 'download' processing data                
+            var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );
+
+
+            ClientDataManager.mergeDownloadedClients( mongoClients, processingInfo, function( changeOccurred_atMerge ) 
             {
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );

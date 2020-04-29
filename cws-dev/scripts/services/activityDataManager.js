@@ -134,7 +134,7 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
 // ====================================================
 // === Activity
 
-ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaActivities, pwaClient )
+ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaActivities, pwaClient, processingInfo )
 {
     var newActivities = [];
 
@@ -235,4 +235,48 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
         MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notificationDark', undefined, '', 'right', 'top' );
     }
 
+};
+
+// ----------------------------------------
+
+ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr )
+{
+    var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
+    var processingInfo = {
+        'created': dateStr,
+        'status': statusStr,
+        'history': [ { 'status': statusStr, 'responseCode': 200, 'datetime': dateStr, 'msg': msgStr } ]
+    };    
+
+    return processingInfo;
+};
+
+
+ActivityDataManager.createProcessingInfo_Other = function( statusStr, responseCode, msgStr )
+{
+    var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
+    var processingInfo = {
+        'status': statusStr,
+        'history': [ { 'status': statusStr, 'responseCode': responseCode, 'datetime': dateStr, 'msg': msgStr } ]
+    };    
+
+    return processingInfo;
+};
+
+
+ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
+{
+    if ( activity )
+    {
+        if ( !activity.processing ) activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
+        else 
+        {
+            // update the limited data --> 'status', 'statusRead', 'history' (add)
+            activityProcessing.status = newProcessingInfo.status;
+
+            if ( newProcessingInfo.statusRead !== undefined ) activityProcessing.statusRead = newProcessingInfo.statusRead;
+        
+            activityProcessing.history.push( Util.getJsonDeepCopy( newProcessingInfo.history[0] ) );        
+        }
+    }
 };

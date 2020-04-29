@@ -1,6 +1,6 @@
 // -------------------------------------------
 // -- ActivityCard Class/Methods
-//      - Mainly used for syncManager run one activity item sync
+//      - Mainly used for syncManager run one activity item sync + 'SyncUp' - performSyncUp();
 //
 //      - Tags will be used if this item is displayed on the app.
 //          - There will be cases where activity items are processed (in sync)
@@ -52,9 +52,6 @@ function ActivityCard( activityId, cwsRenderObj )
     {        
         var activityCardTrTag = me.getActivityCardTrTag();
 
-        //console.log( 'render' );
-        //console.log( 'activityCardTrTag' );
-
         // If tag is visible (has been created), perform render
         if ( activityCardTrTag )
         {
@@ -62,11 +59,7 @@ function ActivityCard( activityId, cwsRenderObj )
 
             try
             {
-                //var divListItemContentTag = activityCardTrTag.find( 'div.activityContent' );
-                    
-
                 var activityTrans = me.getCombinedTrans( activityJson );
-
 
                 // 1. activityType (Icon) display (LEFT SIDE)
                 //me.activityTypeDisplay( activityCardTrTag, activityJson );
@@ -112,7 +105,7 @@ function ActivityCard( activityId, cwsRenderObj )
         divSyncStatusTextTag.html( '' );
 
 
-        var statusVal = ( !activityJson.processing ) ? Constants.status_submit : activityJson.processing.status;
+        var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
 
         if ( statusVal === Constants.status_submit )        
@@ -128,6 +121,12 @@ function ActivityCard( activityId, cwsRenderObj )
 
             if ( activityJson.processing.statusRead ) divSyncIconTag.css( 'background-image', 'url(images/sync_msdr.svg)' );
             else divSyncIconTag.css( 'background-image', 'url(images/sync_msd.svg)' );
+        }
+        else if ( statusVal === Constants.status_downloaded )        
+        {
+            // already sync..
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' );
+            divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
@@ -220,32 +219,6 @@ function ActivityCard( activityId, cwsRenderObj )
         }, "syncResultMsg_content, activity processing history lookup" );
 
     };
-
-
-    // Not individual message..
-    var syncAll_msg = `
-    <div class="sync_all__section">
-
-        <div class="sync_all__section_title">Services Deliveries 4/6</div>
-        <div class="sync_all__section_log">
-            20-02-01 17:07 Starting sync_all.
-            <br>20-02-01 17:07 Synchronizing...
-            <br>20-02-01 17:07 sync_all completed.
-        </div>
-    </div>
-
-    <div class="sync_all__section">
-
-        <div class="sync_all__section_title">Client details</div>
-        <div class="sync_all__section_log">
-            <span class="color_status_sync">Sync - read message 2</span>
-            <br><span class="color_status_pending_msg">Sync postponed 2</span>
-            <br><span class="color_status_error">Sync error 1</span>
-        </div>
-    </div>
-    
-    <div class="sync_all__section_msg">Show next sync: in 32m</div>
-    `;
 
 
     me.setActivityContentDisplay = function( divActivityContentTag, activity, activityTrans, configJson )
@@ -548,27 +521,40 @@ function ActivityCard( activityId, cwsRenderObj )
                 // run UI animations
                 if ( activityCardTrTag ) me.updateItem_UI_StartSync();
     
-                var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );            
-                var processing = Util.getJsonDeepCopy( activityJson.processing );
-                delete activityJson.processing;
+                var activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
+                // Do not delete 'processing' until success..
+
+                var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
+                delete activityJson_Copy.processing;
     
                 var payload = {
-                    'searchValues': processing.searchValues,
-                    'captureValues': activityJson
+                    'searchValues': activityJson_Orig.processing.searchValues,
+                    'captureValues': activityJson_Copy
                 };
-    
-                //console.log( 'ActivityCard syncUp payload: ' );
-                //console.log( payload );
-                
-                var loadingTag = undefined;
-                //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
-                WsCallManager.requestPost( processing.url, payload, loadingTag, function( success, responseJson )
+
+
+                // TODO: add 'processing' history on trial?!!!
+
+
+                try
                 {
-                    if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
-                    
-                    me.syncUpResponseHandle( success, responseJson, callBack );
-                });            
-    
+                    var loadingTag = undefined;
+                    //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
+                    WsCallManager.requestPost( processing.url, payload, loadingTag, function( success, responseJson )
+                    {
+                        if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
+                        
+                        // Replace the downloaded activity with existing one.
+                        me.syncUpResponseHandle( activityJson_Orig, success, responseJson, callBack );
+                    });         
+                }
+                catch ( errMsg )
+                {
+                    var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + errMsg );
+                    ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );                
+
+                    throw ' in WsCallManager.requestPost - ' + errMsg;
+                }    
             }
             catch( errMsg )
             {
@@ -583,7 +569,7 @@ function ActivityCard( activityId, cwsRenderObj )
 
     // =============================================
 
-    me.syncUpResponseHandle = function( success, responseJson, callBack )
+    me.syncUpResponseHandle = function( activityJson_Orig, success, responseJson, callBack )
     {
         // if 'success' and return json content also suggests that, 
         //      <-- existance of 'note' 
@@ -601,7 +587,12 @@ function ActivityCard( activityId, cwsRenderObj )
 
             ActivityDataManager.removePayloadActivityById( me.activityId );
             
-            ClientDataManager.mergeDownloadedClients( [ responseJson.result.client ], function( changeOccurred_atMerge ) 
+
+            // 'syncedUp' processing data                
+            var processingInfo = ActivityDataManager.ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
+
+
+            ClientDataManager.mergeDownloadedClients( [ responseJson.result.client ], processingInfo, function( changeOccurred_atMerge ) 
             {
                 ClientDataManager.saveCurrent_ClientsStore();
 
@@ -614,18 +605,14 @@ function ActivityCard( activityId, cwsRenderObj )
         }
         else
         {
+            // 'syncedUp' processing data                
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + JSON.stringify( responseJson ) );
+
+            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
             // Add activityJson processing
             if ( callBack ) callBack( operationSuccess );
-        }
-
-        //me.updateItem_DataFields( success, responseJson, me.activityJson, me.cwsRenderObj );
-        //if ( success ) me.updateItem_Data_CleanUp( me.activityJson );
-        //me.updateItem_Data_saveToDB( me.activityJson, callBack );
-
-        // TODO: LET's not use 'saveHistory' for now.  Let's change other part of app to not use history info.
-        //me.updateItem_Data_saveHistory( me.activityJson, dtmSyncAttempt, success, returnJson, function() {
-        //} );    
- 
+        } 
     };
 
 

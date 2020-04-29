@@ -514,9 +514,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                         <br>20-02-01 17:07 Synchronizing...
                         <br>20-02-01 17:07 sync_all completed.
                     </div>
-                    </div>
+                </div>
 
-                    <div class="sync_all__section">
+                <div class="sync_all__section">
                     <div class="sync_all__section_title">Client details</div>
                     <div class="sync_all__section_log">
                         <span class="color_status_sync">Sync - read message 2</span>

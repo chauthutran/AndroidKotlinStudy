@@ -1185,7 +1185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "5205397f770ccc1d920e681a23fce7fa"
+    "revision": "4e545a6d36c2828190914386e95c124b"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "b2316e6b1783fc760153d9220a46f4fc"
+    "revision": "cc073065f540b208ad065d56d9818827"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1341,7 +1341,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "e74f5968b20df81a99b6203241dd9780"
+    "revision": "64e9069d602ef018288e94615cdad178"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -1349,7 +1349,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/clientDataManager.js",
-    "revision": "0d1296413f87292e380a614eeb48b544"
+    "revision": "9e00f8a676ebd7b8ce6e5890d4f29f5c"
   },
   {
     "url": "scripts/services/configManager.js",
@@ -1437,7 +1437,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "8ccd9fe0b461a412f3f733d705ddda86"
+    "revision": "83d124a5c5bba434f444d525a55a6f2f"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
