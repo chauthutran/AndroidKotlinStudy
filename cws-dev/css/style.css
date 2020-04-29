@@ -2970,6 +2970,22 @@ h6 {
   -moz-box-sizing: border-box;
 }
 
+/* this should be stand alone? */
+.list_three_line-suppor_visuals {
+  float: left;
+  width: 40px;
+  height: 40px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+      align-items: center;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: #5e92f3;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
 .list .list_three_line .list_three_line__container .list_three_item_content {
   float: left;
   width: calc(100% - 164px);
@@ -5504,7 +5520,7 @@ h6 {
 .Nav2 {
   position: sticky;
   position: -webkit-sticky;
-  top: 56;
+  top: 56px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

@@ -7,6 +7,7 @@ Constants.storageName_clientList = "clientList";
 Constants.storageName_session = "session";
 
 Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
+Constants.status_submit_wMsg = "submit_wMsg"; 
 Constants.status_queued = "queued"; // initialize from dcd@XX ?
 Constants.status_failed = "failed"; // initialize from dcd@XX ?
 Constants.status_hold = "paused"; // initialize from dcd@XX ? //REMOVE? We don't "PAUSE" or HOLD records (yet)

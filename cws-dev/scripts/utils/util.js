@@ -11,7 +11,20 @@ Util.termName_listEmpty = "common_listEmpty";
 Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 
-Util.tryCatchContinue = function( callBack, runFunc )
+Util.tryCatchContinue = function( runFunc, optionalMsg )
+{
+	try
+	{
+		runFunc();
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
+	}
+};
+
+
+Util.tryCatchCallBack = function( callBack, runFunc )
 {
 	try
 	{
@@ -19,7 +32,7 @@ Util.tryCatchContinue = function( callBack, runFunc )
 	}
 	catch( errMsg )
 	{
-		console.log( 'ERROR, tryCatchContinue, errMsg - ' + errMsg );
+		console.log( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
 		callBack();
 	}
 };

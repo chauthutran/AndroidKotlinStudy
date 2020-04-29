@@ -97,20 +97,17 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         <td>
             <div class="list_three_line">
 
-                <div class="list_three_line__container">
+                <div class="activityContainer list_three_line__container">
 
-                    <div class="list_three_line-suppor_visuals i-metod_provision_40"></div>
+                    <div class="activityIcon list_three_line-suppor_visuals i-metod_provision_40"></div>
 
-                    <div class="list_three_item_content">
-                        <div class="list_three_line-date">24 Feb 2020 - 13:15</div>
-                        <div class="list_three_line-text"><b>Greg R.</b> | Male 21<br>
-                        Service: 3x Pills</div>
+                    <div class="activityContent list_three_item_content">
                     </div>
 
-                    <div class="list_three_item_cta">
-                        <div class="list_three_item_status"></div>
-                        <div class="list_three_item_cta1"></div>
-                        <div class="list_three_item_cta2"></div>
+                    <div class="activityStatus list_three_item_cta">
+                        <div class="activityStatusText list_three_item_status"></div>
+                        <div class="activityPhone list_three_item_cta1"></div>
+                        <div class="activityStatusIcon list_three_item_cta2"></div>
                     </div>
 
                 </div>
@@ -124,63 +121,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
         </td>
     </tr>`;
-
-    
-    me.template_ActivityCard = `<li itemid="" class="activityItemCard">
-        <a class="expandable" itemid="" >
-
-            <div class="icon-row listItem">
-
-                <table class="listItem_table">
-                    <tr>
-                        <td class="listItem_selector_drag" style="width:2px;opacity:0.65;vertical-align:top;">
-                            <div style="overflow-y:hidden;" class="listItem">&nbsp;</div>
-                        </td>
-
-                        <td class="listItem_icon_activityType">
-                            <div style="width: 56px;"></div>
-                        </td>
-
-                        <td class="listItem_data_preview">
-                            <div class="divListItemContent">
-                                <div class="listItem_label_title">---Date---</div>
-                            </div>
-                        </td>
-
-
-                        <td class="listItem_action_sync">
-                            <div class="act-r">
-                                <div class="listItem_statusOption"></div>
-                            </div>
-
-                            <div class="icons-status divListItem_icon_sync">
-                                <small class="syncIcon">
-                                    <img src="images/sync-n.svg" class="listItem_icon_sync" />
-                                </small>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="act-l">
-                <div class="act-l-more">
-                    <img src="images/client.svg" style="width:18px;height:18px;opacity:0.5">&nbsp;<span class="act_btn_showDetails" term="">see more</span>
-                </div>
-                <!-- <div class="act-l-expander">
-                    <img class="expandable-arrow" src="images/arrow_down.svg" >
-                </div> -->
-            </div>
-
-            <div class="act-preview"></div>
-
-        </a>
-    </li>`;
-
-    me.template_ActivityCardEmpty = `<li class="emptyListLi activityItemCard">
-            <a class="expandable" style="" term="${Util.termName_listEmpty}">List is empty.</a>
-        </li>`;
-
 
     // ===========================================================
     // === Main Features =========================
@@ -562,20 +502,34 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         imgSyncDownTag.off( "click" ).click( () => {
 
+            Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
+            {
+                var syncAll_Header = `
+                  <div class="sync_all__header_title">Synchronization Services Deliveries</div>
+                  <div class="sync_all__anim i-sync-pending_36 rot_l_anim"></div>`;
 
-            //SyncManagerNew.syncDown( cwsRenderObj, 'Manual', me.afterSyncDownload );
+                var syncAll_Body = `<div class="sync_all__section">
+                    <div class="sync_all__section_title">Services Deliveries 4/6</div>
+                    <div class="sync_all__section_log">20-02-01 17:07 Starting sync_all.
+                        <br>20-02-01 17:07 Synchronizing...
+                        <br>20-02-01 17:07 sync_all completed.
+                    </div>
+                    </div>
 
-            // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
-            $('.sheet_bottom-fs').show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
-            $('.sheet_bottom-scrim').show();  //   opacity: 0.2;  <-- css changed
+                    <div class="sync_all__section">
+                    <div class="sync_all__section_title">Client details</div>
+                    <div class="sync_all__section_log">
+                        <span class="color_status_sync">Sync - read message 2</span>
+                        <br><span class="color_status_pending_msg">Sync postponed 2</span>
+                        <br><span class="color_status_error">Sync error 1</span>
+                    </div>
+                    <div class="sync_all__section_msg">Show next sync: in 32m</div>
+                </div>`;
+
+                syncInfoAreaTag.find( 'div.msgHeader' ).append( syncAll_Header );
+                syncInfoAreaTag.find( 'div.msgContent' ).append( syncAll_Body );
+            });
         });
-
-        /*
-        $(".sheet_bottom-scrim").click(function () {
-            $('.sheet_bottom-fs').css('display', 'none');
-            $('.sheet_bottom-scrim').css('display', 'none');
-        });
-        */
     };
 
 

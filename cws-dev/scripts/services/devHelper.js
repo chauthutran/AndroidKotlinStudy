@@ -33,9 +33,10 @@ DevHelper.sampleDataList = [{
         "activityType": "eVoucher",
         "processing": {
             "created": "2020-04-06T18:30:50.000",
-            "status": "submit",
+            "status": "submit_wMsg",
+            "statusRead": false,
             "history": [
-                { "status": "submit", "dateTime": "2020-04-06T18:30:50.000", "msg": "Downloaded" }
+                { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
             ]
         },
         "transactions": [{
@@ -133,7 +134,7 @@ DevHelper.sampleDataList = [{
             "status": "failed",
             "history": [
                 { "status": "queued", "dateTime": "2020-04-05T17:16:35.000", "msg": "Created in PWA app" }
-                ,{ "status": "failed", "dateTime": "2020-04-07T17:16:35.000", "msg": "Error msg... - more detail with responseCode" }
+                ,{ "status": "failed", "dateTime": "2020-04-07T17:16:35.000", "responseCode": 401, "msg": "Error msg... - more detail with responseCode" }
             ],
             "url": "/PWA.syncUp",
             "searchValues": {}
@@ -183,7 +184,7 @@ DevHelper.sampleDataList = [{
             "created": "2020-04-06T17:16:35.000",
             "status": "submit",
             "history": [
-                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "msg": "Synced - new add" }
+                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Synced - new add" }
             ],
             "url": "/PWA.syncUp",
             "searchValues": {}
@@ -233,7 +234,7 @@ DevHelper.sampleDataList = [{
             "created": "2019-12-30T17:16:35.000",
             "status": "submit",
             "history": [
-                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "msg": "Downloaded" }
+                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Downloaded" }
             ],
             "url": "/PWA.syncUp",
             "searchValues": {}

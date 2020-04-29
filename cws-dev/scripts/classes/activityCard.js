@@ -43,7 +43,7 @@ function ActivityCard( activityId, cwsRenderObj )
 
     me.getSyncButtonTag = function()
     {
-        return me.getActivityCardTrTag().find( '.list_three_item_cta2' );
+        return me.getActivityCardTrTag().find( '.activityStatusIcon' );
     };
     
     // ----------------------------------------------------
@@ -62,95 +62,26 @@ function ActivityCard( activityId, cwsRenderObj )
 
             try
             {
-                var divListItemContentTag = activityCardTrTag.find( 'div.list_three_item_content' );
-
-
-                // NOT APPLICABLE...
-                var activityCardAnchorTag = activityCardTrTag.find( 'a.expandable' );
-                var contentDivTag = activityCardTrTag.find( 'div.listItem' );
-                // --- See More Related Tags
-                var divSeeMoreTag = activityCardTrTag.find( 'div.act-l' );
-                var divSeeMoreBtnTag = divSeeMoreTag.find( 'div.act-l-more' );
-                //var divSeeMoreContentTag = divSeeMoreTag.find( 'div.act-l-expander' );
-                var divSeeMoreIconBtnTag = divSeeMoreTag.find( 'div.act-l-expander' );
-                var divSeeMoreContentTag = activityCardTrTag.find( 'div.act-preview' );
-    
+                //var divListItemContentTag = activityCardTrTag.find( 'div.activityContent' );
                     
 
                 var activityTrans = me.getCombinedTrans( activityJson );
-                // activity
-                //      - tran1
-                //      - tran2
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityCardTrTag, activityJson );
+                //me.activityTypeDisplay( activityCardTrTag, activityJson );
                 
+                me.activityIconClick_displayInfo( activityCardTrTag.find( 'div.activityIcon' ), activityJson );
+
+
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityJson, activityTrans, divListItemContentTag, SessionManager.sessionData.dcdConfig );
+                me.setActivityContentDisplay( activityCardTrTag.find( 'div.activityContent' )
+                    , activityJson, activityTrans, SessionManager.sessionData.dcdConfig );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardTrTag, activityJson );
-
-                
-
-                // 4. 'SeeMore' Related - divSeeMoreBtnTag click to display more/less --> By toggling class
-                contentDivTag.off( 'click' );
-                contentDivTag.on( 'click', function( e ) 
-                {
-                    e.stopPropagation();         
-
-                    // remove all other 'expanded' tags (and run click > hideMoreDetails if preview is showing)
-                    var blockListUlTag = activityCardTrTag.closest( 'ul.tab__content_act' );
-                    blockListUlTag.find('a.expanded').each( function(){
-
-                        if ( $( this ) !== activityCardAnchorTag ) 
-                        {
-                            if ( $( this ).find( 'div.act-preview' ).hasClass( 'act-l-more-open' ) )
-                            {
-                                $( this ).find( 'div.act-l-expander' ).click();
-                            }
-                            $( this ).toggleClass( 'expanded' );
-                        }
-
-                    });
-
-                    // run click event to flip arrowIcon (if already showing)
-                    if ( activityCardAnchorTag.hasClass( 'expanded' ) && divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
-                    {
-                        divSeeMoreBtnTag.click();
-                    }
-    
-                    activityCardAnchorTag.toggleClass( 'expanded' ); 
-                });
-
-                
-                divSeeMoreBtnTag.off( 'click' );
-                divSeeMoreBtnTag.on( 'click', function( e ) 
-                {
-                    e.stopPropagation();
-                    divSeeMoreContentTag.toggleClass( 'act-l-more-open' );
-                    divSeeMoreIconBtnTag.find( '.expandable-arrow' ).toggleClass( 'flipVertical' ); // flip downArrow
-    
-                    if ( divSeeMoreContentTag.hasClass( 'act-l-more-open' ) )
-                    {
-                        console.log( activityJson );
-    
-                        var jsonViewer = new JSONViewer();
-                        divSeeMoreContentTag.append( jsonViewer.getContainer() );
-    
-                        jsonViewer.showJSON( activityTrans );
-                    }
-                    else
-                    {
-                        divSeeMoreContentTag.html( '' );
-                    }
-                });
-                divSeeMoreIconBtnTag.click( function(){
-                    divSeeMoreBtnTag.click();
-                });           
+                me.setupSyncBtn( activityCardTrTag, activityJson );    
 
             }
             catch( errMsg )
@@ -160,16 +91,25 @@ function ActivityCard( activityId, cwsRenderObj )
         }
     };
 
+    
+    me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
+    {
+        activityIconTag.off( 'click' ).click( function() {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+            console.log( activityJson );
+        });
+    };
+
 
     me.setupSyncBtn = function( activityCardTrTag, activityJson )
     {
-        var divSyncIconTag = activityCardTrTag.find( '.list_three_item_cta2' );
-        var divSyncStatusTag = activityCardTrTag.find( '.list_three_item_status' );
+        var divSyncIconTag = activityCardTrTag.find( '.activityStatusIcon' );
+        var divSyncStatusTextTag = activityCardTrTag.find( '.activityStatusText' );
         
         // reset..
         divSyncIconTag.off( 'click' );
         divSyncIconTag.css( 'background-image', '' );
-        divSyncStatusTag.html( '' );
+        divSyncStatusTextTag.html( '' );
 
 
         var statusVal = ( !activityJson.processing ) ? Constants.status_submit : activityJson.processing.status;
@@ -178,17 +118,25 @@ function ActivityCard( activityId, cwsRenderObj )
         if ( statusVal === Constants.status_submit )        
         {
             // already sync..
-            divSyncStatusTag.css( 'color', '#2aad5c' ).html( 'Sync' );
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' );
             divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+        }
+        else if ( statusVal === Constants.status_submit_wMsg )        
+        {
+            // already sync..
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
+
+            if ( activityJson.processing.statusRead ) divSyncIconTag.css( 'background-image', 'url(images/sync_msdr.svg)' );
+            else divSyncIconTag.css( 'background-image', 'url(images/sync_msd.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
-            divSyncStatusTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
+            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
             divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
         }
         else if ( statusVal === Constants.status_failed )
         {
-            divSyncStatusTag.css( 'color', '#FF0000' ).html( 'Sync error' );
+            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Sync error' );
             divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
         }
 
@@ -197,66 +145,153 @@ function ActivityCard( activityId, cwsRenderObj )
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
 
-            me.syncInfoShow( statusVal, activityJson );
+            // Need ref to existing tag... or find?
+            me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
 
             if ( statusVal === Constants.status_queued ) me.activitySubmitSyncClick(); 
+            else if ( statusVal === Constants.submit_wMsg )        
+            {
+                activityJson.processing.statusRead = true;
+                // Need to save storage afterwards..
+                ClientDataManager.saveCurrent_ClientsStore();                
+            }
         });        
     };
 
     
-    me.syncInfoShow = function( statusVal, activityJson )
+    me.syncResultMsgShow = function( statusVal, activityJson, activityCardTrTag )
     {
-        Templates.setMsgAreaBottom( function( syncInfoAreaTag ) {
-        
-            var divBottomWrapperTag = syncInfoAreaTag.find( 'div.bottom__wrapper' );
+        // If 'activityCardTrTag ref is not workign with fresh data, we might want to get it by activityId..
 
+        Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
+        {
+            me.syncResultMsg_header( syncInfoAreaTag, activityCardTrTag );
 
-            // activityJson.processing  <-- activityJson.appData?
-            // activityJson.processing.history..  <-- save error / downloaded / synced info..
-            // activityJson.processing.status       <-- quick info of current (last)
-
-
-            if ( activityJson.activityId === "LA_TEST_PROV_20200407_081636003" )
-            {
-
-                // results..
-                //  <-- We need to collect the response...
-
-
-                var testMsg = `
-                <div class="sync_all__section">
-
-                    <div class="sync_all__section_title">Services Deliveries 4/6</div>
-                    <div class="sync_all__section_log">
-                        20-02-01 17:07 Starting sync_all.
-                        <br>20-02-01 17:07 Synchronizing...
-                        <br>20-02-01 17:07 sync_all completed.
-                    </div>
-                </div>
-
-                <div class="sync_all__section">
-
-                    <div class="sync_all__section_title">Client details</div>
-                    <div class="sync_all__section_log">
-                        <span class="color_status_sync">Sync - read message 2</span>
-                        <br><span class="color_status_pending_msg">Sync postponed 2</span>
-                        <br><span class="color_status_error">Sync error 1</span>
-                    </div>
-                </div>
-                
-                <div class="sync_all__section_msg">Show next sync: in 32m</div>
-                `;
-        
-                divBottomWrapperTag.append( testMsg );    
-            }
-    
+            me.syncResultMsg_content( syncInfoAreaTag, activityCardTrTag, activityJson );
         });
+
+        // activityJson.processing  <-- activityJson.appData?
+        // activityJson.processing.history..  <-- save error / downloaded / synced info..
+        // activityJson.processing.status       <-- quick info of current (last)
+    };
+
+    me.syncResultMsg_header = function( syncInfoAreaTag, activityCardTrTag )
+    {        
+        var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
+
+        var statusLabel = activityCardTrTag.find( 'div.activityStatusText' ).text();
+
+        divHeaderTag.html( '<div class="msgHeaderLabel sync_all__header_title">' + statusLabel + '</div>' );
+    };
+
+
+    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardTrTag, activityJson )
+    {
+        var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
+
+        // 1. ActivityCard Info Add - From Activity Card Tag
+        divBottomTag.append( Templates.msgActivityCard );
+
+        var activityContainerTag = divBottomTag.find( 'div.activityContainer' );
+
+        activityContainerTag.append( activityCardTrTag.find( 'div.activityIcon' ).clone() );
+        activityContainerTag.append( activityCardTrTag.find( 'div.activityContent' ).clone() );
+        
+
+        // 2. Add 'processing' sync message.. - last one?
+        
+        Util.tryCatchContinue( function() 
+        {
+            var historyList = activityJson.processing.history;
+
+            if ( historyList.length > 0 )
+            {
+                var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
+                var latestItem = historyList_Sorted[0];    
+        
+                var msgSectionTag = $( Templates.msgSection );
+    
+                msgSectionTag.find( 'div.msgSectionTitle' ).text( Util.getStr( latestItem.responseCode ) );
+        
+                msgSectionTag.find( 'div.msgSectionLog' ).text( Util.getStr( latestItem.msg ) );        
+    
+                divBottomTag.append( msgSectionTag );
+            }        
+        }, "syncResultMsg_content, activity processing history lookup" );
 
     };
 
 
-    me.setActivityContentDisplay = function( activity, activityTrans, divListItemContentTag, configJson )
+    // Not individual message..
+    var syncAll_msg = `
+    <div class="sync_all__section">
+
+        <div class="sync_all__section_title">Services Deliveries 4/6</div>
+        <div class="sync_all__section_log">
+            20-02-01 17:07 Starting sync_all.
+            <br>20-02-01 17:07 Synchronizing...
+            <br>20-02-01 17:07 sync_all completed.
+        </div>
+    </div>
+
+    <div class="sync_all__section">
+
+        <div class="sync_all__section_title">Client details</div>
+        <div class="sync_all__section_log">
+            <span class="color_status_sync">Sync - read message 2</span>
+            <br><span class="color_status_pending_msg">Sync postponed 2</span>
+            <br><span class="color_status_error">Sync error 1</span>
+        </div>
+    </div>
+    
+    <div class="sync_all__section_msg">Show next sync: in 32m</div>
+    `;
+
+
+    me.setActivityContentDisplay = function( divActivityContentTag, activity, activityTrans, configJson )
     {
+
+        var activitySettings = FormUtil.getActivityType( activity );      
+        var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+        
+        divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
+
+        var activityItem = activity;
+
+
+        // Display 1st line - as date
+        if ( activity.processing )
+        {
+            var dateStr = $.format.date( activity.processing.created, "MMM dd, yyyy - HH:mm" );
+    
+            divActivityContentTag.append( '<div class="activityContentDisplay list_three_line-date">' + dateStr + '</div>' );
+        }
+
+
+        if ( displaySettings )
+        {
+            // If custom config display, remove 
+            for( var i = 0; i < displaySettings.length; i++ )
+            {
+                // Need 'activity', 'activityTrans'
+                var dispSettingEvalStr = displaySettings[ i ];
+                var displayEvalResult = "------------";
+    
+                try
+                {
+                    displayEvalResult = eval( dispSettingEvalStr );
+                    //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
+                }
+                catch ( errMsg )
+                {
+                    console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
+                }
+    
+                divActivityContentTag.append( '<div class="activityContentDisplay list_three_line-text">' + displayEvalResult + '</div>' );    
+            }                        
+        }
+
+        /*
         //var displaySettings = ConfigManager.getActivityDisplaySettings();
         var divLabelTag = divListItemContentTag.find( 'div.list_three_line-date' );
 
@@ -316,6 +351,7 @@ function ActivityCard( activityId, cwsRenderObj )
         }                
 
         divListItemContentTag.html( divListItemContentTag.html().replace( /undefined/g, '' ) )
+        */
     };
 
 

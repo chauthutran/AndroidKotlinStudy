@@ -41,7 +41,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "b5af68bb739c869d2fff014fb36746b5"
+    "revision": "e479277ba606bd06818afe9f7acb4f14"
   },
   {
     "url": "images/about.png",
@@ -1165,7 +1165,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "a4db80b8526e74f17e334bad46797f46"
+    "revision": "e5300d55d51c7673ac4fb7cb95ad55c7"
   },
   {
     "url": "redeemGen.html",
@@ -1185,7 +1185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "1aa7a7a669eb649cf4f38c066f2b8267"
+    "revision": "5205397f770ccc1d920e681a23fce7fa"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "5db380421497eae2d581a12fdb21eada"
+    "revision": "b2316e6b1783fc760153d9220a46f4fc"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1273,11 +1273,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "79461e5b70f4df93f022cd1aacd58acf"
+    "revision": "d56b63a9debab7d3a6c73e97b84b9ed5"
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "20c0919a7b3a5a17dcd9cd671fe55c47"
+    "revision": "e4e8b883df1d0fc041a985dbf8260848"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1369,11 +1369,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/dataVerMove.js",
-    "revision": "f47832bb5f433a41de24785012421824"
+    "revision": "97175d056bab6444ef10b24556b5aa2c"
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "2cd7d720dd1c28fea003bfd0e21d572a"
+    "revision": "1ebcbed0aad610eda58ff8ccb174c11b"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1493,7 +1493,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "194287bf1e886d8e3ed05a4dd9b51484"
+    "revision": "6ea84ea1193ffe6b77968101d7ff1df6"
   },
   {
     "url": "scripts/utils/util2.js",

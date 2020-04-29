@@ -184,7 +184,7 @@ DataVerMove.idbLocalForageMove = function( callBack )
 DataVerMove.lsRedeemListMove = function( callBack )
 {    
     // Add Try/Catch Wrapper?
-    Util.tryCatchContinue( callBack, function( callBackInner ) {
+    Util.tryCatchCallBack( callBack, function( callBackInner ) {
 
         DataVerMove.checkRedeemListNeedMove( function( needToMove ) 
         {
