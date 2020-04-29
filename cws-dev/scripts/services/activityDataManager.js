@@ -35,10 +35,9 @@ ActivityDataManager.getActivityItem = function( propName, propVal )
 };
 
 
-// not yet implemeted..
 ActivityDataManager.getActivityById = function( activityId )
 {
-
+    return Util.getFromList( ActivityDataManager._activityList, activityId, 'activityId' );
 };
 
 

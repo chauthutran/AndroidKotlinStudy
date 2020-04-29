@@ -111,7 +111,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     </div>
 
                 </div>
-
             </div>
         </td>
     </tr>`;

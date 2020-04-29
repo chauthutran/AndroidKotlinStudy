@@ -47,6 +47,18 @@ ClientDataManager.getClientById = function( idStr )
 };
 
 
+ClientDataManager.getClientByActivityId = function( activityId )
+{
+    var client;
+
+    if ( ActivityDataManager._activityToClient[ activityId ] )
+    {
+        client = ActivityDataManager._activityToClient[ activityId ];
+    }
+
+    return client;
+};
+
 // ----- Insert Client ----------------
 
 ClientDataManager.insertClient = function( client )
