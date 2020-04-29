@@ -472,7 +472,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
                 var activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
                 // Do not delete 'processing' until success..
 
-                var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
+                var activityJson_Copy = Util.getJsonDeepCopy( activityJson_Orig );
                 delete activityJson_Copy.processing;
     
                 var payload = {
