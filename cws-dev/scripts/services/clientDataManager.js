@@ -86,11 +86,11 @@ ClientDataManager.insertClients = function( clients )
 // Add processing info if does not exists - with 'downloaded detail'
 ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, processingInfo )
 {
-    for ( var i = 0; i < newClients; i++ )
+    for ( var i = 0; i < newClients.length; i++ )
     {
-        var client = clients[ i ];
+        var client = newClients[ i ];
 
-        for ( var x = 0; x < client.activities; x++ )
+        for ( var x = 0; x < client.activities.length; x++ )
         {
             var activity = client.activities[ x ];
 

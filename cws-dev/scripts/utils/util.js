@@ -946,7 +946,7 @@ Util.dateToStr = function( date, separator )
 
 Util.formatDateTime = function( dateObj, dateType )
 {
-	Util.formatDateTimeStr( dateObj.toString(), dateType );
+	return Util.formatDateTimeStr( dateObj.toString(), dateType );
 };
 
 Util.formatDateTimeStr = function( dateStr, dateType )

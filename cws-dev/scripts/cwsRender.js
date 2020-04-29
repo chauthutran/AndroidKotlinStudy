@@ -759,8 +759,8 @@ function cwsRender()
 	me.logOutProcess = function()
 	{
 		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-
-		FormUtil.undoLogin();
+		SessionManager.unloadDataInSession();
+		//FormUtil.undoLogin();
 		sessionStorage.clear();
 		ScheduleManager.stopSchedules_AfterLogOut();
 
@@ -880,8 +880,8 @@ function cwsRender()
 
 	me.createRefreshIntervalTimer = function( ver )
 	{
-		var bDev = ( (location.href).indexOf('localhost') >= 0 || (location.href).indexOf('ngrok') >= 0 || (location.href).indexOf('127.0.0.1:8080') >= 0 );
-
+		var bDev = WsCallManager.isLocalDevCase;
+		
 		me.newSWrefreshNotification( ver );
 
 		var refreshIntV = setInterval( function() {

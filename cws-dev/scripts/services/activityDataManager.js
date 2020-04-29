@@ -267,7 +267,25 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
 {
     if ( activity )
     {
-        if ( !activity.processing ) activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
+        if ( !activity.processing ) 
+        {
+            activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
+
+            // update the 'created' as mongoDB one if exists..            
+            if ( activity.activityDate )
+            {
+                var activityUtcDate = '';
+
+                if ( activity.activityDate.createdOnDeviceUTC ) activityUtcDate = activity.activityDate.createdOnDeviceUTC;
+                else if ( activity.activityDate.createdOnMdbUTC ) activityUtcDate = activity.activityDate.createdOnMdbUTC;
+
+                if ( activityUtcDate )
+                {
+                    var updateCreated = Util.formatDateTime( Util.dateUTCToLocal( activityUtcDate ) );
+                    if ( updateCreated ) activity.processing.created = updateCreated;
+                }
+            }
+        }
         else 
         {
             // update the limited data --> 'status', 'statusRead', 'history' (add)
