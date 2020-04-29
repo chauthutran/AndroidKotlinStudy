@@ -218,7 +218,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         
                 var msgSectionTag = $( Templates.msgSection );
     
-                msgSectionTag.find( 'div.msgSectionTitle' ).text( Util.getStr( latestItem.responseCode ) );
+                msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
         
                 msgSectionTag.find( 'div.msgSectionLog' ).text( Util.getStr( latestItem.msg ) );        
     
