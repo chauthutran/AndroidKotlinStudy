@@ -1185,7 +1185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "27c74d90e01f64182242b3a200b8b9d7"
+    "revision": "560b2c563d0b7c9375f08f299278bc84"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
