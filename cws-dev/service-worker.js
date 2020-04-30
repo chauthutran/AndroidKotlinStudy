@@ -1165,7 +1165,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "3fdad1bd94002566a0ed213a07fd0fab"
+    "revision": "9ed207a905c5fd0b701a8c80624c5535"
   },
   {
     "url": "redeemGen.html",
@@ -1345,7 +1345,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "b65794115ebceed1f83d897b031ce7f8"
+    "revision": "75dd9b7a9b0228e2b7a4f2dea643c16b"
   },
   {
     "url": "scripts/services/cacheManager.js",
