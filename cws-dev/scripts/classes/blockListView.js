@@ -26,6 +26,13 @@
 //          
 //      NOTE: BlockList class should also follow above method templating logic.
 //
+
+//      ** ADDED: GroupBy:
+//          - If selected 'viewDef' has 'groupBy' definition, 
+//              Create alternative list to 'viewActivityList' --> 'activityList_groupBy' activityList..
+
+//
+//
 // -- Pseudo WriteUp: 
 //
 //      - MAIN FEATURES:
@@ -62,7 +69,9 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.viewFilteredList = [];
     //me.viewsList_CurrentItem;
-    
+    me.groupByData = {}; // { 'groupByList': {}, 'activitiesRefGroupBy': {}, 'groupByDef': {}, 'groupByUsed': false };
+    //List = [];  // NEW GROUP BY?
+
     //me.viewListNames = [];  // List of view names - used on this blockList
 
     // --- Tags -----------------------
@@ -98,62 +107,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
       </div>
     </div>`;
 
-    //             <option selected="" disabled="disabled">Select an option</option>
-
-    /*
-        <select mandatory="true">
-            <option selected="" disabled="disabled">Select an option</option>
-            <option value="Option1">View 1</option>
-            <option value="Option2">View 2</option>
-            <option value="Option3">View 3</option>
-            <option value="Option4">View 4</option>
-            <option value="Option5">View 5</option>
-          </select>
-
-        <div class="Menus_display" style="display: none;">
-        <div class="menu_item_comtainer">
-            <div class="menu_item_text">Option line</div>
-        </div>
-        <div class="menu_item_comtainer">
-            <div class="menu_item_text">And other option line..</div>
-        </div>
-        <div class="menu_item_comtainer">
-            <div class="menu_item_text">And other option line..</div>
-        </div>
-        <div class="menu_item_comtainer">
-            <div class="menu_item_text">And other option line..</div>
-        </div>
-        </div>          
-    */
-
-
-    /* `
-        <li class="viewsFilterAndSortContainer inputDiv">
-
-            <div class="field">
-                <div class="field__label">
-                    <label term="" class="">Select a view</label>
-                </div>
-
-                <div class="fiel__controls">
-                    <div class="field__left">
-                        <div class="viewsListContainerTag">
-                            <div class="select viewsListContainerSelect">
-                                <select class="selector selViewsListSelector"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field__right" style="display:block">
-                        <div class="viewsSorter">
-                            <button class="buttonSortOrder"></button>
-                            <ul class="ulSortOrder"></ul>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </li>`;*/
 
     me.viewOptionTagTemplate = `<option value=""></option>`;
     //me.sortLiTagTemplate = `<li class="liSort" sortid="" ></li>`;
@@ -207,7 +160,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     {
         me.mainList = ActivityDataManager.getActivityList();
         me.viewsDefinitionList = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list    
-        me.groupByDefinitionList = JSON.parse( JSON.stringify( ConfigManager.getConfigJson().definitionGroupBy ) ); // full complete view def list
+        me.groupByDefinitionList = Util.getJsonDeepCopy( ConfigManager.getConfigJson().definitionGroupBy ); // full complete view def list
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
@@ -310,9 +263,13 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         {
             me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
         
+            // NOTE: TODO: if groupBy exists, we need different sorting?!! <-- 
+            me.groupByData = me.setGroupByList( me.viewDef_Selected, me.viewFilteredList, me.groupByDefinitionList ); 
 
+
+            // TODO: Sort would be effected by GROUP BY <-- If exists and used, 
             // Populate Sort List - based on viewDef..
-            me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort ); 
+            me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort, me.groupByData ); 
     
     
             // Sort with 1st one..
@@ -325,38 +282,134 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..  
+        me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..  
 
     };
 
-
+    
     me.viewFilterData = function( viewDef, mainList )
     {
         var filteredData = []; 
+        
+        var INFO = {};
 
         for ( var i = 0; i < mainList.length; i++ )
         {
-            var activityItem = mainList[ i ];
-
-            // Below eval use 'activityItem' object, thus, we need to declare it..
-            if ( me.evalQueryCondition( viewDef.query, activityItem ) )
+            var activity = mainList[ i ]; 
+            INFO.activity = activity;
+            
+            if ( Util.evalTryCatch( viewDef.query, INFO, 'BlockListView.viewFilterData()' ) === true )
             {
-                //if ( me.hasGroupBy() ) 
-                //{
-                //    activityItem = me.evalGroupByCondition( viewDef.groupBy, activityItem );
-                //}
-                filteredData.push( activityItem );
+                // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
+                filteredData.push( activity );
             }
         }
 
-        //if ( me.hasGroupBy() )
-        //{
-        //    me.setGroupBy_GroupsAndFilterValues( viewDef, filteredData );
-        //}
-
-        
         return filteredData;
     };
+
+
+    // --------------------------------------------
+    // --- GroupBy Related -----
+
+    me.setGroupByList = function( viewDef, activityList, groupByDefinitionList )
+    {
+        var groupByData = { 'groupByList': {}, 'activitiesRefGroupBy': {}, 'groupByDef': {}, 'groupByUsed': false };  // reset list.
+
+        // If groupBy exists for this 'view', create groupBy category list and 
+        if ( viewDef.groupBy )
+        {
+            var groupByDef = groupByDefinitionList[ viewDef.groupBy ];            
+
+            if ( groupByDef )
+            {
+                groupByData.groupByDef = groupByDef;
+
+                for ( var i = 0; i < activityList.length; i++ )
+                {
+                    var activity = activityList[i];
+    
+                    // GroupJson could be 'unique' one created from activity, or from group list.
+                    var groupJson = me.getGroup_FromViewDef( activity, groupByDef );
+    
+                    // Set groupByData.groupByList & activitiesRefGroupBy with 'groupJson' & activityId
+                    me.setGroupByData_withActivity( groupJson, activity, groupByData );
+                }
+
+                // Set 'groupByUsed' true/false.
+                groupByData.groupByUsed = ( Util.objKeyCount( groupByData.groupByList ) > 0 );
+            }
+        }
+
+        return groupByData;
+    };
+
+
+    me.getGroup_FromViewDef = function( activity, groupByDef )
+    {
+        var groupMatched;
+
+        var INFO = { 'activity': activity };
+
+        var evalField = Util.evalTryCatch( groupByDef.evalField, INFO, 'BlockListView.getGroupId_FromViewDef()' );
+
+
+        if ( groupByDef.groupType === 'unique' )
+        {
+            // Each value is a group (automatic grouping).  set 'evaledVal' as groupId, but as string.
+            var evalVal = '' + evalField;
+
+            groupMatched = { 'id': evalVal, 'name': evalVal }; //, 'term': evalVal };
+        }
+        else
+        {
+            // See which group this falls in?
+            if ( groupByDef.groups )
+            {
+                for ( var i = 0; i < groupByDef.groups.length; i++ )
+                {
+                    var groupDef = groupByDef.groups[i];
+
+                    var INFO2 = { 'evalField': evalField };
+                    
+                    if ( Util.evalTryCatch( groupDef.eval, INFO2, 'BlockListView.getGroupId_FromViewDef() Groups' ) === true )
+                    {
+                        groupMatched = Util.getJsonDeepCopy( groupDef );
+                        break;                        
+                    }
+                }
+            }
+        }        
+        
+        return groupMatched;
+    };
+
+    
+    me.setGroupByData_withActivity = function( groupJson, activity, groupByData )
+    {
+        // ?? TODO: HOW SHOULD WE FORMAT THE GROUPS?  WITH 'ACTIVITIES' IN IT?
+        if ( groupJson && groupJson.id && activity.activityId )
+        {            
+            //var matchingGroup = Util.getFromList( groupByData.groupByList, groupJson.id, 'id' );
+
+            var existingGroup_InList = groupByData.groupByList[ groupJson.id ];
+
+            if ( existingGroup_InList )
+            {
+                // If already in list, use that group..
+                groupByData.activitiesRefGroupBy[ activity.activityId ] = existingGroup_InList;
+            }
+            else
+            {
+                // add the groupJson to groupByList..
+                groupByData.groupByList[ groupJson.id ] = groupJson;
+                groupByData.activitiesRefGroupBy[ activity.activityId ] = groupJson;
+            }
+        }
+    };
+
+    // --- GroupBy Related -----
+    // --------------------------------------------
 
 
     /*
@@ -380,14 +433,18 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             if ( ! activityItem[ 'groupBy' ] ) activityItem[ 'groupBy' ] = {};
             activityItem[ 'groupBy' ] [ viewDef.groupBy ] = me.getAttributeFromGroupBy_Group( groupByResult, 'id' ).toUpperCase();
         }
-    }
+    };
+
+
     me.clearGroupBy_UsedInBlockList_status = function()
     {
         for ( var i = 0; i < me.groupByGroups.length; i++ )
         {
             me.groupByGroups[ i ].created = 0;
         }
-    }
+    };
+
+
     me.getAttributeFromGroupBy_Group = function( evalField, attr )
     {
         for ( var i = 0; i < me.groupByGroups.length; i++ )
@@ -397,7 +454,9 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 return ( me.groupByGroups[ i ][ attr ] );
             }
         }
-    }
+    };
+
+
     me.getGroupByGroups_FromUniqueValues = function( groupBy, mainList )
     {
         var ret = [];
@@ -412,12 +471,15 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             }
         }
         return ret;
-    }
+    };
+
+
     me.evalGroupByCondition = function( groupBy, activityItem )
     {
         var evalField = me.groupByDefinitionList[ groupBy ].evalField; // Variable 'evalField' expected within 'query' statement  <  do not rename
         var activity = activityItem; // Variable 'activity' expected within 'query' statement  <  do not rename
         var groupByResult = eval( evalField );
+        
         if ( groupByResult === undefined )
         {
             groupByResult = 'undefined';
@@ -432,8 +494,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         activityItem[ groupBy ] = groupByResult;
         return activityItem;
     };
-    */
-
 
     me.evalQueryCondition = function( query, activityItem )
     {
@@ -450,16 +510,23 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         return success;
     };
 
-    
+    */
+
+
     // -------------------------------------
     // -- Sorting Operation Related
 
-    me.populateSorts = function ( sortListDivTag, sortList )
+    me.populateSorts = function ( sortListDivTag, sortList, groupByData )
     {
         //sortListDivTag.html( '' );
         sortListDivTag.find( 'div.menu_item_comtainer' ).remove();
         
-        if ( sortList )
+        if ( me.usedGroupBy( groupByData ) )
+        {
+            // Use the sorting in the groupBy..
+            alert( 'Use GroupBy sorting!!' );
+        }
+        else if ( sortList )
         {
             for ( var i = 0; i < sortList.length; i++ )
             {
@@ -509,7 +576,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             //{
                 
             me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
-            //}
+            
 
             // TODO: There is no updated sort visual for now
             //me.updateSortLiTag( $( me.sortListDivTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
@@ -624,7 +691,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 
                 // TODO:
                 //      - This should call 'setActivityListNRender()'
-                me.blockListObj.reRenderWithList( me.viewFilteredList );  // there is 'callBack' param..            
+                me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..            
             }
         });
     };
@@ -644,11 +711,19 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
             }
         }
-    }
-    me.hasGroupBy = function()
+    };
+
+
+    me.hasGroupBy = function( viewDef )
     {
-        return ( ( me.viewDef_Selected.groupBy ) && ( me.viewDef_Selected.groupBy !== '' ) );
-    }
+        return ( viewDef.groupBy );
+    };
+
+    me.usedGroupBy = function( groupByData )
+    {
+        return ( Util.objKeyCount( groupByData.groupByList ) > 0 );
+    };
+
     // =-===============================
 
     me.initialize();

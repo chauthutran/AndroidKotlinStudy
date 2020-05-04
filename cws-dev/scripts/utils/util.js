@@ -10,6 +10,8 @@ Util.termName_listEmpty = "common_listEmpty";
 
 Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 
+// ----------------------------------------------------
+// ---- Try Cache / Eval related methods
 
 Util.tryCatchContinue = function( runFunc, optionalMsg )
 {
@@ -37,6 +39,85 @@ Util.tryCatchCallBack = function( callBack, runFunc )
 	}
 };
 
+
+Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
+{
+	var returnVal;
+
+	try
+	{
+		returnVal = eval( inputVal ).replace( /undefined/g, '' );
+	}
+	catch( errMsg )
+	{
+		if ( !optionalTitle ) optionalTitle = '';
+
+		console.log( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
+	}
+
+	return returnVal;
+};
+
+
+Util.traverseEval = function( obj, INFO, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		console.log( 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth );
+	}
+	else
+	{
+		for ( var prop in obj ) 
+		{
+			var propVal = obj[prop];
+	
+			if ( typeof( propVal ) === "object" ) 
+			{
+				//console.log( prop, propVal );
+				Util.traverseEval( propVal, INFO, iDepth++, limit );
+			}
+			else if ( typeof( propVal ) === "string" ) 
+			{
+				//console.log( prop, propVal );
+				try
+				{
+					obj[prop] = eval( propVal );
+				}
+				catch( errMsg )
+				{
+					console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+				}
+			}
+		}
+	}
+};	
+
+
+Util.getObjRef_fromList = function( list, prop )
+{
+	var objRef = {};
+
+	if ( list && prop )
+	{
+		for ( var i = 0; i < list.length; i++ )
+		{
+			var obj = list[ i ];
+
+			var objId = obj[ prop ];
+
+			if ( objId ) objRef[ objId ] = obj;
+		}
+	}
+
+	return objRef;
+};
+
+// ----------------------------------------------------
+
+Util.objKeyCount = function( obj )
+{
+	return ( obj ) ? Object.keys( obj ).length: 0;
+};
 
 Util.disableTag = function( tag, isDisable )
 {
@@ -104,9 +185,43 @@ Util.mergeDeep = function ( dest, obj )
 	//return prev;
 };
 
+
+Util.dotNotation = function ( dest, obj, parentObjName ) 
+{
+	Object.keys( obj ).forEach( function( key ) {
+
+		var oVal = obj[key];
+
+		if ( Array.isArray( oVal ) )  dest[ parentObjName + '.' + key ] = oVal;
+		else if ( typeof oVal === 'object' ) 
+		{
+			Util.dotNotation( dest, oVal, parentObjName + '.' + key );
+		} 
+		else 
+		{
+			dest[ parentObjName + '.' + key ] = oVal;
+		}
+	});
+};
+
+
 Util.isObject = function( obj )
 {
 	return ( typeof obj === 'object' );
+};
+
+
+Util.getPathObj = function( obj, pathArr )
+{
+    var tempObj = Util.getJsonDeepCopy( obj );
+
+    for ( var i = 0; i < pathArr.length; i++ )
+    {
+        var path = pathArr[i];
+        tempObj = tempObj[path];
+    }
+
+    return tempObj;
 };
 
 
@@ -1331,6 +1446,7 @@ Util.decrypt = function (garbage,loops)
 	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
   }
 
+  // -----------------------------------------------------------------
 
 try {
     module.exports = Util;

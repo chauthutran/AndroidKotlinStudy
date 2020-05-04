@@ -70,6 +70,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.blockJson = blockJson;   
 
     me.activityList = [];
+    me.viewGroupByData; // set from 'blockListView'
 
     me.hasView = false;  
     me.BlockListViewObj;
@@ -121,6 +122,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         </td>
     </tr>`;
 
+    me.template_groupTrTag = `<tr class="blockListGroupBy opened">
+        <td class="blockListGroupBySection"></td>
+    </tr>`;
+
+
+
     // ===========================================================
     // === Main Features =========================
 
@@ -157,7 +164,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
     // Used by viewFilter.. - 
-    me.reRenderWithList = function( newActivityList, callBack )
+    me.reRenderWithList = function( newActivityList, groupByData, callBack )
     {
         if ( me.listTableTbodyTag )
         {
@@ -165,12 +172,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             me.lastScrollTop = 0;
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
+            me.viewGroupByData = groupByData;
 
             me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
             me.pagingDataReset( me.pagingData );
 
             // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.listTableTbodyTag );
+            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag );
 
             if ( callBack ) callBack();
         }
@@ -190,7 +198,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {
             var newActivityList = Util.cloneArray( ActivityDataManager.getActivityList() );
 
-            me.reRenderWithList( newActivityList, callBack );    
+            me.reRenderWithList( newActivityList, me.viewGroupByData, callBack );    
         }
     };
 
@@ -263,7 +271,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         else
         {
             me.pagingDataReset( me.pagingData );            
-            me.populateActivityCardList( activityList, listTableTbodyTag );
+            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag );
         }
     };
 
@@ -281,7 +289,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
+    me.populateActivityCardList = function( activityList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
     {        
         if ( activityList.length === 0 ) 
         {
@@ -306,12 +314,24 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     var activityJson = activityList[i];
                     var groupByGroupIdxVal = '';
                     
+
+
+                    // NOTE: Listing the activity should not care if 'groupBy' or 'sorting' has been applied.
+                    //  The cleanest way would be that it simply list things from top to bottom..
+                    //  And if new 'groupBy' exists, display that groupBy right before rendering.. (and if diff from current groupBy)
+                    //      <-- create a 'groupBy' list that has Easy find groupBy by activityId..
+                    //      list: { 'activityId': refToGroupInfo }
+
+
+                    // GROUP BY
+
+
                     //if ( me.hasView && me.BlockListViewObj.groupByGroups.length )
                     //{
                     //    groupByGroupIdxVal = me.evalCreateGroupByGroup( activityJson, listTableTbodyTag, me.BlockListViewObj );
                     //}
 
-                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, groupByGroupIdxVal );
+                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, viewGroupByData );
 
                     activityCardObj.render();
                 }    
@@ -320,6 +340,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             }
         }
     };
+
 
     /*
     me.evalCreateGroupByGroup = function( activityJson, targTag, blockListViewObj )
@@ -449,7 +470,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.scrollList = function()
     {
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.listTableTbodyTag, function() {
+        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function() {
 
             me.cwsRenderObj.pulsatingProgress.show();
             
@@ -464,19 +485,92 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Create Activity Card Related -------------
 
-    me.createActivityCard = function( activityJson, listTableTbodyTag, groupByIdxVal )
+    me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
     {
         var activityCardTrTag = $( me.tempalte_trActivityTag );
-        listTableTbodyTag.append( activityCardTrTag );     
 
         activityCardTrTag.attr( 'itemId', activityJson.activityId );
 
+
+        // TODO: move this to 'activityCard' class..
         activityCardTrTag.find( '.activityContent' ).click( function(){
             DevHelper.showFullPreview( activityJson.activityId );
         });
       
-        if ( groupByIdxVal && groupByIdxVal !== '' ) activityCardTrTag.attr( 'groupBy', groupByIdxVal );
+
+
+        var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
+
+
+        activityCardTrTag.attr( 'group', groupAttrVal );
+
+        listTableTbodyTag.append( activityCardTrTag );     
+
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
+    };
+
+            
+    me.setGroupDiv = function( activityJson, viewGroupByData, listTableTbodyTag )
+    {
+        var groupAttrVal = '';
+
+        try
+        {
+            if ( viewGroupByData && viewGroupByData.groupByUsed )
+            {
+                var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.activityId ];
+                groupAttrVal = groupJson.id;                
+
+                if ( groupJson.id !== undefined )
+                {        
+                    // get previous activity groupBy
+                    var lastActivityTrTag = listTableTbodyTag.find( 'tr.activity' ).last();
+        
+                    if ( lastActivityTrTag && listTableTbodyTag.length === 1 )
+                    {
+                        // get groupby
+                        var lastGroupId = lastActivityTrTag.attr( 'group' );
+        
+                        if ( lastGroupId )
+                        {                    
+                            if ( groupJson.id !== lastGroupId )
+                            {
+                                // create groupBy Tag..                        
+                                me.createGroupDiv( groupJson, listTableTbodyTag );
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // if 1st one, create the group tag..
+                        me.createGroupDiv( groupJson, listTableTbodyTag );
+                    }
+                }
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'Error in BlockList.setGroupDiv(), errMsg: ' + errMsg );
+        }
+
+        return groupAttrVal;
+    };
+
+    
+    me.createGroupDiv = function( groupJson, listTableTbodyTag )
+    {
+        var groupTrTag = $( me.template_groupTrTag );
+
+        groupTrTag.find( 'td.blockListGroupBySection' ).text( groupJson.name );
+
+
+        // TODO: set event
+
+
+
+        listTableTbodyTag.append( groupTrTag );
+
+        return groupTrTag;
     };
 
 
