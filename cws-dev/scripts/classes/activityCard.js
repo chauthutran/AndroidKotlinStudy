@@ -28,7 +28,9 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     //              2) cards layout contain (referenceable) attribute + id information as per v1.2.1 design
     // Reorganized class layout: 
     //              [UI] methods grouped together above [DATA] methods 
-
+    
+    me.template_ActivityContentDateTag = `<div class="activityContentDisplay list_three_line-date"></div>`;
+    me.template_ActivityContentTextTag = `<div class="activityContentDisplay list_three_line-text"></div>`;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -67,7 +69,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
             try
             {
-                var activityTrans = me.getCombinedTrans( activityJson );
+                var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
 
                 var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
                 var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
@@ -248,71 +250,33 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         
         divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
 
-        var activityItem = activity;
-
 
         // Display 1st line - as date
         if ( activity.processing )
         {
             var dateStr = $.format.date( activity.processing.created, "MMM dd, yyyy - HH:mm" );
     
-            divActivityContentTag.append( '<div class="activityContentDisplay list_three_line-date">' + dateStr + '</div>' );
+            divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( dateStr ) );
         }
 
 
         if ( displaySettings )
-        {
+        {            
+            var INFO = { 'activityTrans': activityTrans, 'activity': activity, 'activityItem': activity };
+
             // If custom config display, remove 
             for( var i = 0; i < displaySettings.length; i++ )
             {
                 // Need 'activity', 'activityTrans'
                 var dispSettingEvalStr = displaySettings[ i ];
                 var displayEvalResult = "------------";
+                
+                displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, INFO, 'ActivityCard.setActivityContentDisplay' );
     
-                try
-                {
-                    displayEvalResult = eval( dispSettingEvalStr );
-                    //divListItemContentTag.append( '<div class="activityContentDisplay">' + displayEvalResult + '</div>' );
-                }
-                catch ( errMsg )
-                {
-                    console.log( 'Error on BlockList.setActivityContentDisplay, errMsg: ' + errMsg );
-                }
-    
-                divActivityContentTag.append( '<div class="activityContentDisplay list_three_line-text">' + displayEvalResult + '</div>' );    
+                divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
             }
 
         }
-    };
-
-
-    me.getCombinedTrans = function( activityJson )
-    {
-        var jsonShow = {};
-
-        try
-        {
-            var tranList = activityJson.transactions;
-
-            for( var i = 0; i < tranList.length; i++ )
-            {
-                var tranData = tranList[i].dataValues;
-
-                if ( tranData )
-                {
-                    for ( var prop in tranData ) 
-                    {
-                        jsonShow[ prop ] = tranData[ prop ];
-                    }
-                }
-            }
-        }
-        catch ( errMsg )
-        {
-            console.log( 'Error during BlockList.getCombinedTrans, errMsg: ' + errMsg );
-        }
-
-        return jsonShow;
     };
 
 

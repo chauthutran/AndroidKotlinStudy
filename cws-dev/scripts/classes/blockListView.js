@@ -349,38 +349,49 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     {
         var groupMatched;
 
-        var INFO = { 'activity': activity };
-
-        var evalField = Util.evalTryCatch( groupByDef.evalField, INFO, 'BlockListView.getGroupId_FromViewDef()' );
-
-
-        if ( groupByDef.groupType === 'unique' )
+        try
         {
-            // Each value is a group (automatic grouping).  set 'evaledVal' as groupId, but as string.
-            var evalVal = '' + evalField;
+            var activityTrans = ActivityDataManager.getCombinedTrans( activity );
+            var client = ClientDataManager.getClientByActivityId( activity.activityId );
+            //var clientDetails = ( client ) ? client.clientDetails: {};
+    
+            var INFO = { 'activity': activity, 'client': client, 'activityTrans': activityTrans };
 
-            groupMatched = { 'id': evalVal, 'name': evalVal }; //, 'term': evalVal };
-        }
-        else
-        {
-            // See which group this falls in?
-            if ( groupByDef.groups )
+            var evalField = Util.evalTryCatch( groupByDef.evalField, INFO, 'BlockListView.getGroupId_FromViewDef()' );
+    
+    
+            if ( groupByDef.groupType === 'unique' )
             {
-                for ( var i = 0; i < groupByDef.groups.length; i++ )
+                // Each value is a group (automatic grouping).  set 'evaledVal' as groupId, but as string.
+                var evalVal = '' + evalField;
+    
+                groupMatched = { 'id': evalVal, 'name': evalVal }; //, 'term': evalVal };
+            }
+            else
+            {
+                // See which group this falls in?
+                if ( groupByDef.groups )
                 {
-                    var groupDef = groupByDef.groups[i];
-
-                    var INFO2 = { 'evalField': evalField };
-                    
-                    if ( Util.evalTryCatch( groupDef.eval, INFO2, 'BlockListView.getGroupId_FromViewDef() Groups' ) === true )
+                    for ( var i = 0; i < groupByDef.groups.length; i++ )
                     {
-                        groupMatched = Util.getJsonDeepCopy( groupDef );
-                        break;                        
+                        var groupDef = groupByDef.groups[i];
+    
+                        var INFO2 = { 'evalField': evalField };
+                        
+                        if ( Util.evalTryCatch( groupDef.eval, INFO2, 'BlockListView.getGroupId_FromViewDef() Groups' ) === true )
+                        {
+                            groupMatched = Util.getJsonDeepCopy( groupDef );
+                            break;                        
+                        }
                     }
                 }
-            }
-        }        
-        
+            }            
+        }
+        catch ( errMsg )
+        {
+            console.log( 'Error in BlockListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
+        }
+
         return groupMatched;
     };
 
@@ -524,7 +535,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         if ( me.usedGroupBy( groupByData ) )
         {
             // Use the sorting in the groupBy..
-            alert( 'Use GroupBy sorting!!' );
+            console.log( '**** Use GroupBy sorting!! ******' );
+
         }
         else if ( sortList )
         {

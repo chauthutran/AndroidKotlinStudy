@@ -297,3 +297,43 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
         }
     }
 };
+
+
+ActivityDataManager.getCombinedTrans = function( activityJson )
+{
+    var jsonCombined = {};
+
+    try
+    {
+        var tranList = activityJson.transactions;
+
+        for( var i = 0; i < tranList.length; i++ )
+        {
+            var tranData_dv = tranList[i].dataValues;
+            var tranData_cd = tranList[i].clientDetails;
+
+            if ( tranData_dv )
+            {
+                for ( var prop in tranData_dv ) 
+                {
+                    jsonCombined[ prop ] = tranData_dv[ prop ];
+                }
+            }
+
+            if ( tranData_cd )
+            {
+                for ( var prop in tranData_cd ) 
+                {
+                    jsonCombined[ prop ] = tranData_cd[ prop ];
+                }
+            }
+
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );
+    }
+
+    return jsonCombined;
+};

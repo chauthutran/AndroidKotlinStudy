@@ -312,24 +312,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
                 {
                     var activityJson = activityList[i];
-                    var groupByGroupIdxVal = '';
-                    
-
-
-                    // NOTE: Listing the activity should not care if 'groupBy' or 'sorting' has been applied.
-                    //  The cleanest way would be that it simply list things from top to bottom..
-                    //  And if new 'groupBy' exists, display that groupBy right before rendering.. (and if diff from current groupBy)
-                    //      <-- create a 'groupBy' list that has Easy find groupBy by activityId..
-                    //      list: { 'activityId': refToGroupInfo }
-
-
-                    // GROUP BY
-
-
-                    //if ( me.hasView && me.BlockListViewObj.groupByGroups.length )
-                    //{
-                    //    groupByGroupIdxVal = me.evalCreateGroupByGroup( activityJson, listTableTbodyTag, me.BlockListViewObj );
-                    //}
 
                     var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, viewGroupByData );
 
@@ -509,9 +491,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         try
         {
+            console.log( 'viewGroupByData' );
+            console.log( viewGroupByData );
+            
             if ( viewGroupByData && viewGroupByData.groupByUsed )
             {
                 var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.activityId ];
+
+                console.log( groupJson );
+
                 groupAttrVal = groupJson.id;                
 
                 if ( groupJson.id !== undefined )
@@ -519,11 +507,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                     // get previous activity groupBy
                     var lastActivityTrTag = listTableTbodyTag.find( 'tr.activity' ).last();
         
-                    if ( lastActivityTrTag && listTableTbodyTag.length === 1 )
+                    if ( lastActivityTrTag && lastActivityTrTag.length === 1 )
                     {
                         // get groupby
                         var lastGroupId = lastActivityTrTag.attr( 'group' );
-        
+
                         if ( lastGroupId )
                         {                    
                             if ( groupJson.id !== lastGroupId )
@@ -553,13 +541,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.createGroupDiv = function( groupJson, listTableTbodyTag )
     {
         var groupTrTag = $( me.template_groupTrTag );
+        groupTrTag.attr( 'group', groupJson.id );
 
         var tdGroupTag = groupTrTag.find( 'td.blockListGroupBySection' );
-        
-        tdGroupTag.text( groupJson.name );
+        tdGroupTag.text( groupJson.name ); // attr( 'group', groupJson.id ).
 
         // Set event
-        me.setTdGroupClick();
+        me.setTdGroupClick( tdGroupTag, listTableTbodyTag );
 
 
         listTableTbodyTag.append( groupTrTag );
@@ -568,27 +556,38 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.setTdGroupClick = function()
+    me.setTdGroupClick = function( tdGroupTag, tableTag )
     {
-        var tdGroupClickTag = $( this );
+        tdGroupTag.off( 'click' ).click( function() 
+        {
+            try
+            {    
+                var tdGroupClickTag = $( this );
 
-        var trTag = tdGroupClickTag.closest( 'tr.blockListGroupBy' );
-        var opened = trTag.hasClass( 'opened' );
+                var trTag = tdGroupClickTag.closest( 'tr.blockListGroupBy' );
+                var opened = trTag.hasClass( 'opened' );
+                var groupId = trTag.attr( 'group' );
+                
+                var activityTrTags = tableTag.find( 'tr.activity[group="' + groupId + '"]' );
         
-        var activityTrTags = tableTag.find( 'tr.activity[group="' + groupId + '"]' );
-
-        // Toggle 'opened' status..
-        if ( opened )
-        {
-            // hide it
-            trTag.removeClass( 'opened' );
-            activityTrTags.hide();
-        } 
-        else 
-        {
-            trTag.addClass( 'opened' );
-            activityTrTags.show( 'fast' );
-        }
+                // Toggle 'opened' status..
+                if ( opened )
+                {
+                    // hide it
+                    trTag.removeClass( 'opened' );
+                    activityTrTags.hide();
+                } 
+                else 
+                {
+                    trTag.addClass( 'opened' );
+                    activityTrTags.show( 'fast' );
+                }
+            }
+            catch( errMsg )
+            {
+                console.log( 'Error in BlockList.setTdGroupClick(), errMsg: ' + errMsg );
+            }
+        });        
     };
 
 
