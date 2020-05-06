@@ -64,7 +64,7 @@
                 @include box-sizing(border-box);
 
                 @include rwd-max(380) {
-                    width: calc(100% - 56px);
+                    width: calc(100% - 86px);
                     border-bottom: 1px solid #ccc;
                     margin-bottom: 12px;
                 }
@@ -83,9 +83,9 @@
                 float: left;
 
                 @include rwd-max(380) {
-                    float: right;
+                    float: none;
                     margin-right: 8px;
-                    width: calc(100% - 56px);
+                    width: calc(100% - 26px);
                 }
 
                 .list_three_item_status {
@@ -109,7 +109,7 @@
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
-                        margin-right: 32;
+                        margin-left: 12px;
                     }
                 }
 
@@ -127,6 +127,8 @@
 
                     @include rwd-max(380) {
                         float: right;
+                        width: 32px !important;
+                        height: 32px !important;
                     }
                 }
             }

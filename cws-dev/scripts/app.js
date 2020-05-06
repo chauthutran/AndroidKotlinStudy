@@ -101,6 +101,10 @@
 
       $( 'input.loginUserName' ).focus();
 
+      $( '.Nav1' ).dblclick( function(){
+        DevHelper.loadSampleData();
+      } )
+
     }, 500)
 
   }

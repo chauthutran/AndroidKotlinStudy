@@ -2986,7 +2986,7 @@ h6 {
 
 @media (max-width: 380px) {
   .list .list_three_line .list_three_line__container .list_three_item_content {
-    width: calc(100% - 56px);
+    width: calc(100% - 86px);
     border-bottom: 1px solid #ccc;
     margin-bottom: 12px;
   }
@@ -3011,9 +3011,9 @@ h6 {
 
 @media (max-width: 380px) {
   .list .list_three_line .list_three_line__container .list_three_item_cta {
-    float: right;
+    float: none;
     margin-right: 8px;
-    width: calc(100% - 56px);
+    width: calc(100% - 26px);
   }
 }
 
@@ -3055,7 +3055,7 @@ h6 {
 
 @media (max-width: 380px) {
   .list .list_three_line .list_three_line__container .list_three_item_cta .list_three_item_cta1 {
-    margin-right: 32;
+    margin-left: 12px;
   }
 }
 
@@ -3088,6 +3088,8 @@ h6 {
 @media (max-width: 380px) {
   .list .list_three_line .list_three_line__container .list_three_item_cta .list_three_item_cta2 {
     float: right;
+    width: 32px !important;
+    height: 32px !important;
   }
 }
 
@@ -5505,7 +5507,7 @@ h6 {
 .Nav2 {
   position: sticky;
   position: -webkit-sticky;
-  top: 56;
+  top: 56px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -6848,7 +6850,8 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  /*background-color: rgba($color-typ-sl, 35%);*/
+  /*background-color: rgba($color-typ-sl, 35%);
+  opacity: 0.2; */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }

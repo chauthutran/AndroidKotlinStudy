@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "029b16e3c0323cd43d5178316a5f286c"
+    "revision": "c59c212aee5d32ddb00dc2f040a27c45"
   },
   {
     "url": "css/qunit.css",
@@ -41,7 +41,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "1fc22732dc6457a6fda87f3fb68fcf77"
+    "revision": "e37634dabc863edc64b57158fd2107c1"
   },
   {
     "url": "images/about.png",
@@ -1173,7 +1173,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "aa71d3289c21d916f66b4cfb97283ea4"
+    "revision": "78e6ae09b50ff6d5025b97f17675e8f6"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1185,7 +1185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "49a22d7eae51cd2e62c39ddb2723424b"
+    "revision": "d7ba453bd7b05b2c1ec4b4224b46867e"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1209,11 +1209,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "ba80303e0e6ff5d2d63cf795be4dcab2"
+    "revision": "7f558d7e0f29514cb5dd86f4a43b584c"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "bef130ef58c373bd7a113a1743fed2b9"
+    "revision": "2c15ecc378f3299be5bead186d940e3c"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -1497,7 +1497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "4787ce1cb0c62b35f7455b634d8258ee"
+    "revision": "a8ff978e865fac5058c0d37eb99a6707"
   },
   {
     "url": "scripts/utils/util2.js",
@@ -1509,7 +1509,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "298c198a4ed80dd6557521c83bc6e7b0"
+    "revision": "a808e0800a69895be45479e4e00e6773"
   },
   {
     "url": "sounds/beep.mp3",

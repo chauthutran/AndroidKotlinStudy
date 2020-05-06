@@ -535,15 +535,15 @@ ul li .expandable.expanded+div {
 }
 
 /* 4. blockList GroupBy blocks */
-li.blockListGroupBy {
+.blockListGroupBy {
   margin-bottom: 4px;
 }
-li.blockListGroupBy > a {
+.blockListGroupBy > td {
   position: relative;
   border-left-width: 6;
   /*background-image: linear-gradient( #fff, #f5f5f5 );*/
-  padding: 8px 8px 8px 28px;
-  font-size:10pt;
+  padding: 8px 8px 8px 18px;
+  /*font-size:10pt;*/
   color: #333;
   text-decoration: none;
   display: inline-block;
@@ -552,12 +552,12 @@ li.blockListGroupBy > a {
   border-top: #FFF .5px solid;
   border-bottom: #CCC .5px solid;
   box-sizing: border-box;
-  font-weight: 400;
+  font-weight: 600;
   background-repeat: no-repeat;
 
 }
-li.blockListGroupBy > a:after,
-li.blockListGroupBy > a:before {
+.blockListGroupBy > td:after,
+.blockListGroupBy > td:before {
   top: 40%;
   left: 88%;
   border: solid transparent;

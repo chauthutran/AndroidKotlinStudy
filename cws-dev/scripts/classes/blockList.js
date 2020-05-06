@@ -278,7 +278,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.clearExistingList = function( listTableTbodyTag )
     {
         listTableTbodyTag.find( 'tr.activity' ).remove();
-        //listTableTbodyTag.find( 'li.blockListGroupBy' ).remove();
+        listTableTbodyTag.find( 'tr.blockListGroupBy' ).remove();
     };
 
 
@@ -491,14 +491,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         activityCardTrTag.attr( 'itemId', activityJson.activityId );
 
-
-        // TODO: move this to 'activityCard' class..
-        activityCardTrTag.find( '.activityContent' ).click( function(){
-            DevHelper.showFullPreview( activityJson.activityId );
-        });
-      
-
-
+        
         var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
 
 
@@ -561,16 +554,41 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {
         var groupTrTag = $( me.template_groupTrTag );
 
-        groupTrTag.find( 'td.blockListGroupBySection' ).text( groupJson.name );
+        var tdGroupTag = groupTrTag.find( 'td.blockListGroupBySection' );
+        
+        tdGroupTag.text( groupJson.name );
 
-
-        // TODO: set event
-
+        // Set event
+        me.setTdGroupClick();
 
 
         listTableTbodyTag.append( groupTrTag );
 
         return groupTrTag;
+    };
+
+
+    me.setTdGroupClick = function()
+    {
+        var tdGroupClickTag = $( this );
+
+        var trTag = tdGroupClickTag.closest( 'tr.blockListGroupBy' );
+        var opened = trTag.hasClass( 'opened' );
+        
+        var activityTrTags = tableTag.find( 'tr.activity[group="' + groupId + '"]' );
+
+        // Toggle 'opened' status..
+        if ( opened )
+        {
+            // hide it
+            trTag.removeClass( 'opened' );
+            activityTrTags.hide();
+        } 
+        else 
+        {
+            trTag.addClass( 'opened' );
+            activityTrTags.show( 'fast' );
+        }
     };
 
 

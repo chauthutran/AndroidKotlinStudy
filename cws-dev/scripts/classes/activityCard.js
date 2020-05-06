@@ -69,15 +69,19 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
             {
                 var activityTrans = me.getCombinedTrans( activityJson );
 
+                var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
+                var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
+
+
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityCardTrTag, activityJson );
-                
-                me.activityIconClick_displayInfo( activityCardTrTag.find( 'div.activityIcon' ), activityJson );
+                me.activityTypeDisplay( activityTypeTdTag, activityJson );                
+                me.activityIconClick_displayInfo( activityTypeTdTag, activityJson );
 
 
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityCardTrTag.find( 'div.activityContent' )
+                me.setActivityContentDisplay( activityContentTag
                     , activityJson, activityTrans, ConfigManager.getConfigJson() );
+                me.activityContentClick_FullView( activityContentTag, activityJson.activityId );
 
 
                 // 3. 'SyncUp' Button Related
@@ -95,13 +99,20 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     
     me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
     {
-        activityIconTag.off( 'click' ).click( function() {
+        activityIconTag.off( 'click' ).click( function( e ) {
             e.stopPropagation();  // Stops calling parent tags event calls..
             console.log( activityJson );
         });
     };
 
-
+    me.activityContentClick_FullView = function( activityContentTag, activityId )
+    {
+        activityContentTag.off( 'click' ).click( function( e ) {
+            e.stopPropagation();
+            DevHelper.showFullPreview( activityId );
+        });
+    };
+                
     me.setupSyncBtn = function( activityCardTrTag, activityJson )
     {
         var divSyncIconTag = activityCardTrTag.find( '.activityStatusIcon' );
@@ -347,14 +358,12 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     };
 
 
-    me.activityTypeDisplay = function( activityCardTrTag, activityJson )
+    me.activityTypeDisplay = function( activityTypeTdTag, activityJson )
     {
         try
         {
             var activityTypeConfig = ConfigManager.getActivityTypeConfig( activityJson );
     
-            var activityTypeTdTag = activityCardTrTag.find( '.activityIcon' ); // Left side activityType part - for icon
-
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
             var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
 

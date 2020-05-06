@@ -46,7 +46,12 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 
 	try
 	{
-		returnVal = eval( inputVal ).replace( /undefined/g, '' );
+		returnVal = eval( inputVal );
+
+		if ( typeof( returnVal ) === "string" ) 
+		{
+			returnVal = returnVal.replace( /undefined/g, '' );
+		}
 	}
 	catch( errMsg )
 	{

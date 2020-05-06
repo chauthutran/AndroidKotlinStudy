@@ -140,7 +140,8 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  /*background-color: rgba($color-typ-sl, 35%);*/
+  /*background-color: rgba($color-typ-sl, 35%);
+  opacity: 0.2; */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px); 
 }
