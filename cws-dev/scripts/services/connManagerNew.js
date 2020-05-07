@@ -178,6 +178,11 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 {
 	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo( statusInfo );
 
+	ConnManagerNew.setAppMode( appModeNew, statusInfo );
+
+	// NOTE: Disabling AppMode Switch Prompt.  Also, disables area switching by appMode switch
+
+	/*
 	// If appModeNew is same as existing Prmopt MOde, ignore it.
 	if ( appModeNew !== statusInfo.appMode_PromptedMode )
 	{
@@ -195,6 +200,7 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 			}
 		}
 	}
+	*/
 };
 
 

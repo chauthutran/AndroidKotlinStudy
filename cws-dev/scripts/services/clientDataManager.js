@@ -22,6 +22,8 @@ ClientDataManager.template_Client = {
     'activities': []        
 };
 
+ClientDataManager.payloadClientNameStart = 'client_';
+
 // ===================================================
 // === MAIN FEATURES =============
 
@@ -99,29 +101,38 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, pr
     }
 };
 
-ClientDataManager.createCommonPayloadClient = function()
+
+ClientDataManager.createActivityPayloadClient = function( activity )
 {
     // Call it from template?
-    var commonPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
+    var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
 
-    commonPayloadClient._id = ClientDataManager._commonPayloadClientId;
+    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.activityId;
+    acitivityPayloadClient.clientDetails = ActivityDataManager.getCombinedTrans( activity );
 
-    ClientDataManager.insertClient( commonPayloadClient );
+    ClientDataManager.insertClient( acitivityPayloadClient );
 
-    return commonPayloadClient;
+    return acitivityPayloadClient;
 };
 
-ClientDataManager.getCommonPayloadClient = function()
+
+ClientDataManager.removeClient = function( client )
 {
-    // If Common Payload Client already exists, return that client.
-    // If not, create one, add to the list.
-    var commonPayloadClient = ClientDataManager.getClientById( ClientDataManager._commonPayloadClientId );
+    try
+    {
+        // Remove activities in it
+        ActivityDataManager.removeActivities( client.activities );
 
-    if ( !commonPayloadClient ) commonPayloadClient = ClientDataManager.createCommonPayloadClient();
-
-    return commonPayloadClient;
-    // Do not need to save to storage (IDB) since the caller will save it if there are any addition to here.
+        // remove client ones..
+        ClientDataManager.removeClientIndex( client );        
+        Util.RemoveFromArray( ClientDataManager.getClientList(), "_id", client._id );
+    }
+    catch( errMsg )
+    {
+        console.log( 'Error in ClientDataManager.removeClient, errMsg: ' + errMsg );
+    } 
 };
+
 
 // --------------------------------------------
 
@@ -168,6 +179,18 @@ ClientDataManager.addClientIndex = function( client )
     if ( client._id )
     {
         ClientDataManager._clientsIdx[ client._id ] = client;
+    }
+};
+
+
+ClientDataManager.removeClientIndex = function( client )
+{
+    if ( client._id )
+    {
+        if ( ClientDataManager._clientsIdx[ client._id ] )
+        {
+            delete ClientDataManager._clientsIdx[ client._id ];
+        }
     }
 };
 

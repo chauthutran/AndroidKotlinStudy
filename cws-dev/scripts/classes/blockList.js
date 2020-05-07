@@ -323,67 +323,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
     };
 
-
-    /*
-    me.evalCreateGroupByGroup = function( activityJson, targTag, blockListViewObj )
-    {
-        var retGroup = '';
-        for ( var g=0; g < blockListViewObj.groupByGroups.length; g++ )
-        {
-            if ( activityJson.groupBy[ blockListViewObj.viewDef_Selected.groupBy ] === blockListViewObj.groupByGroups[ g ].id )
-            {
-                retGroup = blockListViewObj.groupByGroups[ g ].id;
-                if ( ! blockListViewObj.groupByGroups[ g ].created )
-                {
-                    var liContentTag = $( '<li class="blockListGroupBy opened" />' );
-                    //var anchorTag = $( '<a class="blockListGroupBySection" groupBy="' + ( blockListViewObj.groupByGroups[ g ].id ).toUpperCase() + '" style=""><img src="images/arrow_up.svg" class="arrow" style="padding-right:4px;">' + ( blockListViewObj.groupByGroups[ g ].name ) + '</a>' );
-                    var anchorTag = $( '<a class="blockListGroupBySection" />' );
-
-                    //anchorTag.css( 'background', 'url(images/arrow_up.svg)' );
-                    anchorTag.text( blockListViewObj.groupByGroups[ g ].name  );
-
-                    targTag.append( liContentTag );
-                    liContentTag.append( anchorTag );
-
-                    anchorTag.click( function() {
-                        //var imgTag = this.children[ 0 ];
-                        var groupByClickTag = $( this );
-                        me.evalToggleCalGroupCards( targTag, 'groupBy', blockListViewObj.groupByGroups[ g ].id );
-                        groupByClickTag.parent()[ 0 ].classList.toggle( "opened" );
-                        //imgTag.classList.toggle( "rotateImg" );
-                        //groupByClickTag.classList.toggle( "rotateImg" );
-                    });
-                    blockListViewObj.groupByGroups[ g ][ 'created' ] = 1;
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-        return retGroup;
-    };
-    me.evalToggleCalGroupCards = function( parentTag, attrName, attrVal )
-    {        
-        parentTag.find( 'li.activityItemCard' ).each( function(){ 
-            var li = $( this );
-            console.log( li.attr( attrName ) + ' == ' + attrVal );
-            if ( li.attr( attrName ) == attrVal )
-            {
-                if ( li.is( ':visible' ) )
-                {
-                    li.hide();
-                }
-                else
-                {
-                    li.show();
-                }
-            }
-        });
-    };
-    */
-
     // ------------------------------------
     // --- Paging Related -------------
 
@@ -484,6 +423,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
     };
 
+
+    // ------------------------------------
+    // --- Create GROUP Related -------------
             
     me.setGroupDiv = function( activityJson, viewGroupByData, listTableTbodyTag )
     {

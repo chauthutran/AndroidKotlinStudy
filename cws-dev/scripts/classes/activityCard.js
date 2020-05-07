@@ -509,11 +509,12 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         {
             operationSuccess = true;
 
-            ActivityDataManager.removePayloadActivityById( me.activityId );
+            // remove client as well if started with 'client_'
+            ActivityDataManager.removeActivityNClientById( me.activityId );
             
 
             // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
+            var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
 
 
             ClientDataManager.mergeDownloadedClients( [ responseJson.result.client ], processingInfo, function( changeOccurred_atMerge ) 

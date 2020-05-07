@@ -44,14 +44,52 @@ ActivityDataManager.getActivityById = function( activityId )
 // ---------------------------------------
 // --- Remove Activity
 
+ActivityDataManager.removeActivities = function( activities )
+{
+    for ( var i = 0; i < activities.length; i++ )
+    {
+        var activity = activities[ i ];
+
+        ActivityDataManager.removeActivityById( activity.activityId );
+    }
+}
+
 // After 'syncUp', remove the payload <-- after syncDown?
-ActivityDataManager.removePayloadActivityById = function( activityId )
+ActivityDataManager.removeActivityById = function( activityId )
+{
+    try
+    {
+        if ( activityId )
+        {
+            // 1. remove from activityList
+            Util.RemoveFromArray( ActivityDataManager._activityList, "activityId", activityId );
+
+            // 2. remove from activityClientMap, 3. remove from client activities
+            if ( ActivityDataManager._activityToClient[ activityId ] )
+            {
+                var client = ActivityDataManager._activityToClient[ activityId ];
+
+                delete ActivityDataManager._activityToClient[ activityId ];
+
+                Util.RemoveFromArray( client.activities, "activityId", activityId );
+            }   
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+    }
+};
+
+
+// NEW
+ActivityDataManager.removeActivityNClientById = function( activityId )
 {
     try
     {
         // 1. remove from activityList
         Util.RemoveFromArray( ActivityDataManager._activityList, "activityId", activityId );
-
+        
         // 2. remove from activityClientMap, 3. remove from client activities
         if ( ActivityDataManager._activityToClient[ activityId ] )
         {
@@ -60,6 +98,12 @@ ActivityDataManager.removePayloadActivityById = function( activityId )
             delete ActivityDataManager._activityToClient[ activityId ];
 
             Util.RemoveFromArray( client.activities, "activityId", activityId );
+
+            if ( client._id.indexOf( ClientDataManager.payloadClientNameStart ) === 0 )
+            {
+                // Delete 'client' that was created for the activity payload..
+                ClientDataManager.removeClient( client );
+            }
         }    
     }
     catch ( errMsg )
@@ -221,9 +265,9 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
     {
         var activityJson = ActivityDataManager.generateActivityPayloadJson( formsJson, formsJsonGroup, blockInfo, actionDefJson );
 
-        var commonPayloadClient = ClientDataManager.getCommonPayloadClient();
+        var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
     
-        ActivityDataManager.insertActivityToClient( activityJson, commonPayloadClient );
+        ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient );
     
         ClientDataManager.saveCurrent_ClientsStore( function() {
             if ( callBack ) callBack( activityJson );    
