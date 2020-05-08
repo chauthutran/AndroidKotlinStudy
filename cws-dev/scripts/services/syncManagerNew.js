@@ -36,6 +36,22 @@ SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
 // If blockListObj were created and referened..  We could use cwsRenderObj instead..
 SyncManagerNew.blockListObj;  // If
 
+SyncManagerNew.template_SyncMsgJson = { 
+    "msgList": [], // { "msg": "", "datetime": "" }
+    "summaryList": []  // { "msg": "" }
+};
+
+SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
+
+SyncManagerNew.template_SyncMsg_Header = `<div class="sync_all__header_title">Synchronization Services Deliveries</div>
+    <div class="sync_all__anim i-sync-pending_36 rot_l_anim"></div>`;
+
+SyncManagerNew.template_SyncMsg_Section = `<div class="sync_all__section">
+      <div class="sync_all__section_title"></div>
+      <div class="sync_all__section_log"></div>
+  </div>`;
+
+
 // ===================================================
 // === MAIN 2 FEATURES =============
 
@@ -46,15 +62,25 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     {
         if ( SyncManagerNew.syncStart() )
         {
+            SyncManagerNew.SyncMsg_InsertMsg( "Started sync_all.." );
+
             // initialise UI + animation
             SyncManagerNew.update_UI_StartSyncAll();
     
             // get activityItems (for upload) > not already uploaded (to be processed)
             SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( itemDataList ){
     
-                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() {
+                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() 
+                {
+                    SyncManagerNew.SyncMsg_InsertMsg( "sync_all completed.." );
     
+
+                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync postponed N.." );
+                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync error N.." );
+
+
                     console.log( 'syncAll finished' );
+
                     SyncManagerNew.syncFinish();
                     SyncManagerNew.update_UI_FinishSyncAll();
 
@@ -69,6 +95,8 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     }
     catch( errMsg )
     {
+        SyncManagerNew.SyncMsg_InsertSummaryMsg( "sync_all failed - msg: " + errMsg );
+
         console.log( 'syncAll not run properly - ' + errMsg );
         SyncManagerNew.syncFinish();
         if( callBack ) callBack( false );
@@ -82,9 +110,13 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     // NOTE: We can check network connection here, or from calling place.  
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
 
+    SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
+
     // Retrieve data..
     SyncManagerNew.downloadClients( function( downloadSuccess, returnJson ) 
     {
+        SyncManagerNew.SyncMsg_InsertMsg( "download finished.." );
+
         var changeOccurred = false;        
         //console.log( success ); //console.log( mongoClients );
         // S2. NOTE: Mark that download done as just log?
@@ -97,6 +129,8 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 
         if ( !downloadSuccess ) 
         { 
+            SyncManagerNew.SyncMsg_InsertMsg( "download result - not success.." );
+
             if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
         }
         else
@@ -104,9 +138,16 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
             // 'download' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );
 
+            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + mongoClients.length + "clients: " );
+
+            SyncManagerNew.SyncMsg_InsertMsg( "Synchronizing..." );
 
             ClientDataManager.mergeDownloadedClients( mongoClients, processingInfo, function( changeOccurred_atMerge ) 
             {
+                SyncManagerNew.SyncMsg_InsertMsg( "merged.." );
+                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + mongoClients.length + "clients: " );
+
+
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
 
@@ -383,6 +424,129 @@ SyncManagerNew.syncFinish = function()
     SyncManagerNew.sync_Running = false;  
 };
 
+
+// ===================================================
+// === Sync All Msg to LS Methods =============
+
+
+// TODO: Load at load in memory on startup!!!!
+SyncManagerNew.SyncMsg_Get = function()
+{
+    var syncMsgJson;
+
+    if ( SyncManagerNew.syncMsgJson ) syncMsgJson = SyncManagerNew.syncMsgJson;
+    else
+    {
+        syncMsgJson = LocalStgMng.syncMsg_Get();
+
+        if ( !syncMsgJson ) syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJsonbj );    
+
+        SyncManagerNew.syncMsgJson = syncMsgJson;
+    }
+    
+    return syncMsgJson;
+};
+
+
+SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
+{
+    var syncMsgJson = SyncManagerNew.syncMsgJson;
+
+    var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+    
+    syncMsgJson.msgList.push( newMsgJson );
+
+    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+};
+
+
+SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
+{
+    var syncMsgJson = SyncManagerNew.syncMsgJson;
+
+    var newSummaryMsgJson = { "msg": summaryMsgStr };
+    
+    syncMsgJson.summaryList.push( newSummaryMsgJson );
+
+    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+};
+
+
+// After Login, we want to reset this 'SyncMsg'
+SyncManagerNew.SyncMsg_Reset = function()
+{
+    var syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJsonbj );
+    
+    SyncManagerNew.syncMsgJson = syncMsgJson;
+
+    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+};
+
+
+SyncManagerNew.SyncMsg_ShowBottomMsg = function()
+{
+    Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
+    {
+        var msgHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
+        var msgContentTag = syncInfoAreaTag.find( 'div.msgContent' );
+
+        // 1. Set Header
+        msgHeaderTag.append( SyncManagerNew.template_SyncMsg_Header );
+        // TODO: Need to update the sync progress status.. and register 
+
+
+        // 2. Set Body
+        var syncMsgJson = SyncManagerNew.SyncMsg_Get();
+
+        // Add Service Deliveries Msg
+        SyncManagerNew.SyncMsg_createSectionTag( 'Services Deliveries', function( sectionTag, sectionLogTag )
+        {
+            for ( var i = 0; i < syncMsgJson.msgList.length; i++ )
+            {
+                //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+                var msgJson = syncMsgJson.msgList[i];
+    
+                var msgStr = msgJson.datetime + ' ' + msgJson.msg;
+    
+                sectionLogTag.append( '<div>' + msgStr + '</div>' );
+            }
+
+            msgContentTag.append( sectionTag );
+        });
+
+
+        // Add Summaries Msg
+        SyncManagerNew.SyncMsg_createSectionTag( 'Summaries', function( sectionTag, sectionLogTag )
+        {
+            var syncMsgJson = SyncManagerNew.SyncMsg_Get();
+
+            for ( var i = 0; i < syncMsgJson.summaryList.length; i++ )
+            {
+                //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+                var msgJson = syncMsgJson.summaryList[i];
+    
+                sectionLogTag.append( '<div>' + msgJson.msg + '</div>' );
+            }
+    
+            msgContentTag.append( sectionTag );
+        });
+
+        
+        //    <div class="sync_all__section_msg">Show next sync: in 32m</div>
+    });
+
+};
+
+
+SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
+{
+    var sectionTag = $( SyncManagerNew.template_SyncMsg_Section );
+
+    var sectionTitleTag = sectionTag.find( 'div.sync_all__section_title' ).html( sectionTitle );
+    var sectionLogTag = sectionTag.find( 'div.sync_all__section_log' );
+
+    callBack( sectionTag, sectionLogTag );
+}
 
 // ===================================================
 // === OTHERS Methods =============

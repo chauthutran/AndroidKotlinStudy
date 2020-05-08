@@ -549,34 +549,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         divSyncDownTag.show(); 
 
         imgSyncDownTag.off( "click" ).click( () => {
-
-            Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
-            {
-                var syncAll_Header = `
-                  <div class="sync_all__header_title">Synchronization Services Deliveries</div>
-                  <div class="sync_all__anim i-sync-pending_36 rot_l_anim"></div>`;
-            // THIS SHOULD BE SET ON APP LEVEL - ONCE  <-- cwsRender or apps class..
-                var syncAll_Body = `<div class="sync_all__section">
-                    <div class="sync_all__section_title">Services Deliveries 4/6</div>
-                    <div class="sync_all__section_log">20-02-01 17:07 Starting sync_all.
-                        <br>20-02-01 17:07 Synchronizing...
-                        <br>20-02-01 17:07 sync_all completed.
-                    </div>
-                    </div>
-
-                    <div class="sync_all__section">
-                    <div class="sync_all__section_title">Client details</div>
-                    <div class="sync_all__section_log">
-                        <span class="color_status_sync">Sync - read message 2</span>
-                        <br><span class="color_status_pending_msg">Sync postponed 2</span>
-                        <br><span class="color_status_error">Sync error 1</span>
-                    </div>
-                    <div class="sync_all__section_msg">Show next sync: in 32m</div>
-                </div>`;
-
-                syncInfoAreaTag.find( 'div.msgHeader' ).append( syncAll_Header );
-                syncInfoAreaTag.find( 'div.msgContent' ).append( syncAll_Body );
-            });
+            SyncManagerNew.SyncMsg_ShowBottomMsg();
         });
     };
 

@@ -596,6 +596,7 @@ div.errorMsgText {
   z-index: 1;
   border-radius: 0 0 3px 3px;
 }
+
 div.errorMsgArrow
 {
   display: block;
@@ -608,4 +609,9 @@ div.errorMsgArrow
   -moz-transform: rotate(45deg);
   -o-transform: rotate(45deg); /* Opera */
   border-radius: 0px 0px 4px 0;
+}
+
+.btnClickInProcess
+{
+  background-color: silver;
 }

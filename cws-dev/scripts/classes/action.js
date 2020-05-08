@@ -9,6 +9,8 @@ function Action( cwsRenderObj, blockObj )
 	
 	me.renderBlockTag = cwsRenderObj.renderBlockTag;
 
+	me.className_btnClickInProcess = 'btnClickInProcess';
+	
 	// -----------------------------
 	// ---- Methods ----------------
 	
@@ -29,13 +31,15 @@ function Action( cwsRenderObj, blockObj )
 		if ( !me.btnClickedAlready( btnTag ) )
 		{
 			me.btnClickMarked( btnTag );
-			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+
+			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
+			
 				me.clearBtn_ClickedMark( btnTag );
-			} );
+			} );	
 		}
 		else
 		{
-			//console.log( 'Btn already clicked/in process' );
+			console.log( 'Btn already clicked/in process' );
 		}
 	}
 
@@ -109,7 +113,9 @@ function Action( cwsRenderObj, blockObj )
 
 		if ( !me.btnClickedAlready( btnTag ) )
 		{
-			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData ) {
+			me.btnClickMarked( btnTag );
+
+			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
 				me.clearBtn_ClickedMark( btnTag );					
 			} );
 		}
@@ -125,24 +131,23 @@ function Action( cwsRenderObj, blockObj )
 	// me.recurrsiveActions
 	me.handleActionsInSync = function( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc )
 	{
-		if ( actionIndex >= actions.length ) endOfActionsFunc( dataPass );
+		if ( actionIndex >= actions.length ) endOfActionsFunc( dataPass, "Success" );
 		else
 		{
 			// me.clickActionPerform
 			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( resultStr )
 			{				
-				if ( resultStr !== "actionFailed" )
+				if ( resultStr === "Failed" || resultStr === "actionFailed" )
+				{
+					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
+					endOfActionsFunc( dataPass, "Failed" );
+				}
+				else
 				{
 					actionIndex++;
 
 					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );
 				}
-				else
-				{
-					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
-					endOfActionsFunc( dataPass );
-				}
-
 			});
 		}
 	}
@@ -152,236 +157,246 @@ function Action( cwsRenderObj, blockObj )
 	me.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
 		// TODO: all the blockDivTag related should be done by 'block' class method
-
-		var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
-
-		// ACTIVITY ADDING
-		var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
-
-		
-		if ( clickActionJson )
+		try
 		{
-			if ( clickActionJson.actionType === "evaluation" )
-			{
-				//console.log( blockPassingData.displayData );
-				blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
-				//console.log( blockPassingData.displayData );
+			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "clearOtherBlocks" )
+			// ACTIVITY ADDING
+			var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
+			
+			if ( clickActionJson )
 			{
-				var currBlockId = blockDivTag.attr( 'blockId' );
-
-				me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "closeBlock" )
-			{
-				if( clickActionJson.closeLevel !== undefined )
+				if ( clickActionJson.actionType === "evaluation" )
 				{
-					var closeLevel = Util.getNum( clickActionJson.closeLevel );
-
-					var divBlockTotal = me.renderBlockTag.find( 'div.block:visible' ).length;
-
-					var currBlock = blockDivTag;
-
-					for ( var i = 0; i < divBlockTotal; i++ )
+					//console.log( blockPassingData.displayData );
+					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
+					//console.log( blockPassingData.displayData );
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "clearOtherBlocks" )
+				{
+					var currBlockId = blockDivTag.attr( 'blockId' );
+	
+					me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "closeBlock" )
+				{
+					if( clickActionJson.closeLevel !== undefined )
 					{
-						var tempPrevBlock = currBlock.prev( 'div.block' );
-
-						if ( closeLevel >= i ) 
+						var closeLevel = Util.getNum( clickActionJson.closeLevel );
+	
+						var divBlockTotal = me.renderBlockTag.find( 'div.block:visible' ).length;
+	
+						var currBlock = blockDivTag;
+	
+						for ( var i = 0; i < divBlockTotal; i++ )
 						{
-							currBlock.remove();
+							var tempPrevBlock = currBlock.prev( 'div.block' );
+	
+							if ( closeLevel >= i ) 
+							{
+								currBlock.remove();
+							}
+							else break;
+	
+							currBlock = tempPrevBlock;
 						}
-						else break;
-
-						currBlock = tempPrevBlock;
 					}
-				}
-				else if( clickActionJson.blockId != undefined )
-				{
-					me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
-				}
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "hideBlock" )
-			{
-				//blockDivTag.hide();
-				me.blockObj.hideBlock();
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "openBlock" )
-			{
-				if ( clickActionJson.blockId !== undefined )
-				{
-					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
-
-					// 'blockPassingData' exists is called from 'processWSResult' actions
-					if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
-					blockPassingData.showCase = clickActionJson.showCase;
-					blockPassingData.hideCase = clickActionJson.hideCase;
-
-
-					// Hide block if action is doing 'openBlock'
-					me.blockObj.hideBlock();
-
-					var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true }, clickActionJson );	
-					newBlockObj.render();
-
-					if ( clickActionJson.payloadConfig )
+					else if( clickActionJson.blockId != undefined )
 					{
-						// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
-						FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
-						// NOT SURE IF THIS IS PROPER PLACE..
-						FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
+						me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
+					}
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "hideBlock" )
+				{
+					//blockDivTag.hide();
+					me.blockObj.hideBlock();
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "openBlock" )
+				{
+					if ( clickActionJson.blockId !== undefined )
+					{
+						var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
+	
+						// 'blockPassingData' exists is called from 'processWSResult' actions
+						if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
+						blockPassingData.showCase = clickActionJson.showCase;
+						blockPassingData.hideCase = clickActionJson.hideCase;
+	
+	
+						// Hide block if action is doing 'openBlock'
+						me.blockObj.hideBlock();
+	
+						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true }, clickActionJson );	
+						newBlockObj.render();
+	
+						if ( clickActionJson.payloadConfig )
+						{
+							// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
+							FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
+							// NOT SURE IF THIS IS PROPER PLACE..
+							FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
+						}
+						else
+						{
+							FormUtil.block_payloadConfig = '';
+						}
+					}
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "openArea" )
+				{				
+					if ( clickActionJson.areaId )
+					{
+						//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
+						me.cwsRenderObj.renderArea( clickActionJson.areaId );
+					}
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "filledData" )
+				{
+					var dataFromDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
+					var dataToDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
+					var dataItems = clickActionJson.dataItems;
+	
+					for ( var i = 0; i < dataItems.length; i++ )
+					{
+						var value = dataFromDivTag.find("[name='" + dataItems[i] + "']").val()
+						dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
+					}
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "alertMsg" )
+				{
+					if ( clickActionJson.messageClass )
+					{
+						MsgManager.notificationMessage ( clickActionJson.message, clickActionJson.messageClass, undefined, '', 'right', 'top' );
 					}
 					else
 					{
-						FormUtil.block_payloadConfig = '';
+						MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
 					}
+	
+					if ( afterActionFunc ) afterActionFunc();
 				}
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "openArea" )
-			{				
-				if ( clickActionJson.areaId )
+				else if ( clickActionJson.actionType === "topNotifyMsg" )
 				{
-					//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
-					me.cwsRenderObj.renderArea( clickActionJson.areaId );
-				}
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "filledData" )
-			{
-				var dataFromDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
-				var dataToDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
-				var dataItems = clickActionJson.dataItems;
-
-				for ( var i = 0; i < dataItems.length; i++ )
-				{
-					var value = dataFromDivTag.find("[name='" + dataItems[i] + "']").val()
-					dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
-				}
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "alertMsg" )
-			{
-				if ( clickActionJson.messageClass )
-				{
-					MsgManager.notificationMessage ( clickActionJson.message, clickActionJson.messageClass, undefined, '', 'right', 'top' );
-				}
-				else
-				{
-					MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
-				}
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "topNotifyMsg" )
-			{
-				if ( clickActionJson.messageClass )
-				{
-					MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
-				}
-				else
-				{
-					MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
-				}
-				// If term exists, translate it before displaying
-				//MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
-
-				if ( afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "processWSResult" ) 
-			{
-				var statusActionsCalled = false;
-
-				// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
-				var wsReplyData = dataPass.prevWsReplyData;
-
-				if ( wsReplyData && wsReplyData.resultData && clickActionJson.resultCase )
-				{
-					var statusActions = clickActionJson.resultCase[ wsReplyData.resultData.status ];
-
-					if ( statusActions && statusActions.length > 0 )
+					if ( clickActionJson.messageClass )
 					{
-						statusActionsCalled = true;
+						MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
+					}
+					else
+					{
+						MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
+					}
+					// If term exists, translate it before displaying
+					//MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
+	
+					if ( afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "processWSResult" ) 
+				{
+					var statusActionsCalled = false;
+	
+					// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
+					var wsReplyData = dataPass.prevWsReplyData;
+	
+					if ( wsReplyData && wsReplyData.resultData && clickActionJson.resultCase )
+					{
+						var statusActions = clickActionJson.resultCase[ wsReplyData.resultData.status ];
+	
+						if ( statusActions && statusActions.length > 0 )
+						{
+							statusActionsCalled = true;
+							var dataPass_Status = {};
+	
+							// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
+							me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
+								if ( afterActionFunc ) afterActionFunc();
+							} );
+	
+						}
+					}
+	
+					// If statusActions did not get started for some reason, return as this action finished
+					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
+				}
+				else if ( clickActionJson.actionType === "WSlocalData" )
+				{
+					var statusActionsCalled = false;
+	
+					if ( clickActionJson.localResource )
+					{
+						var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
+						var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
 						var dataPass_Status = {};
-
-						// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
-						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
+	
+						statusActionsCalled = true;
+	
+						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
 							if ( afterActionFunc ) afterActionFunc();
 						} );
-
-					}
-				}
-
-				// If statusActions did not get started for some reason, return as this action finished
-				if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
-			}
-			else if ( clickActionJson.actionType === "WSlocalData" )
-			{
-				var statusActionsCalled = false;
-
-				if ( clickActionJson.localResource )
-				{
-					var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
-					var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
-					var dataPass_Status = {};
-
-					statusActionsCalled = true;
-
-					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
-						if ( afterActionFunc ) afterActionFunc();
-					} );
-
-				}
-				else
-				{
-					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc(); 
-				}
-
-				// If statusActions did not get started for some reason, return as this action finished
-			}
-			else if ( clickActionJson.actionType === "sendToWS" )
-			{
-				// Temporarily move before 'handlePayloadPreview' - since version 1 
-				var formsJsonGroup = {};
-				var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
-				var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
-
-				me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
-					//var currBlockId = blockDivTag.attr( 'blockId' );
-
-					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
-
-					// If 'Activity' generate case, add to list
-					if ( clickActionJson.redeemListInsert === "true" )
-					{						
-						ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
-						{
-							dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 	
-							if ( afterActionFunc ) afterActionFunc();
-						} );	
 					}
 					else
 					{
-						// Immediate Submit to Webservice case
-						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+						if ( !statusActionsCalled && afterActionFunc ) afterActionFunc(); 
 					}
-				});
+	
+					// If statusActions did not get started for some reason, return as this action finished
+				}
+				else if ( clickActionJson.actionType === "sendToWS" )
+				{
+					// Temporarily move before 'handlePayloadPreview' - since version 1 
+					var formsJsonGroup = {};
+					var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
+	
+					me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
+						//var currBlockId = blockDivTag.attr( 'blockId' );
+	
+						FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+	
+						// If 'Activity' generate case, add to list
+						if ( clickActionJson.redeemListInsert === "true" )
+						{						
+							ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+							{
+								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+		
+								if ( afterActionFunc ) afterActionFunc();
+							} );	
+						}
+						else
+						{
+							// Immediate Submit to Webservice case
+							me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+						}
+					});
+	
+					// Failed case - follow through 'handlePayloadPreview'..
+					if ( afterActionFunc ) afterActionFunc( 'Failed' );
+				}
 			}
+		}
+		catch ( errMsg )
+		{
+			if ( afterActionFunc ) afterActionFunc( 'Failed' );
 		}
 	};
 
+
+	// ----------------------------------------------
 
 	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
 	{
@@ -515,17 +530,17 @@ function Action( cwsRenderObj, blockObj )
 	
 	me.btnClickedAlready = function( btnTag )
 	{
-		return btnTag.hasClass( 'clicked' );
+		return btnTag.hasClass( me.className_btnClickInProcess );
 	};
 
 	me.btnClickMarked = function( btnTag )
 	{
-		btnTag.addClass( 'clicked' );
+		btnTag.addClass( me.className_btnClickInProcess );
 	};
 
 	me.clearBtn_ClickedMark = function( btnTag )
 	{
-		btnTag.removeClass( 'clicked' );
+		btnTag.removeClass( me.className_btnClickInProcess );
 	};
 
 	// ========================================================

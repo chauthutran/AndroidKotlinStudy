@@ -8,7 +8,10 @@ function LocalStgMng() {}
 LocalStgMng.KEY_session = "session";
 LocalStgMng.KEY_langTerms = "langTerms";
 LocalStgMng.KEY_lastDownload = "lastDownload";
+LocalStgMng.KEY_syncMsg = "syncMsg";
+
 // ---------------------------------------------------
+// -- Last Download Mark Related --------------
 
 LocalStgMng.lastDownload_Save = function( dateISOStr ) 
 {
@@ -34,78 +37,20 @@ LocalStgMng.lastDownload_Get = function()
 	return dateISOStr;  // return 'undefined' if lastDownload does not exists..
 };
 
-
-/*
-LocalStgMng.getUserConfigData = function() 
-{
-	return LocalStgMng.getSessionData( function( sessionJson ){
-		//console.log( sessionJson );
-		if ( sessionJson && sessionJson.user )	
-		{
-			LocalStgMng.getData( sessionJson.user, function( userConfigJson ){
-				if ( callBack ) callBack( userConfigJson );
-			} );
-		}
-		else
-		{
-			if ( callBack ) callBack();
-		}
-	});
-}
-
-/*
-LocalStgMng.getSessionData = function() 
-{
-	return LocalStgMng.getJsonData( LocalStgMng.KEY_session );
-}
-
-LocalStgMng.setSessionDataValue = function( prop, val ) 
-{
-	LocalStgMng.getData( LocalStgMng.KEY_session, function( sessionJson ){
-		if ( sessionJson )
-		{
-			sessionJson[ prop ] = val;
-
-			LocalStgMng.saveData( LocalStgMng.KEY_session, sessionJson );
-		}
-	} );
-}
-
-LocalStgMng.getSessionDataValue = function( prop, defval, callBack ) 
-{
-	LocalStgMng.getData( LocalStgMng.KEY_session, function( sessionJson ){
-		var ret;
-
-		if ( sessionJson )
-		{
-			if ( sessionJson[ prop ] )
-			{
-				ret = sessionJson[ prop ];
-			}
-			else
-			{
-				ret = defval;
-			}
-		}	
-		callBack( ret );
-	} );
-}
+// ---------------------------------------------------
+// -- SyncMsg Related --------------
 
 
-LocalStgMng.clearSessionStorage = function( callBack )
-{
-	//LocalStgMng.deleteData( 'networkConnectionObs' );
-	//localStorage.removeItem( 'networkConnectionObs' );
+//LocalStgMng.syncMsg_Save = function( jsonData ) 
+//{
+//	LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, jsonData );
+//};
 
-	LocalStgMng.getSessionData( function( sessionData ){
+//LocalStgMng.syncMsg_Get = function() 
+//{
+//	return LocalStgMng.getJsonData( LocalStgMng.KEY_syncMsg );
+//};
 
-		LocalStgMng.deleteData( LocalStgMng.KEY_session );
-		//LocalStgMng.deleteData( sessionData.user );
-
-		if ( callBack ) callBack();
-	});
-}
-*/
 
 // -------------------------------------
 // ---- Overall Data Save/Get/Delete ---

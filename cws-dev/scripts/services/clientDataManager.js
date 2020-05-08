@@ -12,9 +12,6 @@ function ClientDataManager()  {};
 
 ClientDataManager._clientsStore = { 'list': [] };
 ClientDataManager._clientsIdx = {};
-ClientDataManager._commonPayloadClientId = "CommonPayloadClient";
-//ClientDataManager._userLoginId;  // ??
-//ClientDataManager._userLoginPwd;
 
 ClientDataManager.template_Client = {
     '_id': '',

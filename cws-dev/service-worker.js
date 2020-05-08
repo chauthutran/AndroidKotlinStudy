@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "c59c212aee5d32ddb00dc2f040a27c45"
+    "revision": "fef999b236be0ec82b6253b70c1ae4cb"
   },
   {
     "url": "css/qunit.css",
@@ -1181,11 +1181,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "b4d19240b9522516aa83927a0756750a"
+    "revision": "3a4dc5ab406b7dfd653b8208dabb5e66"
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "2f14618cb6481079021b649af676819e"
+    "revision": "61202ae91a2a43fcf5ecb5c5a637b117"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "71d20bfe945ab617710604072e445f58"
+    "revision": "34bbe6ac6ada250ec15d3ef9abdd449a"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "767af9e0515b0b9309bfd080021024be"
+    "revision": "4b215df73b01f9f6fbe3c3b3c4ebbe4f"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1241,7 +1241,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "20e9aa976bfbf757b4126fa87e2ab0c7"
+    "revision": "1ca674870ecf8dfaaf22b8be86243d6b"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1345,7 +1345,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "df968f77b6ae3531c5641931cd7ff5b3"
+    "revision": "e40473f4e0f8d52a0431d6245e5add20"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -1353,7 +1353,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/clientDataManager.js",
-    "revision": "5d3edd1d444ec9b93fa04f62cbf4b2da"
+    "revision": "1d3ad7907e1b95ee7bd10c0990610cad"
   },
   {
     "url": "scripts/services/configManager.js",
@@ -1365,7 +1365,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "d26560fed4d721b970d92ae173f747d4"
+    "revision": "4a4fb2bf304ffcd7d44d27b5d5784a6d"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1425,7 +1425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
-    "revision": "658823556a0f636d1e40ce4a23ea48b2"
+    "revision": "b981d2648e6a4c094c56fc222951ea43"
   },
   {
     "url": "scripts/services/storage/storageMng.js",
@@ -1441,7 +1441,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "83d124a5c5bba434f444d525a55a6f2f"
+    "revision": "657aa749f588d8f475827c12d061b90e"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",

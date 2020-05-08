@@ -258,7 +258,7 @@ ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJson
 };
 
 
-// Add new activity to commonPayloadClient
+// Add new activity with client generation
 ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGroup, blockInfo, actionDefJson, callBack )
 {
     try
@@ -276,8 +276,9 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
     catch( errMsg )
     {    
         MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notificationDark', undefined, '', 'right', 'top' );
-    }
 
+        if ( callBack ) callBack();    
+    }
 };
 
 // ----------------------------------------

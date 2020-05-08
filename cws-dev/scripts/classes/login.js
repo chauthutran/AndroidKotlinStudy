@@ -334,6 +334,10 @@ function Login( cwsRenderObj )
 
 	me.loginSuccessProcess = function( loginData ) 
 	{		
+		// After Login, reset some things..
+		SyncManagerNew.SyncMsg_Reset();
+
+		// Load Activities
 		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
 		{
 			me.closeForm();
