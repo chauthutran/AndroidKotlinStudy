@@ -122,6 +122,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.initialize = function()
     {
         me.nav2Tag = $( 'div.Nav2' ).show();
+        $( '#pageDiv' ).css( 'height', 'calc(100% - 106px)' );
 
         me.setUpInitialData();
     };
@@ -421,107 +422,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     // --- GroupBy Related -----
     // --------------------------------------------
-
-
-    /*
-    me.setGroupBy_GroupsAndFilterValues = function( viewDef, mainList )
-    {
-        me.groupByGroups = []; //(re)set to empty array
-        if ( me.hasGroupBy() &&
-             me.groupByDefinitionList[ viewDef.groupBy ].groupType && 
-             me.groupByDefinitionList[ viewDef.groupBy ].groupType === 'unique' )
-        {
-            me.groupByGroups = me.getGroupByGroups_FromUniqueValues( viewDef.groupBy, mainList );
-        }
-        else if ( me.hasGroupBy() )
-        {
-            me.groupByGroups = JSON.parse( JSON.stringify( me.groupByDefinitionList[ viewDef.groupBy ].groups ));
-        }
-        for ( var i = 0; i < mainList.length; i++ )
-        {
-            var activityItem = mainList[ i ];
-            var groupByResult = activityItem[ viewDef.groupBy ];
-            if ( ! activityItem[ 'groupBy' ] ) activityItem[ 'groupBy' ] = {};
-            activityItem[ 'groupBy' ] [ viewDef.groupBy ] = me.getAttributeFromGroupBy_Group( groupByResult, 'id' ).toUpperCase();
-        }
-    };
-
-
-    me.clearGroupBy_UsedInBlockList_status = function()
-    {
-        for ( var i = 0; i < me.groupByGroups.length; i++ )
-        {
-            me.groupByGroups[ i ].created = 0;
-        }
-    };
-
-
-    me.getAttributeFromGroupBy_Group = function( evalField, attr )
-    {
-        for ( var i = 0; i < me.groupByGroups.length; i++ )
-        {
-            if ( eval( me.groupByGroups[ i ].eval ) )
-            {
-                return ( me.groupByGroups[ i ][ attr ] );
-            }
-        }
-    };
-
-
-    me.getGroupByGroups_FromUniqueValues = function( groupBy, mainList )
-    {
-        var ret = [];
-        var matches = [];
-        for ( var i = 0; i < mainList.length; i++ )
-        {
-            var activityItem = mainList[ i ];
-            if ( ! matches.includes( activityItem[ groupBy ] ) )
-            {
-                matches.push( activityItem[ groupBy ] );
-                ret.push( { "id": ( activityItem[ groupBy ] ).toString().trim().toUpperCase(), "name": activityItem[ groupBy ].toString().trim(), "term": "",  "eval": " evalField === " + ( isNaN( activityItem[ groupBy ] ) ? "'" + activityItem[ groupBy ] + "'" : activityItem[ groupBy ] ), "created": 0 } );
-            }
-        }
-        return ret;
-    };
-
-
-    me.evalGroupByCondition = function( groupBy, activityItem )
-    {
-        var evalField = me.groupByDefinitionList[ groupBy ].evalField; // Variable 'evalField' expected within 'query' statement  <  do not rename
-        var activity = activityItem; // Variable 'activity' expected within 'query' statement  <  do not rename
-        var groupByResult = eval( evalField );
-        
-        if ( groupByResult === undefined )
-        {
-            groupByResult = 'undefined';
-        }
-        else
-        {
-            if( typeof( groupByResult ) === 'number' && isNaN( groupByResult ) )
-            {
-                groupByResult = 'NaN';
-            }
-        }
-        activityItem[ groupBy ] = groupByResult;
-        return activityItem;
-    };
-
-    me.evalQueryCondition = function( query, activityItem )
-    {
-        // NOTE: Param 'activityItem' object is assumed to be used within 'query' statement, thus, do not remove it.
-        var success = false;
-
-        try {
-            success = eval( query );
-        }
-        catch ( err ) {
-            console.log( 'error evaluating viewList query : ' + err);
-        }
-
-        return success;
-    };
-
-    */
 
 
     // -------------------------------------

@@ -138,14 +138,14 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
             // 'download' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );
 
-            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + mongoClients.length + "clients: " );
+            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + mongoClients.length + " clients: " );
 
             SyncManagerNew.SyncMsg_InsertMsg( "Synchronizing..." );
 
             ClientDataManager.mergeDownloadedClients( mongoClients, processingInfo, function( changeOccurred_atMerge ) 
             {
                 SyncManagerNew.SyncMsg_InsertMsg( "merged.." );
-                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + mongoClients.length + "clients: " );
+                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + mongoClients.length + " clients: " );
 
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
@@ -437,9 +437,13 @@ SyncManagerNew.SyncMsg_Get = function()
     if ( SyncManagerNew.syncMsgJson ) syncMsgJson = SyncManagerNew.syncMsgJson;
     else
     {
-        syncMsgJson = LocalStgMng.syncMsg_Get();
+        syncMsgJson = LocalStgMng.getJsonData( LocalStgMng.KEY_syncMsg );
+                
+        console.log( syncMsgJson );
 
-        if ( !syncMsgJson ) syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJsonbj );    
+        if ( !syncMsgJson ) syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );    
+
+        console.log( syncMsgJson );
 
         SyncManagerNew.syncMsgJson = syncMsgJson;
     }
@@ -450,32 +454,46 @@ SyncManagerNew.SyncMsg_Get = function()
 
 SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
 {
-    var syncMsgJson = SyncManagerNew.syncMsgJson;
+    var syncMsgJson = SyncManagerNew.SyncMsg_Get(); // SyncManagerNew.syncMsgJson??
 
-    var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+    if ( syncMsgJson )
+    {
+        var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
     
-    syncMsgJson.msgList.push( newMsgJson );
-
-    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+        syncMsgJson.msgList.push( newMsgJson );
+    
+        LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );    
+    }
+    else
+    {
+        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+    }
 };
 
 
 SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
 {
-    var syncMsgJson = SyncManagerNew.syncMsgJson;
+    var syncMsgJson = SyncManagerNew.SyncMsg_Get();  // SyncManagerNew.syncMsgJson??
 
-    var newSummaryMsgJson = { "msg": summaryMsgStr };
-    
-    syncMsgJson.summaryList.push( newSummaryMsgJson );
+    if ( syncMsgJson )
+    {
+        var newSummaryMsgJson = { "msg": summaryMsgStr };
+        
+        syncMsgJson.summaryList.push( newSummaryMsgJson );
 
-    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+        LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+    }
+    else
+    {
+        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+    }    
 };
 
 
 // After Login, we want to reset this 'SyncMsg'
 SyncManagerNew.SyncMsg_Reset = function()
 {
-    var syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJsonbj );
+    var syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );
     
     SyncManagerNew.syncMsgJson = syncMsgJson;
 

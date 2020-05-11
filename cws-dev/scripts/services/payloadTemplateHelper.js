@@ -18,11 +18,11 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     try
     {
         var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, ConfigManager.getConfigJson().definitionPayloadTemplates );
-        
-        var INFO = PayloadTemplateHelper.getINFO( dateTimeObj, blockInfo );
-        DevHelper.setINFO_ForConsoleDisplay( INFO ); 
+                
+        var INFO = PayloadTemplateHelper.getINFO( dateTimeObj, formsJson, formsJsonGroup, blockInfo, SessionManager.sessionData );
+        //DevHelper.setINFO_ForConsoleDisplay( INFO ); 
 
-        PayloadTemplateHelper.evalPayloads( payloadList, formsJson, formsJsonGroup, INFO );
+        PayloadTemplateHelper.evalPayloads( payloadList, INFO );
 
         finalPayload = PayloadTemplateHelper.combinePayloads( payloadList );
 
@@ -39,7 +39,7 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
 {
     var payloadList = [];
 
-    if ( payloadTemplateDefs && payloadTemplateDefs.length > 0 )
+    if ( payloadTemplateDefs )
     {
         try
         {
@@ -57,8 +57,6 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
                 {
                     var payloadTemplateTemp = payloadTemplate[ i ];
 
-                    console.log( 'payloadTemplateTemp - ' + payloadTemplateTemp );
-
                     var payloadJson = payloadTemplateDefs[ payloadTemplateTemp ];
 
                     if ( payloadJson ) payloadList.push( Util.getJsonDeepCopy( payloadJson ) );
@@ -74,27 +72,31 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
     return payloadList;
 };
 
-PayloadTemplateHelper.getINFO = function( dateTimeObj, blockInfo )
+PayloadTemplateHelper.getINFO = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, sessionData )
 {
     var INFO = {};
     
     // In config/payloadTemplat, we will use below info
     INFO.date = dateTimeObj;
-    Util.mergeJson( INFO, SessionManager.sessionData ); // = { login_UserName: '',
+    Util.mergeJson( INFO, sessionData ); // = { login_UserName: '',
     Util.mergeJson( INFO, blockInfo ); // activityType
     
+    INFO.formsJson = formsJson;
+    INFO.formsJsonGroup = formsJsonGroup;
+
     return INFO;
 };
 
 
-PayloadTemplateHelper.evalPayloads = function( payloadList, formsJson, formsJsonGroup, INFO )
+PayloadTemplateHelper.evalPayloads = function( payloadList, INFO )
 {    
     for ( var i = 0; i < payloadList.length; i++ ) 
     {
         var payloadJson = payloadList[ i ];
 
-        // Go through each line of config template strings and perform eval to set 
-        PayloadTemplateHelper.traverseEval( payloadJson, payloadJson, formsJsonGroup, formsJson, INFO, 0, 30 );
+        INFO.payloadJson = payloadJson; 
+        
+        Util.traverseEval( payloadJson, INFO, 0, 15 );
     }
 };
 

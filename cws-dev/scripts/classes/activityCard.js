@@ -71,6 +71,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
             {
                 var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
 
+                var activityContainerTag = activityCardTrTag.find( 'div.activityContainer' );
                 var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
                 var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
 
@@ -83,7 +84,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityContentTag
                     , activityJson, activityTrans, ConfigManager.getConfigJson() );
-                me.activityContentClick_FullView( activityContentTag, activityJson.activityId );
+                me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.activityId );
 
 
                 // 3. 'SyncUp' Button Related
@@ -107,11 +108,12 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         });
     };
 
-    me.activityContentClick_FullView = function( activityContentTag, activityId )
+    me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, activityId )
     {
         activityContentTag.off( 'click' ).click( function( e ) {
             e.stopPropagation();
-            DevHelper.showFullPreview( activityId );
+
+            me.showFullPreview( activityId, activityContainerTag );
         });
     };
                 
@@ -161,7 +163,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         }
 
     
-        divSyncIconTag.on( 'click', function( e ) 
+        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
 
@@ -542,8 +544,91 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
 
     // remove this activity from list  (me.activityJson.activityId ) <-- from common client
+    
+
+    // =============================================
+	// === Full Detail Popup Related METHODS ========================
+
+    me.showFullPreview = function( activityId, activityContainerTag )
+    {
+        if ( activityId ) 
+        {
+            // initialize
+            var sheetFull = $( 'div.sheet_full-fs' );
+            var screenHeight = document.body.clientHeight + 40;
+        
+            // set initial styles
+            sheetFull.css( 'z-index', 9999 );
+            sheetFull.css( 'position', 'absolute' );
+            sheetFull.css( 'left', '0' );
+            sheetFull.css( 'top', '0' );
+            sheetFull.css( 'width', '100%' );
+            sheetFull.css( 'height', screenHeight ); // - 56
+            sheetFull.css( 'background-image', 'url(../images/logo_bk.svg)' );
+            //sheetFull.css( 'background-color', '#fff' );
+            sheetFull.css( 'overflow', 'hidden' );
+        
+            // populate template
+            sheetFull.html( $( Templates.activityCardFullScreen ) );
+        
+            // create tab click events
+            FormUtil.setUpNewUITab( sheetFull.find( '.tab_fs' ) ); 
+        
+            // ADD TEST/DUMMY VALUE
+            sheetFull.find( '.activity' ).attr( 'itemid', activityId )
+            
+
+            // Header content set
+            // sheetFull.find( 'div.card__sync_container' ).html( activityContainerTag.html() );
+            var actCard = new ActivityCard( activityId, me.cwsRenderObj, sheetFull ); //activityJson.activityId
+            actCard.render();
 
 
+            // set tabs contents
+            me.setFullPreviewTabContent( activityId );
+        
+            // set other events
+            var cardCloseTag = sheetFull.find( 'img.btnBack' );
+        
+            cardCloseTag.off( 'click' ).click( function(){ 
+                sheetFull.empty();
+                sheetFull.fadeOut();
+                //$( '#pageDiv' ).show();
+            });
+        
+        
+            // render
+            sheetFull.fadeIn();
+        
+            //$( '#pageDiv' ).hide();
+        }
+    };
+    
+    me.setFullPreviewTabContent = function( activityId )
+    {
+        var clientObj = ClientDataManager.getClientByActivityId( activityId );
+        var activityJson = ActivityDataManager.getActivityById( activityId );
+    
+        var arrDetails = [];
+    
+        for ( var key in clientObj.clientDetails ) 
+        {
+            arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
+        }
+    
+        $( '#tab_previewDetails' ).html( Util2.activityListPreviewTable( 'clientDetails:', arrDetails) )
+    
+    
+        //tab_previewPayload
+        var jv_payload = new JSONViewer();
+        $( '#tab_previewPayload' ).append( jv_payload.getContainer() );
+        jv_payload.showJSON( activityJson );
+    
+    
+        $("#tab_previewSync").html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
+    };
+    
+    
     // =============================================
 	// === Other Supporting METHODS ========================
 

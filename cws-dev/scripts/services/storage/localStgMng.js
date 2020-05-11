@@ -62,8 +62,15 @@ LocalStgMng.saveJsonData = function( key, jsonData ) {
 LocalStgMng.getJsonData = function( key ) {
 	var jsonData;
 
-	var dataStr = localStorage[ key ];
-	if ( dataStr ) jsonData = JSON.parse( dataStr );
+	try
+	{
+		var dataStr = localStorage[ key ];
+		if ( dataStr && dataStr !== "undefined" ) jsonData = JSON.parse( dataStr );	
+	}
+	catch( errMsg )
+	{
+		console.log( "Error in LocalStgMng.getJsonData, errMsg: " + errMsg );
+	}
 
 	return jsonData;
 };

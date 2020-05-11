@@ -615,3 +615,15 @@ div.errorMsgArrow
 {
   background-color: silver;
 }
+
+.bt_td_head
+{
+  font-weight: 500;
+  font-style: italic;
+  height: 25px;
+}
+
+.bt_td_row_even, .bt_td_row_odd
+{
+  font-weight: 200;
+}
