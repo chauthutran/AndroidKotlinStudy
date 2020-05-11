@@ -315,7 +315,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.setGroupByList = function( viewDef, activityList, groupByDefinitionList )
     {
-        var groupByData = { 'groupByList': {}, 'activitiesRefGroupBy': {}, 'groupByDef': {}, 'groupByUsed': false };  // reset list.
+        var groupByData = { 'groupByList': {}, 'groupListArr': [], 'activitiesRefGroupBy': {}, 'groupByDef': {}, 'groupByUsed': false, 'groupSort': '' };  // reset list.
 
         // If groupBy exists for this 'view', create groupBy category list and 
         if ( viewDef.groupBy )
@@ -408,13 +408,19 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
             if ( existingGroup_InList )
             {
+                existingGroup_InList.activities.push( activity );
                 // If already in list, use that group..
                 groupByData.activitiesRefGroupBy[ activity.activityId ] = existingGroup_InList;
             }
             else
             {
+                groupJson.activities = []; // reset the 'activities' list
+
+                groupJson.activities.push( activity );
+
                 // add the groupJson to groupByList..
                 groupByData.groupByList[ groupJson.id ] = groupJson;
+                groupByData.groupListArr.push( groupJson );
                 groupByData.activitiesRefGroupBy[ activity.activityId ] = groupJson;
             }
         }
@@ -435,8 +441,9 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         if ( me.usedGroupBy( groupByData ) )
         {
             // Use the sorting in the groupBy..
-            console.log( '**** Use GroupBy sorting!! ******' );
+            //console.log( '**** Use GroupBy sorting!! ******' );
 
+            // TODO: NEED TO SETUP GROUP SORTING..
         }
         else if ( sortList )
         {
@@ -469,26 +476,32 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.sortList_wt1stOne = function( sortDefs, viewFilteredList )
     {
-        if ( sortDefs && sortDefs.length > 0 )
+        // TODO: DUPLICATE CALL AS BELOW?
+        if ( me.usedGroupBy( me.groupByData ) ) 
+        {
+            me.sortList_ByGroup( me.groupByData );
+        }
+        else if ( sortDefs && sortDefs.length > 0 )
         {
             me.sortList( sortDefs[0], viewFilteredList );
         }
     };
 
 
+    me.sortList_ByGroup = function( groupByData )
+    {
+        if ( !groupByData.groupSort ) groupByData.groupSort = 'Acending';
+        else if ( groupByData.groupSort === 'Acending' ) groupByData.groupSort = 'Decending';
+        else if ( groupByData.groupSort === 'Decending' ) groupByData.groupSort = 'Acending';
+
+        me.viewFilteredList = me.groupBySorting( groupByData, groupByData.groupSort );                
+    };
+
     me.sortList = function( sortDef, viewFilteredList )
     {
         try 
         {
-            //if ( me.hasGroupBy() )
-            //{
-            //    me.evalGroupBySort( sortDef.field, viewFilteredList, me.viewDef_Selected.groupBy, sortDef.order.toLowerCase() );
-            //}
-            //else
-            //{
-                
             me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
-            
 
             // TODO: There is no updated sort visual for now
             //me.updateSortLiTag( $( me.sortListDivTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
@@ -499,6 +512,33 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         }                   
     };
 
+
+    me.groupBySorting = function( groupByData, sortOrder )
+    {
+        // 1. sort the group list?
+        var usedGroupList_Sorted = Util.sortByKey( groupByData.groupListArr, "id", undefined, sortOrder );
+
+        // 2. recreate view list based on the sorting? - loop through the group and get full activity list..
+        return me.getNewActivityList_FromGroupList( usedGroupList_Sorted );
+    }
+
+
+    me.getNewActivityList_FromGroupList = function( groupList )
+    {
+        var newActivityList = [];
+
+        for ( var i = 0; i < groupList.length; i++ )
+        {
+            var group = groupList[ i ];
+
+            for ( var x = 0; x < group.activities.length; x++ )
+            {
+                newActivityList.push( group.activities[ x ] );
+            }
+        }
+
+        return newActivityList;
+    }
 
     // Could be Util method...
     me.evalSort = function( fieldEvalStr, list, orderStr )
@@ -530,7 +570,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                                 ' : 0 ';
             return eval( sortEval );
         });
-        console.log( list );
     };
 
     // ---------------------------------------------------------
@@ -547,14 +586,24 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.setSortOtherEvents = function( sortListButtonTag )
     {
         $(".Nav2__icon").click(function () {
-            if ($('.Menus_display').is(':visible')) {
-                $('.Menus_display').css('display', 'none');
-                $('.fab-wrapper').show();
-                $('.Nav2__icon').css('transform', 'rotate(0deg)');
-            } else {
-                $('.Menus_display').css('display', 'table-row');
-                $('.fab-wrapper').css('display', 'none');
-                $('.Nav2__icon').css('transform', 'rotate(180deg)');
+
+            if ( me.usedGroupBy( me.groupByData ) )
+            {
+                me.sortList_ByGroup( me.groupByData );
+
+                me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );
+            }
+            else
+            {
+                if ($('.Menus_display').is(':visible')) {
+                    $('.Menus_display').css('display', 'none');
+                    $('.fab-wrapper').show();
+                    $('.Nav2__icon').css('transform', 'rotate(0deg)');
+                } else {
+                    $('.Menus_display').css('display', 'table-row');
+                    $('.fab-wrapper').css('display', 'none');
+                    $('.Nav2__icon').css('transform', 'rotate(180deg)');
+                }    
             }
         });
     
@@ -564,25 +613,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             $('.fab-wrapper').show();
         });
 
-        /*
-        sortListButtonTag.off( 'click' );
-        $( document ).off( 'click' );
-
-        sortListButtonTag.click( function() {
-            me.sortListDivTag.css( "display", "flex" );
-        });
-
-        $( document ).click( function( event ) 
-        {
-            // If click target is not sortButton, hide the UL;            
-            if ( event.target != me.sortListButtonTag[0] )
-            {
-                me.sortListDivTag.hide();
-            }
-        });
-        */
-
-        // me.sortListDivTag click events are created when we create sort list from selected view
     };
 
 
@@ -626,14 +656,10 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
-    me.hasGroupBy = function( viewDef )
-    {
-        return ( viewDef.groupBy );
-    };
 
     me.usedGroupBy = function( groupByData )
     {
-        return ( Util.objKeyCount( groupByData.groupByList ) > 0 );
+        return groupByData.groupByUsed;
     };
 
     // =-===============================

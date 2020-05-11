@@ -1181,7 +1181,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "66216706a699ab5520b144c08013fed9"
+    "revision": "3a4dc5ab406b7dfd653b8208dabb5e66"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1197,11 +1197,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "ed37229f69f6bc5a029a4d09cc2a9204"
+    "revision": "f1c0f2fbc0ecdfb09ca4a0c365866c1b"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "34bbe6ac6ada250ec15d3ef9abdd449a"
+    "revision": "2cba0f877f4947fd7cf5ac7b95da1583"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -1209,11 +1209,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "4b215df73b01f9f6fbe3c3b3c4ebbe4f"
+    "revision": "57ae15280d189a56308fd447144ee006"
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "80280725b9619e89df84a3bb3578e794"
+    "revision": "cfee331aa7e9a670d2f1c4683124a398"
   },
   {
     "url": "scripts/classes/blockMsg.js",

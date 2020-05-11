@@ -360,7 +360,7 @@ function Action( cwsRenderObj, blockObj )
 					// Temporarily move before 'handlePayloadPreview' - since version 1 
 					var formsJsonGroup = {};
 					var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
-					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.tab_fs__container-content' ) );
+					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
 	
 					me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
 						//var currBlockId = blockDivTag.attr( 'blockId' );

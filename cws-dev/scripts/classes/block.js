@@ -154,13 +154,20 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		}
 
 		// Put it under parentTag
-		parentTag.find( 'div.wrapper' ).append( blockTag.addClass( 'blockStyle' ) );		
+		//parentTag.find( 'div.wrapper' ).append( blockTag.addClass( 'blockStyle' ) );		
+		parentTag.append( blockTag.addClass( 'blockStyle' ) );		
 
+		return blockTag;
+		// Above are not being used...
+
+
+		// 
+		/*
 		parentTag.attr( 'blockId', blockId );
 		parentTag.attr( 'activityType', blockDefJson.activityType );
 
-		//return blockTag;
 		return parentTag;
+		*/
 	}
 
 	me.hideBlock = function()

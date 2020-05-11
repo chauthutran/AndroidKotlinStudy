@@ -238,7 +238,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 				{
 					//var blockDivTag = btnTag.closest( '.block' );
 					// TODO: 'tab_fs__container-content' <-- TEMPORARY FIX <-- WILL NOT WORK WITH ALL BLOCK MODEL, BUT ONLY TAB BASED ONES.. 
-					var blockDivTag = btnTag.closest( '.tab_fs__container-content' );
+					var blockDivTag = btnTag.closest( 'div.block' );
 					var formDivSecTag = blockDivTag.find( '.formDivSec' );
 
 					// NOTE: TRAN VALIDATION

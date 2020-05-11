@@ -432,15 +432,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         var groupAttrVal = '';
 
         try
-        {
-            console.log( 'viewGroupByData' );
-            console.log( viewGroupByData );
-            
+        {            
             if ( viewGroupByData && viewGroupByData.groupByUsed )
             {
                 var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.activityId ];
-
-                console.log( groupJson );
 
                 groupAttrVal = groupJson.id;                
 
