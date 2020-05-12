@@ -466,7 +466,7 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
                 {
                     var loadingTag = undefined;
                     //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
-                    WsCallManager.requestPost( processing.url, payload, loadingTag, function( success, responseJson )
+                    WsCallManager.requestPost( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
                     {
                         if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
                         
