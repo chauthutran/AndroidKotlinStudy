@@ -88,11 +88,22 @@ dialog {
             height: 162px;
             margin: 0 auto;
             cursor: pointer;
-            @include background-image('cloud_offline');
             @include box-sizing(border-box);
             @include rwd-max(240) {
                 display: none;
             }
+        }
+
+        .offline {
+            @include background-image('cloud_offline');
+        }
+
+        .online {
+            @include background-image('cloud_online');
+        }
+
+        .unavailable {
+            @include background-image('cloud_offline_Intenet-up1');
         }
     }
 
@@ -128,7 +139,7 @@ dialog {
         }
 
         @include rwd-max(488) {
-            max-width: 200px;
+            max-width: 100%; //200px
 
             div {
                 float: right;

@@ -409,9 +409,9 @@ function aboutApp( cwsRender )
 
     me.showAboutPage = function()
     {
-        if ( $( 'div.mainDiv' ).is( ":visible" ) )
+        if ( $( '#pageDiv' ).is( ":visible" ) )
         {
-            $( 'div.mainDiv' ).hide();
+            $( '#pageDiv' ).hide();
         }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
@@ -430,7 +430,7 @@ function aboutApp( cwsRender )
         setTimeout( function() {
             if ( FormUtil.checkLogin() > 0 )
             {
-                $( 'div.mainDiv' ).show( 'fast' );
+                $( '#pageDiv' ).show( 'fast' );
             }
             else
             {

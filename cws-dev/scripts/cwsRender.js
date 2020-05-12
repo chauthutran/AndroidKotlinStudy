@@ -225,8 +225,11 @@ function cwsRender()
 				// reload the block refresh?
 				if ( selectedArea && selectedArea.startBlockName )
 				{
+
+					if ( ! me.renderBlockTag.is( ':visible' ) ) me.renderBlockTag.show();
+
 					// added by Greg (2018/12/10)
-					if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
+					//if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
 					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 					startBlockObj.render();  // should been done/rendered automatically?
@@ -920,7 +923,7 @@ function cwsRender()
 		});
 
 		// MISSING TRANSLATION
-		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationBlue', btnUpgrade, '', 'right', 'bottom', 25000 );
+		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationGray', btnUpgrade, '', 'right', 'top', 25000 );
 
 		console.log( ' ~ REFRESH notification' );
 

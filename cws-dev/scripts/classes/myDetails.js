@@ -117,10 +117,16 @@ function myDetails(cwsRender) {
     // ------------------------------------
     me.showmyDetailsPage = function()
     {
-        if ( $( 'div.mainDiv' ).is( ":visible" ) )
+        /*if ( $( 'div.mainDiv' ).is( ":visible" ) )
         {
             $( 'div.mainDiv' ).hide();
+        }*/
+
+        if ( me.cwsRenderObj.renderBlockTag.is( ":visible" ) )
+        {
+            me.cwsRenderObj.renderBlockTag.hide();
         }
+
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
             $( '#loginFormDiv' ).hide();
@@ -137,7 +143,8 @@ function myDetails(cwsRender) {
 
             if ( FormUtil.checkLogin() > 0 )
             {
-                $( 'div.mainDiv' ).show( 'fast' );
+                //$( 'div.mainDiv' ).show( 'fast' );
+                me.cwsRenderObj.renderBlockTag.show( 'fast' );
             }
             else
             {

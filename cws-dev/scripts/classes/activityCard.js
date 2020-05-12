@@ -460,8 +460,6 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
 
                 // TODO: add 'processing' history on trial?!!!
-
-
                 try
                 {
                     var loadingTag = undefined;

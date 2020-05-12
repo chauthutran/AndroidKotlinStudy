@@ -88,16 +88,12 @@ function favIcons( cwsRender )
                 favItem.find( '.fab__child-text' ).attr( 'actionType', favList[ favItm ].target.actionType );
                 favItem.find( '.fab__child-text' ).html( favList[ favItm ].name );
 
-                //var svgObject = me.fetchFavIcon( favList[ favItm ].id );
-                var svgObject = me.fetchFavIcon( favList[ 0 ].id );
+                var svgObject = me.fetchFavIcon( favList[ favItm ].id );
 
-                $( svgObject ).attr( 'id', 'svg_'+unqID );
+                $( svgObject ).attr( 'id', 'svg_' + unqID );
 
                 favItem.find( '.fab__child' ).append( svgObject );
-                //me.favIconsTag.append( favItem );
-
-                favItem.insertBefore( me.favIconsTag.find( '.fab__section' ) );
-                
+                favItem.insertBefore( me.favIconsTag.find( '.fab__section' ) );                
 
                 if ( favList[ favItm ].target )
                 {
@@ -304,7 +300,6 @@ function favIcons( cwsRender )
 
                 if ( favItm.id == iconID )
                 {
-                    //console.log( decodeURI( favItm.svg ) );
                     return $( decodeURI( favItm.svg ) );
                 }
             }

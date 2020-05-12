@@ -94,9 +94,7 @@ function inputMonitor( cwsRenderObj )
 
         if ( FormUtil.checkLogin() )
         {
-            inputMonLogoutDelay = JSON.parse(localStorage.getItem( "session" )).logoutDelay;
-        
-        
+            inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins; //JSON.parse(localStorage.getItem( "session" )).logoutDelay;
             cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
 
             InputMonLogoutTimer = setInterval( function() 
@@ -110,7 +108,6 @@ function inputMonitor( cwsRenderObj )
     
             if ( StatusInfoManager.debugMode ) console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
         }
-        
 
     }
 
@@ -267,10 +264,10 @@ function inputMonitor( cwsRenderObj )
                 $( 'div.scrim' ).css( 'zIndex', ( $( '#navDrawerDiv' ).css( 'zIndex' ) -1 ) );
             }
         }
-        else
+        /*else
         {
             $( 'div.scrim' ).css( 'opacity', 0);
-        }
+        }*/
     }
 
     me.initialiseListItemVars = function()

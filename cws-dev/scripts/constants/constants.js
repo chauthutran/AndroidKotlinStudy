@@ -20,4 +20,4 @@ Constants.storage_offline_ItemAgeLimit = ( 92 * 24 ); //92 days
 //Constants.activityList_PageSize = 15;
 
 Constants.lsFlag_dataMoved_redeemListIDB = "dataMoved_redeemListIDB";
-Constants.focusRelegator_MaxOpacity = 0.4;
+Constants.focusRelegator_MaxOpacity = 0.35;

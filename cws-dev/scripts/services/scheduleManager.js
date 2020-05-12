@@ -91,8 +91,15 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 
 };
 
+ScheduleManager.restart_checkNSet_ServerAvailable = function()
+{
+	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
+
+	ScheduleManager.schedule_serverStatus_Check();
+};
 
 
+// NOT CALLED FOR v1.3 > SILENT SWITCHING (code wasn't used in v1.2.4?)
 ScheduleManager.schedule_switchNetworkModePrompt_Check = function( NotRunRightAway )
 {
 	if ( ! NotRunRightAway ) ConnManagerNew.runSwitchNetworkMode_Prompt_Check( NotRunRightAway );

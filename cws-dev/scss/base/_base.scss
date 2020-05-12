@@ -1,0 +1,184 @@
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #fff;
+  @include background-image('logo_bk');
+  padding: 0;
+  margin: 0;
+  font-family: $typ-default;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: auto;
+  position: relative;
+}
+
+.wrapper {
+  width: 100%;
+  height: auto;
+  height: calc(100% - 56px);
+  padding: 8px 16px 0px 16px;
+  @include box-sizing(border-box);
+  @include p-device(240){
+    padding: 0 8px;
+  }
+}
+
+footer {
+  width: 100%;
+  height: 56px;
+  background: black;
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  position: fixed;
+  @include shadow-b(-2px -2px 5px 0px $color-shadow);
+  /*Here's what sticks it*/
+  bottom: 0;
+  /*to the bottom of the window*/
+  left: 0;
+  @include box-sizing(border-box);
+}
+
+hr {
+  border-top: 1px solid rgba($color-pl, 0.1);
+}
+
+.scrim {
+  display: none;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  background-color: rgba($color-typ-sl, 35%);
+  opacity: 0.4;
+}
+
+.sheet_bottom-scrim {
+  display: none;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.35); 
+}
+
+input,
+select {
+  width: 100%;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 20px;
+  color: $color-typ-dark;
+  border: none;
+  background: transparent;
+  @include font-size(14px);
+  @include box-sizing(border-box);
+}
+
+input[type=text]:focus {
+  outline: 0px;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=password] {
+  font-size: 20px;
+  -webkit-text-security: circle;
+  letter-spacing: 5px;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  outline: none
+}
+
+select {
+  display: inline-block;
+  line-height: 20px;
+  padding: 0 0 0 5px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  @include background-image('arrow_drop_down');
+  background-position: right;
+  background-repeat: no-repeat;
+  @include appearance(none);
+  @include box-sizing(border-box);
+}
+
+select:focus {
+  @include background-image('arrow_drop_up');
+  background-position: right;
+  background-repeat: no-repeat;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+// style scrolls
+
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid $bk-autofill;
+  -webkit-text-fill-color: $color-p;
+  -webkit-box-shadow: 0 0 0px 1000px $bk-autofill inset;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.wrapper__content-center {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  //background-color: orange;
+  @include box-sizing(border-box);
+}

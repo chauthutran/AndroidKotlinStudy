@@ -115,9 +115,13 @@ function statistics( cwsRender )
         }
         
 
-        if ( $( 'div.mainDiv' ).is( ":visible" ) )
+        /*if ( $( 'div.mainDiv' ).is( ":visible" ) )
         {
             $( 'div.mainDiv' ).hide();
+        }*/
+        if ( me.cwsRenderObj.renderBlockTag.is( ":visible" ) )
+        {
+            me.cwsRenderObj.renderBlockTag.hide();
         }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
@@ -871,7 +875,8 @@ function statistics( cwsRender )
         setTimeout( function() {
             if ( FormUtil.checkLogin() )
             {
-                $( 'div.mainDiv' ).show( 'fast' );
+                //$( 'div.mainDiv' ).show( 'fast' );
+                me.cwsRenderObj.renderBlockTag.show( 'fast' );
             }
             else
             {

@@ -107,24 +107,18 @@
           </td>
           <td>
             <div id="divAppDataSyncStatus" class="icons-status" style="display:none;">
-              <img id="imgAppDataSyncStatus" src="images/sync-banner.svg" alt="sync banner">
+              <img id="imgAppDataSyncStatus" src="images/sync-pending_24.svg" alt="sync banner">
             </div>
           </td>
           <td>
             <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;">
               <img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus"
-                style="width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;" />
+                style="filter: invert(100%);width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;" />
             </div>
-            <div style="margin-top: -22px; margin-left: 6px; width: 28px;">
-              <div id="divStatusDot_network"
-                style="color: #ccc; font-weight: bold; margin-left: 2px; display: inline-block;" title="Network Status">
-                .</div>
-              <div id="divStatusDot_networkStable"
-                style="color: #ccc; font-weight: bold; margin-left: 2px; display: inline-block;"
-                title="NetworkStable Status">.</div>
-              <div id="divStatusDot_server"
-                style="color:#ccc; font-weight: bold; margin-left: 2px; display: inline-block;" title="Server Status">.
-              </div>
+            <div class="networkStatusIcons">
+              <div id="divStatusDot_network" class="networkStatusThree" title="Network Status"></div>
+              <div id="divStatusDot_networkStable" class="networkStatusThree" title="NetworkStable Status"></div>
+              <div id="divStatusDot_server" class="networkStatusThree" title="Server Status"></div>
             </div>
           </td>
         </tr>
@@ -143,16 +137,6 @@
 
   <!-- LOGIN FORM DIV -->
   <div id="loginFormDiv" style="display:none;">
-
-
-    <!-- LARGE WIDTH MODE DISPLAY -->
-    <!-- <ul class="tabs">
-            <li tabId="1" class="active">
-              <img src='images/key.svg' class="tab-image" alt="key">
-              <label> Login </label>
-            </li>
-          </ul> -->
-
     <div class="wrapper">
       <div class="login_title">
         <h1>PSI - workforce app</h1>
@@ -213,26 +197,11 @@
 
     </div>
 
-
-
   </div>
 
   <!-- AFTER LOGIN - MAIN APP CONTENT DIV -->
-  <!-- <div id="pageDiv" style="display:none;"> -->
+  <div id="pageDiv" class="wrapper"></div>
 
-    <!-- <div name="top-body" class="bodytop bg-color-program-son"></div> -->
-
-    <div id="pageDiv" class="wrapper">
-
-      <!-- <main class="container">
-        <div class="mainDiv">
-          <div id="renderBlock" style="margin-top: 15px;" class="renderBlock"></div>
-        </div>
-      </main> -->
-
-    </div>
-
-<!--  </div> -->
 
   <div id="pulsatingCircle" style="display:none;"></div>
 
@@ -716,6 +685,10 @@
   </div>
   <!-- END > STATISTICS REPORT -->
 
+  
+  <div id="networkSwitch" class="" style="display:none;"></div>
+
+
   <div class="sheet_full-fs" style="display: none;"></div>
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
   <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
@@ -795,6 +768,7 @@
   <div class="scrim"></div>
   <script type="text/javascript" src="scripts/constants/constants.js"></script>
   <script type="text/javascript" src="scripts/constants/templates.js"></script>
+  <script type="text/javascript" src="scripts/constants/configs.js"></script>
 
   <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>
   <script type="text/javascript" src="scripts/utils/pptManager.js"></script>
@@ -823,6 +797,7 @@
   <script type="text/javascript" src="scripts/services/formMsgManager.js"></script>
   <script type="text/javascript" src="scripts/utils/restUtil.js"></script>
   <script type="text/javascript" src="scripts/services/connManager.js"></script>
+  <!--script type="text/javascript" src="scripts/classes/appModeSwitchPrompt.js"></script-->
   <script type="text/javascript" src="scripts/services/connManagerNew.js"></script>
   <script type="text/javascript" src="scripts/services/old/dbStorageIDB.js"></script>
   <script type="text/javascript" src="scripts/services/old/indexdbDataManager.js"></script>

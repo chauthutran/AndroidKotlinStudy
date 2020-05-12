@@ -576,6 +576,27 @@ img.rotateImg {
   transform: rotate(180deg);
 }
 
+/* JAMES CUSTOM FOR PREVIEW CARD BOTTOMSHEET */
+/* this should be stand alone? */
+.list_three_line-suppor_visuals {
+  float: left;
+  width: 56px;
+  height: 56px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+      align-items: center;
+  /*border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);*/
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+} 
+#tab_previewPayload {
+  height: 100vw;
+  overflow: auto !important;
+}
+
 /* ### FORM LAYOUT  ### */
 /* 1. validation messages */
 
@@ -596,7 +617,6 @@ div.errorMsgText {
   z-index: 1;
   border-radius: 0 0 3px 3px;
 }
-
 div.errorMsgArrow
 {
   display: block;
@@ -626,4 +646,131 @@ div.errorMsgArrow
 .bt_td_row_even, .bt_td_row_odd
 {
   font-weight: 200;
+}
+
+
+/* NEW UI >> NETWORK SWITCHING */
+#networkSwitch {
+  /*z-index: 1999;
+
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.22);
+  border-radius: 2px;
+
+  width: 80vw;
+  height: 60vh;
+
+  position: fixed;
+  float: right;
+
+  top: 2%;
+  left: 2%;
+
+  margin: 5%;
+  padding: 10px;
+  text-align: center;*/
+
+}
+.networkSwitchTitle {
+  /*height: 52px;*/
+  left: 16px;
+  right: 16px;
+  top: 16px;
+
+  text-align: left;
+
+  /* Dialog / Title */
+
+  font-family: 'Rubik', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px; /*20px;*/
+  line-height: 24px;
+  margin: 10px;
+  /* Primary Dark text */
+
+  color: rgba(51, 51, 51, 0.87);
+}
+.networkSwitchIcon {
+  width:162px;
+  height:122px;
+  padding:10px;
+}
+.networkSwitchMessage {
+  font-family: 'Rubik', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  /* or 143% */
+  
+  letter-spacing: -0.02em;
+
+  color: rgba(0, 0, 0, 0.541327);
+  margin: 10px 10px 20px 10px;
+}
+.networkSwitchOpts {
+  padding: 10px;
+}
+.networkSwitchOpt
+{
+  font-family: 'Rubik', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 40px;
+  /* display: contents; */
+  letter-spacing: -0.02em;
+  color: rgba(51, 51, 51, 0.87);
+  /* display: flex; */
+  flex-flow: column;
+  text-align: left;
+}
+.networkSwitchOpt > input {
+  width: 20px;
+  height: 20px;
+  padding: 20px;
+}
+.networkSwitchButtonsRow {  
+  line-height: 60px;
+  position: absolute;
+  bottom: 0%;
+  right: 4%;
+}
+.networkSwitchButtonsRow > a {
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.networkSwitchButtonsRow > a.cancel {
+  color:#BDBDBD;
+}
+.networkSwitchButtonsRow > a.runSwitch {
+  color:#2C98F0;
+}
+.networkStatusIcons {
+  margin-top: -17px; 
+  margin-left: 10px; 
+  width: 32px; 
+  height:18px;
+}
+.networkStatusThree {
+  color:#ccc; 
+  margin-left: 2px; 
+  display: inline-block;
+  border-radius: 3px;
+  width: 5px;
+  height: 5px;
+
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.25);
+  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.25);
+}
+#divStatusDot_network {
+  display: none;
+}
+
+#imgAppDataSyncStatus {
+  width: 24px;
+  height: 24px;
 }

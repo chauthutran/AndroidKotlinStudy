@@ -37,7 +37,6 @@ $active-tab :$color-p;
         margin: 0 0 8px 0;
         padding: 0;
         list-style: none;
-        z-index: 1000;
         width: $tab__head-width;
         //overflow-y: scroll;
         @include box-sizing(border-box);
@@ -145,7 +144,6 @@ $active-tab :$color-p;
 }
 
 .tab_fs__container {
-    //display: none;
     margin: 8px 0;
     width: $tab__container-width;
     height: auto;
@@ -173,14 +171,12 @@ $active-tab :$color-p;
         width: 50%;
         min-width: 600px;
         padding: 0 12px;
-        background-color: #FFF;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
         @include shadow-b(2px 2px 5px 0px $color-shadow);
     }
 
     .tab_fs__container-content {
-        overflow: auto;
         @include box-sizing(border-box);
 
         @include rwd-min(600) {

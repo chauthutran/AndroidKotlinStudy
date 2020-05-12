@@ -18,7 +18,13 @@ ConnManagerNew.statusInfo = {
     },
     'serverAvailable': false,
 	'appMode': ConnManagerNew.OFFLINE, 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.connected_Stable == 'Online' )
-	'appMode_PromptedMode': ''
+	'appMode_PromptedMode': '',
+	'manual_Offline': {
+		'enabled': false, 	// 'mode': ConnManagerNew.OFFLINE, 	// either online:boolean or named 'Offline' >> manual offline is only 'provisioned' networkMode setting 
+		'retryOption': '',
+		'retryDateTime': '',
+		'initiated': ''
+    }
 };
 
 
@@ -78,16 +84,18 @@ ConnManagerNew.updateNetworkConnStatus = function()
 	//	if no change has happened in some period of time.
 	clearTimeout( ConnManagerNew.networkConnTimeOut );
 
-	var modeOnline = navigator.onLine;	
-	ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
-	ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+	//if ( ! ConnManagerNew.statusInfo.manual_Offline.enabled )
+	{
+		var modeOnline = navigator.onLine;	
+		ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
+		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
+		ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStatus
+			, ConnManagerNew.networkConnStableCheckTime
+			, ConnManagerNew.statusInfo
+			, modeOnline );
+	}
 
-	ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStatus
-		, ConnManagerNew.networkConnStableCheckTime
-		, ConnManagerNew.statusInfo
-		, modeOnline );
-	
 };
 
 
@@ -180,7 +188,7 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 
 	ConnManagerNew.setAppMode( appModeNew, statusInfo );
 
-	// NOTE: Disabling AppMode Switch Prompt.  Also, disables area switching by appMode switch
+	if ( FormUtil.checkLogin() ) ConnManagerNew.refreshUI_forNetworkModeOnly( appModeNew );
 
 	/*
 	// If appModeNew is same as existing Prmopt MOde, ignore it.
@@ -204,7 +212,7 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 };
 
 
-ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo ) 
+/*ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo ) 
 {
 	// if there is any pending prompted switch request, clear them out.
 	//ConnManagerNew.hidePrompt_AppSwitch( statusInfo );
@@ -212,16 +220,22 @@ ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo )
 	// If Logged In, display Prompt for user confirmation rather than switch.
 	if ( FormUtil.checkLogin() ) ConnManagerNew.prompt_AppModeSwitch_WithCondition( appModeNew, statusInfo );
 	else ConnManagerNew.setAppMode( appModeNew, statusInfo );
-};
+};*/
 
 
 ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) 
 {
 	statusInfo.appMode = appModeNew;
 	console.log( 'AppMode Set to: ' + appModeNew );
+	console.log( statusInfo );
 
 	// TODO: NEED TO TRIGGER SOME UI (Or others) CHANGES DUE TO AppMode Change
 	ConnManagerNew.update_UI( statusInfo );
+};
+
+ConnManagerNew.refreshUI_forNetworkModeOnly = function( appModeNew )
+{
+
 };
 
 
@@ -234,7 +248,7 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 // ===============================================
 // --- Prompt App Mode Switch Related --------------------
 
-ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, statusInfo ) 
+/*ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, statusInfo ) 
 {
 	// only show switch prompt if current mode different to appModeNew
 	if ( appModeNew != statusInfo.appMode )
@@ -251,9 +265,60 @@ ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, status
 			ConnManagerNew.hidePrompt_AppSwitch();
 		}
 	}
-};
+};*/
 
-ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
+
+/*ConnManagerNew.showPrompt_AppSwitchModeNew = function( statusInfo )
+{
+	console.log( statusInfo );
+	console.log( ConnManagerNew.switchPromptObj );
+
+
+	var switchPromptTag = $( '#networkSwitch' );
+	var switchTemplatContent = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? Templates.ConnManagerNew_Dialog_SwitchMode_Opts : Templates.ConnManagerNew_Dialog_SwitchMode_NoOpts );
+	var switchPromptContentObj = $( Templates.ConnManagerNew_Dialog_SwitchMode_NoOpts );
+	var switchPromptText = Templates.ConnManagerNew_Dialog_prompt_online;
+
+	var friendlyTitle = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? 'Back Online!' : 'No internet :-(' );
+	var btnActionText = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? 'ACCEPT' : 'GO OFFLINE' );
+
+	switchPromptTag.empty();
+	switchPromptTag.append( switchPromptContentObj );
+
+	var dvTitle = switchPromptTag.find( '.title' );
+	var dvPrompt = switchPromptTag.find( '.prompt' );
+	var btnCancel = switchPromptTag.find( '.cancel' );
+	var btnAction = switchPromptTag.find( '.runAction' );
+
+	dvTitle.html( friendlyTitle );
+	dvPrompt.html( dvPrompt.html().replace( /{SWITCH_LABEL}/g, questionStr.toUpperCase() ) );
+	btnAction.html( btnActionText.toUpperCase() );
+
+	btnCancel.click( function(){
+
+		$( '.scrim' ).hide();
+		$( '#networkSwitch' ).empty();
+		$( '#networkSwitch' ).hide();
+
+	});
+
+	btnAction.click( function(){
+
+		$( '.scrim' ).hide();
+		$( '#networkSwitch' ).empty();
+		$( '#networkSwitch' ).hide();
+
+		ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
+
+	});
+
+	$( '.scrim' ).show();
+	$( '#networkSwitch' ).fadeIn();
+
+	ConnManagerNew._cwsRenderObj.langTermObj.translatePage(); 
+}*/
+
+/*ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
 {
 	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.showPrompt( statusInfo );
 
@@ -271,7 +336,7 @@ ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
 
 	MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManagerNew.rejectPrompt_AppModeSwitch, ConnManagerNew.switchPrompt_reservedMsgID );
 
-}
+}*/
 
 ConnManagerNew.cancelPrompt_AppModeSwitch = function( appModeNew, statusInfo ) 
 {
@@ -307,7 +372,7 @@ ConnManagerNew.cancelAndHide_promptModeSwitch = function( statusInfo )
 ConnManagerNew.hidePrompt_AppSwitch = function()
 {
 	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.hidePrompt( ConnManagerNew.switchPrompt_reservedMsgID );
-	MsgManager.clearReservedMessage( ConnManagerNew.switchPrompt_reservedMsgID );
+	//MsgManager.clearReservedMessage( ConnManagerNew.switchPrompt_reservedMsgID );
 }
 
 
@@ -337,16 +402,69 @@ ConnManagerNew.isAppMode_Online = function()
 
 ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 {
-	// Below will trigger another 
-	ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+	console.log( ' ~ running ConnManagerNew.scheduled_checkNSet_ServerAvailable' );
+	if ( ! ConnManagerNew.statusInfo.manual_Offline.enabled )
 	{
+		// Below will trigger another 
+		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+		{
+			// called again to update UI to new connect settings
+			ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+
+			//if ( callBack ) callBack( true );
+		});
+	}
+	else
+	{
+		ConnManagerNew.checkRestoreBlockedManualMode( ConnManagerNew.statusInfo );
 		// called again to update UI to new connect settings
 		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-
-		//if ( callBack ) callBack( true );
-	});
+	}
 
 }
+
+ConnManagerNew.checkManualMode_Restore = function()
+{
+	return ( statusInfo.manual_Offline.enabled && 
+		( statusInfo.manual_Offline.retryOption > 0 ) && 
+			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) );
+}
+
+ConnManagerNew.checkRestoreBlockedManualMode = function( statusInfo )
+{
+	if ( statusInfo.manual_Offline.enabled && 
+		( statusInfo.manual_Offline.retryOption > 0 ) && 
+			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) )
+	{
+
+		ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available ){
+
+			var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
+
+			if ( available )
+			{
+				ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+				{
+					prompt.showManualSwitch_Dialog( 'Online' );
+				})
+			}
+			else
+			{
+				if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
+				{
+					prompt.showManualSwitch_NetworkUnavailable_Dialog( true );
+				}
+				else
+				{
+					//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
+					prompt.showManualSwitch_ServerUnavailable_Dialog();
+				}
+			}
+
+		});
+	}
+}
+
 
 // ===============================================================
 // =====================================
@@ -359,8 +477,8 @@ ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 
 ConnManagerNew.update_UI = function( statusInfo )
 {
-    // update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
-    if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
+	// update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
+	if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
 	else ConnManagerNew.update_UI_NetworkIcons( statusInfo );
 
 	ConnManagerNew.update_UI_statusDots( statusInfo );
@@ -389,14 +507,15 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 	var networkServerConditionsGood = ConnManagerNew.isAppMode_Online();
 
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
-	var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
+	//var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
+	var imgSrc = ( networkServerConditionsGood ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg' );
 
-	$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
+	//$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
 
 	// timeout (500) used to create image rotation effect (requires 1s transition on img obj)
-	setTimeout( function() { 
+	//setTimeout( function() { 
 		$( '#imgNetworkStatus' ).attr( 'src', imgSrc );
-	}, 500 );
+	//}, 500 );
 
 	$( '#divNetworkStatus' ).css( 'display', 'block' );
 };
@@ -416,6 +535,6 @@ ConnManagerNew.update_UI_statusDots = function( statusInfo )
 
 ConnManagerNew.setStatusCss = function( tag, isOn ) 
 {
-	var colorStr = ( isOn ) ? 'lightGreen' : 'red';
-	tag.css( 'color', colorStr );
+	var colorStr = ( isOn ) ? '#F5F5F5' : 'transparent';	//'lightGreen' : 'red'
+	tag.css( 'background-color', colorStr );
 };

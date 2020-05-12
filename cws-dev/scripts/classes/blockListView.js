@@ -62,7 +62,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.mainList;
     me.viewsDefinitionList; // = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list
     me.viewListDefs = [];
-    me.groupByDefinitionList;
+    me.groupByDefinitionList = {}; // TODO: check undefined or not existing on config case.
     me.groupByGroups = [];
 
     me.viewDef_Selected;  // Need to set 'undefined' when view is cleared?
@@ -122,7 +122,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.initialize = function()
     {
         me.nav2Tag = $( 'div.Nav2' ).show();
-        $( '#pageDiv' ).css( 'height', 'calc(100% - 106px)' );
+        //$( '#pageDiv' ).css( 'height', 'calc(100% - 106px)' );
 
         me.setUpInitialData();
     };
@@ -161,7 +161,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     {
         me.mainList = ActivityDataManager.getActivityList();
         me.viewsDefinitionList = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list    
-        me.groupByDefinitionList = Util.getJsonDeepCopy( ConfigManager.getConfigJson().definitionGroupBy ); // full complete view def list
+        me.groupByDefinitionList = ( ConfigManager.getConfigJson().definitionGroupBy ) ? Util.getJsonDeepCopy( ConfigManager.getConfigJson().definitionGroupBy ) : {}; // full complete view def list
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..

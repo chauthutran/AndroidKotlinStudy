@@ -48,7 +48,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	{
 		// TEMP - For now, set 'Nav2' visible reset/hide here.. - should move to 'area'?
 		$( 'div.Nav2' ).hide();
-		$( '#pageDiv' ).css( 'height', '' ); // or could do .removeAttr( 'style' )
+		//$( '#pageDiv' ).css( 'height', '' ); // or could do .removeAttr( 'style' )
 
 
 		// Form BlockTag generate/assign

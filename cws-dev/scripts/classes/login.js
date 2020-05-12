@@ -399,9 +399,55 @@ function Login( cwsRenderObj )
 		$( '.login_data__fields').find( 'h4' ).remove();
 		$( '<h4>'+ $( 'input.loginUserName' ).val() +'<h4>' ).insertBefore( $('#loginField') );
 
-		FormUtil.hideProgressBar();
-	}
+    me.networkStatusClickSetup();
 
+		FormUtil.hideProgressBar();
+	};
+
+
+  me.networkStatusClickSetup = function()
+  {
+
+		$( '#divNetworkStatus' ).click( function(){
+
+			var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
+			var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
+
+			if ( goOnline )
+			{
+
+				ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available ){
+
+					if ( available )
+					{
+						ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+						{
+							prompt.showManualSwitch_Dialog( 'Online' );
+						})
+					}
+					else
+					{
+						if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
+						{
+							prompt.showManualSwitch_NetworkUnavailable_Dialog();
+						}
+						else
+						{
+							//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
+							prompt.showManualSwitch_ServerUnavailable_Dialog();
+						}
+						
+					}
+
+				});
+			}
+			else
+			{
+				prompt.showManualSwitch_Dialog( 'Offline' );
+			}
+
+		});
+  };
 	// --------------------------------------
 	
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )

@@ -109,7 +109,8 @@
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
-                        margin-left: 12px;
+                        margin-left: 20%;
+                        margin-bottom: 12px;
                     }
                 }
 
@@ -120,7 +121,7 @@
                     -webkit-box-align: center;
                             align-items: center;
                     cursor: pointer;
-                    background-repeat: no-repeat;
+		            background-repeat: no-repeat;
                     background-position: center;
                     @include background-image('sync-pending_36');
                     @include box-sizing(border-box);

@@ -49,9 +49,9 @@ function statisticsOld( cwsRender )
 	
 	me.showStatsPage = function()
 	{
-        if ( $( 'div.mainDiv' ).is( ":visible" ) )
+        if ( $( '#pageDiv' ).is( ":visible" ) )
         {
-            $( 'div.mainDiv' ).hide();
+            $( '#pageDiv' ).hide();
         }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
@@ -83,7 +83,7 @@ function statisticsOld( cwsRender )
         setTimeout( function() {
             if ( FormUtil.checkLogin() )
             {
-                $( 'div.mainDiv' ).show( 'fast' );
+                $( '#pageDiv' ).show( 'fast' );
             }
             else
             {
