@@ -323,6 +323,66 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 	}
 };
 
+
+
+// Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
+Util.sortByKey2 = function( array, key, order, options ) 
+{
+	var noCase;
+	var emptyStringLast;
+
+	if ( options )
+	{
+		noCase = ( options.noCase ) ? options.noCase : undefined;
+		emptyStringLast = ( options.emptyStringLast ) ? options.emptyStringLast : undefined;
+	}
+
+
+	if ( array.length == 0 || array[0][key] === undefined ) return array;
+	else
+	{
+		return array.sort( function( a, b ) {
+		
+
+			noCase, order, emptyStringLast
+
+
+			var x = a[key]; 
+			var y = b[key];
+
+			if ( x === undefined ) x = "";
+			if ( y === undefined ) y = "";
+
+			if ( noCase !== undefined && noCase )
+			{
+				x = x.toLowerCase();
+				y = y.toLowerCase();
+			}
+
+			if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
+			{
+				if ( x == "" && y == "" ) return 0;
+				else if ( x == "" ) return 1;
+				else if ( y == "" ) return -1;
+			}
+			else
+			{
+				if ( order === undefined )
+				{
+					return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+				}
+				else
+				{
+					if ( order == "Acending" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+					else if ( order == "Decending" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+				}
+			}
+		});
+	}
+};
+
+
+
 Util.sortByKey_Reverse = function( array, key ) {
 	return array.sort( function( b, a ) {
 		var x = a[key]; var y = b[key];

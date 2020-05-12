@@ -351,12 +351,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         var groupMatched;
 
         try
-        {
-            var activityTrans = ActivityDataManager.getCombinedTrans( activity );
-            var client = ClientDataManager.getClientByActivityId( activity.activityId );
-            //var clientDetails = ( client ) ? client.clientDetails: {};
-    
-            var INFO = { 'activity': activity, 'client': client, 'activityTrans': activityTrans };
+        {    
+            var INFO = me.getINFO_byActivity( activity );
 
             var evalField = Util.evalTryCatch( groupByDef.evalField, INFO, 'BlockListView.getGroupId_FromViewDef()' );
     
@@ -396,6 +392,15 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         return groupMatched;
     };
 
+
+    me.getINFO_byActivity = function( activity )
+    {
+        var activityTrans = ActivityDataManager.getCombinedTrans( activity );
+        var client = ClientDataManager.getClientByActivityId( activity.activityId );
+        //var clientDetails = ( client ) ? client.clientDetails: {};
+
+        return { 'activity': activity, 'client': client, 'activityTrans': activityTrans };
+    }
     
     me.setGroupByData_withActivity = function( groupJson, activity, groupByData )
     {
@@ -488,15 +493,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
-    me.sortList_ByGroup = function( groupByData )
-    {
-        if ( !groupByData.groupSort ) groupByData.groupSort = 'Acending';
-        else if ( groupByData.groupSort === 'Acending' ) groupByData.groupSort = 'Decending';
-        else if ( groupByData.groupSort === 'Decending' ) groupByData.groupSort = 'Acending';
-
-        me.viewFilteredList = me.groupBySorting( groupByData, groupByData.groupSort );                
-    };
-
     me.sortList = function( sortDef, viewFilteredList )
     {
         try 
@@ -513,32 +509,105 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
+    // ------------------------------------------
+    // -- Sort activityList by Group Related ---
+
+    me.sortList_ByGroup = function( groupByData )
+    {
+        if ( !groupByData.groupSort ) groupByData.groupSort = 'Acending';
+        else if ( groupByData.groupSort === 'Acending' ) groupByData.groupSort = 'Decending';
+        else if ( groupByData.groupSort === 'Decending' ) groupByData.groupSort = 'Acending';
+
+        me.viewFilteredList = me.groupBySorting( groupByData, groupByData.groupSort );                
+    };
+
+    
     me.groupBySorting = function( groupByData, sortOrder )
     {
         // 1. sort the group list?
         var usedGroupList_Sorted = Util.sortByKey( groupByData.groupListArr, "id", undefined, sortOrder );
 
         // 2. recreate view list based on the sorting? - loop through the group and get full activity list..
-        return me.getNewActivityList_FromGroupList( usedGroupList_Sorted );
+        return me.getNewActivityList_FromGroupList( usedGroupList_Sorted, groupByData.groupByDef );
     }
 
 
-    me.getNewActivityList_FromGroupList = function( groupList )
+    me.getNewActivityList_FromGroupList = function( groupList, groupByDef )
     {
         var newActivityList = [];
+        var contentSort = ( groupByDef && groupByDef.contentSort ) ? groupByDef.contentSort : '';
+        var contentSortOrder = ( groupByDef && groupByDef.contentSortOrder ) ? groupByDef.contentSortOrder : '';
+        //"contentSort": "INFO.client.clientDetails.firstName",
 
         for ( var i = 0; i < groupList.length; i++ )
         {
             var group = groupList[ i ];
 
-            for ( var x = 0; x < group.activities.length; x++ )
+            if ( contentSort ) 
             {
-                newActivityList.push( group.activities[ x ] );
+                me.groupContentSort( newActivityList, group, contentSort, contentSortOrder );
+            }
+            else
+            {                
+                Util.appendArray( newActivityList, group.activities );
             }
         }
 
         return newActivityList;
+    };
+
+
+    // -----------------------------------
+    // -- Group Content Sort Methods ---
+    
+    me.groupContentSort = function( newActivityList, group, contentSort, contentSortOrder )
+    {
+        Util.tryCatchContinue( function() {
+
+            var activityINFOList = me.setINFOList_byActivityList( group.activities );
+                
+            me.evalSort( contentSort, activityINFOList, contentSortOrder );
+
+            // Put the activity (in INFO) back to activityList..
+            var newGroupActivities = me.getActivityList_fromINFOList( activityINFOList );
+            Util.appendArray( newActivityList, newGroupActivities );
+
+            console.log( '========== Content Sorting =====' );
+
+        }, "BlockListView.groupContentSort()" );
     }
+
+    me.setINFOList_byActivityList = function( activityList )
+    {
+        var newList = [];
+
+        for ( var i = 0; i < activityList.length; i++ )
+        {
+            var activity = activityList[ i ];
+
+            var INFO = me.getINFO_byActivity( activity );
+
+            newList.push( { 'INFO': INFO } );
+        }
+
+        return newList;
+    };
+
+    
+    me.getActivityList_fromINFOList = function( activityINFOList )
+    {
+        var newActivityList = [];
+
+        for ( var i = 0; i < activityINFOList.length; i++ )
+        {
+            var activityInfo = activityINFOList[ i ];
+
+            newActivityList.push( activityInfo.INFO.activity );
+        }
+
+        return newActivityList;
+    };
+
 
     // Could be Util method...
     me.evalSort = function( fieldEvalStr, list, orderStr )
@@ -558,6 +627,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         });          
     };
 
+    // NOT USED..
     me.evalGroupBySort = function( fieldEvalStr, list, groupBy, orderStr )
     {
         var isDescending = orderStr.indexOf( 'desc' );
