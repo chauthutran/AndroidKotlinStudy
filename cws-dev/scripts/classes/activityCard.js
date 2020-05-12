@@ -593,14 +593,14 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
             cardCloseTag.off( 'click' ).click( function(){ 
                 sheetFull.empty();
                 sheetFull.fadeOut();
-                //$( '#pageDiv' ).show();
+                $( '#pageDiv' ).show();
             });
         
         
             // render
             sheetFull.fadeIn();
         
-            //$( '#pageDiv' ).hide();
+            $( '#pageDiv' ).hide();
         }
     };
     

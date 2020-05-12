@@ -78,7 +78,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.scrollEnabled = true;
     me.lastScrollTop = 0;  // For tracking scroll up vs down
 
-    me.pagingData = { 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
+    me.pagingData = ConfigManager.getSettingPaging(); //{ 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
+    me.pagingData.currPosition = 0;
 
     // -------- Tags --------------------------
 
@@ -125,7 +126,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.template_groupTrTag = `<tr class="blockListGroupBy opened">
         <td class="blockListGroupBySection"></td>
     </tr>`;
-
 
 
     // ===========================================================
@@ -293,7 +293,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {        
         if ( activityList.length === 0 ) 
         {
-            // if already have added emtpyList, no need to add emptyList
+            // If already have added emtpyList, no need to add emptyList
             if ( me.listTableTbodyTag.find( 'tr.emptyList' ).length === 0 )
             {
                 me.listTableTbodyTag.append( $( me.tempalte_trActivityEmptyTag ) );
@@ -301,8 +301,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
+            // Designed to handle with/without scrolling:
+            // If setting has no scrolling/paging, me.pagingData has 'enabled': false, and will return endPos as full list size.
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
             me.setNextPagingData( me.pagingData, currPosJson );            
+
+            console.log( me.pagingData );
+            console.log( currPosJson );
+
 
             if ( !currPosJson.endAlreadyReached )
             {
@@ -332,7 +338,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         
         currPosJson.startPosIdx = pagingData.currPosition;
                 
-        var nextPageEnd = pagingData.currPosition + pagingData.pagingSize;
+        // If paging is disabled, put 'nextPageEnd' to the full activityListSize.
+        var nextPageEnd = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : activityListSize;
         if ( nextPageEnd >= activityListSize ) nextPageEnd = activityListSize;  // if nextPageEnd is over the limit, set to limit.
 
         currPosJson.endPos = nextPageEnd; 

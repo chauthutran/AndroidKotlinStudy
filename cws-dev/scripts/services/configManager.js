@@ -50,6 +50,10 @@ ConfigManager.defaultJsonList = {
    }
 };
 
+ConfigManager.default_SettingPaging = { 
+    "enabled": false  // "paging": { "enabled": true, "pagingSize": 5 }, 
+};
+
 
 // ==== Methods ======================
 
@@ -78,6 +82,7 @@ ConfigManager.clearConfigJson = function ()
 
 // ---------------------------
 
+/*
 ConfigManager.setSettingsJson = function( configJson )
 {
     ConfigManager.configSetting = configJson.settings;
@@ -94,13 +99,13 @@ ConfigManager.getSettings = function( settingName )
         return ConfigManager.configSetting;
     } 
 }
-
+*/
 
 // ------------------------------------
 
 ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 {
-    var configJson = ConfigManager.configJson;
+    var configJson = ConfigManager.getConfigJson();
 
     ConfigManager.configUserRole( function()
     {
@@ -167,10 +172,29 @@ ConfigManager.configUserRole = function( callBack )
 
 };
 
+// ----------------------------------------
+        
+ConfigManager.getSettingPaging = function()
+{
+    var pagingSetting;
+
+    var configJson = ConfigManager.getConfigJson();
+
+    if ( configJson && configJson.settings && configJson.settings.paging )
+    {
+        pagingSetting = configJson.settings.paging;
+    }
+    else
+    {
+        pagingSetting = ConfigManager.default_SettingPaging;
+    }
+    
+    return pagingSetting;
+}
 
 ConfigManager.getActivityDisplaySettings = function()
 {
-    var configJson = ConfigManager.configJson;
+    var configJson = ConfigManager.getConfigJson();
 
     var displaySettings = [  
       ConfigManager.defaultActivityDisplaySettings 
@@ -201,7 +225,7 @@ ConfigManager.getActivityDisplaySettings = function()
 ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 {
     var activityStatusConfig;
-    var configJson = ConfigManager.configJson;
+    var configJson = ConfigManager.getConfigJson();
 
 	try
 	{        

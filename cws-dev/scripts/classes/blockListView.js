@@ -572,8 +572,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             var newGroupActivities = me.getActivityList_fromINFOList( activityINFOList );
             Util.appendArray( newActivityList, newGroupActivities );
 
-            console.log( '========== Content Sorting =====' );
-
         }, "BlockListView.groupContentSort()" );
     }
 
