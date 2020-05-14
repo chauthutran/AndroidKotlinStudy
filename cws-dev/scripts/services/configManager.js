@@ -1,15 +1,26 @@
 // -------------------------------------------
-// -- ConfigManager Class/Methods
-
-// -- 1. Define the loading place clearly
-//      - On login..  <-- undernearth the call..
-//      2. Remove other points..
-
+//      ConfigManager Class/Methods
+//          - Loads configJson data from downloaded file or from locally retrieved 
+//              and use it as main config data (in memory main place)
+//          - Provides configJson related methods (Get/Set)
+//
+//      - FEATURES:
+//          1. Place default config json parts - used if these parts json are not provided in loaded configJson
+//          2. 'setConfigJson' - Used to set the downloaded/retrieved country config to main memory config.
+//                  - Also keeps original configJson ('configJson_Original') downloaded/retrieved.
+//          3. 'resetConfigJson' - reset is to reload the memory configJson from the original configJson.
+//          4. Get related methods
+//          5. Apply Defaults related methods.
+//
+// -------------------------------------------------
 
 function ConfigManager() {}
 
-ConfigManager.configJson = {};     // store the configJson here when first loading config?
-ConfigManager.configSetting = {};
+ConfigManager.configJson = {};     // In memory stored configJson
+ConfigManager.configJson_Original = {};  // Downloaded country PWA config original
+
+//ConfigManager.configSetting = {}; // Not Yet coded for it.
+
 
 ConfigManager.defaultActivityDisplaySettings = `'<b><i>' + INFO.activity.processing.created + '</i></b>'`;
 
@@ -58,51 +69,36 @@ ConfigManager.default_SettingPaging = {
 
 // ==== Methods ======================
 
-ConfigManager.getConfigJson = function () 
-{
-    return ConfigManager.configJson;
-};  
-
 ConfigManager.setConfigJson = function ( configJson ) 
 {
-   ConfigManager.applyDefaults( configJson, ConfigManager.defaultJsonList );
+    ConfigManager.configJson_Original = configJson; 
 
-    ConfigManager.configJson = configJson;
+    ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
 
-    // TODO: If default config parts do not exists, insert them....
-    // ConfigManager.syncSetting_Default = {
-    // ConfigManager.settings_Default = {    
+    ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
 };
 
+// NOTE: We can override any config setting by modifying 'ConfigManager.configJson' in console.
+
+
+ConfigManager.resetConfigJson = function () 
+{
+    ConfigManager.setConfigJson( ConfigManager.configJson_Original );
+};
 
 ConfigManager.clearConfigJson = function () 
 {
     ConfigManager.configJson = {};
-    ConfigManager.configSetting = {};
+    //ConfigManager.configSetting = {};
 };
-
-// ---------------------------
-
-/*
-ConfigManager.setSettingsJson = function( configJson )
-{
-    ConfigManager.configSetting = configJson.settings;
-};
-
-ConfigManager.getSettings = function( settingName )
-{
-    if ( settingName )
-    {
-        return ConfigManager.configSetting[ settingName ];
-    }   
-    else
-    {
-        return ConfigManager.configSetting;
-    } 
-}
-*/
 
 // ------------------------------------
+// --- 'Get' related methods
+
+ConfigManager.getConfigJson = function () 
+{
+    return ConfigManager.configJson;
+};  
 
 ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 {
@@ -280,6 +276,7 @@ ConfigManager.getSyncDownSetting = function()
 
 
 // ------------------------------------------------------
+// -- Apply Defaults related methods.
 
 ConfigManager.applyDefaults = function( configJson, defaults )
 {

@@ -653,6 +653,37 @@ Util.getFromList = function( list, value, propertyName )
 	return item;
 };
 
+Util.getItemFromList = function( list, value, propertyName )
+{
+	return Util.getFromList( list, value, propertyName );
+};
+
+Util.getItemsFromList = function( list, value, propertyName )
+{
+	var items = [];
+
+	if ( list )
+	{
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if ( propertyName === undefined )
+		{
+			propertyName = "id";
+		}
+
+		for( i = 0; i < list.length; i++ )
+		{
+			var listItem = list[i];
+
+			if ( listItem[propertyName] && listItem[propertyName] === value )
+			{
+				items.push( listItem );
+			}
+		}
+	}
+
+	return items;
+};
+
 
 Util.getMatchData = function( settingData, matchSet )
 {
