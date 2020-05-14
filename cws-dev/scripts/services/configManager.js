@@ -51,7 +51,7 @@ ConfigManager.defaultJsonList = {
 };
 
 ConfigManager.default_SettingPaging = { 
-    "enabled": true,
+    "enabled": false,
     "pagingSize": 8   // "paging": { "enabled": true, "pagingSize": 5 }, 
 };
 
