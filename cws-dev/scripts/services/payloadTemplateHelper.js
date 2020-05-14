@@ -1,15 +1,18 @@
 // =========================================
 // -------------------------------------------------
 //     PayloadTemplateHelper
-//          - keeps activity list data & has methods related to that.
+//          - Helper methods for 'payload' generation (New Activity Payload)
 //
-// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
-//
+//      - FEATURES:
+//          1. 'generatePayload' - Main method for new activity payload json.
+//              - All other methods are supporting methods for this main method.
 //
 // -------------------------------------------------
 
 function PayloadTemplateHelper()  {};
 
+// ------------------------------------------------------------
+// --- Main 'payload' generation method
 
 PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, payloadTemplate )
 {
@@ -34,6 +37,9 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
 
     return finalPayload;
 };
+
+
+// ------------------------------------------------------------
 
 PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, payloadTemplateDefs )
 {
@@ -116,36 +122,3 @@ PayloadTemplateHelper.combinePayloads = function( payloadList )
 };
 
 // ================================================
-
-PayloadTemplateHelper.traverseEval = function( obj, payloadJson, formsJsonGroup, formsJson, INFO, iDepth, limit )
-{
-    if ( iDepth === limit )
-    {
-        console.log( 'Error in PayloadTemplateHelper.traverseEval, Traverse depth limit has reached: ' + iDepth );
-    }
-    else
-    {
-        for ( var prop in obj ) 
-        {
-            var propVal = obj[prop];
-    
-            if ( typeof( propVal ) === "object" ) 
-            {
-                //console.log( prop, propVal );
-                PayloadTemplateHelper.traverseEval( propVal, payloadJson, formsJsonGroup, formsJson, INFO, iDepth++, limit );
-            }
-            else if ( typeof( propVal ) === "string" ) 
-            {
-                //console.log( prop, propVal );
-                try
-                {
-                    obj[prop] = eval( propVal );
-                }
-                catch( errMsg )
-                {
-                    console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
-                }
-            }
-        }
-    }
-};	

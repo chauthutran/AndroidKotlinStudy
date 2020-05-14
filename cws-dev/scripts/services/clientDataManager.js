@@ -1,10 +1,16 @@
 // =========================================
 // -------------------------------------------------
 //     ClientDataManager
-//          - keeps client list data & has methods related to that.
+//          - Keeps client list data & Related Methods.
 //
-// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
-//
+//      - FEATURES:
+//          1. Get Client - by Id, by activityId, get all clientList, etc..
+//          2. Insert Client - by Id, by activityId, get all clientList, etc..
+//          3. loadClientsStore_FromStorage - Load client data from IDB
+//          4. saveCurrent_ClientsStore - Save client data to IDB
+//          5. Client Index Add/Remove Related Methods
+//          6. Merge Related Methods - After SyncUp/Down client/activities data merge
+//          7. Othe Methods - Activity Add ProcessingInfo, createActivityPayloadClient 
 //
 // -------------------------------------------------
 
@@ -22,8 +28,6 @@ ClientDataManager.template_Client = {
 ClientDataManager.payloadClientNameStart = 'client_';
 
 // ===================================================
-// === MAIN FEATURES =============
-
 // ----- Get  Client ----------------
 
 // Get ClientList from memory
@@ -31,7 +35,6 @@ ClientDataManager.getClientList = function()
 {
     return ClientDataManager._clientsStore.list;
 };
-
 
 // Get single client Item (by property value search) from the list
 // TODO: SHOULD BE OBSOLETE
@@ -44,7 +47,6 @@ ClientDataManager.getClientById = function( idStr )
 {
     return ClientDataManager._clientsIdx[ idStr ];
 };
-
 
 ClientDataManager.getClientByActivityId = function( activityId )
 {
@@ -82,36 +84,7 @@ ClientDataManager.insertClients = function( clients )
 };
 
 
-// Add processing info if does not exists - with 'downloaded detail'
-ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, processingInfo )
-{
-    for ( var i = 0; i < newClients.length; i++ )
-    {
-        var client = newClients[ i ];
-
-        for ( var x = 0; x < client.activities.length; x++ )
-        {
-            var activity = client.activities[ x ];
-
-            ActivityDataManager.insertToProcessing( activity, processingInfo );
-        }
-    }
-};
-
-
-ClientDataManager.createActivityPayloadClient = function( activity )
-{
-    // Call it from template?
-    var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
-
-    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.activityId;
-    acitivityPayloadClient.clientDetails = ActivityDataManager.getCombinedTrans( activity );
-
-    ClientDataManager.insertClient( acitivityPayloadClient );
-
-    return acitivityPayloadClient;
-};
-
+// ----- Remove Client ----------------
 
 ClientDataManager.removeClient = function( client )
 {
@@ -271,77 +244,35 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInf
 }; 
 
 
+// ----- Othe Methods - Activity Add ProcessingInfo, createActivityPayloadClient ----------------
 
-// --------------------------------------------
-// -------- Below are not implemented properly
+// Add processing info if does not exists - with 'downloaded detail'
+ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, processingInfo )
+{
+    for ( var i = 0; i < newClients.length; i++ )
+    {
+        var client = newClients[ i ];
+
+        for ( var x = 0; x < client.activities.length; x++ )
+        {
+            var activity = client.activities[ x ];
+
+            ActivityDataManager.insertToProcessing( activity, processingInfo );
+        }
+    }
+};
 
 
-// --------------------------------------
-// -- Ways to add data to main list
+ClientDataManager.createActivityPayloadClient = function( activity )
+{
+    // Call it from template?
+    var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
 
-// ===================================================
-// === OTHERS Methods =============
+    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.activityId;
+    acitivityPayloadClient.clientDetails = ActivityDataManager.getCombinedTrans( activity );
 
+    ClientDataManager.insertClient( acitivityPayloadClient );
 
-// =======================================================
+    return acitivityPayloadClient;
+};
 
-
-//     NOTE:
-//          'searchValues' & 'captureValues' only exists on draft ready for Sync Item.
-//          Once synced, it will be removed since it will get Mongo updated one
-//               - which does not have 'searchValues' & 'captureValues' format.
-
-// Merge Cases:
-
-//      1. New Device: 
-//          Get All Clients with the activeUser Id..
-//              --> no date range..
-//              - But if clients data exists on PWA, we need merging..
-//                  if 'updated' is later on mongo side, get activities that PWA does not have..
-//                  and update the PWA client details (from mongo one)
-//                  - Otherwise, if PWA 'updated' is same or higher(Not possible), do not do update?
-//
-//      2. SyncDown with date
-//          In search json, 'find', do by clientId, but with Date range.. 
-//              --> new clients  <-- simply add to client list
-//              --> existing client with differnt update
-//                  - follow mongoDB data!!!
-//
-//              - Update client List and activity List..
-//
-//      3. SyncUp
-//          - one new activity ISS case
-//          - How do we tell if client of this activity exists?
-//          A. if PWA store has client, online/offline, use this client Id in search
-//              '_id' : clientId.
-//              For activity, generate activityId and send 'activityId' : activityId <-- in search..
-//              <-- If client not found, new client case.  If found, but activity not found, new activity case.
-//              After mongo SyncUp, get mongo info and save here..
-//              
-//
-//    If client detail is updated, it will be by/through activity.  Thus, we can simply check 'update'
-//          date.  See which one is later one, and simply take the client Detail update..
-//          - Which means, for 'SyncDown', if same client exists, it should always get mongo's clientDetail 
-//            and overwrite to PWA one - if mongo one is later one.
-//
-//    If the 'updated' date is different, 
-//      even if PWA one is later one, there could be case there both got updated, THUS
-//    IF 'updated' is same, no changes..
-//    IF DIFF, we look at activities...
-//          --> ** We do not need to check activity ID since it is only created or not.
-//          We only get activities not exists in both mongo and PWA
-//          And run them in order <-- by activityDate (UTC)?
-//              --> But PWA one would not have mongoUTC date, thus, these are still pending ones...
-//                  <-- Not influence details..
-
-//          Thus, we only get the mongo ones that does not exist in PWA 
-//              + update client detail...
-//              + add these activities on PWA activity list.
-//              - while keeping the not, yet, submitted activities...
-//
-//
-//      ** 'SyncUp'
-//          - We only save 'updated' time mark if we successfully get mongo save confirmation!!
-//              --> Better, yet, get it from mongo, so that the 'updated' date is same..
-//
-//

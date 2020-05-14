@@ -1,9 +1,16 @@
 // -------------------------------------------
-// -- SessionManager Class/Methods
-// --- On memory session ---
-// ----- and started to have methods to save to localStage, but don't know how it will be managed in future..
-// ---------
+//      SessionManager Class/Methods
+//          - Keeps Session Data in Memory.
+//			- FOR NOW, we only store login data in Session.
+//				userName/password, orgUnit, configJson
 
+//      - FEATURES:
+//          1. Load session data and use the loaded session country configJson to ConfigManager. - 'loadDataInSession'
+//			2. Unload session data
+//			3. Save session data to local storage - 'saveUserSessionToStorage'
+//			4. Update some of session data to local storage - 'updateUserSessionToStorage'
+//
+// -------------------------------------------------
 function SessionManager() {}
 
 SessionManager.sessionData = {
@@ -83,39 +90,3 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 		DataManager.saveData( userName, loginData );			
 	}
 };
-
-/*
-SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
-{
-	// NOTE!!!!
-	//	- session data management!!!!  Not here!!!
-	var dtmNow = ( new Date() ).toISOString();
-
-	// if session data exists, update the lastUpdated date else create new session data
-	if ( loginData.mySession ) 
-	{
-		loginData.mySession.lastUpdated = dtmNow;
-		loginData.mySession.stayLoggedIn = false;
-
-		DataManager.saveData( userName, loginData );			
-	}
-	else
-	{
-		var newSaveObj = Object.assign( {} , loginData);
-
-		FormUtil.defaultLanguage( function( defaultLang )
-		{
-			newSaveObj.mySession = { 
-				createdDate: dtmNow, 
-				lastUpdated: dtmNow, 
-				pin: Util.encrypt( password, 4 ), 
-				stayLoggedIn: false, 
-				theme: loginData.dcdConfig.settings.theme, 
-				language: defaultLang 
-			};
-
-			DataManager.saveData( userName, newSaveObj );
-		});
-	}
-};
-*/

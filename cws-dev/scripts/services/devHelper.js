@@ -261,6 +261,8 @@ DevHelper.sampleDataList = [{
     "updated": "2019-12-30T08:17:06.876"
 }];
 
+DevHelper.crossfilterObj = crossfilter( DevHelper.sampleDataList );
+
 // =======================================
 
 DevHelper.setUp = function( cwsRenderObj )
@@ -330,6 +332,61 @@ DevHelper.setScheduleMsgFlag = function() { };
 
 // ======================================
 // === TESTING ONES BELOW ================
+
+
+DevHelper.crossfilter = function( clientAttr )
+{    
+    // How many issued?  redeemed?
+    var dimention = DevHelper.crossfilterObj.dimension( function( client ) { 
+        return client[ clientAttr ];
+    });
+
+    //console.log( trans_issued );
+
+    //DevHelper.crossfilter().groupAll().reduceCount().value();
+
+    return dimention;
+
+    // Dimension - a target point value accumulated?  -- dataPoint in DHIS?  
+    //  - Expensive to create - Allow only 8 or 16 max dimension on given time...
+    //  var paymentsByTotal = payments.dimension(function(d) { return d.total; });
+
+    // FILTER - trim out/filter the 'dimension' values
+    //  paymentsByTotal.filter([100, 200]); // selects payments whose total is between 100 and 200
+    //  paymentsByTotal.filter(120); // selects payments whose total equals 120
+    //  paymentsByTotal.filter(function(d) { return d % 2; }); // selects payments whose total is odd
+
+    // dimention.top() / bottom() / dispose()
+
+    // Group - grouping by dimension value..
+    //  var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
+
+
+
+    // Test if child level can be referenced --> dimensioned..
+};
+
+
+DevHelper.cfIssued = function( transactionType )
+{    
+    return DevHelper.crossfilterObj.groupAll().reduceSum( function( client ) { 
+        // client -> activities -> transactions -> "transactionType": "v_iss",
+
+        var total_issued = 0;
+
+        for( var i = 0; i < client.activities.length; i++ )
+        {
+            var activity = client.activities[ i ];
+                        
+            // transactionType - "v_iss"
+            var issTransList = Util.getItemsFromList( activity.transactions, transactionType, "transactionType" );
+
+            total_issued += issTransList.length;
+        }
+
+        return total_issued; 
+    }).value();
+};
 
 //DevHelper.TestRequestSend( 'https://client-dev.psi-connect.org/routeWsTest' );
 //DevHelper.TestRequestSend( 'https://api-dev.psi-connect.org/PWA.locator?1?n=50&iso2=SV&c=13.6929,-89.2182&d=5000000%27' );

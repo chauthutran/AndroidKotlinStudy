@@ -1,32 +1,35 @@
 // =========================================
 // -------------------------------------------------
 //     ActivityDataManager
-//          - keeps activity list data & has methods related to that.
+//          - keeps activity list data & related methods.
 //
-// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --> to Lower Level)
-//
+//      - FEATURES:
+//          1. Get Activity/ActivityList - by Id, etc..
+//          2. Remove Activity/ActivityList/ActivityByClientId, etc..
+//          3. Insert/Update Activity
+//          4. ActivityList Regen, update, add (with index data)
+//          5. Merge downloaded activities related
+//          6. Activity Payload Related Methods
+//          7. Create Activity Processing Info Related Methods
+//          8. getCombinedTrans - get single json that combines all data in transactions
 //
 // -------------------------------------------------
 
 function ActivityDataManager()  {};
 
-ActivityDataManager._activityList = [];
-ActivityDataManager._activityToClient = {};  // 
-
+ActivityDataManager._activityList = []; // Activity reference list - original data are  in each client activities.
+ActivityDataManager._activityToClient = {};  // Fast reference - activity to client
 
 // ===================================================
 // === MAIN FEATURES =============
 
+// ---------------------------------------
+// --- Get Activity / ActivityList
 
 ActivityDataManager.getActivityList = function()
 {
     return ActivityDataManager._activityList;
 };
-
-
-// ** Problem with 2 type of data..
-// <-- when we list things, the viewer and others need to sort based on that?
-//  <-- 
 
 // Get single activity Item (by property value search) from the list - Called from 'activityItem.js'
 ActivityDataManager.getActivityItem = function( propName, propVal )
@@ -34,12 +37,10 @@ ActivityDataManager.getActivityItem = function( propName, propVal )
     return Util.getFromList( ActivityDataManager.getActivityList(), propVal, propName );    
 };
 
-
 ActivityDataManager.getActivityById = function( activityId )
 {
     return Util.getFromList( ActivityDataManager._activityList, activityId, 'activityId' );
 };
-
 
 // ---------------------------------------
 // --- Remove Activity
@@ -81,8 +82,6 @@ ActivityDataManager.removeActivityById = function( activityId )
     }
 };
 
-
-// NEW
 ActivityDataManager.removeActivityNClientById = function( activityId )
 {
     try
@@ -115,7 +114,6 @@ ActivityDataManager.removeActivityNClientById = function( activityId )
 // ---------------------------------------
 // --- Insert Activity
 
-
 ActivityDataManager.insertActivityToClient = function( activity, client )
 {
     ActivityDataManager.insertActivitiesToClient( [ activity ], client );
@@ -133,15 +131,9 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client )
     }
 };
 
-ActivityDataManager.updateActivityList_NIndexes = function( activity, client )
-{
-    // Might use 'unshift' to add to top?
-    ActivityDataManager._activityList.push( activity );
-
-    if ( activity.activityId ) ActivityDataManager._activityToClient[ activity.activityId ] = client;
-}
-
 // ============================================
+// === ActivityList Regen, update, add (with index data)
+
 
 // Create 'activityList' and 'activityToClient' map.
 ActivityDataManager.regenActivityList_NIndexes = function()
@@ -160,6 +152,16 @@ ActivityDataManager.regenActivityList_NIndexes = function()
     }
 };
 
+
+ActivityDataManager.updateActivityList_NIndexes = function( activity, client )
+{
+    // Might use 'unshift' to add to top?
+    ActivityDataManager._activityList.push( activity );
+
+    if ( activity.activityId ) ActivityDataManager._activityToClient[ activity.activityId ] = client;
+};
+
+
 ActivityDataManager.addToActivityList_NIndexes = function( client )
 {
     if ( client.activities ) 
@@ -175,7 +177,7 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
 
 
 // ====================================================
-// === Activity
+// === Merge downloaded activities related
 
 ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaActivities, pwaClient, processingInfo )
 {
@@ -213,7 +215,7 @@ ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaAc
 };
 
 // --------------------------------------
-// -- Ways to add data to main list
+// -- Activity Payload Related Methods
 
 ActivityDataManager.generateActivityPayloadJson = function( formsJson, formsJsonGroup, blockInfo, actionDefJson )
 {
@@ -281,7 +283,8 @@ ActivityDataManager.createNewPayloadActivity = function( formsJson, formsJsonGro
     }
 };
 
-// ----------------------------------------
+// ----------------------------------------------
+// --- Create Activity Processing Info Related
 
 ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr )
 {
@@ -343,6 +346,8 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
     }
 };
 
+// --------------------------------------------
+// --- Other Methods
 
 ActivityDataManager.getCombinedTrans = function( activityJson )
 {
