@@ -139,9 +139,9 @@ function cwsRender()
 
 
 	// This or other classes use this to control the scrolling..
-	me.setScrollEvent = function( setScrollEvent )
+	me.setScrollEvent = function( scrollCallBack )
 	{
-        $(window).off( "scroll" ).on( "scroll", setScrollEvent );
+        $( 'body' ).off( "scroll" ).on( "scroll", scrollCallBack );
 	};
 
 

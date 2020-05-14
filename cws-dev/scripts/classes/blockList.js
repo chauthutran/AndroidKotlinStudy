@@ -61,6 +61,7 @@
 //
 //
 // -------------------------------------------------
+
 function BlockList( cwsRenderObj, blockObj, blockJson ) 
 {
     var me = this;
@@ -76,6 +77,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.BlockListViewObj;
 
     me.scrollEnabled = true;
+    me.scrollLoadingNextPage = false;
     me.lastScrollTop = 0;  // For tracking scroll up vs down
 
     me.pagingData = ConfigManager.getSettingPaging(); //{ 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
@@ -168,7 +170,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {
         if ( me.listTableTbodyTag )
         {
-            $( window ).scrollTop( 0 ); // Scroll top
+            $( 'body' ).scrollTop( 0 ); // Scroll top
             me.lastScrollTop = 0;
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
@@ -177,10 +179,26 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
             me.pagingDataReset( me.pagingData );
 
-            // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag );
+            me.scrollLoadingNextPage = true;
+            me.cwsRenderObj.pulsatingProgress.show();
 
-            if ( callBack ) callBack();
+            // This removes the top view - if view exists..
+            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function(){
+
+                me.scrollLoadingNextPage = true;
+                me.cwsRenderObj.pulsatingProgress.show();
+
+            }, function(){
+
+                setTimeout( function() { 
+
+                    me.cwsRenderObj.pulsatingProgress.hide(); 
+                    me.scrollLoadingNextPage = false;
+    
+                }, 250 );
+
+            } );
+
         }
         else
         {
@@ -208,7 +226,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.setClassEvents = function( cwsRenderObj )
     {
-        if ( me.scrollEnabled ) cwsRenderObj.setScrollEvent( me.setScrollEvent );
+        cwsRenderObj.setScrollEvent( me.evalBlockListScroll );
     };
 
     // -----------------------------------------------
@@ -259,7 +277,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
     {
-        
+
         if ( hasView )
         {
             me.BlockListViewObj = new BlockListView( me.cwsRenderObj, me, blockJson.activityListViews );
@@ -270,8 +288,23 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
-            me.pagingDataReset( me.pagingData );            
-            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag );
+            me.pagingDataReset( me.pagingData );
+
+            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag, function(){
+
+                me.scrollLoadingNextPage = true;
+                me.cwsRenderObj.pulsatingProgress.show();
+
+            }, function(){
+
+                setTimeout( function() { 
+
+                    me.cwsRenderObj.pulsatingProgress.hide(); 
+                    me.scrollLoadingNextPage = false;
+    
+                }, 250 );
+
+            } );
         }
     };
 
@@ -290,7 +323,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
     me.populateActivityCardList = function( activityList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
-    {        
+    {
         if ( activityList.length === 0 ) 
         {
             // If already have added emtpyList, no need to add emptyList
@@ -298,6 +331,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             {
                 me.listTableTbodyTag.append( $( me.tempalte_trActivityEmptyTag ) );
             }
+
+            if ( scrollEndFunc ) scrollEndFunc();
         }
         else
         {
@@ -306,12 +341,14 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
             me.setNextPagingData( me.pagingData, currPosJson );            
 
-            console.log( me.pagingData );
-            console.log( currPosJson );
+            //console.log( me.pagingData );
+            //console.log( currPosJson );
+            me.pagingData.endAlreadyReached = currPosJson.endAlreadyReached;
 
 
             if ( !currPosJson.endAlreadyReached )
             {
+
                 if ( scrollStartFunc ) scrollStartFunc();
 
                 //for( var i = 0; i < activityList.length; i++ )
@@ -323,9 +360,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
                     activityCardObj.render();
                 }    
-    
-                if ( scrollEndFunc ) scrollEndFunc();    
+
             }
+
+            if ( scrollEndFunc ) scrollEndFunc();
         }
     };
 
@@ -335,17 +373,17 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.getCurrentPositionRange = function( activityListSize, pagingData )
     {
         var currPosJson = {};
-        
+        console.log( pagingData);
         currPosJson.startPosIdx = pagingData.currPosition;
-                
+        
         // If paging is disabled, put 'nextPageEnd' to the full activityListSize.
         var nextPageEnd = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : activityListSize;
         if ( nextPageEnd >= activityListSize ) nextPageEnd = activityListSize;  // if nextPageEnd is over the limit, set to limit.
 
         currPosJson.endPos = nextPageEnd; 
-        
-        currPosJson.endAlreadyReached = ( currPosJson.startPosIdx === currPosJson.endPos );
 
+        currPosJson.endAlreadyReached = ( currPosJson.startPosIdx === currPosJson.endPos );
+        
         return currPosJson;
     };
 
@@ -365,48 +403,59 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Scrolling Related -------------
 
-    me.setScrollEvent = function()
+    me.evalBlockListScroll = function()
     {
         //Infinite Scroll
 
+        var currScrollTop = $( 'body' ).scrollTop();
+        var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
+
+        me.lastScrollTop = currScrollTop;
+
         // Scroll only if this tag is visible, and there are activities
-        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 )
+        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 && ! me.scrollLoadingNextPage )
         {                    
-            var currScrollTop = $(window).scrollTop();
-            var scrollDirection = ( currScrollTop > me.lastScrollTop ) ? 'Down' : 'Up';
-            me.lastScrollTop = currScrollTop;
-
-            if ( scrollDirection === 'Down' )
+            if ( scrollDirection === 'Down' && ( me.pagingData.endAlreadyReached === undefined || me.pagingData.endAlreadyReached === false ) )
             {
-                //page height
-                var scrollHeight = $(document).height();
+                //doc height
+                var docHeight = $( document ).height();
 
-                //scroll position
-                var scrollPos = $(window).height() + $(window).scrollTop();
+                //scroll position (on screen)
+                var scrollPos = $( 'body' ).scrollTop() + $( 'body' ).height();
 
-                // fire if the scroll position is 100 pixels above the bottom of the page
-                if ( ( ( scrollHeight - 100 ) >= scrollPos ) / scrollHeight == 0 ) {
-
+                // fire if the scroll position is within 100 pixels above the bottom of the page
+                if ( scrollPos > ( docHeight - 100 ) )  
+                {
                     me.scrollList();
                 }
             }
         }
+
     };
 
 
     // Get next paging amount data and display it
     me.scrollList = function()
     {
+        me.scrollLoadingNextPage = true;
+        me.cwsRenderObj.pulsatingProgress.show();
+
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function() {
+        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function(){
 
+            me.scrollLoadingNextPage = true;
             me.cwsRenderObj.pulsatingProgress.show();
-            
-        }, function() {
 
-            setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide(); }, 250 );
+        }, function(){
 
-        });
+            setTimeout( function() { 
+
+                me.cwsRenderObj.pulsatingProgress.hide(); 
+                me.scrollLoadingNextPage = false;
+
+            }, 250 );
+
+        } );
     };
 
     
