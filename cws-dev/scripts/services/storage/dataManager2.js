@@ -202,6 +202,12 @@ DataManager2.saveData_LS_Str = function( key, strData )
 // ------------------------------------------------
 // -------- Other Operation Methods --------------
 
+DataManager2.deleteAllStorageData = function( callBack ) 
+{
+	LocalStgMng.clear();
+	
+	StorageMng.clear( StorageMng.StorageType_IndexedDB, callBack );
+};
 
 DataManager2.deleteDataByStorageType = function( storageTypeStr, secName ) 
 {
