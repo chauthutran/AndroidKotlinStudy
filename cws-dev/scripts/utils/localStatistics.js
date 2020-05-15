@@ -64,7 +64,7 @@ function statistics( cwsRender )
     me.render = function()
     {
         $( window ).scrollTop(0);
-
+        
         me.localStatsTag.empty();
 
         me.hoursInDay = me.getHoursInDay();
@@ -82,12 +82,134 @@ function statistics( cwsRender )
                 me.showStatsPage( dataFound )
                 me.colorize();
 
+                me.testStatisticContent();
+
             });
 
         });
+    };
+
+    
+	me.testStatisticContent = function()
+	{
+		var containerDiv = $( '#statisticContentSubDiv' );
+
+		// display total.
+        var activityDataList = [];
+
+        var clientList = DevHelper.sampleDataList;
+        
+        // Create activity data list - number clientRegistered, vocuher issued/redeemd
+        clientList.forEach( (client, i_c) => {
+
+            client.activities.forEach( (activity, i_a) => {
+
+                var activityData = {};
+
+                activityData.date = activity.activityDate.capturedLoc;
+                activityData.n_reg = 0;
+                activityData.n_iss = 0;
+                activityData.n_rdm = 0;
+                //activityData.activityId = activity.activityId;
+                //activityData.clientId = client._id;
+
+                activity.transactions.forEach( (trans, i_t) => {
+
+                    if ( trans.transactionType === 'c_reg' ) activityData.n_reg++;
+                    else if ( trans.transactionType === 'v_iss' ) activityData.n_iss++;
+                    else if ( trans.transactionType === 'v_rdm' ) activityData.n_rdm++;                    
+                });
+
+                activityDataList.push( activityData );
+            });
+        });
+
+        console.log( 'activityDataList:' );
+        console.log( activityDataList );
 
 
-    }
+        var activityCF = crossfilter( activityDataList );
+
+        var totalVoucherIssued = activityCF.groupAll().reduceSum( function( activity ) { return activity.n_iss; }).value();
+
+
+        console.log( 'totalVoucherIssued' );
+        console.log( totalVoucherIssued );
+
+
+        var dateDim = activityCF.dimension( function( activity ) { 
+            return activity.date;
+        });
+
+        var dateGroup = dateDim.group( function( dateStr ) {
+            return dateStr.substring(0, 7);
+        });
+
+        var info = dateGroup.top(Infinity);
+
+        console.log( 'info' );
+        console.log( info );
+
+
+
+        var byYearMonth = {};
+
+        activityDataList.forEach( (activity, i_a) => {
+
+            var yearMonthStr = activity.date.substring( 0, 7 );
+            if ( !byYearMonth[ yearMonthStr ] ) byYearMonth[ yearMonthStr ] = { 'n_reg': 0, 'n_iss': 0, 'n_rdm': 0 };
+
+            var yearMonthObj = byYearMonth[ yearMonthStr ];
+
+            yearMonthObj.n_reg += activity.n_reg;
+            yearMonthObj.n_iss += activity.n_iss;
+            yearMonthObj.n_rdm += activity.n_rdm;
+        });
+
+
+        var byYearMonthArr = [];
+
+        Object.keys( byYearMonth ).forEach( function( yearMonthStr ) {
+
+            var oVal = byYearMonth[yearMonthStr];
+
+            byYearMonthArr.push( [ yearMonthStr, oVal.n_reg, oVal.n_iss, oVal.n_rdm ] );
+        });
+    
+
+        console.log( byYearMonthArr );
+
+
+        var table = d3.select("#table").append("table");
+        var header = table.append("thead").append("tr");
+
+        header.selectAll("th")
+                .data(["yearMonth", "n_reg", "n_iss", "n_rdm"])
+                .enter()
+                .append("th")
+                .text(function(d) { return d; });
+
+        var tablebody = table.append("tbody");
+        rows = tablebody
+                .selectAll("tr")
+                .data(byYearMonthArr)
+                .enter()
+                .append("tr");
+
+        // We built the rows using the nested array - now each row has its own array.
+        cells = rows.selectAll("td")
+            // each row has data associated; we get it and enter it for the cells.
+                .data(function(d) {
+                    console.log(d);
+                    return d;
+                })
+                .enter()
+                .append("td")
+                .text(function(d) {
+                    return d;
+                });        
+
+	};
 
     me.showStatsPage = function( dataFound )
 	{

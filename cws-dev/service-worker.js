@@ -1169,7 +1169,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b6689ab024a73d1a49fa435d3716d2e9"
+    "revision": "eb5d2808686fa43b47130ef799da13df"
   },
   {
     "url": "redeemGen.html",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "97a40cade171706e6c9beb3771694b7d"
+    "revision": "e64804ed17dd1628d3ff5840466c2dce"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "2dd9f3a6943715b99f18d083a0656919"
+    "revision": "b1b4931769c1e324efedc974300ef551"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -1269,7 +1269,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "44b914aed1e42d2a5903cfd498ffa12e"
+    "revision": "8acb66abcb9fa54edd31a37b05f0bf6a"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "6a0a7cffdbfb0ba003cc8acb6cff18af"
+    "revision": "52742114024c668f5b72056a7cc5f9c2"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1302,6 +1302,10 @@ self.__precacheManifest = [
   {
     "url": "scripts/libraries/crossfilter.min.js",
     "revision": "a977abb00e3013ebb2281603780a28f3"
+  },
+  {
+    "url": "scripts/libraries/d3.min.js",
+    "revision": "f3ba03784f98e7e7985fc96413714837"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.min.js",
@@ -1356,6 +1360,10 @@ self.__precacheManifest = [
     "revision": "12bbfc8e326e6881bb82e836b4d51106"
   },
   {
+    "url": "scripts/libraries/tabulate.js",
+    "revision": "96ca52998d4d41dee41aef29a998e581"
+  },
+  {
     "url": "scripts/services/activityDataManager.js",
     "revision": "5f233cdd70c2a4b3ded0935e1c73bab8"
   },
@@ -1389,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "25bd77da55b20d05f7262052de7c14c8"
+    "revision": "30ed9d7e1791065fbe57f51b36f4cd3a"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1485,7 +1493,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "2c44cc5fb287a9dd37ef306d4d4897e0"
+    "revision": "aa32e08e86d140e516e577e1157b29be"
   },
   {
     "url": "scripts/utils/pptManager.js",
