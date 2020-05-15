@@ -1305,7 +1305,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/d3.min.js",
-    "revision": "f3ba03784f98e7e7985fc96413714837"
+    "revision": "9ad8953dc8e48d3c94a159eb6d9f69c0"
   },
   {
     "url": "scripts/libraries/jquery-3.4.0.min.js",
@@ -1361,7 +1361,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/tabulate.js",
-    "revision": "96ca52998d4d41dee41aef29a998e581"
+    "revision": "aec853f2cc7761bff893a3f887130ef0"
   },
   {
     "url": "scripts/services/activityDataManager.js",
@@ -1437,15 +1437,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
-    "revision": "92810c3887f18602b1ca4a05920b32a3"
+    "revision": "d06b326d6fb4fb6a1956472188e2350c"
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
-    "revision": "3e6c844a8a042815861033074653e177"
+    "revision": "9faecf3f97dcdaac3ca332f9d46550a5"
   },
   {
     "url": "scripts/services/storage/storageMng.js",
-    "revision": "03483b29d0213d4291064e123adbb0b6"
+    "revision": "368a34dc852a71e111f510f0cccd5fb1"
   },
   {
     "url": "scripts/services/swManager.js",
@@ -1493,7 +1493,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/localStatistics.js",
-    "revision": "aa32e08e86d140e516e577e1157b29be"
+    "revision": "89a12a3e3490b48a4f89221a3fbf108a"
   },
   {
     "url": "scripts/utils/pptManager.js",
