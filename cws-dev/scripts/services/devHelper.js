@@ -206,9 +206,38 @@ DevHelper.sampleDataList = [{
             }
         }],
         "dc": {}
+    },
+    {
+        "activityId": "LA_TEST_PROV_20200506_091636003",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-05-06T08:17:06.877",
+            "capturedUTC": "2020-05-06T08:16:36.000",
+            "createdOnDeviceUTC": "2020-05-06T08:16:36.000",
+            "capturedLoc": "2020-05-06T17:16:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "WalkInB",
+        "processing": {
+            "created": "2020-05-06T17:16:35.000",
+            "status": "submit",
+            "history": [
+                { "status": "submit", "dateTime": "2020-05-06T17:16:35.000", "responseCode": 200, "msg": "Synced - new add" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
+        "transactions": [{
+            "transactionType": "v_rdm",
+            "dataValues": {
+                "voucherCode": "112233445589"
+            }
+        }],
+        "dc": {}
     }],
     "_id": "5e86f102f39ff8047ee4f2D6",
-    "updated": "2020-04-06T09:18:22.169"
+    "updated": "2020-05-06T09:18:22.169"
 }, {
     "clientDetails": {
         "firstName": "Jackson",
@@ -256,9 +285,39 @@ DevHelper.sampleDataList = [{
             }
         }],
         "dc": {}
+    },
+    {
+        "activityId": "LA_TEST_PROV_20200130_081706001",
+        "activityDate": {
+            "createdOnMdbUTC": "2020-01-30T08:17:06.877",
+            "capturedUTC": "2020-01-30T08:16:36.000",
+            "createdOnDeviceUTC": "2020-01-30T08:16:36.000",
+            "capturedLoc": "2020-01-30T17:16:36.000"
+        },
+        "activeUser": "qwertyuio3",
+        "location": {},
+        "program": "fpl",
+        "activityType": "WalkInB",
+        "processing": {
+            "created": "2020-01-30T17:16:35.000",
+            "status": "submit",
+            "history": [
+                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Downloaded" }
+            ],
+            "url": "/PWA.syncUp",
+            "searchValues": {}
+        },
+        "transactions": [
+        {
+            "transactionType": "v_rdm",
+            "dataValues": {
+                "voucherCode": "1010101010101"
+            }
+        }],
+        "dc": {}
     }],
     "_id": "5e86f102f39ff8047ee4f2D6",
-    "updated": "2019-12-30T08:17:06.876"
+    "updated": "2020-01-30T08:17:06.876"
 }];
 
 DevHelper.crossfilterObj = crossfilter( DevHelper.sampleDataList );
@@ -337,15 +396,20 @@ DevHelper.setScheduleMsgFlag = function() { };
 DevHelper.crossfilter = function( clientAttr )
 {    
     // How many issued?  redeemed?
-    var dimention = DevHelper.crossfilterObj.dimension( function( client ) { 
+    var dimension = DevHelper.crossfilterObj.dimension( function( client ) { 
         return client[ clientAttr ];
+    });
+
+    var lastUpdatedDim = DevHelper.crossfilterObj.dimension( function( client ) { 
+        return client.lastUpdated;  // client.clientDetails.city or age
     });
 
     //console.log( trans_issued );
 
     //DevHelper.crossfilter().groupAll().reduceCount().value();
 
-    return dimention;
+
+    return dimension;
 
     // Dimension - a target point value accumulated?  -- dataPoint in DHIS?  
     //  - Expensive to create - Allow only 8 or 16 max dimension on given time...
@@ -360,7 +424,6 @@ DevHelper.crossfilter = function( clientAttr )
 
     // Group - grouping by dimension value..
     //  var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
-
 
 
     // Test if child level can be referenced --> dimensioned..
@@ -386,6 +449,99 @@ DevHelper.cfIssued = function( transactionType )
 
         return total_issued; 
     }).value();
+};
+
+
+DevHelper.cf_Example = function()
+{
+    // Source - https://blog.rusty.io/2012/09/17/crossfilter-tutorial/
+
+    var livingThings = crossfilter([
+        // Fact data.
+        { name: 'Rusty',  type: 'human', legs: 2 },
+        { name: 'Alex',   type: 'human', legs: 2 },
+        { name: 'Lassie', type: 'dog',   legs: 4 },
+        { name: 'Spot',   type: 'dog',   legs: 4 },
+        { name: 'Polly',  type: 'bird',  legs: 2 },
+        { name: 'Fiona',  type: 'plant', legs: 0 }
+      ]);
+
+    // How many living things are in my house?
+    var n = livingThings.groupAll().reduceCount().value();
+    console.log('There are ' + n + ' living things in my house.') // 6
+
+    // How many total legs are in my house?
+    var legs = livingThings.groupAll().reduceSum(function(fact) { return fact.legs; }).value()
+    console.log('There are ' + legs + ' legs in my house.') // 14
+
+    //dimension is something you want to group or filter by. Here, the dimension is going to be the type .
+
+    // Filter for dogs.
+    var typeDimension = livingThings.dimension(function(d) { return d.type; });
+    typeDimension.filter('dog')
+
+
+    // How many living things of each type are in my house?
+    var countMeasure = typeDimension.group().reduceCount();
+    var a = countMeasure.top(4);
+    console.log('There are ' + a[0].value + ' ' + a[0].key + '(s) in my house.');
+    console.log('There are ' + a[1].value + ' ' + a[1].key + '(s) in my house.');
+    console.log('There are ' + a[2].value + ' ' + a[2].key + '(s) in my house.');
+    console.log('There are ' + a[3].value + ' ' + a[3].key + '(s) in my house.');
+
+
+    // How many legs of each type are in my house?
+    var legMeasure = typeDimension.group().reduceSum(function(fact) { return fact.legs; });
+    var a = legMeasure.top(4);
+};
+
+
+
+DevHelper.cf_Example2 = function()
+{
+    // Source - https://github.com/square/crossfilter/wiki/API-Reference
+
+    var payments = crossfilter([
+        {date: "2011-11-14T16:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+        {date: "2011-11-14T16:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
+        {date: "2011-11-14T16:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T16:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T16:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
+        {date: "2011-11-14T17:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T17:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
+        {date: "2011-11-14T17:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
+      ]);
+
+
+    // DIMENSION
+    var paymentsByTotal = payments.dimension(function(d) { return d.total; });
+
+    // FILTER
+    paymentsByTotal.filter([100, 200]); // selects payments whose total is between 100 and 200
+    paymentsByTotal.filter(120); // selects payments whose total equals 120
+    paymentsByTotal.filter(function(d) { return d % 2; }); // selects payments whose total is odd
+
+    // TOP
+    var topPayments = paymentsByTotal.top(4); // the top four payments, by total
+    topPayments[0]; // the biggest payment
+
+    // GROUP
+    var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
+    
+
+    // EXAMPLE - Group by type and get 'total' on each group.  Get top 1 total sum by type.
+    var paymentsByType = payments.dimension(function(d) { return d.type; }),
+    paymentVolumeByType = paymentsByType.group().reduceSum(function(d) { return d.total; }),
+    topTypes = paymentVolumeByType.top(1);
+    topTypes[0].key; // the top payment type (e.g., "tab")
+
+    // EXAMPLE - Return the most record counts by 'type'
+    var paymentsByType = payments.dimension(function(d) { return d.type; }),
+    paymentCountByType = paymentsByType.group(),
+    topTypes = paymentCountByType.top(1);
+    topTypes[0].key; // the top payment type (e.g., "tab")
+    topTypes[0].value; // the count of payments of that type (e.g., 8)
+
 };
 
 //DevHelper.TestRequestSend( 'https://client-dev.psi-connect.org/routeWsTest' );

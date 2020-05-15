@@ -163,6 +163,11 @@ function cwsRender()
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
+	me.resetVisibility_ViewListDiv = function()
+	{
+		$( 'div.Nav2' ).hide();
+	};
+
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
@@ -183,6 +188,9 @@ function cwsRender()
 
 	me.renderArea = function( areaId )
 	{
+		me.resetVisibility_ViewListDiv();
+
+
 		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
 			me.hideAreaRelatedParts();

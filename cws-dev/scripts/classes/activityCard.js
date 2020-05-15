@@ -167,16 +167,21 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
 
-            // Need ref to existing tag... or find?
-            me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
-
             if ( statusVal === Constants.status_queued ) me.activitySubmitSyncClick(); 
-            else if ( statusVal === Constants.submit_wMsg )        
+            else 
             {
-                activityJson.processing.statusRead = true;
-                // Need to save storage afterwards..
-                ClientDataManager.saveCurrent_ClientsStore();                
-            }
+                // Display the popup
+                me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
+
+
+                // TODO: THIS DOES NOT WORK 100% <-- NEED TO REVISIT!!!
+                if ( statusVal === Constants.submit_wMsg )        
+                {
+                    activityJson.processing.statusRead = true;
+                    // Need to save storage afterwards..
+                    ClientDataManager.saveCurrent_ClientsStore();                
+                }    
+            }            
         });        
     };
 

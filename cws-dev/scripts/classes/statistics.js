@@ -65,6 +65,9 @@ function statisticsOld( cwsRender )
 		me.emptyTable();
 		me.statisticsFormDiv.show( 'fast' );
 
+		me.testStatisticContent();
+
+		/*
 		if ( ConnManager.isOnline() )
 		{
 			me.getReport();
@@ -73,8 +76,27 @@ function statisticsOld( cwsRender )
 		{
 			me.getOfflineReport();
 		}
+		*/
 
 	}
+
+
+
+	me.testStatisticContent = function()
+	{
+		var containerDiv = $( '#statisticContentSubDiv' );
+
+		var newContentDiv = $( '<div style="margin-top: 25px;"></div>' );
+		containerDiv.append( newContentDiv );
+
+		// display total..
+
+
+		newContentDiv.append( 'jamesTest ' );
+
+
+	}
+
 
     me.hideStatsPage = function()
     {
