@@ -6,23 +6,16 @@
 //          - There will be cases where activity items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ActivityCard( activityId, cwsRenderObj, parentTag )
+function ActivityCard( activityId, cwsRenderObj, options )
 {
 	var me = this;
 
     me.activityId = activityId;
     me.cwsRenderObj = cwsRenderObj;
-    me.parentTag = parentTag;
+    me.options = ( options ) ? options : {};
+    //me.parentTag_Override = parentTag_Override;
 
     // -----------------------------------
-
-
-    //me.activityCardLiTag = activityCardLiTag;  // <-- This could also be not available..
-    //me.divListItemTag = me.activityCardLiTag.find( 'div.listItem' );
-
-    //me.divListItemTag_ActivityType; // activityType display icon (img tag)
-    //me.divListItemTag_SyncButton;   // sync icon action button (img tag)
-
     // Greg notes: 
     // Assumptions: 1) not all cards (itemData objects) are visible/loaded on screen >> initialize() can determine this
     //              2) cards layout contain (referenceable) attribute + id information as per v1.2.1 design
@@ -41,9 +34,9 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
     me.getActivityCardTrTag = function()
     {
-        if ( me.parentTag )
+        if ( me.options.parentTag_Override )
         {
-            return $( me.parentTag ).find( '.activity[itemid="' + me.activityId + '"]' );
+            return me.options.parentTag_Override.find( '.activity[itemid="' + me.activityId + '"]' );
         }
         else
         {
@@ -51,10 +44,14 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         }
     };
 
-    me.getSyncButtonTag = function()
+
+    me.getSyncButtonTag = function( activityId )
     {
-        return me.getActivityCardTrTag().find( '.activityStatusIcon' );
+        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardTrTag();
+
+        return activityCardTags.find( '.activityStatusIcon' );
     };
+
 
     // ----------------------------------------------------
 
@@ -62,10 +59,11 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     {        
         var activityCardTrTag = me.getActivityCardTrTag();
 
-        // If tag is visible (has been created), perform render
+        // If tag has been created), perform render
         if ( activityCardTrTag )
         {
             var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );
+            var clickEnable = ( me.options.disableClicks ) ? false: true;
 
             try
             {
@@ -74,23 +72,27 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
                 var activityContainerTag = activityCardTrTag.find( 'div.activityContainer' );
                 var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
                 var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
+                var activityRerenderTag = activityCardTrTag.find( 'div.activityRerender' );
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityTypeTdTag, activityJson );                
-                me.activityIconClick_displayInfo( activityTypeTdTag, activityJson );
+                me.activityTypeDisplay( activityTypeTdTag, activityJson );
+                if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeTdTag, activityJson );
 
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityContentTag
                     , activityJson, activityTrans, ConfigManager.getConfigJson() );
-                me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.activityId );
+                if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.activityId );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardTrTag, activityJson );    
+                me.setupSyncBtn( clickEnable, activityCardTrTag, activityJson );    
 
+
+                // 4. clickable rerender setup
+                me.setUpReRenderByClick( activityRerenderTag );
             }
             catch( errMsg )
             {
@@ -99,25 +101,26 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         }
     };
 
-    
+
     me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
     {
-        activityIconTag.off( 'click' ).click( function( e ) {
+        activityIconTag.off( 'click' ).click( function( e ) 
+        {
             e.stopPropagation();  // Stops calling parent tags event calls..
             console.log( activityJson );
-        });
+        });    
     };
 
     me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, activityId )
     {
-        activityContentTag.off( 'click' ).click( function( e ) {
+        activityContentTag.off( 'click' ).click( function( e ) 
+        {
             e.stopPropagation();
-
             me.showFullPreview( activityId, activityContainerTag );
         });
     };
                 
-    me.setupSyncBtn = function( activityCardTrTag, activityJson )
+    me.setupSyncBtn = function( clickEnable, activityCardTrTag, activityJson )
     {
         var divSyncIconTag = activityCardTrTag.find( '.activityStatusIcon' );
         var divSyncStatusTextTag = activityCardTrTag.find( '.activityStatusText' );
@@ -155,6 +158,10 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         {
             divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
             divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
+
+            var inProcess = ( activityJson.processing && activityJson.processing.inProcess );
+            me.setIconTagRotation( divSyncIconTag, inProcess );
+
         }
         else if ( statusVal === Constants.status_failed )
         {
@@ -163,26 +170,38 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         }
 
     
-        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
+        if ( clickEnable )
         {
-            e.stopPropagation();  // Stops calling parent tags event calls..
-
-            if ( statusVal === Constants.status_queued ) me.activitySubmitSyncClick(); 
-            else 
+            divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
             {
-                // Display the popup
-                me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
-
-
-                // TODO: THIS DOES NOT WORK 100% <-- NEED TO REVISIT!!!
-                if ( statusVal === Constants.submit_wMsg )        
+                e.stopPropagation();  // Stops calling parent tags event calls..
+    
+                if ( statusVal === Constants.status_queued ) me.activitySubmitSyncClick(); 
+                else 
                 {
-                    activityJson.processing.statusRead = true;
-                    // Need to save storage afterwards..
-                    ClientDataManager.saveCurrent_ClientsStore();                
-                }    
-            }            
-        });        
+                    // Display the popup
+                    me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
+    
+    
+                    // TODO: THIS DOES NOT WORK 100% <-- NEED TO REVISIT!!!
+                    if ( statusVal === Constants.submit_wMsg )        
+                    {
+                        activityJson.processing.statusRead = true;
+                        // Need to save storage afterwards..
+                        ClientDataManager.saveCurrent_ClientsStore();                
+                    }    
+                }            
+            });     
+        }
+    };
+
+
+    me.setUpReRenderByClick = function( activityRerenderTag )
+    {
+        activityRerenderTag.off( 'click' ).click( function( e ) {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+            me.render();
+        } );    
     };
 
     
@@ -297,7 +316,9 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     
                     SyncManagerNew.syncFinish();     
 
-                    if ( success ) me.render();
+                    // reRender all the places for this activity (popup, full detail, activityList)
+                    me.reRenderByActivityId( me.activityId );
+                    //me.render();
                 });    
             }
             catch( errMsg )
@@ -308,6 +329,16 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         }
     };
               
+
+    me.reRenderByActivityId = function( activityId )
+    {
+        // There are multiple places presenting same activityId info.
+        // We can find them all and reRender their info..
+        var activityCardTags = $( '.activity[itemid="' + activityId + '"]' );
+        var reRenderClickDivTags = activityCardTags.find( 'div.activityRerender' );   
+        
+        reRenderClickDivTags.click();
+    }
     
     // -------------------------------
     // --- Display Icon/Content related..
@@ -446,14 +477,23 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         else
         {
             var activityCardTrTag = me.getActivityCardTrTag();
+            var activityJson_Orig;
 
             try
             {
-                // run UI animations
-                if ( activityCardTrTag ) me.updateItem_UI_StartSync();
-    
-                var activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
+                // run UI animations                
+                //if ( activityCardTrTag ) me.updateItem_UI_StartSync();
+                // NOTE: TODO: Alternately, we might simply send activityId to perform in all places...
+                //me.updateItem_UI_StartSync( me.activityId );
+
+                activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
                 // Do not delete 'processing' until success..
+
+
+                // Run UI Animation..
+                activityJson_Orig.processing.inProcess = true;
+                me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), true );
+
 
                 var activityJson_Copy = Util.getJsonDeepCopy( activityJson_Orig );
                 delete activityJson_Copy.processing;
@@ -471,8 +511,11 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
                     //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
                     WsCallManager.requestPost( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
                     {
-                        if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
-                        
+                        // me.updateItem_UI_FinishSync( me.activityId );
+                        // stop UI Animation..
+                        activityJson_Orig.processing.inProcess = false;
+                        me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+
                         // Replace the downloaded activity with existing one.
                         me.syncUpResponseHandle( activityJson_Orig, success, responseJson, callBack );
                     });         
@@ -487,8 +530,11 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
             }
             catch( errMsg )
             {
-                if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
-    
+                //if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
+                //me.updateItem_UI_FinishSync( me.activityId );
+                if ( activityJson_Orig ) activityJson_Orig.processing.inProcess = false;
+                me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+
                 console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
                 callBack( false );
             }
@@ -583,7 +629,8 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
 
             // Header content set
             // sheetFull.find( 'div.card__sync_container' ).html( activityContainerTag.html() );
-            var actCard = new ActivityCard( activityId, me.cwsRenderObj, sheetFull ); //activityJson.activityId
+            var actCard = new ActivityCard( activityId, me.cwsRenderObj
+                , { 'parentTag_Override': sheetFull, 'disableClicks': true } );
             actCard.render();
 
 
@@ -649,9 +696,9 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     };
     */
 
-    me.updateItem_UI_Animation = function( runAnimation )
+    me.updateItem_UI_Animation = function( runAnimation, activityId )
     {
-        var syncButtonTag = me.getSyncButtonTag();
+        var syncButtonTag = me.getSyncButtonTag( activityId );
 
         if ( syncButtonTag )
         {
@@ -688,16 +735,16 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
     };
 
 
-    me.updateItem_UI_StartSync = function()
+    me.updateItem_UI_StartSync = function( activityId )
     {        
         // start spinning "busy/working" icon
-        me.updateItem_UI_Animation( true ); 
+        me.updateItem_UI_Animation( true, activityId ); 
     };
 
-    me.updateItem_UI_FinishSync = function()
+    me.updateItem_UI_FinishSync = function( activityId )
     {
         // stop spinning "busy" icon
-        me.updateItem_UI_Animation( false );
+        me.updateItem_UI_Animation( false, activityId );
 
         // update card status + activityType 
         //me.updateItem_UI_Icons( me.activityJson, me.cwsRenderObj );
@@ -706,6 +753,21 @@ function ActivityCard( activityId, cwsRenderObj, parentTag )
         //  - Need to get more UI changes from syncManager.endSync()?
         //me.updateUI( me.divListItemTag, me.activityJson );
     };
+
+    
+    me.setIconTagRotation = function( divSyncIconTag, inProcess )
+    {
+        if ( inProcess )
+        {
+            divSyncIconTag.rotate({ count:999, forceJS: true, startDeg: 0 });
+        }
+        else
+        {
+            divSyncIconTag.stop();
+        }
+    };
+
+
     // --------------------------
 
     // =======================================================

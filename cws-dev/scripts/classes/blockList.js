@@ -114,6 +114,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                         <div class="activityStatusIcon list_three_item_cta2"></div>
                     </div>
 
+                    <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+
                 </div>
             </div>
         </td>
@@ -373,7 +375,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.getCurrentPositionRange = function( activityListSize, pagingData )
     {
         var currPosJson = {};
-        console.log( pagingData);
         currPosJson.startPosIdx = pagingData.currPosition;
         
         // If paging is disabled, put 'nextPageEnd' to the full activityListSize.
