@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "e64804ed17dd1628d3ff5840466c2dce"
+    "revision": "348c2c0a2dbc356c64983bfb1463ebb7"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "7aba37b81bd95d630eb2f6eb0e242525"
+    "revision": "3b245dd29a6253525cafd79afea5ffe6"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "52742114024c668f5b72056a7cc5f9c2"
+    "revision": "5d49c7e2234ac0843e08697c4696d517"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/sessionManager.js",
-    "revision": "6940b95c336e26aa86b7c266badcfdbb"
+    "revision": "7e4ad832bfabd4b16cb5ee4b3b5c25ae"
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
