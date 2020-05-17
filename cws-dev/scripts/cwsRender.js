@@ -708,23 +708,22 @@ function cwsRender()
 
 	me.handleLastSession = function( nextFunc )
 	{
-		// Check 'Local Data'.  If 'stayLoggedIn' were previously set to true, load saved info.
-		DataManager.getSessionData( function(lastSession) {
+		// TODO: Use Session Manager?
+		// TODO: MOVE THIS TO login page..
+		
+		var lastSession = SessionManager.getStorageLastSessionData();
 
-			if ( lastSession )
-			{
-				$( 'input.loginUserName' ).val( lastSession.user );	
-				$( 'input.loginUserName' ).attr( 'readonly',true );
-				$( '#loginField' ).hide();
-				$('<h4>' + lastSession.user + '<h4>').insertBefore( $( '#loginField' ) );
-			}
-		});
-
-		if ( nextFunc )
+		if ( lastSession )
 		{
-			nextFunc();
+			$( 'input.loginUserName' ).val( lastSession.user );	
+			$( 'input.loginUserName' ).attr( 'readonly',true );
+			$( '#loginField' ).hide();
+			$('<h4>' + lastSession.user + '<h4>').insertBefore( $( '#loginField' ) );
 		}
-	}
+
+		if ( nextFunc ) nextFunc();
+	};
+
 
 	me.showLoginForm = function()
 	{
@@ -840,6 +839,7 @@ function cwsRender()
 	}
 
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
+	// USED?  Put in back file?
 	me.trackUserLocation = function( clicked_area )
 	{
 		DataManager.getSessionData( function( lastSession ){

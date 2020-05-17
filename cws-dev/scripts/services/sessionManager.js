@@ -10,8 +10,18 @@
 //			3. Save session data to local storage - 'saveUserSessionToStorage'
 //			4. Update some of session data to local storage - 'updateUserSessionToStorage'
 //
+//		- NOTE:
+//			'LA_TEST_IPC' - in local storage, user name key stores last session data
+//			'session' - in local storage, 'session' key stores user name..
+//				--> This should be renamed..  Not 'session', but more of 
+//				--> 'log'?  'info'?  'storedData'?
+//					+ move all other data info this..
+//					<-- Create a class to manage the 'storedData'
+//
 // -------------------------------------------------
 function SessionManager() {}
+
+SessionManager.LSKey_storedData = "session";
 
 SessionManager.sessionData = {
 	login_UserName: '',
@@ -72,7 +82,8 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 			language: defaultLang 
 		};
 
-		DataManager.saveData( userName, newSaveObj );
+		//DataManager.saveData( userName, newSaveObj );
+		LocalStgMng.saveJsonData( userName, newSaveObj );
 	});
 };
 
@@ -87,6 +98,12 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 		loginData.mySession.lastUpdated = dtmNow;
 		loginData.mySession.stayLoggedIn = false;
 
-		DataManager.saveData( userName, loginData );			
+		LocalStgMng.saveJsonData( userName, loginData );
 	}
+};
+
+
+SessionManager.getStorageLastSessionData = function()
+{	
+	return LocalStgMng.getJsonData( SessionManager.LSKey_storedData );
 };

@@ -476,7 +476,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         else
         {
-            var activityCardTrTag = me.getActivityCardTrTag();
+            //var activityCardTrTag = me.getActivityCardTrTag();
             var activityJson_Orig;
 
             try
