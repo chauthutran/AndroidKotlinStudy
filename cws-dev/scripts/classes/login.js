@@ -83,84 +83,86 @@ function Login( cwsRenderObj )
 	{
 		$( '.advOptBtn' ).click( function() {
 
-			$('.scrim').show();
-			$('.scrim').css( 'opacity', '0.4' );
-			$('.scrim').css( 'z-Index', '109' );
+			// STEP 0. create Html Jquery Tag from proper Template
+			var bottomSheetTag = $(Templates.template_bottomSheet);
+						
 
+			bottomSheetTag.addClass('sheet_bottom-btn3')
+			bottomSheetTag.find('div.sbtt-btn__header_title').text('Advance options')
 
-			// create and reference templatesManager here:
-			$( 'body' ).append (
-			`
-			<div id="advOpt" class="login_buttons" style="background-color: white">
-			<label>Advance options</label>
-			<div class="login_buttons__container">
-			  <div class="button h-emphasis button-full_width switchToStagBtn" >
-				<div class="button__container ">
-				  <div class="button-label">switch to Staging</div>
-				</div>
-			  </div>
-			  <div class="button h-emphasis button-full_width demoBtn" >
-				<div class="button__container ">
-				  <div class="button-label">Demo mode</div>
-				</div>
-			  </div>
-			  <div class="button h-emphasis button-full_width changeUserBtn" >
-				<div class="button__container ">
-				  <div class="button-label">Change user</div>
-				</div>
-			  </div>
-			</div>
-		  	</div>
-			`
-		  );
+			var btn1 = $(Templates.buttonsTemplate)
+			btn1.addClass('switchToStagBtn dis');
+			btn1.find('.button-label').text('switch to Staging');
 
-		  $(".scrim").click(function () {
-			$('.scrim').css('display', 'none');
-			$('#advOpt').remove();
-			$('dialog').remove();
-		});
-		$(".switchToStagBtn").click(function () {
-			alert('switchToStagBtn');
-		});
-		$(".demoBtn").click(function () {
-			alert('demo')
-			$('dialog').remove()
-		});
-		$(".changeUserBtn").click(function () {
-			$('.scrim').append (
-				`
-				<dialog id="dialog_alert">
-				<div class="dialog__title"><label>Change user</label></div>
-				<div class="dialog__text">Changing user will delete all data for %username, including any data not syncronized. </div>
-				<div class="dialog__text warning">Are you sure that you want to delete the data for %username and allow new user login ? </div>
-				<div class="dialog__action">
-				  <div id="dialog_act2" class="button-text warning">
-					<div class="button__container">
-					  <div class="button-label">ACCEPT</div>
-					</div>
-				  </div>
-				  <div id="dialog_act1" class="button-text primary">
-					<div class="button__container">
-					  <div class="button-label">CANCEL</div>
-					</div>
-				  </div>
-				</div>
-			  </dialog>
-				`
-			);
-			$('#advOpt').remove();
-			$('#dialog_alert').css('display', 'block');
+			var btn2 = $(Templates.buttonsTemplate)
+			btn2.addClass('demoBtn dis');
+			btn2.find('.button-label').text('Demo mode');
 
-			$("#dialog_act2").click(function () {
-				localStorage.clear();
-				sessionStorage.clear();
-				DataManager.dropMyIndexedDB_CAUTION_DANGEROUS()
-				$('.scrim').css('display', 'none');
-				$('#advOpt').remove()
-				$('dialog').remove()
+			var btn3 = $(Templates.buttonsTemplate)
+			btn3.addClass('changeUserBtn');
+			btn3.find('.button-label').text('Change user');
+
+			var ctaButtons = bottomSheetTag.find('.cta_buttons');
+			ctaButtons.empty();
+			ctaButtons.append(btn1, btn2, btn3);
+
+			
+
+			$('.scrim').click(function () {
+				Templates.close()
 			});
+
+			Templates.setContent(bottomSheetTag, false);
+
+
+
+			$('.changeUserBtn').click(function () {
+				
+				var dialogTag = $(Templates.template_dialog);
+
+
+				dialogTag.find($('.dialog__title').children()).text('Change user');
+				dialogTag.find('.dialog__text').text(`Changing user will delete all data for the user, including any data not syncronized. 
+
+				Are you sure that you want to delete the data for user and allow new user login ?`);
+
+				// $("div.dialog__status-img").css("background-image", "url(../images//cloud_offline.svg)");        // sets CSS rule
+
+
+				
+
+				var btn2 = $(Templates.buttonsTemplate2)
+				btn2.addClass('button-text accept warning');
+				btn2.find('.button-label').text('Accept');
+
+				var btn3 = $(Templates.buttonsTemplate2)
+				btn3.addClass('button-text cancel primary c_500');
+				btn3.find('.button-label').text('Cancel');
+
+				var ctaButtons = dialogTag.find('.dialog__action');
+				ctaButtons.empty();
+				ctaButtons.append(btn2, btn3);
+
+				Templates.setContent(dialogTag, false);
+
+				$('.accept').click(function () {
+					DataManager.clearSessionStorage()
+					if ( cacheManager.clearCacheKeys() )
+					{
+						me.cwsRenderObj.reGetAppShell();
+						
+					}
+				})
+				$('.cancel').click(function () {
+					Templates.close();
+				})
+			});
+
+
 		});
-		});
+
+
+		
 	}
 
 	me.setUpEnterKeyLogin = function()

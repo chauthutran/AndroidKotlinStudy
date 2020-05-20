@@ -1,9 +1,136 @@
+/* ## Inconsistent layouts due to SCSS: this fixes that ## */
+
+#pageDiv {
+  /* padding: 0 !important; */
+}
+
+
+.modalSymbol{
+  background: #FFF;
+  color: #50555a;
+  font-family: "Rubik", Arial;
+  line-height: 35px;
+}
+
+.modalSymbol li{list-style: none;}
+   .containerSymbol .inputTrue{
+     display: none;
+   }
+   .container--modalSymbol{
+       --bradius: .5em;
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100vw;
+       height: 100vh;
+       background: rgba(0,0,0,.15);
+       display: none;
+       justify-content: center;
+       align-items: center;
+       z-index: 9999;
+   }
+
+   .modalSymbol .textSymbol{
+       color: #50555a;
+       font-size: 16px;
+       font-weight: 700;
+       font-family: "Rubik", Arial;
+       line-height: 35px;
+       padding: 10px 0px 20px 10px;
+       text-align: left;
+   }
+   .container--modalSymbol input{
+       flex-grow: 1;
+       border: none;
+       padding: .5em 1.25em;
+       border-radius: .5em;
+       outline: 0;
+   }
+   .container--optionsSymbol{
+       font-family: 'Rubik', Arial;
+       /*background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );*/
+       height: 300px;
+       position: relative;
+       padding: .5em;
+       overflow-y: auto;
+       margin: 10px 0 0 0;
+   }
+   .optionsSymbol{
+       /*position: absolute;
+       left: 50%;
+       transform: translateX(-50%);
+       width: 100%;
+       text-align: center;*/
+   }
+   .container--optionsSymbol::-webkit-scrollbar{
+       display: none;
+   }
+   .optionsSymbol li{
+      padding: 2px 0;
+      color: rgba(0, 0, 0, .87);
+      cursor: pointer;
+      font-size: 16px;
+      font-family: 'Rubik', Arial;
+      font-weight: 400;
+      margin-left: 0px;
+   }
+   .optionsSymbol li.focus {
+    background-color: #2C98F0;
+    color: #fff;
+    border-radius: 20px;
+    margin: 0 100px 0 100px;
+   }
+   /*.optionsSymbol li.focus::before{
+       content:'✓';
+       position: fixed;
+       left: 10%;
+       font-size: 22px;
+       font-weight: 800;
+   }*/
+   .controlsSymbol{
+       display: block;
+       justify-content: stretch;
+       overflow: hidden;
+       border-radius: 0 0 var(--bradius) var(--bradius);
+       background-color: #fff;
+       padding:10px;
+   }
+   .controlsSymbol button{
+       /*padding: 1em;
+       font-size: 16px;
+       background: #F7F7F7;
+       border: none;
+       border-top: 1px solid #ccc;
+       color: #009788;
+       width: 100%;*/
+       cursor: pointer;
+   }
+   .controlsSymbol button.set{
+       font-weight: bold;
+   }
+   .controlsSymbol button:active{
+       background: rgb(234, 234, 234);
+   }
+   .closeSearchSymbol{
+       display: none;
+       position: absolute;
+       right: 15px;
+       top: 50%;
+       transform: translateY(-50%);
+       width: 15px;
+       height: 15px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 20px;
+   }
+
 
 /* ### LOGIN SCREEN ### */
 /* 1. password numeric keypad */
 #passReal {
     position: absolute;
-    width: 0px !important;
+    width: 1px !important;
     height: 0px;
     padding: 0 !important;
     margin: 0 !important;
@@ -535,25 +662,22 @@ ul li .expandable.expanded+div {
 }
 
 /* 4. blockList GroupBy blocks */
-.blockListGroupBy {
-  margin-bottom: 4px;
-}
+
 .blockListGroupBy > td {
-  position: relative;
-  border-left-width: 6;
-  /*background-image: linear-gradient( #fff, #f5f5f5 );*/
-  padding: 8px 8px 8px 18px;
-  /*font-size:10pt;*/
-  color: #333;
-  text-decoration: none;
-  display: inline-block;
-  width: 100%;
-  height:auto;
-  border-top: #FFF .5px solid;
-  border-bottom: #CCC .5px solid;
-  box-sizing: border-box;
-  font-weight: 600;
-  background-repeat: no-repeat;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+  color: #333333;
+  background-color: #E3F2FD;
+  padding: 0 0 0 16px;
 
 }
 .blockListGroupBy > td:after,
@@ -593,7 +717,7 @@ img.rotateImg {
   -moz-box-sizing: border-box;
 } 
 #tab_previewPayload {
-  height: 100vw;
+  height: calc(100vw + 25px);
   overflow: auto !important;
 }
 
@@ -718,7 +842,7 @@ div.errorMsgArrow
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  line-height: 40px;
+  /* line-height: 40px; */
   /* display: contents; */
   letter-spacing: -0.02em;
   color: rgba(51, 51, 51, 0.87);
@@ -997,31 +1121,31 @@ div.errorMsgArrow
 }
 .container--optionsSymbol{
     font-family: 'Rubik', Arial;
-    background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );
+    /*background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );*/
     height: 300px;
     position: relative;
     padding: .5em;
     overflow-y: auto;
-    margin: 10px 0 0 0;
+    margin: 0; /* 10px 0 0 0 */
 }
 .optionsSymbol{
     position: absolute;
-    left: 50%;
+    left: 45%;
     transform: translateX(-50%);
-    width: 100%;
+    /*width: 100%;*/
     text-align: center;
 }
 .container--optionsSymbol::-webkit-scrollbar{
     display: none;
 }
 .optionsSymbol li{
-   padding: 2px 0;
    color: rgba(0, 0, 0, .87);
    cursor: pointer;
    font-size: 16px;
    font-family: 'Rubik', Arial;
    font-weight: 400;
    margin-left: 0px;
+   padding: 0 12px;
 }
 .optionsSymbol li.focus {
  background-color: #2C98F0;
@@ -1120,3 +1244,148 @@ div.errorMsgArrow
   border-radius: 3px;
   margin: 4px 0 0 0 !important;
 }
+
+.declineButton {
+  border: none; 
+  margin: 0px 24px 12px 20px;
+}
+.acceptButton {
+  border: none; 
+  margin: 0px 4px 12px 20px;
+}
+
+
+
+
+
+/* Start: QR SCANNER Styles */
+
+#qrBlock{
+  background-color: rgb( 35, 35, 35);
+  position: fixed;
+  top:0;
+  left:0;
+  z-index: 100;
+  height: 100%;
+  width: 100%;
+}
+
+#qrVideo{
+  width:100%;
+  height:100%;
+  object-fit: cover;    
+}
+
+#qr-canvas{
+  display:none;
+}
+
+#qrMessage{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:100%;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  overflow: hidden;
+}
+
+#qrBottom {
+  position:fixed;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 80px;
+  width:100%;
+}
+
+#qrCancel {
+  text-align: center;
+  padding:12px 0 12px 0;
+}
+
+#qrCancelButton {
+  border: 0; 
+  border-radius: 30px;
+  background-color: rgba( 255, 255, 255, 0.85 );
+}
+
+#qrBusyIcon {
+  position:fixed;
+  left: 6px;
+  top: 10px;
+  width:40px;
+  height:40px;
+  /*border: 2px solid rgba(0, 0, 0, 0.1 );
+  background: rgba(0, 0, 0, 0.15);*/
+  border-radius: 20px;
+  padding:8px;
+
+  transform-style: preserve-3d;
+  transition: all 0.5s linear;
+}
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -webkit-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -ms-transform: rotateY(360deg);
+    -moz-transform: rotateY(360deg);
+    -webkit-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
+.qrInput{
+  width: 100% !important;
+  border: 1px dotted #AAA;
+  border-radius: 3px;
+  margin: 0 !important;
+}
+.qrIcon {
+  width:28px;
+  text-align: center;
+}
+/* END: QR SCANNER Styles */
+
+/* START: QR generate (barcode) */
+
+#qrTemplate {
+  display: none;
+  background-color: #fff;
+  padding:14px;
+}
+
+.imgQRInput {
+  padding: 8px 12px;
+  text-align: center;
+}
+
+/* END: QR generate (barcode) */
+

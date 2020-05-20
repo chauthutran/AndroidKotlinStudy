@@ -28,8 +28,9 @@ $active-tab :$color-p;
         width: 100%;
     }
 
-    @include rwd-min(560) {
-        width: 50%;
+    @include rwd-min(658) {
+        width: 100%;
+        max-width: 700px;
     }
 
     .tab_fs__head {
@@ -38,6 +39,7 @@ $active-tab :$color-p;
         padding: 0;
         list-style: none;
         width: $tab__head-width;
+        border-bottom: 2px solid #FFF;
         //overflow-y: scroll;
         @include box-sizing(border-box);
 
@@ -80,7 +82,7 @@ $active-tab :$color-p;
             }
 
             @include rwd-min(600) {
-                width: auto;
+                width: calc(100%/3);
                 position: relative;
                 display: block;
                 padding: 0px 20px;
@@ -96,12 +98,12 @@ $active-tab :$color-p;
             }
 
             &:hover {
-                border-bottom: 2px solid $tab-hover-bg;
+                //border-bottom: 2px solid $tab-hover-bg;
                 color: #000;
             }
 
             &.active {
-                border-bottom: 2px solid $border-color-active;
+                //border-bottom: 2px solid $border-color-active;
                 display: block;
                 opacity: 1;
             }
@@ -174,6 +176,11 @@ $active-tab :$color-p;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
         @include shadow-b(2px 2px 5px 0px $color-shadow);
+    }
+
+    @include rwd-min(658) {
+        width: 100%;
+        max-width: 700px;
     }
 
     .tab_fs__container-content {

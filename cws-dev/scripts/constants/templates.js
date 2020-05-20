@@ -3,6 +3,130 @@ function Templates() {};
 
 // -------------------------------------
 
+Templates.inputFieldStandard = `<div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+<div class="field__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+<div class="fiel__controls">
+  <div class="inputFieldParentTag field__left"></div>
+  <div class="field__right" style="display: none;"></div>
+</div>
+</div>`;
+
+Templates.inputFieldCheckbox = `<div class="checkbox">
+<div class="checkbox__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+<div class="checkbox__wrapper">
+  <div class="optsContainer checkbox-col">
+  </div>
+</div>
+</div>`;
+Templates.inputFieldCheckbox_Item = `<div class="checkbox-group horizontal">
+<input id="checkboxName1" type="checkbox">
+<label for="checkboxName1"></label>
+</div>`;
+Templates.inputFieldCheckbox_SingleItem = `  <div class="checkbox-group">
+<input id="" type="checkbox">
+<label for=""></label>
+</div>`;
+
+Templates.inputFieldToggle = `<div class="toogle-s">
+<div class="toogle-s__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+<div class="toogle-s-content">
+  <label class="toggle">
+    <input type="checkbox" class="inputFieldTag toggle_input">
+    <div class="toggle-control"></div>
+  </label>
+</div>
+</div>`;
+/*Templates.inputFieldToggle_SingleItem = `<div class="toogle-s-content">
+<label class="toggle">
+  <input type="checkbox" class="toggle_input">
+  <div class="toggle-control"></div>
+</label>
+</div>`;*/
+
+Templates.inputFieldRadio = `<div class="radiobutton">
+<div class="radiobutton__label"><label class="displayName"></label><span>*</span>
+</div>
+<div class="radiobutton__wrapper">
+  <div class="optsContainer radiobutton-col"></div>
+</div>
+</div>`;
+
+Templates.inputFieldRadio_Item = `<div class="radio-group">
+  <input name="" type="radio" id="">
+    <label for="" term="">Option 1</label>
+</div>`;
+
+
+Templates.inputFieldYear = `
+<div class="containerSymbol">
+  <input id="" type="text" class="inputTrue" name="" uid="" />
+  <input id="" type="text" class="inputShow form-type-text inputValidation" isNumber="true" >
+  <dialog class="">
+    <div class="modalSymbol">
+      <div class="dialog__title">
+        <input type="text" class="searchSymbol">
+        <span class="closeSearchSymbol">�</span>
+      </div>
+      <div class="container--optionsSymbol">
+        <ul class="optionsSymbol">
+        </ul>
+      </div>
+      <div class="dialog__action">
+        <div id="dialog_act2" class="button-text warning">
+          <div class="button__container">
+            <div class="declineButton button-label">Action 2</div>
+          </div>
+        </div>
+        <div id="dialog_act1" class="button-text primary">
+          <div class="button__container">
+            <div class="acceptButton button-label">Action 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</div>`;
+/*
+
+      <div class="controlsSymbol">
+        <button class="acceptButton">SELECT</button>
+        <button class="declineButton">CANCEL</button>
+      </div>
+
+*/
+
+Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" style="display: none;">
+<div class="dialog__title"><label class="title">title</label></div>
+<div class="dialog__search">
+  <div class="field_leading_icon">
+    <div class="field_leading_icon__controls">
+      <div class="field_leading_icon__l-icon"></div>
+      <div class="field_leading_icon__input">
+        <input type="text" class="searchText" autocomplete="true" mandatory="true" placeholder="Search">
+      </div>
+      <div class="field_leading_icon__right"></div>
+    </div>
+  </div>
+</div>
+<div class="dialog__text">
+  <div class="optsContainer">
+  </div>
+</div>
+<div class="dialog__action">
+  <div id="dialog_act2" class="button-text warning">
+    <div class="button__container">
+      <div class="cancel button-label">Action 2</div>
+    </div>
+  </div>
+  <div id="dialog_act1" class="button-text primary">
+    <div class="button__container">
+      <div class="runAction button-label">Action 1</div>
+    </div>
+  </div>
+</div>
+</dialog>`;
+
+
 Templates.msgAreaBottomContent = `<div class="msgArea sync_all">
         <div class="msgHeader sync_all__header">
         </div>
@@ -238,25 +362,25 @@ Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
 <div class="prompt dialog__text"></div>
 
 <div class="networkSwitchOpts">
-  <div class="networkSwitchOpt">
-    <input type="radio" name="switch_waitingTimeOpt" value="1">
-    <label term="">Try to connect in 60sec</label>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" value="1" id="waitingTimeOpt_1">
+    <label for="waitingTimeOpt_1" term="">Try to connect in 60sec</label>
   </div>
-  <div class="networkSwitchOpt">
-    <input type="radio" name="switch_waitingTimeOpt" DISABLED value="5">
-    <label term="">Try to connect in 5min</label>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" CHECKED value="30" id="waitingTimeOpt_30">
+    <label for="waitingTimeOpt_30" term="">Try to connect in 30min</label>
   </div>
-  <div class="networkSwitchOpt">
-    <input type="radio" name="switch_waitingTimeOpt" DISABLED value="60">
-    <label term="">Try to connect in 1hr</label>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60">
+    <label for="waitingTimeOpt_60" term="">Try to connect in 1hr</label>
   </div>
-  <div class="networkSwitchOpt">
-    <input type="radio" name="switch_waitingTimeOpt" DISABLED value="240">
-    <label term="">Try to connect in 4hr</label>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" value="240" id="waitingTimeOpt_240">
+    <label for="waitingTimeOpt_240" term="">Try to connect in 4hr</label>
   </div>
-  <div class="networkSwitchOpt">
-    <input type="radio" name="switch_waitingTimeOpt" CHECKED value="0">
-    <label term="">Stay offline</label>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" value="0" id="waitingTimeOpt_0">
+    <label for="waitingTimeOpt_0" term="">Stay offline</label>
   </div>
 </div>
 
@@ -395,3 +519,119 @@ Templates.ConnManagerNew_Dialog_prompt_network_Unavailable = `Oops - it looks li
 Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable = `Oops - PSI CwS DWS is not availalbe. You can continue  working offline - only the online search will be disabled. The app will try to reconnect in 10m.`;
 
 /* ONLINE/OFFLINE SWITCHING PROMPT << END */
+
+
+
+
+
+/* lOGIN/CHANGE USER >> START */
+
+
+Templates.buttonsTemplate  = `<div class="button primary c_500">
+                                  <div class="button__container">
+                                  <div class="button-label">Action 1</div>
+                                </div>
+                              </div>
+                              `;
+
+
+Templates.template_bottomSheet = `
+      <div class="" style="display: block;">
+        <div class="sbtt-btn__header">
+          <div class="sbtt-btn__header_title">Containing four buttons</div>
+        </div>
+        <div class="cta_buttons">
+          <div class="button primary c_500">
+            <div class="button__container">
+              <div class="button-label">Action 1</div>
+            </div>
+          </div>
+          <div class="button primary c_500">
+            <div class="button__container">
+              <div class="button-label">Action 2</div>
+            </div>
+          </div>
+          <div class="button primary c_500">
+            <div class="button__container">
+              <div class="button-label">Action 3</div>
+            </div>
+          </div>
+          <div class="button primary c_500">
+            <div class="button__container">
+              <div class="button-label">Action 4</div>
+            </div>
+          </div>
+        </div>
+      </div> `;  
+
+
+
+
+Templates.targetTag = $( 'div.sheet_bottom' );
+
+Templates.setContent = function( htmlStructure, ignoreScrim )
+{
+    Templates.targetTag.empty();
+
+    Templates.targetTag.html(htmlStructure);
+
+    // run some height calculations + adjust position (if required) < might not be necessary
+
+    if ( ! ignoreScrim )
+    {
+        $( '.scrim' ).show();
+        $( '.scrim').css('zIndex',100);
+        $( '.scrim').css('opacity', 0.4);
+        $('div.sheet_bottom').css('zIndex',3000);
+    }
+   
+   // showMsgManager.targetTag.slideDown("slow");
+   Templates.targetTag.fadeIn();
+
+    return Templates.targetTag;
+
+}
+
+Templates.close = function()
+{
+    $( '.scrim' ).hide();
+    Templates.targetTag.empty();
+    Templates.targetTag.hide();
+  
+}
+/* lOGIN/CHANGE USER << END */
+Templates.buttonsTemplate2  = `<div class="button-text ">
+                                <div class="button__container">
+                                  <div class="button-label">Wait</div>
+                                </div>
+                              </div>`
+
+
+Templates.template_dialog = `
+                <dialog id="dialog_confirmation" style="display: block;">
+                  <div class="dialog__title"><label>Confirmation dialog</label></div>
+                  <div class="dialog__text">Competently benchmark principle-centered synergy with tactical services. Energistically
+                    target multidisciplinary relationships through premium leadership. Monotonectally network standards compliant
+                    products whereas turnkey intellectual capital. Authoritatively target multimedia based opportunities with.</div>
+                  <div class="dialog__action">
+                    <div id="dialog_act2" class="button-text warning">
+                      <div class="button__container">
+                        <div class="button-label">Action 2</div>
+                      </div>
+                    </div>
+                    <div id="dialog_act1" class="button-text primary c_500">
+                      <div class="button__container">
+                        <div class="button-label">Action 1</div>
+                      </div>
+                    </div>
+                  </div>
+                </dialog>
+                    
+                    
+                  
+                    
+                    
+                    `;  
+
+
+

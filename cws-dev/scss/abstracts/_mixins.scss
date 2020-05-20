@@ -391,3 +391,93 @@ $retina-suffix: '@2x';
         }
     }
 }
+
+
+@mixin themable($theme-name, $fc-50, $bg-50, $fc-100, $bg-100, $fc-200, $bg-200, $fc-300, $bg-300, $fc-400, $bg-400, $fc-500, $bg-500, $fc-600, $bg-600, $fc-700, $bg-700, $fc-800, $bg-800, $fc-900, $bg-900) {
+    .#{$theme-name} {
+        .Nav1 {
+            color: $fc-900;
+            background-color: $bg-900;
+
+            svg {
+                fill: $fc-900;
+            }
+        }
+
+        .icon_field {
+            .Nav2__icon {
+                svg {
+                    fill: $fc-900;
+                }
+            }
+        }
+
+        .fab__child {
+            color: $fc-300;
+            background-color: $bg-300;
+
+            svg {
+                fill: $fc-400;
+            }
+        }
+
+        .fab {
+            color: $fc-900;
+            background-color: $bg-600;
+
+            svg {
+                fill: $fc-900;
+            }
+        }
+
+        .navigation__header {
+            background-color: $bg-200;
+        }
+
+        .primary {
+            background-color: $bg-700;
+        }
+
+        .button-outline.primary{
+            border: 1px solid $bg-700;
+            .button__container{
+                .button-label{color: $bg-700;}
+            }
+        }
+
+        .button-text.primary{
+
+            .button__container{
+                .button-label{color: $bg-700;}
+            }
+        }
+        
+        .chip{background-color: $bg-50}
+        .chip-outl{border: 1px solid $bg-100;}
+
+        .navigation__items {
+
+            ul {
+
+                li {
+                    &:hover {
+                        background-color: $bg-50;
+                    }
+                }
+            }
+        }
+
+        .tab_fs__head {
+
+            li {
+                background-color: $color_white;
+                border-bottom: 2px solid $color_white;
+
+                &.active {
+                    background-color: $color_white;
+                    border-bottom: 2px solid $bg-900;
+                }
+            }
+        }
+    }
+}

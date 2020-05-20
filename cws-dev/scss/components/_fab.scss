@@ -2,8 +2,8 @@
     position: fixed;
     display: table;
     align-items: right;
-    right: 25px; //16px
-    bottom: 25px; //72px
+    right: 16px;
+    bottom: 16px;
     width: 240;
     height: auto;
     background-color: transparent;
@@ -40,7 +40,7 @@
             text-align: right;
             display: table-cell;
             word-wrap: break-word;
-            max-width: calc(100% - 40px);
+            max-width: calc(100% - 10px);
             float: right;
             height: auto;
             margin: 5px 0;

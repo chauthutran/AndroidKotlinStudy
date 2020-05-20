@@ -256,9 +256,9 @@ DataManager.migrateIndexedDBtoLocalStorage = function( callBack )
 
 }
 
-DataManager.dropMyIndexedDB_CAUTION_DANGEROUS = function( callBack )
+DataManager.dropMyIndexedDB_CAUTION_DANGEROUS = function( callBack, objName )
 {
-	var req = indexedDB.deleteDatabase( 'cwsdb' );
+	var req = indexedDB.deleteDatabase( ( objName ? objName : 'cwsdb' ) );
 
 	req.onsuccess = function () {
 		var msg = "SUCCESS: indexedDB removed";

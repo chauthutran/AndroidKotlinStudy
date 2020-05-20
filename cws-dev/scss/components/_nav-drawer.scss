@@ -20,7 +20,7 @@
         height: 100px;
         margin-bottom: 10px;
         padding: 16px;
-        background-color: rgba($color-pl, 0.1);
+        //background-color: rgba($color-pl, 0.1);
         @include box-sizing(border-box);
 
         .navigation__logo {
@@ -36,7 +36,7 @@
             font-family: $typ-default;
             font-style: normal;
             font-weight: 300;
-            color: $color-p;
+            //color: $color-p;
             @include font-size(24px);
             @include box-sizing(border-box);
         }
