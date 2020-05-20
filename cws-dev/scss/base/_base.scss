@@ -57,7 +57,7 @@ hr {
   bottom: 0;
   left: 0;
   background-color: rgba($color-typ-sl, 35%);
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 .sheet_bottom-scrim {
@@ -67,7 +67,8 @@ hr {
   width: 100vw;
   bottom: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.35); 
+  background-color: rgba($color-typ-sl, 35%);
+  opacity: 0.35;
 }
 
 input,

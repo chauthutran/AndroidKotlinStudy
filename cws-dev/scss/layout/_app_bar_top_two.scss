@@ -1,6 +1,6 @@
 .Nav2 {
     @include position(sticky);
-    top: 56px;
+    top: 56;
     display: -webkit-box;
     display: flex;
     vertical-align: middle;
@@ -11,7 +11,7 @@
     padding: 3.5px 0 3.5px 16px;
     @include box-sizing(border-box);
     @include shadow-b(0px 2px 5px 0px $color-shadow);
-    z-index: 1499;
+    z-index: 1500;
 
     .Nav2__icon {
         display: inline-block;

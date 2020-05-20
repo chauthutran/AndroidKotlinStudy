@@ -1167,6 +1167,28 @@ Util.formatDateTimeStr = function( dateStr, dateType )
 	return $.format.date( dateStr, dateType );
 };
 
+Util.timeCalculation = function( dtmNewer, dtmOlder )
+{
+	var reSult = { 'hh': 0, 'mm': 0, 'ss': 0 };
+
+	var sec_num = ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / 1000;
+
+    var hours   = Math.floor(sec_num / 3600); // round (down)
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60); // round (down)
+    var seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60) ); // round (up)
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+	if (seconds < 10) {seconds = "0"+seconds;}
+
+	reSult.hh = hours;
+	reSult.mm = minutes;
+	reSult.ss = seconds;
+
+    return reSult;
+
+}
+
 Util.dateUTCToLocal = function( dateStr )
 {
 	var localDateObj;

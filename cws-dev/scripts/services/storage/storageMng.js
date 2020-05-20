@@ -54,22 +54,15 @@ StorageMng.setItem = async function( storageTypeStr, key, value, callBack )
     //return StorageMng.setItem( key, value, callBack );
     return localforage.setItem( key, value, callBack );  
   });
-};
+}
 
 // -- DELETE a item
 StorageMng.removeItem = async function( storageTypeStr, key, callBack )
 {
-  return localforage.setDriver( StorageMng.getStorageTypeDriver( storageTypeStr ) ).then( () => { 
+  return localforage.setDriver( storageTypeStr ).then( () => { 
     return localforage.removeItem( key, callBack );
   });
-};
-
-StorageMng.clear = async function( storageTypeStr, callBack )
-{
-  return localforage.setDriver( StorageMng.getStorageTypeDriver( storageTypeStr ) ).then( () => { 
-    return localforage.clear( callBack );
-  });
-};
+}
 
 // ===================================
 // == OTHER INFO/CASES.. ==================

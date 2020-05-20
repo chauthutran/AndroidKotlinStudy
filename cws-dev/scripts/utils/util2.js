@@ -249,8 +249,8 @@ Util2.populate_year = function ( el, data, labelText ) {
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
 		modal = el.getElementsByClassName('modalSymbol')[0],
 		container = el.getElementsByClassName('containerSymbol')[0],
-		set = el.querySelector('button.acceptButton'),
-		cancel = el.querySelector('button.declineButton'),
+		set = el.querySelector('.acceptButton'),
+		cancel = el.querySelector('.declineButton'),
 		inputTrue = el.querySelector('.inputTrue'),
 		inputShow = el.querySelector('.inputShow'),
 		inputSearch = el.getElementsByClassName('searchSymbol')[0],
@@ -382,7 +382,7 @@ Util2.populate_year = function ( el, data, labelText ) {
 		lis.forEach(li => li.style.setProperty('display', 'block'))
 	})
 
-	inputSearch.parentElement.innerHTML = labelText; //'Date of birth'; // MISSING TRANSLATION
+	inputSearch.parentElement.innerHTML = '<label>' + labelText + '</label>'; 
 
 	hidrateUl( data);
 

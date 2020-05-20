@@ -1,5 +1,24 @@
 @import 'themes/_theme_default.scss',
-'themes/_colors.scss';
+'themes/_colors.scss',
+'themes/_red.scss',
+'themes/_pink.scss',
+'themes/_purple.scss',
+'themes/_deep_purple.scss',
+'themes/_indigo.scss',
+'themes/_blue.scss',
+'themes/_light_blue.scss',
+'themes/_cyan.scss',
+'themes/_teal.scss',
+'themes/_green.scss',
+'themes/_light_green.scss',
+'themes/_lime.scss',
+'themes/_yellow.scss',
+'themes/_amber.scss',
+'themes/_orange.scss',
+'themes/_deep_orange.scss',
+'themes/_brown.scss',
+'themes/_gray.scss',
+'themes/_blue_gray.scss';
 
 @import 'abstracts/_setting.scss',
 'abstracts/_mixins.scss';
@@ -22,6 +41,7 @@
 'components/_selector.scss',
 'components/_tabs.scss',
 'components/_sheets_bottom.scss',
+'components/_sheets_full.scss',
 'components/_card.scss',
 'components/_fab.scss';
 /*
@@ -71,8 +91,104 @@
 */
 
 @include button(map-keys($button-colors)...);
+@include themable(theme-green, $green-fc-50, $green-bg-50, $green-fc-100, $green-bg-100, $green-fc-200, $green-bg-200, $green-fc-300, $green-bg-300, $green-fc-400, $green-bg-400, $green-fc-500, $green-bg-500, $green-fc-600, $green-bg-600, $green-fc-700, $green-bg-700, $green-fc-800, $green-bg-800, $green-fc-900, $green-bg-900);
+@include themable(theme-red, $red-fc-50, $red-bg-50, $red-fc-100, $red-bg-100, $red-fc-200, $red-bg-200, $red-fc-300, $red-bg-300, $red-fc-400, $red-bg-400, $red-fc-500, $red-bg-500, $red-fc-600, $red-bg-600, $red-fc-700, $red-bg-700, $red-fc-800, $red-bg-800, $red-fc-900, $red-bg-900);
+@include themable(theme-pink, $pink-fc-50, $pink-bg-50, $pink-fc-100, $pink-bg-100, $pink-fc-200, $pink-bg-200, $pink-fc-300, $pink-bg-300, $pink-fc-400, $pink-bg-400, $pink-fc-500, $pink-bg-500, $pink-fc-600, $pink-bg-600, $pink-fc-700, $pink-bg-700, $pink-fc-800, $pink-bg-800, $pink-fc-900, $pink-bg-900);
+@include themable(theme-purple, $purple-fc-50, $purple-bg-50, $purple-fc-100, $purple-bg-100, $purple-fc-200, $purple-bg-200, $purple-fc-300, $purple-bg-300, $purple-fc-400, $purple-bg-400, $purple-fc-500, $purple-bg-500, $purple-fc-600, $purple-bg-600, $purple-fc-700, $purple-bg-700, $purple-fc-800, $purple-bg-800, $purple-fc-900, $purple-bg-900);
+@include themable(theme-deep_purple, $deep_purple-fc-50, $deep_purple-bg-50, $deep_purple-fc-100, $deep_purple-bg-100, $deep_purple-fc-200, $deep_purple-bg-200, $deep_purple-fc-300, $deep_purple-bg-300, $deep_purple-fc-400, $deep_purple-bg-400, $deep_purple-fc-500, $deep_purple-bg-500, $deep_purple-fc-600, $deep_purple-bg-600, $deep_purple-fc-700, $deep_purple-bg-700, $deep_purple-fc-800, $deep_purple-bg-800, $deep_purple-fc-900, $deep_purple-bg-900);
+@include themable(theme-indigo, $indigo-fc-50, $indigo-bg-50, $indigo-fc-100, $indigo-bg-100, $indigo-fc-200, $indigo-bg-200, $indigo-fc-300, $indigo-bg-300, $indigo-fc-400, $indigo-bg-400, $indigo-fc-500, $indigo-bg-500, $indigo-fc-600, $indigo-bg-600, $indigo-fc-700, $indigo-bg-700, $indigo-fc-800, $indigo-bg-800, $indigo-fc-900, $indigo-bg-900);
+@include themable(theme-blue, $blue-fc-50, $blue-bg-50, $blue-fc-100, $blue-bg-100, $blue-fc-200, $blue-bg-200, $blue-fc-300, $blue-bg-300, $blue-fc-400, $blue-bg-400, $blue-fc-500, $blue-bg-500, $blue-fc-600, $blue-bg-600, $blue-fc-700, $blue-bg-700, $blue-fc-800, $blue-bg-800, $blue-fc-900, $blue-bg-900);
+@include themable(theme-light_blue, $light_blue-fc-50, $light_blue-bg-50, $light_blue-fc-100, $light_blue-bg-100, $light_blue-fc-200, $light_blue-bg-200, $light_blue-fc-300, $light_blue-bg-300, $light_blue-fc-400, $light_blue-bg-400, $light_blue-fc-500, $light_blue-bg-500, $light_blue-fc-600, $light_blue-bg-600, $light_blue-fc-700, $light_blue-bg-700, $light_blue-fc-800, $light_blue-bg-800, $light_blue-fc-900, $light_blue-bg-900);
+@include themable(theme-cyan, $cyan-fc-50, $cyan-bg-50, $cyan-fc-100, $cyan-bg-100, $cyan-fc-200, $cyan-bg-200, $cyan-fc-300, $cyan-bg-300, $cyan-fc-400, $cyan-bg-400, $cyan-fc-500, $cyan-bg-500, $cyan-fc-600, $cyan-bg-600, $cyan-fc-700, $cyan-bg-700, $cyan-fc-800, $cyan-bg-800, $cyan-fc-900, $cyan-bg-900);
+@include themable(theme-teal, $teal-fc-50, $teal-bg-50, $teal-fc-100, $teal-bg-100, $teal-fc-200, $teal-bg-200, $teal-fc-300, $teal-bg-300, $teal-fc-400, $teal-bg-400, $teal-fc-500, $teal-bg-500, $teal-fc-600, $teal-bg-600, $teal-fc-700, $teal-bg-700, $teal-fc-800, $teal-bg-800, $teal-fc-900, $teal-bg-900);
+@include themable(theme-light_green, $light_green-fc-50, $light_green-bg-50, $light_green-fc-100, $light_green-bg-100, $light_green-fc-200, $light_green-bg-200, $light_green-fc-300, $light_green-bg-300, $light_green-fc-400, $light_green-bg-400, $light_green-fc-500, $light_green-bg-500, $light_green-fc-600, $light_green-bg-600, $light_green-fc-700, $light_green-bg-700, $light_green-fc-800, $light_green-bg-800, $light_green-fc-900, $light_green-bg-900);
+@include themable(theme-lime, $lime-fc-50, $lime-bg-50, $lime-fc-100, $lime-bg-100, $lime-fc-200, $lime-bg-200, $lime-fc-300, $lime-bg-300, $lime-fc-400, $lime-bg-400, $lime-fc-500, $lime-bg-500, $lime-fc-600, $lime-bg-600, $lime-fc-700, $lime-bg-700, $lime-fc-800, $lime-bg-800, $lime-fc-900, $lime-bg-900);
+@include themable(theme-yellow, $yellow-fc-50, $yellow-bg-50, $yellow-fc-100, $yellow-bg-100, $yellow-fc-200, $yellow-bg-200, $yellow-fc-300, $yellow-bg-300, $yellow-fc-400, $yellow-bg-400, $yellow-fc-500, $yellow-bg-500, $yellow-fc-600, $yellow-bg-600, $yellow-fc-700, $yellow-bg-700, $yellow-fc-800, $yellow-bg-800, $yellow-fc-900, $yellow-bg-900);
+@include themable(theme-amber, $amber-fc-50, $amber-bg-50, $amber-fc-100, $amber-bg-100, $amber-fc-200, $amber-bg-200, $amber-fc-300, $amber-bg-300, $amber-fc-400, $amber-bg-400, $amber-fc-500, $amber-bg-500, $amber-fc-600, $amber-bg-600, $amber-fc-700, $amber-bg-700, $amber-fc-800, $amber-bg-800, $amber-fc-900, $amber-bg-900);
+@include themable(theme-orange, $orange-fc-50, $orange-bg-50, $orange-fc-100, $orange-bg-100, $orange-fc-200, $orange-bg-200, $orange-fc-300, $orange-bg-300, $orange-fc-400, $orange-bg-400, $orange-fc-500, $orange-bg-500, $orange-fc-600, $orange-bg-600, $orange-fc-700, $orange-bg-700, $orange-fc-800, $orange-bg-800, $orange-fc-900, $orange-bg-900);
+@include themable(theme-deep_orange, $deep_orange-fc-50, $deep_orange-bg-50, $deep_orange-fc-100, $deep_orange-bg-100, $deep_orange-fc-200, $deep_orange-bg-200, $deep_orange-fc-300, $deep_orange-bg-300, $deep_orange-fc-400, $deep_orange-bg-400, $deep_orange-fc-500, $deep_orange-bg-500, $deep_orange-fc-600, $deep_orange-bg-600, $deep_orange-fc-700, $deep_orange-bg-700, $deep_orange-fc-800, $deep_orange-bg-800, $deep_orange-fc-900, $deep_orange-bg-900);
+@include themable(theme-brown, $brown-fc-50, $brown-bg-50, $brown-fc-100, $brown-bg-100, $brown-fc-200, $brown-bg-200, $brown-fc-300, $brown-bg-300, $brown-fc-400, $brown-bg-400, $brown-fc-500, $brown-bg-500, $brown-fc-600, $brown-bg-600, $brown-fc-700, $brown-bg-700, $brown-fc-800, $brown-bg-800, $brown-fc-900, $brown-bg-900);
+@include themable(theme-gray, $gray-fc-50, $gray-bg-50, $gray-fc-100, $gray-bg-100, $gray-fc-200, $gray-bg-200, $gray-fc-300, $gray-bg-300, $gray-fc-400, $gray-bg-400, $gray-fc-500, $gray-bg-500, $gray-fc-600, $gray-bg-600, $gray-fc-700, $gray-bg-700, $gray-fc-800, $gray-bg-800, $gray-fc-900, $gray-bg-900);
+@include themable(theme-blue_gray, $blue_gray-fc-50, $blue_gray-bg-50, $blue_gray-fc-100, $blue_gray-bg-100, $blue_gray-fc-200, $blue_gray-bg-200, $blue_gray-fc-300, $blue_gray-bg-300, $blue_gray-fc-400, $blue_gray-bg-400, $blue_gray-fc-500, $blue_gray-bg-500, $blue_gray-fc-600, $blue_gray-bg-600, $blue_gray-fc-700, $blue_gray-bg-700, $blue_gray-fc-800, $blue_gray-bg-800, $blue_gray-fc-900, $blue_gray-bg-900);
 
-.color_status_pending{color: $color_sync_pending;}
-.color_status_pending_msg{color: $color_sync_pending_msg;}
-.color_status_sync{color: $color_sync;}
-.color_status_error{color: $color_error;}
+
+
+.color_status_pending {
+    color: $color_sync_pending;
+}
+
+.color_status_pending_msg {
+    color: $color_sync_pending_msg;
+}
+
+.color_status_sync {
+    color: $color_sync;
+}
+
+.color_status_error {
+    color: $color_error;
+}
+
+.wrapper_palette {
+    width: 90%;
+    min-width: 600px;
+    height: 100%;
+    margin: 0 auto;
+    @include box-sizing(border-box);
+
+    .intro_text {
+        width: 100%;
+        height: auto;
+        padding-bottom: 36px;
+        font-weight: 300;
+        @include font-size(14px);
+        @include box-sizing(border-box);
+    }
+}
+
+.palette {
+    float: left;
+    width: 10%;
+    min-width: 320px;
+    height: auto;
+    padding: 0 8px 36px 0;
+    @include box-sizing(border-box);
+
+    .palette__title {
+        float: left;
+        width: 100%;
+        height: auto;
+        padding: 8px;
+        font-weight: 500;
+        @include font-size(14px);
+        @include box-sizing(border-box);
+    }
+
+    .palette__color {
+        float: left;
+        width: 100%;
+        height: auto;
+        padding: 8px;
+        @include font-size(16px);
+        @include box-sizing(border-box);
+
+        .palette__color_class {
+            float: left;
+            width: 50%;
+            height: auto;
+            padding: 8px;
+            @include font-size(16px);
+            @include box-sizing(border-box);
+        }
+
+        .palette__color_hex {
+            float: left;
+            width: 50%;
+            height: auto;
+            padding: 8px;
+            text-align: right;
+            @include font-size(16px);
+            @include box-sizing(border-box);
+        }
+    }
+}

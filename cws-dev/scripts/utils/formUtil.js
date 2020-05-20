@@ -989,6 +989,12 @@ FormUtil.evalReservedField = function( tagTarget, val )
 			FormUtil.setQRdataURI( sourceInput, tagTarget );
 		}
 	}
+	else if ( val.indexOf( 'eval{' ) >= 0 )
+	{
+		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
+		var pattern = Util.getParameterInside( val, '{}' );
+		tagTarget.val( FormUtil.tryEval( pattern ) );
+	}
 	else
 	{
 		tagTarget.val( val );
@@ -1044,6 +1050,18 @@ FormUtil.getManifest = function()
 	}
 	);
 
+}
+
+FormUtil.tryEval = function( evalTry )
+{	
+	try {
+		return eval( evalTry )
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+		return 'error: ' + evalTry;
+	}
 }
 
 FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )

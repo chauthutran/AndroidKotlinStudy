@@ -284,19 +284,19 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
     me.getTimeWaitedText = function()
     {
         var dtmLastInitiated = new Date( me.ConnManagerObj.statusInfo.manual_Offline.initiated );
-        var seconds = ( new Date().getTime() - dtmLastInitiated.getTime() ) / 1000;
+        var objTime = Util.timeCalculation( new Date(), dtmLastInitiated );
 
-        if ( seconds > (60 * 60 * 6) )
+        if ( objTime.hh > 6 )
         {
             timeWaited =  ' > 6hrs';
         }
-        else if ( seconds > (60 * 60 ) )
+        else if ( objTime.hh > 1 )
         {
-            timeWaited =  ( Math.round( seconds/60/60 ) > 0 ? Math.round( seconds/60/60 ) + ' hours ' : '' ) + Math.round( ( ( seconds/60/60 ) - Math.round( seconds/60/60 ) ) * 60 ) + ' mins' ;
+            timeWaited =  objTime.hh + ' hours ' + objTime.mm + ' mins' ;
         }
         else
         {
-            timeWaited =  ( Math.round( seconds/60 ) > 0 ? Math.round( seconds/60 ) + ' mins ' : '' ) + Math.round( ( ( seconds/60 ) - Math.round( seconds/60 ) ) * 60 ) + ' secs' ;
+            timeWaited =  objTime.mm + ' mins ' + objTime.ss + ' secs' ;
         }
 
         return timeWaited;

@@ -1,5 +1,6 @@
 .list {
     width: 100%;
+    height: auto;
     background-color: $color-background;
     td {
         border: 0;
@@ -23,8 +24,6 @@
         height: 88px;
         min-height: 88px;
         padding: 16px 8px;
-        letter-spacing: 1pt;
-        //background-color: $color-background;
         @include box-sizing(border-box);
 
         @include rwd-max(380) {
@@ -39,24 +38,10 @@
             width: 100%;
             @include box-sizing(border-box);
 
-            .list_three_line-suppor_visuals {
-                //support
-                float: left;
-                width: 56px;
-                height: 56px;
-                -webkit-box-align: center;
-                        align-items: center;
-                /*border-radius: 50%;
-                margin-right: 8px;
-                background-color: rgba($color-sl, 40%);*/
-                @include box-sizing(border-box);
-            }
-
             .list_three_item_content {
                 float: left;
-                width: calc(100% - 194px);
+                width: calc(100% - 164px);
                 margin-right: 8px;
-                padding-left: 8px;
                 height: auto;
                 text-align: left;
                 line-height: 18px;
@@ -64,7 +49,7 @@
                 @include box-sizing(border-box);
 
                 @include rwd-max(380) {
-                    width: calc(100% - 86px);
+                    width: calc(100% - 56px);
                     border-bottom: 1px solid #ccc;
                     margin-bottom: 12px;
                 }
@@ -83,9 +68,9 @@
                 float: left;
 
                 @include rwd-max(380) {
-                    float: none;
+                    float: right;
                     margin-right: 8px;
-                    width: calc(100% - 26px);
+                    width: calc(100% - 56px);
                 }
 
                 .list_three_item_status {
@@ -109,8 +94,7 @@
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
-                        margin-left: 20%;
-                        margin-bottom: 12px;
+                        margin-right: 32;
                     }
                 }
 
@@ -121,18 +105,27 @@
                     -webkit-box-align: center;
                             align-items: center;
                     cursor: pointer;
-		            background-repeat: no-repeat;
-                    background-position: center;
+                    background-repeat: no-repeat;
                     @include background-image('sync-pending_36');
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
                         float: right;
-                        width: 32px !important;
-                        height: 32px !important;
                     }
                 }
             }
         }
     }
+}
+.avatar_circle {
+    //support
+    float: left;
+    width: 40px;
+    height: 40px;
+    -webkit-box-align: center;
+    align-items: center;
+    border-radius: 50%;
+    margin-right: 8px;
+    background-color: rgba($color-sl, 40%);
+    @include box-sizing(border-box);
 }
