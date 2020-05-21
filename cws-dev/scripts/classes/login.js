@@ -10,9 +10,24 @@ function Login( cwsRenderObj )
 	me.pageDivTag = $( "#pageDiv" );	// Get it from cwsRender object?
 	me.menuTopDivTag; // = $( '#menuTopDiv' ); //edited by Greg (2018/12/10)
 
-	me.loggedInDivTag = $( '#loggedInDiv' );
+	me.loggedInDivTag = $("#loggedInDiv");
 	me.navTitleUserNameTag = $( '.Nav__Title' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
+	me.scrimTag = $('.scrim');
+	me.sheetBottomTag = $('.sheet_bottom');
+
+	me.loginBtnTag = $( '.loginBtn' );
+	me.passRealTag = $( '#passReal' );
+	me.loginUserNameTag = $(".loginUserName");
+	me.loginUserPinTag = $(".loginUserPin");
+	me.loginFormTag = $( 'div.login_data' );
+	me.advanceOptionLoginBtnTag = $("#advanceOptionLoginBtn");
+
+
+	
+	me.loginFormTag = $(".login_data__fields");
+	me.loginFieldTag = $("#loginField");
+
 
   	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
@@ -25,8 +40,6 @@ function Login( cwsRenderObj )
 	me.initialize = function()
 	{
 		me.setEvents_OnInit();
-
-		//me.createSubClasses();	
 	}
 
 	me.render = function()
@@ -35,8 +48,6 @@ function Login( cwsRenderObj )
 	}
 
 	// ------------------
-
-	//me.createSubClasses = function() { }
 
 	me.setEvents_OnInit = function()
 	{
@@ -58,117 +69,94 @@ function Login( cwsRenderObj )
 	}
 
 	// ---------------------------
+	
 
 	me.setLoginBtnEvents = function()
 	{
-
-		$( '.loginBtn' ).focus( function() {
-			$( '#passReal' ).hide();
+		me.scrimTag.click(function () {
+			me.unblockPage();
 		});
 
-		// New UI Button click
-		$( '.loginBtn' ).click( function() {
-
-			var parentTag = $( 'div.login_data' );
-			var loginUserNameVal = parentTag.find( 'input.loginUserName' ).val();
-			var loginUserPinVal = parentTag.find( 'input.loginUserPin' ).val();
-
-			// greg: use location.origin for server parameter? Always records server location
-			me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
+		me.loginBtnTag.focus( function() {
+			me.passRealTag.hide();
 		});
 
-	}
-		// dev/test code for Pilar (Greg: 2019/08/06)
-	me.setAdvOptBtnClick = function()
-	{
-		$( '.advOptBtn' ).click( function() {
+		me.loginBtnTag.click( function() {
 
-			// STEP 0. create Html Jquery Tag from proper Template
-			var bottomSheetTag = $(Templates.template_bottomSheet);
-						
+			var loginUserNameVal = me.loginUserNameTag.val();
+			var loginUserPinVal = me.loginUserPinTag.val();
 
-			bottomSheetTag.addClass('sheet_bottom-btn3')
-			bottomSheetTag.find('div.sbtt-btn__header_title').text('Advance options')
-
-			var btn1 = $(Templates.buttonsTemplate)
-			btn1.addClass('switchToStagBtn dis');
-			btn1.find('.button-label').text('switch to Staging');
-
-			var btn2 = $(Templates.buttonsTemplate)
-			btn2.addClass('demoBtn dis');
-			btn2.find('.button-label').text('Demo mode');
-
-			var btn3 = $(Templates.buttonsTemplate)
-			btn3.addClass('changeUserBtn');
-			btn3.find('.button-label').text('Change user');
-
-			var ctaButtons = bottomSheetTag.find('.cta_buttons');
-			ctaButtons.empty();
-			ctaButtons.append(btn1, btn2, btn3);
-
+			if( loginUserNameVal == "" || loginUserPinVal == "" )
+			{
+				MsgManager.notificationMessage ( 'Please enter username / password', 'notificationRed', undefined, '', 'right', 'top' );
+			}
+			else
+			{
+				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
+			}
 			
-
-			$('.scrim').click(function () {
-				Templates.close()
-			});
-
-			Templates.setContent(bottomSheetTag, false);
-
-
-
-			$('.changeUserBtn').click(function () {
-				
-				var dialogTag = $(Templates.template_dialog);
-
-
-				dialogTag.find($('.dialog__title').children()).text('Change user');
-				dialogTag.find('.dialog__text').text(`Changing user will delete all data for the user, including any data not syncronized. 
-
-				Are you sure that you want to delete the data for user and allow new user login ?`);
-
-				// $("div.dialog__status-img").css("background-image", "url(../images//cloud_offline.svg)");        // sets CSS rule
-
-
-				
-
-				var btn2 = $(Templates.buttonsTemplate2)
-				btn2.addClass('button-text accept warning');
-				btn2.find('.button-label').text('Accept');
-
-				var btn3 = $(Templates.buttonsTemplate2)
-				btn3.addClass('button-text cancel primary c_500');
-				btn3.find('.button-label').text('Cancel');
-
-				var ctaButtons = dialogTag.find('.dialog__action');
-				ctaButtons.empty();
-				ctaButtons.append(btn2, btn3);
-
-				Templates.setContent(dialogTag, false);
-
-				$('.accept').click(function () {
-					DataManager.clearSessionStorage()
-					if ( cacheManager.clearCacheKeys() )
-					{
-						me.cwsRenderObj.reGetAppShell();
-						
-					}
-				})
-				$('.cancel').click(function () {
-					Templates.close();
-				})
-			});
-
-
 		});
-
-
+		
 		
 	}
-
-	me.setUpEnterKeyLogin = function()
+	
+	me.blockPage = function()
 	{
-
+		me.scrimTag.show();
 	}
+
+	me.unblockPage = function()
+	{
+		me.scrimTag.hide();
+		me.sheetBottomTag.html("");
+	}
+	
+	me.setAdvOptBtnClick = function()
+	{
+		me.advanceOptionLoginBtnTag.click( function() {
+
+			me.blockPage();
+
+			// create and reference templatesManager here:
+			me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
+			me.sheetBottomTag.show();
+			me.cwsRenderObj.langTermObj.translatePage();
+
+
+			$("#switchToStagBtn").click(function () {
+				me.unblockPage();
+				alert('switchToStagBtn');
+			});
+
+			$("#demoBtn").click(function () {
+				me.unblockPage();
+				alert('demo');
+			});
+
+
+			$("#changeUserBtn").click(function () {
+				me.sheetBottomTag.html ( Templates.Change_User_Form );
+				me.cwsRenderObj.langTermObj.translatePage();
+
+				$("#accept").click(function () {
+					DataManager2.deleteAllStorageData();
+					me.unblockPage();
+
+					me.loginUserNameTag.val( "" ).removeAttr("readonly");
+					me.loginUserPinTag.val( "" );
+					me.loginFormTag.find( 'h4' ).remove();
+					me.loginFieldTag.show();
+				});
+
+				$("#cancel").click(function () {
+					me.unblockPage();
+				});
+
+			});
+
+		});
+	}
+
 	// =============================================
 
 
@@ -180,22 +168,14 @@ function Login( cwsRenderObj )
 		me.pageDivTag.hide();		
 		me.loginFormDivTag.show( 'fast' );
 
-		/* START > Added by Greg (2018/12/10) */
-		//var divIcon = $( 'div.logo_top' );
 		if ( ! me.loginFormDivTag.is( ":visible" ) )
         {
             me.loginFormDivTag.show();
 		}
 
-		//$( '#nav-toggle' ).hide();
-		$( '#loggedInDiv' ).hide();		
-
-		//me.pageTitleDivTab.show();
-		//me.pageTitleDivTab.html ( 'CONNECT' );
-		/* END > Added by Greg (2018/12/10) */
-
-
-		// TODO: NEW JAMES - 2019/01/22
+		me.loggedInDivTag.hide();
+		// me.loggedInDivTag.show();
+		
 		Menu.setInitialLogInMenu( me.cwsRenderObj );
 	};
 
@@ -205,9 +185,7 @@ function Login( cwsRenderObj )
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
 
-		$( '#loggedInDiv' ).show();		
-
-		//me.cwsRenderObj.configureMobileMenuIcon();
+		me.loginFieldTag.show();		
 	};
 
 
@@ -221,7 +199,6 @@ function Login( cwsRenderObj )
 		parentTag.find( 'div.loadingImg' ).remove();
 
 		// ONLINE vs OFFLINE HANDLING
-		//if ( ! ConnManager.networkSyncConditions() )
 		if ( ! ConnManagerNew.isAppMode_Online() )
 		{
 			// OFFLINE Login
@@ -230,10 +207,8 @@ function Login( cwsRenderObj )
 			{
 				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
-					//var loginData = DataManager.getData( userName );
 					DataManager.getData( userName, function( loginData ) {
 
-						//if ( loginData.mySession.pin ) me._pHash = loginData.mySession.pin;
 						SessionManager.updateUserSessionToStorage( loginData, userName );
 						
 						// load to session in memory
@@ -262,15 +237,11 @@ function Login( cwsRenderObj )
 					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationPurple', undefined, '', 'right', 'top' );
 				}
 			}
-			/* END > Added by Greg: 2018/11/26 */
 		}
 		else
 		{
-			// ONLINE Login
-			//var loadingTag = FormUtil.generateLoadingTag( btnTag.children() );
+			
 			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( 'div.loginBtnInner' ) );
-			//$( '#ConnectingWithSara' ).rotate({ count:6, forceJS: true, startDeg: 0, endDeg: 360, duration: 0.5 });
-
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
 				if ( success )
@@ -288,7 +259,6 @@ function Login( cwsRenderObj )
 
 					// MISSING TRANSLATION
 					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
-					//$( '#ConnectingWithSara' ).stop(); //{ endDeg: 360, duration: 0.1 });
 				}
 
 			} );
@@ -318,8 +288,6 @@ function Login( cwsRenderObj )
 
 			localStorage.setItem( Constants.storageName_session, JSON.stringify( lastSession ) );
 
-			//DataManager.saveData( Constants.storageName_session, lastSession );
-
 		});
 	};
 
@@ -329,7 +297,6 @@ function Login( cwsRenderObj )
 		var userName = JSON.parse( localStorage.getItem(Constants.storageName_session) ).user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
 
-		// greg: use location.origin for server parameter? Always records server location
 		me.processLogin( userName, userPin, location.origin, $( this ) );
 	};
 
@@ -368,10 +335,8 @@ function Login( cwsRenderObj )
 				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
 			}
 
-			//$( 'nav' ).show();
 			$( '.Nav1' ).css( 'display', 'flex' );
 
-			// added by Greg: to 'repair' the innerText of Login button (which by this point should hold spinning/progress icon)
 			me.cwsRenderObj.langTermObj.translatePage();
 
 		});
@@ -394,12 +359,12 @@ function Login( cwsRenderObj )
 
 	me.loginAfter_UI_Update = function()
 	{
-		$( 'input.loginUserName' ).attr( 'readonly',true );
+		me.loginUserNameTag.attr( 'readonly',true );
 		$( 'div.loginSwitchUserNotification' ).show();
 		$( 'div.Nav__icon' ).addClass( 'closed' );
-		$( '#loginField' ).hide();
-		$( '.login_data__fields').find( 'h4' ).remove();
-		$( '<h4>'+ $( 'input.loginUserName' ).val() +'<h4>' ).insertBefore( $('#loginField') );
+		me.loginFieldTag.hide();
+		me.loginFormTag.find( 'h4' ).remove();
+		$( '<h4>'+ me.loginUserNameTag.val() +'<h4>' ).insertBefore( me.loginFieldTag );
 
     me.networkStatusClickSetup();
 
@@ -435,7 +400,6 @@ function Login( cwsRenderObj )
 						}
 						else
 						{
-							//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
 							prompt.showManualSwitch_ServerUnavailable_Dialog();
 						}
 						

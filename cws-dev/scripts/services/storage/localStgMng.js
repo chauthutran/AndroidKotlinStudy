@@ -80,4 +80,8 @@ LocalStgMng.deleteData = function( key ) {
 };
 
 
+LocalStgMng.clear = function() {
+	localStorage.clear();
+};
+
 // =========================

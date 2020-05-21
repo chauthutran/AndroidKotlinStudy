@@ -63,6 +63,12 @@ StorageMng.removeItem = async function( storageTypeStr, key, callBack )
     return localforage.removeItem( key, callBack );
   });
 }
+StorageMng.clear = async function( storageTypeStr, callBack )
+{
+  return localforage.setDriver( StorageMng.getStorageTypeDriver( storageTypeStr ) ).then( () => { 
+    return localforage.clear( callBack );
+  });
+};
 
 // ===================================
 // == OTHER INFO/CASES.. ==================
