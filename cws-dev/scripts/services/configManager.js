@@ -67,6 +67,63 @@ ConfigManager.default_SettingPaging = {
 };
 
 
+ConfigManager.statisticConfig = { 
+    "statsPageContent": [
+        "<div id='statsContent'>",
+        "  <div class='statDiv' statId='issuedPerYearTable'>",
+        "  </div>",
+        "</div>"
+    ],
+    "statsList": {
+        "issuedPerYearTable": {
+            "periodType": "static/relational",
+            "runDataEval": [
+                " var cf = crossfilter([ ",
+                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
+                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
+                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
+                " ]); ",
+
+                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
+            
+                " INFO.toTable( INFO.divStatChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
+            ],
+            "divContent": [
+                "<div>---Table---</div>",
+                "<div>",
+                " displaying table content: <br>",
+                " <div class='statChart'></div>",
+                "</div>"
+            ]
+        }
+    },
+    "chartMethods": [
+        " INFO.toTable = function( tableTag, json ) { ",
+        "    var html = ''; ",
+
+        "    json.forEach(function(row) { ",
+        "        html += '<tr>'; ",
+        "        var dataStr = ''; ",
+        
+        "        for ( key in row ) { ",
+        "              html += '<td>' + row[key] + '</td>'; ",
+        
+        "              dataStr += row[key] + ', '; ",
+        "        }; ",
+        
+        "        console.log( dataStr ); ",
+        "        html += '</tr>'; ",
+        "    }); ",
+        
+        "    tableTag.html( '<table>' + html + '</table>' ); ",
+        " } "
+    ]
+};
+
+
+//   " toTable( INFO.divStatChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
+
+
 // ==== Methods ======================
 
 ConfigManager.setConfigJson = function ( configJson ) 
