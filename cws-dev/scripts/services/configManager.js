@@ -67,6 +67,116 @@ ConfigManager.default_SettingPaging = {
 };
 
 
+ConfigManager.statisticConfig = { 
+    "statsPageContent": [
+        "<div id='statsContent'>",
+        "  <div class='statDiv' statId='byYearTable'></div>",
+        "  <div class='statDiv' statId='periodTotal'></div>",
+        "  <div class='statDiv' statId='allTotal'></div>",
+        "</div>"
+    ],
+    "statsList": {
+        "byYearTable": {
+            "periodType": "relational",
+            "runDataEval": [
+                " var cf = crossfilter([ ",
+                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
+                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
+                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
+                " ]); ",
+
+                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
+            
+                " INFO.toTable( INFO.statChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
+            ],
+            "divContent": [
+                "<div>---Table---</div>",
+                "<div>",
+                " displaying table content: <br>",
+                " <div class='statChart'></div>",
+                "</div>"
+            ]
+        },
+        "allTotal": {
+            "periodType": "static",
+            "runDataEval": [
+                " var cf = crossfilter([ ",
+                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
+                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
+                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
+                " ]); ",
+
+                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
+            
+                " INFO.statChartTag.html( cf_year.groupAll().reduceSum( function(d) { return d.DMFT; } ).value() ); "
+            ],
+            "divContent": [
+                "<div>------</div>",
+                "<div>All Year Total: <div class='statChart'></div>",
+                "</div>"
+            ]
+
+        },
+        "periodTotal": {
+            "periodType": "relational",
+            "runDataEval": [
+                " var cf = crossfilter([ ",
+                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
+                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
+                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
+                " ]); ",
+
+                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
+            
+                " var filtered = cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ); ",
+
+                " INFO.statChartTag.html( INFO.getListSum( filtered.top( Infinity ), 'DMFT' ) ); ",
+
+                " /* filtered.groupAll().reduceSum( function(d) { return d.DMFT; } ).value() */"
+            ],
+            "divContent": [
+                "<div>------</div>",
+                "<div>Period Total: <div class='statChart'></div>",
+                "</div>"
+            ]
+
+        }
+    },
+    "chartMethods": [
+        " INFO.toTable = function( tableTag, json ) { ",
+        "    var html = ''; ",
+
+        "    json.forEach(function(row) { ",
+        "        html += '<tr>'; ",
+        "        var dataStr = ''; ",
+        
+        "        for ( key in row ) { ",
+        "              html += '<td>' + row[key] + '</td>'; ",
+        
+        "              dataStr += row[key] + ', '; ",
+        "        }; ",
+        
+        "        console.log( dataStr ); ",
+        "        html += '</tr>'; ",
+        "    }); ",
+        
+        "    tableTag.html( '<table>' + html + '</table>' ); ",
+        " }; ",
+
+        " INFO.getListSum = function( list, prop ) { ",
+        "    var total = 0; ",
+        "    list.forEach(function(item) { ",
+        "       if ( item[prop] ) total += Number( item[prop] ); ",
+        "    }); ",
+        "    return total; ",
+        " }; "
+    ]
+};
+
+
+//   " toTable( INFO.divStatChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
+
+
 // ==== Methods ======================
 
 ConfigManager.setConfigJson = function ( configJson ) 

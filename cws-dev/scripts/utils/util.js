@@ -48,7 +48,7 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 	{
 		returnVal = eval( inputVal );
 
-		if ( typeof( returnVal ) === "string" ) 
+		if ( returnVal && typeof( returnVal ) === "string" ) 
 		{
 			returnVal = returnVal.replace( /undefined/g, '' );
 		}
@@ -118,6 +118,26 @@ Util.getObjRef_fromList = function( list, prop )
 };
 
 // ----------------------------------------------------
+
+Util.strCombine = function( input )
+{	
+	var output = '';
+
+	if ( input )
+	{
+		if ( Array.isArray( input ) )
+		{
+			output = input.join( ' ' );
+		}
+		else
+		{
+			output = input;
+		}
+	}
+
+	return output;
+};
+
 
 Util.objKeyCount = function( obj )
 {

@@ -544,6 +544,47 @@ DevHelper.cf_Example2 = function()
 
 };
 
+
+
+DevHelper.cf_e3 = function()
+{
+    var cf = crossfilter([
+        { Country: "Brazil", Year: 1986, DMFT: 6.7 },
+        { Country: "Brazil", Year: 1994, DMFT: 4.9 },
+        { Country: "Canada", Year: 1974, DMFT: 4.4 }
+    ]);
+
+    var cf_country = cf.dimension(function(d) { return d.Country; });
+
+    DevHelper.totable( cf_country.top(Infinity) );
+
+    // Filter
+    DevHelper.totable( cf_country.filter( 'Brazil' ).top(Infinity) );
+};
+
+
+DevHelper.totable = function( json ) 
+{
+    var html = "";
+
+    json.forEach(function(row) {
+        html += "<tr>";
+        var dataStr = '';
+
+        for ( key in row ) {
+              html += "<td>"+row[key]+"</td>";
+
+              dataStr += row[key] + ', ';
+        };
+
+        console.log( dataStr );
+
+        html += "</tr>";
+    });
+
+    //return "<table>" + html + "</table>";
+}
+
 //DevHelper.TestRequestSend( 'https://client-dev.psi-connect.org/routeWsTest' );
 //DevHelper.TestRequestSend( 'https://api-dev.psi-connect.org/PWA.locator?1?n=50&iso2=SV&c=13.6929,-89.2182&d=5000000%27' );
 
