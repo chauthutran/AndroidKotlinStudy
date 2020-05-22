@@ -1173,7 +1173,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "c767737e17b86bc8ba91c258a4768f57"
+    "revision": "ff6839f7f94a3e61db1b403416f549fa"
   },
   {
     "url": "redeemGen.html",
@@ -1273,7 +1273,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "9a70e40f76930d0395d0fe9c3bb90142"
+    "revision": "678d84198eaec106fa24127856d28f6b"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -1381,7 +1381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "2c80b0e4b045ebb89c2265c1508eb600"
+    "revision": "13768e165863a0c93572bbf60659d857"
   },
   {
     "url": "scripts/services/connManager.js",

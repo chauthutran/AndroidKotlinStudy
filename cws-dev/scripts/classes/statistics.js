@@ -103,8 +103,6 @@ function statistics( cwsRender )
 	{
         var containerDiv = $( '#statsContentPage' ).html( '' );
 
-
-        // 'divStatChartTag': divStatChartTag
         var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod };
 
 
@@ -133,12 +131,10 @@ function statistics( cwsRender )
                 var divContentTag = $( divContentStr );
                 statDivTag.append( divContentTag );
 
-                var divStatChartTag = divContentTag.find( 'div.statChart' );
+                INFO.statChartTag = divContentTag.find( '.statChart' );
 
                 var runDataEvalStr = Util.strCombine( statObj.runDataEval );
                 
-                INFO.divStatChartTag = divStatChartTag;
-
                 Util.evalTryCatch( runDataEvalStr, INFO, "statistic page runDataEval" );
             }
             else
