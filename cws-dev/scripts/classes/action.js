@@ -359,31 +359,32 @@ function Action( cwsRenderObj, blockObj )
 				{
 					// Temporarily move before 'handlePayloadPreview' - since version 1 
 					var formsJsonGroup = {};
-					var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+					var inputsJson = ActivityUtil.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
 					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
-	
-					me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
-						//var currBlockId = blockDivTag.attr( 'blockId' );
-	
-						FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
-	
-						// If 'Activity' generate case, add to list
-						if ( clickActionJson.redeemListInsert === "true" )
-						{						
+
+					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+
+					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
+					if ( clickActionJson.redeemListInsert === "true" )
+					{						
+						ActivityUtil.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
+							//var currBlockId = blockDivTag.attr( 'blockId' );
+									
 							ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 		
 								if ( afterActionFunc ) afterActionFunc();
 							} );	
-						}
-						else
-						{
-							// Immediate Submit to Webservice case
-							me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
-						}
-					});
-	
+						});
+								
+					}
+					else
+					{
+						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
+						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+					}
+
 					// Failed case - follow through 'handlePayloadPreview'..
 					if ( afterActionFunc ) afterActionFunc( 'Failed' );
 				}
@@ -448,47 +449,6 @@ function Action( cwsRenderObj, blockObj )
 		}		
 	};
 
-
-	me.handlePayloadPreview = function( formDefinition, clickActionJson, formDivSecTag, btnTag, callBack )
-	{
-		if ( clickActionJson.redeemListInsert === "true" )
-		{
-			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
-			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
-
-			formDivSecTag.hide();
-
-			if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
-			{
-				var confirmMessage = 'Please check before Confirm'; // MISSING TRANSLATION
-
-				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
-
-					formDivSecTag.show();
-	
-					if ( confirmed )
-					{
-						if ( callBack ) callBack();
-					}
-					else
-					{
-						if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
-					}
-	
-				});
-			}
-			else
-			{
-				if ( callBack ) callBack();
-			}
-		}
-		else
-		{
-			if ( callBack ) callBack();
-		}
-	};
-
-
 	
     me.actionEvaluateExpression = function( jsonList, actionExpObj )
     {
@@ -545,27 +505,6 @@ function Action( cwsRenderObj, blockObj )
 
 	// ========================================================
 	
-	me.generateInputJsonByType = function( clickActionJson, formDivSecTag, formsJsonGroup )
-	{
-		var inputsJson;
-
-		// generate inputsJson - with value assigned...
-		if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
-		{
-			inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
-		}
-		else
-		{
-			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody, formsJsonGroup );
-		}		
-
-		// Voucher Status add to payload - if ( clickActionJson.voucherStatus ) 
-		inputsJson.voucherStatus = clickActionJson.voucherStatus;
-
-		return inputsJson;
-	};
-
-
 	me.getBlockInfo_Attr = function( blockDivTag )
 	{
 		var blockInfo = { 'activityType': '' };
