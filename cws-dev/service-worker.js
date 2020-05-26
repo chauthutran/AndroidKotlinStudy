@@ -1173,7 +1173,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ff6839f7f94a3e61db1b403416f549fa"
+    "revision": "b4547a1fc2d7954ded386f117ad367b2"
   },
   {
     "url": "redeemGen.html",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "3a4dc5ab406b7dfd653b8208dabb5e66"
+    "revision": "ebac1e00ec1e6cfe41f8c9d79da954bd"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1249,7 +1249,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "9a65c4bd139f08a8d997478cff270952"
+    "revision": "ee2d95993e80584e8a22cbd7668efb88"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "019db796183d0fc6355481d610003533"
+    "revision": "c9dbb3748b52545271630e670c466a33"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1441,15 +1441,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
-    "revision": "92810c3887f18602b1ca4a05920b32a3"
+    "revision": "d06b326d6fb4fb6a1956472188e2350c"
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
-    "revision": "3e6c844a8a042815861033074653e177"
+    "revision": "9faecf3f97dcdaac3ca332f9d46550a5"
   },
   {
     "url": "scripts/services/storage/storageMng.js",
-    "revision": "03483b29d0213d4291064e123adbb0b6"
+    "revision": "d1d31677e1a06854a0e4e02f6163ea02"
   },
   {
     "url": "scripts/services/swManager.js",
@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "69e3591606ce484398d365b3a492f2f3"
+    "revision": "ed29d1ff04a3f60dcb7c35d59841b79d"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -1485,7 +1485,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "990e233dda774bbbb9333cdac3c07032"
+    "revision": "56d86b73236ed96c538140d48550c49d"
   },
   {
     "url": "scripts/utils/inputUtil.js",

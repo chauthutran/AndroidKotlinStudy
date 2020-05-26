@@ -332,9 +332,10 @@ ActivityUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, 
 // ====== Activity Preview Realted ============
 
 
-ActivityUtil.handlePayloadPreview = function( formDefinition, clickActionJson, formDivSecTag, btnTag, callBack )
+ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnTag, callBack )
 {
-    if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
+	// formDefinition, 
+    if ( previewPrompt === "true" )
     {
         var dataPass = ActivityUtil.generateInputPreviewJson( formDivSecTag );
         //var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );	
@@ -350,18 +351,19 @@ ActivityUtil.handlePayloadPreview = function( formDefinition, clickActionJson, f
 
             if ( confirmed )
             {
-                if ( callBack ) callBack();
+                if ( callBack ) callBack( true );
             }
             else
             {
-                if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
+				if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
+				if ( callBack ) callBack( false );				
             }
 
         });
     }
     else
     {
-        if ( callBack ) callBack();
+        if ( callBack ) callBack( true );
     }
 };
 

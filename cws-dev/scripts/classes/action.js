@@ -367,15 +367,23 @@ function Action( cwsRenderObj, blockObj )
 					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
 					if ( clickActionJson.redeemListInsert === "true" )
 					{						
-						ActivityUtil.handlePayloadPreview( undefined, clickActionJson.previewPrompt, formDivSecTag, btnTag, function() { 
+						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
+						{ 
 							//var currBlockId = blockDivTag.attr( 'blockId' );
-									
-							ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+
+							if ( passed )
 							{
-								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-		
-								if ( afterActionFunc ) afterActionFunc();
-							} );	
+								ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+								{
+									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+			
+									if ( afterActionFunc ) afterActionFunc();
+								} );		
+							}
+							else
+							{
+								if ( afterActionFunc ) afterActionFunc( 'Failed' );
+							}
 						});
 								
 					}
