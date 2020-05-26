@@ -70,7 +70,7 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 		if ( getVal_visible )
 		{
 			// Check if the submit var list exists (from config).  If so, only items on that list are added.
-			if ( getValList === undefined )
+			if ( getValList )
 			{			
 				getVal = true;
 			}
@@ -83,7 +83,6 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 		if ( getVal )
 		{
 			var val = FormUtil.getTagVal( inputTag );
-			if ( val === null || val === undefined ) val = '';
 
 			if ( formsJsonGroup )
 			{
@@ -92,6 +91,29 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 				// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
 				nameVal = ActivityUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formsJsonGroup );
 			}
+
+			inputsJson[ nameVal ] = val;
+		}
+	});		
+
+	return inputsJson;
+};
+
+
+ActivityUtil.generateInputJson_ForPreview = function( formDivSecTag )
+{
+	// Input Tag values
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
+
+	inputTags.each( function()
+	{		
+		var inputTag = $( this );	
+		var nameVal = inputTag.attr( 'name' );
+
+		if ( inputTag.is( ':visible' ) )
+		{
+			var val = FormUtil.getTagVal( inputTag );
 
 			inputsJson[ nameVal ] = val;
 		}
@@ -341,6 +363,45 @@ ActivityUtil.handlePayloadPreview = function( formDefinition, clickActionJson, f
     {
         if ( callBack ) callBack();
     }
+};
+
+
+// NEW: NOT USED, NOT YET IMPLEMENTED FULLY
+ActivityUtil.handlePayloadPreview_New = function( previewPrompt, formDivSecTag, btnTag, callBack )
+{
+    if ( previewPrompt === "true" )
+    {		
+		// Use InputsJson data to populate 'Preview'
+		var inputsJson_visible = ActivityUtil.generateInputJson_ForPreview( formDivSecTag );
+		// vs ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
+
+		// Desired: Array of { name: '', type: '', values: [] } per inputField
+		var previewData_JsonArr = ActivityUtil.generatePreviewDataArray( inputsJson_visible, formConfig );
+
+		// Change this as well..
+        MsgManager.confirmPayloadPreview( dataPass, 'Please check before Confirm', function( confirmed ){
+
+            if ( callBack ) callBack( confirmed );
+        });
+    }
+    else
+    {
+        if ( callBack ) callBack( true );
+    }
+};
+
+
+// NEW: NOT USED, NOT YET IMPLEMENTED FULLY
+ActivityUtil.previewActivityJson = function( inputsJson, callBack )
+{
+	var formConfig = {};  // <-- Get this from 'processing' formConfigId & ConfigService.getConfigJson();
+
+	var previewData_JsonArr = ActivityUtil.generatePreviewDataArray( inputsJson, formConfig );
+
+	MsgManager.confirmPayloadPreview( dataPass, 'Please check before Confirm', function( confirmed ) {
+
+		if ( callBack ) callBack( confirmed );
+	});
 };
 
 

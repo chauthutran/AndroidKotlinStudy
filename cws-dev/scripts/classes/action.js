@@ -367,7 +367,7 @@ function Action( cwsRenderObj, blockObj )
 					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
 					if ( clickActionJson.redeemListInsert === "true" )
 					{						
-						ActivityUtil.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
+						ActivityUtil.handlePayloadPreview( undefined, clickActionJson.previewPrompt, formDivSecTag, btnTag, function() { 
 							//var currBlockId = blockDivTag.attr( 'blockId' );
 									
 							ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )

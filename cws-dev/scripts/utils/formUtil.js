@@ -680,7 +680,7 @@ FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 
 FormUtil.getTagVal = function( tag )
 {
-	var val;
+	var val = '';
 
 	if( tag )
 	{
@@ -1673,8 +1673,6 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 		if ( getVal )
 		{
 			var val = FormUtil.getTagVal( inputTag );
-
-			if ( val === null || val === undefined ) val = '';
 
 			inputsJson[ nameVal ] = val;
 		}
