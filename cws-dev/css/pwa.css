@@ -730,7 +730,7 @@ div.errorMsg
   font-size: 10px;
   position: relative;
   border-top: 2px solid red;
-  top: 4px;
+  top: 0; /*4px;*/
   width: fit-content;
   color: #fff;
 }
@@ -745,6 +745,7 @@ div.errorMsgText {
   width: max-content;
   top: 4px;
   border-top: 2px solid red;
+  border-radius: 3px;
 }
 div.errorMsgArrow
 {
@@ -752,8 +753,8 @@ div.errorMsgArrow
   width: 10px;
   position: absolute;
   background-color: red;
-  left: 4px;
-  top: -2px;
+  left: 3px;
+  top: 0px;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -o-transform: rotate(45deg);

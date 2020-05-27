@@ -241,7 +241,8 @@ function Login( cwsRenderObj )
 		else
 		{
 			
-			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( 'div.loginBtnInner' ) );
+			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
+
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
 				if ( success )

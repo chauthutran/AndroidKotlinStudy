@@ -304,7 +304,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		entryTag = divInputFieldTag.find( '.dataValue' );
 
 		// Setup events and visibility and rules
-		me.setEventsAndRules( formItemJson, entryTag, entryTag.parent(), formDivSecTag, formFull_IdList, passedData );
+		me.setEventsAndRules( formItemJson, entryTag, entryTag.parent(), formDivSecTag, formFull_IdList, passedData, divInputFieldTag );
 
 	}
 
@@ -645,7 +645,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.hideCase !== undefined
 			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
-			divInputTag.hide(); 
+			//divInputTag.hide(); 
+			fieldContainerTag.hide(); 
 		}
 
 		if ( passedData !== undefined 
@@ -653,7 +654,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.showCase !== undefined
 			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
 		{
-			divInputTag.show();
+			//divInputTag.show();
+			fieldContainerTag.show();
 		}
 
 	}
