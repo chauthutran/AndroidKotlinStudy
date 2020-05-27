@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "aee127c8bd3c0213dc41a0a221795f88"
+    "revision": "b71e143fa9bfd17af8a4379efc92946d"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "257f45b6a43f67bb7fb95ed26b1fd134"
+    "revision": "c4e4abd0adba153c5f7224981401eb77"
   },
   {
     "url": "css/style2.css",
@@ -322,6 +322,10 @@ self.__precacheManifest = [
   {
     "url": "images/cloud_offline@2x.png",
     "revision": "f7368f5e116d11ac29bee8005c3ec6f3"
+  },
+  {
+    "url": "images/cloud_online_nav.svg",
+    "revision": "720b5b547619d44dd904cf9066d2618c"
   },
   {
     "url": "images/cloud_online.png",
@@ -1016,6 +1020,10 @@ self.__precacheManifest = [
     "revision": "679bf57f11ff6a88d3a130486a65e2aa"
   },
   {
+    "url": "images/sync-button.svg",
+    "revision": "2c4f78e062393474d49368c331be1de2"
+  },
+  {
     "url": "images/sync-error_24.png",
     "revision": "701f775ab7616ec4f5feeb76133e0ca9"
   },
@@ -1173,7 +1181,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "b4547a1fc2d7954ded386f117ad367b2"
+    "revision": "3dae7a581718c4c9a7c40c8b2bde3100"
   },
   {
     "url": "redeemGen.html",
@@ -1193,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "348c2c0a2dbc356c64983bfb1463ebb7"
+    "revision": "d9ebba5d5ff5bdf5f8c895ed9145c852"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1213,11 +1221,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "7dd148702ff095ffe25a3dddb88ca115"
+    "revision": "16924a265cdfba114ad118051f976c89"
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "3b245dd29a6253525cafd79afea5ffe6"
+    "revision": "590330f256893d1b4af4d1273095362b"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1237,7 +1245,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIconNew.js",
-    "revision": "8c031a34bd5be7e999a4fbf3366bad6e"
+    "revision": "1b36c7fcd106032cb690d51424fb24ea"
   },
   {
     "url": "scripts/classes/inputControl.js",
@@ -1277,7 +1285,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "e2e1a2382c46d0a8ea33a052f6990dca"
+    "revision": "9654642ea53211dea3b566a56876ca57"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1293,11 +1301,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "c9dbb3748b52545271630e670c466a33"
+    "revision": "7c6e5a8c979b7a328835a7255901f744"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "5d49c7e2234ac0843e08697c4696d517"
+    "revision": "15c5049c044787dc6de4843ec43322d5"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1389,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "c35434ff8f756987a4d00010513d1873"
+    "revision": "3c21af323e0840c6ea469cd286d95cd7"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1457,11 +1465,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManager.js",
-    "revision": "ad2b47cc6bc8769fd075dc6b1bb4d6b1"
+    "revision": "37d19405e9c2012fc50e543dd3db04f5"
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "24ca5f945794e77fffb0a926b04d0b29"
+    "revision": "47b1060ed9989f1a51d86e452fd3a348"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
@@ -1489,7 +1497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "4060e3684e47bdc5e1158de2645e2d6c"
+    "revision": "6440f3d3f98e38fa83ed5259d61885af"
   },
   {
     "url": "scripts/utils/jsonBuiltTable.js",
@@ -1521,7 +1529,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util2.js",
-    "revision": "0140091ac747a8de5d669c60c8797c2a"
+    "revision": "592155445544c00ee3825ae2ae53588d"
   },
   {
     "url": "scripts/utils/utilBack.js",
@@ -1529,7 +1537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "257f45b6a43f67bb7fb95ed26b1fd134"
+    "revision": "c4e4abd0adba153c5f7224981401eb77"
   },
   {
     "url": "sounds/beep.mp3",
