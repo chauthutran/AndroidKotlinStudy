@@ -494,7 +494,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             {
                 var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.activityId ];
 
-                groupAttrVal = groupJson.id;                
+                groupAttrVal = groupJson.id;
 
                 if ( groupJson.id !== undefined )
                 {        
@@ -538,7 +538,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         groupTrTag.attr( 'group', groupJson.id );
 
         var tdGroupTag = groupTrTag.find( 'td.blockListGroupBySection' );
-        tdGroupTag.text( groupJson.name ); // attr( 'group', groupJson.id ).
+        tdGroupTag.text( groupJson.name + ' (' + groupJson.activities.length + ')' ); // attr( 'group', groupJson.id ).
 
         // Set event
         me.setTdGroupClick( tdGroupTag, listTableTbodyTag );

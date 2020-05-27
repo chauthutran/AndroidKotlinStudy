@@ -251,8 +251,8 @@ Util2.populate_year = function ( el, data, labelText ) {
 		container = el.getElementsByClassName('containerSymbol')[0],
 		set = el.querySelector('.acceptButton'),
 		cancel = el.querySelector('.declineButton'),
-		inputTrue = el.querySelector('.inputTrue'),
-		inputShow = el.querySelector('.inputShow'),
+		inputTrue = el.querySelector('.dataValue'),
+		inputShow = el.querySelector('.displayValue'),
 		inputSearch = el.getElementsByClassName('searchSymbol')[0],
 		closeSearch = el.querySelector('.closeSearchSymbol');
 
@@ -278,16 +278,9 @@ Util2.populate_year = function ( el, data, labelText ) {
 
 		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
 		inputShow.value = ul.children[ul.dataset.index].innerText;
+		console.log( $( '#' + inputTrue.id ) );
 
-		if ("createEvent" in document) {
-			var evt = document.createEvent("HTMLEvents");
-			evt.initEvent('change', false, true);
-			inputShow.dispatchEvent(evt);
-		}
-		else
-		{
-			inputShow.fireEvent("onchange");
-		}
+		FormUtil.dispatchOnChangeEvent( $( '#' + inputTrue.id ) );
 
 	}
 
@@ -554,7 +547,7 @@ Util2.getAgeValueFromPattern = function( tagTarget, pattern )
 	if ( pattern.indexOf( 'form:' ) >= 0 )
 	{
 		var targFld = pattern.split( 'form:' )[ 1 ];
-		var targTag = formTarg.find( "[name='" + targFld + "']" );
+		var targTag = formTarg.find( "#" + targFld ); //( "[name='" + targFld + "']" );
 
 		if ( targTag )
 		{
@@ -566,6 +559,7 @@ Util2.getAgeValueFromPattern = function( tagTarget, pattern )
 				var birthDate = new Date( InpVal );
 				var age = today.getFullYear() - birthDate.getFullYear();
 				var m = today.getMonth() - birthDate.getMonth();
+
 				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
 					age = age - 1;
 				}

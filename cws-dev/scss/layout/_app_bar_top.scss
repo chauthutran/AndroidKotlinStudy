@@ -21,8 +21,45 @@
     }
 
     .Nav__Title {
-        display: -webkit-box;
-        display: flex;
+        width: calc(100% - 132px);
         line-height: 56px;
+    }
+
+    .Nav__sync {
+        width: 24px;
+        height: 24px;
+        margin: 16px 8px 16px 8px;
+        @include box-sizing(border-box);
+    }
+
+    .Nav__status {
+        width: 24px;
+        height: 24px;
+        margin: 16px 8px 16px 8px;
+        @include box-sizing(border-box);
+
+        .online_nav {
+            display: block;
+
+            .online_nav-i {
+                display: block;
+            }
+
+            .online_nav-s {
+                display: block;
+            }
+        }
+
+        .offline_nav {
+            display: none;
+
+            .offline_nav-i {
+                display: none;
+            }
+
+            .offline_nav-s {
+                display: block;
+            }
+        }
     }
 }

@@ -603,23 +603,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( activityId ) 
         {
             // initialize
-            var sheetFull = $( 'div.sheet_full-fs' );
-            var screenHeight = document.body.clientHeight + 40;
-        
-            // set initial styles
-            sheetFull.css( 'z-index', 9999 );
-            sheetFull.css( 'position', 'absolute' );
-            sheetFull.css( 'left', '0' );
-            sheetFull.css( 'top', '0' );
-            sheetFull.css( 'width', '100%' );
-            sheetFull.css( 'height', screenHeight ); // - 56
-            sheetFull.css( 'background-image', 'url(../images/logo_bk.svg)' );
-            //sheetFull.css( 'background-color', '#fff' );
-            sheetFull.css( 'overflow', 'hidden' );
-        
+            var sheetFull = $( 'div.sheet_full-preview' );
+
             // populate template
             sheetFull.html( $( Templates.activityCardFullScreen ) );
-        
+
             // create tab click events
             FormUtil.setUpNewUITab( sheetFull.find( '.tab_fs' ) ); 
         
@@ -628,11 +616,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             
 
             // Header content set
-            // sheetFull.find( 'div.card__sync_container' ).html( activityContainerTag.html() );
             var actCard = new ActivityCard( activityId, me.cwsRenderObj
                 , { 'parentTag_Override': sheetFull, 'disableClicks': true } );
             actCard.render();
-
 
             // set tabs contents
             me.setFullPreviewTabContent( activityId );

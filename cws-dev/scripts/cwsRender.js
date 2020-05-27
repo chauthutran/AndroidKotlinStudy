@@ -144,6 +144,12 @@ function cwsRender()
         $( 'body' ).off( "scroll" ).on( "scroll", scrollCallBack );
 	};
 
+	// This or other classes use this to control the scrolling..
+	me.setAppTitle = function( displayText )
+	{
+		$( 'div.Nav__Title' ).html( displayText );
+	};
+	
 
 	// -------------------------
 
@@ -153,6 +159,7 @@ function cwsRender()
 		{
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
+			me.setAppTitle( $( this ).attr( 'displayName' ) );
 			me.renderArea( clicked_areaId );
 		});
 	}
@@ -229,15 +236,11 @@ function cwsRender()
 				// TODO: ACTIVITY ADDING
 				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 
-				// if menu is clicked,
-				// reload the block refresh?
+				// if menu is clicked, reload the block refresh?
 				if ( selectedArea && selectedArea.startBlockName )
 				{
 
 					if ( ! me.renderBlockTag.is( ':visible' ) ) me.renderBlockTag.show();
-
-					// added by Greg (2018/12/10)
-					//if ( !$( 'div.mainDiv' ).is( ":visible" ) )  $( 'div.mainDiv' ).show();
 
 					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
 					startBlockObj.render();  // should been done/rendered automatically?
@@ -245,8 +248,6 @@ function cwsRender()
 					// Change start area mark based on last user info..
 					me.trackUserLocation( selectedArea );				
 				}
-
-				//me.updateMenuClickStyles( areaId );
 
 			}
 
@@ -499,7 +500,7 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
-					var menuLI = $( '<li areaId="' + area.id + '" />' );
+					var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
 
 					menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
 					menuLI.append( $( '<a href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
@@ -809,11 +810,31 @@ function cwsRender()
 		me.loginObj.openForm();
 		//syncManager.evalSyncConditions();
 
+		me.hideActiveSession_UIcontent();
+
+		me.clearLoginPin();
+	}
+
+	me.clearLoginPin = function()
+	{
+		// clear password pin
+		$( 'input.loginUserPin' ).val( '' );
+		$( '#passReal' ).val( '' );
+
+		//$( '#passReal' ).trigger( { type: 'keypress', which: 46, keyCode: 46 } );
+
+		// reset password pin events
+		FormUtil.createNumberLoginPinPad();
+	}
+
+	me.hideActiveSession_UIcontent = function()
+	{
+
+		// hide UI Areas
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
 		{
 			me.aboutApp.hideAboutPage();
 		}
-		
 		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
 		{
 			me.statisticsObj.hideStatsPage();
@@ -826,7 +847,45 @@ function cwsRender()
 		{
 			me.myDetails.hidemyDetailsPage();
 		}
+		if ( $( '#pageDiv' ).is(':visible') ) 
+		{
+			$('#pageDiv').hide();
+		}
+		if ( $( 'div.sheet_full-preview' ).is(':visible') ) 
+		{
+			$('div.sheet_full-preview').empty();
+			$('#pageDiv').hide();
+		}
 
+		// hide navMenu
+		if ( $( '#navDrawerDiv' ).is(':visible') ) 
+		{
+			$( 'div.Nav__icon' ).click();
+		}
+
+		// hide control Popups
+
+		if ( $( '#dialog_searchOptions' ).is(':visible') ) 
+		{
+			$( '#dialog_searchOptions' ).remove();
+		}
+
+		if ( $( '#mddtp-picker__date' ).is(':visible') ) 
+		{
+			$( '#mddtp-picker__date' ).hide();
+		}
+
+		if ( $( '.inputFieldYear' ).is(':visible') ) 
+		{
+			$( '.inputFieldYear' ).hide();
+		}
+
+		if ( $( '.scrim' ).is(':visible') )
+		{
+			$('.scrim').hide();
+		}
+
+		// hide navBar items
 		$( '.Nav1' ).hide();
 		$( '.Nav2' ).hide();
 	}

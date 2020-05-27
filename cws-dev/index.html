@@ -81,23 +81,20 @@
 
 </head>
 
-<body class="color_blue">
+<body class="theme-blue">
 
   <noscript>
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
 
-  <div class="Nav1 c_900">
+  <div class="Nav1">
     <div class='Nav__icon'>
-
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" version="1.1" id="menu_app">
-        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" class="c_900"></path>
+        <path class="menu-icon" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
       </svg>
-
     </div>
     <div class='Nav__Title'></div>
-
-    <div class="Nav__Tools" style="position: fixed;margin-right: 3px;margin-top: 5px;right: 0;">
+    <div class="Nav__Tools" style="margin-right: 3px;margin-top: 5px;right: 0;">
       <table class="topIconsTbl" style="border-spacing: 0px;">
         <tr>
           <td>
@@ -109,14 +106,14 @@
             </div>
           </td>
           <td>
-            <div id="divAppDataSyncStatus" class="icons-status" style="display:none;">
-              <img id="imgAppDataSyncStatus" src="images/sync-pending_24.svg" alt="sync banner">
+            <div id="divAppDataSyncStatus" class="icons-status" style="width:28px;padding: 6px 2px 3px 3px;">
+              <img id="imgAppDataSyncStatus" src="images/sync-button.svg" alt="sync banner">
             </div>
           </td>
           <td>
             <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block;">
-              <img id="imgNetworkStatus" src='images/sharp-cloud_queue-24px.svg' alt="NetworkStatus"
-                style="filter: invert(100%);width: 36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;" />
+              <img id="imgNetworkStatus" src='images/cloud_online_nav.svg' alt="NetworkStatus"
+                style="width:36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;" />
             </div>
             <div class="networkStatusIcons">
               <div id="divStatusDot_network" class="networkStatusThree" title="Network Status"></div>
@@ -185,7 +182,7 @@
       </div>
       <div class="login_buttons">
         <div class="login_buttons__container">
-          <div class="button l-emphasis button-full_width" id="advanceOptionLoginBtn">
+          <div class="button l-emphasis button-full_width advOptBtn">
             <div class="button__container">
               <div class="button-label">Advance options</div>
             </div>
@@ -705,7 +702,7 @@
   <div id="networkSwitch" class="" style="display:none;"></div>
 
 
-  <div class="sheet_full-fs" style="display: none;"></div>
+  <div class="sheet_full-preview sheet_full-fs" style="display: none;"></div>
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
   <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
 

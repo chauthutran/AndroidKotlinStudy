@@ -3,32 +3,34 @@ function Templates() {};
 
 // -------------------------------------
 
-Templates.inputFieldStandard = `<div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
-<div class="field__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+Templates.inputFieldHidden = `<input type='hidden' id='' value='' name='' class='hiddenData' >`;
+
+Templates.inputFieldStandard = `<div class="inputField field" >
+<div class="field__label fieldLabel"><label class="displayName"></label></div>
 <div class="fiel__controls">
-  <div class="inputFieldParentTag field__left"></div>
+  <div class="field__left"></div>
   <div class="field__right" style="display: none;"></div>
 </div>
 </div>`;
 
 Templates.inputFieldCheckbox = `<div class="checkbox">
-<div class="checkbox__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+<div class="checkbox__label fieldLabel"><label class="displayName"></label></div>
 <div class="checkbox__wrapper">
   <div class="optsContainer checkbox-col">
   </div>
 </div>
 </div>`;
 Templates.inputFieldCheckbox_Item = `<div class="checkbox-group horizontal">
-<input id="checkboxName1" type="checkbox">
-<label for="checkboxName1"></label>
+<input id="" type="checkbox">
+<label for=""></label>
 </div>`;
-Templates.inputFieldCheckbox_SingleItem = `  <div class="checkbox-group">
+Templates.inputFieldCheckbox_SingleItem = `<div class="checkbox-group">
 <input id="" type="checkbox">
 <label for=""></label>
 </div>`;
 
 Templates.inputFieldToggle = `<div class="toogle-s">
-<div class="toogle-s__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+<div class="toogle-s__label fieldLabel"><label class="displayName"></label></div>
 <div class="toogle-s-content">
   <label class="toggle">
     <input type="checkbox" class="inputFieldTag toggle_input">
@@ -36,15 +38,15 @@ Templates.inputFieldToggle = `<div class="toogle-s">
   </label>
 </div>
 </div>`;
-/*Templates.inputFieldToggle_SingleItem = `<div class="toogle-s-content">
+Templates.inputFieldToggle_Item = `<div class="toogle-s-content">
 <label class="toggle">
   <input type="checkbox" class="toggle_input">
   <div class="toggle-control"></div>
 </label>
-</div>`;*/
+</div>`;
 
 Templates.inputFieldRadio = `<div class="radiobutton">
-<div class="radiobutton__label"><label class="displayName"></label><span>*</span>
+<div class="radiobutton__label fieldLabel"><label class="displayName"></label>
 </div>
 <div class="radiobutton__wrapper">
   <div class="optsContainer radiobutton-col"></div>
@@ -59,13 +61,13 @@ Templates.inputFieldRadio_Item = `<div class="radio-group">
 
 Templates.inputFieldYear = `
 <div class="containerSymbol">
-  <input id="" type="text" class="inputTrue" name="" uid="" />
-  <input id="" type="text" class="inputShow form-type-text inputValidation" isNumber="true" >
-  <dialog class="">
+  <input id="" type="text" class="inputTrue dataValue" name="" uid="" />
+  <input id="" type="text" class="inputShow displayValue form-type-text" isNumber="true" >
+  <dialog class="inputFieldYear">
     <div class="modalSymbol">
       <div class="dialog__title">
         <input type="text" class="searchSymbol">
-        <span class="closeSearchSymbol">ï¿½</span>
+        <span class="closeSearchSymbol">ï¿?/span>
       </div>
       <div class="container--optionsSymbol">
         <ul class="optionsSymbol">
@@ -74,12 +76,12 @@ Templates.inputFieldYear = `
       <div class="dialog__action">
         <div id="dialog_act2" class="button-text warning">
           <div class="button__container">
-            <div class="declineButton button-label">Action 2</div>
+            <div class="declineButton button-label" term="cancel">CANCEL</div>
           </div>
         </div>
         <div id="dialog_act1" class="button-text primary">
           <div class="button__container">
-            <div class="acceptButton button-label">Action 1</div>
+            <div class="acceptButton button-label" term="">SELECT</div>
           </div>
         </div>
       </div>
@@ -115,12 +117,12 @@ Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" style="displ
 <div class="dialog__action">
   <div id="dialog_act2" class="button-text warning">
     <div class="button__container">
-      <div class="cancel button-label">Action 2</div>
+      <div class="cancel button-label">CANCEL</div>
     </div>
   </div>
   <div id="dialog_act1" class="button-text primary">
     <div class="button__container">
-      <div class="runAction button-label">Action 1</div>
+      <div class="runAction button-label">SELECT</div>
     </div>
   </div>
 </div>
@@ -248,8 +250,8 @@ Templates.template_trActivityTag = `<tr class="activity">
 
 Templates.activityCardFullScreen = `
 <div class="wapper_card">
- <div class="c_900" style="vertical-align:middle;height:56px;font-size:18px;line-height:24px;display:flex;align-items:center;">
-    <img src='images/arrow_back.svg' class='btnBack' style='width:28px;height:28px;padding: 0 10px;filter: invert(100%);'>
+ <div class="sheet-title c_900" >
+    <img src='images/arrow_back.svg' class='btnBack'>
     <span>Details</span>
  </div>
  <div class="card _tab activity">
@@ -527,7 +529,7 @@ Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable = `Oops - PSI Cw
 /* lOGIN/CHANGE USER >> START */
 
 
-Templates.buttonsTemplate  = `<div class="button primary c_500">
+Templates.buttonsTemplate  = `<div class="button">
                                   <div class="button__container">
                                   <div class="button-label">Action 1</div>
                                 </div>
@@ -635,49 +637,3 @@ Templates.template_dialog = `
 
 
 
-// -------------- Advanced LOGIN ------- //
-
-Templates.Advance_Login_Buttons = `
-  <div class="sheet_bottom-btn3" style="display: block;">
-    <div class="sbtt-btn__header">
-      <div class="sbtt-btn__header_title">Advance options</div>
-    </div>
-    <div class="cta_buttons">
-      <div class="button primary c_500 dis" id="switchToStagBtn">
-        <div class="button__container">
-          <div class="button-label">switch to Staging</div>
-        </div>
-        </div>
-        <div class="button primary c_500 dis" id="demoBtn">
-        <div class="button__container">
-          <div class="button-label">Demo mode</div>
-        </div>
-      </div>
-      <div class="button primary c_500" id="changeUserBtn">
-        <div class="button__container">
-          <div class="button-label" term="change_user">Change user</div>
-        </div>
-      </div>
-    </div>
-  </div> `
-
-
-  Templates.Change_User_Form = `
-   <dialog id="dialog_confirmation" style="display: block;">
-      <div class="dialog__title"><label>Confirmation dialog</label></div>
-        <div class="dialog__text" term="change_user_msg">
-            Changing user will delete all data for the user, including any data not syncronized. 
-            Are you sure that you want to delete the data for user and allow new user login ?
-        </div>
-        <div class="dialog__action"><div class="button-text warning" id="accept">
-            <div class="button__container">
-              <div class="button-label" term="accept">Accept</div>
-            </div>
-          </div>
-          <div class="button-text primary c_500" id="cancel">
-            <div class="button__container">
-              <div class="button-label" term="Cancel">Cancel</div>
-            </div>
-          </div>
-        </div>
-    </dialog>`

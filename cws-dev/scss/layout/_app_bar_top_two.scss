@@ -1,23 +1,24 @@
 .Nav2 {
     @include position(sticky);
-    top: 56;
+    top: 56px;
     display: -webkit-box;
     display: flex;
     vertical-align: middle;
     width: 100%;
-    height: 56px;
+    min-height: 56px;
+    height: auto;
     color: $color-typ-p;
     background-color: $color_white;
-    padding: 3.5px 0 3.5px 16px;
+    padding: 8px 12px 0px 16px;
     @include box-sizing(border-box);
     @include shadow-b(0px 2px 5px 0px $color-shadow);
-    z-index: 1500;
+    z-index: 1499;
 
     .Nav2__icon {
         display: inline-block;
         width: 24px;
         height: 24px;
-        margin: 12px;
+        margin: 12px 0 12px 12px;
         cursor: pointer;
     }
 
@@ -57,4 +58,19 @@
         }
     }
 
+    .controls {
+        width: 100%;
+        height: auto;
+        text-align: right;
+        @include box-sizing(border-box);
+
+        .text_help {
+            clear: both;
+            text-align: left;
+            padding-bottom: 8px;
+            color: #222;
+            @include font-size(10px);
+            @include box-sizing(border-box);
+        }
+    }
 }
