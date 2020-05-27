@@ -74,6 +74,9 @@ function Login( cwsRenderObj )
 	me.setLoginBtnEvents = function()
 	{
 		me.scrimTag.click(function () {
+
+			console.log( 'scrimTag click - unblock Page' );
+
 			me.unblockPage();
 		});
 
@@ -367,54 +370,12 @@ function Login( cwsRenderObj )
 		me.loginFormTag.find( 'h4' ).remove();
 		$( '<h4>'+ me.loginUserNameTag.val() +'<h4>' ).insertBefore( me.loginFieldTag );
 
-    me.networkStatusClickSetup();
+		// MOVED TO syncManagerNew
+    	//SyncManagerNew.networkStatusClickSetup();
 
 		FormUtil.hideProgressBar();
 	};
 
-
-  me.networkStatusClickSetup = function()
-  {
-
-		$( '#divNetworkStatus' ).click( function(){
-
-			var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
-			var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-
-			if ( goOnline )
-			{
-
-				ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available ){
-
-					if ( available )
-					{
-						ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-						{
-							prompt.showManualSwitch_Dialog( 'Online' );
-						})
-					}
-					else
-					{
-						if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
-						{
-							prompt.showManualSwitch_NetworkUnavailable_Dialog();
-						}
-						else
-						{
-							prompt.showManualSwitch_ServerUnavailable_Dialog();
-						}
-						
-					}
-
-				});
-			}
-			else
-			{
-				prompt.showManualSwitch_Dialog( 'Offline' );
-			}
-
-		});
-  };
 	// --------------------------------------
 	
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )

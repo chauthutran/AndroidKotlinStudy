@@ -45,41 +45,38 @@
 
     try {
 
-      //WsApiManager.setupWsApiVariables( function () {
+      // MOVED FROM login
+      SyncManagerNew.syncAllStatusClickSetup( $( '#divNetworkStatus' ) );
 
-        App_UI_startUp_Progress( '75%' );
+      App_UI_startUp_Progress( '75%' );
 
-        ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj, function () {
+      ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj, function () {
 
-          App_version_UI_Update();
+        App_version_UI_Update();
 
-          App_syncIcon_UI_event();
+        App_syncIcon_UI_event();
 
-          App_UI_startUp_Progress( '80%' );
+        App_UI_startUp_Progress( '80%' );
 
-          _cwsRenderObj.render();
+        _cwsRenderObj.render();
 
-          FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
+        FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
-          App_UI_startUp_Progress( '90%' );
+        App_UI_startUp_Progress( '90%' );
 
-          App_checkUpdates_found_prompt();
+        App_checkUpdates_found_prompt();
 
-          App_UI_startUp_Progress( '100%' );
+        App_UI_startUp_Progress( '100%' );
 
-          App_UI_startUp_ready();
+        App_UI_startUp_ready();
 
-        });
+      });
 
-      //});
     }
     catch( err )
     {
       console.log( 'error starting App > startApp() error: ' + err );
-
     }
-
-
   }
 
   function App_UI_startUp_loading()
@@ -124,10 +121,10 @@
   {
     // move into cwsRender?
     $('#imgAppDataSyncStatus').click(() => {
-      SyncManagerNew.syncAll( _cwsRenderObj, 'Manual' );
-    });
 
-  }
+      SyncManagerNew.SyncMsg_ShowBottomMsg();
+    });
+  };
 
   function App_checkUpdates_found_prompt()
   {

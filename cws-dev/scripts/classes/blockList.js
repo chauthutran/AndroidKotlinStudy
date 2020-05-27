@@ -86,9 +86,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // -------- Tags --------------------------
 
     me.listTableTbodyTag;    // was me.blockList_UL_Tag;
-    me.divSyncDownTag = $('#divSyncDown');
-    me.imgSyncDownTag = $('#imgSyncDown');
-
     // --------- Templates --------------------
 
 
@@ -154,7 +151,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
         // Other Initial Render Setups - syncDown setup, favIcons, etc..
-        me.otherInitialRenderSetup( me.divSyncDownTag, me.imgSyncDownTag, me.cwsRenderObj );
+        me.otherInitialRenderSetup();
 
         // Set class level tags
         me.setClassVariableTags( blockTag );
@@ -263,10 +260,10 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.otherInitialRenderSetup = function( divSyncDownTag, imgSyncDownTag, cwsRenderObj )
+    me.otherInitialRenderSetup = function()
     {
         SyncManagerNew.setBlockListObj( me ); // Not Utilized, yet.
-        me.setupForSyncDownload( divSyncDownTag, imgSyncDownTag, cwsRenderObj ); // Set 'SyncDownload' display show + click event
+
         me.cwsRenderObj.favIcons_Update();
     };
 
@@ -590,36 +587,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // =============================================
     // === OTHER METHODS ========================
-
-
-    // --------------------------------------
-    // -- TEMP PLACEMENT..  MOVE IT LATER..
-
-    // Show the button + click event    
-    me.setupForSyncDownload = function( divSyncDownTag, imgSyncDownTag, cwsRenderObj )
-    {
-        divSyncDownTag.show(); 
-
-        imgSyncDownTag.off( "click" ).click( () => {
-            SyncManagerNew.SyncMsg_ShowBottomMsg();
-        });
-    };
-
-
-    me.afterSyncDownload = function( success ) 
-    {
-        if ( success )
-        {
-            // blockList UI Listing update??
-            me.reRenderWtMainData( function() {
-                console.log( 'Finished calling reRender() after syncDownload' );
-            });       
-        }
-        else
-        {
-            console.log( 'syncDownload returned with failure..');
-        }
-    };
 
     // =============================================
 

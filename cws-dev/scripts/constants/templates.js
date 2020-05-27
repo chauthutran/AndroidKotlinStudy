@@ -2,6 +2,7 @@
 function Templates() {};
 
 // -------------------------------------
+// ----- HTML Templates --------
 
 Templates.inputFieldHidden = `<input type='hidden' id='' value='' name='' class='hiddenData' >`;
 
@@ -147,27 +148,6 @@ Templates.msgSection = `<div class="msgSection sync_all__section">
 </div>`;
 
 // -------------------------------------
-
-Templates.getMsgAreaBottom = function()
-{
-    var msgAreaBottomTag = $( '#divMsgAreaBottom' );
-    msgAreaBottomTag.html( Templates.msgAreaBottomContent );  // resets previous html content..
-
-    return msgAreaBottomTag;
-};
-
-
-Templates.setMsgAreaBottom = function( callBack )
-{    
-    var syncInfoAreaTag = Templates.getMsgAreaBottom();
-
-    callBack( Templates.getMsgAreaBottom() );
-
-    // Common ones - make a method out of it..
-    syncInfoAreaTag.show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
-    $( '#divMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
-};
-
 
 
 Templates.msgAreaBottom2 = `<div class="sheet_bottom-fs" style="display: none;">
@@ -567,40 +547,6 @@ Templates.template_bottomSheet = `
       </div> `;  
 
 
-
-
-Templates.targetTag = $( 'div.sheet_bottom' );
-
-Templates.setContent = function( htmlStructure, ignoreScrim )
-{
-    Templates.targetTag.empty();
-
-    Templates.targetTag.html(htmlStructure);
-
-    // run some height calculations + adjust position (if required) < might not be necessary
-
-    if ( ! ignoreScrim )
-    {
-        $( '.scrim' ).show();
-        $( '.scrim').css('zIndex',100);
-        $( '.scrim').css('opacity', 0.4);
-        $('div.sheet_bottom').css('zIndex',3000);
-    }
-   
-   // showMsgManager.targetTag.slideDown("slow");
-   Templates.targetTag.fadeIn();
-
-    return Templates.targetTag;
-
-}
-
-Templates.close = function()
-{
-    $( '.scrim' ).hide();
-    Templates.targetTag.empty();
-    Templates.targetTag.hide();
-  
-}
 /* lOGIN/CHANGE USER << END */
 Templates.buttonsTemplate2  = `<div class="button-text ">
                                 <div class="button__container">
@@ -656,7 +602,7 @@ Templates.Advance_Login_Buttons = `
         </div>
       </div>
     </div>
-  </div> `
+  </div> `;
 
 
   Templates.Change_User_Form = `
@@ -677,4 +623,62 @@ Templates.Advance_Login_Buttons = `
             </div>
           </div>
         </div>
-    </dialog>`
+    </dialog>`;
+
+
+// ===================================================
+// ----- Show/Hide Bottom Messages --------
+
+Templates.targetTag = $( 'div.sheet_bottom' );
+
+Templates.setContent = function( htmlStructure, ignoreScrim )
+{
+    Templates.targetTag.empty();
+
+    Templates.targetTag.html(htmlStructure);
+
+    // run some height calculations + adjust position (if required) < might not be necessary
+
+    if ( ! ignoreScrim )
+    {
+        $( '.scrim' ).show();
+        $( '.scrim').css('zIndex',100);
+        $( '.scrim').css('opacity', 0.4);
+        $('div.sheet_bottom').css('zIndex',3000);
+    }
+   
+   // showMsgManager.targetTag.slideDown("slow");
+   Templates.targetTag.fadeIn();
+
+    return Templates.targetTag;
+};
+
+Templates.close = function()
+{
+    $( '.scrim' ).hide();
+    Templates.targetTag.empty();
+    Templates.targetTag.hide();
+};
+
+// -----------------
+
+Templates.getMsgAreaBottom = function()
+{
+    var msgAreaBottomTag = $( '#divMsgAreaBottom' );
+    msgAreaBottomTag.html( Templates.msgAreaBottomContent );  // resets previous html content..
+
+    return msgAreaBottomTag;
+};
+
+
+Templates.setMsgAreaBottom = function( callBack )
+{    
+    var syncInfoAreaTag = Templates.getMsgAreaBottom();
+
+    callBack( Templates.getMsgAreaBottom() );
+
+    // Common ones - make a method out of it..
+    syncInfoAreaTag.show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
+    $( '#divMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
+};
+

@@ -505,6 +505,9 @@ SyncManagerNew.SyncMsg_Reset = function()
 
 SyncManagerNew.SyncMsg_ShowBottomMsg = function()
 {
+    // TODO: Should do toggle of visible - if clicked again, hide it as well..
+    //   ?? Where is the hiding logic?
+
     Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
     {
         var msgHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
@@ -574,4 +577,48 @@ SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
 SyncManagerNew.setBlockListObj = function( blockListObj )
 {
     SyncManagerNew.blockListObj = blockListObj;
+};
+
+
+// Call this when app starts.
+SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
+{
+    //$( '#divNetworkStatus' ).click( function()
+    divNetworkStatusTag.off( 'click' ).click( function()
+    {
+        var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
+
+        // TODO: AppModeSwitchPrompt should be static method..
+        var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
+
+        if ( goOnline )
+        {
+            ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available )
+            {
+                if ( available )
+                {
+                    ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+                    {
+                        prompt.showManualSwitch_Dialog( 'Online' );
+                    })
+                }
+                else
+                {
+                    if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
+                    {
+                        prompt.showManualSwitch_NetworkUnavailable_Dialog();
+                    }
+                    else
+                    {
+                        prompt.showManualSwitch_ServerUnavailable_Dialog();
+                    }                    
+                }
+            });
+        }
+        else
+        {
+            prompt.showManualSwitch_Dialog( 'Offline' );
+        }
+
+    });
 };
