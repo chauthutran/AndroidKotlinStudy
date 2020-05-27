@@ -504,6 +504,10 @@ self.__precacheManifest = [
     "revision": "339b1ba5f7e79e27826bc63692ab0b59"
   },
   {
+    "url": "images/icon_text_scaling.svg",
+    "revision": "7ddf1f99b4a37d6dcdc38fb6e37084ac"
+  },
+  {
     "url": "images/icons/Connect_144px.png",
     "revision": "6b9407c411ec5966405f3790a2809828"
   },
@@ -1185,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "db674a59c869b0ac1ab0cad706913165"
+    "revision": "91f635d57220726e4f48630efeccb4f8"
   },
   {
     "url": "redeemGen.html",
@@ -1197,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "e70e3adc46a4deeea4faff25c652b0ab"
+    "revision": "24805546cf46bc484b123f1e6cb0c9a7"
   },
   {
     "url": "scripts/classes/action.js",
@@ -1249,7 +1253,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIconNew.js",
-    "revision": "2114383c3e99b7d33fbcb99a5d5beefe"
+    "revision": "00f78e853b521fa03f1c91a10272ffee"
   },
   {
     "url": "scripts/classes/inputControl.js",
@@ -1257,7 +1261,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "b09740918ebc26d94c371859d77696cb"
+    "revision": "3d37f10ab5fb4d32c4af19209a8b7e4e"
   },
   {
     "url": "scripts/classes/login.js",
@@ -1281,7 +1285,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "27cfd50bfbf2a22b92d17f59ff7d456d"
+    "revision": "261ef8ed9d8e06eac4a28822d53049db"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -1309,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "8bf7a2902abdffd2c1443e83bfb6763c"
+    "revision": "53104fa356ce2e78de1fa1e841e56c54"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1401,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "de3f57f8364f72cfbe9936394ac103d4"
+    "revision": "0230c13ee591821b0a382581e9844c16"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
