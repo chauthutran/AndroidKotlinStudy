@@ -628,12 +628,53 @@ Templates.template_dialog = `
                     </div>
                   </div>
                 </dialog>
-                    
-                    
-                  
-                    
-                    
                     `;  
 
 
 
+// -------------- Advanced LOGIN ------- //
+
+Templates.Advance_Login_Buttons = `
+  <div class="sheet_bottom-btn3" style="display: block;">
+    <div class="sbtt-btn__header">
+      <div class="sbtt-btn__header_title">Advance options</div>
+    </div>
+    <div class="cta_buttons">
+      <div class="button primary c_500 dis" id="switchToStagBtn">
+        <div class="button__container">
+          <div class="button-label">switch to Staging</div>
+        </div>
+        </div>
+        <div class="button primary c_500 dis" id="demoBtn">
+        <div class="button__container">
+          <div class="button-label">Demo mode</div>
+        </div>
+      </div>
+      <div class="button primary c_500" id="changeUserBtn">
+        <div class="button__container">
+          <div class="button-label" term="change_user">Change user</div>
+        </div>
+      </div>
+    </div>
+  </div> `
+
+
+  Templates.Change_User_Form = `
+   <dialog id="dialog_confirmation" style="display: block;">
+      <div class="dialog__title"><label>Confirmation dialog</label></div>
+        <div class="dialog__text" term="change_user_msg">
+            Changing user will delete all data for the user, including any data not syncronized. 
+            Are you sure that you want to delete the data for user and allow new user login ?
+        </div>
+        <div class="dialog__action"><div class="button-text warning" id="accept">
+            <div class="button__container">
+              <div class="button-label" term="accept">Accept</div>
+            </div>
+          </div>
+          <div class="button-text primary c_500" id="cancel">
+            <div class="button__container">
+              <div class="button-label" term="Cancel">Cancel</div>
+            </div>
+          </div>
+        </div>
+    </dialog>`
