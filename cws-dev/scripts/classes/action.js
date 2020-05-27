@@ -432,7 +432,7 @@ function Action( cwsRenderObj, blockObj )
 				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );
 
 				var bResult = true;
-				var optionJson;
+				var moreInfoJson;
 
 				if ( success )
 				{
