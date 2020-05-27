@@ -310,15 +310,41 @@ function cwsRender()
 
 		//DataManager.initialiseDataStorageSize();
 
-	} 
+	}
+
+	me.refreshMenuItems = function()
+	{
+		ConfigManager.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), function( areaList ){
+
+			if ( areaList )
+			{
+				var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+	
+				me.populateMenuList( finalAreaList, function( startMenuTag ){
+
+					me.updateNavDrawerHeaderContent();
+	
+					//if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+
+				} );
+	
+			}
+
+		} );
+
+	}
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
 	me.handleAppMode_Switch = function()
 	{
-		me.startBlockExecuteAgain(); //
-		me.favIcons_Update();
-		// 
-		// where do we refresh favIcons? blockList references favIcons
+		//me.startBlockExecuteAgain();
+		me.refreshMenuItems();
+
+		if ( $( 'div.fab' ) ) 
+		{
+			me.favIcons_Update();
+		}
+
 	}
 
 	me.startBlockExecuteAgain = function()
@@ -381,20 +407,11 @@ function cwsRender()
 
 			//FormUtil.updateStat_SyncItems( Constants.storageName_redeemList, function( myData )
 			{
-
 				DataManager.getUserConfigData( function( userData ){
 
-					if( userData != undefined && userData.orgUnitData != undefined )
-					{
-						$( '.navigation__user' ).html( userData.orgUnitData.orgUnit.name );
-					}
-					else
-					{
-						$( '.navigation__user' ).html( '' );
-					}
+					$( 'div.navigation__user' ).html( userData.orgUnitData.userName );
 
 				});
-
 
 				if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
 				{
@@ -405,7 +422,6 @@ function cwsRender()
 					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
 					//$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
-
 				}
 
 			} //re);
@@ -468,7 +484,7 @@ function cwsRender()
 	{
 
 		DataManager.getSessionData( function( userSessionJson ) {
-			//var userSessionJson = DataManager.getSessionData();
+
 			var userName = ( SessionManager.sessionData.login_UserName && FormUtil.checkLogin() ) ? SessionManager.sessionData.login_UserName : "";
 			var startMenuTag;
 
@@ -492,6 +508,7 @@ function cwsRender()
 
 			var navMenuItems = $( '<div class="navigation__items" />');
 			var navItemsUL = $( '<ul />');
+
 			navMenuItems.append( navItemsUL );
 
 			// Add the menu rows
@@ -892,8 +909,8 @@ function cwsRender()
 
 	me.clearMenuPlaceholders = function()
 	{
-		$( '.navigation__user' ).html( '' );
-		$( '.Nav__Title' ).html( '' );
+		$( 'div.navigation__user' ).html( '' );
+		$( 'div.Nav__Title' ).html( '' );
 		//$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
@@ -1000,17 +1017,14 @@ function cwsRender()
 	
     me.favIcons_Update = function()
     {
-        if ( ConfigManager.getConfigJson() && ConfigManager.getConfigJson().favList  )
-        {
-            me.favIconsObj = new favIcons( me );
+		if ( $( 'div.fab' ).hasClass( 'w_button' ) ) 
+		{
+			$( 'div.fab' ).click(); // hide because already opened
+			$( 'div.fab' ).off( 'click' );
+		}
 
-			//me.favIconsObj.render();
-            //me.setFloatingListMenuIconEvents( me.renderBlockTag.find( '.fab__section' ), me.renderBlockTag.find( '.fab__child-section' ) );
-        }
-        else
-        {
-            me.renderBlockTag.find( '.floatListMenuIcon' ).hide();
-        }
+		me.favIconsObj = new favIcons( me );
+
 	};
 
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )

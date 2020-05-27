@@ -5,45 +5,39 @@ function favIcons( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.favIconsTag; //= $( '#pageDiv' ).find( 'div.floatListMenuSubIcons' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
+    me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); 
+    me.favButtonTag = $( '#pageDiv' ).find( 'div.fab' );
     me.incr = 0;
 
 
     me.initialize = function() 
     {
-        if ( ConfigManager.getConfigJson() && ConfigManager.getConfigJson().favList )
-        {
-            console.log( ConfigManager.getConfigJson().favList );
+        me.initialize_UI();
 
-            me.render( ConfigManager.getConfigJson().favList );
-        }
+        me.render( ConfigManager.getConfigJson().favList );
 
         return me;
-
     }
 
     me.render = function( favData ) 
     {
 
-        var favList = Util.sortByKey( me.getFavAreaItems( favData ), 'id');
-        var networkStatus = ConnManagerNew.statusInfo.appMode.toLowerCase();
-
-        $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
-
-        me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
-
-        var favItems = localStorage.getItem( 'favIcons' );
-
-        me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
+        var favList = me.getFavIconsByAreaRole( favData );
+        //var favItems = localStorage.getItem( 'favIcons' );
+        //console.log( favItems );
+        //console.log ( ' ~ favList from MEMORY {' + ( favItems !== undefined ) + '}');
+        
+        me.createRecursiveFavIcons ( favList, 0, false ); //( favItems !== undefined )
 
     }
 
-    /*me.initializeOffLineIcons = function( callBack )
+    me.initialize_UI = function()
     {
-        me.createRecursiveFavIcons ( favList, 0, false )
-    }*/
+        // clear existing favIcons
+        $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
+    }
 
-    me.getFavAreaItems = function( favData, callBack )
+    me.getFavIconsByAreaRole = function( favData, callBack )
     {
         var bOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' );
         var areaItems = ( bOnline ) ? favData.online : favData.offline;
@@ -68,16 +62,21 @@ function favIcons( cwsRender )
            }
         }
 
+        Util.sortByKey( areaFavItems, 'id');
+
         return areaFavItems;
     
     };
 
 	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )
 	{
+        // 1. create 'precompiled' SVG icons for easy reference;
+        // 2. retrieve these compiled SVG files when bAppend = true
+        // * NOTE: this implementation is not complete [2020-05-27]
 
         if ( favList[ favItm ] )
         {
-
+            // 'append' SVG icons to blockList screen
             if ( bAppend && bAppend == true )
             {
                 var unqID = Util.generateRandomId();
@@ -87,7 +86,7 @@ function favIcons( cwsRender )
                 favItem.find( '.fab__child-text' ).attr( 'displayName', favList[ favItm ].name );
                 favItem.find( '.fab__child-text' ).attr( 'blockId', favList[ favItm ].target.blockId );
                 favItem.find( '.fab__child-text' ).attr( 'actionType', favList[ favItm ].target.actionType );
-                favItem.find( '.fab__child-text' ).html( favList[ favItm ].name );
+                favItem.find( '.fab__child-text' ).html( favList[ favItm ].name + ' [' + ConnManagerNew.statusInfo.appMode + ']'  );
 
                 var svgObject = me.fetchFavIcon( favList[ favItm ].id );
 
@@ -120,40 +119,38 @@ function favIcons( cwsRender )
             }
             else
             {
-                // read local SVG xml structure, then replace appropriate content 'holders': {TEXT} 
-                $.get( favList[ favItm ].img, function(data) {
+                // create + add SVG styled icons to localStorage
+                $.get( favList[ favItm ].img, function( data ) {
 
-                    var unqID = Util.generateRandomId();
-                    var svgTemplate = ( $(data)[0].documentElement );
-                    var svgObject = ( $(data)[0].documentElement );
+                    var svgObject = ( $( data )[0].documentElement );
 
-                    $( svgObject ).find("tspan").html( favList[ favItm ].name );
+                    $( svgObject ).find( 'tspan' ).html( favList[ favItm ].name );
 
                     if ( favList[ favItm ].term )
                     {
-                        $( svgObject ).html( $(svgObject).html().replace( /{TERM}/g, favList[ favItm ].term ) );
+                        $( svgObject ).html( $( svgObject ).html().replace( /{TERM}/g, favList[ favItm ].term ) );
                     }
 
                     if ( favList[ favItm ].colors )
                     {
                         if ( favList[ favItm ].colors.background )
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, favList[ favItm ].colors.background ) );
+                            $( svgObject ).html( $( svgObject ).html().replace( /{BGFILL}/g, favList[ favItm ].colors.background ) );
                             $( svgObject ).attr( 'colors.background', favList[ favItm ].colors.background );
                         }
                         else
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{BGFILL}/g, '#CCCCCC' ) );
+                            $( svgObject ).html( $( svgObject ).html().replace( /{BGFILL}/g, '#CCCCCC' ) );
                             $( svgObject ).attr( 'colors.background', '#CCCCCC' );
                         }
                         if ( favList[ favItm ].colors.foreground )
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, favList[ favItm ].colors.foreground ) );
+                            $( svgObject ).html( $( svgObject ).html().replace( /{COLOR}/g, favList[ favItm ].colors.foreground ) );
                             $( svgObject ).attr( 'colors.foreground', favList[ favItm ].colors.foreground );
                         }
                         else
                         {
-                            $( svgObject ).html( $(svgObject).html().replace( /{COLOR}/g, '#333333' ) );
+                            $( svgObject ).html( $( svgObject ).html().replace( /{COLOR}/g, '#333333' ) );
                             $( svgObject ).attr( 'colors.foreground', '#333333' );
 
                         }
@@ -164,22 +161,22 @@ function favIcons( cwsRender )
                         {
                             if (favList[ favItm ].style.icon.colors.background )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, favList[ favItm ].style.icon.colors.background ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{ICON.BGFILL}/g, favList[ favItm ].style.icon.colors.background ) );
                                 $( svgObject ).attr( 'icon.colors.background', favList[ favItm ].style.icon.colors.background );
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.BGFILL}/g, '#CCC' ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{ICON.BGFILL}/g, '#CCC' ) );
                                 $( svgObject ).attr( 'icon.colors.background', '#CCC' );
                             }
                             if ( favList[ favItm ].style.icon.colors.foreground )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, favList[ favItm ].style.icon.colors.foreground ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{ICON.COLOR}/g, favList[ favItm ].style.icon.colors.foreground ) );
                                 $( svgObject ).attr( 'icon.colors.foreground', favList[ favItm ].style.icon.colors.foreground );
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{ICON.COLOR}/g, '#333333' ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{ICON.COLOR}/g, '#333333' ) );
                                 $( svgObject ).attr( 'icon.colors.foreground', '#333333' );                                
                             }
                         }
@@ -188,24 +185,24 @@ function favIcons( cwsRender )
                             if (favList[ favItm ].style.label.colors.background )
                             {
                                 // edited: 2019/09/05 >> FIGMA Concept v1.0.3 suggested we use permanent 'light' backgrounds for labels... 
-                                //$( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
+                                //$( svgObject ).html( $( svgObject ).html().replace( /{LABEL.BGFILL}/g, favList[ favItm ].style.label.colors.background ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
                                 $( svgObject ).attr( 'label.colors.background', favList[ favItm ].style.label.colors.background );
 
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{LABEL.BGFILL}/g, '#F5F5F5' ) );
                                 $( svgObject ).attr( 'label.colors.background', '#F5F5F5' );
                             }
                             if ( favList[ favItm ].style.label.colors.foreground )
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, favList[ favItm ].style.label.colors.foreground ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{LABEL.COLOR}/g, favList[ favItm ].style.label.colors.foreground ) );
                                 $( svgObject ).attr( 'label.colors.foreground', favList[ favItm ].style.label.colors.foreground );
                             }
                             else
                             {
-                                $( svgObject ).html( $(svgObject).html().replace( /{LABEL.COLOR}/g, '#333333' ) );
+                                $( svgObject ).html( $( svgObject ).html().replace( /{LABEL.COLOR}/g, '#333333' ) );
                                 $( svgObject ).attr( 'label.colors.foreground', '#333333' );
                             }
                         }
@@ -233,7 +230,6 @@ function favIcons( cwsRender )
 
     me.setFavIconClickTarget = function( favObjTag, favItem )
     {
-        // Greg: you modified this code 2020-04-22 @ 08h43 (maybe revert?)
         favObjTag.off( 'click' );
 
         favObjTag.click( function() {
@@ -250,7 +246,9 @@ function favIcons( cwsRender )
     me.createFavButtonShowHideEvent = function()
     {
 
-        me.favIconsTag.find( 'div.fab' ).click(function () {
+        me.favButtonTag.off( 'click' );
+
+        me.favButtonTag.click(function () {
 
             if ( $( '.fab__child-section' ).is( ':visible' ) ) 
             {
@@ -310,6 +308,7 @@ function favIcons( cwsRender )
     }
 
     // empty existing container - force a recreate of SVG content
+    // added temporarily (ideally should only be done once login)
     localStorage.removeItem( 'favIcons' );
 
 	// ------------------------------------
