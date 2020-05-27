@@ -145,9 +145,13 @@ function cwsRender()
 	};
 
 	// This or other classes use this to control the scrolling..
-	me.setAppTitle = function( displayText )
+	me.setAppTitle = function( clicked_areaId, displayText )
 	{
-		$( 'div.Nav__Title' ).html( displayText );
+		// these items show up full-screen (sheet_full-fs)
+		if ( clicked_areaId !== 'settingsPage' && clicked_areaId !== 'aboutPage' )
+		{
+			$( 'div.Nav__Title' ).html( displayText );
+		}
 	};
 	
 
@@ -159,7 +163,7 @@ function cwsRender()
 		{
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
-			me.setAppTitle( $( this ).attr( 'displayName' ) );
+			me.setAppTitle( clicked_areaId, $( this ).attr( 'displayName' ) );
 			me.renderArea( clicked_areaId );
 		});
 	}
@@ -195,8 +199,11 @@ function cwsRender()
 
 	me.renderArea = function( areaId )
 	{
-		me.resetVisibility_ViewListDiv();
 
+		if ( areaId !== 'settingsPage' && areaId !== 'aboutPage' )
+		{
+			me.resetVisibility_ViewListDiv();
+		}
 
 		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
