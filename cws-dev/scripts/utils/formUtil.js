@@ -76,8 +76,16 @@ FormUtil.generateLoadingTag = function( btnTag )
 
 	if ( btnTag.is( 'div' ) )
 	{
-		loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-		btnTag.append( loadingTag );
+		if ( ! btnTag.hasClass( 'button-label' ) && btnTag.find( '.button-label' ) )
+		{
+			loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+			btnTag.find( '.button-label' ).append( loadingTag );	
+		}
+		else
+		{
+			loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+			btnTag.append( loadingTag );	
+		}
 	}
 	else if ( btnTag.is( 'button' ) )
 	{
@@ -238,14 +246,14 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
 {	//test code added by Greg
 	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
-	console.log( $( targetTag ).css( 'zIndex' ), targetTag );
+	//console.log( $( targetTag ).css( 'zIndex' ), targetTag );
 	$( targetTag ).css( 'zIndex', newZidx );
 }
 
 FormUtil.setStackOrder = function( arrObjTags )
 {	//test code added by Greg
 	var stackFrom = FormUtil.screenMaxZindex();
-	console.log( arrObjTags );
+	//console.log( arrObjTags );
 	for ( var i = 0; i < arrObjTags.length; i++ )
 	{
 		var stackObj = arrObjTags[ i ];

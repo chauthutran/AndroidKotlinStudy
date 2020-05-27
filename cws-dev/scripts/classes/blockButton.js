@@ -250,13 +250,10 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 							//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
 							ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
-						if ( btnJson.buttonType === 'listRightImg' )
-						{
-							var loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-							btnTag.hide();
-							btnTag.parent().append( loadingTag );
-						} 
+							if ( btnJson.buttonType === 'listRightImg' )
+							{
+								var loadingTag = FormUtil.generateLoadingTag( btnTag );
+							} 
 
 							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
 						}
