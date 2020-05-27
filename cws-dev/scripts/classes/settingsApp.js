@@ -8,7 +8,6 @@ function settingsApp( cwsRender )
     me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.settingsFormDivTag = $( '#settingsFormDiv' );
-    me.settingsContentDivTag = $( '#settingsContentDiv' );
     me.settingsData;
     me.themeList;
     me.defaultsInitialised = 0;
@@ -537,14 +536,14 @@ function settingsApp( cwsRender )
 
     me.showSettingsPage = function()
     {
-        if ( $( '#pageDiv' ).is( ":visible" ) )
+        /*if ( $( '#pageDiv' ).is( ":visible" ) )
         {
             $( '#pageDiv' ).hide();
         }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
             $( '#loginFormDiv' ).hide();
-        }
+        }*/
 
         me.renderNonEssentialFields( FormUtil.checkLogin() );
 
@@ -556,14 +555,14 @@ function settingsApp( cwsRender )
         me.settingsFormDivTag.fadeOut( 500 );
 
         setTimeout( function() {
-            if ( FormUtil.checkLogin() > 0 )
+            /*if ( FormUtil.checkLogin() > 0 )
             {
                 $( '#pageDiv' ).show( 'fast' );
             }
             else
             {
                 $( '#loginFormDiv' ).show( 'fast' );
-            }
+            }*/
             me.settingsFormDivTag.hide();
         }, 250 );
 

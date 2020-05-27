@@ -8,7 +8,6 @@ function aboutApp( cwsRender )
     me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.aboutFormDivTag = $( '#aboutFormDiv' );
-    me.aboutContentDivTag = $( '#aboutContentDiv' );
     me.aboutData;
     me.themeList;
     me.defaultsInitialised = 0;

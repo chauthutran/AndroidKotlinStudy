@@ -202,442 +202,221 @@
   <div id="pulsatingCircle" style="display:none;"></div>
 
   <!-- START > SETTINGS FORM DIV -->
-  <div id="settingsFormDiv" style="display:none;">
+<div id="settingsFormDiv" class="sheet_full-fs" style="display: none;">
+  <div class="wapper_card">
+    <div class="sheet-title c_900">
+      <img src="images/arrow_back.svg" class="btnSettingsBack btnBack">
+      <span term="menu_settings">Settings</span>
+    </div>
+    <div class="card _tab activity">
 
-    <div name="top-body" class="bodytop bg-color-program-son"></div>
-
-    <section class="wrapper">
-
-      <main class="container">
-
-        <div id="settingsContentDiv " class="settingsListDiv tab_fs" style="position:relative;text-align:left;">
-
-          <ul class="tab_fs__head ">
-            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
-                class="btnSettingsBack" alt="arrowLeft">
-              <label class="aboutHeader" term="menu_settings">Settings</label>
-              <br>
-            </li>
-          </ul>
-
-          <div class="title-act-mobile">
-            <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px"
-              class="btnSettingsBack" alt="arrowLeft">
-            <img src="images/settings.svg" class="tab-image" alt="active">
-            <label class="aboutHeader" term="menu_settings">Settings</label>
+      <div class="field">
+        <div class="field__label"><label>Network sync</label></div>
+        <div class="fiel__controls">
+          <div class="field__selector">
+            <select id="settingsInfo_networkSync"></select>
           </div>
-
-          <ul class="tab_fs__container">
-
-            <li class="settingsTopfiller" style="width: 97%;"></li>
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_network_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="settings_network" id="lblsettings_network" class="from-string titleDiv">Network sync</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="settingsInfo_network_Text"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore enabled" id='imgsettingsInfo_network_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-
-              </div>
-            </li>
-
-            <li class="inputDiv settingsMoreDiv" id='settingsInfo_network_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="settings_autosync" id="" class="from-string titleDiv">Auto sync</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td>
-                      <div id="settingsInfo_DivnetworkSelect" style="display:none;max-width: 250px;"
-                        class="settingsSelect">
-                        <select id="settingsInfo_networkSync" class="selector form-type-text"
-                          style="padding-left:0;padding-top:0;max-width: 250px;"></select>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_userLanguage_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="settings_userLanguage" id="lblsettings_userLanguage" class="from-string titleDiv">User
-                language</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="settingsInfo_userLanguage_Name"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore enabled" id='imgsettingsInfo_userLanguage_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-
-              </div>
-            </li>
-
-            <li class="inputDiv settingsMoreDiv" id='settingsInfo_userLanguage_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="settings_userLanguage" id="" class="from-string titleDiv">User language</label>
-              <div class="form-type-text" style="border-bottom: 2px solid #F5F5F5;padding:10px 0 10px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td>
-                      <div id="settingsInfo_DivLangSelect" style="display:none;max-width: 250px;"
-                        class="settingsSelect">
-                        <select id="settingsInfo_langSelect" class="selector form-type-text"
-                          style="padding-left:0;padding-top:0;max-width: 250px;"></select>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-              <label term="settings_Language_pack_date" id="languageCollapsibleHeader" class="from-string titleDiv"
-                style="display: flex; justify-content: flex-start; align-items: center;border-bottom:2px solid #F5F5F5">
-                <img src="images/sync-banner.svg" alt="" style="margin-right: 9px;opacity: 0.65;">
-                <span>Language pack</span>
-              </label>
-              <div class="form-type-text" id="languageCollapsibleBody"
-                style="display: none; border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td style="width:160px;"><span id="settingsInfo_userLanguage_Update" class="form-type-text"
-                        style="position: relative; left: 6px;"></span></td>
-                    <td>
-                      <div id="" class="form-type-text">
-                        <button id="settingsInfo_newLangTermsDownload" term="" class="btnStyle1"
-                          style="float: right;">UPDATE</button>
-                        <!-- /*sorry to change it */ term="settings_newLangTermsDownload" -->
-                      </div>
-                    </td>
-                    <td></td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_theme_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="settings_theme" id="lblsettings_theme" class="from-string titleDiv">Theme</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="settingsInfo_theme_Text"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore enabled" id='imgsettingsInfo_theme_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-
-              </div>
-            </li>
-
-            <li class="inputDiv settingsMoreDiv" id='settingsInfo_theme_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="settings_theme" id="" class="from-string titleDiv">Theme</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td>
-                      <div id="settingsInfo_DivThemeSelect" style="display:none;max-width: 250px;"
-                        class="settingsSelect">
-                        <select id="settingsInfo_ThemeSelect" class="selector form-type-text"
-                          style="padding-left:0;padding-top:0;max-width: 250px;"></select>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_logoutDelay_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="settings_logout" id="lblsettings_logout" class="from-string titleDiv">Auto logOut</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="settingsInfo_logout_Text"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore enabled" id='imgsettingsInfo_logoutDelay_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-
-              </div>
-            </li>
-
-            <li class="inputDiv settingsMoreDiv" id='settingsInfo_logoutDelay_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="settings_autologout" id="" class="from-string titleDiv">Auto LogOut after</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td>
-
-                      <div id="settingsInfo_DivlogoutSelect" style="display:none;max-width: 250px;"
-                        class="settingsSelect">
-                        <select id="settingsInfo_logoutDelay" class="selector form-type-text"
-                          style="padding-left:0;padding-top:0;max-width: 250px;"></select>
-                      </div>
-
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_soundEffects_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;display:none;">
-              <label term="" class="from-string titleDiv">Sound Effects</label>
-              <div id="settingsInfo_soundEffects" class="form-type-text" style="padding:10px 0 5px 10px">
-                <!-- Switch -->
-                <div class="switch">
-                  <label>
-                    Off
-                    <input id="soundSwitchInput" type="checkbox">
-                    <span id="soundSwitchSlider" class="lever"></span>
-                    On
-                  </label>
-                </div>
-              </div>
-            </li>
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_autoComplete_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="" class="from-string titleDiv">Auto Complete</label>
-              <div id="settingsInfo_autoComplete" class="form-type-text" style="padding:10px 0 5px 10px">
-                <!-- Switch -->
-                <div class="switch">
-                  <label>
-                    Off
-                    <input id="autoCompleteInput" type="checkbox">
-                    <span id="autoCompleteSlider" class="lever"></span>
-                    On
-                  </label>
-                </div>
-              </div>
-            </li>
-
-            <li class="inputDiv settingsGroupDiv" id='settingsInfo_StorageSize_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="" class="from-string titleDiv">Storage usage</label>
-              <div id="settingsInfo_StorageSize" class="form-type-text" style="padding:10px 0 5px 10px">
-
-              </div>
-            </li>
-
-
-            <!-- /scripts/classes/settingsApp line 89 -->
-            <li class="inputDiv settingsGroupDiv" id="resetCollapsible"
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <ul class="collapsible">
-                <li>
-                  <div class="collapsible-header from-string titleDiv" id="settingsAppRestHeader" term=""
-                    style="padding: 2px !important;">
-
-                    <table>
-                      <tr>
-                        <td style="width: 30px;text-align: left;">
-                          <svg width="21" height="18" viewBox="0 0 21 18" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                              d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
-                              fill="#333333" fill-opacity="0.87" />
-                          </svg>
-                        </td>
-                        <td>
-                          <span>Reset app data & configuration</span>
-                        </td>
-                      </tr>
-                    </table>
-
-                  </div>
-                  <div class="collapsible-body" id="bodyCollapsible">
-                    <div id="bodyCollapsible__text" term="">
-                      Your configuration and App data stored in the device will be deleted. You will be asked to log in
-                      again and data which is not synced to the server will be lost.
-                    </div>
-                    <button id="buttonResetData" class="btnStyle1" term=""
-                      style="position:relative; left:100%; transform:translateX(-100%);">RESET</button>
-                  </div>
-                </li>
-              </ul>
-
-          </ul>
+          <div class="field__right"></div>
         </div>
+      </div>
 
-      </main>
-    </section>
 
+      <div class="field">
+        <div class="field__label"><label term="settings_userLanguage">User language</label></div>
+        <div class="fiel__controls">
+          <div class="field__selector">
+            <select id="settingsInfo_langSelect"></select>
+          </div>
+          <div class="field__right"></div>
+        </div>
+      </div>
+
+
+      <div class="field">
+        <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
+            date</label></div>
+        <div class="fiel__controls">
+          <span id="settingsInfo_userLanguage_Update"></span>
+          <img src="images/sync-banner.svg" alt="" style="margin-right: 9px;opacity: 0.65;"
+            id="settingsInfo_newLangTermsDownload">
+          <div class="field__right"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field__label"><label term="settings_theme">Theme</label></div>
+        <div class="fiel__controls">
+          <div class="field__selector">
+            <select id="settingsInfo_ThemeSelect"></select>
+          </div>
+          <div class="field__right"></div>
+        </div>
+      </div>
+
+      <!-- /scripts/classes/settingsApp line 89 -->
+      <li class="inputDiv settingsGroupDiv" id="resetCollapsible"
+        style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
+        <ul class="collapsible">
+          <li>
+            <div class="collapsible-header from-string titleDiv" id="settingsAppRestHeader" term="" style="padding: 2px !important;">
+
+              <table>
+                <tr>
+                  <td style="width: 30px;text-align: left;">
+                    <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
+                        fill="#333333" fill-opacity="0.87" />
+                    </svg>
+                    
+                  </td>
+                  <td>
+                    <span>Reset app data & configuration</span>
+                  </td>
+                  <img src="./images/arrow_down.svg" alt="" srcset="">
+                </tr>
+              </table>
+
+            </div>
+            <div class="collapsible-body" id="bodyCollapsible">
+              <div id="bodyCollapsible__text" term="">
+                Your configuration and App data stored in the device will be deleted. You will be asked to log in
+                again and data which is not synced to the server will be lost.
+              </div>
+              <button id="buttonResetData" class="btnStyle1" term=""
+                style="position:relative; left:100%; transform:translateX(-100%);">RESET</button>
+            </div>
+          </li>
+        </ul>
+      </li>
+
+
+
+
+      <div class="toogle-s" style="border: 0px">
+        <div class="toogle-s__label">
+          <img src="./images/icon_text_scaling.svg" alt="" srcset="">
+          <label>Text scaling</label>
+        </div>
+        <div class="toogle-s-content">
+          <label class="toggle">
+            <input type="checkbox" class="toggle_input">
+            <div class="toggle-control"></div>
+          </label>
+        </div>
+        
+     
+
+
+
+        <div class="slidecontainer">
+          <input type="range" value="0" step="50" class="slider" id="myRange" list="tickmarks">
+          <datalist id="tickmarks">
+            <option value="0" label="Low">
+            <option value="50" label="Medium">
+            <option value="100" label="High">
+          </datalist>
+  
+  
+          <p>Value: <span id="demo"></span></p>
+        </div>
+        
+        <p>
+          Drag your slider until you can read this confortably. Text should look at least this big after double-tapping on a paragraph.
+        </p>
+
+
+
+        
+      </div>
+
+      
+
+    </div>
   </div>
+</div>
+
+  
 
   <!-- END > SETTINGS FORM DIV -->
 
   <!-- START > ABOUT FORM DIV -->
-  <div id="aboutFormDiv" style="display:none;">
+  <div id="aboutFormDiv" class="sheet_full-fs" style="display: none;">
+    <div class="wapper_card">
+      <div class="sheet-title c_900">
+        <img src="images/arrow_back.svg" class="btnAboutBack btnBack">
+        <span term="menu_about">About</span>
+      </div>
+      <div class="card _tab activity">
+       
+        <div style="display:flex; align-items: center" style="
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 17px;
+        color: rgba(51, 51, 51, 0.87);">
+      <img src="images/logo_cws.png" alt=""> Workforce App
+    </div>
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="about_applicationVersion">Application version</dt>
+      <dt style="font-size: 12px;
+          line-height: 20px;" id="aboutInfo_AppVersion"></dt>
+    </dl>
+    <!-- <dl>
+          <dt term="about_newVersionAvailable">new version available</dt>
+          <dd id="aboutInfo_AppNewVersion">
+          <dd id="aboutInfo_AppVersionInner">
+            <button value="" id="appShellUpdateBtn" class="" term="common_update">update</button>
+          </dd>
+        </dl> -->
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="about_configVersion">Config version</dt>
+      <dt style="font-size: 12px;
+          line-height: 20px;" id="aboutInfo_dcdVersion"></dt>
+    </dl>
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="about_networkMode">Network mode</dt>
+      <dt style="font-size: 12px;
+          line-height: 20px;" id="aboutInfo_networkMode"></dt>
+    </dl>
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="about_geoLocation">Location permission</dt>
+      <dt style="font-size: 12px;
+          line-height: 20px;" id="aboutInfo_geoLocation"></dt>
+    </dl>
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="about_browser">Browser</dt>
+      <dt style="font-size: 12px;
+          line-height: 20px;" id="aboutInfo_Browser"></dt>
+    </dl>
+    <dl>
+      <dt style="color: rgba(51, 51, 51, 0.54);
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 10px;" term="">Other data</dt>
+      <dt id=""></dt>
+    </dl>
 
-    <div name="top-body" class="bodytop bg-color-program-son"></div>
-
-    <section class="wrapper">
-
-      <main class="container">
-
-        <div id="aboutContentDiv " class="aboutListDiv tab_fs" style="position:relative;text-align:left;">
-
-          <ul class="tab_fs__head ">
-            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
-                class="btnAboutBack" alt="arrowLeft">
-              <label class="aboutHeader" term="menu_about">About</label>
-              <br>
-            </li>
-          </ul>
-
-          <div class="title-act-mobile">
-            <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px"
-              class="btnAboutBack" alt="arrowLeft">
-            <img src="images/about.svg" class="tab-image" alt="active">
-            <label class="aboutHeader" term="menu_about">About</label>
-          </div>
-
-          <ul class="tab_fs__container">
-
-            <li class="settingsTopfiller" style="width: 97%;"></li>
-
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_AppVersion_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="about_applicationVersion" id="lblabout_applicationVersion"
-                class="from-string titleDiv">Application version</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="aboutInfo_AppVersion"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore disabled" id='imgaboutInfo_AppVersion_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-            <li class="inputDiv aboutMoreDiv" id='aboutInfo_AppVersion_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="about_newVersionAvailable" class="from-string titleDiv">new version available</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td><span id="aboutInfo_AppNewVersion"></span></td>
-                    <td>
-                      <div id="aboutInfo_AppVersionInner">
-                        <button value="" id="appShellUpdateBtn" class="btnStyle1" term="common_update">update</button>
-                      </div>
-                    </td>
-                    <td></td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_dcdVersion_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="about_configVersion" id="lblabout_configVersion" class="from-string titleDiv">Config
-                version</label>
-
-              <div class="form-type-text" style="padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr
-                    style="-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-                    <td><span id="aboutInfo_dcdVersion"></span></td>
-                    <td style="width:30px;">
-                      <img src='images/arrow_right.svg' class="imgMore disabled" id='imgaboutInfo_dcdVersion_Less'
-                        style="display:block;width:28px;" alt="arrowRight">
-                    </td>
-                  </tr>
-                </table>
-
-              </div>
-            </li>
-
-            <li class="inputDiv aboutMoreDiv" id='aboutInfo_dcdVersion_More'
-              style="width:97%;margin:0;display:none;-webkit-transition: display 200ms, -webkit-transform 200ms;transition: display 200ms, transform 200ms;">
-
-              <label term="about_newVersionAvailable" class="from-string titleDiv">new version available</label>
-              <div class="form-type-text" style="border-bottom: 1px solid #fff;padding:10px 0 5px 10px">
-                <table style="width:100%;border-spacing:0;">
-                  <tr>
-                    <td><span id="aboutInfo_dcdNewVersion"></span></td>
-                    <td>
-                      <div id="aboutInfo_dcdVersionInner">
-                        <button value="" id="dcdUpdateBtn" class="btnStyle1" term="common_update">update</button>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-            </li>
-
-
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_networkMode_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="about_networkMode" class="from-string titleDiv">Network mode</label>
-              <div id="aboutInfo_networkMode" class="form-type-text" style="padding:10px 0 5px 10px"></div>
-            </li>
-
-            <li class="inputDiv aboutGroupDiv" id='aboutInfo_geoLocation_Less'
-              style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="about_geoLocation" class="from-string titleDiv">geoLocation</label>
-              <div id="aboutInfo_geoLocation" class="form-type-text" style="padding:10px 0 5px 10px"></div>
-            </li>
-
-            <li class="inputDiv aboutGroupDiv" style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-              <label term="about_browser" class="from-string titleDiv">Browser</label>
-              <div id="aboutInfo_Browser" class="form-type-text" style="padding:10px 0 5px 10px"></div>
-            </li>
-
-          </ul>
-        </div>
-
-      </main>
-    </section>
-
+      </div>
+    </div>
   </div>
+
+
+ 
 
   <!-- END > ABOUT FORM DIV -->
 

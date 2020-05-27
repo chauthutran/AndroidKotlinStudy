@@ -86,7 +86,7 @@ function favIcons( cwsRender )
                 favItem.find( '.fab__child-text' ).attr( 'displayName', favList[ favItm ].name );
                 favItem.find( '.fab__child-text' ).attr( 'blockId', favList[ favItm ].target.blockId );
                 favItem.find( '.fab__child-text' ).attr( 'actionType', favList[ favItm ].target.actionType );
-                favItem.find( '.fab__child-text' ).html( favList[ favItm ].name + ' [' + ConnManagerNew.statusInfo.appMode + ']'  );
+                favItem.find( '.fab__child-text' ).html( favList[ favItm ].name );
 
                 var svgObject = me.fetchFavIcon( favList[ favItm ].id );
 
@@ -236,8 +236,8 @@ function favIcons( cwsRender )
 
             if ( favItem.target.blockId )
             {
-                me.cwsRenderObj.setAppTitle( favItem.name )
-                me.cwsRenderObj.renderBlock( favItem.target.blockId, favItem.target.options )
+                me.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name );
+                me.cwsRenderObj.renderBlock( favItem.target.blockId, favItem.target.options );
             }
 
         });
