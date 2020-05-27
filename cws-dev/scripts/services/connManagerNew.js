@@ -167,6 +167,7 @@ ConnManagerNew.changeNetworkConnStatus = function( statusInfo, modeOnline )
 // Server
 ConnManagerNew.changeServerAvailableIfDiff =  function( newAvailable, statusInfo )
 {
+	console.log( newAvailable + ' vs ' + statusInfo.serverAvailable );
 	// If there was a change in this status, trigger the appModeCheck
 	if ( newAvailable !== statusInfo.serverAvailable )
 	{
@@ -188,40 +189,9 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 
 	ConnManagerNew.setAppMode( appModeNew, statusInfo );
 
-	if ( FormUtil.checkLogin() ) ConnManagerNew.refreshUI_forNetworkModeOnly( appModeNew );
+	if ( FormUtil.checkLogin() ) ConnManagerNew.refreshUI_networkModeDependencies();
 
-	/*
-	// If appModeNew is same as existing Prmopt MOde, ignore it.
-	if ( appModeNew !== statusInfo.appMode_PromptedMode )
-	{
-		// Only if appMode New is diff from current appmode proceed with setAppMode
-		if ( appModeNew !== statusInfo.appMode )
-		{
-			ConnManagerNew.setAppMode_WithCondition( appModeNew, statusInfo );
-		}
-		else 
-		{
-			// If appModeNew is same as existing appMode, but we have Prompt, then, we cancel the prompt.
-			if ( statusInfo.appMode_PromptedMode !== '' )
-			{
-				ConnManagerNew.cancelAndHide_promptModeSwitch( statusInfo );
-			}
-		}
-	}
-	*/
 };
-
-
-/*ConnManagerNew.setAppMode_WithCondition = function( appModeNew, statusInfo ) 
-{
-	// if there is any pending prompted switch request, clear them out.
-	//ConnManagerNew.hidePrompt_AppSwitch( statusInfo );
-
-	// If Logged In, display Prompt for user confirmation rather than switch.
-	if ( FormUtil.checkLogin() ) ConnManagerNew.prompt_AppModeSwitch_WithCondition( appModeNew, statusInfo );
-	else ConnManagerNew.setAppMode( appModeNew, statusInfo );
-};*/
-
 
 ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) 
 {
@@ -233,9 +203,9 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 	ConnManagerNew.update_UI( statusInfo );
 };
 
-ConnManagerNew.refreshUI_forNetworkModeOnly = function( appModeNew )
+ConnManagerNew.refreshUI_networkModeDependencies = function()
 {
-
+	ConnManagerNew._cwsRenderObj.handleAppMode_Switch();
 };
 
 
@@ -248,95 +218,6 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 // ===============================================
 // --- Prompt App Mode Switch Related --------------------
 
-/*ConnManagerNew.prompt_AppModeSwitch_WithCondition = function( appModeNew, statusInfo ) 
-{
-	// only show switch prompt if current mode different to appModeNew
-	if ( appModeNew != statusInfo.appMode )
-	{
-		statusInfo.appMode_PromptedMode = appModeNew;
-
-		ConnManagerNew.showPrompt_AppSwitchMode( statusInfo );
-	}
-	else
-	{
-		if ( ConnManagerNew.switchPrompt_reservedMsgID ) 
-		{
-			console.log( 'clearing existing Prompt > Switch to - ' + appModeNew );
-			ConnManagerNew.hidePrompt_AppSwitch();
-		}
-	}
-};*/
-
-
-/*ConnManagerNew.showPrompt_AppSwitchModeNew = function( statusInfo )
-{
-	console.log( statusInfo );
-	console.log( ConnManagerNew.switchPromptObj );
-
-
-	var switchPromptTag = $( '#networkSwitch' );
-	var switchTemplatContent = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? Templates.ConnManagerNew_Dialog_SwitchMode_Opts : Templates.ConnManagerNew_Dialog_SwitchMode_NoOpts );
-	var switchPromptContentObj = $( Templates.ConnManagerNew_Dialog_SwitchMode_NoOpts );
-	var switchPromptText = Templates.ConnManagerNew_Dialog_prompt_online;
-
-	var friendlyTitle = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? 'Back Online!' : 'No internet :-(' );
-	var btnActionText = ( statusInfo.appMode_PromptedMode.toUpperCase() === 'ONLINE' ? 'ACCEPT' : 'GO OFFLINE' );
-
-	switchPromptTag.empty();
-	switchPromptTag.append( switchPromptContentObj );
-
-	var dvTitle = switchPromptTag.find( '.title' );
-	var dvPrompt = switchPromptTag.find( '.prompt' );
-	var btnCancel = switchPromptTag.find( '.cancel' );
-	var btnAction = switchPromptTag.find( '.runAction' );
-
-	dvTitle.html( friendlyTitle );
-	dvPrompt.html( dvPrompt.html().replace( /{SWITCH_LABEL}/g, questionStr.toUpperCase() ) );
-	btnAction.html( btnActionText.toUpperCase() );
-
-	btnCancel.click( function(){
-
-		$( '.scrim' ).hide();
-		$( '#networkSwitch' ).empty();
-		$( '#networkSwitch' ).hide();
-
-	});
-
-	btnAction.click( function(){
-
-		$( '.scrim' ).hide();
-		$( '#networkSwitch' ).empty();
-		$( '#networkSwitch' ).hide();
-
-		ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
-
-	});
-
-	$( '.scrim' ).show();
-	$( '#networkSwitch' ).fadeIn();
-
-	ConnManagerNew._cwsRenderObj.langTermObj.translatePage(); 
-}*/
-
-/*ConnManagerNew.showPrompt_AppSwitchMode = function( statusInfo )
-{
-	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.showPrompt( statusInfo );
-
-	var questionStr = "switch to [" + statusInfo.appMode_PromptedMode.toUpperCase() + "] "; //"Network changed: switch to '" + changeConnStr.toUpperCase() + "' mode?";
-	var btnSwitch = $( '<a term="" class="notifBtn" ">SWITCH</a>' );
-
-	$( btnSwitch ).click( function(){
-
-		// make part of cwsRender obj > think about
-		ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
-
-	});
-
-	ConnManagerNew.switchPrompt_reservedMsgID = 'ConnManagerNew_switch_' + statusInfo.appMode_PromptedMode.toUpperCase();
-
-	MsgManager.notificationMessage( questionStr, 'notificationDark', btnSwitch,'', 'right', 'top', 20000, true, ConnManagerNew.rejectPrompt_AppModeSwitch, ConnManagerNew.switchPrompt_reservedMsgID );
-
-}*/
 
 ConnManagerNew.cancelPrompt_AppModeSwitch = function( appModeNew, statusInfo ) 
 {
@@ -479,7 +360,10 @@ ConnManagerNew.update_UI = function( statusInfo )
 {
 	// update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
 	if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
-	else ConnManagerNew.update_UI_NetworkIcons( statusInfo );
+	else
+	{
+		ConnManagerNew.update_UI_NetworkIcons( statusInfo );
+	}
 
 	ConnManagerNew.update_UI_statusDots( statusInfo );
 }
@@ -508,7 +392,7 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
 	//var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
-	var imgSrc = ( networkServerConditionsGood ? 'images/cloud_online_nav.svg': 'images/cloud_offline.svg' );
+	var imgSrc = ( networkServerConditionsGood ? 'images/cloud_online_nav.svg': 'images/cloud_offline_nav.svg' );
 
 	//$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
 
