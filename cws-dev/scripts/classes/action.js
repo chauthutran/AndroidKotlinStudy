@@ -135,11 +135,12 @@ function Action( cwsRenderObj, blockObj )
 		else
 		{
 			// me.clickActionPerform
-			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( resultStr )
+			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( bResult, moreInfoJson )
 			{				
-				if ( resultStr === "Failed" || resultStr === "actionFailed" )
+				if ( bResult === false )
 				{
 					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
+					if ( moreInfoJson ) console.log( moreInfoJson );
 					endOfActionsFunc( dataPass, "Failed" );
 				}
 				else
@@ -359,39 +360,47 @@ function Action( cwsRenderObj, blockObj )
 				{
 					// Temporarily move before 'handlePayloadPreview' - since version 1 
 					var formsJsonGroup = {};
-					var inputsJson = me.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+					var inputsJson = ActivityUtil.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
 					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
-	
-					me.handlePayloadPreview( undefined, clickActionJson, formDivSecTag, btnTag, function() { 
-						//var currBlockId = blockDivTag.attr( 'blockId' );
-	
-						FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
-	
-						// If 'Activity' generate case, add to list
-						if ( clickActionJson.redeemListInsert === "true" )
-						{						
-							ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+
+					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+
+					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
+					if ( clickActionJson.redeemListInsert === "true" )
+					{						
+						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
+						{ 
+							//var currBlockId = blockDivTag.attr( 'blockId' );
+							if ( passed )
 							{
-								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-		
-								if ( afterActionFunc ) afterActionFunc();
-							} );	
-						}
-						else
-						{
-							// Immediate Submit to Webservice case
-							me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
-						}
-					});
-	
-					// Failed case - follow through 'handlePayloadPreview'..
-					if ( afterActionFunc ) afterActionFunc( 'Failed' );
+								ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+								{
+									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+			
+									if ( afterActionFunc ) afterActionFunc();
+								} );		
+							}
+							else
+							{
+								//if ( afterActionFunc ) afterActionFunc( false );
+								throw 'canceled on preview';
+							}
+						});
+								
+					}
+					else
+					{
+						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
+						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+							if ( afterActionFunc ) afterActionFunc( bResult, optionJson );
+						} );
+					}
 				}
 			}
 		}
 		catch ( errMsg )
 		{
-			if ( afterActionFunc ) afterActionFunc( 'Failed' );
+			if ( afterActionFunc ) afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
 		}
 	};
 
@@ -400,12 +409,12 @@ function Action( cwsRenderObj, blockObj )
 
 	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
 	{
-		if ( actionDefJson.url )
+		// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
+		var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
+
+		if ( url )
 		{					
 			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
-
-			// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
-			var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
 
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
@@ -422,7 +431,8 @@ function Action( cwsRenderObj, blockObj )
 
 				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );
 
-				var resultStr = "success";
+				var bResult = true;
+				var optionJson;
 
 				if ( success )
 				{
@@ -434,10 +444,11 @@ function Action( cwsRenderObj, blockObj )
 					MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
 					// Should we stop at here?  Or continue with subActions?
 
-					var resultStr = "actionFailed";
+					bResult = false; // "actionFailed";
+					moreInfoJson = { 'type': 'requestFailed', 'msg': 'Request call returned with failure.'}
 				}
 
-				if ( afterActionFunc ) afterActionFunc( resultStr );
+				if ( afterActionFunc ) afterActionFunc( bResult, moreInfoJson );
 
 			});
 		}
@@ -445,49 +456,11 @@ function Action( cwsRenderObj, blockObj )
 		{
 			MsgManager.notificationMessage ( 'Process Failed - no url!!', 'notificationDark', undefined, '', 'right', 'top' );
 			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
+
+			throw 'url info missing on actionDef - during submitToWs';
+			//if ( afterActionFunc ) afterActionFunc( false, { 'type': '', 'msg': '' } );
 		}		
 	};
-
-
-	me.handlePayloadPreview = function( formDefinition, clickActionJson, formDivSecTag, btnTag, callBack )
-	{
-		if ( clickActionJson.redeemListInsert === "true" )
-		{
-			var dataPass = FormUtil.generateInputPreviewJson( formDivSecTag );
-			//var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );
-
-			formDivSecTag.hide();
-
-			if ( clickActionJson.previewPrompt && clickActionJson.previewPrompt === "true" )
-			{
-				var confirmMessage = 'Please check before Confirm'; // MISSING TRANSLATION
-
-				MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
-
-					formDivSecTag.show();
-	
-					if ( confirmed )
-					{
-						if ( callBack ) callBack();
-					}
-					else
-					{
-						if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
-					}
-	
-				});
-			}
-			else
-			{
-				if ( callBack ) callBack();
-			}
-		}
-		else
-		{
-			if ( callBack ) callBack();
-		}
-	};
-
 
 	
     me.actionEvaluateExpression = function( jsonList, actionExpObj )
@@ -545,27 +518,6 @@ function Action( cwsRenderObj, blockObj )
 
 	// ========================================================
 	
-	me.generateInputJsonByType = function( clickActionJson, formDivSecTag, formsJsonGroup )
-	{
-		var inputsJson;
-
-		// generate inputsJson - with value assigned...
-		if ( clickActionJson.payloadVersion && clickActionJson.payloadVersion == "2" )
-		{
-			inputsJson = FormUtil.generateInputTargetPayloadJson( formDivSecTag, clickActionJson.payloadBody );
-		}
-		else
-		{
-			inputsJson = FormUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody, formsJsonGroup );
-		}		
-
-		// Voucher Status add to payload - if ( clickActionJson.voucherStatus ) 
-		inputsJson.voucherStatus = clickActionJson.voucherStatus;
-
-		return inputsJson;
-	};
-
-
 	me.getBlockInfo_Attr = function( blockDivTag )
 	{
 		var blockInfo = { 'activityType': '' };
