@@ -135,11 +135,12 @@ function Action( cwsRenderObj, blockObj )
 		else
 		{
 			// me.clickActionPerform
-			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( resultStr )
+			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( bResult, moreInfoJson )
 			{				
-				if ( resultStr === "Failed" || resultStr === "actionFailed" )
+				if ( bResult === false )
 				{
 					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
+					if ( moreInfoJson ) console.log( moreInfoJson );
 					endOfActionsFunc( dataPass, "Failed" );
 				}
 				else
@@ -370,7 +371,6 @@ function Action( cwsRenderObj, blockObj )
 						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
 						{ 
 							//var currBlockId = blockDivTag.attr( 'blockId' );
-
 							if ( passed )
 							{
 								ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
@@ -382,7 +382,8 @@ function Action( cwsRenderObj, blockObj )
 							}
 							else
 							{
-								if ( afterActionFunc ) afterActionFunc( 'Failed' );
+								//if ( afterActionFunc ) afterActionFunc( false );
+								throw 'canceled on preview';
 							}
 						});
 								
@@ -390,17 +391,16 @@ function Action( cwsRenderObj, blockObj )
 					else
 					{
 						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
-						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, afterActionFunc );
+						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+							if ( afterActionFunc ) afterActionFunc( bResult, optionJson );
+						} );
 					}
-
-					// Failed case - follow through 'handlePayloadPreview'..
-					if ( afterActionFunc ) afterActionFunc( 'Failed' );
 				}
 			}
 		}
 		catch ( errMsg )
 		{
-			if ( afterActionFunc ) afterActionFunc( 'Failed' );
+			if ( afterActionFunc ) afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
 		}
 	};
 
@@ -409,12 +409,12 @@ function Action( cwsRenderObj, blockObj )
 
 	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
 	{
-		if ( actionDefJson.url )
+		// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
+		var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
+
+		if ( url )
 		{					
 			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
-
-			// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
-			var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
 
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
@@ -431,7 +431,8 @@ function Action( cwsRenderObj, blockObj )
 
 				FormUtil.trackPayload( 'received', redeemReturnJson, undefined, actionDefJson );
 
-				var resultStr = "success";
+				var bResult = true;
+				var optionJson;
 
 				if ( success )
 				{
@@ -443,10 +444,11 @@ function Action( cwsRenderObj, blockObj )
 					MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
 					// Should we stop at here?  Or continue with subActions?
 
-					var resultStr = "actionFailed";
+					bResult = false; // "actionFailed";
+					moreInfoJson = { 'type': 'requestFailed', 'msg': 'Request call returned with failure.'}
 				}
 
-				if ( afterActionFunc ) afterActionFunc( resultStr );
+				if ( afterActionFunc ) afterActionFunc( bResult, moreInfoJson );
 
 			});
 		}
@@ -454,6 +456,9 @@ function Action( cwsRenderObj, blockObj )
 		{
 			MsgManager.notificationMessage ( 'Process Failed - no url!!', 'notificationDark', undefined, '', 'right', 'top' );
 			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
+
+			throw 'url info missing on actionDef - during submitToWs';
+			//if ( afterActionFunc ) afterActionFunc( false, { 'type': '', 'msg': '' } );
 		}		
 	};
 

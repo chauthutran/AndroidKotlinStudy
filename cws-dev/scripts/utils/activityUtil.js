@@ -355,7 +355,8 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
             }
             else
             {
-				if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
+                // TODO: THIS IS NO GOOD.. REMOVE THIS?
+				//if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
 				if ( callBack ) callBack( false );				
             }
 

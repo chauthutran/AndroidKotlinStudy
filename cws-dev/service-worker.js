@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "ebac1e00ec1e6cfe41f8c9d79da954bd"
+    "revision": "5aeb08c7c4a2869f7b95f4bfa8b710e9"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "71abf164e13e2671119f31880786d4af"
+    "revision": "e20613221ac7dbc06e0c8a0f1c241833"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
