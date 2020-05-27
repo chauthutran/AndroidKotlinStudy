@@ -168,14 +168,14 @@ syncManager.evalSyncConditions = function()
         {
             if ( syncManager.dataQueued.length + syncManager.dataFailed.length )
             {
-                $( '#divAppDataSyncStatus' ).show();
+                //$( '#divAppDataSyncStatus' ).show();
                 $( '#imgAppDataSyncStatus' ).show();
 
                 return true;
             }
             else
             {
-                $( '#divAppDataSyncStatus' ).hide();
+                //$( '#divAppDataSyncStatus' ).hide();
                 $( '#imgAppDataSyncStatus' ).hide();
 
                 return false;
@@ -183,7 +183,7 @@ syncManager.evalSyncConditions = function()
         }
         else
         {
-            $( '#divAppDataSyncStatus' ).hide();
+            //$( '#divAppDataSyncStatus' ).hide();
             $( '#imgAppDataSyncStatus' ).hide();
 
             return false;
@@ -191,7 +191,7 @@ syncManager.evalSyncConditions = function()
     }
     else
     {
-        $( '#divAppDataSyncStatus' ).hide();
+        //$( '#divAppDataSyncStatus' ).hide();
         $( '#imgAppDataSyncStatus' ).hide();
 
         return false;  
@@ -530,7 +530,7 @@ syncManager.endSync = function( btnTag, callBack )
 
     if ( !syncManager.pauseProcess )
     {
-        $( '#divAppDataSyncStatus' ).hide();
+        //$( '#divAppDataSyncStatus' ).hide();
         $( '#imgAppDataSyncStatus' ).hide();    
     }
 

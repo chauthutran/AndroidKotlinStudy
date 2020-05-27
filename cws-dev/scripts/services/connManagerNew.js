@@ -508,7 +508,7 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 
 	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
 	//var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
-	var imgSrc = ( networkServerConditionsGood ? 'images/sharp-cloud_queue-24px.svg': 'images/baseline-cloud_off-24px.svg' );
+	var imgSrc = ( networkServerConditionsGood ? 'images/cloud_online_nav.svg': 'images/cloud_offline.svg' );
 
 	//$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
 

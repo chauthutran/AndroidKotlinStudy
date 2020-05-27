@@ -12,4 +12,28 @@
     background-position: right;
     background-repeat: no-repeat;
     background-size: auto;
+
+    .wapper_card{
+
+        .sheet-title {
+            vertical-align:middle;
+            height:56px;
+            font-size:18px;
+            line-height:24px;
+            display:flex;
+            align-items:center;
+    
+            img {
+                width:28px;
+                height:28px;
+                padding: 0 10px;
+                filter: invert(100%);
+            }
+    
+        }
+
+    }
+
+
+
 }

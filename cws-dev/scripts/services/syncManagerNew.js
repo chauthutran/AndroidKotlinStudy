@@ -401,13 +401,15 @@ SyncManagerNew.syncAllButtonChange = function()
 
     if ( showSyncIcon )
     {
-        $('#divAppDataSyncStatus').show(); 
+        //$('#divAppDataSyncStatus').show();
+        $( '#imgAppDataSyncStatus' ).show();
         //$('#divAppDataSyncDownStatus').show(); 
         //$('#imgAppDataSyncStatus').show();        
     }
     else
     {
-        $('#divAppDataSyncStatus').hide();
+        //$('#divAppDataSyncStatus').hide();
+        $( '#imgAppDataSyncStatus' ).hide();
         //$('#divAppDataSyncDownStatus').show(); 
         //$('#imgAppDataSyncStatus').hide()
     } 

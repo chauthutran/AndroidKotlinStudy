@@ -24,6 +24,7 @@
         height: 88px;
         min-height: 88px;
         padding: 16px 8px;
+        //background-color: $color-background;
         @include box-sizing(border-box);
 
         @include rwd-max(380) {
@@ -38,18 +39,32 @@
             width: 100%;
             @include box-sizing(border-box);
 
+            .list_three_line-suppor_visuals {
+                //support
+                float: left;
+                width: 56px;
+                height: 56px;
+                -webkit-box-align: center;
+                        align-items: center;
+                /*border-radius: 50%;
+                margin-right: 8px;
+                background-color: rgba($color-sl, 40%);*/
+                @include box-sizing(border-box);
+            }
+
             .list_three_item_content {
                 float: left;
-                width: calc(100% - 164px);
+                width: calc(100% - 194px);
                 margin-right: 8px;
+                padding-left: 8px;
                 height: auto;
                 text-align: left;
                 line-height: 18px;
-                @include font-size(14px);
+                @include font-size(12px);
                 @include box-sizing(border-box);
 
                 @include rwd-max(380) {
-                    width: calc(100% - 56px);
+                    width: calc(100% - 86px);
                     border-bottom: 1px solid #ccc;
                     margin-bottom: 12px;
                 }
@@ -68,9 +83,9 @@
                 float: left;
 
                 @include rwd-max(380) {
-                    float: right;
+                    float: none;
                     margin-right: 8px;
-                    width: calc(100% - 56px);
+                    width: calc(100% - 26px);
                 }
 
                 .list_three_item_status {
@@ -78,7 +93,7 @@
                     text-align: right;
                     line-height: 10px;
                     line-height: 18px;
-                    @include font-size(14px);
+                    @include font-size(12px);
                     @include box-sizing(border-box);
                 }
 
@@ -90,11 +105,11 @@
                             align-items: center;
                     margin-right: 32px;
                     cursor: pointer;
-                    @include background-image('phone');
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
-                        margin-right: 32;
+                        margin-left: 20%;
+                        margin-bottom: 12px;
                     }
                 }
 
@@ -105,12 +120,14 @@
                     -webkit-box-align: center;
                             align-items: center;
                     cursor: pointer;
-                    background-repeat: no-repeat;
-                    @include background-image('sync-pending_36');
+		            background-repeat: no-repeat;
+                    background-position: center;
                     @include box-sizing(border-box);
 
                     @include rwd-max(380) {
                         float: right;
+                        width: 32px !important;
+                        height: 32px !important;
                     }
                 }
             }

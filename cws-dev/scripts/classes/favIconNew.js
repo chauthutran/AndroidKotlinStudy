@@ -84,6 +84,7 @@ function favIcons( cwsRender )
                 var favItem = $( Templates.favButtonRowItem );
 
                 favItem.find( '.fab__child-text' ).attr( 'term', favList[ favItm ].term );
+                favItem.find( '.fab__child-text' ).attr( 'displayName', favList[ favItm ].name );
                 favItem.find( '.fab__child-text' ).attr( 'blockId', favList[ favItm ].target.blockId );
                 favItem.find( '.fab__child-text' ).attr( 'actionType', favList[ favItm ].target.actionType );
                 favItem.find( '.fab__child-text' ).html( favList[ favItm ].name );
@@ -239,6 +240,7 @@ function favIcons( cwsRender )
 
             if ( favItem.target.blockId )
             {
+                me.cwsRenderObj.setAppTitle( favItem.name )
                 me.cwsRenderObj.renderBlock( favItem.target.blockId, favItem.target.options )
             }
 

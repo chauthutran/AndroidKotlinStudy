@@ -37,19 +37,6 @@
                 @include btm-nav-section-icon;
             }
 
-            #i_services {
-                @include background-image('services_u');
-            }
-            #i_eLearning {
-                @include background-image('eLearning_u');
-            }
-            #i_Stats {
-                @include background-image('stats_u');
-            }
-            #i_Profile {
-                @include background-image('profile_u');
-            }
-
             .btm_nav__section-label {
                 @include font-size(12px);
                 padding: 5 12px 0 12px;
@@ -59,5 +46,6 @@
                 @include box-sizing(border-box);
             }
         }
+        .active{}
     }
 }

@@ -13,7 +13,9 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
     me.setUp_Events = function( formTag )
     {
-        formTag.find( "input,select,checkbox,textarea" ).each( function() {
+		// < change to find( '.dataValue' ) ?
+        //formTag.find( "input,select,checkbox,textarea" ).each( function() {
+		formTag.find( ".dataValue" ).each( function() {
             var inputTag = $( this );
             inputTag.change( function(){ //blur
                 me.checkValidations( inputTag );
@@ -29,7 +31,8 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		var allValid = true;
 
 		// If any of the tag is not valid, mark it as invalid.
-		formTag.find( "input,select,checkbox,textarea" ).each( function() {
+		//formTag.find( "input,select,checkbox,textarea" ).each( function() {
+		formTag.find( ".dataValue" ).each( function() {
 			if ( !me.checkValidations( $(this) ) )
 			{
 				allValid = false;
@@ -43,12 +46,14 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 	{	
 		// Validation Initial Setting Clear
 		tag.attr( 'valid', 'true' );
-		var divTag = tag.closest( "div" );
-		var validationTag = ( divTag.hasClass( 'inputValidation' ) ? divTag.hasClass( 'inputValidation' ) : divTag.find( ".inputValidation" ) );
+
+		var divTag = tag.parent(); //.closest( "div" ).parent();  //( "div" );
+		var validationTag = ( tag.hasClass( 'displayValue' ) ? tag : tag.parent() );
+
 		divTag.find( "div.errorMsg" ).remove();
 
-		if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
-		{
+		//if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
+		//{
 			me.performValidationCheck( tag, 'mandatory', divTag );
 			me.performValidationCheck( tag, 'minlength', divTag );
 			me.performValidationCheck( tag, 'maxlength', divTag );
@@ -57,14 +62,14 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 			me.performValidationCheck( tag, 'isDate', divTag );
 			me.performValidationCheck( tag, 'phoneNumber', divTag );
 			me.performValidationCheck( tag, 'patterns', divTag );
-		}
-
-		var valid = ( tag.attr( 'valid' ) == 'true' );
+		//}
 
 		// If not valid, set the background color.
-		tag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
+		var valid = ( tag.attr( 'valid' ) == 'true' );
+
+		//tag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
 		validationTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
-		
+
 		return valid;
 	};
 	

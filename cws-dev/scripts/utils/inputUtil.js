@@ -188,6 +188,7 @@ function inputMonitor( cwsRenderObj )
         navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
         thresholdNavDrawerWidth = ( expectedNavDrawerWidth / 2 ).toFixed( 0 );
         dragXoffsetLimit = 50; // touch zone (up to left 50px for start of menu-open swipe)
+        //console.log( $( e.touches[0].target ) );
 
         // listPage (containing redeemList) is currently visible
         if ( $( 'div.listDiv' ).is( ':visible' ) ) //div.floatListMenuSubIcons

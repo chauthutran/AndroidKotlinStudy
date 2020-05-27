@@ -88,6 +88,7 @@
         background-repeat: no-repeat;
         background-size: 100%;
         position: relative;
+        transition: all 1s ease;
         @include box-sizing(border-box);
 
         @include p-device($breakpoint_240) {

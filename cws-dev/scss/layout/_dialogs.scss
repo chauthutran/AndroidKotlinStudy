@@ -13,6 +13,7 @@ dialog {
     border-radius: $radius;
     border: 0;
     max-width: 450px;
+    
     @include box-sizing(border-box);
 
     @include rwd-max(488) {
@@ -46,12 +47,12 @@ dialog {
         @include box-sizing(border-box);
 
         label {
-            @include font-size(20px);
-            line-height: 24px;
+            @include font-size(18px);
+            line-height: 20px;
             font-family: $typ-default;
             font-style: normal;
             font-weight: 500;
-            margin-top: 16px;
+            margin: 16px 0 8px 0;
             color: $color-typ-pl;
             display: block;
 
@@ -88,7 +89,6 @@ dialog {
             height: 162px;
             margin: 0 auto;
             cursor: pointer;
-            @include background-image('cloud_offline');
             @include box-sizing(border-box);
             @include rwd-max(240) {
                 display: none;
@@ -101,6 +101,10 @@ dialog {
 
         .online {
             @include background-image('cloud_online');
+        }
+
+        .unavailable {
+            @include background-image('cloud_offline_Intenet-up1');
         }
     }
 
@@ -129,6 +133,7 @@ dialog {
         height: auto;
         min-height: 52px;
         padding: 8px 8px 0 8px;
+        display: flex;
         @include box-sizing(border-box);
 
         div {
@@ -136,11 +141,15 @@ dialog {
         }
 
         @include rwd-max(488) {
-            max-width: 200px;
+            max-width: 100%; //200px
 
             div {
                 float: right;
             }
         }
     }
+}
+.dialog_cont{
+    height: 90%;
+    max-height: 490px;
 }
