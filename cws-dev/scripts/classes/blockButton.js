@@ -241,12 +241,14 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 					var blockDivTag = btnTag.closest( 'div.block' );
 					var formDivSecTag = blockDivTag.find( '.formDivSec' );
 
-					// NOTE: TRAN VALIDATION
-					if( me.validationObj.checkFormEntryTagsData( formDivSecTag ) )
-					{				
-						// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
-						//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
-						ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
+					if ( me.networkModeSupported( btnJson ) )
+					{
+						// NOTE: TRAN VALIDATION
+						if( me.validationObj.checkFormEntryTagsData( formDivSecTag ) )
+						{				
+							// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
+							//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
+							ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
 						// display 'loading' image in place of click-img (assuming content will be replaced by new block)
 						if ( btnJson.buttonType === 'listRightImg' )
@@ -256,7 +258,13 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 							btnTag.parent().append( loadingTag );
 						} 
 
-						me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
+							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
+						}
+					}
+					else
+					{
+						var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
+						prompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode )
 					}
 				});
 			}
@@ -305,6 +313,20 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 		}
 	}
 
+	me.networkModeSupported = function( btnJson )
+	{
+		var supported = true;
+
+		if ( btnJson.notSupportedMode !== undefined )
+		{
+			if ( btnJson.notSupportedMode[ ConnManagerNew.statusInfo.appMode.toLowerCase() ] )
+			{
+				supported = false; 
+			}
+		}
+
+		return supported;
+	}
 
 	me.renderBlockTabContent = function( liContentTag, onClick )
 	{
