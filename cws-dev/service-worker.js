@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "ed29d1ff04a3f60dcb7c35d59841b79d"
+    "revision": "71abf164e13e2671119f31880786d4af"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",

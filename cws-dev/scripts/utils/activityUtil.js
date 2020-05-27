@@ -70,7 +70,7 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 		if ( getVal_visible )
 		{
 			// Check if the submit var list exists (from config).  If so, only items on that list are added.
-			if ( getValList )
+			if ( !getValList )
 			{			
 				getVal = true;
 			}
