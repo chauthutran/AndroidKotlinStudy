@@ -167,7 +167,6 @@ ConnManagerNew.changeNetworkConnStatus = function( statusInfo, modeOnline )
 // Server
 ConnManagerNew.changeServerAvailableIfDiff =  function( newAvailable, statusInfo )
 {
-	console.log( newAvailable + ' vs ' + statusInfo.serverAvailable );
 	// If there was a change in this status, trigger the appModeCheck
 	if ( newAvailable !== statusInfo.serverAvailable )
 	{

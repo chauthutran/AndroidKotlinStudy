@@ -92,9 +92,9 @@ function LangTerm( cwsRenderObj )
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
 		// config should also note all the 'term' into tags..
-		WsCallManager.requestGet( queryLoc, loadingTag, function( returnJson )
+		WsCallManager.requestGet( queryLoc, loadingTag, function( success, returnJson )
 		{
-			if ( returnJson )
+			if ( success )
 			{
 				if ( returnFunc ) returnFunc( returnJson );
 			}
