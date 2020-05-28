@@ -68,7 +68,7 @@ Templates.inputFieldYear = `
     <div class="modalSymbol">
       <div class="dialog__title">
         <input type="text" class="searchSymbol">
-        <span class="closeSearchSymbol">ï¿?/span>
+        <span class="closeSearchSymbol">ï¿½?/span>
       </div>
       <div class="container--optionsSymbol">
         <ul class="optionsSymbol">
@@ -682,3 +682,37 @@ Templates.setMsgAreaBottom = function( callBack )
     $( '#divMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
 };
 
+
+
+
+
+// ===================================================
+// ----- SettingsPage Messages --------
+
+
+Templates.Setting_ResetData = `
+    <dialog id="dialog_confirmation" style="display: block;">
+    <div class="dialog__title"><label>Confirmation dialog</label></div>
+      <div class="dialog__text" term="change_user_msg">
+      Reseting the app will delete all data, including any data not syncronized. 
+
+      Are you sure that you want to delete the data for %username and allow new user login ?
+      </div>
+      <div class="dialog__action"><div class="button-text warning" id="accept">
+          <div class="button__container">
+            <div class="button-label" term="accept">Accept</div>
+          </div>
+        </div>
+        <div class="button-text primary c_500" id="cancel">
+          <div class="button__container">
+            <div class="button-label" term="Cancel">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </dialog> `;
+
+
+
+
+
+// ===================================================

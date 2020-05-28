@@ -15,10 +15,16 @@ function settingsApp( cwsRender )
     // ----- Tags -----------
     me.settingsInfo_langSelectTag = $( '#settingsInfo_langSelect' );
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
+    me.settingsInfo_ThemeSelectTag2 = $( '#settingsInfo_ThemeSelect2' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
     me.settingsInfo_autoCompleteInput = $( '#autoCompleteInput' );
+
+    
+
+    me.scrimTag = $('.sheet_bottom-scrim');
+	me.sheetBottomTag = $('.sheet_bottom-fs');
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
@@ -26,7 +32,17 @@ function settingsApp( cwsRender )
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
+    me.blockPage = function()
+	{
+		me.scrimTag.show();
+	}
 
+	me.unblockPage = function()
+	{
+		me.scrimTag.hide();
+		me.sheetBottomTag.html("");
+    }
+    
     me.initialize = function() 
     {
         me.setEvents_OnInit();
@@ -111,29 +127,27 @@ function settingsApp( cwsRender )
                 $("#bodyCollapsible").slideToggle("fast")
                 $("#settingsAppRestHeader").toggleClass("collapsible-body--on")
             })
-            // @GREG: ADD TRANSLATION SUPPORT HERE
-            let titleMessage="Reset app data & configuration",
-                bodyMessage="Your configuration and App data stored in the device will be deleted. "
-                questionMessage="Are you sure?",
-                btnAcceptResetData = $( '<button class="acceptButton" term="">ACCEPT</button>' ),
-                btnDeclineResetData = $( '<button class="declineButton" term="">DECLINE</button>' );
+      
+           
+            // $("#buttonResetData").click(function () {
+            //     me.blockPage();
+            //     me.sheetBottomTag.html( Templates.Setting_ResetData );
+            //     me.cwsRenderObj.langTermObj.translatePage();
 
-            let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
+            //     $("#accept").click(function () {
+            //         DataManager2.deleteAllStorageData();
+            //         me.unblockPage();
 
-            $("#buttonResetData").click(function(){
-                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
-            })
-            btnDeclineResetData.click(function(){
-                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
-            })
-            btnAcceptResetData.click(()=>{
-                DataManager.clearSessionStorage()
-                if ( cacheManager.clearCacheKeys() )
-                {
-                    me.cwsRenderObj.reGetAppShell();
-                }
-                pptManager.on({})
-            })
+            //     });
+
+            //     $("#cancel").click(function () {
+            //         me.unblockPage();
+            //     });
+
+            // });
+
+
+           
         })()
 
 
@@ -195,7 +209,11 @@ function settingsApp( cwsRender )
 
         });
 
-
+        me.settingsInfo_ThemeSelectTag2.change ( () => 
+        {    
+            $("body").removeClass().addClass(me.settingsInfo_ThemeSelectTag2.val());
+            
+        });
 
         me.settingsInfo_ThemeSelectTag.change ( () => 
         {    
@@ -273,17 +291,17 @@ function settingsApp( cwsRender )
 
 
         $( '#settingsInfo_newLangTermsDownload' ).click( function() 
-        {
+        { 
             var btnDownloadTag = $( this );
             var langSelVal = me.settingsInfo_langSelectTag.val();
-            var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
-
-            FormUtil.showProgressBar();
+            //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
+            $("#rotate").addClass("rot_l_anim");
+           // FormUtil.showProgressBar();
 
             me.langTermObj.retrieveAllLangTerm( function() 
             {
-                loadingTag.hide();
-
+               // loadingTag.hide();
+               $("#rotate").removeClass("rot_l_anim");
                 me.populateLangList_Show( me.langTermObj.getLangList(), langSelVal );
 
                 me.settingsInfo_langSelectTag.val( langSelVal ).change();
@@ -961,8 +979,8 @@ function settingsApp( cwsRender )
             Util.setSelectDefaultByName( me.settingsInfo_ThemeSelectTag, defaultTheme );
         }
 
-        $( '#settingsInfo_theme_Text' ).html( defaultTheme );
-        $( '#settingsInfo_DivThemeSelect' ).show();
+        // $( '#settingsInfo_theme_Text' ).html( defaultTheme );
+        // $( '#settingsInfo_DivThemeSelect' ).show();
     }
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
