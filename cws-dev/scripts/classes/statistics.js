@@ -201,6 +201,7 @@ function Statistics( cwsRender )
 
             if ( statObj )
             {
+                // create 'sequentially processed' outputs
                 if ( statObj.sequentialEval && statObj.sequentialEval === "true" )
                 {
                     for (var i = 0; i < statObj.runDataEval.length; i++)
@@ -214,12 +215,14 @@ function Statistics( cwsRender )
                 else
                 {
 
+                    // add titles + text if found
                     var titleTag = ( statObj.title ? me.addTitle( statObj.title.label, statObj.title.icon ) : undefined );
                     var textTag = ( statObj.title ? me.addText( statObj.text.label ) : undefined );
 
                     if ( titleTag ) statDivTag.append( titleTag );
                     if ( textTag ) statDivTag.append( textTag );
 
+                    // create 'bulk processed' output
                     var divContentStr = Util.strCombine( statObj.divContent );
                     var divContentTag = $( divContentStr );
                     statDivTag.append( divContentTag );
@@ -276,11 +279,11 @@ function Statistics( cwsRender )
         {
             sectionTag.find('.title_section__icon').html( Templates.svg_Activities );
         }
-        else if ( icon === 'detail' )
+        else if ( icon === 'details' )
         {
             sectionTag.find('.title_section__icon').html( Templates.svg_Detail );
         }
-        else if ( icon === 'consultant' )
+        else if ( icon === 'consult' )
         {
             sectionTag.find('.title_section__icon').html( Templates.svg_Consult );
         }
@@ -312,7 +315,51 @@ function Statistics( cwsRender )
     // add/create Table?
     me.addTable = function( dataObj )
     {
-        return JSON.stringify( dataObj );
+        var jsonObj;
+        var tableWrapped = $( '<div class="table-wrap" />' )
+        var tbl = $( '<table>' );
+        var th = $( '<thead>' );
+        var thr = $( '<tr>' );
+
+        tableWrapped.append( tbl );
+        tbl.append( th );
+        th.append( thr );
+
+        if ( dataObj.length )
+        {
+            jsonObj = dataObj[ 0 ];
+
+            for ( var key in jsonObj ) 
+            {
+                var th = $( '<th class="header" >' );
+                thr.append( th );
+    
+                th.text( key );
+            }
+    
+            var tb = $( '<tbody>' );
+            tbl.append( tb );
+    
+            for (var i = 0; i < dataObj.length; i++)
+            {
+                var tbr = $( '<tr>' );
+                tb.append( tbr );
+    
+                for ( var key in jsonObj ) 
+                {
+                    var td = $( '<td data-th="' + key + '">' );
+                    tbr.append( td );
+    
+                    td.text( dataObj[ i ][ key ] );
+    
+                }
+        
+            }
+
+        }
+
+        console.log( tableWrapped );
+        return tableWrapped;
     }
 
 	me.testStatisticContent = function()

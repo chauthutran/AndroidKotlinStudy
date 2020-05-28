@@ -86,7 +86,7 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'Title of Table', 'table' ); ", 
                 " me.addText( 'Appropriately whiteboard competitive bandwidth rather than cross-media systems. Credibly impact.' ); ",
-                " me.addTable( [ {'greg':'wrote','this':'text'}, {'someone':'else','wrote':'this'} ] ); ",
+                " me.addTable( [ { Country: 'Brazil', Year: 1986, DMFT: 6.7 },  { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, { Country: 'Canada', Year: 1974, DMFT: 4.4 }  ] ); ",
             ]
         },
         "totalActivities": {

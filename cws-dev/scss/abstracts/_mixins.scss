@@ -592,7 +592,7 @@ $retina-suffix: '@2x';
 
             .wapper_card{
 
-                .sheet-title {
+                .sheet-title { 
 
                     color: $fc-900;
                     background-color: $bg-900;
@@ -603,5 +603,25 @@ $retina-suffix: '@2x';
 
         }
 
+        /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
     }
 }
