@@ -1439,3 +1439,11 @@ div.errorMsgArrow
 img.round:hover{
   background-color: #666666;
 }
+
+
+#statsContentPage {
+  overflow: auto;
+  height: calc(100vh - 126px);
+  position: absolute;
+  top: 126px;
+}

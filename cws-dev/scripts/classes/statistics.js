@@ -97,9 +97,6 @@ function Statistics( cwsRender )
 
             me.dateGroupStats = me.dateGroups[ idx ].data;
 
-            console.log( startPeriod, endPeriod, idx );
-            
-
             $( '#stats_t_help' ).html( 'Between ' + $.format.date( startPeriod, 'dd MMM yyyy' ) + ' and ' + $.format.date( endPeriod, 'dd MMM yyyy' ) );
 
             me.statEvalCode( startPeriod, endPeriod );
@@ -125,6 +122,8 @@ function Statistics( cwsRender )
         me.setEvents_OnRender();
 
         me.initialise_periodOptions( me.statsPeriodSelector );
+
+        $( '#pageDiv' ).hide();
 
         me.statisticsFormDiv.fadeIn();
 
@@ -317,7 +316,7 @@ function Statistics( cwsRender )
     {
         var jsonObj;
         var tableWrapped = $( '<div class="table-wrap" />' )
-        var tbl = $( '<table>' );
+        var tbl = $( '<table class="statsTable">' );
         var th = $( '<thead>' );
         var thr = $( '<tr>' );
 
@@ -358,7 +357,6 @@ function Statistics( cwsRender )
 
         }
 
-        console.log( tableWrapped );
         return tableWrapped;
     }
 

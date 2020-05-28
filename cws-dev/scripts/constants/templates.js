@@ -315,7 +315,7 @@ Templates.statisticsFullScreen = `
     <span term="menu_statistics">Statistics</span>
   </div>
 
-  <div class="Nav2">
+  <div class="Nav2" style="position:absolute !important;">
     <div class="controls">
         <div class="field">
             <div class="field__label"><label>Select a period</label><span>*</span></div>
