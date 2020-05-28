@@ -28,7 +28,8 @@
 @import 'base/_typography.scss',
 'base/_base.scss',
 'base/_icons.scss',
-'base/_animations.scss';
+'base/_animations.scss',
+'base/_table.scss';
 //'base/_reset.scss'
 
 @import 'components/_buttons.scss',
@@ -40,8 +41,8 @@
 'components/_snackbars.scss',
 'components/_selector.scss',
 'components/_tabs.scss',
-'components/_sheets_bottom.scss',
 'components/_sheets_full.scss',
+'components/_sheets_bottom.scss',
 'components/_card.scss',
 'components/_fab.scss';
 /*

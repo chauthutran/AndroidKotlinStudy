@@ -102,7 +102,7 @@ function cwsRender()
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
 		me.myDetails = new myDetails( me );
-		me.statisticsObj = new statistics( me );
+		me.statisticsObj = new Statistics( me );
 	}
 
 	// =============================================
@@ -148,7 +148,7 @@ function cwsRender()
 	me.setAppTitle = function( clicked_areaId, displayText )
 	{
 		// these items show up full-screen (sheet_full-fs)
-		if ( clicked_areaId !== 'settingsPage' && clicked_areaId !== 'aboutPage' )
+		if ( clicked_areaId !== 'statisticsPage' && clicked_areaId !== 'settingsPage' && clicked_areaId !== 'aboutPage' )
 		{
 			$( 'div.Nav__Title' ).html( displayText );
 		}
@@ -163,7 +163,7 @@ function cwsRender()
 		{
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
-			me.setAppTitle( clicked_areaId, $( this ).attr( 'displayName' ) );
+			me.setAppTitle( clicked_areaId, $( this ).text() ); //$( this ).attr( 'displayName' ) 
 			me.renderArea( clicked_areaId );
 		});
 	}
@@ -200,7 +200,7 @@ function cwsRender()
 	me.renderArea = function( areaId )
 	{
 
-		if ( areaId !== 'settingsPage' && areaId !== 'aboutPage' )
+		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )
 		{
 			me.resetVisibility_ViewListDiv();
 		}
@@ -212,13 +212,13 @@ function cwsRender()
 			// added by Greg (2019-02-18) > test track googleAnalytics
 			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-			// should close current tag/content?
-			if (areaId === 'logOut') me.logOutProcess();
+			if (areaId === 'logOut') 
+			{
+				me.logOutProcess();
+			}
 			else if ( areaId === 'statisticsPage') 
 			{
-				//me.clearMenuClickStyles();
 				me.statisticsObj.render();
-				//me.updateMenuClickStyles( areaId );
 			}
 			else if ( areaId === 'settingsPage')
 			{
@@ -524,6 +524,14 @@ function cwsRender()
 				for ( var i = 0; i < areaList.length; i++ )
 				{
 					var area = areaList[i];
+
+					if ( area && area.groupBefore === true )
+					{
+						var groupRow = $( '<hr>' );
+
+						navItemsUL.append( groupRow );
+					}
+
 					var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
 
 					menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
@@ -535,7 +543,7 @@ function cwsRender()
 
 					if ( area.startArea ) startMenuTag = menuLI;
 
-					if ( area && area.group === true )
+					if ( area && area.groupAfter === true )
 					{
 						var groupRow = $( '<hr>' );
 
@@ -773,7 +781,7 @@ function cwsRender()
 		$( '#settingsFormDiv' ).hide();
 
 		// hide the menu div if open
-		me.hidenavDrawerDiv();			
+		me.hidenavDrawerDiv();
 	}
 
 	me.clearMenuClickStyles = function()
@@ -881,11 +889,7 @@ function cwsRender()
 			$('#pageDiv').hide();
 		}
 
-		// hide navMenu
-		if ( $( '#navDrawerDiv' ).is(':visible') ) 
-		{
-			$( 'div.Nav__icon' ).click();
-		}
+		me.hidenavDrawerDiv();
 
 		// hide control Popups
 
@@ -1014,9 +1018,7 @@ function cwsRender()
 		});
 
 		// MISSING TRANSLATION
-		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationGray', btnUpgrade, '', 'right', 'top', 25000 );
-
-		console.log( ' ~ REFRESH notification' );
+		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
 
 		localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': true, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': '' } ) );
 

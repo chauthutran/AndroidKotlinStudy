@@ -2363,6 +2363,17 @@ select:-webkit-autofill:focus {
   }
 }
 
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.75rem;
+}
+
+.table-wrap table th {
+  font-weight: 400;
+}
+
 .button {
   float: left;
   min-width: 64px;
@@ -3737,6 +3748,53 @@ select:-webkit-autofill:focus {
   }
 }
 
+.sheet_full-fs {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  bottom: 0px;
+  left: 0px;
+  top: 0px;
+  z-index: 2999;
+  background-image: url(../images/logo_bk.svg);
+  background-color: #FFF;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
+.no-svg .sheet_full-fs {
+  background-image: url(../images/logo_bk.png);
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
+  .no-svg .sheet_full-fs {
+    background-image: url(../images/logo_bk@2x.png);
+  }
+}
+
+.sheet_full-fs .wapper_card .sheet-title {
+  vertical-align: middle;
+  height: 56px;
+  font-size: 18px;
+  line-height: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.sheet_full-fs .wapper_card .sheet-title img {
+  width: 28px;
+  height: 28px;
+  padding: 0 10px;
+  -webkit-filter: invert(100%);
+          filter: invert(100%);
+}
+
 .sheet_bottom-fs {
   display: none;
   position: fixed;
@@ -5028,53 +5086,6 @@ select:-webkit-autofill:focus {
   margin-bottom: 8px;
 }
 
-.sheet_full-fs {
-  display: none;
-  position: absolute;
-  width: 100%;
-  height: 100vh;
-  bottom: 0px;
-  left: 0px;
-  top: 0px;
-  z-index: 2999;
-  background-image: url(../images/logo_bk.svg);
-  background-color: #FFF;
-  background-position: right;
-  background-repeat: no-repeat;
-  background-size: auto;
-}
-
-.no-svg .sheet_full-fs {
-  background-image: url(../images/logo_bk.png);
-}
-
-@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
-  .no-svg .sheet_full-fs {
-    background-image: url(../images/logo_bk@2x.png);
-  }
-}
-
-.sheet_full-fs .wapper_card .sheet-title {
-  vertical-align: middle;
-  height: 56px;
-  font-size: 18px;
-  line-height: 24px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-.sheet_full-fs .wapper_card .sheet-title img {
-  width: 28px;
-  height: 28px;
-  padding: 0 10px;
-  -webkit-filter: invert(100%);
-          filter: invert(100%);
-}
-
 .wapper_card {
   min-width: 240px;
 }
@@ -5113,9 +5124,9 @@ select:-webkit-autofill:focus {
   float: left;
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  /*border-radius: 50%;*/
   margin-right: 8px;
-  background-color: #5e92f3;
+  /*background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -6832,9 +6843,6 @@ dialog .dialog__action {
   height: auto;
   min-height: 52px;
   padding: 8px 8px 0 8px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -7153,6 +7161,29 @@ dialog .dialog__action div {
   cursor: pointer;
 }
 
+.theme-green {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-green .Nav1 {
   color: #FFFFFF;
   background-color: #1B5E20;
@@ -7301,6 +7332,29 @@ dialog .dialog__action div {
 .theme-green .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #1B5E20;
+}
+
+.theme-red {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-red .Nav1 {
@@ -7453,6 +7507,29 @@ dialog .dialog__action div {
   background-color: #B71C1C;
 }
 
+.theme-pink {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-pink .Nav1 {
   color: #FFFFFF;
   background-color: #880E4F;
@@ -7601,6 +7678,29 @@ dialog .dialog__action div {
 .theme-pink .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #880E4F;
+}
+
+.theme-purple {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-purple .Nav1 {
@@ -7753,6 +7853,29 @@ dialog .dialog__action div {
   background-color: #4A148C;
 }
 
+.theme-deep_purple {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-deep_purple .Nav1 {
   color: #FFFFFF;
   background-color: #311B92;
@@ -7901,6 +8024,29 @@ dialog .dialog__action div {
 .theme-deep_purple .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #311B92;
+}
+
+.theme-indigo {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-indigo .Nav1 {
@@ -8053,6 +8199,29 @@ dialog .dialog__action div {
   background-color: #1A237E;
 }
 
+.theme-blue {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-blue .Nav1 {
   color: #FFFFFF;
   background-color: #0D47A1;
@@ -8201,6 +8370,29 @@ dialog .dialog__action div {
 .theme-blue .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #0D47A1;
+}
+
+.theme-light_blue {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-light_blue .Nav1 {
@@ -8353,6 +8545,29 @@ dialog .dialog__action div {
   background-color: #01579B;
 }
 
+.theme-cyan {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-cyan .Nav1 {
   color: #FFFFFF;
   background-color: #006064;
@@ -8501,6 +8716,29 @@ dialog .dialog__action div {
 .theme-cyan .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #006064;
+}
+
+.theme-teal {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-teal .Nav1 {
@@ -8653,6 +8891,29 @@ dialog .dialog__action div {
   background-color: #004D40;
 }
 
+.theme-light_green {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-light_green .Nav1 {
   color: #FFFFFF;
   background-color: #33691E;
@@ -8801,6 +9062,29 @@ dialog .dialog__action div {
 .theme-light_green .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #33691E;
+}
+
+.theme-lime {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-lime .Nav1 {
@@ -8953,6 +9237,29 @@ dialog .dialog__action div {
   background-color: #827717;
 }
 
+.theme-yellow {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-yellow .Nav1 {
   color: #000000;
   background-color: #F57F17;
@@ -9101,6 +9408,29 @@ dialog .dialog__action div {
 .theme-yellow .sheet_full-fs .wapper_card .sheet-title {
   color: #000000;
   background-color: #F57F17;
+}
+
+.theme-amber {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-amber .Nav1 {
@@ -9253,6 +9583,29 @@ dialog .dialog__action div {
   background-color: #FF6F00;
 }
 
+.theme-orange {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-orange .Nav1 {
   color: #FFFFFF;
   background-color: #FF6F00;
@@ -9401,6 +9754,29 @@ dialog .dialog__action div {
 .theme-orange .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #FF6F00;
+}
+
+.theme-deep_orange {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-deep_orange .Nav1 {
@@ -9553,6 +9929,29 @@ dialog .dialog__action div {
   background-color: #BF360C;
 }
 
+.theme-brown {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-brown .Nav1 {
   color: #FFFFFF;
   background-color: #3E2723;
@@ -9703,6 +10102,29 @@ dialog .dialog__action div {
   background-color: #3E2723;
 }
 
+.theme-gray {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
+}
+
 .theme-gray .Nav1 {
   color: #FFFFFF;
   background-color: #212121;
@@ -9851,6 +10273,29 @@ dialog .dialog__action div {
 .theme-gray .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #212121;
+}
+
+.theme-blue_gray {
+  /*table{
+            background-color: #FFF;
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+            }
+            th{
+                border: 1px solid $bg-100; 
+            }
+            td{
+                border: 1px solid $bg-100; 
+            }
+        }*/
 }
 
 .theme-blue_gray .Nav1 {

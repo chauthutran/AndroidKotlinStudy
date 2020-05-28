@@ -63,11 +63,106 @@ ConfigManager.defaultJsonList = {
 
 ConfigManager.default_SettingPaging = { 
     "enabled": false,
-    "pagingSize": 8   // "paging": { "enabled": true, "pagingSize": 5 }, 
+    "pagingSize": 9 // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
 };
 
 
+
 ConfigManager.statisticConfig = { 
+    "statsPageContent": [
+        "<div id='statsContent'>",
+        "  <div class='statDiv' statId='tableExample'></div>",
+        "  <div class='statDiv' statId='totalActivities'></div>",
+        "  <div class='statDiv' statId='titleOfValue'></div>",
+        "  <div class='statDiv' statId='chartBarLast3Months'></div>",
+        "  <div class='statDiv' statId='1stConsultationThisWeek'></div>",
+        "  <div class='statDiv' statId='titleOfPieChart'></div>",
+        "  <div class='statDiv' statId='titleOfLineChart'></div>",
+        "</div>"
+    ],
+    "statsList": {
+        "tableExample": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Title of Table', 'table' ); ", 
+                " me.addText( 'Appropriately whiteboard competitive bandwidth rather than cross-media systems. Credibly impact.' ); ",
+                " me.addTable( [ { Country: 'Brazil', Year: 1986, DMFT: 6.7 },  { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, { Country: 'Canada', Year: 1974, DMFT: 4.4 }  ] ); ",
+            ]
+        },
+        "totalActivities": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Total activities last 3 month', 'table' ); ", 
+                " me.addText( 'Assertively mesh B2C action items through multimedia based solutions. Progressively coordinate enabled communities through market positioning ideas. Dynamically synthesize process-centric materials before interdependent.' ); ",
+            ]
+
+        },
+        "titleOfValue": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Title of Value', 'details' ); ", 
+                " me.addText( 'Interactively reconceptualize pandemic meta-services for turnkey markets. Synergistically actualize empowered users without go forward collaboration and idea-sharing. Assertively e-enable highly efficient paradigms with open-source experiences. Progressively fashion seamless meta-services through performance based materials. Efficiently coordinate competitive bandwidth before next-generation web.' ); ",
+            ]
+
+        },
+        "chartBarLast3Months": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Chart Bar Last 3 months “allowTimeFiltering”:False', 'barChart' ); ", 
+                " me.addText( 'Continually engineer B2C resources after performance based data. Interactively.' ); ",
+            ]
+
+        },
+        "1stConsultationThisWeek": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( '1st Consultation - This week', 'consult' ); ", 
+                " me.addText( 'Dynamically revolutionize worldwide technology vis-a-vis backward-compatible bandwidth. Compellingly matrix stand-alone deliverables vis-a-vis low-risk high-yield supply chains. Rapidiously streamline wireless.' ); ",
+            ]
+
+        },
+        "titleOfPieChart": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Title of Value', 'pieChart' ); ", 
+                " me.addText( 'Monotonectally supply granular e-tailers without parallel interfaces. Compellingly orchestrate equity invested convergence.' ); ",
+            ]
+
+        },
+        "titleOfLineChart": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Title of chart Line', 'lineChart' ); ", 
+                " me.addText( 'Holisticly revolutionize client-centered best practices rather than cross-platform e-services. Rapidiously target client-centric best practices before 2.0 convergence. Uniquely strategize emerging manufactured products without maintainable web services. Monotonectally whiteboard B2C leadership skills and revolutionary opportunities. Competently administrate real-time intellectual capital after user-centric outside.' ); ",
+            ]
+
+        },
+        "titleOfValue2222": {
+            "title": { 'label': 'Header Section Title', 'icon': 'table' },
+            "periodType": "relational",
+            "runDataEval": [
+                " var cf = crossfilter([ ",
+                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
+                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
+                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
+                " ]); ",
+
+                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
+            
+                " INFO.toTable( INFO.statChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
+            ],
+            "divContent": [
+                "<div>---Table---</div>",
+                "<div>",
+                " displaying table content: <br>",
+                " <div class='statChart'></div>",
+                "</div>"
+            ]
+        }
+    }
+};
+
+ConfigManager.statisticConfig2 = { 
     "statsPageContent": [
         "<div id='statsContent'>",
         "  <div class='statDiv' statId='byYearTable'></div>",
