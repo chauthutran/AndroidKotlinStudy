@@ -625,7 +625,9 @@ $retina-suffix: '@2x';
             th,td{
                 border: 1px solid $bg-100; 
                 padding: 6px; 
-                text-align: left; 
+                text-align: left;
+                font-size: 0.75rem;
+                font-weight: 400;
             }
         
             th.des:after {

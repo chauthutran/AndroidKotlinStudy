@@ -7335,6 +7335,8 @@ dialog .dialog__action div {
   border: 1px solid #C8E6C9;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-green table.statsTable th.des:after {
@@ -7519,6 +7521,8 @@ dialog .dialog__action div {
   border: 1px solid #FFCDD2;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-red table.statsTable th.des:after {
@@ -7703,6 +7707,8 @@ dialog .dialog__action div {
   border: 1px solid #F8BBD0;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-pink table.statsTable th.des:after {
@@ -7887,6 +7893,8 @@ dialog .dialog__action div {
   border: 1px solid #E1BEE7;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-purple table.statsTable th.des:after {
@@ -8071,6 +8079,8 @@ dialog .dialog__action div {
   border: 1px solid #D1C4E9;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-deep_purple table.statsTable th.des:after {
@@ -8255,6 +8265,8 @@ dialog .dialog__action div {
   border: 1px solid #C5CAE9;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-indigo table.statsTable th.des:after {
@@ -8439,6 +8451,8 @@ dialog .dialog__action div {
   border: 1px solid #BBDEFB;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-blue table.statsTable th.des:after {
@@ -8623,6 +8637,8 @@ dialog .dialog__action div {
   border: 1px solid #B3E5FC;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-light_blue table.statsTable th.des:after {
@@ -8807,6 +8823,8 @@ dialog .dialog__action div {
   border: 1px solid #B2EBF2;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-cyan table.statsTable th.des:after {
@@ -8991,6 +9009,8 @@ dialog .dialog__action div {
   border: 1px solid #B2DFDB;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-teal table.statsTable th.des:after {
@@ -9175,6 +9195,8 @@ dialog .dialog__action div {
   border: 1px solid #DCEDC8;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-light_green table.statsTable th.des:after {
@@ -9359,6 +9381,8 @@ dialog .dialog__action div {
   border: 1px solid #F0F4C3;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-lime table.statsTable th.des:after {
@@ -9543,6 +9567,8 @@ dialog .dialog__action div {
   border: 1px solid #FFF9C4;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-yellow table.statsTable th.des:after {
@@ -9727,6 +9753,8 @@ dialog .dialog__action div {
   border: 1px solid #FFECB3;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-amber table.statsTable th.des:after {
@@ -9911,6 +9939,8 @@ dialog .dialog__action div {
   border: 1px solid #FFE0B2;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-orange table.statsTable th.des:after {
@@ -10095,6 +10125,8 @@ dialog .dialog__action div {
   border: 1px solid #FFCCBC;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-deep_orange table.statsTable th.des:after {
@@ -10279,6 +10311,8 @@ dialog .dialog__action div {
   border: 1px solid #D7CCC8;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-brown table.statsTable th.des:after {
@@ -10463,6 +10497,8 @@ dialog .dialog__action div {
   border: 1px solid #F5F5F5;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-gray table.statsTable th.des:after {
@@ -10647,6 +10683,8 @@ dialog .dialog__action div {
   border: 1px solid #CFD8DC;
   padding: 6px;
   text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .theme-blue_gray table.statsTable th.des:after {

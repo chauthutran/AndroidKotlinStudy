@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "67aa038ed037db1f30baad14e784cd29"
+    "revision": "1fca0bb43d1b9513cbb45c7f634e611e"
   },
   {
     "url": "css/style2.css",
@@ -1289,7 +1289,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "975b7c7c94d4709104c96507b3001ffb"
+    "revision": "5a1e0ff81224b9e27efe6d7830016ba8"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -1397,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "6a581438291c1fcdbdc61a7c990ce968"
+    "revision": "279c98096c165b0432dbd630e18eb3ae"
   },
   {
     "url": "scripts/services/connManager.js",
@@ -1417,7 +1417,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "8ba96223945a4be66ca8d279d02d91ac"
+    "revision": "27384fbcef424549b313ed8154b38f35"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1545,7 +1545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "67aa038ed037db1f30baad14e784cd29"
+    "revision": "1fca0bb43d1b9513cbb45c7f634e611e"
   },
   {
     "url": "sounds/beep.mp3",
