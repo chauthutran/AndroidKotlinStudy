@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "d9ebba5d5ff5bdf5f8c895ed9145c852"
+    "revision": "ba3580d42fef3983159c0f33d346498e"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1305,7 +1305,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/constants.js",
-    "revision": "571c716f82418a38c7b0e9a1066addf7"
+    "revision": "78582493942f72ff8dd766c080ca70bd"
   },
   {
     "url": "scripts/constants/templates.js",
@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "8f99e4eb9e783d004cd03385b066abc3"
+    "revision": "009adab0340ccacb537a44ab8635ec9b"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
