@@ -603,8 +603,10 @@ $retina-suffix: '@2x';
 
         }
 
-        /*table{
+        table.statsTable {
             background-color: #FFF;
+            width: 100%; 
+            border-collapse: collapse; 
 
             tr{
                 &:nth-of-type(odd) { 
@@ -615,13 +617,24 @@ $retina-suffix: '@2x';
             th { 
                 background: $bg-900; 
                 color: $fc-900;
+                font-weight: bold; 
+                cursor: s-resize;
+                background-repeat: no-repeat;
+                background-position: 3% center;
             }
-            th{
+            th,td{
                 border: 1px solid $bg-100; 
+                padding: 6px; 
+                text-align: left; 
             }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+        
+            th.des:after {
+                content: "\21E9";
+              }
+              
+              th.aes:after {
+                content: "\21E7";
+              }
+        }
     }
 }

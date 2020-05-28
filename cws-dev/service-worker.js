@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "24717d656ea953cf898cc0ede8aaca07"
+    "revision": "329230723fae53e281ec1fa8631afcfd"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "c4e4abd0adba153c5f7224981401eb77"
+    "revision": "67aa038ed037db1f30baad14e784cd29"
   },
   {
     "url": "css/style2.css",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "91f635d57220726e4f48630efeccb4f8"
+    "revision": "4572f979d27b98d5f9de5d3b2998b2b1"
   },
   {
     "url": "redeemGen.html",
@@ -1233,7 +1233,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "2e3b82d9267f2e9a853ac751ff27cd98"
+    "revision": "de9a336adf26daedc41f98270580c258"
   },
   {
     "url": "scripts/classes/blockListView.js",
@@ -1269,7 +1269,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "fa8eae81e1d640546e1a90878302cd20"
+    "revision": "408bebad9d5cf52e2a02fb0125385735"
   },
   {
     "url": "scripts/classes/myDetails.js",
@@ -1289,7 +1289,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "678d84198eaec106fa24127856d28f6b"
+    "revision": "975b7c7c94d4709104c96507b3001ffb"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -1309,11 +1309,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "abe7c9fb3848b5ddb555ee0ff21e09b9"
+    "revision": "87b0c030a872c7ad2d60405b9f289800"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "53104fa356ce2e78de1fa1e841e56c54"
+    "revision": "c18e7e109e2d0afe1b149d43abc06176"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1397,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "13768e165863a0c93572bbf60659d857"
+    "revision": "6a581438291c1fcdbdc61a7c990ce968"
   },
   {
     "url": "scripts/services/connManager.js",
@@ -1417,7 +1417,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "7a833b847901451175490c8f8e8d09ba"
+    "revision": "8ba96223945a4be66ca8d279d02d91ac"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1545,7 +1545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "c4e4abd0adba153c5f7224981401eb77"
+    "revision": "67aa038ed037db1f30baad14e784cd29"
   },
   {
     "url": "sounds/beep.mp3",

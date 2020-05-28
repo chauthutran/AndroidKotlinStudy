@@ -5124,9 +5124,9 @@ select:-webkit-autofill:focus {
   float: left;
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  /*border-radius: 50%;*/
   margin-right: 8px;
-  background-color: #5e92f3;
+  /*background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -7161,29 +7161,6 @@ dialog .dialog__action div {
   cursor: pointer;
 }
 
-.theme-green {
-  /*table{
-            background-color: #FFF;
-
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
-}
-
 .theme-green .Nav1 {
   color: #FFFFFF;
   background-color: #1B5E20;
@@ -7334,27 +7311,38 @@ dialog .dialog__action div {
   background-color: #1B5E20;
 }
 
-.theme-red {
-  /*table{
-            background-color: #FFF;
+.theme-green table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-green table.statsTable tr:nth-of-type(odd) {
+  background: #E8F5E9;
+  color: #000000;
+}
+
+.theme-green table.statsTable th {
+  background: #1B5E20;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-green table.statsTable th, .theme-green table.statsTable td {
+  border: 1px solid #C8E6C9;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-green table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-green table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-red .Nav1 {
@@ -7507,27 +7495,38 @@ dialog .dialog__action div {
   background-color: #B71C1C;
 }
 
-.theme-pink {
-  /*table{
-            background-color: #FFF;
+.theme-red table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-red table.statsTable tr:nth-of-type(odd) {
+  background: #FFEBEE;
+  color: #000000;
+}
+
+.theme-red table.statsTable th {
+  background: #B71C1C;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-red table.statsTable th, .theme-red table.statsTable td {
+  border: 1px solid #FFCDD2;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-red table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-red table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-pink .Nav1 {
@@ -7680,27 +7679,38 @@ dialog .dialog__action div {
   background-color: #880E4F;
 }
 
-.theme-purple {
-  /*table{
-            background-color: #FFF;
+.theme-pink table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-pink table.statsTable tr:nth-of-type(odd) {
+  background: #FCE4EC;
+  color: #000000;
+}
+
+.theme-pink table.statsTable th {
+  background: #880E4F;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-pink table.statsTable th, .theme-pink table.statsTable td {
+  border: 1px solid #F8BBD0;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-pink table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-pink table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-purple .Nav1 {
@@ -7853,27 +7863,38 @@ dialog .dialog__action div {
   background-color: #4A148C;
 }
 
-.theme-deep_purple {
-  /*table{
-            background-color: #FFF;
+.theme-purple table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-purple table.statsTable tr:nth-of-type(odd) {
+  background: #F3E5F5;
+  color: #000000;
+}
+
+.theme-purple table.statsTable th {
+  background: #4A148C;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-purple table.statsTable th, .theme-purple table.statsTable td {
+  border: 1px solid #E1BEE7;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-purple table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-purple table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-deep_purple .Nav1 {
@@ -8026,27 +8047,38 @@ dialog .dialog__action div {
   background-color: #311B92;
 }
 
-.theme-indigo {
-  /*table{
-            background-color: #FFF;
+.theme-deep_purple table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-deep_purple table.statsTable tr:nth-of-type(odd) {
+  background: #EDE7F6;
+  color: #000000;
+}
+
+.theme-deep_purple table.statsTable th {
+  background: #311B92;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-deep_purple table.statsTable th, .theme-deep_purple table.statsTable td {
+  border: 1px solid #D1C4E9;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-deep_purple table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-deep_purple table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-indigo .Nav1 {
@@ -8199,27 +8231,38 @@ dialog .dialog__action div {
   background-color: #1A237E;
 }
 
-.theme-blue {
-  /*table{
-            background-color: #FFF;
+.theme-indigo table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-indigo table.statsTable tr:nth-of-type(odd) {
+  background: #E8EAF6;
+  color: #000000;
+}
+
+.theme-indigo table.statsTable th {
+  background: #1A237E;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-indigo table.statsTable th, .theme-indigo table.statsTable td {
+  border: 1px solid #C5CAE9;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-indigo table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-indigo table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-blue .Nav1 {
@@ -8372,27 +8415,38 @@ dialog .dialog__action div {
   background-color: #0D47A1;
 }
 
-.theme-light_blue {
-  /*table{
-            background-color: #FFF;
+.theme-blue table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-blue table.statsTable tr:nth-of-type(odd) {
+  background: #E3F2FD;
+  color: #000000;
+}
+
+.theme-blue table.statsTable th {
+  background: #0D47A1;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-blue table.statsTable th, .theme-blue table.statsTable td {
+  border: 1px solid #BBDEFB;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-blue table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-blue table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-light_blue .Nav1 {
@@ -8545,27 +8599,38 @@ dialog .dialog__action div {
   background-color: #01579B;
 }
 
-.theme-cyan {
-  /*table{
-            background-color: #FFF;
+.theme-light_blue table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-light_blue table.statsTable tr:nth-of-type(odd) {
+  background: #E1F5FE;
+  color: #000000;
+}
+
+.theme-light_blue table.statsTable th {
+  background: #01579B;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-light_blue table.statsTable th, .theme-light_blue table.statsTable td {
+  border: 1px solid #B3E5FC;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-light_blue table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-light_blue table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-cyan .Nav1 {
@@ -8718,27 +8783,38 @@ dialog .dialog__action div {
   background-color: #006064;
 }
 
-.theme-teal {
-  /*table{
-            background-color: #FFF;
+.theme-cyan table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-cyan table.statsTable tr:nth-of-type(odd) {
+  background: #E0F7FA;
+  color: #000000;
+}
+
+.theme-cyan table.statsTable th {
+  background: #006064;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-cyan table.statsTable th, .theme-cyan table.statsTable td {
+  border: 1px solid #B2EBF2;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-cyan table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-cyan table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-teal .Nav1 {
@@ -8891,27 +8967,38 @@ dialog .dialog__action div {
   background-color: #004D40;
 }
 
-.theme-light_green {
-  /*table{
-            background-color: #FFF;
+.theme-teal table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-teal table.statsTable tr:nth-of-type(odd) {
+  background: #E0F2F1;
+  color: #000000;
+}
+
+.theme-teal table.statsTable th {
+  background: #004D40;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-teal table.statsTable th, .theme-teal table.statsTable td {
+  border: 1px solid #B2DFDB;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-teal table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-teal table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-light_green .Nav1 {
@@ -9064,27 +9151,38 @@ dialog .dialog__action div {
   background-color: #33691E;
 }
 
-.theme-lime {
-  /*table{
-            background-color: #FFF;
+.theme-light_green table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-light_green table.statsTable tr:nth-of-type(odd) {
+  background: #F1F8E9;
+  color: #000000;
+}
+
+.theme-light_green table.statsTable th {
+  background: #33691E;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-light_green table.statsTable th, .theme-light_green table.statsTable td {
+  border: 1px solid #DCEDC8;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-light_green table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-light_green table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-lime .Nav1 {
@@ -9237,27 +9335,38 @@ dialog .dialog__action div {
   background-color: #827717;
 }
 
-.theme-yellow {
-  /*table{
-            background-color: #FFF;
+.theme-lime table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-lime table.statsTable tr:nth-of-type(odd) {
+  background: #F9FBE7;
+  color: #000000;
+}
+
+.theme-lime table.statsTable th {
+  background: #827717;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-lime table.statsTable th, .theme-lime table.statsTable td {
+  border: 1px solid #F0F4C3;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-lime table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-lime table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-yellow .Nav1 {
@@ -9410,27 +9519,38 @@ dialog .dialog__action div {
   background-color: #F57F17;
 }
 
-.theme-amber {
-  /*table{
-            background-color: #FFF;
+.theme-yellow table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-yellow table.statsTable tr:nth-of-type(odd) {
+  background: #FFFDE7;
+  color: #000000;
+}
+
+.theme-yellow table.statsTable th {
+  background: #F57F17;
+  color: #000000;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-yellow table.statsTable th, .theme-yellow table.statsTable td {
+  border: 1px solid #FFF9C4;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-yellow table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-yellow table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-amber .Nav1 {
@@ -9583,27 +9703,38 @@ dialog .dialog__action div {
   background-color: #FF6F00;
 }
 
-.theme-orange {
-  /*table{
-            background-color: #FFF;
+.theme-amber table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-amber table.statsTable tr:nth-of-type(odd) {
+  background: #FFF8E1;
+  color: #000000;
+}
+
+.theme-amber table.statsTable th {
+  background: #FF6F00;
+  color: #000000;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-amber table.statsTable th, .theme-amber table.statsTable td {
+  border: 1px solid #FFECB3;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-amber table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-amber table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-orange .Nav1 {
@@ -9756,27 +9887,38 @@ dialog .dialog__action div {
   background-color: #FF6F00;
 }
 
-.theme-deep_orange {
-  /*table{
-            background-color: #FFF;
+.theme-orange table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-orange table.statsTable tr:nth-of-type(odd) {
+  background: #FFF3E0;
+  color: #000000;
+}
+
+.theme-orange table.statsTable th {
+  background: #FF6F00;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-orange table.statsTable th, .theme-orange table.statsTable td {
+  border: 1px solid #FFE0B2;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-orange table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-orange table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-deep_orange .Nav1 {
@@ -9929,27 +10071,38 @@ dialog .dialog__action div {
   background-color: #BF360C;
 }
 
-.theme-brown {
-  /*table{
-            background-color: #FFF;
+.theme-deep_orange table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-deep_orange table.statsTable tr:nth-of-type(odd) {
+  background: #FBE9E7;
+  color: #000000;
+}
+
+.theme-deep_orange table.statsTable th {
+  background: #BF360C;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-deep_orange table.statsTable th, .theme-deep_orange table.statsTable td {
+  border: 1px solid #FFCCBC;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-deep_orange table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-deep_orange table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-brown .Nav1 {
@@ -10102,27 +10255,38 @@ dialog .dialog__action div {
   background-color: #3E2723;
 }
 
-.theme-gray {
-  /*table{
-            background-color: #FFF;
+.theme-brown table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-brown table.statsTable tr:nth-of-type(odd) {
+  background: #EFEBE9;
+  color: #000000;
+}
+
+.theme-brown table.statsTable th {
+  background: #3E2723;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-brown table.statsTable th, .theme-brown table.statsTable td {
+  border: 1px solid #D7CCC8;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-brown table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-brown table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-gray .Nav1 {
@@ -10275,27 +10439,38 @@ dialog .dialog__action div {
   background-color: #212121;
 }
 
-.theme-blue_gray {
-  /*table{
-            background-color: #FFF;
+.theme-gray table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
 
-            tr{
-                &:nth-of-type(odd) { 
-                    background: $bg-50;
-                    color: $fc-50
-                }
-            }
-            th { 
-                background: $bg-900; 
-                color: $fc-900;
-            }
-            th{
-                border: 1px solid $bg-100; 
-            }
-            td{
-                border: 1px solid $bg-100; 
-            }
-        }*/
+.theme-gray table.statsTable tr:nth-of-type(odd) {
+  background: #FAFAFA;
+  color: #000000;
+}
+
+.theme-gray table.statsTable th {
+  background: #212121;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-gray table.statsTable th, .theme-gray table.statsTable td {
+  border: 1px solid #F5F5F5;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-gray table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-gray table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .theme-blue_gray .Nav1 {
@@ -10446,6 +10621,40 @@ dialog .dialog__action div {
 .theme-blue_gray .sheet_full-fs .wapper_card .sheet-title {
   color: #FFFFFF;
   background-color: #263238;
+}
+
+.theme-blue_gray table.statsTable {
+  background-color: #FFF;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.theme-blue_gray table.statsTable tr:nth-of-type(odd) {
+  background: #ECEFF1;
+  color: #000000;
+}
+
+.theme-blue_gray table.statsTable th {
+  background: #263238;
+  color: #FFFFFF;
+  font-weight: bold;
+  cursor: s-resize;
+  background-repeat: no-repeat;
+  background-position: 3% center;
+}
+
+.theme-blue_gray table.statsTable th, .theme-blue_gray table.statsTable td {
+  border: 1px solid #CFD8DC;
+  padding: 6px;
+  text-align: left;
+}
+
+.theme-blue_gray table.statsTable th.des:after {
+  content: "\21E9";
+}
+
+.theme-blue_gray table.statsTable th.aes:after {
+  content: "\21E7";
 }
 
 .color_status_pending {
