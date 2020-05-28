@@ -177,8 +177,8 @@ function Statistics( cwsRender )
 	{
         var containerDiv = $( '#statsContentPage' ).html( '' );
         var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod };
-        console.log( me.dateGroupStats);
-        INFO.data = me.dateGroupStats; 
+
+        INFO.data = me.getActivityList_Query( INFO ); //me.dateGroupStats; 
 
         // STEP 1. Eval and Insert the main tag + get list of 'div.statDiv'        
         var statContentTagStr = Util.strCombine( ConfigManager.statisticConfig.statsPageContent );
@@ -311,8 +311,105 @@ function Statistics( cwsRender )
         return textTag;
     }
 
+    me.addTable = function( data, target )
+    {
+        /*function keys( jsonObj )
+        {
+            var keyArr = [];
+            for ( var key in jsonObj[ 0 ] ) 
+            {
+                keyArr.push( key );
+            }
+            return keyArr;
+        }*/
+        function tabulate( data, tagID ) //columns
+        {
+            /*var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
+            var thead = table.append( 'thead' );
+            var	tbody = table.append( 'tbody' );
+    
+            // append the header row
+            thead.append('tr')
+              .selectAll('th')
+              .data(columns).enter()
+              .append('th')
+              .text(function (column) { return column; });
+    
+            // create a row for each object in the data
+            var rows = tbody.selectAll('tr')
+              .data(data)
+              .enter()
+              .append('tr');
+    
+            // create a cell in each row for each column
+            var cells = rows.selectAll('td')
+              .data(function (row) {
+                return columns.map(function (column) {
+                  return {column: column, value: row[column]};
+                });
+              })
+              .enter()
+              .append('td')
+              .text(function (d) { return d.value; });*/
+
+              var sortAscending = true;
+              var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
+              table.attr( 'class', 'statsTable' );
+
+              var keys = d3.keys( data[0] );
+              var headers = table.append('thead').append('tr')
+                  .selectAll('th')
+                  .data( keys ).enter()
+                  .append('th')
+                  .text(function (d) {
+                      return d;
+                  })
+                  .on('click', function (d) {
+                      headers.attr('class', 'header');
+                      if (sortAscending) {
+                          rows.sort(function (a, b) {
+                              return b[d] < a[d];
+                          });
+                          sortAscending = false;
+                          this.className = 'aes';
+                      } else {
+                          rows.sort(function (a, b) {
+                              return b[d] > a[d];
+                          });
+                          sortAscending = true;
+                          this.className = 'des';
+                      }
+                  });
+
+              var rows = table.append('tbody').selectAll('tr')
+                  .data(data).enter()
+                  .append('tr');
+              rows.selectAll('td')
+                  .data(function (d) {
+                      return keys.map(function (k) {
+                          return {
+                              'value': d[k],
+                              'name': k
+                          };
+                      });
+                  }).enter()
+                  .append('td')
+                  .attr('data-th', function (d) {
+                      return d.name;
+                  })
+                  .text(function (d) {
+                      return d.value;
+                  });
+    
+          return table;
+        }
+    
+        // render the table(s)
+        tabulate( data, target ); // keys( data ), 
+    }
+
     // add/create Table?
-    me.addTable = function( dataObj )
+    me.addTable1 = function( dataObj )
     {
         var jsonObj;
         var tableWrapped = $( '<div class="table-wrap" />' )
@@ -358,6 +455,37 @@ function Statistics( cwsRender )
         }
 
         return tableWrapped;
+    }
+
+    me.getActivityList_Query = function( INFO )
+    {
+        // type: c_reg/v_iss/v_rdm
+        var type = 'c_reg';
+        var clientList = ActivityDataManager.getActivityList();
+        var queryResults = [];
+    
+        // Create activity data list - number clientRegistered, vocuher issued/redeemd
+        clientList.forEach( (activity, i_c) => {
+    
+            console.log( activity );
+
+            var activityData = {};
+
+            activityData.date = activity.activityDate.capturedLoc;
+
+            activity.transactions.forEach( (trans, i_t) => {
+
+                if ( trans.transactionType === type ) 
+                {
+                    // INFO.startPeriod - INFO.endPeriod
+                    queryResults.push( ( trans.clientDetails ) ? trans.clientDetails : trans.dataValues );
+                }
+            
+            });
+
+        });
+
+        return queryResults;
     }
 
 	me.testStatisticContent = function()
