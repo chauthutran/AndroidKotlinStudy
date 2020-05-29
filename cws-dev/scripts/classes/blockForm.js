@@ -95,7 +95,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			me.evalFormGroupDisplayStatus( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
-			me.validationObj.setUp_Events( formDivSecTag );
+			//me.validationObj.setUp_Events( formDivSecTag );
 
 			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 			setTimeout( function(){

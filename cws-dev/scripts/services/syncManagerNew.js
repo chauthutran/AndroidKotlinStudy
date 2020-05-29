@@ -98,7 +98,9 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         SyncManagerNew.SyncMsg_InsertSummaryMsg( "sync_all failed - msg: " + errMsg );
 
         console.log( 'syncAll not run properly - ' + errMsg );
+
         SyncManagerNew.syncFinish();
+        SyncManagerNew.update_UI_FinishSyncAll();
         if( callBack ) callBack( false );
     }
 };
@@ -161,10 +163,10 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 // ===================================================
 // === 1. 'syncUpItem' Related Methods =============
 
-SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
-{
-    return ConnManagerNew.isAppMode_Online();
-};
+//SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
+//{
+//    return ConnManagerNew.isAppMode_Online();
+//};
 
 
 // ===================================================
@@ -193,21 +195,30 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( itemDataList, i, cwsRende
         return callBack();        
     }
     else
-    {
-        var itemData = itemDataList[i];         
+    {    
+        // CASE: NOTE: DURING syncAll, if Offline mode detected, cancel the syncAll process in the middle.
+        if ( !ConnManagerNew.isAppMode_Online() )
+        {
+            SyncManagerNew.SyncMsg_InsertMsg( "App offline mode detected.  Stopping syncAll process.." );
+            throw 'Stopping syncAll process due to app mode offline detected.';
+        }
+        else
+        {
+            var itemData = itemDataList[i];         
         
-        var activityCardObj = new ActivityCard( itemData.activityId, cwsRenderObj );
-
-        activityCardObj.performSyncUp( function( success ) {
-
-            if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.activityId );
-
-            // update on progress bar
-            FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
-
-            // Process next item.
-            SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
-        });
+            var activityCardObj = new ActivityCard( itemData.activityId, cwsRenderObj );
+    
+            activityCardObj.performSyncUp( function( success ) {
+    
+                if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.activityId );
+    
+                // update on progress bar
+                FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
+    
+                // Process next item.
+                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
+            });    
+        }
     }
 };
 
@@ -379,8 +390,17 @@ SyncManagerNew.syncStart = function()
     }
     else 
     {
-        SyncManagerNew.sync_Running = true;
-        isOkToStart = true;
+        // If not already running sync in process, check the network mode
+        // and set it as running
+        if ( !ConnManagerNew.isAppMode_Online() )
+        {
+            alert( 'Sync not available with offline appMode status..' );            
+        }
+        else
+        {
+            SyncManagerNew.sync_Running = true;
+            isOkToStart = true;    
+        }        
     }
 
     return isOkToStart;

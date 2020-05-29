@@ -13,6 +13,7 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
     me.setUp_Events = function( formTag )
     {
+		/*
 		// < change to find( '.dataValue' ) ?
         //formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
@@ -20,7 +21,8 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
             inputTag.change( function(){ //blur
                 me.checkValidations( inputTag );
             });
-        });
+		});
+		*/
     };
 
 	// ================================
@@ -30,6 +32,7 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 	{	
 		var allValid = true;
 
+		/*
 		// If any of the tag is not valid, mark it as invalid.
 		//formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
@@ -38,12 +41,13 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 				allValid = false;
 			}
 		});
-				
+		*/		
 		return allValid;
 	};
 
 	me.checkValidations = function( tag )
 	{	
+		/*
 		// Validation Initial Setting Clear
 		tag.attr( 'valid', 'true' );
 
@@ -71,6 +75,8 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		validationTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
 
 		return valid;
+		*/
+		return true;
 	};
 	
 	me.performValidationCheck = function( tag, type, divTag )
