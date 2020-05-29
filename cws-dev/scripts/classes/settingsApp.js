@@ -15,7 +15,6 @@ function settingsApp( cwsRender )
     // ----- Tags -----------
     me.settingsInfo_langSelectTag = $( '#settingsInfo_langSelect' );
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
-    me.settingsInfo_ThemeSelectTag2 = $( '#settingsInfo_ThemeSelect2' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
@@ -201,26 +200,15 @@ function settingsApp( cwsRender )
 
         });
 
-        me.settingsInfo_ThemeSelectTag2.change ( () => 
-        {    
-            $("body").removeClass().addClass(me.settingsInfo_ThemeSelectTag2.val());
-            
-        });
-
         me.settingsInfo_ThemeSelectTag.change ( () => 
         {    
-            FormUtil.showProgressBar();
+            $("body").removeClass().addClass( me.settingsInfo_ThemeSelectTag.val() );
 
-            var thisConfig = ConfigManager.getConfigJson();
+            var sessData = JSON.parse( localStorage.getItem( "session" ) );
 
-            thisConfig.settings.theme = me.settingsInfo_ThemeSelectTag.val();
+            sessData.theme = me.settingsInfo_ThemeSelectTag.val();
+            DataManager.saveData("session", sessData);
 
-            ConfigManager.getConfigJson() = thisConfig;
-            me.cwsRenderObj.renderDefaultTheme(); 
-
-            $( '#settingsInfo_theme_Text' ).html( me.settingsInfo_ThemeSelectTag.val() );
-
-            FormUtil.hideProgressBar();
         });
 
         me.settingsInfo_NetworkSync.change ( () => 
@@ -771,8 +759,8 @@ function settingsApp( cwsRender )
             if ( dcdConfig.version ) dcdConfigVersion = dcdConfig.version;
             if ( dcdConfig.settings && dcdConfig.settings.theme ) 
             {
-                me.getThemeList( dcdConfig.themes );
-                me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
+                //me.getThemeList( dcdConfig.themes );
+                //me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
                 me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins )
 
@@ -781,7 +769,9 @@ function settingsApp( cwsRender )
 
         // Populate data
         $( '#settingsInfo_AppVersion' ).html( $( '#spanVersion' ).html().replace('v','') );
-        $( '#settingsInfo_Browser' ).html( navigator.sayswho );
+        //$( '#settingsInfo_Browser' ).html( navigator.sayswho );
+
+        $( '#settingsInfo_ThemeSelect' ).val( $("body")[0].classList[ 0 ] );
 
         if ( ! me.langTermObj.getLangList() )
         {
@@ -878,7 +868,7 @@ function settingsApp( cwsRender )
 
     }
 
-    me.getThemeList = function( jsonThemes )
+    /*me.getThemeList = function( jsonThemes )
     {
 		if ( jsonThemes )
 		{
@@ -908,7 +898,7 @@ function settingsApp( cwsRender )
             }
 
 		}
-    }
+    }*/
 
 
     me.populateLangList_Show = function( languageList, defaultLangCode )
@@ -963,18 +953,6 @@ function settingsApp( cwsRender )
 
     }
 
-    me.populateThemeList_Show = function( ThemeList, defaultTheme )
-    {   
-        Util.populateSelect( me.settingsInfo_ThemeSelectTag, "Theme", ThemeList );
-
-        if ( defaultTheme )
-        {
-            Util.setSelectDefaultByName( me.settingsInfo_ThemeSelectTag, defaultTheme );
-        }
-
-        // $( '#settingsInfo_theme_Text' ).html( defaultTheme );
-        // $( '#settingsInfo_DivThemeSelect' ).show();
-    }
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
     {

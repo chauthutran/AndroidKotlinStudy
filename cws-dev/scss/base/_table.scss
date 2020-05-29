@@ -7,10 +7,17 @@
 
         th {
             font-weight: 400;
+            @include font-size(12px);
         }
 
-        td {}
+        td {
+            font-weight: 400;
+            @include font-size(12px);
+        }
 
-        tr {}
+        tr {
+            font-weight: 400;
+            @include font-size(12px);
+        }
     }
 }

@@ -146,7 +146,7 @@
             <div class="field__label">
               <label term="login_userName">User code</label><span>*</span>
             </div>
-            <div class="fiel__controls">
+            <div class="field__controls">
               <div class="field__left">
                 <input class="auto_compl loginUserName" type="text" autocomplete="off" mandatory="true"
                   placeholder="Enter your user code" tabindex="1">
@@ -158,7 +158,7 @@
             <div class="field__label">
               <label term="login_password">PIN</label><span>*</span>
             </div>
-            <div class="fiel__controls">
+            <div class="field__controls">
               <div class="field__left">
                 <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
                   autocomplete="off" mandatory="true">
@@ -212,7 +212,7 @@
 
       <div class="field">
         <div class="field__label"><label>Network sync</label></div>
-        <div class="fiel__controls">
+        <div class="field__controls">
           <div class="field__selector">
             <select id="settingsInfo_networkSync"></select>
           </div>
@@ -223,7 +223,7 @@
 
       <div class="field">
         <div class="field__label"><label term="settings_userLanguage">User language</label></div>
-        <div class="fiel__controls">
+        <div class="field__controls">
           <div class="field__selector">
             <select id="settingsInfo_langSelect"></select>
           </div>
@@ -235,7 +235,7 @@
       <div class="field">
         <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
             date</label></div>
-        <div class="fiel__controls">
+        <div class="field__controls">
           <div class="field__left">
             <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
           </div>
@@ -252,22 +252,28 @@
 
       <div class="field">
         <div class="field__label"><label term="settings_theme">Theme</label></div>
-        <div class="fiel__controls">
+        <div class="field__controls">
           <div class="field__selector">
-            <!-- <select id="settingsInfo_ThemeSelect"></select> -->
-            <select id="settingsInfo_ThemeSelect2">
-              <option value="theme-red">theme-red</option> 
-              <option value="theme-pink" >theme-pink</option>
+            <select id="settingsInfo_ThemeSelect">
+              <option value="theme-red">theme-red</option>
+              <option value="theme-pink">theme-pink</option>
               <option value="theme-purple">theme-purple</option>
               <option value="theme-deep_purple">theme-deep_purple</option>
               <option value="theme-indigo">theme-indigo</option>
-              <option value="theme-blue" selected >theme-blue</option>
+              <option value="theme-blue">theme-blue</option>
               <option value="theme-light_blue">theme-light_blue</option>
               <option value="theme-cyan">theme-cyan</option>
               <option value="theme-teal">theme-teal</option>
               <option value="theme-green">theme-green</option>
-                       
-
+              <option value="theme-light_green">theme-light_green</option>
+              <option value="theme-lime">theme-lime</option>
+              <option value="theme-yellow">theme-yellow</option>
+              <option value="theme-amber">theme-amber</option>
+              <option value="theme-orange">theme-orange</option>
+              <option value="theme-deep_orange">theme-deep_orange</option>
+              <option value="theme-brown">theme-brown</option>
+              <option value="theme-gray">theme-gray</option>
+              <option value="theme-blue_gray">theme-blue_gray</option>
             </select>
           </div>
           <div class="field__right"></div>
@@ -281,7 +287,7 @@
             
       
           <div class="" id="settingsAppRestHeader">
-            <div class="fiel__controls">
+            <div class="field__controls">
               <div class="field__left"></div>
       
               <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -360,77 +366,44 @@
 
   <!-- START > ABOUT FORM DIV -->
   <div id="aboutFormDiv" class="sheet_full-fs" style="display: none;">
+
     <div class="wapper_card">
       <div class="sheet-title c_900">
         <img src="images/arrow_back.svg" class="btnAboutBack btnBack">
         <span term="menu_about">About</span>
       </div>
-      <div class="card _tab activity">
-       
-        <div style="display:flex; align-items: center" style="
-        font-weight: bolder;
-        font-size: 1.5rem;
-        line-height: 17px;
-        color: rgba(51, 51, 51, 0.87);">
-      <img src="images/logo_cws.png" alt=""> Workforce App
     </div>
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="about_applicationVersion">Application version</dt>
-      <dt style="font-size: 0.875rem;
-          line-height: 20px;" id="aboutInfo_AppVersion"></dt>
-    </dl>
-    <!-- <dl>
-          <dt term="about_newVersionAvailable">new version available</dt>
-          <dd id="aboutInfo_AppNewVersion">
-          <dd id="aboutInfo_AppVersionInner">
-            <button value="" id="appShellUpdateBtn" class="" term="common_update">update</button>
-          </dd>
-        </dl> -->
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="about_configVersion">Config version</dt>
-      <dt style="font-size: 0.875rem;
-          line-height: 20px;" id="aboutInfo_dcdVersion"></dt>
-    </dl>
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="about_networkMode">Network mode</dt>
-      <dt style="font-size: 0.875rem;
-          line-height: 20px;" id="aboutInfo_networkMode"></dt>
-    </dl>
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="about_geoLocation">Location permission</dt>
-      <dt style="font-size: 0.875rem;
-          line-height: 20px;" id="aboutInfo_geoLocation"></dt>
-    </dl>
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="about_browser">Browser</dt>
-      <dt style="font-size: 0.875rem;
-          line-height: 20px;" id="aboutInfo_Browser"></dt>
-    </dl>
-    <dl>
-      <dt style="color: rgba(51, 51, 51, 0.54);
-          font-weight: 500;
-          font-size: 0.75rem;
-          line-height: 10px;" term="">Other data</dt>
-      <dt id=""></dt>
-    </dl>
 
+    <div class="wrapper">
+      <div class="principal_section" style="height: 75px;margin: 0;width: 100vw;left: -8px;position: relative;background-color: #fff;padding: 8px 0 12px 8px;">
+          <div class="principal_section__icon">
+            <img src="images/Connect.svg" style="width: inherit;height: inherit;">
+          </div>
+          <div class="principal_section__title">Workforce App</div>
       </div>
+      <div class="field-read_only">
+          <div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
+          <div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
+      </div>
+      <div class="field-read_only">
+          <div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
+          <div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
+      </div>
+      <div class="field-read_only">
+          <div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
+          <div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
+      </div>
+      <div class="field-read_only">
+          <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
+          <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
+      </div>
+      <div class="field-read_only">
+          <div class="field-read_only__label"><label term="about_browser">Browser</label></div>
+          <div class="field-read_only__text" id="aboutInfo_Browser">Chrome -73</div>
+      </div>
+
     </div>
+
   </div>
 
   <!-- END > ABOUT FORM DIV -->

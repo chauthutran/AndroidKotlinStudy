@@ -88,7 +88,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.containerTagTemplate = `
     <div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
       <div class="field__label"><label>Label</label><span>*</span></div>
-      <div class="fiel__controls">
+      <div class="field__controls">
         <div class="field__selector">
           <select class="selViewsListSelector" mandatory="true">
           </select>

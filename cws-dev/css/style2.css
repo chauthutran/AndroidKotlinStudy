@@ -2875,13 +2875,13 @@ select:-webkit-autofill:focus {
   cursor: pointer;
 }
 
-.field .fiel__controls {
+.field .field__controls {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-.field .fiel__controls .field__right {
+.field .field__controls .field__right {
   display: none;
   float: right;
   width: 24px;
@@ -2897,12 +2897,12 @@ select:-webkit-autofill:focus {
   -moz-box-sizing: border-box;
 }
 
-.no-svg .field .fiel__controls .field__right {
+.no-svg .field .field__controls .field__right {
   background-image: url(../images/close.png);
 }
 
 @media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
-  .no-svg .field .fiel__controls .field__right {
+  .no-svg .field .field__controls .field__right {
     background-image: url(../images/close@2x.png);
   }
 }

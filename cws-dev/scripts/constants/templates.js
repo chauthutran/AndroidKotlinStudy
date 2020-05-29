@@ -8,7 +8,7 @@ Templates.inputFieldHidden = `<input type='hidden' id='' value='' name='' class=
 
 Templates.inputFieldStandard = `<div class="inputField field" >
 <div class="field__label fieldLabel"><label class="displayName"></label></div>
-<div class="fiel__controls">
+<div class="field__controls">
   <div class="field__left"></div>
   <div class="field__right" style="display: none;"></div>
 </div>
@@ -319,7 +319,7 @@ Templates.statisticsFullScreen = `
     <div class="controls">
         <div class="field">
             <div class="field__label"><label>Select a period</label><span>*</span></div>
-            <div class="fiel__controls">
+            <div class="field__controls">
                 <div class="field__selector">
                     <select id="stats_select_period" mandatory="true">
                         <option selected="" from="0" to="0" value="0">Select a period</option>

@@ -30,7 +30,7 @@
         cursor: pointer;
     }
 
-    .fiel__controls {
+    .field__controls {
         display: flex;
 
         .field__right {
@@ -99,5 +99,36 @@
             @include background-image('close');
             @include box-sizing(border-box);
         }
+    }
+}
+
+/**********************/ 
+
+.field-read_only {
+    float: left;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    margin: $field-margin;
+    text-align: left;
+    @include box-sizing(border-box);
+
+    .field-read_only__label {
+        padding: 2px 8px 0 8px;
+
+        label {
+            color: $color-typ-dark;
+            font-style: normal;
+            font-weight: normal;
+            @include font-size(12px);
+            line-height: auto;
+        }
+    }
+
+    .field-read_only__text {
+        float: left;
+        width: calc(100% - 24px);
+        padding: 0 8px 0 8px;
+        @include box-sizing(border-box);
     }
 }
