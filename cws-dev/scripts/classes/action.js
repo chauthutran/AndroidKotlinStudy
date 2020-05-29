@@ -419,13 +419,8 @@ function Action( cwsRenderObj, blockObj )
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			// If search by voucher/phone number go '/dc/search--' by dws, we need to add userName and password in payload
-			// NOTE: TODO: We should have a flag for this?  in 'actionDefJson', add login_Password?
-			formsJson.password = SessionManager.sessionData.login_Password;
-			formsJson.userName = SessionManager.sessionData.login_UserName;
-
-
-			WsCallManager.requestPost( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
+			
+			WsCallManager.wsActionCall( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
 
 				if ( !redeemReturnJson ) redeemReturnJson = {};
 

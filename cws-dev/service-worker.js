@@ -1205,11 +1205,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "7b00ac1870ec205db889faf0f73c51bc"
+    "revision": "6c91d3ed088fd21cf99c353d09a368f0"
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "ba3580d42fef3983159c0f33d346498e"
+    "revision": "a229635d44234975efa9eecf53031ce9"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1489,7 +1489,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/wsCallManager.js",
-    "revision": "f1c58ff56a2fb1ff154a1e7e7e78cced"
+    "revision": "9ba21cafdf5e7d6177adf8c793ce6e2e"
   },
   {
     "url": "scripts/utils/activityUtil.js",

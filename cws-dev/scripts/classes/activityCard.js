@@ -385,6 +385,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.reRenderByActivityId = function( activityId )
     {
+        console.log( 'reRenderByActivityId' );
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
         var activityCardTags = $( '.activity[itemid="' + activityId + '"]' );
@@ -520,29 +521,22 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
 
     // Perform Submit Operation..
-    me.performSyncUp = function( callBack )
+    me.performSyncUp = function( afterDoneCall )
     {
-        //var activityCardTrTag = me.getActivityCardTrTag();
         var activityJson_Orig;
+        var syncIconTag = me.getSyncButtonTag( me.activityId );
 
         try
         {
-            //if ( activityCardTrTag ) me.updateItem_UI_StartSync();
-            // NOTE: TODO: Alternately, we might simply send activityId to perform in all places...
-            //me.updateItem_UI_StartSync( me.activityId );
-
             activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
             // Do not delete 'processing' until success..
-
 
             // Set the status as processing..
             activityJson_Orig.processing.status = Constants.status_processing;
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardTrTag() );
 
-
             // Run UI Animation..
-            //activityJson_Orig.processing.inProcess = true;
-            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), true );
+            me.setIconTagRotation( syncIconTag, true );
 
 
             var activityJson_Copy = Util.getJsonDeepCopy( activityJson_Orig );
@@ -553,21 +547,32 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 'captureValues': activityJson_Copy
             };
 
-
-            // TODO: add 'processing' history on trial?!!!
             try
             {
                 var loadingTag = undefined;
                 //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
-                WsCallManager.requestPost( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
+
+                WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
                 {
-                    // me.updateItem_UI_FinishSync( me.activityId );
-                    // stop UI Animation..
-                    activityJson_Orig.processing.inProcess = false;
+                    // Stop the Sync Icon rotation
+                    //me.setIconTagRotation( syncIconTag, false );
                     me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
 
-                    // Replace the downloaded activity with existing one.
-                    me.syncUpResponseHandle( activityJson_Orig, success, responseJson, callBack );
+                    // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
+                    me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success ) {
+
+                        if ( success ) afterDoneCall( true );
+                        else 
+                        {
+                            // Why need to call this again?
+                            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+
+                            // 'syncedUp' processing data                
+                            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + JSON.stringify( responseJson ) );
+                            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+                            afterDoneCall( false );
+                        }
+                    } );
                 });         
             }
             catch ( errMsg )
@@ -575,18 +580,18 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + errMsg );
                 ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );                
 
-                throw ' in WsCallManager.requestPost - ' + errMsg;
+                throw ' in WsCallManager.requestPost - ' + errMsg;  // Go to next 'catch'
             }    
         }
         catch( errMsg )
         {
-            //if ( activityCardTrTag ) me.updateItem_UI_FinishSync();
-            //me.updateItem_UI_FinishSync( me.activityId );
-            if ( activityJson_Orig ) activityJson_Orig.processing.inProcess = false;
+            console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
+
+            // Stop the Sync Icon rotation
+            //me.setIconTagRotation( syncIconTag, false );
             me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
 
-            console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
-            callBack( false );
+            afterDoneCall( false );
         }
     };
 
@@ -630,11 +635,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         else
         {
-            // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + JSON.stringify( responseJson ) );
-
-            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
-
             // Add activityJson processing
             if ( callBack ) callBack( operationSuccess );
         } 
