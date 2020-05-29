@@ -642,34 +642,18 @@ function cwsRender()
 			&& ConfigManager.getConfigJson().settings.theme 
 			&& ConfigManager.getConfigJson().themes )
 		{
-			console.log( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme);
+			console.log( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
 
-			var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
-
-			//$( '.Nav1' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '.Nav__Title' ).css( 'color', defTheme.navTop.colors.foreground );
-
-			/* OLD STYLING: remove? */
-			//$( '.navigation__user' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '#divNavDrawerOUlongName' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '.navigation__user' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( '#divNavDrawerOUlongName' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( '#divNavDrawerSummaryData' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( 'div.bg-color-program-son' ).css( 'background-color', defTheme.navMiddle.colors.background );
-			//$( '#navDrawerHeader' ).css( 'background-color', defTheme.navTop.colors.background );
-			//$( '#navDrawerHeader' ).css( 'color', defTheme.navTop.colors.foreground );
-			//$( 'div.menu-mobile' ).css( 'background-color', defTheme.navDrawer.colors.background );
-			//$( 'div.menu-mobile-row' ).css( 'background-color', defTheme.navDrawer.colors.background );
-			//$( 'div.menu-mobile-row' ).css( 'color', defTheme.navDrawer.colors.foreground );
-
+			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
+			var defTheme = SessionManager.getStorageLastSessionData().theme;
 
 			$('#styleCssMobileRow').remove();
 			$('#styleCssPulse').remove();
 			$('#styleCssProgress').remove();
 
-			$( 'head' ).append('<style id="styleCssProgress"> .determinate, .indeterminate { background-color: ' + defTheme.navTop.colors.foreground + ' } </style>');
+			//$( 'head' ).append('<style id="styleCssProgress"> .determinate, .indeterminate { background-color: ' + defTheme.navTop.colors.foreground + ' } </style>');
 
-			if ( defTheme.button.colors )
+			/*if ( defTheme.button.colors )
 			{
 				var btnStyle = '';
 				if ( defTheme.button.colors.foreground )
@@ -689,8 +673,14 @@ function cwsRender()
 
 				$( 'head' ).append('<style id="styleCssMobileRow"> .navMenuHeader, .tb-content-buttom { ' + btnStyle + ' } </style>');
 
-			}
+			}*/
 
+			if ( defTheme ) $("body").removeClass().addClass( defTheme );
+
+		}
+		else
+		{
+			$("body").removeClass().addClass( 'theme-blue' );
 		}
 		
 	}

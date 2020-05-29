@@ -655,7 +655,8 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
             $( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
-            ConnManager.getDcdConfigVersion( function( retVersion ) 
+            //var retVersion = ConfigManager.getConfigJson().version;
+            /*ConnManager.getDcdConfigVersion( function( retVersion ) 
             {
                 var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
     
@@ -672,7 +673,7 @@ function aboutApp( cwsRender )
                     if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
                     if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
                 }
-            });
+            });*/
         }
 
     }

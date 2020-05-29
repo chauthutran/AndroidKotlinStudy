@@ -41,15 +41,15 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style_james.css",
-    "revision": "987f64bfd9287d94f1415b410f5e128c"
+    "revision": "36086dcc935c80c9bf73e854401343c2"
   },
   {
     "url": "css/style.css",
-    "revision": "4e6bd40c6af056c5f70f3a8280fa0712"
+    "revision": "b37b9582fd9f87f7edd8bc316383b125"
   },
   {
     "url": "css/style2.css",
-    "revision": "ed0733ddeec70f32a8bcdb329427f823"
+    "revision": "b7297e2601501980aa79f36aeb3991cc"
   },
   {
     "url": "images/about.png",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "e860c542bc1f4d247608f765c0565f25"
+    "revision": "978019d910bbaa8a8a77242eead8bb43"
   },
   {
     "url": "redeemGen.html",
@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "fc43d91d89e0b0ca8f11fe919bc15cd8"
+    "revision": "7e204f929d5c09c8a10e81d2789715f1"
   },
   {
     "url": "scripts/classes/action.js",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "ebdfd01fd69a9e00999297f810b442e4"
+    "revision": "d5b9b6c15041382aa496e8373cf99109"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -1285,7 +1285,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "bb9fb4a07a0dec175623bd518ae5fbee"
+    "revision": "d61911f963d338b35cd26b0c8a1e61f0"
   },
   {
     "url": "scripts/classes/statistics.js",
@@ -1309,11 +1309,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "87b0c030a872c7ad2d60405b9f289800"
+    "revision": "d1c96462573fde06bd34886cccff5a85"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "c18e7e109e2d0afe1b149d43abc06176"
+    "revision": "d6f55828ac802009846b2980245a57db"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1545,7 +1545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "4e6bd40c6af056c5f70f3a8280fa0712"
+    "revision": "b37b9582fd9f87f7edd8bc316383b125"
   },
   {
     "url": "sounds/beep.mp3",

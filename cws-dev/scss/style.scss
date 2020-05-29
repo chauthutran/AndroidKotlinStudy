@@ -113,7 +113,6 @@
 @include themable(theme-blue_gray, $blue_gray-fc-50, $blue_gray-bg-50, $blue_gray-fc-100, $blue_gray-bg-100, $blue_gray-fc-200, $blue_gray-bg-200, $blue_gray-fc-300, $blue_gray-bg-300, $blue_gray-fc-400, $blue_gray-bg-400, $blue_gray-fc-500, $blue_gray-bg-500, $blue_gray-fc-600, $blue_gray-bg-600, $blue_gray-fc-700, $blue_gray-bg-700, $blue_gray-fc-800, $blue_gray-bg-800, $blue_gray-fc-900, $blue_gray-bg-900);
 
 
-
 .color_status_pending {
     color: $color_sync_pending;
 }
