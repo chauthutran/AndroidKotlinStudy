@@ -236,10 +236,17 @@
         <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
             date</label></div>
         <div class="fiel__controls">
-          <span id="settingsInfo_userLanguage_Update"></span>
-          <img src="images/sync-banner.svg" alt="" style="margin-right: 9px;opacity: 0.65;"
-            id="settingsInfo_newLangTermsDownload">
+          <div class="field__left">
+            <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
+          </div>
           <div class="field__right"></div>
+
+          
+          <div id="settingsInfo_newLangTermsDownload" >
+            <img id="rotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
+          </div>
+        
+        
         </div>
       </div>
 
@@ -247,48 +254,67 @@
         <div class="field__label"><label term="settings_theme">Theme</label></div>
         <div class="fiel__controls">
           <div class="field__selector">
-            <select id="settingsInfo_ThemeSelect"></select>
+            <!-- <select id="settingsInfo_ThemeSelect"></select> -->
+            <select id="settingsInfo_ThemeSelect2">
+              <option value="theme-red">theme-red</option> 
+              <option value="theme-pink" >theme-pink</option>
+              <option value="theme-purple">theme-purple</option>
+              <option value="theme-deep_purple">theme-deep_purple</option>
+              <option value="theme-indigo">theme-indigo</option>
+              <option value="theme-blue" selected >theme-blue</option>
+              <option value="theme-light_blue">theme-light_blue</option>
+              <option value="theme-cyan">theme-cyan</option>
+              <option value="theme-teal">theme-teal</option>
+              <option value="theme-green">theme-green</option>
+                       
+
+            </select>
           </div>
           <div class="field__right"></div>
         </div>
       </div>
 
       <!-- /scripts/classes/settingsApp line 89 -->
-      <li class="inputDiv settingsGroupDiv" id="resetCollapsible"
-        style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5;">
-        <ul class="collapsible">
-          <li>
-            <div class="collapsible-header from-string titleDiv" id="settingsAppRestHeader" term="" style="padding: 2px !important;">
-
-              <table>
-                <tr>
-                  <td style="width: 30px;text-align: left;">
-                    <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
-                        fill="#333333" fill-opacity="0.87" />
-                    </svg>
-                    
-                  </td>
-                  <td>
-                    <span>Reset app data & configuration</span>
-                  </td>
-                  <img src="./images/arrow_down.svg" alt="" srcset="">
-                </tr>
-              </table>
-
+      <div class="inputDiv settingsGroupDiv" id="resetCollapsible"
+        style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5; font-size: 0.875rem;">
+        <div class="collapsible">
+            
+      
+          <div class="" id="settingsAppRestHeader">
+            <div class="fiel__controls">
+              <div class="field__left"></div>
+      
+              <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
+                  fill="#333333" fill-opacity="0.87" />
+              </svg>
+      
+      
+              <input type="text" mandatory="true" placeholder="type=text" readonly value="Reset app data & configuration">
+              <img src="./images/arrow_down.svg" alt="" srcset="">
             </div>
-            <div class="collapsible-body" id="bodyCollapsible">
-              <div id="bodyCollapsible__text" term="">
-                Your configuration and App data stored in the device will be deleted. You will be asked to log in
-                again and data which is not synced to the server will be lost.
+            <div class="field__right"></div>
+          </div>
+      
+     
+      
+      
+          <div class="collapsible-body" id="bodyCollapsible">
+            <div id="bodyCollapsible__text" term="">
+              Your configuration and App data stored in the device will be deleted. You will be asked to log in
+              again and data which is not synced to the server will be lost.
+            </div>
+            <div id="buttonResetData" class="button-text alert">
+              <div class="button__container">
+                <div class="button-label">RESET</div>
               </div>
-              <button id="buttonResetData" class="btnStyle1" term=""
-                style="position:relative; left:100%; transform:translateX(-100%);">RESET</button>
             </div>
-          </li>
-        </ul>
-      </li>
+      
+          </div>
+      
+        </div>
+      </div>
 
 
 
@@ -349,8 +375,8 @@
       <div class="card _tab activity">
        
         <div style="display:flex; align-items: center" style="
-        font-weight: bold;
-        font-size: 14px;
+        font-weight: bolder;
+        font-size: 1.5rem;
         line-height: 17px;
         color: rgba(51, 51, 51, 0.87);">
       <img src="images/logo_cws.png" alt=""> Workforce App
@@ -358,9 +384,9 @@
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="about_applicationVersion">Application version</dt>
-      <dt style="font-size: 12px;
+      <dt style="font-size: 0.875rem;
           line-height: 20px;" id="aboutInfo_AppVersion"></dt>
     </dl>
     <!-- <dl>
@@ -373,39 +399,39 @@
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="about_configVersion">Config version</dt>
-      <dt style="font-size: 12px;
+      <dt style="font-size: 0.875rem;
           line-height: 20px;" id="aboutInfo_dcdVersion"></dt>
     </dl>
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="about_networkMode">Network mode</dt>
-      <dt style="font-size: 12px;
+      <dt style="font-size: 0.875rem;
           line-height: 20px;" id="aboutInfo_networkMode"></dt>
     </dl>
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="about_geoLocation">Location permission</dt>
-      <dt style="font-size: 12px;
+      <dt style="font-size: 0.875rem;
           line-height: 20px;" id="aboutInfo_geoLocation"></dt>
     </dl>
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="about_browser">Browser</dt>
-      <dt style="font-size: 12px;
+      <dt style="font-size: 0.875rem;
           line-height: 20px;" id="aboutInfo_Browser"></dt>
     </dl>
     <dl>
       <dt style="color: rgba(51, 51, 51, 0.54);
           font-weight: 500;
-          font-size: 10px;
+          font-size: 0.75rem;
           line-height: 10px;" term="">Other data</dt>
       <dt id=""></dt>
     </dl>

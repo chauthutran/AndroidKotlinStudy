@@ -15,6 +15,7 @@ function settingsApp( cwsRender )
     // ----- Tags -----------
     me.settingsInfo_langSelectTag = $( '#settingsInfo_langSelect' );
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
+    me.settingsInfo_ThemeSelectTag2 = $( '#settingsInfo_ThemeSelect2' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
@@ -195,7 +196,11 @@ function settingsApp( cwsRender )
 
         });
 
-
+        me.settingsInfo_ThemeSelectTag2.change ( () => 
+        {    
+            $("body").removeClass().addClass(me.settingsInfo_ThemeSelectTag2.val());
+            
+        });
 
         me.settingsInfo_ThemeSelectTag.change ( () => 
         {    
@@ -276,14 +281,14 @@ function settingsApp( cwsRender )
         {
             var btnDownloadTag = $( this );
             var langSelVal = me.settingsInfo_langSelectTag.val();
-            var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
-
-            FormUtil.showProgressBar();
+            //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
+            $("#rotate").addClass("rot_l_anim");
+           // FormUtil.showProgressBar();
 
             me.langTermObj.retrieveAllLangTerm( function() 
             {
-                loadingTag.hide();
-
+               // loadingTag.hide();
+               $("#rotate").removeClass("rot_l_anim");
                 me.populateLangList_Show( me.langTermObj.getLangList(), langSelVal );
 
                 me.settingsInfo_langSelectTag.val( langSelVal ).change();
@@ -910,7 +915,7 @@ function settingsApp( cwsRender )
         }
 
         $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
-        $( '#settingsInfo_userLanguage_Update' ).html( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
+        $( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#settingsInfo_DivLangSelect' ).show();
 
     }
@@ -961,8 +966,8 @@ function settingsApp( cwsRender )
             Util.setSelectDefaultByName( me.settingsInfo_ThemeSelectTag, defaultTheme );
         }
 
-        $( '#settingsInfo_theme_Text' ).html( defaultTheme );
-        $( '#settingsInfo_DivThemeSelect' ).show();
+        // $( '#settingsInfo_theme_Text' ).html( defaultTheme );
+        // $( '#settingsInfo_DivThemeSelect' ).show();
     }
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
