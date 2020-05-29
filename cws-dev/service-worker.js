@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "329230723fae53e281ec1fa8631afcfd"
+    "revision": "b2efcadaff9be8eceda480c6703ebe17"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "1fca0bb43d1b9513cbb45c7f634e611e"
+    "revision": "4e6bd40c6af056c5f70f3a8280fa0712"
   },
   {
     "url": "css/style2.css",
@@ -105,7 +105,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/act.svg",
-    "revision": "a59f1cd43cdb7fe359000002283a50a7"
+    "revision": "eb97630ca1c98affbeef32bebba0d7a1"
   },
   {
     "url": "images/active.svg",
@@ -117,7 +117,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/alert.svg",
-    "revision": "5f2f94439570a21a82cf1007d5359b8a"
+    "revision": "eb8c75541da08661a6bfb6a3617afc85"
   },
   {
     "url": "images/arrow_back.png",
@@ -133,7 +133,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/arrow_down.svg",
-    "revision": "1d6cebe7e67a1c69ca8f1941174c6b77"
+    "revision": "d7742c7c0c773ad2f3d7c86393cc1326"
   },
   {
     "url": "images/arrow_drop_down.png",
@@ -205,7 +205,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/arrows_col.svg",
-    "revision": "3e3f227aa06dbfea700cb4ba587bf182"
+    "revision": "bb4825d480cf120357ef7f64294f4635"
   },
   {
     "url": "images/baseline-cloud_off-24px-unavailable.svg",
@@ -273,7 +273,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/close_white.svg",
-    "revision": "f2f35369d814bbeca6c7895dbafa9a42"
+    "revision": "317be0df51698e9db7a05c4778719f1d"
   },
   {
     "url": "images/close.png",
@@ -345,11 +345,11 @@ self.__precacheManifest = [
   },
   {
     "url": "images/completed.svg",
-    "revision": "b9efc7199268773a8c02348f1f62c502"
+    "revision": "f0b6c1f756bc105d7e399b11abb1c9ae"
   },
   {
     "url": "images/Connect.svg",
-    "revision": "3a0a2e0bd172fc55453712641f5360a9"
+    "revision": "bd02a90569ddf4ee0b544fc2f1847ebd"
   },
   {
     "url": "images/cws_statusDownloaded.svg",
@@ -385,7 +385,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/entry.svg",
-    "revision": "a19649ec23fe1803d4dd9408740cb5c6"
+    "revision": "82f5db78e62a0278b8e4904af9535842"
   },
   {
     "url": "images/fab_follow_up_40.svg",
@@ -425,7 +425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/failed.svg",
-    "revision": "b2049e1e2f5652f830b863e1ea8a9f18"
+    "revision": "a3c5dc242aa6fbf178505ea377ba1550"
   },
   {
     "url": "images/favbar_color_act.svg",
@@ -497,7 +497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/hold.svg",
-    "revision": "321e0ceabe0eb1dc3601a4830a36faa6"
+    "revision": "6fb2c9c125841817c38ae5bdf857876a"
   },
   {
     "url": "images/i_date.svg",
@@ -577,7 +577,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/logo.svg",
-    "revision": "44b0c57dc046930b5f78026ad2eeb937"
+    "revision": "90f03efeae002c8d5d4f6587d347c1ea"
   },
   {
     "url": "images/logout.png",
@@ -609,7 +609,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/menu_icon.svg",
-    "revision": "528dd5f2e025f2208386bead7bbc1e59"
+    "revision": "f6814da3ba149036eb3cf39a3cffefe2"
   },
   {
     "url": "images/menu-24px.svg",
@@ -653,7 +653,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/pending.svg",
-    "revision": "eb1f5bcf5ce3173536853cd3774b447e"
+    "revision": "cc1af7cf4f3f62ddfe6de4c4957b95f5"
   },
   {
     "url": "images/phone.png",
@@ -961,7 +961,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/sync_error.svg",
-    "revision": "6345c6b90ad5dd60d639a18892c6f3d2"
+    "revision": "6e779f7b1992ae8e7c48a02435aded39"
   },
   {
     "url": "images/sync_msd.png",
@@ -1025,7 +1025,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/sync-banner.svg",
-    "revision": "679bf57f11ff6a88d3a130486a65e2aa"
+    "revision": "bb264dcfd6c85fa3c64dbc96a6716446"
   },
   {
     "url": "images/sync-button.svg",
@@ -1061,7 +1061,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/sync-n.svg",
-    "revision": "bb5732a4e025d9baf31822b06d381366"
+    "revision": "d46af5030a2cb6848ae8d568a72e26aa"
   },
   {
     "url": "images/sync-pending_24.png",
@@ -1177,7 +1177,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/unavail.svg",
-    "revision": "2758cb61cc532065e0fdaa3eb50683bb"
+    "revision": "7a301512d54cde88b72db70593cc1914"
   },
   {
     "url": "images/user.svg",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "4572f979d27b98d5f9de5d3b2998b2b1"
+    "revision": "e860c542bc1f4d247608f765c0565f25"
   },
   {
     "url": "redeemGen.html",
@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "24805546cf46bc484b123f1e6cb0c9a7"
+    "revision": "fc43d91d89e0b0ca8f11fe919bc15cd8"
   },
   {
     "url": "scripts/classes/action.js",
@@ -1285,11 +1285,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "261ef8ed9d8e06eac4a28822d53049db"
+    "revision": "bb9fb4a07a0dec175623bd518ae5fbee"
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "5a1e0ff81224b9e27efe6d7830016ba8"
+    "revision": "75541a826f51fbc9d89056e558585479"
   },
   {
     "url": "scripts/classes/validation.js",
@@ -1317,7 +1317,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/libraries/aes.js",
-    "revision": "11c5114e2a1face42de239b2b17943fb"
+    "revision": "4ff108e4584780dce15d610c142c3e62"
   },
   {
     "url": "scripts/libraries/crossfilter.min.js",
@@ -1397,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "279c98096c165b0432dbd630e18eb3ae"
+    "revision": "9aa4e833fa797c3247c09b3605c5f5d1"
   },
   {
     "url": "scripts/services/connManager.js",
@@ -1501,7 +1501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "3710919555bcb3bc38fc1b92f495f238"
+    "revision": "ec46e8a83d784069275e9edc8581b7a6"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -1545,7 +1545,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "1fca0bb43d1b9513cbb45c7f634e611e"
+    "revision": "4e6bd40c6af056c5f70f3a8280fa0712"
   },
   {
     "url": "sounds/beep.mp3",

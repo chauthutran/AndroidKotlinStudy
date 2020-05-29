@@ -166,8 +166,8 @@ function aboutApp( cwsRender )
 
                 if ( $( obj ).attr( 'id' ) != excludeID && ! $( obj ).hasClass( 'byPassAboutMore' ) )
                 {
-                    if ( $( obj ).is(':visible') ) $( obj ).hide( 'fast' );
-                    else $( obj ).show( 'fast' );
+                    if ( $( obj ).is(':visible') ) $( obj ).hide();
+                    else $( obj ).show();
                 }
 
             });
@@ -419,24 +419,25 @@ function aboutApp( cwsRender )
 
         me.renderNonEssentialFields( FormUtil.checkLogin() );
 
-        me.aboutFormDivTag.show( 'fast' );    
+        me.aboutFormDivTag.show();
     }
 
     me.hideAboutPage = function()
     {
-        me.aboutFormDivTag.fadeOut( 500 );
+        //me.aboutFormDivTag.fadeOut( 500 );
+        me.aboutFormDivTag.hide();
 
-        setTimeout( function() {
+        /*setTimeout( function() {
             if ( FormUtil.checkLogin() > 0 )
-            {
+            {*/
                 $( '#pageDiv' ).show( 'fast' );
-            }
+            /*}
             else
             {
                 $( '#loginFormDiv' ).show( 'fast' );
             }
             me.aboutFormDivTag.hide();
-        }, 250 );
+        }, 250 );*/
 
     }
 

@@ -717,7 +717,7 @@ img.rotateImg {
   -moz-box-sizing: border-box;
 } 
 #tab_previewPayload {
-  height: calc(100vw + 25px);
+  height: calc(100vh - 190px);
   overflow: auto !important;
 }
 
@@ -1446,4 +1446,5 @@ img.round:hover{
   height: calc(100vh - 126px);
   position: absolute;
   top: 126px;
+  background-color: transparent;
 }

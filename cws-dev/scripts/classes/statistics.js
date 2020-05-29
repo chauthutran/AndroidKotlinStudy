@@ -159,6 +159,7 @@ function Statistics( cwsRender )
 
                 var e = myArr[ i ];
 
+                //console.log( e );
                 //if ( parseFloat(e.ageHours) > hrFrom && parseFloat(e.ageHours) <= hrTo )
                 if ( parseFloat(e.ageHours) <= hrTo )
                 {
@@ -178,7 +179,7 @@ function Statistics( cwsRender )
         var containerDiv = $( '#statsContentPage' ).html( '' );
         var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod };
 
-        INFO.data = me.getActivityList_Query( INFO ); //me.dateGroupStats; 
+        INFO.data = me.getActivityList_Query( INFO, startPeriod, endPeriod ); //me.dateGroupStats; 
 
         // STEP 1. Eval and Insert the main tag + get list of 'div.statDiv'        
         var statContentTagStr = Util.strCombine( ConfigManager.statisticConfig.statsPageContent );
@@ -216,8 +217,8 @@ function Statistics( cwsRender )
 
                     // add titles + text if found
                     var titleTag = ( statObj.title ? me.addTitle( statObj.title.label, statObj.title.icon ) : undefined );
-                    var textTag = ( statObj.title ? me.addText( statObj.text.label ) : undefined );
-
+                    var textTag = ( statObj.text ? me.addText( statObj.text.label ) : undefined );
+                    console.log( titleTag, textTag )
                     if ( titleTag ) statDivTag.append( titleTag );
                     if ( textTag ) statDivTag.append( textTag );
 
@@ -457,7 +458,7 @@ function Statistics( cwsRender )
         return tableWrapped;
     }
 
-    me.getActivityList_Query = function( INFO )
+    me.getActivityList_Query = function( INFO, startPeriod, endPeriod )
     {
         // type: c_reg/v_iss/v_rdm
         var type = 'c_reg';
@@ -472,10 +473,11 @@ function Statistics( cwsRender )
             var activityData = {};
 
             activityData.date = activity.activityDate.capturedLoc;
+            //if ( new Date( e.activityDate.capturedUTC ) )
 
             activity.transactions.forEach( (trans, i_t) => {
 
-                if ( trans.transactionType === type ) 
+                if ( trans.transactionType === type && ( new Date( activity.activityDate.capturedLoc ) >= new Date( startPeriod ) ) && ( new Date( activity.activityDate.capturedLoc ) <= new Date( endPeriod ) ) ) 
                 {
                     // INFO.startPeriod - INFO.endPeriod
                     queryResults.push( ( trans.clientDetails ) ? trans.clientDetails : trans.dataValues );

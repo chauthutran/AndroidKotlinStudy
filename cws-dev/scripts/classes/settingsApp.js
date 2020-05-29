@@ -83,19 +83,24 @@ function settingsApp( cwsRender )
                 }, 500 );
             }
         });
-        var show = false
+
+        var show = false;
+
         $('#languageCollapsibleHeader').click( ()=> {
-            $('#languageCollapsibleBody').slideToggle('fast')
-            console.log(show)
-            if(show){
+
+            $('#languageCollapsibleBody').slideToggle('fast');
+
+            if( show )
+            {
                 $('#languageCollapsibleBody').css('border-bottom','none')
                 $('#languageCollapsibleHeader').css('border-bottom','2px solid #F5F5F5')
             }
-            else{
+            else
+            {
                 $('#languageCollapsibleHeader').css('border-bottom','none')
                 $('#languageCollapsibleBody').css('border-bottom','2px solid #F5F5F5')
             }
-            show = !show
+            show = !show;
         });
 
         //  Funcionalidad: Reset Data
@@ -269,8 +274,8 @@ function settingsApp( cwsRender )
 
                 if ( $( obj ).attr( 'id' ) != excludeID && ! $( obj ).hasClass( 'byPassSettingsMore' ) )
                 {
-                    if ( $( obj ).is(':visible') ) $( obj ).hide( 'fast' );
-                    else $( obj ).show( 'fast' );
+                    if ( $( obj ).is(':visible') ) $( obj ).hide();
+                    else $( obj ).show();
                 }
 
             });
@@ -541,35 +546,36 @@ function settingsApp( cwsRender )
 
     me.showSettingsPage = function()
     {
-        /*if ( $( '#pageDiv' ).is( ":visible" ) )
+        if ( $( '#pageDiv' ).is( ":visible" ) )
         {
             $( '#pageDiv' ).hide();
         }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
             $( '#loginFormDiv' ).hide();
-        }*/
+        }
 
         me.renderNonEssentialFields( FormUtil.checkLogin() );
 
-        me.settingsFormDivTag.show( 'fast' );    
+        me.settingsFormDivTag.show();    
     }
 
     me.hideSettingsPage = function()
     {
-        me.settingsFormDivTag.fadeOut( 500 );
+        //me.settingsFormDivTag.fadeOut( 500 );
+        me.settingsFormDivTag.hide();
 
-        setTimeout( function() {
-            /*if ( FormUtil.checkLogin() > 0 )
+        //setTimeout( function() {
+            //if ( FormUtil.checkLogin() > 0 )
+            //{
+                $( '#pageDiv' ).show();
+            //}
+            /*else
             {
-                $( '#pageDiv' ).show( 'fast' );
-            }
-            else
-            {
-                $( '#loginFormDiv' ).show( 'fast' );
+                $( '#loginFormDiv' ).show();
             }*/
-            me.settingsFormDivTag.hide();
-        }, 250 );
+            //me.settingsFormDivTag.hide();
+        //}, 250 );
 
     }
 

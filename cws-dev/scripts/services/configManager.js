@@ -78,6 +78,7 @@ ConfigManager.statisticConfig = {
         "  <div class='statDiv' statId='1stConsultationThisWeek'></div>",
         "  <div class='statDiv' statId='titleOfPieChart'></div>",
         "  <div class='statDiv' statId='titleOfLineChart'></div>",
+        "  <div class='statDiv' statId='sampleA'></div>",
         "</div>"
     ],
     "statsList": {
@@ -138,7 +139,7 @@ ConfigManager.statisticConfig = {
             ]
 
         },
-        "titleOfValue2222": {
+        "sampleA": {
             "title": { 'label': 'Header Section Title', 'icon': 'table' },
             "periodType": "relational",
             "runDataEval": [
