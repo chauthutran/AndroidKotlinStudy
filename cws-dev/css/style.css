@@ -3758,7 +3758,7 @@ select:-webkit-autofill:focus {
   top: 0px;
   z-index: 2999;
   background-image: url(../images/logo_bk.svg);
-  background-color: #FFF;
+  /*background-color: #FFF;*/
   background-position: right;
   background-repeat: no-repeat;
   background-size: auto;
@@ -3785,6 +3785,7 @@ select:-webkit-autofill:focus {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  width: calc(100vw - 100px);
 }
 
 .sheet_full-fs .wapper_card .sheet-title img {

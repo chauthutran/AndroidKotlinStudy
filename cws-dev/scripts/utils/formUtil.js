@@ -1876,7 +1876,8 @@ FormUtil.getCommonDateGroups = function()
 			{ name: "Last 7 days", term: "", hours: 168, created: 0 },
 			{ name: "Last 30 days", term: "", hours: 720, created: 0 },
 			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
-			{ name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
+			{ name: "Last 6 months", term: "", hours: 4320, created: 0 },
+			{ name: "Last 3 years", term: "", hours: 25920, created: 0 } ];
 	return z;
 };
 
