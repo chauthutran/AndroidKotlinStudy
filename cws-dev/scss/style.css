@@ -1897,6 +1897,100 @@ select:-webkit-autofill:focus {
   -moz-box-sizing: border-box;
 }
 
+/* */
+.principal_section {
+  width: 100%;
+  height: auto;
+  min-height: 56px;
+  margin: 8px 0 12px 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.principal_section .principal_section__icon {
+  float: left;
+  width: 56px;
+  height: 56px;
+  margin: 0 8px 0 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.principal_section .principal_section__title {
+  float: left;
+  width: calc(100% - 72px);
+  height: 24px;
+  margin: 0 8px 0 0;
+  line-height: 56px;
+  font-weight: 600;
+  color: #333;
+  font-size: 1.3125rem;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+/* */
+.title_section {
+  width: 100%;
+  height: auto;
+  min-height: 48px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.title_section .title_section__icon {
+  float: left;
+  width: 24px;
+  height: 24px;
+  margin: 12px 8px 12px 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.title_section .title_section__title {
+  float: left;
+  width: calc(100% - 40px);
+  height: 24px;
+  margin: 15px 8px 8px 0;
+  line-height: 18px;
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.section_description {
+  width: 100%;
+  height: auto;
+  padding-bottom: 8px;
+  line-height: 18px;
+  font-weight: 400;
+  color: #333;
+  font-size: 0.75rem;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+textarea {
+  border: 0.5px solid #B1B1B1;
+  width: 100%;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 18px;
+  margin: 5px 0;
+  padding: 3px;
+}
+
 .i-metod_provision {
   background-image: url(../images/provision.svg);
 }

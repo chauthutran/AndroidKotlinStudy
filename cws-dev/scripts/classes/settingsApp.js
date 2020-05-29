@@ -928,7 +928,7 @@ function settingsApp( cwsRender )
         }
 
         $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
-        $( '#settingsInfo_userLanguage_Update' ).html( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
+        $( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
         $( '#settingsInfo_DivLangSelect' ).show();
 
     }
