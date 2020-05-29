@@ -627,3 +627,15 @@ DevHelper.testRun = function()
     console.log( dest );
 };
 
+DevHelper.statPeriodOptions = function()
+{
+	var dateGroups = [ { name: "Last 24 hours", term: "", hours: 24, created: 0 },
+			{ name: "Last 3 days", term: "", hours: 72 , created: 0 },
+			{ name: "Last 7 days", term: "", hours: 168, created: 0 },
+			{ name: "Last 30 days", term: "", hours: 720, created: 0 },
+			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
+            { name: "Last 6 months", term: "", hours: 4320, created: 0 } ];
+
+    return dateGroups;
+
+}

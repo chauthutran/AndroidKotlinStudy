@@ -80,7 +80,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.scrollLoadingNextPage = false;
     me.lastScrollTop = 0;  // For tracking scroll up vs down
 
-    me.pagingData = ConfigManager.getSettingPaging(); //{ 'pagingSize': 15, 'currPosition': 0 };  //, 'currPage': 0 };
+    me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
     me.pagingData.currPosition = 0;
 
     // -------- Tags --------------------------

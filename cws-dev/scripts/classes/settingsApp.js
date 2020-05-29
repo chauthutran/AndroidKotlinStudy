@@ -21,28 +21,13 @@ function settingsApp( cwsRender )
     me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
     me.settingsInfo_autoCompleteInput = $( '#autoCompleteInput' );
 
-    
-
-    me.scrimTag = $('.sheet_bottom-scrim');
-	me.sheetBottomTag = $('.sheet_bottom-fs');
-
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
-    me.blockPage = function()
-	{
-		me.scrimTag.show();
-	}
 
-	me.unblockPage = function()
-	{
-		me.scrimTag.hide();
-		me.sheetBottomTag.html("");
-    }
-    
     me.initialize = function() 
     {
         me.setEvents_OnInit();
@@ -127,27 +112,29 @@ function settingsApp( cwsRender )
                 $("#bodyCollapsible").slideToggle("fast")
                 $("#settingsAppRestHeader").toggleClass("collapsible-body--on")
             })
-      
-           
-            // $("#buttonResetData").click(function () {
-            //     me.blockPage();
-            //     me.sheetBottomTag.html( Templates.Setting_ResetData );
-            //     me.cwsRenderObj.langTermObj.translatePage();
+            // @GREG: ADD TRANSLATION SUPPORT HERE
+            let titleMessage="Reset app data & configuration",
+                bodyMessage="Your configuration and App data stored in the device will be deleted. "
+                questionMessage="Are you sure?",
+                btnAcceptResetData = $( '<button class="acceptButton" term="">ACCEPT</button>' ),
+                btnDeclineResetData = $( '<button class="declineButton" term="">DECLINE</button>' );
 
-            //     $("#accept").click(function () {
-            //         DataManager2.deleteAllStorageData();
-            //         me.unblockPage();
+            let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
 
-            //     });
-
-            //     $("#cancel").click(function () {
-            //         me.unblockPage();
-            //     });
-
-            // });
-
-
-           
+            $("#buttonResetData").click(function(){
+                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
+            })
+            btnDeclineResetData.click(function(){
+                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
+            })
+            btnAcceptResetData.click(()=>{
+                DataManager.clearSessionStorage()
+                if ( cacheManager.clearCacheKeys() )
+                {
+                    me.cwsRenderObj.reGetAppShell();
+                }
+                pptManager.on({})
+            })
         })()
 
 
@@ -291,7 +278,7 @@ function settingsApp( cwsRender )
 
 
         $( '#settingsInfo_newLangTermsDownload' ).click( function() 
-        { 
+        {
             var btnDownloadTag = $( this );
             var langSelVal = me.settingsInfo_langSelectTag.val();
             //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );

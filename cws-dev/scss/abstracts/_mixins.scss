@@ -592,7 +592,7 @@ $retina-suffix: '@2x';
 
             .wapper_card{
 
-                .sheet-title {
+                .sheet-title { 
 
                     color: $fc-900;
                     background-color: $bg-900;
@@ -603,5 +603,40 @@ $retina-suffix: '@2x';
 
         }
 
+        table.statsTable {
+            background-color: #FFF;
+            width: 100%; 
+            border-collapse: collapse; 
+
+            tr{
+                &:nth-of-type(odd) { 
+                    background: $bg-50;
+                    color: $fc-50
+                }
+            }
+            th { 
+                background: $bg-900; 
+                color: $fc-900;
+                font-weight: bold; 
+                cursor: s-resize;
+                background-repeat: no-repeat;
+                background-position: 3% center;
+            }
+            th,td{
+                border: 1px solid $bg-100; 
+                padding: 6px; 
+                text-align: left;
+                font-size: 0.75rem;
+                font-weight: 400;
+            }
+        
+            th.des:after {
+                content: "\21E9";
+              }
+              
+              th.aes:after {
+                content: "\21E7";
+              }
+        }
     }
 }
