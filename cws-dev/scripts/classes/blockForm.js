@@ -95,7 +95,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			me.evalFormGroupDisplayStatus( formDivSecTag );
 
 			// NOTE: TRAN VALIDATION
-			//me.validationObj.setUp_Events( formDivSecTag );
+			me.validationObj.setUp_Events( formDivSecTag );
 
 			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 			setTimeout( function(){
@@ -581,6 +581,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	};
 
 
+	// NOTE: evaluation the 'defaultValue' expression...  
+	//		But, this should have evaluated from source tag value change..
+	//		Also, this should be replaced with..
+	// 'data-fields' should be replaced.. 
 	me.evalFormInputFunctions = function( formDivSecTag )
 	{
 		if ( formDivSecTag )
@@ -624,15 +628,29 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag.parent() ); //.parent()
+				// TODO: Fix the on leave issues.. below..y
+				// JAMES, disabled for now..
+				// IDEA: Rather than using 'defaultValue' concept, we should use 
+				//		that changes
+				// me.evalFormInputFunctions( formDivSecTag.parent() ); //.parent()
+
+
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 
 		}
 
 		me.addRuleForField( divInputTag, formItemJson );
+
+
+		//  Below... shoudl be moved to other methods/organization?
+
+
 		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 		me.addStylesForField( divInputTag, formItemJson );
+
+
+		// TODO: PUT BELOW CODE AS separate..
 
 		// Set Tag Visibility
 		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
