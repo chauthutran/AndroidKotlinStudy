@@ -52,8 +52,10 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
 		divTag.find( "div.errorMsg" ).remove();
 
-		//if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
-		//{
+
+		// JAMES: If visible, check the validation (by validation related attribute)
+		if ( tag.is( ':visible' ) ) // || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
+		{
 			me.performValidationCheck( tag, 'mandatory', divTag );
 			me.performValidationCheck( tag, 'minlength', divTag );
 			me.performValidationCheck( tag, 'maxlength', divTag );
@@ -62,7 +64,7 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 			me.performValidationCheck( tag, 'isDate', divTag );
 			me.performValidationCheck( tag, 'phoneNumber', divTag );
 			me.performValidationCheck( tag, 'patterns', divTag );
-		//}
+		}
 
 		// If not valid, set the background color.
 		var valid = ( tag.attr( 'valid' ) == 'true' );
