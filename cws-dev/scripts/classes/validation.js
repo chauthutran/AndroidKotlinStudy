@@ -13,7 +13,6 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
     me.setUp_Events = function( formTag )
     {
-		/*
 		// < change to find( '.dataValue' ) ?
         //formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
@@ -22,7 +21,6 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
                 me.checkValidations( inputTag );
             });
 		});
-		*/
     };
 
 	// ================================
@@ -32,7 +30,6 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 	{	
 		var allValid = true;
 
-		/*
 		// If any of the tag is not valid, mark it as invalid.
 		//formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
@@ -41,13 +38,12 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 				allValid = false;
 			}
 		});
-		*/		
+
 		return allValid;
 	};
 
 	me.checkValidations = function( tag )
 	{	
-		/*
 		// Validation Initial Setting Clear
 		tag.attr( 'valid', 'true' );
 
@@ -56,8 +52,10 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
 		divTag.find( "div.errorMsg" ).remove();
 
-		//if ( tag.is( ':visible' ) || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
-		//{
+
+		// JAMES: If visible, check the validation (by validation related attribute)
+		if ( tag.is( ':visible' ) ) // || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
+		{
 			me.performValidationCheck( tag, 'mandatory', divTag );
 			me.performValidationCheck( tag, 'minlength', divTag );
 			me.performValidationCheck( tag, 'maxlength', divTag );
@@ -66,7 +64,7 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 			me.performValidationCheck( tag, 'isDate', divTag );
 			me.performValidationCheck( tag, 'phoneNumber', divTag );
 			me.performValidationCheck( tag, 'patterns', divTag );
-		//}
+		}
 
 		// If not valid, set the background color.
 		var valid = ( tag.attr( 'valid' ) == 'true' );
@@ -75,8 +73,6 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		validationTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
 
 		return valid;
-		*/
-		return true;
 	};
 	
 	me.performValidationCheck = function( tag, type, divTag )
