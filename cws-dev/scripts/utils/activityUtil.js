@@ -51,52 +51,34 @@ ActivityUtil.generateInputJsonByType = function( clickActionJson, formDivSecTag,
 
 ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup )
 {
-	// Input Tag values
-	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
-
-	inputTags.each( function()
-	{		
-		var inputTag = $( this );	
-		var attrDisplay = inputTag.attr( 'display' );
-		var nameVal = inputTag.attr( 'name' );
-		var dataGroup = inputTag.attr( 'dataGroup' );
-		var getVal_visible = false;
-		var getVal = false;
-
-		if ( attrDisplay === 'hiddenVal' ) getVal_visible = true;
-		else if ( inputTag.is( ':visible' ) ) getVal_visible = true;
-
-		if ( getVal_visible )
-		{
-			// Check if the submit var list exists (from config).  If so, only items on that list are added.
-			if ( !getValList )
-			{			
-				getVal = true;
-			}
-			else
+		// Input Tag values
+		var inputsJson = {};
+		var inputTags = formDivSecTag.find( '.dataValue' );
+	
+		inputTags.each( function()
+		{		
+			var inputTag = $( this );	
+			var displayed = inputTag.closest( '.fieldBlock' ).is( ':visible' );
+			var nameVal = inputTag.attr( 'name' );
+			var dataGroup = inputTag.attr( 'dataGroup' );
+			if( displayed )
 			{
-				if ( getValList.indexOf( nameVal ) >= 0 ) getVal = true;
+				var val = FormUtil.getTagVal( inputTag );
+				if ( val === null || val === undefined ) val = '';
+	
+				if ( formsJsonGroup )
+				{
+					// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
+					// Add to 'formsJsonGroup' object - to be used in payloadTemplate
+					// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
+					nameVal = ActivityUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formsJsonGroup );
+				}
+	
+				inputsJson[ nameVal ] = val;
 			}
-		}
-
-		if ( getVal )
-		{
-			var val = FormUtil.getTagVal( inputTag );
-
-			if ( formsJsonGroup )
-			{
-				// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
-				// Add to 'formsJsonGroup' object - to be used in payloadTemplate
-				// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
-				nameVal = ActivityUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formsJsonGroup );
-			}
-
-			inputsJson[ nameVal ] = val;
-		}
-	});		
-
-	return inputsJson;
+		});		
+	
+		return inputsJson;
 };
 
 

@@ -4,34 +4,48 @@ function Templates() {};
 // -------------------------------------
 // ----- HTML Templates --------
 
-Templates.inputFieldHidden = `<input type='hidden' id='' value='' name='' class='hiddenData' >`;
 
-Templates.inputFieldStandard = `<div class="inputField field" >
-<div class="field__label fieldLabel"><label class="displayName"></label></div>
-<div class="field__controls">
-  <div class="field__left"></div>
-  <div class="field__right" style="display: none;"></div>
-</div>
+// Templates.inputFieldHidden = `<input type='hidden' class='hiddenData' >`;
+Templates.inputFieldHidden = `<input type='hidden' >`;
+
+Templates.inputFieldStandard = `<div class="fieldBlock field" fieldId="" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+  <div class="field__label">
+    <label class="displayName"></label>
+  </div>
+  <div class="fiel__controls">
+    <div class="field__left"></div>
+    <div class="field__right" style="display: none;"></div>
+  </div>
 </div>`;
 
-Templates.inputFieldCheckbox = `<div class="checkbox">
-<div class="checkbox__label fieldLabel"><label class="displayName"></label></div>
+Templates.labelField = `<label class="fieldBlock"></label>`;
+
+
+// Templates.inputFieldStandard = `<div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+// <div class="field__label"><label class="displayName"></label><span class="compulsory">*</span></div>
+// <div class="fiel__controls">
+//   <div class="inputFieldParentTag field__left"></div>
+//   <div class="field__right" style="display: none;"></div>
+// </div>
+// </div>`;
+
+Templates.inputFieldCheckbox = `<div class="checkbox fieldBlock">
+<div class="checkbox__label"><label class="displayName"></label></div>
 <div class="checkbox__wrapper">
-  <div class="optsContainer checkbox-col">
+  <div class="checkbox-col">
   </div>
 </div>
 </div>`;
 Templates.inputFieldCheckbox_Item = `<div class="checkbox-group horizontal">
-<input id="" type="checkbox">
-<label for=""></label>
+<input id="checkboxName1" type="checkbox">
+<label for="checkboxName1"></label>
 </div>`;
-Templates.inputFieldCheckbox_SingleItem = `<div class="checkbox-group">
-<input id="" type="checkbox">
-<label for=""></label>
+Templates.inputFieldCheckbox_SingleItem = `<div class="checkbox-group horizontal">
+<input type="checkbox" class="dataValue"><label ></label>
 </div>`;
 
 Templates.inputFieldToggle = `<div class="toogle-s">
-<div class="toogle-s__label fieldLabel"><label class="displayName"></label></div>
+<div class="toogle-s__label"><label class="displayName"></label></div>
 <div class="toogle-s-content">
   <label class="toggle">
     <input type="checkbox" class="inputFieldTag toggle_input">
@@ -39,50 +53,51 @@ Templates.inputFieldToggle = `<div class="toogle-s">
   </label>
 </div>
 </div>`;
-Templates.inputFieldToggle_Item = `<div class="toogle-s-content">
+/*Templates.inputFieldToggle_SingleItem = `<div class="toogle-s-content">
 <label class="toggle">
   <input type="checkbox" class="toggle_input">
   <div class="toggle-control"></div>
 </label>
-</div>`;
+</div>`;*/
 
-Templates.inputFieldRadio = `<div class="radiobutton">
-<div class="radiobutton__label fieldLabel"><label class="displayName"></label>
+
+Templates.inputFieldRadio = `<div class="radiobutton fieldBlock">
+<div class="radiobutton__label"><label class="displayName"></label>
 </div>
 <div class="radiobutton__wrapper">
-  <div class="optsContainer radiobutton-col"></div>
+  <div class="radiobutton-col"></div>
 </div>
 </div>`;
 
-Templates.inputFieldRadio_Item = `<div class="radio-group">
-  <input name="" type="radio" id="">
-    <label for="" term="">Option 1</label>
+Templates.inputFieldRadio_Item = `<div class="radio-group horizontal">
+    <input type="radio" >
+    <label></label>
 </div>`;
 
 
 Templates.inputFieldYear = `
-<div class="containerSymbol">
-  <input id="" type="text" class="inputTrue dataValue" name="" uid="" />
-  <input id="" type="text" class="inputShow displayValue form-type-text" isNumber="true" >
+<div class="containerSymbol fieldBlock">
+  <input type="text" class="inputTrue dataValue"/>
+  <input type="text" class="inputShow displayValue form-type-text inputValidation" isNumber="true" >
   <dialog class="inputFieldYear">
     <div class="modalSymbol">
       <div class="dialog__title">
         <input type="text" class="searchSymbol">
-        <span class="closeSearchSymbol">�?/span>
+        <span class="closeSearchSymbol">�</span>
       </div>
       <div class="container--optionsSymbol">
         <ul class="optionsSymbol">
         </ul>
       </div>
       <div class="dialog__action">
-        <div id="dialog_act2" class="button-text warning">
-          <div class="button__container">
-            <div class="declineButton button-label" term="cancel">CANCEL</div>
-          </div>
-        </div>
         <div id="dialog_act1" class="button-text primary">
           <div class="button__container">
             <div class="acceptButton button-label" term="">SELECT</div>
+          </div>
+        </div>
+        <div id="dialog_act2" class="button-text warning">
+          <div class="button__container">
+            <div class="declineButton button-label" term="cancel">CANCEL</div>
           </div>
         </div>
       </div>
@@ -116,14 +131,14 @@ Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" style="displ
   </div>
 </div>
 <div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
+  <div id="clearBtn" class="button-text primary">
     <div class="button__container">
-      <div class="cancel button-label">CANCEL</div>
+      <div class="button-label" term='clear'>Clear</div>
     </div>
   </div>
-  <div id="dialog_act1" class="button-text primary">
+  <div id="closeBtn" class="button-text warning">
     <div class="button__container">
-      <div class="runAction button-label">SELECT</div>
+      <div class="button-label">Close</div>
     </div>
   </div>
 </div>

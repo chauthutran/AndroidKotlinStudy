@@ -12,7 +12,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	me.payloadConfigSelection;
 	me.formJsonArr;
 	me._childTargetActionDelay = 400;
-	me._groupNoneId = 'zzzEmpty';
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -40,13 +39,15 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
 			var formTag = $( '<form ' + autoComplete + '></form>' );
 
-			formDivSecTag.append( formTag )
+			formDivSecTag.append( formTag );
+
 			blockTag.append( formDivSecTag );
 
-			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
 			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
 			var formUniqueGroups = me.getFormUniqueGroups( formFieldGroups );
 			var groupsCreated = [];
+
+			formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) ); // TODO : REMOVE this attribute
 
 			if ( formUniqueGroups.length > 1 ) //minimum of 1 = 'no groups defined'
 			{
@@ -61,91 +62,71 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			for( var i = 0; i < formFieldGroups.length; i++ )
 			{
-				var controlGroup = me.createControlsGroup( formFieldGroups[ i ], groupsCreated, formTag, formDivSecTag );
+				var groupDivTag = me.createGroupDivTag( formFieldGroups[ i ], groupsCreated, formTag );
 
-				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
-				{
-					if ( formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'SHORT_TEXT' || 
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'INT' ||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'DROPDOWN_LIST' || 
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'DROPDOWN_AUTOCOMPLETE' ||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'MULTI_CHECKBOX' ||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'YEAR' ||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'DATE' ||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'IMAGE'||
-						formJsonArr[ formFieldGroups[ i ].seq ].controlType === 'LABEL' )
-					{
-						me.renderInputFieldControls( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
-					}
-					else
-					{
-						me.renderNewUI_InputFieldControls( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
-					}
-				}
-				/*else
-				{
-					me.renderInput( formJsonArr[ formFieldGroups[ i ].seq ], controlGroup, formTag, formFull_IdList, passedData, me.payloadConfigSelection );
-				}*/
+				var formItemJson = formJsonArr[ formFieldGroups[ i ].seq ];
+				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr );
+				groupDivTag.append( inputFieldTag );
 
+				formTag.append( groupDivTag );
 			}
 
-			formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) );
-
-			me.populateFormData( passedData, formDivSecTag );
-			me.evalFormGroupDisplayStatus( formDivSecTag );
+			me.populateFormData( passedData, formTag );
+			me.evalFormGroupDisplayStatus( formTag );
 
 			// NOTE: TRAN VALIDATION
-			me.validationObj.setUp_Events( formDivSecTag );
+			me.validationObj.setUp_Events( formTag );
 
 			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 			setTimeout( function(){
-				me.evalFormInputFunctions( formDivSecTag );
+				me.evalFormInputFunctions( formTag );
 			}, 500 );
 
 		}
 
 	}
 
-	me.createControlsGroup = function( formFieldGroup, groupsCreated, formTag, formDivSecTag )
+	me.createGroupDivTag = function( formFieldGroup, groupsCreated, formTag )
 	{
+		var groupDivTag = formTag;
+
 		if ( ( formFieldGroup.group ).toString().length )
 		{
 			if ( ! groupsCreated.includes( formFieldGroup.group ) )
 			{
-				// should we move this into Templates.xxx ?
-				var controlGroup = $( '<div style="" class="inputDiv active formGroupSection" name="' + formFieldGroup.group + '"><div class="section"><label class="displayName">' + formFieldGroup.group + '</label></div></div>' );
-
-				formTag.append( controlGroup );
+				groupDivTag = $( '<div class="formGroupSection" name="' + formFieldGroup.group + '"><div class="section"><label>' + formFieldGroup.group + '</label></div></div>' );
+				formTag.append( groupDivTag );
 				groupsCreated.push( formFieldGroup.group );
 			}
 			else
 			{
-				var controlGroup = $( formDivSecTag ).find( 'div[name="' + formFieldGroup.group + '"]' );
+				//do nothing: group already exists
+				groupDivTag = $( formTag ).find( 'div[name="' + formFieldGroup.group + '"]' );
 			}
 		}
 		else 
 		{
+			// TRAN TODO : NEED TO do something about it
 			if ( ( formFieldGroup.group ).toString().length == 0 )
 			{
-				if ( ! groupsCreated.includes( me._groupNoneId ) )
+				if ( ! groupsCreated.includes( "zzzEmpty" ) )
 				{
-					var controlGroup = $( '<div style="" class="active formGroupSection emptyFormGroupSection" name="' + me._groupNoneId + '"></div>' );
-
-					formTag.append( controlGroup );	
-					groupsCreated.push( me._groupNoneId );
+					groupDivTag = $( '<div style="" class="formGroupSection" name="zzzEmpty"></div>' );
+					formTag.append( groupDivTag );	
+					groupsCreated.push( "zzzEmpty" );
 				}
 				else
 				{
-					var controlGroup = $( formDivSecTag ).find( 'div[name="' + me._groupNoneId + '"]' );
+					groupDivTag = $( formTag ).find( 'div[name="' + 'zzzEmpty' + '"]' );
 				}
 			}
 			else
 			{
-				var controlGroup = formDivSecTag;
+				groupDivTag = formTag;
 			}
 		}
 
-		return controlGroup;
+		return groupDivTag;
 	}
 
 	me.evalFormGroupDisplayStatus = function( formDivSecTag )
@@ -154,12 +135,11 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		for( var i = 0; i < dvGroups.length; i++ )
 		{
-			var inpCtls  = $( dvGroups[ i ] ).find("div.inputField");
+			var inpCtls  = $( dvGroups[ i ] ).find("div.fieldBlock");
 			var sumDisplay = 0;
 
 			for( var c = 0; c < inpCtls.length; c++ )
 			{
-				//sumDisplay += ( $( inpCtls[ c ]).is( ':visible' ) ? 1 : 0 );
 				if ( $( inpCtls[ c ]).css( 'display' ) != 'none' )
 				{
 					sumDisplay += 1;
@@ -171,6 +151,580 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 		}
 	}
+
+
+	// =============================================
+	// Render INPUT fields
+
+	me.createInputFieldTag = function( formItemJson, payloadConfigSelection, formDivSecTag, passedData, formJsonArr )
+	{		
+		var controlType = formItemJson.controlType;
+		var divInputFieldTag;
+		var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
+
+		if ( controlType == "INT" || controlType == "SHORT_TEXT" )
+		{
+			divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
+		}
+		else if ( controlType == "DROPDOWN_LIST" )
+		{
+			divInputFieldTag = me.createDropDownEntryTag( formItemJson );
+		}
+		else if ( controlType == "LABEL" )
+		{
+			divInputFieldTag = me.createLabelFieldTag( formItemJson );
+		}
+		else if( controlType == "IMAGE" )
+		{
+			divInputFieldTag = me.createImageTag( formItemJson );
+		}
+		else if( controlType == "YEAR" ) 
+		{
+			divInputFieldTag = me.createYearFieldTag( formItemJson );
+		}
+		else if( controlType == "DATE" ) 
+		{
+			divInputFieldTag = me.createDateFieldTag( formItemJson );
+		}
+		else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
+		{
+			divInputFieldTag = me.createRadioDialogFieldTag( formItemJson );
+		}
+		else if( controlType == "RADIO" )
+		{
+			divInputFieldTag = me.createRadioFieldTag( formItemJson );
+		}
+		else if( controlType == "CHECKBOX" ) // "RADIO_DIALOG"
+		{
+			divInputFieldTag = me.createCheckboxFieldTag( formItemJson );
+		}
+		else if( controlType == "MULTI_CHECKBOX" ) // "CHECKBOX_DIALOG"
+		{
+			divInputFieldTag = me.createCheckBoxDialogFieldTag( formItemJson );
+		}
+		
+		if( divInputFieldTag != undefined && divInputFieldTag.find(".dataValue").length != 0 ) // LABEL, IMAGE don't have "dataValue" clazz
+		{
+			FormUtil.setTagVal( divInputFieldTag.find(".dataValue"), formItemJson.defaultValue );
+		
+
+			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
+			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
+
+			// Setup events and visibility and rules
+			var entryTag = divInputFieldTag.find(".dataValue");
+
+			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
+			me.setEventsAndRules( formItemJson, entryTag, entryTag.closest("div.fieldBlock"), formDivSecTag, formFull_IdList, passedData, entryTag.closest(".fieldBlock") );
+		}
+
+		return divInputFieldTag;
+	};
+
+
+	me.createStandardInputFieldTag = function( formItemJson, autoComplete )
+	{
+		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+
+		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid 
+				+ '" dataGroup="' + formItemJson.dataGroup + '" type="text" ' + autoComplete 
+				+ ' class="dataValue displayValue" />' );
+		
+		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
+
+		return divInputFieldTag;
+	}
+
+	me.createInputFieldTag_Standard = function( formItemJson )
+	{
+		// Create tag
+		var divInputFieldTag = $( Templates.inputFieldStandard );
+
+		// fieldId
+		divInputFieldTag.find( '.fieldBlock' ).attr( 'fieldId', formItemJson.id );
+
+		// Label
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+		
+		return divInputFieldTag;
+	};
+
+	me.createDropDownEntryTag = function( formItemJson )
+	{
+		// Create tag
+		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+
+		// Remove standard css class "field__left", add "field__selector" class
+		divInputFieldTag.find(".field__left").removeClass( 'field__left' ).addClass( 'field__selector' );
+
+		// Get and resolve options
+		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		Util.decodeURI_ItemList( optionList, "defaultName" );
+
+		// Populate options
+		var entryTag = $( '<select name="' + formItemJson.id + '" uid="' + formItemJson.uid 
+					+ '" dataGroup="' + formItemJson.dataGroup 
+					+ '" class="dataValue displayValue" />' );
+ 		Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
+
+
+		divInputFieldTag.find( 'div.field__selector' ).append( entryTag );
+
+		return divInputFieldTag;
+	}
+
+	me.createRadioDialogFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = $( Templates.inputFieldRadio );
+		divInputFieldTag.find("label").html( formItemJson.defaultName );
+		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
+
+		divInputFieldTag.append( showEntryForm );
+		divInputFieldTag.append( entryTag );
+
+		divInputFieldTag.on( 'click', function(){
+			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'radio' );
+		} );
+
+		return divInputFieldTag;
+	}
+	
+
+	me.createCheckBoxDialogFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = $( Templates.inputFieldCheckbox );
+		divInputFieldTag.find("label").html( formItemJson.defaultName );
+		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
+
+		divInputFieldTag.append( showEntryForm );
+		divInputFieldTag.append( entryTag );
+
+		divInputFieldTag.on( 'click', function(){
+			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'checkbox' );
+		} );
+
+		return divInputFieldTag;
+	}
+	
+
+	me.createLabelFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = $( Templates.labelField );
+
+		divInputFieldTag.html( formItemJson.defaultName );
+
+		return divInputFieldTag;
+	}
+
+	// TRAN : NEED TO UNDERSTAND HOW THIS FIELD EXPECT TO WORK
+	me.createImageTag = function( formItemJson )
+	{
+		// Create tag
+		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+
+		// IMAGE
+		var imgDivTag = $( '<div class="imgQRInput"></div>' );
+		var imgDisplay = $( '<img name="' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="" class="displayValue">' );
+		imgDivTag.append( imgDisplay );
+
+		divInputFieldTag.find( 'div.field__left' ).append( imgDivTag );
+
+		return divInputFieldTag;
+	}
+
+	// NEED TO SEE HOW IT WORKS
+	me.createYearFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+
+		var yearFieldTag = $( Templates.inputFieldYear );
+		divInputFieldTag.find(".field__left").append( yearFieldTag );
+
+		var yearRange = formItemJson.yearRange;
+		if( yearRange == undefined )
+		{
+			yearRange = { 'from': -100, 'to': 0 };
+		}
+
+		var data = []
+		var rndID = Util.generateRandomId( 8 );
+		var curYear = ( new Date() ).getFullYear();
+
+		for ( var i = yearRange.from; i <= yearRange.to; i++ )
+		{
+			var year = curYear + i;
+			data.push( { value: year, text: year } );
+		}
+
+
+		divInputFieldTag.find( 'input.dataValue' ).attr( 'name', formItemJson.id );
+		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.id );
+
+		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', JSON.parse( localStorage.getItem('session') ).autoComplete );
+
+		Util2.populate_year( yearFieldTag[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+
+		return divInputFieldTag;
+	}
+
+	// TRAN TODO : will organize later
+	me.createDateFieldTag = function( formItemJson )
+	{
+		wrapperDad = $('<div class="dateContainer"></div>');
+		wrapperInput = $('<div class="dateWrapper"></div>');
+		button = $('<button class="dateButton" ></button>');
+		icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
+
+		button.append(icoCalendar);
+
+		var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
+		var dtmSeparator = Util.getDateSeparator( formatDate );
+		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => {
+			let arr="";
+			for ( let i = 0; i < item.length; i++ )
+			{
+				arr += "#";
+			}
+			acum.push(arr);
+			return acum;
+		}, [] ).join( dtmSeparator );
+
+		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+
+		wrapperInput.append( entryTag );
+		wrapperDad.append( wrapperInput, button );
+
+		FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+
+
+		//function that call datepicker
+		Maska.create( entryTag[0] );
+
+		entryTag.click( e => e.preventDefault() );
+
+		var yearRange = ( formItemJson.yearRange ) ? formItemJson.yearRange : { 'from': -100, 'to': 1 };
+		var tagOfClick = Util.isMobi() ? button.parent() : button;
+
+		tagOfClick.click( function(e) {
+			if(Util.isMobi()) entryTag.blur()
+			var dtmPicker = new mdDateTimePicker.default({
+				type: 'date',
+				init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
+				past: moment().add( yearRange.from, 'years'), // Date min 
+				future: moment().add( yearRange.to, 'years')  // Date max
+			} );
+
+			e.preventDefault();
+			dtmPicker.toggle();
+
+			var inputDate = entryTag[ 0 ];
+			dtmPicker.trigger = inputDate;
+
+			inputDate.addEventListener('onOk', function() {
+
+				var trueFormat = ( formatDate == '' ) ? 'YYYY' : formatDate;
+				var inpDate = $( '[name=' + formItemJson.id + ']' );
+
+				inpDate.val( dtmPicker.time.format( trueFormat ) );
+
+				FormUtil.dispatchOnChangeEvent( inpDate );
+
+			});
+
+		});
+
+		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		divInputFieldTag.find(".field__left").append( wrapperDad );
+
+		return divInputFieldTag;
+	}
+
+	me.createRadioFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = $( Templates.inputFieldRadio );
+
+		var checkLabel = divInputFieldTag.find( '.displayName' );
+		checkLabel.html( formItemJson.defaultName );
+
+		// Create a hidden input tag to save selected option value
+		var hiddenTarget = $( Templates.inputFieldHidden );
+		hiddenTarget.addClass( "dataValue" );
+		hiddenTarget.attr( "name", formItemJson.id );
+		divInputFieldTag.append( hiddenTarget );
+
+		// Create Option list
+		me.createRadioItemTags( divInputFieldTag, formItemJson );
+
+		return divInputFieldTag;
+	}
+
+	me.createCheckboxFieldTag = function( formItemJson )
+	{
+		var divInputFieldTag = $( Templates.inputFieldCheckbox );
+		divInputFieldTag.find( '.displayName' ).html( formItemJson.defaultName );
+			
+
+		// Create Option list
+		me.createCheckboxItems( divInputFieldTag, formItemJson )
+
+		return divInputFieldTag;
+	}
+
+	
+
+	// =============================================
+	// === Supportive for INPUT fields =============
+
+	// For RADIO items
+	me.createRadioItemTags = function( divInputFieldTag, formItemJson )
+	{
+		/* 
+		<div class="radiobutton-col ">
+          <div class="radio-group horizontal">
+            <input name="group2" type="radio" id="radioName3">
+            <label for="radioName3">1. radio button
+            </label>
+          </div>
+          <div class="radio-group horizontal">
+            <input name="group2" type="radio" id="radioName4">
+            <label for="radioName4">2. radio button
+            </label>
+          </div>
+		</div>
+		*/
+
+		var optionDivListTag = divInputFieldTag.find(".radiobutton-col");
+		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		
+		for ( var i = 0; i < optionList.length; i++ )
+		{
+			var optionDivTag = $( Templates.inputFieldRadio_Item );
+
+			me.setAttributesForInputItem( optionDivTag, formItemJson.id, optionList[ i ] );
+
+			optionDivListTag.append( optionDivTag );
+
+			me.setupEvents_RadioItemTags( divInputFieldTag, optionDivTag.find( 'input' ) );
+		}
+	}
+
+	me.setAttributesForInputItem = function( optionDivTag, targetId, optionConfig )
+	{
+		var optionInputTag = optionDivTag.find( 'input' );
+		optionInputTag.attr( 'name', targetId );
+		optionInputTag.attr( 'id', 'opt_' + optionConfig.value ); // Need for css to make check-mark
+		optionInputTag.attr( 'value', optionConfig.value ); // Use to fill the selected option value to input.dataValue
+		
+
+		var labelTag = optionDivTag.find( 'label' );
+		var labelTerm = me.cwsRenderObj.langTermObj.translateText( optionConfig.defaultName, optionConfig.poTerm );
+		labelTag.attr( 'for', 'opt_' + optionConfig.value );
+		labelTag.text( labelTerm );
+	}
+	
+	me.setupEvents_RadioItemTags = function( divInputFieldTag, optionInputTag )
+	{
+		optionInputTag.change( function(){
+			var targetInputTag = divInputFieldTag.find("input.dataValue");
+			targetInputTag.val( $(this).val() );
+		});
+	}
+
+	// For checkbox items
+	me.createCheckboxItems = function( divInputFieldTag, formItemJson )
+	{
+		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
+		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		
+		// For TRUE/FALSE case without options defination
+		if ( optionList === undefined )
+		{
+			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
+
+			var optionInputTag = optionDivTag.find( 'input' );
+			optionInputTag.attr( 'id', "opt_" + formItemJson.id );
+			optionInputTag.attr( 'name', formItemJson.id );
+
+			optionDivTag.find("label").attr("for", "opt_" + formItemJson.id );
+
+			optionDivListTag.append( optionDivTag ); 
+
+			me.setupEvents_SingleCheckBoxItemTags( divInputFieldTag, optionDivTag );
+		}
+		else // Create multiple items
+		{
+			
+			// Create a hidden input tag to save selected option value
+			var hiddenTarget = $( Templates.inputFieldHidden );
+			hiddenTarget.addClass( 'dataValue' );
+			hiddenTarget.attr( 'name', formItemJson.id );
+			divInputFieldTag.append( hiddenTarget );
+
+			for ( var i = 0; i < optionList.length; i++ )
+			{
+				var optionDivTag = $( Templates.inputFieldCheckbox_Item );
+				me.setAttributesForInputItem ( optionDivTag, formItemJson.id, optionList[ i ] );
+
+				optionDivListTag.append( optionDivTag );
+
+				me.setupEvents_CheckBoxItemsTags( divInputFieldTag, optionDivTag.find("input") );
+			}
+		}
+
+	}
+
+	me.setupEvents_SingleCheckBoxItemTags = function( divInputFieldTag, optionDivTag )
+	{
+		optionDivTag.change( function(){
+			var checkBoxTag = optionDivTag.find("input");
+			var value = ( checkBoxTag.prop("checked") ) ? "true" : "false";
+			
+			divInputFieldTag.find("input.dataValue").val( value );
+		});
+	}
+
+	me.setupEvents_CheckBoxItemsTags = function( divInputFieldTag, optionInputTag )
+	{
+		optionInputTag.change( function(){
+			var targetInputTag = divInputFieldTag.find("input.dataValue");
+			var checkedItems = divInputFieldTag.find("input[name='" + targetInputTag.attr("name") + "']:checked");
+			var selectedValues = [];
+			for( var i=0; i<checkedItems.length; i++ )
+			{
+				selectedValues.push( checkedItems[i].value );
+			}
+			targetInputTag.val( selectedValues.join(",") );
+		});
+	}
+
+	// For RADIO/CHECKBOX dialog
+	me.createSearchOptions_Dialog = function( divInputFieldTag, formItemJson, type )
+	{
+		var dialogForm = $( Templates.searchOptions_Dialog );
+		dialogForm.find(".dialog__text").addClass("checkbox"); 
+
+		var optsContainer = dialogForm.find( '.optsContainer' );
+		dialogForm.find( '.title' ).html( me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+
+		if( type == 'radio')
+		{
+			optsContainer.addClass("radiobutton-col");
+
+			// Create Item list
+			me.createRadioItemTags( dialogForm, formItemJson );
+		}
+		else
+		{
+			optsContainer.addClass("checkbox-col");
+			optsContainer.addClass("checkbox__wrapper");
+
+			// Create Item list
+			me.createCheckboxItems( dialogForm, formItemJson );
+
+			// Set list of items as vertical
+			optsContainer.find(".horizontal").removeClass("horizontal");
+		}
+
+
+		// Set checked items if any
+		var selectedValues = divInputFieldTag.find("input.dataValue").val();
+		selectedValues = ( selectedValues != "" ) ? selectedValues : formItemJson.defaultValue;
+		if( selectedValues != undefined )
+		{
+			var selected = selectedValues.split(",");
+			for( var i=0; i<selected.length; i++ )
+			{
+				var value = selected[i];
+				optsContainer.find("input[value='" + value + "']").prop("checked", true);
+			}
+			
+		}
+
+		// Display dialog
+		me.openDialogForm( dialogForm );
+
+		// Need to so something about this ? Maybe move the main class ???
+		$('.scrim').off( 'click' ).on( 'click', function(){
+			me.closeDialogForm( dialogForm );
+		} );
+
+
+		// --------------------------------------------------------
+		// Setup events
+
+		// Search event 
+		dialogForm.find( 'input.searchText' ).on( 'keyup', function( e ){
+
+			var searchFor = $( this ).val().toUpperCase();
+			var searchItems = optsContainer.find( 'div' );
+
+			searchItems.each( function( i ) {
+				selectedVal = ( $( this ).find("label").html() ).toUpperCase();
+				$( this ).css( 'display', ( selectedVal.includes( searchFor ) ? 'block' : 'none' ) );
+			});
+			
+		});
+
+		// Item CLICK event
+		optsContainer.find("input").click( function(){
+			me.setupEvents_DialogSelectedItemTags( divInputFieldTag, dialogForm, $(this) );
+		});
+
+		// Close button event
+		dialogForm.find( '#closeBtn' ).on( 'click', function(){
+
+			$('.scrim').hide();
+			$( '#dialog_searchOptions' ).remove();
+		} );
+
+		// Clear button event
+		dialogForm.find( '#clearBtn' ).on( 'click', function(){
+
+			optsContainer.find("input").prop("checked", false);
+
+			divInputFieldTag.find("input.dataValue").val( "" );
+			divInputFieldTag.find("input.displayValue").val( "" );
+		} );
+
+	}
+
+	me.closeDialogForm = function( dialogForm )
+	{
+		dialogForm.remove();
+		$('.scrim').hide();
+	};
+
+	me.openDialogForm = function( dialogForm )
+	{
+		$( 'body' ).append( dialogForm );
+		$('.scrim').show();
+		dialogForm.fadeIn();
+	}
+
+	me.setupEvents_DialogSelectedItemTags = function( targetDivInputFieldTag, dialogTag, optionInputTag )
+	{
+		optionInputTag.change( function(){
+			var targetInputTag = targetDivInputFieldTag.find("input.dataValue");
+			var targetDisplayTag = targetDivInputFieldTag.find("input.displayValue");
+
+			var checkedItems = dialogTag.find("input[name='" + targetInputTag.attr("name") + "']:checked");
+			var selectedValues = [];
+			var selectedTexts = [];
+			for( var i=0; i<checkedItems.length; i++ )
+			{
+				var text = optionInputTag.closest("div").find("label").html();
+				selectedValues.push( checkedItems[i].value );
+				selectedTexts.push( text );
+			}
+
+			targetInputTag.val( selectedValues.join(",") );
+			targetDisplayTag.val( selectedTexts.join(",") );
+		});
+	}
+
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
@@ -191,6 +745,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
 	{
+		var groupNone = 'zzzNone';
 		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
 		var retGrpArr = [];
 
@@ -198,7 +753,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		{
 			if ( newArr[ i ].formGroup == undefined || newArr[ i ].formGroup == '' )
 			{
-				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': me._groupNoneId, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
+				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
 			}
 			else
 			{
@@ -207,17 +762,16 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 
 		// SORTING should be inherited from preconfigured 'Group' object sort value
-		Util.sortByKey( retGrpArr, 'order');
-		/*retGrpArr.sort(function(a, b)
+		retGrpArr.sort(function(a, b)
 		{
 			if (a.order < b.order) { return -1; }
 			if (b.order < a.order) return 1;
 			else return 0;
-		});*/
+		});
 
 		for( var i = 0; i < retGrpArr.length; i++ )
 		{
-			if ( retGrpArr[ i ].group === me._groupNoneId )
+			if ( retGrpArr[ i ].group == groupNone )
 			{
 				retGrpArr[ i ].group = '';
 			}
@@ -246,68 +800,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		return Util.getFromList( formJsonArr, id, "id" );
 	}
 
-
-	// Old UI Used Method
-	me.renderInput = function( formItemJson, formDivSecTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
-	{
-		var divInputTag = $( '<div class="inputDiv"></div>' );
-
-		var spanTitleTag = $( '<span ' + FormUtil.getTermAttr( formItemJson ) + ' class="titleSpan"></span>' );
-		spanTitleTag.text( formItemJson.defaultName );
-
-		var titleDivTag = $( '<div class="titleDiv"></div>' ).append( spanTitleTag );
-
-		divInputTag.append( titleDivTag );
-
-		me.renderInputTag( formItemJson, divInputTag, formTag, formFull_IdList, passedData, payloadConfigSelection );
-
-		formDivSecTag.append( divInputTag );
-	}
-	
-	// New UI Used Method
-	me.renderInputFieldControls = function( formItemJson, controlGroupTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
-	{
-		var fieldContainerTag = $( Templates.inputFieldStandard );
-		var divFieldLabelTag = fieldContainerTag.find( 'label.displayName' );
-		var divFieldControlLeftTag = fieldContainerTag.find( 'div.field__left' );
-
-		fieldContainerTag.attr( 'inputFieldId', formItemJson.id );
-
-		divFieldLabelTag.text( formItemJson.defaultName );
-		FormUtil.addTag_TermAttr ( divFieldLabelTag, formItemJson);
-
-		me.renderInputTag( formItemJson, divFieldControlLeftTag, formTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag );
-
-		controlGroupTag.append( fieldContainerTag );
-	}
-
-	me.renderNewUI_InputFieldControls = function( formItemJson, controlGroupTag, formTag, formFull_IdList, passedData, payloadConfigSelection )
-	{
-		var divInputFieldTag = $( '<div class="inputField newUIfield" inputFieldId="' + formItemJson.id + '" />' ); // ADD NEW UI NESTED CLASS STRUCTURES HERE PER controlType
-		var entryTag;
-
-		controlGroupTag.append( divInputFieldTag );
-
-		if ( formItemJson.controlType === "CHECKBOX" ) //|| formItemJson.controlType === "MULTI_CHECKBOX"
-		{
-			me.renderInputCheckbox( formItemJson, divInputFieldTag, formTag, formFull_IdList, passedData, payloadConfigSelection, divInputFieldTag, ( formItemJson.slider && (formItemJson.slider == "true" || formItemJson.slider == true ) ) );
-		}
-		else if ( formItemJson.controlType === "RADIO" )
-		{
-			me.renderInputRadio( formItemJson, divInputFieldTag, formTag, formFull_IdList, passedData, payloadConfigSelection, divInputFieldTag );
-		}
-		/*else
-		{
-			entryTag = me.renderInputTag( formItemJson, divInputFieldTag, formTag, formFull_IdList, passedData, payloadConfigSelection, divInputFieldTag );
-		}*/
-
-		entryTag = divInputFieldTag.find( '.dataValue' );
-
-		// Setup events and visibility and rules
-		me.setEventsAndRules( formItemJson, entryTag, entryTag.parent(), formDivSecTag, formFull_IdList, passedData, divInputFieldTag );
-
-	}
-
 	me.getFormControlRule = function ( formItemJson, attr )
 	{
 		var objAttr = formItemJson.rules.filter(obj=>obj.name===attr)[0] 
@@ -317,257 +809,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			:	''
 		)	
 	}
-
-	// TODO: JAMES: 'payloadConfig' is passed and 'FormUtil.setTagVal' should be handled...
-	me.renderInputTag = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag )
-	{
-
-		// NB: inline properties use (from quick observation):
-		//   uid: 		for passing data values (populateFormData); could/should be replaced by 'id' reference as UID is DHIS2 related (no longer used/relevant)
-		// 	 dataGroup: for inputJson (payload) formation (FormUtil.setFormsJsonGroup_Val); should be reviewed/improved?
-		//   name:		for reference by eval defaultValue in me.evalFormInputFunctions (even though value loaded into name is 'id' value ?)
-
-		if ( formItemJson )
-		{
-			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
-			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
-
-			var entryTag;
-			var bSkipControlAppend = false;
-			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
-
-			if ( formItemJson.scanQR != undefined &&  formItemJson.scanQR == true ) bSkipControlAppend = true;
-			if ( formItemJson.controlType === "DROPDOWN_LIST" && formItemJson.options === 'boolOption' ) formItemJson.controlType = "CHECKBOX";
-
-
-			if ( formItemJson.controlType === "INT" || formItemJson.controlType === "SHORT_TEXT" )
-			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="text" ' + autoComplete + ' class="dataValue displayValue" />' );
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
-			}			
-			else if ( formItemJson.controlType === "DROPDOWN_LIST" )
-			{
-
-				divInputTag.removeClass( 'field__left' );
-				divInputTag.addClass( 'field__selector' );
-
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-
-				Util.decodeURI_ItemList( optionList, "defaultName" );
-
-				entryTag = $( '<select name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" class="dataValue displayValue" />' );
-
-				Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
-
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				divInputTag.append( entryTag );
-
-			}
-			else if ( formItemJson.controlType === "DROPDOWN_AUTOCOMPLETE" ) // rename [DIALOG_RADIO]
-			{
-				var inputDisplayOnly = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-
-				entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
-
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
-
-				inputDisplayOnly.on( 'click', function(){
-
-					me.createSearchOptions_Dialog( formItemJson, entryTag, this, 'radio' );
-
-				} );
-
-				divInputTag.append( inputDisplayOnly, entryTag );
-
-			}
-			else if ( formItemJson.controlType === "MULTI_CHECKBOX" ) // rename [DIALOG_CHECKBOX]
-			{
-				var inputDisplayOnly = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-
-				entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
-
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				if ( ! bSkipControlAppend ) divInputTag.append( entryTag );
-
-				inputDisplayOnly.on( 'click', function(){
-
-					me.createSearchOptions_Dialog( formItemJson, entryTag, this, 'checkbox' );
-
-				} );
-
-				divInputTag.append( inputDisplayOnly, entryTag );
-
-			}
-			else if( formItemJson.controlType === "YEAR" )
-			{
-				var data = []
-				var today = new Date();
-				var year = today.getFullYear();
-				var rndID = Util.generateRandomId( 8 );
-				var yearRange = ( formItemJson.yearRange ) ? formItemJson.yearRange : { 'from': -100, 'to': 0 };
-
-				for ( var i = yearRange.from; i <= yearRange.to; i++ )
-				{
-					data.push( { value: moment().add( i, 'years')._d.getFullYear(), text: moment().add( i, 'years')._d.getFullYear() } );
-				}
-
-				var yearDialogObj = $( Templates.inputFieldYear );
-
-				yearDialogObj.find( 'input.dataValue' ).attr( 'id', formItemJson.id ); //'input_' + rndID
-				yearDialogObj.find( 'input.dataValue' ).attr( 'uid', formItemJson.id );
-
-				yearDialogObj.find( 'input.displayValue' ).attr( 'id', 'display_' + rndID );
-				yearDialogObj.find( 'input.displayValue' ).attr( 'autocomplete', JSON.parse( localStorage.getItem('session') ).autoComplete );
-
-				var wrapperTag = $( '<div></div>' );
-
-				entryTag = $( yearDialogObj ).find( '.dataValue' );
-
-				wrapperTag.append( yearDialogObj );
-				divInputTag.append( wrapperTag );
-
-				Util2.populate_year( yearDialogObj[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
-
-			}
-			else if ( formItemJson.controlType === "DATE" )
-			{
-				// <- we need to generate from Templates.xxxx
-				var wrapperDad = $('<div class="dateContainer"></div>');
-				var wrapperInput = $('<div class="dateWrapper"></div>');
-				var button = $('<button class="dateButton" ></button>');
-				var icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
-
-				button.append( icoCalendar );
-
-				var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
-				var dtmSeparator = Util.getDateSeparator( formatDate );
-				var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => {
-					let arr="";
-					for ( let i = 0; i < item.length; i++ )
-					{
-						arr += "#";
-					}
-					acum.push(arr);
-					return acum;
-				}, [] ).join( dtmSeparator );
-
-				// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
-				entryTag = $( '<input data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" class="dataValue displayValue" />' );
-
-				wrapperInput.append( entryTag );
-				wrapperDad.append( wrapperInput, button );
-
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				divInputTag.append( wrapperDad );
-
-				//function that call datepicker
-				Maska.create( entryTag[0] );
-
-				entryTag.click( e => e.preventDefault() );
-
-				var yearRange = ( formItemJson.yearRange ) ? formItemJson.yearRange : { 'from': -100, 'to': 1 };
-				var tagOfClick = Util.isMobi() ? button.parent() : button;
-
-				tagOfClick.click( function(e) {
-					if(Util.isMobi()) entryTag.blur()
-					var dtmPicker = new mdDateTimePicker.default({
-						type: 'date',
-						init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
-						past: moment().add( yearRange.from, 'years'), // Date min 
-						future: moment().add( yearRange.to, 'years')  // Date max
-					} );
-
-					e.preventDefault();
-					dtmPicker.toggle();
-
-					var inputDate = entryTag[ 0 ];
-					dtmPicker.trigger = inputDate;
-
-					inputDate.addEventListener('onOk', function() {
-
-						var trueFormat = ( formatDate == '' ) ? 'YYYY' : formatDate;
-						var inpDate = $( '[name=' + formItemJson.id + ']' );
-
-						inpDate.val( dtmPicker.time.format( trueFormat ) );
-
-						FormUtil.dispatchOnChangeEvent( inpDate );
-
-					});
-
-				});
-
-			}
-			else if ( formItemJson.controlType === "LABEL" )
-			{
-				divInputTag.css( 'background-color', 'darkgray' );
-				divInputTag.find( 'label.titleDiv' ).css( 'color', 'white' );
-			}
-			else if ( formItemJson.controlType === "IMAGE" ) // rename [QR_IMAGE]
-			{
-				var divSelectTag = $( '<div class="imgQRInput"></div>' );
-				var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" style="display:none" class="dataValue" />' );
-				var imgDisplay = $( '<img name="imgPreview_' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="" class="displayValue">' );
-
-				divSelectTag.append( entryTag );
-				divSelectTag.append( imgDisplay );
-				divInputTag.append( divSelectTag );
-
-			}
-			/*else
-			{
-				entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="text" class="dataValue displayValue" />' );
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-				console.log( formItemJson,entryTag );
-
-				//if ( ! bSkipControlAppend ) 
-				divInputTag.append( entryTag );
-			}*/
-
-			// Setup events and visibility and rules
-			me.setEventsAndRules( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData, fieldContainerTag );
-
-			if ( formItemJson.scanQR != undefined )
-			{
-				if ( formItemJson.scanQR == true )
-				{
-					var tbl = $( '<table style="width:100%" />' );
-					var tR = $( '<tr />' );
-					var tdL = $( '<td />' );
-					var tdR = $( '<td class="qrIcon" />' );
-
-					tbl.append( tR );
-					tR.append( tdL );
-					tR.append( tdR );
-					divInputTag.append( QRiconTag );
-
-					var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >')
-
-					tdL.click( function(){
-						var qrData = new readQR( entryTag );
-					} );
-
-					tdL.append( entryTag );
-					tdR.append( QRiconTag );
-					entryTag.addClass( 'qrInput' );
-
-					divInputTag.append( tbl );
-
-				}
-
-			}
-			
-			return entryTag;
-
-		}
-	};
 
 	
 	me.setFormItemJson_DefaultValue_PayloadConfigSelection = function( formItemJson, payloadConfigSelection )
@@ -581,10 +822,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	};
 
 
-	// NOTE: evaluation the 'defaultValue' expression...  
-	//		But, this should have evaluated from source tag value change..
-	//		Also, this should be replaced with..
-	// 'data-fields' should be replaced.. 
 	me.evalFormInputFunctions = function( formDivSecTag )
 	{
 		if ( formDivSecTag )
@@ -628,34 +865,26 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				// TODO: Fix the on leave issues.. below..y
-				// JAMES, disabled for now..
-				// IDEA: Rather than using 'defaultValue' concept, we should use 
-				//		that changes
-				// me.evalFormInputFunctions( formDivSecTag.parent() ); //.parent()
-
-
+				me.evalFormInputFunctions( formDivSecTag ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 
 		}
 
 		me.addRuleForField( divInputTag, formItemJson );
-
-
-		//  Below... shoudl be moved to other methods/organization?
-
-
 		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 		me.addStylesForField( divInputTag, formItemJson );
-
-
-		// TODO: PUT BELOW CODE AS separate..
 
 		// Set Tag Visibility
 		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
 		{
 			fieldContainerTag.hide();
+			divInputTag.hide();
+
+			entryTag.attr( 'display', 'hiddenVal' );
+
+			if ( entryTag == undefined ) console.log ( formItemJson ) ;
+
 		}
 
 		if ( passedData !== undefined 
@@ -663,8 +892,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.hideCase !== undefined
 			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
-			//divInputTag.hide(); 
-			fieldContainerTag.hide(); 
+			divInputTag.hide(); //divInputTag.find("input,select").remove();
 		}
 
 		if ( passedData !== undefined 
@@ -672,8 +900,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.showCase !== undefined
 			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
 		{
-			//divInputTag.show();
-			fieldContainerTag.show();
+			divInputTag.show();
 		}
 
 	}
@@ -687,6 +914,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			for ( var i = 0; i < formItemJson.styles.length; i++ )
 			{
 				var styleDef = formItemJson.styles[i];
+				//entryTag.css( styleDef.name, styleDef.value );
 
 				entryTag.each( function( index, element ){
 					$( element ).attr( styleDef.name, styleDef.value );
@@ -698,7 +926,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( ".dataValue" ); //( "select,input" )
+		var entryTag = divInputTag.find( "select,input" );
 		var regxRules = [];
 
 		if( formItemJson.rules !== undefined )
@@ -714,7 +942,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
-						var titleTag = divInputTag.closest( 'div.inputField' ).find( '.fieldLabel' );
+						//var titleTag = divInputTag.find( ".titleDiv" );
+						//titleTag.after( $( "<span class='redStar'> * </span>" ) );
+						var titleTag = divInputTag.closest( 'div.field' ).find( 'div.field__label' );
 						titleTag.append( $( "<span>*</span>" ) );
 					}
 				}	
@@ -883,12 +1113,17 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			{
 				var idStr = idList[i];
 				var targetInputTag = me.getMatchingInputTag( formDivSecTag, idStr );
-				var targetInputDivTag = targetInputTag.closest( 'div[inputFieldId="' + idStr + '"]'); // < change to [formDivSecTag.find] ..
+				var targetInputDivTag = targetInputTag.closest( 'div.fieldBlock');
 
 				if ( visible ) 
 				{
 					targetInputDivTag.show( 'fast' );
 
+					//console.log( 'show by condition: id/name: ' + idStr );
+
+					// target inputs subsequent show/hide
+					// Due to parent tag initializing show hide of same target
+					// Perform this a bit after time delay
 					me.performChildTagEvalActions( idStr, targetInputTag, formDivSecTag, formFull_IdList );
 				}
 				else 
@@ -898,7 +1133,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 		}
 	};
-
 
 	me.performChildTagEvalActions = function( idStr, targetInputTag, formDivSecTag, formFull_IdList )
 	{
@@ -947,7 +1181,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				inputTags.each( function( i ) 
 				{
 					var inputTag = $( this );
-					var uidStr = inputTag.attr( 'uid' ); // <-- WHY USE 'uid' WHEN 'id' WILL WORK? hmmm
+					var uidStr = inputTag.attr( 'uid' );
+
+					//console.log( 'inputTag visible, uid: ' + uidStr + ', visible: ' + inputTags.is( ':visible') );
 
 					if ( uidStr )
 					{
@@ -999,173 +1235,82 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	}
 
 
-	me.renderInputCheckbox = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag, enableToggle )
-	{
-		var parentTag = $( Templates.inputFieldCheckbox );
-		var checkLabel = parentTag.find( '.displayName' );
+	// me.renderInputCheckbox = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag, enableToggle )
+	// {
+	// 	var parentTag = $( Templates.inputFieldCheckbox );
+	// 	var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+	// 	var checkLabel = parentTag.find( '.displayName' );
+	// 	checkLabel.html( formItemJson.defaultName );
 
-		checkLabel.html( formItemJson.defaultName );
+	// 	divInputTag.append( parentTag );
 
-		divInputTag.append( parentTag );
+	// 	console.log( optionList, formItemJson );
 
-		me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'checkbox', false, ( ! enableToggle ? 'horizontal' : '' ), enableToggle );
-	}
+	// 	me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'checkbox', 'horizontal' );
 
-
-	me.renderInputRadio = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag )
-	{
-		var parentTag = $( Templates.inputFieldRadio );
-		var checkLabel = parentTag.find( '.displayName' );
-
-		checkLabel.html( formItemJson.defaultName );
-
-		divInputTag.append( parentTag );
-
-		me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'radio', false, 'horizontal' );
-	}
+	// }
 
 
-	me.createSearchOptions_Dialog = function( formItemJson, targetInputTag, targetDisplayText, type )
-	{
-		var newDialog = $( Templates.searchOptions_Dialog );
-		var optsContainer = newDialog.find( '.optsContainer' );
+	// me.renderInputRadio = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag )
+	// {
+	// 	var parentTag = $( Templates.inputFieldRadio );
+	// 	var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+	// 	var checkLabel = parentTag.find( '.displayName' );
 
-		if ( type === 'radio' )
-		{
-			optsContainer.addClass( 'radiobutton-col' );
-		}
-		else if ( type === 'checkbox' )
-		{
-			optsContainer.addClass( 'checkbox-col' );
-		}
+	// 	checkLabel.html( formItemJson.defaultName );
 
-		newDialog.find( '.title' ).html( me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+	// 	divInputTag.append( parentTag );
 
-		me.createListOptions_Items( optsContainer, formItemJson, type, true );
-
-		$( 'body' ).append( newDialog );
-
-		$('.scrim').show();
-
-		$('.scrim').off( 'click' ).on( 'click', function(){
-			$( '#dialog_searchOptions' ).remove();
-			$('.scrim').hide();
-		} );
-
-		newDialog.fadeIn();
+	// 	console.log( optionList, formItemJson );
 
 
-		// search event 
-		newDialog.find( 'input.searchText' ).on( 'keyup', function( e ){
+	// 	me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'radio', 'horizontal' );
+	// }
 
-			var searchFor = $( this ).val().toUpperCase();
-			var optContainerTag = $( '#dialog_searchOptions' ).find( '.optsContainer' );
-			var searchItems = optContainerTag.find( 'div' );
+	
+	
 
-			searchItems.each( function( i ) {
-				selectedVal = ( $( this ).attr( 'searchtext' ) ).toUpperCase();
-				$( this ).css( 'display', ( selectedVal.includes( searchFor ) ? 'block' : 'none' ) );
-			});
-			
-		});
-
-		// cancel button event
-		newDialog.find( '.cancel' ).on( 'click', function(){
-
-			$('.scrim').hide();
-			$( '#dialog_searchOptions' ).remove();
-
-		} );
-
-		// accept button event
-		newDialog.find( '.runAction' ).on( 'click', function(){
-
-			var selectedArr = [], displayArr = [];
-
-			$.each( $( "input[name='option_" + formItemJson.id + "']:checked" ), function(){
-				selectedArr.push( $( this ).attr( 'value' ) );
-				displayArr.push( $( $( this ).siblings()[ 0 ] ).text() );
-			});
-
-			$( targetInputTag ).val( selectedArr.join( ',' ) );
-			$( targetDisplayText ).val( displayArr.join( ',' ) );
-
-			$('.scrim').hide();
-			$( '#dialog_searchOptions' ).remove();
-		} );
-
-	}
-
-	me.createListOptions_Items = function( parentTag, formItemJson, type, useDialog, addClass, displaySlider )
+	// TRAN TODO 
+	me.createListOptions_Items = function( targetTag, formItemJson, type, addClass, targetInputTag, targetDisplayText )
 	{
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-		var inputHiddenTarget = $( Templates.inputFieldHidden );
+		var hiddenTarget = $( Templates.inputFieldHidden );
 
+		targetTag.append( hiddenTarget );
+
+		hiddenTarget.attr( 'id', formItemJson.id );
+		hiddenTarget.addClass( 'dataValue' );
+		
 		if ( optionList === undefined )
 		{
 			// create single item ( on / off ) for checkbox ONLY
 			if ( type === 'checkbox' )
 			{
-				inputHiddenTarget.attr( 'id', formItemJson.id );
-				inputHiddenTarget.addClass( 'dataValue' );
-
 				var checkboxTag = $( Templates.inputFieldCheckbox_SingleItem );
-				var checkboxInputTag = checkboxTag.find( 'input' );
-				var lblTag = checkboxTag.find( 'label' );
 
-				checkboxInputTag.attr( 'id', 'display_' + formItemJson.id );
-				checkboxInputTag.attr( 'updates', formItemJson.id );
+				var inputTag = checkboxTag.find( 'input' );
+				inputTag.addClass( 'displayValue' );
+				inputTag.attr( 'id', 'option_' + formItemJson.id );
+				inputTag.attr( 'single', 'true' );
+				inputTag.attr( 'updates', formItemJson.id );
 
-				checkboxInputTag.addClass( 'displayValue' );
-				checkboxInputTag.addClass( 'singleOption' );
 
-				lblTag.html( '' ); // no need to display label as it exists inside field object
-				lblTag.attr( 'for', 'display_' + formItemJson.id );
+				checkboxTag.find( 'label' ).attr( 'for', 'option_' + formItemJson.id );
+				// checkboxTag.find( 'label' ).html( '' );
 
-				if ( formItemJson.defaultValue && formItemJson.defaultValue.toLowerCase() === 'checked' ) checkboxTag.attr( 'checked', 'checked' );
+				me.createListOption_UpdateEvent( checkboxTag.find( 'input' ) , targetInputTag, targetDisplayText );
 
-				me.createListOption_UpdateEvent( checkboxInputTag );
-
-				parentTag.append( inputHiddenTarget );
-				parentTag.append( checkboxTag );
-
+				targetTag.append( checkboxTag ); 
 			}
 		}
 		else
 		{
-
-			var updates;
-
-			if ( useDialog )
-			{
-				inputHiddenTarget.attr( 'id', 'dialog_' + formItemJson.id );
-
-				updates = 'dialog_' + formItemJson.id;
-			}
-			else
-			{
-				inputHiddenTarget.attr( 'id', formItemJson.id );
-				inputHiddenTarget.addClass( 'dataValue' );
-
-				updates = formItemJson.id;
-			}
-
-			parentTag.append( inputHiddenTarget );
-
 			// create multiple items
-			var sourceDataTag = $( '#' + formItemJson.id );
-			var dataValues = ( sourceDataTag.val() ? sourceDataTag.val().split( ',' ) : [] );
 
 			for ( var i = 0; i < optionList.length; i++ )
 			{
 				var optItem = optionList[ i ];
-				var newOpt, optTag;
 
-				/*if ( displaySlider === true )
-				{
-					newOpt = $( Templates.inputFieldToggle_Item );
-				}
-				else*/
 				if ( type === 'radio' )
 				{
 					newOpt = $( Templates.inputFieldRadio_Item );
@@ -1175,44 +1320,47 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					newOpt = $( Templates.inputFieldCheckbox_Item );
 				}
 
-				if ( addClass ) newOpt.addClass( addClass );
-
 				var labelTerm = me.cwsRenderObj.langTermObj.translateText( optItem.defaultName, optItem.poTerm )
+
+				if ( addClass ) newOpt.addClass( addClass );
 
 				newOpt.first( 'div' ).attr( 'searchText', labelTerm );
 
-				optTag = newOpt.find( 'input' );
-
-				optTag.attr( 'id', 'option_' + optItem.value );
-				optTag.attr( 'name', 'option_' + formItemJson.id );
-				optTag.attr( 'value', optItem.value );
-				optTag.attr( 'updates', updates );
-
-				optTag.addClass( 'displayValue' );
-
-				if ( dataValues.length )
-				{
-					if ( dataValues.includes( optItem.value ) ) 
-					{
-						optTag.attr( 'checked', 'checked' );
-					}
-				}
-
+				newOpt.find( 'input' ).attr( 'name', 'search_opt_' + formItemJson.id );
+				newOpt.find( 'input' ).attr( 'id', 'option_' + optItem.value );
+				newOpt.find( 'input' ).attr( 'value', optItem.value );
+				newOpt.find( 'input' ).attr( 'targetName', formItemJson.id );
+				newOpt.find( 'input' ).attr( 'single', 'false' );
+				
+				newOpt.find( 'input' ).addClass( 'displayValue' );
+				
+	
 				newOpt.find( 'label' ).attr( 'for', 'option_' + optItem.value );
 				newOpt.find( 'label' ).text( labelTerm );
 
-				me.createListOption_UpdateEvent( optTag );
-
-				parentTag.append( newOpt );
+				me.createListOption_UpdateEvent( newOpt.find( 'input' ), targetInputTag, targetDisplayText );
+	
+				targetTag.append( newOpt );
 			}
+
+
+			if( targetInputTag != undefined )
+			{
+				// Select options if any
+				var selectedIs = targetInputTag.val().split(",");
+				for( var i=0; i<selectedIs.length; i++ )
+				{
+					targetTag.find( '[id="option_' + selectedIs[i] + '"]' ).prop("checked", true );
+				}
+			}
+
 		}
 
 	}
 
-	me.createListOption_UpdateEvent = function( listOptionTag )
+	me.createListOption_UpdateEvent = function( listOptionTag, targetInputTag, targetDisplayText )
 	{
-		//if ( listOptionTag.attr( 'single' ) === 'true' )
-		if ( listOptionTag.hasClass( 'singleOption' ) ) // checkbox is both display + data value
+		if ( listOptionTag.attr( 'single' ) === 'true' )
 		{
 			listOptionTag.on( 'click', function(){
 
@@ -1220,39 +1368,42 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				inputUpdates.val( ( $( this ).is( ':checked' ) ? 'true' : 'false' ) );
 
-				FormUtil.dispatchOnChangeEvent( inputUpdates );
-
 			} );
 		}
 		else
 		{
 
-			if ( listOptionTag.hasClass( 'displayValue' ) ) // default should be true
-			{
-				listOptionTag.on( 'click', function(){
+			listOptionTag.on( 'click', function(){
 
-					var targUpdates = $( this ).attr( 'updates' );
-					var inputUpdates = $( '#' + targUpdates );
-					var listOpts = $( 'input[updates="' + targUpdates + '"]' );
-					var selected = [];
-	
-					listOpts.each(function() {
-	
-						if ( $( this ).is( ':checked' ) ) 
-						{
-							selected.push( $( this ).val() );	
-						}
-	
-					});
-	
-					inputUpdates.val( selected.join(",") );
+				var targUpdates = $( this ).attr( 'updates' );
+				// var inputUpdates = $( '#' + targUpdates );
+				var listOpts = $( 'input[targetName="' + targUpdates + '"]' );
+				var selectedValueList = [];
+				var selectedTextList = [];
 
-					// dispatch update-event if not showing in dialogMode
-					if ( targUpdates.indexOf( 'dialog_' ) < 0 ) FormUtil.dispatchOnChangeEvent( inputUpdates );
-	
+				listOpts.each(function() {
+
+					if ( $( this ).is( ':checked' ) ) {
+						var name = $( this ).val();
+						var text = $( this ).closest(  ".radio-group" ).find("label").html();
+
+						selectedValueList.push( name );
+						selectedTextList.push( text );
+					}
 				});
-	
-			}
+
+				
+				var inputUpdates = $( '#' + targUpdates );
+				inputUpdates.val( selectedValueList.join(",") );
+
+				if( targetInputTag != undefined  )
+				{
+					targetDisplayText.val( selectedTextList.join(",") );
+					targetInputTag.val( selectedValueList.join(",") );
+				}
+
+
+			});
 
 		}
 	}
