@@ -10,6 +10,8 @@ function Action( cwsRenderObj, blockObj )
 	me.renderBlockTag = cwsRenderObj.renderBlockTag;
 
 	me.className_btnClickInProcess = 'btnClickInProcess';
+
+	me.formJsonArr;
 	
 	// -----------------------------
 	// ---- Methods ----------------
@@ -21,7 +23,11 @@ function Action( cwsRenderObj, blockObj )
 	// Same level as 'render' in other type of class
 	me.handleClickActions = function( btnTag, btnOnClickActions, blockDivTag, formDivSecTag )
 	{		
-		if ( formDivSecTag.attr( 'data-fields') != undefined )
+		me.formJsonArr = blockObj.blockFormObj.formJsonArr;
+
+		console.log( me.formJsonArr );
+		// if ( formDivSecTag.attr( 'data-fields') != undefined )
+		if ( me.formJsonArr != undefined )
 		{
 			me.handleSequenceIncrCommits( formDivSecTag );
 		}
@@ -45,7 +51,8 @@ function Action( cwsRenderObj, blockObj )
 
 	me.handleSequenceIncrCommits = function( formDivSecTag )
 	{
-		var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		// var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		var jData = me.formJsonArr;
 		var pConf = FormUtil.block_payloadConfig;
 
 		for( var i = 0; i < jData.length; i++ )

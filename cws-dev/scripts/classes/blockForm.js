@@ -47,7 +47,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			var formUniqueGroups = me.getFormUniqueGroups( formFieldGroups );
 			var groupsCreated = [];
 
-			formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) ); // TODO : REMOVE this attribute
+			// formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) ); // TODO : REMOVE this attribute
 
 			if ( formUniqueGroups.length > 1 ) //minimum of 1 = 'no groups defined'
 			{
@@ -90,7 +90,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		var groupDivTag = formTag;
 
-		console.log( formFieldGroup );
 		if ( ( formFieldGroup.group ).toString().length )
 		{
 			if ( ! groupsCreated.includes( formFieldGroup.group ) )
@@ -881,9 +880,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		if ( formDivSecTag )
 		{
-			if ( formDivSecTag.attr( 'data-fields') != undefined )
+			if ( me.formJsonArr != undefined )
 			{
-				var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+				var jData = me.formJsonArr;
 				var pConf = FormUtil.block_payloadConfig;
 
 				for( var i = 0; i < jData.length; i++ )
