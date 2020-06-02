@@ -365,12 +365,10 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "sendToWS" )
 				{
-					// Temporarily move before 'handlePayloadPreview' - since version 1 
-					var formsJsonGroup = {};
-					var inputsJson = ActivityUtil.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
-					var blockInfo = me.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
-
-					FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+					//var inputsJson = ActivityUtil.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );
+					
+					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
 
 					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
 					if ( clickActionJson.redeemListInsert === "true" )
@@ -380,7 +378,9 @@ function Action( cwsRenderObj, blockObj )
 							//var currBlockId = blockDivTag.attr( 'blockId' );
 							if ( passed )
 							{
-								ActivityDataManager.createNewPayloadActivity( inputsJson, formsJsonGroup, blockInfo, clickActionJson, function( activityJson )
+								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+
+								ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, function( activityJson )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
@@ -397,11 +397,39 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else
 					{
+						var formsJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
+
 						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
-						me.submitToWs( inputsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+						me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
 							if ( afterActionFunc ) afterActionFunc( bResult, optionJson );
 						} );
 					}
+				}
+				else if ( clickActionJson.actionType === "queueActivity" )
+				{
+					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
+					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+
+					ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
+					{ 
+						//var currBlockId = blockDivTag.attr( 'blockId' );
+						if ( passed )
+						{
+							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+
+							ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, function( activityJson )
+							{
+								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+		
+								if ( afterActionFunc ) afterActionFunc();
+							} );		
+						}
+						else
+						{
+							//if ( afterActionFunc ) afterActionFunc( false );
+							throw 'canceled on preview';
+						}
+					});								
 				}
 			}
 		}
@@ -414,20 +442,22 @@ function Action( cwsRenderObj, blockObj )
 
 	// ----------------------------------------------
 
-	me.submitToWs = function( formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
+	me.getActionUrl_Adjusted = function( actionDefJson )
 	{
-		// get url - if 'dws.url' exists, use it.  otherwise, use normal url.
-		var url = ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
+		return ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
+	};
 
-		if ( url )
+
+	me.submitToWs = function( actionUrl, formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
+	{
+		// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
+
+		if ( actionUrl )
 		{					
-			// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
-
 			// Loading Tag part..
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			
-			WsCallManager.wsActionCall( url, formsJson, loadingTag, function( success, redeemReturnJson ) {
+			WsCallManager.wsActionCall( actionUrl, formsJson, loadingTag, function( success, redeemReturnJson ) {
 
 				if ( !redeemReturnJson ) redeemReturnJson = {};
 
@@ -519,22 +549,5 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 	// ========================================================
-	
-	me.getBlockInfo_Attr = function( blockDivTag )
-	{
-		var blockInfo = { 'activityType': '' };
-
-		if ( blockDivTag )
-		{
-			var activityType = blockDivTag.attr( 'activityType' );
-
-			if ( activityType )
-			{
-				blockInfo.activityType = activityType;
-			}
-		}
-
-		return blockInfo;
-	};
 
 }
