@@ -531,21 +531,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
             activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
             // Do not delete 'processing' until success..
 
+
             // Set the status as processing..
             activityJson_Orig.processing.status = Constants.status_processing;
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardTrTag() );
-
             // Run UI Animation..
             me.setIconTagRotation( syncIconTag, true );
 
 
-            var activityJson_Copy = Util.getJsonDeepCopy( activityJson_Orig );
-            delete activityJson_Copy.processing;
-
-            var payload = {
-                'searchValues': activityJson_Orig.processing.searchValues,
-                'captureValues': activityJson_Copy
-            };
+            
+            var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
 
             try
             {
@@ -561,7 +556,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
                     me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success ) {
 
-                        if ( success ) afterDoneCall( true );
+                        if ( success ) 
+                        {
+                            // Why need to call this again?
+                            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+
+                            afterDoneCall( true );
+                        }
                         else 
                         {
                             // Why need to call this again?

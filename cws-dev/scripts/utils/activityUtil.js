@@ -28,6 +28,85 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
 // ===========================================================
 // ==== Inputs Json generate / Activity Payload Gen related ==
 
+
+ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, formDivSecTag )
+{
+	var activityPayload = actionDefJson.activityPayload;
+	var dhisPayload;
+	var mongoPayload;
+
+	if ( activityPayload )
+	{
+		dhisPayload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.dhisPayload, actionDefJson, formDivSecTag );  
+		mongoPayload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.mongoPayload, actionDefJson, formDivSecTag );  
+	}
+	else
+	{
+		mongoPayload = ActivityUtil.generateFormsJsonData_ByType( actionDefJson, actionDefJson, formDivSecTag );  
+	}
+
+	return { 'dhisPayload': dhisPayload, 'mongoPayload': mongoPayload };
+};
+
+// 'payloadDefJson' and 'actionDefJson' could be same or different.
+ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJson, formDivSecTag )
+{
+	var formsJson;
+	var formsJsonGroup = {};
+
+	if ( payloadDefJson )
+	{
+		if ( payloadDefJson.payloadVersion )
+		{
+			if ( payloadDefJson.payloadVersion === "1" )
+			{
+				formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
+				if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;	
+			}
+			else if ( payloadDefJson.payloadVersion === "2" )
+			{
+				formsJson = ActivityUtil.generateInputTargetPayloadJson( formDivSecTag, actionDefJson.payloadBody );	
+			}	
+		}
+		else if ( payloadDefJson.payloadTemplate )
+		{
+			formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
+			if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;
+	
+			var blockInfo = ActivityUtil.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
+			var createdDT = new Date();		// Should we match this with activityDataManager.generatePayload...
+			formsJson = PayloadTemplateHelper.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, payloadDefJson.payloadTemplate );
+		}
+		else
+		{
+			// Default payload generation
+			formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
+			if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;	
+		}
+	}
+
+	return formsJson;
+};
+
+
+ActivityUtil.getBlockInfo_Attr = function( blockDivTag )
+{
+	var blockInfo = { 'activityType': '' };
+
+	if ( blockDivTag )
+	{
+		var activityType = blockDivTag.attr( 'activityType' );
+
+		if ( activityType )
+		{
+			blockInfo.activityType = activityType;
+		}
+	}
+
+	return blockInfo;
+};
+
+
 ActivityUtil.generateInputJsonByType = function( clickActionJson, formDivSecTag, formsJsonGroup )
 {
     var inputsJson;
@@ -42,6 +121,7 @@ ActivityUtil.generateInputJsonByType = function( clickActionJson, formDivSecTag,
         inputsJson = ActivityUtil.generateInputJson( formDivSecTag, clickActionJson.payloadBody, formsJsonGroup );
     }		
 
+	// TODO: TRY TO UNDERSTAND THE reason for this..
     // Voucher Status add to payload - if ( clickActionJson.voucherStatus ) 
     inputsJson.voucherStatus = clickActionJson.voucherStatus;
 
@@ -81,6 +161,24 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 		return inputsJson;
 };
 
+/*
+
+		if ( attrDisplay === 'hiddenVal' ) getVal_visible = true;
+		else if ( inputTag.is( ':visible' ) ) getVal_visible = true;
+
+		if ( getVal_visible )
+		{
+			// Check if the submit var list exists (from config).  If so, only items on that list are added.
+			if ( !getValList )
+			{			
+				getVal = true;
+			}
+			else
+			{
+				if ( getValList.indexOf( nameVal ) >= 0 ) getVal = true;
+			}
+		}
+*/
 
 ActivityUtil.generateInputJson_ForPreview = function( formDivSecTag )
 {
