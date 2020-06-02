@@ -90,6 +90,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		var groupDivTag = formTag;
 
+		console.log( formFieldGroup );
 		if ( ( formFieldGroup.group ).toString().length )
 		{
 			if ( ! groupsCreated.includes( formFieldGroup.group ) )
@@ -162,6 +163,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		var divInputFieldTag;
 		var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
 
+		
 		if ( controlType == "INT" || controlType == "SHORT_TEXT" )
 		{
 			divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
@@ -203,17 +205,22 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			divInputFieldTag = me.createCheckBoxDialogFieldTag( formItemJson );
 		}
 		
-		if( divInputFieldTag != undefined && divInputFieldTag.find(".dataValue").length != 0 ) // LABEL, IMAGE don't have "dataValue" clazz
+		
+		var entryTag = divInputFieldTag.find(".dataValue");
+		if( divInputFieldTag != undefined && entryTag.length != 0 ) // LABEL don't have "dataValue" clazz
 		{
-			FormUtil.setTagVal( divInputFieldTag.find(".dataValue"), formItemJson.defaultValue );
+			if( formItemJson.scanQR != undefined && formItemJson.scanQR )
+			{
+				me.createScanQR( entryTag );
+			}
+
+			FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 		
 
 			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
 			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
 
 			// Setup events and visibility and rules
-			var entryTag = divInputFieldTag.find(".dataValue");
-
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
 			me.setEventsAndRules( formItemJson, entryTag, entryTag.closest("div.fieldBlock"), formDivSecTag, formFull_IdList, passedData, entryTag.closest(".fieldBlock") );
 		}
@@ -221,6 +228,40 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		return divInputFieldTag;
 	};
 
+	me.createScanQR = function( entryTag )
+	{
+		var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >');
+
+		QRiconTag.click( function(){
+			new readQR( entryTag );
+		} );
+
+		entryTag.css( "width", "90%" );
+		entryTag.closest("div").append( QRiconTag );
+
+
+		// var tbl = $( '<table style="width:100%" />' );
+		// var tR = $( '<tr />' );
+		// var tdL = $( '<td />' );
+		// var tdR = $( '<td class="qrIcon" />' );
+
+		// tbl.append( tR );
+		// tR.append( tdL );
+		// tR.append( tdR );
+		// divInputFieldTag.append( QRiconTag );
+
+		// var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >')
+
+		// tdL.click( function(){
+		// 	var qrData = new readQR( entryTag );
+		// } );
+
+		// tdL.append( entryTag );
+		// tdR.append( QRiconTag );
+		// entryTag.addClass( 'qrInput' );
+
+		// divInputFieldTag.append( tbl );
+	}
 
 	me.createStandardInputFieldTag = function( formItemJson, autoComplete )
 	{
@@ -323,6 +364,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		// Create tag
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+
+		// Add input to display image if the image has payload
+		var inputTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="hidden" class="dataValue" />' );
+		divInputFieldTag.find( 'div.field__left' ).append( inputTag );
 
 		// IMAGE
 		var imgDivTag = $( '<div class="imgQRInput"></div>' );
@@ -745,7 +790,11 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
 	{
-		var groupNone = 'zzzNone';
+		// There are some hidden data which are put in hidden INPUT tag without any group. 
+		// This one need to genrerate first so that data in these fields can be used after that
+		var groupNone = 'zzzEmpty'; 
+		var nonGroup = [];
+
 		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
 		var retGrpArr = [];
 
@@ -753,7 +802,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		{
 			if ( newArr[ i ].formGroup == undefined || newArr[ i ].formGroup == '' )
 			{
-				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
+				nonGroup.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
 			}
 			else
 			{
@@ -768,6 +817,12 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			if (b.order < a.order) return 1;
 			else return 0;
 		});
+
+		// Add "non group" INPUT fields in beginging of list
+		for( var i = 0; i<nonGroup.length; i++ )
+		{
+			retGrpArr.unshift( nonGroup[i] );
+		}
 
 		for( var i = 0; i < retGrpArr.length; i++ )
 		{

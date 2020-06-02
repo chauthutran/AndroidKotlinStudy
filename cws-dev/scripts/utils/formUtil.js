@@ -678,7 +678,7 @@ FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 
 	myQR.fetchCode ( inputVal, function( dataURI ){
 
-		var previewTag = $( '[name=imgPreview_' + imgInputTag.attr( 'name' ) +']' )
+		var previewTag = $( '[name=' + imgInputTag.attr( 'name' ) +']' )
 		previewTag.attr( 'src', dataURI );
 		imgInputTag.val( dataURI );
 
@@ -1760,7 +1760,7 @@ FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm,
 FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 {
 	var formDivSecTag = blockObj.parentTag;
-	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
+	var inputTags = formDivSecTag.find( 'input,select' );
 
 	inputTags.each( function()
 	{		
