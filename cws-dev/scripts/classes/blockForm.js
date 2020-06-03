@@ -49,16 +49,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			// formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) ); // TODO : REMOVE this attribute
 
-			if ( formUniqueGroups.length > 1 ) //minimum of 1 = 'no groups defined'
-			{
-				//set grid layout
-				formDivSecTag.css( 'display', 'grid' );
-			}
-			else
-			{
-				//set block layout
-				formDivSecTag.css( 'display', 'block' );
-			}
+			//if ( formUniqueGroups.length > 1 ) formDivSecTag.css( 'display', 'grid' );
+			//else formDivSecTag.css( 'display', 'block' );
+
 
 			for( var i = 0; i < formFieldGroups.length; i++ )
 			{
@@ -127,7 +120,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 
 		return groupDivTag;
-	}
+	};
+
 
 	me.evalFormGroupDisplayStatus = function( formDivSecTag )
 	{
@@ -150,7 +144,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				$( dvGroups[ i ] ).css( 'display', 'none' );
 			}
 		}
-	}
+	};
 
 
 	// =============================================
@@ -232,6 +226,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		return divInputFieldTag;
 	};
 
+	
 	me.createScanQR = function( entryTag )
 	{
 		var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >');

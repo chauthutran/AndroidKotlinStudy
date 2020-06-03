@@ -1229,7 +1229,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "6d8a076024523ee49adead2cd3793c5f"
+    "revision": "f31229ad7349cf0c9134d9ca68aee727"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1493,7 +1493,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "7613e30704084d1d7d7310b878cef017"
+    "revision": "3e2c3ed6e779675668426d1355c3d1d4"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
