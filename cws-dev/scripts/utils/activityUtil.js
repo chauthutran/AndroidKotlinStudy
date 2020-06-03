@@ -129,19 +129,28 @@ ActivityUtil.generateInputJsonByType = function( clickActionJson, formDivSecTag,
 };
 
 
-ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonGroup )
+ActivityUtil.generateInputJson = function( formDivSecTag, listFilter, formsJsonGroup )
 {
-		// Input Tag values
-		var inputsJson = {};
-		var inputTags = formDivSecTag.find( '.dataValue' );
-	
-		inputTags.each( function()
-		{		
-			var inputTag = $( this );	
-			var displayed = inputTag.closest( '.fieldBlock' ).is( ':visible' );
-			var nameVal = inputTag.attr( 'name' );
-			var dataGroup = inputTag.attr( 'dataGroup' );
-			if( displayed )
+	// Input Tag values
+	var inputsJson = {};
+	var inputTags = formDivSecTag.find( '.dataValue' );
+	//var inputTags = formDivSecTag.find( '.fieldBlock' );
+
+	inputTags.each( function()
+	{		
+		var inputTag = $( this );	
+		var divfieldBlockTag = inputTag.closest( '.fieldBlock' );
+		var displayed = divfieldBlockTag.is( ':visible' );
+
+		var nameVal = inputTag.attr( 'name' );
+		var dataGroup = inputTag.attr( 'dataGroup' );
+
+
+		// Process visible fieldBlocks only.  But if the hidden fieldBlock has 'display=hiddenVal', also use that to collect data.
+		if( displayed || divfieldBlockTag.attr( 'display' ) === 'hiddenVal' )
+		{
+			// Check if 'filteredList' exists.  If exists, we need to limit by nameVal that is in the filteredList only.
+			if ( !listFilter || listFilter.indexOf( nameVal ) >= 0 )
 			{
 				var val = FormUtil.getTagVal( inputTag );
 				if ( val === null || val === undefined ) val = '';
@@ -156,29 +165,12 @@ ActivityUtil.generateInputJson = function( formDivSecTag, getValList, formsJsonG
 	
 				inputsJson[ nameVal ] = val;
 			}
-		});		
-	
-		return inputsJson;
+		}
+	});		
+
+	return inputsJson;
 };
 
-/*
-
-		if ( attrDisplay === 'hiddenVal' ) getVal_visible = true;
-		else if ( inputTag.is( ':visible' ) ) getVal_visible = true;
-
-		if ( getVal_visible )
-		{
-			// Check if the submit var list exists (from config).  If so, only items on that list are added.
-			if ( !getValList )
-			{			
-				getVal = true;
-			}
-			else
-			{
-				if ( getValList.indexOf( nameVal ) >= 0 ) getVal = true;
-			}
-		}
-*/
 
 ActivityUtil.generateInputJson_ForPreview = function( formDivSecTag )
 {

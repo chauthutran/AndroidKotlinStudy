@@ -36,8 +36,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		if ( formJsonArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
-			var formTag = $( '<form ' + autoComplete + '></form>' );
+			var autoComplete = SessionManager.getSessionAutoComplete();
+			var formTag = $( '<form autocomplete="' + autoComplete + '"></form>' );
 
 			formDivSecTag.append( formTag );
 
@@ -65,7 +65,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				var groupDivTag = me.createGroupDivTag( formFieldGroups[ i ], groupsCreated, formTag );
 
 				var formItemJson = formJsonArr[ formFieldGroups[ i ].seq ];
-				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr );
+				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr, autoComplete );
 				groupDivTag.append( inputFieldTag );
 
 				formTag.append( groupDivTag );
@@ -156,12 +156,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	// =============================================
 	// Render INPUT fields
 
-	me.createInputFieldTag = function( formItemJson, payloadConfigSelection, formDivSecTag, passedData, formJsonArr )
+	me.createInputFieldTag = function( formItemJson, payloadConfigSelection, formDivSecTag, passedData, formJsonArr, autoComplete )
 	{		
 		var controlType = formItemJson.controlType;
 		var divInputFieldTag;
-		var autoComplete = 'autocomplete="' + JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete + '"';
-
 		
 		if ( controlType == "INT" || controlType == "SHORT_TEXT" )
 		{
@@ -181,7 +179,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 		else if( controlType == "YEAR" ) 
 		{
-			divInputFieldTag = me.createYearFieldTag( formItemJson );
+			divInputFieldTag = me.createYearFieldTag( formItemJson, autoComplete );
 		}
 		else if( controlType == "DATE" ) 
 		{
@@ -205,10 +203,11 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 		
 		
-		var entryTag = divInputFieldTag.find(".dataValue");
-		if( divInputFieldTag != undefined && entryTag.length != 0 ) // LABEL don't have "dataValue" clazz
+		var entryTag = divInputFieldTag.find( '.dataValue' );
+
+		if ( divInputFieldTag !== undefined && entryTag.length > 0 ) // LABEL don't have "dataValue" clazz
 		{
-			if( formItemJson.scanQR != undefined && formItemJson.scanQR )
+			if ( formItemJson.scanQR != undefined && formItemJson.scanQR )
 			{
 				me.createScanQR( entryTag );
 			}
@@ -221,7 +220,13 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			// Setup events and visibility and rules
 			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
-			me.setEventsAndRules( formItemJson, entryTag, entryTag.closest("div.fieldBlock"), formDivSecTag, formFull_IdList, passedData, entryTag.closest(".fieldBlock") );
+			
+			// Set change event and rules on input tags
+			me.setEventsAndRules( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList );
+
+
+			// Set InputFieldTag visibility based on: config setting - display 'hiddenVal/none', or hide/show case
+			me.setFieldTagVisibility( formItemJson, divInputFieldTag, passedData );  // This method might have to move outside of if case - if not related to 'entry.length'
 		}
 
 		return divInputFieldTag;
@@ -267,8 +272,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
 
 		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid 
-				+ '" dataGroup="' + formItemJson.dataGroup + '" type="text" ' + autoComplete 
-				+ ' class="dataValue displayValue" />' );
+				+ '" dataGroup="' + formItemJson.dataGroup + '" type="text" autocomplete="' + autoComplete 
+				+ '" class="dataValue displayValue" />' );
 		
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
@@ -379,7 +384,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	}
 
 	// NEED TO SEE HOW IT WORKS
-	me.createYearFieldTag = function( formItemJson )
+	me.createYearFieldTag = function( formItemJson, autoComplete )
 	{
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
 
@@ -405,7 +410,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		divInputFieldTag.find( 'input.dataValue' ).attr( 'name', formItemJson.id );
 		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.id );
 
-		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', JSON.parse( localStorage.getItem('session') ).autoComplete );
+		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', autoComplete );
 
 		Util2.populate_year( yearFieldTag[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
 
@@ -908,10 +913,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		}
 
-	}
+	};
 
 
-	me.setEventsAndRules = function( formItemJson, entryTag, divInputTag, formDivSecTag, formFull_IdList, passedData, fieldContainerTag )
+	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
 	{
 		if ( entryTag )
 		{
@@ -921,23 +926,22 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				me.evalFormInputFunctions( formDivSecTag ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
-
 		}
 
-		me.addRuleForField( divInputTag, formItemJson );
-		me.addDataTargets( divInputTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
-		me.addStylesForField( divInputTag, formItemJson );
+		me.addRuleForField( divInputFieldTag, formItemJson );
+		me.addDataTargets( divInputFieldTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
+		me.addStylesForField( divInputFieldTag, formItemJson );
+	};
 
+
+	me.setFieldTagVisibility = function( formItemJson, divInputFieldTag, passedData )
+	{		
 		// Set Tag Visibility
 		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
 		{
-			fieldContainerTag.hide();
-			divInputTag.hide();
-
-			entryTag.attr( 'display', 'hiddenVal' );
-
-			if ( entryTag == undefined ) console.log ( formItemJson ) ;
-
+			divInputFieldTag.hide();
+			divInputFieldTag.attr( 'display', 'hiddenVal' );
+			//entryTag.attr( 'display', 'hiddenVal' );
 		}
 
 		if ( passedData !== undefined 
@@ -945,7 +949,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.hideCase !== undefined
 			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
 		{
-			divInputTag.hide(); //divInputTag.find("input,select").remove();
+			divInputFieldTag.hide(); //divInputFieldTag.find("input,select").remove();
 		}
 
 		if ( passedData !== undefined 
@@ -953,10 +957,10 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			&& formItemJson.showCase !== undefined
 			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
 		{
-			divInputTag.show();
+			divInputFieldTag.show();
 		}
+	};
 
-	}
 
 	me.addStylesForField = function( divInputTag, formItemJson )
 	{

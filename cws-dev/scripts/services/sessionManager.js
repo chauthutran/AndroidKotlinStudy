@@ -107,3 +107,20 @@ SessionManager.getStorageLastSessionData = function()
 {	
 	return LocalStgMng.getJsonData( SessionManager.LSKey_storedData );
 };
+
+
+SessionManager.getSessionAutoComplete = function()
+{	
+	var autoComplete = '';
+
+	try
+	{
+		autoComplete = JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete;
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error on SessionManager.getSessionAutoComplete, errMsg - ' + errMsg );
+	}
+
+	return autoComplete;
+}
