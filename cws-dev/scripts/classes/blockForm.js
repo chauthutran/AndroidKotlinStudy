@@ -393,7 +393,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 
 		var data = []
-		var rndID = Util.generateRandomId( 8 );
 		var curYear = ( new Date() ).getFullYear();
 
 		for ( var i = yearRange.from; i <= yearRange.to; i++ )

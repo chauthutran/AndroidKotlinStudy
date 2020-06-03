@@ -278,9 +278,8 @@ Util2.populate_year = function ( el, data, labelText ) {
 
 		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
 		inputShow.value = ul.children[ul.dataset.index].innerText;
-		console.log( $( '#' + inputTrue.id ) );
 
-		FormUtil.dispatchOnChangeEvent( $( '#' + inputTrue.id ) );
+		FormUtil.dispatchOnChangeEvent( $( '#' + inputTrue.name ) );
 
 	}
 
