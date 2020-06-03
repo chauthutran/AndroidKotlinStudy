@@ -114,134 +114,134 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 // ---------------------------------
 // --- Form Related, BlockForm related..
 
-Util2.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
-{
-	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
-	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
-	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
-	var text = $( '<span class="checkboxText">' + message + '</span>' )
-	var check = $( '<span class="checkboxCheck" ></span>' )
+// Util2.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
+// {
+// 	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
+// 	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
+// 	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
+// 	var text = $( '<span class="checkboxText">' + message + '</span>' )
+// 	var check = $( '<span class="checkboxCheck" ></span>' )
 
-	divContainerTag.click( function(){
+// 	divContainerTag.click( function(){
 
-		if ( checkboxReal.prop( 'checked' ) )
-		{
-			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-			checkboxShow.css( 'background', 'transparent' );
-			checkboxReal.prop( 'checked', false );
-		} 
-		else 
-		{
-			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-			checkboxShow.css( 'background', 'gray' );
-			checkboxReal.prop( 'checked', true );
-		}
+// 		if ( checkboxReal.prop( 'checked' ) )
+// 		{
+// 			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+// 			checkboxShow.css( 'background', 'transparent' );
+// 			checkboxReal.prop( 'checked', false );
+// 		} 
+// 		else 
+// 		{
+// 			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+// 			checkboxShow.css( 'background', 'gray' );
+// 			checkboxReal.prop( 'checked', true );
+// 		}
 
-		if ( updates ) Util2.updateMultiCheckboxPayloadValue( updates )
+// 		if ( updates ) Util2.updateMultiCheckboxPayloadValue( updates )
 
-	} );
+// 	} );
 
-	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
-	{
-		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-		checkboxShow.css( 'background', 'gray' );
-		checkboxReal.prop( 'checked', true );
-	} 
-	else 
-	{
-		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-		checkboxShow.css( 'background', 'transparent' );
-		checkboxReal.prop( 'checked', false );
-	}
+// 	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
+// 	{
+// 		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
+// 		checkboxShow.css( 'background', 'gray' );
+// 		checkboxReal.prop( 'checked', true );
+// 	} 
+// 	else 
+// 	{
+// 		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
+// 		checkboxShow.css( 'background', 'transparent' );
+// 		checkboxReal.prop( 'checked', false );
+// 	}
 
-	checkboxShow.append( check );
-	divContainerTag.append( checkboxReal,checkboxShow, text );
+// 	checkboxShow.append( check );
+// 	divContainerTag.append( checkboxReal,checkboxShow, text );
 
-	return { component: divContainerTag, input:checkboxReal };
-};
-
-
-Util2.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
-{
-	selectObj.empty();
-
-	var inputOpts = [];
-
-	json_Data.forEach( obj=> {
-
-		var { component } = Util2.createCheckbox( {
-				message:	obj.defaultName,
-				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
-				updates:	formItemJson.id,
-				value: 		obj.value } ),
-				li = $( '<li></li>' )
-				li.append( component )
-				selectObj.append( li );
-
-		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
-
-	} );
-};
+// 	return { component: divContainerTag, input:checkboxReal };
+// };
 
 
-Util2.updateRadioPayloadValue = function( updates )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
+// Util2.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
+// {
+// 	selectObj.empty();
 
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.checked )
-			{
-				$( '[name="' + updates + '"]' ).val( obj.value );
-				console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
+// 	var inputOpts = [];
 
-				FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
+// 	json_Data.forEach( obj=> {
+
+// 		var { component } = Util2.createCheckbox( {
+// 				message:	obj.defaultName,
+// 				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
+// 				updates:	formItemJson.id,
+// 				value: 		obj.value } ),
+// 				li = $( '<li></li>' )
+// 				li.append( component )
+// 				selectObj.append( li );
+
+// 		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
+
+// 	} );
+// };
+
+
+// Util2.updateRadioPayloadValue = function( targetInputTagName )
+// {
+// 	var vals = '';
+// 	var InpTarg = $( "[name='" + targetInputTagName + "']" );
+
+// 	if ( InpTarg )
+// 	{
+// 		for ( var i = 0; i < InpTarg.length; i++ )
+// 		{
+// 			var obj = InpTarg[ i ];
+// 			if ( obj.checked )
+// 			{
+// 				$( '[name="' + targetInputTagName + '"]' ).val( obj.value );
+// 				// console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
+
+// 				FormUtil.dispatchOnChangeEvent( $( '[name="' + targetInputTagName + '"]' ) );
 				
-			}
-		}
-	}
-};
+// 			}
+// 		}
+// 	}
+// };
 
 
-Util2.updateOtherRadioOptions = function( updates, excludeName )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
+// Util2.updateOtherRadioOptions = function( updates, excludeName )
+// {
+// 	var vals = '';
+// 	var InpTarg = $( "[updates='" + updates + "']" );
 
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.name != excludeName ) obj.checked = false;
-		}
-	}
-};
+// 	if ( InpTarg )
+// 	{
+// 		for ( var i = 0; i < InpTarg.length; i++ )
+// 		{
+// 			var obj = InpTarg[ i ];
+// 			if ( obj.name != excludeName ) obj.checked = false;
+// 		}
+// 	}
+// };
 
 
 
-Util2.updateMultiCheckboxPayloadValue = function( updates )
-{
-	var vals = '';
-	var InpTarg = $( "[updates='" + updates + "']" );
+// Util2.updateMultiCheckboxPayloadValue = function( updates )
+// {
+// 	var vals = '';
+// 	var InpTarg = $( "[updates='" + updates + "']" );
 
-	if ( InpTarg )
-	{
-		for ( var i = 0; i < InpTarg.length; i++ )
-		{
-			var obj = InpTarg[ i ];
-			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
-		}
-	}
+// 	if ( InpTarg )
+// 	{
+// 		for ( var i = 0; i < InpTarg.length; i++ )
+// 		{
+// 			var obj = InpTarg[ i ];
+// 			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
+// 		}
+// 	}
 
-	$( '[name="' + updates + '"]' ).val( vals );
+// 	$( '[name="' + updates + '"]' ).val( vals );
 
-	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
-};
+// 	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
+// };
 
 
 Util2.populate_year = function ( el, data, labelText ) {
@@ -279,7 +279,7 @@ Util2.populate_year = function ( el, data, labelText ) {
 		inputTrue.value = ul.children[ul.dataset.index].dataset.value;
 		inputShow.value = ul.children[ul.dataset.index].innerText;
 
-		FormUtil.dispatchOnChangeEvent( $( '#' + inputTrue.name ) );
+		FormUtil.dispatchOnChangeEvent( $( '[name="' + inputTrue.name +'"]') );
 
 	}
 
@@ -381,46 +381,46 @@ Util2.populate_year = function ( el, data, labelText ) {
 };
 
 
-Util2.populateRadios = function ( formItemJson, selectObj, json_Data )
-{
-	selectObj.empty();
+// Util2.populateRadios = function ( formItemJson, selectObj, json_Data )
+// {
+// 	selectObj.empty();
 
-	json_Data.forEach( obj => {
+// 	json_Data.forEach( obj => {
 
-		var content = $( '<div class="radioContent" ></div>' );
-		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
-		var picker = $( '<span class="radioPicker"></span>' );
-		var pickerOn = $( '<i class="radioPickerOn"></i>' )
-		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
+// 		var content = $( '<div class="radioContent" ></div>' );
+// 		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
+// 		var picker = $( '<span class="radioPicker"></span>' );
+// 		var pickerOn = $( '<i class="radioPickerOn"></i>' )
+// 		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
 
-		picker.append( pickerOn );
-		content.append( input, picker, text);
+// 		picker.append( pickerOn );
+// 		content.append( input, picker, text);
 
-		content.click( function(e) {
+// 		content.click( function(e) {
 
-			e.stopPropagation();
+// 			e.stopPropagation();
 
-			if (! input.prop('checked') ){
+// 			if (! input.prop('checked') ){
 
-				content[0].parentElement.querySelectorAll('i').forEach(i=>{
-					$(i).css( 'background', 'transparent' )
-				});
+// 				content[0].parentElement.querySelectorAll('i').forEach(i=>{
+// 					$(i).css( 'background', 'transparent' )
+// 				});
 
-				pickerOn.css( 'background', 'gray' );
-				input.prop( 'checked', true );
+// 				pickerOn.css( 'background', 'gray' );
+// 				input.prop( 'checked', true );
 
-				Util2.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
+// 				Util2.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
 
-			}
+// 			}
 
-			Util2.updateRadioPayloadValue( formItemJson.id );
+// 			Util2.updateRadioPayloadValue( formItemJson.id );
 
-		});
+// 		});
 
-		selectObj.append( content );
+// 		selectObj.append( content );
 
-	} );
-};
+// 	} );
+// };
 
 
 Util2.dateToMyFormat = function( date, myFormat )
