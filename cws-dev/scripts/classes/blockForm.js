@@ -226,7 +226,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		return divInputFieldTag;
 	};
 
-	
+
 	me.createScanQR = function( entryTag )
 	{
 		var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >');
@@ -403,7 +403,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 
 		divInputFieldTag.find( 'input.dataValue' ).attr( 'name', formItemJson.id );
-		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.id );
+		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.uid );
 
 		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', autoComplete );
 
