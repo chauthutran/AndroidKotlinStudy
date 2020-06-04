@@ -653,9 +653,17 @@ Util2.arrayPreviewRecord = function( title, arr )
 	{
 		if ( title )
 		{
+			var titleTag = $("<h4/>");
+			titleTag.html( title );
+			titleTag.append( titleTag );
+
+			var td = $( '<td colspan=2 class="dataToHTMLtitle" />' );
+			td.append( titleTag );
+
 			var tr = $( '<tr />');
+			tr.append( td );
+
 			ret.append( tr );
-			tr.append( $( '<td colspan=2 class="dataToHTMLtitle" />').html( title ) );
 		}
 	
 		for ( var i = 0; i < arr.length; i++ )

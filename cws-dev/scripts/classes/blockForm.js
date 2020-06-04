@@ -82,6 +82,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				me.evalFormInputFunctions( formTag );
 			}, 500 );
 
+			// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
+			formDivSecTag.find(".dataValue:not(:empty)").change();
+
 		}
 
 	}
@@ -213,7 +216,26 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				me.createScanQR( entryTag );
 			}
 
-			FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+			// var defaultValue = formItemJson.defaultValue;
+			// if( defaultValue !== undefined )
+			// {
+				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+				// if( controlType == "RADIO" || controlType == "CHECKBOX" 
+				// 	|| controlType == "MULTI_CHECKBOX" || controlType == "DROPDOWN_AUTOCOMPLETE" )
+				// {
+				// 	var values = formItemJson.defaultValue.split(",");
+				// 	for( var i=0; i<values.length; i++ )
+				// 	{
+				// 		divInputFieldTag.find( "[id='opt_" + values[i]  + "']").prop("checked", true );
+				// 	}
+					
+				// 	divInputFieldTag.find(".displayValue").val();
+				// }
+				// else if(  )
+				// {
+					
+				// }
+			// }
 		
 
 			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
@@ -237,29 +259,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		entryTag.css( "width", "90%" );
 		entryTag.closest("div").append( QRiconTag );
-
-
-		// var tbl = $( '<table style="width:100%" />' );
-		// var tR = $( '<tr />' );
-		// var tdL = $( '<td />' );
-		// var tdR = $( '<td class="qrIcon" />' );
-
-		// tbl.append( tR );
-		// tR.append( tdL );
-		// tR.append( tdR );
-		// divInputFieldTag.append( QRiconTag );
-
-		// var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >')
-
-		// tdL.click( function(){
-		// 	var qrData = new readQR( entryTag );
-		// } );
-
-		// tdL.append( entryTag );
-		// tdR.append( QRiconTag );
-		// entryTag.addClass( 'qrInput' );
-
-		// divInputFieldTag.append( tbl );
 	}
 
 	me.createStandardInputFieldTag = function( formItemJson, autoComplete )
@@ -327,6 +326,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'radio' );
 		} );
 
+		// Set DEFAULT display value if any
+		me.setDefaultValue_DialogFieldTag( divInputFieldTag, formItemJson );
+
 		return divInputFieldTag;
 	}
 	
@@ -345,7 +347,36 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'checkbox' );
 		} );
 
+		// Set DEFAULT display value if any
+		me.setDefaultValue_DialogFieldTag( divInputFieldTag, formItemJson );
+
 		return divInputFieldTag;
+	}
+
+	me.setDefaultValue_DialogFieldTag = function( divInputFieldTag, formItemJson )
+	{
+		if( formItemJson.defaultValue != undefined )
+		{
+			var defaultValueList = formItemJson.defaultValue.split(",");
+			var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+			var displayTag = divInputFieldTag.find(".displayValue");
+			var displayValues = [];
+			
+			
+			for ( var i = 0; i < optionList.length; i++ )
+			{
+				var optionConfig = optionList[i];
+				if( defaultValueList.includes( optionConfig.value ) )
+				{
+					var displayValue = me.cwsRenderObj.langTermObj.translateText( optionConfig.defaultName, optionConfig.poTerm );
+					displayValues.push( displayValue );
+				}
+			}
+
+			displayTag.val( displayValues.join(",") );
+		}
+		
+		
 	}
 	
 
@@ -406,6 +437,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.id );
 
 		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', JSON.parse( localStorage.getItem('session') ).autoComplete );
+		
+		// Set DEFAULT for display field if any
+		FormUtil.setTagVal( divInputFieldTag.find( 'input.displayValue' ), formItemJson.defaultValue );
 
 		Util2.populate_year( yearFieldTag[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
 
@@ -539,14 +573,30 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		</div>
 		*/
 
+
+		// var targetTag = divInputFieldTag.find(".dataValue");
+		// var defaultValueList = []; 
+		// if( targetTag.val() != "" )
+		// {
+		// 	defaultValueList = targetTag.val().split(",");
+		// }
+		// else if( formItemJson.defaultValue == undefined )
+		// {
+		// 	defaultValueList = formItemJson.defaultValue.split(",");
+		// }
+
+
 		var optionDivListTag = divInputFieldTag.find(".radiobutton-col");
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
+		var displayTag = divInputFieldTag.find(".displayValue");
+		
 		
 		for ( var i = 0; i < optionList.length; i++ )
 		{
 			var optionDivTag = $( Templates.inputFieldRadio_Item );
 
-			me.setAttributesForInputItem( optionDivTag, formItemJson.id, optionList[ i ] );
+			me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 			optionDivListTag.append( optionDivTag );
 
@@ -554,23 +604,31 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 	}
 
-	me.setAttributesForInputItem = function( optionDivTag, targetId, optionConfig )
+	me.setAttributesForInputItem = function( displayTag, optionDivTag, targetId, optionConfig, isChecked )
 	{
 		var optionInputTag = optionDivTag.find( 'input' );
-		optionInputTag.attr( 'name', targetId );
+		optionInputTag.attr( 'name', 'opt_' + targetId );
 		optionInputTag.attr( 'id', 'opt_' + optionConfig.value ); // Need for css to make check-mark
 		optionInputTag.attr( 'value', optionConfig.value ); // Use to fill the selected option value to input.dataValue
-		
+		optionInputTag.prop( "checked", isChecked );
 
 		var labelTag = optionDivTag.find( 'label' );
 		var labelTerm = me.cwsRenderObj.langTermObj.translateText( optionConfig.defaultName, optionConfig.poTerm );
 		labelTag.attr( 'for', 'opt_' + optionConfig.value );
 		labelTag.text( labelTerm );
+
+		// Set DEFAULT display value if any
+		if( isChecked )
+		{
+			var value = displayTag.val();
+			value = ( value == "" ) ? labelTerm : ", " + labelTerm;
+			FormUtil.setTagVal( displayTag, value );
+		}
 	}
 	
 	me.setupEvents_RadioItemTags = function( divInputFieldTag, optionInputTag )
 	{
-		optionInputTag.change( function(){
+		optionInputTag.click( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
 			targetInputTag.val( $(this).val() );
 		});
@@ -591,6 +649,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			optionInputTag.attr( 'id', "opt_" + formItemJson.id );
 			optionInputTag.attr( 'name', formItemJson.id );
 
+
 			optionDivTag.find("label").attr("for", "opt_" + formItemJson.id );
 
 			optionDivListTag.append( optionDivTag ); 
@@ -599,17 +658,20 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 		else // Create multiple items
 		{
-			
 			// Create a hidden input tag to save selected option value
 			var hiddenTarget = $( Templates.inputFieldHidden );
 			hiddenTarget.addClass( 'dataValue' );
 			hiddenTarget.attr( 'name', formItemJson.id );
 			divInputFieldTag.append( hiddenTarget );
 
+			
+			var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
+			var displayTag = divInputFieldTag.find(".displayValue");
+
 			for ( var i = 0; i < optionList.length; i++ )
 			{
 				var optionDivTag = $( Templates.inputFieldCheckbox_Item );
-				me.setAttributesForInputItem ( optionDivTag, formItemJson.id, optionList[ i ] );
+				me.setAttributesForInputItem ( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 				optionDivListTag.append( optionDivTag );
 
@@ -753,7 +815,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			var targetInputTag = targetDivInputFieldTag.find("input.dataValue");
 			var targetDisplayTag = targetDivInputFieldTag.find("input.displayValue");
 
-			var checkedItems = dialogTag.find("input[name='" + targetInputTag.attr("name") + "']:checked");
+			var checkedItems = dialogTag.find("input[name='opt_" + targetInputTag.attr("name") + "']:checked");
 			var selectedValues = [];
 			var selectedTexts = [];
 			for( var i=0; i<checkedItems.length; i++ )

@@ -41,7 +41,7 @@ Templates.inputFieldCheckbox_Item = `<div class="checkbox-group horizontal">
 <label for="checkboxName1"></label>
 </div>`;
 Templates.inputFieldCheckbox_SingleItem = `<div class="checkbox-group horizontal">
-<input type="checkbox" class="dataValue"><label ></label>
+<input type="checkbox" class="dataValue displayValue"><label ></label>
 </div>`;
 
 Templates.inputFieldToggle = `<div class="toogle-s">

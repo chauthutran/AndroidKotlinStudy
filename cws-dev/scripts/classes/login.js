@@ -248,6 +248,7 @@ function Login( cwsRenderObj )
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
+				console.log( success );
 				if ( success )
 				{
 					SessionManager.saveUserSessionToStorage( loginData, userName, password );

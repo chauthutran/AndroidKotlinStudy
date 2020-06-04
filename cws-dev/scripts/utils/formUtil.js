@@ -692,14 +692,15 @@ FormUtil.getTagVal = function( tag )
 
 	if( tag )
 	{
-		if ( FormUtil.checkTag_CheckBox( tag ) )
-		{			
-			val = tag.is( ":checked" ) ? "true" : "false" ;
-		}
-		else
-		{
-			val = tag.val();
-		}
+		val = tag.val();
+		// if ( FormUtil.checkTag_CheckBox( tag ) )
+		// {			
+		// 	val = tag.is( ":checked" ) ? "true" : "false" ;
+		// }
+		// else
+		// {
+		// 	val = tag.val();
+		// }
 	}
 
 	return val;

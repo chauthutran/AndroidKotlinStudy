@@ -423,7 +423,7 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
         // TODO: Do we have to hide the formDiv Tag?
         formDivSecTag.hide();
 
-        var confirmMessage = 'Please check before Confirm'; // MISSING TRANSLATION
+        var confirmMessage = 'Please check before confirm'; // MISSING TRANSLATION
 
         MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
 
@@ -493,38 +493,59 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	// Input Tag values
 	var retDataArray = [];
 	var inputsJson;
-	var inputTags = formDivSecTag.find( '.formGroupSection,input,checkbox,select' );
+	var inputTags = formDivSecTag.find( '.dataValue' );
+	// var inputTags = formDivSecTag.find( '.displayValue' );
 
 	inputTags.each( function()
 	{
 		var inputTag = $( this );	
-		var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
 
-		if ( getVal_visible )
+		var displayed = inputTag.closest( '.fieldBlock' ).is( ':visible' );
+		// var nameVal = inputTag.attr( 'name' );
+
+
+
+		// var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
+
+		if ( displayed )
 		{
-			if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
+			// if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
+			// {
+			// var	inputLabel = ActivityUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
+			// }
+
+			// if ( inputTag[ 0 ].nodeName === "LABEL" )
+			// {
+			// 	if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
+			// 	{
+			// 		inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
+			// 	}
+			// }
+			// else 
+			
+			
+			// if ( inputTag[ 0 ].nodeName === "INPUT" )
+			// {
+			// 	if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ) || ( inputTag.attr( 'updates' ) == undefined && inputTag.hasClass( 'CHECKBOX' )  ) )
+			// 	{
+			// 		inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+			// 	}
+			// }
+			// else if ( inputTag[ 0 ].nodeName === "SELECT" )
+			// {
+			// 	inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
+			// }
+
+			var labelTag = $( inputTag[ 0 ] ).closest("div.fieldBlock").find("label");
+			var name = ( labelTag ) ? labelTag.html() : inputTag[ 0 ].name;
+			var type = inputTag[ 0 ].nodeName;
+			var value = $( inputTag[ 0 ] ).closest("div.fieldBlock").find(".displayValue").val();
+			if( type == "SELECT" )
 			{
-				var inputLabel = ActivityUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
+				value = $( inputTag[ 0 ] ).find("option:selected").text();
 			}
 
-			if ( inputTag[ 0 ].nodeName === "LABEL" )
-			{
-				if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
-				{
-					inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
-				}
-			}
-			else if ( inputTag[ 0 ].nodeName === "INPUT" )
-			{
-				if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ) || ( inputTag.attr( 'updates' ) == undefined && inputTag.hasClass( 'CHECKBOX' )  ) )
-				{
-					inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
-				}
-			}
-			else if ( inputTag[ 0 ].nodeName === "SELECT" )
-			{
-				inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
-			}
+			inputsJson = { name: name, type: type, value: value };
 
 			if ( inputsJson )
 			{
@@ -536,39 +557,6 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	});		
 
 	return retDataArray;
-};
-
-
-ActivityUtil.inputPreviewLabel = function( formInput )
-{
-	var lbl;
-	var sibs = $( formInput ).siblings();
-
-	sibs.each( function() {
-
-		var tag = $( this );
-
-		if ( tag[ 0 ].nodeName === "LABEL" )
-		{
-			lbl = tag[ 0 ].innerText;
-		}
-
-	})
-
-	if ( lbl == undefined )
-	{
-
-		if ( $( formInput ).closest( '.inputDiv' ).find( 'label' ) && $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ] )
-		{
-			lbl = $( formInput ).closest( '.inputDiv' ).find( 'label' )[ 0 ].innerText;
-		}
-		else
-		{
-			console.log( $( formInput ).closest( '.inputDiv' ) ); //.find( 'label' )[ 0 ].innerText;
-		}
-	}
-
-	return lbl;
 };
 
 
