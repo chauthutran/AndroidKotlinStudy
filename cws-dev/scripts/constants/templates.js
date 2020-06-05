@@ -8,7 +8,7 @@ function Templates() {};
 // Templates.inputFieldHidden = `<input type='hidden' class='hiddenData' >`;
 Templates.inputFieldHidden = `<input type='hidden' >`;
 
-Templates.inputFieldStandard = `<div class="fieldBlock field" fieldId="" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+Templates.inputFieldStandard = `<div class="fieldBlock field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
   <div class="field__label">
     <label class="displayName"></label>
   </div>

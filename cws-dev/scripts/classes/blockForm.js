@@ -259,8 +259,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		// Create tag
 		var divInputFieldTag = $( Templates.inputFieldStandard );
 
-		// fieldId
-		divInputFieldTag.find( '.fieldBlock' ).attr( 'fieldId', formItemJson.id );
+		// // fieldId
+		// divInputFieldTag.find( '.fieldBlock' ).attr( 'fieldId', formItemJson.id );
 
 		// Label
 		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
