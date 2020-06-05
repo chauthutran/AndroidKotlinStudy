@@ -27,7 +27,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
 	me.render = function( formDef, blockTag, passedData )
 	{
-
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );
 		var formGrps = ConfigManager.getConfigJson().definitionFormGroups;
 
@@ -209,27 +208,8 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				me.createScanQR( entryTag );
 			}
 
-			// var defaultValue = formItemJson.defaultValue;
-			// if( defaultValue !== undefined )
-			// {
-				FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-				// if( controlType == "RADIO" || controlType == "CHECKBOX" 
-				// 	|| controlType == "MULTI_CHECKBOX" || controlType == "DROPDOWN_AUTOCOMPLETE" )
-				// {
-				// 	var values = formItemJson.defaultValue.split(",");
-				// 	for( var i=0; i<values.length; i++ )
-				// 	{
-				// 		divInputFieldTag.find( "[id='opt_" + values[i]  + "']").prop("checked", true );
-				// 	}
-					
-				// 	divInputFieldTag.find(".displayValue").val();
-				// }
-				// else if(  )
-				// {
-					
-				// }
-			// }
-		
+			// Set defaultValue if any
+			FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
 
 			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
 			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
@@ -934,22 +914,28 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 				for( var i = 0; i < jData.length; i++ )
 				{
-					if ( jData[ i ].defaultValue || jData[ i ].payload )
+					if( jData[i].controlType !== "LABEL" )
 					{
-						var EvalActionString = '';
-
-						if ( jData[ i ].defaultValue ) EvalActionString = jData[ i ].defaultValue;
-
-						if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
-
-						if ( EvalActionString.length )
+						// if ( jData[ i ].defaultValue || jData[ i ].payload )
+						var inputVal = formDivSecTag.find("[name='" + jData[ i ].id + "']").val();
+						if ( inputVal || jData[ i ].payload )
 						{
-							var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+							var EvalActionString = '';
 
-							FormUtil.evalReservedField( tagTarget, EvalActionString );
+							if (inputVal ) EvalActionString = inputVal;
+
+							if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
+
+							if ( EvalActionString.length )
+							{
+								var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+
+								FormUtil.evalReservedField( tagTarget, EvalActionString );
+							}
+
 						}
-
 					}
+
 				}
 
 			}
