@@ -108,7 +108,8 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 				btnTabsContainerTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
 			}
 
-			var btnArr = Util.cloneArray( buttonsJson );
+			// TRAN : This variable 'btnArr' is not used in any where
+			// var btnArr = Util.cloneArray( buttonsJson );
 
 			// Main Render: block button tag generate
 			for( var i = 0; i < buttonsJson.length; i++ )

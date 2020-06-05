@@ -571,20 +571,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
           </div>
 		</div>
 		*/
-
-
-		// var targetTag = divInputFieldTag.find(".dataValue");
-		// var defaultValueList = []; 
-		// if( targetTag.val() != "" )
-		// {
-		// 	defaultValueList = targetTag.val().split(",");
-		// }
-		// else if( formItemJson.defaultValue == undefined )
-		// {
-		// 	defaultValueList = formItemJson.defaultValue.split(",");
-		// }
-
-
+		
 		var optionDivListTag = divInputFieldTag.find(".radiobutton-col");
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
 		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");

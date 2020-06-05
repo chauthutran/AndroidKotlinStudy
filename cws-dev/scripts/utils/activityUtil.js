@@ -413,13 +413,15 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
         //var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );	
 
         // TODO: Do we have to hide the formDiv Tag?
-        formDivSecTag.hide();
+		formDivSecTag.hide();
+		btnTag.hide();
 
         var confirmMessage = 'Please check before confirm'; // MISSING TRANSLATION
 
         MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
 
-            formDivSecTag.show();
+			formDivSecTag.show();
+			btnTag.show();
 
             if ( confirmed )
             {

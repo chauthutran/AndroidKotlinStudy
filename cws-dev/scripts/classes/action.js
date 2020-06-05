@@ -123,7 +123,7 @@ function Action( cwsRenderObj, blockObj )
 			me.btnClickMarked( btnTag );
 
 			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
-				me.clearBtn_ClickedMark( btnTag );					
+				me.clearBtn_ClickedMark( btnTag );
 			} );
 		}
 		else
@@ -390,7 +390,10 @@ function Action( cwsRenderObj, blockObj )
 							else
 							{
 								//if ( afterActionFunc ) afterActionFunc( false );
-								throw 'canceled on preview';
+								// throw 'canceled on preview';
+
+								me.clearBtn_ClickedMark( btnTag );
+								console.log( " me.clearBtn_ClickedMark( btnTag ) " );
 							}
 						});
 								
@@ -426,8 +429,11 @@ function Action( cwsRenderObj, blockObj )
 						}
 						else
 						{
-							//if ( afterActionFunc ) afterActionFunc( false );
-							throw 'canceled on preview';
+							me.clearBtn_ClickedMark( btnTag );
+
+							console.log( "queueActivity -  me.clearBtn_ClickedMark( btnTag ) " );
+							// //if ( afterActionFunc ) afterActionFunc( false );
+							// throw 'canceled on preview';
 						}
 					});								
 				}

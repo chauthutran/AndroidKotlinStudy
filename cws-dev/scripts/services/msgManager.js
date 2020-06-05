@@ -397,9 +397,9 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
     
         var prevRow = $( '<div class="" />' );
         var btnRow = $( '<div style="height:90px;text-align:center;" />' );
-        var btnConfirm = $( `<div class="button cta button-full_width">
+        var btnConfirm = $( `<div class="button primary button-full_width">
                                 <div class="button__container">
-                                    <div class="button-label">Redeem</div>
+                                    <div class="button-label">Confirm</div>
                                 </div>
                             </div>` );
         
