@@ -52,7 +52,7 @@
                     border-radius: 2px;
 
                     @if $border-color !='' {
-                        border: 1px solid $border-color;
+                        border: 2px solid $border-color;
                     }
 
                     @if $background-color !='' {
@@ -63,7 +63,7 @@
                 }
 
                 &:not(:checked)+label::before {
-                    @include checkbox-structure($border-color: $checkbox-border-color-unchecked, $background-color: $checkbox-bg-color-unchecked);
+                    @include checkbox-structure($border-color: $checkbox-border-color-unchecked); /*, $background-color: $checkbox-bg-color-unchecked */
 
                     left: 0;
                 }

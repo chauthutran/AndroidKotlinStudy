@@ -47,36 +47,34 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		// Validation Initial Setting Clear
 		tag.attr( 'valid', 'true' );
 
-		var divTag = tag.parent(); //.closest( "div" ).parent();  //( "div" );
-		var validationTag = ( tag.hasClass( 'displayValue' ) ? tag : tag.parent() );
+		var divFieldBlockTag = tag.closest( '.fieldBlock' );
+		//var msgTarget = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
+ 
+		divFieldBlockTag.find( "div.errorMsg" ).remove();
 
-		divTag.find( "div.errorMsg" ).remove();
-
-
-		// JAMES: If visible, check the validation (by validation related attribute)
-		if ( tag.is( ':visible' ) ) // || tag.hasClass( 'MULTI_CHECKBOX' ) || tag.hasClass( 'RADIO' )  )
+		if ( divFieldBlockTag.is( ':visible' ) ) 
 		{
-			me.performValidationCheck( tag, 'mandatory', divTag );
-			me.performValidationCheck( tag, 'minlength', divTag );
-			me.performValidationCheck( tag, 'maxlength', divTag );
-			me.performValidationCheck( tag, 'maxvalue', divTag );
-			me.performValidationCheck( tag, 'isNumber', divTag );
-			me.performValidationCheck( tag, 'isDate', divTag );
-			me.performValidationCheck( tag, 'phoneNumber', divTag );
-			me.performValidationCheck( tag, 'patterns', divTag );
+			me.performValidationCheck( tag, 'mandatory', divFieldBlockTag );
+			me.performValidationCheck( tag, 'minlength', divFieldBlockTag );
+			me.performValidationCheck( tag, 'maxlength', divFieldBlockTag );
+			me.performValidationCheck( tag, 'maxvalue', divFieldBlockTag );
+			me.performValidationCheck( tag, 'isNumber', divFieldBlockTag );
+			me.performValidationCheck( tag, 'isDate', divFieldBlockTag );
+			me.performValidationCheck( tag, 'phoneNumber', divFieldBlockTag );
+			me.performValidationCheck( tag, 'patterns', divFieldBlockTag );
 		}
 
 		// If not valid, set the background color.
 		var valid = ( tag.attr( 'valid' ) == 'true' );
 
-		//tag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
-		validationTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
+		divFieldBlockTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
 
 		return valid;
 	};
+
 	
 	me.performValidationCheck = function( tag, type, divTag )
-	{		
+	{
 		// check the type of validation (if exists in the tag attribute)
 		// , and if not valid, set the tag as '"valid"=false' in the attribute
 		var valid = true;

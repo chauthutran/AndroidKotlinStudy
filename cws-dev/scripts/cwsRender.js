@@ -863,9 +863,9 @@ function cwsRender()
 		{
 			$('#pageDiv').hide();
 		}
-		if ( $( 'div.sheet_full-preview' ).is(':visible') ) 
+		if ( $( '#fullScreenPreview' ).is(':visible') ) 
 		{
-			$('div.sheet_full-preview').empty();
+			$('#fullScreenPreview').empty();
 			$('#pageDiv').hide();
 		}
 

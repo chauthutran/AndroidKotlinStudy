@@ -5593,10 +5593,10 @@ textarea {
   height: 24px;
   top: -1px;
   border-radius: 2px;
-  border: 1px solid #CCCCCC;
-  background-color: #FFF;
+  border: 2px solid #CCCCCC;
   -webkit-transition: .2s;
   transition: .2s;
+  /*, $background-color: $checkbox-bg-color-unchecked */
   left: 0;
 }
 
@@ -5607,7 +5607,7 @@ textarea {
   height: 24px;
   top: -1px;
   border-radius: 2px;
-  border: 1px solid #333;
+  border: 2px solid #333;
   background-color: #333;
   -webkit-transition: .2s;
   transition: .2s;

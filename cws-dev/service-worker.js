@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "b2efcadaff9be8eceda480c6703ebe17"
+    "revision": "31884dba41a344da75470068cb0ed3d0"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "4a55b707cc1588d07d94d4ea7f2b60a1"
+    "revision": "2c1aa7ac315b7268cce435a480b49cc1"
   },
   {
     "url": "css/style2.css",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "08256d403ccf03042e4cee83e8806146"
+    "revision": "5f042bf00300607c5a577ebc1e4f8795"
   },
   {
     "url": "redeemGen.html",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "8e5195cae41de6f94769abab949c7c1e"
+    "revision": "11ff99608f2f244f63768b3d8eb651bc"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "6a35e04a76a48ed03cb6c82688286d31"
+    "revision": "639454c7c57271ff792e611487a36727"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "294d00de7f43ba672123e6c91c3453cf"
+    "revision": "de2c3df22740ca9650aca63097447c08"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1385,7 +1385,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "c7ca6b34b848404a948177e7945d5b3e"
+    "revision": "3eed901a8f28e2d3c3d945c5576a9a86"
   },
   {
     "url": "scripts/services/cacheManager.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "3d87fbceb8af402b0582efcd95beda9a"
+    "revision": "2502153855746e49453ad7e55560bae5"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1449,7 +1449,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/RESTCallManager.js",
-    "revision": "b6312254a98ae64da0a0a976aa6a16c0"
+    "revision": "93d06a18b8ffe1a9e56ff9b09ec92531"
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
@@ -1537,7 +1537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "4a55b707cc1588d07d94d4ea7f2b60a1"
+    "revision": "2c1aa7ac315b7268cce435a480b49cc1"
   },
   {
     "url": "sounds/beep.mp3",

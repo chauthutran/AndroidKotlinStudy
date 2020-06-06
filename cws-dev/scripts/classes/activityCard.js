@@ -181,52 +181,54 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.displayActivitySyncStatus = function( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson )
     {
         // reset..
-        divSyncIconTag.css( 'background-image', '' );
-        divSyncStatusTextTag.html( '' );
-                
+        divSyncIconTag.empty();
+        divSyncStatusTextTag.empty();
+
+        var imgIcon = $( '<img>' );
 
         if ( statusVal === Constants.status_submit )        
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_submit_wMsg )        
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
     
-            if ( activityJson.processing.statusRead ) divSyncIconTag.css( 'background-image', 'url(images/sync_msdr.svg)' );
-            else divSyncIconTag.css( 'background-image', 'url(images/sync_msd.svg)' );
+            if ( activityJson.processing.statusRead ) imgIcon.attr( 'src', 'images/sync_msdr.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync_msdr.svg)' );
+            else imgIcon.attr( 'src', 'images/sync_msd.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync_msd.svg)' );
         }
         else if ( statusVal === Constants.status_downloaded )        
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
             divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
+            imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
         }
         else if ( statusVal === Constants.status_processing )
         {
             divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
+            imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
             me.setIconTagRotation( divSyncIconTag, true );
         }        
         else if ( statusVal === Constants.status_failed )
         {
             // Not closed status, yet
             divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
+            imgIcon.attr( 'src', 'images/sync-postponed_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
         }
         else if ( statusVal === Constants.status_error )
         {
             divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Error' );
-            divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
-        }    
+            imgIcon.attr( 'src', 'images/sync-error_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
+        }
+        divSyncIconTag.append( imgIcon );
     };
     
 
@@ -561,7 +563,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
                             // Why need to call this again?
                             me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
 
-                            // Need to handle the success..
                             afterDoneCall( true );
                         }
                         else 
@@ -654,7 +655,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( activityId ) 
         {
             // initialize
-            var sheetFull = $( 'div.sheet_full-preview' );
+            var sheetFull = $( '#fullScreenPreview' );
 
             // populate template
             sheetFull.html( $( Templates.activityCardFullScreen ) );
