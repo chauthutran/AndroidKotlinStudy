@@ -206,7 +206,9 @@ ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaAc
             // Only the ones (mongo) that does not exists in PWA, add to the list..
             if ( !pwaActivity )
             {
-                newActivities.push( mongoActivity );
+                ActivityDataManager.insertToProcessing( mongoActivity, processingInfo );
+
+                newActivities.push( mongoActivity );                
             }
         }
         catch( errMsg )

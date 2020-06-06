@@ -20,8 +20,9 @@ WsCallManager.wsUrlList = {
     'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev'
 };
 
-WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A='; // { 'Authorization': 
+WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';
 
+WsCallManager.timeOut_AvailableCheck = 10000; // timeout number used for 'available' request
 
 // ============================================
 // Setup / Set on Start of App Related ========
@@ -72,7 +73,7 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 
 WsCallManager.getDataServerAvailable = function( returnFunc )
 {
-    WsCallManager.requestGet( '/PWA.available', undefined, returnFunc );
+    WsCallManager.requestGet( '/PWA.available', { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
 
 
@@ -83,7 +84,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     payloadJson.password = SessionManager.sessionData.login_Password;
 
     WsCallManager.requestPost( apiPath, payloadJson, loadingTag, returnFunc );
-}
+};
 
 // ========================================
 // === Basic 'Post' and 'Get' =====
@@ -103,7 +104,7 @@ WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFu
     url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
 	// Send the POST reqesut	
-	RESTUtil.performPost( url, requestOption, function( success, returnJson ) 
+	RESTCallManager.performPost( url, requestOption, function( success, returnJson ) 
 	{
 		if ( loadingTag ) loadingTag.remove();
 
@@ -111,7 +112,7 @@ WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFu
 	});
 };
 
-WsCallManager.requestGet = function( apiPath, loadingTag, returnFunc )
+WsCallManager.requestGet = function( apiPath, optionJson, loadingTag, returnFunc )
 {	
     var url = WsCallManager.composeWsFullUrl( apiPath );
 
@@ -121,12 +122,18 @@ WsCallManager.requestGet = function( apiPath, loadingTag, returnFunc )
         }
     };
 
+    if ( optionJson ) Util.mergeJson( requestOption, optionJson );
+
     url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
 	// Send the POST reqesut	
-	RESTUtil.performGet( url, requestOption, function( success, returnJson ) 
-	{
-		if ( loadingTag ) loadingTag.remove();
+	RESTCallManager.performGet( url, requestOption, function( success, returnJson ) 
+	{        
+        Util.tryCatchContinue( function() {
+
+            if ( loadingTag ) loadingTag.remove();
+
+        }, "WsCallManager.requestGet loadingTag Clear" );
 
 		if ( returnFunc ) returnFunc( success, returnJson );
 	});

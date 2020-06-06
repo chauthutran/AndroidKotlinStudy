@@ -229,16 +229,8 @@ function Login( cwsRenderObj )
 			}
 			else
 			{
-				if ( !ConnManager.isOnline() )
-				{
-					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'No network connection > cannot login', 'notificationDark', undefined, '', 'right', 'top' );
-				}
-				else
-				{
-					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Data server offline > cannot verify login details', 'notificationPurple', undefined, '', 'right', 'top' );
-				}
+				// MISSING TRANSLATION
+				MsgManager.notificationMessage ( 'No Offline UserSession Available', 'notificationDark', undefined, '', 'right', 'top' );
 			}
 		}
 		else
@@ -248,7 +240,6 @@ function Login( cwsRenderObj )
 
 			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 			{
-				console.log( success );
 				if ( success )
 				{
 					SessionManager.saveUserSessionToStorage( loginData, userName, password );

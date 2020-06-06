@@ -561,6 +561,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                             // Why need to call this again?
                             me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
 
+                            // Need to handle the success..
                             afterDoneCall( true );
                         }
                         else 

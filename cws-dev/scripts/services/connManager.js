@@ -64,7 +64,7 @@ ConnManager.userNetworkModeSwitch_IntvLimit = 3600; //3600 = 60 * 60sec = 1h (@ 
 ConnManager.userNetworkMode_dtmSet;
 ConnManager.userNetworkMode_dtmPrompt;
 
-ConnManager.debugMode = WsApiManager.isDebugMode;
+ConnManager.debugMode = false;
 
 ConnManager.connection; //v1.3
 ConnManager.type;		//v1.3
@@ -110,7 +110,7 @@ ConnManager.updateConnectionStatus = function ()
 	// ConnManager.connection = ( navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' } );
 	ConnManager.connection = navigator.onLine ? ( navigator.connection || navigator.mozConnection || navigator.webkitConnection ) : { effectiveType: 'offline' };
 
-	if ( WsApiManager.isDebugMode ) console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
+	console.log( "Connection type changed from " + ConnManager.type + " to " + ConnManager.connection.effectiveType + " (online:" + navigator.onLine + ")" );
 
 	//ConnManager.incrementNetworkConnectionMonitor( ConnManager.type, ConnManager.connection.effectiveType );
 

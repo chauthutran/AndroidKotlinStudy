@@ -52,16 +52,12 @@ DataManager.getData = function( secName, callBack )
 
 				var returnList = data.list.filter( a => a.owner == SessionManager.sessionData.login_UserName );
 				var myQueue = returnList.filter( a=>a.status == Constants.status_queued );
-				var myFailed = returnList.filter( a=>a.status == Constants.status_failed ); //&& (!a.networkAttempt || a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );
+				var myFailed = returnList.filter( a=>a.status == Constants.status_failed ); 
 				var mySubmit = returnList.filter( a=>a.status == Constants.status_submit );
 
 				FormUtil.records_redeem_submit = mySubmit.length;
 				FormUtil.records_redeem_queued = myQueue.length;
 				FormUtil.records_redeem_failed = myFailed.length;
-
-				//syncManager.dataQueued = myQueue;
-				//syncManager.dataFailed = returnList.filter( a=>a.status == Constants.status_redeem_failed && ( a.networkAttempt && a.networkAttempt < syncManager.cwsRenderObj.storage_offline_ItemNetworkAttemptLimit) );;
-
 			}
 
 			if ( callBack ) callBack( data );

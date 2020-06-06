@@ -12,8 +12,6 @@
   const _cwsRenderObj = new cwsRender();
   const _swManagerObj = new swManager( _cwsRenderObj );
 
-  var debugMode = false; //WsApiManager.isDebugMode;
-
   // ----------------------------------------------------
 
   App_UI_startUp_loading();
@@ -50,7 +48,9 @@
 
       App_UI_startUp_Progress( '75%' );
 
-      ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj, function () {
+      // JAMES: Removed the call back wait..
+      ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj );
+      //, function () {
 
         App_version_UI_Update();
 
@@ -70,7 +70,7 @@
 
         App_UI_startUp_ready();
 
-      });
+      //});
 
     }
     catch( err )

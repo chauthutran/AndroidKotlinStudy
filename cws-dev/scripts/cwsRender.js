@@ -558,16 +558,6 @@ function cwsRender()
 				$( 'div.Nav__icon' ).click();
 			});
 
-/*
-			if ( FormUtil.checkLogin() && ConnManager.userNetworkMode )
-			{
-				me.navDrawerDivTag.append( '<div id="menu_userNetworkMode" style="padding:10px;font-size:11px;color:#A0A0A1;"><span term="">mode</span>: ' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ) + '</div>' );
-			}
-			else
-			{
-				$( '#menu_userNetworkMode' ).remove();
-			}stat
-*/
 			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
 			if ( exeFunc ) exeFunc( startMenuTag );

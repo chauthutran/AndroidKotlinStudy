@@ -5,7 +5,7 @@ global.window = window;
 global.$ = require('../../scripts/libraries/jquery-3.4.0.js');
 global.localforage = require("../../scripts/libraries/localforage.min.js");
 global.Util = require("../../scripts/utils/util.js");
-// global.RESTUtil = require("../../scripts/utils/restUtil.js");
+// global.RESTCallManager = require("../../scripts/utils/restUtil.js");
 // global.WsApiManager = require("../../scripts/services/wsApiManager.js");
 // global.FormUtil = require("../../scripts/utils/formUtil.js");
 

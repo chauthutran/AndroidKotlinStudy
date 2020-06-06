@@ -529,79 +529,6 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_networkMode' ).attr( 'unselectable', 'on' );
             $( '#aboutInfo_networkMode' ).css( 'user-select', 'none' );
             $( '#aboutInfo_networkMode' ).on( 'selectstart', false );
-
-            // 2020-02-07:  Greg removing 'easter egg' for allow users to force network mode to their choice
-            /*$( '#aboutInfo_networkMode' ).click( () => {
-
-                if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) )
-                {
-
-                    if ( $( '#aboutInfo_networkMode' ).attr( 'counter' ) < 4 )
-                    {
-                        var incr = parseInt( $( '#aboutInfo_networkMode' ).attr( 'counter' ) );
-                        incr ++;
-                        $( '#aboutInfo_networkMode' ).attr( 'counter', incr );
-
-                        if ( me.easterEgg1Timer )
-                        {
-                            clearTimeout( me.easterEgg1Timer );
-                        }
-                        me.easterEgg1Timer = setTimeout( function() {
-                            $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
-                        }, 3000 );
-                    }
-                    else
-                    {
-                        if ( me.easterEgg1Timer )
-                        {
-                            clearTimeout( me.easterEgg1Timer );
-                        }
-
-                        $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
-
-                        var requestConnMode;
-
-                        if ( $( '#aboutInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() )
-                        {
-                            // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
-                            requestConnMode = ! ConnManagerNew.statusInfo.appMode.toLowerCase();
-                        }
-                        else
-                        {
-                            // current setting is NOT actual network condition setting > prompt to change back
-                            requestConnMode = ConnManagerNew.statusInfo.appMode.toLowerCase();
-                        }
-
-                        ConnManager.changeConnModeTo = requestConnMode;
-                        ConnManager.changeConnModeStr = "switch";
-                        ConnManager.setUserNetworkMode( requestConnMode );
-
-                        var btnSwitch = $( '<a class="notifBtn" term=""> ' + ConnManager.connStatusStr( requestConnMode ).toUpperCase() + ' </a>');
-
-                        $( btnSwitch ).click ( () => {
-                            ConnManager.userNetworkMode = true;
-                            ConnManager.switchPreDeterminedConnMode();
-                            $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
-                        });
-
-                        // MISSING TRANSLATION
-                        questionStr = "Force network mode switch?";
-                        MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
-
-                    }
-
-                }
-                else
-                {
-                    $( '#aboutInfo_networkMode' ).attr( 'counter', 1 )
-
-                    me.easterEgg1Timer = setTimeout( function() {
-                        $( '#aboutInfo_networkMode' ).attr( 'counter', 0 );
-                    }, 3000 );
-                }
-
-            });*/
-
         }
 
         if ( me.langTermObj.debugMode )
@@ -650,30 +577,9 @@ function aboutApp( cwsRender )
 
         if ( FormUtil.checkLogin() )
         {
-
             $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
             $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
             $( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
-
-            //var retVersion = ConfigManager.getConfigJson().version;
-            /*ConnManager.getDcdConfigVersion( function( retVersion ) 
-            {
-                var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
-    
-                if ( ( userConfig.dcdConfig.version ).toString() < retVersion.toString() )
-                {
-                    $( '#aboutInfo_dcdNewVersion' ).html( retVersion );
-                    if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'disabled' );
-                    if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'enabled' );	
-                    $( '#aboutInfo_dcdNewVersion' ).show();
-                }
-                else
-                {
-                    $( '#aboutInfo_dcdNewVersion' ).hide();
-                    if ( ! $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).addClass( 'disabled' );
-                    if ( $( '#imgaboutInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgaboutInfo_dcdVersion_Less' ).removeClass( 'enabled' );
-                }
-            });*/
         }
 
     }

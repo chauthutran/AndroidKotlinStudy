@@ -123,7 +123,7 @@ function Action( cwsRenderObj, blockObj )
 			me.btnClickMarked( btnTag );
 
 			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
-				me.clearBtn_ClickedMark( btnTag );
+				me.clearBtn_ClickedMark( btnTag );					
 			} );
 		}
 		else
