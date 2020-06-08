@@ -1397,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "9aa4e833fa797c3247c09b3605c5f5d1"
+    "revision": "37adfa9ca77497bec5bcc77393cc8d57"
   },
   {
     "url": "scripts/services/connManager.js",

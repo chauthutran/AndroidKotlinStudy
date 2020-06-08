@@ -58,7 +58,296 @@ ConfigManager.defaultJsonList = {
       "content": {
          "dateCompareField": [ "updated" ]
       }
-   }
+   },
+
+   "favList": {
+
+    "online": [{
+            "id": "1",
+            "name": "All Contact",
+            "term": "menu_list",
+            "img": "images/favbar_color_act.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#4F4F4F"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList"
+            }
+        },
+        {
+            "id": "2",
+            "name": "Queued",
+            "term": "",
+            "img": "images/favbar_color_fpl-sp.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#008234"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList",
+                "options": {
+                    "filter": [{
+                        "status": "queued"
+                    }]
+                }
+            }
+        },
+        {
+            "id": "3",
+            "name": "Completed",
+            "term": "",
+            "img": "images/favbar_color_contact.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#ffffff"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList",
+                "options": {
+                    "filter": [{
+                        "status": "submit"
+                    }]
+                }
+            }
+        },
+        {
+            "id": "4",
+            "name": "Entry Online only",
+            "term": "menu_entry",
+            "img": "images/favbar_color_fpl-fu.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#B06068"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockDefaultOptionsOnline"
+            }
+        }
+    ],
+    "offline": [{
+            "id": "1",
+            "name": "All Contact",
+            "term": "menu_list",
+            "img": "images/favbar_color_act.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#4F4F4F"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList"
+            }
+        },
+        {
+            "id": "2",
+            "name": "Queued",
+            "term": "",
+            "img": "images/favbar_color_arrows.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#008234"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList",
+                "options": {
+                    "filter": [{
+                        "status": "queued"
+                    }]
+                }
+            }
+        },
+        {
+            "id": "3",
+            "name": "Completed",
+            "term": "",
+            "img": "images/favbar_color_contact.svg",
+            "style": {
+                "icon": {
+                    "colors": {
+                        "background": "none",
+                        "foreground": "#008234"
+                    }
+                },
+                "label": {
+                    "colors": {
+                        "background": "#cccccc",
+                        "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "blockId": "blockRedeemList",
+                "options": {
+                    "filter": [{
+                        "status": "submit"
+                    }]
+                }
+            }
+        },
+        {
+            "id": "4",
+            "name": "Entry (On + Off)",
+            "term": "menu_entry",
+            "img": "images/favbar_color_act.svg",
+            "style": {
+                "icon": {
+                    "colors": { "background": "none", "foreground": "#19DD89" }
+                },
+                "label": {
+                    "colors": { "background": "#cccccc", "foreground": "#000000"
+                    }
+                }
+            },
+            "target": {
+                "actionType": "openBlock",
+                "startBlockName": "blockDefaultOptionsOffline",
+                "blockId": "blockDefaultOptionsOffline"
+            }
+        }
+    ]
+    },
+
+    "themes":[  
+        {  
+           "id":"default",
+           "name":"default",
+           "spec":{  
+              "navTop":{  
+                 "colors":{  
+                    "background":"#ffc61d",
+                    "foreground":"#101010"
+                 }
+              },
+              "navMiddle":{  
+                 "colors":{  
+                    "background":"#ffda6d",
+                    "foreground":"#50555a"
+                 }
+              },
+              "button":{  
+                 "colors":{  
+                    "background":"#ffc61d",
+                    "foreground":"#333333"
+                 }
+              }
+           }
+        },
+        {  
+           "id":"opule",
+           "name":"opule",
+           "spec":{  
+              "navTop":{  
+                 "colors":{  
+                    "background":"#00ACC1",
+                    "foreground":"#ffffff"
+                 }
+              },
+              "navMiddle":{  
+                 "colors":{  
+                    "background":"#0093A3",
+                    "foreground":"#333333"
+                 }
+              },
+              "button":{  
+                 "colors":{  
+                    "background":"#0093A3",
+                    "foreground":"#ffffff"
+                 }
+              }
+           }
+        },
+        {  
+           "id":"ocean",
+           "name":"ocean",
+           "spec":{  
+              "navTop":{  
+                 "colors":{  
+                    "background":"#8DC9F7",
+                    "foreground":"#E5EBEB"
+                 }
+              },
+              "navMiddle":{  
+                 "colors":{  
+                    "background":"#059ADC",
+                    "foreground":"#FFFFFF"
+                 }
+              },
+              "button":{  
+                 "colors":{  
+                    "background":"#059ADC",
+                    "foreground":"#F8FAF5"
+                 }
+              }
+           }
+        }
+     ]    
 };
 
 ConfigManager.default_SettingPaging = { 
@@ -489,9 +778,12 @@ ConfigManager.applyDefaults = function( configJson, defaults )
 {
    ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
 
-   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare )
+   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
 
    // Other defaults could be placed here..
+   ConfigManager.applyDefault_favList( configJson, defaults.favList );
+
+   ConfigManager.applyDefault_themes( configJson, defaults.themes );
 
 };
 
@@ -502,7 +794,6 @@ ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
       // 1. Check if 'configJson' has the content in path.
       //    If not exists, set the 'content' of json..
       if ( !configJson.settings ) configJson.settings = {};
-
       if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
       if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson.content );
@@ -518,12 +809,30 @@ ConfigManager.applyDefault_mergeCompare = function( configJson, mregeCompareJson
       // 1. Check if 'configJson' has the content in path.
       //    If not exists, set the 'content' of json..
       if ( !configJson.settings ) configJson.settings = {};
-
       if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
       if ( !configJson.settings.sync.mregeCompare ) configJson.settings.sync.mregeCompare = Util.getJsonDeepCopy( mregeCompareJson.content );
    }
 };
+
+
+ConfigManager.applyDefault_favList = function( configJson, favListJson )
+{
+   if ( favListJson )
+   {
+      if ( !configJson.favList ) configJson.favList = Util.getJsonDeepCopy( favListJson );
+   }
+};
+
+
+ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
+{
+   if ( themesJsonArr )
+   {
+      if ( !configJson.themes ) configJson.themes = themesJsonArr;
+   }
+};
+
 // ========================================================
 
 
