@@ -663,31 +663,39 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             }
             else
             {
-                if ($('.Menus_display').is(':visible')) {
-                    $('.Menus_display').css('display', 'none');
-                    $('.fab-wrapper').show();
-                    $('.Nav2__icon').css('transform', 'rotate(0deg)');
-                } else {
-                    $('.Menus_display').css('display', 'table-row');
-                    $('.fab-wrapper').css('display', 'none');
-                    $('.Nav2__icon').css('transform', 'rotate(180deg)');
-                }    
+                me.toggleDisplay_SortList( $( '.Menus_display' ) );
             }
         });
-    
-        $(".menu_item_comtainer").click(function () {
-            $('.Menus_display').css('display', 'none');
-            $('.Nav2__icon').css('transform', 'rotate(0deg)');
-            $('.fab-wrapper').show();
-        });
+        
+        // NOTE: This would not work <-- Not created, yet..
+        //$(".menu_item_comtainer").click(function () {
+        //    me.toggleDisplay_SortList( $( '.Menus_display' ) );
+        //});
+    };
 
+    
+    me.toggleDisplay_SortList = function( sortListTag )
+    {
+        if ( sortListTag.is(':visible') ) {
+            sortListTag.css('display', 'none');
+            $('.fab-wrapper').show();
+            $('.Nav2__icon').css('transform', 'rotate(0deg)');
+        } else {
+            sortListTag.css('display', 'table-row');
+            $('.fab-wrapper').css('display', 'none');
+            $('.Nav2__icon').css('transform', 'rotate(180deg)');
+        }    
     };
 
 
     me.setSortDivTagClickEvent = function( divTag, sortDefs )
     {
         divTag.click( function()
-        {
+        {            
+            // Hide the sort list popup menu
+            me.toggleDisplay_SortList( $( '.Menus_display' ) );
+
+
             var sortId = $( this ).attr( 'sortid' );
 
             // get sortId and get sortDef from it..

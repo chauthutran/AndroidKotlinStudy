@@ -6002,6 +6002,7 @@ textarea {
   line-height: 48px;
   font-size: 0.875rem;
   box-sizing: border-box;
+  cursor: pointer;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
