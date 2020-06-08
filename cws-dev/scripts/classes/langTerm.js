@@ -87,12 +87,12 @@ function LangTerm( cwsRenderObj )
 
 		var queryLoc = '/PWA.langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
 		var dailyCache = '/PWA.dailyCache';
-
+		var options = {};
 		var loadingTag = undefined;
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
 		// config should also note all the 'term' into tags..
-		WsCallManager.requestGet( queryLoc, loadingTag, function( success, returnJson )
+		WsCallManager.requestGet( queryLoc, options, loadingTag, function( success, returnJson )
 		{
 			if ( success )
 			{
