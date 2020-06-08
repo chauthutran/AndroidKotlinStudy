@@ -1205,7 +1205,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "70e4aa5b5365b3a19625e537fb160224"
+    "revision": "56949ff7cd55932d24da2fc9120f1fd2"
   },
   {
     "url": "scripts/classes/activityCard.js",

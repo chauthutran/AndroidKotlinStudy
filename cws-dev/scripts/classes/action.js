@@ -47,72 +47,8 @@ function Action( cwsRenderObj, blockObj )
 		{
 			console.log( 'Btn already clicked/in process' );
 		}
-	}
+	};
 
-	me.handleSequenceIncrCommits = function( formDivSecTag )
-	{
-		// var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-		var jData = me.formJsonArr;
-		var pConf = FormUtil.block_payloadConfig;
-
-		for( var i = 0; i < jData.length; i++ )
-		{
-			if ( jData[ i ].defaultValue || jData[ i ].payload )
-			{
-				var payloadPattern = false;
-				var pattern = '';
-
-				payloadPattern = ( jData[ i ].defaultValue && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
-
-				if ( payloadPattern )
-				{
-					pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
-				}
-				else
-				{
-					payloadPattern = ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue && jData[ i ].payload[ pConf ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
-
-					if ( payloadPattern )
-					{
-						pattern = Util.getParameterInside( jData[ i ].payload[ pConf ].defaultValue, '()' );
-					}
-				}
-
-				if ( payloadPattern )
-				{
-					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-					var calcVal = Util2.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
-
-					if ( calcVal != undefined )
-					{
-						if ( tagTarget.css( 'text-transform' ) != undefined )
-						{
-							if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
-							{
-								calcVal = calcVal.toUpperCase()
-							}
-							else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
-							{
-								calcVal = calcVal.toLowerCase()
-							}
-						}
-						else
-						{
-							console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
-						}
-					}
-					else
-					{
-						calcVal = '';
-					}
-
-
-					tagTarget.val( calcVal );
-
-				}
-			}
-		}
-	}
 
 	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag )
 	{		
@@ -143,24 +79,25 @@ function Action( cwsRenderObj, blockObj )
 		{
 			// me.clickActionPerform
 			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( bResult, moreInfoJson )
-			{				
-				if ( bResult === false )
+			{			
+				if ( bResult )
+				{
+					actionIndex++;
+					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );				
+				}
+				else
 				{
 					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
 					if ( moreInfoJson ) console.log( moreInfoJson );
 					endOfActionsFunc( dataPass, "Failed" );
 				}
-				else
-				{
-					actionIndex++;
-
-					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );
-				}
 			});
 		}
-	}
+	};
 
 
+	// ------------------------------------
+	
 	// me.clickActionPerform 
 	me.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
@@ -180,7 +117,7 @@ function Action( cwsRenderObj, blockObj )
 					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
 					//console.log( blockPassingData.displayData );
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "clearOtherBlocks" )
 				{
@@ -188,7 +125,7 @@ function Action( cwsRenderObj, blockObj )
 	
 					me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "closeBlock" )
 				{
@@ -218,14 +155,14 @@ function Action( cwsRenderObj, blockObj )
 						me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 					}
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "hideBlock" )
 				{
 					//blockDivTag.hide();
 					me.blockObj.hideBlock();
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "openBlock" )
 				{
@@ -258,7 +195,7 @@ function Action( cwsRenderObj, blockObj )
 						}
 					}
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "openArea" )
 				{				
@@ -268,7 +205,7 @@ function Action( cwsRenderObj, blockObj )
 						me.cwsRenderObj.renderArea( clickActionJson.areaId );
 					}
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "filledData" )
 				{
@@ -282,7 +219,7 @@ function Action( cwsRenderObj, blockObj )
 						dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
 					}
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "alertMsg" )
 				{
@@ -295,7 +232,7 @@ function Action( cwsRenderObj, blockObj )
 						MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
 					}
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "topNotifyMsg" )
 				{
@@ -310,7 +247,7 @@ function Action( cwsRenderObj, blockObj )
 					// If term exists, translate it before displaying
 					//MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
 	
-					if ( afterActionFunc ) afterActionFunc();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "processWSResult" ) 
 				{
@@ -330,14 +267,14 @@ function Action( cwsRenderObj, blockObj )
 	
 							// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
 							me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
-								if ( afterActionFunc ) afterActionFunc();
+								afterActionFunc( true );
 							} );
 	
 						}
 					}
 	
 					// If statusActions did not get started for some reason, return as this action finished
-					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc();
+					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "WSlocalData" )
 				{
@@ -352,13 +289,13 @@ function Action( cwsRenderObj, blockObj )
 						statusActionsCalled = true;
 	
 						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
-							if ( afterActionFunc ) afterActionFunc();
+							afterActionFunc( true );
 						} );
 	
 					}
 					else
 					{
-						if ( !statusActionsCalled && afterActionFunc ) afterActionFunc(); 
+						if ( !statusActionsCalled && afterActionFunc ) afterActionFunc( true ); 
 					}
 	
 					// If statusActions did not get started for some reason, return as this action finished
@@ -384,12 +321,12 @@ function Action( cwsRenderObj, blockObj )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
-									if ( afterActionFunc ) afterActionFunc();
+									afterActionFunc( true );
 								} );		
 							}
 							else
 							{
-								//if ( afterActionFunc ) afterActionFunc( false );
+								//afterActionFunc( false );
 								// throw 'canceled on preview';
 
 								me.clearBtn_ClickedMark( btnTag );
@@ -404,7 +341,7 @@ function Action( cwsRenderObj, blockObj )
 
 						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
 						me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
-							if ( afterActionFunc ) afterActionFunc( bResult, optionJson );
+							afterActionFunc( bResult, optionJson );
 						} );
 					}
 				}
@@ -424,15 +361,15 @@ function Action( cwsRenderObj, blockObj )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 		
-								if ( afterActionFunc ) afterActionFunc();
+								afterActionFunc( true );
 							} );		
 						}
 						else
 						{
-							me.clearBtn_ClickedMark( btnTag );
+							//me.clearBtn_ClickedMark( btnTag );
 
 							console.log( "queueActivity -  me.clearBtn_ClickedMark( btnTag ) " );
-							// //if ( afterActionFunc ) afterActionFunc( false );
+							afterActionFunc( false, { 'type': 'previewBtn', 'msg': 'preview cancelled' } );
 							// throw 'canceled on preview';
 						}
 					});								
@@ -441,7 +378,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		catch ( errMsg )
 		{
-			if ( afterActionFunc ) afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
+			afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
 		}
 	};
 
@@ -555,5 +492,70 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 	// ========================================================
+	
+	me.handleSequenceIncrCommits = function( formDivSecTag )
+	{
+		// var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
+		var jData = me.formJsonArr;
+		var pConf = FormUtil.block_payloadConfig;
+
+		for( var i = 0; i < jData.length; i++ )
+		{
+			if ( jData[ i ].defaultValue || jData[ i ].payload )
+			{
+				var payloadPattern = false;
+				var pattern = '';
+
+				payloadPattern = ( jData[ i ].defaultValue && jData[ i ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+				if ( payloadPattern )
+				{
+					pattern = Util.getParameterInside( jData[ i ].defaultValue, '()' );
+				}
+				else
+				{
+					payloadPattern = ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue && jData[ i ].payload[ pConf ].defaultValue.indexOf( 'generatePattern(' ) > 0 );
+
+					if ( payloadPattern )
+					{
+						pattern = Util.getParameterInside( jData[ i ].payload[ pConf ].defaultValue, '()' );
+					}
+				}
+
+				if ( payloadPattern )
+				{
+					var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+					var calcVal = Util2.getValueFromPattern( tagTarget, pattern, ( pattern.indexOf( 'SEQ[' ) > 0 ) );
+
+					if ( calcVal != undefined )
+					{
+						if ( tagTarget.css( 'text-transform' ) != undefined )
+						{
+							if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'UPPERCASE' )
+							{
+								calcVal = calcVal.toUpperCase()
+							}
+							else if ( tagTarget.css( 'text-transform' ).toString().toUpperCase() == 'LOWERCASE' )
+							{
+								calcVal = calcVal.toLowerCase()
+							}
+						}
+						else
+						{
+							console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
+						}
+					}
+					else
+					{
+						calcVal = '';
+					}
+
+
+					tagTarget.val( calcVal );
+
+				}
+			}
+		}
+	}
 
 }
