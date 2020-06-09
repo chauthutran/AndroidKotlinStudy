@@ -299,7 +299,9 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             var activity = mainList[ i ]; 
             INFO.activity = activity;
             
-            if ( Util.evalTryCatch( viewDef.query, INFO, 'BlockListView.viewFilterData()' ) === true )
+            if ( viewDef.query && !viewDef.dataFilterEval ) viewDef.dataFilterEval = viewDef.query;
+
+            if ( Util.evalTryCatch( viewDef.dataFilterEval, INFO, 'BlockListView.viewFilterData()' ) === true )
             {
                 // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
                 filteredData.push( activity );

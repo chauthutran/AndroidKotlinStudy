@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "11ff99608f2f244f63768b3d8eb651bc"
+    "revision": "140993becf034a6e8b57da21c193a335"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "d2c0cc27b823de9843f8b4a9faaa9516"
+    "revision": "d18f3a9c7c54edc7313d4b3df9b17e0a"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -1265,7 +1265,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "c15da14ce95fdc18c7df777182819754"
+    "revision": "21021c36e2489bf060539d27c831b647"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1481,7 +1481,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "009adab0340ccacb537a44ab8635ec9b"
+    "revision": "98c5e3d92eeac7a82b940d31727eecf8"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
@@ -1497,7 +1497,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "74a02936e526a069959ae217a6139c28"
+    "revision": "85ed3881007a99565bb857330fd8abaa"
   },
   {
     "url": "scripts/utils/inputUtil.js",
