@@ -111,12 +111,15 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 {
     // NOTE: We can check network connection here, or from calling place.  
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
+    SyncManagerNew.update_UI_StartSyncAll();
 
     SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
 
     // Retrieve data..
     SyncManagerNew.downloadClients( function( downloadSuccess, returnJson ) 
     {
+        SyncManagerNew.update_UI_FinishSyncAll();
+
         SyncManagerNew.SyncMsg_InsertMsg( "download finished.." );
 
         var changeOccurred = false;        

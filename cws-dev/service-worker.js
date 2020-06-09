@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
-    "revision": "646dfa046c156781797d10ae941175c3"
+    "revision": "209aeadfb3da144cf1fd8f8f766064eb"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "2502153855746e49453ad7e55560bae5"
+    "revision": "c3f523f458ae18daf0313e98101b233d"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1481,7 +1481,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "98c5e3d92eeac7a82b940d31727eecf8"
+    "revision": "5a6551117088ab5f7ca5619f3b5a9607"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
@@ -1537,7 +1537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "2bffea07cd264eab6ab7a1da44081b33"
+    "revision": "2c1aa7ac315b7268cce435a480b49cc1"
   },
   {
     "url": "sounds/beep.mp3",
