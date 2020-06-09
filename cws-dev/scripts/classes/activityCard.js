@@ -185,7 +185,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
         //var activityType = FormUtil.getActivityType( activityJson );
 
-        console.log( activityTrans );
+        divPhoneCallTag.empty();
 
         //if ( activityType && activityType.calls && activityType.calls )
         if ( activityTrans.phoneNumber )
