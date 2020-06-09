@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "140993becf034a6e8b57da21c193a335"
+    "revision": "1b984d27dccd89902e71f6bffb10339f"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1449,11 +1449,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/RESTCallManager.js",
-    "revision": "93d06a18b8ffe1a9e56ff9b09ec92531"
+    "revision": "bed7bd1e2bcceb4401892b4b68eb2d04"
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "6224db75313388a0efd26bc8711199bf"
+    "revision": "b5e79da5426fc474a7837421c027cfd5"
   },
   {
     "url": "scripts/services/scheduleManager.js",
@@ -1537,7 +1537,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "2c1aa7ac315b7268cce435a480b49cc1"
+    "revision": "2bffea07cd264eab6ab7a1da44081b33"
   },
   {
     "url": "sounds/beep.mp3",

@@ -73,6 +73,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
                 var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
                 var activityRerenderTag = activityCardTrTag.find( 'div.activityRerender' );
+                var activityPhoneCallTag = activityCardTrTag.find( 'div.activityPhone' );
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
@@ -90,8 +91,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // click event - for activitySubmit.., icon/text populate..
                 me.setupSyncBtn( clickEnable, activityCardTrTag, activityJson );    
 
+                // 4. 'phoneNumber' action  button setup
+                me.setupPhoneCallBtn( activityPhoneCallTag, activityJson );
 
-                // 4. clickable rerender setup
+                // 5. clickable rerender setup
                 me.setUpReRenderByClick( activityRerenderTag );
             }
             catch( errMsg )
@@ -175,6 +178,62 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 
             });     
         }
+    };
+
+    me.setupPhoneCallBtn = function( divPhoneCallTag, activityJson )
+    {
+        var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
+        //var activityType = FormUtil.getActivityType( activityJson );
+
+        console.log( activityTrans );
+
+        //if ( activityType && activityType.calls && activityType.calls )
+        if ( activityTrans.phoneNumber )
+        {
+            var phoneNumber = activityTrans.phoneNumber; // should we define phoneNumber field in config? might change to something else in the future
+            //var evalConditions = activityType.calls.evalConditions;
+            //var paylDetails = Util.jsonToArray ( activityTrans, 'name:value' );
+
+            //for( var i = 0; ( i < evalConditions.length ) ; i++ )
+            //{
+                //var phoneCondition = evalConditions[ i ].condition;
+
+                //me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
+
+                    //if ( passConditionTest )
+                    //{
+                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+
+                        cellphoneTag.click( function(e) {
+
+                            e.stopPropagation();
+
+                            if ( Util.isMobi() )
+                            {
+                                window.location.href = `tel:${phoneNumber}`;
+                            }
+                            else
+                            {
+                                alert( phoneNumber );
+                            }
+                        });
+
+                        divPhoneCallTag.append( cellphoneTag );
+                        divPhoneCallTag.show();
+
+                    //}
+    
+                //})
+
+            
+            //}
+
+        }
+        /*else
+        {
+            divPhoneCallTag.hide();
+        }*/
+
     };
 
 
