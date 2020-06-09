@@ -231,6 +231,7 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
             newStatusInfo.manual_Offline.retryDateTime = ( new Date( ( new Date ).getTime() + parseInt( switchOpt ) * 60 * 1000 ) ).toISOString();
             newStatusInfo.manual_Offline.initiated = ( new Date ).toISOString();
 
+            // TODO: JAMES: THIS SHOULD NOT BE?
             newStatusInfo.serverAvailable = false;
 
             me.ConnManagerObj.acceptPrompt_AppModeSwitch( newStatusInfo );

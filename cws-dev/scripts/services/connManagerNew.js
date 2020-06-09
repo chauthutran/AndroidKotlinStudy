@@ -16,7 +16,7 @@ ConnManagerNew.statusInfo = {
 		'online_Current': false,
         'online_Stable': false // 'Offline',  // CHANGE TO boolean <-- with variable 'networkConn'?
     },
-    'serverAvailable': false,
+    'serverAvailable': true,	// Start with 'true' for serverAvailable (webService)
 	'appMode': ConnManagerNew.OFFLINE, 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.connected_Stable == 'Online' )
 	'appMode_PromptedMode': '',
 	'manual_Offline': {
@@ -47,30 +47,16 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj ) //, callBack )
 
 	try
 	{
-		// to start off > update UI to 'defaults' for connection settings
+		// To start off > update UI to 'defaults' for connection settings
 		var modeOnline = navigator.onLine;  // 'navigator.online' return 'true' if network connect exists.  Otherwise, return 'false'.
 		ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
 		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
+		// WsAvailable is by default set to 'true'
 		
-		// These 2 below checks/change will each trigger appModeSwitchRequest
-		//	But, since this is before logged In, they will simply set them accordingly..
-
-		// sets 'networkConn.crrentStableMode'
-		ConnManagerNew.changeNetworkConnStatus( ConnManagerNew.statusInfo, modeOnline, 'startUp' );
-
-
-		// JAMES: Removed the 'callBack', resulting app start to not wait..
-		/*
-		// Below will trigger another 
-		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-		{
-			// called again to update UI to new connect settings
-			ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-
-			callBack( true );
-		});
-		*/
+		// Set the start off network connection status to 'stable' one (only on this start process)
+		// And Trigger to update the AppMode (with the WsAvailable value + additional submit afterwards)
+		ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, modeOnline, 'startUp' );
 
 	}
 	catch( errMsg )
@@ -101,19 +87,16 @@ ConnManagerNew.updateNetworkConnStatus = function()
 	// If there is any one online signal, consider it as online stable
 	if ( modeOnline && ConnManagerNew.efficiency.networkConnOnline_Immediate )
 	{
-		ConnManagerNew.changeNetworkConnStatus( ConnManagerNew.statusInfo, modeOnline );
+		ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, modeOnline );
 	}
 	else
 	{
-		ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStatus
+		ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStableStatus
 			, ConnManagerNew.networkConnStableCheckTime
 			, ConnManagerNew.statusInfo
 			, modeOnline );
 	}
 };
-
-
-
 
 
 // CHECK #2 - SERVER AVAILABLE CHECK
@@ -165,7 +148,7 @@ ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 // ------------------------------------------
 
 // Change Network Connection
-ConnManagerNew.changeNetworkConnStatus = function( statusInfo, modeOnline, optionStr )
+ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline, optionStr )
 {
 	statusInfo.networkConn.online_Stable = modeOnline;
 
