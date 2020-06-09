@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "1b984d27dccd89902e71f6bffb10339f"
+    "revision": "568e253dce116594fc32f5141cf3698c"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1309,7 +1309,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "cd7e7d6e4c8132f0d68be57bc0dc589a"
+    "revision": "b412c80d3b393f2c43042e6d07e89a6b"
   },
   {
     "url": "scripts/cwsRender.js",
