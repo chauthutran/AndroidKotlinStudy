@@ -22,7 +22,7 @@ WsCallManager.wsUrlList = {
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';
 
-WsCallManager.timeOut_AvailableCheck = 10000; // timeout number used for 'available' request
+WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
 
 // ============================================
 // Setup / Set on Start of App Related ========

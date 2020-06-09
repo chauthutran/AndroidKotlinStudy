@@ -5,7 +5,7 @@
 
 function RESTCallManager() {}
 
-RESTCallManager.defaultTimeOut = 60000;  // 1 min.
+RESTCallManager.defaultTimeOut = 180000;  // 3 min.
 
 // ==== Methods ======================
 RESTCallManager.performGet = function( url, requestOption, returnFunc )
