@@ -335,8 +335,8 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 				}
 				else
 				{
-					if ( order == "Acending" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-					else if ( order == "Decending" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+					else if ( order === "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
 				}
 			}
 		});
@@ -393,8 +393,8 @@ Util.sortByKey2 = function( array, key, order, options )
 				}
 				else
 				{
-					if ( order == "Acending" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-					else if ( order == "Decending" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+					else if ( order == "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
 				}
 			}
 		});

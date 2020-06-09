@@ -292,20 +292,25 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     {
         var filteredData = []; 
         
-        var INFO = {};
+        if ( viewDef.query && !viewDef.dataFilterEval ) viewDef.dataFilterEval = viewDef.query;
 
-        for ( var i = 0; i < mainList.length; i++ )
+        // If dataFilter does not exists, the entire data into the 
+        if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
+        else
         {
-            var activity = mainList[ i ]; 
-            INFO.activity = activity;
-            
-            if ( viewDef.query && !viewDef.dataFilterEval ) viewDef.dataFilterEval = viewDef.query;
+            var INFO = {};
 
-            if ( Util.evalTryCatch( viewDef.dataFilterEval, INFO, 'BlockListView.viewFilterData()' ) === true )
+            for ( var i = 0; i < mainList.length; i++ )
             {
-                // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
-                filteredData.push( activity );
-            }
+                var activity = mainList[ i ]; 
+                INFO.activity = activity;
+                
+                if ( Util.evalTryCatch( viewDef.dataFilterEval, INFO, 'BlockListView.viewFilterData()' ) === true )
+                {
+                    // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
+                    filteredData.push( activity );
+                }    
+            }    
         }
 
         return filteredData;
@@ -516,11 +521,11 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.sortList_ByGroup = function( groupByData )
     {
-        if ( !groupByData.groupSort ) groupByData.groupSort = 'Acending';
-        else if ( groupByData.groupSort === 'Acending' ) groupByData.groupSort = 'Decending';
-        else if ( groupByData.groupSort === 'Decending' ) groupByData.groupSort = 'Acending';
+        if ( !groupByData.groupSortOrder ) groupByData.groupSortOrder = 'asc';
+        else if ( groupByData.groupSortOrder === 'asc' ) groupByData.groupSortOrder = 'desc';
+        else if ( groupByData.groupSortOrder === 'desc' ) groupByData.groupSortOrder = 'asc';
 
-        me.viewFilteredList = me.groupBySorting( groupByData, groupByData.groupSort );                
+        me.viewFilteredList = me.groupBySorting( groupByData, groupByData.groupSortOrder );                
     };
 
     
@@ -625,21 +630,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     
             return eval( sortEval );    
         });          
-    };
-
-    // NOT USED..
-    me.evalGroupBySort = function( fieldEvalStr, list, groupBy, orderStr )
-    {
-        var isDescending = orderStr.indexOf( 'desc' );
-        list.sort( function(a, b) {
-            var sortEval = ( ! isDescending ) ? '( a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' < b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' ) ? -1 : ' +
-                                ' ( b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' < a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' ) ? 1 ' +
-                                ' : 0 '
-                            : '( a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' > b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ') ? -1 : ' +
-                                ' ( b.groupBy.' + groupBy + ' + a.' + fieldEvalStr + ' > a.groupBy.' + groupBy + ' + b.' + fieldEvalStr + ' ) ? 1 ' +
-                                ' : 0 ';
-            return eval( sortEval );
-        });
     };
 
     // ---------------------------------------------------------

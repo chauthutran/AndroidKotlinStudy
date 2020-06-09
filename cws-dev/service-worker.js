@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockListView.js",
-    "revision": "d18f3a9c7c54edc7313d4b3df9b17e0a"
+    "revision": "bec6f4753cd9f03c3cb04ef96b1991fd"
   },
   {
     "url": "scripts/classes/blockMsg.js",
@@ -1525,7 +1525,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "c24922d18a254e5b1c420d867813512c"
+    "revision": "44a8df679b358eec0b92540131be74d1"
   },
   {
     "url": "scripts/utils/util2.js",
