@@ -136,19 +136,15 @@ function Login( cwsRenderObj )
 				alert('demo');
 			});
 
-
 			$("#changeUserBtn").click(function () {
 				me.sheetBottomTag.html ( Templates.Change_User_Form );
 				me.cwsRenderObj.langTermObj.translatePage();
 
 				$("#accept").click(function () {
-					DataManager2.deleteAllStorageData();
-					me.unblockPage();
-
-					me.loginUserNameTag.val( "" ).removeAttr("readonly");
-					me.loginUserPinTag.val( "" );
-					me.loginFormTag.find( 'h4' ).remove();
-					me.loginFieldTag.show();
+					DataManager2.deleteAllStorageData( function() {
+						location.reload( true );
+						//me.cwsRenderObj.reGetAppShell(); 
+					});
 				});
 
 				$("#cancel").click(function () {

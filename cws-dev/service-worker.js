@@ -1261,11 +1261,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/langTerm.js",
-    "revision": "3d37f10ab5fb4d32c4af19209a8b7e4e"
+    "revision": "51ad23e47bc4c5c74f8323c101ef5776"
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "1bdeb503eec530618e22bce77cd0b907"
+    "revision": "c15da14ce95fdc18c7df777182819754"
   },
   {
     "url": "scripts/classes/menu.js",

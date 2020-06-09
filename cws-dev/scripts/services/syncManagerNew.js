@@ -331,14 +331,13 @@ SyncManagerNew.update_UI_StartSyncAll = function()
     SyncManagerNew.initializeProgressBar();
 
     // animate syncButton 'running' 
-    SyncManagerNew.updateSyncButton_UI_Animation( true, SyncManagerNew.imgAppSyncActionButton )
-
+    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, true );
 };
 
 SyncManagerNew.update_UI_FinishSyncAll = function()
 {
     SyncManagerNew.hideProgressBar();
-    SyncManagerNew.updateSyncButton_UI_Animation( false, SyncManagerNew.imgAppSyncActionButton ); 
+    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, false );
 };
 
 
@@ -359,20 +358,7 @@ SyncManagerNew.hideProgressBar = function()
 
     //$( syncManager.subProgressBar ).removeClass( 'determinate' );
     //$( syncManager.subProgressBar ).addClass( 'indeterminate' );
-}
-
-SyncManagerNew.updateSyncButton_UI_Animation = function( runAnimation, itemTagSyncButton )
-{
-    if ( runAnimation )
-    {
-        itemTagSyncButton.rotate({ count:999, forceJS: true, startDeg: 0 });
-    }
-    else
-    {
-        itemTagSyncButton.stop();
-    }
 };
-
 
 // ===================================================
 // === 'syncStart/Finish' Related Methods =============

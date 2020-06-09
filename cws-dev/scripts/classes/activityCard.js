@@ -215,7 +215,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' );
             imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
-            me.setIconTagRotation( divSyncIconTag, true );
+            FormUtil.rotateTag( divSyncIconTag, true );
         }        
         else if ( statusVal === Constants.status_failed )
         {
@@ -538,7 +538,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             activityJson_Orig.processing.status = Constants.status_processing;
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardTrTag() );
             // Run UI Animation..
-            me.setIconTagRotation( syncIconTag, true );
+            FormUtil.rotateTag( syncIconTag, true );
 
 
             
@@ -552,8 +552,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
                 {
                     // Stop the Sync Icon rotation
-                    //me.setIconTagRotation( syncIconTag, false );
-                    me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+                    //FormUtil.rotateTag( syncIconTag, false );
+                    FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
                     // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
                     me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success ) {
@@ -561,14 +561,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
                         if ( success ) 
                         {
                             // Why need to call this again?
-                            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+                            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
                             afterDoneCall( true );
                         }
                         else 
                         {
                             // Why need to call this again?
-                            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+                            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
                             // 'syncedUp' processing data                
                             var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + JSON.stringify( responseJson ) );
@@ -591,8 +591,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
             console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
 
             // Stop the Sync Icon rotation
-            //me.setIconTagRotation( syncIconTag, false );
-            me.setIconTagRotation( me.getSyncButtonTag( me.activityId ), false );
+            //FormUtil.rotateTag( syncIconTag, false );
+            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
             afterDoneCall( false );
         }
@@ -734,23 +734,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
     */
 
-    me.updateItem_UI_Animation = function( runAnimation, activityId )
-    {
-        var syncButtonTag = me.getSyncButtonTag( activityId );
-
-        if ( syncButtonTag )
-        {
-            if ( runAnimation )
-            {
-                syncButtonTag.rotate({ count:999, forceJS: true, startDeg: 0 });
-            }
-            else
-            {
-                syncButtonTag.stop();
-            }
-        }
-    };
-
 
     // Update ActivityCard UI based on current activityItem data
     me.updateUI = function( divListItemTag, activityJson )
@@ -771,40 +754,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }
         }        
     };
-
-
-    me.updateItem_UI_StartSync = function( activityId )
-    {        
-        // start spinning "busy/working" icon
-        me.updateItem_UI_Animation( true, activityId ); 
-    };
-
-    me.updateItem_UI_FinishSync = function( activityId )
-    {
-        // stop spinning "busy" icon
-        me.updateItem_UI_Animation( false, activityId );
-
-        // update card status + activityType 
-        //me.updateItem_UI_Icons( me.activityJson, me.cwsRenderObj );
-
-        // TODO:  Update ActivityCard UI based on the updated info.
-        //  - Need to get more UI changes from syncManager.endSync()?
-        //me.updateUI( me.divListItemTag, me.activityJson );
-    };
-
-    
-    me.setIconTagRotation = function( divSyncIconTag, inProcess )
-    {
-        if ( inProcess )
-        {
-            divSyncIconTag.rotate({ count:999, forceJS: true, startDeg: 0 });
-        }
-        else
-        {
-            divSyncIconTag.stop();
-        }
-    };
-
 
     // --------------------------
 

@@ -44,6 +44,24 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 };
 
 
+FormUtil.rotateTag = function( tag, runRotation )
+{
+	if ( tag )
+	{
+		if ( runRotation )
+		{
+			tag.rotate({ count:999, forceJS: true, startDeg: 0 });
+		}
+		else
+		{
+			tag.rotate( { endDeg:360, duration:0 } );
+			//tag.stop();
+			//tag.rotate(0);
+		}	
+	}
+};
+
+
 // Temp use by 'dataList' for now - might populate it fully for more common use
 FormUtil.renderInputTag = function( dataJson, containerDivTag )
 {
