@@ -88,51 +88,32 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
     }
 
 
-    if ( disableCancel === undefined )
+    if ( disableCancel ) btnCancel.hide();
+    else
     {
         btnCancel.click( function () {
 
             if ( isSwitchToOnline )
             {
                 var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
-                AppModeSwitchPrompt.runAndSetManualSwitchAction( ConnManagerNew.OFFLINE, callBackTimeMs );
+                ConnManagerNew.setManualAppModeSwitch( ConnManagerNew.OFFLINE, callBackTimeMs );
+                AppModeSwitchPrompt.hideDialog();                
             }
 
             AppModeSwitchPrompt.cancelSwitchAction();
-
         });            
     }
-    else
-    {
-        if ( disableCancel === true )
-        {
-            btnCancel.hide();
-        }
-    }
+
 
     btnAction.click( function () {
 
         var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
-        AppModeSwitchPrompt.runAndSetManualSwitchAction( switchTo_appMode, callBackTimeMs );
-
-        /*
-        if ( isSwitchToOffline )
-        {
-            // restart network check so that timer follows directly behind new planned 'restart' networkMode
-
-            // TODO: JAMES: THIS SHOULD BE MUCH SIMPLER..
-            //ScheduleManager.restart_checkNSet_ServerAvailable();
-        }
-        else
-        {
-            ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-        }
-        */
-
+        ConnManagerNew.setManualAppModeSwitch( switchTo_appMode, callBackTimeMs );
+        AppModeSwitchPrompt.hideDialog();
     });
 
-    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
+    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
     AppModeSwitchPrompt.showDialog();
 
 };
@@ -214,7 +195,8 @@ AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function()
         AppModeSwitchPrompt.cancelSwitchAction();
     });
 
-    ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
+    
+    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 }
