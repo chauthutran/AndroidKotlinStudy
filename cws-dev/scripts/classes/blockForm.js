@@ -661,7 +661,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		optionInputTag.change( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
-			var checkedItems = divInputFieldTag.find("input[name='" + targetInputTag.attr("name") + "']:checked");
+			var checkedItems = divInputFieldTag.find("input[name='opt_" + targetInputTag.attr("name") + "']:checked");
 			var selectedValues = [];
 			for( var i=0; i<checkedItems.length; i++ )
 			{
