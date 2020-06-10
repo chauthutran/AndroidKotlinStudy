@@ -4,14 +4,11 @@
 // -------------------------------------------
 // -- AppModeSwitchPrompt NEW Class/Methods
 
-function AppModeSwitchPrompt( ConnManagerNew ) {
+function AppModeSwitchPrompt() {
 
     var me = this;
 
-    me.ConnManagerObj = ConnManagerNew;
-
     // MAIN METHODS FOR SHOWING DIALOGS RELATED TO NETWORK CHANGES
-
 
     me.showInvalidNetworkMode_Dialog = function ( appMode ) 
     {
@@ -46,7 +43,7 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
         });
 
         // TODO: REMOVE IT..
-        me.ConnManagerObj._cwsRenderObj.langTermObj.translatePage();
+        ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
         me.showDialog();
     }
@@ -54,9 +51,11 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
     me.showManualSwitch_Dialog = function ( switchTo_appMode, disableCancel ) 
     {
         // DISPLAYS WHEN USER CLICKs 'CLOUD' ICON in NAV HEADER > manual networkMode switch (to opposite of current)
+        //var switchChoiseStr = switchTo_appMode.toUpperCase();
+        // === 'OFFLINE';
 
         var switchPromptTag = $( '#networkSwitch' );
-        var switchPromptContentObj = ( switchTo_appMode.toUpperCase() === 'OFFLINE' ? $( Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts ) : $( Templates.ConnManagerNew_Dialog_Manual_goOnline ) );
+        var switchPromptContentObj = ( switchTo_appMode.toUpperCase() === 'OFFLINE' ) ? $( Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts ) : $( Templates.ConnManagerNew_Dialog_Manual_goOnline );
 
         var friendlyTitle = ( switchTo_appMode.toUpperCase() === 'OFFLINE' ? 'Go Offline' : 'Back Online' );
         var switchPromptText = ( switchTo_appMode.toUpperCase() === 'OFFLINE' ? Templates.ConnManagerNew_Dialog_prompt_manualOffline : Templates.ConnManagerNew_Dialog_prompt_manualOnline );
@@ -71,7 +70,7 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
         var btnCancel = switchPromptTag.find('.cancel');
         var btnAction = switchPromptTag.find('.runAction');
 
-        imgIcon.addClass( switchTo_appMode.toLowerCase() )
+        imgIcon.addClass( switchTo_appMode.toLowerCase() );
 
         dvTitle.html( friendlyTitle );
         btnAction.html( btnActionText );
@@ -117,20 +116,22 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
             if ( switchTo_appMode.toUpperCase() === 'OFFLINE' )
             {
                 // restart network check so that timer follows directly behind new planned 'restart' networkMode
+
+                // TODO: JAMES: THIS SHOULD BE MUCH SIMPLER..
                 ScheduleManager.restart_checkNSet_ServerAvailable();
             }
             else
             {
-                me.ConnManagerObj.update_UI( me.ConnManagerObj.statusInfo );
+                ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
             }
 
         });
 
-        me.ConnManagerObj._cwsRenderObj.langTermObj.translatePage();
+        ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
         me.showDialog();
 
-    }
+    };
 
     me.showManualSwitch_NetworkUnavailable_Dialog = function( rePromptWithCancel )
     {
@@ -164,18 +165,18 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
             btnCancel.html( 'CANCEL' );
         }
 
-        btnCancel.click(function () {
+        btnCancel.click( function () {
 
             me.cancelSwitchAction();
 
             if ( rePromptWithCancel )
             {
-                me.showManualSwitch_Dialog( 'OFFLINE', true )
+                me.showManualSwitch_Dialog( 'OFFLINE', true );
             }
 
         });
 
-        me.ConnManagerObj._cwsRenderObj.langTermObj.translatePage();
+        ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
         me.showDialog();
     }
@@ -208,16 +209,18 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
             me.cancelSwitchAction();
         });
 
-        me.ConnManagerObj._cwsRenderObj.langTermObj.translatePage();
+        ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
 
         me.showDialog();
     }
 
+
     me.runAndSetManualSwitchAction = function( newMode, repeat )
     {
-        var newStatusInfo = me.ConnManagerObj.statusInfo;
+        var newStatusInfo = ConnManagerNew.statusInfo;
         var switchPromptTag = $( '#networkSwitch' );
-        var switchOpt = ( repeat === undefined ? switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() : newStatusInfo.manual_Offline.retryOption ); //( '.[name=switch_waitingTimeOpt]' );
+        var switchOpt = ( repeat ) ? newStatusInfo.manual_Offline.retryOption : switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val();
+
 
         newStatusInfo.appMode = newMode;
         newStatusInfo.appMode_PromptedMode = newMode;
@@ -225,42 +228,43 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
         if ( newMode.toUpperCase() === 'OFFLINE' )
         {
             // MAIN Setting (true when switching to OFFLINE)
+            ConnManagerNew.setManualOffline( 'userChoiceTime_60sec' );
+
+
             newStatusInfo.manual_Offline.enabled = true;
 
-            newStatusInfo.manual_Offline.retryOption = switchOpt;
-            newStatusInfo.manual_Offline.retryDateTime = ( new Date( ( new Date ).getTime() + parseInt( switchOpt ) * 60 * 1000 ) ).toISOString();
-            newStatusInfo.manual_Offline.initiated = ( new Date ).toISOString();
+            //newStatusInfo.manual_Offline.retryOption = switchOpt;
+            //newStatusInfo.manual_Offline.retryDateTime = ( new Date( ( new Date ).getTime() + parseInt( switchOpt ) * 60 * 1000 ) ).toISOString();
+            //newStatusInfo.manual_Offline.initiated = ( new Date ).toISOString();
+
 
             // TODO: JAMES: THIS SHOULD NOT BE?
-            newStatusInfo.serverAvailable = false;
+            //newStatusInfo.serverAvailable = false;
 
-            me.ConnManagerObj.acceptPrompt_AppModeSwitch( newStatusInfo );
+            ConnManagerNew.acceptPrompt_AppModeSwitch( newStatusInfo );
         }
         else
         {
             // MAIN Setting (false when switching to ONLINE)
-            me.ConnManagerObj.statusInfo.manual_Offline.enabled = false;
+            ConnManagerNew.statusInfo.manual_Offline.enabled = false;
 
-            me.ConnManagerObj.acceptPrompt_AppModeSwitch( newStatusInfo );
+            ConnManagerNew.acceptPrompt_AppModeSwitch( newStatusInfo );
         }
 
         me.hideDialog();
-
-    }
-
+    };
 
 
-
+    /*
     // OTHER CLICK-BUTTON METHODS
-
-
     me.runSwitchAction = function () 
     {
-
         me.hideDialog();
 
-        me.ConnManagerObj.acceptPrompt_AppModeSwitch( statusInfo );
+        ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
     }
+    */
+
 
     me.cancelSwitchAction = function () 
     {
@@ -284,7 +288,7 @@ function AppModeSwitchPrompt( ConnManagerNew ) {
 
     me.getTimeWaitedText = function()
     {
-        var dtmLastInitiated = new Date( me.ConnManagerObj.statusInfo.manual_Offline.initiated );
+        var dtmLastInitiated = new Date( ConnManagerNew.statusInfo.manual_Offline.initiated );
         var objTime = Util.timeCalculation( new Date(), dtmLastInitiated );
 
         if ( objTime.hh > 6 )
