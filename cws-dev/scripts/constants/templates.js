@@ -449,10 +449,6 @@ Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
     <input type="radio" name="switch_waitingTimeOpt" value="240" id="waitingTimeOpt_240">
     <label for="waitingTimeOpt_240" term="">Try to connect in 4hr</label>
   </div>
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="0" id="waitingTimeOpt_0">
-    <label for="waitingTimeOpt_0" term="">Stay offline</label>
-  </div>
 </div>
 
 <div class="dialog__action">
