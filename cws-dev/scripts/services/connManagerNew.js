@@ -21,6 +21,7 @@ ConnManagerNew.statusInfo = {
 	'appMode_PromptedMode': '',
 	'manual_Offline': {
 		'enabled': false, 	// 'mode': ConnManagerNew.OFFLINE, 	// either online:boolean or named 'Offline' >> manual offline is only 'provisioned' networkMode setting 
+		'timeOutRef': undefined, // CallBack timeout reference
 		'retryOption': '',
 		'retryDateTime': '',
 		'initiated': ''
@@ -33,8 +34,6 @@ ConnManagerNew.efficiency = {
 };
 
 ConnManagerNew.switchPrompt_reservedMsgID;
-//ConnManagerNew.switchPromptObj = new AppModeSwitchPrompt();
-
 
 // ====================================================
 // ===============================
@@ -155,6 +154,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 	// Trigger AppMode Change Check
 	ConnManagerNew.appModeSwitchRequest( statusInfo );
 	// update UI icons to reflect current network change
+	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
 	ConnManagerNew.update_UI( statusInfo );
 
 
@@ -290,6 +290,8 @@ ConnManagerNew.isAppMode_Online = function()
 // ===============================================
 // --- Scheduler related Tasks ---
 
+
+// James?  Mine?
 ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 {
 	console.log( ' ~ running ConnManagerNew.scheduled_checkNSet_ServerAvailable' );
@@ -313,6 +315,39 @@ ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
 
 }
 
+
+ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTimeMs )
+{
+	var statusInfoRef = ConnManagerNew.statusInfo;
+	
+	if ( ConnManagerNew.isStrOFFLINE( newAppModeStr ) )
+	{
+		// If Manual Offline AppMode Requested, 
+		//	1. Set the 'AppMode' to Offline Manually.
+		statusInfoRef.appMode = newAppModeStr;
+		statusInfoRef.appMode_PromptedMode = newAppModeStr;
+	
+		//  2. Set a Call back in time.. - to remove the manual offline and trigger appMode check..
+		statusInfoRef.manual_Offline.timeOutRef = setTimeout( function( statusInfoRef ) {
+
+			statusInfoRef.manual_Offline.enabled = false;
+			ConnManagerNew.appModeSwitchRequest( statusInfoRef );
+		
+		}, callBackTimeMs, statusInfoRef );
+	}
+	else
+	{
+		// If manual timeout exists, clear that timeout, so that it does not fire later.
+		if ( statusInfoRef.manual_Offline.timeOutRef ) clearTimeout( statusInfoRef.manual_Offline.timeOutRef );
+
+		// If Manual Online, simply perform the check..
+		statusInfoRef.manual_Offline.enabled = false;
+		ConnManagerNew.appModeSwitchRequest( statusInfoRef );
+	}
+};
+
+
+
 ConnManagerNew.checkManualMode_Restore = function()
 {
 	return ( statusInfo.manual_Offline.enabled && 
@@ -327,27 +362,25 @@ ConnManagerNew.checkRestoreBlockedManualMode = function( statusInfo )
 			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) )
 	{
 
-		ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available ){
-
-			var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-
+		ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available )
+		{
 			if ( available )
 			{
 				ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
 				{
-					prompt.showManualSwitch_Dialog( 'Online' );
+					AppModeSwitchPrompt.showManualSwitch_Dialog( 'Online' );
 				})
 			}
 			else
 			{
 				if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
 				{
-					prompt.showManualSwitch_NetworkUnavailable_Dialog( true );
+					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( true );
 				}
 				else
 				{
 					//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
-					prompt.showManualSwitch_ServerUnavailable_Dialog();
+					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog();
 				}
 			}
 
@@ -359,7 +392,15 @@ ConnManagerNew.checkRestoreBlockedManualMode = function( statusInfo )
 // ===============================================================
 // =====================================
 
+ConnManagerNew.isStrONLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.ONLINE );
+};
 
+ConnManagerNew.isStrOFFLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.OFFLINE );
+};
 
 
 // ===============================================

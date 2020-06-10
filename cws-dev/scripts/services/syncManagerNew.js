@@ -395,6 +395,7 @@ SyncManagerNew.syncStart = function()
     return isOkToStart;
 };
 
+/*
 SyncManagerNew.syncAllButtonChange = function()
 {
     //showSyncIcon = ( ConnManagerNew.isAppMode_Online() );
@@ -423,6 +424,7 @@ SyncManagerNew.syncAllButtonChange = function()
         //$('#imgAppDataSyncStatus').hide()
     } 
 };
+*/
 
 
 SyncManagerNew.syncAll_WithChecks = function()
@@ -597,9 +599,6 @@ SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
     {
         var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
 
-        // TODO: AppModeSwitchPrompt should be static method..
-        var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-
         if ( goOnline )
         {
             ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available )
@@ -608,25 +607,25 @@ SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
                 {
                     ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
                     {
-                        prompt.showManualSwitch_Dialog( 'Online' );
+                        AppModeSwitchPrompt.showManualSwitch_Dialog( 'Online' );
                     })
                 }
                 else
                 {
                     if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
                     {
-                        prompt.showManualSwitch_NetworkUnavailable_Dialog();
+                        AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog();
                     }
                     else
                     {
-                        prompt.showManualSwitch_ServerUnavailable_Dialog();
+                        AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog();
                     }                    
                 }
             });
         }
         else
         {
-            prompt.showManualSwitch_Dialog( 'Offline' );
+            AppModeSwitchPrompt.showManualSwitch_Dialog( 'Offline' );
         }
 
     });

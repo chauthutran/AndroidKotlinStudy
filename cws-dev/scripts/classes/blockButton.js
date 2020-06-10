@@ -261,8 +261,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 					}
 					else
 					{
-						var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-						prompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode )
+						AppModeSwitchPrompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode )
 					}
 				});
 			}
