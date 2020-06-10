@@ -50,11 +50,13 @@ FormUtil.rotateTag = function( tag, runRotation )
 	{
 		if ( runRotation )
 		{
+			console.log( 'ROTATE STARTING..' );
 			tag.rotate({ count:999, forceJS: true, startDeg: 0 });
 		}
 		else
 		{
-			tag.rotate( { endDeg:360, duration:0 } );
+			console.log( 'ROTATE STOPPING..' );
+			tag.stop().rotate( { endDeg:360, duration:0 } );
 			//tag.stop();
 			//tag.rotate(0);
 		}	

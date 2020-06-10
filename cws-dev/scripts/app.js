@@ -121,6 +121,12 @@
   {
     // move into cwsRender?
     $('#imgAppDataSyncStatus').click(() => {
+      
+      //DevHelper.tempCount++;
+      //var remainder = ( DevHelper.tempCount % 2 );
+      //console.log( 'tempCount: ' + DevHelper.tempCount + ', ' + remainder );
+      //if ( remainder === 1 ) FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, true );
+      //else FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, false );
 
       SyncManagerNew.SyncMsg_ShowBottomMsg();
     });

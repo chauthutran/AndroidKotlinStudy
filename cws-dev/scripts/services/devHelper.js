@@ -10,6 +10,7 @@ function DevHelper() {};
 
 DevHelper.cwsRenderObj;
 DevHelper.INFO;
+DevHelper.tempCount = 0;
 
 DevHelper.sampleDataList = [{
     "clientDetails": {
