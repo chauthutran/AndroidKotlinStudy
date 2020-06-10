@@ -657,10 +657,10 @@ Util2.arrayPreviewRecord = function( title, arr )
 			titleTag.html( title );
 			titleTag.append( titleTag );
 
-			var td = $( '<td colspan=2 class="dataToHTMLtitle" />' );
+			var td = $('<td colspan=2 />' );
 			td.append( titleTag );
 
-			var tr = $( '<tr />');
+			var tr = $('<tr />');
 			tr.append( td );
 
 			ret.append( tr );
@@ -668,23 +668,23 @@ Util2.arrayPreviewRecord = function( title, arr )
 	
 		for ( var i = 0; i < arr.length; i++ )
 		{
-			if ( arr[ i ].type && arr[ i ].type == 'LABEL' )
+			var tr = $('<tr />');
+			ret.append( tr );
+			if ( arr[ i ].type && arr[ i ].type == 'SECTION' ) // Display GROUP names
 			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td colspan=2 class="dataToHTMLheader" />').html( arr[ i ].name ) );
+				var td = $('<td colspan=2 />');
+				var groupLabel = $("<h5/>").html( arr[ i ].name );
+				td.append( groupLabel );
+				tr.append( td );
 			}
 			else
 			{
-				var tr = $( '<tr />');
-				ret.append( tr );
-				tr.append( $( '<td class="dataToHTMLleft" />').html( arr[ i ].name ) );
-				tr.append( $( '<td class="dataToHTMLright" />').html( arr[ i ].value ) );
+				tr.append( $( '<td />').html( arr[ i ].name ) );
+				tr.append( $( '<td />').html( arr[ i ].value ) );
 			}
 		}
 	
-		var tr = $( '<tr />');
-		ret.append( tr );
+		ret.append(  $( '<tr />') ); // Add an empty row in the end of table
 		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
 
 	}

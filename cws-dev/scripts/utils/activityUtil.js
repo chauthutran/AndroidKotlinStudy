@@ -486,60 +486,34 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 {
 	// Input Tag values
 	var retDataArray = [];
-	var inputsJson;
-	var inputTags = formDivSecTag.find( '.dataValue' );
-	// var inputTags = formDivSecTag.find( '.displayValue' );
+	
+	var tags = formDivSecTag.find( '.dataValue, .section' ); // Get fields and GROUP names
 
-	inputTags.each( function()
+	tags.each( function()
 	{
-		var inputTag = $( this );	
-
-		var displayed = inputTag.closest( '.fieldBlock' ).is( ':visible' );
-		// var nameVal = inputTag.attr( 'name' );
-
-
-
-		// var getVal_visible = inputTag.is(':visible') || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ;
+		var tag = $( this );
+		var displayed = ( tag.hasClass("section")  ) ? tag.is( ':visible' ) : tag.closest( '.fieldBlock' ).is( ':visible' );
 
 		if ( displayed )
 		{
-			// if ( inputTag[ 0 ].nodeName != "LABEL" && inputTag[ 0 ].nodeName != "DIV" )
-			// {
-			// var	inputLabel = ActivityUtil.inputPreviewLabel( inputTag ); //$( inputTag ).closest( 'label' );	
-			// }
+			var labelTag, name, type, value;
 
-			// if ( inputTag[ 0 ].nodeName === "LABEL" )
-			// {
-			// 	if ( ( inputTag[ 0 ].innerText ).toString().length > 0 )
-			// 	{
-			// 		inputsJson = { name: inputTag[ 0 ].innerText, type: inputTag[ 0 ].nodeName, value: [] };
-			// 	}
-			// }
-			// else 
-			
-			
-			// if ( inputTag[ 0 ].nodeName === "INPUT" )
-			// {
-			// 	if ( ( inputTag[ 0 ].name ).toString().length > 0 && ( ! inputTag.hasClass( 'inputHidden' ) || inputTag.hasClass( 'MULTI_CHECKBOX' ) || inputTag.hasClass( 'RADIO' ) ) || ( inputTag.attr( 'updates' ) == undefined && inputTag.hasClass( 'CHECKBOX' )  ) )
-			// 	{
-			// 		inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
-			// 	}
-			// }
-			// else if ( inputTag[ 0 ].nodeName === "SELECT" )
-			// {
-			// 	inputsJson = { name: ( inputLabel ? inputLabel : inputTag[ 0 ].name ), type: inputTag[ 0 ].nodeName, value: FormUtil.getTagVal( inputTag ) };
-			// }
-
-			var labelTag = $( inputTag[ 0 ] ).closest("div.fieldBlock").find("label");
-			var name = ( labelTag ) ? labelTag.html() : inputTag[ 0 ].name;
-			var type = inputTag[ 0 ].nodeName;
-			var value = $( inputTag[ 0 ] ).closest("div.fieldBlock").find(".displayValue").val();
-			if( type == "SELECT" )
+			if( tag.hasClass("section") )
 			{
-				value = $( inputTag[ 0 ] ).find("option:selected").text();
+				labelTag = $( tag[ 0 ] ).find("label");
+				name = labelTag.html();
+				type = "SECTION";
+				value = labelTag.html();
 			}
-
-			inputsJson = { name: name, type: type, value: value };
+			else
+			{
+				labelTag = $( tag[ 0 ] ).closest("div.fieldBlock").find("label");
+				name = ( labelTag ) ? labelTag.html() : tag[ 0 ].name;
+				type = tag[ 0 ].nodeName;
+				value = ( type == "SELECT" ) ? $( tag[ 0 ] ).find("option:selected").text() : $( tag[ 0 ] ).closest("div.fieldBlock").find(".displayValue").val();
+			}
+			
+			var inputsJson = { name: name, type: type, value: value };
 
 			if ( inputsJson )
 			{
