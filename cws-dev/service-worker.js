@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "f4e659e227eb6ee3ed35521e525d4e58"
+    "revision": "854a299bc6ef047357eda83cace1e9a1"
   },
   {
     "url": "redeemGen.html",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
-    "revision": "9c17c23a4bfb3557a563345b42f841da"
+    "revision": "da50f2ca92c3220abbf37de47dddab1a"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -1453,7 +1453,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "b5e79da5426fc474a7837421c027cfd5"
+    "revision": "07e6b9f9e88e97eaa7ea9c6d39c0860f"
   },
   {
     "url": "scripts/services/scheduleManager.js",

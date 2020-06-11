@@ -18,7 +18,7 @@ WsCallManager.wsUrlList = {
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
     'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
     'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
-    'test': 'https://pwa-dev.psi-connect.org/ws/dws-test'
+    'test': 'https://pwa-test.psi-connect.org/ws/dws-test'
 };
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';
