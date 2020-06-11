@@ -28,6 +28,12 @@ ScheduleManager.timerID_serverAvilableCheck;
 
 // === PART 1. Schedule Call/Start Methods =============
 
+ScheduleManager.runSchedules_AppStart = function()
+{
+	ScheduleManager.schedule_serverStatus_Check( true );
+};
+
+
 ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {	
 	// TODO: ENABLE THIS LATER: For 'Sync' Down?

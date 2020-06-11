@@ -38,7 +38,7 @@ WsCallManager.setWsTarget = function()
 
     // use current site 
     // localhost is set to use 'stage'
-    if ( WsCallManager.isLocalDevCase ) stageName = 'stage';
+    if ( WsCallManager.isLocalDevCase ) stageName = 'test';
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';

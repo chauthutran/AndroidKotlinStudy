@@ -39,6 +39,8 @@ function app()
   {
     try {
           
+      // --------------------
+      // 1. SET UP PHASE
       WsCallManager.setWsTarget();
 
       // app startup event setup (for listeners)
@@ -50,17 +52,23 @@ function app()
 
       me.App_UI_startUp_Progress( '50%' );
 
-      // --------------------
 
-      // TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
+      // --------------------
+      // 2. START PHASE
+      // EVENT SETUP - TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
       ConnManagerNew.cloudConnStatusClickSetup( $( '#divNetworkStatus' ) );
 
+      // Start Connection..
+      ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
+
+      // Start the scheduling on app start
+      ScheduleManager.runSchedules_AppStart();
 
       me.App_UI_startUp_Progress( '75%' );
 
-      // JAMES: Removed the call back wait..
-      ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
-
+      // --------------------
+      // 3. FINISH APP START PHASE
+      
       me.App_version_UI_Update();
 
       me.App_syncIcon_UI_event();
