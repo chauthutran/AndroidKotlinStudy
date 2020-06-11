@@ -236,6 +236,12 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 };
 
 
+ConnManagerNew.isAppMode_Online = function()
+{
+	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
+};
+
+
 // ===============================================
 // --- Others --------------------
 
@@ -248,13 +254,6 @@ ConnManagerNew.createNetworkConnListeners = function()
     window.addEventListener( 'online', ConnManagerNew.updateNetworkConnStatus );
 	window.addEventListener( 'offline', ConnManagerNew.updateNetworkConnStatus );
 };
-
-
-ConnManagerNew.isAppMode_Online = function()
-{
-	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
-}
-
 
 // ===============================================
 // --- Manual AppMode Swtich related Tasks ---
@@ -418,71 +417,3 @@ ConnManagerNew.setStatusCss = function( tag, isOn )
 	tag.css( 'background-color', colorStr );
 };
 
-
-/*
-// James?  Mine?
-ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
-{
-	console.log( ' ~ running ConnManagerNew.scheduled_checkNSet_ServerAvailable' );
-	if ( ! ConnManagerNew.statusInfo.manual_Offline.enabled )
-	{
-		// Below will trigger another 
-		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-		{
-			// called again to update UI to new connect settings
-			ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-
-			//if ( callBack ) callBack( true );
-		});
-	}
-	else
-	{
-		ConnManagerNew.checkRestoreBlockedManualMode( ConnManagerNew.statusInfo );
-		// called again to update UI to new connect settings
-		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-	}
-
-}
-*/
-
-/*
-ConnManagerNew.checkManualMode_Restore = function()
-{
-	return ( statusInfo.manual_Offline.enabled && 
-		( statusInfo.manual_Offline.retryOption > 0 ) && 
-			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) );
-}
-
-ConnManagerNew.checkRestoreBlockedManualMode = function( statusInfo )
-{
-	if ( statusInfo.manual_Offline.enabled && 
-		( statusInfo.manual_Offline.retryOption > 0 ) && 
-			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) )
-	{
-
-		ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available )
-		{
-			if ( available )
-			{
-				ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-				{
-					AppModeSwitchPrompt.showManualSwitch_Dialog( 'Online' );
-				})
-			}
-			else
-			{
-				if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
-				{
-					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( true );
-				}
-				else
-				{
-					//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
-					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog();
-				}
-			}
-
-		});
-	}
-}
-*/
