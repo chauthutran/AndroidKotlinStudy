@@ -23,11 +23,11 @@ function app()
 
   me.startApp = function()
   {
-    App_UI_startUp_loading();
+    me.App_UI_startUp_loading();
 
     me._swManagerObj.run( function() {
 
-      App_UI_startUp_Progress( '25%' );
+      me.App_UI_startUp_Progress( '25%' );
 
       me.startAppProcess();
     } );   
@@ -46,9 +46,9 @@ function app()
 
       ConnManagerNew.createNetworkConnListeners();
 
-      ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
+      //ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
 
-      DevHelper.setUp(me._cwsRenderObj);
+      DevHelper.setUp( me._cwsRenderObj );
 
       me.App_UI_startUp_Progress( '50%' );
 
@@ -61,7 +61,7 @@ function app()
       me.App_UI_startUp_Progress( '75%' );
 
       // JAMES: Removed the call back wait..
-      ConnManagerNew.appStartUp_SetStatus(me._cwsRenderObj);
+      ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
 
       me.App_version_UI_Update();
 
@@ -94,7 +94,7 @@ function app()
     // show PWA (loading) screen
     FormMsgManager.appBlockTemplate('appLoad');
 
-    App_UI_startUp_Progress( '10%' );
+    me.App_UI_startUp_Progress( '10%' );
   };
 
 

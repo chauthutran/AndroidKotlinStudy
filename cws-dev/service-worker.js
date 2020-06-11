@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "d83eed2085bfe24294824ff596b8b4fb"
+    "revision": "47b54f3d65f446eb7c6c704cb4602774"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "6a32d40b541dd18f2a97878f1b325a5d"
+    "revision": "c76a9ba3a7123b2ceee0df960aef5232"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1457,7 +1457,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "adeffa866a9dc4fb9975ace91dc854c6"
+    "revision": "75f4861cd98c62619cb3aa19a196c0fc"
   },
   {
     "url": "scripts/services/sessionManager.js",

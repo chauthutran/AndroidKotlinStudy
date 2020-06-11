@@ -36,12 +36,14 @@ ScheduleManager.timerID_serverAvilableCheck;
 
 // === PART 1. Schedule Call/Start Methods =============
 
+/*
 ScheduleManager.runSchedules_AppStart = function( callBack )
 {
 	ScheduleManager.schedule_serverStatus_Check( true );
 
 	if ( callBack ) callBack();
 }
+*/
 
 ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {
