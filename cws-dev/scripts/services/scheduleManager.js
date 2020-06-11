@@ -3,7 +3,7 @@
 //	  - Setup schedules for tasks that runs in the background
 //		LVL 1:
 //		1. Create Initiate method to start task schedules in the beginning of the app
-//		2. Create method to start task schedules after login
+//		2. Create method to start task schedules after login  <-- what is ths?
 //		3. Create method to cancel task schedules after logout
 //	
 //		LVL 2:
@@ -36,15 +36,6 @@ ScheduleManager.timerID_serverAvilableCheck;
 
 // === PART 1. Schedule Call/Start Methods =============
 
-/*
-ScheduleManager.runSchedules_AppStart = function( callBack )
-{
-	ScheduleManager.schedule_serverStatus_Check( true );
-
-	if ( callBack ) callBack();
-}
-*/
-
 ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {
 	//ScheduleManager.schedule_showHideSyncAllButtonUI(); 	//manual sync (enable)
@@ -59,7 +50,8 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 	console.log( 'runSchedules_AfterLogin' );
 
 	if ( callBack ) callBack();
-}
+};
+
 
 ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 {
@@ -71,12 +63,12 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 	console.log( 'stopSchedules_AfterLogOut' );
 
 	if ( callBack ) callBack();
-}
+};
 
 // -------------------------------------------------------------------
 // ------ Sub Methods ------------------------------
 
-/*
+
 ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway ) 
 {
 	if ( ! NotRunRightAway ) ConnManagerNew.scheduled_checkNSet_ServerAvailable();
@@ -85,7 +77,7 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.scheduled_checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
 };
 
-
+/*
 ScheduleManager.restart_checkNSet_ServerAvailable = function()
 {
 	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
@@ -123,14 +115,17 @@ ScheduleManager.schedule_syncAllRun = function( NotRunRightAway )
 
 	// 30 seconds
 	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_WithChecks, ScheduleManager.interval_scheduleSyncAllRun );
-}
+};
 
+/*
 ScheduleManager.schedule_trackConnectionType = function( NotRunRightAway )
 {
 	if ( ! NotRunRightAway ) ConnManagerNew.trackConnectionType();
 
 	ScheduleManager.timerID_trackConnectionType = setInterval( ConnManagerNew.trackConnectionType, ScheduleManager.interval_networkConnectionTypeCheck );
 }
+*/
+
 
 // -----------------------------------------------
 // --- SyncDown Once when Online Schedule ----

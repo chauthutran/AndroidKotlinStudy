@@ -46,15 +46,13 @@ function app()
 
       ConnManagerNew.createNetworkConnListeners();
 
-      //ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
-
       DevHelper.setUp( me._cwsRenderObj );
 
       me.App_UI_startUp_Progress( '50%' );
 
       // --------------------
 
-      // MOVED FROM login
+      // TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
       ConnManagerNew.cloudConnStatusClickSetup( $( '#divNetworkStatus' ) );
 
 
