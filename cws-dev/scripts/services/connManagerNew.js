@@ -310,10 +310,7 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 {
 	var statusInfoRef = ConnManagerNew.statusInfo;
-	
-	console.log( 'ConnManagerNew.setManualAppModeSwitch - newAppModeStr: ' + newAppModeStr );
-	console.log( 'callBackTime: ' + callBackTime );
-	
+		
 	if ( ConnManagerNew.isStrOFFLINE( newAppModeStr ) )
 	{
 		// If Manual Offline AppMode Requested, 
@@ -321,14 +318,9 @@ ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 		ConnManagerNew.setAppMode( ConnManagerNew.OFFLINE, statusInfoRef );
 		statusInfoRef.manual_Offline.enabled = true;
 
-		console.log( 'MANUAL OFFLINE REQUESTED:');
-		console.log( statusInfoRef );
-		
 
 		//  2. Set a Call back in time.. - to remove the manual offline and trigger appMode check..
 		statusInfoRef.manual_Offline.timeOutRef = setTimeout( function( statusInfoRef ) {
-
-			console.log( 'timeOut Called' );
 
 			statusInfoRef.manual_Offline.enabled = false;
 			ConnManagerNew.appModeSwitchRequest( statusInfoRef );
@@ -374,7 +366,7 @@ ConnManagerNew.update_UI = function( statusInfo )
 	}
 
 	ConnManagerNew.update_UI_statusDots( statusInfo );
-}
+};
 
 
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
