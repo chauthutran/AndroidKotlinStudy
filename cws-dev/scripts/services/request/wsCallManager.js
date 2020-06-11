@@ -17,7 +17,8 @@ WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
     'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
-    'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev'
+    'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
+    'test': 'https://pwa-dev.psi-connect.org/ws/dws-test'
 };
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';
@@ -42,6 +43,7 @@ WsCallManager.setWsTarget = function()
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
+    else if ( originUrl.indexOf( 'https://pwa-test.' ) === 0 ) stageName = 'test';
     
     WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
 };
