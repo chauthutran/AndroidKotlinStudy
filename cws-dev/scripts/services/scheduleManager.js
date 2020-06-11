@@ -68,23 +68,13 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 // -------------------------------------------------------------------
 // ------ Sub Methods ------------------------------
 
-
 ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway ) 
 {
-	if ( ! NotRunRightAway ) ConnManagerNew.scheduled_checkNSet_ServerAvailable();
+	if ( ! NotRunRightAway ) ConnManagerNew.checkNSet_ServerAvailable();
 
 	// 30 seconds
-	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.scheduled_checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
+	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
 };
-
-/*
-ScheduleManager.restart_checkNSet_ServerAvailable = function()
-{
-	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
-
-	ScheduleManager.schedule_serverStatus_Check();
-};
-*/
 
 /*
 // NOT CALLED FOR v1.3 > SILENT SWITCHING (code wasn't used in v1.2.4?)

@@ -105,9 +105,8 @@ ConnManagerNew.checkNSet_ServerAvailable = function( statusInfo, callBack )
 	{
 		ConnManagerNew.changeServerAvailableIfDiff( newAvailable, statusInfo );
 
-		callBack( newAvailable );
+		if ( callBack ) callBack( newAvailable );
 	});	
-
 };
 
 
@@ -164,11 +163,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 		if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
 		{
 			// Below will trigger another 
-			ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-			{
-				// called again to update UI to new connect settings
-				ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-			});
+			ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo );
 		}	
 	}		
 };
