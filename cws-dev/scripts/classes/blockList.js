@@ -262,8 +262,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.otherInitialRenderSetup = function()
     {
-        SyncManagerNew.setBlockListObj( me ); // Not Utilized, yet.
-
         me.cwsRenderObj.favIcons_Update();
     };
 

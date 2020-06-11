@@ -434,22 +434,29 @@ Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
 
 <div class="networkSwitchOpts">
   <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="1" id="waitingTimeOpt_1">
-    <label for="waitingTimeOpt_1" term="">Try to connect in 60sec</label>
+    <input type="radio" name="switch_waitingTimeOpt" value="10" id="waitingTimeOpt_10s">
+    <label for="waitingTimeOpt_10s" term="">Try to connect in 10sec</label>
   </div>
   <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" CHECKED value="30" id="waitingTimeOpt_30">
-    <label for="waitingTimeOpt_30" term="">Try to connect in 30min</label>
+    <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60s">
+    <label for="waitingTimeOpt_60s" term="">Try to connect in 60sec</label>
   </div>
   <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60">
-    <label for="waitingTimeOpt_60" term="">Try to connect in 1hr</label>
+    <input type="radio" name="switch_waitingTimeOpt" CHECKED value="180" id="waitingTimeOpt_30m">
+    <label for="waitingTimeOpt_30m" term="">Try to connect in 30min</label>
   </div>
   <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="240" id="waitingTimeOpt_240">
-    <label for="waitingTimeOpt_240" term="">Try to connect in 4hr</label>
+    <input type="radio" name="switch_waitingTimeOpt" value="360" id="waitingTimeOpt_1h">
+    <label for="waitingTimeOpt_1h" term="">Try to connect in 1hr</label>
+  </div>
+  <div class="networkSwitchOpt radio-group">
+    <input type="radio" name="switch_waitingTimeOpt" value="1440" id="waitingTimeOpt_4h">
+    <label for="waitingTimeOpt_4h" term="">Try to connect in 4hr</label>
   </div>
 </div>
+
+
+
 
 <div class="dialog__action">
   <div id="dialog_act2" class="button-text warning">

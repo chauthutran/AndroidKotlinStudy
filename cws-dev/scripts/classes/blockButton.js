@@ -242,7 +242,11 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 					var blockDivTag = btnTag.closest( 'div.block' );
 					var formDivSecTag = blockDivTag.find( '.formDivSec' );
 
-					if ( me.networkModeSupported( btnJson ) )
+					if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
+					{
+						AppModeSwitchPrompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode, cwsRenderObj );
+					}
+					else
 					{
 						// NOTE: TRAN VALIDATION
 						if( me.validationObj.checkFormEntryTagsData( formDivSecTag ) )
@@ -251,18 +255,13 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 							//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
 							ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
-							if ( btnJson.buttonType === 'listRightImg' )
-							{
-								var loadingTag = FormUtil.generateLoadingTag( btnTag );
-							} 
+							//if ( btnJson.buttonType === 'listRightImg' )
+							//{
+							//	var loadingTag = FormUtil.generateLoadingTag( btnTag );
+							//} 
 
 							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
 						}
-					}
-					else
-					{
-						var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-						prompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode )
 					}
 				});
 			}
@@ -311,19 +310,10 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 		}
 	}
 
-	me.networkModeSupported = function( btnJson )
+	me.networkModeNotSupported = function( btnJson, appMode )
 	{
-		var supported = true;
-
-		if ( btnJson.notSupportedMode !== undefined )
-		{
-			if ( btnJson.notSupportedMode[ ConnManagerNew.statusInfo.appMode.toLowerCase() ] )
-			{
-				supported = false; 
-			}
-		}
-
-		return supported;
+		return ( btnJson.notSupportedMode 
+			&& btnJson.notSupportedMode[ appMode.toLowerCase() ] );
 	}
 
 	me.renderBlockTabContent = function( liContentTag, onClick )

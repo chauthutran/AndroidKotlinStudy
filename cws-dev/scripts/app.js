@@ -4,92 +4,99 @@
 // 3. start connectionManager (+ scheduler)
 // 4. run other things (memory swap?)
 
+function app()
+{
+	var me = this;
 
-( function () {
-
-  'use strict';
-
-  const _cwsRenderObj = new cwsRender();
-  const _swManagerObj = new swManager( _cwsRenderObj );
+  me._cwsRenderObj;
+  me._swManagerObj;
 
   // ----------------------------------------------------
 
-  App_UI_startUp_loading();
-
-  _swManagerObj.run( function(){
-
-    App_UI_startUp_Progress( '25%' );
-
-    startApp();
-
-  } );   
+	me.initialize = function()
+	{
+    // Instantiate Classes
+    me._cwsRenderObj = new cwsRender();
+    me._swManagerObj = new swManager( me._cwsRenderObj );
+  };
 
 
-  function startApp() 
+  me.startApp = function()
   {
+    me.App_UI_startUp_loading();
 
-    WsCallManager.setWsTarget();
+    me._swManagerObj.run( function() {
 
-    // app startup event setup (for listeners)
-    window.addEventListener('appinstalled', App_installed_done);
+      me.App_UI_startUp_Progress( '25%' );
 
-    ConnManagerNew.createNetworkConnListeners();
+      me.startAppProcess();
+    } );   
+  };
 
-    ScheduleManager.runSchedules_AppStart(); //here? before network+server 1st checked
-    
-    DevHelper.setUp( _cwsRenderObj );
+  // ----------------------------------------------------
 
-    App_UI_startUp_Progress( '50%' );
-
+  me.startAppProcess = function() 
+  {
     try {
+          
+      WsCallManager.setWsTarget();
 
-      // MOVED FROM login
-      SyncManagerNew.syncAllStatusClickSetup( $( '#divNetworkStatus' ) );
+      // app startup event setup (for listeners)
+      window.addEventListener( 'appinstalled', me.App_installed_done);
 
-      App_UI_startUp_Progress( '75%' );
+      ConnManagerNew.createNetworkConnListeners();
+
+      DevHelper.setUp( me._cwsRenderObj );
+
+      me.App_UI_startUp_Progress( '50%' );
+
+      // --------------------
+
+      // TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
+      ConnManagerNew.cloudConnStatusClickSetup( $( '#divNetworkStatus' ) );
+
+
+      me.App_UI_startUp_Progress( '75%' );
 
       // JAMES: Removed the call back wait..
-      ConnManagerNew.appStartUp_SetStatus( _cwsRenderObj );
-      //, function () {
+      ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
 
-        App_version_UI_Update();
+      me.App_version_UI_Update();
 
-        App_syncIcon_UI_event();
+      me.App_syncIcon_UI_event();
 
-        App_UI_startUp_Progress( '80%' );
+      me.App_UI_startUp_Progress( '80%' );
 
-        _cwsRenderObj.render();
+      me._cwsRenderObj.render();
 
-        FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
+      FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
-        App_UI_startUp_Progress( '90%' );
+      me.App_UI_startUp_Progress( '90%' );
 
-        App_checkUpdates_found_prompt();
+      me.App_checkUpdates_found_prompt();
 
-        App_UI_startUp_Progress( '100%' );
+      me.App_UI_startUp_Progress( '100%' );
 
-        App_UI_startUp_ready();
+      me.App_UI_startUp_ready();
 
-      //});
-
+    } catch (err) {
+      console.log('error starting App > startApp() error: ' + err);
     }
-    catch( err )
-    {
-      console.log( 'error starting App > startApp() error: ' + err );
-    }
-  }
+  };
 
-  function App_UI_startUp_loading()
+
+  // ------------------------------
+
+  me.App_UI_startUp_loading = function()
   {
-
     // show PWA (loading) screen
     FormMsgManager.appBlockTemplate('appLoad');
 
-    App_UI_startUp_Progress( '10%' );
+    me.App_UI_startUp_Progress( '10%' );
+  };
 
-  }
 
-  function App_UI_startUp_ready()
+  me.App_UI_startUp_ready = function()
   {
     // hide PWA (loading) screen: timeout used for delay (UI effect)
     setTimeout(function () {
@@ -102,22 +109,24 @@
         DevHelper.loadSampleData();
       } )
 
-    }, 500)
+    }, 500);
+  };
 
-  }
 
-  function App_UI_startUp_Progress( perc )
+  me.App_UI_startUp_Progress = function( perc )
   {
     $( 'div.startUpProgress' ).css( 'width', perc );
     //$( 'div.Nav__Title' ).html( perc );
-  }
+  };
 
-  function App_version_UI_Update()
+
+  me.App_version_UI_Update = function()
   {
-    $('#spanVersion').text('v' + _ver);
-  }
+    $( '#spanVersion' ).text( 'v' + _ver );
+  };
 
-  function App_syncIcon_UI_event()
+
+  me.App_syncIcon_UI_event = function()
   {
     // move into cwsRender?
     $('#imgAppDataSyncStatus').click(() => {
@@ -132,14 +141,16 @@
     });
   };
 
-  function App_checkUpdates_found_prompt()
+
+  me.App_checkUpdates_found_prompt = function()
   {
-    if ( _swManagerObj.swPromptRefresh ) {
-      _cwsRenderObj.createRefreshIntervalTimer(_ver);
+    if ( me._swManagerObj.swPromptRefresh ) {
+      me._cwsRenderObj.createRefreshIntervalTimer(_ver);
     }
-  }
+  };
   
-  function App_installed_done(event) {
+
+  me.App_installed_done = function( event ) {
 
     // Track event: The app was installed (banner or manual installation)
     FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
@@ -147,8 +158,10 @@
       ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
       playSound("coin");
     });
+  };
 
-  }
+	// ======================================
 
+	me.initialize();
 
-})();
+}

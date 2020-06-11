@@ -395,6 +395,7 @@ SyncManagerNew.syncStart = function()
     return isOkToStart;
 };
 
+/*
 SyncManagerNew.syncAllButtonChange = function()
 {
     //showSyncIcon = ( ConnManagerNew.isAppMode_Online() );
@@ -423,6 +424,7 @@ SyncManagerNew.syncAllButtonChange = function()
         //$('#imgAppDataSyncStatus').hide()
     } 
 };
+*/
 
 
 SyncManagerNew.syncAll_WithChecks = function()
@@ -582,52 +584,3 @@ SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
 
 // ===================================================
 // === OTHERS Methods =============
-
-SyncManagerNew.setBlockListObj = function( blockListObj )
-{
-    SyncManagerNew.blockListObj = blockListObj;
-};
-
-
-// Call this when app starts.
-SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
-{
-    //$( '#divNetworkStatus' ).click( function()
-    divNetworkStatusTag.off( 'click' ).click( function()
-    {
-        var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
-
-        // TODO: AppModeSwitchPrompt should be static method..
-        var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-
-        if ( goOnline )
-        {
-            ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available )
-            {
-                if ( available )
-                {
-                    ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-                    {
-                        prompt.showManualSwitch_Dialog( 'Online' );
-                    })
-                }
-                else
-                {
-                    if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
-                    {
-                        prompt.showManualSwitch_NetworkUnavailable_Dialog();
-                    }
-                    else
-                    {
-                        prompt.showManualSwitch_ServerUnavailable_Dialog();
-                    }                    
-                }
-            });
-        }
-        else
-        {
-            prompt.showManualSwitch_Dialog( 'Offline' );
-        }
-
-    });
-};

@@ -21,6 +21,7 @@ ConnManagerNew.statusInfo = {
 	'appMode_PromptedMode': '',
 	'manual_Offline': {
 		'enabled': false, 	// 'mode': ConnManagerNew.OFFLINE, 	// either online:boolean or named 'Offline' >> manual offline is only 'provisioned' networkMode setting 
+		'timeOutRef': undefined, // CallBack timeout reference
 		'retryOption': '',
 		'retryDateTime': '',
 		'initiated': ''
@@ -33,8 +34,6 @@ ConnManagerNew.efficiency = {
 };
 
 ConnManagerNew.switchPrompt_reservedMsgID;
-//ConnManagerNew.switchPromptObj = new AppModeSwitchPrompt();
-
 
 // ====================================================
 // ===============================
@@ -106,9 +105,8 @@ ConnManagerNew.checkNSet_ServerAvailable = function( statusInfo, callBack )
 	{
 		ConnManagerNew.changeServerAvailableIfDiff( newAvailable, statusInfo );
 
-		callBack( newAvailable );
+		if ( callBack ) callBack( newAvailable );
 	});	
-
 };
 
 
@@ -155,6 +153,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 	// Trigger AppMode Change Check
 	ConnManagerNew.appModeSwitchRequest( statusInfo );
 	// update UI icons to reflect current network change
+	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
 	ConnManagerNew.update_UI( statusInfo );
 
 
@@ -164,11 +163,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 		if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
 		{
 			// Below will trigger another 
-			ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-			{
-				// called again to update UI to new connect settings
-				ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-			});
+			ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo );
 		}	
 	}		
 };
@@ -196,25 +191,47 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 {
 	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo( statusInfo );
 
-	ConnManagerNew.setAppMode( appModeNew, statusInfo );
-
-	if ( FormUtil.checkLogin() ) ConnManagerNew.refreshUI_networkModeDependencies();
-
+	ConnManagerNew.setAppMode( appModeNew, statusInfo ); //, function( appModeChanged ) 
+	/*{
+		if ( appModeChanged )
+		{
+			ConnManagerNew.update_UI( statusInfo );	
+			if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
+		}
+	} );
+	*/
 };
 
-ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) 
-{
-	statusInfo.appMode = appModeNew;
-	console.log( 'AppMode Set to: ' + appModeNew );
-	console.log( statusInfo );
 
-	// TODO: NEED TO TRIGGER SOME UI (Or others) CHANGES DUE TO AppMode Change
-	ConnManagerNew.update_UI( statusInfo );
-};
-
-ConnManagerNew.refreshUI_networkModeDependencies = function()
+ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack ) 
 {
-	ConnManagerNew._cwsRenderObj.handleAppMode_Switch();
+	console.log( 'ConnManagerNew.setAppMode Before' );
+	console.log( statusInfo );	
+	var existingAppMode = statusInfo.appMode;
+
+	// Set appMode
+	if ( statusInfo.manual_Offline.enabled ) 
+	{
+		statusInfo.appMode = ConnManagerNew.OFFLINE;
+		console.log( 'In Manual Offline Mode.  Stay in OFFLINE.  Requeseted AppMode: ' + appModeNew );
+		console.log( statusInfo );	
+	}
+	else 
+	{
+		statusInfo.appMode = appModeNew;
+		console.log( 'AppMode Changed to: ' + appModeNew );
+		console.log( statusInfo );	
+	}
+
+	console.log( 'existingAppMode: ' + existingAppMode );
+
+	// call CallBack Method
+	//var appModeChanged = ( statusInfo.appMode !== existingAppMode );
+	if ( statusInfo.appMode !== existingAppMode )
+	{
+		ConnManagerNew.update_UI( statusInfo );	
+		if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
+	}
 };
 
 
@@ -224,51 +241,14 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 };
 
 
-// ===============================================
-// --- Prompt App Mode Switch Related --------------------
-
-
-ConnManagerNew.cancelPrompt_AppModeSwitch = function( appModeNew, statusInfo ) 
+ConnManagerNew.isAppMode_Online = function()
 {
-	//if ( appModeNew === statusInfo.appMode )
-	if ( appModeNew !== statusInfo.appMode_PromptedMode )
-	ConnManagerNew.hidePrompt_AppSwitch();
-
+	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
 };
-
-// Called from other place - event handler click..
-ConnManagerNew.acceptPrompt_AppModeSwitch = function( statusInfo )
-{
-	ConnManagerNew.setAppMode( statusInfo.appMode_PromptedMode, statusInfo );
-
-	ConnManagerNew._cwsRenderObj.handleAppMode_Switch(); //rename function to something like cwsRenderObj.handleAppMode_StartSwitch
-
-	ConnManagerNew.cancelAndHide_promptModeSwitch( statusInfo );
-};
-
-// 
-ConnManagerNew.rejectPrompt_AppModeSwitch = function()
-{
-	ConnManagerNew.hidePrompt_AppSwitch();
-}
-
-ConnManagerNew.cancelAndHide_promptModeSwitch = function( statusInfo )
-{
-	statusInfo.appMode_PromptedMode = '';
-
-	ConnManagerNew.hidePrompt_AppSwitch();
-}
-
-ConnManagerNew.hidePrompt_AppSwitch = function()
-{
-	//ConnManagerNew.switchPrompt_reservedMsgID = ConnManagerNew.switchPromptObj.hidePrompt( ConnManagerNew.switchPrompt_reservedMsgID );
-	//MsgManager.clearReservedMessage( ConnManagerNew.switchPrompt_reservedMsgID );
-}
 
 
 // ===============================================
 // --- Others --------------------
-
 
 
 // ===============================================
@@ -280,86 +260,97 @@ ConnManagerNew.createNetworkConnListeners = function()
 	window.addEventListener( 'offline', ConnManagerNew.updateNetworkConnStatus );
 };
 
-
-ConnManagerNew.isAppMode_Online = function()
-{
-	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
-}
-
-
 // ===============================================
-// --- Scheduler related Tasks ---
+// --- Manual AppMode Swtich related Tasks ---
 
-ConnManagerNew.scheduled_checkNSet_ServerAvailable = function()
+// Call this when app starts.
+ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 {
-	console.log( ' ~ running ConnManagerNew.scheduled_checkNSet_ServerAvailable' );
-	if ( ! ConnManagerNew.statusInfo.manual_Offline.enabled )
-	{
-		// Below will trigger another 
-		ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
-		{
-			// called again to update UI to new connect settings
-			ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+    //$( '#divNetworkStatus' ).click( function()
+    divNetworkStatusTag.off( 'click' ).click( function()
+    {
+        if ( ConnManagerNew.isAppMode_Online() )
+        {
+			// Show Dialog for Manual Offline - If currently online..
+			AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, ConnManagerNew._cwsRenderObj );
+        }
+        else
+        {
+			// Show Dialog for Manual Online - only if was manual offline & netowrk available
+			var statusInfoRef = ConnManagerNew.statusInfo;
 
-			//if ( callBack ) callBack( true );
-		});
-	}
-	else
-	{
-		ConnManagerNew.checkRestoreBlockedManualMode( ConnManagerNew.statusInfo );
-		// called again to update UI to new connect settings
-		ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
-	}
-
-}
-
-ConnManagerNew.checkManualMode_Restore = function()
-{
-	return ( statusInfo.manual_Offline.enabled && 
-		( statusInfo.manual_Offline.retryOption > 0 ) && 
-			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) );
-}
-
-ConnManagerNew.checkRestoreBlockedManualMode = function( statusInfo )
-{
-	if ( statusInfo.manual_Offline.enabled && 
-		( statusInfo.manual_Offline.retryOption > 0 ) && 
-			( new Date ) >= new Date( statusInfo.manual_Offline.retryDateTime ) )
-	{
-
-		ConnManagerNew.serverAvailable( ConnManagerNew.statusInfo, function( available ){
-
-			var prompt =  new AppModeSwitchPrompt( ConnManagerNew );
-
-			if ( available )
+			if ( statusInfoRef.manual_Offline.enabled )
 			{
-				ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
+				// NOTE: TODO: Manual Online Failure --> Could have both condition, thus, show combined issue message?
+				if ( !statusInfoRef.networkConn.online_Stable )
 				{
-					prompt.showManualSwitch_Dialog( 'Online' );
-				})
-			}
-			else
-			{
-				if ( ! ConnManagerNew.statusInfo.networkConn.online_Stable )
+					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( ConnManagerNew._cwsRenderObj );
+				}
+				else if ( !statusInfoRef.serverAvailable )
 				{
-					prompt.showManualSwitch_NetworkUnavailable_Dialog( true );
+					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog( ConnManagerNew._cwsRenderObj );					
 				}
 				else
 				{
-					//if ( ! ConnManagerNew.statusInfo.serverAvailable )  << only remaining 'available=false' option is server unavailable
-					prompt.showManualSwitch_ServerUnavailable_Dialog();
+					// Perform Manual Online 
+					AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE, ConnManagerNew._cwsRenderObj );
 				}
 			}
+			else
+			{
+				// Show no manual offline existing..  
+				msgManager.msgAreaShow( 'AppMode is Offline without manual offline setting.' );
+			}			
+        }
+	});
+	
+};
 
-		});
+
+ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
+{
+	var statusInfoRef = ConnManagerNew.statusInfo;
+		
+	if ( ConnManagerNew.isStrOFFLINE( newAppModeStr ) )
+	{
+		// If Manual Offline AppMode Requested, 
+		//	1. Set the 'AppMode' to Offline Manually.
+		ConnManagerNew.setAppMode( ConnManagerNew.OFFLINE, statusInfoRef );
+		statusInfoRef.manual_Offline.enabled = true;
+
+
+		//  2. Set a Call back in time.. - to remove the manual offline and trigger appMode check..
+		statusInfoRef.manual_Offline.timeOutRef = setTimeout( function( statusInfoRef ) {
+
+			statusInfoRef.manual_Offline.enabled = false;
+			ConnManagerNew.appModeSwitchRequest( statusInfoRef );
+		
+		}, callBackTime * 1000, statusInfoRef );
 	}
-}
+	else
+	{
+		// If manual timeout exists, clear that timeout, so that it does not fire later.
+		if ( statusInfoRef.manual_Offline.timeOutRef ) clearTimeout( statusInfoRef.manual_Offline.timeOutRef );
+
+		// If Manual Online, simply perform the check..
+		statusInfoRef.manual_Offline.enabled = false;
+		ConnManagerNew.appModeSwitchRequest( statusInfoRef );
+	}
+};
 
 
 // ===============================================================
 // =====================================
 
+ConnManagerNew.isStrONLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.ONLINE );
+};
 
+ConnManagerNew.isStrOFFLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.OFFLINE );
+};
 
 
 // ===============================================
@@ -375,7 +366,7 @@ ConnManagerNew.update_UI = function( statusInfo )
 	}
 
 	ConnManagerNew.update_UI_statusDots( statusInfo );
-}
+};
 
 
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
@@ -431,3 +422,4 @@ ConnManagerNew.setStatusCss = function( tag, isOn )
 	var colorStr = ( isOn ) ? '#F5F5F5' : 'transparent';	//'lightGreen' : 'red'
 	tag.css( 'background-color', colorStr );
 };
+
