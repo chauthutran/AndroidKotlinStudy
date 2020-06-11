@@ -170,7 +170,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 
 
 // Server
-ConnManagerNew.changeServerAvailableIfDiff =  function( newAvailable, statusInfo )
+ConnManagerNew.changeServerAvailableIfDiff = function( newAvailable, statusInfo )
 {
 	// If there was a change in this status, trigger the appModeCheck
 	if ( newAvailable !== statusInfo.serverAvailable )
