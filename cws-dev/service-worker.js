@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "33e7e1bf9130b3a75c2a199792b56174"
+    "revision": "5f8bb872b3c8ac959d0761ef00d00a8e"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1457,7 +1457,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "9a1493265ebb48523239a9b937bc6b5d"
+    "revision": "a7639f6996032a117c0e1498ba45c704"
   },
   {
     "url": "scripts/services/sessionManager.js",

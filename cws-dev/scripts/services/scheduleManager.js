@@ -62,10 +62,10 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 
 ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway ) 
 {
-	if ( ! NotRunRightAway ) ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo );
+	if ( ! NotRunRightAway ) ConnManagerNew.checkNSet_ServerAvailable();
 
 	// 30 seconds
-	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck, ConnManagerNew.statusInfo );
+	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
 };
 
 

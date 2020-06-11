@@ -99,41 +99,36 @@ ConnManagerNew.updateNetworkConnStatus = function()
 
 
 // CHECK #2 - SERVER AVAILABLE CHECK
-ConnManagerNew.checkNSet_ServerAvailable = function( statusInfo, callBack ) 
+ConnManagerNew.checkNSet_ServerAvailable = function( callBack ) 
 {
-	ConnManagerNew.serverAvailable( statusInfo, function( newAvailable )
+	if ( ConnManagerNew.statusInfo.networkConn.online_Stable )
 	{
-		ConnManagerNew.changeServerAvailableIfDiff( newAvailable, statusInfo );
+		ConnManagerNew.serverAvailable( function( bServerAvailableNew )
+		{
+			ConnManagerNew.changeServerAvailableIfDiff( bServerAvailableNew, ConnManagerNew.statusInfo );
 
-		if ( callBack ) callBack( newAvailable );
-	});	
+			if ( callBack ) callBack( bServerAvailableNew );		
+		});	
+	}
 };
 
 
-ConnManagerNew.serverAvailable = function( statusInfo, callBack )
+ConnManagerNew.serverAvailable = function( callBack )
 {
 	try
 	{
-		if ( statusInfo.networkConn.online_Stable )
-		{
-			WsCallManager.getDataServerAvailable( function ( success, jsonData ) {
+		WsCallManager.getDataServerAvailable( function ( success, jsonData ) {
 
-				// if check succeeds with valid [jsonData] payload
-				if ( success && jsonData && jsonData.available != undefined ) 
-				{
-					callBack( jsonData.available );
-				}
-				else 
-				{
-					callBack( false );
-				}
-			});
-		}
-		else
-		{	
-			callBack( false );
-		}
-		
+			// if check succeeds with valid [jsonData] payload
+			if ( success && jsonData && jsonData.available != undefined ) 
+			{
+				callBack( jsonData.available );
+			}
+			else 
+			{
+				callBack( false );
+			}
+		});
 	}
 	catch (err)
 	{
@@ -148,24 +143,23 @@ ConnManagerNew.serverAvailable = function( statusInfo, callBack )
 // Change Network Connection
 ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline, optionStr )
 {
+	// MAIN - Mark the network connection as stable Online/Offline
 	statusInfo.networkConn.online_Stable = modeOnline;
 
-	// Trigger AppMode Change Check
+
+	// Trigger AppMode Check
 	ConnManagerNew.appModeSwitchRequest( statusInfo );
 	// update UI icons to reflect current network change
 	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
 	ConnManagerNew.update_UI( statusInfo );
 
 
-	// After network Stable become online (from offline), try the ws work immedicatley..
-	if ( statusInfo.networkConn.online_Stable )
+	// If optional flag is to check server available immedicatley, perform it.
+	if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
 	{
-		if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
-		{
-			// Below will trigger another 
-			ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo );
-		}	
-	}		
+		// Below only gets called (has checks inside) if stable online..
+		ConnManagerNew.checkNSet_ServerAvailable();
+	}	
 };
 
 
@@ -192,41 +186,19 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo( statusInfo );
 
 	ConnManagerNew.setAppMode( appModeNew, statusInfo ); //, function( appModeChanged ) 
-	/*{
-		if ( appModeChanged )
-		{
-			ConnManagerNew.update_UI( statusInfo );	
-			if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
-		}
-	} );
-	*/
 };
 
 
 ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack ) 
 {
-	console.log( 'ConnManagerNew.setAppMode Before' );
-	console.log( statusInfo );	
 	var existingAppMode = statusInfo.appMode;
 
 	// Set appMode
-	if ( statusInfo.manual_Offline.enabled ) 
-	{
-		statusInfo.appMode = ConnManagerNew.OFFLINE;
-		console.log( 'In Manual Offline Mode.  Stay in OFFLINE.  Requeseted AppMode: ' + appModeNew );
-		console.log( statusInfo );	
-	}
-	else 
-	{
-		statusInfo.appMode = appModeNew;
-		console.log( 'AppMode Changed to: ' + appModeNew );
-		console.log( statusInfo );	
-	}
-
-	console.log( 'existingAppMode: ' + existingAppMode );
+	if ( statusInfo.manual_Offline.enabled ) statusInfo.appMode = ConnManagerNew.OFFLINE;
+	else statusInfo.appMode = appModeNew;
+	
 
 	// call CallBack Method
-	//var appModeChanged = ( statusInfo.appMode !== existingAppMode );
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
