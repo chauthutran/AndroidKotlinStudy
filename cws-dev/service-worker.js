@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "47b54f3d65f446eb7c6c704cb4602774"
+    "revision": "fad45809263e03d9e18e89e2f57c44bd"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
-    "revision": "a72ed89c1cea9fbcde186434e9a210e5"
+    "revision": "87ba52341f156c19ee1412afc21bc726"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -1309,7 +1309,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "b412c80d3b393f2c43042e6d07e89a6b"
+    "revision": "4424821f01066c1d565cb59e571422bb"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "c76a9ba3a7123b2ceee0df960aef5232"
+    "revision": "4ff3772ca20949f563f13b980e6a6db1"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1457,7 +1457,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "75f4861cd98c62619cb3aa19a196c0fc"
+    "revision": "ec8c6ddc42d6ba9bbe75df40c1640459"
   },
   {
     "url": "scripts/services/sessionManager.js",

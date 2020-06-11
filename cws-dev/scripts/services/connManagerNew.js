@@ -191,19 +191,22 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 {
 	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo( statusInfo );
 
-	ConnManagerNew.setAppMode( appModeNew, statusInfo, function( appModeChanged ) 
-	{
+	ConnManagerNew.setAppMode( appModeNew, statusInfo ); //, function( appModeChanged ) 
+	/*{
 		if ( appModeChanged )
 		{
 			ConnManagerNew.update_UI( statusInfo );	
 			if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
 		}
 	} );
+	*/
 };
 
 
-ConnManagerNew.setAppMode = function( appModeNew, statusInfo, callBack ) 
+ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack ) 
 {
+	console.log( 'ConnManagerNew.setAppMode Before' );
+	console.log( statusInfo );	
 	var existingAppMode = statusInfo.appMode;
 
 	// Set appMode
@@ -220,8 +223,15 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo, callBack )
 		console.log( statusInfo );	
 	}
 
+	console.log( 'existingAppMode: ' + existingAppMode );
+
 	// call CallBack Method
-	if ( callBack ) callBack( statusInfo.appMode !== existingAppMode );
+	//var appModeChanged = ( statusInfo.appMode !== existingAppMode );
+	if ( statusInfo.appMode !== existingAppMode )
+	{
+		ConnManagerNew.update_UI( statusInfo );	
+		if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
+	}
 };
 
 
@@ -297,24 +307,33 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 };
 
 
-ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTimeMs )
+ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 {
 	var statusInfoRef = ConnManagerNew.statusInfo;
+	
+	console.log( 'ConnManagerNew.setManualAppModeSwitch - newAppModeStr: ' + newAppModeStr );
+	console.log( 'callBackTime: ' + callBackTime );
 	
 	if ( ConnManagerNew.isStrOFFLINE( newAppModeStr ) )
 	{
 		// If Manual Offline AppMode Requested, 
 		//	1. Set the 'AppMode' to Offline Manually.
-		statusInfoRef.appMode = newAppModeStr;
-		statusInfoRef.appMode_PromptedMode = newAppModeStr;
-	
+		ConnManagerNew.setAppMode( ConnManagerNew.OFFLINE, statusInfoRef );
+		statusInfoRef.manual_Offline.enabled = true;
+
+		console.log( 'MANUAL OFFLINE REQUESTED:');
+		console.log( statusInfoRef );
+		
+
 		//  2. Set a Call back in time.. - to remove the manual offline and trigger appMode check..
 		statusInfoRef.manual_Offline.timeOutRef = setTimeout( function( statusInfoRef ) {
+
+			console.log( 'timeOut Called' );
 
 			statusInfoRef.manual_Offline.enabled = false;
 			ConnManagerNew.appModeSwitchRequest( statusInfoRef );
 		
-		}, callBackTimeMs, statusInfoRef );
+		}, callBackTime * 1000, statusInfoRef );
 	}
 	else
 	{

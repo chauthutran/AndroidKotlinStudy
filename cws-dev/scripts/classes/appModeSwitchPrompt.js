@@ -81,28 +81,15 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
 
     // Switch(MAIN Action) Button Related
     btnAction.click( function () {
-        var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
-        ConnManagerNew.setManualAppModeSwitch( switchTo_appMode, callBackTimeMs );
+        var callBackTime = Number( switchPromptTag.find( "input[name=switch_waitingTimeOpt]:checked" ).val() );
+        ConnManagerNew.setManualAppModeSwitch( switchTo_appMode, callBackTime );
         AppModeSwitchPrompt.hideDialog();
     });
 
-
-    // Cancel Button Related
-    if ( disableCancel ) btnCancel.hide();
-    else
-    {
-        btnCancel.click( function () {
-
-            if ( isSwitchToOnline )
-            {
-                var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
-                ConnManagerNew.setManualAppModeSwitch( ConnManagerNew.OFFLINE, callBackTimeMs );
-                AppModeSwitchPrompt.hideDialog();                
-            }
-
-            AppModeSwitchPrompt.cancelSwitchAction();
-        });            
-    }
+    
+    btnCancel.click( function () {
+        AppModeSwitchPrompt.hideDialog();                
+    });            
 
 
     //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
