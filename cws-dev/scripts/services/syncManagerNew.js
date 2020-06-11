@@ -585,19 +585,14 @@ SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
 // ===================================================
 // === OTHERS Methods =============
 
-SyncManagerNew.setBlockListObj = function( blockListObj )
-{
-    SyncManagerNew.blockListObj = blockListObj;
-};
-
-
+/*
 // Call this when app starts.
 SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
 {
     //$( '#divNetworkStatus' ).click( function()
     divNetworkStatusTag.off( 'click' ).click( function()
     {
-        var goOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' ? false : true );
+        var goOnline = ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE ) ? false : true;
 
         if ( goOnline )
         {
@@ -607,7 +602,7 @@ SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
                 {
                     ConnManagerNew.checkNSet_ServerAvailable( ConnManagerNew.statusInfo, function() 
                     {
-                        AppModeSwitchPrompt.showManualSwitch_Dialog( 'Online' );
+                        AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE );
                     })
                 }
                 else
@@ -625,8 +620,9 @@ SyncManagerNew.syncAllStatusClickSetup = function( divNetworkStatusTag )
         }
         else
         {
-            AppModeSwitchPrompt.showManualSwitch_Dialog( 'Offline' );
+            AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE );
         }
 
     });
 };
+*/

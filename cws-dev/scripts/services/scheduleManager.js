@@ -71,15 +71,6 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 	if ( callBack ) callBack();
 }
 
-ScheduleManager.runSchedules_cancelPrompt_AppModeSwitch = function( callBack )
-{
-	// when cancelling switchMode notification prompt > create this schedule
-	//   to 'push' user to move to appropriate online/offline mode
-	// problem? when to switch off this schedule...
-
-}
-
-
 // -------------------------------------------------------------------
 // ------ Sub Methods ------------------------------
 

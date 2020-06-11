@@ -74,20 +74,20 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
 
     dvTitle.html( friendlyTitle );
     btnAction.html( btnActionText );
-
-    if ( isSwitchToOnline )
-    {
-        // calculate elapsed time since going 'OFFLINE'
-        var timeWaited = AppModeSwitchPrompt.getTimeWaitedText();
-
-        dvPrompt.html( switchPromptText + '<br><br>You have been offline for ' + timeWaited );
-    }
-    else
-    {
-        dvPrompt.html( switchPromptText );
-    }
+    // calculate elapsed time since going 'OFFLINE'
+    //var timeWaited = AppModeSwitchPrompt.getTimeWaitedText();
+    dvPrompt.html( switchPromptText + ( isSwitchToOnline ) ? '<br><br>You have been offline for ---' : '' );
 
 
+    // Switch(MAIN Action) Button Related
+    btnAction.click( function () {
+        var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
+        ConnManagerNew.setManualAppModeSwitch( switchTo_appMode, callBackTimeMs );
+        AppModeSwitchPrompt.hideDialog();
+    });
+
+
+    // Cancel Button Related
     if ( disableCancel ) btnCancel.hide();
     else
     {
@@ -103,14 +103,6 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
             AppModeSwitchPrompt.cancelSwitchAction();
         });            
     }
-
-
-    btnAction.click( function () {
-
-        var callBackTimeMs = Number( switchPromptTag.find( "input[name='switch_waitingTimeOpt']:checked" ).val() );
-        ConnManagerNew.setManualAppModeSwitch( switchTo_appMode, callBackTimeMs );
-        AppModeSwitchPrompt.hideDialog();
-    });
 
 
     //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
@@ -208,17 +200,6 @@ AppModeSwitchPrompt.runAndSetManualSwitchAction = function( newAppModeStr, callB
 
     AppModeSwitchPrompt.hideDialog();
 };
-
-
-/*
-// OTHER CLICK-BUTTON METHODS
-AppModeSwitchPrompt.runSwitchAction = function () 
-{
-    AppModeSwitchPrompt.hideDialog();
-
-    ConnManagerNew.acceptPrompt_AppModeSwitch( statusInfo );
-}
-*/
 
 
 AppModeSwitchPrompt.cancelSwitchAction = function () 
