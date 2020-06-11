@@ -272,7 +272,7 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
         if ( ConnManagerNew.isAppMode_Online() )
         {
 			// Show Dialog for Manual Offline - If currently online..
-			AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE );
+			AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, ConnManagerNew._cwsRenderObj );
         }
         else
         {
@@ -284,16 +284,16 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 				// NOTE: TODO: Manual Online Failure --> Could have both condition, thus, show combined issue message?
 				if ( !statusInfoRef.networkConn.online_Stable )
 				{
-					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog();
+					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( ConnManagerNew._cwsRenderObj );
 				}
 				else if ( !statusInfoRef.serverAvailable )
 				{
-					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog();					
+					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog( ConnManagerNew._cwsRenderObj );					
 				}
 				else
 				{
 					// Perform Manual Online 
-					AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE );
+					AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE, ConnManagerNew._cwsRenderObj );
 				}
 			}
 			else

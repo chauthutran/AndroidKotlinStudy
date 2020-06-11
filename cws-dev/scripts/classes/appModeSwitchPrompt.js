@@ -6,7 +6,7 @@
 function AppModeSwitchPrompt() {};
 
 
-AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode ) 
+AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode, cwsRenderObj ) 
 {
     // DISPLAYS WHEN CLICKING 'ONLINE SEARCH' BUTTON > but networkMode = Offline
 
@@ -38,19 +38,16 @@ AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode )
 
     });
 
-    // TODO: REMOVE IT..
-    //cwsRenderObj.langTermObj.translatePage();
+
+    cwsRenderObj.langTermObj.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 };
 
 
-
-AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disableCancel ) 
+AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRenderObj ) 
 {
     // DISPLAYS WHEN USER CLICKs 'CLOUD' ICON in NAV HEADER > manual networkMode switch (to opposite of current)
-    //var switchChoiseStr = switchTo_appMode.toUpperCase();
-    // === 'OFFLINE';
     var isSwitchToOffline = ConnManagerNew.isStrOFFLINE( switchTo_appMode );
     var isSwitchToOnline = !isSwitchToOffline;
 
@@ -76,7 +73,8 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
     btnAction.html( btnActionText );
     // calculate elapsed time since going 'OFFLINE'
     //var timeWaited = AppModeSwitchPrompt.getTimeWaitedText();
-    dvPrompt.html( switchPromptText + ( isSwitchToOnline ) ? '<br><br>You have been offline for ---' : '' );
+    switchPromptText += ( isSwitchToOnline ) ? '<br><br>You have been offline for ---' : '';    
+    dvPrompt.html( switchPromptText );
 
 
     // Switch(MAIN Action) Button Related
@@ -92,12 +90,13 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, disab
     });            
 
 
-    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
+    cwsRenderObj.langTermObj.translatePage();
+    
     AppModeSwitchPrompt.showDialog();
-
 };
 
-AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( rePromptWithCancel )
+
+AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( cwsRenderObj )
 {
     // DISPLAYS WHEN SERVER UNAVAILABLE BUT TRYING TO GO ONLINE
 
@@ -133,20 +132,20 @@ AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( rePro
 
         AppModeSwitchPrompt.cancelSwitchAction();
 
-        if ( rePromptWithCancel )
-        {
-            AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, true );
-        }
+        //if ( rePromptWithCancel )
+        //{
+        //    AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, cwsRenderObj, true );
+        //}
 
     });
 
-    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
+    cwsRenderObj.langTermObj.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 };
 
 
-AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function()
+AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function( cwsRenderObj )
 {
     // DISPLAYS WHEN SERVER UNAVAILABLE BUT TRYING TO GO ONLINE
 
@@ -175,7 +174,7 @@ AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function()
     });
 
     
-    //ConnManagerNew._cwsRenderObj.langTermObj.translatePage();
+    cwsRenderObj.langTermObj.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 }

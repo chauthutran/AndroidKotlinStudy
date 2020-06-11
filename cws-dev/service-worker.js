@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
-    "revision": "87ba52341f156c19ee1412afc21bc726"
+    "revision": "9c17c23a4bfb3557a563345b42f841da"
   },
   {
     "url": "scripts/classes/baseConverter.js",
@@ -1225,7 +1225,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "7e297944ee6f02c231b7055d75649dcb"
+    "revision": "7431c246090df7aac086ad58133ccd18"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "4ff3772ca20949f563f13b980e6a6db1"
+    "revision": "4e596b28d19dd1ebafc103c9f70b9b42"
   },
   {
     "url": "scripts/services/dataFormatConvert.js",
@@ -1481,7 +1481,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "88669d2efd9bbe75682d36e1703a10be"
+    "revision": "910b565ec41cc7626f318fdac7cd8a0b"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
