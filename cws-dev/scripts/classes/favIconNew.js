@@ -23,9 +23,6 @@ function favIcons( cwsRender )
     {
 
         var favList = me.getFavIconsByAreaRole( favData );
-        //var favItems = localStorage.getItem( 'favIcons' );
-        //console.log( favItems );
-        //console.log ( ' ~ favList from MEMORY {' + ( favItems !== undefined ) + '}');
         
         me.createRecursiveFavIcons ( favList, 0, false ); //( favItems !== undefined )
 
@@ -271,18 +268,17 @@ function favIcons( cwsRender )
     me.storeFavIcon = function( svgObjectCode, iconID, iconName, callBack )
     {
 
-        if ( localStorage.getItem( 'favIcons' ) )
+        var favIconObj = AppInfoManager.getFavIcons();
+
+        if ( favIconObj === undefined )
         {
-            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
+           favIconObj = [];
         }
-        else
-        {
-            var favIconObj = [];
-        }
+
 
         favIconObj.push ( { id: iconID, name: iconName, svg: encodeURI( svgObjectCode ) } );
 
-        localStorage.setItem( 'favIcons', JSON.stringify( favIconObj ) );
+        AppInfoManager.updateFavIcons( favIconObj );
 
         if ( callBack ) callBack();
 
@@ -290,10 +286,9 @@ function favIcons( cwsRender )
 
     me.fetchFavIcon = function( iconID )
     {
-        if ( localStorage.getItem( 'favIcons' ) )
+        var favIconObj = AppInfoManager.getFavIcons();
+        if ( favIconObj != undefined )
         {
-            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
-
             for ( var i = 0; i < favIconObj.length; i++ )
             {
                 var favItm = ( favIconObj[ i ] );
@@ -309,7 +304,7 @@ function favIcons( cwsRender )
 
     // empty existing container - force a recreate of SVG content
     // added temporarily (ideally should only be done once login)
-    localStorage.removeItem( 'favIcons' );
+    AppInfoManager.removeFavIcons();
 
 	// ------------------------------------
 

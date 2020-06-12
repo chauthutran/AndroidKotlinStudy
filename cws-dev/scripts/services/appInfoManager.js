@@ -161,26 +161,23 @@ AppInfoManager.updateData = function( keyword, jsonData )
     AppInfoManager.data = appInfo;
 }
 
+
 AppInfoManager.removeData = function( keyword )
 {
      // Get appInfo from localStorage if any. If not, use default appInfo
      var appInfo = AppInfoManager.loadAppInfo();
     
      // Update data of appInfo by using keyword
-    //  appInfo[keyword] = undefined
-    delete appInfo[keyword];
+     delete appInfo[keyword];
      
      // Update the 'appInfo' data
      LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
- 
-     // Set new data info in memory
-     AppInfoManager.data = appInfo;
-}	
+}
+	
 
 // Get appInfo from localStorage if any. If not, use default appInfo
 AppInfoManager.loadAppInfo = function()
 {
-    // var appInfo = localStorage.getItem( AppInfoManager.KEY_APPINFO );
     var appInfo = LocalStgMng.getJsonData( AppInfoManager.KEY_APPINFO );
     return ( appInfo == undefined ) ? AppInfoManager.data : appInfo;
 }
