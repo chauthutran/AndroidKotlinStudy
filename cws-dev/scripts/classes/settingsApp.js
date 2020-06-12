@@ -180,10 +180,10 @@ function settingsApp( cwsRender )
 
         me.settingsInfo_SoundSwitchInput.change(() => {
           var soundSetting = me.settingsInfo_SoundSwitchInput.is( ":checked" ); // load from input checkbox
-          var sessData = JSON.parse(localStorage.getItem( "session" ));
+          var sessData = AppInfoManager.getUserInfo();
 
           sessData.soundEffects = soundSetting; //add
-          DataManager.saveData( "session", sessData );
+          AppInfoManager.updateUserInfo( sessData );
 
           if(soundSetting) playSound( "notify") ;
 
@@ -191,10 +191,10 @@ function settingsApp( cwsRender )
 
         me.settingsInfo_autoCompleteInput.change(() => {
             var autoComplete = me.settingsInfo_autoCompleteInput.is( ":checked" ); // load from input checkbox
-            var sessData = JSON.parse(localStorage.getItem( "session" ));
-  
+            sessData = AppInfoManager.getUserInfo();
+
             sessData.autoComplete = autoComplete; //add
-            DataManager.saveData( "session", sessData );
+            AppInfoManager.updateUserInfo( sessData );
 
             me.updateAutoComplete( ( autoComplete ? 'on' : 'off' ) );
 
@@ -204,11 +204,10 @@ function settingsApp( cwsRender )
         {    
             $("body").removeClass().addClass( me.settingsInfo_ThemeSelectTag.val() );
 
-            var sessData = JSON.parse( localStorage.getItem( "session" ) );
+            var sessData = AppInfoManager.getUserInfo();
 
             sessData.theme = me.settingsInfo_ThemeSelectTag.val();
-            DataManager.saveData("session", sessData);
-
+            AppInfoManager.updateUserInfo( sessData );
         });
 
         me.settingsInfo_NetworkSync.change ( () => 
@@ -235,10 +234,10 @@ function settingsApp( cwsRender )
 
             //syncManager.reinitialize ( me.cwsRenderObj );
 
-            var sessData = JSON.parse(localStorage.getItem( "session" ));
+            var sessData = AppInfoManager.getUserInfo();
 
             sessData.logoutDelay = me.settingsInfo_logoutDelay.val(); //add
-            DataManager.saveData("session", sessData);
+            AppInfoManager.updateUserInfo( sessData );
 
         });
         
@@ -793,16 +792,18 @@ function settingsApp( cwsRender )
             $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
             $( '#settingsInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
-            var sessData = JSON.parse( localStorage.getItem( "session" ) );
+            var sessData = AppInfoManager.getUserInfo();
 
             me.settingsInfo_SoundSwitchInput.prop( 'checked', sessData.soundEffects );
             me.settingsInfo_autoCompleteInput.prop( 'checked', sessData.autoComplete );
 
             ConnManager.getDcdConfigVersion( function( retVersion ) 
             {
-                var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
-    
-                if ( ( userConfig.dcdConfig.version ).toString() < retVersion.toString() )
+                // var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
+                var dcdConfig = ConfigManager.getConfigJson();
+
+                // TRAN TODO : this code [if ( ( dcdConfig.version ).toString() < retVersion.toString() )]  never reach
+                if ( ( dcdConfig.version ).toString() < retVersion.toString() )
                 {
                     $( '#settingsInfo_dcdNewVersion' ).html( retVersion );
                     if ( $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).removeClass( 'disabled' );

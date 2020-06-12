@@ -260,25 +260,22 @@ function Login( cwsRenderObj )
 		// TODO: NOTE: SAVING SESSION INFO FOR THE FIRST TIME AT HERE?
 		FormUtil.defaultLanguage( function( defaultLang ){
 
-			var lastSession = localStorage.getItem( Constants.storageName_session );
+			var lastSession = AppInfoManager.getUserInfo();
 
-			if ( lastSession == undefined || lastSession == null )
+			if ( lastSession == undefined )
 			{
 				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true, logoutDelay: 60 };
 			}
 			else
 			{
-				lastSession = JSON.parse( lastSession );
-
 				lastSession.user = userName;
 
 				if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
 				if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
 				if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
 			}
-
-
-			localStorage.setItem( Constants.storageName_session, JSON.stringify( lastSession ) );
+			
+			AppInfoManager.updateUserInfo( lastSession );
 
 		});
 	};
@@ -286,7 +283,7 @@ function Login( cwsRenderObj )
 
 	me.regetDCDconfig = function()
 	{
-		var userName = JSON.parse( localStorage.getItem(Constants.storageName_session) ).user;
+		var userName = AppInfoManager.getUserInfo().user;
 		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
 
 		me.processLogin( userName, userPin, location.origin, $( this ) );

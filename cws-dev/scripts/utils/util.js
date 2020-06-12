@@ -1325,7 +1325,7 @@ Util.paddNumeric = function( val, padding )
 
 Util.getLocalStorageObjectValue = function( objKeyVal )
 {
-	var lastSession = DataManager.getSessionData(); //JSON.parse( localStorage.getItem( Constants.storageName_session ) );
+	var lastSession = AppInfoManager.getUserInfo();
 	var arrKeys;
 
 	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
@@ -1337,7 +1337,7 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 	{
 		if ( lastSession )
 		{
-			var localData = JSON.parse( localStorage.getItem( lastSession.user ) );
+			var localData = SessionManager.sessionData;
 
 			arrKeys = objKeyVal.toString().split( '.' );
 

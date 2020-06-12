@@ -27,9 +27,9 @@ function swManager( _cwsRenderObj ) {
 
     me.createSWinfo = function () 
     {
-        var SWinfoStr = localStorage.getItem( 'swInfo' );
+        var SWinfoStr = AppInfoManager.getSWInfo();
 
-        if ( ! SWinfoStr ) 
+        if ( SWinfoStr == undefined ) 
         {
             me.SWinfoObj = { 'reloadRequired': false, 'datetimeInstalled': (new Date()).toISOString(), 'currVersion': _ver, 'lastVersion': _ver, 'datetimeApplied': (new Date()).toISOString() };
         }
@@ -65,7 +65,7 @@ function swManager( _cwsRenderObj ) {
 
     me.saveSWinfo = function () 
     {
-        localStorage.setItem('swInfo', JSON.stringify(me.SWinfoObj));
+        AppInfoManager.updateSWInfo( me.SWinfoObj );
     }
 
     me.loadRegistrationObjVars = function ( swRegObj ) 

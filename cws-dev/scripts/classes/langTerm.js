@@ -53,7 +53,7 @@ function LangTerm( cwsRenderObj )
 
 		// If exists in local storage, load it.
 		// Otherwise, retrieve it
-		var langTerms = ( forceDownload ) ? undefined : DataManager.getData( DataManager.StorageName_langTerms );
+		var langTerms = ( forceDownload ) ? undefined : AppInfoManager.getLangTerms();
 
 		if ( langTerms )
 		{
@@ -73,8 +73,9 @@ function LangTerm( cwsRenderObj )
 				me.setLanguageList( me.allLangTerms );
 				me.currentLangTerms = me.getLangTerms( me.currentLangcode );
 
-				if ( returnJson ) DataManager.saveData( DataManager.StorageName_langTerms, returnJson );
-
+				if ( returnJson ) {
+					AppInfoManager.updateLangTerms( returnJson );
+				}
 				returnFunc( returnJson );
 			});
 		}

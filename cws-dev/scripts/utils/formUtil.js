@@ -499,7 +499,7 @@ FormUtil.orientation = function() {
 
 FormUtil.getUserSessionAttr = function( usr, attr ) {
 
-	var lastSessionAll = JSON.parse(localStorage.getItem(usr))
+	var lastSessionAll = AppInfoManager.getUserInfo();
 
 	if ( lastSessionAll && lastSessionAll.mySession )
 	{
@@ -1906,12 +1906,14 @@ FormUtil.getCommonDateGroups = function()
 FormUtil.getActivityTypes = function()
 {
 	// get different 'Areas' or Activity-Types
-	var sessData = localStorage.getItem(Constants.storageName_session);
+	// var sessData = localStorage.getItem(Constants.storageName_session);
+	var userInfo = AppInfoManager.getUserInfo();
 	var retArr = [];
 
-	if ( sessData )
+	if ( userInfo )
 	{
-		var itms = JSON.parse( localStorage.getItem( JSON.parse( sessData ).user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+		// var itms = JSON.parse( localStorage.getItem( userInfo.user ) ).dcdConfig.settings.redeemDefs.activityTypes;
+		var itms = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
 
 		if ( itms && itms.length )
 		{

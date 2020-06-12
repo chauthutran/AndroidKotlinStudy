@@ -5,7 +5,7 @@
 function DataManager2() {}
 
 DataManager2.StorageName_session = "session";
-DataManager2.StorageName_langTerms = "langTerms";
+// DataManager2.StorageName_langTerms = "langTerms";
 
 DataManager2.dbStorageType_localStorage = "localStorage";
 DataManager2.dbStorageType_indexdb = "indexdb";

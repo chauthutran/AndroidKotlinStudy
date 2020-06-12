@@ -38,17 +38,13 @@ MsgManager.initialSetup = function()
         MsgManager.divProgressAreaTag.empty();
     });
 
-    if ( localStorage.getItem(Constants.storageName_session) )
+    var dcdConfig = ConfigManager.getConfigJson();
+    if ( dcdConfig.settings && dcdConfig.settings.message )
     {
-        var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
-
-        if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
-        {
-            MsgManager._autoHide = dcdConf.dcdConfig.settings.message.autoHide;
-            MsgManager._autoHideDelay = dcdConf.dcdConfig.settings.message.autoHideTime;
-        }
+        MsgManager._autoHide = dcdConfig.settings.message.autoHide;
+        MsgManager._autoHideDelay = dcdConfig.settings.message.autoHideTime;
     }
-
+    
 }
 
 
@@ -62,12 +58,15 @@ MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRef
     {
         if ( !MsgManager._autoHide )
         {
-            var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
+            // TRAN TODO : SHOULD GET "dcdConf" DATA FROM sessionManager.js
+            // var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
+            var dcdConfig = ConfigManager.getConfigJson();
 
-            if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
+            // if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
+            if ( dcdConfig && dcdConfig.settings && dcdConfig.settings.message )
             {
-                MsgManager._autoHide = dcdConf.dcdConfig.settings.message.autoHide;
-                MsgManager._autoHideDelay = dcdConf.dcdConfig.settings.message.autoHideTime;
+                MsgManager._autoHide = dcdConfig.settings.message.autoHide;
+                MsgManager._autoHideDelay = dcdConfig.settings.message.autoHideTime;
             }
         }
 

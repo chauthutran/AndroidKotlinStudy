@@ -35,7 +35,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		if ( formJsonArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var autoComplete = SessionManager.getSessionAutoComplete();
+			var autoComplete = AppInfoManager.getSessionAutoComplete();
 			var formTag = $( '<form autocomplete="' + autoComplete + '"></form>' );
 
 			formDivSecTag.append( formTag );

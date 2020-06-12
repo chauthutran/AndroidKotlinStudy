@@ -52,7 +52,7 @@ function favIcons( cwsRender )
 
             me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); //$( '#pageDiv' ).find( 'div.floatListMenuSubIcons' );
 
-            var favItems = localStorage.getItem( 'favIcons' );
+            var favItems = AppInfoManager.getFavIcons();
 
             me.createRecursiveFavIcons ( favList, 0, ( favItems != undefined && favItems.length > 0 ) )
 
@@ -263,19 +263,16 @@ function favIcons( cwsRender )
 
     me.storeFavIcon = function( svgObjectCode, iconID, iconName, callBack )
     {
+        var favIconObj = AppInfoManager.getFavIcons();
 
-        if ( localStorage.getItem( 'favIcons' ) )
+        if ( favIconObj === undefined )
         {
-            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
-        }
-        else
-        {
-            var favIconObj = [];
+           favIconObj = [];
         }
 
         favIconObj.push ( { id: iconID, name: iconName, svg: encodeURI( svgObjectCode ) } );
 
-        localStorage.setItem( 'favIcons', JSON.stringify( favIconObj ) );
+        AppInfoManager.updateFavIcons( favIconObj );
 
         if ( callBack ) callBack();
 
@@ -283,10 +280,10 @@ function favIcons( cwsRender )
 
     me.fetchFavIcon = function( iconID )
     {
-        if ( localStorage.getItem( 'favIcons' ) )
-        {
-            var favIconObj = JSON.parse( localStorage.getItem( 'favIcons' ) );
+        var favIconObj = AppInfoManager.getFavIcons();
 
+        if ( favIconObj )
+        {
             for ( var i = 0; i < favIconObj.length; i++ )
             {
                 var favItm = ( favIconObj[ i ] );
@@ -302,7 +299,7 @@ function favIcons( cwsRender )
     }
 
     // empty existing container - force a recreate of SVG content
-    localStorage.removeItem( 'favIcons' );
+    AppInfoManager.removeFavIcons();
 
 	// ------------------------------------
 

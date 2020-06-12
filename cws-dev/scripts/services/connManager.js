@@ -540,7 +540,8 @@ ConnManager.setUserNetworkMode = function( requestConnMode )
 
 ConnManager.getDcdConfigVersion = function( returnFunc )
 {
-	if ( localStorage.getItem(Constants.storageName_session) !== null && FormUtil.checkLogin() )
+	var userInfo = AppInfoManager.getUserInfo();
+	if ( userInfo !== null && FormUtil.checkLogin() )
 	{
 		console.log( 'ConnManager.getDcdConfigVersion - SessionManager.sessionData.login_UserName/Password: ' + SessionManager.sessionData.login_UserName + ', ' + SessionManager.sessionData.login_Password );
 

@@ -5,8 +5,8 @@
 
 function DataManager() {}
 
-DataManager.StorageName_session = "session";
-DataManager.StorageName_langTerms = "langTerms";
+// DataManager.StorageName_session = "session";
+// DataManager.StorageName_langTerms = "langTerms";
 
 DataManager.dbStorageType_localStorage = "localStorage";
 DataManager.dbStorageType_indexdb = "indexdb";

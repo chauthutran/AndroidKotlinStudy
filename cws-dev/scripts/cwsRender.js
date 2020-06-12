@@ -635,7 +635,8 @@ function cwsRender()
 			console.log( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
 
 			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
-			var defTheme = SessionManager.getStorageLastSessionData().theme;
+			// var defTheme = SessionManager.getStorageLastSessionData().theme;
+			var defTheme = AppInfoManager.getUserInfo().theme;
 
 			$('#styleCssMobileRow').remove();
 			$('#styleCssPulse').remove();
@@ -724,7 +725,7 @@ function cwsRender()
 		// TODO: Use Session Manager?
 		// TODO: MOVE THIS TO login page..
 		
-		var lastSession = SessionManager.getStorageLastSessionData();
+		var lastSession = AppInfoManager.getUserInfo();
 
 		if ( lastSession )
 		{
@@ -788,12 +789,10 @@ function cwsRender()
 		ScheduleManager.stopSchedules_AfterLogOut();
 
 		// change to session Management process > forced reload of app (detect new version + forced login)
-		var SWinfoObj = localStorage.getItem( 'swInfo' );
+		var SWinfoObj = AppInfoManager.getSWInfo()
 
 		if ( SWinfoObj )
 		{
-			SWinfoObj = JSON.parse( SWinfoObj );
-			
 			if ( SWinfoObj.reloadRequired )
 			{ 
 				location.reload( true );
@@ -909,14 +908,14 @@ function cwsRender()
 	// USED?  Put in back file?
 	me.trackUserLocation = function( clicked_area )
 	{
-		DataManager.getSessionData( function( lastSession ){
+		var userInfo = AppInfoManager.getUserInfo();
 
 			var thisNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'online' : 'offline' );
 			var altNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'offline' : 'online' );
 			var matchOn = [ "id", "startBlockName", "name" ];
 			var matchedOn, areaMatched;
 
-			if ( lastSession )
+			if ( userInfo )
 			{
 
 				DataManager.getUserConfigData( function( loginData ){
@@ -935,13 +934,13 @@ function cwsRender()
 						}
 			
 						//UPDATE lastStorage session for current user (based on last menu selection)
-						DataManager.saveData( lastSession.user, loginData );
+						// DataManager.saveData( lastSession.user, loginData );
+						SessionManager.saveUserSessionToStorage( loginData, lastSession.user, Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) );
 
 					}
 				});
 				
 			}
-		});
 	};
 
 	me.hidenavDrawerDiv = function()
@@ -976,21 +975,28 @@ function cwsRender()
 	me.newSWrefreshNotification = function( ver )
 	{
 
+		var swInforData = { 
+			'reloadRequired': false, 
+			'datetimeInstalled': (new Date() ).toISOString() , 
+			'currVersion': ver, 
+			'lastVersion': ver, 
+			'datetimeApplied':''
+		};
+
 		// new update available
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
 		// move to cwsRender ?
 		$( btnUpgrade ).click ( () => {
 
-			var SWinfoObj = localStorage.getItem( 'swInfo' );
+			var SWinfoObj = AppInfoManager.getSWInfo();
 
-			if ( SWinfoObj )
+			if ( SWinfoObj == undefined )
 			{
-				//do nothing
-			}
-			else
-			{
-				localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': false, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': (new Date() ).toISOString() } ) );
+				var jsonData = JSON.parse( JSON.stringify( swInforData ) );
+				jsonData.datetimeApplied = (new Date() ).toISOString();
+
+				AppInfoManager.updateSWInfo( jsonData );
 			}
 
 			location.reload( true );
@@ -999,8 +1005,7 @@ function cwsRender()
 
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
-
-		localStorage.setItem( 'swInfo', JSON.stringify( { 'reloadRequired': true, 'datetimeInstalled': (new Date() ).toISOString() , 'currVersion': ver, 'lastVersion': ver, 'datetimeApplied': '' } ) );
+		AppInfoManager.updateSWInfo( swInnforData );
 
 	};
 	

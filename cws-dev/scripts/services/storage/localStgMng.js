@@ -5,10 +5,7 @@
 
 function LocalStgMng() {}
 
-LocalStgMng.KEY_session = "session";
-LocalStgMng.KEY_langTerms = "langTerms";
 LocalStgMng.KEY_lastDownload = "lastDownload";
-LocalStgMng.KEY_syncMsg = "syncMsg";
 
 // ---------------------------------------------------
 // -- Last Download Mark Related --------------

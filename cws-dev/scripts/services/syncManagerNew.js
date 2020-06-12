@@ -154,7 +154,7 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
-                LocalStgMng.lastDownload_Save( ( new Date() ).toISOString() );
+                AppInfoManager.updateDownloadInfo(( new Date() ).toISOString()); 
 
                 if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge );
             });
@@ -245,7 +245,7 @@ SyncManagerNew.downloadClients = function( callBack )
         };
 
         // If last download date exists, search after that. Otherwise, get all
-        var lastDownloadDateISOStr = LocalStgMng.lastDownload_Get();
+        var lastDownloadDateISOStr = AppInfoManager.getDownloadInfo();
 
         if ( lastDownloadDateISOStr ) 
         { 
@@ -291,7 +291,7 @@ SyncManagerNew.downloadActivities = function( callBack )
 
 
         // If last download date exists, search after that. Otherwise, get all
-        var lastDownloadDateISOStr = LocalStgMng.lastDownload_Get();
+        var lastDownloadDateISOStr = AppInfoManager.getDownloadInfo();
 
         if ( lastDownloadDateISOStr ) 
         { 
@@ -450,7 +450,7 @@ SyncManagerNew.SyncMsg_Get = function()
     if ( SyncManagerNew.syncMsgJson ) syncMsgJson = SyncManagerNew.syncMsgJson;
     else
     {
-        syncMsgJson = LocalStgMng.getJsonData( LocalStgMng.KEY_syncMsg );
+        syncMsgJson = AppInfoManager.getSyncMsg();
                 
         console.log( syncMsgJson );
 
@@ -475,7 +475,7 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
     
         syncMsgJson.msgList.push( newMsgJson );
     
-        LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );    
+        AppInfoManager.updateSyncMsg( syncMsgJson );
     }
     else
     {
@@ -494,7 +494,7 @@ SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
         
         syncMsgJson.summaryList.push( newSummaryMsgJson );
 
-        LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+        AppInfoManager.updateSyncMsg( syncMsgJson );
     }
     else
     {
@@ -510,7 +510,7 @@ SyncManagerNew.SyncMsg_Reset = function()
     
     SyncManagerNew.syncMsgJson = syncMsgJson;
 
-    LocalStgMng.saveJsonData( LocalStgMng.KEY_syncMsg, syncMsgJson );
+    AppInfoManager.updateSyncMsg( syncMsgJson );
 };
 
 

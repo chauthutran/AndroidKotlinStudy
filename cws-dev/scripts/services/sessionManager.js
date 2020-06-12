@@ -21,8 +21,6 @@
 // -------------------------------------------------
 function SessionManager() {}
 
-SessionManager.LSKey_storedData = "session";
-
 SessionManager.sessionData = {
 	login_UserName: '',
 	login_Password: '',
@@ -101,26 +99,3 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 		LocalStgMng.saveJsonData( userName, loginData );
 	}
 };
-
-
-SessionManager.getStorageLastSessionData = function()
-{	
-	return LocalStgMng.getJsonData( SessionManager.LSKey_storedData );
-};
-
-
-SessionManager.getSessionAutoComplete = function()
-{	
-	var autoComplete = '';
-
-	try
-	{
-		autoComplete = JSON.parse( localStorage.getItem(Constants.storageName_session) ).autoComplete;
-	}
-	catch( errMsg )
-	{
-		console.log( 'Error on SessionManager.getSessionAutoComplete, errMsg - ' + errMsg );
-	}
-
-	return autoComplete;
-}
