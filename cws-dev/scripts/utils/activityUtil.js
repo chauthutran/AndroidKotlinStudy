@@ -500,7 +500,7 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 
 			if( tag.hasClass("section") )
 			{
-				labelTag = $( tag[ 0 ] ).find("label");
+				labelTag = tag.find("label");
 				name = labelTag.html();
 				type = "SECTION";
 				value = labelTag.html();
@@ -509,8 +509,8 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 			{
 				labelTag = $( tag[ 0 ] ).closest("div.fieldBlock").find("label");
 				name = ( labelTag ) ? labelTag.html() : tag[ 0 ].name;
-				type = tag[ 0 ].nodeName;
-				value = ( type == "SELECT" ) ? $( tag[ 0 ] ).find("option:selected").text() : $( tag[ 0 ] ).closest("div.fieldBlock").find(".displayValue").val();
+				type = tag.prop("nodeName");
+				value = ActivityUtil.getTagText( tag );
 			}
 			
 			var inputsJson = { name: name, type: type, value: value };
@@ -527,7 +527,40 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 	return retDataArray;
 };
 
+ActivityUtil.getTagText = function( entryTag )
+{
+	var displayValue = entryTag.val();
 
+	if( entryTag.prop("nodeName") == "SELECT" )
+	{
+		displayValue = entryTag.find("option:selected").text();
+	}
+	else
+	{
+		var fieldBlockTag = entryTag.closest("div.fieldBlock");
+		var displayValueTag = fieldBlockTag.find(".displayValue");
+		if( displayValueTag.length == 1 )
+		{
+			displayValue = displayValueTag.val();
+		}
+		else // if( entryTag.attr("type") == "checkbox" || entryTag.attr("type") == "radio" ) 
+		{
+			var selectedValues = fieldBlockTag.find(".dataValue").val().split(",");
+			var displayValues = [];
+			for( var i=0; i<selectedValues.length; i++ )
+			{
+				displayValues.push( fieldBlockTag.find("input[id='opt_" + selectedValues[i] + "']").closest("div").find("label").text() );
+			}
+
+			if( displayValues.length != 0 )
+			{
+				displayValue = displayValues.join(",");
+			}
+		}
+	}
+	
+	return displayValue;
+}
 // ===========================================================
 
 

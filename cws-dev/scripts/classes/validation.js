@@ -16,11 +16,11 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		// < change to find( '.dataValue' ) ?
         //formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
-            var inputTag = $( this );
-            inputTag.change( function(){ //blur
-                me.checkValidations( inputTag );
-            });
-		});
+			  var inputTag = $( this );
+        inputTag.change( function(){ //blur
+            me.checkValidations( inputTag );
+        });
+		  });
     };
 
 	// ================================
@@ -48,26 +48,26 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		tag.attr( 'valid', 'true' );
 
 		var divFieldBlockTag = tag.closest( '.fieldBlock' );
-		//var msgTarget = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
+		var divErrorMsgTargetTag = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
  
 		divFieldBlockTag.find( "div.errorMsg" ).remove();
 
 		if ( divFieldBlockTag.is( ':visible' ) ) 
 		{
-			me.performValidationCheck( tag, 'mandatory', divFieldBlockTag );
-			me.performValidationCheck( tag, 'minlength', divFieldBlockTag );
-			me.performValidationCheck( tag, 'maxlength', divFieldBlockTag );
-			me.performValidationCheck( tag, 'maxvalue', divFieldBlockTag );
-			me.performValidationCheck( tag, 'isNumber', divFieldBlockTag );
-			me.performValidationCheck( tag, 'isDate', divFieldBlockTag );
-			me.performValidationCheck( tag, 'phoneNumber', divFieldBlockTag );
-			me.performValidationCheck( tag, 'patterns', divFieldBlockTag );
+			me.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+			me.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
 		}
 
 		// If not valid, set the background color.
 		var valid = ( tag.attr( 'valid' ) == 'true' );
 
-		divFieldBlockTag.css( 'background-color', ( ( valid ) ? '' : me.COLOR_WARNING ) );
+		divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : me.COLOR_WARNING );
 
 		return valid;
 	};

@@ -8,7 +8,7 @@ function Templates() {};
 // Templates.inputFieldHidden = `<input type='hidden' class='hiddenData' >`;
 Templates.inputFieldHidden = `<input type='hidden' >`;
 
-Templates.inputFieldStandard = `<div class="fieldBlock field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
+Templates.inputFieldStandard = `<div class="fieldBlock field">
   <div class="field__label">
     <label class="displayName"></label>
   </div>
@@ -20,18 +20,9 @@ Templates.inputFieldStandard = `<div class="fieldBlock field" style="border: 1px
 
 Templates.labelField = `<label class="fieldBlock"></label>`;
 
-
-// Templates.inputFieldStandard = `<div class="field" style="border: 1px solid rgba(51, 51, 51, 0.54);">
-// <div class="field__label"><label class="displayName"></label><span class="compulsory">*</span></div>
-// <div class="fiel__controls">
-//   <div class="inputFieldParentTag field__left"></div>
-//   <div class="field__right" style="display: none;"></div>
-// </div>
-// </div>`;
-
 Templates.inputFieldCheckbox = `<div class="checkbox fieldBlock">
 <div class="checkbox__label"><label class="displayName"></label></div>
-<div class="checkbox__wrapper">
+<div class="checkbox__wrapper listWrapper">
   <div class="checkbox-col">
   </div>
 </div>
@@ -53,18 +44,12 @@ Templates.inputFieldToggle = `<div class="toogle-s">
   </label>
 </div>
 </div>`;
-/*Templates.inputFieldToggle_SingleItem = `<div class="toogle-s-content">
-<label class="toggle">
-  <input type="checkbox" class="toggle_input">
-  <div class="toggle-control"></div>
-</label>
-</div>`;*/
 
 
 Templates.inputFieldRadio = `<div class="radiobutton fieldBlock">
 <div class="radiobutton__label"><label class="displayName"></label>
 </div>
-<div class="radiobutton__wrapper">
+<div class="radiobutton__wrapper listWrapper">
   <div class="radiobutton-col"></div>
 </div>
 </div>`;
@@ -104,16 +89,8 @@ Templates.inputFieldYear = `
     </div>
   </dialog>
 </div>`;
-/*
 
-      <div class="controlsSymbol">
-        <button class="acceptButton">SELECT</button>
-        <button class="declineButton">CANCEL</button>
-      </div>
-
-*/
-
-Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" style="display: none;">
+Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" class="dialogSearch" style="display: none;">
 <div class="dialog__title"><label class="title">title</label></div>
 <div class="dialog__search">
   <div class="field_leading_icon">

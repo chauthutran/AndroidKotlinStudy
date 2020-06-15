@@ -1,5 +1,12 @@
 // -------------------------------------------
 // -- BlockForm Class/Methods
+//
+//  1. render groups + controls
+//    1.1 layouts + defaultValues + eventHandlers
+//    1.2 load passed dataValues
+//  2. handle calculatedFields (inside eventHandlers)
+//  3. handle validations
+
 function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 {
     var me = this;
@@ -12,6 +19,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	me.payloadConfigSelection;
 	me.formJsonArr;
 	me._childTargetActionDelay = 400;
+	me._groupNoneId = 'zzzGroupNone';
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -43,14 +51,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			blockTag.append( formDivSecTag );
 
 			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
-			var formUniqueGroups = me.getFormUniqueGroups( formFieldGroups );
 			var groupsCreated = [];
-
-			// formDivSecTag.attr( 'data-fields', escape( JSON.stringify( formJsonArr ) ) ); // TODO : REMOVE this attribute
-
-			//if ( formUniqueGroups.length > 1 ) formDivSecTag.css( 'display', 'grid' );
-			//else formDivSecTag.css( 'display', 'block' );
-
 
 			for( var i = 0; i < formFieldGroups.length; i++ )
 			{
@@ -104,15 +105,16 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			// TRAN TODO : NEED TO do something about it
 			if ( ( formFieldGroup.group ).toString().length == 0 )
 			{
-				if ( ! groupsCreated.includes( "zzzEmpty" ) )
+				if ( ! groupsCreated.includes( me._groupNoneId ) )
 				{
-					groupDivTag = $( '<div style="" class="formGroupSection" name="zzzEmpty"></div>' );
+					groupDivTag = $( '<div style="" class="formGroupSection" name="' + me._groupNoneId + '"></div>' );
+
 					formTag.append( groupDivTag );	
-					groupsCreated.push( "zzzEmpty" );
+					groupsCreated.push( me._groupNoneId );
 				}
 				else
 				{
-					groupDivTag = $( formTag ).find( 'div[name="' + 'zzzEmpty' + '"]' );
+					groupDivTag = $( formTag ).find( 'div[name="' + me._groupNoneId + '"]' );
 				}
 			}
 			else
@@ -189,7 +191,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		{
 			divInputFieldTag = me.createRadioFieldTag( formItemJson );
 		}
-		else if( controlType == "CHECKBOX" ) // "RADIO_DIALOG"
+		else if( controlType == "CHECKBOX" )
 		{
 			divInputFieldTag = me.createCheckboxFieldTag( formItemJson );
 		}
@@ -205,7 +207,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		{
 			if ( formItemJson.scanQR != undefined && formItemJson.scanQR )
 			{
-				me.createScanQR( entryTag );
+				me.createScanQR( divInputFieldTag, entryTag );
 			}
 
 			// Set defaultValue if any
@@ -229,16 +231,17 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	};
 
 
-	me.createScanQR = function( entryTag )
+	me.createScanQR = function( divInputFieldTag, entryTag )
 	{
 		var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >');
 
-		QRiconTag.click( function(){
-			new readQR( entryTag );
-		} );
+		entryTag.click( function(){
+			var qrData = new readQR( entryTag );
+		});
 
-		entryTag.css( "width", "90%" );
-		entryTag.closest("div").append( QRiconTag );
+		divInputFieldTag.find( '.field__left' ).append( QRiconTag );
+		entryTag.addClass( 'qrInput' );
+
 	}
 
 	me.createStandardInputFieldTag = function( formItemJson, autoComplete )
@@ -258,9 +261,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		// Create tag
 		var divInputFieldTag = $( Templates.inputFieldStandard );
-
-		// // fieldId
-		// divInputFieldTag.find( '.fieldBlock' ).attr( 'fieldId', formItemJson.id );
 
 		// Label
 		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
@@ -295,7 +295,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	me.createRadioDialogFieldTag = function( formItemJson )
 	{
 		var divInputFieldTag = $( Templates.inputFieldRadio );
-		divInputFieldTag.find("label").html( formItemJson.defaultName );
+		divInputFieldTag.find("label").attr( 'term', formItemJson.term ).html( formItemJson.defaultName );
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
 		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
@@ -316,7 +316,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	me.createCheckBoxDialogFieldTag = function( formItemJson )
 	{
 		var divInputFieldTag = $( Templates.inputFieldCheckbox );
-		divInputFieldTag.find("label").html( formItemJson.defaultName );
+		divInputFieldTag.find("label").attr( 'term', formItemJson.term ).html( formItemJson.defaultName );
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
 		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
@@ -651,7 +651,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		optionDivTag.change( function(){
 			var checkBoxTag = optionDivTag.find("input");
-			var value = ( checkBoxTag.prop("checked") ) ? "true" : "false";
+			var value = checkBoxTag.is( ':checked' );
 			
 			divInputFieldTag.find("input.dataValue").val( value );
 		});
@@ -735,8 +735,12 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			searchItems.each( function( i ) {
 				selectedVal = ( $( this ).find("label").html() ).toUpperCase();
 				$( this ).css( 'display', ( selectedVal.includes( searchFor ) ? 'block' : 'none' ) );
+				dialogForm.height( dialogForm.attr( 'constantHeight' ) );
 			});
-			
+
+			// GREG: trying to maintain dialog height when searching
+			dialogForm.height( dialogForm.attr( 'constantHeight' ) );
+
 		});
 
 		// Item CLICK event
@@ -772,7 +776,14 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		$( 'body' ).append( dialogForm );
 		$('.scrim').show();
-		dialogForm.fadeIn();
+
+		dialogForm.show();
+
+	/*	setTimeout( function(){
+			// GREG: trying to maintain dialog height when searching
+			dialogForm.attr( 'constantHeight', dialogForm.height() );
+			dialogForm.attr( 'constantWidth', dialogForm.width() );
+		 }, 250 ) */
 	}
 
 	me.setupEvents_DialogSelectedItemTags = function( targetDivInputFieldTag, dialogTag, optionInputTag )
@@ -786,7 +797,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			var selectedTexts = [];
 			for( var i=0; i<checkedItems.length; i++ )
 			{
-				var text = optionInputTag.closest("div").find("label").html();
+				var text = $( checkedItems[i] ).closest("div").find("label").html();
 				selectedValues.push( checkedItems[i].value );
 				selectedTexts.push( text );
 			}
@@ -818,7 +829,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
-		var groupNone = 'zzzEmpty'; 
+		var groupNone = me._groupNoneId; 
 		var nonGroup = [];
 
 		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
@@ -837,12 +848,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 
 		// SORTING should be inherited from preconfigured 'Group' object sort value
-		retGrpArr.sort(function(a, b)
-		{
-			if (a.order < b.order) { return -1; }
-			if (b.order < a.order) return 1;
-			else return 0;
-		});
+		Util.sortByKey( retGrpArr, 'order' );
 
 		// Add "non group" INPUT fields in beginging of list
 		for( var i = 0; i<nonGroup.length; i++ )
@@ -902,8 +908,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 	};
 
-
-	me.evalFormInputFunctions = function( formDivSecTag )
+	me.evalFormInputFunctionsOLD = function( formDivSecTag )
 	{
 		if ( formDivSecTag )
 		{
@@ -945,6 +950,175 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	};
 
 
+	me.getEvalFormulas = function()
+	{
+		var jData = me.formJsonArr;
+		var pConf = FormUtil.block_payloadConfig;
+		var retArr = [];
+
+		for( var i = 0; i < jData.length; i++ )
+		{
+			// prioritize existing payloadConfig
+			if ( pConf.length )
+			{
+				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue ) 
+				{
+					retArr.push( { name: jData[ i ].id, type: 'calculatedValue', formula: jData[ i ].payload[ pConf ].calculatedValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( jData[ i ].payload[ pConf ].calculatedValue ) } );
+				}
+				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) 
+				{
+					retArr.push( { name: jData[ i ].id, type: 'defaultValue', formula: jData[ i ].payload[ pConf ].defaultValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( jData[ i ].payload[ pConf ].defaultValue ) } );
+				}
+			}
+			else
+			{
+				if ( jData[ i ].calculatedValue ) 
+				{
+					retArr.push( { name: jData[ i ].id, type: 'calculatedValue', formula: jData[ i ].calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( jData[ i ].calculatedValue ) } );
+				}
+				if ( jData[ i ].defaultValue ) 
+				{
+					retArr.push( { name: jData[ i ].id, type: 'defaultValue', formula: jData[ i ].defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( jData[ i ].defaultValue ) } );
+				}
+			}
+
+		}
+
+		return retArr;
+	};
+
+	me.getFieldsFromFormula = function( evalFormula )
+	{
+		var returnFields = [];
+
+		if ( evalFormula.indexOf( 'form:' ) < 0 )
+		{
+			return returnFields;
+		}
+
+		// accepts formula, e.g. "##{generatePattern(form:walkIn_firstName[LEFT:3]+form:walkIn_motherName[LEFT:3]+form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
+		// returns array containing [ "walkIn_firstName", "walkIn_motherName", "walkIn_birthDistrict", "walkIn_birthOrder" ]
+
+		var sourceFieldsArr = evalFormula.split( 'form:' );
+		var separatorChars = '[|)|+|-| |,';
+		var separatorArr = separatorChars.split( '|' );
+
+		for( var i = 0; i < sourceFieldsArr.length; i++ )
+		{
+			var bFoundCharMatch = false;
+
+			for( var s = 0; s < separatorArr.length; s++ )
+			{
+				if ( ! bFoundCharMatch )
+				{
+					if ( ( sourceFieldsArr[ i ] ).indexOf( separatorArr[ s ] ) > 0 )
+					{
+						var fieldName = ( sourceFieldsArr[ i ] ).split( separatorArr[ s ]  )[ 0 ];
+	
+						if ( ! returnFields.includes( separatorArr[ s ] ) )
+						{
+							returnFields.push( fieldName );
+							bFoundCharMatch = true;
+						}
+					}
+				}
+			}
+
+			bFoundCharMatch = false;
+		}
+
+		return returnFields;
+	};
+
+
+	me.evalFormInputFunctions = function( formDivSecTag, thisTag )
+	{
+		// 1. get all evalFunctions (using calculatedValue / defaultValue)
+		// 2. determine which evalFunctions + controls have reference to thisTag control
+		// 3. only update those controls affected by currentControl value change
+
+		
+		var jData = me.formJsonArr;
+
+		// only focus on changing control's value (cascade calculatedValue)
+		if ( thisTag )
+		{
+			var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
+				return field.type === 'calculatedValue';
+			});
+			var affectedControls = evalFunctionsToProcess.filter( function( field ){
+				return field.dependencies.includes( thisTag.attr( 'name' ) );
+			} );
+
+			console.log( affectedControls );
+
+			for( var i = 0; i < affectedControls.length; i++ )
+			{
+				var inputVal = thisTag.val();
+				var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
+
+				FormUtil.evalReservedField( tagTarget, affectedControls[ i ].formula );
+			}
+
+		}
+		else
+		{
+			var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
+				return field.type === 'defaultValue';
+			});
+		}
+
+		if ( me.formJsonArr != undefined )
+		{
+			var jData = me.formJsonArr;
+			var pConf = FormUtil.block_payloadConfig;
+			var findName = ( thisTag ) ? thisTag.attr( 'name' ) : '';
+
+			for( var i = 0; i < jData.length; i++ )
+			{
+				var inputVal;
+				var EvalActionString = '';
+
+				if ( findName.length && findName === jData[ i ].id )
+				{
+					inputVal = thisTag.val();
+				}
+				else
+				{
+					inputVal = formDivSecTag.find("[name='" + jData[ i ].id + "']").val();
+				}
+
+				//if( jData[i].controlType !== "LABEL" )
+				if ( inputVal || jData[ i ].payload )
+				{
+					if (inputVal ) EvalActionString = inputVal;
+
+					if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
+
+					if ( EvalActionString.length )
+					{
+						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+
+						FormUtil.evalReservedField( tagTarget, EvalActionString );
+					}
+
+					// GREG @Tran/@James: added "calculatedValue" but should probably be reorganized
+					if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue )
+					{
+						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
+
+						FormUtil.evalReservedField( tagTarget, jData[ i ].payload[ pConf ].calculatedValue );
+					}
+
+				}
+
+			}
+
+		}
+
+
+	};
+
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
 	{
 		if ( entryTag )
@@ -952,7 +1126,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag ); //.parent()
+				me.evalFormInputFunctions( formDivSecTag, entryTag ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}
@@ -1012,7 +1186,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( "select,input" );
+		var entryTag = divInputTag.find( "select,input" ); 
 		var regxRules = [];
 
 		if( formItemJson.rules !== undefined )
@@ -1028,9 +1202,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
-						//var titleTag = divInputTag.find( ".titleDiv" );
-						//titleTag.after( $( "<span class='redStar'> * </span>" ) );
-						var titleTag = divInputTag.closest( 'div.field' ).find( 'div.field__label' );
+						var titleTag = divInputTag.closest( 'div.fieldBlock' ).find( 'label' );
 						titleTag.append( $( "<span>*</span>" ) );
 					}
 				}	
@@ -1261,7 +1433,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			{
 				// var attributes = passedData.data.relationships[0].relative.attributes;
 				var attributes = passedData.displayData;  // <-- we are assuming this is single list...
-				var inputTags = formDivSecTag.find( 'input,checkbox,select' );
+				var inputTags = formDivSecTag.find( 'input,select' );
 
 				// Go through each input tags and use 'uid' to match the attribute for data population
 				inputTags.each( function( i ) 
