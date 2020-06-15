@@ -2,12 +2,17 @@
 // -- RESTCallManager Class/Methods
 //      - Not DWS specific, but general request 'fetch' util.
 // -------------------------------------
+// Error types:
+// { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, , 'errStatus': response.status };
+// { 'errMsg': 'unknwon error', 'errType': 'unknown' };
+// { 'errMsg': error, 'errType': 'timeout' }
 
 function RESTCallManager() {}
 
 RESTCallManager.defaultTimeOut = 180000;  // 3 min.
 
 // ==== Methods ======================
+
 RESTCallManager.performGet = function( url, requestOption, returnFunc )
 {
     var requestData = {
@@ -61,15 +66,15 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     //fetch( url, requestData )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
+        //console.log( response );
         if ( response.ok ) return response.json();
-        else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response };
+        else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
     })
     .then( jsonData => {
         returnFunc( true, jsonData );
     })
     .catch( ( error ) => {
-        console.log( 'ErrorCatched, RESTCallManager.performREST, url: ' + url + ', error: ' + error );
-        console.log( error );
+        console.log( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;
