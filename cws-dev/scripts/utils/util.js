@@ -196,7 +196,7 @@ Util.mergeDeep = function ( dest, obj )
 			Util.mergeArrays( dVal, oVal );			
 			//dest[key] = pVal.concat(...oVal);
 		} 
-		else if ( Util.isObject( dVal ) && Util.isObject( oVal ) ) 
+		else if ( Util.isTypeObject( dVal ) && Util.isTypeObject( oVal ) ) 
 		{
 			//dest[key] = 
 			Util.mergeDeep( dVal, oVal );
@@ -230,9 +230,14 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 };
 
 
-Util.isObject = function( obj )
+Util.isTypeObject = function( obj )
 {
-	return ( typeof obj === 'object' );
+	return ( obj && typeof obj === 'object' );
+};
+
+Util.isTypeString = function( input )
+{
+	return ( input && typeof( input ) === 'string' );
 };
 
 

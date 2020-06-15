@@ -39,8 +39,8 @@ RESTCallManager.timeoutPromise = function( promise, timeout, error )
     return new Promise( ( resolve, reject ) => {
 
         setTimeout(() => {
-        reject(error);
-      }, timeout );
+            reject( { 'errMsg': error, 'errType': 'timeout' } );
+        }, timeout );
 
       promise.then( resolve, reject );
     });
@@ -62,16 +62,21 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
         if ( response.ok ) return response.json();
-        else if ( response.statusText ) throw Error( response.statusText )
+        else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response };
     })
     .then( jsonData => {
         returnFunc( true, jsonData );
     })
-    .catch( error => {
-        console.log( 'ErrorCatched, RESTCallManager.performREST, url: ' + url );
-        console.log( error );  
+    .catch( ( error ) => {
+        console.log( 'ErrorCatched, RESTCallManager.performREST, url: ' + url + ', error: ' + error );
+        console.log( error );
 
-        returnFunc( false, { "response": error.toString() } );
+        var errJson;
+        if ( Util.isTypeObject( error ) ) errJson = error;
+        else if ( Util.isTypeString( error ) ) errJson = { 'errMsg': error, 'errType': 'unknown' };
+        else errJson = { 'errMsg': 'unknwon error', 'errType': 'unknown' };
+
+        returnFunc( false, errJson );
     });
 };
 

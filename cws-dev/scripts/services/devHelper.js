@@ -332,6 +332,23 @@ DevHelper.setUp = function( cwsRenderObj )
 
 // =======================================
 
+
+DevHelper.switchConnectMode = function( connModeStr )
+{
+    if ( connModeStr === "STABLE" )
+    {
+        ConnManagerNew.efficiency.wsAvailCheck_Immediate = true;
+        ConnManagerNew.efficiency.networkConnOnline_Immediate = false;
+    }
+    else if ( connModeStr === "ACCESSIBLE" )
+    {
+        ConnManagerNew.efficiency.wsAvailCheck_Immediate = true;
+        ConnManagerNew.efficiency.networkConnOnline_Immediate = true;
+        // More settings to ...
+    }
+};
+
+
 DevHelper.showClientListData = function()
 {
     console.log( ClientDataManager.getClientList() );
