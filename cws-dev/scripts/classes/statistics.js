@@ -36,6 +36,30 @@ function Statistics( cwsRender )
     me.total;
     me.slideIndex; 
 
+    me.stat_Config = [
+        {
+            "id": "",
+            "htmlRef": "stat_1s355.html",
+            "divRef": "div_table3Cal",  // one div in statisticPage.html //<-- we can try putting this on gitConfig service..
+ 
+            "htmlTempalte(Optaional)": [ "<div>------" ],
+ 
+            "jsScriptRef": "stat_1s355.js",
+            "methodRef": "table3Cal",  // one method in statsticMethods.js // put it on gitConfig service..
+            // [Manipulate data to feed to the table/chart/etc.]
+            // The method contains below 3 operation: 
+            // 1. Aggregate data <-- from source (device)
+            // 2. do date filter
+            // 3. generate table/chart (target is the 'div' with table/chart)
+
+            "relativePeriodRange": true
+        },
+        {
+            "id": "list_revisited_clients",
+            "scriptMethodRef": "listClients",  // <-- how to manipulate the data to feed to the table/chart/single value..
+        }
+    ];
+
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================

@@ -10,6 +10,33 @@ Util.termName_listEmpty = "common_listEmpty";
 
 Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 
+
+// ----------------------------------------------------
+
+Util.outputAsStr = function( input )
+{	
+	var output = '';
+
+	if ( input )
+	{
+		if ( Util.isTypeObject( input ) )
+		{
+			output = JSON.stringify( input );
+		}
+		else if ( Util.isTypeString( input ) )
+		{
+			output = input;
+		}
+		else
+		{
+			try { output = '[unknown type, ' + input + ']'; } 
+			catch ( err ) { console.log( 'Error in Util.outputAsStr, err: ' + err ); }
+		}
+	}
+
+	return output;
+};
+
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods
 
@@ -149,6 +176,8 @@ Util.disableTag = function( tag, isDisable )
 	tag.prop('disabled', isDisable);
 }
 
+// ---------------------------------------
+
 // NOTE: Should be named 'append'?
 Util.mergeArrays = function( mainArr, newArr )
 {
@@ -196,7 +225,7 @@ Util.mergeDeep = function ( dest, obj )
 			Util.mergeArrays( dVal, oVal );			
 			//dest[key] = pVal.concat(...oVal);
 		} 
-		else if ( Util.isObject( dVal ) && Util.isObject( oVal ) ) 
+		else if ( Util.isTypeObject( dVal ) && Util.isTypeObject( oVal ) ) 
 		{
 			//dest[key] = 
 			Util.mergeDeep( dVal, oVal );
@@ -230,9 +259,14 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 };
 
 
-Util.isObject = function( obj )
+Util.isTypeObject = function( obj )
 {
-	return ( typeof obj === 'object' );
+	return ( obj && typeof obj === 'object' );
+};
+
+Util.isTypeString = function( input )
+{
+	return ( input && typeof( input ) === 'string' );
 };
 
 
@@ -300,6 +334,8 @@ Util.getCombinedJsonInArr = function( objArr )
 
 	return combinedObj;
 };
+
+// -------------------------------------------
 
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
@@ -409,6 +445,8 @@ Util.sortByKey_Reverse = function( array, key ) {
 		return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
 	});
 };
+
+// -------------------------------------------
 
 Util.searchByName = function( array, propertyName, value )
 {

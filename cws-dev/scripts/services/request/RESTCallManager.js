@@ -2,12 +2,17 @@
 // -- RESTCallManager Class/Methods
 //      - Not DWS specific, but general request 'fetch' util.
 // -------------------------------------
+// Error types:
+// { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, , 'errStatus': response.status };
+// { 'errMsg': 'unknwon error', 'errType': 'unknown' };
+// { 'errMsg': error, 'errType': 'timeout' }
 
 function RESTCallManager() {}
 
 RESTCallManager.defaultTimeOut = 180000;  // 3 min.
 
 // ==== Methods ======================
+
 RESTCallManager.performGet = function( url, requestOption, returnFunc )
 {
     var requestData = {
@@ -39,8 +44,8 @@ RESTCallManager.timeoutPromise = function( promise, timeout, error )
     return new Promise( ( resolve, reject ) => {
 
         setTimeout(() => {
-        reject(error);
-      }, timeout );
+            reject( { 'errMsg': error, 'errType': 'timeout' } );
+        }, timeout );
 
       promise.then( resolve, reject );
     });
@@ -61,17 +66,22 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     //fetch( url, requestData )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
+        //console.log( response );
         if ( response.ok ) return response.json();
-        else if ( response.statusText ) throw Error( response.statusText )
+        else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
     })
     .then( jsonData => {
         returnFunc( true, jsonData );
     })
-    .catch( error => {
-        console.log( 'ErrorCatched, RESTCallManager.performREST, url: ' + url );
-        console.log( error );  
+    .catch( ( error ) => {
+        console.log( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );
 
-        returnFunc( false, { "response": error.toString() } );
+        var errJson;
+        if ( Util.isTypeObject( error ) ) errJson = error;
+        else if ( Util.isTypeString( error ) ) errJson = { 'errMsg': error, 'errType': 'unknown' };
+        else errJson = { 'errMsg': 'unknwon error', 'errType': 'unknown' };
+
+        returnFunc( false, errJson );
     });
 };
 

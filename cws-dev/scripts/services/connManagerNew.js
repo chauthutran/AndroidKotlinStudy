@@ -66,9 +66,8 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj ) //, callBack )
 };
 
 
-// ===============================================
-// ------------------------------------------
-
+// =====================================================
+// ------ Network Connection Status Check Related -----
 
 // CHECK #1
 // Event Handler for checking / updating consistant(not frequently changed) network connection status.
@@ -97,6 +96,32 @@ ConnManagerNew.updateNetworkConnStatus = function()
 	}
 };
 
+
+// Change Network Connection
+ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline, optionStr )
+{
+	// MAIN - Mark the network connection as stable Online/Offline
+	statusInfo.networkConn.online_Stable = modeOnline;
+
+
+	// Trigger AppMode Check
+	ConnManagerNew.appModeSwitchRequest( statusInfo );
+	// update UI icons to reflect current network change
+	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
+	ConnManagerNew.update_UI( statusInfo );
+
+
+	// If optional flag is to check server available immedicatley, perform it.
+	if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
+	{
+		// Below only gets called (has checks inside) if stable online..
+		ConnManagerNew.checkNSet_ServerAvailable();
+	}	
+};
+
+
+// ====================================================
+// ------- Server Available Check Related ------------
 
 // CHECK #2 - SERVER AVAILABLE CHECK
 ConnManagerNew.checkNSet_ServerAvailable = function( callBack ) 
@@ -135,31 +160,6 @@ ConnManagerNew.serverAvailable = function( callBack )
 		console.log( 'error in ConnManagerNew.serverAvailable ')
 		callBack( false );
 	}
-};
-
-// ===============================================
-// ------------------------------------------
-
-// Change Network Connection
-ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline, optionStr )
-{
-	// MAIN - Mark the network connection as stable Online/Offline
-	statusInfo.networkConn.online_Stable = modeOnline;
-
-
-	// Trigger AppMode Check
-	ConnManagerNew.appModeSwitchRequest( statusInfo );
-	// update UI icons to reflect current network change
-	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
-	ConnManagerNew.update_UI( statusInfo );
-
-
-	// If optional flag is to check server available immedicatley, perform it.
-	if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
-	{
-		// Below only gets called (has checks inside) if stable online..
-		ConnManagerNew.checkNSet_ServerAvailable();
-	}	
 };
 
 
@@ -212,10 +212,22 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 	return ( statusInfo.networkConn.online_Stable && statusInfo.serverAvailable ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
 };
 
+// ===============================================
+// ---- Status Check Related ----------
 
 ConnManagerNew.isAppMode_Online = function()
 {
 	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
+};
+
+ConnManagerNew.isStrONLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.ONLINE );
+};
+
+ConnManagerNew.isStrOFFLINE = function( appModeStr )
+{
+	return ( appModeStr === ConnManagerNew.OFFLINE );
 };
 
 
@@ -311,20 +323,6 @@ ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 };
 
 
-// ===============================================================
-// =====================================
-
-ConnManagerNew.isStrONLINE = function( appModeStr )
-{
-	return ( appModeStr === ConnManagerNew.ONLINE );
-};
-
-ConnManagerNew.isStrOFFLINE = function( appModeStr )
-{
-	return ( appModeStr === ConnManagerNew.OFFLINE );
-};
-
-
 // ===============================================
 // --- UI section ----
 
@@ -395,3 +393,5 @@ ConnManagerNew.setStatusCss = function( tag, isOn )
 	tag.css( 'background-color', colorStr );
 };
 
+
+// ===============================================
