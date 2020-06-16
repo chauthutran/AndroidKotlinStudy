@@ -294,15 +294,16 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.createRadioDialogFieldTag = function( formItemJson )
 	{
-		var divInputFieldTag = $( Templates.inputFieldRadio );
-		divInputFieldTag.find("label").attr( 'term', formItemJson.term ).html( formItemJson.defaultName );
+		var divInputFieldTag = $( Templates.inputFieldStandard );
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
 		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
-		divInputFieldTag.append( showEntryForm );
-		divInputFieldTag.append( entryTag );
+		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
+		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
-		divInputFieldTag.on( 'click', function(){
+		showEntryForm.on( 'click', function(){
 			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'radio' );
 		} );
 
@@ -315,15 +316,17 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.createCheckBoxDialogFieldTag = function( formItemJson )
 	{
-		var divInputFieldTag = $( Templates.inputFieldCheckbox );
-		divInputFieldTag.find("label").attr( 'term', formItemJson.term ).html( formItemJson.defaultName );
+		var divInputFieldTag = $( Templates.inputFieldStandard ); //Templates.inputFieldCheckbox
+
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
 		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
-		divInputFieldTag.append( showEntryForm );
-		divInputFieldTag.append( entryTag );
+		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
+		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
-		divInputFieldTag.on( 'click', function(){
+		showEntryForm.on( 'click', function(){
 			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'checkbox' );
 		} );
 
@@ -751,6 +754,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		// Close button event
 		dialogForm.find( '#closeBtn' ).on( 'click', function(){
 
+			var targetInputTag = divInputFieldTag.find("input.dataValue");
+			FormUtil.dispatchOnChangeEvent( targetInputTag );
+
 			$('.scrim').hide();
 			$( '#dialog_searchOptions' ).remove();
 		} );
@@ -760,8 +766,13 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			optsContainer.find("input").prop("checked", false);
 
-			divInputFieldTag.find("input.dataValue").val( "" );
-			divInputFieldTag.find("input.displayValue").val( "" );
+			var targetInputTag = divInputFieldTag.find("input.dataValue");
+			var targetDisplayTag = divInputFieldTag.find("input.displayValue");
+
+			targetDisplayTag.val( "" );
+			targetDisplayTag.val( "" );
+
+			FormUtil.dispatchOnChangeEvent( targetInputTag );
 		} );
 
 	}
@@ -1202,8 +1213,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
-						var titleTag = divInputTag.closest( 'div.fieldBlock' ).find( 'label' );
-						titleTag.append( $( "<span>*</span>" ) );
+						divInputTag.find( 'label' ).first().closest("div").append( $( "<span>*</span>" ) );
 					}
 				}	
 				else if ( ruleJson.pattern )
@@ -1491,42 +1501,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 		return walkInClientCase;
 	}
-
-
-	// me.renderInputCheckbox = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag, enableToggle )
-	// {
-	// 	var parentTag = $( Templates.inputFieldCheckbox );
-	// 	var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-	// 	var checkLabel = parentTag.find( '.displayName' );
-	// 	checkLabel.html( formItemJson.defaultName );
-
-	// 	divInputTag.append( parentTag );
-
-	// 	console.log( optionList, formItemJson );
-
-	// 	me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'checkbox', 'horizontal' );
-
-	// }
-
-
-	// me.renderInputRadio = function( formItemJson, divInputTag, formDivSecTag, formFull_IdList, passedData, payloadConfigSelection, fieldContainerTag )
-	// {
-	// 	var parentTag = $( Templates.inputFieldRadio );
-	// 	var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-	// 	var checkLabel = parentTag.find( '.displayName' );
-
-	// 	checkLabel.html( formItemJson.defaultName );
-
-	// 	divInputTag.append( parentTag );
-
-	// 	console.log( optionList, formItemJson );
-
-
-	// 	me.createListOptions_Items( parentTag.find( '.optsContainer' ), formItemJson, 'radio', 'horizontal' );
-	// }
-
-	
-	
 
 	// TRAN TODO 
 	me.createListOptions_Items = function( targetTag, formItemJson, type, addClass, targetInputTag, targetDisplayText )
