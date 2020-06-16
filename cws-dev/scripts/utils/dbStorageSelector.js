@@ -12,22 +12,18 @@ function DBStorageSelector()
     me.setDefaultDataHandler = function() {
         var selectedValue = 'indexdb';
 
-        //LocalStorageDataManager.saveData( "dbStorageType", selectedValue );
-        //IndexdbDataManager.saveData( "dbStorageType", selectedValue );
-
-        DataManager.dbStorageType = selectedValue;
+        DataManager2.dbStorageType = selectedValue;
     };
 
     me.setStorageDb = function()
     {
-        LocalStorageDataManager.getData( "dbStorageType", function(value){
-            if( value == undefined ) {
-                document.getElementById("dbStorageSelector").value = DataManager.dbStorageType_localStorage;
-            }
-            else{
-                document.getElementById("dbStorageSelector").value = value;
-            }
-        });
+        var  value = LocalStgMng.getJsonData( "dbStorageType" );
+        if( value == undefined ) { 
+            document.getElementById("dbStorageSelector").value = DataManager2.dbStorageType_localStorage;
+        }
+        else{
+            document.getElementById("dbStorageSelector").value = value;
+        }
     };
 
     // --------------------------------------------------------------------------------------

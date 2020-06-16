@@ -586,35 +586,33 @@ ConnManager.incrementNetworkConnectionMonitor = function( connChangedFrom, connC
 		if ( bProceed )
 		{
 
-			DataManager.getData( 'networkConnectionObs', function( dataObs ) {
+			var dataObs = AppInfoManager.getNetworkConnectionObs;
 
-				var dtmLast = '';
-	
-				if ( ! dataObs )
-				{
-					var data = { 'first': dtmObs.toISOString(), 'last': dtmObs.toISOString(), 'observations': { 'slow-2g': {}, '2g': {}, '3g': {}, '4g': {}, 'offline': {} } };
-				}
-				else
-				{
-					var data = dataObs;
-					dtmLast = $.format.date( new Date( data.last ), "yyyymmddHHmm" )
-				}
-	
-				// block collection of connectivityType data when multiple observations occur in same minute
-				if ( dtmLast != $.format.date( dtmObs, "yyyymmddHHmm" ) )
-				{
-					var hrs = ( data.observations[ connChangedTo ][ dtmHr ] ? data.observations[ connChangedTo ][ dtmHr ] : 0 ) + 1;
-	
-					data.observations[ connChangedTo ][ dtmHr ] = hrs
-					data.last = dtmObs.toISOString();
-	
-					DataManager.saveData( 'networkConnectionObs', data );
-	
-					ConnManager.lastConnectTypeObs = dtmObs;
-	
-				}
-	
-			})
+			var dtmLast = '';
+
+			if ( ! dataObs )
+			{
+				var data = { 'first': dtmObs.toISOString(), 'last': dtmObs.toISOString(), 'observations': { 'slow-2g': {}, '2g': {}, '3g': {}, '4g': {}, 'offline': {} } };
+			}
+			else
+			{
+				var data = dataObs;
+				dtmLast = $.format.date( new Date( data.last ), "yyyymmddHHmm" )
+			}
+
+			// block collection of connectivityType data when multiple observations occur in same minute
+			if ( dtmLast != $.format.date( dtmObs, "yyyymmddHHmm" ) )
+			{
+				var hrs = ( data.observations[ connChangedTo ][ dtmHr ] ? data.observations[ connChangedTo ][ dtmHr ] : 0 ) + 1;
+
+				data.observations[ connChangedTo ][ dtmHr ] = hrs
+				data.last = dtmObs.toISOString();
+
+				AppInfoManager.updateNetworkConnectionObs( data );
+
+				ConnManager.lastConnectTypeObs = dtmObs;
+
+			}
 		}
 
 	}

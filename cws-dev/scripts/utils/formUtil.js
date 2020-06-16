@@ -1048,17 +1048,16 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 FormUtil.defaultLanguage = function( exeFunc )
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	DataManager.getSessionData( function( sessData){
-
-		if ( sessData && sessData.language )
-		{
-			if ( exeFunc ) exeFunc( sessData.language );
-		}
-		else
-		{
-			if ( exeFunc ) exeFunc( (navigator.language).toString().substring(0,2) );
-		}
-	});
+	var userInfo = AppInfoManager.updateUserInfo();
+	
+	if ( userInfo && userInfo.language )
+	{
+		if ( exeFunc ) exeFunc( userInfo.language );
+	}
+	else
+	{
+		if ( exeFunc ) exeFunc( (navigator.language).toString().substring(0,2) );
+	}
 
 };
 
@@ -1383,7 +1382,7 @@ FormUtil.listItemActionUpdate = function( itemID, prop, value )
 
 FormUtil.gAnalyticsEventAction = function( returnFunc )
 {
-	var dcd = DataManager.getUserConfigData();
+	var dcd = ConfigManager.getConfigJson();
 	var ret = '';
 	if ( dcd && dcd.orgUnitData )
 	{

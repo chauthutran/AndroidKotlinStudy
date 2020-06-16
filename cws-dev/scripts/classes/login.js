@@ -206,16 +206,15 @@ function Login( cwsRenderObj )
 			{
 				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
-					DataManager.getData( userName, function( loginData ) {
+					var loginData = SessionManager.getLoginDataFromStorage( userName );
 
-						SessionManager.updateUserSessionToStorage( loginData, userName );
-						
-						// load to session in memory
-						SessionManager.loadDataInSession( userName, password, loginData );
+					// Update current user login information ( lastUpdated, stayLoggedIn )
+					SessionManager.updateUserSessionToStorage( loginData, userName );
+					
+					// load to session in memory
+					SessionManager.loadDataInSession( userName, password, loginData );
 
-						me.loginSuccessProcess( loginData );
-
-					});
+					me.loginSuccessProcess( loginData );
 				}
 				else
 				{

@@ -132,7 +132,7 @@ function settingsApp( cwsRender )
                 pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
             })
             btnAcceptResetData.click(()=>{
-                DataManager.clearSessionStorage()
+                AppInfoManager.removeUserInfo();
                 if ( cacheManager.clearCacheKeys() )
                 {
                     me.cwsRenderObj.reGetAppShell();
@@ -214,21 +214,18 @@ function settingsApp( cwsRender )
         {
             me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_NetworkSync.val();
 
-            DataManager.setSessionDataValue( 'networkSync', me.settingsInfo_NetworkSync.val() );
-
+            AppInfoManager.updateNetworkSync( me.settingsInfo_NetworkSync.val() );
+            
             $( '#settingsInfo_network_Text' ).html( ( me.settingsInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.settingsInfo_NetworkSync.val() ) );
-
-            //syncManager.reinitialize ( me.cwsRenderObj );
-
         });
 
 
         me.settingsInfo_logoutDelay.change ( () => 
         {
-            
             me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_logoutDelay.val();
 
-            DataManager.setSessionDataValue( 'logoutDelay', me.settingsInfo_logoutDelay.val() );
+            // TRAN TODO : Have to updateLogoutDelay here. The code in line 237 did update the logoutDelay ???
+            AppInfoManager.updateLogoutDelay( me.settingsInfo_logoutDelay.val() );
 
             $( '#settingsInfo_logout_Text' ).html( ( me.settingsInfo_logoutDelay.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getLogoutOptions(), me.settingsInfo_logoutDelay.val() ) );
 
@@ -758,8 +755,6 @@ function settingsApp( cwsRender )
             if ( dcdConfig.version ) dcdConfigVersion = dcdConfig.version;
             if ( dcdConfig.settings && dcdConfig.settings.theme ) 
             {
-                //me.getThemeList( dcdConfig.themes );
-                //me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
                 me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins )
 
@@ -818,7 +813,7 @@ function settingsApp( cwsRender )
                 }
             });
 
-            me.getStorageSummary( $( '#settingsInfo_StorageSize' ) ); //, DataManager.storageEstimate
+            me.getStorageSummary( $( '#settingsInfo_StorageSize' ) ); 
 
         }
 
@@ -829,7 +824,7 @@ function settingsApp( cwsRender )
 
         targetTag.empty();
 
-        DataManager.estimateStorageUse( function( storageJSON ){
+        DataManager2.estimateStorageUse( function( storageJSON ){
 
             var quotaDenom = parseFloat( storageJSON.quota ) / 1024 / 1024;
             var suffix = 'MB';

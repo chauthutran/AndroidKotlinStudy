@@ -113,10 +113,8 @@ function cwsRender()
 
 	me.updateFromSession = function()
 	{
-		DataManager.getSessionDataValue( 'networkSync', null,  function(data){
-			if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
-			// DataManager.saveData(  'networkSync',  data );
-		});
+		var data = AppInfoManager.getNetworkSync();
+		if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
 	};
 
 	me.setPageHeaderEvents = function()
@@ -315,8 +313,6 @@ function cwsRender()
 
 		} );
 
-		//DataManager.initialiseDataStorageSize();
-
 	}
 
 	me.refreshMenuItems = function()
@@ -357,29 +353,6 @@ function cwsRender()
 	me.startBlockExecuteAgain = function()
 	{
 		me.startBlockExecute();
-
-		/*
-		DataManager.getUserConfigData( function( userData ){
-
-			if ( userData != undefined )
-			{
-				me.startBlockExecute( userData.dcdConfig );
-			}
-			else
-			{
-				var sessData = localStorage.getItem( Constants.storageName_session );
-
-				if ( sessData )
-				{
-					var dcdData = localStorage.getItem( JSON.parse( sessData ).user );
-
-					me.startBlockExecute( JSON.parse( dcdData ).dcdConfig );
-				}
-				
-			}
-
-		});
-		*/
 	}
 
 	// ----------------------------------
@@ -410,30 +383,19 @@ function cwsRender()
 			return;
 		}
 
-		DataManager.getSessionData( function( mySessionData ) {
+		var userData = ConfigManager.getConfigJson();
 
-			//FormUtil.updateStat_SyncItems( Constants.storageName_redeemList, function( myData )
-			{
-				DataManager.getUserConfigData( function( userData ){
+		$( 'div.navigation__user' ).html( userData.orgUnitData.userName );
 
-					$( 'div.navigation__user' ).html( userData.orgUnitData.userName );
+		if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
+		{
+			// var mySubmit = FormUtil.records_redeem_submit; 
+			// var myQueue = FormUtil.records_redeem_queued; 
+			// var myFailed = FormUtil.records_redeem_failed; 
 
-				});
+			if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
 
-				if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
-				{
-					var mySubmit = FormUtil.records_redeem_submit; 
-					var myQueue = FormUtil.records_redeem_queued; 
-					var myFailed = FormUtil.records_redeem_failed; 
-
-					if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
-
-					//$( '#divNavDrawerSummaryData' ).html ( me.menuStatSummary( mySubmit, myQueue, myFailed ) );
-				}
-
-			} //re);
-
-		});
+		}
 
 	}
 
@@ -489,79 +451,74 @@ function cwsRender()
 
 	me.populateMenuList = function( areaList, exeFunc )
 	{
+		var startMenuTag;
 
-		DataManager.getSessionData( function( userSessionJson ) {
+		$( '#navDrawerDiv' ).empty();
 
-			var userName = ( SessionManager.sessionData.login_UserName && FormUtil.checkLogin() ) ? SessionManager.sessionData.login_UserName : "";
-			var startMenuTag;
+		// clear the list first
+		//me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
 
-			$( '#navDrawerDiv' ).empty();
-
-			// clear the list first
-			//me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
-
-			// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-			var navMenuHead = $( '<div class="navigation__header" />' );
-			var navMenuLogo = $( '<div class="navigation__logo" />' );
-			var navMenuUser = $( '<div class="navigation__user" />' );
-			var navMenuClose = $( '<div class="navigation__close" />' );
+		// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
+		var navMenuHead = $( '<div class="navigation__header" />' );
+		var navMenuLogo = $( '<div class="navigation__logo" />' );
+		var navMenuUser = $( '<div class="navigation__user" />' );
+		var navMenuClose = $( '<div class="navigation__close" />' );
 
 
-			me.navDrawerDivTag.append ( navMenuHead );
-			navMenuHead.append ( navMenuLogo );
-			navMenuHead.append ( navMenuUser );
-			navMenuHead.append ( navMenuClose );
-			//navMenuHead.append ( $( '<div id="divNavDrawerSummaryData" class="" />' ) );
+		me.navDrawerDivTag.append ( navMenuHead );
+		navMenuHead.append ( navMenuLogo );
+		navMenuHead.append ( navMenuUser );
+		navMenuHead.append ( navMenuClose );
+		//navMenuHead.append ( $( '<div id="divNavDrawerSummaryData" class="" />' ) );
 
-			var navMenuItems = $( '<div class="navigation__items" />');
-			var navItemsUL = $( '<ul />');
+		var navMenuItems = $( '<div class="navigation__items" />');
+		var navItemsUL = $( '<ul />');
 
-			navMenuItems.append( navItemsUL );
+		navMenuItems.append( navItemsUL );
 
-			// Add the menu rows
-			if ( areaList )
+		// Add the menu rows
+		if ( areaList )
+		{
+			for ( var i = 0; i < areaList.length; i++ )
 			{
-				for ( var i = 0; i < areaList.length; i++ )
+				var area = areaList[i];
+
+				if ( area && area.groupBefore === true )
 				{
-					var area = areaList[i];
+					var groupRow = $( '<hr>' );
 
-					if ( area && area.groupBefore === true )
-					{
-						var groupRow = $( '<hr>' );
+					navItemsUL.append( groupRow );
+				}
 
-						navItemsUL.append( groupRow );
-					}
+				var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
 
-					var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
+				menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
+				menuLI.append( $( '<a href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
 
-					menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
-					menuLI.append( $( '<a href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
+				navItemsUL.append( menuLI );
 
-					navItemsUL.append( menuLI );
+				me.setupMenuTagClick( menuLI );
 
-					me.setupMenuTagClick( menuLI );
+				if ( area.startArea ) startMenuTag = menuLI;
 
-					if ( area.startArea ) startMenuTag = menuLI;
+				if ( area && area.groupAfter === true )
+				{
+					var groupRow = $( '<hr>' );
 
-					if ( area && area.groupAfter === true )
-					{
-						var groupRow = $( '<hr>' );
+					navItemsUL.append( groupRow );
+				}
+			}	
+		}
 
-						navItemsUL.append( groupRow );
-					}
-				}	
-			}
+		me.navDrawerDivTag.append( navMenuItems );
 
-			me.navDrawerDivTag.append( navMenuItems );
-
-			navMenuClose.on( 'click', function(){
-				$( 'div.Nav__icon' ).click();
-			});
-
-			me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
-
-			if ( exeFunc ) exeFunc( startMenuTag );
+		navMenuClose.on( 'click', function(){
+			$( 'div.Nav__icon' ).click();
 		});
+
+		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
+
+		if ( exeFunc ) exeFunc( startMenuTag );
 	
 	}
 
@@ -636,7 +593,11 @@ function cwsRender()
 
 			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
 			// var defTheme = SessionManager.getStorageLastSessionData().theme;
-			var defTheme = AppInfoManager.getUserInfo().theme;
+			var defTheme = "";
+			if( AppInfoManager.getUserInfo() != undefined )
+			{
+				defTheme = AppInfoManager.getUserInfo().theme;
+			}
 
 			$('#styleCssMobileRow').remove();
 			$('#styleCssPulse').remove();
@@ -904,43 +865,46 @@ function cwsRender()
 		//$( '#divNavDrawerSummaryData' ).html( '' );
 	}
 
+	// TRAN TODO : Discuss with James and will try to remove this method and disabled the code method
 	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
 	// USED?  Put in back file?
 	me.trackUserLocation = function( clicked_area )
 	{
-		var userInfo = AppInfoManager.getUserInfo();
+		// var userInfo = AppInfoManager.getUserInfo();
 
-			var thisNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'online' : 'offline' );
-			var altNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'offline' : 'online' );
-			var matchOn = [ "id", "startBlockName", "name" ];
-			var matchedOn, areaMatched;
+		// 	var thisNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'online' : 'offline' );
+		// 	// var altNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'offline' : 'online' );
+		// 	// var matchOn = [ "id", "startBlockName", "name" ];
+		// 	// var matchedOn, areaMatched;
 
-			if ( userInfo )
-			{
+		// 	if ( userInfo )
+		// 	{
 
-				DataManager.getUserConfigData( function( loginData ){
+		// 		// DataManager.getUserConfigData( function( loginData ){
 
-					if (loginData)
-					{
-						for ( var i = 0; i < loginData.dcdConfig.areas[thisNetworkMode].length; i++ )
-						{
-							loginData.dcdConfig.areas[thisNetworkMode][i].startArea = false;
+		// 			// if (loginData)
+		// 			// {
+		// 				var dcdConfig = ConfigManager.getConfigJson();
+		// 				for ( var i = 0; i < dcdConfig.areas[thisNetworkMode].length; i++ )
+		// 				{
+		// 					dcdConfig.areas[thisNetworkMode][i].startArea = false;
 
-							if ( clicked_area.id == loginData.dcdConfig.areas[thisNetworkMode][i].id )
-							{
-								loginData.dcdConfig.areas[thisNetworkMode][i].startArea = true;
-							}
+		// 					if ( clicked_area.id == dcdConfig.areas[thisNetworkMode][i].id )
+		// 					{
+		// 						dcdConfig.areas[thisNetworkMode][i].startArea = true;
+		// 					}
 
-						}
+		// 				}
 			
-						//UPDATE lastStorage session for current user (based on last menu selection)
-						// DataManager.saveData( lastSession.user, loginData );
-						SessionManager.saveUserSessionToStorage( loginData, lastSession.user, Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) );
+		// 				//UPDATE lastStorage session for current user (based on last menu selection)
+		// 				// DataManager.saveData( lastSession.user, loginData );
 
-					}
-				});
+		// 				// TRAN TODO : loginData here is just dcdConfig data, not full login data
+		// 				SessionManager.saveUserSessionToStorage( loginData, lastSession.user, Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) );
+		// 			// }
+		// 		// });
 				
-			}
+		// 	}
 	};
 
 	me.hidenavDrawerDiv = function()

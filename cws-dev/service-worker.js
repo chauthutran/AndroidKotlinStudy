@@ -1432,22 +1432,6 @@ self.__precacheManifest = [
     "revision": "71c0c30a1cb5e155798fe60e2d3c6aba"
   },
   {
-    "url": "scripts/services/old/dataManager.js",
-    "revision": "0bc12d268a17cf31eec9d5a6229d3b10"
-  },
-  {
-    "url": "scripts/services/old/dbStorageIDB.js",
-    "revision": "ea13b41c2219e99298e46abdcaed6386"
-  },
-  {
-    "url": "scripts/services/old/indexdbDataManager.js",
-    "revision": "c19604205417e82f942c93c79af120d6"
-  },
-  {
-    "url": "scripts/services/old/localStorageDataManager.js",
-    "revision": "d5f25ae4971422158a959336dee9e5a9"
-  },
-  {
     "url": "scripts/services/payloadTemplateHelper.js",
     "revision": "12766f52ef81c78a097ae090cfbbff16"
   },

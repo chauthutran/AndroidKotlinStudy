@@ -139,7 +139,7 @@ function aboutApp( cwsRender )
         {
             me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.aboutInfo_NetworkSync.val();
 
-            DataManager.setSessionDataValue( 'networkSync', me.aboutInfo_NetworkSync.val() );
+            AppInfoManager.updateNetworkSync( me.aboutInfo_NetworkSync.val() );
 
             $( '#aboutInfo_network_Text' ).html( ( me.aboutInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.aboutInfo_NetworkSync.val() ) );
 

@@ -99,3 +99,15 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 		LocalStgMng.saveJsonData( userName, loginData );
 	}
 };
+
+
+SessionManager.getLoginDataFromStorage = function( userName )
+{
+	return LocalStgMng.getJsonData( userName );
+}
+
+
+SessionManager.saveLoginDataFromStorage = function( userName, loginData )
+{
+	LocalStgMng.saveJsonData( userName, loginData );
+}

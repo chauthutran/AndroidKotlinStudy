@@ -8,6 +8,10 @@ AppInfoManager.KEY_LANGUAGE = "langTerms";
 AppInfoManager.KEY_SYNCMSG = "syncMsg"; 
 AppInfoManager.KEY_DOWNLOADINFO = "lastDownload"; 
 AppInfoManager.KEY_FAVICONS = "favIcons"; 
+AppInfoManager.KEY_NETWORKCONNECTION = "networkConnectionObs";
+
+AppInfoManager.KEY_NETWORKSYNC = "networkSync";
+AppInfoManager.KEY_LOGOUTDELAY = "logoutDelay";
 
 
 AppInfoManager.data = {};
@@ -28,6 +32,12 @@ AppInfoManager.getUserInfo = function()
 {
     return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
 }	
+
+
+AppInfoManager.removeUserInfo = function()
+{
+    AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
+}
 
 
 AppInfoManager.getSessionAutoComplete = function()
@@ -138,6 +148,50 @@ AppInfoManager.removeFavIcons = function()
 
 
 // ------------------------------------------------------------------------------------  
+// ----------------  networkConnectionObs
+
+
+AppInfoManager.updateNetworkConnectionObs = function( jsonData )
+{
+    AppInfoManager.updateData( AppInfoManager.KEY_NETWORKCONNECTION, jsonData );
+}	
+
+AppInfoManager.getNetworkConnectionObs = function()
+{
+    return AppInfoManager.getData( AppInfoManager.KEY_NETWORKCONNECTION );
+}
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  Update properties in "userinfo"
+
+
+// networkSync
+AppInfoManager.updateNetworkSync = function( dataStr ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, dataStr );
+}	
+
+AppInfoManager.getNetworkSync = function() 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
+}	
+
+
+// language
+AppInfoManager.updateLanguage = function( dataStr ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANGUAGE, dataStr );
+}	
+
+// logoutDelay
+AppInfoManager.updateLogoutDelay = function( dataStr ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGOUTDELAY, AppInfoManager.KEY_LANGUAGE, dataStr );
+}
+
+
+// ------------------------------------------------------------------------------------  
 // ------------------------------------------------------------------------------------  
 // ------------------------------------------------------------------------------------  
 
@@ -180,4 +234,37 @@ AppInfoManager.loadAppInfo = function()
 {
     var appInfo = LocalStgMng.getJsonData( AppInfoManager.KEY_APPINFO );
     return ( appInfo == undefined ) ? AppInfoManager.data : appInfo;
+}
+
+
+AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.loadAppInfo();
+    
+    // Update sub value by using keyword
+    if( appInfo[mainKey] == undefined )
+    {
+        appInfo[mainKey] = {};
+    }
+    
+    appInfo[mainKey][subKey] = valStr;
+
+    // Update data in memory
+    AppInfoManager.updateData( mainKey, appInfo );
+}
+
+AppInfoManager.getPropertyValue = function( mainKey, subKey )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.loadAppInfo();
+    
+    var mainInfo = appInfo[mainKey];
+    if( mainInfo == undefined )
+    {
+        return undefined;
+    }
+
+    // Get Sub data if any
+    return appInfo[mainKey][subKey];
 }

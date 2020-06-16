@@ -81,21 +81,19 @@ DataVerMove.markDataVersionNumber_LF = function( versionNumber, callBack )
 
 DataVerMove.getDataVersionNumber = function( callBack )
 {    
-    LocalStorageDataManager.getData( "dataVersion", function( dataVersion )
-    {
-        var versionNumber = 0;
+    var dataVersion = LocalStgMng.getJsonData( "dataVersion" );
+    var versionNumber = 0;
 
-        if ( dataVersion && dataVersion.ver ) versionNumber = Number( dataVersion.ver );
+    if ( dataVersion && dataVersion.ver ) versionNumber = Number( dataVersion.ver );
 
-        callBack( versionNumber );
-    });
+    callBack( versionNumber );
 };
 
 DataVerMove.markDataVersionNumber = function( versionNumber )
 {    
     var dataJson = { 'ver': versionNumber };
 
-    LocalStorageDataManager.saveData( "dataVersion", dataJson );
+    LocalStgMng.saveData( "dataVersion", dataJson );
 }
 
 // =====================================
@@ -149,15 +147,11 @@ DataVerMove.idbLocalForageMove = function( callBack )
         {
             console.log( ' IDB, needToMove: ' + needToMove );
 
-            var dbStorage_IDB = new DBStorage();
-
-            //console.log( moveKeys );
-
             var dataObj = { 'list': moveKeys };
             
             Util.recursiveCalls( dataObj, 0, function( keyStr, continueNext, finishCall ) {
 
-                dbStorage_IDB.getData( keyStr, function( jsonData )
+                DataManager2.getData_IDB( keyStr, function( jsonData )
                 {
                     // Change key name
                     DataManager2.saveData_IDB( keyStr, jsonData, function(){
@@ -250,7 +244,6 @@ DataVerMove.checkLS_LocalForageNeedMove = function( callBack )
 
 DataVerMove.checkIDB_LocalForageNeedMove = function( callBack )
 {
-    var dbStorage_IDB = new DBStorage();
     var moveKeys = DataManager2.securedContainers; //[ Constants.storageName_redeemList ];
     // LATER, use 'recursiveCall' method to go through the list..
 
@@ -258,7 +251,7 @@ DataVerMove.checkIDB_LocalForageNeedMove = function( callBack )
     // var fixedKeys = [ Constants.storageName_redeemList ];
 
     // Get IndexedDB using old storage..
-    dbStorage_IDB.getData( keyStr, function( searched )
+    DataManager2.getData_IDB( keyStr, function( searched )
     {
         // If exists, check the 'localForage' one
         if( searched )
@@ -336,94 +329,4 @@ DataVerMove.dataCopyToIDB = function( key, value, callBack )
     })
 };
 
-// ===========================================
-// === OLD
 
-DataVerMove.moveToIDB = function( key, value, callBack )
-{
-    var dbStorage = new DBStorage();
-    
-    dbStorage.getData( key, function( searched ){
-
-        if( searched === undefined )
-        {
-            IndexdbDataManager.saveData( key, JSON.parse( value ), function( retData ){
-    
-                if ( callBack ) callBack( key, retData )
-
-            } );
-        }
-    })
-};
-
-/*
-DataVerMove.redeemListLS_IDB = function( callBack )
-{
-    // Get all items in localStorage
-    var keys = Object.keys( localStorage );
-    var moveKeys = [];
-
-    // Compose 'moveKeys' with intertested to move ones Constants.storageName_redeemList in our case.
-    for ( var key in keys ) 
-    {
-        if ( DataManager.protectedContainer( keys[ key ] ) ) moveKeys.push( keys[ key ] )
-    }
-
-    // For moving keys, copy from localStorage to IndexedDB.
-    for ( var i = 0; i < moveKeys.length; i++ )
-    {
-        var value = localStorage.getItem( moveKeys[ i ] );
-
-        DataVerMove.moveToIDB( moveKeys[ i ], value, function( container, newData ){
-
-            console.log( 'Moved key to indexedDB ' );
-            // LocalStorageDataManager.saveData( container, newData );
-            //localStorage.removeItem( moveKeys[ i ] );
-            //LocalStorageDataManager.saveData("dataVersion", "1");
-
-        });
-    }
-
-    console.log( ' ===> Ran DataVerMove.redeemListLS_IDB()' );
-    callBack();
-};
-*/
-
-
-    //DataVerMove.lsKeyChange( keys, 0, function() {
-    //    DataVerMove.dataCopyToIDBs();
-    //});
-
-/*DataVerMove.lsKeyChange = function( keys, index, returnFunc )
-{
-    
-    //DataVerMove.idx++;
-    console.log( index + " / " +  keys.length );
-
-    // 
-    if( index < keys.length )
-    {
-        // If within, move localStorage keys from '--' -> 'localforage/'
-        var keyVal = keys[ index ];
-        index++;
-
-        if( !( keyVal.indexOf( "localforage/" ) == 0 ) )
-        {
-            var jsonData = JSON.parse( localStorage[ keyVal ] )
-          
-            // Change key name
-            DataManager2.saveDataByStorageType( StorageMng.StorageType_LocalStorage, keyVal, jsonData, function(){
-                DataVerMove.lsKeyChange( keys, index, returnFunc );
-            } );
-        }
-        else
-        {
-            // go to next one..
-            DataVerMove.lsKeyChange( keys, index, returnFunc );
-        }
-    }
-    else // MOVE DATA
-    {
-        returnFunc();
-    }
-};*/

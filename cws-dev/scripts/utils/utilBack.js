@@ -200,7 +200,7 @@ UtilBack.getValueByCallFieldFromConfig = function ( array, field, [attr, value] 
 UtilBack.cacheSizeCheckAndRepair = function( callBack )
 {
 
-  DataManager.estimateStorageUse( function( storageJSON ){
+  DataManager2.estimateStorageUse( function( storageJSON ){
 
 	  var quotaDenom = parseFloat( storageJSON.quota ) / 1024 / 1024;
 	  var suffix = 'MB';
@@ -220,11 +220,11 @@ UtilBack.cacheSizeCheckAndRepair = function( callBack )
 		  MsgManager.notificationMessage( '1: data usage exceeds 50% of available quota: ' 
 		  + Util.numberWithCommas( parseFloat( parseFloat( storageJSON.usage ) / 1024 / 1024 ).toFixed( 1 ) ) + ' ' + 'MB' + ' / ' + Util.numberWithCommas( parseFloat( quotaDenom ).toFixed( 1 ) + ' ' + suffix ), 'notificationRed', undefined,'', 'right', 'top', 10000, false, undefined,'diagnostics' );
 
-		  DataManager.getData( Constants.lsFlag_dataMoved_redeemListIDB, function( movedData )
+		  DataManager2.getData_IDB( Constants.lsFlag_dataMoved_redeemListIDB, function( movedData )
 		  {
 			  if ( movedData === "Y" )
 			  {
-				  DataManager.migrateIndexedDBtoLocalStorage( function( result, msg ){
+				  DataManager2.migrateIndexedDBtoLocalStorage( function( result, msg ){
 
 					  if ( callBack ) callBack( result, msg );
 
