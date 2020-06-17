@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "bb1bb560df37a563aecf07a0b009b3e9"
+    "revision": "565e23470e9ddf0706293d66204fd81f"
   },
   {
     "url": "redeemGen.html",
@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "6001bc301bbeff45f9940607c876b79a"
+    "revision": "53aa8bbfffc099f4f3ec35298977fe13"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "f167f945950262febd11baca6069d88d"
+    "revision": "7aae0ea22b833c1d71fd142c4b98b6ae"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1389,7 +1389,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/appInfoManager.js",
-    "revision": "e381cac11ba1715d04d07c0ac4f2df88"
+    "revision": "24ab9c94d2b1a842a6fa033f8e0a4de5"
   },
   {
     "url": "scripts/services/cacheManager.js",

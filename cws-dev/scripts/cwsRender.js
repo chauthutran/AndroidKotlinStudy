@@ -66,10 +66,8 @@ function cwsRender()
 	{
 		if ( me.debugMode ) console.log( 'cwsRender.render()' );
 
-		me.handleLastSession( function() {
-
-			me.showLoginForm();
-		});
+		me.loadSavedUserName();		
+		me.showLoginForm();
 
 		me._manageInputSwipe = inputMonitor( me );
 
@@ -675,22 +673,29 @@ function cwsRender()
 	// ----------------------------------------------
 	// ----------- Render called method -------------
 
-	me.handleLastSession = function( nextFunc )
+	me.loadSavedUserName = function()
 	{
 		// TODO: Use Session Manager?
 		// TODO: MOVE THIS TO login page..
-		
+		var loginUserNameH4Tag = $( '#loginUserNameH4' );
+
+		loginUserNameH4Tag.hide();
+
 		var lastSession = AppInfoManager.getUserInfo();
 
-		if ( lastSession )
+		if ( lastSession && lastSession.user )
 		{
+			// Div (Input) part of Login UserName
+			$( '#loginField' ).hide();
+
+			// input parts..  Below will be hidden, though...
 			$( 'input.loginUserName' ).val( lastSession.user );	
 			$( 'input.loginUserName' ).attr( 'readonly',true );
-			$( '#loginField' ).hide();
-			$('<h4>' + lastSession.user + '<h4>').insertBefore( $( '#loginField' ) );
-		}
 
-		if ( nextFunc ) nextFunc();
+			// Display login name as Big text part - if we already have user..
+			loginUserNameH4Tag.text( lastSession.user ).show();
+			//$('<h4>' + lastSession.user + '<h4>').insertBefore( $( '#loginField' ) );
+		}
 	};
 
 

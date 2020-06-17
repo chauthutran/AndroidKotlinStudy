@@ -317,4 +317,8 @@ AppInfoManager.createUpdateUserInfo = function( userName )
             , logoutDelay: 60 
         };
     }    
+
+    
+    AppInfoManager.updateUserInfo( lastSession );
+
 };

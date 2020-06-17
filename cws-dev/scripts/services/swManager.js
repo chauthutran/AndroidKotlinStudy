@@ -21,7 +21,7 @@ function swManager( _cwsRenderObj ) {
     {
         //me.callBackStartApp = callBackStartApp;
 
-        me.createSWinfo();
+        //me.createSWinfo();
         me.installServiceWorker( callBack );
     }
 
@@ -43,6 +43,7 @@ function swManager( _cwsRenderObj ) {
     // 1. main purpose of SW class
     me.installServiceWorker = function ( callBack ) 
     {
+        // If browser has service worker capability
         me.checkSWexists(function () {
 
             me.registerServiceWorker( callBack );
@@ -97,7 +98,7 @@ function swManager( _cwsRenderObj ) {
 
             me.SWinfoObj['lastState'] = me.swInstallObj.state;
 
-            me.saveSWinfo();
+            //me.saveSWinfo();
 
             if (me.debugMode) console.log(' - sw_state update: ' + me.swInstallObj.state);
 
@@ -140,7 +141,7 @@ function swManager( _cwsRenderObj ) {
                         {
                             me.SWinfoObj['datetimeApplied'] = (new Date()).toISOString();
                             me.SWinfoObj['reloadRequired'] = false;
-                            me.saveSWinfo();
+                            //me.saveSWinfo();
                         }
 
                         if (me.freshSWregistration) 
@@ -157,7 +158,7 @@ function swManager( _cwsRenderObj ) {
                         break;
                 }
 
-                me.saveSWinfo()
+                //me.saveSWinfo()
 
             };
 
@@ -171,14 +172,14 @@ function swManager( _cwsRenderObj ) {
 
             me.loadRegistrationObjVars( registration );
 
-            me.saveSWinfo();
+            //me.saveSWinfo();
 
             me.monitorUpdatesAndStateChanges( registration, callBack );
 
             // need to share registration obj with cwsRender (for reset App, etc)
             me._cwsRenderObj.setRegistrationObject( registration );
 
-            me.saveSWinfo();
+            //me.saveSWinfo();
 
             if (me.debugMode) console.log('Service Worker Registered');
 
@@ -187,7 +188,7 @@ function swManager( _cwsRenderObj ) {
             if (me.debugMode) console.log('updatesFound: ' + me.updatesFound);
             if (me.debugMode) console.log('freshSWregistration: ' + me.freshSWregistration);
 
-            me.saveSWinfo();
+            //me.saveSWinfo();
 
             if (me.freshSWregistration == false) 
             {

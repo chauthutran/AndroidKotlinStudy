@@ -25,6 +25,7 @@ function app()
   {
     me.App_UI_startUp_loading();
 
+    // Making notes..
     me._swManagerObj.run( function() {
 
       me.App_UI_startUp_Progress( '25%' );
