@@ -1445,7 +1445,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/sessionManager.js",
-    "revision": "2e7ba26a68154590774d994ee8228d42"
+    "revision": "58a1ca391db14ac275bae1af90e96e2b"
   },
   {
     "url": "scripts/services/storage/dataManager2.js",

@@ -63,25 +63,33 @@ SessionManager.unloadDataInSession = function()
 // -- Called after login --> to update the 'User' session data in localStorage.
 SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
 {
-	var newSaveObj = Util.getJsonDeepCopy( loginData );
+	try
+	{
+		var newSaveObj = Util.getJsonDeepCopy( loginData );
 
-	var dtmNow = ( new Date() ).toISOString();
+		var dtmNow = ( new Date() ).toISOString();
+		
+		var themeStr = ( loginData 
+			&& loginData.dcdConfig 
+			&& loginData.dcdConfig.settings 
+			&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
 	
-	var themeStr = ( loginData 
-		&& loginData.dcdConfig 
-		&& loginData.dcdConfig.settings 
-		&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
+		newSaveObj.mySession = { 
+			createdDate: dtmNow, 
+			lastUpdated: dtmNow, 
+			pin: Util.encrypt( password, 4 ), 
+			stayLoggedIn: false, 
+			theme: themeStr, 
+			language: AppInfoManager.getLangCode() 
+		};
+	
+		LocalStgMng.saveJsonData( userName, newSaveObj );
+	}
+	catch( errMsg )
+	{
+		console.log( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
+	}
 
-	newSaveObj.mySession = { 
-		createdDate: dtmNow, 
-		lastUpdated: dtmNow, 
-		pin: Util.encrypt( password, 4 ), 
-		stayLoggedIn: false, 
-		theme: themeStr, 
-		language: AppInfoManager.getLangCode() 
-	};
-
-	LocalStgMng.saveJsonData( userName, newSaveObj );
 };
 
 // -- Called after offline login --> updates just datetime..
