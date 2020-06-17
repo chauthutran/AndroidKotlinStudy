@@ -383,9 +383,7 @@ function cwsRender()
 			return;
 		}
 
-		var userData = ConfigManager.getConfigJson();
-
-		$( 'div.navigation__user' ).html( userData.orgUnitData.userName );
+		$( 'div.navigation__user' ).html( SessionManager.sessionData.login_UserName );
 
 		if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
 		{

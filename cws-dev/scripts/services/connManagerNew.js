@@ -230,6 +230,10 @@ ConnManagerNew.isStrOFFLINE = function( appModeStr )
 	return ( appModeStr === ConnManagerNew.OFFLINE );
 };
 
+ConnManagerNew.connStatusStr = function() 
+{
+	return (ConnManagerNew.isAppMode_Online() ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
+}
 
 // ===============================================
 // --- Others --------------------
@@ -283,7 +287,7 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 			else
 			{
 				// Show no manual offline existing..  
-				msgManager.msgAreaShow( 'AppMode is Offline without manual offline setting.' );
+				MsgManager.msgAreaShow( 'AppMode is Offline without manual offline setting.' );
 			}			
         }
 	});

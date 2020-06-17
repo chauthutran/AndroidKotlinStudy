@@ -833,7 +833,7 @@ FormUtil.getLastPayload = function( namedPayload )
 
 FormUtil.performReget = function( regObj, option )
 {		
-	if ( ConnManager.isOffline() )
+	if ( ConnManagerNew.isAppMode_Online() )
 	{
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'Cannot re-register service worker when Network Offline', 'notificationDark', undefined, '', 'right', 'top' );
@@ -1387,11 +1387,11 @@ FormUtil.gAnalyticsEventAction = function( returnFunc )
 	if ( dcd && dcd.orgUnitData )
 	{
 		//CUSTOMIZE AS REQUIRED
-		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManagerNew.connStatusStr() + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 	else
 	{
-		ret = 'country:none;userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManager.connStatusStr( ConnManager.isOnline() ) + ';appLaunch:' + FormUtil.PWAlaunchFrom();
+		ret = 'country:none;userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManagerNew.connStatusStr() + ';appLaunch:' + FormUtil.PWAlaunchFrom();
 	}
 
 	if ( returnFunc ) returnFunc( ret );
@@ -1400,7 +1400,7 @@ FormUtil.gAnalyticsEventAction = function( returnFunc )
 
 FormUtil.gAnalyticsEventLabel = function()
 {
-	return 'networkOnline: ' + ConnManager.isOnline() + ', dataServerOnline: ' + ConnManager.dataServerOnline()
+	return 'networkOnline: ' + ConnManagerNew.isAppMode_Online () + ', dataServerOnline: ' + ConnManagerNew.statusInfo.serverAvailable;
 }
 
 FormUtil.PWAlaunchFrom = function()

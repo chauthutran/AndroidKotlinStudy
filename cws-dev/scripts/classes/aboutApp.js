@@ -35,7 +35,7 @@ function aboutApp( cwsRender )
     me.render = function() 
     {
 
-        me.populateAboutPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
+        me.populateAboutPageData( ConfigManager.getConfigJson() );
         
         me.langTermObj.translatePage();
 
@@ -65,7 +65,7 @@ function aboutApp( cwsRender )
 
         $( btnAppShellTag ).click( () => {
 
-            if ( ConnManager.isOffline() )
+            if ( !ConnManagerNew.isAppMode_Online() )
             {
                 // MISSING TRANSLATION
                 MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
@@ -86,9 +86,9 @@ function aboutApp( cwsRender )
         var btnDcdConfigTag = $( '#dcdUpdateBtn' );
 
         $( btnDcdConfigTag ).click( () => {
-            if ( ConnManager.isOffline() )
+            if ( !ConnManagerNew.isAppMode_Online() )
             {
-                msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
+                MsgManager.msgAreaShow ( 'Please wait until network access is restored.' );
             }
             else
             {
@@ -126,8 +126,8 @@ function aboutApp( cwsRender )
             var thisConfig = ConfigManager.getConfigJson();
 
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
-
-            ConfigManager.getConfigJson() = thisConfig;
+            // TRAN TODO : Why don't save this change to local db
+            ConfigManager.setConfigJson( thisConfig );
             me.cwsRenderObj.renderDefaultTheme(); 
 
             $( '#aboutInfo_theme_Text' ).html( me.aboutInfo_ThemeSelectTag.val() );

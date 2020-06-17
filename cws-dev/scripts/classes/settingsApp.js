@@ -67,7 +67,7 @@ function settingsApp( cwsRender )
 
         $( btnAppShellTag ).click( () => {
 
-            if ( ConnManager.isOffline() )
+            if ( !ConnManagerNew.isAppMode_Online() )
             {
                 // MISSING TRANSLATION
                 MsgManager.notificationMessage ( 'Only re-register service-worker while online, please.', 'notificationDark', undefined, '', 'right', 'top' );
@@ -146,7 +146,7 @@ function settingsApp( cwsRender )
         var btnDcdConfigTag = $( '#dcdUpdateBtn' );
 
         $( btnDcdConfigTag ).click( () => {
-            if ( ConnManager.isOffline() )
+            if ( !ConnManagerNew.isAppMode_Online() )
             {
                 msgManager.msgAreaShow ( 'Please wait until network access is restored.' );
             }
@@ -662,73 +662,75 @@ function settingsApp( cwsRender )
             $( '#settingsInfo_networkMode' ).on( 'selectstart', false );
 
             $( '#settingsInfo_networkMode' ).click( () => {
+                alert("this feature has been disabled !");
 
-                if ( $( '#settingsInfo_networkMode' ).attr( 'counter' ) )
-                {
+                // if ( $( '#settingsInfo_networkMode' ).attr( 'counter' ) )
+                // {
 
-                    if ( $( '#settingsInfo_networkMode' ).attr( 'counter' ) < 4 )
-                    {
-                        var incr = parseInt( $( '#settingsInfo_networkMode' ).attr( 'counter' ) );
-                        incr ++;
-                        $( '#settingsInfo_networkMode' ).attr( 'counter', incr );
+                //     if ( $( '#settingsInfo_networkMode' ).attr( 'counter' ) < 4 )
+                //     {
+                //         var incr = parseInt( $( '#settingsInfo_networkMode' ).attr( 'counter' ) );
+                //         incr ++;
+                //         $( '#settingsInfo_networkMode' ).attr( 'counter', incr );
 
-                        if ( me.easterEgg1Timer )
-                        {
-                            clearTimeout( me.easterEgg1Timer );
-                        }
-                        me.easterEgg1Timer = setTimeout( function() {
-                            $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
-                        }, 3000 );
-                    }
-                    else
-                    {
-                        if ( me.easterEgg1Timer )
-                        {
-                            clearTimeout( me.easterEgg1Timer );
-                        }
+                //         if ( me.easterEgg1Timer )
+                //         {
+                //             clearTimeout( me.easterEgg1Timer );
+                //         }
+                //         me.easterEgg1Timer = setTimeout( function() {
+                //             $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
+                //         }, 3000 );
+                //     }
+                //     else
+                //     {
+                //         if ( me.easterEgg1Timer )
+                //         {
+                //             clearTimeout( me.easterEgg1Timer );
+                //         }
 
-                        $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
+                //         $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
 
-                        var requestConnMode;
+                //         var requestConnMode;
 
-                        if ( $( '#settingsInfo_networkMode' ).find('div').html() == ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() )
-                        {
-                            // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
-                            requestConnMode = ! ConnManagerNew.statusInfo.appMode.toLowerCase();
-                        }
-                        else
-                        {
-                            // current setting is NOT actual network condition setting > prompt to change back
-                            requestConnMode = ConnManagerNew.statusInfo.appMode.toLowerCase();
-                        }
+                //         if ( $( '#settingsInfo_networkMode' ).find('div').html() == ConnManagerNew.connStatusStr().toLowerCase() )
+                //         {
+                //             // current setting is actual network condition setting > prompt to CHANGE TO OFFLINE (if online), or visa versa
+                //             requestConnMode = ! ConnManagerNew.statusInfo.appMode.toLowerCase();
+                //         }
+                //         else
+                //         {
+                //             // current setting is NOT actual network condition setting > prompt to change back
+                //             requestConnMode = ConnManagerNew.statusInfo.appMode.toLowerCase();
+                //         }
 
-                        ConnManager.changeConnModeTo = requestConnMode;
-                        ConnManager.changeConnModeStr = "switch";
-                        ConnManager.setUserNetworkMode( requestConnMode );
+                //         ConnManager.changeConnModeTo = requestConnMode;
+                //         ConnManager.changeConnModeStr = "switch";
+                //         ConnManager.setUserNetworkMode( requestConnMode );
 
-                        var btnSwitch = $( '<a class="notifBtn" term=""> ' + ConnManager.connStatusStr( requestConnMode ).toUpperCase() + ' </a>');
 
-                        $( btnSwitch ).click ( () => {
-                            ConnManager.userNetworkMode = true;
-                            ConnManager.switchPreDeterminedConnMode();
-                            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
-                        });
+                //         var btnSwitch = $( '<a class="notifBtn" term=""> ' + ConnManagerNew.connStatusStr().toUpperCase() + ' </a>');
 
-                        // MISSING TRANSLATION
-                        questionStr = "Force network mode switch?";
-                        MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
+                //         $( btnSwitch ).click ( () => {
+                //             ConnManager.userNetworkMode = true;
+                //             ConnManager.switchPreDeterminedConnMode();
+                //             $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManagerNew.connStatusStr().toLowerCase() + '</div>' );
+                //         });
 
-                    }
+                //         // MISSING TRANSLATION
+                //         questionStr = "Force network mode switch?";
+                //         MsgManager.notificationMessage ( questionStr, 'notificationDark', btnSwitch, '', 'right', 'top', 15000, true );
 
-                }
-                else
-                {
-                    $( '#settingsInfo_networkMode' ).attr( 'counter', 1 )
+                //     }
 
-                    me.easterEgg1Timer = setTimeout( function() {
-                        $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
-                    }, 3000 );
-                }
+                // }
+                // else
+                // {
+                //     $( '#settingsInfo_networkMode' ).attr( 'counter', 1 )
+
+                //     me.easterEgg1Timer = setTimeout( function() {
+                //         $( '#settingsInfo_networkMode' ).attr( 'counter', 0 );
+                //     }, 3000 );
+                // }
 
             });
 
@@ -784,7 +786,7 @@ function settingsApp( cwsRender )
         {
 
             $( '#settingsInfo_dcdVersion' ).html( dcdConfigVersion );
-            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManager.connStatusStr( ConnManagerNew.statusInfo.appMode.toLowerCase() ).toLowerCase() + '</div>' );
+            $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManagerNew.connStatusStr().toLowerCase() + '</div>' );
             $( '#settingsInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
             var sessData = AppInfoManager.getUserInfo();
@@ -792,26 +794,24 @@ function settingsApp( cwsRender )
             me.settingsInfo_SoundSwitchInput.prop( 'checked', sessData.soundEffects );
             me.settingsInfo_autoCompleteInput.prop( 'checked', sessData.autoComplete );
 
-            ConnManager.getDcdConfigVersion( function( retVersion ) 
-            {
-                // var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
-                var dcdConfig = ConfigManager.getConfigJson();
+            // var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
+            var dcdConfig = ConfigManager.getConfigJson();
+            var retVersion = dcdConfig.version;
 
-                // TRAN TODO : this code [if ( ( dcdConfig.version ).toString() < retVersion.toString() )]  never reach
-                if ( ( dcdConfig.version ).toString() < retVersion.toString() )
-                {
-                    $( '#settingsInfo_dcdNewVersion' ).html( retVersion );
-                    if ( $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).removeClass( 'disabled' );
-                    if ( ! $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).addClass( 'enabled' );	
-                    $( '#settingsInfo_dcdNewVersion' ).show();
-                }
-                else
-                {
-                    $( '#settingsInfo_dcdNewVersion' ).hide();
-                    if ( ! $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).addClass( 'disabled' );
-                    if ( $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).removeClass( 'enabled' );
-                }
-            });
+            // TRAN TODO : this code [if ( ( dcdConfig.version ).toString() < retVersion.toString() )]  never reach
+            if ( ( dcdConfig.version ).toString() < retVersion.toString() )
+            {
+                $( '#settingsInfo_dcdNewVersion' ).html( retVersion );
+                if ( $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).removeClass( 'disabled' );
+                if ( ! $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).addClass( 'enabled' );	
+                $( '#settingsInfo_dcdNewVersion' ).show();
+            }
+            else
+            {
+                $( '#settingsInfo_dcdNewVersion' ).hide();
+                if ( ! $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'disabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).addClass( 'disabled' );
+                if ( $( '#imgsettingsInfo_dcdVersion_Less' ).hasClass( 'enabled' ) ) $( '#imgsettingsInfo_dcdVersion_Less' ).removeClass( 'enabled' );
+            }
 
             me.getStorageSummary( $( '#settingsInfo_StorageSize' ) ); 
 

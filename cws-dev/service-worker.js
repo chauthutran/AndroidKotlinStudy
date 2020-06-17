@@ -1404,10 +1404,6 @@ self.__precacheManifest = [
     "revision": "37adfa9ca77497bec5bcc77393cc8d57"
   },
   {
-    "url": "scripts/services/connManager.js",
-    "revision": "f1e0593e70c7f7aecab53341db06ed28"
-  },
-  {
     "url": "scripts/services/connManagerNew.js",
     "revision": "9a6e072d1d5abaa3b3b2a3ab78321976"
   },
