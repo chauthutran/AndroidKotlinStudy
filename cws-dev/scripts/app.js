@@ -18,11 +18,7 @@ function app()
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
     me._swManagerObj = new swManager( me._cwsRenderObj );
-  };
 
-
-  me.startApp = function()
-  {
     me.App_UI_startUp_loading();
 
     // Making notes..
@@ -32,7 +28,12 @@ function app()
 
       me.startAppProcess();
     } );   
+
+
   };
+
+
+//  me.startApp = function() { };
 
   // ----------------------------------------------------
 

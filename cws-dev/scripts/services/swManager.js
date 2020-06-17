@@ -25,6 +25,7 @@ function swManager( _cwsRenderObj ) {
         me.installServiceWorker( callBack );
     }
 
+    /*
     me.createSWinfo = function () 
     {
         var SWinfoStr = AppInfoManager.getSWInfo();
@@ -39,6 +40,7 @@ function swManager( _cwsRenderObj ) {
             me.SWinfoObj.reloadRequired = false;
         }
     };
+    */
 
     // 1. main purpose of SW class
     me.installServiceWorker = function ( callBack ) 
@@ -64,10 +66,11 @@ function swManager( _cwsRenderObj ) {
         }
     };
 
+    /*
     me.saveSWinfo = function () 
     {
         AppInfoManager.updateSWInfo( me.SWinfoObj );
-    }
+    }*/
 
     me.loadRegistrationObjVars = function ( swRegObj ) 
     {
@@ -77,12 +80,12 @@ function swManager( _cwsRenderObj ) {
         if ( ! swRegObj.active )
         {
             me.freshSWregistration = true; // 1st time running SW registration (1st time running PWA)
-            me.SWinfoObj.lastState = '';
+            //me.SWinfoObj.lastState = '';
         }
         else 
         {
             me.freshSWregistration = false;
-            me.SWinfoObj.lastState = swRegObj.active.state;
+            //me.SWinfoObj.lastState = swRegObj.active.state;
         }
     }
 
@@ -96,7 +99,7 @@ function swManager( _cwsRenderObj ) {
 
             me.swInstallObj = swRegObj.installing;
 
-            me.SWinfoObj['lastState'] = me.swInstallObj.state;
+            //me.SWinfoObj['lastState'] = me.swInstallObj.state;
 
             //me.saveSWinfo();
 
@@ -106,7 +109,7 @@ function swManager( _cwsRenderObj ) {
             me.swInstallObj.onstatechange = () => {
 
                 me.updatesFound = true;
-                me.SWinfoObj['lastState'] = me.swInstallObj.state;
+                //me.SWinfoObj['lastState'] = me.swInstallObj.state;
 
                 if (me.debugMode) console.log(' ~ sw_state: ' + me.swInstallObj.state);
 
@@ -121,11 +124,11 @@ function swManager( _cwsRenderObj ) {
                         if (navigator.serviceWorker.controller) 
                         {
                             me.UpdatesRequireRefresh = true;
-                            me.SWinfoObj['reloadRequired'] = true;
+                            //me.SWinfoObj['reloadRequired'] = true;
                         }
                         else 
                         {
-                            me.SWinfoObj['reloadRequired'] = false;
+                            //me.SWinfoObj['reloadRequired'] = false;
                         }
                         break;
 
@@ -137,12 +140,12 @@ function swManager( _cwsRenderObj ) {
                     // SW activated (4) - done > ready for refresh
                     case 'activated':
 
-                        if (me.SWinfoObj.reloadRequired) 
-                        {
-                            me.SWinfoObj['datetimeApplied'] = (new Date()).toISOString();
-                            me.SWinfoObj['reloadRequired'] = false;
+                        //if (me.SWinfoObj.reloadRequired) 
+                        //{
+                            //me.SWinfoObj['datetimeApplied'] = (new Date()).toISOString();
+                            //me.SWinfoObj['reloadRequired'] = false;
                             //me.saveSWinfo();
-                        }
+                        //}
 
                         if (me.freshSWregistration) 
                         {
@@ -152,8 +155,8 @@ function swManager( _cwsRenderObj ) {
                         }
                         else 
                         {
-                            me.SWinfoObj['reloadRequired'] = true;
-                            me._cwsRenderObj.createRefreshIntervalTimer(_ver);
+                            //me.SWinfoObj['reloadRequired'] = true;
+                            //me._cwsRenderObj.createRefreshIntervalTimer(_ver);
                         }
                         break;
                 }
@@ -174,6 +177,7 @@ function swManager( _cwsRenderObj ) {
 
             //me.saveSWinfo();
 
+            // If fresh registration case, we use 'callBack'..
             me.monitorUpdatesAndStateChanges( registration, callBack );
 
             // need to share registration obj with cwsRender (for reset App, etc)
@@ -185,12 +189,12 @@ function swManager( _cwsRenderObj ) {
 
         }).then(function () {
 
-            if (me.debugMode) console.log('updatesFound: ' + me.updatesFound);
-            if (me.debugMode) console.log('freshSWregistration: ' + me.freshSWregistration);
+            console.log('updatesFound: ' + me.updatesFound);
+            console.log('freshSWregistration: ' + me.freshSWregistration);
 
             //me.saveSWinfo();
 
-            if (me.freshSWregistration == false) 
+            if ( !me.freshSWregistration ) 
             {
                 // callBack to App.js
                 //me.callBackStartApp();
