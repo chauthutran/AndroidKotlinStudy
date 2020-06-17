@@ -71,7 +71,14 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
         else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
     })
     .then( jsonData => {
-        returnFunc( true, jsonData );
+        try
+        {
+            returnFunc( true, jsonData );
+        }
+        catch ( errMsg )
+        {
+            console.log( 'RESTCallManager.performREST, Returned Success.  Howerver, had some issue processing the returnFunc somewhere: ' + errMsg );
+        }
     })
     .catch( ( error ) => {
         console.log( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );

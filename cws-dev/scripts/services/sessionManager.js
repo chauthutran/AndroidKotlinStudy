@@ -67,12 +67,17 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 
 	var dtmNow = ( new Date() ).toISOString();
 	
+	var themeStr = ( loginData 
+		&& loginData.dcdConfig 
+		&& loginData.dcdConfig.settings 
+		&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
+
 	newSaveObj.mySession = { 
 		createdDate: dtmNow, 
 		lastUpdated: dtmNow, 
 		pin: Util.encrypt( password, 4 ), 
 		stayLoggedIn: false, 
-		theme: loginData.dcdConfig.settings.theme, 
+		theme: themeStr, 
 		language: AppInfoManager.getLangCode() 
 	};
 

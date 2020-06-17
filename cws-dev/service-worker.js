@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/RESTCallManager.js",
-    "revision": "e6eada8a5b20153036eb0143f9a0f523"
+    "revision": "c7e14696ab51f9f511599fad988a5b04"
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
@@ -1445,7 +1445,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/sessionManager.js",
-    "revision": "918a34669b6f652c699039982103b896"
+    "revision": "2e7ba26a68154590774d994ee8228d42"
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
