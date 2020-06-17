@@ -271,3 +271,50 @@ AppInfoManager.getPropertyValue = function( mainKey, subKey )
     // Get Sub data if any
     return appInfo[mainKey][subKey];
 }
+
+// =========================================
+// === Other Related Methods..
+
+AppInfoManager.getLangCode = function()
+{
+	var lang = '';
+
+	try
+	{
+		var userInfo = AppInfoManager.getUserInfo();
+	
+		if ( userInfo && userInfo.language ) lang = userInfo.language;
+		else ( navigator.language ).toString().substring(0,2);
+	}
+	catch ( err )
+	{
+		console.log( 'Error in AppInfoManager.getLangCode: ' + err );
+	}
+
+	return lang;
+};
+
+
+AppInfoManager.createUpdateUserInfo = function( userName )
+{
+    var lastSession = AppInfoManager.getUserInfo();
+    
+    if ( lastSession )
+    {
+        lastSession.user = userName;
+    
+        if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
+        if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
+        if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
+    }
+    else
+    {
+        lastSession = { 
+            user: userName, lastUpdated: dtmNow
+            , language: AppInfoManager.getLangCode()
+            , soundEffects: ( Util.isMobi() )
+            , autoComplete: true
+            , logoutDelay: 60 
+        };
+    }    
+};

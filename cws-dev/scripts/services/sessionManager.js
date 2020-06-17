@@ -63,26 +63,20 @@ SessionManager.unloadDataInSession = function()
 // -- Called after login --> to update the 'User' session data in localStorage.
 SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
 {
-	// NOTE!!!!
-	//	- session data management!!!!  Not here!!!
+	var newSaveObj = Util.getJsonDeepCopy( loginData );
+
 	var dtmNow = ( new Date() ).toISOString();
+	
+	newSaveObj.mySession = { 
+		createdDate: dtmNow, 
+		lastUpdated: dtmNow, 
+		pin: Util.encrypt( password, 4 ), 
+		stayLoggedIn: false, 
+		theme: loginData.dcdConfig.settings.theme, 
+		language: AppInfoManager.getLangCode() 
+	};
 
-	var newSaveObj = Object.assign( {} , loginData);
-
-	FormUtil.defaultLanguage( function( defaultLang )
-	{
-		newSaveObj.mySession = { 
-			createdDate: dtmNow, 
-			lastUpdated: dtmNow, 
-			pin: Util.encrypt( password, 4 ), 
-			stayLoggedIn: false, 
-			theme: loginData.dcdConfig.settings.theme, 
-			language: defaultLang 
-		};
-
-		//DataManager.saveData( userName, newSaveObj );
-		LocalStgMng.saveJsonData( userName, newSaveObj );
-	});
+	LocalStgMng.saveJsonData( userName, newSaveObj );
 };
 
 // -- Called after offline login --> updates just datetime..

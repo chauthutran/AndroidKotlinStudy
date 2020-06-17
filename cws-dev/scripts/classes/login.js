@@ -255,28 +255,8 @@ function Login( cwsRenderObj )
 			} );
 		}
 
-
-		// TODO: NOTE: SAVING SESSION INFO FOR THE FIRST TIME AT HERE?
-		FormUtil.defaultLanguage( function( defaultLang ){
-
-			var lastSession = AppInfoManager.getUserInfo();
-
-			if ( lastSession == undefined )
-			{
-				lastSession = { user: userName, lastUpdated: dtmNow, language: defaultLang, soundEffects: ( Util.isMobi() ), autoComplete: true, logoutDelay: 60 };
-			}
-			else
-			{
-				lastSession.user = userName;
-
-				if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
-				if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
-				if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
-			}
-			
-			AppInfoManager.updateUserInfo( lastSession );
-
-		});
+		
+		AppInfoManager.createUpdateUserInfo( userName );
 	};
 
 

@@ -1045,22 +1045,6 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 
 };
 
-FormUtil.defaultLanguage = function( exeFunc )
-{
-	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	var userInfo = AppInfoManager.getUserInfo();
-	
-	if ( userInfo && userInfo.language )
-	{
-		if ( exeFunc ) exeFunc( userInfo.language );
-	}
-	else
-	{
-		if ( exeFunc ) exeFunc( (navigator.language).toString().substring(0,2) );
-	}
-
-};
-
 FormUtil.getTermAttr = function( jsonItem )
 {
 	return ( jsonItem.term ) ? 'term="' + jsonItem.term + '"' : '';

@@ -1488,10 +1488,15 @@ Util.upNumber_IntArr = function( arr, upNumber )
 Util.encrypt = function (seed,loops) 
 {
 	let ret = seed;
-	for ( var i = 0; i < loops; i++ )
+	
+	if ( seed )
 	{
-		ret = btoa(ret); //SHA256(ret)
+		for ( var i = 0; i < loops; i++ )
+		{
+			ret = btoa(ret); //SHA256(ret)
+		}	
 	}
+
 	return ret;
 };
 

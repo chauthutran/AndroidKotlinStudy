@@ -654,26 +654,22 @@ function cwsRender()
 	
 	me.retrieveAndSetUpTranslate = function()
 	{
-		
-		FormUtil.defaultLanguage(function( defaultLangCode ){
-			//"pt";
+		var langCode = AppInfoManager.getLangCode();
 
-			me.langTermObj.setCurrentLang( defaultLangCode )
+		me.langTermObj.setCurrentLang( langCode )
 
-			me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		{
+			if ( allLangTerms )
 			{
-				if ( allLangTerms )
-				{
-					// Enable the language switch dropdown
-					me.settingsApp.populateLangList_Show( me.langTermObj.getLangList(), defaultLangCode );
+				// Enable the language switch dropdown
+				me.settingsApp.populateLangList_Show( me.langTermObj.getLangList(), langCode );
 
-					// Translate current page
-					me.langTermObj.translatePage();
-				}
-			});
-		}); 
-
-	}
+				// Translate current page
+				me.langTermObj.translatePage();
+			}
+		});
+	};
 
 
 	// ----------------------------------------------
