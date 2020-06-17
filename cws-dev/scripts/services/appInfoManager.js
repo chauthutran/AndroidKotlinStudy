@@ -21,6 +21,19 @@ AppInfoManager.data = {};
 // ------------------------------------------------------------------------------------  
 // ----------------  User info
 
+AppInfoManager.initialLoad_FromStorage = function()
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.loadAppInfo();
+    
+    // Set new data info in memory
+    AppInfoManager.data = appInfo;
+};
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  User info
+
 
 AppInfoManager.updateUserInfo = function( jsonData )
 {

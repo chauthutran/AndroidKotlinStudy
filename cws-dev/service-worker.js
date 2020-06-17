@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "9e3beb7099fe6b83a6898c7bb8b6500b"
+    "revision": "785c81de122d9214f63101a03f0c13cf"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1389,7 +1389,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/appInfoManager.js",
-    "revision": "24ab9c94d2b1a842a6fa033f8e0a4de5"
+    "revision": "832d6c1329c9e4019cfa976bc34a1a89"
   },
   {
     "url": "scripts/services/cacheManager.js",

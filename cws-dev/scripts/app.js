@@ -19,6 +19,9 @@ function app()
     me._cwsRenderObj = new cwsRender();
     me._swManagerObj = new swManager( me._cwsRenderObj );
 
+    // Does this get loaded also when we login?
+    AppInfoManager.initialLoad_FromStorage();
+
     me.App_UI_startUp_loading();
 
     // Making notes..
@@ -28,7 +31,6 @@ function app()
 
       me.startAppProcess();
     } );   
-
 
   };
 
