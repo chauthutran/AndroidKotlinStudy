@@ -1048,7 +1048,7 @@ FormUtil.navDrawerWidthLimit = function( screenWidth )
 FormUtil.defaultLanguage = function( exeFunc )
 {
 	//defaultLanguage (from dcdConfig) ? does it match as a supported language option
-	var userInfo = AppInfoManager.updateUserInfo();
+	var userInfo = AppInfoManager.getUserInfo();
 	
 	if ( userInfo && userInfo.language )
 	{

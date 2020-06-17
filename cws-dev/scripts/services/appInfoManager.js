@@ -36,6 +36,7 @@ AppInfoManager.getUserInfo = function()
 
 AppInfoManager.removeUserInfo = function()
 {
+    console.log( "removeUserInfo" );
     AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
 }
 
@@ -208,7 +209,6 @@ AppInfoManager.updateData = function( keyword, jsonData )
     
     // Update data of appInfo by using keyword
     appInfo[keyword] = jsonData;
-    // localStorage.setItem( AppInfoManager.KEY_APPINFO, JSON.stringify( appInfo ) );
     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
 
     // Set new data info in memory
@@ -251,7 +251,10 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
     appInfo[mainKey][subKey] = valStr;
 
     // Update data in memory
-    AppInfoManager.updateData( mainKey, appInfo );
+    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+
+    // Set new data info in memory
+    AppInfoManager.data = appInfo;
 }
 
 AppInfoManager.getPropertyValue = function( mainKey, subKey )
