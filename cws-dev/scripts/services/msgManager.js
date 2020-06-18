@@ -390,12 +390,12 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
 
         var screenWidth = document.body.clientWidth;
         var screenHeight = document.body.clientHeight;
-        var notifDiv = $( '<div id="notif_' + unqID + '" class="previewPayload rounded" >' );
+        var notifDiv = $( '<div id="notif_' + unqID + '" class="previewPayload" >' );
 
         $( parentTag ).append( notifDiv );
     
-        var prevRow = $( '<div class="" />' );
-        var btnRow = $( '<div style="height:90px;text-align:center;" />' );
+        var prevRow = $( '<div class="sheet_preview" />' );
+        var btnRow = $( '<div style="height:90px;text-align:center;margin-top:30px;" />' );
         var btnConfirm = $( `<div class="button primary button-full_width">
                                 <div class="button__container">
                                     <div class="button-label">Confirm</div>
@@ -415,6 +415,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
         notifDiv.append( btnRow );
 
         prevRow.append( Util2.arrayPreviewRecord( title, jsonData ) );
+        //prevRow.find( 'table' ).css( 'max-width', prevRow.css( 'width' ) );
 
         btnRow.append( btnConfirm )
         btnRow.append( btnDecline )

@@ -14,7 +14,7 @@ class Modal{
         this.passive = object.passive
         this.typeModal = object.typeModal
         this.contentClass = object.contentClass
-        this.positionZ = object.positionZ | 1000
+        this.positionZ = object.positionZ | 9999
         this.status = false
         this.data = {
             title: object.titleMessage,
@@ -234,7 +234,7 @@ class InterfaceModal{
         if(!this.created){  //  Seguridad: Evita que se inicialice el mismo objeto varias veces **
             let self = this
             let newModal = new Modal(object)
-            this.higherPositionZ = 1000
+            this.higherPositionZ = 9999
             this.modals[0]={positionZ: this.higherPositionZ,modal:newModal}
             this.created = true
             return self

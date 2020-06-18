@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "68a8aa7eda538cf8a170fc4df1086ec9"
+    "revision": "dcb7d3807b58e94c74cfcffc4ee59e2e"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "b8e8b1224dd8e95159420e75dfd19bd5"
+    "revision": "1edac54835055e4da1f86f44ef327b08"
   },
   {
     "url": "css/style2.css",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "31b4fad47cdcc9f8b5f820f45d09e6f5"
+    "revision": "866b53f2febcd75ddd7c252f91c29ee9"
   },
   {
     "url": "redeemGen.html",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "568e253dce116594fc32f5141cf3698c"
+    "revision": "81f761b33107482873e392e3bec4728e"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1265,11 +1265,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "90bdb6811554fbd624ff361504f7f32e"
+    "revision": "4c7a1718e46b7d907406b6a00c57b67d"
   },
   {
     "url": "scripts/classes/menu.js",
-    "revision": "408bebad9d5cf52e2a02fb0125385735"
+    "revision": "36ec1c8cf3003be0e1a65d8d8c16b02d"
   },
   {
     "url": "scripts/classes/myDetails.js",
@@ -1309,11 +1309,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "0954a4829433a6811705a6501b4635c6"
+    "revision": "502a5e0457347e34baf6b4900f62e82c"
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "7aae0ea22b833c1d71fd142c4b98b6ae"
+    "revision": "1f086e8240e81f8a2031693169c86a6f"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1401,7 +1401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "37adfa9ca77497bec5bcc77393cc8d57"
+    "revision": "e5b5387dd65603b78ee6918240babe0b"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1425,7 +1425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/msgManager.js",
-    "revision": "71c0c30a1cb5e155798fe60e2d3c6aba"
+    "revision": "e367cba43422df8634ec1a3f6684e8b9"
   },
   {
     "url": "scripts/services/payloadTemplateHelper.js",
@@ -1445,7 +1445,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/sessionManager.js",
-    "revision": "58a1ca391db14ac275bae1af90e96e2b"
+    "revision": "0e764e64bf97f3e3845b66b8d8b12a2f"
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
@@ -1493,7 +1493,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/pptManager.js",
-    "revision": "25c5dccb817cdb8d2f4d809d41e87e30"
+    "revision": "336b844ef00e3441bf1dab13616fa384"
   },
   {
     "url": "scripts/utils/pptOptions.js",
@@ -1513,7 +1513,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util2.js",
-    "revision": "ed445c5cc587275a6f8c3651e9121232"
+    "revision": "5ee2876215894d836a5e8509a89dcd56"
   },
   {
     "url": "scripts/utils/utilBack.js",
@@ -1521,7 +1521,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "2c1aa7ac315b7268cce435a480b49cc1"
+    "revision": "1edac54835055e4da1f86f44ef327b08"
   },
   {
     "url": "sounds/beep.mp3",

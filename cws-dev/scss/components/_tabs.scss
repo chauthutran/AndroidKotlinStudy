@@ -1,5 +1,3 @@
-$tab__head-width: 100%;
-$tab__container-width: 100%;
 $border-color :#ccc;
 $border-color-active :$color-p;
 $tab-hover-bg :#f5f5f5;
@@ -12,9 +10,9 @@ $active-tab :$color-p;
     flex-direction: column;
     justify-content: flex-start;
     width: 50%;
-    min-width: 600px;
     height: 48px;
     margin: 0 auto;
+    max-width: 558px;
     border-bottom: 1px solid $tab-hover-bg;
     @include shadow-b(2px 2px 5px 0px $color-shadow);
     @include box-sizing(border-box);
@@ -28,19 +26,13 @@ $active-tab :$color-p;
         width: 100%;
     }
 
-    @include rwd-min(658) {
-        width: 100%;
-        max-width: 700px;
-    }
-
     .tab_fs__head {
         display: block;
-        margin: 0 0 8px 0;
+        margin: 0 8px;
         padding: 0;
         list-style: none;
-        width: $tab__head-width;
+        width: 100%;
         border-bottom: 2px solid #FFF;
-        //overflow-y: scroll;
         @include box-sizing(border-box);
 
         @include p-device(240) {
@@ -56,7 +48,7 @@ $active-tab :$color-p;
         li {
             float: left;
             cursor: pointer;
-            padding: 0px 20px;
+            padding: 0px 8px;
             border-bottom: 0px;
             overflow: hidden;
             opacity: 0.5;
@@ -81,11 +73,10 @@ $active-tab :$color-p;
                 display: none;
             }
 
-            @include rwd-min(600) {
+            @include rwd-min(558) {
                 width: calc(100%/3);
                 position: relative;
                 display: block;
-                padding: 0px 20px;
                 @include box-sizing(border-box);
             }
 
@@ -98,28 +89,35 @@ $active-tab :$color-p;
             }
 
             &:hover {
-                //border-bottom: 2px solid $tab-hover-bg;
                 color: #000;
             }
 
             &.active {
-                //border-bottom: 2px solid $border-color-active;
                 display: block;
                 opacity: 1;
             }
 
             ul {
                 width: 100%;
-                min-width: 240px;
                 padding: 0;
                 display: none;
                 position: absolute;
                 background-color: $color-background;
+                @include shadow-b(2px 2px 2px $color-shadow);
+                @include box-sizing(border-box);
+
+                @include p-device(240) {
+                    width: calc(100% - 120px);
+                }
+
+                @include rwd-max(557) {
+                    width: calc(100% - 70px);
+                }
 
                 li {
                     padding: 0;
                     width: 100%;
-                    min-width: 240px;
+                    //min-width: 240px;
                     position: relative;
                     background-color: $color-background;
                     opacity: 1;
@@ -128,18 +126,16 @@ $active-tab :$color-p;
         }
     }
 
-    .tab_fs__head-icon_exp{
+    .tab_fs__head-icon_exp {
         position: absolute;
-        top: 68px;
-        right: 8px;
+        top: 76px;
+        right: 24px;
         width: 24px;
         height: 24px;
         @include background-image('arrow_drop_down');
         @include box-sizing(border-box);
-        @include p-device(600) {
-            display: none;
-        }
-        @include l-device(600) {
+
+        @include rwd-min(558) {
             display: none;
         }
     }
@@ -147,9 +143,10 @@ $active-tab :$color-p;
 
 .tab_fs__container {
     margin: 8px 0;
-    width: $tab__container-width;
+    width: 100%;
     height: auto;
     overflow: hidden;
+    max-width: 558px;
     @include box-sizing(border-box);
 
     @include p-device(240) {
@@ -168,25 +165,19 @@ $active-tab :$color-p;
         box-shadow: none;
     }
 
-    @include rwd-min(600) {
+    @include rwd-min(558) {
         margin: 0 auto;
-        width: 50%;
-        min-width: 600px;
-        padding: 0 12px;
+        width: 100%;
+        padding: 8px 12px;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
         @include shadow-b(2px 2px 5px 0px $color-shadow);
     }
 
-    @include rwd-min(658) {
-        width: 100%;
-        max-width: 700px;
-    }
-
     .tab_fs__container-content {
         @include box-sizing(border-box);
 
-        @include rwd-min(600) {
+        @include rwd-min(558) {
             width: 100%;
             height: auto;
             overflow: hidden;
@@ -205,7 +196,7 @@ $active-tab :$color-p;
                 margin: 0 0 8px;
             }
 
-            @include rwd-min(560) {
+            @include rwd-min(558) {
                 width: calc(50% - 8px);
                 margin: 0 4px 12px;
             }
@@ -224,7 +215,7 @@ $active-tab :$color-p;
                 margin: 0 0 8px;
             }
 
-            @include rwd-min(560) {
+            @include rwd-min(558) {
                 width: calc(50% - 8px);
                 margin: 0 4px 12px;
             }

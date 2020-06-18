@@ -314,6 +314,8 @@ Util2.populate_year = function ( el, data, labelText ) {
 	$(set).click( function(e)
 	{
 		e.preventDefault();
+		$( 'div.scrim' ).off( 'click' );
+		$( 'div.scrim' ).hide();
 		if (!isNaN(parseInt(ul.dataset.index))) {
 			sendChoose();
 		}
@@ -324,12 +326,17 @@ Util2.populate_year = function ( el, data, labelText ) {
 	$(cancel).click( function(e)
 	{
 		e.preventDefault();
+		$( 'div.scrim' ).off( 'click' );
+		$( 'div.scrim' ).hide();
 		modal.parentElement.style.setProperty('display', 'none');
 	});
 
 	inputShow.addEventListener('focus', e => {
 		e.preventDefault();
 		inputShow.blur();
+		$( 'div.scrim' ).show();
+		$( 'div.scrim' ).off( 'click' );
+		$( 'div.scrim' ).click( function(){ $(cancel).click(); } );
 		modal.parentElement.style.setProperty('display', 'flex');
 		$( '.container--optionsSymbol' ).scrollTop( $( 'ul.optionsSymbol' )[0].scrollHeight );
 
@@ -651,14 +658,15 @@ Util2.arrayPreviewRecord = function( title, arr )
 	{
 		if ( title )
 		{
-			var titleTag = $("<h4/>");
-			titleTag.html( title );
-			titleTag.append( titleTag );
-
-			var td = $('<td colspan=2 />' );
-			td.append( titleTag );
-
 			var tr = $('<tr />');
+			var td = $('<td colspan=2 />');
+			var dv = $( '<div class="section" />');
+			var lbl = $( '<label />');
+
+			lbl.html( title );
+
+			dv.append( lbl );
+			td.append( dv );
 			tr.append( td );
 
 			ret.append( tr );
@@ -668,17 +676,23 @@ Util2.arrayPreviewRecord = function( title, arr )
 		{
 			var tr = $('<tr />');
 			ret.append( tr );
+
 			if ( arr[ i ].type && arr[ i ].type == 'SECTION' ) // Display GROUP names
 			{
 				var td = $('<td colspan=2 />');
-				var groupLabel = $("<h5/>").html( arr[ i ].name );
-				td.append( groupLabel );
+				var dv = $( '<div class="section" />');
+				var lbl = $( '<label />');
+
+				lbl.html( arr[ i ].name );
+
+				dv.append( lbl );
+				td.append( dv );
 				tr.append( td );
 			}
 			else
 			{
-				tr.append( $( '<td />').html( arr[ i ].name ) );
-				tr.append( $( '<td />').html( arr[ i ].value ) );
+				tr.append( $( '<td class="name" />').html( arr[ i ].name ) );
+				tr.append( $( '<td class="value" />').html( arr[ i ].value ) );
 			}
 		}
 	

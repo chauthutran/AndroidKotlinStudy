@@ -512,6 +512,8 @@ function cwsRender()
 			$( 'div.Nav__icon' ).click();
 		});
 
+		navMenuUser.html( SessionManager.sessionData.login_UserName );
+
 		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
 		if ( exeFunc ) exeFunc( startMenuTag );
@@ -694,7 +696,10 @@ function cwsRender()
 
 			// Display login name as Big text part - if we already have user..
 			loginUserNameH4Tag.text( lastSession.user ).show();
-			//$('<h4>' + lastSession.user + '<h4>').insertBefore( $( '#loginField' ) );
+		}
+		else
+		{
+			$( '#advanceOptionLoginBtn' ).removeClass( 'l-emphasis' ).addClass( 'dis' );
 		}
 	};
 
@@ -825,6 +830,7 @@ function cwsRender()
 		if ( $( '#fullScreenPreview' ).is(':visible') ) 
 		{
 			$('#fullScreenPreview').empty();
+			$('#fullScreenPreview').hide();
 			$('#pageDiv').hide();
 		}
 
@@ -938,13 +944,13 @@ function cwsRender()
 	me.newSWrefreshNotification = function( ver )
 	{
 
-		var swInforData = { 
+		/*var swInforData = { 
 			'reloadRequired': false, 
 			'datetimeInstalled': (new Date() ).toISOString() , 
 			'currVersion': ver, 
 			'lastVersion': ver, 
 			'datetimeApplied':''
-		};
+		};*/
 
 		// new update available
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
@@ -952,7 +958,7 @@ function cwsRender()
 		// move to cwsRender ?
 		$( btnUpgrade ).click ( () => {
 
-			var SWinfoObj = AppInfoManager.getSWInfo();
+			/*var SWinfoObj = AppInfoManager.getSWInfo();
 
 			if ( SWinfoObj == undefined )
 			{
@@ -960,7 +966,7 @@ function cwsRender()
 				jsonData.datetimeApplied = (new Date() ).toISOString();
 
 				AppInfoManager.updateSWInfo( jsonData );
-			}
+			}*/
 
 			location.reload( true );
 
@@ -968,7 +974,7 @@ function cwsRender()
 
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
-		AppInfoManager.updateSWInfo( swInnforData );
+		//AppInfoManager.updateSWInfo( swInforData );
 
 	};
 	

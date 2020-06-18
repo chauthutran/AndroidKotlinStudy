@@ -70,19 +70,19 @@ Templates.inputFieldYear = `
         <input type="text" class="searchSymbol">
         <span class="closeSearchSymbol">�</span>
       </div>
-      <div class="container--optionsSymbol">
+      <div class="container--optionsSymbol checkbox">
         <ul class="optionsSymbol">
         </ul>
       </div>
       <div class="dialog__action">
-        <div id="dialog_act1" class="button-text primary">
-          <div class="button__container">
-            <div class="acceptButton button-label" term="">SELECT</div>
-          </div>
-        </div>
         <div id="dialog_act2" class="button-text warning">
           <div class="button__container">
             <div class="declineButton button-label" term="cancel">CANCEL</div>
+          </div>
+        </div>
+        <div id="dialog_act1" class="button-text primary">
+          <div class="button__container">
+            <div class="acceptButton button-label" term="">SELECT</div>
           </div>
         </div>
       </div>
@@ -287,7 +287,7 @@ Templates.activityCardFullScreen = `
  </div>
 
  <div class="tab_fs__container">
-  <div class="tab_fs__container-content active" id="tab_previewDetails" blockid="tab_previewDetails" />
+  <div class="tab_fs__container-content active sheet_preview" id="tab_previewDetails" blockid="tab_previewDetails" />
   <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
   <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
  </div>
@@ -652,20 +652,20 @@ Templates.template_dialog = `
 Templates.Advance_Login_Buttons = `
   <div class="sheet_bottom-btn3" style="display: block;">
     <div class="sbtt-btn__header">
-      <div class="sbtt-btn__header_title">Advance options</div>
+      <div class="sbtt-btn__header_title">Advanced options</div>
     </div>
     <div class="cta_buttons">
-      <div class="button primary c_500 dis" id="switchToStagBtn">
+      <div class="button c_500 dis" id="switchToStagBtn">
         <div class="button__container">
           <div class="button-label">switch to Staging</div>
         </div>
-        </div>
-        <div class="button primary c_500 dis" id="demoBtn">
+      </div>
+      <div class="button c_500 dis" id="demoBtn">
         <div class="button__container">
           <div class="button-label">Demo mode</div>
         </div>
       </div>
-      <div class="button primary c_500" id="changeUserBtn">
+      <div class="button c_500" id="changeUserBtn">
         <div class="button__container">
           <div class="button-label" term="change_user">Change user</div>
         </div>

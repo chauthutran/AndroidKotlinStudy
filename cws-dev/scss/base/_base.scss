@@ -21,7 +21,7 @@ body {
   width: 100%;
   height: auto;
   height: calc(100% - 56px);
-  padding: 8px 16px 0px 16px;
+  padding: 8px 16px 0px 16px!important;
   @include box-sizing(border-box);
 
   @include p-device(240) {
@@ -221,7 +221,7 @@ select:-webkit-autofill:focus {
   width: 100%;
   height: auto;
   min-height: 48px;
-  margin: 8px 0;
+  margin: 8px 0 0 8px;
   //background-color: greenyellow;
   @include box-sizing(border-box);
 
@@ -241,7 +241,7 @@ select:-webkit-autofill:focus {
     line-height: 18px;
     font-weight: 500;
     color: #333;
-    @include font-size(16px);
+    @include font-size(14px);
     @include box-sizing(border-box);
   }
 }
@@ -249,7 +249,7 @@ select:-webkit-autofill:focus {
 .section_description {
   width: 100%;
   height: auto;
-  padding-bottom: 8px;
+  padding: 0 0 8px 40px;
   line-height: 18px;
   font-weight: 400;
   color: #333;

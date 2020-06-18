@@ -11,7 +11,7 @@ function Login( cwsRenderObj )
 	me.menuTopDivTag; // = $( '#menuTopDiv' ); //edited by Greg (2018/12/10)
 
 	me.loggedInDivTag = $("#loggedInDiv");
-	me.navTitleUserNameTag = $( '.Nav__Title' );
+	me.navTitleTextTag = $( '.Nav__Title' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
 	me.scrimTag = $('.scrim');
 	me.sheetBottomTag = $('.sheet_bottom');
@@ -73,7 +73,7 @@ function Login( cwsRenderObj )
 
 	me.setLoginBtnEvents = function()
 	{
-		me.scrimTag.click(function () {
+		me.scrimTag.click( function() {
 
 			console.log( 'scrimTag click - unblock Page' );
 
@@ -106,6 +106,12 @@ function Login( cwsRenderObj )
 	me.blockPage = function()
 	{
 		me.scrimTag.show();
+
+		me.scrimTag.off( 'click' );
+
+		me.scrimTag.click( function(){
+			me.unblockPage();
+		} )
 	}
 
 	me.unblockPage = function()
@@ -117,39 +123,49 @@ function Login( cwsRenderObj )
 	me.setAdvOptBtnClick = function()
 	{
 		me.advanceOptionLoginBtnTag.click( function() {
+			if ( ! $( this ).hasClass( 'dis' ) )
+			{
+				me.blockPage();
 
-			me.blockPage();
-
-			// create and reference templatesManager here:
-			me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
-			me.sheetBottomTag.show();
-			me.cwsRenderObj.langTermObj.translatePage();
-
-
-			$("#switchToStagBtn").click(function () {
-				me.unblockPage();
-				alert('switchToStagBtn');
-			});
-
-			$("#demoBtn").click(function () {
-				me.unblockPage();
-				alert('demo');
-			});
-
-			$("#changeUserBtn").click(function () {
-				me.sheetBottomTag.html ( Templates.Change_User_Form );
+				// create and reference templatesManager here:
+				me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
+				me.sheetBottomTag.show();
 				me.cwsRenderObj.langTermObj.translatePage();
+			}
 
-				$("#accept").click(function () {
-					DataManager2.deleteAllStorageData( function() {
-						location.reload( true );
-						//me.cwsRenderObj.reGetAppShell(); 
-					});
-				});
-
-				$("#cancel").click(function () {
+			$("#switchToStagBtn").click( function() {
+				if ( ! $( this ).hasClass( 'dis' ) )
+				{
 					me.unblockPage();
-				});
+					alert('switchToStagBtn');	
+				}
+			});
+
+			$("#demoBtn").click( function() {
+				if ( ! $( this ).hasClass( 'dis' ) )
+				{
+					me.unblockPage();
+					alert('demo');
+				}
+			});
+
+			$("#changeUserBtn").click( function() {
+				if ( ! $( this ).hasClass( 'dis' ) )
+				{
+					me.sheetBottomTag.html ( Templates.Change_User_Form );
+					me.cwsRenderObj.langTermObj.translatePage();
+
+					$("#accept").click( function() {
+						DataManager2.deleteAllStorageData( function() {
+							location.reload( true );
+							//me.cwsRenderObj.reGetAppShell(); 
+						});
+					});
+
+					$("#cancel").click( function() {
+						me.unblockPage();
+					});
+				}
 
 			});
 
@@ -309,14 +325,14 @@ function Login( cwsRenderObj )
 			me.pageTitleDivTab.hide(); 
 
 			// Set Logged in orgUnit info
-			if ( loginData.orgUnitData )
-			{
-				me.loggedInDivTag.show();
-				me.navTitleUserNameTag.show();
-				me.navTitleUserNameTag.text( ' ' + loginData.orgUnitData.userName + ' ' ).attr( 'title', loginData.orgUnitData.ouName );
+			//if ( loginData.orgUnitData )
+			//{
+			//	me.loggedInDivTag.show();
+			//	me.navTitleTextTag.show();
+			//	me.navTitleTextTag.text( ' ' + loginData.orgUnitData.ouName + ' ' ).attr( 'title', loginData.orgUnitData.ouName ); //loginData.orgUnitData.userName
 
-				$( 'div.navigation__user').html( loginData.orgUnitData.userName );
-			} 
+			//	$( 'div.navigation__user').html( loginData.orgUnitData.ouName ); //loginData.orgUnitData.userName
+			//}
 
 			// Load config and continue the CWS App process
 			if ( loginData.dcdConfig ) 
@@ -334,7 +350,7 @@ function Login( cwsRenderObj )
 
 			$( '.Nav1' ).css( 'display', 'flex' );
 
-			me.cwsRenderObj.langTermObj.translatePage();
+			//me.cwsRenderObj.langTermObj.translatePage();
 
 		});
 	};
@@ -356,12 +372,29 @@ function Login( cwsRenderObj )
 
 	me.loginAfter_UI_Update = function()
 	{
-		me.loginUserNameTag.attr( 'readonly',true );
+
+		/*me.loginUserNameTag.attr( 'readonly',true );
 		$( 'div.loginSwitchUserNotification' ).show();
 		$( 'div.Nav__icon' ).addClass( 'closed' );
 		me.loginFieldTag.hide();
 		me.loginFormTag.find( 'h4' ).remove();
-		$( '<h4>'+ me.loginUserNameTag.val() +'<h4>' ).insertBefore( me.loginFieldTag );
+		$( '<h4>'+ me.loginUserNameTag.val() +'<h4>' ).insertBefore( me.loginFieldTag );*/
+
+		var loginUserNameH4Tag = $( '#loginUserNameH4' );
+
+		//loginUserNameH4Tag.show();
+
+		// Div (Input) part of Login UserName
+		$( '#loginField' ).hide();
+
+		// input parts..  Below will be hidden, though...
+		//$( 'input.loginUserName' ).val( lastSession.user );	
+		$( 'input.loginUserName' ).attr( 'readonly',true );
+
+		// Display login name as Big text part - if we already have user..
+		loginUserNameH4Tag.text( me.loginUserNameTag.val() ).show();
+		
+		$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
 		// MOVED TO syncManagerNew
     	//SyncManagerNew.networkStatusClickSetup();
