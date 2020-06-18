@@ -30,8 +30,12 @@ SessionManager.sessionData = {
 
 // ---------------------------------------
 
+// Only used in Login..
 SessionManager.loadDataInSession = function( userName, password, loginData ) 
 {
+	// If dcdConfig or orgUnitData does not exists, we need to notify!!!
+	// SessionManager.checkLoginData( loginData );
+
 	var newSessionInfo = { 
 		login_UserName: userName,
 		login_Password: password,
@@ -43,6 +47,29 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 	
 	// TODO: Need to set 'configManager'
 	ConfigManager.setConfigJson( loginData.dcdConfig );
+};
+
+
+SessionManager.checkLoginData = function( loginData ) 
+{
+	var validLoginData = false;
+
+	try
+	{
+		if ( !loginData ) MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+		else if ( !loginData.orgUnitData ) MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+		else if ( !loginData.dcdConfig ) MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+		else 
+		{
+			validLoginData = true;
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
+	}
+
+	return validLoginData;
 };
 
 

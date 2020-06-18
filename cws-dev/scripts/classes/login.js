@@ -207,14 +207,17 @@ function Login( cwsRenderObj )
 				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
 				{
 					var loginData = SessionManager.getLoginDataFromStorage( userName );
-
-					// Update current user login information ( lastUpdated, stayLoggedIn )
-					SessionManager.updateUserSessionToStorage( loginData, userName );
 					
-					// load to session in memory
-					SessionManager.loadDataInSession( userName, password, loginData );
+					if ( me.checkLoginData( loginData ) )
+					{
+						// Update current user login information ( lastUpdated, stayLoggedIn )
+						SessionManager.updateUserSessionToStorage( loginData, userName );
+						
+						// load to session in memory
+						SessionManager.loadDataInSession( userName, password, loginData );
 
-					me.loginSuccessProcess( loginData );
+						me.loginSuccessProcess( loginData );
+					}
 				}
 				else
 				{
@@ -237,12 +240,15 @@ function Login( cwsRenderObj )
 			{
 				if ( success )
 				{
-					SessionManager.saveUserSessionToStorage( loginData, userName, password );
+					if ( me.checkLoginData( loginData ) )
+					{
+						SessionManager.saveUserSessionToStorage( loginData, userName, password );
 
-					// load to session in memory
-					SessionManager.loadDataInSession( userName, password, loginData );
-
-					me.loginSuccessProcess( loginData );
+						// load to session in memory
+						SessionManager.loadDataInSession( userName, password, loginData );
+	
+						me.loginSuccessProcess( loginData );	
+					}
 				}
 				else
 				{
@@ -260,6 +266,28 @@ function Login( cwsRenderObj )
 	};
 
 
+	me.checkLoginData = function( loginData ) 
+	{
+		var validLoginData = false;
+	
+		try
+		{
+			if ( !loginData ) MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			else if ( !loginData.orgUnitData ) MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			else if ( !loginData.dcdConfig ) MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			else 
+			{
+				validLoginData = true;
+			}
+		}
+		catch ( errMsg )
+		{
+			console.log( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
+		}
+	
+		return validLoginData;
+	};
+	
 	me.regetDCDconfig = function()
 	{
 		var userName = AppInfoManager.getUserInfo().user;

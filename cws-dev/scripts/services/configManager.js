@@ -567,11 +567,21 @@ ConfigManager.statisticConfig2 = {
 
 ConfigManager.setConfigJson = function ( configJson ) 
 {
-    ConfigManager.configJson_Original = configJson; 
-
-    ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
-
-    ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
+    try
+    {
+        if ( configJson )
+        {
+            ConfigManager.configJson_Original = configJson; 
+    
+            ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
+        
+            ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
+        }    
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
+    }
 };
 
 // NOTE: We can override any config setting by modifying 'ConfigManager.configJson' in console.
