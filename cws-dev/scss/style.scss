@@ -43,6 +43,7 @@
 'components/_tabs.scss',
 'components/_sheets_full.scss',
 'components/_sheets_bottom.scss',
+'components/_sheets_preview.scss',
 'components/_card.scss',
 'components/_fab.scss';
 /*
@@ -111,6 +112,7 @@
 @include themable(theme-brown, $brown-fc-50, $brown-bg-50, $brown-fc-100, $brown-bg-100, $brown-fc-200, $brown-bg-200, $brown-fc-300, $brown-bg-300, $brown-fc-400, $brown-bg-400, $brown-fc-500, $brown-bg-500, $brown-fc-600, $brown-bg-600, $brown-fc-700, $brown-bg-700, $brown-fc-800, $brown-bg-800, $brown-fc-900, $brown-bg-900);
 @include themable(theme-gray, $gray-fc-50, $gray-bg-50, $gray-fc-100, $gray-bg-100, $gray-fc-200, $gray-bg-200, $gray-fc-300, $gray-bg-300, $gray-fc-400, $gray-bg-400, $gray-fc-500, $gray-bg-500, $gray-fc-600, $gray-bg-600, $gray-fc-700, $gray-bg-700, $gray-fc-800, $gray-bg-800, $gray-fc-900, $gray-bg-900);
 @include themable(theme-blue_gray, $blue_gray-fc-50, $blue_gray-bg-50, $blue_gray-fc-100, $blue_gray-bg-100, $blue_gray-fc-200, $blue_gray-bg-200, $blue_gray-fc-300, $blue_gray-bg-300, $blue_gray-fc-400, $blue_gray-bg-400, $blue_gray-fc-500, $blue_gray-bg-500, $blue_gray-fc-600, $blue_gray-bg-600, $blue_gray-fc-700, $blue_gray-bg-700, $blue_gray-fc-800, $blue_gray-bg-800, $blue_gray-fc-900, $blue_gray-bg-900);
+
 
 
 .color_status_pending {

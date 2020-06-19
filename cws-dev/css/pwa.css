@@ -716,7 +716,7 @@ img.rotateImg {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 } 
-#tab_previewPayload {
+#tab_previewPayload, #tab_previewDetails {
   height: calc(100vh - 190px);
   overflow: auto !important;
 }
@@ -1384,6 +1384,7 @@ div.errorMsgArrow
   width:18px;
   height:18px;
   margin:0;
+  position: absolute;
 }
 /* END: QR SCANNER Styles */
 
@@ -1450,3 +1451,51 @@ img.round:hover{
 .listWrapper {
   display: grid;
 }
+
+  /* ppt styles */
+  .pptContainer {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 16px;
+    background: rgba(0,0,0, 0.15);
+  }
+  .pptContent {
+    padding: 16px;
+    display: block;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    background: white;
+    margin: 16px;
+    height: 160px;
+  }
+  .pptAutocomplete {
+    height: 70vh !important;
+  }
+  .pptTitle {
+    color: #50555a;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Rubik", Arial;
+    line-height: 35px;
+    padding: 0px 0px 0px 10px;
+    text-align: left;
+  }
+  .pptBody {
+    font-size: 14px;
+    text-align: left;
+    padding: 0px 10px 0px 10px;
+  }
+  .pptQuestion {
+    font-weight: bold;
+  }
+
+  .blockUI {
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+  }

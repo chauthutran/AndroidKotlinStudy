@@ -1,7 +1,7 @@
 .Nav1 {
     @include position(sticky);
     top: 0;
-    display: -webkit-box;
+    //display: -webkit-box;
     display: none;
     vertical-align: middle;
     width: 100%;
@@ -21,8 +21,10 @@
     }
 
     .Nav__Title {
+        overflow:hidden;
         width: calc(100% - 132px);
         line-height: 56px;
+        text-overflow: ellipsis;
     }
 
     .Nav__sync {
