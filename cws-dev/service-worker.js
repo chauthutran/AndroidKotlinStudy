@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "1edac54835055e4da1f86f44ef327b08"
+    "revision": "228273bda8154a22a8511e562e0809f6"
   },
   {
     "url": "css/style2.css",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "866b53f2febcd75ddd7c252f91c29ee9"
+    "revision": "8c3b0fae9681b14f4ee61dfef33f75e4"
   },
   {
     "url": "redeemGen.html",
@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "785c81de122d9214f63101a03f0c13cf"
+    "revision": "39a3adf3305f6d19279dfe0d7addf92f"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1417,7 +1417,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "bdc2358cb25a5c08346ab218031973a0"
+    "revision": "3ce7979cc8f7021e864d9ca8c88a74c9"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1521,7 +1521,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "1edac54835055e4da1f86f44ef327b08"
+    "revision": "228273bda8154a22a8511e562e0809f6"
   },
   {
     "url": "sounds/beep.mp3",
@@ -1606,6 +1606,10 @@ self.__precacheManifest = [
   {
     "url": "unittest/qunittest/test.html",
     "revision": "41b8d2c8ee0356de3d0d683b26967b60"
+  },
+  {
+    "url": "versions.html",
+    "revision": "2d260a1f1e24c41b725c848c40182c62"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

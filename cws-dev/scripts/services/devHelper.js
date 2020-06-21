@@ -321,7 +321,7 @@ DevHelper.sampleDataList = [{
     "updated": "2020-01-30T08:17:06.876"
 }];
 
-DevHelper.crossfilterObj = crossfilter( DevHelper.sampleDataList );
+DevHelper.crossfilterObj;
 
 // =======================================
 
@@ -332,6 +332,15 @@ DevHelper.setUp = function( cwsRenderObj )
 
 // =======================================
 
+DevHelper.getCrossfilterObj = function()
+{
+    if ( !DevHelper.crossfilterObj ) 
+    {
+        DevHelper.crossfilterObj = crossfilter( DevHelper.sampleDataList );
+    }
+
+    return DevHelper.crossfilterObj;
+};
 
 DevHelper.switchConnectMode = function( connModeStr )
 {
@@ -414,11 +423,11 @@ DevHelper.setScheduleMsgFlag = function() { };
 DevHelper.crossfilter = function( clientAttr )
 {    
     // How many issued?  redeemed?
-    var dimension = DevHelper.crossfilterObj.dimension( function( client ) { 
+    var dimension = DevHelper.getCrossfilterObj().dimension( function( client ) { 
         return client[ clientAttr ];
     });
 
-    var lastUpdatedDim = DevHelper.crossfilterObj.dimension( function( client ) { 
+    var lastUpdatedDim = DevHelper.getCrossfilterObj().dimension( function( client ) { 
         return client.lastUpdated;  // client.clientDetails.city or age
     });
 
@@ -450,7 +459,7 @@ DevHelper.crossfilter = function( clientAttr )
 
 DevHelper.cfIssued = function( transactionType )
 {    
-    return DevHelper.crossfilterObj.groupAll().reduceSum( function( client ) { 
+    return DevHelper.getCrossfilterObj().groupAll().reduceSum( function( client ) { 
         // client -> activities -> transactions -> "transactionType": "v_iss",
 
         var total_issued = 0;

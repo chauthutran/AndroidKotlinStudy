@@ -73,7 +73,7 @@ function app()
       // --------------------
       // 3. FINISH APP START PHASE
       
-      me.App_version_UI_Update();
+      me.appVersionSetup();
 
       me.App_syncIcon_UI_event();
 
@@ -132,7 +132,7 @@ function app()
   };
 
 
-  me.App_version_UI_Update = function()
+  me.appVersionSetup = function()
   {
     $( '#spanVersion' ).text( 'v' + _ver );
   };
