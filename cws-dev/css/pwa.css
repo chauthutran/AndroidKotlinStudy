@@ -663,7 +663,7 @@ ul li .expandable.expanded+div {
 
 /* 4. blockList GroupBy blocks */
 
-.blockListGroupBy > td {
+.blockListGroupBy > div {
   left: 0%;
   right: 0%;
   top: 0%;
@@ -680,8 +680,8 @@ ul li .expandable.expanded+div {
   padding: 0 0 0 16px;
 
 }
-.blockListGroupBy > td:after,
-.blockListGroupBy > td:before {
+.blockListGroupBy > div:after,
+.blockListGroupBy > div:before {
   top: 40%;
   left: 88%;
   border: solid transparent;
@@ -771,11 +771,13 @@ div.errorMsgArrow
   font-weight: 500;
   font-style: italic;
   height: 25px;
+  font-size: calc(12px + 0.4vw);
 }
 
 .bt_td_row_even, .bt_td_row_odd
 {
   font-weight: 200;
+  font-size: calc(12px + 0.4vw);
 }
 
 

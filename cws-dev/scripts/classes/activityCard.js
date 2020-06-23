@@ -32,7 +32,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     // ----------------------------------------------------
 
-    me.getActivityCardTrTag = function()
+    me.getactivityCardDivTag = function()
     {
         if ( me.options.parentTag_Override )
         {
@@ -40,14 +40,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         else
         {
-            return $( 'tr.activity[itemid="' + me.activityId + '"]' );
+            return $( 'div.activity[itemid="' + me.activityId + '"]' );
         }
     };
 
 
     me.getSyncButtonTag = function( activityId )
     {
-        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardTrTag();
+        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getactivityCardDivTag();
 
         return activityCardTags.find( '.activityStatusIcon' );
     };
@@ -57,10 +57,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.render = function()
     {        
-        var activityCardTrTag = me.getActivityCardTrTag();
+        var activityCardDivTag = me.getactivityCardDivTag();
 
         // If tag has been created), perform render
-        if ( activityCardTrTag )
+        if ( activityCardDivTag )
         {
             var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;
@@ -69,16 +69,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
             {
                 var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
 
-                var activityContainerTag = activityCardTrTag.find( 'div.activityContainer' );
-                var activityTypeTdTag = activityCardTrTag.find( 'div.activityIcon' );
-                var activityContentTag = activityCardTrTag.find( 'div.activityContent' );
-                var activityRerenderTag = activityCardTrTag.find( 'div.activityRerender' );
-                var activityPhoneCallTag = activityCardTrTag.find( 'div.activityPhone' );
+                var activityContainerTag = activityCardDivTag.find( 'div.activityContainer' );
+                var activityTypeIconTag = activityCardDivTag.find( 'div.activityIcon' );
+                var activityContentTag = activityCardDivTag.find( 'div.activityContent' );
+                var activityRerenderTag = activityCardDivTag.find( 'div.activityRerender' );
+                var activityPhoneCallTag = activityCardDivTag.find( 'div.activityPhone' );
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityTypeTdTag, activityJson );
-                if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeTdTag, activityJson );
+                me.activityTypeDisplay( activityTypeIconTag, activityJson );
+                if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeIconTag, activityJson );
 
 
                 // 2. previewText/main body display (MIDDLE)
@@ -89,7 +89,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( clickEnable, activityCardTrTag, activityJson );    
+                me.setupSyncBtn( clickEnable, activityCardDivTag, activityJson );    
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, activityJson );
@@ -123,10 +123,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
         });
     };
                 
-    me.setupSyncBtn = function( clickEnable, activityCardTrTag, activityJson )
+    me.setupSyncBtn = function( clickEnable, activityCardDivTag, activityJson )
     {
-        var divSyncIconTag = activityCardTrTag.find( '.activityStatusIcon' );
-        var divSyncStatusTextTag = activityCardTrTag.find( '.activityStatusText' );
+        var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
+        var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
         
         var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
@@ -152,7 +152,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     // if ( statusVal === Constants.status_processing )
 
                     // Display the popup
-                    me.syncResultMsgShow( statusVal, activityJson, activityCardTrTag );
+                    me.syncResultMsgShow( statusVal, activityJson, activityCardDivTag );
     
                     // TODO: THIS DOES NOT WORK 100% <-- NEED TO REVISIT!!!
                     if ( statusVal === Constants.submit_wMsg )        
@@ -171,7 +171,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     // Case 1. Continue to be in 'Sync' case reset
                     //      - simple processing status unset.. But the process will continue..
                     //activityJson.processing.status = Constants.status_queued;
-                    //me.displayActivitySyncStatus_Wrapper( activityJson, activityCardTrTag );
+                    //me.displayActivitySyncStatus_Wrapper( activityJson, activityCardDivTag );
 
                     // Case 2. Cancel the Sync Process..
                 
@@ -249,7 +249,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' );
-            imgIcon.attr( 'src', 'images/sync.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync_msd.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_submit_wMsg )        
         {
@@ -263,7 +263,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' );
-            imgIcon.attr( 'src', 'images/sync.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync_msd.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
@@ -292,13 +292,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
 
     // Wrapper to call displayActivitySyncStatus with fewer parameters
-    me.displayActivitySyncStatus_Wrapper = function( activityJson, activityCardTrTag )
+    me.displayActivitySyncStatus_Wrapper = function( activityJson, activityCardDivTag )
     {
-        //var activityCardTrTag = me.getActivityCardTrTag();
-        if ( activityCardTrTag && activityCardTrTag.length > 0 )
+        //var activityCardDivTag = me.getactivityCardDivTag();
+        if ( activityCardDivTag && activityCardDivTag.length > 0 )
         {
-            var divSyncIconTag = activityCardTrTag.find( '.activityStatusIcon' );
-            var divSyncStatusTextTag = activityCardTrTag.find( '.activityStatusText' );
+            var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
+            var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
             
             var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
     
@@ -319,15 +319,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
     
-    me.syncResultMsgShow = function( statusVal, activityJson, activityCardTrTag )
+    me.syncResultMsgShow = function( statusVal, activityJson, activityCardDivTag )
     {
-        // If 'activityCardTrTag ref is not workign with fresh data, we might want to get it by activityId..
+        // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
 
         Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
         {
-            me.syncResultMsg_header( syncInfoAreaTag, activityCardTrTag );
+            me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
 
-            me.syncResultMsg_content( syncInfoAreaTag, activityCardTrTag, activityJson );
+            me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson );
         });
 
         // activityJson.processing  <-- activityJson.appData?
@@ -335,17 +335,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // activityJson.processing.status       <-- quick info of current (last)
     };
 
-    me.syncResultMsg_header = function( syncInfoAreaTag, activityCardTrTag )
+    me.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
     {        
         var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
 
-        var statusLabel = activityCardTrTag.find( 'div.activityStatusText' ).text();
+        var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
 
         divHeaderTag.html( '<div class="msgHeaderLabel sync_all__header_title">' + statusLabel + '</div>' );
     };
 
 
-    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardTrTag, activityJson )
+    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson )
     {
         var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
 
@@ -354,8 +354,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         var activityContainerTag = divBottomTag.find( 'div.activityContainer' );
 
-        activityContainerTag.append( activityCardTrTag.find( 'div.activityIcon' ).clone() );
-        activityContainerTag.append( activityCardTrTag.find( 'div.activityContent' ).clone() );
+        activityContainerTag.append( activityCardDivTag.find( 'div.activityIcon' ).clone() );
+        activityContainerTag.append( activityCardDivTag.find( 'div.activityContent' ).clone() );
         
 
         // 2. Add 'processing' sync message.. - last one?
@@ -458,15 +458,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // -------------------------------
     // --- Display Icon/Content related..
     
-    me.syncUpStatusDisplay = function( activityCardTrTag, activityJson )
+    me.syncUpStatusDisplay = function( activityCardDivTag, activityJson )
     {
         try
         {
             // 1. Does it find hte matching status?
             var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
-            if ( activitySyncUpStatusConfig ) activityCardTrTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
+            if ( activitySyncUpStatusConfig ) activityCardDivTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
-            me.setActivitySyncUpStatus( activityCardTrTag, activityJson.processing );
+            me.setActivitySyncUpStatus( activityCardDivTag, activityJson.processing );
         }
         catch( errMsg )
         {
@@ -475,7 +475,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.activityTypeDisplay = function( activityTypeTdTag, activityJson )
+    me.activityTypeDisplay = function( activityTypeIconTag, activityJson )
     {
         try
         {
@@ -487,7 +487,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // TODO: Bring this method up from 'formUtil' to 'activityCard'?
             // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
 
-            FormUtil.appendActivityTypeIcon( activityTypeTdTag
+            FormUtil.appendActivityTypeIcon( activityTypeIconTag
                 , activityTypeConfig
                 , activitySyncUpStatusConfig
                 , undefined
@@ -553,11 +553,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setActivitySyncUpStatus = function( activityCardTrTag, activityProcessing ) 
+    me.setActivitySyncUpStatus = function( activityCardDivTag, activityProcessing ) 
     {
         try
         {
-            var imgSyncIconTag = activityCardTrTag.find( 'small.syncIcon img' );
+            var imgSyncIconTag = activityCardDivTag.find( 'small.syncIcon img' );
 
             if ( activityProcessing.status === Constants.status_queued )
             {
@@ -595,7 +595,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             // Set the status as processing..
             activityJson_Orig.processing.status = Constants.status_processing;
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardTrTag() );
+            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getactivityCardDivTag() );
             // Run UI Animation..
             FormUtil.rotateTag( syncIconTag, true );
 

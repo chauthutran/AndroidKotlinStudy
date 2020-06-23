@@ -1602,7 +1602,8 @@ h6 {
   clear: both;
   width: 100%;
   height: auto;
-  padding: 24px 0 12px 0;
+  padding: 12px 0;
+  /* 12px 0; */
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -3890,7 +3891,7 @@ textarea {
 }
 
 .list .list_three_line .list_three_line__container .list_three_item_cta {
-  float: left;
+  float: right;
 }
 
 @media (max-width: 380px) {
@@ -3963,9 +3964,9 @@ textarea {
   -webkit-box-align: center;
   -ms-flex-align: center;
       align-items: center;
-  border-radius: 50%;
+  /*border-radius: 50%;*/
   margin-right: 8px;
-  background-color: #5e92f3;
+  /*background-color: rgba($color-sl, 40%);*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -4384,6 +4385,10 @@ textarea {
   padding: 0 10px;
   -webkit-filter: invert(100%);
           filter: invert(100%);
+}
+
+.sheet_full-fs .wapper_card .tab_fs__head-icon_exp {
+  display: none !important;
 }
 
 .sheet_bottom-fs {
@@ -5685,7 +5690,7 @@ textarea {
 .sheet_preview .name, .sheet_preview .value {
   padding: 8px 8px 8px 12px;
   margin: 2px;
-  font-size: calc(10px + 0.4vw);
+  font-size: calc(12px + 0.4vw);
   white-space: nowrap;
   text-align: left;
   max-width: 47vw;

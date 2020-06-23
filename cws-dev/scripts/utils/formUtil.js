@@ -1109,8 +1109,8 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && svgStyle && $(iconObj).html() )
 				{
-					$( svgObject ).attr( 'width', svgStyle.width );
-					$( svgObject ).attr( 'height', svgStyle.height );
+					$( svgObject ).attr( 'width', ( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width ) );
+					$( svgObject ).attr( 'height', ( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height ) );
 				}
 	
 				/*if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
