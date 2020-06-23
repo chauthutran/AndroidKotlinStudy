@@ -239,6 +239,9 @@ AppInfoManager.removeData = function( keyword )
      
      // Update the 'appInfo' data
      LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+     
+     // Set new data info in memory
+     AppInfoManager.data = appInfo;
 }
 	
 
