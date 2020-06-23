@@ -80,7 +80,7 @@
             }
 
             .list_three_item_cta {
-                float: left;
+                float: right;
 
                 @include rwd-max(380) {
                     float: none;
@@ -141,8 +141,8 @@
     height: 40px;
     -webkit-box-align: center;
     align-items: center;
-    border-radius: 50%;
+    /*border-radius: 50%;*/
     margin-right: 8px;
-    background-color: rgba($color-sl, 40%);
+    /*background-color: rgba($color-sl, 40%);*/
     @include box-sizing(border-box);
 }

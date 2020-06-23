@@ -47,7 +47,8 @@ DevHelper.sampleDataList = [{
                 "lastName": "Chang",
                 "phoneNumber": "6543222212",
                 "clientId": "",
-                "age": "14"
+                "age": "14",
+                "provisionMethod": "Pills"
             }
         }, {
             "transactionType": "v_iss",
@@ -97,7 +98,8 @@ DevHelper.sampleDataList = [{
                 "phoneNumber": "27732462992",
                 "clientId": "",
                 "age": "47",
-                "hairStyle": "braids"
+                "hairStyle": "braids",
+                "provisionMethod": "Condom"
             }
         }, {
             "transactionType": "v_iss",
@@ -148,7 +150,8 @@ DevHelper.sampleDataList = [{
                 "phoneNumber": "0839891685",
                 "clientId": "",
                 "age": "23",
-                "hairStyle": "bun"
+                "hairStyle": "bun",
+                "provisionMethod": "Condom"
             }
         }, {
             "transactionType": "v_iss",
@@ -198,7 +201,8 @@ DevHelper.sampleDataList = [{
                 "phoneNumber": "0734471959",
                 "clientId": "",
                 "age": "32",
-                "hairStyle": "bangs"
+                "hairStyle": "bangs",
+                "provisionMethod": "Inject"
             }
         }, {
             "transactionType": "v_iss",
@@ -277,7 +281,8 @@ DevHelper.sampleDataList = [{
                 "phoneNumber": "0798985543",
                 "clientId": "",
                 "age": "65",
-                "hairStyle": "bob"
+                "hairStyle": "bob",
+                "provisionMethod": "Condom"
             }
         }, {
             "transactionType": "v_iss",

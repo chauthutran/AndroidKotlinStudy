@@ -89,12 +89,15 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // --------- Templates --------------------
 
 
-    me.template_listTableTag = `<table class="list">
+    me.template_listDivTag = `<div class="list" />`;
+    /*
+    me.template_listDivTag = `<table class="list">
         <tbody>
         </tbody>
     </table>`;
+    */
 
-    me.tempalte_trActivityTag = `<tr class="activity">
+    /*me.template_divActivityTag = `<tr class="activity">
         <td>
             <div class="list_three_line">
 
@@ -116,18 +119,40 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 </div>
             </div>
         </td>
-    </tr>`;
+    </tr>`;*/
+    me.template_divActivityTag = `<div class="activity list_three_line">
 
-    me.tempalte_trActivityEmptyTag = `<tr class="activity emptyList">
+        <div class="activityContainer list_three_line__container">
+
+            <div class="activityIcon avatar_circle" />
+
+            <div class="activityContent list_three_item_content" />
+
+            <div class="activityStatus list_three_item_cta">
+                <div class="activityStatusText list_three_item_status"></div>
+                <div class="activityPhone list_three_item_cta1"></div>
+                <div class="activityStatusIcon list_three_item_cta2"></div>
+            </div>
+
+        </div>
+
+    </div>`;
+
+    /*me.template_divActivityEmptyTag = `<tr class="activity emptyList">
         <td>
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
         </td>
-    </tr>`;
+    </tr>`;*/
+    me.template_divActivityEmptyTag = `<div class="activity emptyList">
+            <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
+    </div>`;
 
-    me.template_groupTrTag = `<tr class="blockListGroupBy opened">
+    /*me.template_groupDivTag = `<tr class="blockListGroupBy opened">
         <td class="blockListGroupBySection"></td>
-    </tr>`;
-
+    </tr>`;*/
+    me.template_groupDivTag = `<div class="blockListGroupBy opened">
+        <div class="blockListGroupBySection" />
+    </div>`;
 
     // ===========================================================
     // === Main Features =========================
@@ -248,7 +273,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.setClassContainerTag = function( blockTag )
     {
-        var listTableTag = $( me.template_listTableTag );
+        var listTableTag = $( me.template_listDivTag );
 
         blockTag.append( listTableTag );
 
@@ -256,7 +281,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         blockTag.append( listFavButtonTag );
 
-        return listTableTag.find( 'tbody' );
+        return listTableTag; //listTableTag.find( 'tbody' );
     };
 
 
@@ -307,8 +332,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.clearExistingList = function( listTableTbodyTag )
     {
-        listTableTbodyTag.find( 'tr.activity' ).remove();
-        listTableTbodyTag.find( 'tr.blockListGroupBy' ).remove();
+        listTableTbodyTag.find( 'div.activity' ).remove();
+        listTableTbodyTag.find( 'div.blockListGroupBy' ).remove();
     };
 
 
@@ -324,9 +349,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         if ( activityList.length === 0 ) 
         {
             // If already have added emtpyList, no need to add emptyList
-            if ( me.listTableTbodyTag.find( 'tr.emptyList' ).length === 0 )
+            if ( me.listTableTbodyTag.find( 'div.emptyList' ).length === 0 )
             {
-                me.listTableTbodyTag.append( $( me.tempalte_trActivityEmptyTag ) );
+                me.listTableTbodyTag.append( $( me.template_divActivityEmptyTag ) );
             }
 
             if ( scrollEndFunc ) scrollEndFunc();
@@ -460,13 +485,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
     {
-        var activityCardTrTag = $( me.tempalte_trActivityTag );
+        var activityCardTrTag = $( me.template_divActivityTag );
 
         activityCardTrTag.attr( 'itemId', activityJson.activityId );
 
-        
         var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
-
 
         activityCardTrTag.attr( 'group', groupAttrVal );
 
@@ -478,7 +501,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     // ------------------------------------
     // --- Create GROUP Related -------------
-            
+
     me.setGroupDiv = function( activityJson, viewGroupByData, listTableTbodyTag )
     {
         var groupAttrVal = '';
@@ -494,8 +517,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 if ( groupJson.id !== undefined )
                 {        
                     // get previous activity groupBy
-                    var lastActivityTrTag = listTableTbodyTag.find( 'tr.activity' ).last();
-        
+                    var lastActivityTrTag = listTableTbodyTag.find( 'div.activity' ).last();
+
                     if ( lastActivityTrTag && lastActivityTrTag.length === 1 )
                     {
                         // get groupby
@@ -526,13 +549,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         return groupAttrVal;
     };
 
-    
+
     me.createGroupDiv = function( groupJson, listTableTbodyTag )
     {
-        var groupTrTag = $( me.template_groupTrTag );
+        var groupTrTag = $( me.template_groupDivTag );
         groupTrTag.attr( 'group', groupJson.id );
 
-        var tdGroupTag = groupTrTag.find( 'td.blockListGroupBySection' );
+        var tdGroupTag = groupTrTag.find( 'div.blockListGroupBySection' );
         tdGroupTag.text( groupJson.name + ' (' + groupJson.activities.length + ')' ); // attr( 'group', groupJson.id ).
 
         // Set event
@@ -553,11 +576,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             {    
                 var tdGroupClickTag = $( this );
 
-                var trTag = tdGroupClickTag.closest( 'tr.blockListGroupBy' );
+                var trTag = tdGroupClickTag.closest( 'div.blockListGroupBy' );
                 var opened = trTag.hasClass( 'opened' );
                 var groupId = trTag.attr( 'group' );
                 
-                var activityTrTags = tableTag.find( 'tr.activity[group="' + groupId + '"]' );
+                var activityTrTags = tableTag.find( 'div.activity[group="' + groupId + '"]' );
         
                 // Toggle 'opened' status..
                 if ( opened )
