@@ -156,7 +156,7 @@ function swManager( _cwsRenderObj ) {
                         else 
                         {
                             //me.SWinfoObj['reloadRequired'] = true;
-                            //me._cwsRenderObj.createRefreshIntervalTimer(_ver);
+                            me._cwsRenderObj.createRefreshIntervalTimer( _ver );
                         }
                         break;
                 }
