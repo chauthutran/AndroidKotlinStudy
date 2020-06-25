@@ -55,6 +55,9 @@ $active-tab :$color-p;
             line-height: 48px;
             color: $tab-head-color;
             text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             @include box-sizing(border-box);
 
             @include p-device(240) {
