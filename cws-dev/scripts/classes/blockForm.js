@@ -235,7 +235,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	{
 		var QRiconTag = $( '<img src="images/qr.svg" class="qrButton" >');
 
-		entryTag.click( function(){
+		QRiconTag.click( function(){
 			var qrData = new readQR( entryTag );
 		});
 
@@ -1061,7 +1061,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				return field.dependencies.includes( thisTag.attr( 'name' ) );
 			} );
 
-			console.log( affectedControls );
+			//console.log( affectedControls );
 
 			for( var i = 0; i < affectedControls.length; i++ )
 			{

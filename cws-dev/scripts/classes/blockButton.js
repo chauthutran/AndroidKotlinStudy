@@ -1,12 +1,12 @@
 // -------------------------------------------
 // -- BlockButton Class/Methods
-function BlockButton( cwsRenderObj, blockObj, validationObj )
+function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
-	me.validationObj = validationObj;
+	me.validationObj = me.blockObj.validationObj;
 	me.actionObj;
 
 	me.divTabsContainer = ` <div class="tab_fs" /> `;
@@ -102,7 +102,7 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 
 
 			}
-			else if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
+			else //if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 			{
 				// Main Content Part
 				btnTabsContainerTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
@@ -216,7 +216,14 @@ function BlockButton( cwsRenderObj, blockObj, validationObj )
 			else if ( btnJson.buttonType === 'listRightImg' )
 			{
 				btnTag = $( '<img src="' + btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
-				//btnTag = $( '<img src="' + btnJson.img + '" class="rotate90 ' + btnJson.buttonType + '" style="cursor: pointer;">' );
+				//btnTag.attr( 'width', '100%' );
+				//btnTag.attr( 'height', '100%' );
+
+				if ( divTag )
+				{
+					btnTag.attr( 'width', ( divTag.css( 'width' ) ? divTag.css( 'width' ) : svgStyle.width ) );
+					btnTag.attr( 'height', ( divTag.css( 'height' ) ? divTag.css( 'height' ) : svgStyle.height ) );	
+				}
 			}
 		}
 
