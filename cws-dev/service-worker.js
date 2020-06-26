@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "4ae0b254f06774b143439bf4d5baee76"
+    "revision": "d4fb70f69015f528cdabfad87a10b2ba"
   },
   {
     "url": "css/qunit.css",
@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "1d3511ec105694a9e3593ca2c1d97e2c"
+    "revision": "5f974f17249174932e3ea8da0b76b28e"
   },
   {
     "url": "redeemGen.html",
@@ -1221,15 +1221,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "2dd9f3a6943715b99f18d083a0656919"
+    "revision": "413b3574ed4c6d211e58a17891242d8d"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "7431c246090df7aac086ad58133ccd18"
+    "revision": "e90f5ed0f1c41efece989d1d6b5d030e"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "c1f7d9f19544ff38c38b36e7428012b9"
+    "revision": "065966e2336015cc2869de45edb48017"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1245,7 +1245,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/dataList.js",
-    "revision": "0d28f8ee2def659897b6353a93fc18b6"
+    "revision": "9408954c4821856c5e3d33e22153a4d4"
   },
   {
     "url": "scripts/classes/favIcon.js",

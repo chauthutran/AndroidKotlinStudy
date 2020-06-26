@@ -700,6 +700,134 @@ img.rotateImg {
   transform: rotate(180deg);
 }
 
+/* 5. dataList GroupBy search results */
+
+.itemBlock{
+  text-align: left;
+  margin: 5px;
+  padding: 3px 3px 3px 5px;
+}
+
+.itemBlock div span {
+  color:#000;
+}
+
+
+.resultsImgContainer
+{
+  margin: 8px;
+  max-width: 56px;
+  min-width: 56px;
+  /*width: 56px;*/
+}
+.imggroupByFldHeader{
+  width:24px;
+  height:24px;
+}
+
+.searchResultTable 
+{
+  width: 100%;
+}
+.searchResultTable td
+{
+  font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: calc(12px + 0.2vw);
+}
+.searchResultGroupByButtons{
+  text-align:center;
+  vertical-align:middle;
+  width:60px;
+}
+
+.searchResultTableSpacer
+{
+  padding:6px;
+}
+.groupBySearchContainer
+{
+  margin-bottom: 10px;
+}
+.groupBySearchResults
+{
+  font-size: 1em;
+  color:#777;
+  padding: 0px 4px 4px 14px;
+}
+.groupByField
+{
+  padding: 2px; 
+  margin: 0 0 0 20px;
+  width: 97%;
+}
+.groupByFieldHeader
+{
+  width: fit-content;
+  padding:8px 4px 4px 0px;
+  margin: 0 0 0 6px;
+  font-weight: 600;
+  border-top: 1px solid #F0F0F0;
+}
+
+.groupByFieldResultTable
+{
+  width: 100%;
+  border-top: 1px solid #F5F5F5;
+}
+.groupByResultHeader
+{
+  color: #50555a; 
+  font-size: 12px;
+  padding: 8px 6px 4px 4px;
+  vertical-align: middle;
+}
+.groupByHeaderField
+{
+  vertical-align: middle;
+}
+.groupByHeaderValue
+{
+  padding: 0 0 0 4px;
+  vertical-align: middle;
+}
+.groupByFieldName
+{
+  color: #50555a;
+  padding: 0 0 0 4px;
+  font-size: calc(12px + 0.2vw);
+}
+
+
+.imggroupByExpanded
+{
+  display: block;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url("../images/sharp-remove_circle_outline-24px.svg") no-repeat;
+  opacity: 0.6;
+  width:inherit;
+  height: inherit;
+  background-size: cover;
+  width: 24px;
+  height: 24px;
+}
+.imggroupByCollapsed
+{
+  display: block;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: url("../images/sharp-add_circle_outline-24px.svg") no-repeat;
+  opacity: 0.6;
+  width:inherit;
+  height: inherit;
+  background-size: cover;
+  width: 24px;
+  height: 24px;
+}
+
+
 /* JAMES CUSTOM FOR PREVIEW CARD BOTTOMSHEET */
 /* this should be stand alone? */
 .list_three_line-suppor_visuals {

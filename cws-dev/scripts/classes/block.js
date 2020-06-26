@@ -83,7 +83,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			// Render Buttons
 			if ( me.blockDefJson.buttons ) 
 			{
-				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me, me.validationObj );
+				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me ); //, me.validationObj 
 				me.blockButtonObj.render( me.blockDefJson.buttons, me.blockTag, undefined );
 			}
 

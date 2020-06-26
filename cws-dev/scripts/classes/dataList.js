@@ -198,7 +198,7 @@ function DataList( cwsRenderObj, blockObj )
                             var dvGrpByTitle = $( '<div class="groupByField" />' );
 
                             dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
-                            dvGrpByTitle.attr( 'title', fldGroupByID );
+                            dvGrpByTitle.attr( 'title', grpByArr[ r ].value );
 
                             var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
 
@@ -462,7 +462,7 @@ function DataList( cwsRenderObj, blockObj )
     {
         if ( itemButtons )
         {
-            var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj );
+            var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj ); //, me.blockObj.validationObj
 
             newItemBtn.render( itemButtons, divItemTag );
         } 
