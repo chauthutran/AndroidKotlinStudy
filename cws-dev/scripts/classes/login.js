@@ -189,8 +189,7 @@ function Login( cwsRenderObj )
 		}
 
 		me.loggedInDivTag.hide();
-		// me.loggedInDivTag.show();
-		
+
 		Menu.setInitialLogInMenu( me.cwsRenderObj );
 	};
 
