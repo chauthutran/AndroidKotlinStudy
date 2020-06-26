@@ -155,13 +155,15 @@ function cwsRender()
 	
 					if ( $( 'body' ).css( 'height' ) !== $( 'body' ).attr( 'initialHeight' ) && $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) ) 
 					{
-						console.log( 'not keyboard' );
-						$( 'div.login_title').find( 'h1' ).html( 'not keyboard' );
+						console.log( 'IS keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' );
+						$( '[keyboardVisible=hide]' ).fadeOut();
 					} 
 					else
 					{
-						console.log( 'IS keyboard' );
-						$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' );
+						console.log( 'not keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' );
+						$( '[keyboardVisible=hide]' ).fadeIn();
 					}
 				}
 
