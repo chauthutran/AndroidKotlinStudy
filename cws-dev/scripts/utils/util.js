@@ -1515,7 +1515,17 @@ Util.decrypt = function (garbage,loops)
   {
 	return (/Mobi/.test(navigator.userAgent));
   };
-  
+
+  Util.isAndroid = function ( ) 
+  {
+	return (/Android/.test(navigator.userAgent));
+  };
+
+  Util.isIOS = function ( ) 
+  {
+	return ( navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)/i) !== null );
+  };
+
   Util.getPeriodName = function( pe )
   {
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];

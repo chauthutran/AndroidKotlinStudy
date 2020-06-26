@@ -1265,7 +1265,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "4c7a1718e46b7d907406b6a00c57b67d"
+    "revision": "ea6329e3d0100dae091b32f0be1a4c2a"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1f086e8240e81f8a2031693169c86a6f"
+    "revision": "653ed5dbd51eeb0db5020e4bd733a48a"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1509,7 +1509,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "c83aa59d28b14fa6808fdca2ccd385bd"
+    "revision": "47abd48d8d35330baa55b4ed4cbe816a"
   },
   {
     "url": "scripts/utils/util2.js",
