@@ -17,19 +17,17 @@ function app()
 	{
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
-    me._swManagerObj = new swManager( me._cwsRenderObj );
 
     // Does this get loaded also when we login?
     AppInfoManager.initialLoad_FromStorage();
 
-    me.App_UI_startUp_loading();
+    me.App_UI_startUp_loading(); // << should we move this into cwsRender?
 
-    // Making notes..
-    me._swManagerObj.run( function() {
+    me._swManagerObj = new swManager( me._cwsRenderObj, function() {
 
-      me.App_UI_startUp_Progress( '25%' );
-
+      me.App_UI_startUp_Progress( '40%' );
       me.startAppProcess();
+
     } );   
 
   };
@@ -68,7 +66,7 @@ function app()
       // Start the scheduling on app start
       ScheduleManager.runSchedules_AppStart();
 
-      me.App_UI_startUp_Progress( '75%' );
+      me.App_UI_startUp_Progress( '70%' );
 
       // --------------------
       // 3. FINISH APP START PHASE
@@ -83,9 +81,9 @@ function app()
 
       FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
-      me.App_UI_startUp_Progress( '90%' );
+      //me.App_UI_startUp_Progress( '90%' );
 
-      me.App_checkUpdates_found_prompt();
+      //me.App_checkUpdates_found_prompt();
 
       me.App_UI_startUp_Progress( '100%' );
 
@@ -128,7 +126,6 @@ function app()
   me.App_UI_startUp_Progress = function( perc )
   {
     $( 'div.startUpProgress' ).css( 'width', perc );
-    //$( 'div.Nav__Title' ).html( perc );
   };
 
 
@@ -142,25 +139,20 @@ function app()
   {
     // move into cwsRender?
     $('#imgAppDataSyncStatus').click(() => {
-      
-      //DevHelper.tempCount++;
-      //var remainder = ( DevHelper.tempCount % 2 );
-      //console.log( 'tempCount: ' + DevHelper.tempCount + ', ' + remainder );
-      //if ( remainder === 1 ) FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, true );
-      //else FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, false );
 
       SyncManagerNew.SyncMsg_ShowBottomMsg();
+
     });
   };
 
 
   me.App_checkUpdates_found_prompt = function()
   {
-    if ( me._swManagerObj.swPromptRefresh ) {
+    if ( me._swManagerObj.createRefreshPrompt ) {
       me._cwsRenderObj.createRefreshIntervalTimer(_ver);
     }
   };
-  
+
 
   me.App_installed_done = function( event ) {
 

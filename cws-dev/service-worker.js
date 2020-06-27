@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "cd23517bef481fdb26405c6a6f5f3666"
+    "revision": "47bd8e09c8dd10fe34e39cc660ca0358"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1265,7 +1265,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "4c7a1718e46b7d907406b6a00c57b67d"
+    "revision": "ea6329e3d0100dae091b32f0be1a4c2a"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1f086e8240e81f8a2031693169c86a6f"
+    "revision": "a69a9d5a01b454260ce92941bb6ee521"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1461,7 +1461,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/swManager.js",
-    "revision": "3c4db77e8cb3364cb3b8ece26f147e9d"
+    "revision": "7982adeea41cf8f2684858928bbcde07"
   },
   {
     "url": "scripts/services/syncManagerNew.js",
@@ -1509,7 +1509,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "c83aa59d28b14fa6808fdca2ccd385bd"
+    "revision": "47abd48d8d35330baa55b4ed4cbe816a"
   },
   {
     "url": "scripts/utils/util2.js",
