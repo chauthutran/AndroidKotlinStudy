@@ -138,37 +138,7 @@ function cwsRender()
 	{
 		if ( Util.isAndroid() || Util.isIOS() )
 		{
-			// Track width+height sizes for detecting android keyboard popup (which triggers resize)
-			$( 'body' ).attr( 'initialWidth', $( 'body' ).css( 'width' ) );
-			$( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
-
-			// Set defaults for Tags to be hidden when keyboard triggers resize
-			$( '#advanceOptionLoginBtn' ).attr( 'keyboardVisible', 'hide' );
-
-			// Window Resize detection
-			$( window ).on( 'resize', function () {
-
-				if ( ! FormUtil.checkLogin() )
-				{
-					InitialWidth = $( 'body' ).attr( 'initialWidth' );
-					initialHigh = $( 'body' ).attr( 'initialHeight' );
-	
-					if ( $( 'body' ).css( 'height' ) !== $( 'body' ).attr( 'initialHeight' ) && $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) ) 
-					{
-						//console.log( 'IS keyboard' );
-						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' );
-						$( '[keyboardVisible=hide]' ).fadeOut();
-					} 
-					else
-					{
-						//console.log( 'not keyboard' );
-						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' );
-						$( '[keyboardVisible=hide]' ).fadeIn();
-					}
-				}
-
-			});
-
+			me.setup_keyboardDetection();
 		}
 	}
 
@@ -1033,6 +1003,44 @@ function cwsRender()
 	{
         FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me );
 	};
+
+	me.setup_keyboardDetection = function()
+	{
+		// Track width+height sizes for detecting android keyboard popup (which triggers resize)
+		$( 'body' ).attr( 'initialWidth', $( 'body' ).css( 'width' ) );
+		$( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
+
+		// Set defaults for Tags to be hidden when keyboard triggers resize
+		$( '#advanceOptionLoginBtn' ).attr( 'keyboardVisible', 'hide' );
+
+		// Window Resize detection
+		$( window ).on( 'resize', function () {
+
+			if ( ! FormUtil.checkLogin() )
+			{
+
+				//InitialWidth = $( 'body' ).attr( 'initialWidth' );
+				initialHeight = $( 'body' ).attr( 'initialHeight' );
+
+				// height ( change ) only value we're interested in comparing
+				if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
+				{
+					//console.log( 'IS keyboard' );
+					//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' );
+					$( '[keyboardVisible=hide]' ).fadeOut();
+				} 
+				else
+				{
+					//console.log( 'not keyboard' );
+					//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' );
+					$( '[keyboardVisible=hide]' ).fadeIn();
+				}
+
+			}
+
+		});
+
+	}
 
 	// ======================================
 

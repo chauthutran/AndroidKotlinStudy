@@ -1265,7 +1265,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "ea6329e3d0100dae091b32f0be1a4c2a"
+    "revision": "1377f78d738a098a53d293f1f0b94e6e"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "a69a9d5a01b454260ce92941bb6ee521"
+    "revision": "2bb8fad19d121a9fdb5a3d6bfe2ad3e7"
   },
   {
     "url": "scripts/libraries/aes.js",
