@@ -123,6 +123,7 @@ function Login( cwsRenderObj )
 	me.setAdvOptBtnClick = function()
 	{
 		me.advanceOptionLoginBtnTag.click( function() {
+
 			if ( ! $( this ).hasClass( 'dis' ) )
 			{
 				me.blockPage();
@@ -133,23 +134,28 @@ function Login( cwsRenderObj )
 				me.cwsRenderObj.langTermObj.translatePage();
 			}
 
-			$("#switchToStagBtn").click( function() {
+			$( '#switchToStagBtn' ).click( function() {
+
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.unblockPage();
 					alert('switchToStagBtn');	
 				}
+
 			});
 
-			$("#demoBtn").click( function() {
+			$( '#demoBtn' ).click( function() {
+
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.unblockPage();
 					alert('demo');
 				}
+
 			});
 
-			$("#changeUserBtn").click( function() {
+			$( '#changeUserBtn' ).click( function() {
+
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.sheetBottomTag.html ( Templates.Change_User_Form );
