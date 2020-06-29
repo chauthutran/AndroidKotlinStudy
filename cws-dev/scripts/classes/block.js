@@ -142,7 +142,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.createBlockTag = function( blockId, blockType, blockDefJson, parentTag )
 	{
 		//var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
-		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
+		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + Util.getStr( blockDefJson.activityType ) + '"></div>' );
 		blockTag.addClass( blockType );
 
 		// If 'me.options.notClear' exists and set to be true, do not clear the parent Tag contents
