@@ -51,41 +51,45 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
 ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJson, formDivSecTag )
 {
-	var formsJson;
+	var formsJson = {};
 	var formsJsonGroup = {};
 
 	if ( payloadDefJson )
 	{
-		if ( payloadDefJson.payloadVersion )
-		{
-			if ( payloadDefJson.payloadVersion === "1" )
-			{
-				formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
-				if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;	
-			}
-			else if ( payloadDefJson.payloadVersion === "2" )
-			{
-				formsJson = ActivityUtil.generateInputTargetPayloadJson( formDivSecTag, actionDefJson.payloadBody );	
-			}	
-		}
-		else if ( payloadDefJson.payloadTemplate )
+		// If payloadVersion is undefined or "1", it is version 1 (default one)
+		if ( !payloadDefJson.payloadVersion || payloadDefJson.payloadVersion === "1" )
 		{
 			formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
-			if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;
-	
+		}
+		else if ( payloadDefJson.payloadVersion === "2" )
+		{
+			formsJson = ActivityUtil.generateInputTargetPayloadJson( formDivSecTag, actionDefJson.payloadBody );	
+		}	
+
+
+		// Merge the formsJson data defined (If) on Action Definition Json
+		ActivityUtil.mergeFormsJson_ActionDef( formsJson, actionDefJson );
+
+
+		// If payload is template one, create template json based on version 1 'formsJson'
+		// If payloadVersion 2 is created, skip the template usage.  They are not compatible.
+		if ( payloadDefJson.payloadVersion !== "2" && payloadDefJson.payloadTemplate )
+		{
 			var blockInfo = ActivityUtil.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
 			var createdDT = new Date();		// Should we match this with activityDataManager.generatePayload...
 			formsJson = PayloadTemplateHelper.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, payloadDefJson.payloadTemplate );
 		}
-		else
-		{
-			// Default payload generation
-			formsJson = ActivityUtil.generateInputJson( formDivSecTag, actionDefJson.payloadBody, formsJsonGroup );
-			if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;	
-		}
 	}
 
 	return formsJson;
+};
+
+
+ActivityUtil.mergeFormsJson_ActionDef = function( formsJson, actionDefJson )
+{
+	if ( actionDefJson.formsJsonInsert ) Util.mergeJson( formsJson, actionDefJson.formsJsonInsert );
+
+	if ( actionDefJson.voucherStatus ) formsJson.voucherStatus = actionDefJson.voucherStatus;	
 };
 
 

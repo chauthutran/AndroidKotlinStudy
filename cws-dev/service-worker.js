@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "5f974f17249174932e3ea8da0b76b28e"
+    "revision": "c2a2bb899b1d5c74e00c09971ddc1c11"
   },
   {
     "url": "redeemGen.html",
@@ -1221,7 +1221,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "413b3574ed4c6d211e58a17891242d8d"
+    "revision": "12f4d7d7328822ad20c7891f53122169"
   },
   {
     "url": "scripts/classes/blockButton.js",
@@ -1229,7 +1229,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "065966e2336015cc2869de45edb48017"
+    "revision": "026135316e45e866bec27a49248f3570"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1473,7 +1473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "d8011955fe2d758c6a2ea1f463022e45"
+    "revision": "74ac973b1bef4bf19d452c40fdafe9b4"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
