@@ -7,58 +7,14 @@ function Statistics( cwsRender )
 
     me.cwsRenderObj = cwsRender;
     me.langTermObj = me.cwsRenderObj.langTermObj;
-    me.dtmNow = new Date().getTime();
 
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
-    //me.localStatsTag = $( '#localStatistics' );
-
     me.statsFormContainerTag;
     me.statsPeriodSelector;
+    me.dateFilterField = 'createdOnDeviceUTC';
 
     me.allStats = [];
-    me.dateGroupStats = [];
-    me.dateGroups = [];
-
-    me.submitDateStats = {};
-    me.queueDateStats = {};
-    me.dataFailed;
-    me.failedDateStats = {};
-
-    me.popularDays = [];
-    me.popularHours = [];
-    me.activityTypes = [];
-    //me.statusTypes = [];
-    me.connectionTypes = [];
-
-    me.earliestDate;
-    me.hoursFrom;
-    me.hoursTo;
-    me.total;
-    me.slideIndex; 
-
-    me.stat_Config = [
-        {
-            "id": "",
-            "htmlRef": "stat_1s355.html",
-            "divRef": "div_table3Cal",  // one div in statisticPage.html //<-- we can try putting this on gitConfig service..
- 
-            "htmlTempalte(Optaional)": [ "<div>------" ],
- 
-            "jsScriptRef": "stat_1s355.js",
-            "methodRef": "table3Cal",  // one method in statsticMethods.js // put it on gitConfig service..
-            // [Manipulate data to feed to the table/chart/etc.]
-            // The method contains below 3 operation: 
-            // 1. Aggregate data <-- from source (device)
-            // 2. do date filter
-            // 3. generate table/chart (target is the 'div' with table/chart)
-
-            "relativePeriodRange": true
-        },
-        {
-            "id": "list_revisited_clients",
-            "scriptMethodRef": "listClients",  // <-- how to manipulate the data to feed to the table/chart/single value..
-        }
-    ];
+    me.statMetaSummary = {};
 
 
 	// TODO: NEED TO IMPLEMENT
@@ -67,15 +23,26 @@ function Statistics( cwsRender )
 
     me.initialize = function() 
     {
-        me.slideIndex = new Date().getDay();
+        
     }
 
+    me.render = function()
+    {
+        me.initialize_UI();
+
+        me.initialize_Data();
+
+        me.setEvents_OnRender();
+
+        $( '#pageDiv' ).hide();
+
+        me.statisticsFormDiv.fadeIn();
+
+    };
 
     me.initialize_UI = function()
     {
-
         me.statisticsFormDiv.empty();
-        //me.localStatsTag.empty();
 
         $( window ).scrollTop(0);
 
@@ -85,45 +52,54 @@ function Statistics( cwsRender )
         me.statsPeriodSelector = me.statisticsFormDiv.find( '#stats_select_period' );
     }
 
-    me.initialize_StatsData = function()
+    me.initialize_Data = function()
     {
+        var allDates = [];
+
+        // get local ActivityList
         me.allStats = ActivityDataManager._activityList;
+
+        // get date Ranges for local ActivityList > Already sorted  << *not sorting correctly...
+        //me.allStats.sort( ( a, b ) => a.activityDate[ me.dateFilterField ] - b.activityDate[ me.dateFilterField ] );
+
+        // sort activityDates
+        for (var i = 0; i < me.allStats.length; i++)
+        {
+            allDates.push( new Date( me.allStats[ i ].activityDate[ me.dateFilterField ] ).toISOString() );
+        }
+        allDates.sort();
+
+        me.statMetaSummary[ 'from' ] = allDates[ 0 ]; // me.allStats[ 0 ].activityDate[ me.dateFilterField ];
+        me.statMetaSummary[ 'to' ] = allDates[ allDates.length -1 ]; //me.allStats[ me.allStats.length -1 ].activityDate[ me.dateFilterField ];
+        me.statMetaSummary[ 'count' ] = me.allStats.length;
+
+        me.initialise_periodOptions( me.statsPeriodSelector );
+
     }
 
     me.initialise_periodOptions = function( control )
     {
-        var dateGroups = FormUtil.getCommonDateGroups();
-        var dtmNow = new Date();
+        var dateGroups = me.getPeriodOpts( new Date( me.statMetaSummary[ 'from' ] ).toISOString().split( 'T' )[ 0 ], new Date( me.statMetaSummary[ 'to' ] ).toISOString().split( 'T' )[ 0 ] );
 
         for (var d = 0; d < dateGroups.length; d++) 
         {
-            dateGroups[ d ].from = moment( dtmNow ).add( dateGroups[ d ].hours * -1, 'h').toDate().toISOString();
-            dateGroups[ d ].to = dtmNow.toISOString();
-
-            dateGroups[ d ].data = me.enrichDateCalculations( me.allStats, dateGroups[ d ].hours );
+            dateGroups[ d ].data = me.getRecordsForDateGroup( me.allStats, dateGroups[ d ] );
         }
 
-        me.dateGroups = dateGroups;
-
-        me.createStatPeriodOptions( me.statsPeriodSelector, me.dateGroups );
+        me.createStatPeriodOptions( me.statsPeriodSelector, dateGroups );
     }
 
 	me.setEvents_OnRender = function()
 	{	
         $( '#stats_select_period' ).change( function() {
 
-            var opt = $('option:selected', this);
-            var startPeriod = ( opt.attr( 'from' ) ); //Number( ... )
-            var endPeriod = ( opt.attr( 'to' ) );     //Number( ... )
-            var idx = ( opt.attr( 'idx' ) );
+            var opt = $( 'option:selected', this );
+            var startPeriod = opt.attr( 'from' );
+            var endPeriod = opt.attr( 'to' );
 
-            console.log( idx, me.dateGroups, me.dateGroups[ idx ].data ); 
+            $( '#stats_t_help' ).html( 'Between ' + startPeriod + ' and ' + endPeriod );
 
-            me.dateGroupStats = me.dateGroups[ idx ].data;
-
-            $( '#stats_t_help' ).html( 'Between ' + $.format.date( startPeriod, 'dd MMM yyyy' ) + ' and ' + $.format.date( endPeriod, 'dd MMM yyyy' ) );
-
-            me.statEvalCode( startPeriod, endPeriod );
+            me.runDateFilterAndRenderConfig( startPeriod, endPeriod );
 
         });
 
@@ -137,57 +113,30 @@ function Statistics( cwsRender )
 
     }
 
-    me.render = function()
-    {
-        me.initialize_UI();
-
-        me.initialize_StatsData();
-
-        me.setEvents_OnRender();
-
-        me.initialise_periodOptions( me.statsPeriodSelector );
-
-        $( '#pageDiv' ).hide();
-
-        me.statisticsFormDiv.fadeIn();
-
-        //me.statEvalCode( 0, 3000 );
-    };
 
     me.createStatPeriodOptions = function ( selectTag, dateOptions )
     {
         for ( var i = 0; i < dateOptions.length; i++ )
         {
-            var newOpt = $( '<option idx="' + i + '" value="' + dateOptions[ i ].hours + '" from="' + dateOptions[ i ].from + '" to="' + dateOptions[ i ].to + '" >' + dateOptions[ i ].name + '</option>' );
+            var newOpt = $( '<option from="' + dateOptions[ i ].from + '" to="' + dateOptions[ i ].to + '" >' + dateOptions[ i ].name + '</option>' );
 
             selectTag.append( newOpt );
         }
     }
 
-    me.enrichDateCalculations = function( myArr, hrTo )
+    me.getRecordsForDateGroup = function( myArr, periodOpt )
     {
         var retArr = [];
-        var dtmNow = new Date();
 
         if ( myArr && myArr.length )
         {
             for (var i = 0; i < myArr.length; i++)
             {
-                var dtmThis = new Date( myArr[ i ].activityDate.capturedUTC ); //myArr[ i ].created
+                var dtmThis = new Date( myArr[ i ].activityDate[ me.dateFilterField ] ); //myArr[ i ].created
 
-                myArr[ i ].ageHours = parseFloat( dtmNow - dtmThis.getTime() ) / 1000 / 60 / 60;
-                myArr[ i ].hourInDay = ( dtmThis.getHours() );
-                myArr[ i ].dayInWeek = ( dtmThis.getDay() );
-
-
-
-                var e = myArr[ i ];
-
-                //console.log( e );
-                //if ( parseFloat(e.ageHours) > hrFrom && parseFloat(e.ageHours) <= hrTo )
-                if ( parseFloat(e.ageHours) <= hrTo )
+                if ( new Date( dtmThis ) >= new Date( periodOpt.from ) && new Date( dtmThis ) <= new Date( periodOpt.to ) )
                 {
-                    retArr.push( e );
+                    retArr.push( myArr[ i ] );
                 }
 
             }
@@ -198,29 +147,31 @@ function Statistics( cwsRender )
     }
 
     // Need to pass in(?) startPeriod and endPeriod?
-	me.statEvalCode = function( startPeriod, endPeriod )
+	me.runDateFilterAndRenderConfig = function( startPeriod, endPeriod )
 	{
         var containerDiv = $( '#statsContentPage' ).html( '' );
-        var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod };
+        var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod, data: { } };
+        var trxTypes = Configs.transactionTypes; 
 
-        INFO.data = me.getActivityList_Query( INFO, startPeriod, endPeriod ); //me.dateGroupStats; 
+        // STEP 1. create data.trxType arrays (for quick filtering/reference)
+        trxTypes.forEach( (trxType, i_a) => {
+            var itms = me.getActivityList_Query( startPeriod, endPeriod, trxType );
+            INFO.data[ trxType.name ] = itms;
+        });
 
-        // STEP 1. Eval and Insert the main tag + get list of 'div.statDiv'        
+        console.log( INFO );
+
+        // STEP 2. run config Eval and Insert the main tag + get list of 'div.statDiv'        
         var statContentTagStr = Util.strCombine( ConfigManager.statisticConfig.statsPageContent );
         var statContentTag = $( statContentTagStr );
         containerDiv.append( statContentTag );
 
-        // Run/Create the javascript methods
-        var chartMethodsStr = Util.strCombine( ConfigManager.statisticConfig.chartMethods );
-        Util.evalTryCatch( chartMethodsStr, INFO, 'chartMethodsStr' );
 
-
+        // STEP 3. for each object container - run associated code config
         statContentTag.find( 'div.statDiv' ).each( function( i, tag ) {
 
             var statDivTag = $( this );
-
             var statId = statDivTag.attr( 'statId' );
-
             var statObj = ConfigManager.statisticConfig.statsList[ statId ];
 
             if ( statObj )
@@ -230,9 +181,8 @@ function Statistics( cwsRender )
                 {
                     for (var i = 0; i < statObj.runDataEval.length; i++)
                     {
-                        console.log( statObj.runDataEval[ i] );
                         var result = me.evalTry( statObj.runDataEval[ i], INFO );
-                        console.log( result );
+                        //if ( result ) console.log( result );
                         if ( result ) statDivTag.append( result );
                     }
                 }
@@ -242,7 +192,7 @@ function Statistics( cwsRender )
                     // add titles + text if found
                     var titleTag = ( statObj.title ? me.addTitle( statObj.title.label, statObj.title.icon ) : undefined );
                     var textTag = ( statObj.text ? me.addText( statObj.text.label ) : undefined );
-                    console.log( titleTag, textTag )
+
                     if ( titleTag ) statDivTag.append( titleTag );
                     if ( textTag ) statDivTag.append( textTag );
 
@@ -267,8 +217,172 @@ function Statistics( cwsRender )
         } );
     };
 
+
+
+    /* DATA MANIPULATION FUNCTIONS */
+
+
+    me.getActivityList_Query = function( startPeriod, endPeriod, trxType )
+    {
+        // MAIN QUERYING FUNCTION 
+
+        var clientList = me.allStats;
+        var queryResults = [];
+    
+        // Create activity data list - number clientRegistered, vocuher issued/redeemd
+        clientList.forEach( (activity, i_c) => {
+
+            activity.transactions.forEach( (trans, i_t) => {
+
+                if ( trans.transactionType === trxType.name && ( new Date( activity.activityDate[ me.dateFilterField ] ) >= new Date( startPeriod ) ) && ( new Date( activity.activityDate[ me.dateFilterField ] ) <= new Date( endPeriod ) ) ) 
+                {
+                    var newObj = { 'activityType': activity.activityType,'transactionType': trxType.name, 'transactionDate': activity.activityDate[ me.dateFilterField ], 'transactionYear': new Date( activity.activityDate[ me.dateFilterField ] ).getFullYear(), 'transactionYearMonth': ( new Date( activity.activityDate[ me.dateFilterField ] ).toISOString().split( 'T')[0] ).replace(/-/g,'').substring(0,6) };
+
+                    if ( trxType.dataContainer.includes( 'clientDetails' ) && trans.clientDetails )
+                    {
+                        newObj = $.extend(newObj, trans.clientDetails);
+                    }
+                    if ( trxType.dataContainer.includes( 'dataValues' ) && trans.dataValues )
+                    {
+                        newObj = $.extend(newObj, trans.dataValues);
+                    }
+                    //if ( trans.clientDetails ) newObj = $.extend(newObj, trans.clientDetails);
+                    //if ( trans.dataValues ) newObj = $.extend(newObj, trans.dataValues);
+                    queryResults.push( newObj );
+                }
+
+            });
+
+        });
+
+        return queryResults;
+    }
+
+    me.groupBy = function( data, groupFls )
+    {
+        const valueLabel = 'count';
+
+        var cf = crossfilter( data );
+        var newData = [];
+
+        // single field parsed by name instead of inside array
+        if ( typeof groupFls === 'string' )
+        {
+            var byField = cf.dimension( function(p) { return p[ groupFls ]; } );
+            var groupByPart = byField.group();
+    
+            groupByPart.top( Infinity ).forEach( function( p, i ) {
+                newData.push( { [ groupFls ]: p.key, [ valueLabel ]: p.value } );
+            });
+        }
+        else if ( typeof groupFls === 'object' && Array.isArray( groupFls ) )
+        {
+            // 1. create 'string' json object for all fields in array
+            var byFields = cf.dimension(function (d) {
+                var retGrp = {};
+                for (var i = 0; i < groupFls.length; i++)
+                {
+                    retGrp[ groupFls[i] ] = d[ groupFls[i] ];
+                }
+                //stringify() and later, parse() to get keyed objects
+                return JSON.stringify ( retGrp ) ;
+              });
+
+              // 2. run 'group' method
+              var groupByPart = byFields.group();
+
+              // 3. reformat groupBy fields into proper JSON
+              groupByPart.top( Infinity ).forEach( function( d, i ) {
+                d.key = JSON.parse( d.key );
+              });
+
+              // 4. move groupBy fields up into parent array-object
+              groupByPart.all().forEach( function( d ) {
+                    var newD = {};
+                    for ( var key in d.key ) 
+                    {
+                        newD[ key ] = d.key[ key ];
+                    }
+                    newD[ valueLabel ] = d.value;
+                    newData.push( newD );
+              });
+        }
+
+        return newData;
+    }
+
+    me.createGroup = function( myArray, inputField, outputField, groupDef )
+    {
+        myArray.forEach( function( d ) {
+            if ( ! d [ inputField ] )
+            {
+                d [ outputField ] = ''; //default Null
+            }
+            else
+            {
+                groupDef.forEach( function( q ) {
+                    if ( d [ inputField ] >= q.from && d [ inputField ] <= q.to )
+                    {
+                        d [ outputField ] = q.name;
+                    }
+                });
+            }
+          });
+        return myArray;
+    }
+
+    me.pivot = function( dataArray, rowIdx, colIdx, dataIdx) 
+    {
+        var result = {}, ret = [], newCols = [];
+
+        for (var i = 0; i < dataArray.length; i++) 
+        {
+
+            if ( ! result[ dataArray[ i ][ rowIdx ] ] )
+            {
+                result[ dataArray[ i ][ rowIdx ] ] = {};
+            }
+
+            result[ dataArray[ i ][ rowIdx ] ][ dataArray[ i ][ colIdx ] ] = dataArray[ i ][ dataIdx ];
+ 
+            //To get column names
+            if ( ! newCols.includes( dataArray[ i ][ colIdx ] ) ) 
+            {
+                newCols.push( dataArray[ i ][ colIdx ] );
+            }
+
+        }
+ 
+        newCols.sort();
+
+        var item = [];
+ 
+        //Add Header Row
+        item.push( 'item' );
+        item.push.apply( item, newCols );
+        ret.push( item );
+ 
+        //Add content 
+        for ( var key in result )
+        {
+            item = [];
+            item.push(key);
+
+            for (var i = 0; i < newCols.length; i++) 
+            {
+                item.push( result[ key ][ newCols[ i ] ] || ' ' );
+            }
+
+            ret.push( item );
+        }
+
+        return ret;
+    }
+
+
     me.evalTry = function( inputVal, INFO )
     {
+        // main try/catch eval function for stats config
         var returnVal;
     
         try
@@ -287,6 +401,10 @@ function Statistics( cwsRender )
     
         return returnVal;
     };
+
+
+    /* DATA PRESENTATION METHODS */
+
 
     // add/create Title?
     me.addTitle = function( text, icon)
@@ -336,352 +454,185 @@ function Statistics( cwsRender )
         return textTag;
     }
 
+    me.addTag = function( dataVal, target, tagType, tagClass )
+    {
+        var inner = $( '<' + tagType + '>' + dataVal + '</' + tagType + '>' );
+
+        if ( tagClass && tagClass.length ) inner.addClass( tagClass );
+
+        $( 'div[statid="'+ target + '"]' ).append( inner );
+    }
+
     me.addTable = function( data, target )
     {
-        /*function keys( jsonObj )
-        {
-            var keyArr = [];
-            for ( var key in jsonObj[ 0 ] ) 
-            {
-                keyArr.push( key );
-            }
-            return keyArr;
-        }*/
+
         function tabulate( data, tagID ) //columns
         {
-            /*var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
-            var thead = table.append( 'thead' );
-            var	tbody = table.append( 'tbody' );
-    
-            // append the header row
-            thead.append('tr')
-              .selectAll('th')
-              .data(columns).enter()
-              .append('th')
-              .text(function (column) { return column; });
-    
-            // create a row for each object in the data
-            var rows = tbody.selectAll('tr')
-              .data(data)
-              .enter()
-              .append('tr');
-    
-            // create a cell in each row for each column
-            var cells = rows.selectAll('td')
-              .data(function (row) {
-                return columns.map(function (column) {
-                  return {column: column, value: row[column]};
-                });
-              })
-              .enter()
-              .append('td')
-              .text(function (d) { return d.value; });*/
-
               var sortAscending = true;
               var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
-              table.attr( 'class', 'statsTable' );
-
-              var keys = d3.keys( data[0] );
+              var titles = d3.keys(data[0]);
               var headers = table.append('thead').append('tr')
-                  .selectAll('th')
-                  .data( keys ).enter()
-                  .append('th')
-                  .text(function (d) {
-                      return d;
-                  })
-                  .on('click', function (d) {
-                      headers.attr('class', 'header');
-                      if (sortAscending) {
-                          rows.sort(function (a, b) {
-                              return b[d] < a[d];
-                          });
-                          sortAscending = false;
-                          this.className = 'aes';
-                      } else {
-                          rows.sort(function (a, b) {
-                              return b[d] > a[d];
-                          });
-                          sortAscending = true;
-                          this.className = 'des';
-                      }
-                  });
+                    .selectAll('th')
+                    .data(titles).enter()
+                    .append('th')
+                    .text(function (d) {
+                        return d;
+                    })
+                    .on('click', function (d) {
+                        headers.attr('class', 'header');
 
-              var rows = table.append('tbody').selectAll('tr')
-                  .data(data).enter()
-                  .append('tr');
-              rows.selectAll('td')
-                  .data(function (d) {
-                      return keys.map(function (k) {
-                          return {
-                              'value': d[k],
-                              'name': k
-                          };
-                      });
-                  }).enter()
-                  .append('td')
-                  .attr('data-th', function (d) {
-                      return d.name;
-                  })
-                  .text(function (d) {
-                      return d.value;
-                  });
+                        if (sortAscending) {
+                            rows.sort(function (a, b) {
+                                return b[d] < a[d];
+                            });
+                            sortAscending = false;
+                            this.className = 'aes';
+                        } else {
+                            rows.sort(function (a, b) {
+                                return b[d] > a[d];
+                            });
+                            sortAscending = true;
+                            this.className = 'des';
+                        }
+
+                    });
+
+                var rows = table.append('tbody').selectAll('tr')
+                    .data(data).enter()
+                    .append('tr');
+                rows.selectAll('td')
+                    .data(function (d) {
+                        return titles.map(function (k) {
+                            return {
+                                'value': d[k],
+                                'name': k
+                            };
+                        });
+                    }).enter()
+                    .append('td')
+                    .attr('data-th', function (d) {
+                        return d.name;
+                    })
+                    .text(function (d) {
+                        return d.value;
+                    });
+
+          return table;
+        }
+
+        // render the table(s)
+        tabulate( data, target ); 
+    }
+
+
+    me.addDimensionTable = function( data, target, layoutParms )
+    {
+        var defLay1 = { groupBy: [ 'Country' ], pivot: 'period', value: 'value', function: 'SUM', rowTotals: 'true', colTotals: 'true' };
+        var defLay2 = { dim: 'Country', piv: 'period', val: 'value', aggr: 'sum', rowTotals: 'false', colTotals: 'false' };
+        var layout = layoutParms ? layoutParms : defLay1;
+
+        function dimTabulate( data, tagID ) //columns
+        {
+            $( 'div[statid="'+ tagID + '"]' ); //.addClass( 'table_container' );
+
+              var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
+              var titles = d3.keys(data[0]);
+              var sortAscending = true;
+
+              table.attr('class', me.classFromKeys( titles ) );
+
+              var headers = table.append('thead').append('tr')
+                    .selectAll('th')
+                    .data(titles).enter()
+                    .append('th')
+                    .text(function (d) {
+                        return d;
+                    })
+                    .on('click', function (d) {
+                        headers.attr('class', 'header');
+
+                        if (sortAscending) {
+                            rows.sort(function (a, b) {
+                                return b[d] < a[d];
+                            });
+                            sortAscending = false;
+                            //this.className = 'aes';
+                        } else {
+                            rows.sort(function (a, b) {
+                                return b[d] > a[d];
+                            });
+                            sortAscending = true;
+                            //this.className = 'des';
+                        }
+
+                    });
+
+                var rows = table.append('tbody').selectAll('tr')
+                    .data(data).enter()
+                    .append('tr');
+                rows.selectAll('td')
+                    .data(function (d) {
+                        return titles.map(function (k) {
+                            return {
+                                'value': d[k],
+                                'name': k
+                            };
+                        });
+                    }).enter()
+                    .append('td')
+                    .attr('data-th', function (d) {
+                        return d.name;
+                    })
+                    .text(function (d) {
+                        return d.value;
+                    });
     
           return table;
         }
     
         // render the table(s)
-        tabulate( data, target ); // keys( data ), 
+        dimTabulate( data, target ); 
     }
 
-    // add/create Table?
-    me.addTable1 = function( dataObj )
+
+    me.pivotTable = function( data, target )
     {
-        var jsonObj;
-        var tableWrapped = $( '<div class="table-wrap" />' )
-        var tbl = $( '<table class="statsTable">' );
-        var th = $( '<thead>' );
-        var thr = $( '<tr>' );
 
-        tableWrapped.append( tbl );
-        tbl.append( th );
-        th.append( thr );
-
-        if ( dataObj.length )
+        function tabulate( data, tagID ) //columns
         {
-            jsonObj = dataObj[ 0 ];
+              var sortAscending = true;
+              var table = d3.select( 'div[statid="'+ tagID + '"]' ).append( 'table' );
+              var titles = d3.keys(data[0]);
 
-            for ( var key in jsonObj ) 
-            {
-                var th = $( '<th class="header" >' );
-                thr.append( th );
-    
-                th.text( key );
-            }
-    
-            var tb = $( '<tbody>' );
-            tbl.append( tb );
-    
-            for (var i = 0; i < dataObj.length; i++)
-            {
-                var tbr = $( '<tr>' );
-                tb.append( tbr );
-    
-                for ( var key in jsonObj ) 
-                {
-                    var td = $( '<td data-th="' + key + '">' );
-                    tbr.append( td );
-    
-                    td.text( dataObj[ i ][ key ] );
-    
-                }
-        
-            }
+                var rows = table.append('tbody').selectAll('tr')
+                    .data(data).enter()
+                    .append('tr');
+                rows.selectAll('td')
+                    .data(function (d) {
+                        return titles.map(function (k) {
+                            return {
+                                'value': d[k],
+                                'name': k
+                            };
+                        });
+                    }).enter()
+                    .append('td')
+                    .attr('data-th', function (d) {
+                        return d.name;
+                    })
+                    .text(function (d) {
+                        return d.value;
+                    });
 
+          return table;
         }
 
-        return tableWrapped;
+        // render the table(s)
+        tabulate( data, target ); 
     }
 
-    me.getActivityList_Query = function( INFO, startPeriod, endPeriod )
-    {
-        // type: c_reg/v_iss/v_rdm
-        var type = 'c_reg';
-        var clientList = ActivityDataManager.getActivityList();
-        var queryResults = [];
-    
-        // Create activity data list - number clientRegistered, vocuher issued/redeemd
-        clientList.forEach( (activity, i_c) => {
-    
-            console.log( activity );
 
-            var activityData = {};
-
-            activityData.date = activity.activityDate.capturedLoc;
-            //if ( new Date( e.activityDate.capturedUTC ) )
-
-            activity.transactions.forEach( (trans, i_t) => {
-
-                if ( trans.transactionType === type && ( new Date( activity.activityDate.capturedLoc ) >= new Date( startPeriod ) ) && ( new Date( activity.activityDate.capturedLoc ) <= new Date( endPeriod ) ) ) 
-                {
-                    // INFO.startPeriod - INFO.endPeriod
-                    queryResults.push( ( trans.clientDetails ) ? trans.clientDetails : trans.dataValues );
-                }
-            
-            });
-
-        });
-
-        return queryResults;
-    }
-
-	me.testStatisticContent = function()
-	{
-		var containerDiv = $( '#statsContentPage' );
-
-		// display total.
-        var activityDataList = [];
-
-        var clientList = DevHelper.sampleDataList;
-        
-        // Create activity data list - number clientRegistered, vocuher issued/redeemd
-        clientList.forEach( (client, i_c) => {
-
-            client.activities.forEach( (activity, i_a) => {
-
-                var activityData = {};
-
-                activityData.date = activity.activityDate.capturedLoc;
-                activityData.n_reg = 0;
-                activityData.n_iss = 0;
-                activityData.n_rdm = 0;
-                //activityData.activityId = activity.activityId;
-                //activityData.clientId = client._id;
-
-                activity.transactions.forEach( (trans, i_t) => {
-
-                    if ( trans.transactionType === 'c_reg' ) activityData.n_reg++;
-                    else if ( trans.transactionType === 'v_iss' ) activityData.n_iss++;
-                    else if ( trans.transactionType === 'v_rdm' ) activityData.n_rdm++;                    
-                });
-
-                activityDataList.push( activityData );
-            });
-        });
-
-        console.log( 'activityDataList:' );
-        console.log( activityDataList );
-
-
-        var activityCF = crossfilter( activityDataList );
-
-        var totalVoucherIssued = activityCF.groupAll().reduceSum( function( activity ) { return activity.n_iss; }).value();
-
-
-        console.log( 'totalVoucherIssued' );
-        console.log( totalVoucherIssued );
-
-
-        var dateDim = activityCF.dimension( function( activity ) { 
-            return activity.date;
-        });
-
-        var dateGroup = dateDim.group( function( dateStr ) {
-            return dateStr.substring(0, 7);
-        });
-
-        var info = dateGroup.top(Infinity);
-
-        console.log( 'info' );
-        console.log( info );
-
-
-
-        var byYearMonth = {};
-
-        activityDataList.forEach( (activity, i_a) => {
-
-            var yearMonthStr = activity.date.substring( 0, 7 );
-            if ( !byYearMonth[ yearMonthStr ] ) byYearMonth[ yearMonthStr ] = { 'n_reg': 0, 'n_iss': 0, 'n_rdm': 0 };
-
-            var yearMonthObj = byYearMonth[ yearMonthStr ];
-
-            yearMonthObj.n_reg += activity.n_reg;
-            yearMonthObj.n_iss += activity.n_iss;
-            yearMonthObj.n_rdm += activity.n_rdm;
-        });
-
-
-        var byYearMonthArr = [];
-
-        Object.keys( byYearMonth ).forEach( function( yearMonthStr ) {
-
-            var oVal = byYearMonth[yearMonthStr];
-
-            byYearMonthArr.push( [ yearMonthStr, oVal.n_reg, oVal.n_iss, oVal.n_rdm ] );
-        });
-    
-
-        console.log( byYearMonthArr );
-
-
-        var table = d3.select("#table").append("table");
-        var header = table.append("thead").append("tr");
-
-        header.selectAll("th")
-                .data(["yearMonth", "n_reg", "n_iss", "n_rdm"])
-                .enter()
-                .append("th")
-                .text(function(d) { return d; });
-
-        var tablebody = table.append("tbody");
-        rows = tablebody
-                .selectAll("tr")
-                .data(byYearMonthArr)
-                .enter()
-                .append("tr");
-
-        // We built the rows using the nested array - now each row has its own array.
-        cells = rows.selectAll("td")
-            // each row has data associated; we get it and enter it for the cells.
-                .data(function(d) {
-                    console.log(d);
-                    return d;
-                })
-                .enter()
-                .append("td")
-                .text(function(d) {
-                    return d;
-                });        
-
-	};
-
-    me.toTable = function( arrObj, title )
-    {
-        
-        var tbl = $( '<table class="tableStatistics column">' );
-
-        var trTitle = $( '<tr>' );
-        var tdTitle = $( '<td class="tableTitle" colspan="' + arrObj.length + '">' );
-
-        tdTitle.html( title );
-
-        tbl.append( trTitle );
-        trTitle.append( tdTitle );
-
-        var trName = $( '<tr>' );
-        var trData = $( '<tr>' );
-
-        for (var i = 0; i < arrObj.length; i++)
-        {
-
-            var tdName = $( '<td class="columnLabel">' );
-            var tdData = $( '<td class="columnData">' );
-
-            tbl.append( trData );
-            trData.append( tdData );
-            tbl.append( trName );
-            trName.append( tdName );
-
-            tdName.html( arrObj[ i ].name );
-
-            if ( arrObj[ i ].data && arrObj[ i ].data.length )
-            {
-                tdData.html( arrObj[ i ].data.length );
-            }
-
-
-        }
-
-        var trFiller = $( '<tr>' );
-        var tdFiller = $( '<td class="columnFiller" colspan="' + arrObj.length + '">' );
-
-        tbl.append( trFiller );
-        trFiller.append( tdFiller );
-        tdFiller.html( '&nbsp;' );
-
-        return tbl;
-    }
-
+    /* OTHER METHODS*/
 
     me.hideStatsPage = function()
     {
@@ -690,26 +641,68 @@ function Statistics( cwsRender )
         setTimeout( function() {
             if ( FormUtil.checkLogin() )
             {
-                //$( 'div.mainDiv' ).show( 'fast' );
                 me.cwsRenderObj.renderBlockTag.show( 'fast' );
             }
             else
             {
-                $( '#loginFormDiv' ).show( 'fast' );
+                if ( ! $( '#loginFormDiv' ).is( ':visible' ) ) $( '#loginFormDiv' ).show( 'fast' );
             }
             me.statisticsFormDiv.hide();
 		}, 250 );
 
     }
 
-    me.getSpecialNote = function( earliest )
+    me.getPeriodOpts = function( rangeFrom, rangeTo )
     {
-        return $( '<div class="icon-row" style="padding: 8px 4px;line-height:18px"><strong term="">Note: </strong><span term="">the statistic displayed above are calculated based on the activities registered using this device since earliest date </span><strong>' + Util.dateToString( earliest ) + '</strong></div>')
-    }
+        var opts = ConfigManager.periodSelectorOptions;
+        var fetchGroups = [];
 
-    me.getNoDataMessage = function()
+        for ( var key in opts )
+        {
+            var newOpt = opts[ key ];
+            var newFrom = eval( newOpt.from );
+            var newTo = eval( newOpt.to );
+
+            if ( newOpt.enabled === 'true' )
+            {
+                if ( rangeFrom && rangeTo )
+                {
+                    if ( ( new Date( newFrom ) <= new Date( rangeFrom ) && new Date( newTo ) >= new Date( rangeFrom )  ) || ( new Date( newFrom ) <= new Date( rangeTo ) && new Date( newTo ) >= new Date( rangeTo )  ) )
+                    {
+                        fetchGroups.push( { "name": newOpt.name, "term": ( newOpt.term ) ? newOpt.term : '', "from": newFrom, "to": newTo } );	
+                    }
+                }
+                else
+                {
+                    fetchGroups.push( { "name": newOpt.name, "term": ( newOpt.term ) ? newOpt.term : '', "from": newFrom, "to": newTo } );
+                }
+            }
+
+        }
+
+        return fetchGroups;
+    };
+
+
+    me.classFromKeys = function( arr )
     {
-        return $( '<div class="" style="font-size: 12px;padding: 8px 4px;line-height:18px"><span term="">no local Statistics available </span></div>')
+        if ( arr.length >= 6 )
+        {
+            return 'from_six_cols';
+        }
+        else if ( arr.length === 5 )
+        {
+            return 'five_cols';
+        }
+        else if ( arr.length === 4 )
+        {
+            return 'four_cols';
+        }
+        else 
+        {
+            return 'three_cols';
+        }
+           
     }
 
 	me.initialize();

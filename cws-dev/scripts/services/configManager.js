@@ -24,8 +24,29 @@ ConfigManager.configJson_Original = {};  // Downloaded country PWA config origin
 
 ConfigManager.defaultActivityDisplaySettings = `'<b><i>' + INFO.activity.processing.created + '</i></b>'`;
 
-// configJson[sync][syncUp]
+ConfigManager.FiveYearsAgeGroups = [
+    { name: '0-4',  from: 0, to: 4 },
+    { name: '5-9',  from: 5, to: 9 },
+    { name: '10-14', from: 10, to: 14 },
+    { name: '15-19', from: 15, to: 19 },
+    { name: '20-24', from: 20, to: 24 },
+    { name: '25-29', from: 25, to: 29 },
+    { name: '30-34', from: 30, to: 34 },
+    { name: '35-39', from: 35, to: 39 },
+    { name: '40+',  from: 40, to: 120 }
+];
 
+ConfigManager.TenYearsAgeGroups = [
+    { name: '0-9',  from: 0, to: 9 },
+    { name: '10-19',  from: 10, to: 19 },
+    { name: '20-29', from: 20, to: 29 },
+    { name: '30-39', from: 30, to: 39 },
+    { name: '40-49', from: 40, to: 49 },
+    { name: '50-59', from: 50, to: 59 },
+    { name: '60-69', from: 60, to: 69 },
+    { name: '70-79', from: 70, to: 79 },
+    { name: '80+',  from: 80, to: 120 }
+];
 // -- Default Configs -----
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
@@ -356,99 +377,247 @@ ConfigManager.default_SettingPaging = {
 };
 
 
+ConfigManager.periodSelectorOptions = {
+    "all": {
+        "name": "All periods",
+        "term": "",
+        "from": "rangeFrom",
+        "to": "rangeTo",
+        "enabled": "true"
+    },
+    "today": {
+        "name": "today",
+        "term": "",
+        "from": "new Date().toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "24hours": {
+        "name": "last 24 hours",
+        "term": "",
+        "from": "new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0]+'T'+new Date().toISOString().split( 'T' )[ 1 ]",
+        "to": "new Date(new Date().setDate(new Date().getDate())).toISOString().split('T')[0]+'T'+new Date().toISOString().split( 'T' )[ 1 ]",
+        "enabled": "false"
+    },
+    "last3Days": {
+        "name": "last 3 Days",
+        "term": "",
+        "from": "new Date(new Date().setDate(new Date().getDate() - 2)).toISOString().split('T')[0]",
+        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "last7Days": {
+        "name": "last 7 Days",
+        "term": "",
+        "from": "new Date(new Date().setDate(new Date().getDate() - 6)).toISOString().split('T')[0]",
+        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "thisWeek": {
+        "name": "this Week",
+        "term": "",
+        "from": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay())).toISOString().split('T')[0]",
+        "to": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()+6)).toISOString().split('T')[0]",
+        "enabled": "true"
+    },
+    "lastWeek": {
+        "name": "last Week",
+        "term": "",
+        "from": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()-7)).toISOString().split('T')[0]",
+        "to": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()-1)).toISOString().split('T')[0]",
+        "enabled": "true"
+    },
+    "thisMonth": {
+        "name": "this Month",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth(), 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "true"
+    },
+    "lastMonth": {
+        "name": "last Month",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "true"
+    },
+    "thisPaymentPeriod": {
+        "name": "this Payment Period",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 22).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth(), 21).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "lastPaymentPeriod": {
+        "name": "last Payment Period",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 22).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 21).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "thisQuarter": {
+        "name": "this Quarter",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 + 3, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "lastQuarter": {
+        "name": "last Quarter",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 - 3, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "last3Months": {
+        "name": "last 3 Months",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "last6Months": {
+        "name": "last 6 Months",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 5, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "thisYear": {
+        "name": "this Year",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), 0, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear()+1, 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "true"
+    },
+    "lastYear": {
+        "name": "last Year",
+        "term": "",
+        "from": "new Date(new Date().getFullYear()-1, 0, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    }
+};
 
 ConfigManager.statisticConfig = { 
     "statsPageContent": [
         "<div id='statsContent'>",
-        "  <div class='statDiv' statId='tableExample'></div>",
-        "  <div class='statDiv' statId='totalActivities'></div>",
-        "  <div class='statDiv' statId='titleOfValue'></div>",
-        "  <div class='statDiv' statId='chartBarLast3Months'></div>",
-        "  <div class='statDiv' statId='1stConsultationThisWeek'></div>",
-        "  <div class='statDiv' statId='titleOfPieChart'></div>",
-        "  <div class='statDiv' statId='titleOfLineChart'></div>",
-        "  <div class='statDiv' statId='sampleA'></div>",
+        "  <div class='statDiv' statId='uniqueRegistrations'></div>",
+        "  <div class='statDiv' statId='vouchersIssued'></div>",
+        "  <div class='statDiv' statId='totalVisits'></div>",
+        "  <div class='statDiv' statId='returningClients'></div>",
+        "  <div class='statDiv' statId='regByAge'></div>",
+        "  <div class='statDiv' statId='regByActivityType'></div>",
+        "  <div class='statDiv' statId='regByActivityTypeByAge'></div>",
+        "  <div class='statDiv' statId='regByActivityTypeByServiceByAge'></div>",
+        "  <div class='statDiv' statId='regByActivityTypeByFullDateByAge'></div>",
+        "  <div class='statDiv' statId='regByActivityTypeByAgePivot'></div>",
+        "  <div class='statDiv' statId='regByActivityTypeBytransactionYearMonthPivot'></div>",
         "</div>"
     ],
     "statsList": {
-        "tableExample": {
+        "uniqueRegistrations": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Title of Table', 'table' ); ", 
-                " me.addText( 'Appropriately whiteboard competitive bandwidth rather than cross-media systems. Credibly impact.' ); ",
-                " me.addTable( [ { Country: 'Brazil', Year: 1986, DMFT: 6.7 },  { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, { Country: 'Canada', Year: 1974, DMFT: 4.4 }  ], 'tableExample' ); ",
+                " me.addTitle( 'Unique Clients Registrations', 'consult' ); ", 
+                " console.log( 'uniqueRegistrations', INFO.data.c_reg ); ",
+                " me.addTag( INFO.data.c_reg.length, 'uniqueRegistrations', 'h3', 'blockDigit' ); "
             ]
         },
-        "totalActivities": {
+        "vouchersIssued": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Total activities last 3 month', 'table' ); ", 
-                " me.addText( 'Assertively mesh B2C action items through multimedia based solutions. Progressively coordinate enabled communities through market positioning ideas. Dynamically synthesize process-centric materials before interdependent.' ); ",
-                " me.addTable( INFO.data, 'totalActivities' ); ",
+                " me.addTitle( 'Vouchers Issued ', 'details' ); ", 
+                " console.log( 'vouchersIssued', INFO.data.v_iss, INFO.data.v_iss.length ); ",
+                " me.addTag( INFO.data.v_iss.length, 'vouchersIssued', 'h3', 'blockDigit' ); "
+            ]
+        },
+        "totalVisits": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Total Visits', 'activities' ); ", 
+                " console.log( 'totalVisits', ActivityDataManager._activityList ); ",
+                " me.addTag( ActivityDataManager._activityList.length, 'totalVisits', 'h3', 'blockDigit' ); "
+            ]
+        },
+        "returningClients": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Returning Clients', 'table' ); ", 
+                " me.addTag( INFO.data.s_pro.length + INFO.data.s_apt.length , 'returningClients', 'h3', 'blockDigit' ); "
+            ]
+        },
+        "regByAge": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Registrations by Age', 'table' ); ", 
+                " console.log( 'Registrations by Age' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'age' ] ) ); ",
+                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'age' ] ), 'regByAge' ); ",
             ]
 
         },
-        "titleOfValue": {
+        "regByActivityType": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Title of Value', 'details' ); ", 
-                " me.addText( 'Interactively reconceptualize pandemic meta-services for turnkey markets. Synergistically actualize empowered users without go forward collaboration and idea-sharing. Assertively e-enable highly efficient paradigms with open-source experiences. Progressively fashion seamless meta-services through performance based materials. Efficiently coordinate competitive bandwidth before next-generation web.' ); ",
+                " me.addTitle( 'Registrations by activityType', 'table' ); ", 
+                " console.log( 'Registrations by activityType' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'activityType' ] ) ); ",
+                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'activityType' ] ), 'regByActivityType' ); ",
             ]
 
         },
-        "chartBarLast3Months": {
+        "regByActivityTypeByAge": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Chart Bar Last 3 months “allowTimeFiltering”:False', 'barChart' ); ", 
-                " me.addText( 'Continually engineer B2C resources after performance based data. Interactively.' ); ",
+                " me.addTitle( 'Registrations by activityType+age', 'table' ); ", 
+                " console.log( 'Registrations by activityType+age' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'activityType', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'activityType', 'age' ] ), 'regByActivityTypeByAge' ); ",
             ]
 
         },
-        "1stConsultationThisWeek": {
+        "regByActivityTypeByServiceByAge": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( '1st Consultation - This week', 'consult' ); ", 
-                " me.addText( 'Dynamically revolutionize worldwide technology vis-a-vis backward-compatible bandwidth. Compellingly matrix stand-alone deliverables vis-a-vis low-risk high-yield supply chains. Rapidiously streamline wireless.' ); ",
+                " me.addTitle( 'PARTIAL DATASET ERROR: Registrations by activityType+program+age', 'table' ); ", 
+                " console.log( 'Registrations by activityType+program+age' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'program', 'activityType', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'program', 'activityType', 'age' ] ), 'regByActivityTypeByServiceByAge' ); ",
             ]
 
         },
-        "titleOfPieChart": {
+        "regByActivityTypeByFullDateByAge": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Title of Value', 'pieChart' ); ", 
-                " me.addText( 'Monotonectally supply granular e-tailers without parallel interfaces. Compellingly orchestrate equity invested convergence.' ); ",
+                " me.addTitle( 'Registrations by activityType+transactionYearMonth+age', 'table' ); ", 
+                " console.log( 'Registrations by activityType+program+age' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'activityType', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'activityType', 'age' ] ), 'regByActivityTypeByFullDateByAge' ); ",
+            ]
+        },
+        "regByActivityTypeByAgePivot": {
+            "sequentialEval": "true",
+            "runDataEval": [
+                " me.addTitle( 'Registrations by ActivityType + Age: PIVOT', 'table' ); ", 
+                " console.log( 'regByActivityTypeByAgePivot' ); ",
+                " console.log( me.createGroup( INFO.data.c_reg, 'age', 'ageGroup5', ConfigManager.FiveYearsAgeGroups ) ); ",
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'ageGroup5' ] ), 'ageGroup5', 'activityType', 'count' ), 'regByActivityTypeByAgePivot' ); ",
             ]
 
         },
-        "titleOfLineChart": {
+        "regByActivityTypeBytransactionYearMonthPivot": {
             "sequentialEval": "true",
             "runDataEval": [
-                " me.addTitle( 'Title of chart Line', 'lineChart' ); ", 
-                " me.addText( 'Holisticly revolutionize client-centered best practices rather than cross-platform e-services. Rapidiously target client-centric best practices before 2.0 convergence. Uniquely strategize emerging manufactured products without maintainable web services. Monotonectally whiteboard B2C leadership skills and revolutionary opportunities. Competently administrate real-time intellectual capital after user-centric outside.' ); ",
+                " me.addTitle( 'Registrations by ActivityType + transactionYearMonth: PIVOT', 'table' ); ", 
+                " console.log( 'regByActivityTypeBytransactionYearMonthPivot' ); ",
+                " console.log( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'transactionYearMonth' ] ), 'transactionYearMonth', 'activityType', 'count' ) ); ",
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'transactionYearMonth' ] ), 'transactionYearMonth', 'activityType', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
+                " me.createGroup( INFO.data.c_reg, 'age', 'ageGroup10', ConfigManager.TenYearsAgeGroups ); ",
+                " me.addTitle( 'Another PIVOT', 'table' ); ", 
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'ageGroup10' ] ), 'activityType', 'ageGroup10', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
             ]
 
-        },
-        "sampleA": {
-            "title": { 'label': 'Header Section Title', 'icon': 'table' },
-            "periodType": "relational",
-            "runDataEval": [
-                " var cf = crossfilter([ ",
-                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
-                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
-                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
-                " ]); ",
-
-                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
-            
-                " INFO.toTable( INFO.statChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
-            ],
-            "divContent": [
-                "<div>---Table---</div>",
-                "<div>",
-                " displaying table content: <br>",
-                " <div class='statChart'></div>",
-                "</div>"
-            ]
         }
     }
 };
@@ -847,50 +1016,3 @@ ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
 
 
 // ==================================================
-
-
-/*
-ConfigManager.applyDefaultJson = function( configJson )
-{
-   // TODO: later, we might want to create a single list for this?
-
-   // Check for 
-   for ( var i = 0; i < ConfigManager.defaultJsonList.length; i++ )
-   {
-      var defaultJson = ConfigManager.defaultJsonList[ i ];
-
-      var targetLoc = configJson;
-      var resultStr = '';
-
-
-      // check if 'configJson' has this part.  If not, put it there.. (hard copy?)
-      for ( var x = 0; x < defaultJson.pathList.length; x++ )
-      {
-         var pathName = defaultJson.pathList[x];
-         var targetLoc = targetLoc[ pathName ];
-
-         var lastPath = ( defaultJson.pathList.length === ( x + 1 ) );
-         
-         // The pathList follow not found/worked in downloaded 'configJson'.  Can
-         if ( !targetLoc )
-         {
-            if ( lastPath ) resultStr = 'TargetNull';
-            else resultStr = 'TargetReachFailed';
-
-            break;
-         }
-         else
-         {
-            if ( lastPath ) resultStr = 'TargetExists';
-         }
-      }
-
-
-      if ( resultStr === 'TargetNull' )
-      {
-
-      }
-   }
-}; 
-
-*/

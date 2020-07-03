@@ -5693,12 +5693,81 @@ textarea {
 .sheet_preview .name, .sheet_preview .value {
   padding: 8px 8px 8px 12px;
   margin: 2px;
-  font-size: calc(12px + 0.4vw);
+  font-size: calc(10px + 0.4vw);
   white-space: nowrap;
   text-align: left;
   max-width: 47vw;
   overflow: overlay;
   line-height: 1.9em;
+}
+
+.statDivX {
+  /* 
+        Max width before this PARTICULAR table gets nasty
+        This query will take effect for any screen smaller than 760px
+        and also iPads specifically.
+        */
+}
+
+.statDivX table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.statDivX table tbody tr:nth-of-type(odd) {
+  background: #eee;
+}
+
+.statDivX table tbody td {
+  height: 14px;
+}
+
+@media only screen and (max-width: 760px) {
+  .statDivX {
+    /* Force table to not be like tables anymore */
+    /* Hide table headers (but not display: none;, for accessibility) */
+    /*
+            Label the data
+            */
+  }
+  .statDivX table,
+  .statDivX thead,
+  .statDivX tbody,
+  .statDivX th,
+  .statDivX td,
+  .statDivX tr {
+    display: block;
+  }
+  .statDivX thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .statDivX tr {
+    /*border: 1px solid #ccc;*/
+  }
+  .statDivX td {
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+  }
+  .statDivX td:before {
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 1px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+  .statDivX td:before {
+    content: attr(data-th) ": ";
+    width: 6.5em;
+    display: inline-block;
+  }
 }
 
 .wapper_card {
@@ -5921,7 +5990,7 @@ textarea {
     width: 100%;
     height: auto;
     overflow: hidden;
-    padding: 16px 0 4px;
+    padding: 16px 0 14px;
   }
 }
 
