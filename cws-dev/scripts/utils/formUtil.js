@@ -1109,10 +1109,10 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	
 				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && svgStyle && $(iconObj).html() )
 				{
-					$( svgObject ).attr( 'width', ( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width ) );
-					$( svgObject ).attr( 'height', ( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height ) );
+					$( svgObject ).attr( 'width', '100%' ); //( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width )
+					$( svgObject ).attr( 'height', '100%' ); //( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height )
 				}
-	
+
 				/*if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
 				{
 					var iconActivityWidth = ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize.width;
@@ -1128,7 +1128,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					// This is SyncUp status icon (placed right below ActivityType icon.)
 					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
 				}*/
-	
+
 			});
 		}
 	}

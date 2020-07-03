@@ -53,60 +53,60 @@ Configs.transactionTypes = [
         "label": "client reg",
         "term": "",
         "comment": "",
-        "dataContainer": "dataValues"
+        "dataContainer": [ "dataValues", "clientDetails" ]
     },
     {
         "name": "c_upd",
         "label": "client update",
         "term": "",
-        "dataContainer": "clientDetails"
+        "dataContainer": [ "dataValues" ]
     }, {
         "name": "s_ifo",
         "label": "service information",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues" ]
     },
     {
         "name": "s_pro",
         "label": "service provision",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues", "clientDetails" ]
     },
     {
         "name": "s_sat",
         "label": "service satisfaction",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues" ]
     },
     {
         "name": "s_apt",
         "label": "service appointement",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues", "clientDetails" ]
     },
     {
         "name": "v_iss",
         "label": "voucher issuing",
         "term": "",
-        "dataContainer": "dataValues"
+        "dataContainer": [ "dataValues" ]
     },
     {
         "name": "v_rem",
         "label": "voucher reminder",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues" ]
     },
     {
         "name": "v_rdx",
         "label": "voucher redeeming",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues", "clientDetails" ]
     },
     {
         "name": "v_exp",
         "label": "voucher expired",
         "term": "",
-        "dataContainer": ""
+        "dataContainer": [ "dataValues" ]
     }
 ];
 

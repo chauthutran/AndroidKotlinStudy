@@ -139,6 +139,7 @@ function cwsRender()
 		if ( Util.isAndroid() || Util.isIOS() )
 		{
 			me.setup_keyboardDetection();
+			me.override_classStyles();
 		}
 	}
 
@@ -820,7 +821,7 @@ function cwsRender()
 		{
 			me.aboutApp.hideAboutPage();
 		}
-		if ( $( 'div.statisticsDiv' ).is(':visible') ) 
+		if ( me.statisticsObj.statisticsFormDiv.is(':visible') ) 
 		{
 			me.statisticsObj.hideStatsPage();
 		}
@@ -1012,33 +1013,38 @@ function cwsRender()
 
 		// Set defaults for Tags to be hidden when keyboard triggers resize
 		$( '#advanceOptionLoginBtn' ).attr( 'keyboardVisible', 'hide' );
+		$( '#pass' ).attr( 'keyboardVisible', 'hide' );
 
 		// Window Resize detection
 		$( window ).on( 'resize', function () {
 
 			if ( ! FormUtil.checkLogin() )
 			{
-
 				//InitialWidth = $( 'body' ).attr( 'initialWidth' );
 				initialHeight = $( 'body' ).attr( 'initialHeight' );
 
 				// height ( change ) only value we're interested in comparing
 				if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
 				{
-					//console.log( 'IS keyboard' );
-					//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' );
+					//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
 					$( '[keyboardVisible=hide]' ).fadeOut();
 				} 
 				else
 				{
-					//console.log( 'not keyboard' );
-					//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' );
+					//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
 					$( '[keyboardVisible=hide]' ).fadeIn();
 				}
 
 			}
 
 		});
+
+		me.override_classStyles = function()
+		{
+			var style = $('<style> #pageDiv { padding: 4px 2px 0px 2px !important; }</style>')
+
+			$( 'html > head' ).append(style);
+		}
 
 	}
 
