@@ -21,7 +21,7 @@ function Action( cwsRenderObj, blockObj )
 	// ------------------------------------
 
 	// Same level as 'render' in other type of class
-	me.handleClickActions = function( btnTag, btnOnClickActions, blockDivTag, formDivSecTag )
+	me.handleClickActions = function( btnTag, btnOnClickActions, blockDivTag, formDivSecTag, blockPassingData )
 	{		
 		me.formJsonArr = blockObj.blockFormObj.formJsonArr;
 
@@ -38,7 +38,7 @@ function Action( cwsRenderObj, blockObj )
 		{
 			me.btnClickMarked( btnTag );
 
-			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
+			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
 			
 				me.clearBtn_ClickedMark( btnTag );
 			} );	
@@ -50,7 +50,7 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 
-	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag )
+	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag, blockPassingData )
 	{		
 		var dataPass = {};
 
@@ -58,7 +58,7 @@ function Action( cwsRenderObj, blockObj )
 		{
 			me.btnClickMarked( btnTag );
 
-			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) {
+			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
 				me.clearBtn_ClickedMark( btnTag );					
 			} );
 		}

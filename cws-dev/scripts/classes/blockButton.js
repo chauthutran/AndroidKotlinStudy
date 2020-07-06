@@ -267,7 +267,7 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 							//	var loadingTag = FormUtil.generateLoadingTag( btnTag );
 							//} 
 
-							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag );
+							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag, passedData );
 						}
 					}
 				});
@@ -308,7 +308,7 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 						} 
 
 						var idx = btnTag.closest(".itemBlock").attr("idx");
-						me.actionObj.handleItemClickActions( btnTag, btnJson.onClickItem, idx, blockDivTag, itemBlockTag );
+						me.actionObj.handleItemClickActions( btnTag, btnJson.onClickItem, idx, blockDivTag, itemBlockTag, passedData );
 						// , passedData ); <-- 'passedData' is not used anymore.
 						//	It retrieves from DHIS/WebService (making retrieveByClientId call) (using clientId again..)
 					}

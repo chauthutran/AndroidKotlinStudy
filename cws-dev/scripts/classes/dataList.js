@@ -66,168 +66,170 @@ function DataList( cwsRenderObj, blockObj )
             divFormContainerTag.append( dvgrpBySearchContainer );
             dvgrpBySearchContainer.append( dvgrpBySearchSummary );
 
+            
             if ( blockJson.groupBy )
             {
-
-                for( var g = 0; g < blockJson.groupBy.length; g++ )
-                {
-                    var lookup = {};
-                    var uniqValues = [];
-                    var fldGroupByID, fldGroupByObj, fldGroupByButtons;
-                    var complexGroupBy = false;
-
-                    if ( typeof blockJson.groupBy[ g ] === "object" ) 
-                    {
-                        var keys = Object.keys( blockJson.groupBy[ g ] );
-                        fldGroupByObj = blockJson.groupBy[ g ];
-                        fldGroupByID = keys[ 0 ];
-                        complexGroupBy = true;
-                        fldGroupByButtons = fldGroupByObj[ fldGroupByID ].buttons;
-                    }
-                    else 
-                    {
-                        fldGroupByID = blockJson.groupBy[ g ];
-                        fldGroupByButtons = blockJson.itemButtons;
-                    }
-
-                    // iterate + tally unique values
-                    for( var i = 0; i < dataJson.length; i++ )
-                    {
-                        for( var p = 0; p < dataJson[ i ].length; p++ )
-                        {
-                            if ( dataJson[ i ][ p ].id == fldGroupByID )
-                            {
-                                var unqVal = dataJson[ i ][ p ].value;
-                                if (! uniqValues.includes( unqVal ) ) 
-                                {
-                                    lookup[unqVal] = 1;
-                                    uniqValues.push( unqVal );
-                                }
-                                else
-                                {
-                                    lookup[unqVal] += 1;
-                                }
-                            }
-                        }
-                    }
-
-                    // store tally of unique values
-                    var grpByArr = [];
-                    for (val in lookup) {
-                        var count = lookup[ val ];
-                        grpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
-                    }
-
-                    if ( complexGroupBy )
-                    {
-                        if ( fldGroupByObj[ fldGroupByID ].values )
-                        {
-                            for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
-                            {
-                                var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
-                                var keyVal = Object.keys( keyValObj )[ 0 ];
-
-                                for( var r = 0; r < grpByArr.length; r++ )
-                                {
-                                    if ( grpByArr[ r ].value == keyVal )
-                                    {
-                                        if ( keyValObj[ keyVal ].buttons )
-                                        {
-                                            grpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
-                                        }
-                                        else
-                                        {
-                                            grpByArr[ r ].buttons = blockJson.itemButtons;
-                                        }
-                                        if ( keyValObj[ keyVal ].opened != undefined )
-                                        {
-                                            grpByArr[ r ].opened = keyValObj[ keyVal ].opened;
-                                        }
-                                        if ( keyValObj[ keyVal ].order != undefined )
-                                        {
-                                            grpByArr[ r ].order = keyValObj[ keyVal ].order;
-                                        }
-                                    }
-                                }
-
-                            }
-
-                        }
-                        else
-                        {
-                            if ( fldGroupByObj[ fldGroupByID ].buttons )
-                            {
-
-                            }
-                        }
-
-                    }
-
-                    if ( me.debugMode ) console.log( grpByArr );
-
-                    uniqValues.sort();
-
-                    grpByArr.sort(function(a, b)
-                    {
-                        if (a.order < b.order) { return -1; }
-                        if (b.order < a.order) return 1;
-                        else return 0;
-                    });
-
-                    if ( uniqValues.length )
-                    {
-                        // build layout
-
-                        var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
-                        dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td class="imggroupByFldHeader" ><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
-                        dvgrpBySearchContainer.append( dvgrpByFieldHeader );
-
-                        var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
-                        dvgrpBySearchContainer.append( dvgrpByFieldBlock );
-
-                        for( var r = 0; r < grpByArr.length; r++ )
-                        {
-
-                            if ( me.debugMode ) console.log( fldGroupByID, grpByArr[ r ].value );
-
-                            var tblGrpBy = $( '<table id="groupByFieldBlock_' + g + '_' + r + '" class="groupByFieldResultTable" />' );
-                            var trGrpBy = $( '<tr />' );
-                            var tdGrpBy = $( '<td colspan=2 />' );                    
-                            var dvGrpByTitle = $( '<div class="groupByField" />' );
-
-                            dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
-                            dvGrpByTitle.attr( 'title', grpByArr[ r ].value );
-
-                            var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
-
-                            dvgrpByFieldBlock.append( tblGrpBy );
-                            tblGrpBy.append( trGrpBy );
-                            trGrpBy.append( tdGrpBy );
-                            tdGrpBy.append( dvGrpByTitle );
-                            dvGrpByTitle.append( dvGrpByRows );
-
-                            me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, fldGroupByID, grpByArr[ r ].value, dataJson, blockJson, grpByArr[ r ].buttons )
-
-                            FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
-
-                        }
-
-                        FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
-
-                    }
-
-                }
-
+                me.groupByRender( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList );
             }
             else
             {
-
                 me.renderSearchResultBlocks( divFormContainerTag, itemDisplayAttrList, undefined, undefined, jsonList, blockJson )
-
             }
         }
     }
 
+
+    me.groupByRender = function( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList )
+    {
+        for( var g = 0; g < blockJson.groupBy.length; g++ )
+        {
+            var lookup = {};
+            var uniqValues = [];
+            var fldGroupByID, fldGroupByObj, fldGroupByButtons;
+            var complexGroupBy = false;
+
+            if ( typeof blockJson.groupBy[ g ] === "object" ) 
+            {
+                var keys = Object.keys( blockJson.groupBy[ g ] );
+                fldGroupByObj = blockJson.groupBy[ g ];
+                fldGroupByID = keys[ 0 ];
+                complexGroupBy = true;
+                fldGroupByButtons = fldGroupByObj[ fldGroupByID ].buttons;
+            }
+            else 
+            {
+                fldGroupByID = blockJson.groupBy[ g ];
+                fldGroupByButtons = blockJson.itemButtons;
+            }
+
+            // iterate + tally unique values
+            for( var i = 0; i < dataJson.length; i++ )
+            {
+                for( var p = 0; p < dataJson[ i ].length; p++ )
+                {
+                    if ( dataJson[ i ][ p ].id == fldGroupByID )
+                    {
+                        var unqVal = dataJson[ i ][ p ].value;
+                        if (! uniqValues.includes( unqVal ) ) 
+                        {
+                            lookup[unqVal] = 1;
+                            uniqValues.push( unqVal );
+                        }
+                        else
+                        {
+                            lookup[unqVal] += 1;
+                        }
+                    }
+                }
+            }
+
+            // store tally of unique values
+            var grpByArr = [];
+            for (val in lookup) {
+                var count = lookup[ val ];
+                grpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
+            }
+
+            if ( complexGroupBy )
+            {
+                if ( fldGroupByObj[ fldGroupByID ].values )
+                {
+                    for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
+                    {
+                        var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
+                        var keyVal = Object.keys( keyValObj )[ 0 ];
+
+                        for( var r = 0; r < grpByArr.length; r++ )
+                        {
+                            if ( grpByArr[ r ].value == keyVal )
+                            {
+                                if ( keyValObj[ keyVal ].buttons )
+                                {
+                                    grpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
+                                }
+                                else
+                                {
+                                    grpByArr[ r ].buttons = blockJson.itemButtons;
+                                }
+                                if ( keyValObj[ keyVal ].opened != undefined )
+                                {
+                                    grpByArr[ r ].opened = keyValObj[ keyVal ].opened;
+                                }
+                                if ( keyValObj[ keyVal ].order != undefined )
+                                {
+                                    grpByArr[ r ].order = keyValObj[ keyVal ].order;
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    if ( fldGroupByObj[ fldGroupByID ].buttons )
+                    {
+
+                    }
+                }
+
+            }
+
+            if ( me.debugMode ) console.log( grpByArr );
+
+            uniqValues.sort();
+
+            grpByArr.sort(function(a, b)
+            {
+                if (a.order < b.order) { return -1; }
+                if (b.order < a.order) return 1;
+                else return 0;
+            });
+
+            if ( uniqValues.length )
+            {
+                // build layout
+
+                var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
+                dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td class="imggroupByFldHeader" ><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue">' +me.resolvedefinitionField( { "id": fldGroupByID, "name": fldGroupByID } ) + '</span></td></tr></table> </div>' ) );
+                dvgrpBySearchContainer.append( dvgrpByFieldHeader );
+
+                var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
+                dvgrpBySearchContainer.append( dvgrpByFieldBlock );
+
+                for( var r = 0; r < grpByArr.length; r++ )
+                {
+
+                    if ( me.debugMode ) console.log( fldGroupByID, grpByArr[ r ].value );
+
+                    var tblGrpBy = $( '<table id="groupByFieldBlock_' + g + '_' + r + '" class="groupByFieldResultTable" />' );
+                    var trGrpBy = $( '<tr />' );
+                    var tdGrpBy = $( '<td colspan=2 />' );                    
+                    var dvGrpByTitle = $( '<div class="groupByField" />' );
+
+                    dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div id="imggroupBy_' + g + '_' + r + '" class="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) + '" /> </td> <td class="groupByFieldName"> <span>' + me.resolvedefinitionOptionValue( grpByArr[ r ].value ) + '</span>: <strong class="">' + grpByArr[ r ].count + '</strong></td></tr></table> </div>' );
+                    dvGrpByTitle.attr( 'title', grpByArr[ r ].value );
+
+                    var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' + ( grpByArr[ r ].opened != undefined ? ( grpByArr[ r ].opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
+
+                    dvgrpByFieldBlock.append( tblGrpBy );
+                    tblGrpBy.append( trGrpBy );
+                    trGrpBy.append( tdGrpBy );
+                    tdGrpBy.append( dvGrpByTitle );
+                    dvGrpByTitle.append( dvGrpByRows );
+
+                    me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, fldGroupByID, grpByArr[ r ].value, dataJson, blockJson, grpByArr[ r ].buttons )
+
+                    FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+
+                }
+
+                FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+
+            }
+
+        }
+    };
 
     // TODO: NOT USED ANYMORE?
     me.actionExpressionEvaluate = function( jsonList, actionTypeObj )
@@ -377,7 +379,7 @@ function DataList( cwsRenderObj, blockObj )
 
                 };
 
-                var tdRightobjTag = $( '<td class="searchResultGroupByButtons" >' );
+                var tdRightobjTag = $( '<td class="searchResultGroupByButtons" info="' + r + '" ></td>' );
                 trTopObjTag.append( tdRightobjTag );
 
                 me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag );
@@ -388,13 +390,20 @@ function DataList( cwsRenderObj, blockObj )
                 }
                 else
                 {
-                    me.renderButtons( tdRightobjTag, blockJson.itemButtons );
+                    // Readjust json for passing
+                    var passedData = Util.getJsonDeepCopy( me.jsonListData );
+                    passedData.displayData = itemAttrDataList;
+                    passedData.resultData = {};
+
+                    // BUTTON LIST
+                    var buttonDefList = [];
+                    if ( blockJson.itemButtons ) buttonDefList = blockJson.itemButtons;
+                    else if ( blockJson.buttons ) buttonDefList = blockJson.buttons;
+
+                    me.renderButtons( tdRightobjTag, buttonDefList, passedData );
                 }
-
             }
-
         }
-
     }
 
     /*
@@ -432,7 +441,10 @@ function DataList( cwsRenderObj, blockObj )
         var validResults = [];
 
         // If 'displayResult' is not on definition, send all. 
-        if ( !itemDisplayAttrList || itemDisplayAttrList.length === 0 ) validResults = searchResults;
+        if ( !itemDisplayAttrList || itemDisplayAttrList.length === 0 ) 
+        {
+            validResults = searchResults;
+        }
         else
         {
             for( var a = 0; a < itemDisplayAttrList.length; a++ )
@@ -443,8 +455,8 @@ function DataList( cwsRenderObj, blockObj )
 
                 if ( itemData && itemData.value )
                 {   
-                    var itemName = ( itemData.displayName ) ? itemData.displayName : itemData.id;
-                    validResults.push ( { 'id': itemData.id, 'name': itemName, 'value': itemData.value } );
+                    //var itemName = ( itemData.displayName ) ? itemData.displayName : itemData.id;
+                    validResults.push ( { 'id': itemData.id, 'name': itemData.displayName, 'value': itemData.value } );
                 }    
             }
         }
@@ -487,13 +499,13 @@ function DataList( cwsRenderObj, blockObj )
         }
     }
 
-    me.renderButtons = function( divItemTag, itemButtons )
+    me.renderButtons = function( divItemTag, itemButtons, passedData )
     {
         if ( itemButtons )
         {
             var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj ); //, me.blockObj.validationObj
 
-            newItemBtn.render( itemButtons, divItemTag );
+            newItemBtn.render( itemButtons, divItemTag, passedData );
         } 
     }
 
@@ -519,24 +531,28 @@ function DataList( cwsRenderObj, blockObj )
 
         if ( dcd && dcd.definitionFields )
         {
-            for( var i = 0; i < dcd.definitionFields.length; i++ )
+            try
             {
-                if ( objFieldData.id === dcd.definitionFields[ i ].id )
+                for( var i = 0; i < dcd.definitionFields.length; i++ )
                 {
-                    if ( ( dcd.definitionFields[ i ].term ).toString().length )
+                    if ( objFieldData.id === dcd.definitionFields[ i ].id )
                     {
-                        retName = me.cwsRenderObj.langTermObj.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
+                        if ( ( dcd.definitionFields[ i ].term ).toString().length )
+                        {
+                            retName = me.cwsRenderObj.langTermObj.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
+                        }
+                        else
+                        {
+                            retName = dcd.definitionFields[ i ].defaultName;
+                        }
                     }
-                    else
-                    {
-                        retName = dcd.definitionFields[ i ].defaultName;
-                    }
-                }
+                }    
             }
+            catch ( errMsg ) {  }
 
             if ( retName.length == 0 )
             {
-                return objFieldData.name;
+                return ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
             }
             else
             {
@@ -545,9 +561,8 @@ function DataList( cwsRenderObj, blockObj )
         }
         else
         {
-            return objFieldData.name;
+            return ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
         }
-
     }
 
     me.resolvedefinitionOptionValue = function( val )
