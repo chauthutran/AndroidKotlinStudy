@@ -62,7 +62,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // If tag has been created), perform render
         if ( activityCardDivTag )
         {
-            var activityJson = ActivityDataManager.getActivityItem( "activityId", me.activityId );
+            var activityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;
 
             try
@@ -84,7 +84,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityContentTag
                     , activityJson, activityTrans, ConfigManager.getConfigJson() );
-                if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.activityId );
+                if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
 
 
                 // 3. 'SyncUp' Button Related
@@ -589,7 +589,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         try
         {
-            activityJson_Orig = ActivityDataManager.getActivityItem( "activityId", me.activityId );
+            activityJson_Orig = ActivityDataManager.getActivityItem( "id", me.activityId );
             // Do not delete 'processing' until success..
 
 
@@ -702,10 +702,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         } 
     };
 
-
-    // remove this activity from list  (me.activityJson.activityId ) <-- from common client
-    
-
+    // remove this activity from list  (me.activityJson.id ) <-- from common client 
     // =============================================
 	// === Full Detail Popup Related METHODS ========================
 
@@ -778,21 +775,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
     // =============================================
 	// === Other Supporting METHODS ========================
-
-    /*
-    me.updateItem_UI_Icons = function( activityJson, cwsRenderObj )
-    {
-        // update card 'status' (submit/fail/queue)  <--- TODO: This should be marked as 'Synced'!!!  <-- Only on success
-        FormUtil.setStatusOnTag( $( '#listItem_action_sync_' + activityJson.activityId ).find( 'div.icons-status' ), activityJson, cwsRenderObj );
-
-        // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-        FormUtil.appendActivityTypeIcon ( $( '#listItem_icon_activityType_' + activityJson.activityId )
-            , FormUtil.getActivityType ( activityJson )
-            , FormUtil.getStatusOpt ( activityJson )
-            , cwsRenderObj );
-    };
-    */
-
 
     // Update ActivityCard UI based on current activityItem data
     me.updateUI = function( divListItemTag, activityJson )

@@ -189,11 +189,14 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInf
 
         try
         {
+            // CASE #1. Client Update (Server version has later update)
             // If matching id item(activity) already exists in device, 
             // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
             if ( pwaClient )
             {
-                if ( mongoClient.updated > pwaClient.updated ) 
+                //ClientDataManager.getDateStr_LastUpdated = function( clientJson )
+                if ( ClientDataManager.getDateStr_LastUpdated( mongoClient ) 
+                        > ClientDataManager.getDateStr_LastUpdated( pwaClient ) ) 
                 {
                     // Get activities in mongoClient that does not exists...
                     ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient
@@ -201,7 +204,9 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInf
 
                     // Update clientDetail from mongoClient
                     pwaClient.clientDetails = mongoClient.clientDetails;
-                    pwaClient.updated = mongoClient.updated;
+                    pwaClient.clientConsent = mongoClient.clientConsent;
+
+                    pwaClient.date = mongoClient.date;
 
                     changeOccurred = true;
                     updateOccurred = true;
@@ -209,6 +214,7 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInf
             }
             else
             {
+                // CASE #2. New Client Download Case
                 // If not existing on device, simply add it.
                 newClients.push( mongoClient );
 
@@ -268,7 +274,7 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     // Call it from template?
     var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
 
-    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.activityId;
+    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.id;
     acitivityPayloadClient.clientDetails = ActivityDataManager.getCombinedTrans( activity );
 
     ClientDataManager.insertClient( acitivityPayloadClient );
@@ -276,3 +282,15 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     return acitivityPayloadClient;
 };
 
+
+ClientDataManager.getDateStr_LastUpdated = function( clientJson )
+{
+    var dateStr = '';
+
+    if ( clientJson && clientJson.date && clientJson.date.updatedOnMdbUTC )
+    {
+        dateStr = clientJson.date.updatedOnMdbUTC;
+    }
+
+    return dateStr;
+};

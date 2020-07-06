@@ -68,9 +68,9 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             SyncManagerNew.update_UI_StartSyncAll();
     
             // get activityItems (for upload) > not already uploaded (to be processed)
-            SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( itemDataList ){
+            SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( activityDataList ){
     
-                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, 0, cwsRenderObj, function() 
+                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, function() 
                 {
                     SyncManagerNew.SyncMsg_InsertMsg( "sync_all completed.." );
     
@@ -189,10 +189,10 @@ SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
 	//});
 };
 
-SyncManagerNew.syncUpItem_RecursiveProcess = function( itemDataList, i, cwsRenderObj, callBack )
+SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsRenderObj, callBack )
 {
     // length is 1  index 'i' = 0; next time 'i' = 1
-    if ( itemDataList.length <= i )
+    if ( activityDataList.length <= i )
     {
         // If index is equal or bigger to list, return back. - End reached.
         return callBack();        
@@ -207,19 +207,19 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( itemDataList, i, cwsRende
         }
         else
         {
-            var itemData = itemDataList[i];         
+            var activityData = activityDataList[i];         
         
-            var activityCardObj = new ActivityCard( itemData.activityId, cwsRenderObj );
+            var activityCardObj = new ActivityCard( activityData.id, cwsRenderObj );
     
             activityCardObj.performSyncUp( function( success ) {
     
-                if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + itemData.activityId );
+                if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
     
                 // update on progress bar
-                FormUtil.updateProgressWidth( ( ( i + 1 ) / itemDataList.length * 100 ).toFixed( 1 ) + '%' );
+                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
     
                 // Process next item.
-                SyncManagerNew.syncUpItem_RecursiveProcess( itemDataList, i + 1, cwsRenderObj, callBack );
+                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );
             });    
         }
     }
@@ -241,7 +241,8 @@ SyncManagerNew.downloadClients = function( callBack )
         var payloadJson = { 'find': {} };
 
         payloadJson.find = {
-            "activities": { "$elemMatch": { "activeUser": activeUser } } 
+            "clientDetails.users": activeUser
+            //"activities": { "$elemMatch": { "activeUser": activeUser } } 
         };
 
         // If last download date exists, search after that. Otherwise, get all
@@ -250,13 +251,12 @@ SyncManagerNew.downloadClients = function( callBack )
         if ( lastDownloadDateISOStr ) 
         { 
             dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
-            payloadJson.find.updated = { "$gte": dateRange_gtStr };
+            payloadJson.find[ 'date.updatedOnMdbUTC' ] = { "$gte": dateRange_gtStr };
         }
 
 
         var loadingTag = undefined;
-
-        WsCallManager.requestPost( '/PWA.syncDown', payloadJson, loadingTag, function( success, returnJson ) {
+        WsCallManager.requestPost( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
@@ -272,56 +272,6 @@ SyncManagerNew.downloadClients = function( callBack )
     }
 };
 
-
-
-// Perform Server Operation..
-SyncManagerNew.downloadActivities = function( callBack )
-{
-    try
-    {
-        // TODO: 
-        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio1";  // Replace with 'loginUser'?  8004?    
-        var dateRange_gtStr;
-        //var url = 'https://pwa-dev.psi-connect.org/ws/PWA.activities';
-		var payloadJson = {
-            "activity": { 
-                "activeUser": activeUser
-            }
-        };
-
-
-        // If last download date exists, search after that. Otherwise, get all
-        var lastDownloadDateISOStr = AppInfoManager.getDownloadInfo();
-
-        if ( lastDownloadDateISOStr ) 
-        { 
-            dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
-
-            payloadJson.activity[ 'activityDate.createdOnMdbUTC' ] = {
-                "$gt": dateRange_gtStr
-            };
-        }
-
-
-        var loadingTag = undefined;
-
-        WsCallManager.requestPost( '/PWA.activities', payloadJson, loadingTag, function( success, mongoClientsJson ) {
-
-            // NOTE: IMPORTANT:
-            // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
-            if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
-
-            callBack( success, mongoClientsJson );
-        });
-
-        
-    }
-    catch( errMsg )
-    {
-        console.log( 'Error in SyncManagerNew.downloadActivities - ' + errMsg );
-        callBack( false );
-    }
-};
 
 
 // ===================================================

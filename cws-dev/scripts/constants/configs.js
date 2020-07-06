@@ -127,7 +127,7 @@ Configs.transactionTypePropertyFromName = function( trxName, propName )
 
 Configs.getPayloadFromTransactionType = function( activityID, transType )
 {
-    var activityJson = ActivityDataManager.getActivityItem( "activityId", activityID );
+    var activityJson = ActivityDataManager.getActivityItem( "id", activityID );
     var objectName = Configs.transactionTypePropertyFromName( transType, 'dataContainer' );
 	var ret = {};
 
@@ -176,7 +176,7 @@ Configs.getPayloadFromTransactionType = function( activityID, transType )
 
 Configs.getPayloadObject = function( activityID, objectName, transType )
 {
-    var activityJson = ActivityDataManager.getActivityItem( "activityId", activityID );
+    var activityJson = ActivityDataManager.getActivityItem( "id", activityID );
     //var trxTargetObj = objectName ? objectName : Configs.transactionTypePropertyFromName( 'v_exp', 'label' )
 	var ret = {};
 

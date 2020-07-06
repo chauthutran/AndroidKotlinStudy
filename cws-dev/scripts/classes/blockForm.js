@@ -1425,33 +1425,136 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	// PopulateFormData by passed in json (Not by config, but by external data)
 	me.populateFormData = function( passedData, formDivSecTag )
 	{
-
 		if ( passedData !== undefined && passedData.resultData !== undefined )
 		{
 			// TODO: On WebService side, we should simply create
 			//   a list that holds 'id' and 'value' for population...
 			//	regardless of type 'tei attribute val', 'dataElement value'
+				
+			me.populateFormData_Common( formDivSecTag, passedData.resultData );
 
+			// Simpler data population
+			if ( passedData.simpleData ) me.populateFormData_ObjByName( formDivSecTag, passedData.simpleData );
+
+			// (Preivously only used for Dhis2 attribute data population) <-- we are assuming this is single list... (could be 2 dimensional array)
+			// 
+			if ( passedData.displayData ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData.displayData );
+		}
+	};
+
+
+	me.populateFormData_Common = function( formDivSecTag, resultData )
+	{
+		try 
+		{		
 			// getProperValue  <-- but 'clientId' and voucherId' could be populated by hidden inputs..
-			var clientId = Util.getNotEmpty( passedData.resultData.clientId );
-			var voucherId = Util.getNotEmpty( passedData.resultData.voucherId );
+			var clientId = Util.getNotEmpty( resultData.clientId );
+			var voucherId = Util.getNotEmpty( resultData.voucherId );
 
 			if ( clientId ) formDivSecTag.find( '[name="clientId"]' ).val( clientId );
 			if ( voucherId ) formDivSecTag.find( '[name="voucherId"]' ).val( voucherId );
 
-			try 
+			clientId = formDivSecTag.find( '[name="clientId"]' ).val();
+			voucherId = formDivSecTag.find( '[name="voucherId"]' ).val();
+			formDivSecTag.find( '[name="walkInClientCase"]' ).val( me.getWalkInClientCase ( clientId, voucherId ) );
+		}
+		catch ( errMsg )
+		{
+			console.log( 'Error in blockForm.populateFormData_Common: errMsg: ' + errMsg );
+		}		
+	};
+
+
+	me.populateFormData_ObjByName = function( formDivSecTag, jsonData )
+	{
+		try 
+		{
+			if ( jsonData && jsonData.clientDetails )
 			{
-				// var attributes = passedData.data.relationships[0].relative.attributes;
-				var attributes = passedData.displayData;  // <-- we are assuming this is single list...
-				var inputTags = formDivSecTag.find( 'input,select' );
+				var clientDetails = jsonData.clientDetails;
+
+				//console.log( 'clientDetails' );
+				//console.log( clientDetails );
+
+				// Need to confirm with Tran/Greg with getting right input control
+				var inputTags = formDivSecTag.find( 'input,select' ).filter('.dataValue');
 
 				// Go through each input tags and use 'uid' to match the attribute for data population
 				inputTags.each( function( i ) 
 				{
 					var inputTag = $( this );
-					var uidStr = inputTag.attr( 'uid' );
 
-					//console.log( 'inputTag visible, uid: ' + uidStr + ', visible: ' + inputTags.is( ':visible') );
+					try
+					{
+						var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
+
+						//console.log( 'nameStr: ' + nameStr );
+		
+						if ( nameStr )
+						{
+							var data = clientDetails[ nameStr ];
+
+							console.log( data );
+
+							if ( data && Util.isTypeString( data ) )
+							{
+								FormUtil.setTagVal( inputTag, data, function() 
+								{
+									inputTag.change();
+								});	
+							}
+						}	
+					}
+					catch ( errMsg )
+					{
+						console.log( 'Error in inputTag blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
+					}
+				});
+			}
+		}
+		catch ( errMsg )
+		{
+			console.log( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
+		}
+	};
+
+
+	me.getContentArr = function( input )
+	{
+		var contentArr = input;
+
+		if ( Util.isTypeArray( input ) )
+		{
+			if ( input.length > 0 && Util.isTypeArray( input[0] ) )
+			{
+				contentArr = input[0];
+			}
+		}
+
+		return contentArr;
+	};
+
+
+	me.populateFormData_ArrayDataByUid = function( formDivSecTag, attributes )
+	{
+		try 
+		{
+			// If double array, get content array (subArray)
+			attributes = me.getContentArr( attributes );
+
+			// NOTE: Since uid are placed in right hidden 'dataValue' class, we do not need to worry about
+			// finding the right tag..
+			var inputTags = formDivSecTag.find( 'input.dataValue[uid],select.dataValue[uid]' );
+
+			// Go through each input tags and use 'uid' to match the attribute for data population
+			inputTags.each( function( i ) 
+			{
+				var inputTag = $( this );
+
+				try 
+				{
+					var uidStr = inputTag.attr( 'uid' );
+					if ( uidStr === 'undefined' ) uidStr = inputTag.attr( 'name' ); // If uid='undefined', use 'name' value for data matching id.
 
 					if ( uidStr )
 					{
@@ -1463,23 +1566,58 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 							{
 								//console.log( 'populating tag data, name: ' + inputTag.attr( 'name' ) + ', val: ' + attrJson.value );
 								inputTag.change();
+
+								// TODO: But, we also need to display the values as well
+								// <-- ASK TRAN TO SET ALL THE 'change' event on input.dataValue --> to trigger the displayValue settting.
+
 							});
 						}
-					}
-				});
+					}					
+				}
+				catch ( errMsg )
+				{
+					console.log( 'Error in inputTag blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+				}
 
-				clientId = formDivSecTag.find( '[name="clientId"]' ).val();
-				voucherId = formDivSecTag.find( '[name="voucherId"]' ).val();
-				formDivSecTag.find( '[name="walkInClientCase"]' ).val( me.getWalkInClientCase ( clientId, voucherId ) );
-
-			}
-			catch(err) {
-				console.log( 'Error Duing "populateFormData".' );
-				console.log( err );
-			}					
+			});
 		}
-	}
-	
+		catch ( errMsg )
+		{
+			console.log( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+		}
+	};
+
+
+	me.removeGroupDotName = function( inputNameStr )
+	{
+		var outputName = '';
+
+		try
+		{
+			// In case input name has group name with dot (ex. 'clientDetail.phoneNumber' )
+			// remove the groupName: 'clientDetail.phoneNumber' --> 'phoneNumber'
+			if ( inputNameStr )
+			{
+				if ( inputNameStr.indexOf( '.' ) > 0 )
+				{
+					var splitNames = inputNameStr.split( '.' );
+					outputName = splitNames[1];
+				}
+				else
+				{
+					outputName = inputNameStr;
+				}
+			}
+		}
+		catch ( errMsg )
+		{
+			console.log( 'Error in blockForm.removeGroupDotName: errMsg: ' + errMsg );
+		}
+
+		return outputName;
+	};
+
+
 	me.getWalkInClientCase = function( clientId, voucherId )
 	{
 		var walkInClientCase = "";

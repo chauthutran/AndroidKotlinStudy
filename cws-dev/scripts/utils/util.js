@@ -258,17 +258,23 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 	});
 };
 
-
+// ---------------------------
+// --- Types Check ----
 Util.isTypeObject = function( obj )
 {
 	return ( obj && typeof obj === 'object' );
 };
 
-Util.isTypeString = function( input )
+Util.isTypeArray = function( obj )
 {
-	return ( input && typeof( input ) === 'string' );
+	return ( obj && Array.isArray( obj ) );
 };
 
+Util.isTypeString = function( obj )
+{
+	return ( obj && typeof( obj ) === 'string' );
+};
+// ------------------------------------
 
 Util.getPathObj = function( obj, pathArr )
 {

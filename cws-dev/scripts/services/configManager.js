@@ -922,7 +922,7 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 
     try
 	{
-        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.activityType, 'name' );
+        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.type, 'name' );
 
         // Removed - if matching acitivity type config does not exists, compose activity type based on 'program'..
         // FormUtil.getActivityTypeComposition = function( itemData )

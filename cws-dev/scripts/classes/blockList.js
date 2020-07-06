@@ -487,7 +487,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {
         var activityCardTrTag = $( me.template_divActivityTag );
 
-        activityCardTrTag.attr( 'itemId', activityJson.activityId );
+        activityCardTrTag.attr( 'itemId', activityJson.id );
 
         var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
 
@@ -495,7 +495,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         listTableTbodyTag.append( activityCardTrTag );     
 
-        return new ActivityCard( activityJson.activityId, me.cwsRenderObj );
+        return new ActivityCard( activityJson.id, me.cwsRenderObj );
     };
 
 
@@ -510,7 +510,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {            
             if ( viewGroupByData && viewGroupByData.groupByUsed )
             {
-                var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.activityId ];
+                var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.id ];
 
                 groupAttrVal = groupJson.id;
 

@@ -1,5 +1,8 @@
 // -------------------------------------------
 // -- DataList Class/Methods
+
+//const Util = require("../utils/util");
+
 // -- (Web Service) Returned data list rendering as list..
 function DataList( cwsRenderObj, blockObj ) 
 {
@@ -8,7 +11,6 @@ function DataList( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;
     me.blockJson;        
-    me.itemDisplayAttrList = [];    // matches to block.displayResult <-- which lists which attr to display on html
 
     me.jsonListData;
 
@@ -16,8 +18,6 @@ function DataList( cwsRenderObj, blockObj )
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
-
-
 
 	// -----------------------------
 	// ---- Methods ----------------
@@ -33,13 +33,11 @@ function DataList( cwsRenderObj, blockObj )
     me.render = function( blockJson, newBlockTag, jsonListData )
 	{
         me.blockJson = blockJson;
-        if ( blockJson.displayResult ) me.itemDisplayAttrList = blockJson.displayResult;
-
         me.jsonListData = jsonListData;
                 
 		if ( blockJson && blockJson.list === 'dataList' && jsonListData )
         {
-            me.renderDataList( jsonListData.displayData, me.itemDisplayAttrList, newBlockTag, blockJson );	
+            me.renderDataList( jsonListData.displayData, blockJson.displayResult, newBlockTag, blockJson );	
         }
 	}
 
@@ -399,21 +397,25 @@ function DataList( cwsRenderObj, blockObj )
 
     }
 
-    me.blockDataValidResultArray = function( itemAttrList, searchResults )
+    /*
+    me.blockDataValidResultArray = function( itemDisplayAttrList, searchResults )
     {
-
-        /* ONLY return array pairs where payload contains expected UID fields */
+        // ONLY return array pairs where payload contains expected UID fields
         var validResults = [];
 
-        for( var a = 0; a < itemAttrList.length; a++ )
+        for( var a = 0; a < itemDisplayAttrList.length; a++ )
         {
+            var idStr = itemDisplayAttrList[a];
+
             for( var i = 0; i < searchResults.length; i++ )
             {
-                if ( itemAttrList[a] == searchResults[i].id )
+                searchResult = searchResults[i];
+
+                if ( idStr === searchResult.id )
                 {
-                    if ( searchResults[i].value )
+                    if ( searchResult.value )
                     {   
-                        validResults.push ( { 'id': itemAttrList[a], 'name': searchResults[i].displayName, 'value': searchResults[i].value } );
+                        validResults.push ( { 'id': searchResult.id, 'name': searchResult.displayName, 'value': searchResult.value } );
                     }
                 }
 
@@ -421,8 +423,35 @@ function DataList( cwsRenderObj, blockObj )
         }
 
         return validResults;
+    };
+    */
 
-    }
+    me.blockDataValidResultArray = function( itemDisplayAttrList, searchResults )
+    {
+        // ONLY return array pairs where payload contains expected UID fields
+        var validResults = [];
+
+        // If 'displayResult' is not on definition, send all. 
+        if ( !itemDisplayAttrList || itemDisplayAttrList.length === 0 ) validResults = searchResults;
+        else
+        {
+            for( var a = 0; a < itemDisplayAttrList.length; a++ )
+            {
+                var idStr = itemDisplayAttrList[a];
+    
+                var itemData = Util.getFromList( searchResults, idStr, "id" );
+
+                if ( itemData && itemData.value )
+                {   
+                    var itemName = ( itemData.displayName ) ? itemData.displayName : itemData.id;
+                    validResults.push ( { 'id': itemData.id, 'name': itemName, 'value': itemData.value } );
+                }    
+            }
+        }
+
+        return validResults;
+    };
+
 
     me.renderHiddenKeys = function( keyList, itemAttrDataList, divItemTag )
     {

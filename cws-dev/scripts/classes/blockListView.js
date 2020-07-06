@@ -403,7 +403,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.getINFO_byActivity = function( activity )
     {
         var activityTrans = ActivityDataManager.getCombinedTrans( activity );
-        var client = ClientDataManager.getClientByActivityId( activity.activityId );
+        var client = ClientDataManager.getClientByActivityId( activity.id );
         //var clientDetails = ( client ) ? client.clientDetails: {};
 
         return { 'activity': activity, 'client': client, 'activityTrans': activityTrans };
@@ -412,7 +412,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.setGroupByData_withActivity = function( groupJson, activity, groupByData )
     {
         // ?? TODO: HOW SHOULD WE FORMAT THE GROUPS?  WITH 'ACTIVITIES' IN IT?
-        if ( groupJson && groupJson.id && activity.activityId )
+        if ( groupJson && groupJson.id && activity.id )
         {            
             //var matchingGroup = Util.getFromList( groupByData.groupByList, groupJson.id, 'id' );
 
@@ -422,7 +422,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             {
                 existingGroup_InList.activities.push( activity );
                 // If already in list, use that group..
-                groupByData.activitiesRefGroupBy[ activity.activityId ] = existingGroup_InList;
+                groupByData.activitiesRefGroupBy[ activity.id ] = existingGroup_InList;
             }
             else
             {
@@ -433,7 +433,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 // add the groupJson to groupByList..
                 groupByData.groupByList[ groupJson.id ] = groupJson;
                 groupByData.groupListArr.push( groupJson );
-                groupByData.activitiesRefGroupBy[ activity.activityId ] = groupJson;
+                groupByData.activitiesRefGroupBy[ activity.id ] = groupJson;
             }
         }
     };
