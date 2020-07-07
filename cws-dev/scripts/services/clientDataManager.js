@@ -275,7 +275,7 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
 
     acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.id;
-    acitivityPayloadClient.clientDetails = ActivityDataManager.getCombinedTrans( activity );
+    acitivityPayloadClient.clientDetails = ActivityDataManager.getClientInfo_FromTrans( activity );
 
     ClientDataManager.insertClient( acitivityPayloadClient );
 

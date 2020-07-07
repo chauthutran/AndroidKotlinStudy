@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "f5c4c805b31cd60ffbe6958f38e8fec8"
+    "revision": "d507195f17c6adbb532977b9b5390882"
   },
   {
     "url": "redeemGen.html",
@@ -1197,7 +1197,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "47bd8e09c8dd10fe34e39cc660ca0358"
+    "revision": "a51ebac126ba5a53b033bf0c1fe2a6b0"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1229,7 +1229,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "909d50bad73de640dcb3806d25b6a3c0"
+    "revision": "a1921b459124a5bc91d7863f839a177f"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/validation.js",
-    "revision": "69433f91b77e9261334926a2dfd7c945"
+    "revision": "272e6a1248a82b3d164f1a5e9f3870e7"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1385,7 +1385,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "84e4439a3b74cd32c93234f7075bcf92"
+    "revision": "17c900c9a963325e84abf082f6202d71"
   },
   {
     "url": "scripts/services/appInfoManager.js",
@@ -1397,7 +1397,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/clientDataManager.js",
-    "revision": "579e11849b26cd7b9faa573f4f01d3ad"
+    "revision": "c88cbb02f0b46facf716d4832e64525d"
   },
   {
     "url": "scripts/services/configManager.js",
@@ -1473,7 +1473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "7abb90f61019cbf429d07bbef86b4551"
+    "revision": "5e4bcc33b9c4f76023363afb8de636eb"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",

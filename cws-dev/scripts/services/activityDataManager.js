@@ -234,11 +234,11 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJson
 {
     var activityJson = {};
 
-    if ( !formsJsonActivityPayload.mongoPayload ) throw 'activityPayloadsJson.mongoPayload not exists';
+    if ( !formsJsonActivityPayload.payload ) throw 'activityPayloadsJson.payload not exists';
     else
     {
         var createdDT = new Date();
-        var payload = formsJsonActivityPayload.mongoPayload;
+        var payload = formsJsonActivityPayload.payload;
 
 
         // CONVERT 'searchValues'/'captureValues' structure ==> 'captureValues.processing': { 'searchValues' }
@@ -256,7 +256,6 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJson
             ,'history': []
             ,'url': actionUrl
             ,'searchValues': payload.searchValues
-            ,'dhisPayload': formsJsonActivityPayload.dhisPayload
             //"payloadType": payloadType
             // 'actionJson': actionDefJson <-- Do not need this, probably
         };
@@ -293,15 +292,14 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson 
 {
     var payloadJson = {
         "appVersion": ActivityDataManager.wsSubmit_AppVersionStr,
-        "dhisPayload": activityJson.processing.dhisPayload,
-        "mongoPayload": undefined
+        "payload": undefined
     };
 
     // 'activity' are not in 'search/capture' structure.  Change it to that structure.
     var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
     delete activityJson_Copy.processing;
     
-    payloadJson.mongoPayload = {
+    payloadJson.payload = {
         'searchValues': activityJson.processing.searchValues,
         'captureValues': activityJson_Copy
     };
@@ -384,27 +382,29 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
     {
         var tranList = activityJson.transactions;
 
-        for( var i = 0; i < tranList.length; i++ )
+        if ( tranList )
         {
-            var tranData_dv = tranList[i].dataValues;
-            var tranData_cd = tranList[i].clientDetails;
-
-            if ( tranData_dv )
+            for( var i = 0; i < tranList.length; i++ )
             {
-                for ( var prop in tranData_dv ) 
+                var tranData_dv = tranList[i].dataValues;
+                var tranData_cd = tranList[i].clientDetails;
+    
+                if ( tranData_dv )
                 {
-                    jsonCombined[ prop ] = tranData_dv[ prop ];
+                    for ( var prop in tranData_dv ) 
+                    {
+                        jsonCombined[ prop ] = tranData_dv[ prop ];
+                    }
+                }
+    
+                if ( tranData_cd )
+                {
+                    for ( var prop in tranData_cd ) 
+                    {
+                        jsonCombined[ prop ] = tranData_cd[ prop ];
+                    }
                 }
             }
-
-            if ( tranData_cd )
-            {
-                for ( var prop in tranData_cd ) 
-                {
-                    jsonCombined[ prop ] = tranData_cd[ prop ];
-                }
-            }
-
         }
     }
     catch ( errMsg )
@@ -413,4 +413,37 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
     }
 
     return jsonCombined;
+};
+
+
+ActivityDataManager.getClientInfo_FromTrans = function( activityJson )
+{
+    var clientDetails = {};
+
+    try
+    {
+        var tranList = activityJson.transactions;
+
+        if ( tranList )
+        {
+            for( var i = 0; i < tranList.length; i++ )
+            {
+                var tranData_cd = tranList[i].clientDetails;
+        
+                if ( tranData_cd )
+                {
+                    for ( var prop in tranData_cd ) 
+                    {
+                        clientDetails[ prop ] = tranData_cd[ prop ];
+                    }
+                }
+            }
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error during ActivityDataManager.getClientInfo_FromTrans, errMsg: ' + errMsg );
+    }
+
+    return clientDetails;
 };

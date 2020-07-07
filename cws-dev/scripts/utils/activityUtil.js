@@ -32,27 +32,24 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
 ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, formDivSecTag )
 {
 	var activityPayload = actionDefJson.activityPayload;
-	var dhisPayload;
-	var mongoPayload;
+	var payload;
 
 	if ( activityPayload )
 	{
-		// If '.localPayload' exists, override the 'dhisPayload' or 'mongoPayload' with 'localPayload'.
+		// If '.localPayload' exists, override the 'payload'
 		if ( activityPayload.localPayload && WsCallManager.isLocalDevCase ) 
 		{
-			if ( activityPayload.dhisPayload ) activityPayload.dhisPayload = activityPayload.localPayload;
-			if ( activityPayload.mongoPayload ) activityPayload.mongoPayload = activityPayload.localPayload;
+			if ( activityPayload.payload ) activityPayload.payload = activityPayload.localPayload;
 		}
 
-		dhisPayload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.dhisPayload, actionDefJson, formDivSecTag );  
-		mongoPayload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.mongoPayload, actionDefJson, formDivSecTag );  
+		payload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.payload, actionDefJson, formDivSecTag );  
 	}
 	else
 	{
-		mongoPayload = ActivityUtil.generateFormsJsonData_ByType( actionDefJson, actionDefJson, formDivSecTag );  
+		payload = ActivityUtil.generateFormsJsonData_ByType( actionDefJson, actionDefJson, formDivSecTag );  
 	}
 
-	return { 'dhisPayload': dhisPayload, 'mongoPayload': mongoPayload };
+	return { 'payload': payload };
 };
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.

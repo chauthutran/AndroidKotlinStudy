@@ -3,6 +3,7 @@
 // 2. set up DWS connection settings for API calls
 // 3. start connectionManager (+ scheduler)
 // 4. run other things (memory swap?)
+//
 
 function app()
 {
