@@ -1,4 +1,27 @@
-// This could be static class - Need to set it up for 'cwsRenderObj' after cwsRenderObj
+// TODO: TO be merged with 'Validation' class..
+function ValidationUtil() {};
+
+ValidationUtil._DisableValidation = false;
+
+ValidationUtil.disableValidation = function( execFunc )
+{
+	ValidationUtil._DisableValidation = true;
+
+	try
+	{
+		execFunc();
+	}
+	catch ( errMsg )
+	{
+		console.log( 'Error in ValidationUtil.disableValidation execute, errMsg: ' + errMsg );
+	}
+
+	ValidationUtil._DisableValidation = false;
+};
+
+// -------------------------------------------------
+
+// TODO: This could be static class - Need to set it up for 'cwsRenderObj' after cwsRenderObj
 function Validation( cwsRenderObj ) //, blockObj, pageTag )
 {
 	var me = this;
@@ -16,11 +39,11 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 		// < change to find( '.dataValue' ) ?
         //formTag.find( "input,select,checkbox,textarea" ).each( function() {
 		formTag.find( ".dataValue" ).each( function() {
-			  var inputTag = $( this );
-        inputTag.change( function(){ //blur
-            me.checkValidations( inputTag );
-        });
-		  });
+			var inputTag = $( this );
+			inputTag.change( function(){ //blur
+				me.checkValidations( inputTag );
+			});
+		});
     };
 
 	// ================================
@@ -44,30 +67,36 @@ function Validation( cwsRenderObj ) //, blockObj, pageTag )
 
 	me.checkValidations = function( tag )
 	{	
-		// Validation Initial Setting Clear
-		tag.attr( 'valid', 'true' );
+		var valid = true;
 
-		var divFieldBlockTag = tag.closest( '.fieldBlock' );
-		var divErrorMsgTargetTag = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
- 
-		divFieldBlockTag.find( "div.errorMsg" ).remove();
-
-		if ( divFieldBlockTag.is( ':visible' ) ) 
+		// TODO: Make 'skipValidation' a static/constant variable somewhere..
+		//if ( tag.attr( 'skipValidation' ) !== 'true' )
+		if ( !ValidationUtil._DisableValidation )
 		{
-			me.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
-			me.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+			// Validation Initial Setting Clear
+			tag.attr( 'valid', 'true' );
+
+			var divFieldBlockTag = tag.closest( '.fieldBlock' );
+			var divErrorMsgTargetTag = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
+	
+			divFieldBlockTag.find( "div.errorMsg" ).remove();
+
+			if ( divFieldBlockTag.is( ':visible' ) ) 
+			{
+				me.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+				me.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+			}
+
+			// If not valid, set the background color.
+			valid = ( tag.attr( 'valid' ) == 'true' );
+			divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : me.COLOR_WARNING );
 		}
-
-		// If not valid, set the background color.
-		var valid = ( tag.attr( 'valid' ) == 'true' );
-
-		divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : me.COLOR_WARNING );
 
 		return valid;
 	};

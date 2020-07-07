@@ -64,22 +64,25 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				formTag.append( groupDivTag );
 			}
 
-			me.populateFormData( passedData, formTag );
-			me.evalFormGroupDisplayStatus( formTag );
-
-			// NOTE: TRAN VALIDATION
-			me.validationObj.setUp_Events( formTag );
-
-			//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
-			setTimeout( function(){
-				me.evalFormInputFunctions( formTag );
-			}, 500 );
-
-			// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
-			formDivSecTag.find(".dataValue:not(:empty)").change();
-
+			
+			ValidationUtil.disableValidation( function() 
+			{
+				me.populateFormData( passedData, formTag );
+				me.evalFormGroupDisplayStatus( formTag );
+	
+				// NOTE: TRAN VALIDATION
+				me.validationObj.setUp_Events( formTag );
+	
+				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
+				setTimeout( function(){
+					me.evalFormInputFunctions( formTag );
+				}, 500 );
+	
+				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
+				formDivSecTag.find(".dataValue:not(:empty)").change();
+		
+			});
 		}
-
 	}
 
 	me.createGroupDivTag = function( formFieldGroup, groupsCreated, formTag )
@@ -1126,8 +1129,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			}
 
 		}
-
-
 	};
 
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
@@ -1473,9 +1474,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 			{
 				var clientDetails = jsonData.clientDetails;
 
-				//console.log( 'clientDetails' );
-				//console.log( clientDetails );
-
 				// Need to confirm with Tran/Greg with getting right input control
 				var inputTags = formDivSecTag.find( 'input,select' ).filter('.dataValue');
 
@@ -1487,19 +1485,16 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					try
 					{
 						var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
-
-						//console.log( 'nameStr: ' + nameStr );
 		
 						if ( nameStr )
 						{
 							var data = clientDetails[ nameStr ];
 
-							console.log( data );
-
 							if ( data && Util.isTypeString( data ) )
 							{
 								FormUtil.setTagVal( inputTag, data, function() 
 								{
+									// Do without validation..
 									inputTag.change();
 								});	
 							}
@@ -1516,22 +1511,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		{
 			console.log( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
 		}
-	};
-
-
-	me.getContentArr = function( input )
-	{
-		var contentArr = input;
-
-		if ( Util.isTypeArray( input ) )
-		{
-			if ( input.length > 0 && Util.isTypeArray( input[0] ) )
-			{
-				contentArr = input[0];
-			}
-		}
-
-		return contentArr;
 	};
 
 
@@ -1564,12 +1543,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 							// ADDED - CheckBox mark by passed in data + perform change event if passed in value are populated.
 							FormUtil.setTagVal( inputTag, attrJson.value, function() 
 							{
-								//console.log( 'populating tag data, name: ' + inputTag.attr( 'name' ) + ', val: ' + attrJson.value );
 								inputTag.change();
-
-								// TODO: But, we also need to display the values as well
-								// <-- ASK TRAN TO SET ALL THE 'change' event on input.dataValue --> to trigger the displayValue settting.
-
 							});
 						}
 					}					
@@ -1587,6 +1561,21 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 		}
 	};
 
+
+	me.getContentArr = function( input )
+	{
+		var contentArr = input;
+
+		if ( Util.isTypeArray( input ) )
+		{
+			if ( input.length > 0 && Util.isTypeArray( input[0] ) )
+			{
+				contentArr = input[0];
+			}
+		}
+
+		return contentArr;
+	};
 
 	me.removeGroupDotName = function( inputNameStr )
 	{
