@@ -1189,7 +1189,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "d507195f17c6adbb532977b9b5390882"
+    "revision": "3aa0be2f712f16c4bf07de3ed42a59ab"
   },
   {
     "url": "redeemGen.html",
@@ -1233,7 +1233,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockList.js",
-    "revision": "a9dc52d4e41830ee09b6eb80a7fc38d8"
+    "revision": "8cb9c403d8f1e37cd6b0f24641491d5d"
   },
   {
     "url": "scripts/classes/blockListView.js",
