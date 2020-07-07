@@ -134,6 +134,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 <div class="activityStatusIcon list_three_item_cta2"></div>
             </div>
 
+            <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+
         </div>
 
     </div>`;
