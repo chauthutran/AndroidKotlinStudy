@@ -22,8 +22,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // Reorganized class layout: 
     //              [UI] methods grouped together above [DATA] methods 
     
-    me.template_ActivityContentDateTag = `<div class="activityContentDisplay list_three_line-date"></div>`;
-    me.template_ActivityContentTextTag = `<div class="activityContentDisplay list_three_line-text"></div>`;
+    me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date"></div>`;
+    //me.template_ActivityContentTextTag = `<div class="activityContentDisplay list_three_line-text"></div>`;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -40,7 +40,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         else
         {
-            return $( 'div.activity[itemid="' + me.activityId + '"]' );
+            return $( '.activity[itemid="' + me.activityId + '"]' );
         }
     };
 
@@ -69,11 +69,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
             {
                 var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
 
-                var activityContainerTag = activityCardDivTag.find( 'div.activityContainer' );
-                var activityTypeIconTag = activityCardDivTag.find( 'div.activityIcon' );
-                var activityContentTag = activityCardDivTag.find( 'div.activityContent' );
-                var activityRerenderTag = activityCardDivTag.find( 'div.activityRerender' );
-                var activityPhoneCallTag = activityCardDivTag.find( 'div.activityPhone' );
+                var activityContainerTag = activityCardDivTag.find( '.activityContainer' );
+                var activityTypeIconTag = activityCardDivTag.find( '.activityIcon' );
+                var activityContentTag = activityCardDivTag.find( '.activityContent' );
+                var activityRerenderTag = activityCardDivTag.find( '.activityRerender' );
+                var activityPhoneCallTag = activityCardDivTag.find( '.activityPhone' );
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
@@ -322,11 +322,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.syncResultMsgShow = function( statusVal, activityJson, activityCardDivTag )
     {
         // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
-
         Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
         {
             me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
-
             me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson );
         });
 
@@ -338,7 +336,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
     {        
         var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
-
         var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
 
         divHeaderTag.html( '<div class="msgHeaderLabel sync_all__header_title">' + statusLabel + '</div>' );
@@ -348,18 +345,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson )
     {
         var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
+        divBottomTag.empty();
 
-        // 1. ActivityCard Info Add - From Activity Card Tag
-        divBottomTag.append( Templates.msgActivityCard );
-
-        var activityContainerTag = divBottomTag.find( 'div.activityContainer' );
-
-        activityContainerTag.append( activityCardDivTag.find( 'div.activityIcon' ).clone() );
-        activityContainerTag.append( activityCardDivTag.find( 'div.activityContent' ).clone() );
-        
+        // 1. ActivityCard Info Add - From Activity Card Tag  
+        divBottomTag.append( $( activityCardDivTag.parent().find( '[itemid=' + activityJson.id + ']' )[ 0 ].outerHTML ) ); // << was activityJson.activityId
 
         // 2. Add 'processing' sync message.. - last one?
-        
         Util.tryCatchContinue( function() 
         {
             var historyList = activityJson.processing.history;
@@ -368,11 +359,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             {
                 var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
                 var latestItem = historyList_Sorted[0];    
-        
                 var msgSectionTag = $( Templates.msgSection );
     
                 msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
-        
                 msgSectionTag.find( 'div.msgSectionLog' ).text( Util.getStr( latestItem.msg ) );        
     
                 divBottomTag.append( msgSectionTag );
@@ -387,7 +376,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         var activitySettings = FormUtil.getActivityType( activity );      
         var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-        
+        var appendContent = '';
+
         divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
 
 
@@ -395,8 +385,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( activity.processing )
         {
             var dateStr = $.format.date( activity.processing.created, "MMM dd, yyyy - HH:mm" );
-    
-            divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( dateStr ) );
+            //divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( dateStr ) );
+            appendContent = dateStr + '<br>';
         }
 
 
@@ -410,13 +400,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // Need 'activity', 'activityTrans'
                 var dispSettingEvalStr = displaySettings[ i ];
                 var displayEvalResult = "------------";
-                
+
                 displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, INFO, 'ActivityCard.setActivityContentDisplay' );
-    
-                divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+
+                //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+                appendContent += displayEvalResult.trim() + '<br>';
             }
 
         }
+
+        divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
+
     };
 
 

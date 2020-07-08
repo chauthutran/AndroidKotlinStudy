@@ -532,6 +532,20 @@ $retina-suffix: '@2x';
             }
         }
 
+        .tab_fs {
+            @include rwd-min(558) {
+                border-bottom: 1px solid $bg-100;
+            }
+        }
+
+        .tab_fs__container {
+            @include rwd-min(558) {
+                border-left: 1px solid $bg-100;
+                border-right: 1px solid $bg-100;
+                border-bottom: 1px solid $bg-100;
+            }
+        }
+
         .btm_nav {
             background-color: #FFF;
 
@@ -804,3 +818,29 @@ $retina-suffix: '@2x';
         }
     }
 }
+
+/* mixin for multiline */
+@mixin multiLineEllipsis($lineHeight, $lineCount, $bgColor){
+    overflow: hidden;
+    position: relative;
+    line-height: $lineHeight;
+    max-height: $lineHeight * $lineCount; 
+    margin-right: -1em;
+    padding-right: 1em;
+    margin-bottom: 8px;
+    &:before {
+      content: '...';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      right: 0;
+      width: 1em;
+      height: 1em;
+      margin-top: 0.2em;
+      background: $bgColor;
+    }
+  }

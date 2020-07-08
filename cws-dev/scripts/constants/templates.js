@@ -123,16 +123,9 @@ Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" class="dialo
 
 
 Templates.msgAreaBottomContent = `<div class="msgArea sync_all">
-        <div class="msgHeader sync_all__header">
-        </div>
-        <div class="msgContent bottom__wrapper">
-        </div>
+        <div class="msgHeader sync_all__header" />
+        <div class="msgContent bottom__wrapper list" />
     </div>`;
-
-Templates.msgActivityCard = `<div class="msgActivityCard sheet_bottom_card">
-    <div class="activityContainer sheet_bottom_card__container">
-    </div>
-</div>`;
 
 Templates.msgSection = `<div class="msgSection sync_all__section">
     <div class="msgSectionTitle sync_all__section_title"></div>
@@ -227,16 +220,14 @@ Templates.activityCardFullScreen = `
     <span>Details</span>
  </div>
  <div class="card _tab activity">
-  <div class="card__sync" >
-    <div class="card__sync_container">
-      <div class="activityIcon card__sync-suppor_visuals"></div>
-      <div class="activityContent card__sync_content list_three_item_content"></div>
-      <div class="activityStatus card__sync_cta">
-        <div class="activityStatusText card__sync_status color_status_error">Error</div>
-        <div class="activityPhone card__sync_cta1"></div>
-        <div class="activityStatusIcon card__sync_cta2"></div>
-      </div>
-    </div>
+  <div class="card__container" >
+    <card__support_visuals class="activityIcon card__support_visuals" />
+    <card__content class="activityContent card__content" />
+    <card__cta class="activityStatus card__cta">
+      <div class="activityStatusText card__cta_status" />
+      <div class="activityPhone card__cta_one"></div>
+      <div class="activityStatusIcon card__cta_two"></div>
+    </card__cta>
   </div>
   <div class="tab_fs">
   <ul class="tab_fs__head" style="background-color: #fff;">

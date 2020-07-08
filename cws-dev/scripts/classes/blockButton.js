@@ -184,13 +184,13 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 					var liDivTag = divTag.find( 'div[rel=' + btnData + ']' );
 					var liSpanTag = divTag.find( 'span[rel=' + btnData + ']' );
 
-					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
+					liDivTag.css( 'background', 'url(' + ( ! btnJson.imageSrc ) ? 'images/arrow_right.svg' : btnJson.imageSrc  + ')' );
 					liSpanTag.text( btnJson.defaultLabel );
 					btnTag = liTabTag;
 				}
 				else
 				{
-					btnTag = $( '<div class="btnType ' + btnJson.buttonType + '"><img src="' + btnJson.imageSrc + '"></div>' );
+					btnTag = $( '<div class="btnType ' + btnJson.buttonType + '"><img src="' + ( ! btnJson.imageSrc ) ? 'images/arrow_right.svg' : btnJson.imageSrc + '"></div>' );
 				}
 			}
 			else if ( btnJson.buttonType === 'textButton' )
@@ -215,9 +215,11 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 			}
 			else if ( btnJson.buttonType === 'listRightImg' )
 			{
-				btnTag = $( '<img src="' + btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
-				//btnTag.attr( 'width', '100%' );
-				//btnTag.attr( 'height', '100%' );
+				btnTag = $( '<img src="' + ( ! btnJson.img ) ? 'images/arrow_right.svg' : btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
+				btnTag.on( 'error', function (){
+					$( this).attr( 'src', 'images/arrow_right.svg' );
+					return false;
+				});
 
 				if ( divTag )
 				{
