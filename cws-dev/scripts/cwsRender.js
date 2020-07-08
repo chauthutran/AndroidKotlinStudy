@@ -306,11 +306,11 @@ function cwsRender()
 
 			if ( areaList )
 			{
-				var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+				var finalAreaList = ( SessionManager.Status_LoggedIn ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
 	
-					if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+					if ( startMenuTag && SessionManager.Status_LoggedIn ) startMenuTag.click();
 	
 					// initialise favIcons
 					//me.favIconsObj = new favIcons( me );
@@ -329,13 +329,13 @@ function cwsRender()
 
 			if ( areaList )
 			{
-				var finalAreaList = FormUtil.checkLogin() ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+				var finalAreaList = ( SessionManager.Status_LoggedIn ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
 
 					me.updateNavDrawerHeaderContent();
 	
-					//if ( startMenuTag && FormUtil.checkLogin() ) startMenuTag.click();
+					//if ( startMenuTag && SessionManager.Status_LoggedIn ) startMenuTag.click();
 
 				} );
 	
@@ -386,14 +386,14 @@ function cwsRender()
 
 	me.updateNavDrawerHeaderContent = function()
 	{
-		if( !FormUtil.checkLogin() )
+		if( !SessionManager.Status_LoggedIn )
 		{
 			return;
 		}
 
 		$( 'div.navigation__user' ).html( SessionManager.sessionData.login_UserName );
 
-		if ( FormUtil.checkLogin() ) //myData && FormUtil.checkLogin()
+		if ( SessionManager.Status_LoggedIn ) //myData && SessionManager.Status_LoggedIn
 		{
 			// var mySubmit = FormUtil.records_redeem_submit; 
 			// var myQueue = FormUtil.records_redeem_queued; 
@@ -757,10 +757,9 @@ function cwsRender()
 
 	me.logOutProcess = function()
 	{
-		// TODO: CREATE 'SESSION' CLASS TO PUT THESE...
-		SessionManager.unloadDataInSession();
-		//FormUtil.undoLogin();
-		sessionStorage.clear();
+		SessionManager.Status_LoggedIn = false;
+		SessionManager.unloadDataInSession(); // Include config json unload
+		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
 		// change to session Management process > forced reload of app (detect new version + forced login)
@@ -774,17 +773,17 @@ function cwsRender()
 			}
 			else
 			{
-				me.closeLoginSession();
+				me.closeLoginUI();
 			}
 		}
 		else
 		{
-			me.closeLoginSession();
+			me.closeLoginUI();
 		}
 
 	}
 
-	me.closeLoginSession = function()
+	me.closeLoginUI = function()
 	{
 		//me.loginObj.spanOuNameTag.text( '' );
 		//me.loginObj.spanOuNameTag.hide();
@@ -1018,7 +1017,7 @@ function cwsRender()
 		// Window Resize detection
 		$( window ).on( 'resize', function () {
 
-			if ( ! FormUtil.checkLogin() )
+			if ( !SessionManager.Status_LoggedIn )
 			{
 				//InitialWidth = $( 'body' ).attr( 'initialWidth' );
 				initialHeight = $( 'body' ).attr( 'initialHeight' );

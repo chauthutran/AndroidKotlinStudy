@@ -43,7 +43,7 @@ function settingsApp( cwsRender )
 
         me.showSettingsPage();
 
-        if ( FormUtil.checkLogin() )
+        if ( SessionManager.Status_LoggedIn )
         {
             me.defaultsInitialised = 1;
         }
@@ -539,7 +539,7 @@ function settingsApp( cwsRender )
             $( '#loginFormDiv' ).hide();
         }
 
-        me.renderNonEssentialFields( FormUtil.checkLogin() );
+        me.renderNonEssentialFields( SessionManager.Status_LoggedIn );
 
         me.settingsFormDivTag.show();    
     }
@@ -549,18 +549,7 @@ function settingsApp( cwsRender )
         //me.settingsFormDivTag.fadeOut( 500 );
         me.settingsFormDivTag.hide();
 
-        //setTimeout( function() {
-            //if ( FormUtil.checkLogin() > 0 )
-            //{
-                $( '#pageDiv' ).show();
-            //}
-            /*else
-            {
-                $( '#loginFormDiv' ).show();
-            }*/
-            //me.settingsFormDivTag.hide();
-        //}, 250 );
-
+        $( '#pageDiv' ).show();
     }
 
 
@@ -782,7 +771,7 @@ function settingsApp( cwsRender )
             $( '#imgsettingsInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        if ( FormUtil.checkLogin() )
+        if ( SessionManager.Status_LoggedIn )
         {
 
             $( '#settingsInfo_dcdVersion' ).html( dcdConfigVersion );

@@ -136,23 +136,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 
 // -----------------------------------
 // ---- Login And Fetch WS Related ------
-
-FormUtil.checkLogin = function()
-{
-	return ( SessionManager.sessionData.login_UserName.toString().length * SessionManager.sessionData.login_Password.toString().length );
-}
-
-FormUtil.undoLogin = function()
-{
-	SessionManager.sessionData.login_UserName = '';
-	SessionManager.sessionData.login_Password = '';	
-	ConfigManager.getConfigJson() = undefined;
-	SessionManager.sessionData.orgUnitData = undefined;
-
-	$( 'input.loginUserPin' ).val( '' );
-	$( 'input.loginUserPinNumeric' ).val( '' );
-}
-
 // ---------------------------------------------------------
 
 FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )

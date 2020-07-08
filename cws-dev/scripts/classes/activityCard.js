@@ -130,7 +130,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         
         var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
-
+        //divSyncIconTag.css( "cursor", "pointer" );
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
     

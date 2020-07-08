@@ -639,7 +639,7 @@ function Statistics( cwsRender )
         me.statisticsFormDiv.fadeOut( 500 );
 
         setTimeout( function() {
-            if ( FormUtil.checkLogin() )
+            if ( SessionManager.Status_LoggedIn )
             {
                 me.cwsRenderObj.renderBlockTag.show( 'fast' );
             }

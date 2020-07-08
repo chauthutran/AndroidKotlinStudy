@@ -202,7 +202,7 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack )
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
-		if ( FormUtil.checkLogin() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
+		if ( SessionManager.Status_LoggedIn ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
 	}
 };
 
@@ -333,7 +333,7 @@ ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 ConnManagerNew.update_UI = function( statusInfo )
 {
 	// update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
-	if ( ! FormUtil.checkLogin() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
+	if ( !SessionManager.Status_LoggedIn ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
 	else
 	{
 		ConnManagerNew.update_UI_NetworkIcons( statusInfo );
