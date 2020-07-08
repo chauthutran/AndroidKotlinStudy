@@ -18,6 +18,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 	me.payloadConfigSelection;
 	me.formJsonArr;
+	me.formJsonConfig = {};
 	me._childTargetActionDelay = 400;
 	me._groupNoneId = 'zzzGroupNone';
 
@@ -58,6 +59,9 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				var groupDivTag = me.createGroupDivTag( formFieldGroups[ i ], groupsCreated, formTag );
 
 				var formItemJson = formJsonArr[ formFieldGroups[ i ].seq ];
+
+				me.formJsonConfig[formItemJson.id] = formItemJson;
+
 				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr, autoComplete );
 				groupDivTag.append( inputFieldTag );
 
@@ -1494,7 +1498,6 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 							{
 								FormUtil.setTagVal( inputTag, data, function() 
 								{
-									// Do without validation..
 									inputTag.change();
 								});	
 							}
@@ -1514,6 +1517,53 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 	};
 
 
+	me.populateDisplayValueIfAny = function( divInputFieldTag, formItemJson )
+	{
+		var dataValue = divInputFieldTag.find(".dataValue").val();
+		if( dataValue != "" )
+		{	
+			var controlType = formItemJson.controlType;
+
+			if( controlType == "YEAR" )
+			{
+				divInputFieldTag.find(".displayValue").val( dataValue );
+			}
+			else if( formItemJson.options == undefined && controlType == "CHECKBOX" && dataValue == "true" )
+			{
+				// For TRUE/FALSE case without options defination
+				divInputFieldTag.find("input.displayValue").prop( "checked", true );
+			}
+			else if( formItemJson.options != undefined )
+			{
+				var dataValueList = dataValue.split(",");
+				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+				var displayValues = [];
+
+				for ( var i = 0; i < dataValueList.length; i++ )
+				{
+					var searched = Util.getFromList( optionList, dataValueList[i], "value" );
+					if( searched != undefined  && ( controlType == "RADIO" || controlType == "CHECKBOX" ) )
+					{
+						divInputFieldTag.find("input[id='opt_" + dataValueList[i] + "']").prop( "checked", true );
+					}
+					else if( controlType == "DROPDOWN_AUTOCOMPLETE" || controlType == "MULTI_CHECKBOX" )
+					{	
+						var displayValue = ( searched == undefined ) ? dataValueList[i] : me.cwsRenderObj.langTermObj.translateText( searched.defaultName, searched.poTerm );
+						displayValues.push( displayValue );
+					}
+				}
+
+				if( displayValues.length > 0 )
+				{
+					divInputFieldTag.find(".displayValue").val( displayValues.join(",") );
+				}
+			}
+			
+		}
+
+	}
+
+
 	me.populateFormData_ArrayDataByUid = function( formDivSecTag, attributes )
 	{
 		try 
@@ -1523,7 +1573,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 
 			// NOTE: Since uid are placed in right hidden 'dataValue' class, we do not need to worry about
 			// finding the right tag..
-			var inputTags = formDivSecTag.find( 'input.dataValue[uid],select.dataValue[uid]' );
+			var inputTags = formDivSecTag.find( 'input.dataValue,select.dataValue' );
 
 			// Go through each input tags and use 'uid' to match the attribute for data population
 			inputTags.each( function( i ) 
@@ -1533,18 +1583,33 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				try 
 				{
 					var uidStr = inputTag.attr( 'uid' );
-					if ( uidStr === 'undefined' ) uidStr = inputTag.attr( 'name' ); // If uid='undefined', use 'name' value for data matching id.
+					
+					if ( uidStr == undefined ||  uidStr === "undefined" ) {
+						uidStr = inputTag.attr( 'name' ); // If uid='undefined', use 'name' value for data matching id.
+					}
+
 
 					if ( uidStr )
 					{
 						var attrJson = Util.getFromList( attributes, uidStr, "id" );
+						
 						if ( attrJson )
 						{
-							// ADDED - CheckBox mark by passed in data + perform change event if passed in value are populated.
-							FormUtil.setTagVal( inputTag, attrJson.value, function() 
-							{
-								inputTag.change();
-							});
+							inputTag.val(attrJson.value);
+
+							var formItemJson = me.formJsonConfig[inputTag.attr("name")];
+							me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
+
+							inputTag.change();
+
+							// // ADDED - CheckBox mark by passed in data + perform change event if passed in value are populated.
+							// FormUtil.setTagVal( inputTag, attrJson.value, function() 
+							// {
+							// 	var formItemJson = me.formJsonConfig[inputTag.attr("name")];
+							// 	me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
+
+							// 	inputTag.change();
+							// });
 						}
 					}					
 				}
