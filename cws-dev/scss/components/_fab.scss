@@ -1,4 +1,5 @@
 .fab-wrapper {
+
     position: fixed;
     display: table;
     align-items: right;
@@ -10,6 +11,7 @@
     z-index: 1599;
 
     .fab__section {
+        display:none;
         display: table-row;
 
         .fab {

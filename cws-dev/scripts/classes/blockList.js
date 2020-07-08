@@ -90,68 +90,29 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
     me.template_listDivTag = `<div class="list" />`;
-    /*
-    me.template_listDivTag = `<table class="list">
-        <tbody>
-        </tbody>
-    </table>`;
-    */
 
-    /*me.template_divActivityTag = `<tr class="activity">
-        <td>
-            <div class="list_three_line">
+    me.template_divActivityTag = `<div class="activity card">
 
-                <div class="activityContainer list_three_line__container">
+        <div class="activityContainer card__container">
 
-                    <div class="activityIcon list_three_line-suppor_visuals"></div>
+            <card__support_visuals class="activityIcon card__support_visuals" />
 
-                    <div class="activityContent list_three_item_content">
-                    </div>
+            <card__content class="activityContent card__content" />
 
-                    <div class="activityStatus list_three_item_cta">
-                        <div class="activityStatusText list_three_item_status"></div>
-                        <div class="activityPhone list_three_item_cta1"></div>
-                        <div class="activityStatusIcon list_three_item_cta2"></div>
-                    </div>
-
-                    <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
-
-                </div>
-            </div>
-        </td>
-    </tr>`;*/
-    me.template_divActivityTag = `<div class="activity list_three_line">
-
-        <div class="activityContainer list_three_line__container">
-
-            <div class="activityIcon avatar_circle" />
-
-            <div class="activityContent list_three_item_content" />
-
-            <div class="activityStatus list_three_item_cta">
-                <div class="activityStatusText list_three_item_status"></div>
-                <div class="activityPhone list_three_item_cta1"></div>
-                <div class="activityStatusIcon list_three_item_cta2"></div>
-            </div>
-
-            <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+            <card__cta class="activityStatus card__cta">
+                <div class="activityStatusText card__cta_status"></div>
+                <div class="activityPhone card__cta_one"></div>
+                <div class="activityStatusIcon card__cta_two"></div>
+            </card__cta>
 
         </div>
 
     </div>`;
 
-    /*me.template_divActivityEmptyTag = `<tr class="activity emptyList">
-        <td>
-            <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
-        </td>
-    </tr>`;*/
     me.template_divActivityEmptyTag = `<div class="activity emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
     </div>`;
 
-    /*me.template_groupDivTag = `<tr class="blockListGroupBy opened">
-        <td class="blockListGroupBySection"></td>
-    </tr>`;*/
     me.template_groupDivTag = `<div class="blockListGroupBy opened">
         <div class="blockListGroupBySection" />
     </div>`;
@@ -365,8 +326,6 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
             me.setNextPagingData( me.pagingData, currPosJson );            
 
-            //console.log( me.pagingData );
-            //console.log( currPosJson );
             me.pagingData.endAlreadyReached = currPosJson.endAlreadyReached;
 
 

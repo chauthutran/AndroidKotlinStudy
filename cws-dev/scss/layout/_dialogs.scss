@@ -1,38 +1,31 @@
 dialog {
     display: none;
-    float: left;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
     z-index: 1700;
     -webkit-transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    padding: 0 0 0 24px;
     border-radius: $radius;
     border: 0;
-    max-width: 450px;
-    margin: 0 auto;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
-
+    width: 90%;
+    max-width: 400px;
+    max-height: 400px;
     @include box-sizing(border-box);
+    padding: 16px 16px 4px 16px;
 
-    @include p-device(240) {
-        margin: 0 auto;
-        padding: 8px;
+    @include rwd-min(800) {
+        left:25%;
+        -webkit-transform: translateX(-55%) translateY(-50%);
+        -moz-transform: translateX(-55%) translateY(-50%);
+        -ms-transform: translateX(-55%) translateY(-50%);
+        transform: translateX(-55%) translateY(-50%);
     }
 
-    @include l-device(320) {
-        margin: 0 auto;
-        padding: 16px;
-    }
-/*
-    @include rwd-max(488) {
-        margin-left: 16px;
-        margin-right: 16px;
-    }
-*/
     &::-webkit-backdrop {
         background: rgba(0, 0, 0, 0.4);
     }
@@ -43,70 +36,121 @@ dialog {
 
     &::-webkit-backdrop {
         -webkit-animation: show 500ms ease;
-                animation: show 500ms ease;
+        animation: show 500ms ease;
     }
 
     &[open],
     &::backdrop {
         -webkit-animation: show 500ms ease;
-                animation: show 500ms ease;
+        animation: show 500ms ease;
     }
+    
 
     .dialog__title {
         width: 100%;
-        min-height: 48px;
-        padding-right: 16px;
+        height: auto;
+        @include multiLineEllipsis(20px,2,white);  
         @include box-sizing(border-box);
 
         label {
             @include font-size(18px);
             line-height: 20px;
             font-family: $typ-default;
-            font-style: normal;
             font-weight: 500;
-            margin: 16px 0 8px 0;
             color: $color-typ-pl;
-            display: block;
-
-            @include p-device(240) {
-                @include font-size(16px);
-                line-height: 14px;
-                font-family: $typ-default;
-                font-style: normal;
-                font-weight: 500;
-                margin-top: 10px;
-            }
-
-            @include l-device(320) {
-                @include font-size(16px);
-                line-height: 14px;
-                font-family: $typ-default;
-                font-style: normal;
-                font-weight: 500;
-                margin-top: 2px;
-            }
-        }
-
-        @include p-device(240) {
-            min-height: 24px;
-        }
-
-        @include l-device(320) {
-            min-height: 24px;
         }
     }
 
-    .dialog__search {
-        width: 100%;
-        height: 48px;
-    }
-
-    .dialog__list {
+    .dialog__text {
         clear: both;
-        text-align: left;
-        width: 100%;
+        height: auto;
+        line-height: 16px;
+        max-height: 300px;
+        font-family: $typ-default;
+        font-weight: 300;
+        color: rgba($color-typ-pl, 60%);
+        margin-bottom: 8px;
+        overflow-x: auto;
+        @include font-size(14px);
         @include box-sizing(border-box);
     }
+
+    .dialog__action {
+        float: right;
+        height: auto;
+        @include box-sizing(border-box);
+
+        div {
+            float: left;
+            margin-bottom: 0px;
+        }
+
+        @include rwd-max(488) {
+            max-width: 100%;
+
+            div {
+                float: right;
+            }
+        }
+    }
+}
+
+.dialog_alert,
+.dialog_confirmation {
+    @include p-device(240) {
+        .dialog__text {
+            max-height: 150px;
+        }
+    }
+
+    @include l-device(320) {
+        .dialog__text {
+            max-height: 120px;
+        }
+    }
+}
+
+.dialog_search-ck,
+.dialog_search-rb {
+    .field_leading_icon {
+        margin-bottom: 8px;
+    }
+
+    @include p-device(240) {
+        .dialog__text {
+            max-height: 80px;
+        }
+    }
+
+    @include l-device(320) {
+        .dialog__text {
+            max-height: 50px;
+        }
+    }
+
+    @include p-device(320) {
+        .dialog__text {
+            max-height: 220px;
+        }
+    }
+
+    @include l-device(480) {
+        .dialog__text {
+            max-height: 140px;
+        }
+    }
+
+    @include l-device(600) {
+        .dialog__text {
+            max-height: 180px;
+        }
+    }
+
+}
+
+
+.dialog_confirmation_mac {
+    width: 90%;
 
     .dialog__status {
         width: 100%;
@@ -119,8 +163,21 @@ dialog {
             margin: 0 auto;
             cursor: pointer;
             @include box-sizing(border-box);
-            @include rwd-max(240) {
+
+            @include p-device(240) {
                 display: none;
+            }
+
+            @include l-device(320) {
+                display: none;
+            }
+
+            @include p-device(320) {
+                display: inline-block;
+            }
+
+            @include l-device(598) {
+                display: inline-block;
             }
         }
 
@@ -138,109 +195,16 @@ dialog {
     }
 
     .dialog__text {
-        clear: both;
-        height: auto;
-        line-height: 20px;
-        max-height: 300px;
-        font-family: $typ-default;
-        font-style: normal;
-        font-weight: 500;
-        color: rgba($color-typ-pl, 60%);
-        overflow-y: auto;
-        overflow-x: hidden;
-        margin-right: 8px;
-        @include font-size(16px);
-        @include box-sizing(border-box);
-
         @include p-device(240) {
-            max-height: 48vh;
+            .dialog__text {
+                max-height: 150px;
+            }
         }
 
         @include l-device(320) {
-            max-height: 65px;
-        }
-
-        @include p-device(320) {
-            max-height: 65vh;
-        }
-
-        @include p-device(360) {
-            max-height: 68vh;
-        }
-
-        @include l-device(480) {
-            max-height: 50vh;
-        }
-
-        @include l-device(598) {
-            max-height: 55vh;
-        }
-
-        @include p-device(375) {
-            max-height: 66vh;
-        }
-
-        @include rwd-min(769) {
-            max-height: 68vh;
-        }
-    }
-
-    .dialog__action {
-        float: right;
-        height: auto;
-        min-height: 52px;
-        padding: 8px 8px 0 8px;
-        @include box-sizing(border-box);
-
-        div {
-            float: left;
-        }
-
-        @include rwd-max(488) {
-            max-width: 100%; //200px
-
-            div {
-                float: right;
+            .dialog__text {
+                max-height: 120px;
             }
         }
     }
-}
-.dialog_cont{
-    $dialog_h: height;
-    height: 90%;
-    max-height: 460px;
-
-    @include p-device(240) {
-        height: 100%;
-    }
-
-    @include p-device(320) {
-        top: 2% !important;
-        height: 100%;
-    }
-
-    @include l-device(320) {
-        height: 100%;
-    }
-
-    @include p-device(360) {
-        top: 10% !important;
-        height: 100%;
-    }
-
-    @include l-device(598) {
-        top: 2% !important;
-        height: 95%;
-    }
-
-    @include p-device(375) {
-        top: 15% !important;
-        height: 100%;
-    }
-
-    @include rwd-min(769) {
-        top: 20% !important;
-        height: 96%;
-    }
-
 }

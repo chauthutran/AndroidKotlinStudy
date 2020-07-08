@@ -581,7 +581,8 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 				// Special eval key type field - '{ ~~~ }'
 				if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
 				{
-					FormUtil.evalReservedField( tag, val );
+					//FormUtil.evalReservedField( tag, val );
+					FormUtil.evalReservedField( tag.closest( 'form' ), tag, val );
 				}
 				else
 				{
@@ -625,7 +626,7 @@ FormUtil.dispatchOnChangeEvent = function( targetControl )
 	}
 }
 
-FormUtil.evalReservedField = function( tagTarget, val )
+FormUtil.evalReservedField = function( form, tagTarget, val )
 {
 	if ( val.indexOf( '$${' ) >= 0 )
 	{
@@ -680,7 +681,7 @@ FormUtil.evalReservedField = function( tagTarget, val )
 	{
 		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
 		var pattern = Util.getParameterInside( val, '{}' );
-		tagTarget.val( FormUtil.tryEval( pattern ) );
+		tagTarget.val( FormUtil.tryEval( form, pattern ) );
 	}
 	else
 	{
@@ -1773,11 +1774,11 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 
 			if ( dataTarg.defaultValue )
 			{
-				if ( dataTarg.defaultValue.indexOf( '##{' ) > 0 )
+				if ( dataTarg.defaultValue.indexOf( '{' ) > 0 )
 				{
 					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
 
-					FormUtil.evalReservedField( tagTarget, dataTarg.defaultValue );
+					FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, dataTarg.defaultValue );
 				}
 				else
 				{

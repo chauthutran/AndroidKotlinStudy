@@ -60,17 +60,17 @@ function Statistics( cwsRender )
         me.allStats = ActivityDataManager._activityList;
 
         // get date Ranges for local ActivityList > Already sorted  << *not sorting correctly...
-        //me.allStats.sort( ( a, b ) => a.activityDate[ me.dateFilterField ] - b.activityDate[ me.dateFilterField ] );
+        //me.allStats.sort( ( a, b ) => a.date[ me.dateFilterField ] - b.date[ me.dateFilterField ] );
 
         // sort activityDates
         for (var i = 0; i < me.allStats.length; i++)
         {
-            allDates.push( new Date( me.allStats[ i ].activityDate[ me.dateFilterField ] ).toISOString() );
+            allDates.push( new Date( me.allStats[ i ].date[ me.dateFilterField ] ).toISOString() );
         }
         allDates.sort();
 
-        me.statMetaSummary[ 'from' ] = allDates[ 0 ]; // me.allStats[ 0 ].activityDate[ me.dateFilterField ];
-        me.statMetaSummary[ 'to' ] = allDates[ allDates.length -1 ]; //me.allStats[ me.allStats.length -1 ].activityDate[ me.dateFilterField ];
+        me.statMetaSummary[ 'from' ] = allDates[ 0 ]; // me.allStats[ 0 ].date[ me.dateFilterField ];
+        me.statMetaSummary[ 'to' ] = allDates[ allDates.length -1 ]; //me.allStats[ me.allStats.length -1 ].date[ me.dateFilterField ];
         me.statMetaSummary[ 'count' ] = me.allStats.length;
 
         me.initialise_periodOptions( me.statsPeriodSelector );
@@ -132,7 +132,7 @@ function Statistics( cwsRender )
         {
             for (var i = 0; i < myArr.length; i++)
             {
-                var dtmThis = new Date( myArr[ i ].activityDate[ me.dateFilterField ] ); //myArr[ i ].created
+                var dtmThis = new Date( myArr[ i ].date[ me.dateFilterField ] ); //myArr[ i ].created
 
                 if ( new Date( dtmThis ) >= new Date( periodOpt.from ) && new Date( dtmThis ) <= new Date( periodOpt.to ) )
                 {
@@ -234,9 +234,9 @@ function Statistics( cwsRender )
 
             activity.transactions.forEach( (trans, i_t) => {
 
-                if ( trans.transactionType === trxType.name && ( new Date( activity.activityDate[ me.dateFilterField ] ) >= new Date( startPeriod ) ) && ( new Date( activity.activityDate[ me.dateFilterField ] ) <= new Date( endPeriod ) ) ) 
+                if ( trans.transactionType === trxType.name && ( new Date( activity.date[ me.dateFilterField ] ) >= new Date( startPeriod ) ) && ( new Date( activity.date[ me.dateFilterField ] ) <= new Date( endPeriod ) ) ) 
                 {
-                    var newObj = { 'activityType': activity.activityType,'transactionType': trxType.name, 'transactionDate': activity.activityDate[ me.dateFilterField ], 'transactionYear': new Date( activity.activityDate[ me.dateFilterField ] ).getFullYear(), 'transactionYearMonth': ( new Date( activity.activityDate[ me.dateFilterField ] ).toISOString().split( 'T')[0] ).replace(/-/g,'').substring(0,6) };
+                    var newObj = { 'activityType': activity.activityType,'transactionType': trxType.name, 'transactionDate': activity.date[ me.dateFilterField ], 'transactionYear': new Date( activity.date[ me.dateFilterField ] ).getFullYear(), 'transactionYearMonth': ( new Date( activity.date[ me.dateFilterField ] ).toISOString().split( 'T')[0] ).replace(/-/g,'').substring(0,6) };
 
                     if ( trxType.dataContainer.includes( 'clientDetails' ) && trans.clientDetails )
                     {
