@@ -7,13 +7,12 @@
 //  2. handle calculatedFields (inside eventHandlers)
 //  3. handle validations
 
-function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
+function BlockForm( cwsRenderObj, blockObj, actionJson )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
-	me.validationObj = validationObj;
 	me.actionJson = actionJson;
 
 	me.payloadConfigSelection;
@@ -75,7 +74,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				me.evalFormGroupDisplayStatus( formTag );
 	
 				// NOTE: TRAN VALIDATION
-				me.validationObj.setUp_Events( formTag );
+				ValidationUtil.setUp_Events( formTag );
 	
 				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 				setTimeout( function(){

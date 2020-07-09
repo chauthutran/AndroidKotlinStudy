@@ -503,7 +503,7 @@ function DataList( cwsRenderObj, blockObj )
     {
         if ( itemButtons )
         {
-            var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj ); //, me.blockObj.validationObj
+            var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj );
 
             newItemBtn.render( itemButtons, divItemTag, passedData );
         } 

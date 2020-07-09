@@ -1292,10 +1292,6 @@ self.__precacheManifest = [
     "revision": "d8acc7b1e60ba560f4be8ef087e5c42e"
   },
   {
-    "url": "scripts/classes/validation.js",
-    "revision": "272e6a1248a82b3d164f1a5e9f3870e7"
-  },
-  {
     "url": "scripts/classes/webqr.js",
     "revision": "d68c757ed34cd531bb2ebadf15c681c8"
   },

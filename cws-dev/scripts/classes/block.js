@@ -21,8 +21,6 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 	// -- Sub class objects -----
 	//me.actionObj; // <-- Moved to inside of blockButton class..
-	
-	me.validationObj;  // <-- Should be static Class/Method..
 
 	// TODO: Below reference might be obsolete
 	me.blockFormObj;
@@ -38,10 +36,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 	me.initialize = function()
 	{
-		me.setInitialData();
-
-		me.validationObj = new Validation( me.cwsRenderObj, me );
-		//me.createSubClasses();				
+		me.setInitialData();				
 	}
 
 	me.render = function()
@@ -62,7 +57,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			if ( me.blockDefJson.form ) 
 			{
 				// TODO: me.blockFormObj should be change to var blockFormObj = new --
-				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.validationObj, me.actionJson );
+				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
 				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
 			}
 
@@ -83,7 +78,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			// Render Buttons
 			if ( me.blockDefJson.buttons ) 
 			{
-				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me ); //, me.validationObj 
+				me.blockButtonObj = new BlockButton( me.cwsRenderObj, me );
 				me.blockButtonObj.render( me.blockDefJson.buttons, me.blockTag, undefined );
 			}
 
@@ -113,7 +108,6 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.createSubClasses = function()
 	{
 		//me.actionObj = new Action( me.cwsRenderObj, me );
-		//me.validationObj = new Validation( me.cwsRenderObj, me );
 	}
 
 	//me.setEvents_OnInit = function() { }

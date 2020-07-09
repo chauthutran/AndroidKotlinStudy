@@ -19,6 +19,9 @@ function app()
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
 
+    // Set cwsRenderObj for ValidationUtil so that we can use this class later
+    ValidationUtil.setCWSRenderObj( me._cwsRenderObj );
+
     // Does this get loaded also when we login?
     AppInfoManager.initialLoad_FromStorage();
 

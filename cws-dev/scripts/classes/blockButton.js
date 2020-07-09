@@ -1,12 +1,11 @@
 // -------------------------------------------
 // -- BlockButton Class/Methods
-function BlockButton( cwsRenderObj, blockObj ) //, validationObj
+function BlockButton( cwsRenderObj, blockObj )
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
-	me.validationObj = me.blockObj.validationObj;
 	me.actionObj;
 
 	me.divTabsContainer = ` <div class="tab_fs" /> `;
@@ -258,7 +257,7 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 					else
 					{
 						// NOTE: TRAN VALIDATION
-						if( me.validationObj.checkFormEntryTagsData( formDivSecTag ) )
+						if( ValidationUtil.checkFormEntryTagsData( formDivSecTag ) )
 						{				
 							// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
 							//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
@@ -282,7 +281,7 @@ function BlockButton( cwsRenderObj, blockObj ) //, validationObj
 					var blockDivTag = btnTag.closest( 'div.block' );
 					var itemBlockTag = btnTag.closest( '.itemBlock' );
 						
-					if( me.validationObj.checkFormEntryTagsData( itemBlockTag ) )
+					if( ValidationUtil.checkFormEntryTagsData( itemBlockTag ) )
 					{
 						// TODO: ACTIVITY ADDING
 						ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
