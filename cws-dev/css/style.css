@@ -4079,7 +4079,7 @@ textarea {
   width: 24px;
   height: 24px;
   margin: 12px 8px;
-  opacity: 0.5;
+  /*opacity: 0.5;*/
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
