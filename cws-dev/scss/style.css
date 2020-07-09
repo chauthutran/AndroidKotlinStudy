@@ -4200,7 +4200,7 @@ textarea {
     width: 100%;
     height: auto;
     overflow: hidden;
-    padding: 16px 0 4px;
+    padding: 4px 0 4px;
   }
 }
 
@@ -5675,13 +5675,15 @@ textarea {
 
 .wapper_card {
   min-width: 240px;
+  height: 100vh;
 }
 
 .wapper_card .card {
-  width: 100%;
-  height: auto;
+  width: 100vw;
+  height: calc(100vh - 64px);
   padding: 8px 0 0;
   background-color: #FFF;
+  overflow: hidden;
 }
 
 .wapper_card .card .card__container {

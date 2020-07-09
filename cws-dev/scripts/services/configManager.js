@@ -585,8 +585,8 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType', 'table' ); ", 
                 " console.log( 'Registrations by activityType' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'activityType' ] ) ); ",
-                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'activityType' ] ), 'regByActivityType' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'type' ] ) ); ",
+                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'type' ] ), 'regByActivityType' ); ",
             ]
 
         },
@@ -595,8 +595,8 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType+age', 'table' ); ", 
                 " console.log( 'Registrations by activityType+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'activityType', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'activityType', 'age' ] ), 'regByActivityTypeByAge' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ), 'regByActivityTypeByAge' ); ",
             ]
 
         },
@@ -605,8 +605,8 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'PARTIAL DATASET ERROR: Registrations by activityType+program+age', 'table' ); ", 
                 " console.log( 'Registrations by activityType+program+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'program', 'activityType', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'program', 'activityType', 'age' ] ), 'regByActivityTypeByServiceByAge' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ), 'regByActivityTypeByServiceByAge' ); ",
             ]
 
         },
@@ -615,8 +615,8 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType+transactionYearMonth+age', 'table' ); ", 
                 " console.log( 'Registrations by activityType+program+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'activityType', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'activityType', 'age' ] ), 'regByActivityTypeByFullDateByAge' ); ",
+                " console.log( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ) ); ",
+                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ), 'regByActivityTypeByFullDateByAge' ); ",
             ]
         },
         "regByActivityTypeByAgePivot": {
@@ -625,7 +625,7 @@ ConfigManager.statisticConfig = {
                 " me.addTitle( 'Registrations by ActivityType + Age: PIVOT', 'table' ); ", 
                 " console.log( 'regByActivityTypeByAgePivot' ); ",
                 " console.log( me.createGroup( INFO.data.c_reg, 'age', 'ageGroup5', ConfigManager.FiveYearsAgeGroups ) ); ",
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'ageGroup5' ] ), 'ageGroup5', 'activityType', 'count' ), 'regByActivityTypeByAgePivot' ); ",
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'ageGroup5' ] ), 'ageGroup5', 'type', 'count' ), 'regByActivityTypeByAgePivot' ); ",
             ]
 
         },
@@ -634,11 +634,11 @@ ConfigManager.statisticConfig = {
             "runDataEval": [
                 " me.addTitle( 'Registrations by ActivityType + transactionYearMonth: PIVOT', 'table' ); ", 
                 " console.log( 'regByActivityTypeBytransactionYearMonthPivot' ); ",
-                " console.log( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'transactionYearMonth' ] ), 'transactionYearMonth', 'activityType', 'count' ) ); ",
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'transactionYearMonth' ] ), 'transactionYearMonth', 'activityType', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
+                " console.log( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ) ); ",
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
                 " me.createGroup( INFO.data.c_reg, 'age', 'ageGroup10', ConfigManager.TenYearsAgeGroups ); ",
                 " me.addTitle( 'Another PIVOT', 'table' ); ", 
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'activityType', 'ageGroup10' ] ), 'activityType', 'ageGroup10', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
+                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'ageGroup10' ] ), 'type', 'ageGroup10', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
             ]
 
         }

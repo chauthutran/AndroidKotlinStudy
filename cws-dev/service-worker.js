@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "4445438d53666cae3f8d1308025de90f"
+    "revision": "b4e50a06265c55d7e2b8d33e50e58e44"
   },
   {
     "url": "css/qunit.css",
@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "a6dc12a499f055b7d0de44a00005a5be"
+    "revision": "5e62abe227acaf2406c4f6fc555f3f40"
   },
   {
     "url": "css/style2.css",
@@ -1349,7 +1349,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "d8acc7b1e60ba560f4be8ef087e5c42e"
+    "revision": "8866d56d04f1e0eeb7e6a18ddd450728"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1453,7 +1453,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "5a1ef87a50fdc4fac40259a6911fc3e9"
+    "revision": "65c82bc328a42834b05481f772d59359"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1577,7 +1577,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "a6dc12a499f055b7d0de44a00005a5be"
+    "revision": "5e62abe227acaf2406c4f6fc555f3f40"
   },
   {
     "url": "sounds/beep.mp3",
