@@ -1,0 +1,30 @@
+{
+  "name": "qunitnodejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc qunit"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "karma": "^5.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.2",
+    "karma-jasmine": "^3.3.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-qunit": "^4.1.1",
+    "karma-requirejs": "^1.1.0",
+    "nyc": "^15.1.0",
+    "qunit": "^2.10.0",
+    "qunitjs": "^2.4.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "node-qunit": "^1.0.0",
+    "requirejs": "^2.3.6"
+  },
+  "description": ""
+}

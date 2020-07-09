@@ -254,37 +254,92 @@ function Login( cwsRenderObj )
 		}
 		else
 		{
-			
 			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
-
-			WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
-			{
-				if ( success )
-				{
-					if ( me.checkLoginData( loginData ) )
-					{
-						SessionManager.saveUserSessionToStorage( loginData, userName, password );
-
-						// load to session in memory
-						SessionManager.loadDataInSession( userName, password, loginData );
-	
-						me.loginSuccessProcess( loginData );	
-					}
-				}
-				else
-				{
-					var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
-
-					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
-				}
-
+			me.onlineLogin( userName, password, loadingTag, function( success, loginData ){
+				me.showErrorMsgIfAny ( success, loginData );
 			} );
+			
+			// var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
+
+			// WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
+			// {
+			// 	if ( success )
+			// 	{
+			// 		if ( me.checkLoginData( loginData ) )
+			// 		{
+			// 			SessionManager.saveUserSessionToStorage( loginData, userName, password );
+
+			// 			// load to session in memory
+			// 			SessionManager.loadDataInSession( userName, password, loginData );
+	
+			// 			me.loginSuccessProcess( loginData );	
+			// 		}
+			// 	}
+			// 	else
+			// 	{
+			// 		var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
+
+			// 		// MISSING TRANSLATION
+			// 		MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+			// 	}
+
+			// } );
 		}
 
 		
 		AppInfoManager.createUpdateUserInfo( userName );
 	};
+
+	
+	
+	me.onlineLogin = function( userName, password, loadingTag, execFunc )
+	{
+		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
+		{
+			me.setLoginData( loginData, userName, password );
+
+			if( execFunc ) execFunc( success, loginData );
+		} );
+	}
+
+	me.setLoginData = function( loginData, userName, password )
+	{
+		if ( loginData != undefined && loginData.orgUnitData != undefined && loginData.dcdConfig != undefined )
+		{
+			SessionManager.saveUserSessionToStorage( loginData, userName, password );
+
+			// load to session in memory
+			SessionManager.loadDataInSession( userName, password, loginData );
+		}
+	}
+
+	me.showErrorMsgIfAny = function ( success, loginData )
+	{
+		if ( success )
+		{
+			me.loginSuccessProcess( loginData );
+
+			if ( !loginData )
+			{
+				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			} 
+			else if ( !loginData.orgUnitData ) 
+			{
+				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			}
+			else if ( !loginData.dcdConfig ) 
+			{
+				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+			}
+		}
+		else
+		{
+			var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
+
+			// MISSING TRANSLATION
+			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+		}
+	}
 
 
 	me.checkLoginData = function( loginData ) 

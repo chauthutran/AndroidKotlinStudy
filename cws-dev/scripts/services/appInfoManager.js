@@ -49,7 +49,6 @@ AppInfoManager.getUserInfo = function()
 
 AppInfoManager.removeUserInfo = function()
 {
-    console.log( "removeUserInfo" );
     AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
 }
 
@@ -132,9 +131,9 @@ AppInfoManager.updateDownloadInfo = function( dateStr )
 AppInfoManager.getDownloadInfo = function()
 {
     var jsonData = AppInfoManager.getData( AppInfoManager.KEY_DOWNLOADINFO );
-    if ( jsonData && jsonData.lastDownload ) 
+    if ( jsonData && jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) 
     {
-        return ( new Date( jsonData.lastDownload ) ).toISOString();	
+        return ( new Date( jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) ).toISOString();	
     }
 
     return undefined;
@@ -201,7 +200,7 @@ AppInfoManager.updateLanguage = function( dataStr )
 // logoutDelay
 AppInfoManager.updateLogoutDelay = function( dataStr ) 
 {
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGOUTDELAY, AppInfoManager.KEY_LANGUAGE, dataStr );
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LOGOUTDELAY, dataStr );
 }
 
 
@@ -325,8 +324,11 @@ AppInfoManager.createUpdateUserInfo = function( userName )
     }
     else
     {
+        var dtmNow = ( new Date() ).toISOString();
+        
         lastSession = { 
-            user: userName, lastUpdated: dtmNow
+            user: userName
+            , lastUpdated: dtmNow
             , language: AppInfoManager.getLangCode()
             , soundEffects: ( Util.isMobi() )
             , autoComplete: true

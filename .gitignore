@@ -1,2 +1,4 @@
 node_modules/*
 cws-dev/service-worker.js
+cws-dev/qunittest/node_modules/*
+cws-dev/qunittest/coverage/*

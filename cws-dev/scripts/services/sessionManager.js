@@ -50,6 +50,7 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 };
 
 
+// TRAN TODO : We have similar method in login.js
 SessionManager.checkLoginData = function( loginData ) 
 {
 	var validLoginData = false;
