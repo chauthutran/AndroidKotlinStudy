@@ -72,7 +72,7 @@ function Statistics( cwsRender )
         me.statMetaSummary[ 'from' ] = allDates[ 0 ]; // me.allStats[ 0 ].date[ me.dateFilterField ];
         me.statMetaSummary[ 'to' ] = allDates[ allDates.length -1 ]; //me.allStats[ me.allStats.length -1 ].date[ me.dateFilterField ];
         me.statMetaSummary[ 'count' ] = me.allStats.length;
-
+console.log( me.statMetaSummary );
         me.initialise_periodOptions( me.statsPeriodSelector );
 
     }
@@ -234,9 +234,9 @@ function Statistics( cwsRender )
 
             activity.transactions.forEach( (trans, i_t) => {
 
-                if ( trans.transactionType === trxType.name && ( new Date( activity.date[ me.dateFilterField ] ) >= new Date( startPeriod ) ) && ( new Date( activity.date[ me.dateFilterField ] ) <= new Date( endPeriod ) ) ) 
+                if ( trans.type === trxType.name && ( new Date( activity.date[ me.dateFilterField ] ) >= new Date( startPeriod ) ) && ( new Date( activity.date[ me.dateFilterField ] ) <= new Date( endPeriod ) ) ) 
                 {
-                    var newObj = { 'activityType': activity.activityType,'transactionType': trxType.name, 'transactionDate': activity.date[ me.dateFilterField ], 'transactionYear': new Date( activity.date[ me.dateFilterField ] ).getFullYear(), 'transactionYearMonth': ( new Date( activity.date[ me.dateFilterField ] ).toISOString().split( 'T')[0] ).replace(/-/g,'').substring(0,6) };
+                    var newObj = { 'activityType': activity.activityType,'type': trxType.name, 'transactionDate': activity.date[ me.dateFilterField ], 'transactionYear': new Date( activity.date[ me.dateFilterField ] ).getFullYear(), 'transactionYearMonth': ( new Date( activity.date[ me.dateFilterField ] ).toISOString().split( 'T')[0] ).replace(/-/g,'').substring(0,6) };
 
                     if ( trxType.dataContainer.includes( 'clientDetails' ) && trans.clientDetails )
                     {

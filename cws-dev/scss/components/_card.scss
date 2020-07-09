@@ -1,11 +1,13 @@
 .wapper_card {
     min-width: 240px;
+    height: 100vh;
 
     .card {
-        width: 100%;
-        height: auto;
+        width: 100vw;
+        height: calc(100vh - 64px);
         padding: 8px 0 0;
         background-color: #FFF;
+        overflow: hidden;
 
         .card__container {
             display: grid;
