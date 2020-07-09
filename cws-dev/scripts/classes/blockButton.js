@@ -183,13 +183,13 @@ function BlockButton( cwsRenderObj, blockObj )
 					var liDivTag = divTag.find( 'div[rel=' + btnData + ']' );
 					var liSpanTag = divTag.find( 'span[rel=' + btnData + ']' );
 
-					liDivTag.css( 'background', 'url(' + ( ! btnJson.imageSrc ) ? 'images/arrow_right.svg' : btnJson.imageSrc  + ')' );
+					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
 					liSpanTag.text( btnJson.defaultLabel );
 					btnTag = liTabTag;
 				}
 				else
 				{
-					btnTag = $( '<div class="btnType ' + btnJson.buttonType + '"><img src="' + ( ! btnJson.imageSrc ) ? 'images/arrow_right.svg' : btnJson.imageSrc + '"></div>' );
+					btnTag = $( '<div class="btnType ' + btnJson.buttonType + '"><img src="' + btnJson.imageSrc + '"></div>' );
 				}
 			}
 			else if ( btnJson.buttonType === 'textButton' )
