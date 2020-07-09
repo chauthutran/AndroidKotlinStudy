@@ -609,7 +609,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
                     // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
-                    me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success ) {
+                    me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) {
 
                         if ( success ) 
                         {
@@ -623,8 +623,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
                             // Why need to call this again?
                             FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
+                            // Error - responseJson
+                            console.log( responseJson );
+
                             // 'syncedUp' processing data                
-                            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + JSON.stringify( responseJson ) );
+                            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + Util.getStr( errMsg ) );
                             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
                             afterDoneCall( false );
                         }
@@ -656,13 +659,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.syncUpResponseHandle = function( activityJson_Orig, success, responseJson, callBack )
     {
-        // if 'success' and return json content also suggests that, 
-        //      <-- existance of 'note' 
-
-        console.log( 'ActivityCard.updateItem_Data, success: ' + success );
-        console.log( responseJson );
-
-
         var operationSuccess = false;
 
         // 1. Check success
@@ -677,22 +673,31 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
 
-
             ClientDataManager.mergeDownloadedClients( [ responseJson.result.client ], processingInfo, function( changeOccurred_atMerge ) 
             {
                 ClientDataManager.saveCurrent_ClientsStore();
 
-                // ?? How to refresh current data display in ActivityList?  Without refreshing the list?
-                // Either we get reference to blockList or this 'acitivtyList' holds the tag reference!!
-
-                // TODO: Updating/refreshing activityList via 'blockList' is done by 'callBack'?
                 if ( callBack ) callBack( operationSuccess );
             });
         }
         else
         {
+            var errMsg = '';
+            
+            try
+            {
+                errMsg = 'operation: ' + responseJson.result.operation;
+            } catch 
+            { 
+                try
+                {
+                    errMsg = JSON.stringify( responseJson );
+                }
+                catch {}
+            }
+
             // Add activityJson processing
-            if ( callBack ) callBack( operationSuccess );
+            if ( callBack ) callBack( operationSuccess, errMsg );
         } 
     };
 

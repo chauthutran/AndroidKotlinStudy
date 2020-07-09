@@ -21,7 +21,7 @@ WsCallManager.wsUrlList = {
     'test': 'https://pwa-test.psi-connect.org/ws/dws-test'
 };
 
-WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';
+WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
 
 WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
 

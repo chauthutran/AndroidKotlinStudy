@@ -45,7 +45,7 @@ DevHelper.sampleDataList =
             "capturedLoc": "2020-04-06T18:30:50.000"
         },
         "activeUser": "LA_TEST_IPC",
-        "creditedUser": [
+        "creditedUsers": [
           "LA_TEST_OTH"
         ],
         "type": "eVoucher",
