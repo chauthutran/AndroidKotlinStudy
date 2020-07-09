@@ -10,11 +10,9 @@ $active-tab :$color-p;
     flex-direction: column;
     justify-content: flex-start;
     width: 50%;
-    height: 48px;
+    height: auto;
     margin: 0 auto;
     max-width: 558px;
-    border-bottom: 1px solid $tab-hover-bg;
-    @include shadow-b(2px 2px 5px 0px $color-shadow);
     @include box-sizing(border-box);
 
 
@@ -32,7 +30,7 @@ $active-tab :$color-p;
         padding: 0;
         list-style: none;
         width: 100%;
-        border-bottom: 2px solid #FFF;
+
         @include box-sizing(border-box);
 
         @include p-device(240) {
@@ -51,7 +49,6 @@ $active-tab :$color-p;
             padding: 0px 8px;
             border-bottom: 0px;
             overflow: hidden;
-            opacity: 0.5;
             line-height: 48px;
             color: $tab-head-color;
             text-transform: uppercase;
@@ -88,6 +85,7 @@ $active-tab :$color-p;
                 width: 24px;
                 height: 24px;
                 margin: 12px 8px;
+                opacity: 0.5;
                 @include box-sizing(border-box);
             }
 
@@ -145,27 +143,20 @@ $active-tab :$color-p;
 }
 
 .tab_fs__container {
-    margin: 8px 0;
+    /*margin: 8px 0;*/
     width: 100%;
     height: auto;
     overflow: hidden;
     max-width: 558px;
+    background-color: #FFF;
     @include box-sizing(border-box);
 
     @include p-device(240) {
         width: 100%;
-        background-color: rgba(255, 255, 255, 0);
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
     }
 
     @include l-device(320) {
         width: 100%;
-        background-color: rgba(255, 255, 255, 0);
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
     }
 
     @include rwd-min(558) {
@@ -174,7 +165,6 @@ $active-tab :$color-p;
         padding: 8px 12px;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
-        @include shadow-b(2px 2px 5px 0px $color-shadow);
     }
 
     .tab_fs__container-content {
@@ -201,7 +191,7 @@ $active-tab :$color-p;
 
             @include rwd-min(558) {
                 width: calc(50% - 8px);
-                margin: 0 4px 12px;
+
             }
 
         }

@@ -28,6 +28,8 @@ SessionManager.sessionData = {
 	dcdConfig: undefined
 };
 
+SessionManager.Status_LoggedIn = false;  // Login Flag is kept in here, sessionManager.
+
 // ---------------------------------------
 
 // Only used in Login..

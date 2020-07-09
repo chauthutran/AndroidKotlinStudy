@@ -2,6 +2,7 @@
     width: 100%;
     height: auto;
     background-color: $color-background;
+
     td {
         border: 0;
     }
@@ -16,133 +17,69 @@
 
     tr:hover {
         background-color: #f2f2f2;
-        cursor:pointer;
+        cursor: pointer;
     }
 
-    .list_three_line {
+    .card {
         width: 100%;
-        height: 88px;
-        min-height: 88px;
-        padding: 16px 8px;
-        //background-color: $color-background;
-        @include box-sizing(border-box);
+        height: auto;
+        padding: 8px 0 0;
+        border-bottom: 1px solid #ddd;
+        padding: 4px 0;
 
-        @include rwd-max(380) {
-            min-height: 132px;
-            height: 150px;
-        }
-        @include rwd-max(240) {
-            height: 180px;
-        }
-
-        .list_three_line__container {
+        .card__container {
+            display: grid;
+            grid-gap: 8px;
             width: 100%;
-            @include box-sizing(border-box);
+            grid-template-areas:
+                "card__support_visuals card__content card__cta";
+            grid-template-columns: 56px auto 90px;
+            align-items: center;
 
-            .list_three_line-suppor_visuals {
-                //support
-                float: left;
-                width: 56px;
-                height: 56px;
-                -webkit-box-align: center;
-                        align-items: center;
-                /*border-radius: 50%;
-                margin-right: 8px;
-                background-color: rgba($color-sl, 40%);*/
-                @include box-sizing(border-box);
+            @include rwd-max (380) {
+                grid-template-areas:
+                    "card__support_visuals card__content card__content"
+                    "card__cta card__cta card__cta";
+                grid-template-columns: 56px auto auto;
             }
 
-            .list_three_item_content {
-                float: left;
-                width: calc(100% - 194px);
-                margin-right: 8px;
-                padding-left: 8px;
-                height: auto;
-                text-align: left;
-                line-height: 18px;
-                @include font-size(12px);
-                @include box-sizing(border-box);
-
-                @include rwd-max(380) {
-                    width: calc(100% - 86px);
-                    border-bottom: 1px solid #ccc;
-                    margin-bottom: 12px;
-                }
-
-                .list_three_line-date {
-                    font-weight: 500;
-                    @include box-sizing(border-box);
-                }
-
-                .list_three_line-text {
-                    @include box-sizing(border-box);
-                }
+            .card__support_visuals {
+                grid-area: card__support_visuals;
             }
 
-            .list_three_item_cta {
-                float: right;
+            .card__content {
+                grid-area: card__content;
+                @include font-size(16px);
+            }
 
-                @include rwd-max(380) {
-                    float: none;
-                    margin-right: 8px;
-                    width: calc(100% - 26px);
+            .card__cta {
+                grid-area: card__cta;
+
+                @include rwd-max (380) {
+                    padding: 8px 0;
                 }
 
-                .list_three_item_status {
-                    color: $comp-border;
-                    text-align: right;
-                    line-height: 10px;
-                    line-height: 18px;
+                .card__cta_status {
                     @include font-size(12px);
-                    @include box-sizing(border-box);
+                    text-align: right;
+                    padding-right: 8px;
                 }
 
-                .list_three_item_cta1 {
+                .card__cta_one {
                     float: left;
-                    width: 36px;
-                    height: 36px;
-                    -webkit-box-align: center;
-                            align-items: center;
-                    margin-right: 32px;
-                    cursor: pointer;
-                    @include box-sizing(border-box);
+                    width: 40px;
 
-                    @include rwd-max(380) {
-                        margin-left: 20%;
-                        margin-bottom: 12px;
+                    @include rwd-max (380) {
+                        padding-left: 62px;
                     }
+
                 }
 
-                .list_three_item_cta2 {
-                    float: left;
-                    width: 36px;
-                    height: 36px;
-                    -webkit-box-align: center;
-                            align-items: center;
-                    cursor: pointer;
-		            background-repeat: no-repeat;
-                    background-position: center;
-                    @include box-sizing(border-box);
-
-                    @include rwd-max(380) {
-                        float: right;
-                        width: 32px !important;
-                        height: 32px !important;
-                    }
+                .card__cta_two {
+                    float: right;
+                    width: 40px;
                 }
             }
         }
     }
-}
-.avatar_circle {
-    //support
-    float: left;
-    width: 40px;
-    height: 40px;
-    -webkit-box-align: center;
-    align-items: center;
-    /*border-radius: 50%;*/
-    margin-right: 8px;
-    /*background-color: rgba($color-sl, 40%);*/
-    @include box-sizing(border-box);
 }

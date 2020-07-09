@@ -141,7 +141,7 @@ function myDetails(cwsRender) {
 
         setTimeout( function() {
 
-            if ( FormUtil.checkLogin() > 0 )
+            if ( SessionManager.Status_LoggedIn )
             {
                 //$( 'div.mainDiv' ).show( 'fast' );
                 me.cwsRenderObj.renderBlockTag.show( 'fast' );

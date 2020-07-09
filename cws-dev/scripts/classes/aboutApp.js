@@ -41,7 +41,7 @@ function aboutApp( cwsRender )
 
         me.showAboutPage();
 
-        if ( FormUtil.checkLogin() )
+        if ( SessionManager.Status_LoggedIn )
         {
             me.defaultsInitialised = 1;
         }
@@ -417,7 +417,7 @@ function aboutApp( cwsRender )
             $( '#loginFormDiv' ).hide();
         }
 
-        me.renderNonEssentialFields( FormUtil.checkLogin() );
+        me.renderNonEssentialFields( SessionManager.Status_LoggedIn );
 
         me.aboutFormDivTag.show();
     }
@@ -427,18 +427,7 @@ function aboutApp( cwsRender )
         //me.aboutFormDivTag.fadeOut( 500 );
         me.aboutFormDivTag.hide();
 
-        /*setTimeout( function() {
-            if ( FormUtil.checkLogin() > 0 )
-            {*/
-                $( '#pageDiv' ).show( 'fast' );
-            /*}
-            else
-            {
-                $( '#loginFormDiv' ).show( 'fast' );
-            }
-            me.aboutFormDivTag.hide();
-        }, 250 );*/
-
+        $( '#pageDiv' ).show( 'fast' );
     }
 
 
@@ -575,7 +564,7 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        if ( FormUtil.checkLogin() )
+        if ( SessionManager.Status_LoggedIn )
         {
             $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
             $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );

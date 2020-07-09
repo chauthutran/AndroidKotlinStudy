@@ -953,7 +953,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 							{
 								var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-								FormUtil.evalReservedField( tagTarget, EvalActionString );
+								FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, EvalActionString );
 							}
 
 						}
@@ -1075,7 +1075,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 				var inputVal = thisTag.val();
 				var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
 
-				FormUtil.evalReservedField( tagTarget, affectedControls[ i ].formula );
+				FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula );
 			}
 
 		}
@@ -1117,7 +1117,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					{
 						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-						FormUtil.evalReservedField( tagTarget, EvalActionString );
+						FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, EvalActionString );
 					}
 
 					// GREG @Tran/@James: added "calculatedValue" but should probably be reorganized
@@ -1125,7 +1125,7 @@ function BlockForm( cwsRenderObj, blockObj, validationObj, actionJson )
 					{
 						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
 
-						FormUtil.evalReservedField( tagTarget, jData[ i ].payload[ pConf ].calculatedValue );
+						FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, jData[ i ].payload[ pConf ].calculatedValue );
 					}
 
 				}

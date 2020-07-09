@@ -75,7 +75,11 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 
 WsCallManager.getDataServerAvailable = function( returnFunc )
 {
-    WsCallManager.requestGet( '/PWA.available', { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
+    var configJson = ConfigManager.getConfigJson();
+    var sourceTypeParam = ( configJson ) ? Util.getStr( configJson.sourceType ) : '';
+    // if ( !SessionManager.Status_LoggedIn ) <-- add 'logOut' case?  No, for now, have only 3 types.. 'mongo', 'dhis', '' (log out or config not have sourceType) case..
+
+    WsCallManager.requestGet( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
 
 

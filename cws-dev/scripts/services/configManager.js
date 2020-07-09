@@ -48,6 +48,29 @@ ConfigManager.TenYearsAgeGroups = [
     { name: '80+',  from: 80, to: 120 }
 ];
 // -- Default Configs -----
+
+ConfigManager.defaultActivityType = {
+    "name":"default",
+    "term":"",
+    "label":"default",
+    "icon":{  
+        "path":"images/act_col.svg",
+        "colors":{  
+            "background":"#6FCF97",
+            "foreground":"#4F4F4F"
+        }
+    },
+    "previewData":[  
+        "age phoneNumber",
+        "voucherCode"
+    ],
+    "displaySettings": [
+        "INFO.activityTrans.firstName + ' ' + INFO.activityTrans.lastName"
+    ]
+};
+
+
+
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
 
@@ -918,7 +941,7 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 ConfigManager.getActivityTypeConfig = function( activityJson )
 {
 	var activityTypeConfig;
-   var configJson = ConfigManager.getConfigJson();
+    var configJson = ConfigManager.getConfigJson();
 
     try
 	{
@@ -932,6 +955,8 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 		console.log( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
     
+    if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
+
     return activityTypeConfig;
 };
 
