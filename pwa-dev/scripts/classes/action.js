@@ -416,7 +416,7 @@ function Action( cwsRenderObj, blockObj )
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Process Failed!!', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Request Call Failed From Web Serivce!!', 'notificationDark', undefined, '', 'right', 'top' );
 					// Should we stop at here?  Or continue with subActions?
 
 					bResult = false; // "actionFailed";
@@ -429,7 +429,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			MsgManager.notificationMessage ( 'Process Failed - no url!!', 'notificationDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'Failed - No ActionUrl Provided.', 'notificationDark', undefined, '', 'right', 'top' );
 			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
 
 			throw 'url info missing on actionDef - during submitToWs';
