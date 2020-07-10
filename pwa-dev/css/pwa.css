@@ -1576,6 +1576,7 @@ img.round:hover{
   position: absolute;
   top: 126px;
   background-color: transparent;
+  padding: 16px;
 }
 
 .listWrapper {
