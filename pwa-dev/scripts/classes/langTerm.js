@@ -93,7 +93,7 @@ function LangTerm( cwsRenderObj )
 
 		// Do silently?  translate it afterwards?  <-- how do we do this?
 		// config should also note all the 'term' into tags..
-		WsCallManager.requestGet( queryLoc, options, loadingTag, function( success, returnJson )
+		WsCallManager.requestGetDws( queryLoc, options, loadingTag, function( success, returnJson )
 		{
 			if ( success )
 			{
@@ -105,7 +105,7 @@ function LangTerm( cwsRenderObj )
 				if ( me.debugMode ) console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
-				WsCallManager.requestPost( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
+				WsCallManager.requestPostDws( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
 					if ( success && allLangTermsJson )
 					{
 						

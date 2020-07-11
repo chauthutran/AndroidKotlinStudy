@@ -256,7 +256,7 @@ SyncManagerNew.downloadClients = function( callBack )
 
 
         var loadingTag = undefined;
-        WsCallManager.requestPost( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
+        WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
 
             // NOTE: IMPORTANT:
             // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list

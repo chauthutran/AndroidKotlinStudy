@@ -639,7 +639,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + errMsg );
                 ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );                
 
-                throw ' in WsCallManager.requestPost - ' + errMsg;  // Go to next 'catch'
+                throw ' in WsCallManager.requestPostDws - ' + errMsg;  // Go to next 'catch'
             }    
         }
         catch( errMsg )
