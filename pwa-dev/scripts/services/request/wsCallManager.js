@@ -56,7 +56,7 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 {        
     var requestOption = { 'userName': userName, 'password': password };
 
-	WsCallManager.requestPost( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
+	WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{
 		if ( success )
 		{
@@ -79,7 +79,7 @@ WsCallManager.getDataServerAvailable = function( returnFunc )
     var sourceTypeParam = ( configJson ) ? Util.getStr( configJson.sourceType ) : '';
     // if ( !SessionManager.Status_LoggedIn ) <-- add 'logOut' case?  No, for now, have only 3 types.. 'mongo', 'dhis', '' (log out or config not have sourceType) case..
 
-    WsCallManager.requestGet( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
+    WsCallManager.requestGetDws( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
 
 
@@ -107,16 +107,17 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
         payloadJson.password = SessionManager.sessionData.login_Password;    
     }
 
-    WsCallManager.requestPost( apiPath, payloadJson, loadingTag, returnFunc );
+    WsCallManager.requestPostDws( apiPath, payloadJson, loadingTag, returnFunc );
 };
 
+
 // ========================================
-// === Basic 'Post' and 'Get' =====
+// === Specialized 'Post' and 'Get' =====
 
 // 'action' calls will be using this..
-WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFunc )
+WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	    
-    var url = WsCallManager.composeWsFullUrl( apiPath );
+    var url = WsCallManager.composeDwsWsFullUrl( apiPath );
 
     var requestOption = {
         headers: {
@@ -125,20 +126,13 @@ WsCallManager.requestPost = function( apiPath, payloadJson, loadingTag, returnFu
         body: JSON.stringify( payloadJson )
     };
 
-    url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
-
-	// Send the POST reqesut	
-	RESTCallManager.performPost( url, requestOption, function( success, returnJson ) 
-	{
-		if ( loadingTag ) loadingTag.remove();
-
-		if ( returnFunc ) returnFunc( success, returnJson );
-	});
+    // Send the POST reqesut	
+	WsCallManager.requestPost( url, requestOption, loadingTag, returnFunc );
 };
 
-WsCallManager.requestGet = function( apiPath, optionJson, loadingTag, returnFunc )
+WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnFunc )
 {	
-    var url = WsCallManager.composeWsFullUrl( apiPath );
+    var url = WsCallManager.composeDwsWsFullUrl( apiPath );
 
     var requestOption = {
         headers: {
@@ -148,14 +142,50 @@ WsCallManager.requestGet = function( apiPath, optionJson, loadingTag, returnFunc
 
     if ( optionJson ) Util.mergeJson( requestOption, optionJson );
 
+    WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
+};
+
+// Temporary text response one - we should unify all the response as json
+WsCallManager.requestGet_Text = function( url, requestOption, loadingTag, returnFunc )
+{
+    requestOption.returnDataType = 'text';
+    WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
+};
+
+
+// ========================================
+// === Basic 'Post' and 'Get' =====
+
+// 'action' calls will be using this..
+WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc )
+{	        
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth },        
+    //    body: JSON.stringify( payloadJson )  };
+
+    url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
+
+	// Send the POST reqesut	
+	RESTCallManager.performPost( url, requestOption, function( success, returnJson ) 
+	{
+        WsCallManager.loadingTagClear( loadingTag );
+
+		if ( returnFunc ) returnFunc( success, returnJson );
+	});
+};
+
+WsCallManager.requestGet = function( url, requestOption, loadingTag, returnFunc )
+{	
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth } };
+    //if ( optionJson ) Util.mergeJson( requestOption, optionJson );
+
     url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
 	// Send the POST reqesut	
 	RESTCallManager.performGet( url, requestOption, function( success, returnJson ) 
 	{        
         Util.tryCatchContinue( function() {
-
-            if ( loadingTag ) loadingTag.remove();
+            
+            WsCallManager.loadingTagClear( loadingTag );
 
         }, "WsCallManager.requestGet loadingTag Clear" );
 
@@ -191,9 +221,19 @@ WsCallManager.localhostProxyCaseHandle = function( url ) //, requestOption )
     return url;
 };
 
+
+WsCallManager.loadingTagClear = function( loadingTag )
+{
+    try
+    {
+        if ( loadingTag ) loadingTag.remove();
+    }
+    catch { }
+};
+
 // -----------------------------------------
 
-WsCallManager.composeWsFullUrl = function( targetUrl )
+WsCallManager.composeDwsWsFullUrl = function( targetUrl )
 {
     if ( targetUrl.indexOf( 'http' ) === 0 )
     {

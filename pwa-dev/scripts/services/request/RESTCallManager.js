@@ -67,7 +67,11 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
         //console.log( response );
-        if ( response.ok ) return response.json();
+        if ( response.ok ) 
+        {            
+            if ( requestData.returnDataType === 'text' ) return response.text();
+            else return response.json();
+        }
         else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
     })
     .then( jsonData => {

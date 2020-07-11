@@ -40,6 +40,13 @@ function Statistics( cwsRender )
 
         me.statisticsFormDiv.fadeIn();
 
+        WsCallManager.requestGet_Text( 'https://www.psi-connect.org/connectGitConfig/api/getFile?type=dc_pwa&branch=dev&fileName=dc_pwa@LA@test.html'
+            , {}, undefined, function( success, returnData ) {
+
+                console.log( success );
+                console.log( returnData );
+        });
+
     };
 
     me.initializeTemplate = function()
