@@ -216,7 +216,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			}
 			else if ( btnJson.buttonType === 'listRightImg' )
 			{
-				btnTag = $( '<img src="' + ( ! btnJson.img ) ? 'images/arrow_right.svg' : btnJson.img + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
+				btnTag = $( '<img src="' + ( btnJson.img ? btnJson.img : 'images/arrow_right.svg' ) + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
 				btnTag.on( 'error', function (){
 					$( this).attr( 'src', 'images/arrow_right.svg' );
 					return false;
@@ -224,8 +224,9 @@ function BlockButton( cwsRenderObj, blockObj )
 
 				if ( divTag )
 				{
-					btnTag.attr( 'width', ( divTag.css( 'width' ) ? divTag.css( 'width' ) : svgStyle.width ) );
-					btnTag.attr( 'height', ( divTag.css( 'height' ) ? divTag.css( 'height' ) : svgStyle.height ) );	
+					//console.log( svgStyle );
+					btnTag.attr( 'width', '60px' ); // ( divTag.css( 'width' ) ? divTag.css( 'width' ) : '60px' ) ); //svgStyle.width
+					btnTag.attr( 'height', '60px' ); // ( divTag.css( 'height' ) ? divTag.css( 'height' ) : '60px' ) );	//svgStyle.height
 				}
 			}
 		}

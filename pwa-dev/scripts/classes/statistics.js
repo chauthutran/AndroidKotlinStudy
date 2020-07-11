@@ -16,6 +16,8 @@ function Statistics( cwsRender )
     me.allStats = [];
     me.statMetaSummary = {};
 
+    me.templateURL = '';
+    me.templateObj;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -39,6 +41,19 @@ function Statistics( cwsRender )
         me.statisticsFormDiv.fadeIn();
 
     };
+
+    me.initializeTemplate = function()
+    {
+        var rawbase = 'https://raw.githubusercontent.com/';
+        var jsonloc = 'psi-mis/connectConfigs/stage/dc_pwa/LA/stats_demo.html';
+
+        me.templateURL = rawbase + jsonloc;
+
+        $.getJSON( me.templateURL, function( data ) {
+            console.log(data);
+           //do what you want with data
+         });
+    }
 
     me.initialize_UI = function()
     {
@@ -74,6 +89,8 @@ function Statistics( cwsRender )
         me.statMetaSummary[ 'count' ] = me.allStats.length;
 console.log( me.statMetaSummary );
         me.initialise_periodOptions( me.statsPeriodSelector );
+
+        me.initializeTemplate();
 
     }
 
