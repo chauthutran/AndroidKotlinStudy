@@ -49,6 +49,8 @@ function BlockButton( cwsRenderObj, blockObj )
 				var expIconTag = $( me.divHeadIconExp );
 				btnTabsContainerTag.append( expIconTag );
 
+				btnTabsUlTag.css( '--tabs', ( buttonsJson.length > 0 ) ? buttonsJson.length : 1 );
+
 				// SETUP EMPTY PLACE HOLDERS FOR TABS + TAB-CONTENT (pregenerated)
 				for( var i = 0; i < buttonsJson.length; i++ )
 				{

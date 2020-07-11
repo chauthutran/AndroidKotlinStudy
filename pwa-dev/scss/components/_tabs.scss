@@ -74,7 +74,7 @@ $active-tab :$color-p;
             }
 
             @include rwd-min(558) {
-                width: calc(100%/3);
+                width: calc(100%/var(--tabs));
                 position: relative;
                 display: block;
                 @include box-sizing(border-box);
