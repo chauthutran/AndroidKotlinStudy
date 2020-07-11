@@ -117,6 +117,10 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 // 'action' calls will be using this..
 WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	    
+    if ( !payloadJson ) payloadJson = {};
+
+    WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
+
     var url = WsCallManager.composeDwsWsFullUrl( apiPath );
 
     var requestOption = {
@@ -151,7 +155,6 @@ WsCallManager.requestGet_Text = function( url, requestOption, loadingTag, return
     requestOption.returnDataType = 'text';
     WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
 };
-
 
 // ========================================
 // === Basic 'Post' and 'Get' =====
@@ -194,6 +197,29 @@ WsCallManager.requestGet = function( url, requestOption, loadingTag, returnFunc 
 };
 
 // ========================================
+
+
+WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
+{
+    if ( configJson.sourceType )
+    {
+        payloadJson.sourceType = configJson.sourceType;
+    }
+    
+    if ( configJson.sourceType === "mongo" )
+    {
+        if ( configJson.mongoSchemaVersion ) payloadJson.mongoSchemaVersion = configJson.mongoSchemaVersion;
+        // For 'mongo' sourceType, do not need to send userName & password in payload.
+    }
+    else
+    {
+        // if ( sourceType !== "mongo" )
+        // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
+        payloadJson.userName = SessionManager.sessionData.login_UserName;
+        payloadJson.password = SessionManager.sessionData.login_Password;    
+    }  
+};
+
 
 // Used to force the ws target - by console
 WsCallManager.forceWsTarget = function( stageName )

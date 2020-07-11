@@ -28,7 +28,7 @@ ActivityDataManager.jsonSignature_Mongo = {
     "transactions": []
 };
 
-ActivityDataManager.wsSubmit_AppVersionStr = "1.3";
+// ActivityDataManager.wsSubmit_AppVersionStr = "1.3";  _ver
 
 
 // ===================================================
@@ -291,7 +291,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonAct
 ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson )
 {
     var payloadJson = {
-        "appVersion": ActivityDataManager.wsSubmit_AppVersionStr,
+        "appVersion": _ver,  //ActivityDataManager.wsSubmit_AppVersionStr,
         "payload": undefined
     };
 
