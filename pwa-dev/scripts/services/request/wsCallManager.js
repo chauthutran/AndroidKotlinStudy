@@ -77,7 +77,7 @@ WsCallManager.getDataServerAvailable = function( returnFunc )
 {
     var configJson = ConfigManager.getConfigJson();
     var sourceTypeParam = ( configJson ) ? Util.getStr( configJson.sourceType ) : '';
-    // if ( !SessionManager.Status_LoggedIn ) <-- add 'logOut' case?  No, for now, have only 3 types.. 'mongo', 'dhis', '' (log out or config not have sourceType) case..
+    // if ( !SessionManager.getLoginStatus() ) <-- add 'logOut' case?  No, for now, have only 3 types.. 'mongo', 'dhis', '' (log out or config not have sourceType) case..
 
     WsCallManager.requestGetDws( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
@@ -119,7 +119,8 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
 {	    
     if ( !payloadJson ) payloadJson = {};
 
-    WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
+    if ( SessionManager.getLoginStatus() ) WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
+
 
     var url = WsCallManager.composeDwsWsFullUrl( apiPath );
 
@@ -215,9 +216,9 @@ WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
     {
         // if ( sourceType !== "mongo" )
         // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
-        payloadJson.userName = SessionManager.sessionData.login_UserName;
-        payloadJson.password = SessionManager.sessionData.login_Password;    
-    }  
+        if ( SessionManager.sessionData.login_UserName ) payloadJson.userName = SessionManager.sessionData.login_UserName;
+        if ( SessionManager.sessionData.login_Password ) payloadJson.password = SessionManager.sessionData.login_Password;    
+    }      
 };
 
 

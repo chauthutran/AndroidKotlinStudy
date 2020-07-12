@@ -306,11 +306,11 @@ function cwsRender()
 
 			if ( areaList )
 			{
-				var finalAreaList = ( SessionManager.Status_LoggedIn ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
 	
-					if ( startMenuTag && SessionManager.Status_LoggedIn ) startMenuTag.click();
+					if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
 	
 					// initialise favIcons
 					//me.favIconsObj = new favIcons( me );
@@ -329,13 +329,13 @@ function cwsRender()
 
 			if ( areaList )
 			{
-				var finalAreaList = ( SessionManager.Status_LoggedIn ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
 
 					me.updateNavDrawerHeaderContent();
 	
-					//if ( startMenuTag && SessionManager.Status_LoggedIn ) startMenuTag.click();
+					//if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
 
 				} );
 	
@@ -386,14 +386,14 @@ function cwsRender()
 
 	me.updateNavDrawerHeaderContent = function()
 	{
-		if( !SessionManager.Status_LoggedIn )
+		if( !SessionManager.getLoginStatus() )
 		{
 			return;
 		}
 
 		$( 'div.navigation__user' ).html( SessionManager.sessionData.login_UserName );
 
-		if ( SessionManager.Status_LoggedIn ) //myData && SessionManager.Status_LoggedIn
+		if ( SessionManager.getLoginStatus() ) //myData && SessionManager.getLoginStatus()
 		{
 			// var mySubmit = FormUtil.records_redeem_submit; 
 			// var myQueue = FormUtil.records_redeem_queued; 
@@ -757,7 +757,7 @@ function cwsRender()
 
 	me.logOutProcess = function()
 	{
-		SessionManager.Status_LoggedIn = false;
+		SessionManager.setLoginStatus( false );
 		SessionManager.unloadDataInSession(); // Include config json unload
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
@@ -1017,7 +1017,7 @@ function cwsRender()
 		// Window Resize detection
 		$( window ).on( 'resize', function () {
 
-			if ( !SessionManager.Status_LoggedIn )
+			if ( !SessionManager.getLoginStatus() )
 			{
 				//InitialWidth = $( 'body' ).attr( 'initialWidth' );
 				initialHeight = $( 'body' ).attr( 'initialHeight' );

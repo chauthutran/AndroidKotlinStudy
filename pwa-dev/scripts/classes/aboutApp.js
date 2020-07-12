@@ -41,7 +41,7 @@ function aboutApp( cwsRender )
 
         me.showAboutPage();
 
-        if ( SessionManager.Status_LoggedIn )
+        if ( SessionManager.getLoginStatus() )
         {
             me.defaultsInitialised = 1;
         }
@@ -417,7 +417,7 @@ function aboutApp( cwsRender )
             $( '#loginFormDiv' ).hide();
         }
 
-        me.renderNonEssentialFields( SessionManager.Status_LoggedIn );
+        me.renderNonEssentialFields( SessionManager.getLoginStatus() );
 
         me.aboutFormDivTag.show();
     }
@@ -564,7 +564,7 @@ function aboutApp( cwsRender )
             $( '#imgaboutInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        if ( SessionManager.Status_LoggedIn )
+        if ( SessionManager.getLoginStatus() )
         {
             $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
             $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );

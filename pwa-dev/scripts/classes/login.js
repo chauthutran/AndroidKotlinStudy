@@ -375,7 +375,7 @@ function Login( cwsRenderObj )
 
 	me.loginSuccessProcess = function( loginData ) 
 	{		
-		SessionManager.Status_LoggedIn = true;
+		SessionManager.setLoginStatus( true );
 		
 		// After Login, reset some things..
 		SyncManagerNew.SyncMsg_Reset();

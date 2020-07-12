@@ -78,7 +78,7 @@ function inputMonitor( cwsRenderObj )
 
         me.setFocusRelegatorInitialState();
 
-        if ( SessionManager.Status_LoggedIn ) cwsRenderInputMon.updateNavDrawerHeaderContent();
+        if ( SessionManager.getLoginStatus() ) cwsRenderInputMon.updateNavDrawerHeaderContent();
 
         updateLogoutTimer();
 
@@ -92,14 +92,14 @@ function inputMonitor( cwsRenderObj )
             cwsRenderInputMon.autoLogoutDateTime = '';
         }
 
-        if ( SessionManager.Status_LoggedIn )
+        if ( SessionManager.getLoginStatus() )
         {
             inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins; //JSON.parse(localStorage.getItem( "session" )).logoutDelay;
             cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
 
             InputMonLogoutTimer = setInterval( function() 
             {
-                if ( SessionManager.Status_LoggedIn )
+                if ( SessionManager.getLoginStatus() )
                 {
                     cwsRenderInputMon.logOutProcess();
                 }
@@ -183,7 +183,7 @@ function inputMonitor( cwsRenderObj )
         listItemWasExpanded = false;
         navDrawerVisibleOnMove = false;
 
-        loggedIn = SessionManager.Status_LoggedIn;
+        loggedIn = SessionManager.getLoginStatus();
         expectedNavDrawerWidth  = FormUtil.navDrawerWidthLimit( screenWidth );
         navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
         thresholdNavDrawerWidth = ( expectedNavDrawerWidth / 2 ).toFixed( 0 );

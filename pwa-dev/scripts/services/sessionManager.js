@@ -89,6 +89,19 @@ SessionManager.unloadDataInSession = function()
 };
 
 // --------------------------------------------------
+// ----- Login Status Check/Set
+
+SessionManager.getLoginStatus = function()
+{
+	return SessionManager.Status_LoggedIn;
+};
+
+SessionManager.setLoginStatus = function( bLoggedIn )
+{
+	SessionManager.Status_LoggedIn = bLoggedIn;
+};
+
+// --------------------------------------------------
 
 // -- Called after login --> to update the 'User' session data in localStorage.
 SessionManager.saveUserSessionToStorage = function( loginData, userName, password )

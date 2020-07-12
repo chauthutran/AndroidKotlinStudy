@@ -43,7 +43,7 @@ function settingsApp( cwsRender )
 
         me.showSettingsPage();
 
-        if ( SessionManager.Status_LoggedIn )
+        if ( SessionManager.getLoginStatus() )
         {
             me.defaultsInitialised = 1;
         }
@@ -539,7 +539,7 @@ function settingsApp( cwsRender )
             $( '#loginFormDiv' ).hide();
         }
 
-        me.renderNonEssentialFields( SessionManager.Status_LoggedIn );
+        me.renderNonEssentialFields( SessionManager.getLoginStatus() );
 
         me.settingsFormDivTag.show();    
     }
@@ -771,7 +771,7 @@ function settingsApp( cwsRender )
             $( '#imgsettingsInfo_userLanguage_Less' ).addClass( 'enabled' );
         }
 
-        if ( SessionManager.Status_LoggedIn )
+        if ( SessionManager.getLoginStatus() )
         {
 
             $( '#settingsInfo_dcdVersion' ).html( dcdConfigVersion );

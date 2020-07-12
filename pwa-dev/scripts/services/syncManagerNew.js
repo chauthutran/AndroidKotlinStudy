@@ -128,7 +128,7 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         var mongoClients = [];
         
         if ( returnJson && returnJson.response && returnJson.response.dataList ) mongoClients = returnJson.response.dataList;
-
+        else if ( returnJson && returnJson.clientList ) mongoClients = returnJson.clientList;
 
         console.log( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
 
@@ -165,12 +165,6 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 
 // ===================================================
 // === 1. 'syncUpItem' Related Methods =============
-
-//SyncManagerNew.checkCondition_SyncReady = function() // callBack_success, callBack_failure )
-//{
-//    return ConnManagerNew.isAppMode_Online();
-//};
-
 
 // ===================================================
 // === 2. 'syncAll' Related Methods =============
@@ -258,10 +252,6 @@ SyncManagerNew.downloadClients = function( callBack )
         var loadingTag = undefined;
         WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
 
-            // NOTE: IMPORTANT:
-            // Activities could be old since we are downloading all client info.. - mark it to handle this later when converting to activity list
-            //if ( mongoClientsJson && dateRange_gtStr ) mongoClientsJson.dateRange_gtStr = dateRange_gtStr;
-
             callBack( success, returnJson );
         });        
     }
@@ -344,37 +334,6 @@ SyncManagerNew.syncStart = function()
 
     return isOkToStart;
 };
-
-/*
-SyncManagerNew.syncAllButtonChange = function()
-{
-    //showSyncIcon = ( ConnManagerNew.isAppMode_Online() );
-    showSyncIcon = ConnManagerNew.isAppMode_Online();
-
-    //if ( showSyncIcon )
-    //{
-    //    showSyncIcon = ( FormUtil.records_redeem_queued + FormUtil.records_redeem_failed  );
-    //}
-    
-    // ( showSyncIcon ) ? $('#divAppDataSyncStatus').show() : $('#divAppDataSyncStatus').hide();
-    // ( showSyncIcon ) ? $('#imgAppDataSyncStatus').show() : $('#imgAppDataSyncStatus').hide();
-
-    if ( showSyncIcon )
-    {
-        //$('#divAppDataSyncStatus').show();
-        $( '#imgAppDataSyncStatus' ).show();
-        //$('#divAppDataSyncDownStatus').show(); 
-        //$('#imgAppDataSyncStatus').show();        
-    }
-    else
-    {
-        //$('#divAppDataSyncStatus').hide();
-        $( '#imgAppDataSyncStatus' ).hide();
-        //$('#divAppDataSyncDownStatus').show(); 
-        //$('#imgAppDataSyncStatus').hide()
-    } 
-};
-*/
 
 
 SyncManagerNew.syncAll_WithChecks = function()

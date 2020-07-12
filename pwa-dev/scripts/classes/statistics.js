@@ -663,7 +663,7 @@ console.log( me.statMetaSummary );
         me.statisticsFormDiv.fadeOut( 500 );
 
         setTimeout( function() {
-            if ( SessionManager.Status_LoggedIn )
+            if ( SessionManager.getLoginStatus() )
             {
                 me.cwsRenderObj.renderBlockTag.show( 'fast' );
             }

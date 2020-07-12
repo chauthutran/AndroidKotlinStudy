@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "a6c52935038042a6295ce41e5f1e5568"
+    "revision": "f4d392d857911c69cb84d4d89e74be61"
   },
   {
     "url": "redeemGen.html",
@@ -1205,7 +1205,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/aboutApp.js",
-    "revision": "c124c905d5663d50d5f7eca6783d2c4a"
+    "revision": "b4e1bd841536eef0cb4fed113c3e5c38"
   },
   {
     "url": "scripts/classes/action.js",
@@ -1229,7 +1229,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "c0bf40a628d7dcc070fdfdc795873a29"
+    "revision": "e8cd47c16d66d714492d9635c30c7176"
   },
   {
     "url": "scripts/classes/blockForm.js",
@@ -1269,7 +1269,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "638bafea43736d59fd78050b7d55a743"
+    "revision": "3714aea80a7b496243d9079abe1e4f4e"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1277,7 +1277,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/myDetails.js",
-    "revision": "82b3cc8dc86be5398b70094ee8a94c35"
+    "revision": "815af46c9c2da3a174ad014d19559dae"
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
@@ -1289,11 +1289,11 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/settingsApp.js",
-    "revision": "a6d4f5f0053b049ed73ce6ebfff4b7fe"
+    "revision": "977a74fbff29cdd8471fdcccda9d48c1"
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "632e8b05618f0ec7e8145856c873db8a"
+    "revision": "38a4aacdca84ed655ae229ff993dbe4f"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "28f53341d6c8ed5c4efde4b7cdf40ac1"
+    "revision": "65a54c8e560ccf0ed53b7afc1c2cb01e"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1381,7 +1381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "43b12880f1016274f4921cc0aa3f4549"
+    "revision": "e17b13afff6e6fa01b79e028cc2b588a"
   },
   {
     "url": "scripts/services/appInfoManager.js",
@@ -1401,11 +1401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/connManagerNew.js",
-    "revision": "ada4fa42ea24937c7c0c57a03aaa7462"
-  },
-  {
-    "url": "scripts/services/dataFormatConvert.js",
-    "revision": "d4bdf16045290da70ed4992119fa608f"
+    "revision": "605829f12057ac167ab7fd0909d80378"
   },
   {
     "url": "scripts/services/dataVerMove.js",
@@ -1433,7 +1429,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "4f6b2f5bcdf774421a419507080f05da"
+    "revision": "56a218808fd01096f61671f17523a809"
   },
   {
     "url": "scripts/services/scheduleManager.js",
@@ -1441,7 +1437,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/sessionManager.js",
-    "revision": "df2334b00ea8216b4707ee3220e42f2e"
+    "revision": "df811b535703f4c091c64e5abb401644"
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
@@ -1461,7 +1457,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/syncManagerNew.js",
-    "revision": "f9c7439bdcb17138f045f051fcbc7734"
+    "revision": "cf7262afba79fc16bac81a9867ca7342"
   },
   {
     "url": "scripts/services/viewsListManagerOLD.js",
@@ -1481,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/inputUtil.js",
-    "revision": "7b5cd58dfe1a9ac80f956057c929a28d"
+    "revision": "187961e5231cbf5c609423de3e468550"
   },
   {
     "url": "scripts/utils/jsonBuiltTable.js",
