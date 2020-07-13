@@ -4065,7 +4065,7 @@ textarea {
 
 @media (min-width: 558px) {
   .tab_fs .tab_fs__head li {
-    width: calc(100%/3);
+    width: calc(100%/var(--tabs));
     position: relative;
     display: block;
     box-sizing: border-box;
@@ -5594,12 +5594,12 @@ textarea {
 }
 
 .sheet_preview .name, .sheet_preview .value {
-  padding: 8px 8px 8px 12px;
+  padding: 8px 2px 8px 2px;
   margin: 2px;
   font-size: calc(12px + 0.4vw);
   white-space: nowrap;
   text-align: left;
-  max-width: 47vw;
+  max-width: calc( var(--width) / 2);
   overflow: overlay;
   line-height: 1.9em;
 }

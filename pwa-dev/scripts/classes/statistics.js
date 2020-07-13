@@ -40,26 +40,43 @@ function Statistics( cwsRender )
 
         me.statisticsFormDiv.fadeIn();
 
-        WsCallManager.requestGet_Text( 'https://www.psi-connect.org/connectGitConfig/api/getFile?type=dc_pwa&branch=dev&fileName=dc_pwa@LA@test.html'
-            , {}, undefined, function( success, returnData ) {
-
-                console.log( success );
-                console.log( returnData );
-        });
-
     };
 
     me.initializeTemplate = function()
     {
-        var rawbase = 'https://raw.githubusercontent.com/';
-        var jsonloc = 'psi-mis/connectConfigs/stage/dc_pwa/LA/stats_demo.html';
+        var rawbase = 'https://www.psi-connect.org/connectGitConfig/api/getFile?';
+        var jsonloc = 'type=dc_pwa&branch=stage&fileName=dc_pwa@LA@stats_demo.html';
 
         me.templateURL = rawbase + jsonloc;
+        console.log( me.templateURL );
 
-        $.getJSON( me.templateURL, function( data ) {
-            console.log(data);
-           //do what you want with data
-         });
+        WsCallManager.requestGet_Text( me.templateURL, {}, undefined, function( success, returnData ) {
+
+             console.log( success );
+             console.log( returnData );
+             console.log( $( returnData ) );
+
+             var code, layout;
+
+             for ( var i = 0; i < $( returnData ).length; i++ )
+             {
+                console.log( $( returnData )[ i ] )
+                console.log( $( returnData )[ i ].nodeName )
+                
+                if ( $( returnData )[ i ].nodeName === 'layout' ) layout = $( returnData )[ i ];
+                if ( $( returnData )[ i ].nodeName === 'code' ) code = $( returnData )[ i ];
+
+             }
+
+             console.log( layout );
+             console.log( code );
+
+             $( '#statsContentPage' ).html( layout );
+
+             eval( code );
+             //$( '#statsContentPage' ).html( $( returnData ).find( 'layout' ) );
+        });
+
     }
 
     me.initialize_UI = function()
