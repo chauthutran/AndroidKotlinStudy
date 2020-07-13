@@ -423,7 +423,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
         btnConfirm.click( function(){
 
             $( '#notif_' + unqID ).remove();
-            
+
             if ( callBackSuccess ) callBackSuccess( true );
 
         } );
@@ -435,7 +435,9 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
             if ( callBackSuccess ) callBackSuccess( false );
 
         } );
-    
+
+        prevRow.css( '--width', parentTag.css( 'width' ) );
+
     }
 
 }

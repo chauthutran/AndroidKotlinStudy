@@ -416,7 +416,7 @@ function Action( cwsRenderObj, blockObj )
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Request Call Failed From Web Serivce!!', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Request Call Failed From Web Service', 'notificationDark', undefined, '', 'right', 'top' );
 					// Should we stop at here?  Or continue with subActions?
 
 					bResult = false; // "actionFailed";
