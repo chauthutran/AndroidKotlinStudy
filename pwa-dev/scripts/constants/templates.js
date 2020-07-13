@@ -215,91 +215,87 @@ Templates.template_trActivityTag = `<tr class="activity">
 
 Templates.activityCardFullScreen = `
 
-
 <div class="wapper_card">
- <div class="sheet-title c_900" >
+  <div class="sheet-title c_900">
     <img src='images/arrow_back.svg' class='btnBack'>
     <span>Details</span>
- </div>
- <div class="card _tab activity">
-  <div class="card__container" >
-    <card__support_visuals class="activityIcon card__support_visuals" />
-    <card__content class="activityContent card__content" />
-    <card__cta class="activityStatus card__cta">
-      <div class="activityStatusText card__cta_status" />
-      <div class="activityPhone card__cta_one"></div>
-      <div class="activityStatusIcon card__cta_two"></div>
-    </card__cta>
   </div>
+  <div class="card _tab activity">
+    <div class="card__container">
+      <card__support_visuals class="activityIcon card__support_visuals" />
+      <card__content class="activityContent card__content" />
+      <card__cta class="activityStatus card__cta">
+        <div class="activityStatusText card__cta_status" />
+        <div class="activityPhone card__cta_one"></div>
+        <div class="activityStatusIcon card__cta_two"></div>
+      </card__cta>
+    </div>
 
+    <div class="tab_fs">
 
-  <div class="tab_fs">
+      <div class="button warning button-full_width" id="removeActivity"
+        style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+        <div class="button__container">
+          <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove</div>
+        </div>
+      </div>
 
-  
-  
-<div class="button warning button-full_width" id="removeActivity">
-<div class="button__container">
-  <div class="button-label">Remove</div>
-</div>
-</div>
+      <ul class="tab_fs__head" style="background-color: #fff;">
+        <li class="primary active" rel="tab_previewDetails">
+          <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+          <span rel="tab_previewDetails">Details</span>
+          <ul class="2ndary" style="display:none">
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span rel="tab_previewPayload">Payload</span>
+            </li>
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span rel="tab_previewSync">Sync</span>
+            </li>
+          </ul>
+        </li>
+        <li class="primary" rel="tab_previewPayload">
+          <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+          <span rel="tab_previewPayload">Payload</span>
+          <ul class="2ndary" style="display:none">
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span rel="tab_previewDetails">Details</span>
+            </li>
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span rel="tab_previewSync">Sync</span>
+            </li>
+          </ul>
+        </li>
+        <li class="primary" rel="tab_previewSync">
+          <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+          <span rel="tab_previewSync">Sync</span>
+          <ul class="2ndary" style="display:none">
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span rel="tab_previewDetails">Details</span>
+            </li>
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span rel="tab_previewPayload">Payload</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="tab_fs__head-icon_exp"></div>
+    </div>
 
-
-  <ul class="tab_fs__head" style="background-color: #fff;">
-   <li class="primary active" rel="tab_previewDetails">
-    <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-    <span rel="tab_previewDetails">Details</span>
-     <ul class="2ndary" style="display:none">
-      <li class="2ndary" style="display:none" rel="tab_previewPayload">
-       <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-       <span rel="tab_previewPayload">Payload</span>
-      </li>
-      <li class="2ndary" style="display:none" rel="tab_previewSync">
-       <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-       <span rel="tab_previewSync">Sync</span>
-      </li>
-     </ul>
-   </li>
-   <li class="primary" rel="tab_previewPayload">
-    <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-    <span rel="tab_previewPayload">Payload</span>
-     <ul class="2ndary" style="display:none">
-      <li class="2ndary" style="display:none" rel="tab_previewDetails">
-       <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-       <span rel="tab_previewDetails">Details</span>
-      </li>
-      <li class="2ndary" style="display:none" rel="tab_previewSync">
-       <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-       <span rel="tab_previewSync">Sync</span>
-      </li>
-     </ul>
-   </li>
-   <li class="primary" rel="tab_previewSync">
-    <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-    <span rel="tab_previewSync">Sync</span>
-     <ul class="2ndary" style="display:none">
-      <li class="2ndary" style="display:none" rel="tab_previewDetails">
-       <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-       <span rel="tab_previewDetails">Details</span>
-      </li>
-      <li class="2ndary" style="display:none" rel="tab_previewPayload">
-       <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-       <span rel="tab_previewPayload">Payload</span>
-      </li>
-     </ul>
-   </li>
-  </ul>
-  <div class="tab_fs__head-icon_exp"></div>
- </div>
-
- <div class="tab_fs__container">
-  <div class="tab_fs__container-content active sheet_preview" id="tab_previewDetails" blockid="tab_previewDetails" />
-  <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
-  <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
- 
-  
- 
+    <div class="tab_fs__container">
+      <div class="tab_fs__container-content active sheet_preview" id="tab_previewDetails"
+        blockid="tab_previewDetails" />
+      <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload"
+        style="display:none;" />
+      <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
+    </div>
   </div>
-
+</div>
 `;
 
 /* ACTIVITY CARD FULL SCREEN PREVIEW << END */

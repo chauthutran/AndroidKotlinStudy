@@ -32,25 +32,47 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
 ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, formDivSecTag )
 {
 	var activityPayload = actionDefJson.activityPayload;
-	var payload;
+	var payload = {};
 
 	if ( activityPayload )
 	{
-		// If '.localPayload' exists, override the 'payload'
-		if ( activityPayload.localPayload && WsCallManager.isLocalDevCase ) 
+		if ( activityPayload.payloads )
 		{
-			if ( activityPayload.payload ) activityPayload.payload = activityPayload.localPayload;
-		}
+			// Array ones.. activityPayload: { payloads: [ { payloadTemplate: ---- }, ... ] }
+			// <-- run one after another + merge the json..
+			for ( var i = 0; i < activityPayload.payloads.length; i++ )
+			{
+				var tempPayloadDef = activityPayload.payloads[i];
+				var tempPayload = ActivityUtil.generateFormsJsonData_ByType( tempPayloadDef, actionDefJson, formDivSecTag );
+				
+				// merge result json..				
+				Util.mergeDeep( payload, tempPayload );
 
-		payload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.payload, actionDefJson, formDivSecTag );  
+				console.log( payload );
+			}
+		}
+		else if ( activityPayload.payload )
+		{
+			// Object one - activityPayload: { payload: { payloadTemplate: ---- } }
+			payload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.payload, actionDefJson, formDivSecTag );  
+		}
 	}
 	else
 	{
+		// no structure base ones..
 		payload = ActivityUtil.generateFormsJsonData_ByType( actionDefJson, actionDefJson, formDivSecTag );  
 	}
 
 	return { 'payload': payload };
 };
+		// If '.localPayload' exists, override the 'payload'
+		//if ( activityPayload.localPayload && WsCallManager.isLocalDevCase ) 
+		//{
+		//	if ( activityPayload.payload ) activityPayload.payload = activityPayload.localPayload;
+		//}
+
+
+
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
 ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJson, formDivSecTag )

@@ -136,6 +136,7 @@ function app()
   me.appVersionSetup = function()
   {
     $( '#spanVersion' ).text( 'v' + _ver );
+    $( '#spanVerDate' ).text( '[' + _verDate + ']' );    
   };
 
 

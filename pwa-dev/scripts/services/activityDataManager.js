@@ -416,9 +416,9 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
 };
 
 
-ActivityDataManager.getClientInfo_FromTrans = function( activityJson )
+ActivityDataManager.getData_FromTrans = function( activityJson, propName )
 {
-    var clientDetails = {};
+    var dataJson = {};
 
     try
     {
@@ -428,13 +428,13 @@ ActivityDataManager.getClientInfo_FromTrans = function( activityJson )
         {
             for( var i = 0; i < tranList.length; i++ )
             {
-                var tranData_cd = tranList[i].clientDetails;
+                var tranData_cd = tranList[i][ propName ];
         
                 if ( tranData_cd )
                 {
                     for ( var prop in tranData_cd ) 
                     {
-                        clientDetails[ prop ] = tranData_cd[ prop ];
+                        dataJson[ prop ] = tranData_cd[ prop ];
                     }
                 }
             }
@@ -442,8 +442,8 @@ ActivityDataManager.getClientInfo_FromTrans = function( activityJson )
     }
     catch ( errMsg )
     {
-        console.log( 'Error during ActivityDataManager.getClientInfo_FromTrans, errMsg: ' + errMsg );
+        console.log( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );
     }
 
-    return clientDetails;
+    return dataJson;
 };

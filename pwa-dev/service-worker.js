@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "f4d392d857911c69cb84d4d89e74be61"
+    "revision": "ac7dde41229408c36d095a0aef3762ef"
   },
   {
     "url": "redeemGen.html",
@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "e401b8192df9a01521cf4891655812aa"
+    "revision": "ff0668b72ef37d6d21e98d69eeade995"
   },
   {
     "url": "scripts/classes/aboutApp.js",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "850295bc860f5ee589bed8640059197a"
+    "revision": "dbb0ddd436048d6e4feff8780ff66bcc"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1309,7 +1309,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "0ee59a7bd15e281493a50ef3f554cd7e"
+    "revision": "0abd580615124400aa162923df66e6b9"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1381,7 +1381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "e17b13afff6e6fa01b79e028cc2b588a"
+    "revision": "1f02ed775f31370841ea3970a2c42c4a"
   },
   {
     "url": "scripts/services/appInfoManager.js",
@@ -1393,7 +1393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/clientDataManager.js",
-    "revision": "57e499c86415a41887a68dae492e9aa9"
+    "revision": "0a67eb8b531ecd1978abe1c4eb95bcb2"
   },
   {
     "url": "scripts/services/configManager.js",
@@ -1465,7 +1465,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "f7eaab22bd979d5fbfa3c37780d3d938"
+    "revision": "3271c16dd976a875f10e18cffe8e5ffc"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
