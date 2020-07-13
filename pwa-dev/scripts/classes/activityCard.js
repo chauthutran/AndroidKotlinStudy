@@ -302,7 +302,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             
             var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
     
-            me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );    
+            me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson ); 
         }    
     };
 
@@ -728,7 +728,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             actCard.render();
 
             // set tabs contents
-            me.setFullPreviewTabContent( activityId );
+            me.setFullPreviewTabContent( activityId, sheetFull );
         
             // set other events
             var cardCloseTag = sheetFull.find( 'img.btnBack' );
@@ -747,7 +747,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
     
-    me.setFullPreviewTabContent = function( activityId )
+    me.setFullPreviewTabContent = function( activityId, sheetFull )
     {
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
         var activityJson = ActivityDataManager.getActivityById( activityId );
@@ -769,6 +769,38 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
     
         $("#tab_previewSync").html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
+
+        
+        // Set event for "Remove" button for "Pending" client
+        var activity = ActivityDataManager.getActivityById( activityId );
+        var removeActivityBtn = sheetFull.find("#removeActivity");
+        if( activity.processing.status == "queued" )
+        {
+            removeActivityBtn.click( function(){
+
+                console.log("=================================");
+                console.log( activityJson );
+    
+                var result = confirm("Are you sure you want to delete this client ?");
+                if( result )
+                {
+                    var client = ClientDataManager.getClientByActivityId( activityId );
+                    ClientDataManager.removeClient( client );
+                    ClientDataManager.saveCurrent_ClientsStore( function(){
+                        $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
+                        sheetFull.find( 'img.btnBack' ).click();
+                    });
+                }
+    
+               
+            });
+        }
+        else
+        {
+            removeActivityBtn.remove();
+        }
+        
+        
     };
     
     

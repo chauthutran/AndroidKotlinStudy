@@ -214,6 +214,8 @@ Templates.template_trActivityTag = `<tr class="activity">
 /* ACTIVITY CARD FULL SCREEN PREVIEW >> START */
 
 Templates.activityCardFullScreen = `
+
+
 <div class="wapper_card">
  <div class="sheet-title c_900" >
     <img src='images/arrow_back.svg' class='btnBack'>
@@ -229,7 +231,19 @@ Templates.activityCardFullScreen = `
       <div class="activityStatusIcon card__cta_two"></div>
     </card__cta>
   </div>
+
+
   <div class="tab_fs">
+
+  
+  
+<div class="button warning button-full_width" id="removeActivity">
+<div class="button__container">
+  <div class="button-label">Remove</div>
+</div>
+</div>
+
+
   <ul class="tab_fs__head" style="background-color: #fff;">
    <li class="primary active" rel="tab_previewDetails">
     <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
@@ -281,7 +295,11 @@ Templates.activityCardFullScreen = `
   <div class="tab_fs__container-content active sheet_preview" id="tab_previewDetails" blockid="tab_previewDetails" />
   <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
   <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
- </div>
+ 
+  
+ 
+  </div>
+
 `;
 
 /* ACTIVITY CARD FULL SCREEN PREVIEW << END */
