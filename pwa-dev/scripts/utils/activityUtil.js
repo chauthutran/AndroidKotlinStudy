@@ -176,6 +176,9 @@ ActivityUtil.generateInputJson = function( formDivSecTag, listFilter, formsJsonG
 		var dataGroup = inputTag.attr( 'dataGroup' );
 
 
+		var displayGroup = inputTag.attr( 'frmGroup' );
+
+
 		// Process visible fieldBlocks only.  But if the hidden fieldBlock has 'display=hiddenVal', also use that to collect data.
 		if( displayed || divfieldBlockTag.attr( 'display' ) === 'hiddenVal' )
 		{

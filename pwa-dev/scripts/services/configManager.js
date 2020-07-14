@@ -21,8 +21,8 @@ ConfigManager.configJson_Original = {};  // Downloaded country PWA config origin
 
 //ConfigManager.configSetting = {}; // Not Yet coded for it.
 
-
-ConfigManager.defaultActivityDisplaySettings = `'<b><i>' + INFO.activity.processing.created + '</i></b>'`;
+ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
+ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
 
 ConfigManager.FiveYearsAgeGroups = [
     { name: '0-4',  from: 0, to: 4 },
@@ -65,7 +65,7 @@ ConfigManager.defaultActivityType = {
         "voucherCode"
     ],
     "displaySettings": [
-        "INFO.activityTrans.firstName + ' ' + INFO.activityTrans.lastName"
+        "INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName"
     ]
 };
 
@@ -916,6 +916,29 @@ ConfigManager.getActivityDisplaySettings = function()
     return displaySettings;
 };
 
+
+ConfigManager.getActivityDisplayBase = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+
+    var displayBase = ConfigManager.defaultActivityDisplayBase;
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.redeemDefs
+            && configJson.settings.redeemDefs.displayBase )
+        {
+            displayBase = configJson.settings.redeemDefs.displayBase;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
+    }
+
+    return displayBase;
+};
 
 ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 {

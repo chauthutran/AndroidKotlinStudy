@@ -52,7 +52,7 @@ ClientDataManager.getClientByActivityId = function( activityId )
 {
     var client;
 
-    if ( ActivityDataManager._activityToClient[ activityId ] )
+    if ( activityId && ActivityDataManager._activityToClient[ activityId ] )
     {
         client = ActivityDataManager._activityToClient[ activityId ];
     }

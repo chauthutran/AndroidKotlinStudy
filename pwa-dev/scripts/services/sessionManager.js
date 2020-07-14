@@ -52,7 +52,7 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 };
 
 
-// TRAN TODO : We have similar method in login.js
+// Used in login.js --> validate offline user data
 SessionManager.checkLoginData = function( loginData ) 
 {
 	var validLoginData = false;
@@ -150,14 +150,35 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 	}
 };
 
+// -------------------------------------
 
 SessionManager.getLoginDataFromStorage = function( userName )
 {
 	return LocalStgMng.getJsonData( userName );
-}
+};
 
 
 SessionManager.saveLoginDataFromStorage = function( userName, loginData )
 {
 	LocalStgMng.saveJsonData( userName, loginData );
-}
+};
+
+// -------------------------------------
+
+// Same call, diff name of 'getLoginDataFromStorage'
+SessionManager.getOfflineUserData = function( userName )
+{
+	return SessionManager.getLoginDataFromStorage( userName );
+};
+
+SessionManager.getOfflineUserPin = function( offlineUserData )
+{
+	var pin = "";
+	
+	if ( offlineUserData && offlineUserData.mySession && offlineUserData.mySession.pin )
+	{
+		pin = Util.decrypt( offlineUserData.mySession.pin, 4);
+	}
+
+	return pin;
+};

@@ -248,7 +248,6 @@ SyncManagerNew.downloadClients = function( callBack )
             payloadJson.find[ 'date.updatedOnMdbUTC' ] = { "$gte": dateRange_gtStr };
         }
 
-
         var loadingTag = undefined;
         WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
 
@@ -261,8 +260,6 @@ SyncManagerNew.downloadClients = function( callBack )
         callBack( false );
     }
 };
-
-
 
 // ===================================================
 // === UI Related Methods =============

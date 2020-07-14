@@ -1160,40 +1160,6 @@ Util.addZero = function( i )
     return i;
 };
 
-Util.formatDate = function( strDate )
-{
-	var returnVal = "";
-
-	if( strDate.length == 10 )
-	{
-		var year = strDate.substring(0, 4);
-		var month = strDate.substring(5, 7);
-		var date = strDate.substring(8);
-
-		returnVal = year + "-" + month + "-" + date;
-	}
-
-	return returnVal;
-};
-
-
-Util.formatDateBack = function( strDate )
-{
-	if ( Util.checkValue( strDate ) )
-	{
-		var year = strDate.substring(0, 4);
-		var month = strDate.substring(5, 7);
-		var date = strDate.substring(8, 10);
-
-		return year + "/" + month + "/" + date;
-	}
-	else
-	{
-		return "";
-	}
-};
-
-
 Util.dateToString = function( date )
 {
 	var month = eval( date.getMonth() ) + 1;
@@ -1217,6 +1183,14 @@ Util.dateToStr = function( date, separator )
 	day = ( day < 10 ) ? "0" + day : day;
 		
 	return date.getFullYear() + separator + month + separator + day;
+};
+
+
+Util.formatDate = function( date, formatPattern )
+{
+	if ( !formatPattern ) formatPattern = Util.dateType1;
+
+	return $.format.date( date, formatPattern );
 };
 
 Util.formatDateTime = function( dateObj, dateType )

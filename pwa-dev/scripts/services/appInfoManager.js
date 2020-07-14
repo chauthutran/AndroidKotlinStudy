@@ -285,7 +285,8 @@ AppInfoManager.getPropertyValue = function( mainKey, subKey )
 
     // Get Sub data if any
     return appInfo[mainKey][subKey];
-}
+};
+
 
 // =========================================
 // === Other Related Methods..

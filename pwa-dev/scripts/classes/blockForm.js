@@ -36,6 +36,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.render = function( formDef, blockTag, passedData )
 	{
 		var formJsonArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );
+
 		var formGrps = ConfigManager.getConfigJson().definitionFormGroups;
 
 		me.formJsonArr = formJsonArr;
@@ -844,16 +845,25 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
 	{
+
+		// TODO:!!!  We are assuming that formGroup is always a string with definition defined!!!!
+		//		Need to change this!
+
+
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
 		var groupNone = me._groupNoneId; 
 		var nonGroup = [];
 
+		// 1. copy the array..
 		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
 		var retGrpArr = [];
 
+		// 2. loop each form control and create formGroup...  even none ones...
 		for( var i = 0; i < newArr.length; i++ )
 		{
+			var frmCtrl = newArr[ i ];
+
 			if ( newArr[ i ].formGroup == undefined || newArr[ i ].formGroup == '' )
 			{
 				nonGroup.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );

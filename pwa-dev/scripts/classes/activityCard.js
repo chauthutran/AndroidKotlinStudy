@@ -82,8 +82,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
 
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityContentTag
-                    , activityJson, activityTrans, ConfigManager.getConfigJson() );
+                me.setActivityContentDisplay( activityContentTag, activityJson );
                 if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
 
 
@@ -371,46 +370,48 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setActivityContentDisplay = function( divActivityContentTag, activity, activityTrans, configJson )
+    me.setActivityContentDisplay = function( divActivityContentTag, activity )
     {
-
-        var activitySettings = FormUtil.getActivityType( activity );      
-        var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-        var appendContent = '';
-
-        divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
-
-
-        // Display 1st line - as date
-        if ( activity.processing )
+        try
         {
-            var dateStr = $.format.date( activity.processing.created, "MMM dd, yyyy - HH:mm" );
-            //divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( dateStr ) );
-            appendContent = dateStr + '<br>';
-        }
+            var appendContent = '';
+            var activitySettings = FormUtil.getActivityType( activity );  
+            var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+            var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
+                
+            divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
+        
+            InfoDataManager.setINFOdata( 'activity', activity );
+            InfoDataManager.setINFOclientByActivity( activity );
+    
+            // Display 1st line - as date
+            var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay, displayBase' );
+            appendContent += displayBaseContent + '<br>';
 
 
-        if ( displaySettings )
-        {            
-            var INFO = { 'activityTrans': activityTrans, 'activity': activity, 'activityItem': activity };
-
-            // If custom config display, remove 
-            for( var i = 0; i < displaySettings.length; i++ )
-            {
-                // Need 'activity', 'activityTrans'
-                var dispSettingEvalStr = displaySettings[ i ];
-                var displayEvalResult = "------------";
-
-                displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, INFO, 'ActivityCard.setActivityContentDisplay' );
-
-                //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
-                appendContent += displayEvalResult.trim() + '<br>';
+            // Display 2nd lines and more
+            if ( displaySettings )
+            {            
+                // If custom config display, remove 
+                for( var i = 0; i < displaySettings.length; i++ )
+                {
+                    // Need 'activity', 'activityTrans'
+                    var dispSettingEvalStr = displaySettings[ i ];
+                    var displayEvalResult = "------------";
+    
+                    displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
+    
+                    //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+                    appendContent += displayEvalResult + '<br>';
+                }
             }
-
+    
+            divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
         }
-
-        divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
-
+        catch ( errMsg )
+        {
+            console.log( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
+        }
     };
 
 

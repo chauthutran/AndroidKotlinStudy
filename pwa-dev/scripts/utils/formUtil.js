@@ -480,16 +480,6 @@ FormUtil.orientation = function() {
 	}
 }
 
-FormUtil.getUserSessionAttr = function( usr, attr ) {
-
-	var lastSessionAll = AppInfoManager.getUserInfo();
-
-	if ( lastSessionAll && lastSessionAll.mySession )
-	{
-		return lastSessionAll.mySession[ attr ];
-	}
-
-}
 FormUtil.getRedeemPayload = function( id ) {
 
 	var redPay = JSON.parse(sessionStorage.getItem( id ))

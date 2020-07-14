@@ -913,8 +913,6 @@ function cwsRender()
 		// 				//UPDATE lastStorage session for current user (based on last menu selection)
 		// 				// DataManager.saveData( lastSession.user, loginData );
 
-		// 				// TRAN TODO : loginData here is just dcdConfig data, not full login data
-		// 				SessionManager.saveUserSessionToStorage( loginData, lastSession.user, Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) );
 		// 			// }
 		// 		// });
 				

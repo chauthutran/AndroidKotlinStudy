@@ -295,33 +295,6 @@ DataManager2.getStorageType = function( secName )
 	return storageTypeStr;
 }
 
-/*
-DataManager2.getIV = function( callBack )
-{
-	if ( SessionManager.sessionData.login_Password ) 
-	{ 
-		if ( callBack ) callBack( SessionManager.sessionData.login_Password );
-	}
-	else
-	{
-		DataManager2.getSessionData( function( data ) { 
-
-			// NOTE: DOES NOT GET USED ANYMORE!!
-			if ( data && data.user )
-			{
-				if ( callBack ) callBack( Util.decrypt( FormUtil.getUserSessionAttr( data.user,'pin' ), 4) );
-			}
-			else
-			{
-				if ( callBack ) callBack();
-			}
-
-		} )
-	}
-};
-*/
-
-
 DataManager2.protectedContainer = function( secName )
 {
 	var ret = false;

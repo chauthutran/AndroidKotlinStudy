@@ -209,6 +209,9 @@ function Login( cwsRenderObj )
 	};
 
 
+	// ------------------------------------------
+	// --- Perform Login Related...
+
 	me.processLogin = function( userName, password, server, btnTag )
 	{
 		var parentTag = btnTag.parent();
@@ -219,37 +222,37 @@ function Login( cwsRenderObj )
 		parentTag.find( 'div.loadingImg' ).remove();
 
 		// ONLINE vs OFFLINE HANDLING
-		if ( ! ConnManagerNew.isAppMode_Online() )
+		if ( !ConnManagerNew.isAppMode_Online() )
 		{
 			// OFFLINE Login
 			// validate encrypted pwd against already stored+encrypted pwd
-			if ( FormUtil.getUserSessionAttr( userName,'pin' ) )
+			var offlineUserData = SessionManager.getOfflineUserData( userName );
+
+			if ( offlineUserData )
 			{
-				if ( password === Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4) )
-				{
-					var loginData = SessionManager.getLoginDataFromStorage( userName );
-					
-					if ( me.checkLoginData( loginData ) )
+				if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
+				{					
+					if ( SessionManager.checkLoginData( offlineUserData ) )
 					{
 						// Update current user login information ( lastUpdated, stayLoggedIn )
-						SessionManager.updateUserSessionToStorage( loginData, userName );
+						SessionManager.updateUserSessionToStorage( offlineUserData, userName );
 						
 						// load to session in memory
-						SessionManager.loadDataInSession( userName, password, loginData );
+						SessionManager.loadDataInSession( userName, password, offlineUserData );
 
-						me.loginSuccessProcess( loginData );
+						me.loginSuccessProcess( offlineUserData );
 					}
 				}
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed > invalid userName/pin', 'notificationRed', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notificationRed', undefined, '', 'right', 'top' );
 				}
 			}
 			else
 			{
 				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'No Offline UserSession Available', 'notificationDark', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
 			}
 		}
 		else
@@ -258,39 +261,63 @@ function Login( cwsRenderObj )
 			me.onlineLogin( userName, password, loadingTag, function( success, loginData ){
 				me.showErrorMsgIfAny ( success, loginData );
 			} );
-			
-			// var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
-
-			// WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
-			// {
-			// 	if ( success )
-			// 	{
-			// 		if ( me.checkLoginData( loginData ) )
-			// 		{
-			// 			SessionManager.saveUserSessionToStorage( loginData, userName, password );
-
-			// 			// load to session in memory
-			// 			SessionManager.loadDataInSession( userName, password, loginData );
-	
-			// 			me.loginSuccessProcess( loginData );	
-			// 		}
-			// 	}
-			// 	else
-			// 	{
-			// 		var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
-
-			// 		// MISSING TRANSLATION
-			// 		MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
-			// 	}
-
-			// } );
 		}
 
-		
 		AppInfoManager.createUpdateUserInfo( userName );
 	};
 
 	
+	me.loginSuccessProcess = function( loginData ) 
+	{		
+		// After Login, run/setup below ones.
+		SessionManager.setLoginStatus( true );		
+
+		SyncManagerNew.SyncMsg_Reset();
+
+		InfoDataManager.setDataAfterLogin();
+
+		// Load Activities
+		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
+		{
+			me.closeForm();
+			me.pageTitleDivTab.hide(); 
+
+			// Load config and continue the CWS App process
+			if ( loginData.dcdConfig ) 
+			{
+				// call CWS start with this config data..
+				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
+
+				me.loginAfter();
+			}
+			else
+			{
+				// MISSING TRANSLATION
+				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
+			}
+
+			$( '.Nav1' ).css( 'display', 'flex' );
+
+			//me.cwsRenderObj.langTermObj.translatePage();
+
+		});
+	};
+	
+
+	me.loginAfter = function()
+	{
+		FormUtil.geolocationAllowed();
+
+		me.cwsRenderObj.renderDefaultTheme();
+
+		MsgManager.initialSetup();
+
+		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
+
+		me.loginAfter_UI_Update();
+	};
+
+	// ----------------------------------------------
 	
 	me.onlineLogin = function( userName, password, loadingTag, execFunc )
 	{
@@ -339,96 +366,15 @@ function Login( cwsRenderObj )
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
 		}
-	}
-
-
-	me.checkLoginData = function( loginData ) 
-	{
-		var validLoginData = false;
-	
-		try
-		{
-			if ( !loginData ) MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
-			else if ( !loginData.orgUnitData ) MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
-			else if ( !loginData.dcdConfig ) MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
-			else 
-			{
-				validLoginData = true;
-			}
-		}
-		catch ( errMsg )
-		{
-			console.log( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
-		}
-	
-		return validLoginData;
 	};
+
 	
 	me.regetDCDconfig = function()
 	{
-		var userName = AppInfoManager.getUserInfo().user;
-		var userPin = Util.decrypt( FormUtil.getUserSessionAttr( userName,'pin' ), 4);
+		var userName = SessionManager.sessionData.login_UserName;
+		var userPin = SessionManager.sessionData.login_Password;
 
 		me.processLogin( userName, userPin, location.origin, $( this ) );
-	};
-
-
-	me.loginSuccessProcess = function( loginData ) 
-	{		
-		SessionManager.setLoginStatus( true );
-		
-		// After Login, reset some things..
-		SyncManagerNew.SyncMsg_Reset();
-
-		// Load Activities
-		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
-		{
-			me.closeForm();
-			me.pageTitleDivTab.hide(); 
-
-			// Set Logged in orgUnit info
-			//if ( loginData.orgUnitData )
-			//{
-			//	me.loggedInDivTag.show();
-			//	me.navTitleTextTag.show();
-			//	me.navTitleTextTag.text( ' ' + loginData.orgUnitData.ouName + ' ' ).attr( 'title', loginData.orgUnitData.ouName ); //loginData.orgUnitData.userName
-
-			//	$( 'div.navigation__user').html( loginData.orgUnitData.ouName ); //loginData.orgUnitData.userName
-			//}
-
-			// Load config and continue the CWS App process
-			if ( loginData.dcdConfig ) 
-			{
-				// call CWS start with this config data..
-				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
-
-				me.loginAfter();
-			}
-			else
-			{
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
-			}
-
-			$( '.Nav1' ).css( 'display', 'flex' );
-
-			//me.cwsRenderObj.langTermObj.translatePage();
-
-		});
-	};
-	
-
-	me.loginAfter = function()
-	{
-		FormUtil.geolocationAllowed();
-
-		me.cwsRenderObj.renderDefaultTheme();
-
-		MsgManager.initialSetup();
-
-		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
-
-		me.loginAfter_UI_Update();
 	};
 
 

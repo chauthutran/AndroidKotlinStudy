@@ -22,10 +22,9 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     {
         var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, ConfigManager.getConfigJson().definitionPayloadTemplates );
                 
-        var INFO = PayloadTemplateHelper.getINFO( dateTimeObj, formsJson, formsJsonGroup, blockInfo, SessionManager.sessionData );
-        //DevHelper.setINFO_ForConsoleDisplay( INFO ); 
+        PayloadTemplateHelper.setINFO_payload( dateTimeObj, formsJson, formsJsonGroup, blockInfo );
 
-        PayloadTemplateHelper.evalPayloads( payloadList, INFO );
+        PayloadTemplateHelper.evalPayloads( payloadList, InfoDataManager.getINFO() );
 
         finalPayload = PayloadTemplateHelper.combinePayloads( payloadList );
 
@@ -78,19 +77,18 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
     return payloadList;
 };
 
-PayloadTemplateHelper.getINFO = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, sessionData )
+PayloadTemplateHelper.setINFO_payload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo )
 {
-    var INFO = {};
-    
-    // In config/payloadTemplat, we will use below info
-    INFO.date = dateTimeObj;
-    Util.mergeJson( INFO, sessionData ); // = { login_UserName: '',
-    Util.mergeJson( INFO, blockInfo ); // activityType
-    
-    INFO.formsJson = formsJson;
-    INFO.formsJsonGroup = formsJsonGroup;
+    //var INFO = {};    
+    var payload = {};
 
-    return INFO;
+    payload.date = dateTimeObj;
+    payload.formsJson = formsJson;
+    payload.formsJsonGroup = formsJsonGroup;
+
+    Util.mergeJson( payload, blockInfo ); // activityType
+
+    InfoDataManager.setINFOdata( 'payload', payload );
 };
 
 

@@ -298,14 +298,14 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
-            var INFO = {};
-
             for ( var i = 0; i < mainList.length; i++ )
             {
                 var activity = mainList[ i ]; 
-                INFO.activity = activity;
                 
-                if ( Util.evalTryCatch( viewDef.dataFilterEval, INFO, 'BlockListView.viewFilterData()' ) === true )
+                InfoDataManager.setINFOdata( 'activity', activity );
+                InfoDataManager.setINFOclientByActivity( activity );
+                
+                if ( Util.evalTryCatch( viewDef.dataFilterEval, InfoDataManager.getINFO(), 'BlockListView.viewFilterData()' ) === true )
                 {
                     // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
                     filteredData.push( activity );
@@ -359,11 +359,11 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
         try
         {    
-            var INFO = me.getINFO_byActivity( activity );
+            InfoDataManager.setINFOdata( 'activity', activity );
+            InfoDataManager.setINFOclientByActivity( activity );
 
-            var evalField = Util.evalTryCatch( groupByDef.evalField, INFO, 'BlockListView.getGroupId_FromViewDef()' );
-    
-    
+            var evalField = Util.evalTryCatch( groupByDef.evalField, InfoDataManager.getINFO(), 'BlockListView.getGroupId_FromViewDef()' );
+        
             if ( groupByDef.groupType === 'unique' )
             {
                 // Each value is a group (automatic grouping).  set 'evaledVal' as groupId, but as string.
@@ -379,10 +379,10 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                     for ( var i = 0; i < groupByDef.groups.length; i++ )
                     {
                         var groupDef = groupByDef.groups[i];
-    
-                        var INFO2 = { 'evalField': evalField };
+                            
+                        InfoDataManager.setINFOdata( 'evalField', evalField );
                         
-                        if ( Util.evalTryCatch( groupDef.eval, INFO2, 'BlockListView.getGroupId_FromViewDef() Groups' ) === true )
+                        if ( Util.evalTryCatch( groupDef.eval, InfoDataManager.getINFO(), 'BlockListView.getGroupId_FromViewDef() Groups' ) === true )
                         {
                             groupMatched = Util.getJsonDeepCopy( groupDef );
                             break;                        
@@ -400,15 +400,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
-    me.getINFO_byActivity = function( activity )
-    {
-        var activityTrans = ActivityDataManager.getCombinedTrans( activity );
-        var client = ClientDataManager.getClientByActivityId( activity.id );
-        //var clientDetails = ( client ) ? client.clientDetails: {};
-
-        return { 'activity': activity, 'client': client, 'activityTrans': activityTrans };
-    }
-    
     me.setGroupByData_withActivity = function( groupJson, activity, groupByData )
     {
         // ?? TODO: HOW SHOULD WE FORMAT THE GROUPS?  WITH 'ACTIVITIES' IN IT?
@@ -571,50 +562,61 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     {
         Util.tryCatchContinue( function() {
 
-            var activityINFOList = me.setINFOList_byActivityList( group.activities );
+            // Which name to use - 'INFO' vs 'LIST'
+            var LISTactivityList = me.setLIST_byActivityList( group.activities, 'INFO' );
                 
-            me.evalSort( contentSort, activityINFOList, contentSortOrder );
+            me.evalSort( contentSort, LISTactivityList, contentSortOrder );
 
             // Put the activity (in INFO) back to activityList..
-            var newGroupActivities = me.getActivityList_fromINFOList( activityINFOList );
+            var newGroupActivities = me.getActivityList_fromLIST( LISTactivityList, 'INFO' );
             Util.appendArray( newActivityList, newGroupActivities );
 
         }, "BlockListView.groupContentSort()" );
-    }
+    };
 
-    me.setINFOList_byActivityList = function( activityList )
+
+    me.setLIST_byActivityList = function( activityList, name )
     {
         var newList = [];
 
         for ( var i = 0; i < activityList.length; i++ )
         {
             var activity = activityList[ i ];
-
-            var INFO = me.getINFO_byActivity( activity );
-
-            newList.push( { 'INFO': INFO } );
+            
+            // NOTE: could use 'LIST' instead...
+            var newObj = {};
+            newObj[ name ] = me.getDataByActivity( activity );
+            newList.push( newObj );
         }
 
         return newList;
     };
 
     
-    me.getActivityList_fromINFOList = function( activityINFOList )
+    me.getDataByActivity = function( activity )
+    {
+        var client = ClientDataManager.getClientByActivityId( activity.id );
+
+        return { 'activity': activity, 'client': client };
+    };
+
+    
+    me.getActivityList_fromLIST = function( LISTactivityList, name )
     {
         var newActivityList = [];
 
-        for ( var i = 0; i < activityINFOList.length; i++ )
+        for ( var i = 0; i < LISTactivityList.length; i++ )
         {
-            var activityInfo = activityINFOList[ i ];
+            var data = LISTactivityList[ i ];
 
-            newActivityList.push( activityInfo.INFO.activity );
+            newActivityList.push( data[ name ].activity );
         }
 
         return newActivityList;
     };
 
-
-    // Could be Util method...
+    // If we want to use global 'INFO' in sortEval, we need to pass in the global 'INFO' as parameter
+    //      + change 'INFO.activity' as 'LIST.activity' to differentiate if... or just 'activity'
     me.evalSort = function( fieldEvalStr, list, orderStr )
     {
         var isDescending = orderStr.indexOf( 'desc' );
