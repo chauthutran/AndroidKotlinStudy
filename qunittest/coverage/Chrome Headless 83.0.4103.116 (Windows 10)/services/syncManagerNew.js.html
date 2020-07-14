@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for services/activityDataManager.js</title>
+    <title>Code coverage report for services/syncManagerNew.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> activityDataManager.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> syncManagerNew.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.75% </span>
+                <span class="strong">15.48% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>118/160</span>
+                <span class='fraction'>26/168</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">36.54% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>19/52</span>
+                <span class='fraction'>0/43</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.36% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>19/22</span>
+                <span class='fraction'>0/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.22% </span>
+                <span class="strong">16.67% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>109/143</span>
+                <span class='fraction'>26/156</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -505,7 +505,59 @@
 <a name='L446'></a><a href='#L446'>446</a>
 <a name='L447'></a><a href='#L447'>447</a>
 <a name='L448'></a><a href='#L448'>448</a>
-<a name='L449'></a><a href='#L449'>449</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a>
+<a name='L455'></a><a href='#L455'>455</a>
+<a name='L456'></a><a href='#L456'>456</a>
+<a name='L457'></a><a href='#L457'>457</a>
+<a name='L458'></a><a href='#L458'>458</a>
+<a name='L459'></a><a href='#L459'>459</a>
+<a name='L460'></a><a href='#L460'>460</a>
+<a name='L461'></a><a href='#L461'>461</a>
+<a name='L462'></a><a href='#L462'>462</a>
+<a name='L463'></a><a href='#L463'>463</a>
+<a name='L464'></a><a href='#L464'>464</a>
+<a name='L465'></a><a href='#L465'>465</a>
+<a name='L466'></a><a href='#L466'>466</a>
+<a name='L467'></a><a href='#L467'>467</a>
+<a name='L468'></a><a href='#L468'>468</a>
+<a name='L469'></a><a href='#L469'>469</a>
+<a name='L470'></a><a href='#L470'>470</a>
+<a name='L471'></a><a href='#L471'>471</a>
+<a name='L472'></a><a href='#L472'>472</a>
+<a name='L473'></a><a href='#L473'>473</a>
+<a name='L474'></a><a href='#L474'>474</a>
+<a name='L475'></a><a href='#L475'>475</a>
+<a name='L476'></a><a href='#L476'>476</a>
+<a name='L477'></a><a href='#L477'>477</a>
+<a name='L478'></a><a href='#L478'>478</a>
+<a name='L479'></a><a href='#L479'>479</a>
+<a name='L480'></a><a href='#L480'>480</a>
+<a name='L481'></a><a href='#L481'>481</a>
+<a name='L482'></a><a href='#L482'>482</a>
+<a name='L483'></a><a href='#L483'>483</a>
+<a name='L484'></a><a href='#L484'>484</a>
+<a name='L485'></a><a href='#L485'>485</a>
+<a name='L486'></a><a href='#L486'>486</a>
+<a name='L487'></a><a href='#L487'>487</a>
+<a name='L488'></a><a href='#L488'>488</a>
+<a name='L489'></a><a href='#L489'>489</a>
+<a name='L490'></a><a href='#L490'>490</a>
+<a name='L491'></a><a href='#L491'>491</a>
+<a name='L492'></a><a href='#L492'>492</a>
+<a name='L493'></a><a href='#L493'>493</a>
+<a name='L494'></a><a href='#L494'>494</a>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -525,47 +577,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -578,117 +599,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -708,8 +621,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -718,95 +629,17 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -816,51 +649,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -868,71 +661,27 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -946,462 +695,854 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// =========================================
 // -------------------------------------------------
-//     ActivityDataManager
-//          - keeps activity list data &amp; related methods.
+//     SyncManagerNew
+//          - Methods related to submitting data to server
+//              - Later will have downloading data from server feature.
 //
-//      - FEATURES:
-//          1. Get Activity/ActivityList - by Id, etc..
-//          2. Remove Activity/ActivityList/ActivityByClientId, etc..
-//          3. Insert/Update Activity
-//          4. ActivityList Regen, update, add (with index data)
-//          5. Merge downloaded activities related
-//          6. Activity Payload Related Methods
-//          7. Create Activity Processing Info Related Methods
-//          8. getCombinedTrans - get single json that combines all data in transactions
+// -- Pseudo WriteUp:   Create Pseudo Codes with Flow of App (High Level --&gt; to Lower Level)
+//
+//      - LVL 1. The Expected Features of this class..
+//          1. Running 'Sync' on Item --&gt; Submit Offline(?) Item to Server to process operation.  MORE: SyncUp, SyncDown
+//          2. 'SyncAll' - all the list of items, perform Sync.
+//          3. 'SyncDown' - Start download and merge
+//
+//      - LVL 2. Go through each of 'Lvl 1' Methods to put general operation logics
+//          OP1. ""'Sync' on a item"
+//              A. Check on Network Status.
+//              B. Submit/Perform the operation of item on server..
+//              B1(?). Update Data based on B
+//              C. Update The App/UI of changes
 //
 // -------------------------------------------------
 &nbsp;
-function <span class="fstat-no" title="function not covered" >ActivityDataManager(</span>)  {};
+function <span class="fstat-no" title="function not covered" >SyncManagerNew(</span>)  {};
 &nbsp;
-ActivityDataManager._activityList = []; // Activity reference list - original data are  in each client activities.
-ActivityDataManager._activityToClient = {};  // Fast reference - activity to client
+SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 &nbsp;
-ActivityDataManager.jsonSignature_Dhis2 = {
-    "client": {}
+//SyncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
+//SyncManagerNew.sync_Download_Running = false; // for planned download sync
+&nbsp;
+SyncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
+SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
+//.children()[0];
+// $( '#divProgressBar.indeterminate' );
+&nbsp;
+&nbsp;
+// If blockListObj were created and referened..  We could use cwsRenderObj instead..
+SyncManagerNew.blockListObj;  // If
+&nbsp;
+SyncManagerNew.template_SyncMsgJson = { 
+    "msgList": [], // { "msg": "", "datetime": "" }
+    "summaryList": []  // { "msg": "" }
 };
 &nbsp;
-ActivityDataManager.jsonSignature_Mongo = {
-    "transactions": []
-};
+SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
 &nbsp;
-// ActivityDataManager.wsSubmit_AppVersionStr = "1.3";  _ver
+SyncManagerNew.template_SyncMsg_Header = `&lt;div class="sync_all__header_title"&gt;Synchronization Services Deliveries&lt;/div&gt;
+    &lt;div class="sync_all__anim i-sync-pending_36 rot_l_anim"&gt;&lt;/div&gt;`;
+&nbsp;
+SyncManagerNew.template_SyncMsg_Section = `&lt;div class="sync_all__section"&gt;
+      &lt;div class="sync_all__section_title"&gt;&lt;/div&gt;
+      &lt;div class="sync_all__section_log"&gt;&lt;/div&gt;
+  &lt;/div&gt;`;
 &nbsp;
 &nbsp;
 // ===================================================
-// === MAIN FEATURES =============
+// === MAIN 2 FEATURES =============
 &nbsp;
-// ---------------------------------------
-// --- Get Activity / ActivityList
-&nbsp;
-ActivityDataManager.getActivityList = function()
+// 2. Run 'sync' on All activityItems
+SyncManagerNew.syncAll = <span class="fstat-no" title="function not covered" >fu</span>nction( cwsRenderObj, runType, callBack )
 {
-    return ActivityDataManager._activityList;
-};
-&nbsp;
-// Get single activity Item (by property value search) from the list - Called from 'activityItem.js'
-ActivityDataManager.getActivityItem = function( propName, propVal )
-{
-    return Util.getFromList( ActivityDataManager.getActivityList(), propVal, propName );    
-};
-&nbsp;
-ActivityDataManager.getActivityById = function( activityId )
-{
-    return Util.getFromList( ActivityDataManager._activityList, activityId, 'id' );
-};
-&nbsp;
-// ---------------------------------------
-// --- Remove Activity
-&nbsp;
-ActivityDataManager.removeActivities = function( activities )
-{
-    for ( var i = 0; i &lt; activities.length; i++ )
+<span class="cstat-no" title="statement not covered" >    try</span>
     {
-        var activity = activities[ i ];
-&nbsp;
-        ActivityDataManager.removeActivityById( activity.id );
-    }
-}
-&nbsp;
-// After 'syncUp', remove the payload &lt;-- after syncDown?
-ActivityDataManager.removeActivityById = function( activityId )
-{
-    try
-    {
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( activityId )
+<span class="cstat-no" title="statement not covered" >        if ( SyncManagerNew.syncStart() )</span>
         {
-            // 1. remove from activityList
-            Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.SyncMsg_InsertMsg( "Started sync_all.." );</span>
 &nbsp;
-            // 2. remove from activityClientMap, 3. remove from client activities
-            <span class="missing-if-branch" title="else path not taken" >E</span>if ( ActivityDataManager._activityToClient[ activityId ] )
-            {
-                var client = ActivityDataManager._activityToClient[ activityId ];
-&nbsp;
-                delete ActivityDataManager._activityToClient[ activityId ];
-&nbsp;
-                Util.RemoveFromArray( client.activities, "id", activityId );
-            }   
-        }
-    }
-    catch ( errMsg )
-    {
-<span class="cstat-no" title="statement not covered" >        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );</span>
-    }
-};
-&nbsp;
-ActivityDataManager.removeActivityNClientById = function( activityId )
-{
-    try
-    {
-        // 1. remove from activityList
-        Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
-        
-        // 2. remove from activityClientMap, 3. remove from client activities
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( ActivityDataManager._activityToClient[ activityId ] )
-        {
-            var client = ActivityDataManager._activityToClient[ activityId ];
-&nbsp;
-            delete ActivityDataManager._activityToClient[ activityId ];
-&nbsp;
-            Util.RemoveFromArray( client.activities, "id", activityId );
-&nbsp;
-            <span class="missing-if-branch" title="else path not taken" >E</span>if ( client._id.indexOf( ClientDataManager.payloadClientNameStart ) === 0 )
-            {
-                // Delete 'client' that was created for the activity payload..
-                ClientDataManager.removeClient( client );
-            }
-        }    
-    }
-    catch ( errMsg )
-    {
-<span class="cstat-no" title="statement not covered" >        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );</span>
-    }
-};
-&nbsp;
-// ---------------------------------------
-// --- Insert Activity
-&nbsp;
-ActivityDataManager.insertActivityToClient = function( activity, client )
-{
-    ActivityDataManager.insertActivitiesToClient( [ activity ], client );
-};
-&nbsp;
-ActivityDataManager.insertActivitiesToClient = function( activities, client )
-{
-    for ( var i = 0; i &lt; activities.length; i++ )
-    {
-        var activity = activities[ i ];
-&nbsp;
-        client.activities.push( activity );
-&nbsp;
-        ActivityDataManager.updateActivityList_NIndexes( activity, client );
-    }
-};
-&nbsp;
-// ============================================
-// === ActivityList Regen, update, add (with index data)
-&nbsp;
-&nbsp;
-// Create 'activityList' and 'activityToClient' map.
-ActivityDataManager.regenActivityList_NIndexes = function()
-{
-    var clientList = ClientDataManager.getClientList();
-&nbsp;
-    // Reset the activityList and mapping to client
-    ActivityDataManager._activityList = [];
-    ActivityDataManager._activityToClient = {};
-&nbsp;
-    for ( var i = 0; i &lt; clientList.length; i++ )
-    {        
-        var client = clientList[i];
-&nbsp;
-        ActivityDataManager.addToActivityList_NIndexes( client );
-    }
-};
-&nbsp;
-&nbsp;
-ActivityDataManager.updateActivityList_NIndexes = function( activity, client )
-{
-    // Might use 'unshift' to add to top?
-    ActivityDataManager._activityList.push( activity );
-&nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if ( activity.id ) ActivityDataManager._activityToClient[ activity.id ] = client;
-};
-&nbsp;
-&nbsp;
-ActivityDataManager.addToActivityList_NIndexes = function( client )
-{
-    <span class="missing-if-branch" title="else path not taken" >E</span>if ( client.activities ) 
-    {
-        for ( var x = 0; x &lt; client.activities.length; x++ )
-        {
-            var activity = client.activities[ x ];
-&nbsp;
-            ActivityDataManager.updateActivityList_NIndexes( activity, client );
-        }
-    }
-};
-&nbsp;
-&nbsp;
-// ====================================================
-// === Merge downloaded activities related
-&nbsp;
-ActivityDataManager.mergeDownloadedActivities = <span class="fstat-no" title="function not covered" >fu</span>nction( mongoActivities, pwaActivities, pwaClient, processingInfo )
-{
-    var newActivities = <span class="cstat-no" title="statement not covered" >[];</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >    for ( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; mongoActivities.length; i++ )</span>
-    {        
-        var mongoActivity = <span class="cstat-no" title="statement not covered" >mongoActivities[i];</span>
-&nbsp;
-        // TODO: Should use index for faster search
-        var pwaActivity = <span class="cstat-no" title="statement not covered" >Util.getFromList( pwaActivities, mongoActivity.id, "id" );</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        try</span>
-        {
-            // Only the ones (mongo) that does not exists in PWA, add to the list..
-<span class="cstat-no" title="statement not covered" >            if ( !pwaActivity )</span>
-            {
-<span class="cstat-no" title="statement not covered" >                ActivityDataManager.insertToProcessing( mongoActivity, processingInfo );</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >                newActivities.push( mongoActivity );                </span>
-            }
-        }
-        catch( errMsg )
-        {
-<span class="cstat-no" title="statement not covered" >            console.log( 'Error during ActivityDataManager.mergeDownloadedActivities: ', mongoActivity, pwaActivity );</span>
-        }
-    }
-&nbsp;
-    // if new list to push to pwaActivities exists, add to the list.
-<span class="cstat-no" title="statement not covered" >    if ( newActivities.length &gt; 0 ) </span>
-    {
-<span class="cstat-no" title="statement not covered" >        ActivityDataManager.insertActivitiesToClient( newActivities, pwaClient );</span>
-    }
-&nbsp;
-    // Return the number of added ones.
-<span class="cstat-no" title="statement not covered" >    return newActivities.length;</span>
-};
-&nbsp;
-// --------------------------------------
-// -- Activity Payload Related Methods
-&nbsp;
-ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJsonActivityPayload )
-{
-    var activityJson = {};
-&nbsp;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if ( !formsJsonActivityPayload.payload ) <span class="cstat-no" title="statement not covered" >throw 'activityPayloadsJson.payload not exists';</span>
-    else
-    {
-        var createdDT = new Date();
-        var payload = formsJsonActivityPayload.payload;
-&nbsp;
-&nbsp;
-        // CONVERT 'searchValues'/'captureValues' structure ==&gt; 'captureValues.processing': { 'searchValues' }
-        activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
-&nbsp;
-        // FAILED TO GENERATE - ERROR MESSAGE..
-        <span class="missing-if-branch" title="if path not taken" >I</span>if ( !activityJson ) <span class="cstat-no" title="statement not covered" >throw 'payload captureValues not exists!';</span>
-        
-        // If activityId were not generated by the payload generation methods, create one.
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( !activityJson.id ) activityJson.id = SessionManager.sessionData.login_UserName + '_' + $.format.date( createdDT.toUTCString(), 'yyyyMMdd_HHmmssSSS' );
-        
-        activityJson.processing = { 
-            'created': Util.formatDateTimeStr( createdDT.toString() )
-            ,'status': Constants.status_queued
-            ,'history': []
-            ,'url': actionUrl
-            ,'searchValues': payload.searchValues
-            //"payloadType": payloadType
-            // 'actionJson': actionDefJson &lt;-- Do not need this, probably
-        };
-    }
-&nbsp;
-    return activityJson;
-};
-&nbsp;
-&nbsp;
-// Add new activity with client generation
-ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonActivityPayload, callBack )
-{
-    try
-    {
-        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, formsJsonActivityPayload );
-&nbsp;
-        var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
+            // initialise UI + animation
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.update_UI_StartSyncAll();</span>
     
-        ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient );
+            // get activityItems (for upload) &gt; not already uploaded (to be processed)
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, <span class="fstat-no" title="function not covered" >fu</span>nction( activityDataList ){</span>
     
-        ClientDataManager.saveCurrent_ClientsStore( function() {
-            <span class="missing-if-branch" title="else path not taken" >E</span>if ( callBack ) callBack( activityJson );    
-        });    
+<span class="cstat-no" title="statement not covered" >                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, <span class="fstat-no" title="function not covered" >fu</span>nction() </span>
+                {
+<span class="cstat-no" title="statement not covered" >                    SyncManagerNew.SyncMsg_InsertMsg( "sync_all completed.." );</span>
+    
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync postponed N.." );</span>
+<span class="cstat-no" title="statement not covered" >                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync error N.." );</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    console.log( 'syncAll finished' );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    SyncManagerNew.syncFinish();</span>
+<span class="cstat-no" title="statement not covered" >                    SyncManagerNew.update_UI_FinishSyncAll();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack( true );</span></span>
+                });
+            });
+        }
+        else
+        {
+<span class="cstat-no" title="statement not covered" >            throw "Sync not ready";</span>
+        }
     }
     catch( errMsg )
+    {
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.SyncMsg_InsertSummaryMsg( "sync_all failed - msg: " + errMsg );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        console.log( 'syncAll not run properly - ' + errMsg );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.syncFinish();</span>
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.update_UI_FinishSyncAll();</span>
+<span class="cstat-no" title="statement not covered" >        if( callBack ) <span class="cstat-no" title="statement not covered" >callBack( false );</span></span>
+    }
+};
+&nbsp;
+&nbsp;
+// NEW: JAMES: ----
+SyncManagerNew.syncDown = <span class="fstat-no" title="function not covered" >fu</span>nction( cwsRenderObj, runType, callBack )
+{
+    // NOTE: We can check network connection here, or from calling place.  
+    //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.update_UI_StartSyncAll();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.SyncMsg_InsertMsg( "download started.." );</span>
+&nbsp;
+    // Retrieve data..
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.downloadClients( <span class="fstat-no" title="function not covered" >fu</span>nction( downloadSuccess, returnJson ) </span>
+    {
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.update_UI_FinishSyncAll();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.SyncMsg_InsertMsg( "download finished.." );</span>
+&nbsp;
+        var changeOccurred = <span class="cstat-no" title="statement not covered" >false;        </span>
+        //console.log( success ); //console.log( mongoClients );
+        // S2. NOTE: Mark that download done as just log?
+        var mongoClients = <span class="cstat-no" title="statement not covered" >[];</span>
+        
+<span class="cstat-no" title="statement not covered" >        if ( returnJson &amp;&amp; returnJson.response &amp;&amp; returnJson.response.dataList ) <span class="cstat-no" title="statement not covered" >mongoClients = returnJson.response.dataList;</span></span>
+        else <span class="cstat-no" title="statement not covered" >if ( returnJson &amp;&amp; returnJson.clientList ) <span class="cstat-no" title="statement not covered" >mongoClients = returnJson.clientList;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        console.log( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if ( !downloadSuccess ) </span>
+        { 
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.SyncMsg_InsertMsg( "download result - not success.." );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack( downloadSuccess, changeOccurred ); </span></span>
+        }
+        else
+        {
+            // 'download' processing data                
+            var processingInfo = <span class="cstat-no" title="statement not covered" >ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + mongoClients.length + " clients: " );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.SyncMsg_InsertMsg( "Synchronizing..." );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            ClientDataManager.mergeDownloadedClients( mongoClients, processingInfo, <span class="fstat-no" title="function not covered" >fu</span>nction( changeOccurred_atMerge ) </span>
+            {
+<span class="cstat-no" title="statement not covered" >                SyncManagerNew.SyncMsg_InsertMsg( "merged.." );</span>
+<span class="cstat-no" title="statement not covered" >                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + mongoClients.length + " clients: " );</span>
+&nbsp;
+&nbsp;
+                // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+<span class="cstat-no" title="statement not covered" >                AppInfoManager.updateDownloadInfo(( new Date() ).toISOString()); </span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack( downloadSuccess, changeOccurred_atMerge );</span></span>
+            });
+            
+        }
+    });    
+};
+&nbsp;
+// ===================================================
+// === 1. 'syncUpItem' Related Methods =============
+&nbsp;
+// ===================================================
+// === 2. 'syncAll' Related Methods =============
+&nbsp;
+SyncManagerNew.getActivityItems_ForSync = <span class="fstat-no" title="function not covered" >fu</span>nction( cwsRenderObj, callBack )
+{    
+    var uploadItems = <span class="cstat-no" title="statement not covered" >[];</span>
+    
+    var newList = <span class="cstat-no" title="statement not covered" >ActivityDataManager.getActivityList().filter( <span class="fstat-no" title="function not covered" >a </span>=&gt; ( <span class="cstat-no" title="statement not covered" >a.status === Constants.status_queued || a.status === Constants.status_failed </span>) );</span>
+    //var myQueue = myItems.filter( a=&gt;a.status == Constants.status_queued );
+    //var myFailed = myItems.filter( a=&gt;a.status == Constants.status_failed ); 
+<span class="cstat-no" title="statement not covered" >    uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); </span>// combined list
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    callBack( uploadItems );</span>
+&nbsp;
+	//});
+};
+&nbsp;
+SyncManagerNew.syncUpItem_RecursiveProcess = <span class="fstat-no" title="function not covered" >fu</span>nction( activityDataList, i, cwsRenderObj, callBack )
+{
+    // length is 1  index 'i' = 0; next time 'i' = 1
+<span class="cstat-no" title="statement not covered" >    if ( activityDataList.length &lt;= i )</span>
+    {
+        // If index is equal or bigger to list, return back. - End reached.
+<span class="cstat-no" title="statement not covered" >        return callBack();        </span>
+    }
+    else
     {    
-<span class="cstat-no" title="statement not covered" >        MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notificationDark', undefined, '', 'right', 'top' );</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack();    </span></span>
-    }
-};
-&nbsp;
-ActivityDataManager.activityPayload_ConvertForWsSubmit = <span class="fstat-no" title="function not covered" >fu</span>nction( activityJson )
-{
-    var payloadJson = <span class="cstat-no" title="statement not covered" >{</span>
-        "appVersion": _ver,  //ActivityDataManager.wsSubmit_AppVersionStr,
-        "payload": undefined
-    };
-&nbsp;
-    // 'activity' are not in 'search/capture' structure.  Change it to that structure.
-    var activityJson_Copy = <span class="cstat-no" title="statement not covered" >Util.getJsonDeepCopy( activityJson );</span>
-<span class="cstat-no" title="statement not covered" >    delete activityJson_Copy.processing;</span>
-    
-<span class="cstat-no" title="statement not covered" >    payloadJson.payload = {</span>
-        'searchValues': activityJson.processing.searchValues,
-        'captureValues': activityJson_Copy
-    };
-&nbsp;
-<span class="cstat-no" title="statement not covered" >    return payloadJson;</span>
-};
-&nbsp;
-&nbsp;
-// ----------------------------------------------
-// --- Create Activity Processing Info Related
-&nbsp;
-ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr )
-{
-    var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
-    var processingInfo = {
-        'created': dateStr,
-        'status': statusStr,
-        'history': [ { 'status': statusStr, 'responseCode': 200, 'datetime': dateStr, 'msg': msgStr } ]
-    };    
-&nbsp;
-    return processingInfo;
-};
-&nbsp;
-&nbsp;
-ActivityDataManager.createProcessingInfo_Other = function( statusStr, responseCode, msgStr )
-{
-    var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
-    var processingInfo = {
-        'status': statusStr,
-        'history': [ { 'status': statusStr, 'responseCode': responseCode, 'datetime': dateStr, 'msg': msgStr } ]
-    };    
-&nbsp;
-    return processingInfo;
-};
-&nbsp;
-&nbsp;
-ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
-{
-    <span class="missing-if-branch" title="else path not taken" >E</span>if ( activity )
-    {
-        if ( !activity.processing ) 
+        // CASE: NOTE: DURING syncAll, if Offline mode detected, cancel the syncAll process in the middle.
+<span class="cstat-no" title="statement not covered" >        if ( !ConnManagerNew.isAppMode_Online() )</span>
         {
-            activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
-&nbsp;
-            // update the 'created' as mongoDB one if exists..            
-            <span class="missing-if-branch" title="if path not taken" >I</span>if ( activity.date )
-            {
-                var activityUtcDate = <span class="cstat-no" title="statement not covered" >'';</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >                if ( activity.date.createdOnDeviceUTC ) <span class="cstat-no" title="statement not covered" >activityUtcDate = activity.date.createdOnDeviceUTC;</span></span>
-                else <span class="cstat-no" title="statement not covered" >if ( activity.date.createdOnMdbUTC ) <span class="cstat-no" title="statement not covered" >activityUtcDate = activity.date.createdOnMdbUTC;</span></span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >                if ( activityUtcDate )</span>
-                {
-                    var updateCreated = <span class="cstat-no" title="statement not covered" >Util.formatDateTime( Util.dateUTCToLocal( activityUtcDate ) );</span>
-<span class="cstat-no" title="statement not covered" >                    if ( updateCreated ) <span class="cstat-no" title="statement not covered" >activity.processing.created = updateCreated;</span></span>
-                }
-            }
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.SyncMsg_InsertMsg( "App offline mode detected.  Stopping syncAll process.." );</span>
+<span class="cstat-no" title="statement not covered" >            throw 'Stopping syncAll process due to app mode offline detected.';</span>
         }
-        else 
+        else
         {
-            // update the limited data --&gt; 'status', 'statusRead', 'history' (add)
-            activity.processing.status = newProcessingInfo.status;
-&nbsp;
-            <span class="missing-if-branch" title="else path not taken" >E</span>if ( newProcessingInfo.statusRead !== undefined ) activity.processing.statusRead = newProcessingInfo.statusRead;
+            var activityData = <span class="cstat-no" title="statement not covered" >activityDataList[i];         </span>
         
-            activity.processing.history.push( Util.getJsonDeepCopy( newProcessingInfo.history[0] ) );        
+            var activityCardObj = <span class="cstat-no" title="statement not covered" >new ActivityCard( activityData.id, cwsRenderObj );</span>
+    
+<span class="cstat-no" title="statement not covered" >            activityCardObj.performSyncUp( <span class="fstat-no" title="function not covered" >fu</span>nction( success ) {</span>
+    
+<span class="cstat-no" title="statement not covered" >                if ( !success ) <span class="cstat-no" title="statement not covered" >console.log( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );</span></span>
+    
+                // update on progress bar
+<span class="cstat-no" title="statement not covered" >                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );</span>
+    
+                // Process next item.
+<span class="cstat-no" title="statement not covered" >                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );</span>
+            });    
         }
     }
 };
 &nbsp;
-// --------------------------------------------
-// --- Other Methods
 &nbsp;
-ActivityDataManager.getCombinedTrans = function( activityJson )
+// ===================================================
+// === 2. 'syncDown' Related Methods =============
+&nbsp;
+// Perform Server Operation..
+SyncManagerNew.downloadClients = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack )
 {
-    var jsonCombined = {};
-&nbsp;
-    try
+<span class="cstat-no" title="statement not covered" >    try</span>
     {
-        var tranList = activityJson.transactions;
+        // TODO: 
+        var activeUser = <span class="cstat-no" title="statement not covered" >SessionManager.sessionData.login_UserName;</span> //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
+        var dateRange_gtStr;
 &nbsp;
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( tranList )
-        {
-            for( var i = 0; i &lt; tranList.length; i++ )
-            {
-                var tranData_dv = tranList[i].dataValues;
-                var tranData_cd = tranList[i].clientDetails;
-    
-                <span class="missing-if-branch" title="else path not taken" >E</span>if ( tranData_dv )
-                {
-                    for ( var prop in tranData_dv ) 
-                    {
-                        jsonCombined[ prop ] = tranData_dv[ prop ];
-                    }
-                }
-    
-                <span class="missing-if-branch" title="else path not taken" >E</span>if ( tranData_cd )
-                {
-                    for ( var prop in tranData_cd ) 
-                    {
-                        jsonCombined[ prop ] = tranData_cd[ prop ];
-                    }
-                }
-            }
+        var payloadJson = <span class="cstat-no" title="statement not covered" >{ 'find': {} };</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        payloadJson.find = {</span>
+            "clientDetails.users": activeUser
+            //"activities": { "$elemMatch": { "activeUser": activeUser } } 
+        };
+&nbsp;
+        // If last download date exists, search after that. Otherwise, get all
+        var lastDownloadDateISOStr = <span class="cstat-no" title="statement not covered" >AppInfoManager.getDownloadInfo();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if ( lastDownloadDateISOStr ) </span>
+        { 
+<span class="cstat-no" title="statement not covered" >            dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );</span>
+<span class="cstat-no" title="statement not covered" >            payloadJson.find[ 'date.updatedOnMdbUTC' ] = { "$gte": dateRange_gtStr };</span>
         }
-    }
-    catch ( errMsg )
-    {
-<span class="cstat-no" title="statement not covered" >        console.log( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );</span>
-    }
 &nbsp;
-    return jsonCombined;
+&nbsp;
+        var loadingTag = <span class="cstat-no" title="statement not covered" >undefined;</span>
+<span class="cstat-no" title="statement not covered" >        WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, <span class="fstat-no" title="function not covered" >fu</span>nction( success, returnJson ) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            callBack( success, returnJson );</span>
+        });        
+    }
+    catch( errMsg )
+    {
+<span class="cstat-no" title="statement not covered" >        console.log( 'Error in SyncManagerNew.downloadClients - ' + errMsg );</span>
+<span class="cstat-no" title="statement not covered" >        callBack( false );</span>
+    }
 };
 &nbsp;
 &nbsp;
-ActivityDataManager.getData_FromTrans = function( activityJson, propName )
+&nbsp;
+// ===================================================
+// === UI Related Methods =============
+&nbsp;
+&nbsp;
+SyncManagerNew.update_UI_StartSyncAll = <span class="fstat-no" title="function not covered" >fu</span>nction()
 {
-    var dataJson = {};
+    // initialise ProgressBar Defaults
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.initializeProgressBar();</span>
 &nbsp;
-    try
+    // animate syncButton 'running' 
+<span class="cstat-no" title="statement not covered" >    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, true );</span>
+};
+&nbsp;
+SyncManagerNew.update_UI_FinishSyncAll = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.hideProgressBar();</span>
+<span class="cstat-no" title="statement not covered" >    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, false );</span>
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.initializeProgressBar = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    $( SyncManagerNew.subProgressBar ).removeClass( 'indeterminate' );</span>
+<span class="cstat-no" title="statement not covered" >    $( SyncManagerNew.subProgressBar ).addClass( 'determinate' );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    FormUtil.updateProgressWidth( 0 );</span>
+<span class="cstat-no" title="statement not covered" >    FormUtil.showProgressBar( 0 );</span>
+};
+&nbsp;
+SyncManagerNew.hideProgressBar = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    FormUtil.hideProgressBar();</span>
+&nbsp;
+    //$( syncManager.subProgressBar ).removeClass( 'determinate' );
+    //$( syncManager.subProgressBar ).addClass( 'indeterminate' );
+};
+&nbsp;
+// ===================================================
+// === 'syncStart/Finish' Related Methods =============
+&nbsp;
+SyncManagerNew.syncStart = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+    var isOkToStart = <span class="cstat-no" title="statement not covered" >false;</span>
+&nbsp;
+    // Return 'false' if there is already running one..
+<span class="cstat-no" title="statement not covered" >    if ( SyncManagerNew.sync_Running ) </span>
     {
-        var tranList = activityJson.transactions;
-&nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if ( tranList )
+<span class="cstat-no" title="statement not covered" >        isOkToStart = false;</span>
+        // TODO: Change to popup message in the app
+<span class="cstat-no" title="statement not covered" >        alert( 'There is another sync job currenly running..' );        </span>
+    }
+    else 
+    {
+        // If not already running sync in process, check the network mode
+        // and set it as running
+<span class="cstat-no" title="statement not covered" >        if ( !ConnManagerNew.isAppMode_Online() )</span>
         {
-<span class="cstat-no" title="statement not covered" >            for( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; tranList.length; i++ )</span>
-            {
-                var tranData_cd = <span class="cstat-no" title="statement not covered" >tranList[i][ propName ];</span>
+<span class="cstat-no" title="statement not covered" >            alert( 'Sync not available with offline appMode status..' );            </span>
+        }
+        else
+        {
+<span class="cstat-no" title="statement not covered" >            SyncManagerNew.sync_Running = true;</span>
+<span class="cstat-no" title="statement not covered" >            isOkToStart = true;    </span>
+        }        
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return isOkToStart;</span>
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.syncAll_WithChecks = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+    // automated sync process
+}
+&nbsp;
+SyncManagerNew.syncFinish = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.sync_Running = false;  </span>
+};
+&nbsp;
+&nbsp;
+// ===================================================
+// === Sync All Msg to LS Methods =============
+&nbsp;
+&nbsp;
+// TODO: Load at load in memory on startup!!!!
+SyncManagerNew.SyncMsg_Get = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+    var syncMsgJson;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( SyncManagerNew.syncMsgJson ) <span class="cstat-no" title="statement not covered" >syncMsgJson = SyncManagerNew.syncMsgJson;</span></span>
+    else
+    {
+<span class="cstat-no" title="statement not covered" >        syncMsgJson = AppInfoManager.getSyncMsg();</span>
+                
+<span class="cstat-no" title="statement not covered" >        console.log( syncMsgJson );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if ( !syncMsgJson ) <span class="cstat-no" title="statement not covered" >syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );    </span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        console.log( syncMsgJson );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.syncMsgJson = syncMsgJson;</span>
+    }
+    
+<span class="cstat-no" title="statement not covered" >    return syncMsgJson;</span>
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.SyncMsg_InsertMsg = <span class="fstat-no" title="function not covered" >fu</span>nction( msgStr )
+{
+    var syncMsgJson = <span class="cstat-no" title="statement not covered" >SyncManagerNew.SyncMsg_Get();</span> // SyncManagerNew.syncMsgJson??
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( syncMsgJson )</span>
+    {
+        var newMsgJson = <span class="cstat-no" title="statement not covered" >{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };</span>
+    
+<span class="cstat-no" title="statement not covered" >        syncMsgJson.msgList.push( newMsgJson );</span>
+    
+<span class="cstat-no" title="statement not covered" >        AppInfoManager.updateSyncMsg( syncMsgJson );</span>
+    }
+    else
+    {
+<span class="cstat-no" title="statement not covered" >        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );</span>
+    }
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.SyncMsg_InsertSummaryMsg = <span class="fstat-no" title="function not covered" >fu</span>nction( summaryMsgStr )
+{
+    var syncMsgJson = <span class="cstat-no" title="statement not covered" >SyncManagerNew.SyncMsg_Get();</span>  // SyncManagerNew.syncMsgJson??
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( syncMsgJson )</span>
+    {
+        var newSummaryMsgJson = <span class="cstat-no" title="statement not covered" >{ "msg": summaryMsgStr };</span>
         
-<span class="cstat-no" title="statement not covered" >                if ( tranData_cd )</span>
-                {
-<span class="cstat-no" title="statement not covered" >                    for ( var prop in tranData_cd ) </span>
-                    {
-<span class="cstat-no" title="statement not covered" >                        dataJson[ prop ] = tranData_cd[ prop ];</span>
-                    }
-                }
-            }
-        }
-    }
-    catch ( errMsg )
-    {
-<span class="cstat-no" title="statement not covered" >        console.log( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );</span>
-    }
+<span class="cstat-no" title="statement not covered" >        syncMsgJson.summaryList.push( newSummaryMsgJson );</span>
 &nbsp;
-    return dataJson;
-};</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >        AppInfoManager.updateSyncMsg( syncMsgJson );</span>
+    }
+    else
+    {
+<span class="cstat-no" title="statement not covered" >        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );</span>
+    }    
+};
+&nbsp;
+&nbsp;
+// After Login, we want to reset this 'SyncMsg'
+SyncManagerNew.SyncMsg_Reset = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+    var syncMsgJson = <span class="cstat-no" title="statement not covered" >Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );</span>
+    
+<span class="cstat-no" title="statement not covered" >    SyncManagerNew.syncMsgJson = syncMsgJson;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    AppInfoManager.updateSyncMsg( syncMsgJson );</span>
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.SyncMsg_ShowBottomMsg = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+    // TODO: Should do toggle of visible - if clicked again, hide it as well..
+    //   ?? Where is the hiding logic?
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    Templates.setMsgAreaBottom( <span class="fstat-no" title="function not covered" >fu</span>nction( syncInfoAreaTag ) </span>
+    {
+        var msgHeaderTag = <span class="cstat-no" title="statement not covered" >syncInfoAreaTag.find( 'div.msgHeader' );</span>
+        var msgContentTag = <span class="cstat-no" title="statement not covered" >syncInfoAreaTag.find( 'div.msgContent' );</span>
+&nbsp;
+        // 1. Set Header
+<span class="cstat-no" title="statement not covered" >        msgHeaderTag.append( SyncManagerNew.template_SyncMsg_Header );</span>
+        // TODO: Need to update the sync progress status.. and register 
+&nbsp;
+&nbsp;
+        // 2. Set Body
+        var syncMsgJson = <span class="cstat-no" title="statement not covered" >SyncManagerNew.SyncMsg_Get();</span>
+&nbsp;
+        // Add Service Deliveries Msg
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.SyncMsg_createSectionTag( 'Services Deliveries', <span class="fstat-no" title="function not covered" >fu</span>nction( sectionTag, sectionLogTag )</span>
+        {
+<span class="cstat-no" title="statement not covered" >            for ( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; syncMsgJson.msgList.length; i++ )</span>
+            {
+                //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+                var msgJson = <span class="cstat-no" title="statement not covered" >syncMsgJson.msgList[i];</span>
+    
+                var msgStr = <span class="cstat-no" title="statement not covered" >msgJson.datetime + ' ' + msgJson.msg;</span>
+    
+<span class="cstat-no" title="statement not covered" >                sectionLogTag.append( '&lt;div&gt;' + msgStr + '&lt;/div&gt;' );</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            msgContentTag.append( sectionTag );</span>
+        });
+&nbsp;
+&nbsp;
+        // Add Summaries Msg
+<span class="cstat-no" title="statement not covered" >        SyncManagerNew.SyncMsg_createSectionTag( 'Summaries', <span class="fstat-no" title="function not covered" >fu</span>nction( sectionTag, sectionLogTag )</span>
+        {
+            var syncMsgJson = <span class="cstat-no" title="statement not covered" >SyncManagerNew.SyncMsg_Get();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            for ( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; syncMsgJson.summaryList.length; i++ )</span>
+            {
+                //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+                var msgJson = <span class="cstat-no" title="statement not covered" >syncMsgJson.summaryList[i];</span>
+    
+<span class="cstat-no" title="statement not covered" >                sectionLogTag.append( '&lt;div&gt;' + msgJson.msg + '&lt;/div&gt;' );</span>
+            }
+    
+<span class="cstat-no" title="statement not covered" >            msgContentTag.append( sectionTag );</span>
+        });
+&nbsp;
+        
+        //    &lt;div class="sync_all__section_msg"&gt;Show next sync: in 32m&lt;/div&gt;
+    });
+&nbsp;
+};
+&nbsp;
+&nbsp;
+SyncManagerNew.SyncMsg_createSectionTag = <span class="fstat-no" title="function not covered" >fu</span>nction( sectionTitle, callBack )
+{
+    var sectionTag = <span class="cstat-no" title="statement not covered" >$( SyncManagerNew.template_SyncMsg_Section );</span>
+&nbsp;
+    var sectionTitleTag = <span class="cstat-no" title="statement not covered" >sectionTag.find( 'div.sync_all__section_title' ).html( sectionTitle );</span>
+    var sectionLogTag = <span class="cstat-no" title="statement not covered" >sectionTag.find( 'div.sync_all__section_log' );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    callBack( sectionTag, sectionLogTag );</span>
+}
+&nbsp;
+// ===================================================
+// === OTHERS Methods =============
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

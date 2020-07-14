@@ -31,6 +31,8 @@ module.exports = function(config) {
       '../pwa-dev/scripts/libraries/d3.min.js',
       '../pwa-dev/scripts/libraries/tabulate.js',
 
+
+
       'src/simple.js',
       
       '../pwa-dev/scripts/**/*.js',
@@ -51,13 +53,86 @@ module.exports = function(config) {
 
     preprocessors: {
       // 'src/*.js' :  'coverage'
-     '../pwa-dev/scripts/services/appInfoManager.js' : ['coverage'],
+    /* '../pwa-dev/scripts/services/appInfoManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/clientDataManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/configManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/sessionManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/activityDataManager.js' : ['coverage'],
      
      '../pwa-dev/scripts/classes/login.js' : ['coverage']
+     */
+     
+
+
+     '../pwa-dev/scripts/constants/constants.js' : ['coverage'],
+     '../pwa-dev/scripts/constants/templates.js' : ['coverage'],
+     '../pwa-dev/scripts/constants/configs.js' : ['coverage'],
+   
+     '../pwa-dev/scripts/utils/pptOptions.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/pptManager.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/util.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/util2.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/prototypes.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/jsonBuiltTable.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/inputUtil.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/activityUtil.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/dbStorageSelector.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/formUtil.js' : ['coverage'],
+     '../pwa-dev/scripts/utils/sounds.js' : ['coverage'],
+     
+     '../pwa-dev/scripts/services/request/RESTCallManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/request/wsCallManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/storage/storageMng.js' : ['coverage'],
+     '../pwa-dev/scripts/services/storage/dataManager2.js' : ['coverage'],
+     '../pwa-dev/scripts/services/storage/localStgMng.js' : ['coverage'],
+     '../pwa-dev/scripts/services/clientDataManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/activityDataManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/payloadTemplateHelper.js' : ['coverage'],
+   
+     '../pwa-dev/scripts/services/dataFormatConvert.js' : ['coverage'],
+     '../pwa-dev/scripts/services/syncManagerNew.js' : ['coverage'],
+     '../pwa-dev/scripts/services/configManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/msgManager.js' : ['coverage'],
+
+
+     '../pwa-dev/scripts/services/formMsgManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/connManagerNew.js' : ['coverage'],
+   
+     '../pwa-dev/scripts/services/cacheManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/appInfoManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/sessionManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/dataVerMove.js' : ['coverage'],
+     '../pwa-dev/scripts/services/scheduleManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/swManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/devHelper.js' : ['coverage'],
+   
+     '../pwa-dev/scripts/classes/activityCard.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/appModeSwitchPrompt.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/langTerm.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/statistics.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/settingsApp.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/aboutApp.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/menu.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/favIconNew.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/login.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/action.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/blockForm.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/blockList.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/blockListView.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/dataList.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/blockButton.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/blockMsg.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/block.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/webqr.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/qrcode.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/pwaEpoch.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/baseConverter.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/myDetails.js' : ['coverage'],
+
+
+
+     
+     
     },
 
 
