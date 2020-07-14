@@ -1,36 +1,33 @@
 
-============= Install QUnit ============
-
-    > npm install --save-dev qunit --> for developing
-    > npm install -g qunit --> For global
-
-============= Automating the Test Run ============
-URL Ref : https://mattsnider.com/karma-test-runner-with-qunit-in-10-minutes/
-
-
 INSTALL
-    Install Karma[1], plugins, and Qunit[2]. Please use QUnit v1.12, otherwise, the unit tests may not work properly.
-
-
+      >cd connectPWA
+    
     # Install Karma
-        npm install karma --save-dev
+        > npm install --save-dev karma
     # Install plugins
-        npm install karma-qunit karma-phantomjs-launcher --save-dev
+        > npm install --save-dev karma-chrome-launcher
+        > npm install --save-dev karma-qunit
     # Add global CLI
-        npm install -g karma-cli
-    # Add Require.js plugin if any
-        npm i karma-requirejs
+        > npm install --g karma-cli
+    # Add Require.js plugin if we use any @require in test files
+        > npm i karma-requirejs
     # Install QUnit
-        npm install --save-dev qunitjs
+        > npm install --save-dev qunitjs
     # Install karma-coverage
-        npm i karma-coverage -D
-        npm install karma karma-qunit karma-coverage
+        > npm install --save-dev karma-coverage
 
 
 
-COPY the JS Files in folder "libs" to nodes_modules/qunit/qunit
+    # COPY the JS Files in folder "libs" to nodes_modules/qunit/qunit
 
 
+
+============= RUN ============
+Open command promt : 
+    pwa-dev/qunit> karma start
+
+
+===============================================================================================
 
 HOW TO MAKE confiiguration file ( It is already here, just note here in case you like to make another one for testing )
     In your project directory, run the Karma initialization script:
@@ -77,17 +74,4 @@ HOW TO MAKE confiiguration file ( It is already here, just note here in case you
     Put your test code under ./test/... directory (I mirror the src directory):
 
     
-    ----------------------------------------------------------------------------------
-    Your QUnit tests should looks something like[4]:
 
-    QUnit.test('Name of Test', function(assert) {
-        // Setup the various states of the code you want to test and assert conditions.
-        assert.equal(1, 1, '1 === 1');
-    });
-
-
-
-
-============= RUN ============
-Open command promt : 
-    cws-dev/qunit> karma start
