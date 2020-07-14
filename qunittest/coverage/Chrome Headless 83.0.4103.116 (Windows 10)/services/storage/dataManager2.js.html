@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for services/appInfoManager.js</title>
+    <title>Code coverage report for services/storage/dataManager2.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> appInfoManager.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">services/storage</a> dataManager2.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.65% </span>
+                <span class="strong">50.76% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>110/115</span>
+                <span class='fraction'>67/132</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.27% </span>
+                <span class="strong">8.82% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/22</span>
+                <span class='fraction'>3/34</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.77% </span>
+                <span class="strong">29.27% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>30/31</span>
+                <span class='fraction'>12/41</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.5% </span>
+                <span class="strong">52% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>106/111</span>
+                <span class='fraction'>65/125</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -399,36 +399,79 @@
 <a name='L340'></a><a href='#L340'>340</a>
 <a name='L341'></a><a href='#L341'>341</a>
 <a name='L342'></a><a href='#L342'>342</a>
-<a name='L343'></a><a href='#L343'>343</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -438,15 +481,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -454,9 +489,55 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -467,225 +548,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -694,12 +559,168 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -707,26 +728,24 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -738,351 +757,491 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function <span class="fstat-no" title="function not covered" >AppInfoManager(</span>) {}
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// -------------------------------------------
+// -- DataManager2 Class/Methods
+// ---- USES 'LocalForage' version of 'DataManager'
 &nbsp;
-AppInfoManager.KEY_APPINFO = "appInfo";
+function <span class="fstat-no" title="function not covered" >DataManager2(</span>) {}
 &nbsp;
-AppInfoManager.KEY_USERINFO = "userInfo"; 
-AppInfoManager.KEY_SWINFO = "swInfo"; 
-AppInfoManager.KEY_LANGUAGE = "langTerms"; 
-AppInfoManager.KEY_SYNCMSG = "syncMsg"; 
-AppInfoManager.KEY_DOWNLOADINFO = "lastDownload"; 
-AppInfoManager.KEY_FAVICONS = "favIcons"; 
-AppInfoManager.KEY_NETWORKCONNECTION = "networkConnectionObs";
+DataManager2.StorageName_session = "session";
+// DataManager2.StorageName_langTerms = "langTerms";
 &nbsp;
-AppInfoManager.KEY_NETWORKSYNC = "networkSync";
-AppInfoManager.KEY_LOGOUTDELAY = "logoutDelay";
+DataManager2.dbStorageType_localStorage = "localStorage";
+DataManager2.dbStorageType_indexdb = "indexdb";
+DataManager2.dbStorageType = DataManager2.dbStorageType_indexdb; // Defaut value. Will be set from databaseSelector.js
 &nbsp;
+DataManager2.securedContainers = [ 'redeemList' ];
+DataManager2.indexedDBStorage = [];
+DataManager2.storageEstimate;
 &nbsp;
-AppInfoManager.data = {};
+DataManager2.indexedDBopenRequestTime; // time the opening + 
+DataManager2.indexedDBopenResponseTime;// response delay times
 &nbsp;
+// -------------------------------------
+// ---- Overall Data Save/Get/Delete ---
 &nbsp;
+// ------------------------------------------------
+// -------- GET Methods --------------
 &nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  User info
-&nbsp;
-AppInfoManager.initialLoad_FromStorage = function()
+// GetData - IndexedDB
+DataManager2.getData_IDB = function( secName, callBack ) 
 {
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
+	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, function( data ) {
+&nbsp;
+		var descriptedJson = DataManager2.decriptData( data );
+&nbsp;
+		callBack( descriptedJson );
+	});
+};
+&nbsp;
+// GetData - LocalStorage
+DataManager2.getData_LS = <span class="fstat-no" title="function not covered" >fu</span>nction( secName, callBack ) 
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, secName, callBack );</span>
+};
+&nbsp;
+// Base GetData - by storage type
+DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack ) 
+{
+	StorageMng.getItem( storageTypeStr, secName, function( err, data )
+	{		
+		<span class="missing-if-branch" title="else path not taken" >E</span>if ( callBack ) callBack( data );		
+	});
 };
 &nbsp;
 &nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  User info
-&nbsp;
-&nbsp;
-AppInfoManager.updateUserInfo = function( jsonData )
+// ------------------------------------------------
+// -------- Encrypt/Decript Methods --------------
+DataManager2.encryptData = function( dataJson )
 {
-    AppInfoManager.updateData( AppInfoManager.KEY_USERINFO, jsonData );
-}	
+	var iv = SessionManager.sessionData.login_Password;
 &nbsp;
+	var encryptedDataStr = CryptoJS.AES.encrypt( JSON.stringify( dataJson ), iv, {
+		keySize: 128 / 8,
+		iv: iv,
+		mode: CryptoJS.mode.CBC,
+		padding: CryptoJS.pad.Pkcs7
+	}).toString();
 &nbsp;
-AppInfoManager.getUserInfo = function()
+	return encryptedDataStr;
+};
+&nbsp;
+DataManager2.decriptData = function( data )
 {
-    return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
-}	
+	var jsonData = data;
 &nbsp;
-&nbsp;
-AppInfoManager.removeUserInfo = function()
-{
-    AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
-}
-&nbsp;
-&nbsp;
-AppInfoManager.getSessionAutoComplete = function()
-{	
-	var autoComplete = '';
-&nbsp;
-	try
+	<span class="missing-if-branch" title="else path not taken" >E</span>if ( data )
 	{
-		autoComplete = AppInfoManager.getUserInfo().autoComplete;
+		// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. &lt;-- on top of redeem one..
+		try
+		{
+			var iv = SessionManager.sessionData.login_Password;
+&nbsp;
+			var descriptedVal = CryptoJS.AES.decrypt( data.toString(), iv, {
+				keySize: 128 / 8,
+				iv: iv,
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7
+			});
+&nbsp;
+			var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+&nbsp;
+			jsonData = JSON.parse( utf8StrVal );	
+		}
+		catch ( errMsg )
+		{
+<span class="cstat-no" title="statement not covered" >			alert( 'Error during data decryption with current password.  If User has been changed, clear all data to resolve this issue.' );</span>
+		}
 	}
-	catch( errMsg )
+&nbsp;
+	return jsonData;
+};
+&nbsp;
+// ------------------------------------------------
+// -------- SAVE Methods --------------
+&nbsp;
+// saveData - IndexedDB
+DataManager2.saveData_IDB = function( secName, jsonData, retFunc ) 
+{
+	var encryptedDataStr = DataManager2.encryptData( jsonData );
+	DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, secName, encryptedDataStr, retFunc );
+};
+&nbsp;
+// saveData - LocalStorage
+DataManager2.saveData_LS = <span class="fstat-no" title="function not covered" >fu</span>nction( secName, jsonData, retFunc ) 
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.saveDataByStorageType( StorageMng.StorageType_LocalStorage, secName, jsonData, retFunc );</span>
+};
+&nbsp;
+// Base SaveData - by storage type
+DataManager2.saveDataByStorageType = function( storageTypeStr, secName, data, callBack ) 
+{		
+	StorageMng.setItem( storageTypeStr, secName, data, function() {
+		<span class="missing-if-branch" title="else path not taken" >E</span>if ( callBack ) callBack( data );
+	});		
+}
+&nbsp;
+// ------------------------------------------------
+// -------- Get/Save Specific Operations Methods --------------
+&nbsp;
+DataManager2.getData_RedeemList = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack ) { };
+&nbsp;
+DataManager2.saveData_RedeemList = <span class="fstat-no" title="function not covered" >fu</span>nction( jsonData, callBack ) { };
+&nbsp;
+// ------------------
+&nbsp;
+// NOTE: If we use user name + fixed name, this has to be only done after login..
+//  --&gt; Which makes sense since we also need password to descript data..
+DataManager2.getData_ActivityList = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack )
+{
+	// TODO: Need to change 'storageName_redeemList' --&gt; 'storageName_activityList'
+<span class="cstat-no" title="statement not covered" >	DataManager2.getData( Constants.storageName_redeemList, callBack );</span>
+};
+&nbsp;
+DataManager2.saveData_ActivityList = <span class="fstat-no" title="function not covered" >fu</span>nction( jsonData, callBack )
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );</span>
+};
+&nbsp;
+// ---------------------------------
+&nbsp;
+DataManager2.getData_ClientsStore = function( callBack )
+{
+	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
+	DataManager2.getData_IDB( keyName, callBack );
+};
+&nbsp;
+DataManager2.saveData_ClientsStore = function( jsonData, callBack )
+{
+	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
+	DataManager2.saveData_IDB( keyName, jsonData, callBack );
+};
+&nbsp;
+&nbsp;
+// ------------------------------------------------
+// -------- Get/Save LocalStorage without LocalForage - No CallBack --------------
+&nbsp;
+// Not Yet Implemented
+DataManager2.getData_LS_JSON = <span class="fstat-no" title="function not covered" >fu</span>nction( key )
+{
+	var jsonData;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	try</span>
 	{
-<span class="cstat-no" title="statement not covered" >		console.log( 'Error on AppInfoManager.getSessionAutoComplete, errMsg - ' + errMsg );</span>
+		var dataStr = <span class="cstat-no" title="statement not covered" >localStorage.getItem( key );</span>
+<span class="cstat-no" title="statement not covered" >		if ( dataStr ) <span class="cstat-no" title="statement not covered" >jsonData = JSON.parse( dataStr );</span></span>
+	}
+	catch ( errMsg )
+	{
+<span class="cstat-no" title="statement not covered" >		console.log( 'ERROR during DataManager2.getData_LS_JSON, errMsg - ' + errMsg );</span>
+<span class="cstat-no" title="statement not covered" >		console.log( ' - LocalStorage data might not be JSON Format String' );</span>
 	}
 &nbsp;
-	return autoComplete;
-}
+<span class="cstat-no" title="statement not covered" >	return jsonData;</span>
+};
 &nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  swInfo
-&nbsp;
-&nbsp;
-AppInfoManager.updateSWInfo = function( jsonData )
+DataManager2.getData_LS_Str = <span class="fstat-no" title="function not covered" >fu</span>nction( key )
 {
-    AppInfoManager.updateData( AppInfoManager.KEY_SWINFO, jsonData );
-}	
+<span class="cstat-no" title="statement not covered" >	return localStorage.getItem( key );</span>
+};
 &nbsp;
-AppInfoManager.getSWInfo = function()
+// ------------------
+&nbsp;
+// Not Yet Implemented
+DataManager2.saveData_LS_JSON = <span class="fstat-no" title="function not covered" >fu</span>nction( key, jsonData )
 {
-    return AppInfoManager.getData( AppInfoManager.KEY_SWINFO );
-}	
+<span class="cstat-no" title="statement not covered" >	localStorage.setItem( key, JSON.stringify( jsonData ) );</span>
+};
 &nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  langTerms
-&nbsp;
-&nbsp;
-AppInfoManager.updateLangTerms = function( jsonData )
+DataManager2.saveData_LS_Str = <span class="fstat-no" title="function not covered" >fu</span>nction( key, strData )
 {
-    AppInfoManager.updateData( AppInfoManager.KEY_LANGUAGE, jsonData );
-}	
+<span class="cstat-no" title="statement not covered" >	localStorage.setItem( key, strData );</span>
+};
 &nbsp;
-AppInfoManager.getLangTerms = function()
+// ------------------------------------------------
+// -------- Other Operation Methods --------------
+&nbsp;
+DataManager2.deleteAllStorageData = function( callBack ) 
 {
-    return AppInfoManager.getData( AppInfoManager.KEY_LANGUAGE );
-}	
-&nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  syncMsg
-&nbsp;
-AppInfoManager.updateSyncMsg = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_SYNCMSG, jsonData );
-}	
-&nbsp;
-AppInfoManager.getSyncMsg = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_SYNCMSG );
-}	
-&nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  lastDownload
-&nbsp;
-&nbsp;
-AppInfoManager.updateDownloadInfo = function( dateStr )
-{
-    var jsonData = {};
-    jsonData[AppInfoManager.KEY_DOWNLOADINFO] = dateStr;
-    AppInfoManager.updateData( AppInfoManager.KEY_DOWNLOADINFO, jsonData );
-}	
-&nbsp;
-AppInfoManager.getDownloadInfo = function()
-{
-    var jsonData = AppInfoManager.getData( AppInfoManager.KEY_DOWNLOADINFO );
-    if ( jsonData &amp;&amp; jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) 
-    {
-        return ( new Date( jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) ).toISOString();	
-    }
-&nbsp;
-    return undefined;
-}	
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  favIcons
-&nbsp;
-&nbsp;
-AppInfoManager.updateFavIcons = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_FAVICONS, jsonData );
-}	
-&nbsp;
-AppInfoManager.getFavIcons = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_FAVICONS );
-}
-&nbsp;
-AppInfoManager.removeFavIcons = function()
-{
-    AppInfoManager.removeData( AppInfoManager.KEY_FAVICONS );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  networkConnectionObs
-&nbsp;
-&nbsp;
-AppInfoManager.updateNetworkConnectionObs = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_NETWORKCONNECTION, jsonData );
-}	
-&nbsp;
-AppInfoManager.getNetworkConnectionObs = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_NETWORKCONNECTION );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  Update properties in "userinfo"
-&nbsp;
-&nbsp;
-// networkSync
-AppInfoManager.updateNetworkSync = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, dataStr );
-}	
-&nbsp;
-AppInfoManager.getNetworkSync = function() 
-{
-    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
-}	
-&nbsp;
-&nbsp;
-// language
-AppInfoManager.updateLanguage = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANGUAGE, dataStr );
-}	
-&nbsp;
-// logoutDelay
-AppInfoManager.updateLogoutDelay = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LOGOUTDELAY, dataStr );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ------------------------------------------------------------------------------------  
-// ------------------------------------------------------------------------------------  
-&nbsp;
-AppInfoManager.getData = function( keyword )
-{
-    return AppInfoManager.data[keyword];
-}	
-&nbsp;
-&nbsp;
-AppInfoManager.updateData = function( keyword, jsonData )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    // Update data of appInfo by using keyword
-    appInfo[keyword] = jsonData;
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-&nbsp;
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
-}
-&nbsp;
-&nbsp;
-AppInfoManager.removeData = function( keyword )
-{
-     // Get appInfo from localStorage if any. If not, use default appInfo
-     var appInfo = AppInfoManager.loadAppInfo();
-    
-     // Update data of appInfo by using keyword
-     delete appInfo[keyword];
-     
-     // Update the 'appInfo' data
-     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-     
-     // Set new data info in memory
-     AppInfoManager.data = appInfo;
-}
+	LocalStgMng.clear();
 	
-&nbsp;
-// Get appInfo from localStorage if any. If not, use default appInfo
-AppInfoManager.loadAppInfo = function()
-{
-    var appInfo = LocalStgMng.getJsonData( AppInfoManager.KEY_APPINFO );
-    return ( appInfo == undefined ) ? AppInfoManager.data : appInfo;
-}
-&nbsp;
-&nbsp;
-AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    // Update sub value by using keyword
-    if( appInfo[mainKey] == undefined )
-    {
-        appInfo[mainKey] = {};
-    }
-    
-    appInfo[mainKey][subKey] = valStr;
-&nbsp;
-    // Update data in memory
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-&nbsp;
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
-}
-&nbsp;
-AppInfoManager.getPropertyValue = function( mainKey, subKey )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    var mainInfo = appInfo[mainKey];
-    if( mainInfo == undefined )
-    {
-        return undefined;
-    }
-&nbsp;
-    // Get Sub data if any
-    return appInfo[mainKey][subKey];
-}
-&nbsp;
-// =========================================
-// === Other Related Methods..
-&nbsp;
-AppInfoManager.getLangCode = function()
-{
-	var lang = '';
-&nbsp;
-	try
-	{
-		var userInfo = AppInfoManager.getUserInfo();
-	
-		<span class="missing-if-branch" title="else path not taken" >E</span>if ( userInfo &amp;&amp; userInfo.language ) lang = userInfo.language;
-		else <span class="cstat-no" title="statement not covered" >( navigator.language ).toString().substring(0,2);</span>
-	}
-	catch ( err )
-	{
-<span class="cstat-no" title="statement not covered" >		console.log( 'Error in AppInfoManager.getLangCode: ' + err );</span>
-	}
-&nbsp;
-	return lang;
+	StorageMng.clear( StorageMng.StorageType_IndexedDB, callBack );
 };
 &nbsp;
-&nbsp;
-AppInfoManager.createUpdateUserInfo = function( userName )
+DataManager2.deleteDataByStorageType = <span class="fstat-no" title="function not covered" >fu</span>nction( storageTypeStr, secName ) 
 {
-    var lastSession = AppInfoManager.getUserInfo();
-    
-    <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession )
-    {
-        lastSession.user = userName;
-    
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
-    }
-    else
-    {
-        var dtmNow = <span class="cstat-no" title="statement not covered" >( new Date() ).toISOString();</span>
-        
-<span class="cstat-no" title="statement not covered" >        lastSession = { </span>
-            user: userName
-            , lastUpdated: dtmNow
-            , language: AppInfoManager.getLangCode()
-            , soundEffects: ( Util.isMobi() )
-            , autoComplete: true
-            , logoutDelay: 60 
-        };
-    }    
-&nbsp;
-    
-    AppInfoManager.updateUserInfo( lastSession );
-&nbsp;
+<span class="cstat-no" title="statement not covered" >	StorageMng.removeItem ( storageTypeStr, secName, <span class="fstat-no" title="function not covered" >fu</span>nction(){ </span>
+<span class="cstat-no" title="statement not covered" >		console.log( secName + " DELETE successfully !!!");</span>
+	} );
 };
+&nbsp;
+// =========================
+&nbsp;
+DataManager2.getUserConfigData = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack ) 
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, <span class="fstat-no" title="function not covered" >fu</span>nction( err, sessionJson ){</span>
+<span class="cstat-no" title="statement not covered" >		if ( sessionJson &amp;&amp; sessionJson.user )	</span>
+		{
+<span class="cstat-no" title="statement not covered" >			DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, sessionJson.user, <span class="fstat-no" title="function not covered" >fu</span>nction( err, userConfigJson ){</span>
+<span class="cstat-no" title="statement not covered" >				if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack( userConfigJson );</span></span>
+			} );
+		}
+		else
+		{
+<span class="cstat-no" title="statement not covered" >			if ( callBack ) <span class="cstat-no" title="statement not covered" >callBack();</span></span>
+		}
+	});
+&nbsp;
+	// LocalStorageDataManager2.getUserConfigData( callBack );
+}
+&nbsp;
+DataManager2.getSessionData = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack ) 
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, callBack );</span>
+&nbsp;
+	// LocalStorageDataManager2.getSessionData( callBack );
+}
+&nbsp;
+DataManager2.setSessionDataValue = <span class="fstat-no" title="function not covered" >fu</span>nction( prop, val ) 
+{
+	var storageTypeStr = <span class="cstat-no" title="statement not covered" >StorageMng.StorageType_LocalStorage;</span>
+<span class="cstat-no" title="statement not covered" >	DataManager2.getDataByStorageType( storageTypeStr, DataManager2.StorageName_session, <span class="fstat-no" title="function not covered" >fu</span>nction( sessionJson ){</span>
+<span class="cstat-no" title="statement not covered" >		if ( sessionJson )</span>
+		{
+<span class="cstat-no" title="statement not covered" >			sessionJson[ prop ] = val;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >			DataManager2.saveDataByStorageType( storageTypeStr, DataManager2.StorageName_session, sessionJson );</span>
+		}
+	} );
+&nbsp;
+	// LocalStorageDataManager2.setSessionDataValue( prop, val );
+}
+&nbsp;
+DataManager2.getSessionDataValue = <span class="fstat-no" title="function not covered" >fu</span>nction( prop, defval, callBack ) 
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, <span class="fstat-no" title="function not covered" >fu</span>nction( sessionJson ){</span>
+		var ret;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		if ( sessionJson )</span>
+		{
+<span class="cstat-no" title="statement not covered" >			if ( sessionJson[ prop ] )</span>
+			{
+<span class="cstat-no" title="statement not covered" >				ret = sessionJson[ prop ];</span>
+			}
+			else
+			{
+<span class="cstat-no" title="statement not covered" >				ret = defval;</span>
+			}
+		}	
+<span class="cstat-no" title="statement not covered" >		callBack( ret );</span>
+	} );
+&nbsp;
+	// LocalStorageDataManager2.getSessionDataValue( prop, defval, callBack  );
+}
+&nbsp;
+&nbsp;
+DataManager2.clearSessionStorage = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+<span class="cstat-no" title="statement not covered" >	DataManager2.deleteDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session );</span>
+}
+&nbsp;
+// -------------------------------------
+// ---- Supporting Methods ------------
+&nbsp;
+DataManager2.getStorageType = <span class="fstat-no" title="function not covered" >fu</span>nction( secName )
+{
+	var storageTypeStr = <span class="cstat-no" title="statement not covered" >( DataManager2.protectedContainer( secName ) ) ? StorageMng.StorageType_IndexedDB : StorageMng.StorageType_LocalStorage;</span>
+<span class="cstat-no" title="statement not covered" >	return storageTypeStr;</span>
+}
+&nbsp;
+/*
+DataManager2.getIV = function( callBack )
+{
+	if ( SessionManager.sessionData.login_Password ) 
+	{ 
+		if ( callBack ) callBack( SessionManager.sessionData.login_Password );
+	}
+	else
+	{
+		DataManager2.getSessionData( function( data ) { 
+&nbsp;
+			// NOTE: DOES NOT GET USED ANYMORE!!
+			if ( data &amp;&amp; data.user )
+			{
+				if ( callBack ) callBack( Util.decrypt( FormUtil.getUserSessionAttr( data.user,'pin' ), 4) );
+			}
+			else
+			{
+				if ( callBack ) callBack();
+			}
+&nbsp;
+		} )
+	}
+};
+*/
+&nbsp;
+&nbsp;
+DataManager2.protectedContainer = <span class="fstat-no" title="function not covered" >fu</span>nction( secName )
+{
+	var ret = <span class="cstat-no" title="statement not covered" >false;</span>
+<span class="cstat-no" title="statement not covered" >	for ( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; DataManager2.securedContainers.length; i++ )</span>
+	{
+<span class="cstat-no" title="statement not covered" >		if ( secName == DataManager2.securedContainers[ i ] )</span>
+		{
+<span class="cstat-no" title="statement not covered" >			ret = true;</span>
+<span class="cstat-no" title="statement not covered" >			break;</span>
+		} 
+	}
+<span class="cstat-no" title="statement not covered" >	return ret;</span>
+&nbsp;
+}
+&nbsp;
+DataManager2.estimateStorageUse = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack )
+{
+<span class="cstat-no" title="statement not covered" >	if ('storage' in navigator &amp;&amp; 'estimate' in navigator.storage) </span>
+	{
+<span class="cstat-no" title="statement not covered" >		navigator.storage.estimate().then(<span class="fstat-no" title="function not covered" >({</span>usage, quota}) =&gt; {</span>
+&nbsp;
+			var retJson = <span class="cstat-no" title="statement not covered" >{ 'usage': usage, 'quota': quota };</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >			DataManager2.storageEstimate = retJson;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		  	if ( callBack )</span>
+			{
+<span class="cstat-no" title="statement not covered" >				callBack( retJson )</span>
+			}
+			else
+			{
+<span class="cstat-no" title="statement not covered" >				return retJson;</span>
+			}
+&nbsp;
+		});
+&nbsp;
+	}
+}
+&nbsp;
+DataManager2.initialiseStorageEstimates = <span class="fstat-no" title="function not covered" >fu</span>nction()
+{
+<span class="cstat-no" title="statement not covered" >	for ( var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; DataManager2.securedContainers.length; i++ )</span>
+	{
+<span class="cstat-no" title="statement not covered" >		FormUtil.getMyListData( DataManager2.securedContainers[i], <span class="fstat-no" title="function not covered" >fu</span>nction (data) {</span>
+&nbsp;
+			var dataSize = <span class="cstat-no" title="statement not covered" >Util.lengthInUtf8Bytes(JSON.stringify(data));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >			DataManager2.indexedDBStorage.push({ container: 'indexedDB', name: DataManager2.securedContainers[i], bytes: dataSize, kb: dataSize / 1024, mb: dataSize / 1024 / 1024 });</span>
+&nbsp;
+		})
+	}
+}
+&nbsp;
+DataManager2.getStorageSizes = <span class="fstat-no" title="function not covered" >fu</span>nction( callBack )
+{
+	var arrItems = <span class="cstat-no" title="statement not covered" >[];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	arrItems.push( { name: 'indexedDB', data: DataManager2.indexedDBStorage } );</span>
+<span class="cstat-no" title="statement not covered" >	arrItems.push( { name: 'localStorage', data: Util2.getLocalStorageSizes() } );</span>
+<span class="cstat-no" title="statement not covered" >	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if ( callBack )</span>
+	{
+<span class="cstat-no" title="statement not covered" >		callBack( arrItems )</span>
+	}
+	else
+	{
+<span class="cstat-no" title="statement not covered" >		return arrItems;</span>
+	}
+&nbsp;
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1093,14 +1252,14 @@ AppInfoManager.createUpdateUserInfo = function( userName )
                 at Tue Jul 14 2020 11:30:22 GMT+0900 (Korean Standard Time)
             </div>
         </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     

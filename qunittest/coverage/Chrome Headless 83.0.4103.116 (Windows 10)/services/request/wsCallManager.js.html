@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for services/appInfoManager.js</title>
+    <title>Code coverage report for services/request/wsCallManager.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> appInfoManager.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">services/request</a> wsCallManager.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.65% </span>
+                <span class="strong">41.9% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>110/115</span>
+                <span class='fraction'>44/105</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.27% </span>
+                <span class="strong">17.86% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/22</span>
+                <span class='fraction'>10/56</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.77% </span>
+                <span class="strong">40% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>30/31</span>
+                <span class='fraction'>8/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.5% </span>
+                <span class="strong">47.13% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>106/111</span>
+                <span class='fraction'>41/87</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -333,89 +333,11 @@
 <a name='L274'></a><a href='#L274'>274</a>
 <a name='L275'></a><a href='#L275'>275</a>
 <a name='L276'></a><a href='#L276'>276</a>
-<a name='L277'></a><a href='#L277'>277</a>
-<a name='L278'></a><a href='#L278'>278</a>
-<a name='L279'></a><a href='#L279'>279</a>
-<a name='L280'></a><a href='#L280'>280</a>
-<a name='L281'></a><a href='#L281'>281</a>
-<a name='L282'></a><a href='#L282'>282</a>
-<a name='L283'></a><a href='#L283'>283</a>
-<a name='L284'></a><a href='#L284'>284</a>
-<a name='L285'></a><a href='#L285'>285</a>
-<a name='L286'></a><a href='#L286'>286</a>
-<a name='L287'></a><a href='#L287'>287</a>
-<a name='L288'></a><a href='#L288'>288</a>
-<a name='L289'></a><a href='#L289'>289</a>
-<a name='L290'></a><a href='#L290'>290</a>
-<a name='L291'></a><a href='#L291'>291</a>
-<a name='L292'></a><a href='#L292'>292</a>
-<a name='L293'></a><a href='#L293'>293</a>
-<a name='L294'></a><a href='#L294'>294</a>
-<a name='L295'></a><a href='#L295'>295</a>
-<a name='L296'></a><a href='#L296'>296</a>
-<a name='L297'></a><a href='#L297'>297</a>
-<a name='L298'></a><a href='#L298'>298</a>
-<a name='L299'></a><a href='#L299'>299</a>
-<a name='L300'></a><a href='#L300'>300</a>
-<a name='L301'></a><a href='#L301'>301</a>
-<a name='L302'></a><a href='#L302'>302</a>
-<a name='L303'></a><a href='#L303'>303</a>
-<a name='L304'></a><a href='#L304'>304</a>
-<a name='L305'></a><a href='#L305'>305</a>
-<a name='L306'></a><a href='#L306'>306</a>
-<a name='L307'></a><a href='#L307'>307</a>
-<a name='L308'></a><a href='#L308'>308</a>
-<a name='L309'></a><a href='#L309'>309</a>
-<a name='L310'></a><a href='#L310'>310</a>
-<a name='L311'></a><a href='#L311'>311</a>
-<a name='L312'></a><a href='#L312'>312</a>
-<a name='L313'></a><a href='#L313'>313</a>
-<a name='L314'></a><a href='#L314'>314</a>
-<a name='L315'></a><a href='#L315'>315</a>
-<a name='L316'></a><a href='#L316'>316</a>
-<a name='L317'></a><a href='#L317'>317</a>
-<a name='L318'></a><a href='#L318'>318</a>
-<a name='L319'></a><a href='#L319'>319</a>
-<a name='L320'></a><a href='#L320'>320</a>
-<a name='L321'></a><a href='#L321'>321</a>
-<a name='L322'></a><a href='#L322'>322</a>
-<a name='L323'></a><a href='#L323'>323</a>
-<a name='L324'></a><a href='#L324'>324</a>
-<a name='L325'></a><a href='#L325'>325</a>
-<a name='L326'></a><a href='#L326'>326</a>
-<a name='L327'></a><a href='#L327'>327</a>
-<a name='L328'></a><a href='#L328'>328</a>
-<a name='L329'></a><a href='#L329'>329</a>
-<a name='L330'></a><a href='#L330'>330</a>
-<a name='L331'></a><a href='#L331'>331</a>
-<a name='L332'></a><a href='#L332'>332</a>
-<a name='L333'></a><a href='#L333'>333</a>
-<a name='L334'></a><a href='#L334'>334</a>
-<a name='L335'></a><a href='#L335'>335</a>
-<a name='L336'></a><a href='#L336'>336</a>
-<a name='L337'></a><a href='#L337'>337</a>
-<a name='L338'></a><a href='#L338'>338</a>
-<a name='L339'></a><a href='#L339'>339</a>
-<a name='L340'></a><a href='#L340'>340</a>
-<a name='L341'></a><a href='#L341'>341</a>
-<a name='L342'></a><a href='#L342'>342</a>
-<a name='L343'></a><a href='#L343'>343</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L277'></a><a href='#L277'>277</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -423,12 +345,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -438,13 +358,32 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -452,11 +391,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -467,262 +405,28 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -734,6 +438,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -741,348 +470,421 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function <span class="fstat-no" title="function not covered" >AppInfoManager(</span>) {}
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// -------------------------------------------
+// -- WsApiManager Class/Methods
+//
+//  - Almost all calls should be directed to DWS
+//      - pwa.psi-connect.org app will use pwa.psi-connect.org/ws/dws
+//      - pwa-dev.psi-connect.org app will use pwa.psi-connect.org/ws/dws-dev
+//
+// -------------------------------------------
 &nbsp;
-AppInfoManager.KEY_APPINFO = "appInfo";
+function <span class="fstat-no" title="function not covered" >WsCallManager(</span>) {}
 &nbsp;
-AppInfoManager.KEY_USERINFO = "userInfo"; 
-AppInfoManager.KEY_SWINFO = "swInfo"; 
-AppInfoManager.KEY_LANGUAGE = "langTerms"; 
-AppInfoManager.KEY_SYNCMSG = "syncMsg"; 
-AppInfoManager.KEY_DOWNLOADINFO = "lastDownload"; 
-AppInfoManager.KEY_FAVICONS = "favIcons"; 
-AppInfoManager.KEY_NETWORKCONNECTION = "networkConnectionObs";
+WsCallManager.wsTargetUrl = '';  // get set when start..
+WsCallManager.localhostProxyUrl = 'http://localhost:3020';
+WsCallManager.isLocalDevCase = false;
 &nbsp;
-AppInfoManager.KEY_NETWORKSYNC = "networkSync";
-AppInfoManager.KEY_LOGOUTDELAY = "logoutDelay";
+WsCallManager.wsUrlList = {
+    'prod': 'https://pwa.psi-connect.org/ws/dws',
+    'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
+    'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
+    'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
+    'test': 'https://pwa-test.psi-connect.org/ws/dws-test'
+};
 &nbsp;
+WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
 &nbsp;
-AppInfoManager.data = {};
+WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
 &nbsp;
+// ============================================
+// Setup / Set on Start of App Related ========
 &nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  User info
-&nbsp;
-AppInfoManager.initialLoad_FromStorage = function()
+WsCallManager.setWsTarget = <span class="fstat-no" title="function not covered" >fu</span>nction()
 {
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
+    var originUrl = <span class="cstat-no" title="statement not covered" >window.location.origin;</span>  // https://pwa.psi-connect.. OR http://localhsot
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    WsCallManager.isLocalDevCase = WsCallManager.checkLocalDevCase( originUrl );</span>
+&nbsp;
+    var stageName = <span class="cstat-no" title="statement not covered" >'dev';</span>  // Default to 'dev'.
+&nbsp;
+    // use current site 
+    // localhost is set to use 'stage'
+<span class="cstat-no" title="statement not covered" >    if ( WsCallManager.isLocalDevCase ) <span class="cstat-no" title="statement not covered" >stageName = 'test';</span></span>
+    else <span class="cstat-no" title="statement not covered" >if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) <span class="cstat-no" title="statement not covered" >stageName = 'prod';</span></span>
+    else <span class="cstat-no" title="statement not covered" >if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) <span class="cstat-no" title="statement not covered" >stageName = 'stage';</span></span>
+    else <span class="cstat-no" title="statement not covered" >if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) <span class="cstat-no" title="statement not covered" >stageName = 'train';</span></span>
+    else <span class="cstat-no" title="statement not covered" >if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) <span class="cstat-no" title="statement not covered" >stageName = 'dev';    </span></span>
+    else <span class="cstat-no" title="statement not covered" >if ( originUrl.indexOf( 'https://pwa-test.' ) === 0 ) <span class="cstat-no" title="statement not covered" >stageName = 'test';</span></span>
     
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
+<span class="cstat-no" title="statement not covered" >    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];</span>
 };
 &nbsp;
 &nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  User info
+// =======================================
+// === Specific Usage Calls =========
 &nbsp;
+WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc )
+{        
+    var requestOption = { 'userName': userName, 'password': password };
 &nbsp;
-AppInfoManager.updateUserInfo = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_USERINFO, jsonData );
-}	
-&nbsp;
-&nbsp;
-AppInfoManager.getUserInfo = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
-}	
-&nbsp;
-&nbsp;
-AppInfoManager.removeUserInfo = function()
-{
-    AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
-}
-&nbsp;
-&nbsp;
-AppInfoManager.getSessionAutoComplete = function()
-{	
-	var autoComplete = '';
-&nbsp;
-	try
+	WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{
-		autoComplete = AppInfoManager.getUserInfo().autoComplete;
-	}
-	catch( errMsg )
-	{
-<span class="cstat-no" title="statement not covered" >		console.log( 'Error on AppInfoManager.getSessionAutoComplete, errMsg - ' + errMsg );</span>
-	}
+		<span class="missing-if-branch" title="else path not taken" >E</span>if ( success )
+		{
+			// Check the login success message in content.. ..			
+			var hasLoginStatus = ( returnJson &amp;&amp; returnJson.loginStatus );
 &nbsp;
-	return autoComplete;
-}
-&nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  swInfo
-&nbsp;
-&nbsp;
-AppInfoManager.updateSWInfo = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_SWINFO, jsonData );
-}	
-&nbsp;
-AppInfoManager.getSWInfo = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_SWINFO );
-}	
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  langTerms
-&nbsp;
-&nbsp;
-AppInfoManager.updateLangTerms = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_LANGUAGE, jsonData );
-}	
-&nbsp;
-AppInfoManager.getLangTerms = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_LANGUAGE );
-}	
-&nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  syncMsg
-&nbsp;
-AppInfoManager.updateSyncMsg = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_SYNCMSG, jsonData );
-}	
-&nbsp;
-AppInfoManager.getSyncMsg = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_SYNCMSG );
-}	
-&nbsp;
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  lastDownload
-&nbsp;
-&nbsp;
-AppInfoManager.updateDownloadInfo = function( dateStr )
-{
-    var jsonData = {};
-    jsonData[AppInfoManager.KEY_DOWNLOADINFO] = dateStr;
-    AppInfoManager.updateData( AppInfoManager.KEY_DOWNLOADINFO, jsonData );
-}	
-&nbsp;
-AppInfoManager.getDownloadInfo = function()
-{
-    var jsonData = AppInfoManager.getData( AppInfoManager.KEY_DOWNLOADINFO );
-    if ( jsonData &amp;&amp; jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) 
-    {
-        return ( new Date( jsonData[AppInfoManager.KEY_DOWNLOADINFO] ) ).toISOString();	
-    }
-&nbsp;
-    return undefined;
-}	
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  favIcons
-&nbsp;
-&nbsp;
-AppInfoManager.updateFavIcons = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_FAVICONS, jsonData );
-}	
-&nbsp;
-AppInfoManager.getFavIcons = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_FAVICONS );
-}
-&nbsp;
-AppInfoManager.removeFavIcons = function()
-{
-    AppInfoManager.removeData( AppInfoManager.KEY_FAVICONS );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  networkConnectionObs
-&nbsp;
-&nbsp;
-AppInfoManager.updateNetworkConnectionObs = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_NETWORKCONNECTION, jsonData );
-}	
-&nbsp;
-AppInfoManager.getNetworkConnectionObs = function()
-{
-    return AppInfoManager.getData( AppInfoManager.KEY_NETWORKCONNECTION );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ----------------  Update properties in "userinfo"
-&nbsp;
-&nbsp;
-// networkSync
-AppInfoManager.updateNetworkSync = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, dataStr );
-}	
-&nbsp;
-AppInfoManager.getNetworkSync = function() 
-{
-    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
-}	
-&nbsp;
-&nbsp;
-// language
-AppInfoManager.updateLanguage = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANGUAGE, dataStr );
-}	
-&nbsp;
-// logoutDelay
-AppInfoManager.updateLogoutDelay = function( dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LOGOUTDELAY, dataStr );
-}
-&nbsp;
-&nbsp;
-// ------------------------------------------------------------------------------------  
-// ------------------------------------------------------------------------------------  
-// ------------------------------------------------------------------------------------  
-&nbsp;
-AppInfoManager.getData = function( keyword )
-{
-    return AppInfoManager.data[keyword];
-}	
-&nbsp;
-&nbsp;
-AppInfoManager.updateData = function( keyword, jsonData )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    // Update data of appInfo by using keyword
-    appInfo[keyword] = jsonData;
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-&nbsp;
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
-}
-&nbsp;
-&nbsp;
-AppInfoManager.removeData = function( keyword )
-{
-     // Get appInfo from localStorage if any. If not, use default appInfo
-     var appInfo = AppInfoManager.loadAppInfo();
-    
-     // Update data of appInfo by using keyword
-     delete appInfo[keyword];
-     
-     // Update the 'appInfo' data
-     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-     
-     // Set new data info in memory
-     AppInfoManager.data = appInfo;
-}
-	
-&nbsp;
-// Get appInfo from localStorage if any. If not, use default appInfo
-AppInfoManager.loadAppInfo = function()
-{
-    var appInfo = LocalStgMng.getJsonData( AppInfoManager.KEY_APPINFO );
-    return ( appInfo == undefined ) ? AppInfoManager.data : appInfo;
-}
-&nbsp;
-&nbsp;
-AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    // Update sub value by using keyword
-    if( appInfo[mainKey] == undefined )
-    {
-        appInfo[mainKey] = {};
-    }
-    
-    appInfo[mainKey][subKey] = valStr;
-&nbsp;
-    // Update data in memory
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-&nbsp;
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
-}
-&nbsp;
-AppInfoManager.getPropertyValue = function( mainKey, subKey )
-{
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
-    var mainInfo = appInfo[mainKey];
-    if( mainInfo == undefined )
-    {
-        return undefined;
-    }
-&nbsp;
-    // Get Sub data if any
-    return appInfo[mainKey][subKey];
-}
-&nbsp;
-// =========================================
-// === Other Related Methods..
-&nbsp;
-AppInfoManager.getLangCode = function()
-{
-	var lang = '';
-&nbsp;
-	try
-	{
-		var userInfo = AppInfoManager.getUserInfo();
-	
-		<span class="missing-if-branch" title="else path not taken" >E</span>if ( userInfo &amp;&amp; userInfo.language ) lang = userInfo.language;
-		else <span class="cstat-no" title="statement not covered" >( navigator.language ).toString().substring(0,2);</span>
-	}
-	catch ( err )
-	{
-<span class="cstat-no" title="statement not covered" >		console.log( 'Error in AppInfoManager.getLangCode: ' + err );</span>
-	}
-&nbsp;
-	return lang;
+			<span class="missing-if-branch" title="else path not taken" >E</span>if ( returnFunc ) returnFunc( hasLoginStatus, returnJson );
+        }
+        else
+        {
+<span class="cstat-no" title="statement not covered" >			if ( returnFunc ) <span class="cstat-no" title="statement not covered" >returnFunc( false, returnJson );</span></span>
+        }
+	});
 };
 &nbsp;
 &nbsp;
-AppInfoManager.createUpdateUserInfo = function( userName )
+WsCallManager.getDataServerAvailable = <span class="fstat-no" title="function not covered" >fu</span>nction( returnFunc )
 {
-    var lastSession = AppInfoManager.getUserInfo();
-    
-    <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession )
+    var configJson = <span class="cstat-no" title="statement not covered" >ConfigManager.getConfigJson();</span>
+    var sourceTypeParam = <span class="cstat-no" title="statement not covered" >( configJson ) ? Util.getStr( configJson.sourceType ) : '';</span>
+    // if ( !SessionManager.getLoginStatus() ) &lt;-- add 'logOut' case?  No, for now, have only 3 types.. 'mongo', 'dhis', '' (log out or config not have sourceType) case..
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    WsCallManager.requestGetDws( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );</span>
+};
+&nbsp;
+&nbsp;
+WsCallManager.wsActionCall = <span class="fstat-no" title="function not covered" >fu</span>nction( apiPath, payloadJson, loadingTag, returnFunc )
+{	    
+    var configJson = <span class="cstat-no" title="statement not covered" >ConfigManager.getConfigJson();</span>
+    var sourceType = <span class="cstat-no" title="statement not covered" >configJson.sourceType;</span>
+    var mongoSchemaVersion = <span class="cstat-no" title="statement not covered" >configJson.mongoSchemaVersion;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( sourceType )</span>
     {
-        lastSession.user = userName;
-    
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
-        <span class="missing-if-branch" title="else path not taken" >E</span>if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
+<span class="cstat-no" title="statement not covered" >        payloadJson.sourceType = sourceType;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( sourceType === "mongo" )</span>
+    {
+<span class="cstat-no" title="statement not covered" >        if ( mongoSchemaVersion ) <span class="cstat-no" title="statement not covered" >payloadJson.mongoSchemaVersion = mongoSchemaVersion;</span></span>
+        // For 'mongo' sourceType, do not need to send userName &amp; password in payload.
     }
     else
     {
-        var dtmNow = <span class="cstat-no" title="statement not covered" >( new Date() ).toISOString();</span>
-        
-<span class="cstat-no" title="statement not covered" >        lastSession = { </span>
-            user: userName
-            , lastUpdated: dtmNow
-            , language: AppInfoManager.getLangCode()
-            , soundEffects: ( Util.isMobi() )
-            , autoComplete: true
-            , logoutDelay: 60 
-        };
-    }    
+        // if ( sourceType !== "mongo" )
+        // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
+<span class="cstat-no" title="statement not covered" >        payloadJson.userName = SessionManager.sessionData.login_UserName;</span>
+<span class="cstat-no" title="statement not covered" >        payloadJson.password = SessionManager.sessionData.login_Password;    </span>
+    }
 &nbsp;
-    
-    AppInfoManager.updateUserInfo( lastSession );
-&nbsp;
+<span class="cstat-no" title="statement not covered" >    WsCallManager.requestPostDws( apiPath, payloadJson, loadingTag, returnFunc );</span>
 };
+&nbsp;
+&nbsp;
+// ========================================
+// === Specialized 'Post' and 'Get' =====
+&nbsp;
+// 'action' calls will be using this..
+WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
+{	    
+    <span class="missing-if-branch" title="if path not taken" >I</span>if ( !payloadJson ) <span class="cstat-no" title="statement not covered" >payloadJson = {};</span>
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if ( SessionManager.getLoginStatus() ) <span class="cstat-no" title="statement not covered" >WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );</span>
+&nbsp;
+&nbsp;
+    var url = WsCallManager.composeDwsWsFullUrl( apiPath );
+&nbsp;
+    var requestOption = {
+        headers: {
+            'Authorization': WsCallManager.requestBasicAuth
+        },        
+        body: JSON.stringify( payloadJson )
+    };
+&nbsp;
+    // Send the POST reqesut	
+	WsCallManager.requestPost( url, requestOption, loadingTag, returnFunc );
+};
+&nbsp;
+WsCallManager.requestGetDws = <span class="fstat-no" title="function not covered" >fu</span>nction( apiPath, optionJson, loadingTag, returnFunc )
+{	
+    var url = <span class="cstat-no" title="statement not covered" >WsCallManager.composeDwsWsFullUrl( apiPath );</span>
+&nbsp;
+    var requestOption = <span class="cstat-no" title="statement not covered" >{</span>
+        headers: {
+            'Authorization': WsCallManager.requestBasicAuth
+        }
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if ( optionJson ) <span class="cstat-no" title="statement not covered" >Util.mergeJson( requestOption, optionJson );</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );</span>
+};
+&nbsp;
+// Temporary text response one - we should unify all the response as json
+WsCallManager.requestGet_Text = <span class="fstat-no" title="function not covered" >fu</span>nction( url, requestOption, loadingTag, returnFunc )
+{
+<span class="cstat-no" title="statement not covered" >    requestOption.returnDataType = 'text';</span>
+<span class="cstat-no" title="statement not covered" >    WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );</span>
+};
+&nbsp;
+// ========================================
+// === Basic 'Post' and 'Get' =====
+&nbsp;
+// 'action' calls will be using this..
+WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc )
+{	        
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth },        
+    //    body: JSON.stringify( payloadJson )  };
+&nbsp;
+    url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
+&nbsp;
+	// Send the POST reqesut	
+	RESTCallManager.performPost( url, requestOption, function( success, returnJson ) 
+	{
+        WsCallManager.loadingTagClear( loadingTag );
+&nbsp;
+		<span class="missing-if-branch" title="else path not taken" >E</span>if ( returnFunc ) returnFunc( success, returnJson );
+	});
+};
+&nbsp;
+WsCallManager.requestGet = <span class="fstat-no" title="function not covered" >fu</span>nction( url, requestOption, loadingTag, returnFunc )
+{	
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth } };
+    //if ( optionJson ) Util.mergeJson( requestOption, optionJson );
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    url = WsCallManager.localhostProxyCaseHandle( url ); </span>//, requestOption );
+&nbsp;
+	// Send the POST reqesut	
+<span class="cstat-no" title="statement not covered" >	RESTCallManager.performGet( url, requestOption, <span class="fstat-no" title="function not covered" >fu</span>nction( success, returnJson ) </span>
+	{        
+<span class="cstat-no" title="statement not covered" >        Util.tryCatchContinue( <span class="fstat-no" title="function not covered" >fu</span>nction() {</span>
+            
+<span class="cstat-no" title="statement not covered" >            WsCallManager.loadingTagClear( loadingTag );</span>
+&nbsp;
+        }, "WsCallManager.requestGet loadingTag Clear" );
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		if ( returnFunc ) <span class="cstat-no" title="statement not covered" >returnFunc( success, returnJson );</span></span>
+	});
+};
+&nbsp;
+// ========================================
+&nbsp;
+&nbsp;
+WsCallManager.addExtraPayload_BySourceType = <span class="fstat-no" title="function not covered" >fu</span>nction( configJson, payloadJson )
+{
+<span class="cstat-no" title="statement not covered" >    if ( configJson.sourceType )</span>
+    {
+<span class="cstat-no" title="statement not covered" >        payloadJson.sourceType = configJson.sourceType;</span>
+    }
+    
+<span class="cstat-no" title="statement not covered" >    if ( configJson.sourceType === "mongo" )</span>
+    {
+<span class="cstat-no" title="statement not covered" >        if ( configJson.mongoSchemaVersion ) <span class="cstat-no" title="statement not covered" >payloadJson.mongoSchemaVersion = configJson.mongoSchemaVersion;</span></span>
+        // For 'mongo' sourceType, do not need to send userName &amp; password in payload.
+    }
+    else
+    {
+        // if ( sourceType !== "mongo" )
+        // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
+<span class="cstat-no" title="statement not covered" >        if ( SessionManager.sessionData.login_UserName ) <span class="cstat-no" title="statement not covered" >payloadJson.userName = SessionManager.sessionData.login_UserName;</span></span>
+<span class="cstat-no" title="statement not covered" >        if ( SessionManager.sessionData.login_Password ) <span class="cstat-no" title="statement not covered" >payloadJson.password = SessionManager.sessionData.login_Password;    </span></span>
+    }      
+};
+&nbsp;
+&nbsp;
+// Used to force the ws target - by console
+WsCallManager.forceWsTarget = <span class="fstat-no" title="function not covered" >fu</span>nction( stageName )
+{
+<span class="cstat-no" title="statement not covered" >    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];</span>
+<span class="cstat-no" title="statement not covered" >    WsCallManager.isLocalDevCase = true; </span>// if changed to 'stage' (from 'dev'), we should also use 'cors' redirection service.
+};
+&nbsp;
+&nbsp;
+WsCallManager.checkLocalDevCase = <span class="fstat-no" title="function not covered" >fu</span>nction( originUrl )
+{
+<span class="cstat-no" title="statement not covered" >    return ( originUrl.indexOf( 'http://localhost' ) === 0 </span>
+    || originUrl.indexOf( 'http://127.0.0.1:' ) === 0 );
+};
+&nbsp;
+&nbsp;
+WsCallManager.localhostProxyCaseHandle = function( url ) //, requestOption )
+{
+    <span class="missing-if-branch" title="if path not taken" >I</span>if ( WsCallManager.isLocalDevCase )
+    {
+        //requestOption.headers[ 'Target-URL' ] = url;
+<span class="cstat-no" title="statement not covered" >        url = WsCallManager.localhostProxyUrl + '/' + url;</span>
+    }
+    
+    return url;
+};
+&nbsp;
+&nbsp;
+WsCallManager.loadingTagClear = function( loadingTag )
+{
+    try
+    {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if ( loadingTag ) loadingTag.remove();
+    }
+    catch { }
+};
+&nbsp;
+// -----------------------------------------
+&nbsp;
+WsCallManager.composeDwsWsFullUrl = function( targetUrl )
+{
+    <span class="missing-if-branch" title="if path not taken" >I</span>if ( targetUrl.indexOf( 'http' ) === 0 )
+    {
+        // target has full path.
+<span class="cstat-no" title="statement not covered" >        return targetUrl;</span>
+    }
+    else
+    {
+        // If partial data, add ws origin..
+        return WsCallManager.wsTargetUrl + targetUrl;        
+    }
+};
+&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1093,14 +895,14 @@ AppInfoManager.createUpdateUserInfo = function( userName )
                 at Tue Jul 14 2020 11:30:22 GMT+0900 (Korean Standard Time)
             </div>
         </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     
