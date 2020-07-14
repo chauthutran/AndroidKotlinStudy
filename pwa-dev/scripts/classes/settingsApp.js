@@ -133,10 +133,11 @@ function settingsApp( cwsRender )
             })
             btnAcceptResetData.click(()=>{
                 AppInfoManager.removeUserInfo();
-                if ( cacheManager.clearCacheKeys() )
-                {
-                    me.cwsRenderObj.reGetAppShell();
-                }
+                //if ( cacheManager.clearCacheKeys() )
+                //{
+                    
+                me.cwsRenderObj.reGetAppShell();
+                //}
                 pptManager.on({})
             })
         })()
@@ -521,7 +522,7 @@ function settingsApp( cwsRender )
         
     
 
-        cacheManager.initialise();
+        //cacheManager.initialise();
 
     }
 

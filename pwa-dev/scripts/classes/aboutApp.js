@@ -399,7 +399,7 @@ function aboutApp( cwsRender )
         });
  
 
-        cacheManager.initialise();
+        //cacheManager.initialise();
 
     }
 

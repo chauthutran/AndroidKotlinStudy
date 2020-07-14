@@ -348,6 +348,7 @@ DataManager2.initialiseStorageEstimates = function()
 	}
 }
 
+/*
 DataManager2.getStorageSizes = function( callBack )
 {
 	var arrItems = [];
@@ -365,4 +366,4 @@ DataManager2.getStorageSizes = function( callBack )
 		return arrItems;
 	}
 
-}
+}*/
