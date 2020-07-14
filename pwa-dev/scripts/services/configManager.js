@@ -844,6 +844,8 @@ ConfigManager.configUserRole = function( callBack )
     var defRoles = ConfigManager.configJson.definitionUserRoles;
     var userGroupRole = SessionManager.sessionData.orgUnitData.orgUnit.organisationUnitGroups;
 
+    FormUtil.login_UserRole = [];
+
     if ( defRoles && userGroupRole )
     {
         for ( var r=0; r< userGroupRole.length; r++ )
@@ -852,7 +854,7 @@ ConfigManager.configUserRole = function( callBack )
             {
                 if ( defRoles[ i ].uid == userGroupRole[ r ].id )
                 {
-                    FormUtil.login_UserRole.push( defRoles[ i ].uid );
+                    FormUtil.login_UserRole.push( defRoles[ i ].id );
                 }
             }
         }
@@ -861,7 +863,6 @@ ConfigManager.configUserRole = function( callBack )
     }
     else
     {
-        FormUtil.login_UserRole = [];
         if ( callBack ) callBack();
     }
 
