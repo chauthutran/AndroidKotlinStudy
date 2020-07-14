@@ -15,25 +15,25 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [  
-      '../scripts/libraries/jquery-3.4.0.min.js',
-      '../scripts/libraries/jquery.blockUI.js',
-      '../scripts/libraries/jquery-ui.min.js',
-      '../scripts/libraries/jquery-autocomplete.js',
-      '../scripts/libraries/jquery-dateformat.min.js',
-      '../scripts/libraries/aes.js',
-      '../scripts/libraries/llqrcode.js',
-      '../scripts/libraries/moment.min.js',
-      '../scripts/libraries/mdDateTimePicker.min.js',
-      '../scripts/libraries/maska.js',
-      '../scripts/libraries/localforage.min.js',
-      '../scripts/libraries/json-viewer.js',
-      '../scripts/libraries/crossfilter.min.js',
-      '../scripts/libraries/d3.min.js',
-      '../scripts/libraries/tabulate.js',
+      '../pwa-dev/scripts/libraries/jquery-3.4.0.min.js',
+      '../pwa-dev/scripts/libraries/jquery.blockUI.js',
+      '../pwa-dev/scripts/libraries/jquery-ui.min.js',
+      '../pwa-dev/scripts/libraries/jquery-autocomplete.js',
+      '../pwa-dev/scripts/libraries/jquery-dateformat.min.js',
+      '../pwa-dev/scripts/libraries/aes.js',
+      '../pwa-dev/scripts/libraries/llqrcode.js',
+      '../pwa-dev/scripts/libraries/moment.min.js',
+      '../pwa-dev/scripts/libraries/mdDateTimePicker.min.js',
+      '../pwa-dev/scripts/libraries/maska.js',
+      '../pwa-dev/scripts/libraries/localforage.min.js',
+      '../pwa-dev/scripts/libraries/json-viewer.js',
+      '../pwa-dev/scripts/libraries/crossfilter.min.js',
+      '../pwa-dev/scripts/libraries/d3.min.js',
+      '../pwa-dev/scripts/libraries/tabulate.js',
 
       'src/simple.js',
       
-      '../scripts/**/*.js',
+      '../pwa-dev/scripts/**/*.js',
 
 
 
@@ -51,13 +51,13 @@ module.exports = function(config) {
 
     preprocessors: {
       // 'src/*.js' :  'coverage'
-     '../scripts/services/appInfoManager.js' : ['coverage'],
-     '../scripts/services/clientDataManager.js' : ['coverage'],
-     '../scripts/services/configManager.js' : ['coverage'],
-     '../scripts/services/sessionManager.js' : ['coverage'],
-     '../scripts/services/activityDataManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/appInfoManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/clientDataManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/configManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/sessionManager.js' : ['coverage'],
+     '../pwa-dev/scripts/services/activityDataManager.js' : ['coverage'],
      
-     '../scripts/classes/login.js' : ['coverage']
+     '../pwa-dev/scripts/classes/login.js' : ['coverage']
     },
 
 
