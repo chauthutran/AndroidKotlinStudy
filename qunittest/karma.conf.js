@@ -89,7 +89,6 @@ module.exports = function(config) {
      '../pwa-dev/scripts/services/activityDataManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/payloadTemplateHelper.js' : ['coverage'],
    
-     '../pwa-dev/scripts/services/dataFormatConvert.js' : ['coverage'],
      '../pwa-dev/scripts/services/syncManagerNew.js' : ['coverage'],
      '../pwa-dev/scripts/services/configManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/msgManager.js' : ['coverage'],
@@ -127,12 +126,9 @@ module.exports = function(config) {
      '../pwa-dev/scripts/classes/qrcode.js' : ['coverage'],
      '../pwa-dev/scripts/classes/pwaEpoch.js' : ['coverage'],
      '../pwa-dev/scripts/classes/baseConverter.js' : ['coverage'],
-     '../pwa-dev/scripts/classes/myDetails.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/myDetails.js' : ['coverage']
 
 
-
-     
-     
     },
 
 
