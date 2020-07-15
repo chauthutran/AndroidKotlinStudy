@@ -854,7 +854,7 @@ ConfigManager.configUserRole = function( callBack )
             {
                 if ( defRoles[ i ].uid == userGroupRole[ r ].id )
                 {
-                    FormUtil.login_UserRole.push( defRoles[ i ].uid );
+                    FormUtil.login_UserRole.push( defRoles[ i ].id );
                 }
             }
         }
