@@ -116,9 +116,7 @@ function aboutApp( cwsRender )
 
         });
 
-
-
-  
+        
         me.aboutInfo_ThemeSelectTag.change ( () => 
         {    
             FormUtil.showProgressBar();
@@ -126,6 +124,7 @@ function aboutApp( cwsRender )
             var thisConfig = ConfigManager.getConfigJson();
 
             thisConfig.settings.theme = me.aboutInfo_ThemeSelectTag.val();
+
             // TRAN TODO : Why don't save this change to local db
             ConfigManager.setConfigJson( thisConfig );
             me.cwsRenderObj.renderDefaultTheme(); 

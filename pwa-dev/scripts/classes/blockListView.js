@@ -274,7 +274,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     
     
             // Sort with 1st one..
-            me.sortList_wt1stOne( me.viewDef_Selected.sort, me.viewFilteredList );    
+            me.sortViewList_wt1stOne( me.viewDef_Selected.sort );    
         }
         else
         {
@@ -477,40 +477,39 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
-    me.sortList_wt1stOne = function( sortDefs, viewFilteredList )
+    me.sortViewList_wt1stOne = function( sortDefs )
     {
         // TODO: DUPLICATE CALL AS BELOW?
         if ( me.usedGroupBy( me.groupByData ) ) 
         {
-            me.sortList_ByGroup( me.groupByData );
+            me.sortViewList_ByGroup( me.groupByData );
         }
         else if ( sortDefs && sortDefs.length > 0 )
         {
-            me.sortList( sortDefs[0], viewFilteredList );
+            me.sortViewList( sortDefs[0] );
         }
     };
 
 
-    me.sortList = function( sortDef, viewFilteredList )
-    {
-        try 
-        {
-            me.evalSort( sortDef.field, viewFilteredList, sortDef.order.toLowerCase() );
+    me.sortViewList = function( sortDef )
+    {        
+        Util.tryCatchContinue( function() {
 
-            // TODO: There is no updated sort visual for now
-            //me.updateSortLiTag( $( me.sortListDivTag ).find( 'li[sortid="' + sortDef.id + '"]' ) );
-        }
-        catch ( errMsg ) 
-        {
-            console.log( 'Error on BlockListView.sortList, errMsg: ' + errMsg );
-        }                   
+            // Which name to use - 'INFO' vs 'LIST'
+            var INFOList_activity = InfoDataManager.setINFOList_Activity( me.viewFilteredList );
+                
+            me.evalSort( sortDef.field, INFOList_activity, sortDef.order.toLowerCase() );
+
+            // Put the activity (in INFO) back to activityList..
+            me.viewFilteredList = InfoDataManager.getActivityList_fromINFOList( INFOList_activity );
+
+        }, "BlockListView.sortViewList()" );
     };
-
 
     // ------------------------------------------
     // -- Sort activityList by Group Related ---
 
-    me.sortList_ByGroup = function( groupByData )
+    me.sortViewList_ByGroup = function( groupByData )
     {
         if ( !groupByData.groupSortOrder ) groupByData.groupSortOrder = 'asc';
         else if ( groupByData.groupSortOrder === 'asc' ) groupByData.groupSortOrder = 'desc';
@@ -563,57 +562,19 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         Util.tryCatchContinue( function() {
 
             // Which name to use - 'INFO' vs 'LIST'
-            var LISTactivityList = me.setLIST_byActivityList( group.activities, 'INFO' );
+            var INFOList_activity = InfoDataManager.setINFOList_Activity( group.activities );
                 
-            me.evalSort( contentSort, LISTactivityList, contentSortOrder );
+            me.evalSort( contentSort, INFOList_activity, contentSortOrder );
 
-            // Put the activity (in INFO) back to activityList..
-            var newGroupActivities = me.getActivityList_fromLIST( LISTactivityList, 'INFO' );
+            var newGroupActivities = InfoDataManager.getActivityList_fromINFOList( INFOList_activity );
+
             Util.appendArray( newActivityList, newGroupActivities );
 
         }, "BlockListView.groupContentSort()" );
     };
 
 
-    me.setLIST_byActivityList = function( activityList, name )
-    {
-        var newList = [];
-
-        for ( var i = 0; i < activityList.length; i++ )
-        {
-            var activity = activityList[ i ];
-            
-            // NOTE: could use 'LIST' instead...
-            var newObj = {};
-            newObj[ name ] = me.getDataByActivity( activity );
-            newList.push( newObj );
-        }
-
-        return newList;
-    };
-
-    
-    me.getDataByActivity = function( activity )
-    {
-        var client = ClientDataManager.getClientByActivityId( activity.id );
-
-        return { 'activity': activity, 'client': client };
-    };
-
-    
-    me.getActivityList_fromLIST = function( LISTactivityList, name )
-    {
-        var newActivityList = [];
-
-        for ( var i = 0; i < LISTactivityList.length; i++ )
-        {
-            var data = LISTactivityList[ i ];
-
-            newActivityList.push( data[ name ].activity );
-        }
-
-        return newActivityList;
-    };
+    // -------------------------------------------------------
 
     // If we want to use global 'INFO' in sortEval, we need to pass in the global 'INFO' as parameter
     //      + change 'INFO.activity' as 'LIST.activity' to differentiate if... or just 'activity'
@@ -651,7 +612,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
             if ( me.usedGroupBy( me.groupByData ) )
             {
-                me.sortList_ByGroup( me.groupByData );
+                me.sortViewList_ByGroup( me.groupByData );
 
                 me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );
             }
@@ -697,7 +658,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
             if ( sortDef )
             {
-                me.sortList( sortDef, me.viewFilteredList );                        
+                me.sortViewList( sortDef, me.viewFilteredList );                        
 
                 //me.clearGroupBy_UsedInBlockList_status();
                 

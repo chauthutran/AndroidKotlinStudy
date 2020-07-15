@@ -3,9 +3,6 @@
 
 function FormUtil() {}
 
-
-FormUtil.login_UserRole = [];
-
 FormUtil.blockType_MainTab = 'mainTab';
 FormUtil.blockType_MainTabContent = 'mainTabContent';
 FormUtil.block_payloadConfig = '';

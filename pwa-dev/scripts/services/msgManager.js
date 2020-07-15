@@ -48,81 +48,9 @@ MsgManager.initialSetup = function()
 }
 
 
-MsgManager.msgAreaShow = function( msg, timeoutTime, countDown, ProgressTimerRefresh )
+MsgManager.msgAreaShow = function( msg )
 {
-    if ( 1==1)
-    {
-        MsgManager.notificationMessage ( msg, 'notificationDark', undefined, '', 'right', 'top' );
-    }
-    else    if ( msg )
-    {
-        if ( !MsgManager._autoHide )
-        {
-            // TRAN TODO : SHOULD GET "dcdConf" DATA FROM sessionManager.js
-            // var dcdConf = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
-            var dcdConfig = ConfigManager.getConfigJson();
-
-            // if ( dcdConf && dcdConf.dcdConfig && dcdConf.dcdConfig.settings && dcdConf.dcdConfig.settings.message )
-            if ( dcdConfig && dcdConfig.settings && dcdConfig.settings.message )
-            {
-                MsgManager._autoHide = dcdConfig.settings.message.autoHide;
-                MsgManager._autoHideDelay = dcdConfig.settings.message.autoHideTime;
-            }
-        }
-
-        MsgManager.spanMsgAreaTextTag.text( msg );
-        FormUtil.addTag_TermAttr = function( tags, jsonItem )
-        {
-            if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
-        };
-        
-
-        if ( ! $( '#divMsgArea' ).is( ':visible' ) )
-        {
-            MsgManager.divMsgAreaTag.show( 'fast' );
-        }
-
-        if ( MsgManager.timer > 0 ) clearTimeout ( MsgManager.timer );
-
-        if ( timeoutTime )
-        {
-            MsgManager.timer = setTimeout( function() {                
-                MsgManager.msgAreaClear( 'slow' );
-            }, timeoutTime );
-        }
-        else
-        {
-            if ( countDown )
-            {
-                MsgManager.countDownDenominator = countDown;
-
-                if ( ProgressTimerRefresh )
-                {
-                    MsgManager.progressBarUpdateTimer = ProgressTimerRefresh;
-                }
-                else
-                {
-                    MsgManager.progressBarUpdateTimer = 25;
-                }
-
-                MsgManager.divProgressAreaTag.append( $('<div style="background-Color:#50555a;width:0;height:10px;"/>') );
-                MsgManager.divProgressAreaTag.show();
-
-                MsgManager.progressCheckCount = 0
-
-            }
-            else
-            {
-                if ( MsgManager._autoHide )
-                {
-                    MsgManager.timer = setTimeout( function() {                
-                        MsgManager.msgAreaClear( );
-                    }, MsgManager._autoHideDelay );
-                }
-            }
-        }
-
-    }
+    MsgManager.notificationMessage ( msg, 'notificationDark', undefined, '', 'right', 'top' );
 }
 
 MsgManager.msgAreaClear = function( speed )

@@ -687,12 +687,20 @@ function ActivityCard( activityId, cwsRenderObj, options )
             
             try
             {
-                errMsg = 'operation: ' + responseJson.result.operation;
+                if ( responseJson.result )
+                {
+                    if ( responseJson.result.operation ) errMsg += ' operation: ' + responseJson.result.operation;
+                    if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData );    
+                }
+                else
+                {
+                    errMsg += ' Error Response: ' + JSON.stringify( responseJson );
+                }
             } catch 
             { 
                 try
                 {
-                    errMsg = JSON.stringify( responseJson );
+                    errMsg += ' Error Response: ' + JSON.stringify( responseJson );
                 }
                 catch {}
             }

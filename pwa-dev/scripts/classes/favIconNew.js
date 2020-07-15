@@ -46,7 +46,7 @@ function favIcons( cwsRender )
            {
                for ( var p=0; p< areaItems[ i ].userRoles.length; p++ )
                {
-                   if ( FormUtil.login_UserRole.includes( areaItems[ i ].userRoles[ p ] ) )
+                   if ( ConfigManager.login_UserRoles.includes( areaItems[ i ].userRoles[ p ] ) )
                    {
                        areaFavItems.push( areaItems[ i ] );
                        break;
