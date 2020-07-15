@@ -24,29 +24,20 @@ QUnit.test('Test PayloadTemplateHelper - generatePayload', function( assert ){
 });
 
 
-QUnit.test('Test PayloadTemplateHelper - getINFO and evalPayloads', function( assert ){
+QUnit.test('Test PayloadTemplateHelper - setINFO_payload and evalPayloads', function( assert ){
   
     var dateTimeObj = new Date();
-    var formsJson = { "test1": "testVal1", "test2": "testVal2" };
+    var formsJson = {"payload" : { "test1": "testVal1", "test2": "testVal2" } };
     var formsJsonGroup = {'testGroup' : formsJson } ;
     var blockInfo = { "activityType" : "" };
-    var sessionData = {
-        "dcdConfig" : {
-            "configType" : "dataCapture",
-            "countryCode" : "TE"
-        },
-        "loginStatus" : true,
-        "status" : "success"
-    };
-    
 
-    var info = PayloadTemplateHelper.getINFO ( dateTimeObj, formsJson, formsJsonGroup, blockInfo, sessionData );
+    
+    PayloadTemplateHelper.setINFO_payload( dateTimeObj, formsJson, formsJsonGroup, blockInfo );
+    var info = InfoDataManager.getINFO().payload;
     assert.equal( info.date.getMilliseconds() == dateTimeObj.getMilliseconds() 
-        && info.dcdConfig.countryCode == "TE" && info.dcdConfig.configType == "dataCapture"
-        && info.loginStatus == true && info.status == "success"
         && JSON.stringify( info.formsJson ) == JSON.stringify( formsJson )
         && JSON.stringify( info.formsJsonGroup.testGroup ) == JSON.stringify( formsJson )
-        , true, "getINFO runs successfully !!!" );
+        , true, "setINFO_payload runs successfully !!!" );
 
 
 
