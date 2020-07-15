@@ -36,6 +36,7 @@ module.exports = function(config) {
       'src/simple.js',
       
       '../pwa-dev/scripts/**/*.js',
+      '../pwa-dev/scripts/**/**/*.js',
 
 
 
@@ -97,7 +98,6 @@ module.exports = function(config) {
      '../pwa-dev/scripts/services/formMsgManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/connManagerNew.js' : ['coverage'],
    
-     '../pwa-dev/scripts/services/cacheManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/appInfoManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/sessionManager.js' : ['coverage'],
      '../pwa-dev/scripts/services/dataVerMove.js' : ['coverage'],
