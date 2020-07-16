@@ -7,7 +7,7 @@ Configs.statusOptions = [
         "label": "Sync",
         "term": "",
         "image": "images/sync.svg",
-        "color": "#2aad5c"
+        "color": "#27AE60"
     },
     {
         "name": "submit_wMsg",

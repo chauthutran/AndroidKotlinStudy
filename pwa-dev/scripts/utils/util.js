@@ -1400,7 +1400,7 @@ Util.generateRandomNumberRange = function(min_value , max_value)
 Util.getRandomWord = function( slist, anythingRandom )
 {
 	var arrL = slist.split(',');
-	var i = generateRandomNumberRange( 0, arrL.length -1 ).toFixed(0);
+	var i = Util.generateRandomNumberRange( 0, arrL.length -1 ).toFixed(0);
 	return arrL[i];
 }
 
