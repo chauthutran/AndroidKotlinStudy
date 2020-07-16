@@ -57,7 +57,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			var groupsCreated = [];
 
-			for ( var i = 0; i < formFieldGroups.length; i++ )
+			for( var i = 0; i < formFieldGroups.length; i++ )
 			{
 				var groupDivTag = me.createGroupDivTag( formFieldGroups[ i ], groupsCreated, formTag );
 
@@ -96,36 +96,35 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var groupDivTag = formTag;
 
-		if ( formFieldGroup.group )
+		if ( ( formFieldGroup.group ).toString().length )
 		{
 			if ( ! groupsCreated.includes( formFieldGroup.group ) )
 			{
-				groupDivTag = $( '<div class="formGroupSection" name="' + formFieldGroup.group + '" groupId="' + formFieldGroup.groupId + '"><div class="section"><label>' + formFieldGroup.group + '</label></div></div>' );
+				groupDivTag = $( '<div class="formGroupSection" name="' + formFieldGroup.group + '"><div class="section"><label>' + formFieldGroup.group + '</label></div></div>' );
 				formTag.append( groupDivTag );
 				groupsCreated.push( formFieldGroup.group );
 			}
 			else
 			{
 				//do nothing: group already exists
-				groupDivTag = formTag.find( 'div[groupId="' + formFieldGroup.groupId + '"]' );
+				groupDivTag = $( formTag ).find( 'div[name="' + formFieldGroup.group + '"]' );
 			}
 		}
 		else 
 		{
-			// NOT A PROPER LOGIC!!  <-- NEED TO CHECK WITH GREG!!!
 			// TRAN TODO : NEED TO do something about it
 			if ( ( formFieldGroup.group ).toString().length == 0 )
 			{
 				if ( ! groupsCreated.includes( me._groupNoneId ) )
 				{
-					groupDivTag = $( '<div style="" class="formGroupSection" name="' + me._groupNoneId + '" groupId="' + me._groupNoneId + '"></div>' );
+					groupDivTag = $( '<div style="" class="formGroupSection" name="' + me._groupNoneId + '"></div>' );
 
 					formTag.append( groupDivTag );	
 					groupsCreated.push( me._groupNoneId );
 				}
 				else
 				{
-					groupDivTag = formTag.find( 'div[name="' + me._groupNoneId + '"]' );
+					groupDivTag = $( formTag ).find( 'div[name="' + me._groupNoneId + '"]' );
 				}
 			}
 			else

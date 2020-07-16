@@ -15,7 +15,7 @@ DevHelper.tempCount = 0;
 DevHelper.sampleDataList = 
 [
   {
-    "_id": "5e8af6d6f39ff8047ee4f3e5",
+    "_id": "5e8af6d6f39ff8{10RNDCHARS}",
     "date": { // MANDATORY?
         "updatedOnMdbUTC": "2020-06-18T12:32:03", // MANDATORY?
         "createdOnMdbUTC": "2020-06-18T11:26:26" // MANDATORY?
@@ -23,10 +23,10 @@ DevHelper.sampleDataList =
     "clientDetails": {
         "firstName": "James",
         "lastName": "Chang",
-        "phoneNumber": "6543222212",
+        "phoneNumber": "{10DIGITS}",
         "age": "14",
-        "users": [ "LA_TEST_IPC" ],
-        "voucherCode": [ "22223333" ]
+        "users": [ "{USERNAME}" ],
+        "voucherCode": [ "{8DIGITS}" ]
     },
     "clientConsent": {
         "phone": true, // MANDATORY?
@@ -35,11 +35,10 @@ DevHelper.sampleDataList =
         "feedback": false
     },    
     "activities": [{
-        "id": "LA_TEST_PROV_20200406_093052500",
+        "id": "{USERNAME}_{SHORTDATE}_{8DIGITS}",
         "date": {
             "createdOnMdbUTC": "2020-04-06T09:31:02.488",
             "createdOnMdbLoc": "2020-04-06T09:31:02.488",
-
             "capturedUTC": "2020-04-06T09:30:50.000",
             "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
             "capturedLoc": "2020-04-06T18:30:50.000"
@@ -48,13 +47,13 @@ DevHelper.sampleDataList =
         "creditedUsers": [
           "LA_TEST_OTH"
         ],
-        "type": "eVoucher",
+        "type": "{ACTIVITY_TYPE}",
         "location": {},
-        "program": "fpl",
+        "program": "{PROGRAM}",
         //"activityType": "eVoucher",
         "processing": {
             "created": "2020-04-06T18:30:50.000",
-            "status": "submit_wMsg",
+            "status": "{STATUS}",
             "statusRead": false,
             "history": [
                 { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
@@ -65,7 +64,7 @@ DevHelper.sampleDataList =
             "clientDetails": {
                 "firstName": "James",
                 "lastName": "Chang",
-                "phoneNumber": "6543222212",
+                "phoneNumber": "{10DIGITS}",
                 "clientId": "",
                 "age": "14",
                 "provisionMethod": "Pills"
@@ -75,7 +74,7 @@ DevHelper.sampleDataList =
         }, {
             "type": "v_iss",
             "clientDetails": {
-                "voucherCode": "22223333"
+                "voucherCode": "{8DIGITS}"
             }
         }]
     }]
@@ -455,9 +454,33 @@ DevHelper.showActivityListStr = function()
 };
 
 // create load data method..
-DevHelper.loadSampleData = function() 
+DevHelper.loadSampleData = function( icount ) 
 {    
-    ClientDataManager.insertClients( DevHelper.sampleDataList );
+    var loops = ( icount ? icount : 1 );
+
+    for (var i = 0; i < loops; i++)
+    {
+        var tmp = JSON.stringify( DevHelper.sampleDataList );
+        var actType = FormUtil.getActivityTypes()[ Util.generateRandomNumberRange(0, FormUtil.getActivityTypes().length-1).toFixed(0) ].name;
+        var status = Configs.statusOptions[ Util.generateRandomNumberRange(0, Configs.statusOptions.length-1).toFixed(0) ].name;
+        tmp = tmp.replace( /{ACTIVITY_TYPE}/g, actType );
+        tmp = tmp.replace( /{PROGRAM}/g, actType.split('-')[0] );
+        tmp = tmp.replace( /{STATUS}/g, status );
+
+        tmp = tmp.replace( /{SHORTDATE}/g, new Date().toISOString().split( 'T')[0].replace(/-/g,'') );
+        tmp = tmp.replace( /{TIME}/g, new Date().toISOString().split( 'T')[1].replace(/:/g,'').replace('.','').replace('Z','') );
+        tmp = tmp.replace( /{USERNAME}/g, SessionManager.sessionData.login_UserName );
+        tmp = tmp.replace( /{8DIGITS}/g, Util.generateRandomNumber(8) );
+        tmp = tmp.replace( /{10DIGITS}/g, Util.generateRandomNumber(10) );
+        tmp = tmp.replace( /{10RNDCHARS}/g, Util.generateRandomId().substring( 0, 10 ) );
+
+        new Date().toISOString().split( 'T')[0].replace(/-/g,'')
+
+        console.log( ' ~ type: ' + actType + ' ( ' + status + ' )' );
+    
+        ClientDataManager.insertClients( JSON.parse( tmp ) );
+    }
+
 
     console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
 

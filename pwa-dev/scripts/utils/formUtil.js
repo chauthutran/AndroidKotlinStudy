@@ -1033,7 +1033,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
-	//console.log( statusOpt );
+	console.log( activityType );
 	try 
 	{
 		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen
@@ -1048,12 +1048,14 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 				{
 					if ( activityType.icon.colors.background )
 					{
-						$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, activityType.icon.colors.background) );
+						$( svgObject ).html( $(svgObject).html().replace(/{icon.bgfill}/g, activityType.icon.colors.background) );
+						$( svgObject ).html( $(svgObject).html().replace(/{bgfill}/g, activityType.icon.colors.background) );
 						$( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
 					}
 					if ( activityType.icon.colors.foreground )
 					{
-						$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, activityType.icon.colors.foreground) );
+						$( svgObject ).html( $(svgObject).html().replace(/{icon.color}/g, activityType.icon.colors.foreground) );
+						$( svgObject ).html( $(svgObject).html().replace(/{color}/g, activityType.icon.colors.foreground) );
 						$( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
 					}
 	
@@ -1083,22 +1085,6 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					$( svgObject ).attr( 'width', '100%' ); //( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width )
 					$( svgObject ).attr( 'height', '100%' ); //( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height )
 				}
-
-				/*if ( $( iconObj ).html() && statusOpt && statusOpt.icon && statusOpt.icon.path )
-				{
-					var iconActivityWidth = ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize.width;
-					var iconStatusWidth = ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width;
-					var iconStatusHeight = ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height;
-	
-					var statusIconObj = $( '<div class="syncStatusIcon" style="vertical-align:top;position:relative;left:' + ( iconActivityWidth - ( iconStatusWidth / 1) ) + 'px;top:-' + (iconStatusHeight + 6) + 'px;">&nbsp;</div>' );
-	
-					//$( '#' + iconObj.attr( 'id' ) ).css( 'width', ( ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize.width + 4 ) + 'px' )
-					$( iconObj ).append( statusIconObj );
-	
-
-					// This is SyncUp status icon (placed right below ActivityType icon.)
-					FormUtil.appendStatusIcon ( statusIconObj, statusOpt )
-				}*/
 
 			});
 		}
@@ -1132,12 +1118,14 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 					{
 						if ( statusOpt.icon.colors.background )
 						{
-							$( svgObject ).html( $(svgObject).html().replace(/{BGFILL}/g, statusOpt.icon.colors.background) );
+							$( svgObject ).html( $(svgObject).html().replace(/{icon.bgfill}/g, statusOpt.icon.colors.background) );
+							$( svgObject ).html( $(svgObject).html().replace(/{bgfill}/g, statusOpt.icon.colors.background) );
 							$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
 						}
 						if ( statusOpt.icon.colors.foreground )
 						{
-							$( svgObject ).html( $(svgObject).html().replace(/{COLOR}/g, statusOpt.icon.colors.foreground) );
+							$( svgObject ).html( $(svgObject).html().replace(/{icon.color}/g, statusOpt.icon.colors.foreground) );
+							$( svgObject ).html( $(svgObject).html().replace(/{color}/g, statusOpt.icon.colors.foreground) );
 							$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
 						}
 					}
@@ -1850,6 +1838,7 @@ FormUtil.getCommonDateGroups = function()
 };
 
 
+// REMOVE - not used anywhere
 FormUtil.getActivityTypes = function()
 {
 	// get different 'Areas' or Activity-Types
@@ -1875,6 +1864,23 @@ FormUtil.getActivityTypes = function()
 	return retArr;
 };
 
+
+FormUtil.getActivityTypeByRef = function( field, val )
+{
+	// get different 'Areas' or Activity-Types
+	// var sessData = localStorage.getItem(Constants.storageName_session);
+
+	var itms = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
+
+	if ( itms && itms.length )
+	{
+		for (var i = 0; i < itms.length; i++)
+		{
+			if ( itms[ i ][ field ] === val ) return itms[ i ];
+		}
+	}
+
+};
 
 FormUtil.loaderEllipsis = function()
 {

@@ -102,6 +102,7 @@ function cwsRender()
 		me.settingsApp = new settingsApp( me );
 		me.myDetails = new myDetails( me );
 		me.statisticsObj = new Statistics( me );
+		//me.favIconsObj = new favIcons( me );
 	}
 
 	// =============================================
@@ -314,6 +315,7 @@ function cwsRender()
 	
 					// initialise favIcons
 					//me.favIconsObj = new favIcons( me );
+					//me.favIconsObj.render(); // << rendered from blockList (this method 'belongs' to blockList)
 	
 				} );
 	
@@ -405,7 +407,8 @@ function cwsRender()
 
 	}
 
-	me.menuStatSummary = function( submitList, queueList, failedList )
+	// REMOVE - no longer used 
+	/*me.menuStatSummary = function( submitList, queueList, failedList )
 	{
 
 		var statTbl = $( '<table class="tblMenuStatSummary" />');
@@ -453,7 +456,7 @@ function cwsRender()
 		tdFailed.append( lblFailed, dataFailed );
 
 		return statTbl;
-	}
+	}*/
 
 	me.populateMenuList = function( areaList, exeFunc )
 	{
@@ -994,6 +997,7 @@ function cwsRender()
 		}
 
 		me.favIconsObj = new favIcons( me );
+		me.favIconsObj.render();
 
 	};
 
