@@ -65,13 +65,6 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 
 	return { 'payload': payload };
 };
-		// If '.localPayload' exists, override the 'payload'
-		//if ( activityPayload.localPayload && WsCallManager.isLocalDevCase ) 
-		//{
-		//	if ( activityPayload.payload ) activityPayload.payload = activityPayload.localPayload;
-		//}
-
-
 
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
@@ -159,45 +152,50 @@ ActivityUtil.generateInputJsonByType = function( clickActionJson, formDivSecTag,
 };
 
 
-ActivityUtil.generateInputJson = function( formDivSecTag, listFilter, formsJsonGroup )
+ActivityUtil.generateInputJson = function( formDivSecTag, listFilter, outFormsJsonGroup )
 {
 	// Input Tag values
 	var inputsJson = {};
 	var inputTags = formDivSecTag.find( '.dataValue' );
+	if ( !outFormsJsonGroup ) outFormsJsonGroup = {};
 	//var inputTags = formDivSecTag.find( '.fieldBlock' );
 
 	inputTags.each( function()
 	{		
 		var inputTag = $( this );	
-		var divfieldBlockTag = inputTag.closest( '.fieldBlock' );
-		var displayed = divfieldBlockTag.is( ':visible' );
-
 		var nameVal = inputTag.attr( 'name' );
-		var dataGroup = inputTag.attr( 'dataGroup' );
 
-
-		var displayGroup = inputTag.attr( 'frmGroup' );
-
-
-		// Process visible fieldBlocks only.  But if the hidden fieldBlock has 'display=hiddenVal', also use that to collect data.
-		if( displayed || divfieldBlockTag.attr( 'display' ) === 'hiddenVal' )
+		try
 		{
-			// Check if 'filteredList' exists.  If exists, we need to limit by nameVal that is in the filteredList only.
-			if ( !listFilter || listFilter.indexOf( nameVal ) >= 0 )
+			var divfieldBlockTag = inputTag.closest( '.fieldBlock' );
+			var displayed = divfieldBlockTag.is( ':visible' );
+
+			var dataGroup = inputTag.attr( 'dataGroup' );
+
+			var formGroupTag = inputTag.closest( 'div.formGroupSection' );
+			var formGroupId = formGroupTag.attr( 'groupId' );
+
+			// Process visible fieldBlocks only.  But if the hidden fieldBlock has 'display=hiddenVal', also use that to collect data.
+			if( displayed || divfieldBlockTag.attr( 'display' ) === 'hiddenVal' )
 			{
-				var val = FormUtil.getTagVal( inputTag );
-				if ( val === null || val === undefined ) val = '';
-	
-				if ( formsJsonGroup )
+				// Check if 'filteredList' exists.  If exists, we need to limit by nameVal that is in the filteredList only.
+				if ( !listFilter || listFilter.indexOf( nameVal ) >= 0 )
 				{
+					var val = FormUtil.getTagVal( inputTag );
+					if ( val === null || val === undefined ) val = '';
+
 					// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
 					// Add to 'formsJsonGroup' object - to be used in payloadTemplate
 					// Also, if '.' in name exists, extract 1st one as groupName and use rest of it as nameVal.
-					nameVal = ActivityUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formsJsonGroup );
+					nameVal = ActivityUtil.setFormsJsonGroup_Val( nameVal, val, dataGroup, formGroupId, outFormsJsonGroup );
+		
+					inputsJson[ nameVal ] = val;
 				}
-	
-				inputsJson[ nameVal ] = val;
 			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in ActivityUtil.generateInputJson(), inputTag name: ' + nameVal + ', errMsg: ' + errMsg );
 		}
 	});		
 
@@ -228,7 +226,7 @@ ActivityUtil.generateInputJson_ForPreview = function( formDivSecTag )
 };
 
 
-ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJsonGroup )
+ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formGroupId, outFormsJsonGroup )
 {
 	// NOTE: If grouping for input data exists (by '.' in name or 'dataGroup' attr)
 	// Add to 'formsJsonGroup' object - to be used in payloadTemplate
@@ -243,18 +241,13 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 			var groupName = splitNames[0];
 			nameVal = nameVal.substr( groupName.length + 1 );  // THIS ALSO AFFECTS BELOW inputsJson nameVal as well.
 
-			if ( !formsJsonGroup[ groupName ] ) formsJsonGroup[ groupName ] = {};
-
-			formsJsonGroup[ groupName ][ nameVal ] = val;
+			if ( groupName ) ActivityUtil.setFormsJsonGroupVal( groupName, nameVal, val, outFormsJsonGroup );
 		}
 
 		// if dataGroup exists, put it ..
-		if ( dataGroup ) 
-		{
-			if ( !formsJsonGroup[ dataGroup ] ) formsJsonGroup[ dataGroup ] = {};
+		if ( dataGroup ) ActivityUtil.setFormsJsonGroupVal( dataGroup, nameVal, val, outFormsJsonGroup );
 
-			formsJsonGroup[ dataGroup ][ nameVal ] = val;
-		}
+		if ( formGroupId ) ActivityUtil.setFormsJsonGroupVal( formGroupId, nameVal, val, outFormsJsonGroup );
 	}
 	catch( errMsg )
 	{
@@ -264,6 +257,14 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 	return nameVal;
 };
 
+
+
+ActivityUtil.setFormsJsonGroupVal = function( groupId, nameVal, val, outFormsJsonGroup )
+{
+	if ( !outFormsJsonGroup[ groupId ] ) outFormsJsonGroup[ groupId ] = {};
+
+	outFormsJsonGroup[ groupId ][ nameVal ] = val;	
+};
 
 
 ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )

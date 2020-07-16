@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "4326debfea9863509e148fb928fbf081"
+    "revision": "8dcaf8d2832328e8a5e79e521d3e0391"
   },
   {
     "url": "redeemGen.html",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "6762084c7a641716499dc14f5cdbcaf5"
+    "revision": "ade8bdf959f660ab5472425f5ab37827"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "34760a6043f51d2c20d7486e11dec23e"
+    "revision": "3742002afee4c8ab2c786874869b64fe"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1469,7 +1469,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "eaa338d246761f2c05d0047a51fc6a72"
+    "revision": "d610ca5688da9ffde534288cbfefc27d"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "f238614667f370e80e48ac082b5ffa03"
+    "revision": "6817e3590aacbca53cee72b9f747a0af"
   },
   {
     "url": "scripts/utils/inputUtil.js",
