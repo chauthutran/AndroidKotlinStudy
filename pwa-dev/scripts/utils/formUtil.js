@@ -2298,6 +2298,20 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 }
 
 
-try {
-    module.exports = FormUtil;
-} catch (error) { }
+FormUtil.getFormCtrlTag = function( formTag, ctrlTagName )
+{
+	return formTag.find("[name='" + ctrlTagName + "']");
+}
+
+
+FormUtil.getFormCtrlDataValue = function( inputDataValueTag )
+{
+	return inputDataValueTag.val();
+}
+
+
+FormUtil.setFormCtrlDataValue = function( inputDataValueTag, value )
+{
+	inputDataValueTag.val( value );
+}
+

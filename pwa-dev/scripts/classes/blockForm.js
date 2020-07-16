@@ -1628,21 +1628,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 						
 						if ( attrJson )
 						{
-							inputTag.val(attrJson.value);
+							FormUtil.setFormCtrlDataValue( inputTag, attrJson.value );
 
 							var formItemJson = me.formJsonConfig[inputTag.attr("name")];
 							me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
 
 							inputTag.change();
-
-							// // ADDED - CheckBox mark by passed in data + perform change event if passed in value are populated.
-							// FormUtil.setTagVal( inputTag, attrJson.value, function() 
-							// {
-							// 	var formItemJson = me.formJsonConfig[inputTag.attr("name")];
-							// 	me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
-
-							// 	inputTag.change();
-							// });
 						}
 					}					
 				}

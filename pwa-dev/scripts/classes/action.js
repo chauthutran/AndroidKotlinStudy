@@ -215,8 +215,11 @@ function Action( cwsRenderObj, blockObj )
 	
 					for ( var i = 0; i < dataItems.length; i++ )
 					{
-						var value = dataFromDivTag.find("[name='" + dataItems[i] + "']").val()
-						dataToDivTag.find("[name='" + dataItems[i] + "']").val( value );
+						var formCtrlTag = FormUtil.getFormCtrlTag( dataFromDivTag, dataItems[i] );
+						var value = FormUtil.getFormCtrlDataValue( formCtrlTag );
+
+						var toCtrlTag = FormUtil.getFormCtrlTag( dataToDivTag, dataItems[i] );
+						FormUtil.setFormCtrlDataValue( toCtrlTag, value );
 					}
 	
 					afterActionFunc( true );

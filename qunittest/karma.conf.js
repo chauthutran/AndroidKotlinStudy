@@ -31,16 +31,14 @@ module.exports = function(config) {
       '../pwa-dev/scripts/libraries/d3.min.js',
       '../pwa-dev/scripts/libraries/tabulate.js',
 
-
-
       'src/simple.js',
       
       '../pwa-dev/scripts/**/*.js',
       '../pwa-dev/scripts/**/**/*.js',
+      
+      '../pwa-dev/scripts/cwsRender.js',
+      '../pwa-dev/scripts/app.js',
 
-
-
-    // 'src/*.js' ,
 
       'test/*.js'
     ],

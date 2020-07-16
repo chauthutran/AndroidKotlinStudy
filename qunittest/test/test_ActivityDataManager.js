@@ -13,7 +13,7 @@ QUnit.test('Test ActivityDataManager - generateActivityPayloadJson', function( a
 
     var activityJson = ActivityDataManager.generateActivityPayloadJson( "www.tes_turl.com", formsJsonActivityPayload );
 
-    assert.equal( !jQuery.isEmptyObject( activityJson ), true, "generateActivityPayloadJson runs successfull !!!" );
+    assert.equal( !jQuery.isEmptyObject( activityJson ), true, "generateActivityPayloadJson runs successfully !!!" );
 });
 
 
@@ -32,7 +32,7 @@ QUnit.asyncTest('Test ActivityDataManager - createNewPayloadActivity', function(
 
     ActivityDataManager.createNewPayloadActivity( "www.tes_turl.com", formsJsonActivityPayload, function(){
 
-        assert.equal( !jQuery.isEmptyObject( ClientDataManager._clientsStore ), true, "createNewPayloadActivity runs successfull !!!" );
+        assert.equal( !jQuery.isEmptyObject( ClientDataManager._clientsStore ), true, "createNewPayloadActivity runs successfully !!!" );
 
         QUnit.start();
     } );
@@ -50,7 +50,7 @@ QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', func
 
     var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson );
 
-    assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfull !!!" );
+    assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfully !!!" );
 
 });
 
@@ -80,7 +80,7 @@ QUnit.test('Test ActivityDataManager - createProcessingInfo_Success', function( 
     
     var processingInfo = ActivityDataManager.createProcessingInfo_Success( "success", "Success message !!!" );
     assert.equal( processingInfo.status == "success" 
-        && processingInfo.history[0].msg == "Success message !!!" , true, "createProcessingInfo_Success runs successfull !!!" );
+        && processingInfo.history[0].msg == "Success message !!!" , true, "createProcessingInfo_Success runs successfully !!!" );
 });
 
 
@@ -90,7 +90,7 @@ QUnit.test('Test ActivityDataManager - createProcessingInfo_Other', function( as
     var processingInfo = ActivityDataManager.createProcessingInfo_Other( "success", 200, "Success message !!!" );
     assert.equal( processingInfo.status == "success" 
         && processingInfo.history[0].msg == "Success message !!!" 
-        && processingInfo.history[0].responseCode == 200, true, "createProcessingInfo_Other runs successfull !!!" );
+        && processingInfo.history[0].responseCode == 200, true, "createProcessingInfo_Other runs successfully !!!" );
 });
 
  
@@ -117,7 +117,7 @@ QUnit.test('Test ActivityDataManager - getCombinedTrans', function( assert ){
 
     var jsonCombined = ActivityDataManager.getCombinedTrans( activityJson );
     assert.equal( jsonCombined.key_a == "a" && jsonCombined.key_b == "b" 
-        && jsonCombined.key_c == "c" && jsonCombined.key_d == "d"  , true, "getCombinedTrans runs successfull !!!" );
+        && jsonCombined.key_c == "c" && jsonCombined.key_d == "d"  , true, "getCombinedTrans runs successfully !!!" );
 });
 
 
@@ -154,7 +154,7 @@ QUnit.test('Test ActivityDataManager - regenActivityList_NIndexes', function( as
     ActivityDataManager.regenActivityList_NIndexes();
 
     
-    assert.equal( ActivityDataManager._activityList.length == 1, true, "regenActivityList_NIndexes runs successfull !!!" );
+    assert.equal( ActivityDataManager._activityList.length == 1, true, "regenActivityList_NIndexes runs successfully !!!" );
 });
 
 
@@ -178,7 +178,7 @@ QUnit.test('Test ActivityDataManager - getActivityList', function( assert ){
     var list = ActivityDataManager.getActivityList();
 
     
-    assert.equal( list.length, 2, "getActivityList runs successfull !!!" );
+    assert.equal( list.length, 2, "getActivityList runs successfully !!!" );
 });
 
 
@@ -201,7 +201,7 @@ QUnit.test('Test ActivityDataManager - getActivityItem', function( assert ){
 
     var item = ActivityDataManager.getActivityItem( "status", "success" );
     
-    assert.equal( item.id == "activityId2" && item.date.createdOnDeviceUTC == "2010-07-08", true, "getActivityItem runs successfull !!!" );
+    assert.equal( item.id == "activityId2" && item.date.createdOnDeviceUTC == "2010-07-08", true, "getActivityItem runs successfully !!!" );
 });
 
 
@@ -222,7 +222,7 @@ QUnit.test('Test ActivityDataManager - getActivityById', function( assert ){
 
     var item = ActivityDataManager.getActivityById( "activityId2" );
     
-    assert.equal( item.id == "activityId2" && item.date.createdOnDeviceUTC == "2010-07-08", true, "getActivityById runs successfull !!!" );
+    assert.equal( item.id == "activityId2" && item.date.createdOnDeviceUTC == "2010-07-08", true, "getActivityById runs successfully !!!" );
 });
 
 
@@ -269,6 +269,6 @@ QUnit.test('Test ActivityDataManager - removeActivityNClientById', function( ass
     ClientDataManager.payloadClientNameStart = "_id1";
     ActivityDataManager.removeActivityNClientById( "activityId1" );
     
-    assert.equal( ActivityDataManager._activityList.length == 1 && ActivityDataManager._activityList[0].id == "activityId2", true, "removeActivityNClientById runs successfull !!!" );
+    assert.equal( ActivityDataManager._activityList.length == 1 && ActivityDataManager._activityList[0].id == "activityId2", true, "removeActivityNClientById runs successfully !!!" );
 });
 
