@@ -88,18 +88,12 @@ ConfigManager.defaultJsonList = {
             "id": "1",
             "name": "All Contact",
             "term": "menu_list",
-            "img": "images/favbar_color_act.svg",
+            "img": "images/act_arrows.svg",
             "style": {
                 "icon": {
                     "colors": {
-                        "background": "none",
+                        "background": "#fff",
                         "foreground": "#4F4F4F"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
                     }
                 }
             },
@@ -112,21 +106,7 @@ ConfigManager.defaultJsonList = {
             "id": "2",
             "name": "Queued",
             "term": "",
-            "img": "images/favbar_color_fpl-sp.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#008234"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
-                    }
-                }
-            },
+            "img": "images/sync-pending_36.svg",
             "target": {
                 "actionType": "openBlock",
                 "blockId": "blockRedeemList",
@@ -141,21 +121,7 @@ ConfigManager.defaultJsonList = {
             "id": "3",
             "name": "Completed",
             "term": "",
-            "img": "images/favbar_color_contact.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#ffffff"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
-                    }
-                }
-            },
+            "img": "images/sync.svg",
             "target": {
                 "actionType": "openBlock",
                 "blockId": "blockRedeemList",
@@ -170,18 +136,12 @@ ConfigManager.defaultJsonList = {
             "id": "4",
             "name": "Entry Online only",
             "term": "menu_entry",
-            "img": "images/favbar_color_fpl-fu.svg",
+            "img": "images/act_col.svg",
             "style": {
                 "icon": {
                     "colors": {
                         "background": "none",
                         "foreground": "#B06068"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
                     }
                 }
             },
@@ -195,18 +155,12 @@ ConfigManager.defaultJsonList = {
             "id": "1",
             "name": "All Contact",
             "term": "menu_list",
-            "img": "images/favbar_color_act.svg",
+            "img": "images/act_arrows.svg",
             "style": {
                 "icon": {
                     "colors": {
                         "background": "none",
                         "foreground": "#4F4F4F"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
                     }
                 }
             },
@@ -219,18 +173,12 @@ ConfigManager.defaultJsonList = {
             "id": "2",
             "name": "Queued",
             "term": "",
-            "img": "images/favbar_color_arrows.svg",
+            "img": "images/sync-pending_36.svg",
             "style": {
                 "icon": {
                     "colors": {
                         "background": "none",
                         "foreground": "#008234"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
                     }
                 }
             },
@@ -248,21 +196,7 @@ ConfigManager.defaultJsonList = {
             "id": "3",
             "name": "Completed",
             "term": "",
-            "img": "images/favbar_color_contact.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#008234"
-                    }
-                },
-                "label": {
-                    "colors": {
-                        "background": "#cccccc",
-                        "foreground": "#000000"
-                    }
-                }
-            },
+            "img": "images/sync.svg",
             "target": {
                 "actionType": "openBlock",
                 "blockId": "blockRedeemList",
@@ -277,13 +211,12 @@ ConfigManager.defaultJsonList = {
             "id": "4",
             "name": "Entry (On + Off)",
             "term": "menu_entry",
-            "img": "images/favbar_color_act.svg",
+            "img": "images/act_col.svg",
             "style": {
                 "icon": {
-                    "colors": { "background": "none", "foreground": "#19DD89" }
-                },
-                "label": {
-                    "colors": { "background": "#cccccc", "foreground": "#000000"
+                    "colors": { 
+                        "background": "none", 
+                        "foreground": "#19DD89" 
                     }
                 }
             },
