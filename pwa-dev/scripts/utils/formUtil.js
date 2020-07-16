@@ -1033,7 +1033,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
-	console.log( activityType );
+	//console.log( activityType );
 	try 
 	{
 		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen

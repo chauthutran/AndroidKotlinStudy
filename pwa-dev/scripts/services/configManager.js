@@ -603,8 +603,7 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 		console.log( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
 
-    console.log( activityJson.type, activityTypeConfig );
-    
+    //console.log( activityJson.type, activityTypeConfig );
     if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
 
     return activityTypeConfig;

@@ -17,12 +17,12 @@ DevHelper.sampleDataList =
   {
     "_id": "5e8af6d6f39ff8{10RNDCHARS}",
     "date": { // MANDATORY?
-        "updatedOnMdbUTC": "2020-06-18T12:32:03", // MANDATORY?
-        "createdOnMdbUTC": "2020-06-18T11:26:26" // MANDATORY?
+        "updatedOnMdbUTC": "{RECENT_SHORTDATE}T12:32:03", // MANDATORY?
+        "createdOnMdbUTC": "{RECENT_SHORTDATE}T11:26:26" // MANDATORY?
     },    
     "clientDetails": {
-        "firstName": "James",
-        "lastName": "Chang",
+        "firstName": "{FIRSTNAME}",
+        "lastName": "{LASTNAME}",
         "phoneNumber": "{10DIGITS}",
         "age": "14",
         "users": [ "{USERNAME}" ],
@@ -37,36 +37,36 @@ DevHelper.sampleDataList =
     "activities": [{
         "id": "{USERNAME}_{SHORTDATE}_{8DIGITS}",
         "date": {
-            "createdOnMdbUTC": "2020-04-06T09:31:02.488",
-            "createdOnMdbLoc": "2020-04-06T09:31:02.488",
-            "capturedUTC": "2020-04-06T09:30:50.000",
-            "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
-            "capturedLoc": "2020-04-06T18:30:50.000"
+            "createdOnMdbUTC": "{EARLIER_SHORTDATE}T09:31:02.488",
+            "createdOnMdbLoc": "{EARLIER_SHORTDATE}T09:31:02.488",
+            "capturedUTC": "{EARLIER_SHORTDATE}T09:30:50.000",
+            "createdOnDeviceUTC": "{EARLIER_SHORTDATE}T09:30:50.000",
+            "capturedLoc": "{EARLIER_SHORTDATE}T18:30:50.000"
         },
-        "activeUser": "LA_TEST_IPC",
+        "activeUser": "{USERNAME}",
         "creditedUsers": [
-          "LA_TEST_OTH"
+          "{USERNAME}_OTH"
         ],
         "type": "{ACTIVITY_TYPE}",
         "location": {},
         "program": "{PROGRAM}",
         //"activityType": "eVoucher",
         "processing": {
-            "created": "2020-04-06T18:30:50.000",
+            "created": "{EARLIER_SHORTDATE}T18:30:50.000",
             "status": "{STATUS}",
             "statusRead": false,
             "history": [
-                { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
+                { "status": "submit_wMsg", "dateTime": "{EARLIER_SHORTDATE}T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
             ]
         },
         "transactions": [{
             "type": "c_reg",
             "clientDetails": {
-                "firstName": "James",
-                "lastName": "Chang",
+                "firstName": "{FIRSTNAME}",
+                "lastName": "{LASTNAME}",
                 "phoneNumber": "{10DIGITS}",
                 "clientId": "",
-                "age": "14",
+                "age": "{AGE}",
                 "provisionMethod": "Pills"
             },
             "clientConsent": {                
@@ -455,28 +455,40 @@ DevHelper.showActivityListStr = function()
 
 // create load data method..
 DevHelper.loadSampleData = function( icount ) 
-{    
+{
     var loops = ( icount ? icount : 1 );
+    var rndNames = 'Vickey Vire,Yuri Youngquist,Sherice Sharma,Ariane Albert,Heather Hillock,Taunya Tubb,Lawanda Lord,Quentin Quesenberry,Terrance Tennyson,Rosaria Romberger,Joann Julius,Doyle Dunker,Carolina Casterline,Sherly Shupe,Dorris Degner,Xuan Xu,Mercedez Matheney,Jacque Jamerson,Lillian Lefler,Derek Deegan,Berenice Barboza,Charlene Marriot,Mariam Malott,Cyndy Carrozza,Shaquana Smith,Kendall Kitterman,Reagan Riehle,Mittie Maez,Carry Carstarphen,Nelida Nakano,Christoper Compo,Sadie Shedd,Coleen Samsonite,Estella Eutsler,Pamula Pannone,Keenan Kerber,Tyisha Tisdale,Ashlyn Aguirre,Ashlie Albritton,Willy Wonka,Diann Yowzer,Asha Carpenter,Devin Dashiell,Arvilla Alers,Sheba Sherron,Richard Racca,Elba Early,Coretta Cossey,Brande Bushnell,Larraine Samsung,Pilar Varillas,Gaspar Hernandez,Greg Rowles,James Chang,Bruno Raimbault,Rodolfo Melia,Chris Purdy,Martin Dale,Sam Sox,Joe Soap,Joan Sope';
 
     for (var i = 0; i < loops; i++)
     {
         var tmp = JSON.stringify( DevHelper.sampleDataList );
         var actType = FormUtil.getActivityTypes()[ Util.generateRandomNumberRange(0, FormUtil.getActivityTypes().length-1).toFixed(0) ].name;
         var status = Configs.statusOptions[ Util.generateRandomNumberRange(0, Configs.statusOptions.length-1).toFixed(0) ].name;
+        var shrtDate = new Date();
+        var recDate = new Date( shrtDate.setDate( shrtDate.getDate() - ( Util.generateRandomNumberRange(0,10 ) ) ) );
+        var earlierDate = new Date( recDate.setDate( recDate.getDate() - ( Util.generateRandomNumberRange(0,60 ) ) ) );
+        var myFirst = Util.getRandomWord( rndNames, i ).trim().split(' ')[0];
+        var myLast = Util.getRandomWord( rndNames, i ).trim().split(' ')[1];
+
         tmp = tmp.replace( /{ACTIVITY_TYPE}/g, actType );
         tmp = tmp.replace( /{PROGRAM}/g, actType.split('-')[0] );
         tmp = tmp.replace( /{STATUS}/g, status );
 
-        tmp = tmp.replace( /{SHORTDATE}/g, new Date().toISOString().split( 'T')[0].replace(/-/g,'') );
+        tmp = tmp.replace( /{SHORTDATE}/g, shrtDate.toISOString().split( 'T')[0].replace(/-/g,'') );
+        tmp = tmp.replace( /{RECENT_SHORTDATE}/g, recDate.toISOString().split( 'T')[0] );
+        tmp = tmp.replace( /{EARLIER_SHORTDATE}/g, earlierDate.toISOString().split( 'T')[0] );
         tmp = tmp.replace( /{TIME}/g, new Date().toISOString().split( 'T')[1].replace(/:/g,'').replace('.','').replace('Z','') );
         tmp = tmp.replace( /{USERNAME}/g, SessionManager.sessionData.login_UserName );
         tmp = tmp.replace( /{8DIGITS}/g, Util.generateRandomNumber(8) );
         tmp = tmp.replace( /{10DIGITS}/g, Util.generateRandomNumber(10) );
         tmp = tmp.replace( /{10RNDCHARS}/g, Util.generateRandomId().substring( 0, 10 ) );
+        tmp = tmp.replace( /{AGE}/g, Util.generateRandomNumberRange(5,55 ) );
+        tmp = tmp.replace( /{FIRSTNAME}/g, myFirst );
+        tmp = tmp.replace( /{LASTNAME}/g, myLast );
 
         new Date().toISOString().split( 'T')[0].replace(/-/g,'')
 
-        console.log( ' ~ type: ' + actType + ' ( ' + status + ' )' );
+        console.log( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
     
         ClientDataManager.insertClients( JSON.parse( tmp ) );
     }
