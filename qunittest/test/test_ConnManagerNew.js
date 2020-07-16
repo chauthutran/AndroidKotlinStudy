@@ -84,10 +84,6 @@ QUnit.test('Test ConnManagerNew - produceAppMode_FromStatusInfo', function( asse
     assert.equal( status, ConnManagerNew.ONLINE, "serverAvailable is updated successfully !!!" );  
 });
 
-ConnManagerNew.isAppMode_Online = function()
-{
-	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
-};
 
 QUnit.test('Test ConnManagerNew - isAppMode_Online', function( assert ){
    
@@ -196,7 +192,10 @@ QUnit.test('Test ConnManagerNew - update_UI_statusDots', function( assert ){
         "networkConn" : {
             "online_Current" : true,
             "online_Stable" : true,
-        }
+        },
+        "manual_Offline": {
+            "enabled" : false
+        },
     };
 
     ConnManagerNew.update_UI_statusDots( statusInfo );
@@ -213,5 +212,37 @@ QUnit.test('Test ConnManagerNew - setStatusCss', function( assert ){
 });
 
 
+QUnit.test('Test ConnManagerNew - cloudConnStatusClickSetup', function( assert ){
 
-// // ===============================================
+    var divNetworkStatusTag =  $("<div></div>");
+    var cwsRenderObj = new cwsRender();
+    var modeOnline = navigator.onLine;
+    ConnManagerNew.appStartUp_SetStatus( cwsRenderObj );
+
+    // ONLINE test
+    ConnManagerNew.statusInfo.appMode = ConnManagerNew.ONLINE;
+    ConnManagerNew.cloudConnStatusClickSetup( divNetworkStatusTag );
+    
+    divNetworkStatusTag.click();
+    assert.equal( true, true, "cloudConnStatusClickSetup ONLINE runs successfully !!!" );  
+
+
+    // OFFLINE test
+    var statusInfo = {
+        "serverAvailable" : false,
+        "appMode" : ConnManagerNew.OFFLINE,
+        "networkConn" : {
+            "online_Stable" : false,
+            "online_Current" : false
+        },
+        "manual_Offline" : {
+            "enabled" : false
+        }
+    };
+    ConnManagerNew.statusInfo = statusInfo;
+    ConnManagerNew.cloudConnStatusClickSetup( divNetworkStatusTag );
+    divNetworkStatusTag.click();
+    assert.equal( true, true, "cloudConnStatusClickSetup OFFLINE runs successfully !!!" );  
+
+});
+

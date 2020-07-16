@@ -8,7 +8,7 @@ var config_loginData = {
     "orgUnitData" : {
         "orgUnit" :{
             "organisationUnitGroups" : [{
-                "id" : "222"
+                "id" : "xxx"
             }]
         }
     },
@@ -27,7 +27,7 @@ var dcdConfig = {
             "startBlockName": "testAreaOffine",
             "term": "menu_entry",
             "id": "entryOffline",
-            "userRoles" : ["222"]
+            "userRoles" : ["111"]
         }],
         "online": [{
             "navArea": {
@@ -39,21 +39,23 @@ var dcdConfig = {
             "startBlockName": "testAreaOnline",
             "term": "menu_list",
             "id": "listOnline",
-            "userRoles" : ["222"]
+            "userRoles" : ["111"]
         }]
     },
     "definitionUserRoles":[
         {
-            "uid": "111"
+            "id": "111",
+            "uid" : "xxx"
         },
         {
-            "uid": "222"
+            "id": "222",
+            "uid" : "yyy"
         }
     ],
     "orgUnit": {
         "organisationUnitGroups": [{
             "name": "CwS - LA - Promoters",
-            "id": "111"
+            "id": "xxx"
         }]
     },
     "settings": {
@@ -118,9 +120,8 @@ QUnit.test('Test ConfigManager - clearConfigJson', function( assert ){
 
 QUnit.test('Test ConfigManager - getAreaListByStatus - userRoles is defined', function( assert ){
 
-    ConfigManager.setConfigJson( dcdConfig );
-
     SessionManager.loadDataInSession( config_userName, config_password, config_loginData );
+    ConfigManager.setConfigJson( dcdConfig );
 
     ConfigManager.getAreaListByStatus( true, function( retAreaList ){
         assert.equal( retAreaList.length == 1 && retAreaList[0].startBlockName == "testAreaOnline", true, "Get online are successfully !!!");
@@ -130,11 +131,11 @@ QUnit.test('Test ConfigManager - getAreaListByStatus - userRoles is defined', fu
 
 QUnit.test('Test ConfigManager - getAreaListByStatus - userRoles is undefined', function( assert ){
 
+    SessionManager.loadDataInSession( config_userName, config_password, config_loginData );
+
     var testDcdConfig = JSON.parse( JSON.stringify( dcdConfig ) );
     delete testDcdConfig.areas.online[0].userRoles;
     ConfigManager.setConfigJson( testDcdConfig );
-
-    SessionManager.loadDataInSession( config_userName, config_password, config_loginData );
 
     ConfigManager.getAreaListByStatus( true, function( retAreaList ){
         assert.equal( retAreaList.length == 1 && retAreaList[0].startBlockName == "testAreaOnline", true, "Get online are successfully !!!");
@@ -158,32 +159,6 @@ QUnit.test('Test ConfigManager - getAllAreaList', function( assert ){
     assert.equal( data.length == 2, true, "Get all areas successfully !!!");
 });
 
-
-QUnit.test('Test ConfigManager - configUserRole - UserRoles is defined', function( assert ){
-
-    ConfigManager.setConfigJson( dcdConfig );
-
-    SessionManager.loadDataInSession( config_userName, config_password, config_loginData );
-    ConfigManager.configUserRole( function(){
-        assert.equal( FormUtil.login_UserRole[0], "222", "Get configUserRole successfully !!!");
-    });
-    
-});
-
-QUnit.test('Test ConfigManager - configUserRole- UserRoles is undefined', function( assert ){
-
-    var testDcdConfig = JSON.parse( JSON.stringify( dcdConfig ) );
-    delete testDcdConfig.definitionUserRoles;
-    ConfigManager.setConfigJson( testDcdConfig );
-
-
-    SessionManager.loadDataInSession( config_userName, config_password, config_loginData );
-
-    ConfigManager.configUserRole( function(){
-        assert.equal( FormUtil.login_UserRole.length, 0, "Get configUserRole successfully !!!");
-    });
-    
-});
 
 QUnit.test('Test ConfigManager - getActivityDisplaySettings', function( assert ){
     

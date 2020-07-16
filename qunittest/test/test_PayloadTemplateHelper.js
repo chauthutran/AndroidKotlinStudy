@@ -6,7 +6,7 @@ QUnit.test('Test PayloadTemplateHelper - generatePayload', function( assert ){
     ConfigManager.configJson = {
         "definitionPayloadTemplates": {
             "searchJson":{
-                "data":"INFO.formsJson"
+                "data":"INFO.payload.formsJson"
             }
         }
     }
@@ -33,17 +33,18 @@ QUnit.test('Test PayloadTemplateHelper - setINFO_payload and evalPayloads', func
 
     
     PayloadTemplateHelper.setINFO_payload( dateTimeObj, formsJson, formsJsonGroup, blockInfo );
-    var info = InfoDataManager.getINFO().payload;
-    assert.equal( info.date.getMilliseconds() == dateTimeObj.getMilliseconds() 
-        && JSON.stringify( info.formsJson ) == JSON.stringify( formsJson )
-        && JSON.stringify( info.formsJsonGroup.testGroup ) == JSON.stringify( formsJson )
+    var info = InfoDataManager.getINFO();
+    assert.equal( info.payload.date.getMilliseconds() == dateTimeObj.getMilliseconds() 
+        && JSON.stringify( info.payload.formsJson ) == JSON.stringify( formsJson )
+        && JSON.stringify( info.payload.formsJsonGroup.testGroup ) == JSON.stringify( formsJson )
         , true, "setINFO_payload runs successfully !!!" );
 
 
 
-    var payloadList = [{"searchValues":{"payloadData":"INFO.formsJson"}}];
+    var payloadList = [{"searchValues":{"payloadData":"INFO.payload.formsJson"}}];
     PayloadTemplateHelper.evalPayloads ( payloadList, info );
-    assert.equal( info.payloadJson.searchValues.payloadData.test1 == "testVal1" && info.payloadJson.searchValues.payloadData.test2 == "testVal2"
+    assert.equal( info.payloadJson.searchValues.payloadData.payload.test1 == "testVal1" 
+        && info.payloadJson.searchValues.payloadData.payload.test2 == "testVal2"
         , true, "evalPayloads runs successfully !!!" );
   
 });
