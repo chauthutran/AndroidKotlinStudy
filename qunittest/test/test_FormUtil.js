@@ -93,7 +93,7 @@ QUnit.test('Test FormUtil - getFormCtrlTag, getFormCtrlTag', function( assert ){
                             </div>
                             <div class="fiel__controls">
                                 <div class="field__left">
-                                    <input name="displayValue_mcheckbox" type="text" class="displayValue">`
+                                    <input name="displayValue_test4" type="text" class="displayValue">`
                                    + inputTagHtml + 
                                 `</div>
                             <div class="field__right" style="display: none;"></div>
