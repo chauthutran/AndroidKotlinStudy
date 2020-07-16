@@ -537,6 +537,7 @@ Util.unselectAllOption = function ( listTag ) {
 	listTag.find('option').attr('selected', true);
 };
 
+// Handles both object and array
 Util.getJsonDeepCopy = function( jsonObj )
 {
 	var newJsonObj;

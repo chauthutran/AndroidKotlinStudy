@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "19c5e5c333c0b67ca48f2ea2434f801a"
+    "revision": "4326debfea9863509e148fb928fbf081"
   },
   {
     "url": "redeemGen.html",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "993e82f9f4c1187a0e44426d0122b5fe"
+    "revision": "34760a6043f51d2c20d7486e11dec23e"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "56a218808fd01096f61671f17523a809"
+    "revision": "217df9ca5c67aa89473a47955216089d"
   },
   {
     "url": "scripts/services/scheduleManager.js",
@@ -1505,7 +1505,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "ccbcf3f83b76fe39d808634db27e97cd"
+    "revision": "f32abcf64e3ec12386cfc5326b400f85"
   },
   {
     "url": "scripts/utils/util2.js",

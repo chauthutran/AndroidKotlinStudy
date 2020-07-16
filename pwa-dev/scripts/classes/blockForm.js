@@ -51,7 +51,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			blockTag.append( formDivSecTag );
 
+
+			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
 			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
+
 			var groupsCreated = [];
 
 			for( var i = 0; i < formFieldGroups.length; i++ )
@@ -846,39 +849,60 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
 	{
 
-		// TODO:!!!  We are assuming that formGroup is always a string with definition defined!!!!
-		//		Need to change this!
-
-
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
 		var groupNone = me._groupNoneId; 
 		var nonGroup = [];
+		var retGrpArr = [];
 
 		// 1. copy the array..
-		var newArr = JSON.parse( JSON.stringify( formJsonArr ) );
-		var retGrpArr = [];
+		var newArr = Util.getJsonDeepCopy( formJsonArr );
 
 		// 2. loop each form control and create formGroup...  even none ones...
 		for( var i = 0; i < newArr.length; i++ )
 		{
 			var frmCtrl = newArr[ i ];
 
-			if ( newArr[ i ].formGroup == undefined || newArr[ i ].formGroup == '' )
+			// NOTE: ISSUES - Currently, definition name is used as id..  but we should have id in it...
+			var frmCtrlGroup = FormUtil.getObjFromDefinition( frmCtrl.formGroup, frmGroupJson );
+			var formCtrlGroupId = frmCtrl.formGroup;
+
+			if ( frmCtrlGroup )
 			{
-				nonGroup.push ( { 'id': newArr[ i ].id, 'group': groupNone, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: 999 } );
+				var dataJson = { 
+					'id': frmCtrl.id
+					,'group': frmCtrlGroup.defaultName
+					,'groupId': formCtrlGroupId
+					,seq: i
+					,created: 0
+					,display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
+					,order: frmCtrlGroup.order 
+				};
+
+				retGrpArr.push ( dataJson );
 			}
 			else
 			{
-				retGrpArr.push ( { 'id': newArr[ i ].id, 'group': frmGroupJson[ newArr[ i ].formGroup ].defaultName, seq: i, created: 0, display: ( newArr[ i ].display == 'hiddenVal' || newArr[ i ].display == 'none' ) ? 0 : 1, order: frmGroupJson[ newArr[ i ].formGroup ].order } );
+				var dataJson = { 
+					'id': frmCtrl.id
+					,'group': groupNone
+					,'groupId': groupNone
+					,seq: i
+					,created: 0
+					, display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
+					, order: 999 
+				}; 
+				
+				nonGroup.push ( dataJson );
 			}
 		}
 
 		// SORTING should be inherited from preconfigured 'Group' object sort value
 		Util.sortByKey( retGrpArr, 'order' );
 
-		// Add "non group" INPUT fields in beginging of list
-		for( var i = 0; i<nonGroup.length; i++ )
+		// Add "non group" INPUT fields in beginging of list  
+		//	<-- but this will reverse the order if noGroup controls, no?
+		for( var i = 0; i < nonGroup.length; i++ )
 		{
 			retGrpArr.unshift( nonGroup[i] );
 		}
