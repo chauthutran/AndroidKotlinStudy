@@ -24,7 +24,7 @@ DevHelper.sampleDataList =
         "firstName": "{FIRSTNAME}",
         "lastName": "{LASTNAME}",
         "phoneNumber": "{10DIGITS}",
-        "age": "14",
+        "age": "{AGE}",
         "users": [ "{USERNAME}" ],
         "voucherCode": [ "{8DIGITS}" ]
     },
@@ -143,7 +143,7 @@ DevHelper.showActivityListStr = function()
 DevHelper.loadSampleData = function( icount ) 
 {
     var loops = ( icount ? icount : 1 );
-    var rndNames = 'Vickey Vire,Yuri Youngquist,Sherice Sharma,Ariane Albert,Heather Hillock,Taunya Tubb,Lawanda Lord,Quentin Quesenberry,Terrance Tennyson,Rosaria Romberger,Joann Julius,Doyle Dunker,Carolina Casterline,Sherly Shupe,Dorris Degner,Xuan Xu,Mercedez Matheney,Jacque Jamerson,Lillian Lefler,Derek Deegan,Berenice Barboza,Charlene Marriot,Mariam Malott,Cyndy Carrozza,Shaquana Smith,Kendall Kitterman,Reagan Riehle,Mittie Maez,Carry Carstarphen,Nelida Nakano,Christoper Compo,Sadie Shedd,Coleen Samsonite,Estella Eutsler,Pamula Pannone,Keenan Kerber,Tyisha Tisdale,Ashlyn Aguirre,Ashlie Albritton,Willy Wonka,Diann Yowzer,Asha Carpenter,Devin Dashiell,Arvilla Alers,Sheba Sherron,Richard Racca,Elba Early,Coretta Cossey,Brande Bushnell,Larraine Samsung,Pilar Varillas,Gaspar Hernandez,Greg Rowles,James Chang,Bruno Raimbault,Rodolfo Melia,Chris Purdy,Martin Dale,Sam Sox,Joe Soap,Joan Sope';
+    var rndNames = 'Vickey Simpson,Yuri Youngquist,Sherice Sharma,Ariane Albert,Heather Locklear,Taunya Tubb,Lawanda Lord,Quentin Quesenberry,Terrance Tennyson,Rosaria Romberger,Joann Julius,Doyle Dunker,Carolina Casterline,Sherly Shupe,Dorris Degner,Xuan Xu,Mercedez Matheney,Jacque Jamerson,Lillian Lefler,Derek Deegan,Berenice Barboza,Charlene Marriot,Mariam Malott,Cyndy Carrozza,Shaquana Smith,Kendall Kitterman,Reagan Riehle,Mittie Maez,Carry Carstarphen,Nelida Nakano,Christoper Compo,Sadie Shedd,Coleen Samsonite,Estella Eutsler,Pamula Pannone,Keenan Kerber,Tyisha Tisdale,Ashlyn Aguirre,Ashlie Albritton,Willy Wonka,Diann Yowzer,Asha Carpenter,Devin Dashiell,Arvilla Alers,Sheba Sherron,Richard Racca,Elba Early,Coretta Cossey,Brande Bushnell,Larraine Samsung,Pilar Varillas,Gaspar Hernandez,Greg Rowles,James Chang,Bruno Raimbault,Rodolfo Melia,Chris Purdy,Martin Dale,Sam Sox,Joe Soap,Joan Sope,Marty McFly';
 
     for (var i = 0; i < loops; i++)
     {
@@ -168,7 +168,7 @@ DevHelper.loadSampleData = function( icount )
         tmp = tmp.replace( /{8DIGITS}/g, Util.generateRandomNumber(8) );
         tmp = tmp.replace( /{10DIGITS}/g, Util.generateRandomNumber(10) );
         tmp = tmp.replace( /{10RNDCHARS}/g, Util.generateRandomId().substring( 0, 10 ) );
-        tmp = tmp.replace( /{AGE}/g, Util.generateRandomNumberRange(5,55 ).toFixed(0) );
+        tmp = tmp.replace( /{AGE}/g, Util.generateRandomNumberRange( i, (50+i) ).toFixed(0) );
         tmp = tmp.replace( /{FIRSTNAME}/g, myFirst );
         tmp = tmp.replace( /{LASTNAME}/g, myLast );
 
