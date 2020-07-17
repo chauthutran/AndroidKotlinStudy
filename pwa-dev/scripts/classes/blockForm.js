@@ -1009,8 +1009,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		for( var i = 0; i < jData.length; i++ )
 		{
-			// prioritize existing payloadConfig
-			if ( pConf.length )
+			// prioritize existing payloadConfig (if match found)
+			if ( pConf.length && jData[ i ].payload && jData[ i ].payload[ pConf ] )
 			{
 				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue ) 
 				{
