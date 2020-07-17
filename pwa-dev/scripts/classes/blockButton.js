@@ -144,24 +144,22 @@ function BlockButton( cwsRenderObj, blockObj )
 		var btnJson = FormUtil.getObjFromDefinition( btnData, ConfigManager.getConfigJson().definitionButtons );
 		var btnTag = me.generateBtnTag( btnNo, btnJson, btnData, divTag );
 
-		// this is not used on mainTab case..
-		if ( me.blockObj.blockType !== FormUtil.blockType_MainTab ) 
+		if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
 		{
-			me.setUpBtnClick( btnTag, btnJson, passedData );
+			// Main Entry Tab Buttons (Tab Image Buttons)
+			btnTag.click( function() {
 
-			divTag.append( btnTag );
+				var tabContentTag = divTag.siblings().find( '#' + btnData );
+
+				me.renderBlockTabContent( tabContentTag, btnJson.onClick );	
+			});
 		}
 		else
 		{
+			// Block Button Click Setup
+			me.setUpBtnClick( btnTag, btnJson, passedData );
 
-			btnTag.click( function() {
-
-				var dvContentTag = divTag.siblings().find( '#' + btnData );
-
-				me.renderBlockTabContent( dvContentTag, btnJson.onClick );	
-
-			});
-
+			divTag.append( btnTag );
 		}
 	}
 
@@ -327,8 +325,14 @@ function BlockButton( cwsRenderObj, blockObj )
 			&& btnJson.notSupportedMode[ appMode.toLowerCase() ] );
 	}
 
-	me.renderBlockTabContent = function( liContentTag, onClick )
+	me.renderBlockTabContent = function( tabContentTag, onClick )
 	{
+
+		// NOTE: For 'MainTab image button click', 
+		//		We could have clear content on 'onClick' action list, but for now... do this as initial default action..
+		tabContentTag.empty();
+
+
 		if ( onClick && onClick.length > 0 )
 		{
 			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, ConfigManager.getConfigJson().definitionActions );
@@ -339,7 +343,7 @@ function BlockButton( cwsRenderObj, blockObj )
 				var blockJson = FormUtil.getObjFromDefinition( actionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 				// Create the block and render it.
-				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, liContentTag, actionJson  );
+				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, tabContentTag, actionJson );
 				newBlockObj.render();
 
 				if ( actionJson.payloadConfig )

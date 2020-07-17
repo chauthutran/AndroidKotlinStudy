@@ -7,7 +7,7 @@ function Action( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	
-	me.renderBlockTag = cwsRenderObj.renderBlockTag;
+	me.pageDivTag = cwsRenderObj.pageDivTag;
 
 	me.className_btnClickInProcess = 'btnClickInProcess';
 
@@ -123,7 +123,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var currBlockId = blockDivTag.attr( 'blockId' );
 	
-					me.renderBlockTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+					me.pageDivTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
 	
 					afterActionFunc( true );
 				}
@@ -133,7 +133,7 @@ function Action( cwsRenderObj, blockObj )
 					{
 						var closeLevel = Util.getNum( clickActionJson.closeLevel );
 	
-						var divBlockTotal = me.renderBlockTag.find( 'div.block:visible' ).length;
+						var divBlockTotal = me.pageDivTag.find( 'div.block:visible' ).length;
 	
 						var currBlock = blockDivTag;
 	
@@ -152,7 +152,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else if( clickActionJson.blockId != undefined )
 					{
-						me.renderBlockTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
+						me.pageDivTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 					}
 	
 					afterActionFunc( true );
@@ -175,11 +175,12 @@ function Action( cwsRenderObj, blockObj )
 						blockPassingData.showCase = clickActionJson.showCase;
 						blockPassingData.hideCase = clickActionJson.hideCase;
 	
-	
 						// Hide block if action is doing 'openBlock'
-						me.blockObj.hideBlock();
+						// QUESTION: WHY DO THIS??
+						//me.blockObj.hideBlock();
 	
-						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, { 'notClear': true }, clickActionJson );	
+						// QUESITON: WHY USE { 'notClear': true }  <--- ??
+						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, undefined, clickActionJson );	
 						newBlockObj.render();
 	
 						if ( clickActionJson.payloadConfig )
@@ -209,8 +210,8 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "filledData" )
 				{
-					var dataFromDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
-					var dataToDivTag =  me.renderBlockTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
+					var dataFromDivTag =  me.pageDivTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
+					var dataToDivTag =  me.pageDivTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
 					var dataItems = clickActionJson.dataItems;
 	
 					for ( var i = 0; i < dataItems.length; i++ )

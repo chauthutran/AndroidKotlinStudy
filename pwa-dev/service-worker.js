@@ -65,7 +65,7 @@ self.__precacheManifest = [
   },
   {
     "url": "images/act_arrows.svg",
-    "revision": "3e3f227aa06dbfea700cb4ba587bf182"
+    "revision": "911875daebbf5c3d88435a4fdba772a1"
   },
   {
     "url": "images/act_col_fpl-fu_arrow_right_24.svg",
@@ -93,19 +93,19 @@ self.__precacheManifest = [
   },
   {
     "url": "images/act_col.svg",
-    "revision": "cd9442045f364002623a0d24be42c137"
+    "revision": "d91c1dff6d69d3bace1af44120a45098"
   },
   {
     "url": "images/act_fpl-fu.svg",
-    "revision": "823b455dc5dcf74369bc8e6c97f148b8"
+    "revision": "13d7433568b138ca0b8171c31db7078c"
   },
   {
     "url": "images/act_fpl-sp.svg",
-    "revision": "9bb235be88fbedf47d9bcac017a8e7ba"
+    "revision": "f750602557f8083efbbc99071ba6dd80"
   },
   {
     "url": "images/act_sas.svg",
-    "revision": "ef69dfc74178bc131a507964299bc6fe"
+    "revision": "5b31272540b0c55c8bcde2520883a364"
   },
   {
     "url": "images/act.svg",
@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "4326debfea9863509e148fb928fbf081"
+    "revision": "6af6aaa1d1babca1fdf881f586740709"
   },
   {
     "url": "redeemGen.html",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "6762084c7a641716499dc14f5cdbcaf5"
+    "revision": "c6f24eae153a94b4024227192f442e06"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1229,15 +1229,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/block.js",
-    "revision": "9293db77461af05e84f8e7f71986d51d"
+    "revision": "4a41f36b323658da76648617ac7ee84a"
   },
   {
     "url": "scripts/classes/blockButton.js",
-    "revision": "e8cd47c16d66d714492d9635c30c7176"
+    "revision": "d60899630785295baeb655e400e4d257"
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "34760a6043f51d2c20d7486e11dec23e"
+    "revision": "c937f6373e344a05c3dabdae6c174e90"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1257,11 +1257,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "cb80da986eacb8004a41b02cc01c0874"
-  },
-  {
-    "url": "scripts/classes/favIconNew.js",
-    "revision": "5e7f8cb7c4fb3be3091bb9114ef7c454"
+    "revision": "7c31e6bd5506bbb793ac2996cb9e146e"
   },
   {
     "url": "scripts/classes/inputControl.js",
@@ -1281,7 +1277,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/myDetails.js",
-    "revision": "815af46c9c2da3a174ad014d19559dae"
+    "revision": "8019e1fa4a10edda39fb0af20a5786a8"
   },
   {
     "url": "scripts/classes/pwaEpoch.js",
@@ -1297,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "40a4b2b43fe58c78d06438c6bb1cd19d"
+    "revision": "9efee8d640031802817bc547536168a0"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1305,7 +1301,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/configs.js",
-    "revision": "99bde69d66c45111ce842080c66aee24"
+    "revision": "1ccbf9636a6deb226a9ed3138cf96162"
   },
   {
     "url": "scripts/constants/constants.js",
@@ -1317,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "2e340d32e4585b95d060689db96acb9e"
+    "revision": "5d209bfe031dbd2d461c9557f83d41eb"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1397,7 +1393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "47de2382ad3794bdb143d2e2ddfd355a"
+    "revision": "76e18957ed8979884402e43c6c0b7fd8"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1409,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "42097b8517dfd8a631d58f95c845a353"
+    "revision": "0a759fe8f86dfc8baa25f78a2eab1d28"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1469,7 +1465,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "eaa338d246761f2c05d0047a51fc6a72"
+    "revision": "e1ae8581a3a719e3df1ec55bd9e9f448"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -1477,7 +1473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "f238614667f370e80e48ac082b5ffa03"
+    "revision": "69f4112cd68d5a7411bd1930b80bfb4b"
   },
   {
     "url": "scripts/utils/inputUtil.js",
@@ -1505,7 +1501,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util.js",
-    "revision": "f32abcf64e3ec12386cfc5326b400f85"
+    "revision": "58002df0ed979e9b196cd81e55bcb0ee"
   },
   {
     "url": "scripts/utils/util2.js",

@@ -14,7 +14,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.blockUid = Util.generateTimedUid();  //<-- Can generate timed unique id..
 	me.parentTag = parentTag;
 	me.passedData = passedData;
-	me.options = options;
+	me.options = options;  // Not used much for now anymore..
 	me.actionJson = actionJson; // if block were created from 'action', the clickActionJson data(config) passed.  Use it when rendering
 
 	me.blockTag;
@@ -47,7 +47,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 
 		// Form BlockTag generate/assign
-		me.clearClassTag( me.blockId, me.parentTag );
+		//me.clearClassTag( me.blockId, me.parentTag );
 		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.blockDefJson, me.parentTag );
 
 
@@ -66,12 +66,12 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			if ( me.blockDefJson.list === 'redeemList' || me.blockDefJson.list === 'activityList' )
 			{
 				me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );
-				me.blockListObj.render( me.blockTag, me.passedData, me.options );
+				me.blockListObj.render( me.blockTag, me.passedData ); //, me.options );
 			}
 			else if ( me.blockDefJson.list === 'dataList' )
 			{
 				me.dataListObj = new DataList( me.cwsRenderObj, me );
-				me.dataListObj.render( me.blockDefJson, me.blockTag, me.passedData, me.options );
+				me.dataListObj.render( me.blockDefJson, me.blockTag, me.passedData ); //, me.options );
 			} 
 
 
@@ -105,10 +105,10 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		if ( me.blockDefJson ) me.blockType = me.blockDefJson.blockType;
 	}
 
-	me.createSubClasses = function()
-	{
+	//me.createSubClasses = function()
+	//{
 		//me.actionObj = new Action( me.cwsRenderObj, me );
-	}
+	//}
 
 	//me.setEvents_OnInit = function() { }
 
@@ -123,13 +123,16 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
+	// Not being used
 	me.clearClassTag = function( blockId, parentTag )
     {
         // Clear any previous ones of this class
-		parentTag.find( 'div.block[blockId="' + blockId + '"]' ).remove(); //Greg: remove for v1.3?
-		parentTag.removeAttr( 'blockId' );
-		parentTag.removeAttr( 'activityType' );
-		parentTag.empty();
+		//parentTag.find( 'div.block[blockId="' + blockId + '"]' ).remove(); //Greg: remove for v1.3?
+
+		// QUESTION: WHY BELOW WERE IMPLEMENTED?
+		//parentTag.removeAttr( 'blockId' );
+		//parentTag.removeAttr( 'activityType' );
+		//parentTag.empty();
 	};
 	
 
@@ -139,34 +142,36 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + Util.getStr( blockDefJson.activityType ) + '"></div>' );
 		blockTag.addClass( blockType );
 
-		// If 'me.options.notClear' exists and set to be true, do not clear the parent Tag contents
-		if ( !( me.options && me.options.notClear ) )
-		{
-			// Clear any existing block - not always..  We could have option to hide instead for 'back' feature.
-			parentTag.find( 'div.block' ).remove();
-			parentTag.find( 'div.wrapper' ).empty();
-		}
-
 		// Put it under parentTag
-		//parentTag.find( 'div.wrapper' ).append( blockTag.addClass( 'blockStyle' ) );		
 		parentTag.append( blockTag.addClass( 'blockStyle' ) );		
 
 		return blockTag;
-		// Above are not being used...
-
-
-		// 
-		/*
-		parentTag.attr( 'blockId', blockId );
-		parentTag.attr( 'activityType', blockDefJson.activityType );
-
-		return parentTag;
-		*/
 	}
+
+	// QUESTION: BELOW Option is being used??
+	// If 'me.options.notClear' exists and set to be true, do not clear the parent Tag contents
+	//if ( me.options && me.options.notClear ) {};
+	//{
+		// Clear any existing block - not always..  We could have option to hide instead for 'back' feature.
+		//parentTag.find( 'div.block' ).remove();
+		//parentTag.find( 'div.wrapper' ).empty();
+
+	// ===============================
+	// === External Methods ====
 
 	me.hideBlock = function()
 	{
 		me.blockTag.hide();
+	}
+
+	me.getBlockTag = function()
+	{
+		return me.blockTag;
+	}
+
+	me.getParentTag = function()
+	{
+		return me.parentTag;
 	}
 
 	// -------------------------------

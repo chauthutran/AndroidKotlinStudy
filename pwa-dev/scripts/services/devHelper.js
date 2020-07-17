@@ -15,18 +15,18 @@ DevHelper.tempCount = 0;
 DevHelper.sampleDataList = 
 [
   {
-    "_id": "5e8af6d6f39ff8047ee4f3e5",
+    "_id": "5e8af6d6f39ff8{10RNDCHARS}",
     "date": { // MANDATORY?
-        "updatedOnMdbUTC": "2020-06-18T12:32:03", // MANDATORY?
-        "createdOnMdbUTC": "2020-06-18T11:26:26" // MANDATORY?
+        "updatedOnMdbUTC": "{RECENT_SHORTDATE}T12:32:03", // MANDATORY?
+        "createdOnMdbUTC": "{RECENT_SHORTDATE}T11:26:26" // MANDATORY?
     },    
     "clientDetails": {
-        "firstName": "James",
-        "lastName": "Chang",
-        "phoneNumber": "6543222212",
-        "age": "14",
-        "users": [ "LA_TEST_IPC" ],
-        "voucherCode": [ "22223333" ]
+        "firstName": "{FIRSTNAME}",
+        "lastName": "{LASTNAME}",
+        "phoneNumber": "{10DIGITS}",
+        "age": "{AGE}",
+        "users": [ "{USERNAME}" ],
+        "voucherCode": [ "{8DIGITS}" ]
     },
     "clientConsent": {
         "phone": true, // MANDATORY?
@@ -35,39 +35,38 @@ DevHelper.sampleDataList =
         "feedback": false
     },    
     "activities": [{
-        "id": "LA_TEST_PROV_20200406_093052500",
+        "id": "{USERNAME}_{SHORTDATE}_{8DIGITS}",
         "date": {
-            "createdOnMdbUTC": "2020-04-06T09:31:02.488",
-            "createdOnMdbLoc": "2020-04-06T09:31:02.488",
-
-            "capturedUTC": "2020-04-06T09:30:50.000",
-            "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
-            "capturedLoc": "2020-04-06T18:30:50.000"
+            "createdOnMdbUTC": "{EARLIER_SHORTDATE}T09:31:02.488",
+            "createdOnMdbLoc": "{EARLIER_SHORTDATE}T09:31:02.488",
+            "capturedUTC": "{EARLIER_SHORTDATE}T09:30:50.000",
+            "createdOnDeviceUTC": "{EARLIER_SHORTDATE}T09:30:50.000",
+            "capturedLoc": "{EARLIER_SHORTDATE}T18:30:50.000"
         },
-        "activeUser": "LA_TEST_IPC",
+        "activeUser": "{USERNAME}",
         "creditedUsers": [
-          "LA_TEST_OTH"
+          "{USERNAME}_OTH"
         ],
-        "type": "eVoucher",
+        "type": "{ACTIVITY_TYPE}",
         "location": {},
-        "program": "fpl",
+        "program": "{PROGRAM}",
         //"activityType": "eVoucher",
         "processing": {
-            "created": "2020-04-06T18:30:50.000",
-            "status": "submit_wMsg",
+            "created": "{EARLIER_SHORTDATE}T18:30:50.000",
+            "status": "{STATUS}",
             "statusRead": false,
             "history": [
-                { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
+                { "status": "submit_wMsg", "dateTime": "{EARLIER_SHORTDATE}T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
             ]
         },
         "transactions": [{
             "type": "c_reg",
             "clientDetails": {
-                "firstName": "James",
-                "lastName": "Chang",
-                "phoneNumber": "6543222212",
+                "firstName": "{FIRSTNAME}",
+                "lastName": "{LASTNAME}",
+                "phoneNumber": "{10DIGITS}",
                 "clientId": "",
-                "age": "14",
+                "age": "{AGE}",
                 "provisionMethod": "Pills"
             },
             "clientConsent": {                
@@ -75,326 +74,12 @@ DevHelper.sampleDataList =
         }, {
             "type": "v_iss",
             "clientDetails": {
-                "voucherCode": "22223333"
+                "voucherCode": "{8DIGITS}"
             }
         }]
     }]
 }];
 
-
-DevHelper.sampleDataList_Old = [{
-    "clientDetails": {
-        "firstName": "James",
-        "lastName": "Chang",
-        "phoneNumber": "6543222212",
-        "clientId": "",
-        "age": "14"
-    },
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20200406_093052500",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-04-06T09:31:02.488",
-            "capturedUTC": "2020-04-06T09:30:50.000",
-            "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
-            "capturedLoc": "2020-04-06T18:30:50.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "eVoucher",
-        "processing": {
-            "created": "2020-04-06T18:30:50.000",
-            "status": "submit_wMsg",
-            "statusRead": false,
-            "history": [
-                { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
-            ]
-        },
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "James",
-                "lastName": "Chang",
-                "phoneNumber": "6543222212",
-                "clientId": "",
-                "age": "14",
-                "provisionMethod": "Pills"
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "12345555"
-            }
-        }],
-        "dc": {}
-    }],
-    "_id": "5e8af6d6f39ff8047ee4f3e5",
-    "updated": "2020-04-06T09:31:02.488"
-}, {
-    "clientDetails": {
-        "firstName": "Greg",
-        "lastName": "Chang",
-        "phoneNumber": "27732462992",
-        "clientId": "",
-        "age": "47",
-        "hairStyle": "braids"
-    },
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20200405_081636001",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-04-05T08:17:06.877",
-            "capturedUTC": "2020-04-05T08:16:35.000",
-            "createdOnDeviceUTC": "2020-04-05T08:16:35.000",
-            "capturedLoc": "2020-04-05T17:16:35.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "WalkInA",
-        "processing": {
-            "created": "2020-04-05T17:16:35.000",
-            "status": "queued",
-            "history": [
-                { "status": "queued", "dateTime": "2020-04-05T17:16:35.000", "msg": "Created in PWA app" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "Greg",
-                "lastName": "Chang",
-                "phoneNumber": "27732462992",
-                "clientId": "",
-                "age": "47",
-                "hairStyle": "braids",
-                "provisionMethod": "Condom"
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "33334444"
-            }
-        }],
-        "dc": {}
-    }],
-    "_id": "5e86f102f39ff8047ee4f2b2",
-    "updated": "2020-04-05T08:18:22.169"
-}, {
-    "clientDetails": {
-        "firstName": "Mary",
-        "lastName": "Canary",
-        "phoneNumber": "0839891685",
-        "clientId": "",
-        "age": "23",
-        "hairStyle": "bun"
-    },
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20200407_081636003",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-04-07T08:17:06.877",
-            "capturedUTC": "2020-04-07T08:16:31.000",
-            "createdOnDeviceUTC": "2020-04-07T08:16:31.000",
-            "capturedLoc": "2020-04-07T17:16:31.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "PhoneVoucher",
-        "processing": {
-            "created": "2020-04-05T17:16:35.000",
-            "status": "failed",
-            "history": [
-                { "status": "queued", "dateTime": "2020-04-05T17:16:35.000", "msg": "Created in PWA app" }
-                ,{ "status": "failed", "dateTime": "2020-04-07T17:16:35.000", "responseCode": 401, "msg": "Error msg... - more detail with responseCode" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "Mary",
-                "lastName": "Canary",
-                "phoneNumber": "0839891685",
-                "clientId": "",
-                "age": "23",
-                "hairStyle": "bun",
-                "provisionMethod": "Condom"
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "112233445588"
-            }
-        }],
-        "dc": {}
-    }],
-    "_id": "5e86f102f39ff8047ee4f2b6",
-    "updated": "2020-04-07T08:18:22.169"
-}, {
-    "clientDetails": {
-        "firstName": "Roger",
-        "lastName": "Wolf",
-        "phoneNumber": "0734471959",
-        "clientId": "",
-        "age": "32",
-        "hairStyle": "bangs"
-    },
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20200406_091636003",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-04-06T08:17:06.877",
-            "capturedUTC": "2020-04-06T08:16:36.000",
-            "createdOnDeviceUTC": "2020-04-06T08:16:36.000",
-            "capturedLoc": "2020-04-06T17:16:36.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "WalkInB",
-        "processing": {
-            "created": "2020-04-06T17:16:35.000",
-            "status": "submit",
-            "history": [
-                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Synced - new add" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "Roger",
-                "lastName": "Wolf",
-                "phoneNumber": "0734471959",
-                "clientId": "",
-                "age": "32",
-                "hairStyle": "bangs",
-                "provisionMethod": "Inject"
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "112233445589"
-            }
-        }],
-        "dc": {}
-    },
-    {
-        "activityId": "LA_TEST_PROV_20200506_091636003",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-05-06T08:17:06.877",
-            "capturedUTC": "2020-05-06T08:16:36.000",
-            "createdOnDeviceUTC": "2020-05-06T08:16:36.000",
-            "capturedLoc": "2020-05-06T17:16:36.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "WalkInB",
-        "processing": {
-            "created": "2020-05-06T17:16:35.000",
-            "status": "submit",
-            "history": [
-                { "status": "submit", "dateTime": "2020-05-06T17:16:35.000", "responseCode": 200, "msg": "Synced - new add" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [{
-            "transactionType": "v_rdm",
-            "dataValues": {
-                "voucherCode": "112233445589"
-            }
-        }],
-        "dc": {}
-    }],
-    "_id": "5e86f102f39ff8047ee4f2D6",
-    "updated": "2020-05-06T09:18:22.169"
-}, {
-    "clientDetails": {
-        "firstName": "Jackson",
-        "lastName": "Pollock",
-        "phoneNumber": "0798985543",
-        "clientId": "",
-        "age": "65",
-        "hairStyle": "bob"
-    },
-    "activities": [{
-        "activityId": "LA_TEST_PROV_20191230_081706001",
-        "activityDate": {
-            "createdOnMdbUTC": "2019-12-30T08:17:06.877",
-            "capturedUTC": "2019-12-30T08:16:36.000",
-            "createdOnDeviceUTC": "2019-12-30T08:16:36.000",
-            "capturedLoc": "2019-12-30T17:16:36.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "WalkInB",
-        "processing": {
-            "created": "2019-12-30T17:16:35.000",
-            "status": "submit",
-            "history": [
-                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Downloaded" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [{
-            "transactionType": "c_reg",
-            "dataValues": {
-                "firstName": "Jackson",
-                "lastName": "Pollock",
-                "phoneNumber": "0798985543",
-                "clientId": "",
-                "age": "65",
-                "hairStyle": "bob",
-                "provisionMethod": "Condom"
-            }
-        }, {
-            "transactionType": "v_iss",
-            "dataValues": {
-                "voucherCode": "1010101010101"
-            }
-        }],
-        "dc": {}
-    },
-    {
-        "activityId": "LA_TEST_PROV_20200130_081706001",
-        "activityDate": {
-            "createdOnMdbUTC": "2020-01-30T08:17:06.877",
-            "capturedUTC": "2020-01-30T08:16:36.000",
-            "createdOnDeviceUTC": "2020-01-30T08:16:36.000",
-            "capturedLoc": "2020-01-30T17:16:36.000"
-        },
-        "activeUser": "qwertyuio3",
-        "location": {},
-        "program": "fpl",
-        "activityType": "WalkInB",
-        "processing": {
-            "created": "2020-01-30T17:16:35.000",
-            "status": "submit",
-            "history": [
-                { "status": "submit", "dateTime": "2020-04-06T17:16:35.000", "responseCode": 200, "msg": "Downloaded" }
-            ],
-            "url": "/PWA.syncUp",
-            "searchValues": {}
-        },
-        "transactions": [
-        {
-            "transactionType": "v_rdm",
-            "dataValues": {
-                "voucherCode": "1010101010101"
-            }
-        }],
-        "dc": {}
-    }],
-    "_id": "5e86f102f39ff8047ee4f2D6",
-    "updated": "2020-01-30T08:17:06.876"
-}];
 
 DevHelper.crossfilterObj;
 
@@ -455,9 +140,45 @@ DevHelper.showActivityListStr = function()
 };
 
 // create load data method..
-DevHelper.loadSampleData = function() 
-{    
-    ClientDataManager.insertClients( DevHelper.sampleDataList );
+DevHelper.loadSampleData = function( icount ) 
+{
+    var loops = ( icount ? icount : 1 );
+    var rndNames = 'Vickey Simpson,Yuri Youngquist,Sherice Sharma,Ariane Albert,Heather Locklear,Taunya Tubb,Lawanda Lord,Quentin Quesenberry,Terrance Tennyson,Rosaria Romberger,Joann Julius,Doyle Dunker,Carolina Casterline,Sherly Shupe,Dorris Degner,Xuan Xu,Mercedez Matheney,Jacque Jamerson,Lillian Lefler,Derek Deegan,Berenice Barboza,Charlene Marriot,Mariam Malott,Cyndy Carrozza,Shaquana Smith,Kendall Kitterman,Reagan Riehle,Mittie Maez,Carry Carstarphen,Nelida Nakano,Christoper Compo,Sadie Shedd,Coleen Samsonite,Estella Eutsler,Pamula Pannone,Keenan Kerber,Tyisha Tisdale,Ashlyn Aguirre,Ashlie Albritton,Willy Wonka,Diann Yowzer,Asha Carpenter,Devin Dashiell,Arvilla Alers,Sheba Sherron,Richard Racca,Elba Early,Coretta Cossey,Brande Bushnell,Larraine Samsung,Pilar Varillas,Gaspar Hernandez,Greg Rowles,James Chang,Bruno Raimbault,Rodolfo Melia,Chris Purdy,Martin Dale,Sam Sox,Joe Soap,Joan Sope,Marty McFly';
+
+    for (var i = 0; i < loops; i++)
+    {
+        var tmp = JSON.stringify( DevHelper.sampleDataList );
+        var actType = FormUtil.getActivityTypes()[ Util.generateRandomNumberRange(0, FormUtil.getActivityTypes().length-1).toFixed(0) ].name;
+        var status = Configs.statusOptions[ Util.generateRandomNumberRange(0, Configs.statusOptions.length-1).toFixed(0) ].name;
+        var shrtDate = new Date();
+        var recDate = new Date( shrtDate.setDate( shrtDate.getDate() - ( Util.generateRandomNumberRange(0,10 ) ) ) );
+        var earlierDate = new Date( recDate.setDate( recDate.getDate() - ( Util.generateRandomNumberRange(0,60 ) ) ) );
+        var myFirst = Util.getRandomWord( rndNames, i ).trim().split(' ')[0];
+        var myLast = Util.getRandomWord( rndNames, i ).trim().split(' ')[1];
+
+        tmp = tmp.replace( /{ACTIVITY_TYPE}/g, actType );
+        tmp = tmp.replace( /{PROGRAM}/g, actType.split('-')[0] );
+        tmp = tmp.replace( /{STATUS}/g, status );
+
+        tmp = tmp.replace( /{SHORTDATE}/g, shrtDate.toISOString().split( 'T')[0].replace(/-/g,'') );
+        tmp = tmp.replace( /{RECENT_SHORTDATE}/g, recDate.toISOString().split( 'T')[0] );
+        tmp = tmp.replace( /{EARLIER_SHORTDATE}/g, earlierDate.toISOString().split( 'T')[0] );
+        tmp = tmp.replace( /{TIME}/g, new Date().toISOString().split( 'T')[1].replace(/:/g,'').replace('.','').replace('Z','') );
+        tmp = tmp.replace( /{USERNAME}/g, SessionManager.sessionData.login_UserName );
+        tmp = tmp.replace( /{8DIGITS}/g, Util.generateRandomNumber(8) );
+        tmp = tmp.replace( /{10DIGITS}/g, Util.generateRandomNumber(10) );
+        tmp = tmp.replace( /{10RNDCHARS}/g, Util.generateRandomId().substring( 0, 10 ) );
+        tmp = tmp.replace( /{AGE}/g, Util.generateRandomNumberRange( i, (50+i) ).toFixed(0) );
+        tmp = tmp.replace( /{FIRSTNAME}/g, myFirst );
+        tmp = tmp.replace( /{LASTNAME}/g, myLast );
+
+        new Date().toISOString().split( 'T')[0].replace(/-/g,'')
+
+        console.log( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
+    
+        ClientDataManager.insertClients( JSON.parse( tmp ) );
+    }
+
 
     console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
 
