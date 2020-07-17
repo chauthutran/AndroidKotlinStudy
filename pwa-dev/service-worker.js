@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "6af6aaa1d1babca1fdf881f586740709"
+    "revision": "6846f7955c8f40d5803ac4bdc2742f21"
   },
   {
     "url": "redeemGen.html",
@@ -1257,7 +1257,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/favIcon.js",
-    "revision": "7c31e6bd5506bbb793ac2996cb9e146e"
+    "revision": "a601bae048decdf27ddfa1136d05dbf8"
   },
   {
     "url": "scripts/classes/inputControl.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "5d209bfe031dbd2d461c9557f83d41eb"
+    "revision": "9f159b5363941abc0423580edc325c15"
   },
   {
     "url": "scripts/libraries/aes.js",
