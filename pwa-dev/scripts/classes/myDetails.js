@@ -122,9 +122,9 @@ function myDetails(cwsRender) {
             $( 'div.mainDiv' ).hide();
         }*/
 
-        if ( me.cwsRenderObj.renderBlockTag.is( ":visible" ) )
+        if ( me.cwsRenderObj.pageDivTag.is( ":visible" ) )
         {
-            me.cwsRenderObj.renderBlockTag.hide();
+            me.cwsRenderObj.pageDivTag.hide();
         }
 
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
@@ -144,7 +144,7 @@ function myDetails(cwsRender) {
             if ( SessionManager.getLoginStatus() )
             {
                 //$( 'div.mainDiv' ).show( 'fast' );
-                me.cwsRenderObj.renderBlockTag.show( 'fast' );
+                me.cwsRenderObj.pageDivTag.show( 'fast' );
             }
             else
             {

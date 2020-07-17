@@ -682,7 +682,7 @@ console.log( me.statMetaSummary );
         setTimeout( function() {
             if ( SessionManager.getLoginStatus() )
             {
-                me.cwsRenderObj.renderBlockTag.show( 'fast' );
+                me.cwsRenderObj.pageDivTag.show( 'fast' );
             }
             else
             {

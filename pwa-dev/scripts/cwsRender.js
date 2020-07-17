@@ -5,8 +5,7 @@ function cwsRender()
 	var me = this;
 
 	// Tags
-	//me.renderBlockTag = $( '#renderBlock' );
-	me.renderBlockTag = $( '#pageDiv' );
+	me.pageDivTag = $( '#pageDiv' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
 	/* me.menuAppMenuIconTag = $( '#nav-toggle' );*/
 	/* me.loggedInDivTag = $( '#loggedInDiv' ); */
@@ -206,7 +205,10 @@ function cwsRender()
 
 	me.renderArea = function( areaId )
 	{
+		// On each area render, clear out the pageDiv content (which represent area div)..
+		me.pageDivTag.empty();
 
+		// 
 		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )
 		{
 			me.resetVisibility_ViewListDiv();
@@ -254,9 +256,9 @@ function cwsRender()
 				if ( selectedArea && selectedArea.startBlockName )
 				{
 
-					if ( ! me.renderBlockTag.is( ':visible' ) ) me.renderBlockTag.show();
+					if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
 
-					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.renderBlockTag );
+					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
 					startBlockObj.render();  // should been done/rendered automatically?
 
 					// Change start area mark based on last user info..
@@ -274,11 +276,11 @@ function cwsRender()
 	{
 		if ( options )
 		{
-			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag, undefined, options );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
 		}
 		else
 		{
-			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.renderBlockTag );
+			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag );
 		}
 
 		if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
@@ -406,57 +408,6 @@ function cwsRender()
 		}
 
 	}
-
-	// REMOVE - no longer used 
-	/*me.menuStatSummary = function( submitList, queueList, failedList )
-	{
-
-		var statTbl = $( '<table class="tblMenuStatSummary" />');
-		var tr = $( '<tr>' );
-		var tdFiller = $( '<td class="statFiller" />' );
-		var tdSubmit = $( '<td class="menuStat" />' );
-		var tdQueue  = $( '<td class="menuStat" />' );
-		var tdFailed = $( '<td class="menuStat" />' );
-
-		statTbl.append( tr );
-		tr.append( tdFiller );
-
-		var lblSubmit = $( '<span class="lblStatSubmit" />' );
-		var lblQueue  = $( '<span class="lblStatQueue" />' );
-		var lblFailed = $( '<span class="lblStatFailed" />' );
-
-		var dataSubmit = $( '<span class="menuDataStat" />' );
-		var dataQueue  = $( '<span class="menuDataStat" />' );
-		var dataFailed = $( '<span class="menuDataStat" />' );
-
-		if ( submitList && submitList > 0 )
-		{
-			FormUtil.appendStatusIcon ( $( lblSubmit ), FormUtil.getStatusOpt ( { "status": Constants.status_submit } ), true );
-			dataSubmit.append( submitList );
-			tr.append( tdSubmit );	
-		}
-
-		if ( queueList && queueList > 0 )
-		{
-			FormUtil.appendStatusIcon ( $( lblQueue ), FormUtil.getStatusOpt ( { "status": Constants.status_queued } ), true );
-			dataQueue.append( queueList );
-			tr.append( tdQueue );
-		}
-
-		if ( failedList && failedList > 0 )
-		{
-			FormUtil.appendStatusIcon ( $( lblFailed ), FormUtil.getStatusOpt ( { "status": Constants.status_failed } ), true );
-			dataFailed.append( failedList );
-			tr.append( tdFailed );
-
-		}
-
-		tdSubmit.append( lblSubmit, dataSubmit );
-		tdQueue.append( lblQueue, dataQueue );
-		tdFailed.append( lblFailed, dataFailed );
-
-		return statTbl;
-	}*/
 
 	me.populateMenuList = function( areaList, exeFunc )
 	{
