@@ -56,6 +56,7 @@ SyncManagerNew.template_SyncMsg_Section = `<div class="sync_all__section">
 // === MAIN 2 FEATURES =============
 
 // 2. Run 'sync' on All activityItems
+// TRAN TODO : "runType" param doesn't get used in any places
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     try

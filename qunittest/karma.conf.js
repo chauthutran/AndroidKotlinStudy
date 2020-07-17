@@ -40,6 +40,7 @@ module.exports = function(config) {
       '../pwa-dev/scripts/app.js',
 
 
+      'test/**/*.js',
       'test/*.js'
     ],
 
