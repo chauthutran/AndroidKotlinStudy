@@ -1,7 +1,15 @@
 
 QUnit.test('Test SyncManagerNew - syncAll', function( assert ){
-    
+
+    SyncManagerNew.syncMsgJson = { "summaryList" : [], "msgList" : [] };
+    SyncManagerNew.sync_Running = false;
+
+    var statusInfo = { "appMode" : ConnManagerNew.ONLINE };
+    ConnManagerNew.statusInfo = statusInfo;
+
     var cwsRenderObj = new cwsRender();
+
+
     SyncManagerNew.syncAll(cwsRenderObj, '', function(){
         assert.equal( true, true, "syncAll runs successfully !!!" );
     } ); 
@@ -9,8 +17,10 @@ QUnit.test('Test SyncManagerNew - syncAll', function( assert ){
 
 
 QUnit.test('Test SyncManagerNew - syncDown', function( assert ){
-    
+
+    SyncManagerNew.syncMsgJson = { "summaryList" : [] };
     var cwsRenderObj = new cwsRender();
+
     SyncManagerNew.syncAll(cwsRenderObj, '', function(){
         assert.equal( true, true, "syncDown runs successfully !!!" );
     } ); 
@@ -97,21 +107,22 @@ QUnit.test('Test SyncManagerNew - syncFinish', function( assert ){
 
 
 QUnit.test('Test SyncManagerNew - SyncMsg_Get', function( assert ){
-    
+    SyncManagerNew.syncMsgJson = { "msgList" : [] };
     var syncMsgJson = SyncManagerNew.SyncMsg_Get();
-    assert.equal( true, true, "SyncMsg_Get runs successfully !!!" );
+
+    assert.equal( syncMsgJson.msgList.length, 0, "SyncMsg_Get runs successfully !!!" );
 });
 
 
 QUnit.test('Test SyncManagerNew - SyncMsg_InsertMsg', function( assert ){
-    
+    SyncManagerNew.syncMsgJson = { "msgList" : [] };
     SyncManagerNew.SyncMsg_InsertMsg();
     assert.equal( true, true, "SyncMsg_InsertMsg runs successfully !!!" );
 });
 
 
 QUnit.test('Test SyncManagerNew - SyncMsg_InsertSummaryMsg', function( assert ){
-    
+    SyncManagerNew.syncMsgJson = { "summaryList" : [] };
     SyncManagerNew.SyncMsg_InsertSummaryMsg( "Test" );
     assert.equal( true, true, "SyncMsg_InsertSummaryMsg runs successfully !!!" );
 });

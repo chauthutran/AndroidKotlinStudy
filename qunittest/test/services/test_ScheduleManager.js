@@ -73,7 +73,7 @@ QUnit.test('Test ScheduleManager - schedule_syncDownRunOnce', function( assert )
 
 QUnit.test('Test ScheduleManager - syncDownRunIfOnlineSchedule', function( assert ){
     
-
+    SyncManagerNew.syncMsgJson = { "msgList" : [] };
     var dcdConfig = {
         "settings": {
             "sync" : {

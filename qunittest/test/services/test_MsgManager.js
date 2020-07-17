@@ -22,15 +22,34 @@ QUnit.test('Test MsgManager - msgAreaShow', function( assert ){
 
 
 QUnit.test('Test MsgManager - msgAreaClear', function( assert ){
+    MsgManager.countDownNumerator =  1;
+
+    
+    MsgManager.msgAreaClear();
+    assert.equal( true, true, "msgAreaClear with undefined speed runs successfully !!!" );
+    
+    
     MsgManager.msgAreaClear( 100 );
-    assert.equal( true, true, "msgAreaClear runs successfully !!!" );  
+    assert.equal( true, true, "msgAreaClear with defined speed runs successfully !!!" );  
 });
 
 
 QUnit.test('Test MsgManager - notificationMessage', function( assert ){
+
     MsgManager.notificationMessage( "Test body message", "msgType", $("<input type='button'>"), "border:1px;color:blue"
         , "right", "top", 10, true, function(){}, "111", false, false );
-    assert.equal( true, true, "notificationMessage runs successfully !!!" );  
+    assert.equal( true, true, "notificationMessage with empty reservedIDs list runs successfully !!!" ); 
+
+    MsgManager.reservedIDs = ["111", "222"];
+    MsgManager.notificationMessage( "Test body message", "msgType", $("<input type='button'>"), "border:1px;color:blue"
+        , "right", "top", 10, true, function(){}, "111", false, false );
+    assert.equal( true, true, "notificationMessage runs with unempty reservedIDs list successfully !!!" );  
+
+    
+    MsgManager.reservedIDs = ["111", "222"];
+    MsgManager.notificationMessage( "Test body message", "msgType", $("<input type='button'>"), "border:1px;color:blue"
+        , "right", "top", 10, true, function(){}, "333", false, false );
+    assert.equal( true, true, "notificationMessage runs with new reservedID successfully !!!" );  
 });
 
 

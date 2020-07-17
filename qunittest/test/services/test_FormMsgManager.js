@@ -6,21 +6,24 @@ QUnit.test('Test FormMsgManager - block', function( assert ){
 
     FormMsgManager.block( true, "Testing", FormMsgManager.cssBlock_Body, $("<div></div>") );
     assert.equal( true, true, "the Block method undefined runs successfully !!!" );  
+
+    FormMsgManager.block( false, "Testing", FormMsgManager.cssBlock_Body, $("<div></div>") );
+    assert.equal( true, true, "unBlock method undefined runs successfully !!!" ); 
 });
 
 
 QUnit.test('Test FormMsgManager - appBlockTemplate', function( assert ){
   
-    FormMsgManager.block( "appLoad" );
+    FormMsgManager.appBlockTemplate( "appLoad" );
     assert.equal( true, true, "appBlockTemplate with appLoad template runs successfully !!!" );  
 
-    FormMsgManager.block( "appLoadProgress" );
+    FormMsgManager.appBlockTemplate( "appLoadProgress" );
     assert.equal( true, true, "appBlockTemplate with appLoadProgress template runs successfully !!!" );
       
-    FormMsgManager.block( "appDiagnostic" );
+    FormMsgManager.appBlockTemplate( "appDiagnostic" );
     assert.equal( true, true, "appBlockTemplate with appDiagnostic template runs successfully !!!" );
       
-    FormMsgManager.block();
+    FormMsgManager.appBlockTemplate();
     assert.equal( true, true, "appBlockTemplate with undefined template param runs successfully !!!" );
 });
 

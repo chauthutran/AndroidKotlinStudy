@@ -24,7 +24,7 @@ QUnit.test('Test ConnManagerNew - updateNetworkConnStatus', function( assert ){
 
 
 QUnit.asyncTest('Test ConnManagerNew - checkNSet_ServerAvailable', function( assert ){
-    
+
     expect(1);
     ConnManagerNew.statusInfo.networkConn.online_Stable = true;
 
