@@ -663,6 +663,10 @@ ul li .expandable.expanded+div {
 
 /* 4. blockList GroupBy blocks */
 
+.blockListGroupBy {
+  border-bottom: 1px solid #ddd;
+}
+
 .blockListGroupBy > div {
   left: 0%;
   right: 0%;
