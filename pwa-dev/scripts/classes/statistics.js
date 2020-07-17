@@ -63,17 +63,23 @@ function Statistics( cwsRender )
                 console.log( $( returnData )[ i ] )
                 console.log( $( returnData )[ i ].nodeName )
                 
-                if ( $( returnData )[ i ].nodeName === 'layout' ) layout = $( returnData )[ i ];
-                if ( $( returnData )[ i ].nodeName === 'code' ) code = $( returnData )[ i ];
+                if ( $( returnData )[ i ].nodeName === 'LAYOUT' ) layout = $( returnData )[ i ];
+                if ( $( returnData )[ i ].nodeName === 'CODE' ) code = $( returnData )[ i ];
 
              }
 
-             console.log( layout );
-             console.log( code );
+             console.log(  layout.innerHTML );
+             console.log( unescape( code.innerHTML ) );
 
-             $( '#statsContentPage' ).html( layout );
+             $( '#statsContentPage' ).html( layout.innerHTML );
 
-             eval( code );
+             var parser = new DOMParser;
+             var dom = parser.parseFromString(
+                 '<!doctype html><body>' + code.innerHTML,
+                 'text/html' );
+             var decodedString = dom.body.textContent;
+
+             eval( decodedString );
              //$( '#statsContentPage' ).html( $( returnData ).find( 'layout' ) );
         });
 
