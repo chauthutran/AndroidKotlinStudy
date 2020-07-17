@@ -551,7 +551,7 @@ Util2.getAgeValueFromPattern = function( tagTarget, pattern )
 	if ( pattern.indexOf( 'form:' ) >= 0 )
 	{
 		var targFld = pattern.split( 'form:' )[ 1 ];
-		var targTag = formTarg.find( "#" + targFld ); //( "[name='" + targFld + "']" );
+		var targTag = formTarg.find( "[name='" + targFld + "']" ); //"#" + targFld ); //( "[name='" + targFld + "']" );
 
 		if ( targTag )
 		{

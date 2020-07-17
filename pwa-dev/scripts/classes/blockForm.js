@@ -1004,13 +1004,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.getEvalFormulas = function()
 	{
 		var jData = me.formJsonArr;
-		var pConf = FormUtil.block_payloadConfig;
+		var pConf = me.payloadConfigSelection; //FormUtil.block_payloadConfig;
 		var retArr = [];
 
 		for( var i = 0; i < jData.length; i++ )
 		{
 			// prioritize existing payloadConfig (if match found)
-			if ( pConf.length && jData[ i ].payload && jData[ i ].payload[ pConf ] )
+			if ( pConf && jData[ i ].payload && jData[ i ].payload[ pConf ] && ( jData[ i ].payload[ pConf ].calculatedValue || jData[ i ].payload[ pConf ].defaultValue ) ) //pConf.length && 
 			{
 				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue ) 
 				{
@@ -1094,14 +1094,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// only focus on changing control's value (cascade calculatedValue)
 		if ( thisTag )
 		{
-			var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
+			/*var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
 				return field.type === 'calculatedValue';
-			});
+			});*/
+			var evalFunctionsToProcess = me.getEvalFormulas();
+
 			var affectedControls = evalFunctionsToProcess.filter( function( field ){
 				return field.dependencies.includes( thisTag.attr( 'name' ) );
 			} );
-
-			//console.log( affectedControls );
 
 			for( var i = 0; i < affectedControls.length; i++ )
 			{
