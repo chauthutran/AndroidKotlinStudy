@@ -272,25 +272,14 @@ function cwsRender()
 	}
 
 
-	me.renderBlock = function( blockName, options )
+	// Area is always an entry location, right?
+	me.renderNewAreaBlock = function( blockName, options )
 	{
-		if ( options )
-		{
-			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
-		}
-		else
-		{
-			var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag );
-		}
+		// On each area render, clear out the pageDiv content (which represent area div)..
+		me.pageDivTag.empty();
 
-		if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
-
+		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
 		blockObj.render();
-
-		// Greg: find a way to link back favIcon 'menu-item-ID' for current [area:online/offline]
-		//console.log( blockObj )
-		//var areaId = blockObj.id
-		//me.updateMenuClickStyles( areaId );
 
 		return blockObj;
 	}
