@@ -24,6 +24,27 @@ FormUtil.syncRunning = 0;
 FormUtil.orientation;
 // ==== Methods ======================
 
+// ==========================================
+// ====  GET/SET Form Control Tag value ====
+FormUtil.getFormCtrlTag = function( formTag, ctrlTagName )
+{
+	return formTag.find("[name='" + ctrlTagName + "']");
+};
+
+
+FormUtil.getFormCtrlDataValue = function( inputDataValueTag )
+{
+	return inputDataValueTag.val();
+};
+
+
+FormUtil.setFormCtrlDataValue = function( inputDataValueTag, value )
+{
+	inputDataValueTag.val( value );
+};
+
+// ==============================================
+
 FormUtil.getObjFromDefinition = function( def, definitions )
 {
 	var objJson = def;  // default is the passed in object/name
@@ -2302,22 +2323,3 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 	}
 
 }
-
-
-FormUtil.getFormCtrlTag = function( formTag, ctrlTagName )
-{
-	return formTag.find("[name='" + ctrlTagName + "']");
-}
-
-
-FormUtil.getFormCtrlDataValue = function( inputDataValueTag )
-{
-	return inputDataValueTag.val();
-}
-
-
-FormUtil.setFormCtrlDataValue = function( inputDataValueTag, value )
-{
-	inputDataValueTag.val( value );
-}
-
