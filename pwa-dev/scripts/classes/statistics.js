@@ -17,7 +17,8 @@ function Statistics( cwsRender )
     me.statMetaSummary = {};
 
     me.templateURL = '';
-    me.templateObj;
+    me.templateLayout;
+    me.templateCode;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -48,30 +49,23 @@ function Statistics( cwsRender )
         var jsonloc = 'type=dc_pwa&branch=stage&fileName=dc_pwa@LA@stats_demo.html';
 
         me.templateURL = rawbase + jsonloc;
-        console.log( me.templateURL );
+        //console.log( me.templateURL );
 
         WsCallManager.requestGet_Text( me.templateURL, {}, undefined, function( success, returnData ) {
-
-             console.log( success );
-             console.log( returnData );
-             console.log( $( returnData ) );
 
              var code, layout;
 
              for ( var i = 0; i < $( returnData ).length; i++ )
              {
-                console.log( $( returnData )[ i ] )
-                console.log( $( returnData )[ i ].nodeName )
-                
                 if ( $( returnData )[ i ].nodeName === 'LAYOUT' ) layout = $( returnData )[ i ];
                 if ( $( returnData )[ i ].nodeName === 'CODE' ) code = $( returnData )[ i ];
-
              }
 
              console.log(  layout.innerHTML );
              console.log( unescape( code.innerHTML ) );
 
-             $( '#statsContentPage' ).html( layout.innerHTML );
+             me.templateLayout = layout.innerHTML;
+
 
              var parser = new DOMParser;
              var dom = parser.parseFromString(
@@ -79,8 +73,14 @@ function Statistics( cwsRender )
                  'text/html' );
              var decodedString = dom.body.textContent;
 
-             eval( decodedString );
-             //$( '#statsContentPage' ).html( $( returnData ).find( 'layout' ) );
+             me.templateCode = decodedString;
+
+             me.statsPeriodSelector.removeClass( 'disabled' );
+             me.statsPeriodSelector.addClass( 'enabled' );
+
+             //$( '#statsContentPage' ).html( layout.innerHTML );
+             //eval( me.templateCode );
+
         });
 
     }
@@ -95,6 +95,7 @@ function Statistics( cwsRender )
         me.statisticsFormDiv.append( me.statsFormContainerTag );
 
         me.statsPeriodSelector = me.statisticsFormDiv.find( '#stats_select_period' );
+        me.statsPeriodSelector.addClass( 'disabled' );
     }
 
     me.initialize_Data = function()
@@ -117,7 +118,7 @@ function Statistics( cwsRender )
         me.statMetaSummary[ 'from' ] = allDates[ 0 ]; // me.allStats[ 0 ].date[ me.dateFilterField ];
         me.statMetaSummary[ 'to' ] = allDates[ allDates.length -1 ]; //me.allStats[ me.allStats.length -1 ].date[ me.dateFilterField ];
         me.statMetaSummary[ 'count' ] = me.allStats.length;
-console.log( me.statMetaSummary );
+
         me.initialise_periodOptions( me.statsPeriodSelector );
 
         me.initializeTemplate();
@@ -138,7 +139,7 @@ console.log( me.statMetaSummary );
 
 	me.setEvents_OnRender = function()
 	{	
-        $( '#stats_select_period' ).change( function() {
+        me.statsPeriodSelector.change( function() {
 
             var opt = $( 'option:selected', this );
             var startPeriod = opt.attr( 'from' );
@@ -194,7 +195,7 @@ console.log( me.statMetaSummary );
     }
 
     // Need to pass in(?) startPeriod and endPeriod?
-	me.runDateFilterAndRenderConfig = function( startPeriod, endPeriod )
+	me.runDateFilterAndRenderConfig_OLD = function( startPeriod, endPeriod )
 	{
         var containerDiv = $( '#statsContentPage' ).html( '' );
         var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod, data: { } };
@@ -264,6 +265,30 @@ console.log( me.statMetaSummary );
         } );
     };
 
+
+    // Need to pass in(?) startPeriod and endPeriod?
+	me.runDateFilterAndRenderConfig = function( startPeriod, endPeriod )
+	{
+        $( '#statsContentPage' ).html( '' );
+
+        var INFO = { 'startPeriod': startPeriod, 'endPeriod': endPeriod, data: { } };
+        var trxTypes = Configs.transactionTypes; 
+
+        // STEP 1. create data.trxType arrays (for quick filtering/reference)
+        trxTypes.forEach( (trxType, i_a) => {
+            var itms = me.getActivityList_Query( startPeriod, endPeriod, trxType );
+            INFO.data[ trxType.name ] = itms;
+        });
+
+        console.log( INFO );
+
+        // STEP 2. run config Eval and Insert the main tag + get list of 'div.statDiv'        
+        $( '#statsContentPage' ).html( me.templateLayout );
+
+        // STEP 3. for each object container - run associated code config
+        me.evalTry( me.templateCode, INFO );
+
+    };
 
 
     /* DATA MANIPULATION FUNCTIONS */
@@ -454,7 +479,7 @@ console.log( me.statMetaSummary );
 
 
     // add/create Title?
-    me.addTitle = function( text, icon)
+    me.addTitle = function( text, icon, targetTag)
     {
         var sectionTag = $( Templates.title_section );
 
@@ -489,7 +514,8 @@ console.log( me.statMetaSummary );
             sectionTag.find('.title_section__icon').html( Templates.svg_Chart_Line );
         }
 
-        return sectionTag;
+        if ( targetTag ) $( "[statid=" + targetTag + "]" ).append( sectionTag )
+        else return sectionTag;
     }
 
     me.addText = function( text )

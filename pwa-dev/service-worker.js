@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "de588903bdba80f0737301413837e366"
+    "revision": "54c72ca133ba4f3ea2a4b856f716e07f"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "c89c6349511ac4ee55dae05f71caaac4"
+    "revision": "55936f503686cda2c64aa8939261fd73"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "0a759fe8f86dfc8baa25f78a2eab1d28"
+    "revision": "4cb432edf3cd704208d1abec2fdd9460"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1473,7 +1473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "1e91af5c2aba796f19b6f18043c61285"
+    "revision": "ed6e6ee052b56c8f65a48af16a3dc247"
   },
   {
     "url": "scripts/utils/inputUtil.js",
