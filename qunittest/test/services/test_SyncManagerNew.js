@@ -48,13 +48,71 @@ QUnit.test('Test SyncManagerNew - syncUpItem_RecursiveProcess', function( assert
 });
 
 
+
 QUnit.asyncTest('Test SyncManagerNew - downloadClients', function( assert ){
     expect(1);
+
+    SessionManager.sessionData.login_UserName = "test_username";
+    AppInfoManager.updateDownloadInfo( "2020-07-03" );
+
+    var dcdConfig = {
+        "settings" : {
+            "sync" : {
+                "syncDown": {
+                    "enable": true,
+                    "syncDownPoint": "test",
+                    "url": "www.test.com"
+                }
+            }
+        }
+    };
+    ConfigManager.setConfigJson( dcdConfig );
+
+    
     SyncManagerNew.downloadClients( function( ){
         assert.equal( true, true, "downloadClients runs successfully !!!" );
         QUnit.start();
     } ); 
 });
+
+
+// // Perform Server Operation..
+// SyncManagerNew.downloadClients = function( callBack )
+// {
+//     try
+//     {
+//         // TODO: 
+//         var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
+//         var dateRange_gtStr;
+ 
+//         var payloadJson = { 'find': {} };
+ 
+//         payloadJson.find = {
+//             "clientDetails.users": activeUser
+//             //"activities": { "$elemMatch": { "activeUser": activeUser } } 
+//         };
+ 
+//         // If last download date exists, search after that. Otherwise, get all
+//         var lastDownloadDateISOStr = AppInfoManager.getDownloadInfo();
+ 
+//         if ( lastDownloadDateISOStr ) 
+//         { 
+//             dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
+//             payloadJson.find[ 'date.updatedOnMdbUTC' ] = { "$gte": dateRange_gtStr };
+//         }
+ 
+//         var loadingTag = undefined;
+//         WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
+ 
+//             callBack( success, returnJson );
+//         });        
+//     }
+//     catch( errMsg )
+//     {
+//         console.log( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
+//         callBack( false );
+//     }
+// };
 
 
 QUnit.test('Test SyncManagerNew - update_UI_StartSyncAll', function( assert ){
