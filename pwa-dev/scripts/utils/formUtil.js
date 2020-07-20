@@ -562,24 +562,22 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 			// Non-Object types value set to inputTag
 
 			// CheckBox 
-			if ( FormUtil.checkTag_CheckBox( tag ) )
+			//if ( FormUtil.checkTag_CheckBox( tag ) )
+			//{
+			//	tag.prop( 'checked', ( val === 'true' || val === true ) ); 
+			//	tag.val( val );
+			//}
+
+			// Special eval key type field - '{ ~~~ }'
+			if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
 			{
-				tag.prop( 'checked', ( val === 'true' || val === true ) ); 
-				tag.val( val );
+				//FormUtil.evalReservedField( tag, val );
+				FormUtil.evalReservedField( tag.closest( 'form' ), tag, val );
 			}
 			else
 			{
-				// Special eval key type field - '{ ~~~ }'
-				if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
-				{
-					//FormUtil.evalReservedField( tag, val );
-					FormUtil.evalReservedField( tag.closest( 'form' ), tag, val );
-				}
-				else
-				{
-					tag.val( val );
-				}				
-			}
+				tag.val( val );
+			}				
 		}
 
 		if ( returnFunc ) returnFunc();

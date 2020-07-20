@@ -1596,7 +1596,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	}
 
-
+	// Populates data (downloaded from web) to form
 	me.populateFormData_ArrayDataByUid = function( formDivSecTag, attributes )
 	{
 		try 
@@ -1628,12 +1628,15 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 						
 						if ( attrJson )
 						{
-							FormUtil.setFormCtrlDataValue( inputTag, attrJson.value );
+							FormUtil.setTagVal( inputTag, attrJson.value, function() 
+							{
+								var formItemJson = me.formJsonConfig[inputTag.attr("name")];
+								me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
+	
+								inputTag.change();
+							});	
+							//FormUtil.setFormCtrlDataValue( inputTag, attrJson.value );
 
-							var formItemJson = me.formJsonConfig[inputTag.attr("name")];
-							me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
-
-							inputTag.change();
 						}
 					}					
 				}
