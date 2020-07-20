@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "85a67b2f284de8c931d69c48013d0a1f"
+    "revision": "f837b39555f41f59b02b8c35b549949a"
   },
   {
     "url": "css/qunit.css",

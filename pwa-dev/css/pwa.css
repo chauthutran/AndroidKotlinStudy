@@ -1576,7 +1576,7 @@ img.round:hover{
 
 #statsContentPage {
   overflow: auto;
-  height: calc(100vh - 134px);
+  height: calc(100vh - 158px);
   position: absolute;
   top: 126px;
   background-color: transparent;
