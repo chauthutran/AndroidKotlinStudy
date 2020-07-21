@@ -10,8 +10,6 @@
    viewBox="0 0 48 48"
    version="1.1"
    id="svg20"
-   width="{WIDTH}"
-   height="{HEIGHT}"
    sodipodi:docname="Connect_2.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
@@ -90,7 +88,7 @@
     <style
        id="style2">.cls-1{fill:#efefef;}.cls-2{fill:#709302;}.cls-3{fill:#e28c05;}.cls-4{fill:#00b5e1;}</style>
   </defs>
-  <circle cx="{WIDTH}" cy="{HEIGHT}" r="{WIDTH}" fill="#fff" stroke="#fff" stroke-width="3"/>
+  <circle cx="56" cy="56" r="56" fill="#fff" stroke="#fff" stroke-width="3"/>
   <g
      id="g1707"
      transform="matrix(0.96074403,0,0,0.96074403,-1.9879493,-2.0218708)">
