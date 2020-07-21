@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "54c72ca133ba4f3ea2a4b856f716e07f"
+    "revision": "aff083e7e0728cec04535ebae615e168"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1309,7 +1309,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "0abd580615124400aa162923df66e6b9"
+    "revision": "0ae355b044a014f4479925130149bd52"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/scheduleManager.js",
-    "revision": "a7639f6996032a117c0e1498ba45c704"
+    "revision": "2fbad687dde9b3e6fd6f529b1ddba777"
   },
   {
     "url": "scripts/services/sessionManager.js",
