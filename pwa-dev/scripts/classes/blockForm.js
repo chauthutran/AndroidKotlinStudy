@@ -1615,12 +1615,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				try 
 				{
-					var uidStr = inputTag.attr( 'uid' );
-					
+					var uidStr = inputTag.attr( 'uid' );					
 					if ( uidStr == undefined ||  uidStr === "undefined" ) {
 						uidStr = inputTag.attr( 'name' ); // If uid='undefined', use 'name' value for data matching id.
 					}
-
 
 					if ( uidStr )
 					{
@@ -1628,7 +1626,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 						
 						if ( attrJson )
 						{
-							FormUtil.setTagVal( inputTag, attrJson.value, function() 
+							var val = attrJson.value;
+
+							if ( Util.isTypeArray( val ) ) val = val[0];  // if array, like 'voucherCde'/'users', get the 1st val..
+
+							FormUtil.setTagVal( inputTag, val, function() 
 							{
 								var formItemJson = me.formJsonConfig[inputTag.attr("name")];
 								me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
@@ -1636,7 +1638,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 								inputTag.change();
 							});	
 							//FormUtil.setFormCtrlDataValue( inputTag, attrJson.value );
-
 						}
 					}					
 				}

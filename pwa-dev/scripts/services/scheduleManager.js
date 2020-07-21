@@ -120,9 +120,7 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 
 					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, true );
 					//alert( 'SyncDown changed list.  Please refresh the list.' );
-
 				}
-
 			} 
 			else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
 		});

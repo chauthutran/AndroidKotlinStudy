@@ -236,7 +236,7 @@ Templates.activityCardFullScreen = `
       <div class="button warning button-full_width" id="removeActivity"
         style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
         <div class="button__container">
-          <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove</div>
+          <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>
         </div>
       </div>
 
