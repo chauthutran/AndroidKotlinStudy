@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "6846f7955c8f40d5803ac4bdc2742f21"
+    "revision": "c3059d7c1fa09993f3e0787aff599ee4"
   },
   {
     "url": "redeemGen.html",
@@ -1574,6 +1574,10 @@ self.__precacheManifest = [
   {
     "url": "styles/materialize.css",
     "revision": "ebfc8887da89775b09fe167ce204b440"
+  },
+  {
+    "url": "versions.html",
+    "revision": "95b60987082abe9194f5953680d118b4"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
