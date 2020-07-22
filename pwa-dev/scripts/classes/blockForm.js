@@ -1009,31 +1009,38 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		for( var i = 0; i < jData.length; i++ )
 		{
+			var formFieldDef = jData[ i ];
 			// prioritize existing payloadConfig (if match found)
-			if ( pConf && jData[ i ].payload && jData[ i ].payload[ pConf ] && ( jData[ i ].payload[ pConf ].calculatedValue || jData[ i ].payload[ pConf ].defaultValue ) ) //pConf.length && 
+			if ( pConf && formFieldDef.payload && formFieldDef.payload[ pConf ] && ( formFieldDef.payload[ pConf ].calculatedValue || formFieldDef.payload[ pConf ].defaultValue ) ) //pConf.length && 
 			{
-				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue ) 
+				if ( formFieldDef.payload && formFieldDef.payload[ pConf ] && formFieldDef.payload[ pConf ].calculatedValue ) 
 				{
-					retArr.push( { name: jData[ i ].id, type: 'calculatedValue', formula: jData[ i ].payload[ pConf ].calculatedValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( jData[ i ].payload[ pConf ].calculatedValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload[ pConf ].calculatedValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].calculatedValue ) } );
 				}
-				if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) 
+				if ( formFieldDef.payload && formFieldDef.payload[ pConf ] && formFieldDef.payload[ pConf ].defaultValue ) 
 				{
-					retArr.push( { name: jData[ i ].id, type: 'defaultValue', formula: jData[ i ].payload[ pConf ].defaultValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( jData[ i ].payload[ pConf ].defaultValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload[ pConf ].defaultValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].defaultValue ) } );
 				}
 			}
 			else
 			{
-				if ( jData[ i ].calculatedValue ) 
+				if ( formFieldDef.calculatedValue ) 
 				{
-					retArr.push( { name: jData[ i ].id, type: 'calculatedValue', formula: jData[ i ].calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( jData[ i ].calculatedValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.calculatedValue ) } );
 				}
-				if ( jData[ i ].defaultValue ) 
+				if ( formFieldDef.defaultValue ) 
 				{
-					retArr.push( { name: jData[ i ].id, type: 'defaultValue', formula: jData[ i ].defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( jData[ i ].defaultValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue ) } );
 				}
 			}
 
 		}
+
+		// how do we sort by retArr.dependencies.length ?
+		//Util.sortByKey( retArr, 'dependencies' );
+		retArr.sort( function( a, b ) {
+			return ( a.dependencies.length < b.dependencies.length ) ? -1 : ( a.dependencies.length > b.dependencies.length ) ? 1 : 0;
+		});
 
 		return retArr;
 	};
@@ -1051,22 +1058,25 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// returns array containing [ "walkIn_firstName", "walkIn_motherName", "walkIn_birthDistrict", "walkIn_birthOrder" ]
 
 		var sourceFieldsArr = evalFormula.split( 'form:' );
-		var separatorChars = '[|)|+|-| |,';
+		var separatorChars = '[|,|)|+|-| '; //do not change order
 		var separatorArr = separatorChars.split( '|' );
 
-		for( var i = 0; i < sourceFieldsArr.length; i++ )
+		for( var i = 1; i < sourceFieldsArr.length; i++ ) // from 1 not 0, left side (0) is to be ignored (usually contains reserved '$$function{' part )
 		{
 			var bFoundCharMatch = false;
+			var formulaPart = sourceFieldsArr[ i ];
 
 			for( var s = 0; s < separatorArr.length; s++ )
 			{
 				if ( ! bFoundCharMatch )
 				{
-					if ( ( sourceFieldsArr[ i ] ).indexOf( separatorArr[ s ] ) > 0 )
+					var sepPart = separatorArr[ s ];
+
+					if ( ( formulaPart ).indexOf( sepPart ) > 0 )
 					{
-						var fieldName = ( sourceFieldsArr[ i ] ).split( separatorArr[ s ]  )[ 0 ];
-	
-						if ( ! returnFields.includes( separatorArr[ s ] ) )
+						var fieldName = ( formulaPart ).split( sepPart  )[ 0 ];
+
+						if ( ! returnFields.includes( sepPart ) )
 						{
 							returnFields.push( fieldName );
 							bFoundCharMatch = true;
