@@ -7,12 +7,11 @@ function Action( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	
-	me.pageDivTag = cwsRenderObj.pageDivTag;
+	//me.pageDivTag = cwsRenderObj.pageDivTag; // NOTE: Should not be used!!!  Replace with me.btnTargetParentTag 
+	me.btnTargetParentTag;  // button rendering div's parent tag..  <-- if tab button, target is tab content
 
 	me.className_btnClickInProcess = 'btnClickInProcess';
 
-	me.formJsonArr;
-	
 	// -----------------------------
 	// ---- Methods ----------------
 	
@@ -21,15 +20,14 @@ function Action( cwsRenderObj, blockObj )
 	// ------------------------------------
 
 	// Same level as 'render' in other type of class
-	me.handleClickActions = function( btnTag, btnOnClickActions, blockDivTag, formDivSecTag, blockPassingData )
+	me.handleClickActions = function( btnTag, btnOnClickActions, btnTargetParentTag, blockDivTag, formDivSecTag, blockPassingData )
 	{		
-		me.formJsonArr = blockObj.blockFormObj.formJsonArr;
+		me.btnTargetParentTag = btnTargetParentTag;
 
-		console.log( me.formJsonArr );
 		// if ( formDivSecTag.attr( 'data-fields') != undefined )
-		if ( me.formJsonArr != undefined )
+		if ( me.blockObj.blockFormObj && blockObj.blockFormObj.formJsonArr )
 		{
-			me.handleSequenceIncrCommits( formDivSecTag );
+			me.handleSequenceIncrCommits( formDivSecTag, blockObj.blockFormObj.formJsonArr );
 		}
 
 		var dataPass = {};
@@ -52,6 +50,8 @@ function Action( cwsRenderObj, blockObj )
 
 	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag, blockPassingData )
 	{		
+		me.btnTargetParentTag = me.blockObj.parentTag; 
+
 		var dataPass = {};
 
 		if ( !me.btnClickedAlready( btnTag ) )
@@ -123,7 +123,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var currBlockId = blockDivTag.attr( 'blockId' );
 	
-					me.pageDivTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+					me.btnTargetParentTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
 	
 					afterActionFunc( true );
 				}
@@ -131,9 +131,10 @@ function Action( cwsRenderObj, blockObj )
 				{
 					if( clickActionJson.closeLevel !== undefined )
 					{
+						// Probably not used...
 						var closeLevel = Util.getNum( clickActionJson.closeLevel );
 	
-						var divBlockTotal = me.pageDivTag.find( 'div.block:visible' ).length;
+						var divBlockTotal = me.btnTargetParentTag.find( 'div.block:visible' ).length;
 	
 						var currBlock = blockDivTag;
 	
@@ -152,7 +153,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else if( clickActionJson.blockId != undefined )
 					{
-						me.pageDivTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
+						me.btnTargetParentTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 					}
 	
 					afterActionFunc( true );
@@ -166,23 +167,23 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "openBlock" )
 				{
-					if ( clickActionJson.blockId !== undefined )
+					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
+
+					if ( blockJson )
 					{
-						var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
-	
 						// 'blockPassingData' exists is called from 'processWSResult' actions
 						if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
 						blockPassingData.showCase = clickActionJson.showCase;
 						blockPassingData.hideCase = clickActionJson.hideCase;
-	
-						// Hide block if action is doing 'openBlock'
-						// QUESTION: WHY DO THIS??
-						//me.blockObj.hideBlock();
-	
-						// QUESITON: WHY USE { 'notClear': true }  <--- ??
-						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockObj.parentTag, blockPassingData, undefined, clickActionJson );	
+
+						// IF THE CURRENT BLOCK TYPE IS MAIN TAB, (and tab button is executing this)
+						// set the target div tag as tab content rather than block parent tag..
+						//var targetDivTag = ( me.blockObj.blockType === 'mainTab' ) ? '': me.blockObj.parentTag;
+
+						// REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
+						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
 						newBlockObj.render();
-	
+
 						if ( clickActionJson.payloadConfig )
 						{
 							// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
@@ -210,8 +211,8 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "filledData" )
 				{
-					var dataFromDivTag =  me.pageDivTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
-					var dataToDivTag =  me.pageDivTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
+					var dataFromDivTag = me.btnTargetParentTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
+					var dataToDivTag = me.btnTargetParentTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
 					var dataItems = clickActionJson.dataItems;
 	
 					for ( var i = 0; i < dataItems.length; i++ )
@@ -497,10 +498,9 @@ function Action( cwsRenderObj, blockObj )
 
 	// ========================================================
 	
-	me.handleSequenceIncrCommits = function( formDivSecTag )
+	me.handleSequenceIncrCommits = function( formDivSecTag, jData )
 	{
 		// var jData = JSON.parse( unescape( formDivSecTag.attr( 'data-fields') ) );
-		var jData = me.formJsonArr;
 		var pConf = FormUtil.block_payloadConfig;
 
 		for( var i = 0; i < jData.length; i++ )

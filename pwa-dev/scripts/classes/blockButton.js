@@ -27,17 +27,18 @@ function BlockButton( cwsRenderObj, blockObj )
 
 	me.render = function( buttonsJson, blockTag, passedData )
 	{
-
 		var btnTabsUlTag;
 
 		if ( buttonsJson !== undefined )
 		{
+			var targetTag;
 
 			// STEP 1. IF 'MAIN TAB' MODE, RENDER ALL THE TABS AND CONTENTS (AND ANCHOR TABS AS WELL)
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
 			{
 				var btnTabsContainerTag = $( me.divTabsContainer );
 				blockTag.append( btnTabsContainerTag );
+				targetTag = btnTabsContainerTag;
 	
 				var btnContentContainerTag = $( me.divTabsTargetContainer );
 				blockTag.append( btnContentContainerTag );
@@ -64,7 +65,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					dvTabContentTag.attr( 'rel', buttonsJson[ i ] );
 					spTabTextTag.attr( 'rel', buttonsJson[ i ] );
 
-					dvContentTag.attr( 'id', buttonsJson[ i ] );
+					dvContentTag.attr( 'tabButtonId', buttonsJson[ i ] );
 					
 					btnTabsUlTag.append( liTabTag );
 					liTabTag.append( dvTabContentTag );
@@ -95,18 +96,13 @@ function BlockButton( cwsRenderObj, blockObj )
 						}
 
 						btnTabsUlTag.find( 'li.primary[rel=' + buttonsJson[ i ] + ']' ).append( ulTabTag );
-
 					}
-
-
 				}
-
-
 			}
 			else //if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 			{
 				// Main Content Part
-				btnTabsContainerTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
+				targetTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
 			}
 
 			// TRAN : This variable 'btnArr' is not used in any where
@@ -115,20 +111,19 @@ function BlockButton( cwsRenderObj, blockObj )
 			// Main Render: block button tag generate
 			for( var i = 0; i < buttonsJson.length; i++ )
 			{
-				me.renderBlockButton( i + 1, buttonsJson[i], btnTabsContainerTag, passedData );
+				me.renderBlockButton( i + 1, buttonsJson[i], targetTag, passedData );
 			}
 
 
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
 			{
 				// Setup the tab click for opening tab content area
-				FormUtil.setUpNewUITab( btnTabsContainerTag ); //expIconTag
+				FormUtil.setUpNewUITab( targetTag ); //expIconTag
 
 				// Click on 1st/Last-Recorded tab.
 				setTimeout( function() 
 				{
-					btnTabsContainerTag.find( 'li:first' ).click();
-
+					targetTag.find( 'li:first' ).click();
 				}, 100 );
 
 			}
@@ -139,17 +134,23 @@ function BlockButton( cwsRenderObj, blockObj )
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
-	me.renderBlockButton = function( btnNo, btnData, divTag, passedData )
+	me.renderBlockButton = function( btnNo, btnId, targetTag, passedData )
 	{
-		var btnJson = FormUtil.getObjFromDefinition( btnData, ConfigManager.getConfigJson().definitionButtons );
-		var btnTag = me.generateBtnTag( btnNo, btnJson, btnData, divTag );
+		var btnJson = FormUtil.getObjFromDefinition( btnId, ConfigManager.getConfigJson().definitionButtons );
+		// For TabButtons Case, they are already generaeted with some html at this point...  Simply adding more details.
+		var btnTag = me.generateBtnTag( btnNo, btnJson, btnId, targetTag );
+		
+		// Block Button Click Setup
+		me.setUpBtnClick( btnTag, btnJson, btnId, passedData );
 
-		if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
+		if ( me.blockObj.blockType !== FormUtil.blockType_MainTab ) targetTag.append( btnTag );
+
+		/*
 		{
 			// Main Entry Tab Buttons (Tab Image Buttons)
 			btnTag.click( function() {
 
-				var tabContentTag = divTag.siblings().find( '#' + btnData );
+				var tabContentTag = targetTag.siblings().find( '#' + btnId );
 
 				me.renderBlockTabContent( tabContentTag, btnJson.onClick );	
 			});
@@ -161,6 +162,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 			divTag.append( btnTag );
 		}
+		*/
 	}
 
 	me.generateBtnTag = function( btnNo, btnJson, btnData, divTag )
@@ -238,7 +240,7 @@ function BlockButton( cwsRenderObj, blockObj )
 		return btnTag;
 	}
 
-	me.setUpBtnClick = function( btnTag, btnJson, passedData )
+	me.setUpBtnClick = function( btnTag, btnJson, btnId, passedData )
 	{
 		if ( btnJson && btnTag )
 		{
@@ -246,32 +248,41 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
-					//var blockDivTag = btnTag.closest( '.block' );
-					// TODO: 'tab_fs__container-content' <-- TEMPORARY FIX <-- WILL NOT WORK WITH ALL BLOCK MODEL, BUT ONLY TAB BASED ONES.. 
-					var blockDivTag = btnTag.closest( 'div.block' );
-					var formDivSecTag = blockDivTag.find( '.formDivSec' );
-
 					if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
 					{
 						AppModeSwitchPrompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode, cwsRenderObj );
 					}
 					else
 					{
-						// NOTE: TRAN VALIDATION
-						if( ValidationUtil.checkFormEntryTagsData( formDivSecTag ) )
-						{				
-							// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
-							//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
-							ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
+						if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
+						{
+							var blockDivTag = btnTag.closest( 'div.block' );
+							var btnTargetParentTag = me.blockObj.blockTag.find( '.tab_fs__container-content[tabButtonId="' + btnId + '"]' );
 
-							//if ( btnJson.buttonType === 'listRightImg' )
-							//{
-							//	var loadingTag = FormUtil.generateLoadingTag( btnTag );
-							//} 
+							// TEMP: NOTE: For 'MainTab image button click', 
+							//		We could have clear content on 'onClick' action list, but for now... do this as initial default action..
+							btnTargetParentTag.empty();
 
-							me.actionObj.handleClickActions( btnTag, btnJson.onClick, blockDivTag, formDivSecTag, passedData );
-						}
-					}
+							me.actionObj.handleClickActions( btnTag, btnJson.onClick, btnTargetParentTag, blockDivTag, undefined, passedData );
+						}	
+						else
+						{
+							//var blockDivTag = btnTag.closest( '.block' );
+							// TODO: 'tab_fs__container-content' <-- TEMPORARY FIX <-- WILL NOT WORK WITH ALL BLOCK MODEL, BUT ONLY TAB BASED ONES.. 
+							var blockDivTag = btnTag.closest( 'div.block' );
+							var formDivSecTag = blockDivTag.find( '.formDivSec' );
+	
+							// NOTE: TRAN VALIDATION
+							if( ValidationUtil.checkFormEntryTagsData( formDivSecTag ) )
+							{				
+								// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
+								//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
+								ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
+
+								me.actionObj.handleClickActions( btnTag, btnJson.onClick, me.blockObj.parentTag, blockDivTag, formDivSecTag, passedData );
+							}
+						}	
+					}			
 				});
 			}
 			else if( btnJson.onClickItem !== undefined )
@@ -325,14 +336,9 @@ function BlockButton( cwsRenderObj, blockObj )
 			&& btnJson.notSupportedMode[ appMode.toLowerCase() ] );
 	}
 
+	/*
 	me.renderBlockTabContent = function( tabContentTag, onClick )
 	{
-
-		// NOTE: For 'MainTab image button click', 
-		//		We could have clear content on 'onClick' action list, but for now... do this as initial default action..
-		tabContentTag.empty();
-
-
 		if ( onClick && onClick.length > 0 )
 		{
 			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, ConfigManager.getConfigJson().definitionActions );
@@ -359,6 +365,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			}
 		}
 	}
+	*/
 
 	me.getActionCases = function( objClick )
 	{

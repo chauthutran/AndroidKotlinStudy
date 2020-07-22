@@ -13,6 +13,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 	me.blockUid = Util.generateTimedUid();  //<-- Can generate timed unique id..
 	me.parentTag = parentTag;
+
 	me.passedData = passedData;
 	me.options = options;  // Not used much for now anymore..
 	me.actionJson = actionJson; // if block were created from 'action', the clickActionJson data(config) passed.  Use it when rendering
@@ -52,7 +53,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 
 		if ( me.blockDefJson )
-		{
+		{					
 			// Render Form
 			if ( me.blockDefJson.form ) 
 			{
@@ -60,7 +61,6 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
 				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
 			}
-
 
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
 			if ( me.blockDefJson.list === 'redeemList' || me.blockDefJson.list === 'activityList' )
@@ -88,7 +88,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			{
 				me.blockMsgObj = new BlockMsg( me.cwsRenderObj, me );
 				me.blockMsgObj.render( me.blockDefJson.message, me.blockTag, me.passedData );
-			}
+			}			
 		}
 
 		me.cwsRenderObj.langTermObj.translatePage();

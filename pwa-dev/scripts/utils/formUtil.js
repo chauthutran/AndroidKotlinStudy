@@ -49,13 +49,20 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 {
 	var objJson = def;  // default is the passed in object/name
 
-	if ( def !== undefined && definitions !== undefined )
+	try
 	{
-		if ( typeof def === 'string' )
+		if ( def && definitions )
 		{
-			// get object from definition
-			objJson = definitions[ def ];
-		}
+			if ( typeof def === 'string' )
+			{
+				// get object from definition
+				objJson = definitions[ def ];
+			}
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
 	}
 
 	return objJson;
@@ -341,6 +348,8 @@ FormUtil.showScreenStackOrder = function( parent )
 
 }
 
+
+// THIS IS USED ON LOGIN - ALSO NEED TO BE CHANGED LIKE 'setUpNewUITab'
 FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 {
 
@@ -427,10 +436,9 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 
 FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 {	
-
+	// tag at here is 'blockTag' in mainTab.  li is tab buttons.
 	tag.find( 'li' ).on( 'click', function( e)
 	{
-
 		e.stopPropagation();
 
 		var Primary = $( this ).hasClass( 'primary' );
@@ -453,12 +461,13 @@ FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
-			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).each( function( index, element ){
-				$( element ).hide();
-			});
+			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).hide();
+			//.each( function( index, element ){
+			//	$( element ).hide();
+			//});
 
 			var tab_select = $( this ).attr( 'rel' );
-			var activeTab = tag.siblings( '.tab_fs__container' ).find( "#" + tab_select );
+			var activeTab = tag.siblings( '.tab_fs__container' ).find( '.tab_fs__container-content[tabButtonId="' + tab_select + '"]' );
 
 			if ( Primary )
 			{
@@ -478,11 +487,10 @@ FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
 
 		}
 
-		e.stopPropagation();
-
+		//e.stopPropagation();
 	});
-
 };
+
 
 FormUtil.orientation = function() {
 
