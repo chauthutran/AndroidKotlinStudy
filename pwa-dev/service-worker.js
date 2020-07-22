@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "15b80444d050fb85f4d413f2260b274e"
+    "revision": "bd4865d63f299fc97329e5ddd30c7e7c"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1505,7 +1505,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/util2.js",
-    "revision": "0b0e3533d8dbf5629c6132d1cb2dbe3c"
+    "revision": "9e89a112754eb9d6b88ed2225349b2b0"
   },
   {
     "url": "scripts/utils/utilBack.js",

@@ -81,13 +81,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				ValidationUtil.setUp_Events( formTag );
 	
 				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
+				//NOTE (2020/07/22): added sort logic to underlying calculationEval so that 'complex' formulas run last
 				setTimeout( function(){
 					me.evalFormInputFunctions( formTag );
 				}, 500 );
 	
 				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
-				formDivSecTag.find(".dataValue:not(:empty)").change();
-		
+				formDivSecTag.find('.dataValue:not(:empty)').change(); // * BUG > only highlights SELECT controls (ignores inputs): https://stackoverflow.com/questions/8639282/notempty-css-selector-is-not-working
+
 			});
 		}
 	}
@@ -1036,8 +1037,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		}
 
-		// how do we sort by retArr.dependencies.length ?
-		//Util.sortByKey( retArr, 'dependencies' );
+		//Util.sortByKey( retArr, 'dependencies' ); // how do we sort by retArr.dependencies.length ?
 		retArr.sort( function( a, b ) {
 			return ( a.dependencies.length < b.dependencies.length ) ? -1 : ( a.dependencies.length > b.dependencies.length ) ? 1 : 0;
 		});
@@ -1054,11 +1054,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			return returnFields;
 		}
 
-		// accepts formula, e.g. "##{generatePattern(form:walkIn_firstName[LEFT:3]+form:walkIn_motherName[LEFT:3]+form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
+		// accepts formula, e.g. "##{generatePattern(form:walkIn_firstName[LEFT:3]-form:walkIn_motherName[LEFT:3]-form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
 		// returns array containing [ "walkIn_firstName", "walkIn_motherName", "walkIn_birthDistrict", "walkIn_birthOrder" ]
 
 		var sourceFieldsArr = evalFormula.split( 'form:' );
-		var separatorChars = '[|,|)|+|-| '; //do not change order
+		var separatorChars = '[|,|)|+|-|/| '; //do not change order
 		var separatorArr = separatorChars.split( '|' );
 
 		for( var i = 1; i < sourceFieldsArr.length; i++ ) // from 1 not 0, left side (0) is to be ignored (usually contains reserved '$$function{' part )
@@ -1099,7 +1099,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// 3. only update those controls affected by currentControl value change
 
 		
-		var jData = me.formJsonArr;
+		//var jData = me.formJsonArr;
+		var evalFunctionsToProcess = me.getEvalFormulas();
+		var affectedControls;
 
 		// only focus on changing control's value (cascade calculatedValue)
 		if ( thisTag )
@@ -1107,29 +1109,27 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			/*var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
 				return field.type === 'calculatedValue';
 			});*/
-			var evalFunctionsToProcess = me.getEvalFormulas();
-
-			var affectedControls = evalFunctionsToProcess.filter( function( field ){
+			affectedControls = evalFunctionsToProcess.filter( function( field ){
 				return field.dependencies.includes( thisTag.attr( 'name' ) );
 			} );
-
-			for( var i = 0; i < affectedControls.length; i++ )
-			{
-				var inputVal = thisTag.val();
-				var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
-
-				FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula );
-			}
-
 		}
 		else
 		{
-			var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
+			affectedControls = evalFunctionsToProcess.filter( function( field ){
 				return field.type === 'defaultValue';
 			});
 		}
 
-		if ( me.formJsonArr != undefined )
+		for( var i = 0; i < affectedControls.length; i++ )
+		{
+			console.log( affectedControls[ i ].name + ': ' + affectedControls[ i ].formula );
+			//var inputVal = thisTag.val();
+			var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
+
+			FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula );
+		}
+
+		/*if ( me.formJsonArr != undefined )
 		{
 			var jData = me.formJsonArr;
 			var pConf = FormUtil.block_payloadConfig;
@@ -1175,7 +1175,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			}
 
-		}
+		}*/
+
 	};
 
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
@@ -1185,7 +1186,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag, entryTag ); //.parent()
+				me.evalFormInputFunctions( formDivSecTag, $( this ) ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}

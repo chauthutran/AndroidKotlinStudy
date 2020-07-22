@@ -81,7 +81,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( 'form:' ) >= 0 )
 			{
-				returnPart = Util2.getFormInputValuePattern( tagTarget, arrPattern[ i ] );
+				returnPart = Util2.getFormInputValuePattern( tagTarget, arrPattern[ i ], patternSeparator );
 			}
 			else
 			{
@@ -585,13 +585,13 @@ Util2.getAgeValueFromPattern = function( tagTarget, pattern )
 };
 
 
-Util2.getFormInputValuePattern = function( tagTarget, formInputPattern )
+Util2.getFormInputValuePattern = function( tagTarget, formInputPattern, patternSeparator )
 {
-	var formTarg = tagTarget.closest( 'div.formDivSec' );
+	var formTarg = tagTarget.closest( 'form' ); //div.formDivSec
 	var arrPattern;
 	var ret = '';
 
-	arrPattern = formInputPattern.split( '+' );
+	arrPattern = formInputPattern.split( patternSeparator ); //'+'
 
 	for (var i = 0; i < arrPattern.length; i++)
 	{
