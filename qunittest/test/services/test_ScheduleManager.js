@@ -28,6 +28,14 @@ QUnit.test('Test ScheduleManager - stopSchedules_AfterLogOut', function( assert 
 
 QUnit.test('Test ScheduleManager - schedule_serverStatus_Check', function( assert ){
 
+     var statusInfo = {
+        "networkConn" : {
+            "online_Stable" : true
+        }
+    } 
+    ConnManagerNew.statusInfo = statusInfo;
+    // ConnManagerNew.statusInfo.networkConn.online_Stable = true;
+    
     ScheduleManager.schedule_serverStatus_Check( true );
     assert.equal( true, true, "schedule_serverStatus_Check without NotRunRightAway runs successfully !!!" );  
 

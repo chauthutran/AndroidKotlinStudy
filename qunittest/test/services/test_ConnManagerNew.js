@@ -3,7 +3,17 @@
 QUnit.test('Test ConnManagerNew - appStartUp_SetStatus and changeNetworkConnStableStatus', function( assert ){
     
     var cwsRenderObj = new cwsRender();
+
     var modeOnline = navigator.onLine;
+    var statusInfo = {
+        "networkConn" : {
+            "online_Stable" : modeOnline,
+            "online_Current" : true
+        }
+    } 
+
+    
+    ConnManagerNew.statusInfo = statusInfo;
     ConnManagerNew.appStartUp_SetStatus( cwsRenderObj );
 
     assert.equal( ConnManagerNew._cwsRenderObj != undefined, true, "cwsRenderObj is set up successfully !!!" );
@@ -26,7 +36,17 @@ QUnit.test('Test ConnManagerNew - updateNetworkConnStatus', function( assert ){
 QUnit.asyncTest('Test ConnManagerNew - checkNSet_ServerAvailable', function( assert ){
 
     expect(1);
-    ConnManagerNew.statusInfo.networkConn.online_Stable = true;
+
+    var statusInfo = {
+        "manual_Offline" : {
+            "enabled" : true
+        },
+        "serverAvailable" : true,
+        "networkConn" : {
+            "online_Stable" : true
+        }
+    };
+    ConnManagerNew.statusInfo = statusInfo;
 
     ConnManagerNew.checkNSet_ServerAvailable( function(){
         assert.equal( 1, 1, "checkNSet_ServerAvailable runs successfully !!!" );    
@@ -139,6 +159,18 @@ QUnit.test('Test ConnManagerNew - cloudConnStatusClickSetup', function( assert )
 
 QUnit.test('Test ConnManagerNew - setManualAppModeSwitch', function( assert ){
   
+    var modeOnline = navigator.onLine;
+    var statusInfo = {
+        "manual_Offline" : {
+            "enabled" : true
+        },
+        "networkConn" : {
+            "online_Stable" : modeOnline,
+            "online_Current" : true
+        }
+    }
+    ConnManagerNew.statusInfo = statusInfo;
+
     ConnManagerNew.statusInfo.appMode = ConnManagerNew.OFFLINE;
     ConnManagerNew.setManualAppModeSwitch( ConnManagerNew.OFFLINE, 10 );
     assert.equal( true, true, "setManualAppModeSwitch - Offline runs successfully !!!" );  

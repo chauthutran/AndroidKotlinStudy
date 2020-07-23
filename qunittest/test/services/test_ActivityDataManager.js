@@ -40,19 +40,20 @@ QUnit.asyncTest('Test ActivityDataManager - createNewPayloadActivity', function(
 });
 
 
-QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', function( assert ){
+// QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', function( assert ){
     
-    var activityJson = {
-        "processing" : {
-            "searchValues" : []
-        }
-    }
+//     var _ver = '1.2.1-rc.2';
+//     var activityJson = {
+//         "processing" : {
+//             "searchValues" : []
+//         }
+//     }
 
-    var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson );
+//     var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson );
 
-    assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfully !!!" );
+//     assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfully !!!" );
 
-});
+// });
 
 
 QUnit.test('Test ActivityDataManager - createProcessingInfo_Success', function( assert ){
