@@ -602,48 +602,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// For checkbox items
-
-	me.createCheckboxItemTagsNEW = function( divInputFieldTag, formItemJson, onDialog )
-	{
-		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
-		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
-		var displayTag = divInputFieldTag.find(".displayValue");
-
-		// For TRUE/FALSE case without options defination
-		if ( optionList === undefined )
-		{
-			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
-
-			var optionInputTag = optionDivTag.find( 'input' );
-			optionInputTag.attr( 'id', "opt_" + formItemJson.id );
-			optionInputTag.attr( 'name', formItemJson.id );
-
-
-			optionDivTag.find("label").attr("for", "opt_" + formItemJson.id );
-
-			optionDivListTag.append( optionDivTag ); 
-
-			me.setupEvents_SingleCheckBoxItemTags( divInputFieldTag, optionDivTag );
-		}
-		else // Create multiple items
-		{
-			for ( var i = 0; i < optionList.length; i++ )
-			{
-				var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
-
-				me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
-
-				optionDivListTag.append( optionDivTag );
-
-				me.setupEvents_RadioItemTags( divInputFieldTag, optionDivTag.find( 'input' ) );
-
-				if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
-			}
-		}
-
-	}
-
 	me.createCheckboxItemTags = function( divInputFieldTag, formItemJson, onDialog )
 	{
 		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
@@ -685,8 +643,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				optionDivListTag.append( optionDivTag );
 
 				me.setupEvents_CheckBoxItemsTags( divInputFieldTag, optionDivTag.find("input"), onDialog );
-
-				//if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
 			}
 		}
 
@@ -1083,7 +1039,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	me.evalFormInputFunctions = function( formDivSecTag, thisTag )
+	me.evalFormInputFunctions = function( formDivSecTag, thisTag, dispatchChangeEvent )
 	{
 		// 1. get all evalFunctions (using calculatedValue / defaultValue)
 		// 2. determine which evalFunctions + controls have reference to thisTag control
@@ -1113,11 +1069,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		for( var i = 0; i < affectedControls.length; i++ )
 		{
-			console.log( affectedControls[ i ].name + ': ' + affectedControls[ i ].formula );
-
 			var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
 
-			FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula );
+			FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula, dispatchChangeEvent );
 		}
 
 	};
@@ -1129,7 +1083,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag, $( this ) ); //.parent()
+				me.evalFormInputFunctions( formDivSecTag, $( this ), true ); //.parent()
 				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
 			});
 		}

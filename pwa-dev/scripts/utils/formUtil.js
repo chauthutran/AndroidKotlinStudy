@@ -617,11 +617,14 @@ FormUtil.dispatchOnChangeEvent = function( targetControl )
 	}
 }
 
-FormUtil.evalReservedField = function( form, tagTarget, val )
+FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent )
 {
+	var dispatchChange = ( dispatchChangeEvent === undefined ? false : dispatchChangeEvent );
+
 	if ( val.indexOf( '$${' ) >= 0 )
 	{
 		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
+		dispatchChange = false;
 	}
 	else if ( val.indexOf( '##{' ) >= 0)
 	{
@@ -679,6 +682,7 @@ FormUtil.evalReservedField = function( form, tagTarget, val )
 		tagTarget.val( val );
 	}
 
+	if ( dispatchChange ) tagTarget.change();
 }
 
 FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
