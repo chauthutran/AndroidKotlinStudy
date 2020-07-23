@@ -33,7 +33,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/pwa.css",
-    "revision": "f837b39555f41f59b02b8c35b549949a"
+    "revision": "fd4ab1c260b18dabb26f294c8037ea84"
   },
   {
     "url": "css/qunit.css",
@@ -1213,7 +1213,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/action.js",
-    "revision": "7e85f7215f834f5d1b85c4487818edc4"
+    "revision": "9ecb7857e0087e4220ec98763fd961bb"
   },
   {
     "url": "scripts/classes/activityCard.js",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "bd4865d63f299fc97329e5ddd30c7e7c"
+    "revision": "fbf6b67ce67f76f76effd7eb792d904a"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1381,7 +1381,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/activityDataManager.js",
-    "revision": "a33b0bf61fb2a7bafc9db409810c1669"
+    "revision": "4b9fff251e107cdebdcf6266fa369870"
   },
   {
     "url": "scripts/services/appInfoManager.js",
@@ -1441,15 +1441,15 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/storage/dataManager2.js",
-    "revision": "b4fecac01677ce26f072e30125c1fe9b"
+    "revision": "5c6ac5612645f58cfc3a3e3a0fef17fd"
   },
   {
     "url": "scripts/services/storage/localStgMng.js",
-    "revision": "cc3ce34cd44e877f1ac5d8c36af9a489"
+    "revision": "ddd06df9ab3038f0abc7e904bbc410f8"
   },
   {
     "url": "scripts/services/storage/storageMng.js",
-    "revision": "d1d31677e1a06854a0e4e02f6163ea02"
+    "revision": "c1127a0f16cfc27c4039f8cfb5976d7c"
   },
   {
     "url": "scripts/services/swManager.js",
@@ -1473,7 +1473,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "811578611b8117b405b8917d305c9009"
+    "revision": "2564006911256e03c7869f4e236d62c0"
   },
   {
     "url": "scripts/utils/inputUtil.js",
