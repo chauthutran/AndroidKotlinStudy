@@ -725,7 +725,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             sheetFull.html( $( Templates.activityCardFullScreen ) );
 
             // create tab click events
-            FormUtil.setUpNewUITab( sheetFull.find( '.tab_fs' ) ); 
+            FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
         
             // ADD TEST/DUMMY VALUE
             sheetFull.find( '.activity' ).attr( 'itemid', activityId )

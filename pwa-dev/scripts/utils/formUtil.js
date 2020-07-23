@@ -434,7 +434,7 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 }
 
 
-FormUtil.setUpNewUITab = function( tag, targetOff, eventName )
+FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 {	
 	// tag at here is 'blockTag' in mainTab.  li is tab buttons.
 	tag.find( 'li' ).on( 'click', function( e)

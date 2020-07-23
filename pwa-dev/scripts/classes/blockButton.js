@@ -8,6 +8,7 @@ function BlockButton( cwsRenderObj, blockObj )
 	me.blockObj = blockObj;
 	me.actionObj;
 
+	// Tabs Related HTMLs
 	me.divTabsContainer = ` <div class="tab_fs" /> `;
 	me.divTabsTargetContainer = ` <div class="tab_fs__container" /> `;
 	me.ulTabsHead = ` <ul class="tab_fs__head" /> `;
@@ -23,149 +24,141 @@ function BlockButton( cwsRenderObj, blockObj )
 
 	me.initialize = function() {
 		me.actionObj = new Action( me.cwsRenderObj, me.blockObj );
-	}
+	};
 
-	me.render = function( buttonsJson, blockTag, passedData )
+	me.render = function( buttonsId, blockTag, passedData )
 	{
-		var btnTabsUlTag;
-
-		if ( buttonsJson !== undefined )
-		{
-			var targetTag;
-
-			// STEP 1. IF 'MAIN TAB' MODE, RENDER ALL THE TABS AND CONTENTS (AND ANCHOR TABS AS WELL)
+		if ( buttonsId )
+		{			
+			// 'MainTab' type block - tab buttons   VS.   Buttons inside the block
 			if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
 			{
-				var btnTabsContainerTag = $( me.divTabsContainer );
-				blockTag.append( btnTabsContainerTag );
-				targetTag = btnTabsContainerTag;
+				// STEP 1. MainTab case, blockDivTag has 2 main sections: 1. 
+				var tabButtonsDivTag = me.createTabsBtnNContentTags( buttonsId, blockTag );
 	
-				var btnContentContainerTag = $( me.divTabsTargetContainer );
-				blockTag.append( btnContentContainerTag );
 
-				// Main Tab Part
-				btnTabsUlTag = $( me.ulTabsHead );
-				btnTabsContainerTag.append( btnTabsUlTag );
-
-				var expIconTag = $( me.divHeadIconExp );
-				btnTabsContainerTag.append( expIconTag );
-
-				btnTabsUlTag.css( '--tabs', ( buttonsJson.length > 0 ) ? buttonsJson.length : 1 );
-
-				// SETUP EMPTY PLACE HOLDERS FOR TABS + TAB-CONTENT (pregenerated)
-				for( var i = 0; i < buttonsJson.length; i++ )
+				// STEP 2. Main Render: block button tag generate
+				for( var i = 0; i < buttonsId.length; i++ )
 				{
-					// MAIN DISPLAY TAB
-					var liTabTag = $( '<li class="primary" />' );
-					var dvTabContentTag = $( me.divHeadIcon );
-					var spTabTextTag = $( me.divHeadTextSpan );
-					var dvContentTag = $( me.divTabsTargetElement );
-
-					liTabTag.attr( 'rel', buttonsJson[ i ] );
-					dvTabContentTag.attr( 'rel', buttonsJson[ i ] );
-					spTabTextTag.attr( 'rel', buttonsJson[ i ] );
-
-					dvContentTag.attr( 'tabButtonId', buttonsJson[ i ] );
-					
-					btnTabsUlTag.append( liTabTag );
-					liTabTag.append( dvTabContentTag );
-					liTabTag.append( spTabTextTag );
-					btnContentContainerTag.append( dvContentTag );
-
-					if ( btnTabsUlTag )
-					{
-						// SECONDARY DISPLAY TAB (hidden, but shown for small screen layout)
-						let ulTabTag = $( me.ulTab2ndary );
-		
-						for( var a = 0; a < buttonsJson.length; a++ )
-						{
-							if ( a !== i )
-							{
-								var li2ndaryTabTag = $( me.liTab2ndary );
-								var dv2ndaryTabContentTag = $( me.divHeadIcon );
-								var sp2ndaryTabTextTag = $( me.divHeadTextSpan );
-		
-								li2ndaryTabTag.attr( 'rel', buttonsJson[ a ] );
-								dv2ndaryTabContentTag.attr( 'rel', buttonsJson[ a ] );
-								sp2ndaryTabTextTag.attr( 'rel', buttonsJson[ a ] );
-
-								li2ndaryTabTag.append( dv2ndaryTabContentTag );
-								li2ndaryTabTag.append( sp2ndaryTabTextTag );
-								ulTabTag.append( li2ndaryTabTag );
-							}
-						}
-
-						btnTabsUlTag.find( 'li.primary[rel=' + buttonsJson[ i ] + ']' ).append( ulTabTag );
-					}
+					var btnId = buttonsId[ i ];
+					me.renderBlockButton( btnId, tabButtonsDivTag, passedData );
+					// No need to append since it was already created on 'createTabsBtnNContentTags'
 				}
-			}
-			else //if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
-			{
-				// Main Content Part
-				targetTag = blockTag; //.find( '#' + buttonsJson[ i ] ); //#pageDiv
-			}
-
-			// TRAN : This variable 'btnArr' is not used in any where
-			// var btnArr = Util.cloneArray( buttonsJson );
-
-			// Main Render: block button tag generate
-			for( var i = 0; i < buttonsJson.length; i++ )
-			{
-				me.renderBlockButton( i + 1, buttonsJson[i], targetTag, passedData );
-			}
-
-
-			if ( me.blockObj.blockType === FormUtil.blockType_MainTab ) 
-			{
-				// Setup the tab click for opening tab content area
-				FormUtil.setUpNewUITab( targetTag ); //expIconTag
-
+	
+	
+				// STEP 3. Setup the tab click for opening tab content area
+				FormUtil.setUpEntryTabClick( tabButtonsDivTag ); //expIconTag
+	
 				// Click on 1st/Last-Recorded tab.
 				setTimeout( function() 
 				{
-					targetTag.find( 'li:first' ).click();
+					tabButtonsDivTag.find( 'li:first' ).click();
 				}, 100 );
-
+				
 			}
-
+			else
+			{
+				// STEP 2. Main Render: block button tag generate
+				for( var i = 0; i < buttonsId.length; i++ )
+				{
+					var btnId = buttonsId[ i ];
+					var btnTag = me.renderBlockButton( btnId, blockTag, passedData );
+					blockTag.append( btnTag );
+				}
+			}
 		}
-	}
+	};
+
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
-	me.renderBlockButton = function( btnNo, btnId, targetTag, passedData )
+	me.createTabsBtnNContentTags = function( buttonsId, blockTag )
 	{
+		// Tab Button div section & Tab Content div section create
+		var btnTabsContainerTag = $( me.divTabsContainer );
+		var btnContentContainerTag = $( me.divTabsTargetContainer );
+
+		blockTag.append( btnTabsContainerTag );
+		blockTag.append( btnContentContainerTag );
+
+
+		// Main Tab Part
+		var btnTabsUlTag = $( me.ulTabsHead );
+		btnTabsContainerTag.append( btnTabsUlTag );
+
+		var expIconTag = $( me.divHeadIconExp );
+		btnTabsContainerTag.append( expIconTag );
+
+		btnTabsUlTag.css( '--tabs', ( buttonsId.length > 0 ) ? buttonsId.length : 1 );
+
+		// SETUP EMPTY PLACE HOLDERS FOR TABS + TAB-CONTENT (pregenerated)
+		for( var i = 0; i < buttonsId.length; i++ )
+		{
+			// MAIN DISPLAY TAB
+			var liTabTag = $( '<li class="primary" />' );
+			var dvTabContentTag = $( me.divHeadIcon );
+			var spTabTextTag = $( me.divHeadTextSpan );
+			var dvContentTag = $( me.divTabsTargetElement );
+
+			liTabTag.attr( 'rel', buttonsId[ i ] );
+			dvTabContentTag.attr( 'rel', buttonsId[ i ] );
+			spTabTextTag.attr( 'rel', buttonsId[ i ] );
+
+			dvContentTag.attr( 'tabButtonId', buttonsId[ i ] );
+			
+			btnTabsUlTag.append( liTabTag );
+			liTabTag.append( dvTabContentTag );
+			liTabTag.append( spTabTextTag );
+			btnContentContainerTag.append( dvContentTag );
+
+			if ( btnTabsUlTag )
+			{
+				// SECONDARY DISPLAY TAB (hidden, but shown for small screen layout)
+				let ulTabTag = $( me.ulTab2ndary );
+
+				for( var a = 0; a < buttonsId.length; a++ )
+				{
+					if ( a !== i )
+					{
+						var li2ndaryTabTag = $( me.liTab2ndary );
+						var dv2ndaryTabContentTag = $( me.divHeadIcon );
+						var sp2ndaryTabTextTag = $( me.divHeadTextSpan );
+
+						li2ndaryTabTag.attr( 'rel', buttonsId[ a ] );
+						dv2ndaryTabContentTag.attr( 'rel', buttonsId[ a ] );
+						sp2ndaryTabTextTag.attr( 'rel', buttonsId[ a ] );
+
+						li2ndaryTabTag.append( dv2ndaryTabContentTag );
+						li2ndaryTabTag.append( sp2ndaryTabTextTag );
+						ulTabTag.append( li2ndaryTabTag );
+					}
+				}
+
+				btnTabsUlTag.find( 'li.primary[rel=' + buttonsId[ i ] + ']' ).append( ulTabTag );
+			}
+		}	
+		
+		return btnTabsContainerTag;
+	};
+
+
+	me.renderBlockButton = function( btnId, targetTag, passedData )
+	{
+		//var targetDivTag;  // target Div where the buttons will be added.
 		var btnJson = FormUtil.getObjFromDefinition( btnId, ConfigManager.getConfigJson().definitionButtons );
+
 		// For TabButtons Case, they are already generaeted with some html at this point...  Simply adding more details.
-		var btnTag = me.generateBtnTag( btnNo, btnJson, btnId, targetTag );
+		var btnTag = me.generateBtnTag( btnJson, btnId, targetTag );
 		
 		// Block Button Click Setup
 		me.setUpBtnClick( btnTag, btnJson, btnId, passedData );
 
-		if ( me.blockObj.blockType !== FormUtil.blockType_MainTab ) targetTag.append( btnTag );
+		return btnTag;
+	};
 
-		/*
-		{
-			// Main Entry Tab Buttons (Tab Image Buttons)
-			btnTag.click( function() {
 
-				var tabContentTag = targetTag.siblings().find( '#' + btnId );
-
-				me.renderBlockTabContent( tabContentTag, btnJson.onClick );	
-			});
-		}
-		else
-		{
-			// Block Button Click Setup
-			me.setUpBtnClick( btnTag, btnJson, passedData );
-
-			divTag.append( btnTag );
-		}
-		*/
-	}
-
-	me.generateBtnTag = function( btnNo, btnJson, btnData, divTag )
+	me.generateBtnTag = function( btnJson, btnId, divTag )
 	{
 		var btnTag;
 
@@ -181,9 +174,9 @@ function BlockButton( cwsRenderObj, blockObj )
 				// New UI Tab Button
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTab )
 				{
-					var liTabTag = divTag.find( 'li[rel=' + btnData + ']' );
-					var liDivTag = divTag.find( 'div[rel=' + btnData + ']' );
-					var liSpanTag = divTag.find( 'span[rel=' + btnData + ']' );
+					var liTabTag = divTag.find( 'li[rel=' + btnId + ']' );
+					var liDivTag = divTag.find( 'div[rel=' + btnId + ']' );
+					var liSpanTag = divTag.find( 'span[rel=' + btnId + ']' );
 
 					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
 					liSpanTag.text( btnJson.defaultLabel );
@@ -202,7 +195,7 @@ function BlockButton( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					btnTag = $( '<button ' + FormUtil.getTermAttr( btnJson ) + ' ranid="' + Util.generateRandomId() + '" class="button primary button-full_width ' + btnJson.buttonType + '" btnNo="' + btnNo + '" />' );
+					btnTag = $( '<button ' + FormUtil.getTermAttr( btnJson ) + ' ranid="' + Util.generateRandomId() + '" class="button primary button-full_width ' + btnJson.buttonType + '" />' );
 				}
 
 				var btnContainerTag = $( '<div class="button__container" />' );
@@ -216,7 +209,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			}
 			else if ( btnJson.buttonType === 'listRightImg' )
 			{
-				btnTag = $( '<img src="' + ( btnJson.img ? btnJson.img : 'images/arrow_right.svg' ) + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" btnNo="' + btnNo + '">' );
+				btnTag = $( '<img src="' + ( btnJson.img ? btnJson.img : 'images/arrow_right.svg' ) + '" style="cursor: pointer;" ranid="' + Util.generateRandomId() + '" class="btnType ' + btnJson.buttonType + '" >' );
 				btnTag.on( 'error', function (){
 					$( this).attr( 'src', 'images/arrow_right.svg' );
 					return false;
@@ -233,18 +226,19 @@ function BlockButton( cwsRenderObj, blockObj )
 
 		if ( btnTag === undefined )
 		{
-			var caseNA = ( btnData !== undefined && typeof btnData === 'string' ) ? btnData : "NA";
+			var caseNA = ( btnId !== undefined && typeof btnId === 'string' ) ? btnId : "NA";
 			btnTag = $( '<div class="btnType unknown">' + caseNA + '</div>' );
 		}
 
 		return btnTag;
-	}
+	};
+
 
 	me.setUpBtnClick = function( btnTag, btnJson, btnId, passedData )
 	{
 		if ( btnJson && btnTag )
 		{
-			if ( btnJson.onClick !== undefined )
+			if ( btnJson.onClick )
 			{
 				btnTag.click( function() 
 				{
@@ -285,7 +279,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					}			
 				});
 			}
-			else if( btnJson.onClickItem !== undefined )
+			else if( btnJson.onClickItem )
 			{
 				btnTag.click( function() 
 				{
