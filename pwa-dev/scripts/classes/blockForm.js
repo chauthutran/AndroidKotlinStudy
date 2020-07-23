@@ -526,7 +526,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		divInputFieldTag.append( hiddenTarget );
 
 		// Create Option list
-		me.createRadioItemTags( divInputFieldTag, formItemJson );
+		me.createRadioItemTags( divInputFieldTag, formItemJson, false );
 
 		return divInputFieldTag;
 	}
@@ -538,7 +538,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			
 
 		// Create Option list
-		me.createCheckboxItems( divInputFieldTag, formItemJson )
+		me.createCheckboxItemTags( divInputFieldTag, formItemJson, false )
 
 		return divInputFieldTag;
 	}
@@ -549,23 +549,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// === Supportive for INPUT fields =============
 
 	// For RADIO items
-	me.createRadioItemTags = function( divInputFieldTag, formItemJson )
-	{
-		/* 
-		<div class="radiobutton-col ">
-          <div class="radio-group horizontal">
-            <input name="group2" type="radio" id="radioName3">
-            <label for="radioName3">1. radio button
-            </label>
-          </div>
-          <div class="radio-group horizontal">
-            <input name="group2" type="radio" id="radioName4">
-            <label for="radioName4">2. radio button
-            </label>
-          </div>
-		</div>
-		*/
-		
+	me.createRadioItemTags = function( divInputFieldTag, formItemJson, onDialog )
+	{		
 		var optionDivListTag = divInputFieldTag.find(".radiobutton-col");
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
 		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
@@ -581,6 +566,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			optionDivListTag.append( optionDivTag );
 
 			me.setupEvents_RadioItemTags( divInputFieldTag, optionDivTag.find( 'input' ) );
+
+			if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
 		}
 	}
 
@@ -615,7 +602,49 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// For checkbox items
-	me.createCheckboxItems = function( divInputFieldTag, formItemJson )
+
+	me.createCheckboxItemTagsNEW = function( divInputFieldTag, formItemJson, onDialog )
+	{
+		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
+		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
+		var displayTag = divInputFieldTag.find(".displayValue");
+
+		// For TRUE/FALSE case without options defination
+		if ( optionList === undefined )
+		{
+			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
+
+			var optionInputTag = optionDivTag.find( 'input' );
+			optionInputTag.attr( 'id', "opt_" + formItemJson.id );
+			optionInputTag.attr( 'name', formItemJson.id );
+
+
+			optionDivTag.find("label").attr("for", "opt_" + formItemJson.id );
+
+			optionDivListTag.append( optionDivTag ); 
+
+			me.setupEvents_SingleCheckBoxItemTags( divInputFieldTag, optionDivTag );
+		}
+		else // Create multiple items
+		{
+			for ( var i = 0; i < optionList.length; i++ )
+			{
+				var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
+
+				me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+
+				optionDivListTag.append( optionDivTag );
+
+				me.setupEvents_RadioItemTags( divInputFieldTag, optionDivTag.find( 'input' ) );
+
+				if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
+			}
+		}
+
+	}
+
+	me.createCheckboxItemTags = function( divInputFieldTag, formItemJson, onDialog )
 	{
 		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
@@ -655,7 +684,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				optionDivListTag.append( optionDivTag );
 
-				me.setupEvents_CheckBoxItemsTags( divInputFieldTag, optionDivTag.find("input") );
+				me.setupEvents_CheckBoxItemsTags( divInputFieldTag, optionDivTag.find("input"), onDialog );
+
+				//if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
 			}
 		}
 
@@ -671,7 +702,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		});
 	}
 
-	me.setupEvents_CheckBoxItemsTags = function( divInputFieldTag, optionInputTag )
+	me.setupEvents_CheckBoxItemsTags = function( divInputFieldTag, optionInputTag, onDialog )
 	{
 		optionInputTag.change( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
@@ -682,6 +713,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				selectedValues.push( checkedItems[i].value );
 			}
 			targetInputTag.val( selectedValues.join(",") );
+			if ( ! onDialog ) FormUtil.dispatchOnChangeEvent( targetInputTag );
 		});
 	}
 
@@ -699,7 +731,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			optsContainer.addClass("radiobutton-col");
 
 			// Create Item list
-			me.createRadioItemTags( dialogForm, formItemJson );
+			me.createRadioItemTags( dialogForm, formItemJson, true );
 		}
 		else
 		{
@@ -707,7 +739,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			optsContainer.addClass("checkbox__wrapper");
 
 			// Create Item list
-			me.createCheckboxItems( dialogForm, formItemJson );
+			me.createCheckboxItemTags( dialogForm, formItemJson, true  );
 
 			// Set list of items as vertical
 			optsContainer.find(".horizontal").removeClass("horizontal");
@@ -780,7 +812,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
 			var targetDisplayTag = divInputFieldTag.find("input.displayValue");
 
-			targetDisplayTag.val( "" );
+			targetInputTag.val( "" );
 			targetDisplayTag.val( "" );
 
 			FormUtil.dispatchOnChangeEvent( targetInputTag );
@@ -1138,18 +1170,18 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addStylesForField = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( "select,input" );
+		var entryTag = divInputTag.find( ".displayValue" ); //select,input
 
 		if( formItemJson.styles !== undefined )
 		{
 			for ( var i = 0; i < formItemJson.styles.length; i++ )
 			{
 				var styleDef = formItemJson.styles[i];
-				//entryTag.css( styleDef.name, styleDef.value );
+				entryTag.css( styleDef.name, styleDef.value );
 
-				entryTag.each( function( index, element ){
+				/*entryTag.each( function( index, element ){
 					$( element ).attr( styleDef.name, styleDef.value );
-				}); 
+				});*/
 			}
 		}
 
@@ -1157,7 +1189,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addRuleForField = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( "select,input" ); 
+		var entryTag = divInputTag.find( "select,input" ); // < shouldn't his be .dataValue?
 		var regxRules = [];
 
 		if( formItemJson.rules !== undefined )
@@ -1203,7 +1235,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addDataTargets = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( "select,input" );
+		var entryTag = divInputTag.find( ".dataValue" ); // < shouldn't his be .dataValue? select,input
 
 		if( formItemJson.dataTargets !== undefined )
 		{

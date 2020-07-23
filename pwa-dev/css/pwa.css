@@ -1225,6 +1225,12 @@ div.errorMsgArrow
 }
 
 /***** YEAR  */
+.inputFieldYear {
+  width: fit-content !important;
+}
+.dialogSearch {
+  max-height: fit-content;
+}
 .modalSymbol li{list-style: none;}
 .containerSymbol .inputTrue{
   display: none;
@@ -1243,22 +1249,6 @@ div.errorMsgArrow
     z-index: 9999;
 }
 
-.modalSymbol .textSymbol{
-    color: #50555a;
-    font-size: 16px;
-    font-weight: 700;
-    font-family: "Rubik", Arial;
-    line-height: 35px;
-    padding: 10px 0px 20px 10px;
-    text-align: left;
-}
-.container--modalSymbol input{
-    flex-grow: 1;
-    border: none;
-    padding: .5em 1.25em;
-    border-radius: .5em;
-    outline: 0;
-}
 .container--optionsSymbol{
     font-family: 'Rubik', Arial;
     /*background-image: linear-gradient( #ffffff, #F5F5F5, #ffffff );*/
