@@ -184,7 +184,7 @@ function Action( cwsRenderObj, blockObj )
 						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
 						newBlockObj.render();
 
-						if ( clickActionJson.payloadConfig )
+						/*if ( clickActionJson.payloadConfig )
 						{
 							// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
 							FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
@@ -194,7 +194,7 @@ function Action( cwsRenderObj, blockObj )
 						else
 						{
 							FormUtil.block_payloadConfig = '';
-						}
+						}*/
 					}
 	
 					afterActionFunc( true );

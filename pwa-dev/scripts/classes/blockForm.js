@@ -960,47 +960,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 	};
 
-	me.evalFormInputFunctionsOLD = function( formDivSecTag )
-	{
-		if ( formDivSecTag )
-		{
-			if ( me.formJsonArr != undefined )
-			{
-				var jData = me.formJsonArr;
-				var pConf = FormUtil.block_payloadConfig;
-
-				for( var i = 0; i < jData.length; i++ )
-				{
-					if( jData[i].controlType !== "LABEL" )
-					{
-						// if ( jData[ i ].defaultValue || jData[ i ].payload )
-						var inputVal = formDivSecTag.find("[name='" + jData[ i ].id + "']").val();
-						if ( inputVal || jData[ i ].payload )
-						{
-							var EvalActionString = '';
-
-							if (inputVal ) EvalActionString = inputVal;
-
-							if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
-
-							if ( EvalActionString.length )
-							{
-								var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-								FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, EvalActionString );
-							}
-
-						}
-					}
-
-				}
-
-			}
-
-		}
-
-	};
-
 
 	me.getEvalFormulas = function()
 	{
@@ -1123,59 +1082,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		for( var i = 0; i < affectedControls.length; i++ )
 		{
 			console.log( affectedControls[ i ].name + ': ' + affectedControls[ i ].formula );
-			//var inputVal = thisTag.val();
+
 			var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
 
 			FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula );
 		}
-
-		/*if ( me.formJsonArr != undefined )
-		{
-			var jData = me.formJsonArr;
-			var pConf = FormUtil.block_payloadConfig;
-			var findName = ( thisTag ) ? thisTag.attr( 'name' ) : '';
-
-			for( var i = 0; i < jData.length; i++ )
-			{
-				var inputVal;
-				var EvalActionString = '';
-
-				if ( findName.length && findName === jData[ i ].id )
-				{
-					inputVal = thisTag.val();
-				}
-				else
-				{
-					inputVal = formDivSecTag.find("[name='" + jData[ i ].id + "']").val();
-				}
-
-				//if( jData[i].controlType !== "LABEL" )
-				if ( inputVal || jData[ i ].payload )
-				{
-					if (inputVal ) EvalActionString = inputVal;
-
-					if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].defaultValue ) EvalActionString = jData[ i ].payload[ pConf ].defaultValue;
-
-					if ( EvalActionString.length )
-					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, EvalActionString );
-					}
-
-					// GREG @Tran/@James: added "calculatedValue" but should probably be reorganized
-					if ( jData[ i ].payload && jData[ i ].payload[ pConf ] && jData[ i ].payload[ pConf ].calculatedValue )
-					{
-						var tagTarget = formDivSecTag.find( '[name="' + jData[ i ].id + '"]' );
-
-						FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, jData[ i ].payload[ pConf ].calculatedValue );
-					}
-
-				}
-
-			}
-
-		}*/
 
 	};
 
