@@ -145,7 +145,7 @@ QUnit.test('Test SyncManagerNew - hideProgressBar', function( assert ){
 
 QUnit.test('Test SyncManagerNew - syncStart', function( assert ){
     
-    SyncManagerNew.sync_Running = false;
+    SyncManagerNew.sync_Running = true;
     SyncManagerNew.syncStart();
     assert.equal( true, true, "syncStart with sync_Running as true runs successfully !!!" );
 
@@ -165,10 +165,35 @@ QUnit.test('Test SyncManagerNew - syncFinish', function( assert ){
 
 
 QUnit.test('Test SyncManagerNew - SyncMsg_Get', function( assert ){
-    SyncManagerNew.syncMsgJson = { "msgList" : [] };
+    SyncManagerNew.syncMsgJson = undefined;
+    AppInfoManager.removeData( AppInfoManager.KEY_SYNCMSG );
     var syncMsgJson = SyncManagerNew.SyncMsg_Get();
+    assert.equal( syncMsgJson.msgList.length == 0 && syncMsgJson.summaryList.length == 0, true, "SyncMsg_Get with template runs successfully !!!" );
 
-    assert.equal( syncMsgJson.msgList.length, 0, "SyncMsg_Get runs successfully !!!" );
+
+    SyncManagerNew.syncMsgJson = undefined;
+    AppInfoManager.updateSyncMsg( { "msgList": 
+        [
+            {
+                "datetime" : "2039-07-22",
+                "msg" : "Test message 1"
+            }
+        ] 
+    } );
+    var syncMsgJson = SyncManagerNew.SyncMsg_Get();
+    assert.equal( syncMsgJson.msgList.length == 1 && syncMsgJson.msgList[0].msg == "Test message 1", true, "SyncMsg_Get with undefined syncMsgJson runs successfully !!!" );
+
+
+    SyncManagerNew.syncMsgJson = { "msgList": 
+        [
+            {
+                "datetime" : "2039-07-23",
+                "msg" : "Test message 2"
+            }
+        ] 
+    };
+    var syncMsgJson = SyncManagerNew.SyncMsg_Get();
+    assert.equal( syncMsgJson.msgList.length == 1 && syncMsgJson.msgList[0].msg == "Test message 2", true, "SyncMsg_Get with defined syncMsgJson runs successfully !!!" );
 });
 
 
@@ -194,7 +219,17 @@ QUnit.test('Test SyncManagerNew - SyncMsg_Reset', function( assert ){
 
 
 QUnit.test('Test SyncManagerNew - SyncMsg_ShowBottomMsg', function( assert ){
-    
+    SyncManagerNew.syncMsgJson = { "msgList" : [
+            {
+                "datetime" : "2039-07-23",
+                "msg" : "Test message 1"
+            }
+        ],
+        "summaryList":[
+            {
+                "msg" : "Test message 2"
+            }
+        ]};
     SyncManagerNew.SyncMsg_ShowBottomMsg();
     assert.equal( true, true, "SyncMsg_ShowBottomMsg runs successfully !!!" );
 });

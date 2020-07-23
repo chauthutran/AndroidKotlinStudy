@@ -65,4 +65,3 @@ QUnit.test('Test SessionManager - checkLoginData', function( assert ){
     var valid = SessionManager.checkLoginData( loginData );
     assert.equal( valid, true, "checkLoginData runs successully !!!" );
 });
-

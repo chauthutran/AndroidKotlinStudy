@@ -54,27 +54,6 @@ QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', func
 
 });
 
-ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson )
-{
-    var payloadJson = {
-        "appVersion": ActivityDataManager.wsSubmit_AppVersionStr,
-        "payload": undefined
-    };
-
-    // 'activity' are not in 'search/capture' structure.  Change it to that structure.
-    var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
-    delete activityJson_Copy.processing;
-    
-    payloadJson.payload = {
-        'searchValues': activityJson.processing.searchValues,
-        'captureValues': activityJson_Copy
-    };
-
-    return payloadJson;
-};
-
-
-
 
 QUnit.test('Test ActivityDataManager - createProcessingInfo_Success', function( assert ){
     

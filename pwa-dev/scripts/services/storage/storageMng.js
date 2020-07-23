@@ -56,6 +56,7 @@ StorageMng.setItem = async function( storageTypeStr, key, value, callBack )
   });
 }
 
+// TRAN TODO : StorageMng.removeItem doesn't work ( using unit test to test) 
 // -- DELETE a item
 StorageMng.removeItem = async function( storageTypeStr, key, callBack )
 {

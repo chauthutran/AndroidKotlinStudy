@@ -68,10 +68,10 @@ QUnit.test('Test AppInfoManager - updateLangTerms and getLangTerms', function( a
 
 
 QUnit.test('Test AppInfoManager - updateSyncMsg and getSyncMsg', function( assert ){
-    AppInfoManager.updateSyncMsg( { "test": "testVal" } );
+    AppInfoManager.updateSyncMsg( { "msgList": [] } );
 
     var data = AppInfoManager.getSyncMsg();
-    assert.equal( data.test, "testVal", "Update and get SyncMsg successfully !!!" );
+    assert.equal( data.msgList != undefined, true, "Update and get SyncMsg successfully !!!" );
 });
 
 

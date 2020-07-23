@@ -10,6 +10,7 @@ LocalStgMng.KEY_lastDownload = "lastDownload";
 // ---------------------------------------------------
 // -- Last Download Mark Related --------------
 
+// TRAN TODO - this method is not used in any place
 LocalStgMng.lastDownload_Save = function( dateISOStr ) 
 {
 	var jsonData = { 'lastDownload': dateISOStr };
@@ -17,6 +18,7 @@ LocalStgMng.lastDownload_Save = function( dateISOStr )
 	LocalStgMng.saveJsonData( LocalStgMng.KEY_lastDownload, jsonData );
 };
 
+// TRAN TODO - this method is not used in any place
 LocalStgMng.lastDownload_Get = function() 
 {
 	var dateISOStr;

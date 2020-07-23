@@ -131,14 +131,18 @@ DataManager2.saveData_RedeemList = function( jsonData, callBack ) { };
 
 // ------------------
 
+
 // NOTE: If we use user name + fixed name, this has to be only done after login..
 //  --> Which makes sense since we also need password to descript data..
+
+// TRAN TODO - This method is not used any place and DataManager2.getData method was removed
 DataManager2.getData_ActivityList = function( callBack )
 {
 	// TODO: Need to change 'storageName_redeemList' --> 'storageName_activityList'
 	DataManager2.getData( Constants.storageName_redeemList, callBack );
 };
 
+// TRAN TODO - This method is not used any place and DataManager2.saveData method was removed
 DataManager2.saveData_ActivityList = function( jsonData, callBack )
 {
 	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
@@ -218,6 +222,7 @@ DataManager2.deleteDataByStorageType = function( storageTypeStr, secName )
 
 // =========================
 
+// TRAN TODO : this method isn't use any place
 DataManager2.getUserConfigData = function( callBack ) 
 {
 	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( err, sessionJson ){
@@ -236,6 +241,7 @@ DataManager2.getUserConfigData = function( callBack )
 	// LocalStorageDataManager2.getUserConfigData( callBack );
 }
 
+// TRAN TODO : this method isn't use any place
 DataManager2.getSessionData = function( callBack ) 
 {
 	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, callBack );
@@ -243,6 +249,8 @@ DataManager2.getSessionData = function( callBack )
 	// LocalStorageDataManager2.getSessionData( callBack );
 }
 
+
+// TRAN TODO : this method isn't use any place
 DataManager2.setSessionDataValue = function( prop, val ) 
 {
 	var storageTypeStr = StorageMng.StorageType_LocalStorage;
@@ -258,6 +266,7 @@ DataManager2.setSessionDataValue = function( prop, val )
 	// LocalStorageDataManager2.setSessionDataValue( prop, val );
 }
 
+// TRAN TODO : this method isn't use any place
 DataManager2.getSessionDataValue = function( prop, defval, callBack ) 
 {
 	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( sessionJson ){
@@ -281,6 +290,7 @@ DataManager2.getSessionDataValue = function( prop, defval, callBack )
 }
 
 
+// TRAN TODO : this method isn't use any place
 DataManager2.clearSessionStorage = function()
 {
 	DataManager2.deleteDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session );
@@ -289,12 +299,14 @@ DataManager2.clearSessionStorage = function()
 // -------------------------------------
 // ---- Supporting Methods ------------
 
+// TRAN TODO : this method isn't use any place
 DataManager2.getStorageType = function( secName )
 {
 	var storageTypeStr = ( DataManager2.protectedContainer( secName ) ) ? StorageMng.StorageType_IndexedDB : StorageMng.StorageType_LocalStorage;
 	return storageTypeStr;
 }
 
+// TRAN TODO : this method isn't use any place
 DataManager2.protectedContainer = function( secName )
 {
 	var ret = false;
@@ -334,6 +346,7 @@ DataManager2.estimateStorageUse = function( callBack )
 	}
 }
 
+// TRAN TODO : this method isn't use any place
 DataManager2.initialiseStorageEstimates = function()
 {
 	for ( var i = 0; i < DataManager2.securedContainers.length; i++ )
