@@ -17,9 +17,9 @@ QUnit.test('Test ActivityDataManager - generateActivityPayloadJson', function( a
 });
 
 
-QUnit.asyncTest('Test ActivityDataManager - createNewPayloadActivity', function( assert ){
+QUnit.test('Test ActivityDataManager - createNewPayloadActivity', function( assert ){
     
-    expect(1);
+    var done = assert.async();
 
     var formsJsonActivityPayload = {
         "payload" : {
@@ -33,27 +33,26 @@ QUnit.asyncTest('Test ActivityDataManager - createNewPayloadActivity', function(
     ActivityDataManager.createNewPayloadActivity( "www.tes_turl.com", formsJsonActivityPayload, function(){
 
         assert.equal( !jQuery.isEmptyObject( ClientDataManager._clientsStore ), true, "createNewPayloadActivity runs successfully !!!" );
-
-        QUnit.start();
+        done();
     } );
 
 });
 
 
-// QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', function( assert ){
+QUnit.test('Test ActivityDataManager - activityPayload_ConvertForWsSubmit', function( assert ){
     
-//     var _ver = '1.2.1-rc.2';
-//     var activityJson = {
-//         "processing" : {
-//             "searchValues" : []
-//         }
-//     }
+    var _ver = '1.2.1-rc.2';
+    var activityJson = {
+        "processing" : {
+            "searchValues" : []
+        }
+    }
 
-//     var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson );
+    var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson, _ver );
 
-//     assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfully !!!" );
+    assert.equal( JSON.stringify( payloadJson.payload.searchValues ) == JSON.stringify( activityJson.processing.searchValues ), true, "activityPayload_ConvertForWsSubmit runs successfully !!!" );
 
-// });
+});
 
 
 QUnit.test('Test ActivityDataManager - createProcessingInfo_Success', function( assert ){

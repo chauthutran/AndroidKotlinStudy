@@ -288,12 +288,14 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonAct
     }
 };
 
-ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson )
+ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson, _version )
 {
+    
+    if( !_version ) _version = _ver;
     // TRAN TODO : "_ver" is defined in index.html. It is hard to use the variables in index.html for unit test. 
     // We should put this one some place else is better to manager
     var payloadJson = {
-        "appVersion": _ver,  //ActivityDataManager.wsSubmit_AppVersionStr,
+        "appVersion": _version,  //ActivityDataManager.wsSubmit_AppVersionStr,
         "payload": undefined
     };
 

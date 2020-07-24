@@ -75,3 +75,8 @@ HOW TO MAKE confiiguration file ( It is already here, just note here in case you
 
     
 
+
+===============================================================================================
+WHAT ARE THE CONCEPS IN COVERAGE ?
+- A branch is where the runtime can choose whether it can take one path or another. 
+Branch coverage tracks which of those branches have been executed so you can ensure all routes are tested properly

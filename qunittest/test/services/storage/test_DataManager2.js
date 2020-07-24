@@ -1,6 +1,6 @@
 
-QUnit.asyncTest('Test DataManager2 - saveData_IDB, getData_IDB, encryptData and decriptData', function( assert ){
-    expect(1);
+QUnit.test('Test DataManager2 - saveData_IDB, getData_IDB, encryptData and decriptData', function( assert ){
+   var done = assert.async();
 
     var jsonData = {"test": "testVal"};
     var secName = "testIDB";
@@ -8,14 +8,14 @@ QUnit.asyncTest('Test DataManager2 - saveData_IDB, getData_IDB, encryptData and 
     DataManager2.saveData_IDB( secName, jsonData, function(){
         DataManager2.getData_IDB( secName, function( data ){
             assert.equal( data.test, "testVal", "Save and Get data successfully !!!" );
-            QUnit.start();
+            done();
         }) ;
     }); 
 });
 
 
-QUnit.asyncTest('Test DataManager2 - saveData_LS and getData_LS', function( assert ){
-    expect(1);
+QUnit.test('Test DataManager2 - saveData_LS and getData_LS', function( assert ){
+    var done = assert.async( 1 );
 
     var jsonData = {"test": "testVal"};
     var secName = "testLSSB";
@@ -24,8 +24,7 @@ QUnit.asyncTest('Test DataManager2 - saveData_LS and getData_LS', function( asse
         DataManager2.getData_LS( secName, function( data ){
 
             assert.equal( data.test, "testVal", "Save and Get data successfully !!!" );
-            QUnit.start();
-
+            done();
         });
     } );
     
@@ -33,8 +32,7 @@ QUnit.asyncTest('Test DataManager2 - saveData_LS and getData_LS', function( asse
 
 
 QUnit.test('Test DataManager2 - getData_RedeemList', function( assert ){
-    // var jsonData = {"test": "testVal"};
-
+   
     DataManager2.getData_RedeemList( function(){
         
     } );
@@ -54,30 +52,30 @@ QUnit.test('Test DataManager2 - saveData_RedeemList', function( assert ){
 });
 
 
-// QUnit.asyncTest('Test DataManager2 - saveData_ActivityList and getData_ActivityList', function( assert ){
-//     expect(2);
+// QUnit.test('Test DataManager2 - saveData_ActivityList and getData_ActivityList', function( assert ){
+    // var done = assert.async();
 
 //     var jsonData = {"test": "testVal"};
 
 //     DataManager2.saveData_ActivityList ( jsonData, function(){
 //         DataManager2.getData_ActivityList( function( data ){
 //             assert.equal( data.test, "testVal", "Save and Get data successfully !!!" );
-//             QUnit.start();
+//             done();
 //         }) ;
 //     });
 
 // });
 
 
-QUnit.asyncTest('Test DataManager2 - getData_ClientsStore and saveData_ClientsStore', function( assert ){
-    expect(1);
+QUnit.test('Test DataManager2 - getData_ClientsStore and saveData_ClientsStore', function( assert ){
+    var done = assert.async();
     SessionManager.sessionData.login_UserName = "test_username";
     var jsonData = {"test": "testVal"};
 
     DataManager2.saveData_ClientsStore( jsonData, function(){
         DataManager2.getData_ClientsStore( function( data ){
             assert.equal( data.test, "testVal", "Save and Get data successfully !!!" );
-            QUnit.start();
+            done();
         }) ;
     });
 
@@ -108,8 +106,8 @@ QUnit.test('Test DataManager2 - saveData_LS_Str and getData_LS_Str', function( a
 });
 
 
-QUnit.asyncTest('Test DataManager2 - deleteAllStorageData', function( assert ){
-    expect(2);
+QUnit.test('Test DataManager2 - deleteAllStorageData', function( assert ){
+    var done = assert.async();
 
     var secName_IDB = "testKey_IDB";
     var jsonData_IPB = { "test_IDB" : "testVal1" };
@@ -131,7 +129,7 @@ QUnit.asyncTest('Test DataManager2 - deleteAllStorageData', function( assert ){
                         assert.equal( data_IDB, undefined, "Delete IDB data successfully !!!" );
                         assert.equal( data_LS, undefined, "Delete LS data successfully !!!" );
 
-                        QUnit.start();
+                        done();
 
                     } );
                 } );
@@ -157,14 +155,12 @@ QUnit.test('Test DataManager2 - saveData_LS_Str and getData_LS_Str', function( a
 
 
 
-QUnit.asyncTest('Test DataManager2 - estimateStorageUse', function( assert ){
-    expect(1);
+QUnit.test('Test DataManager2 - estimateStorageUse', function( assert ){
+    var done = assert.async();
     
     DataManager2.estimateStorageUse( function(){
-
         assert.equal( true, true, "estimateStorageUse runs successfully !!!" );
-        QUnit.start();
-
+        done();
     } );
     
 });

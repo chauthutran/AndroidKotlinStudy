@@ -1,7 +1,7 @@
 
-QUnit.asyncTest('Test StorageMng - setItem, getItem in localStorage', function( assert ){
+QUnit.test('Test StorageMng - setItem, getItem in localStorage', function( assert ){
 
-    expect(1);
+    var done = assert.async();
 
     var key = "testKey";
     var jsonData = { "test" : "testVal" };
@@ -11,14 +11,14 @@ QUnit.asyncTest('Test StorageMng - setItem, getItem in localStorage', function( 
         StorageMng.getItem( storageTypeStr, key, function( err, data ){
 
             assert.equal( data.test, "testVal", "setItem and getItem in localStorage successfully !!!");
-            QUnit.start();
+            done();
 
             // StorageMng.removeItem( storageTypeStr, key, function(){
 
             //     StorageMng.getItem( storageTypeStr, key, function( err, data ){
 
             //         assert.equal( data, undefined, "Remove data in localStorage successfully !!!");
-            //         QUnit.start();
+            //         done();
             //     });
             // });
 
@@ -28,9 +28,9 @@ QUnit.asyncTest('Test StorageMng - setItem, getItem in localStorage', function( 
 });
 
 
-QUnit.asyncTest('Test StorageMng - setItem, getItem in IDB', function( assert ){
+QUnit.test('Test StorageMng - setItem, getItem in IDB', function( assert ){
 
-    expect(1);
+    var done = assert.async();
 
     var key = "testKey";
     var jsonData = { "test" : "testVal" };
@@ -41,14 +41,14 @@ QUnit.asyncTest('Test StorageMng - setItem, getItem in IDB', function( assert ){
         StorageMng.getItem( storageTypeStr, key, function( err, data ){
 
             assert.equal( data.test, "testVal", "setItem and getItem in localStorage successfully !!!");
-            QUnit.start();
+            done();
 
             // StorageMng.removeItem( storageTypeStr, key, function(){
 
             //     StorageMng.getItem( storageTypeStr, key, function( err, data ){
                     
             //         assert.equal( data, undefined, "Remove data in localStorage successfully !!!");
-            //         QUnit.start();
+            //         done();
             //     });
             // });
 

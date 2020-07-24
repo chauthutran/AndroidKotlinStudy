@@ -9,5 +9,7 @@
   "dependencies": {
     "workbox-build": "^4.3.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "karma": "^5.1.0"
+  }
 }

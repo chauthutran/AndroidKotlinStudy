@@ -49,8 +49,8 @@ QUnit.test('Test SyncManagerNew - syncUpItem_RecursiveProcess', function( assert
 
 
 
-QUnit.asyncTest('Test SyncManagerNew - downloadClients', function( assert ){
-    expect(1);
+QUnit.test('Test SyncManagerNew - downloadClients', function( assert ){
+    var done = assert.async();
 
     SessionManager.sessionData.login_UserName = "test_username";
     AppInfoManager.updateDownloadInfo( "2020-07-03" );
@@ -71,7 +71,7 @@ QUnit.asyncTest('Test SyncManagerNew - downloadClients', function( assert ){
     
     SyncManagerNew.downloadClients( function( ){
         assert.equal( true, true, "downloadClients runs successfully !!!" );
-        QUnit.start();
+        done();
     } ); 
 });
 
@@ -144,6 +144,13 @@ QUnit.test('Test SyncManagerNew - hideProgressBar', function( assert ){
 
 
 QUnit.test('Test SyncManagerNew - syncStart', function( assert ){
+    
+    var statusInfo = {
+        "manual_Offline" : {
+            "enabled" : true
+        }
+    }
+    ConnManagerNew.statusInfo = statusInfo;
     
     SyncManagerNew.sync_Running = true;
     SyncManagerNew.syncStart();

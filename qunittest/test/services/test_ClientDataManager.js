@@ -56,9 +56,9 @@ var clientData = {
   }]
 }
 
-QUnit.asyncTest('Test ClientDataManager - loadClientsStore_FromStorage, saveCurrent_ClientsStore and getClientItem', function( assert ){
+QUnit.test('Test ClientDataManager - loadClientsStore_FromStorage, saveCurrent_ClientsStore and getClientItem', function( assert ){
   
-  expect(2);
+  var done = assert.async();
 
   ClientDataManager._clientsStore = JSON.parse( JSON.stringify(  clientList ));
   SessionManager.sessionData.login_UserName = Db_Username;
@@ -72,7 +72,7 @@ QUnit.asyncTest('Test ClientDataManager - loadClientsStore_FromStorage, saveCurr
 
       assert.equal( clientList.list.length == 1, true, "Loaded clients successfully !!!");
 
-      QUnit.start();
+      done();
 
     });
   });
@@ -80,9 +80,10 @@ QUnit.asyncTest('Test ClientDataManager - loadClientsStore_FromStorage, saveCurr
 });
 
 
-QUnit.asyncTest('Test ClientDataManager - insertClient, removeClient and getClientByActivityId', function( assert ){
+QUnit.test('Test ClientDataManager - insertClient, removeClient and getClientByActivityId', function( assert ){
   
-  expect(3);
+  var done = assert.async();
+
   var data =  JSON.parse( JSON.stringify( clientData ) );
   ClientDataManager.insertClient( data );
 
@@ -97,33 +98,32 @@ QUnit.asyncTest('Test ClientDataManager - insertClient, removeClient and getClie
   var searched = ClientDataManager.getClientById( "id2");
   assert.equal( searched == undefined, true, "Remove client successfully !!!");
 
-
-  QUnit.start();
+  done();
 });
 
 
 
-QUnit.asyncTest('Test ClientDataManager - regenClientIndex and removeClientIndex', function( assert ){
+QUnit.test('Test ClientDataManager - regenClientIndex and removeClientIndex', function( assert ){
   
-  expect(2);
+  var done = assert.async( 2 );
+
   ClientDataManager._clientsStore = JSON.parse( JSON.stringify(  clientList ));;
   ClientDataManager.regenClientIndex();
 
   var searched = ClientDataManager.getClientById( "_id1");
   assert.equal( searched !== undefined, true, "regenClientIndex runs successfully !!!");
+  done();
 
   ClientDataManager.removeClientIndex( {"id": "id1"} );
   var searched = ClientDataManager.getClientById( "id1");
   assert.equal( searched == undefined, true, "Remove ClientIndex successfully !!!");
-
-  
-  QUnit.start();
+  done();
 });
 
 
-QUnit.asyncTest('Test ClientDataManager - createActivityPayloadClient', function( assert ){
+QUnit.test('Test ClientDataManager - createActivityPayloadClient', function( assert ){
   
-  expect(2);
+  var done = assert.async( 3 );
 
   var activityId = "activityId3";
   var clientId = "client_" + activityId;
@@ -131,22 +131,22 @@ QUnit.asyncTest('Test ClientDataManager - createActivityPayloadClient', function
 
   ClientDataManager.payloadClientNameStart = "client_";
   ClientDataManager.createActivityPayloadClient( { "id": activityId } );
+  done();
 
   var searched = ClientDataManager.getClientById( clientId );
   assert.equal( searched._id, clientId, "createActivityPayloadClient runs successfully !!!");
+  done();
 
   ClientDataManager.removeClientIndex( {"_id": clientId } );
   searched = ClientDataManager.getClientById( clientId );
   assert.equal( searched == undefined, true, "Remove ClientIndex successfully !!!");
-
-  
-  QUnit.start();
+  done();
 });
 
 
-QUnit.asyncTest('Test ClientDataManager - mergeDownloadedClients - Update cases', function( assert ){
+QUnit.test('Test ClientDataManager - mergeDownloadedClients - Update cases', function( assert ){
 
-  expect(1);
+  var done = assert.async();
 
   var data = JSON.parse( JSON.stringify( clientData ) );
   data.updated = "2020-05-18T02:12:35.170";
@@ -161,21 +161,20 @@ QUnit.asyncTest('Test ClientDataManager - mergeDownloadedClients - Update cases'
   mongoClients[0] = clientData;
 
 
-
   ClientDataManager.mergeDownloadedClients( mongoClients, { "statusRead": true, "status" : "sync", "history":[] } , function(){
     var searched = ClientDataManager.getClientItem( "id", "id2" );
     assert.equal( searched.activities[0].id == "new_activityId", true, "mergeDownloadedClients successfully !!!");
     
-    QUnit.start();
+    done();
   });
 
 });
 
 
 
-QUnit.asyncTest('Test ClientDataManager - mergeDownloadedClients  - Add new cases', function( assert ){
+QUnit.test('Test ClientDataManager - mergeDownloadedClients  - Add new cases', function( assert ){
 
-  expect(1);
+  var done = assert.async();
   ClientDataManager._clientsStore = JSON.parse( JSON.stringify( clientList ));
 
   var mongoClients = [];
@@ -185,7 +184,7 @@ QUnit.asyncTest('Test ClientDataManager - mergeDownloadedClients  - Add new case
   ClientDataManager.mergeDownloadedClients( mongoClients, { "statusRead": true, "status" : "sync", "history":[] } , function(){
     assert.equal( ClientDataManager.getClientList().length, 2, "mergeDownloadedClients successfully !!!");
     
-    QUnit.start();
+    done();
   });
 
 });
