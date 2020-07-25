@@ -22,7 +22,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // Reorganized class layout: 
     //              [UI] methods grouped together above [DATA] methods 
     
-    me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date"></div>`;
+    me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date" style="cursor: pointer;"></div>`;
     //me.template_ActivityContentTextTag = `<div class="activityContentDisplay list_three_line-text"></div>`;
 
 	// =============================================
