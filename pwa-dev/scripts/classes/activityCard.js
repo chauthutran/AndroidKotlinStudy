@@ -182,7 +182,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityJson )
     {
         var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
-        //var activityType = FormUtil.getActivityType( activityJson );
 
         divPhoneCallTag.empty();
 
@@ -375,10 +374,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
         try
         {
             var appendContent = '';
-            var activitySettings = FormUtil.getActivityType( activity );  
-            var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+
+            var activitySettings = ConfigManager.getActivityTypeConfig( activity );
+
+            // Choose to use generic display (Base/Settings) or activity display ones (if available).
             var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
-                
+            var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+
+            
             divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
         
             InfoDataManager.setINFOdata( 'activity', activity );
@@ -396,13 +399,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 for( var i = 0; i < displaySettings.length; i++ )
                 {
                     // Need 'activity', 'activityTrans'
-                    var dispSettingEvalStr = displaySettings[ i ];
-                    var displayEvalResult = "------------";
+                    var dispSettingEvalStr = displaySettings[ i ].trim();
+
+                    if ( dispSettingEvalStr )
+                    {
+                        var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
     
-                    displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
-    
-                    //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
-                    appendContent += displayEvalResult + '<br>';
+                        //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+                        appendContent += displayEvalResult + '<br>';    
+                    }    
                 }
             }
     

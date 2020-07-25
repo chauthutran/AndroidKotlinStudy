@@ -41,13 +41,11 @@ ConfigManager.defaultActivityType = {
     "previewData":[  
         "age phoneNumber",
         "voucherCode"
-    ],
-    "displaySettings": [
-        "INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName"
     ]
 };
-
-
+//   display related setting is purposefully removed.. so that real default settings..
+//   "displayBase": "Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );",
+//    "displaySettings": [ "INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName" ]
 
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
@@ -527,9 +525,6 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
     try
 	{
         activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.type, 'name' );
-
-        // Removed - if matching acitivity type config does not exists, compose activity type based on 'program'..
-        // FormUtil.getActivityTypeComposition = function( itemData )
 	}
 	catch ( errMsg )
 	{
