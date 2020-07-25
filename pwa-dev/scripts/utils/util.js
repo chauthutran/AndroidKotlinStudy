@@ -1620,6 +1620,3 @@ Util.decrypt = function (garbage,loops)
 
   // -----------------------------------------------------------------
 
-try {
-    module.exports = Util;
-} catch (error) { }

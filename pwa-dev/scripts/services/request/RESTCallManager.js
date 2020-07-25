@@ -96,7 +96,3 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     });
 };
 
-
-try {
-    module.exports = RESTCallManager;
-} catch (error) { }

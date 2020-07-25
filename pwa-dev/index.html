@@ -48,8 +48,13 @@
   <script type="text/javascript" src="scripts/libraries/d3.min.js" async></script>
   <script type="text/javascript" src="scripts/libraries/tabulate.js" async></script>
 
+  
+  <script type="text/javascript" src="scripts/services/manifestData.js"></script>
+
   <script> 
-    var _ver = '1.3.0-rc.1.22';
+  
+    var _manifestData = $.parseJSON(ManifestData.get('manifest.json'));
+    var _ver = _manifestData.version;
     var _verDate = '2020-07-22';
   </script>
 
