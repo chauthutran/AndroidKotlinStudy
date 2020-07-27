@@ -211,6 +211,8 @@ function cwsRender()
 		// 
 		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )
 		{
+			me.pageDivTag.empty();
+
 			me.resetVisibility_ViewListDiv();
 		}
 
