@@ -288,11 +288,11 @@ Templates.activityCardFullScreen = `
     </div>
 
     <div class="tab_fs__container">
-      <div class="tab_fs__container-content active sheet_preview" id="tab_previewDetails"
+      <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
         blockid="tab_previewDetails" />
-      <div class="tab_fs__container-content" id="tab_previewPayload" blockid="tab_previewPayload"
+      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload"
         style="display:none;" />
-      <div class="tab_fs__container-content" id="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
+      <div class="tab_fs__container-content" tabButtonId="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
     </div>
   </div>
 </div>

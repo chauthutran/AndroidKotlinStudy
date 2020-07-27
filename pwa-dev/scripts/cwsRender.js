@@ -206,7 +206,7 @@ function cwsRender()
 	me.renderArea = function( areaId )
 	{
 		// On each area render, clear out the pageDiv content (which represent area div)..
-		me.pageDivTag.empty();
+		//me.pageDivTag.empty();
 
 		// 
 		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )

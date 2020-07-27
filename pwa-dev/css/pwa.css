@@ -848,7 +848,7 @@ img.rotateImg {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 } 
-#tab_previewPayload, #tab_previewDetails, #tab_previewSync {
+#fullScreenPreview > .wapper_card > .card > .tab_fs__container > .tab_fs__container-content {
   height: calc(100vh - 200px);
   overflow: auto !important;
 }
