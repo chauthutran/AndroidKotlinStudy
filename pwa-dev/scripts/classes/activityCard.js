@@ -773,16 +773,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
             arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
         }
     
-        $( '#tab_previewDetails' ).html( Util2.arrayPreviewRecord( 'clientDetails:', arrDetails) ); //activityListPreviewTable
+        $( '[tabButtonId=tab_previewDetails]' ).html( Util2.arrayPreviewRecord( 'clientDetails:', arrDetails) ); //activityListPreviewTable
     
     
         //tab_previewPayload
         var jv_payload = new JSONViewer();
-        $( '#tab_previewPayload' ).append( jv_payload.getContainer() );
+        $( '[tabButtonId=tab_previewPayload]' ).append( jv_payload.getContainer() );
         jv_payload.showJSON( activityJson );
     
     
-        $("#tab_previewSync").html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
+        $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
 
         
         // Set event for "Remove" button for "Pending" client
