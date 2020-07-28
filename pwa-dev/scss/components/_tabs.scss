@@ -85,7 +85,7 @@ $active-tab :$color-p;
                 width: 24px;
                 height: 24px;
                 margin: 12px 8px;
-                /*opacity: 0.5;*/
+                /* opacity: 0.5; */
                 @include box-sizing(border-box);
             }
 
@@ -174,7 +174,7 @@ $active-tab :$color-p;
             width: 100%;
             height: auto;
             overflow: hidden;
-            padding: 4px 0 4px;
+            padding: 16px 0 4px;
         }
 
         .field {
@@ -191,7 +191,26 @@ $active-tab :$color-p;
 
             @include rwd-min(558) {
                 width: calc(50% - 8px);
+                margin: 0 4px 8px 4px!important;
 
+            }
+
+        }
+
+        .section{
+            @include p-device(240) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include l-device(320) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include rwd-min(558) {
+                width: calc(100% - 8px);
+                margin: 0 4px 0px 4px!important;
             }
 
         }
@@ -209,8 +228,7 @@ $active-tab :$color-p;
             }
 
             @include rwd-min(558) {
-                width: calc(50% - 8px);
-                margin: 0 4px 12px;
+                margin: 8px 4px 12px 4px!important;
             }
         }
     }

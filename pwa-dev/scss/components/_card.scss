@@ -32,6 +32,13 @@
             .card__content {
                 grid-area: card__content;
                 @include font-size(16px);
+                box-sizing: border-box;;
+
+                .card__row{
+                    float: left;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
             }
 
             .card__cta {

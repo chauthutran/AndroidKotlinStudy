@@ -3851,6 +3851,15 @@ textarea {
   -ms-grid-column: 2;
   grid-area: card__content;
   font-size: 1rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.list .card .card__container .card__content .card__row {
+  float: left;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .list .card .card__container .card__cta {
@@ -4080,7 +4089,7 @@ textarea {
   width: 24px;
   height: 24px;
   margin: 12px 8px;
-  /*opacity: 0.5;*/
+  /* opacity: 0.5; */
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -4201,7 +4210,7 @@ textarea {
     width: 100%;
     height: auto;
     overflow: hidden;
-    padding: 4px 0 4px;
+    padding: 16px 0 4px;
   }
 }
 
@@ -4222,6 +4231,28 @@ textarea {
 @media (min-width: 558px) {
   .tab_fs__container .tab_fs__container-content .field {
     width: calc(50% - 8px);
+    margin: 0 4px 8px 4px !important;
+  }
+}
+
+@media (orientation: portrait) and (min-width: 240px) {
+  .tab_fs__container .tab_fs__container-content .section {
+    width: 100%;
+    margin: 0 0 8px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 320px) {
+  .tab_fs__container .tab_fs__container-content .section {
+    width: 100%;
+    margin: 0 0 8px;
+  }
+}
+
+@media (min-width: 558px) {
+  .tab_fs__container .tab_fs__container-content .section {
+    width: calc(100% - 8px);
+    margin: 0 4px 0px 4px !important;
   }
 }
 
@@ -4241,8 +4272,7 @@ textarea {
 
 @media (min-width: 558px) {
   .tab_fs__container .tab_fs__container-content .button {
-    width: calc(50% - 8px);
-    margin: 0 4px 12px;
+    margin: 8px 4px 12px 4px !important;
   }
 }
 
@@ -5719,6 +5749,15 @@ textarea {
   -ms-grid-column: 2;
   grid-area: card__content;
   font-size: 1rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.wapper_card .card .card__container .card__content .card__row {
+  float: left;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .wapper_card .card .card__container .card__cta {

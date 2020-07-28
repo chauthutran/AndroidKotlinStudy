@@ -22,8 +22,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // Reorganized class layout: 
     //              [UI] methods grouped together above [DATA] methods 
     
-    me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date" style="cursor: pointer;"></div>`;
-    //me.template_ActivityContentTextTag = `<div class="activityContentDisplay list_three_line-text"></div>`;
+    //me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date" style="cursor: pointer;"></div>`;
+    me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -380,7 +380,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // Choose to use generic display (Base/Settings) or activity display ones (if available).
             var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
             var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-
             
             divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
         
@@ -389,7 +388,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
             // Display 1st line - as date
             var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay, displayBase' );
-            appendContent += displayBaseContent + '<br>';
+            if ( displayBaseContent && displayBaseContent.length && displayBaseContent.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayBaseContent ) );
 
 
             // Display 2nd lines and more
@@ -404,14 +403,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     if ( dispSettingEvalStr )
                     {
                         var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
-    
-                        //divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
-                        appendContent += displayEvalResult + '<br>';    
-                    }    
+
+                        if ( displayEvalResult && displayEvalResult.length && displayEvalResult.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+                    }
                 }
             }
     
-            divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
+            //divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
         }
         catch ( errMsg )
         {

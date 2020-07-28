@@ -45,7 +45,7 @@ self.__precacheManifest = [
   },
   {
     "url": "css/style.css",
-    "revision": "49c428e9d1e116786a2016bf60c79a8e"
+    "revision": "b6fa66519399d38c96cd470993ae8480"
   },
   {
     "url": "css/style2.css",
@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "7ebf8d5e19f1891e90fcb0f51cafdca7"
+    "revision": "d367aafe47989245049d24598bc9c800"
   },
   {
     "url": "redeemGen.html",
@@ -1217,7 +1217,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "cf4357e1fa71094bf747c1ce2fbf456c"
+    "revision": "68e0d5299fad584fb6dc5d334fe8679e"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "4cb432edf3cd704208d1abec2fdd9460"
+    "revision": "e74e7f9f6e493157985aaa700f6cb7ae"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1521,7 +1521,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scss/style.css",
-    "revision": "49c428e9d1e116786a2016bf60c79a8e"
+    "revision": "b6fa66519399d38c96cd470993ae8480"
   },
   {
     "url": "sounds/beep.mp3",
