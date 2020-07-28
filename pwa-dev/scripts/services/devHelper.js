@@ -207,6 +207,68 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
     DevHelper.INFO = INFO;
 };
 
+DevHelper.voucherCodeSearch = function( dataList, voucherCode, type )
+{
+    var foundLatestClient;
+    var latestDate;
+
+    if ( dataList && voucherCode && type )
+    {        
+        for ( var i = dataList.length - 1; i >= 0; i-- )
+        {
+            var client = dataList[i];
+
+            var activities = client.activities;
+
+            for ( var k = activities.length - 1; k >= 0; k-- )
+            { 
+                var activity = activities[k];
+
+                // Check the date 
+                var laterActivityCase = false;
+
+                if ( !latestDate ) 
+                { 
+                    latestDate = activity.date.createdOnMdbUTC;
+                    laterActivityCase = true;
+                }
+                else
+                {
+                    if ( latestDate < activity.date.createdOnMdbUTC )
+                    {
+                        latestDate = activity.date.createdOnMdbUTC;
+                        laterActivityCase = true;
+                    }
+                }
+
+
+                if ( laterActivityCase )
+                {
+                    var transList = activity.transactions;
+
+                    if ( transList ) {
+                        // Check if the client trans has matching voucher
+                        for ( var p = transList.length - 1; p >= 0; p-- )
+                        {
+                            var transItem = transList[p];
+                            if ( transItem.clientDetails 
+                                && transItem.clientDetails.voucherCode === voucherCode
+                                && transItem.type === type ) {
+        
+                                // Only one transaction would exists with this voucher
+                                // Thus, break;                                    
+                                foundLatestClient = client;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return foundLatestClient;
+};
 // =======================================
 
 // Not yet implemented
