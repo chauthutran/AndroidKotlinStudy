@@ -207,164 +207,120 @@
   <div id="pulsatingCircle" style="display:none;"></div>
 
   <!-- START > SETTINGS FORM DIV -->
-<div id="settingsFormDiv" class="sheet_full-fs" style="display: none;">
-  <div class="wapper_card">
-    <div class="sheet-title c_900">
-      <img src="images/arrow_back.svg" class="btnSettingsBack btnBack">
-      <span term="menu_settings">Settings</span>
-    </div>
-    <div class="card _tab activity" style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
-
-      <div class="field">
-        <div class="field__label"><label>Network sync</label></div>
-        <div class="field__controls">
-          <div class="field__selector">
-            <select id="settingsInfo_networkSync"></select>
-          </div>
-          <div class="field__right"></div>
-        </div>
+  <div id="settingsFormDiv" class="sheet_full-fs" style="display: none;">
+    <div class="scrim" style="display: none;"></div>
+    <div class="wapper_card">
+      <div class="sheet-title c_900">
+        <img src="images/arrow_back.svg" class="btnSettingsBack btnBack">
+        <span term="menu_settings">Settings</span>
       </div>
+      <div class="card _tab activity" style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
 
-
-      <div class="field">
-        <div class="field__label"><label term="settings_userLanguage">User language</label></div>
-        <div class="field__controls">
-          <div class="field__selector">
-            <select id="settingsInfo_langSelect"></select>
-          </div>
-          <div class="field__right"></div>
-        </div>
-      </div>
-
-
-      <div class="field">
-        <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
-            date</label></div>
-        <div class="field__controls">
-          <div class="field__left">
-            <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
-          </div>
-          <div class="field__right"></div>
-
-          
-          <div id="settingsInfo_newLangTermsDownload" >
-            <img id="rotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
-          </div>
-        
-        
-        </div>
-      </div>
-
-      <div class="field">
-        <div class="field__label"><label term="settings_theme">Theme</label></div>
-        <div class="field__controls">
-          <div class="field__selector">
-            <select id="settingsInfo_ThemeSelect">
-              <option value="theme-red">theme-red</option>
-              <option value="theme-pink">theme-pink</option>
-              <option value="theme-purple">theme-purple</option>
-              <option value="theme-deep_purple">theme-deep_purple</option>
-              <option value="theme-indigo">theme-indigo</option>
-              <option value="theme-blue">theme-blue</option>
-              <option value="theme-light_blue">theme-light_blue</option>
-              <option value="theme-cyan">theme-cyan</option>
-              <option value="theme-teal">theme-teal</option>
-              <option value="theme-green">theme-green</option>
-              <option value="theme-light_green">theme-light_green</option>
-              <option value="theme-lime">theme-lime</option>
-              <option value="theme-yellow">theme-yellow</option>
-              <option value="theme-amber">theme-amber</option>
-              <option value="theme-orange">theme-orange</option>
-              <option value="theme-deep_orange">theme-deep_orange</option>
-              <option value="theme-brown">theme-brown</option>
-              <option value="theme-gray">theme-gray</option>
-              <option value="theme-blue_gray">theme-blue_gray</option>
-            </select>
-          </div>
-          <div class="field__right"></div>
-        </div>
-      </div>
-
-      <!-- /scripts/classes/settingsApp line 89 -->
-      <div class="inputDiv settingsGroupDiv" id="resetCollapsible"
-        style="width: 97%;margin:0;border-bottom: 2px solid #F5F5F5; font-size: 0.875rem;">
-        <div class="collapsible">
-            
-      
-          <div class="" id="settingsAppRestHeader">
-            <div class="field__controls">
-              <div class="field__left"></div>
-      
-              <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
-                  fill="#333333" fill-opacity="0.87" />
-              </svg>
-      
-      
-              <input type="text" mandatory="true" placeholder="type=text" readonly value="Reset app data & configuration">
-              <img src="./images/arrow_down.svg" alt="" srcset="">
+        <div class="field">
+          <div class="field__label"><label>Network sync</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_networkSync"></select>
             </div>
             <div class="field__right"></div>
           </div>
-      
-     
-      
-      
-          <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
-            <div id="bodyCollapsible__text" term="">
-              Your configuration and App data stored in the device will be deleted. You will be asked to log in
-              again and data which is not synced to the server will be lost.
+        </div>
+
+
+        <div class="field">
+          <div class="field__label"><label term="settings_userLanguage">User language</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_langSelect"></select>
             </div>
-            <div id="buttonResetData" class="button-text alert">
-              <div class="button__container">
-                <div class="button-label">RESET</div>
-              </div>
-            </div>
-      
+            <div class="field__right"></div>
           </div>
-      
         </div>
+
+
+        <div class="field">
+          <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
+              date</label></div>
+          <div class="field__controls">
+            <div class="field__left">
+              <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
+            </div>
+            <div class="field__right"></div>
+
+            
+            <div id="settingsInfo_newLangTermsDownload" >
+              <img id="rotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
+            </div>
+          
+          
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__label"><label term="settings_theme">Theme</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_ThemeSelect">
+                <option value="theme-red">theme-red</option>
+                <option value="theme-pink">theme-pink</option>
+                <option value="theme-purple">theme-purple</option>
+                <option value="theme-deep_purple">theme-deep_purple</option>
+                <option value="theme-indigo">theme-indigo</option>
+                <option value="theme-blue">theme-blue</option>
+                <option value="theme-light_blue">theme-light_blue</option>
+                <option value="theme-cyan">theme-cyan</option>
+                <option value="theme-teal">theme-teal</option>
+                <option value="theme-green">theme-green</option>
+                <option value="theme-light_green">theme-light_green</option>
+                <option value="theme-lime">theme-lime</option>
+                <option value="theme-yellow">theme-yellow</option>
+                <option value="theme-amber">theme-amber</option>
+                <option value="theme-orange">theme-orange</option>
+                <option value="theme-deep_orange">theme-deep_orange</option>
+                <option value="theme-brown">theme-brown</option>
+                <option value="theme-gray">theme-gray</option>
+                <option value="theme-blue_gray">theme-blue_gray</option>
+              </select>
+            </div>
+            <div class="field__right"></div>
+          </div>
+        </div>
+
+        <!-- /scripts/classes/settingsApp line 89 -->
+        <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px">
+          <div class="field__label">
+            <div class="" id="settingsAppRestHeader">
+              <div class="field__controls">
+                <div class="field__left" style="padding: 16px 0;">
+                  <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z" fill="#333333" fill-opacity="0.87"></path>
+                  </svg> 
+                  <label term="" style="font-size: 1rem;padding: 4px;line-height: 29px;">Reset app data & configuration</label>
+              </div>
+              <div class="field__right"></div>
+            </div>
+
+            <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
+              <div id="bodyCollapsible__text" term="">
+                Your configuration and App data stored in the device will be deleted. You will be asked to log in
+                again and data which is not synced to the server will be lost.
+              </div>
+              <div id="buttonResetData" class="button-text alert" style="float:right;">
+                <div class="button__container">
+                  <div class="button-label" term="">RESET</div>
+                </div>
+              </div>
+        
+            </div>
+        
+          </div>
+        </div>
+
       </div>
 
-
-
-    <!-- 
-      <div class="toogle-s" style="border: 0px">
-        <div class="toogle-s__label">
-          <img src="./images/icon_text_scaling.svg" alt="" srcset="">
-          <label>Text scaling</label>
-        </div>
-        <div class="toogle-s-content">
-          <label class="toggle">
-            <input type="checkbox" class="toggle_input">
-            <div class="toggle-control"></div>
-          </label>
-        </div>
-
-
-        <div class="slidecontainer">
-          <input type="range" value="0" step="50" class="slider" id="myRange" list="tickmarks">
-          <datalist id="tickmarks">
-            <option value="0" label="Low">
-            <option value="50" label="Medium">
-            <option value="100" label="High">
-          </datalist>
-  
-          <p>Value: <span id="demo"></span></p>
-        </div>
-        
-        <p>
-          Drag your slider until you can read this confortably. Text should look at least this big after double-tapping on a paragraph.
-        </p>
-        
       </div>
-    -->
-      
-
     </div>
   </div>
-</div>
 
   <!-- END > SETTINGS FORM DIV -->
 
@@ -501,8 +457,8 @@
   <script type="text/javascript" src="scripts/constants/templates.js"></script>
   <script type="text/javascript" src="scripts/constants/configs.js"></script>
 
-  <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>
-  <script type="text/javascript" src="scripts/utils/pptManager.js"></script>
+  <!-- <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>
+  <script type="text/javascript" src="scripts/utils/pptManager.js"></script> -->
   <script type="text/javascript" src="scripts/utils/util.js"></script>
   <script type="text/javascript" src="scripts/utils/util2.js"></script>
   <script type="text/javascript" src="scripts/utils/prototypes.js"></script>

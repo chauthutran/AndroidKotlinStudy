@@ -631,10 +631,8 @@ Templates.buttonsTemplate2  = `<div class="button-text ">
 
 Templates.template_dialog = `
                 <dialog id="dialog_confirmation" style="display: block;">
-                  <div class="dialog__title"><label>Confirmation dialog</label></div>
-                  <div class="dialog__text">Competently benchmark principle-centered synergy with tactical services. Energistically
-                    target multidisciplinary relationships through premium leadership. Monotonectally network standards compliant
-                    products whereas turnkey intellectual capital. Authoritatively target multimedia based opportunities with.</div>
+                  <div class="dialog__title"><label>dialog title</label></div>
+                  <div class="dialog__text">dialog message</div>
                   <div class="dialog__action">
                     <div id="dialog_act2" class="button-text warning">
                       <div class="button__container">
@@ -681,24 +679,44 @@ Templates.Advance_Login_Buttons = `
 
   Templates.Change_User_Form = `
    <dialog id="dialog_confirmation" style="display: block;">
-      <div class="dialog__title"><label>Confirmation dialog</label></div>
-        <div class="dialog__text" term="change_user_msg">
-            Changing user will delete all data for the user, including any data not syncronized. 
-            Are you sure that you want to delete the data for user and allow new user login ?
-        </div>
-        <div class="dialog__action"><div class="button-text warning" id="accept">
-            <div class="button__container">
-              <div class="button-label" term="accept">Accept</div>
-            </div>
-          </div>
-          <div class="button-text primary c_500" id="cancel">
-            <div class="button__container">
-              <div class="button-label" term="Cancel">Cancel</div>
-            </div>
-          </div>
-        </div>
-    </dialog>`;
+    <div class="dialog__title">
+      <label>Confirmation dialog</label>
+    </div>
+    <div class="dialog__text" term="change_user_msg">
+        Changing user will delete all data for the user, including any data not syncronized. 
+        Are you sure that you want to delete the data for user and allow new user login ?
+    </div>
+    <div class="dialog__action"><div class="button-text warning" id="accept">
+      <div class="button__container">
+        <div class="button-label" term="accept">Accept</div>
+      </div>
+    </div>
+    <div class="button-text primary c_500" id="cancel">
+      <div class="button__container">
+        <div class="button-label" term="Cancel">Cancel</div>
+      </div>
+    </div>
+   </dialog>`;
 
+    Templates.settings_app_data_configuration = `
+     <dialog id="dialog_confirmation" style="display: block;">
+       <div class="dialog__title">
+        <label term="aboutInfo_Reset">Reset app data & configuration</label>
+       </div>
+       <div class="dialog__text" term="">
+          Your configuration and App data stored in the device will be deleted. Are you sure?
+       </div>
+       <div class="dialog__action"><div class="button-text warning" id="accept">
+          <div class="button__container">
+            <div class="button-label" term="accept">ACCEPT</div>
+          </div>
+       </div>
+       <div class="button-text primary c_500" id="cancel">
+          <div class="button__container">
+            <div class="button-label" term="Cancel">DECLINE</div>
+          </div>
+       </div>
+     </dialog>`;
 
 // ===================================================
 // ----- Show/Hide Bottom Messages --------

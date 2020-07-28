@@ -23,6 +23,9 @@ function settingsApp( cwsRender )
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
 
+    me.scrimTag = me.settingsFormDivTag.find('.scrim');
+    me.sheetBottomTag = $('.sheet_bottom');
+
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -102,45 +105,38 @@ function settingsApp( cwsRender )
             show = !show;
         });
 
-        //  Funcionalidad: Reset Data
-        //  La siguiente funci�n autoejecutable es toda la funcionalidad
-        //  del elemento con id "resetCollapsible". Depende de las clases
-        //  Modal e InterfaceModal, y de una instancia 
-        //  It is found in [rootPath]/scripts/utils/pptManager.js 
-        //  Los estilos de los elementos se encuentran
-        //  en [project]/css/style.css
-        //  de la l�nea 1035 a 1068
-        ( function() {
-            var sectionReset = document.getElementById('resetCollapsible')
-            $("#settingsAppRestHeader").click( function() {
-                $("#bodyCollapsible").slideToggle("fast")
-                $("#settingsAppRestHeader").toggleClass("collapsible-body--on")
-            })
-            // @GREG: ADD TRANSLATION SUPPORT HERE
-            let titleMessage="Reset app data & configuration",
-                bodyMessage="Your configuration and App data stored in the device will be deleted. "
-                questionMessage="Are you sure?",
-                btnAcceptResetData = $( '<button class="acceptButton" term="">ACCEPT</button>' ),
-                btnDeclineResetData = $( '<button class="declineButton" term="">DECLINE</button>' );
 
-            let buttons = [btnDeclineResetData[0],btnAcceptResetData[0]]
 
-            $("#buttonResetData").click(function(){
-                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
-            })
-            btnDeclineResetData.click(function(){
-                pptManager.on({parent: sectionReset, titleMessage,bodyMessage,questionMessage,buttons})
-            })
-            btnAcceptResetData.click(()=>{
+        $( '#settingsAppRestHeader' ).click( function() {
+
+            $( '#bodyCollapsible' ).slideToggle( 'fast' );
+
+            $( '#settingsAppRestHeader' ).toggleClass( 'collapsible-body--on' );
+
+        });
+
+
+        $( '#buttonResetData' ).click(function(){
+
+            me.blockPage();
+
+            me.settingsFormDivTag.append ( Templates.settings_app_data_configuration );
+            me.cwsRenderObj.langTermObj.translatePage();
+
+            $("#accept").click( function() {
+
                 AppInfoManager.removeUserInfo();
-                //if ( cacheManager.clearCacheKeys() )
-                //{
-                    
+
                 me.cwsRenderObj.reGetAppShell();
-                //}
-                pptManager.on({})
-            })
-        })()
+
+            });
+
+            $("#cancel").click( function() {
+                me.unblockPage();
+                $( '#dialog_confirmation' ).remove();
+            });
+
+        });
 
 
         var divButtonDcdVersionTag = $( 'settingsInfo_dcdVersionInner' );
@@ -1046,6 +1042,26 @@ function settingsApp( cwsRender )
         });
 
     }
+
+
+	me.blockPage = function()
+	{
+		me.scrimTag.show();
+
+		me.scrimTag.off( 'click' );
+
+		me.scrimTag.click( function(){
+			me.unblockPage();
+		} )
+	}
+
+	me.unblockPage = function()
+	{
+        me.scrimTag.hide();
+
+		$( '#dialog_confirmation' ).remove();
+	}
+
 
 
     navigator.sayswho= (function(){

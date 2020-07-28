@@ -1879,7 +1879,7 @@ select:-webkit-autofill:focus {
   height: 24px;
   margin: 0 8px 0 0;
   line-height: 56px;
-  font-weight: 600;
+  font-weight: 400;
   color: #333;
   font-size: 1.3125rem;
   box-sizing: border-box;
