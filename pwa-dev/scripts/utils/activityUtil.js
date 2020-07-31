@@ -269,7 +269,7 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
 	var inputsJson = {};
-	var inputTags = formDivSecTag.find( 'input,checkbox,select' );
+	var inputTags = formDivSecTag.find( '.dataValue' ); // < why not .dataValue? ( 'input,checkbox,select' )
 	var inputTargets = [];
 	var uniqTargs = [];
 
@@ -439,10 +439,11 @@ ActivityUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, 
 
 ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnTag, callBack )
 {
+	var dataPass = ActivityUtil.generateInputPreviewJson( formDivSecTag );
+
 	// formDefinition, 
     if ( previewPrompt === "true" )
     {
-        var dataPass = ActivityUtil.generateInputPreviewJson( formDivSecTag );
         //var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );	
 
         // TODO: Do we have to hide the formDiv Tag?
@@ -458,7 +459,7 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
 
             if ( confirmed )
             {
-                if ( callBack ) callBack( true );
+                if ( callBack ) callBack( true, dataPass );
             }
             else
             {
@@ -471,7 +472,7 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
     }
     else
     {
-        if ( callBack ) callBack( true );
+        if ( callBack ) callBack( true, dataPass );
     }
 };
 

@@ -728,8 +728,9 @@ FormUtil.getManifest = function()
 
 }
 
-FormUtil.tryEval = function( evalTry )
+FormUtil.tryEval = function( form, evalTry )
 {	
+	// do not remove parameter [form] < required for scope search, e.g. "eval{ form.find( 'name=commonRepeatingFieldNameFoundOnOtherTab]' ).val() }"
 	try {
 		return eval( evalTry )
 	}
@@ -1652,11 +1653,11 @@ FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm,
 
 
 }
-
+//REMOVE: no longer used
 FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 {
 	var formDivSecTag = blockObj.parentTag;
-	var inputTags = formDivSecTag.find( 'input,select' );
+	var inputTags = formDivSecTag.find( 'input,select' ); // << .dataValue??
 
 	inputTags.each( function()
 	{		

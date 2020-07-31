@@ -1217,7 +1217,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/activityCard.js",
-    "revision": "68e0d5299fad584fb6dc5d334fe8679e"
+    "revision": "fd947fb8866846eacdbd5f718139798f"
   },
   {
     "url": "scripts/classes/appModeSwitchPrompt.js",
@@ -1237,7 +1237,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/blockForm.js",
-    "revision": "fbf6b67ce67f76f76effd7eb792d904a"
+    "revision": "7785bb29d895481ef882824398fd212f"
   },
   {
     "url": "scripts/classes/blockList.js",
@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "0d66ac16caf5af32da2219c7831bc178"
+    "revision": "217df9ca5c67aa89473a47955216089d"
   },
   {
     "url": "scripts/services/scheduleManager.js",
@@ -1469,7 +1469,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/activityUtil.js",
-    "revision": "e1ae8581a3a719e3df1ec55bd9e9f448"
+    "revision": "31c809802fd695aa63775940c66ea38d"
   },
   {
     "url": "scripts/utils/dbStorageSelector.js",
@@ -1477,7 +1477,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "661d150a0fe5c68d5e43e70f7f014fcd"
+    "revision": "c8931e69bb7453549c71e6323ed5d75a"
   },
   {
     "url": "scripts/utils/inputUtil.js",

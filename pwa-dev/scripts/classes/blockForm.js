@@ -958,7 +958,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		for( var i = 0; i < jData.length; i++ )
 		{
 			var formFieldDef = jData[ i ];
-			// prioritize existing payloadConfig (if match found)
+
+			// 1. prioritize existing payloadConfig (if match found)
 			if ( pConf && formFieldDef.payload && formFieldDef.payload[ pConf ] && ( formFieldDef.payload[ pConf ].calculatedValue || formFieldDef.payload[ pConf ].defaultValue ) ) //pConf.length && 
 			{
 				if ( formFieldDef.payload && formFieldDef.payload[ pConf ] && formFieldDef.payload[ pConf ].calculatedValue ) 
@@ -972,14 +973,31 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			}
 			else
 			{
-				if ( formFieldDef.calculatedValue ) 
+				// 2. then prioritize 'default' payloadConfig (if present)
+				if ( formFieldDef.payload && formFieldDef.payload.default && ( formFieldDef.payload.default.calculatedValue || formFieldDef.payload.default.defaultValue ) ) //pConf.length && 
 				{
-					retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.calculatedValue ) } );
+					if ( formFieldDef.payload && formFieldDef.payload.default && formFieldDef.payload.default.calculatedValue ) 
+					{
+						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload.default.calculatedValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.calculatedValue ) } );
+					}
+					if ( formFieldDef.payload && formFieldDef.payload.default && formFieldDef.payload.default.defaultValue ) 
+					{
+						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload.default.defaultValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.defaultValue ) } );
+					}
 				}
-				if ( formFieldDef.defaultValue ) 
+				else
 				{
-					retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue ) } );
+					// 3. finally prioritize root calculatedValue/defaultValue (if present)
+					if ( formFieldDef.calculatedValue ) 
+					{
+						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.calculatedValue ) } );
+					}
+					if ( formFieldDef.defaultValue ) 
+					{
+						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue ) } );
+					}
 				}
+
 			}
 
 		}
@@ -994,18 +1012,46 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.getFieldsFromFormula = function( evalFormula )
 	{
-		var returnFields = [];
 
-		if ( evalFormula.indexOf( 'form:' ) < 0 )
+		// accepts formula, e.g. 1: "##{generatePattern(form:walkIn_firstName[LEFT:3]-form:walkIn_motherName[LEFT:3]-form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
+		// 						 2: "eval{$('[name=generateVoucher]').val() === 'NO' ? '' : $('[name=voucherCode_ipc_capture]').val()}"
+		// returns array,   e.g. 1: [ "walkIn_firstName", "walkIn_motherName", "walkIn_birthDistrict", "walkIn_birthOrder" ]
+		// 					     2: [ "generateVoucher", "voucherCode_ipc_capture" ]
+
+		var returnFields = [];
+		var formSearch = false, nameSearch = false;
+
+		formSearch = ( evalFormula.indexOf( 'form:' ) >= 0 );
+		nameSearch = ( evalFormula.indexOf( 'name=' ) >= 0 );
+
+		if ( ! formSearch && ! nameSearch ) return returnFields;
+
+		var sourceFieldsArr = [], formArr = [], nameArr = [];
+		var separatorChars = '';
+		
+		if ( formSearch ) formArr = evalFormula.split( 'form:' );
+		if ( nameSearch ) nameArr = evalFormula.split( 'name=' );
+
+		if ( formArr.length && nameArr.length )
 		{
-			return returnFields;
+			sourceFieldsArr = formArr.concat( nameArr );
+			separatorChars = '[|,|)|+|-|/| |]';
+		}
+		else
+		{
+			if ( formArr.length )
+			{
+				sourceFieldsArr = formArr;
+				separatorChars = '[|,|)|+|-|/| ';
+			}
+
+			if ( nameArr.length )
+			{
+				sourceFieldsArr = nameArr;
+				separatorChars = ']';
+			}
 		}
 
-		// accepts formula, e.g. "##{generatePattern(form:walkIn_firstName[LEFT:3]-form:walkIn_motherName[LEFT:3]-form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
-		// returns array containing [ "walkIn_firstName", "walkIn_motherName", "walkIn_birthDistrict", "walkIn_birthOrder" ]
-
-		var sourceFieldsArr = evalFormula.split( 'form:' );
-		var separatorChars = '[|,|)|+|-|/| '; //do not change order
 		var separatorArr = separatorChars.split( '|' );
 
 		for( var i = 1; i < sourceFieldsArr.length; i++ ) // from 1 not 0, left side (0) is to be ignored (usually contains reserved '$$function{' part )
@@ -1053,12 +1099,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// only focus on changing control's value (cascade calculatedValue)
 		if ( thisTag )
 		{
-			/*var evalFunctionsToProcess = me.getEvalFormulas().filter( function( field ){
-				return field.type === 'calculatedValue';
-			});*/
 			affectedControls = evalFunctionsToProcess.filter( function( field ){
-				return field.dependencies.includes( thisTag.attr( 'name' ) );
+				return field.dependencies.includes( thisTag.attr( 'name' ) ) ;
 			} );
+			/*var evalCalcFunctions = me.getEvalFormulas().filter( function( field ){
+				return field.type === 'calculatedValue';
+			});
+			if ( evalCalcFunctions ) affectedControls.concat( evalCalcFunctions );*/
 		}
 		else
 		{
@@ -1175,7 +1222,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					// all other custom attributes
 					entryTag.attr( "type", ruleJson.type );
-
 				}
 			}
 
@@ -1189,20 +1235,40 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addDataTargets = function( divInputTag, formItemJson )
 	{
-		var entryTag = divInputTag.find( ".dataValue" ); // < shouldn't his be .dataValue? select,input
+		var entryTag = divInputTag.find( '.dataValue' ); //  ( 'select,input' )
+		var pConf = me.payloadConfigSelection;
+		var dataTargets;
 
-		if( formItemJson.dataTargets !== undefined )
+		// 1. prioritize existing payloadConfig (if match found)
+		if ( pConf )
 		{
-			entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.dataTargets ) ) );
-		}
-		else
-		{
-			if( formItemJson.payload && formItemJson.payload.default && formItemJson.payload.default.dataTargets )
+			if ( formItemJson.payload && formItemJson.payload[ pConf ] && formItemJson.payload[ pConf ].dataTargets  )
 			{
-				entryTag.attr( 'dataTargets', escape( JSON.stringify( formItemJson.payload.default.dataTargets ) ) );
+				dataTargets = formItemJson.payload[ pConf ].dataTargets;
 			}
 		}
 
+		if ( ! dataTargets )
+		{
+			// 2. then prioritize 'default' payloadConfig (if present)
+			if ( formItemJson.payload && formItemJson.payload.default && formItemJson.payload.default.dataTargets )
+			{
+				dataTargets = formItemJson.payload.default.dataTargets;
+			}
+			else
+			{
+				// 3. finally prioritize root calculatedValue/defaultValue (if present)
+				if( formItemJson.dataTargets )
+				{
+					dataTargets = formItemJson.dataTargets;
+				}
+			}
+		}
+
+		if ( dataTargets )
+		{
+			entryTag.attr( 'dataTargets', escape( JSON.stringify( dataTargets ) ) );
+		}
 
 	}
 

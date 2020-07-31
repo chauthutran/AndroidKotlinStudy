@@ -766,20 +766,22 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
         var arrDetails = [];
     
+        // 1 clientDetails
         for ( var key in clientObj.clientDetails ) 
         {
             arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
         }
-    
+
         $( '[tabButtonId=tab_previewDetails]' ).html( Util2.arrayPreviewRecord( 'clientDetails:', arrDetails) ); //activityListPreviewTable
     
     
-        //tab_previewPayload
+        // 2. payload Preview
         var jv_payload = new JSONViewer();
         $( '[tabButtonId=tab_previewPayload]' ).append( jv_payload.getContainer() );
         jv_payload.showJSON( activityJson );
     
-    
+
+        // 3. sync History
         $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
 
         
