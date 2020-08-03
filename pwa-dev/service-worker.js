@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "30c2fd38ad67cda07280e2fcc701f37a"
+    "revision": "fea3da919b7cab04824a916b0ac4e63f"
   },
   {
     "url": "redeemGen.html",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "1cfd47d6b25967bc7efac60d9619a7aa"
+    "revision": "c8ccd197629b086b52e48a373f8ef433"
   },
   {
     "url": "scripts/libraries/aes.js",

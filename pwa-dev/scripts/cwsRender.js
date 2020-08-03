@@ -757,8 +757,12 @@ function cwsRender()
 		FormUtil.createNumberLoginPinPad();
 	}
 
+
+	// NOTE: Not the way to do.  Should organize all these in one and hide it...
 	me.hideActiveSession_UIcontent = function()
 	{
+		// QUICK FIX - Hide 'about/setting/statistic' pages..
+		$( '.subMenu_PageDiv' ).hide();
 
 		// hide UI Areas
 		if ( $( 'div.aboutListDiv' ).is(':visible') )
