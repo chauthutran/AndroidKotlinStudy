@@ -1193,7 +1193,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "fea3da919b7cab04824a916b0ac4e63f"
+    "revision": "4fab29289d600fd75bcb8ad2bab9376f"
   },
   {
     "url": "redeemGen.html",
@@ -1293,7 +1293,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "55936f503686cda2c64aa8939261fd73"
+    "revision": "9151deb274433253b938a930c3342633"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1313,7 +1313,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "c8ccd197629b086b52e48a373f8ef433"
+    "revision": "ab0eea6fcf5edd37512cf1cd522099ca"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1393,7 +1393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "ce21db2c225ebf07efd88752a6bc3198"
+    "revision": "3ac21087c433cca670b55c1389aca407"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1405,7 +1405,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/devHelper.js",
-    "revision": "e74e7f9f6e493157985aaa700f6cb7ae"
+    "revision": "2c9679842e0c3d63a6912e317a492ac7"
   },
   {
     "url": "scripts/services/formMsgManager.js",
@@ -1433,7 +1433,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "217df9ca5c67aa89473a47955216089d"
+    "revision": "0d66ac16caf5af32da2219c7831bc178"
   },
   {
     "url": "scripts/services/scheduleManager.js",
@@ -1504,8 +1504,12 @@ self.__precacheManifest = [
     "revision": "f11a7487b81c5d2c9fbfd2fcce4f65fc"
   },
   {
+    "url": "scripts/utils/StatsUtil.js",
+    "revision": "81aff80058252f87f4b649c8eb7ee4d0"
+  },
+  {
     "url": "scripts/utils/util.js",
-    "revision": "ced2cd25c10800346a55f7efc7286d07"
+    "revision": "32d2fa7699a78256679e584aad1a2b0b"
   },
   {
     "url": "scripts/utils/util2.js",
@@ -1581,7 +1585,7 @@ self.__precacheManifest = [
   },
   {
     "url": "versions.html",
-    "revision": "95b60987082abe9194f5953680d118b4"
+    "revision": "3f359e6bd2b416f688c67dee03fb09b3"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

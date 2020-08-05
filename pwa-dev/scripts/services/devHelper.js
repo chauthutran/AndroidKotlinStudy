@@ -527,4 +527,73 @@ DevHelper.statPeriodOptions = function()
 
     return dateGroups;
 
-}
+};
+
+DevHelper.sampleDataList_Static = 
+[
+  {
+    "_id": "5e8af6d6f39ff8047ee4f3e5",
+    "date": { // MANDATORY?
+        "updatedOnMdbUTC": "2020-06-18T12:32:03", // MANDATORY?
+        "createdOnMdbUTC": "2020-06-18T11:26:26" // MANDATORY?
+    },    
+    "clientDetails": {
+        "firstName": "James",
+        "lastName": "Chang",
+        "phoneNumber": "6543222212",
+        "age": "14",
+        "users": [ "LA_TEST_IPC" ],
+        "voucherCode": [ "22223333" ]
+    },
+    "clientConsent": {
+        "phone": true, // MANDATORY?
+        "tracking": true,
+        "service": true,
+        "feedback": false
+    },    
+    "activities": [{
+        "id": "LA_TEST_PROV_20200406_093052500",
+        "date": {
+            "createdOnMdbUTC": "2020-04-06T09:31:02.488",
+            "createdOnMdbLoc": "2020-04-06T09:31:02.488",
+
+            "capturedUTC": "2020-04-06T09:30:50.000",
+            "createdOnDeviceUTC": "2020-04-06T09:30:50.000",
+            "capturedLoc": "2020-04-06T18:30:50.000"
+        },
+        "activeUser": "LA_TEST_IPC",
+        "creditedUsers": [
+          "LA_TEST_OTH"
+        ],
+        "type": "eVoucher",
+        "location": {},
+        "program": "fpl",
+        //"activityType": "eVoucher",
+        "processing": {
+            "created": "2020-04-06T18:30:50.000",
+            "status": "submit_wMsg",
+            "statusRead": false,
+            "history": [
+                { "status": "submit_wMsg", "dateTime": "2020-04-06T18:30:50.000", "responseCode": 412, "msg": "Client and Voucher were successfully created. We couldn't send the voucher to phone 0777 576 4090.PLease give the voucher code directly to the client. Voucher: 1234" }
+            ]
+        },
+        "transactions": [{
+            "type": "c_reg",
+            "clientDetails": {
+                "firstName": "James",
+                "lastName": "Chang",
+                "phoneNumber": "6543222212",
+                "clientId": "",
+                "age": "14",
+                "provisionMethod": "Pills"
+            },
+            "clientConsent": {                
+            }
+        }, {
+            "type": "v_iss",
+            "clientDetails": {
+                "voucherCode": "22223333"
+            }
+        }]
+    }]
+}];

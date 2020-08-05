@@ -205,6 +205,11 @@ function cwsRender()
 
 	me.renderArea = function( areaId )
 	{
+
+		// NOTE: TODO: BELOW LOGIC NEEDS TO BE RE-ORGANIZED..
+		//		-- SWITCHING SHOULD HAPPEN WITH CLEARING OUT OTHER PARTS..
+		//
+
 		// On each area render, clear out the pageDiv content (which represent area div)..
 		//me.pageDivTag.empty();
 
@@ -216,6 +221,7 @@ function cwsRender()
 			me.resetVisibility_ViewListDiv();
 		}
 
+		// TODO: REVIEW IF WE NEED THIS PART..
 		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
 			me.hideAreaRelatedParts();

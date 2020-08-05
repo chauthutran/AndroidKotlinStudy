@@ -649,8 +649,8 @@ ConfigManager.periodSelectorOptions = {
     "all": {
         "name": "All periods",
         "term": "",
-        "from": "rangeFrom",
-        "to": "rangeTo",
+        "from": "",
+        "to": "",
         "enabled": "true"
     },
     "today": {
@@ -763,6 +763,13 @@ ConfigManager.periodSelectorOptions = {
         "term": "",
         "from": "new Date(new Date().getFullYear()-1, 0, 2).toISOString().split( 'T' )[ 0 ]",
         "to": "new Date(new Date().getFullYear(), 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "customRange": {
+        "name": "custom range",
+        "term": "",
+        "from": "'custom'",
+        "to": "'custom'",
         "enabled": "false"
     }
 };

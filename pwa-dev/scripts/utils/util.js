@@ -542,11 +542,24 @@ Util.getJsonDeepCopy = function( jsonObj )
 {
 	var newJsonObj;
 
-	if ( jsonObj ) newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+	if ( jsonObj )
+	{
+		try
+		{
+			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+		}
+		catch( errMsg ) {
+			console.log( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+		}
+	} 
 
 	return newJsonObj;
 };
 
+Util.cloneJson = function( jsonObj )
+{
+	return Util.getJsonDeepCopy( jsonObj );
+};
 
 Util.valueEscape = function( input )
 {

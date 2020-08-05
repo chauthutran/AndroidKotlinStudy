@@ -53,9 +53,9 @@
 
   <script> 
   
-    var _manifestData = $.parseJSON(ManifestData.get('manifest.json'));
+    var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
     var _ver = _manifestData.version;
-    var _verDate = '2020-07-22';
+    var _verDate = _manifestData.date;
   </script>
 
   <!-- Google Analytics -->
@@ -174,7 +174,7 @@
           </div>
         </div>
         <div id="divAppVersion" class="login_data__more" style="cursor:pointer;">
-          <label id="spanVersion" >Version #.#</label>&nbsp;<label id="spanVerDate"> [2020---]</label>
+          <label id="spanVersion" >Version #.#</label>&nbsp; <label id="spanVerDate">[2020---]</label>
           <br><label> - tabButton click actions logic fixed</label>
           <!-- a id="spanVersion" href="versions.html" target="_blank" style="float: left; color: #888;" >Version #.#</a-->
           <!-- <a href="#">Forgot your PIN?</a> -->
@@ -457,8 +457,6 @@
   <script type="text/javascript" src="scripts/constants/templates.js"></script>
   <script type="text/javascript" src="scripts/constants/configs.js"></script>
 
-  <!-- <script type="text/javascript" src="scripts/utils/pptOptions.js"></script>
-  <script type="text/javascript" src="scripts/utils/pptManager.js"></script> -->
   <script type="text/javascript" src="scripts/utils/util.js"></script>
   <script type="text/javascript" src="scripts/utils/util2.js"></script>
   <script type="text/javascript" src="scripts/utils/prototypes.js"></script>
@@ -469,6 +467,7 @@
   <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
   <script type="text/javascript" src="scripts/utils/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils/validationUtil.js"></script>
+  <script type="text/javascript" src="scripts/utils/StatsUtil.js"></script>
   
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
