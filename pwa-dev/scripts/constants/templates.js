@@ -318,17 +318,26 @@ Templates.statisticsFullScreen = `
             <div class="field__label"><label>Select a period</label><span>*</span></div>
             <div class="field__controls">
                 <div class="field__selector">
-                    <select id="stats_select_period" mandatory="true">
-                        <option selected="" from="0" to="0" value="0">Select a period</option>
+                    <select class="stats_select_period" mandatory="true">
+                        <option from="0" to="0" value="0">Select a period</option>
                     </select>
                 </div>
             </div>
         </div>
-        <div id="stats_t_help" class="text_help"></div>
+        <div class="stats_t_info text_help" style="display:none;">
+          Between <span class="spanPeriod_Start"></span> and <span class="spanPeriod_End"></span>
+        </div>
+        <div class="stats_t_custom text_help" style="display:none;">
+          Between <input class="inputCustomPeriod_Start" placeholder="YYYY-MM-DD" style="width: 80px; border: solid 1px #888; line-height: 15px; font-size: 0.7rem;" /> 
+          and <input class="inputCustomPeriod_End" placeholder="YYYY-MM-DD" style="width: 80px; border: solid 1px #888; line-height: 15px; font-size: 0.7rem;"/> 
+          <button class="btnCustomPeriodRun">Go</button>
+        </div>
     </div>
   </div>
+  
+  <div class="loadingImg_statistic" style="margin: 80px 0px 0px 50px; display: none;"><img src="images/loading_big_blue.gif"></div>
 
-  <div id="statsContentPage" class="card _tab activity" />
+  <div class="statsContentPage card _tab activity" style="overflow: auto !important;" />
 </div>
 `;
 

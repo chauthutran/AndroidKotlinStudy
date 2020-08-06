@@ -9,8 +9,11 @@ function Statistics( cwsRender )
     me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
+
     me.statsFormContainerTag;
     me.statsPeriodSelector;
+    me.statsContentPageTag;
+
     me.dateFilterField = 'createdOnDeviceUTC';
 
     me.allStats = [];
@@ -43,10 +46,15 @@ function Statistics( cwsRender )
 
         me.setEvents_OnRender();
 
-        me.loadStatConfigPage( function() {
-            me._clientList_Clone = me.prepareClientListData( ClientDataManager.getClientList() );            
-            // This method should have been loaded by above 'script' content eval
-            renderAllStats( me._clientList_Clone );
+        me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
+
+            me.loadStatConfigPage( me.statsContentPageTag, function() {
+
+                me._clientList_Clone = me.prepareClientListData( ClientDataManager.getClientList() );            
+
+                // This method should have been loaded by above 'script' content eval
+                renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+            });    
         });
 
         me.statisticsFormDiv.fadeIn();
@@ -56,15 +64,15 @@ function Statistics( cwsRender )
 
     me.initialize_UI = function()
     {
-        me.statisticsFormDiv.empty();
-
         $( window ).scrollTop(0);
 
-        me.statsFormContainerTag = $( Templates.statisticsFullScreen );
-        me.statisticsFormDiv.append( me.statsFormContainerTag );
+        //me.statsFormContainerTag = $( Templates.statisticsFullScreen );
+        me.statisticsFormDiv.empty().append( Templates.statisticsFullScreen );
 
-        me.statsPeriodSelector = me.statisticsFormDiv.find( '#stats_select_period' );
-        me.statsPeriodSelector.addClass( 'disabled' );
+        me.statsContentPageTag = me.statisticsFormDiv.find( ".statsContentPage" );
+
+        me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );
+        
     };
 
     
@@ -72,25 +80,37 @@ function Statistics( cwsRender )
 	{	
         me.statsPeriodSelector.change( function() {
 
-            console.log( 'Period Selector Changed' );
+            // Wipe the conent blank - if there is period selection change event..
+            //me.statsContentPageTag.empty();  <-- we can not emtpy it... Need HTML tags..
+            var loadingImg_statisticTag = me.statisticsFormDiv.find( '.loadingImg_statistic' ).show();
 
-            var opt = $( 'option:selected', this );
-            var startPeriod = opt.attr( 'from' );
-            var endPeriod = opt.attr( 'to' );
+            setTimeout( function() {
+
+                loadingImg_statisticTag.hide();
+                console.log( 'Period Selector Changed' );
             
-            // TODO:
-            // if 'startPeriod' / 'endPeriod' is 'custom', we need to display the ...
-            //      - for further date selection..
+                me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {        
+    
+                    renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+                });
+    
+            }, 700 );
 
-
-            $( '#stats_t_help' ).html( 'Between ' + startPeriod + ' and ' + endPeriod );
-
-            renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
         });
 
-        var cardCloseTag = me.statisticsFormDiv.find( 'img.btnBack' );
 
-        cardCloseTag.off( 'click' ).click( function()
+        me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).click( function() {
+
+            console.log( 'Custom Period button clicked' );
+
+            var inputCustomPeriod_StartTag = me.statisticsFormDiv.find( '.inputCustomPeriod_Start' );
+            var inputCustomPeriod_EndTag = me.statisticsFormDiv.find( '.inputCustomPeriod_End' );
+
+            renderAllStats( me._clientList_Clone, inputCustomPeriod_StartTag.val(), inputCustomPeriod_EndTag.val() );
+        });
+
+
+        me.statisticsFormDiv.find( 'img.btnBack' ).off( 'click' ).click( function()
         { 
             console.log( 'CardClose button clicked' );
             me.allStats = [];
@@ -100,29 +120,64 @@ function Statistics( cwsRender )
     };
 
 
-    me.loadStatConfigPage = function( callBack )
+    me.applyPeriodSelection = function( statsPeriodSelector, callBack )
     {
-        var rawbase = 'https://www.psi-connect.org/connectGitConfig/api/getFile?';
-        var jsonloc = 'type=dc_pwa&branch=dev&fileName=dc_pwa@LA@stat1.html';
+        var opt = $( 'option:selected', statsPeriodSelector );
+        var opt_startPeriod = opt.attr( 'from' );
+        var opt_endPeriod = opt.attr( 'to' );
 
-        var templateURL = rawbase + jsonloc;
-        console.log( templateURL );
+        var divDateInfoTag = me.statisticsFormDiv.find( '.stats_t_info' );
+        var divCustomDateTag = me.statisticsFormDiv.find( '.stats_t_custom' );
 
-        WsCallManager.requestGet_Text( templateURL, {}, undefined, function( success, returnData ) {
 
-            //console.log( returnData );
+        // if 'custom', display...
+        if ( opt_startPeriod === 'custom' || opt_endPeriod === 'custom' )
+        {
+            divDateInfoTag.hide();
 
-            if ( returnData )
+            // Set custom value if already decided
+            if ( opt_startPeriod !== 'custom' ) divCustomDateTag.find( '.inputCustomPeriod_Start' ).val( opt_startPeriod );
+            if ( opt_endPeriod !== 'custom' ) divCustomDateTag.find( '.inputCustomPeriod_End' ).val( opt_endPeriod );
+
+            divCustomDateTag.show( 'fast' );
+        }
+        else
+        {
+            divCustomDateTag.hide();
+
+            divDateInfoTag.find( '.spanPeriod_Start' ).text( ( opt_startPeriod ) ? opt_startPeriod : 'ALL' );
+            divDateInfoTag.find( '.spanPeriod_End' ).text( ( opt_endPeriod ) ? opt_endPeriod : 'ALL' );
+
+            divDateInfoTag.show( 'fast' );
+
+            // 'Select a period' has '0' value
+            if ( opt_startPeriod !== '0' && opt_endPeriod !== '0' ) 
             {
-                var statsContentPageTag = $( "#statsContentPage" );
+                callBack( opt_startPeriod, opt_endPeriod );
+            }
+        }
+    };
+
+
+    me.loadStatConfigPage = function( statsContentPageTag, callBack )
+    {
+        var apiPath = ConfigManager.getStatisticApiPath();
+
+        var loadingTag = $( '<div class="loadingImg" style="margin: 50px;"><img src="images/loading_big_blue.gif"></div>' );
+        statsContentPageTag.empty().append( loadingTag );
+
+        WsCallManager.requestGetDws( apiPath, {}, loadingTag, function( success, returnJson ) {
+
+            if ( success && returnJson && returnJson.response )
+            {
 
                 var dom_parser = new DOMParser(); // parse HTML into DOM document object 
-                var doc = dom_parser.parseFromString( returnData , "text/html"); // doc.body.innerHTML = body part 
+                var doc = dom_parser.parseFromString( returnJson.response , "text/html"); // doc.body.innerHTML = body part 
 
 
                 // 1. Append HTML Tags
                 statsContentPageTag.empty().append( doc.body.innerHTML );
-
+                statsContentPageTag.find( '#statsContent' ).css( 'margin', '100px 5px 40px 10px' );  // Use this if margin is not already set like this..
 
                 // 2. Script bring and run - 'mainRunScript'
                 [].map.call( doc.getElementsByTagName('script'), function( el ) 
@@ -235,7 +290,12 @@ function Statistics( cwsRender )
 
             if ( newOpt.enabled === 'true' )
             {
-                fetchGroups.push( { "name": newOpt.name, "term": ( newOpt.term ) ? newOpt.term : '', "from": newFrom, "to": newTo } );
+                fetchGroups.push( { "name": newOpt.name
+                    , "term": ( newOpt.term ) ? newOpt.term : ''
+                    , "from": newFrom
+                    , "to": newTo
+                    , "selected": ( newOpt.defaultOption === 'true' )
+                });
             }
 
             // REMOVED: Optional param to filter the period options that falls outside of date range
@@ -250,7 +310,11 @@ function Statistics( cwsRender )
     {
         for ( var i = 0; i < periodOptions.length; i++ )
         {
-            var newOpt = $( '<option from="' + periodOptions[ i ].from + '" to="' + periodOptions[ i ].to + '" >' + periodOptions[ i ].name + '</option>' );
+            var option = periodOptions[ i ];
+
+            var newOpt = $( '<option from="' + option.from + '" to="' + option.to + '" >' + option.name + '</option>' );
+
+            if ( option.selected ) newOpt.attr( 'selected', 'selected' );
 
             selectTag.append( newOpt );
         }

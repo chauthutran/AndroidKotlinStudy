@@ -548,6 +548,14 @@ self.__precacheManifest = [
     "revision": "a6bac0e4f5a9dbe41cdfd1f87f35d4f0"
   },
   {
+    "url": "images/loading_big_black.gif",
+    "revision": "a51c5608d01acf32df728f299767f82b"
+  },
+  {
+    "url": "images/loading_big_blue.gif",
+    "revision": "916b89e8bf77dd030c128c3d7f5fd7cd"
+  },
+  {
     "url": "images/loading_small.svg",
     "revision": "94264284ad3ec1e09229e4232754ad7d"
   },
@@ -1293,7 +1301,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "9151deb274433253b938a930c3342633"
+    "revision": "7d73d8b4eda10116eb17b183c0fbfa4e"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1309,7 +1317,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "4eeb8c9a5d39ad8953e6d7310acda005"
+    "revision": "041f96216573fbc19da767d24f78333c"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1393,7 +1401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "3ac21087c433cca670b55c1389aca407"
+    "revision": "676a588d8c5837f283ac5c84a18c7f3d"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1433,7 +1441,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/request/wsCallManager.js",
-    "revision": "0d66ac16caf5af32da2219c7831bc178"
+    "revision": "4d3bea25efc35ecf4e479cd4452e2bd1"
   },
   {
     "url": "scripts/services/scheduleManager.js",

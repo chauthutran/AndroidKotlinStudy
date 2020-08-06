@@ -552,6 +552,25 @@ ConfigManager.getSyncDownSetting = function()
 };
 
 
+ConfigManager.getStatisticJson = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+    
+    return ( configJson.settings && configJson.settings.statistic ) ? configJson.settings.statistic : {};
+};
+
+
+ConfigManager.getStatisticApiPath = function()
+{
+    var statisticJson = ConfigManager.getStatisticJson();
+
+    var urlPath = ( statisticJson.url ) ? statisticJson.url : '/PWA.statistic';
+    var fileName = ( statisticJson.fileName ) ? statisticJson.fileName : ''; // DWS Endpoint has default value..'dc_pwa@LA@stat1.html';
+
+    return urlPath + '?stage=' + WsCallManager.stageName + '&fileName=' + fileName;
+};
+
+
 // ------------------------------------------------------
 // -- Apply Defaults related methods.
 
@@ -651,7 +670,8 @@ ConfigManager.periodSelectorOptions = {
         "term": "",
         "from": "",
         "to": "",
-        "enabled": "true"
+        "enabled": "true",
+        "defaultOption": "true"
     },
     "today": {
         "name": "today",
@@ -770,7 +790,7 @@ ConfigManager.periodSelectorOptions = {
         "term": "",
         "from": "'custom'",
         "to": "'custom'",
-        "enabled": "false"
+        "enabled": "true"
     }
 };
 

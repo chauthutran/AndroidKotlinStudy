@@ -13,6 +13,7 @@ WsCallManager.wsTargetUrl = '';  // get set when start..
 WsCallManager.localhostProxyUrl = 'http://localhost:3020';
 WsCallManager.isLocalDevCase = false;
 
+WsCallManager.stageName = '';
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
@@ -45,6 +46,7 @@ WsCallManager.setWsTarget = function()
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
     else if ( originUrl.indexOf( 'https://pwa-test.' ) === 0 ) stageName = 'test';
     
+    WsCallManager.stageName = stageName;
     WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
 };
 
