@@ -13,8 +13,14 @@ AppInfoManager.KEY_NETWORKCONNECTION = "networkConnectionObs";
 AppInfoManager.KEY_NETWORKSYNC = "networkSync";
 AppInfoManager.KEY_LOGOUTDELAY = "logoutDelay";
 
+AppInfoManager.KEY_STATISTIC_PAGES = "statisticPages"; 
 
 AppInfoManager.data = {};
+
+
+// NOTE: Add statisticPages: { '@LA@stat_IPC.html': '' }
+// <-- do not keep it on memory?  but get it from localStorage everytime..
+
 
 
 
@@ -24,10 +30,8 @@ AppInfoManager.data = {};
 AppInfoManager.initialLoad_FromStorage = function()
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
-    
     // Set new data info in memory
-    AppInfoManager.data = appInfo;
+    AppInfoManager.data = AppInfoManager.loadAppInfo();
 };
 
 
@@ -205,9 +209,24 @@ AppInfoManager.updateLogoutDelay = function( dataStr )
 
 
 // ------------------------------------------------------------------------------------  
+// ----------------  Update properties in "statisticPages"
+
+
+AppInfoManager.updateStatisticPages = function( fileName, dataStr ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
+};
+
+AppInfoManager.getStatisticPages = function( fileName ) 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName );
+};
+
+// ------------------------------------------------------------------------------------  
 // ------------------------------------------------------------------------------------  
 // ------------------------------------------------------------------------------------  
 
+// 
 AppInfoManager.getData = function( keyword )
 {
     return AppInfoManager.data[keyword];
@@ -217,30 +236,24 @@ AppInfoManager.getData = function( keyword )
 AppInfoManager.updateData = function( keyword, jsonData )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
+    var appInfo = AppInfoManager.data;
     
     // Update data of appInfo by using keyword
     appInfo[keyword] = jsonData;
     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
 }
 
 
 AppInfoManager.removeData = function( keyword )
 {
      // Get appInfo from localStorage if any. If not, use default appInfo
-     var appInfo = AppInfoManager.loadAppInfo();
+     var appInfo = AppInfoManager.data;
     
      // Update data of appInfo by using keyword
      delete appInfo[keyword];
      
      // Update the 'appInfo' data
      LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-     
-     // Set new data info in memory
-     AppInfoManager.data = appInfo;
 }
 	
 
@@ -255,7 +268,7 @@ AppInfoManager.loadAppInfo = function()
 AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
+    var appInfo = AppInfoManager.data;
     
     // Update sub value by using keyword
     if( appInfo[mainKey] == undefined )
@@ -267,15 +280,12 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
 
     // Update data in memory
     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
-
-    // Set new data info in memory
-    AppInfoManager.data = appInfo;
 }
 
 AppInfoManager.getPropertyValue = function( mainKey, subKey )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.loadAppInfo();
+    var appInfo = AppInfoManager.data;
     
     var mainInfo = appInfo[mainKey];
     if( mainInfo == undefined )

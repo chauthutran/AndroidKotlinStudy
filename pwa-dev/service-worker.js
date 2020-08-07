@@ -1277,7 +1277,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "1656640d65009eb26ff075ca1c974a53"
+    "revision": "c5a1a3e8bada663a93c00a55c5eca378"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1301,7 +1301,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "7d73d8b4eda10116eb17b183c0fbfa4e"
+    "revision": "d64077131e4fa7f88f48dd1b759df67c"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1317,7 +1317,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "041f96216573fbc19da767d24f78333c"
+    "revision": "ba741ed6097d3ec0cbfee8166c600d46"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1393,7 +1393,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/appInfoManager.js",
-    "revision": "3bb0790eca2b31411464ed213adb449a"
+    "revision": "3aa90af1d4865154383d52822206b836"
   },
   {
     "url": "scripts/services/clientDataManager.js",
@@ -1593,7 +1593,7 @@ self.__precacheManifest = [
   },
   {
     "url": "versions.html",
-    "revision": "3f359e6bd2b416f688c67dee03fb09b3"
+    "revision": "44dbee83346db8c6debea485d501af13"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

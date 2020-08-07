@@ -221,48 +221,29 @@ function Login( cwsRenderObj )
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
+
 		// ONLINE vs OFFLINE HANDLING
 		if ( !ConnManagerNew.isAppMode_Online() )
 		{
-			// OFFLINE Login
-			// validate encrypted pwd against already stored+encrypted pwd
-			var offlineUserData = SessionManager.getOfflineUserData( userName );
-
-			if ( offlineUserData )
+			me.loginOffline( userName, password, function( offlineUserData ) 
 			{
-				if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
-				{					
-					if ( SessionManager.checkLoginData( offlineUserData ) )
-					{
-						// Update current user login information ( lastUpdated, stayLoggedIn )
-						SessionManager.updateUserSessionToStorage( offlineUserData, userName );
-						
-						// load to session in memory
-						SessionManager.loadDataInSession( userName, password, offlineUserData );
-
-						me.loginSuccessProcess( offlineUserData );
-					}
-				}
-				else
-				{
-					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notificationRed', undefined, '', 'right', 'top' );
-				}
-			}
-			else
-			{
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
-			}
+				me.loginSuccessProcess( offlineUserData );
+			});
 		}
 		else
 		{
 			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
-			me.onlineLogin( userName, password, loadingTag, function( success, loginData ){
-				me.showErrorMsgIfAny ( success, loginData );
-			} );
+
+			me.loginOnline( userName, password, loadingTag, function( loginData ) 
+			{
+				me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
+
+				me.loginSuccessProcess( loginData );
+			});
 		}
 
+		// NOTE: Right location to call?  <-- always call even the no login?
+		// If to be called only on sucess login, use this on 'loginSuccessProcess' ?
 		AppInfoManager.createUpdateUserInfo( userName );
 	};
 
@@ -302,7 +283,6 @@ function Login( cwsRenderObj )
 
 		});
 	};
-	
 
 	me.loginAfter = function()
 	{
@@ -319,33 +299,62 @@ function Login( cwsRenderObj )
 
 	// ----------------------------------------------
 	
-	me.onlineLogin = function( userName, password, loadingTag, execFunc )
+	me.loginOnline = function( userName, password, loadingTag, execFunc )
 	{
 		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
-		{
-			me.setLoginData( loginData, userName, password );
+		{			
+			me.checkLoginData_wthErrMsg( success, loginData, function() {
 
-			if( execFunc ) execFunc( success, loginData );
+				// Save 'loginData' in localStorage and put it on session memory
+				SessionManager.saveUserSessionToStorage( loginData, userName, password );
+				SessionManager.loadDataInSession( userName, password, loginData );
+
+				if( execFunc ) execFunc( loginData );
+			});								
 		} );
-	}
+	};
 
-	me.setLoginData = function( loginData, userName, password )
+	
+	me.loginOffline = function( userName, password, execFunc )
 	{
-		if ( loginData != undefined && loginData.orgUnitData != undefined && loginData.dcdConfig != undefined )
+		var offlineUserData = SessionManager.getOfflineUserData( userName );
+
+		// OFFLINE Login - validate encrypted pwd against already stored+encrypted pwd
+		var offlineUserData = SessionManager.getOfflineUserData( userName );
+
+		if ( offlineUserData )
 		{
-			SessionManager.saveUserSessionToStorage( loginData, userName, password );
+			if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
+			{					
+				if ( SessionManager.checkLoginData( offlineUserData ) )
+				{
+					// Update current user login information ( lastUpdated, stayLoggedIn )
+					SessionManager.updateUserSessionToStorage( offlineUserData, userName );
+					SessionManager.loadDataInSession( userName, password, offlineUserData );
 
-			// load to session in memory
-			SessionManager.loadDataInSession( userName, password, loginData );
+					execFunc( offlineUserData );
+				}
+			}
+			else
+			{
+				// MISSING TRANSLATION
+				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notificationRed', undefined, '', 'right', 'top' );
+			}
 		}
-	}
+		else
+		{
+			// MISSING TRANSLATION
+			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
+		}
+	};
 
-	me.showErrorMsgIfAny = function ( success, loginData )
+	// ----------------------------
+
+
+	me.checkLoginData_wthErrMsg = function ( success, loginData, noErrorRun )
 	{
 		if ( success )
 		{
-			me.loginSuccessProcess( loginData );
-
 			if ( !loginData )
 			{
 				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
@@ -358,6 +367,10 @@ function Login( cwsRenderObj )
 			{
 				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
 			}
+			else
+			{
+				if ( noErrorRun ) noErrorRun();
+			}
 		}
 		else
 		{
@@ -368,7 +381,36 @@ function Login( cwsRenderObj )
 		}
 	};
 
+	// ----------------------------------------------
 	
+	// Only online version - download and set to localStorage or IndexedDB
+	me.retrieveStatisticPage = function( execFunc )
+	{
+		var statJson = ConfigManager.getStatisticJson();
+
+		if ( statJson.fileName )
+		{
+			// per apiPath (vs per fileName)
+			var apiPath = ConfigManager.getStatisticApiPath();
+			
+			WsCallManager.requestGetDws( apiPath, {}, undefined, function( success, returnJson ) {
+
+				if ( success && returnJson && returnJson.response )
+				{
+					execFunc( statJson.fileName, returnJson.response );
+				}
+			});
+		}
+	};
+
+	me.saveStatisticPage = function( fileName, dataStr )
+	{
+		// Either store it on localHost, IDB
+		AppInfoManager.updateStatisticPages( fileName, dataStr );
+	};
+
+	// ----------------------------------------------
+
 	me.regetDCDconfig = function()
 	{
 		var userName = SessionManager.sessionData.login_UserName;

@@ -161,80 +161,77 @@ function Statistics( cwsRender )
 
     me.loadStatConfigPage = function( statsContentPageTag, callBack )
     {
-        var apiPath = ConfigManager.getStatisticApiPath();
+        statsContentPageTag.empty();
 
-        var loadingTag = $( '<div class="loadingImg" style="margin: 50px;"><img src="images/loading_big_blue.gif"></div>' );
-        statsContentPageTag.empty().append( loadingTag );
+        var statJson = ConfigManager.getStatisticJson();
 
-        WsCallManager.requestGetDws( apiPath, {}, loadingTag, function( success, returnJson ) {
+        if ( statJson.fileName )
+        {
+            var statisticPage = AppInfoManager.getStatisticPages( statJson.fileName );
 
-            if ( success && returnJson && returnJson.response )
+            var dom_parser = new DOMParser(); // parse HTML into DOM document object 
+            var doc = dom_parser.parseFromString( statisticPage, "text/html"); // doc.body.innerHTML = body part 
+
+
+            // 1. Append HTML Tags
+            statsContentPageTag.empty().append( doc.body.innerHTML );
+            statsContentPageTag.find( '#statsContent' ).css( 'margin', '100px 5px 40px 10px' );  // Use this if margin is not already set like this..
+
+            // 2. Script bring and run - 'mainRunScript'
+            [].map.call( doc.getElementsByTagName('script'), function( el ) 
             {
-
-                var dom_parser = new DOMParser(); // parse HTML into DOM document object 
-                var doc = dom_parser.parseFromString( returnJson.response , "text/html"); // doc.body.innerHTML = body part 
-
-
-                // 1. Append HTML Tags
-                statsContentPageTag.empty().append( doc.body.innerHTML );
-                statsContentPageTag.find( '#statsContent' ).css( 'margin', '100px 5px 40px 10px' );  // Use this if margin is not already set like this..
-
-                // 2. Script bring and run - 'mainRunScript'
-                [].map.call( doc.getElementsByTagName('script'), function( el ) 
+                try
                 {
-                    try
+                    console.log( el );
+                    if ( el.id === 'mainScript' )
                     {
-                        console.log( el );
-                        if ( el.id === 'mainScript' )
-                        {
-                            statsContentPageTag.append( '<script>' + el.textContent + '</' + 'script>' );
-                        }
-                        else if ( el.getAttribute( "wfaload" ) === "true" )
-                        {
-                            statsContentPageTag.append( '<script src="' + el.getAttribute( "src" ) + '"></' + 'script>' );
-                        }    
+                        statsContentPageTag.append( '<script>' + el.textContent + '</' + 'script>' );
                     }
-                    catch ( errMsg ) {
-                        console.log( errMsg );
-                    }
-                });
+                    else if ( el.getAttribute( "wfaload" ) === "true" )
+                    {
+                        statsContentPageTag.append( '<script src="' + el.getAttribute( "src" ) + '"></' + 'script>' );
+                    }    
+                }
+                catch ( errMsg ) {
+                    console.log( errMsg );
+                }
+            });
 
 
-                // 3. Style bring and apply 
-                [].map.call( doc.getElementsByTagName('style'), function( el ) 
+            // 3. Style bring and apply 
+            [].map.call( doc.getElementsByTagName('style'), function( el ) 
+            {
+                try
                 {
-                    try
+                    if ( el.id === 'mainScript' )
                     {
-                        if ( el.id === 'mainScript' )
-                        {
-                            var styleStr = '<style>' + el.textContent + '</' + 'style>';
-                            statsContentPageTag.append( styleStr );
-                        }
+                        var styleStr = '<style>' + el.textContent + '</' + 'style>';
+                        statsContentPageTag.append( styleStr );
                     }
-                    catch ( errMsg ) {
-                        console.log( errMsg );
-                    }
-                });
+                }
+                catch ( errMsg ) {
+                    console.log( errMsg );
+                }
+            });
 
 
-                // 4. Style link file
-                [].map.call( doc.getElementsByTagName('link'), function( el ) 
+            // 4. Style link file
+            [].map.call( doc.getElementsByTagName('link'), function( el ) 
+            {
+                try
                 {
-                    try
+                    if ( el.getAttribute( "wfaload" ) === "true" )
                     {
-                        if ( el.getAttribute( "wfaload" ) === "true" )
-                        {
-                            statsContentPageTag.append( '<link ref="stylesheet" href="' + el.getAttribute( "href" ) + '">' );
-                        }
+                        statsContentPageTag.append( '<link ref="stylesheet" href="' + el.getAttribute( "href" ) + '">' );
                     }
-                    catch ( errMsg ) {
-                        console.log( errMsg );
-                    }
-                });
+                }
+                catch ( errMsg ) {
+                    console.log( errMsg );
+                }
+            });
 
-                if ( callBack ) callBack();
-            }
-        });
+            if ( callBack ) callBack();
+        }
     };
 
 
