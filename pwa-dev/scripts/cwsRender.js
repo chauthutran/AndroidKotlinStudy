@@ -965,8 +965,8 @@ function cwsRender()
 		$( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
 
 		// Set defaults for Tags to be hidden when keyboard triggers resize
+		$( '#ConnectingWithSara' ).attr( 'keyboardVisible', 'hide' );
 		$( '#advanceOptionLoginBtn' ).attr( 'keyboardVisible', 'hide' );
-		$( '#pass' ).attr( 'keyboardVisible', 'hide' );
 
 		// Window Resize detection
 		$( window ).on( 'resize', function () {
@@ -987,6 +987,8 @@ function cwsRender()
 					//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
 					$( '[keyboardVisible=hide]' ).fadeIn();
 				}
+
+				FormUtil.createNumberLoginPinPad();
 
 			}
 

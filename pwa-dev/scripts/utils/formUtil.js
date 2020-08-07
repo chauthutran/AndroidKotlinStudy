@@ -1710,14 +1710,15 @@ FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldI
 FormUtil.createNumberLoginPinPad = function()
 {
 	// creates numeric (only) keypad under android > untidy implementation but it works
+	// move to login.js?
 
 	const PWD_INPUT_PADDING_TOP = 0;
 	const PWD_INPUT_PADDING_LEFT = 0;
 	const CHAR_SPACING_WIDTH = 12;
 
 	// clear existing events
-	$( "#passReal" ).off( 'keydown' );
-	$( "#passReal" ).off( 'keyup' );
+	$( "#passReal" ).off( 'keydown' ).off( 'keyup' );
+	//$( "#passReal" ).off( 'keyup' );
 
 	$( "#pass" ).off( 'focus' );
 	$( "input.loginUserName" ).off( 'focus' );
@@ -1760,7 +1761,7 @@ FormUtil.createNumberLoginPinPad = function()
 	// startup position of blinker in relation to login screen layout (will cause problems if page gets resized)
 	setTimeout( function() {
 		$('#passReal').css( 'top', $('#pass').position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
-		$('#passReal').css( 'left', $('#pass').position().left + PWD_INPUT_PADDING_LEFT + 'px' );
+		$('#passReal').css( 'left', $('#pass').position().left + $('#pass').val().length + 'px' );
 	}, 500 );
 
 };
