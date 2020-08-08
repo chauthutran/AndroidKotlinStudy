@@ -422,7 +422,6 @@ ConfigManager.getAllAreaList = function()
     return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
 };
 
-
 // ----------------------------------------
         
 ConfigManager.getSettingPaging = function()
@@ -552,13 +551,133 @@ ConfigManager.getSyncDownSetting = function()
 };
 
 
+// ---------------------------------------------
+// ---- Statistic Related --------------------
+
+/*
 ConfigManager.getStatisticJson = function()
 {
     var configJson = ConfigManager.getConfigJson();
     
     return ( configJson.settings && configJson.settings.statistic ) ? configJson.settings.statistic : {};
 };
+*/
 
+ConfigManager.getStatisticJson = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+    var login_UserRoles = ConfigManager.login_UserRoles;
+
+    login_UserRoles = [ { "id": "ipc" },  { "id": "prov" } ];
+
+    var statisticJson = {};
+
+    if ( configJson.settings )
+    {
+        if ( configJson.settings.statistics )
+        {
+            var selectedRoleArrCount = 0;
+
+            // userRole based statistic info..
+            for ( var i = 0; i < configJson.settings.statistics.length; i++ )
+            {
+                var statJson = configJson.settings.statistics[i];
+
+                var statRoleArr = statJson.userRoles;
+
+                // If 'userRoles' is not defined or empty, assign as the base/default selection
+                if ( !statRoleArr || statRoleArr.length === 0 )
+                {
+                    selectedRoleArrCount = 0;
+                    statisticJson = statJson;
+                }
+                else
+                {
+                    var checkRoleArrCount = statRoleArr.length;
+
+                    if ( checkRoleArrCount > selectedRoleArrCount
+                        && ConfigManager.hasAllRoles( statRoleArr, login_UserRoles ) )
+                    {
+                        statisticJson = statJson;
+                        selectedRoleArrCount = checkRoleArrCount;
+                    }
+                }
+            }
+        }
+        else if ( configJson.settings.statistic )
+        {
+            statisticJson = configJson.settings.statistic;
+        }
+    }
+
+    console.log( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
+
+    return statisticJson;
+};
+
+
+ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
+{
+    var hasAllConfigRoles = true;
+
+    for ( var p = 0; p < configRoleIds.length; p++ )
+    {
+        var roleId = configRoleIds[p];
+        
+        if ( !ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
+        {
+            hasAllConfigRoles = false;
+            break;
+        }
+    }
+
+    return hasAllConfigRoles;
+};
+
+
+// userRoles are object array...  
+ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
+{
+    var inList = false;
+
+    for ( var p = 0; p < login_UserRoles.length; p++ )
+    {
+        var userRoleDef = login_UserRoles[p];
+
+        if ( userRoleDef.id === roleId )
+        {
+            inList = true;
+            break;
+        }
+    }
+
+    return inList;
+};
+
+/*
+"statistics": [
+    {
+        "userRoles": [],
+        "url": "/PWA.statistic",
+        "fileName": "dc_pwa@MZ@stat1.html"
+    },
+    {
+        "userRoles": [ "ipc" ],
+        "url": "/PWA.statistic",
+        "fileName": "dc_pwa@MZ@statIPC.html"
+    },
+    {
+        "userRoles": [ "prov" ],
+        "url": "/PWA.statistic",
+        "fileName": "dc_pwa@MZ@statPROV.html"
+    },
+    {
+        "userRoles": [ "ipc", "prov" ],
+        "url": "/PWA.statistic",
+        "fileName": "dc_pwa@MZ@statBOTH.html"
+    }
+],  
+*/
 
 ConfigManager.getStatisticApiPath = function()
 {
