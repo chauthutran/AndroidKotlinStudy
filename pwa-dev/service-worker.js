@@ -472,30 +472,6 @@ self.__precacheManifest = [
     "revision": "d015ebd0b1516cdfd3a4a110c6dc884c"
   },
   {
-    "url": "images/gabrielle_48.png",
-    "revision": "c65b2ec85a58699ff17da08cebaa8dca"
-  },
-  {
-    "url": "images/gabrielle_48.svg",
-    "revision": "e0d511d72423b93ca1cc2ca8094fb653"
-  },
-  {
-    "url": "images/gabrielle_48@2x.png",
-    "revision": "0fb0138ee78f71e067e76dd0d235d6f2"
-  },
-  {
-    "url": "images/gabrielle.png",
-    "revision": "5fab36daa07243ac1481f4aae3ce0693"
-  },
-  {
-    "url": "images/Gabrielle.svg",
-    "revision": "f6b50da065c53fd46a830f1e6b208612"
-  },
-  {
-    "url": "images/gabrielle@2x.png",
-    "revision": "c65b2ec85a58699ff17da08cebaa8dca"
-  },
-  {
     "url": "images/hide.png",
     "revision": "6d8ab80b89fd5aec6cb0380854ee293d"
   },
@@ -1201,7 +1177,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "8898a740e4d58cb144cf01cecc23ce6b"
+    "revision": "845484deef06ed56195b296639040cf5"
   },
   {
     "url": "redeemGen.html",
@@ -1209,7 +1185,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "ca0ee0098044ed8796341bb73bd3771f"
+    "revision": "28453cf43c4e5bdb5a52e7f5abee264b"
   },
   {
     "url": "scripts/back/cacheManager.js",
@@ -1321,7 +1297,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "36e5d617703cea88c7a78d4307fc404b"
+    "revision": "89fe6e3a70330062cbd805023f0c5b17"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1593,7 +1569,7 @@ self.__precacheManifest = [
   },
   {
     "url": "versions.html",
-    "revision": "44dbee83346db8c6debea485d501af13"
+    "revision": "d65f55590c4a1edb5a7e991b8f5b60d3"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});

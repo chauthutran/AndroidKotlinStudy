@@ -161,12 +161,14 @@ function app()
 
   me.App_installed_done = function( event ) {
 
+    /*
     // Track event: The app was installed (banner or manual installation)
     FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
       // Track event: The app was installed (banner or manual installation)
       ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
       playSound("coin");
     });
+    */
   };
 
 	// ======================================

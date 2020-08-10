@@ -212,13 +212,14 @@ function cwsRender()
 			me.resetVisibility_ViewListDiv();
 		}
 
+
 		// TODO: REVIEW IF WE NEED THIS PART..
-		FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
+		//FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
 			me.hideAreaRelatedParts();
 
 			// added by Greg (2019-02-18) > test track googleAnalytics
-			ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+			//ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
 			if (areaId === 'logOut') 
 			{
@@ -261,12 +262,12 @@ function cwsRender()
 					startBlockObj.render();  // should been done/rendered automatically?
 
 					// Change start area mark based on last user info..
-					me.trackUserLocation( selectedArea );				
+					//me.trackUserLocation( selectedArea );				
 				}
 
 			}
 
-		});
+		//});
 
 	}
 
