@@ -1201,7 +1201,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "4fab29289d600fd75bcb8ad2bab9376f"
+    "revision": "8898a740e4d58cb144cf01cecc23ce6b"
   },
   {
     "url": "redeemGen.html",
@@ -1209,7 +1209,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/app.js",
-    "revision": "250807d6d548ebbbe1e2bcfc2e489401"
+    "revision": "ca0ee0098044ed8796341bb73bd3771f"
   },
   {
     "url": "scripts/back/cacheManager.js",
@@ -1277,7 +1277,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/login.js",
-    "revision": "c5a1a3e8bada663a93c00a55c5eca378"
+    "revision": "ea012918256913bb7526956f04417b47"
   },
   {
     "url": "scripts/classes/menu.js",
@@ -1321,7 +1321,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/cwsRender.js",
-    "revision": "410743e52c4d4f5f20d85ee4c6e7fcc9"
+    "revision": "36e5d617703cea88c7a78d4307fc404b"
   },
   {
     "url": "scripts/libraries/aes.js",
@@ -1401,7 +1401,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "676a588d8c5837f283ac5c84a18c7f3d"
+    "revision": "47c779919d65ff11978cb86ee02ecc84"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1485,7 +1485,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/utils/formUtil.js",
-    "revision": "700d0ca85c38d2c9ed46451758279ca8"
+    "revision": "be63d0d1d26ec6e62362c518287cdccc"
   },
   {
     "url": "scripts/utils/inputUtil.js",

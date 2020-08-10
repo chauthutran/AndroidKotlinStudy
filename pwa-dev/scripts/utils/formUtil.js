@@ -21,7 +21,14 @@ FormUtil.records_redeem_queued = 0;
 FormUtil.records_redeem_failed = 0;
 FormUtil.syncRunning = 0;
 
-FormUtil.orientation;
+FormUtil.keyCode_Backspace = 8;
+FormUtil.keyCode_Delete = 46;
+FormUtil.keyCode_Enter = 13;
+
+const PWD_INPUT_PADDING_TOP = 0;
+const PWD_INPUT_PADDING_LEFT = 0;
+const CHAR_SPACING_WIDTH = 12;
+
 // ==== Methods ======================
 
 // ==========================================
@@ -1687,8 +1694,8 @@ FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
 		}
 
 	});
-
 }
+
 
 FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldId, formDefArr )
 {
@@ -1704,66 +1711,96 @@ FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldI
 			}
 		}
 	}
-
 }
 
-FormUtil.createNumberLoginPinPad = function()
+
+// TODO: How does this work?  --> Why would we ever call this multiple times?
+FormUtil.setUpLoginInputsEvents = function()
 {
 	// creates numeric (only) keypad under android > untidy implementation but it works
 	// move to login.js?
 
-	const PWD_INPUT_PADDING_TOP = 0;
-	const PWD_INPUT_PADDING_LEFT = 0;
-	const CHAR_SPACING_WIDTH = 12;
+	var pwdVisibleTag = $( "#pass" );  // visible password tag
+	var pwdValueTag = $( "#passReal" );  // actual value holding password tag
 
 	// clear existing events
-	$( "#passReal" ).off( 'keydown' ).off( 'keyup' );
-	//$( "#passReal" ).off( 'keyup' );
-
-	$( "#pass" ).off( 'focus' );
+	pwdValueTag.off( 'keydown' ).off( 'keyup' );
+	pwdVisibleTag.off( 'focus' );
 	$( "input.loginUserName" ).off( 'focus' );
 
 
+	// [ ONE TIME SET ]
 	// backspace/delete button event (clears pin value)
-	$( "#passReal" ).keydown( function( event ) {
-        if ( event.keyCode == 8 || event.keyCode == 46 ) {
-          $( "#passReal" ).val( '' );
-          $( "#pass" ).val( '' );
+	pwdValueTag.keydown( function( event ) 
+	{
+		if ( event.keyCode == FormUtil.keyCode_Backspace || event.keyCode == FormUtil.keyCode_Delete ) 
+		{
+			pwdValueTag.val( '' );
+			pwdVisibleTag.val( '' );
         }
 	});
 
+
+	// [ ONE TIME SET ]
 	// updates password value and repositions "blinker" with (now) longer text
-	$( "#passReal" ).keyup( function( event ) {
-		$('#pass').val( $('#passReal').val() );
-		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
+	pwdValueTag.keyup( function( event ) 
+	{
+		var passwordVal = pwdValueTag.val();
+
+		pwdVisibleTag.val( passwordVal );
+		pwdValueTag.css( 'left', ( pwdVisibleTag.position().left 
+			+ PWD_INPUT_PADDING_LEFT 
+			+ ( CHAR_SPACING_WIDTH * ( passwordVal.length ) ) ).toFixed(0) + 'px' );
+
+		
+		// Auto Login Click - 'Enter' key.  4 digit auto login not enabled, yet.
+		if ( event.keyCode == FormUtil.keyCode_Enter ) $( '.loginBtn' ).click();
+		//if ( passwordVal.length >= 4 ) $( '.loginBtn' ).click();
+
 	});
 
-	$( "#pass" ).focus( function() {
-		if ( ! $( '#passReal' ).is( ':visible') ) $( '#passReal' ).show();
-		$('#passReal').css( 'left', ( $('#pass').position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( $('#passReal').val().length ) ) ).toFixed(0) + 'px' );
-		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
-		$('#passReal').focus();
+
+	pwdVisibleTag.focus( function() 
+	{
+		if ( ! pwdValueTag.is( ':visible') ) pwdValueTag.show();
+	
+		pwdValueTag.css( 'left', ( pwdVisibleTag.position().left + PWD_INPUT_PADDING_LEFT + ( CHAR_SPACING_WIDTH * ( pwdValueTag.val().length ) ) ).toFixed(0) + 'px' );
+		pwdValueTag.css( 'top', pwdVisibleTag.position().top + PWD_INPUT_PADDING_TOP );
+		pwdValueTag.focus();
 	});
 
-	$( "#passReal" ).focus( function( event ) {
-		$('#passReal').css( 'height', '20px' );
-		$('#passReal').css( 'top', $('#pass').position().top + PWD_INPUT_PADDING_TOP );
+	pwdValueTag.focus( function( event ) {
+		pwdValueTag.css( 'height', '20px' );
+		pwdValueTag.css( 'top', pwdVisibleTag.position().top + PWD_INPUT_PADDING_TOP );
 	});
 
-	$( "#passReal" ).blur( function( event ) {
-		$('#passReal').css( 'height', '0px' );
+	pwdValueTag.blur( function( event ) {
+		pwdValueTag.css( 'height', '0px' );
 	});
 
 	/*$( "input.loginUserName" ).focus( function() {
 		$( '#passReal' ).hide();
 	});*/
+};
 
+FormUtil.setTimedOut_PositionLoginPwdBlinker = function()
+{
 	// startup position of blinker in relation to login screen layout (will cause problems if page gets resized)
-	setTimeout( function() {
-		$('#passReal').css( 'top', $('#pass').position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
-		$('#passReal').css( 'left', $('#pass').position().left + $('#pass').val().length + 'px' );
-	}, 500 );
+	setTimeout( FormUtil.positionLoginPwdBlinker, 200 );
 
+	setTimeout( FormUtil.positionLoginPwdBlinker, 500 );
+
+	setTimeout( FormUtil.positionLoginPwdBlinker, 1000 );
+};
+
+
+FormUtil.positionLoginPwdBlinker = function()
+{
+	var pwdVisibleTag = $( "#pass" );  // visible password tag
+	var pwdValueTag = $( "#passReal" );  // actual value holding password tag
+
+	pwdValueTag.css( 'top', pwdVisibleTag.position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
+	pwdValueTag.css( 'left', pwdVisibleTag.position().left + pwdVisibleTag.val().length + 'px' );
 };
 
 

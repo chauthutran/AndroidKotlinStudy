@@ -73,7 +73,7 @@ function cwsRender()
 		// Translate terms setup
 		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
 
-		me.afterRender();
+		//me.afterRender();
 	}
 
 	// ------------------
@@ -133,15 +133,6 @@ function cwsRender()
 		});
 				
 	};
-
-	me.afterRender = function()
-	{
-		if ( Util.isAndroid() || Util.isIOS() )
-		{
-			me.setup_keyboardDetection();
-			me.override_classStyles();
-		}
-	}
 
 
 	// This or other classes use this to control the scrolling..
@@ -744,24 +735,14 @@ function cwsRender()
 		me.navDrawerDivTag.empty();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
+		me.loginObj.clearLoginPin();
+		
 		//syncManager.evalSyncConditions();
 
 		me.hideActiveSession_UIcontent();
 
 		me.clearLoginPin();
-	}
-
-	me.clearLoginPin = function()
-	{
-		// clear password pin
-		$( 'input.loginUserPin' ).val( '' );
-		$( '#passReal' ).val( '' );
-
-		//$( '#passReal' ).trigger( { type: 'keypress', which: 46, keyCode: 46 } );
-
-		// reset password pin events
-		FormUtil.createNumberLoginPinPad();
-	}
+	};
 
 
 	// NOTE: Not the way to do.  Should organize all these in one and hide it...
@@ -957,51 +938,6 @@ function cwsRender()
 	{
         FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me );
 	};
-
-	me.setup_keyboardDetection = function()
-	{
-		// Track width+height sizes for detecting android keyboard popup (which triggers resize)
-		$( 'body' ).attr( 'initialWidth', $( 'body' ).css( 'width' ) );
-		$( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
-
-		// Set defaults for Tags to be hidden when keyboard triggers resize
-		$( '#ConnectingWithSara' ).attr( 'keyboardVisible', 'hide' );
-		$( '#advanceOptionLoginBtn' ).attr( 'keyboardVisible', 'hide' );
-
-		// Window Resize detection
-		$( window ).on( 'resize', function () {
-
-			if ( !SessionManager.getLoginStatus() )
-			{
-				//InitialWidth = $( 'body' ).attr( 'initialWidth' );
-				initialHeight = $( 'body' ).attr( 'initialHeight' );
-
-				// height ( change ) only value we're interested in comparing
-				if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
-				{
-					//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
-					$( '[keyboardVisible=hide]' ).fadeOut();
-				} 
-				else
-				{
-					//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
-					$( '[keyboardVisible=hide]' ).fadeIn();
-				}
-
-				FormUtil.createNumberLoginPinPad();
-
-			}
-
-		});
-
-		me.override_classStyles = function()
-		{
-			var style = $('<style> #pageDiv { padding: 4px 2px 0px 2px !important; }</style>')
-
-			$( 'html > head' ).append(style);
-		}
-
-	}
 
 	// ======================================
 

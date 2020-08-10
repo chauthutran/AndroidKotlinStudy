@@ -75,15 +75,13 @@ function app()
       // --------------------
       // 3. FINISH APP START PHASE
       
-      me.appVersionSetup();
+      me.appVersionInfoDisplay();
 
       me.App_syncIcon_UI_event();
 
       me.App_UI_startUp_Progress( '80%' );
 
       me._cwsRenderObj.render();
-
-      FormUtil.createNumberLoginPinPad(); // BUG here - blinker not always showing
 
       //me.App_UI_startUp_Progress( '90%' );
 
@@ -134,10 +132,11 @@ function app()
   };
 
 
-  me.appVersionSetup = function()
+  me.appVersionInfoDisplay = function()
   {
     $( '#spanVersion' ).text( 'v' + _ver );
-    $( '#spanVerDate' ).text( '[' + _verDate + ']' );    
+    $( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
+    $( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
   };
 
 

@@ -45,7 +45,15 @@ function Login( cwsRenderObj )
 	me.render = function()
 	{
 		me.openForm();
-	}
+
+		me.mobileCssSetup();
+
+		FormUtil.setUpLoginInputsEvents();
+
+		me.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..
+		
+		FormUtil.positionLoginPwdBlinker();
+	};
 
 	// ------------------
 
@@ -451,6 +459,85 @@ function Login( cwsRenderObj )
 
 		FormUtil.hideProgressBar();
 	};
+
+
+	me.clearLoginPin = function()
+	{
+		// clear password pin
+		$( '#pass' ).val( '' );
+		$( '#passReal' ).val( '' );
+	};
+
+	// --------------------------------------
+	// --- Mobile Phone related Setups
+
+	me.isMobileDevice = function()
+	{
+		return ( Util.isAndroid() || Util.isIOS() );
+	};
+
+
+	me.browserResizeHandle = function()
+	{
+		if ( me.isMobileDevice() )
+		{
+			// Track width+height sizes for detecting android keyboard popup (which triggers resize)
+			$( 'body' ).attr( 'initialWidth', $( 'body' ).css( 'width' ) );
+			$( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
+
+			// Set defaults for Tags to be hidden when keyboard triggers resize
+			$( '#ConnectingWithSara' ).addClass( 'hideOnKeyboardVisible' );
+			$( '#advanceOptionLoginBtn' ).addClass( 'hideOnKeyboardVisible' );
+
+			// Window Resize detection
+			$( window ).on( 'resize', function () {
+
+				// TODO: Could do login page visible further detection!!!
+				if ( $( '#pass' ).is( ':visible' ) )   // !SessionManager.getLoginStatus() )
+				{
+					//InitialWidth = $( 'body' ).attr( 'initialWidth' );
+					initialHeight = $( 'body' ).attr( 'initialHeight' );
+
+					// height ( change ) only value we're interested in comparing
+					if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
+					{
+						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
+						$( '.hideOnKeyboardVisible' ).hide();
+					} 
+					else
+					{
+						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
+						$( '.hideOnKeyboardVisible' ).show();
+					}
+
+					FormUtil.setTimedOut_PositionLoginPwdBlinker();
+				}
+			});
+		}
+		else
+		{
+			// Window Resize detection
+			$( window ).on( 'resize', function () 
+			{
+				FormUtil.setTimedOut_PositionLoginPwdBlinker();		
+			});
+		}
+	};
+
+
+	me.mobileCssSetup = function()
+	{
+		if ( me.isMobileDevice() ) me.override_MobileClassStyles();
+	};
+
+
+	me.override_MobileClassStyles = function()
+	{
+		var style = $('<style> #pageDiv { padding: 4px 2px 0px 2px !important; }</style>');
+
+		$( 'html > head' ).append(style);
+	};
+
 
 	// --------------------------------------
 	
