@@ -498,7 +498,7 @@ function cwsRender()
 			&& ConfigManager.getConfigJson().settings.theme 
 			&& ConfigManager.getConfigJson().themes )
 		{
-			console.customLog( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
+			//console.customLog( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
 
 			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
 			// var defTheme = SessionManager.getStorageLastSessionData().theme;

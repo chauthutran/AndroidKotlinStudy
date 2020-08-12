@@ -15,6 +15,12 @@ function app()
 
 	me.initialize = function()
 	{
+
+    // app startup event setup (for listeners)
+    //window.addEventListener( 'appinstalled', me.App_installed_done);
+
+    window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
+
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
 
@@ -44,9 +50,6 @@ function app()
       // --------------------
       // 1. SET UP PHASE
       WsCallManager.setWsTarget();
-
-      // app startup event setup (for listeners)
-      window.addEventListener( 'appinstalled', me.App_installed_done);
 
       ConnManagerNew.createNetworkConnListeners();
 
@@ -139,7 +142,7 @@ function app()
   me.App_syncIcon_UI_event = function()
   {
     // move into cwsRender?
-    $('#imgAppDataSyncStatus').click(() => {
+    $( SyncManagerNew.imgAppSyncActionButtonId ).click(() => {
 
       SyncManagerNew.SyncMsg_ShowBottomMsg();
 
@@ -165,6 +168,42 @@ function app()
   };
 
   // ---------------------------------------
+
+  me.appBeforeInstallPrompt = function( e )
+  {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    //e.preventDefault();
+
+    deferredPrompt = e;
+
+    var isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
+
+    console.customLog( 'App StandAlone Status..: ' + isApp_standAlone );
+    // We would allow below link show if not 'standAlone' case only.
+
+    // this event does not fire if the application is already installed
+    // then your button still hidden ;)
+    console.customLog( 'before install prompt' );
+
+
+    // Set display for this!
+    var divMobileInstallTryTag = $( '#divMobileInstallTry' );
+    divMobileInstallTryTag.css( 'cursor', 'pointer' );
+    divMobileInstallTryTag.text( '<span>Available - standAlone: ' + isApp_standAlone + '</span>' );
+
+    divMobileInstallTryTag.off( 'click' ).click( function() 
+    {
+        // Show the prompt
+        deferredPrompt.prompt();
+
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then( ( choiceResult ) => {
+            if ( choiceResult.outcome === 'accepted' ) console.customLog( 'User accepted the A2HS prompt' );
+            else console.customLog( 'User dismissed the A2HS prompt' );
+            deferredPrompt = null;
+        });
+    });
+  };
 
 	// ======================================
 

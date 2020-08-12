@@ -610,6 +610,16 @@ function aboutApp( cwsRender )
 		}
     }
 
+    // -----------------------------------
+
+    me.setMobileAppPart = function()
+    {
+        $( '.divAppInstall' ).show();
+        $( '#appInstallTry' ).off( 'click' ).click( function() {
+
+            console.customLog( 'Try the install - event call!!' );
+        });      
+    }
 
     me.populateLangList_Show = function( languageList, defaultLangCode )
     {   

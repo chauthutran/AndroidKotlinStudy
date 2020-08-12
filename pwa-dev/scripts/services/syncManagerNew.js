@@ -27,8 +27,8 @@ SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 //SyncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
 //SyncManagerNew.sync_Download_Running = false; // for planned download sync
 
-SyncManagerNew.imgAppSyncActionButton = $( '#imgAppDataSyncStatus' );
-SyncManagerNew.subProgressBar = $( '#divProgressInfo' );
+SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
+SyncManagerNew.subProgressBarId = '#divProgressInfo';
 //.children()[0];
 // $( '#divProgressBar.indeterminate' );
 
@@ -42,15 +42,6 @@ SyncManagerNew.template_SyncMsgJson = {
 };
 
 SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
-
-SyncManagerNew.template_SyncMsg_Header = `<div class="sync_all__header_title">Synchronization Services Deliveries</div>
-    <div class="sync_all__anim i-sync-pending_36 rot_l_anim"></div>`;
-
-SyncManagerNew.template_SyncMsg_Section = `<div class="sync_all__section">
-      <div class="sync_all__section_title"></div>
-      <div class="sync_all__section_log"></div>
-  </div>`;
-
 
 // ===================================================
 // === MAIN 2 FEATURES =============
@@ -272,21 +263,21 @@ SyncManagerNew.update_UI_StartSyncAll = function()
     SyncManagerNew.initializeProgressBar();
 
     // animate syncButton 'running' 
-    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, true );
+    FormUtil.rotateTag( $( SyncManagerNew.imgAppSyncActionButtonId ), true );
 };
 
 SyncManagerNew.update_UI_FinishSyncAll = function()
 {
     SyncManagerNew.hideProgressBar();
-    FormUtil.rotateTag( SyncManagerNew.imgAppSyncActionButton, false );
+    FormUtil.rotateTag( $( SyncManagerNew.imgAppSyncActionButtonId ), false );
 };
 
 
 SyncManagerNew.initializeProgressBar = function()
 {
 
-    $( SyncManagerNew.subProgressBar ).removeClass( 'indeterminate' );
-    $( SyncManagerNew.subProgressBar ).addClass( 'determinate' );
+    $( SyncManagerNew.subProgressBarId ).removeClass( 'indeterminate' );
+    $( SyncManagerNew.subProgressBarId ).addClass( 'determinate' );
 
     FormUtil.updateProgressWidth( 0 );
     FormUtil.showProgressBar( 0 );
@@ -432,9 +423,8 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
         var msgContentTag = syncInfoAreaTag.find( 'div.msgContent' );
 
         // 1. Set Header
-        msgHeaderTag.append( SyncManagerNew.template_SyncMsg_Header );
+        msgHeaderTag.append( Templates.syncMsg_Header );
         // TODO: Need to update the sync progress status.. and register 
-
 
         // 2. Set Body
         var syncMsgJson = SyncManagerNew.SyncMsg_Get();
@@ -481,7 +471,7 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
 
 SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
 {
-    var sectionTag = $( SyncManagerNew.template_SyncMsg_Section );
+    var sectionTag = $( Templates.syncMsg_Section );
 
     var sectionTitleTag = sectionTag.find( 'div.sync_all__section_title' ).html( sectionTitle );
     var sectionLogTag = sectionTag.find( 'div.sync_all__section_log' );

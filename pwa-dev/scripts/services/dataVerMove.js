@@ -184,7 +184,7 @@ DataVerMove.lsRedeemListMove = function( callBack )
         {
             if ( needToMove )
             {
-                console.customLog( ' lsRedeemList, needToMove: ' + needToMove );
+                //console.customLog( ' lsRedeemList, needToMove: ' + needToMove );
     
                 // get from LocalStorage and put it on IDB with localForage..
                 var redeemListDataStr = localStorage.getItem( Constants.storageName_redeemList );

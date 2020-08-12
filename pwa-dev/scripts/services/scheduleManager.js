@@ -41,7 +41,7 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 
 	ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
 
-	console.customLog( 'runSchedules_AfterLogin' );
+	//console.customLog( 'runSchedules_AfterLogin' );
 
 	if ( callBack ) callBack();
 };
@@ -118,7 +118,7 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 						cwsRenderObj.renderArea( cwsRenderObj.areaList[ 0 ].id );
 					});
 
-					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, true );
+					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
 					//alert( 'SyncDown changed list.  Please refresh the list.' );
 				}
 			} 

@@ -336,7 +336,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
         var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
         var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
 
-        divHeaderTag.html( '<div class="msgHeaderLabel sync_all__header_title">' + statusLabel + '</div>' );
+        var syncMsg_HeaderPartTag = $( Templates.syncMsg_Header );
+        syncMsg_HeaderPartTag.find( '.msgHeaderLabel' ).text = statusLabel;
+
+        divHeaderTag.html( syncMsg_HeaderPartTag );
     };
 
 

@@ -19,6 +19,8 @@ function swManager( _cwsRenderObj, callBack ) {
     me.registrationUpdates = false;
     me.createRefreshPrompt = false;
 
+    me.isApp_standAlone = false;
+
     me.installStateProgress = {
             'installing': '1/4',
             'installed': '2/4',
@@ -32,10 +34,7 @@ function swManager( _cwsRenderObj, callBack ) {
 
     me.initialize = function ( callBack ) 
     {
-
-        var standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
-
-        console.customLog( 'App StandAlone Status..: ' + standAlone );
+        me.isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
 
         // checkRegisterSW
         if ( ( 'serviceWorker' in navigator ) )
@@ -47,14 +46,6 @@ function swManager( _cwsRenderObj, callBack ) {
             alert ( 'SERVICE WORKER not supported. Cannot continue!' );
         }
     };
-
-
-    // TODO: TEMP...
-    window.addEventListener('beforeinstallprompt', e => {
-        // this event does not fire if the application is already installed
-        // then your button still hidden ;)
-        console.customLog( 'before install prompt - windows' );
-    });
 
   
     // --------------------------------------------
@@ -122,7 +113,11 @@ function swManager( _cwsRenderObj, callBack ) {
                     case 'installed':
                         // SW installed (2) - changes applied
                         // controller present means existing SW was replaced to be made redundant
-                        if ( navigator.serviceWorker.controller ) me.createRefreshPrompt = true;
+                        if ( navigator.serviceWorker.controller ) 
+                        {
+                            //me.createRefreshPrompt = true;
+                            me.createRefreshIntervalTimer();
+                        }
                         break;
 
                     case 'activating':
@@ -131,17 +126,17 @@ function swManager( _cwsRenderObj, callBack ) {
 
                     case 'activated':
                         // SW activated (4) - start up completed: ready
-                        if ( me.createRefreshPrompt ) me.createRefreshIntervalTimer();
-                        else callBack();
+                        //if ( me.createRefreshPrompt ) me.createRefreshIntervalTimer();
+                        callBack();
                         break;
                 }
 
             };
 
 
-            me.swInstallObj.beforeinstallprompt = () => {
-                console.customLog( 'before install prompt' );
-            };
+            //me.swInstallObj.beforeinstallprompt = () => {
+            //    console.customLog( 'before install prompt' );
+            //};
 
         };
     }
@@ -151,9 +146,11 @@ function swManager( _cwsRenderObj, callBack ) {
     // Restarting the service worker...
 	me.reGetAppShell = function( callBack )
 	{
-		if ( me.swRegObj !== undefined )
+		if ( me.swRegObj )
 		{
-			me.swRegObj.unregister().then(function(boolean) {
+			me.swRegObj.unregister().then( function(boolean) {
+
+                MsgManager.notificationMessage ( 'SW UnRegistered', 'notificationDark', undefined, '', 'left', 'bottom', 1000 );
 
 				if ( callBack )
 				{
@@ -168,7 +165,8 @@ function swManager( _cwsRenderObj, callBack ) {
 			.catch(err => {
 				// MISSING TRANSLATION
 				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
-				setTimeout( function() {
+
+                setTimeout( function() {
 					
 					if ( callBack )
 					{

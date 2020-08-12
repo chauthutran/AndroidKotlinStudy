@@ -123,15 +123,21 @@ function settingsApp( cwsRender )
             me.settingsFormDivTag.append ( Templates.settings_app_data_configuration );
             me.cwsRenderObj.langTermObj.translatePage();
 
-            $("#accept").click( function() {
+            $( '.divResetApp_Accept' ).click( function() {
 
-                AppInfoManager.removeUserInfo();
-
-                me.cwsRenderObj.swManagerObj.reGetAppShell();
-
+                try
+                {
+                    DataManager2.deleteAllStorageData( function() {
+                        me.cwsRenderObj.swManagerObj.reGetAppShell();
+                    });
+                }
+                catch ( errMsg ) {
+                    console.customLog( 'About Page, buttonResetData, errMsg: ' + errMsg );
+                    me.cwsRenderObj.swManagerObj.reGetAppShell();
+                }
             });
 
-            $("#cancel").click( function() {
+            $( '.divResetApp_Cancel' ).click( function() {
                 me.unblockPage();
                 $( '#dialog_confirmation' ).remove();
             });

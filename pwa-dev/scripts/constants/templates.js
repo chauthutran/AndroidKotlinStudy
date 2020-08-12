@@ -127,6 +127,16 @@ Templates.msgAreaBottomContent = `<div class="msgArea sync_all">
         <div class="msgContent bottom__wrapper list" />
     </div>`;
 
+Templates.syncMsg_Header = `<div class="msgHeaderLabel sync_all__header_title">Synchronization Services Deliveries</div>
+    <div class="divSyncAllClose" style="float: right; margin-right: 8px; cursor: pointer;">
+        <img src="images/close.svg" style="width: 36px; height: 36px;" />
+    </div>`;
+
+Templates.syncMsg_Section = `<div class="sync_all__section">
+      <div class="sync_all__section_title"></div>
+      <div class="sync_all__section_log"></div>
+  </div>`;
+
 Templates.msgSection = `<div class="msgSection sync_all__section">
     <div class="msgSectionTitle sync_all__section_title"></div>
     <div class="msgSectionLog sync_all__section_log"></div>
@@ -715,14 +725,14 @@ Templates.Advance_Login_Buttons = `
        <div class="dialog__text" term="">
           Your configuration and App data stored in the device will be deleted. Are you sure?
        </div>
-       <div class="dialog__action"><div class="button-text warning" id="accept">
+       <div class="dialog__action"><div class="button-text warning">
           <div class="button__container">
-            <div class="button-label" term="accept">ACCEPT</div>
+            <div class="button-label divResetApp_Accept" term="accept">ACCEPT</div>
           </div>
        </div>
-       <div class="button-text primary c_500" id="cancel">
+       <div class="button-text primary c_500">
           <div class="button__container">
-            <div class="button-label" term="Cancel">DECLINE</div>
+            <div class="button-label divResetApp_Cancel" term="Cancel">DECLINE</div>
           </div>
        </div>
      </dialog>`;
@@ -776,10 +786,29 @@ Templates.setMsgAreaBottom = function( callBack )
 {    
     var syncInfoAreaTag = Templates.getMsgAreaBottom();
 
-    callBack( Templates.getMsgAreaBottom() );
+    callBack( syncInfoAreaTag );
 
     // Common ones - make a method out of it..
-    syncInfoAreaTag.show( 'slide', { direction: 'down' }, 200 );//css('display', 'block');
+    syncInfoAreaTag.show( 200 );//css('display', 'block');
     $( '#divMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
+
+    syncInfoAreaTag.find( '.divSyncAllClose' ).click( Templates.closeMsgAreaBottomScrim );
 };
 
+
+Templates.closeMsgAreaBottomScrim = function()
+{    
+		// msg hide click event
+		//$( '.sheet_bottom-scrim' ).click( function () 
+    $( '.sheet_bottom-fs' ).css( 'display', 'none' );
+    $( '.sheet_bottom-scrim' ).css( 'display', 'none' );
+};
+
+
+Templates.setEvent_closeMsgAreaBottomScrim = function()
+{    
+		// msg hide click event '#divMsgAreaBottomScrim' is used for '.sheet_bottom-scrim'
+		$( '.sheet_bottom-scrim' ).click( Templates.closeMsgAreaBottomScrim );
+};
+
+				
