@@ -81,6 +81,8 @@ function swManager( _cwsRenderObj, callBack ) {
         {
             me.newRegistration = true; // 1st time running SW registration (1st time running PWA)
             me.registrationState = 'sw: new install';
+
+            // NOTE: DO WE DISPLAY INSTALL ON MOBILE - MESSAGE HERE?
         }
         else 
         {
@@ -113,11 +115,11 @@ function swManager( _cwsRenderObj, callBack ) {
                     case 'installed':
                         // SW installed (2) - changes applied
                         // controller present means existing SW was replaced to be made redundant
-                        if ( navigator.serviceWorker.controller ) 
-                        {
+                        if ( navigator.serviceWorker.controller ) console.customLog( 'App updates detected' );
+                        //{
                             //me.createRefreshPrompt = true;
-                            me.createRefreshIntervalTimer();
-                        }
+                        //    me.createRefreshIntervalTimer();
+                        //}
                         break;
 
                     case 'activating':
@@ -127,19 +129,39 @@ function swManager( _cwsRenderObj, callBack ) {
                     case 'activated':
                         // SW activated (4) - start up completed: ready
                         //if ( me.createRefreshPrompt ) me.createRefreshIntervalTimer();
-                        callBack();
+                        //callBack();
                         break;
                 }
-
             };
-
-
-            //me.swInstallObj.beforeinstallprompt = () => {
-            //    console.customLog( 'before install prompt' );
-            //};
-
         };
-    }
+    };
+    //me.swInstallObj.beforeinstallprompt = () => {
+    //    console.customLog( 'before install prompt' );
+    //};
+
+    // -----------------------------------
+
+	me.createRefreshIntervalTimer = function()
+	{		
+		me.newSWrefreshNotification();
+
+		//var refreshIntV = setInterval( function() {
+		//	me.newSWrefreshNotification();
+		//}, me._newUpdateInstallMsg_interval );
+	};
+
+
+	me.newSWrefreshNotification = function()
+	{
+		// new update available
+		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+		// move to cwsRender ?
+		btnUpgrade.click ( () => {  location.reload( true );  });
+
+		// MISSING TRANSLATION
+		MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
+	};
 
     // -----------------------------------
 
@@ -189,31 +211,6 @@ function swManager( _cwsRenderObj, callBack ) {
 				location.reload( true );
 			}, 100 )		
 		}
-	};
-
-
-	me.createRefreshIntervalTimer = function()
-	{		
-		me.newSWrefreshNotification();
-
-		var refreshIntV = setInterval( function() {
-
-			me.newSWrefreshNotification();
-
-		}, me._newUpdateInstallMsg_interval );
-	};
-
-
-	me.newSWrefreshNotification = function()
-	{
-		// new update available
-		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-		// move to cwsRender ?
-		btnUpgrade.click ( () => {  location.reload( true );  });
-
-		// MISSING TRANSLATION
-		MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
 	};
 
     // -----------------------------------

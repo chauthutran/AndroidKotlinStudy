@@ -169,6 +169,7 @@ function Statistics( cwsRender )
         
         if ( statJson.fileName )
         {
+            var loadList = [];
             var statisticPage = AppInfoManager.getStatisticPages( statJson.fileName );
 
             var dom_parser = new DOMParser(); // parse HTML into DOM document object 
@@ -191,7 +192,21 @@ function Statistics( cwsRender )
                     }
                     else if ( el.getAttribute( "wfaload" ) === "true" )
                     {
-                        statsContentPageTag.append( '<script src="' + el.getAttribute( "src" ) + '"></' + 'script>' );
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = el.getAttribute( "src" );
+
+                        loadList.push( { 'name': script.src, 'loaded': false } );
+
+                        script.onload = function()
+                        {                             
+                            me.setLoaded_ByScriptName( loadList, script.src );
+                            me.waitForAllLoaded( loadList, callBack );
+                        };
+
+                        document.getElementsByTagName("head")[0].appendChild( script );
+                        //var scriptElm  = document.createElement('script');
+                        //statsContentPageTag.append( '<script src="' + el.getAttribute( "src" ) + '"></' + 'script>' );
                     }    
                 }
                 catch ( errMsg ) {
@@ -225,6 +240,15 @@ function Statistics( cwsRender )
                     if ( el.getAttribute( "wfaload" ) === "true" )
                     {
                         statsContentPageTag.append( '<link ref="stylesheet" href="' + el.getAttribute( "href" ) + '">' );
+
+                        // 'load' event does not exists for 'link'.  
+                        //  Instead, we could do this when the app starts!!
+
+                        //var link = document.createElement( 'link' );
+                        //link.ref = "stylesheet";
+                        //link.href = el.getAttribute( "href" );
+                        //loadList.push( { 'name': link.href, 'loaded': false } );
+                        //document.getElementsByTagName("head")[0].appendChild( link );
                     }
                 }
                 catch ( errMsg ) {
@@ -232,10 +256,39 @@ function Statistics( cwsRender )
                 }
             });
 
-            if ( callBack ) callBack();
+            me.waitForAllLoaded( loadList, callBack );
         }
     };
 
+    me.waitForAllLoaded = function( loadList, callBack )
+    {
+        var allLoaded = true;
+
+        for ( var i = 0; i < loadList.length; i++ )
+        {
+            var loadingItem = loadList[i];
+
+            if ( !loadingItem.loaded )
+            {
+                allLoaded = false;
+                break;
+            }
+        }
+
+        if ( allLoaded ) {
+            callBack();
+        }
+    };
+
+
+    me.setLoaded_ByScriptName = function( loadList, name )
+    {
+        var scriptItem = Util.getFromList( loadList, name, 'name' );
+
+        if ( scriptItem ) scriptItem.loaded = true;
+    };
+
+    // ------------------------------------
 
     me.prepareClientListData = function()
     {
@@ -247,7 +300,6 @@ function Statistics( cwsRender )
 
         return clientList_Clone;
     };
-
 
     // -----------------------------------------------
 

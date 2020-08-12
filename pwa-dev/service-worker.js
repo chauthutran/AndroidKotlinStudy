@@ -1169,11 +1169,11 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "11056fd3ba73f0c21693aeaa91f2802d"
+    "revision": "46a19c3d4ec5a04b3b690b326b7239fd"
   },
   {
     "url": "scripts/app.js",
-    "revision": "3bd8a2fd50ec364f7cabd1a0a84838fd"
+    "revision": "c009c3ec4cadf32736f339882f126130"
   },
   {
     "url": "scripts/back/cacheManager.js",
@@ -1265,7 +1265,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/classes/statistics.js",
-    "revision": "ca8ed0eeab167abbc5190b5ea4fcb4d8"
+    "revision": "90e5d4e34d122c17d69faac3753b3c8c"
   },
   {
     "url": "scripts/classes/webqr.js",
@@ -1281,7 +1281,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/constants/templates.js",
-    "revision": "33463a263ea4e6f5455261e9e2486781"
+    "revision": "52e433a0ce9d50134bf0651a750fa182"
   },
   {
     "url": "scripts/cwsRender.js",
@@ -1357,7 +1357,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/configManager.js",
-    "revision": "4b26c97e8c9a95c1a85ea7db62d97e00"
+    "revision": "d600cc1181532c98ce704ab559e3bcad"
   },
   {
     "url": "scripts/services/connManagerNew.js",
@@ -1425,7 +1425,7 @@ self.__precacheManifest = [
   },
   {
     "url": "scripts/services/swManager.js",
-    "revision": "ed5ffb9e5e6681c03ea7e9776751cd91"
+    "revision": "c06a309cb6d3ec8e0e2c3248a4ebe2f1"
   },
   {
     "url": "scripts/services/syncManagerNew.js",

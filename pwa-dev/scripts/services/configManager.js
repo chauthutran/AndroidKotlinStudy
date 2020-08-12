@@ -426,21 +426,18 @@ ConfigManager.getAllAreaList = function()
         
 ConfigManager.getSettingPaging = function()
 {
-    var pagingSetting;
+    var pagingSetting = ConfigManager.default_SettingPaging
 
     var configJson = ConfigManager.getConfigJson();
 
     if ( configJson && configJson.settings && configJson.settings.paging )
     {
-        pagingSetting = configJson.settings.paging;
-    }
-    else
-    {
-        pagingSetting = ConfigManager.default_SettingPaging;
+        Util.mergeJson( pagingSetting, configJson.settings.paging );
     }
     
     return pagingSetting;
-}
+};
+
 
 ConfigManager.getActivityDisplaySettings = function()
 {

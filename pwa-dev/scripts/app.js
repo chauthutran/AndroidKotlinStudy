@@ -32,12 +32,14 @@ function app()
 
     me.App_UI_startUp_loading(); // << should we move this into cwsRender?
 
-    me._cwsRenderObj.swManagerObj = new swManager( me._cwsRenderObj, function() {
+    me._cwsRenderObj.swManagerObj = new swManager( me._cwsRenderObj, function() { 
+      console.log( 'swManger Processed..' );
+    });
 
-      me.App_UI_startUp_Progress( '40%' );
-      me.startAppProcess();
+    me.App_UI_startUp_Progress( '40%' );
+    me.startAppProcess();
 
-    } );   
+    //} );   
 
   };
 
