@@ -18,7 +18,7 @@ DataVerMove.dataChangeHandle = function()
 
     DataVerMove.getDataVersionNumber_LF( function( versionNumber )
     {
-        console.log( ' ===> DataVerMove Current versionNumber: ' + versionNumber  );
+        console.customLog( ' ===> DataVerMove Current versionNumber: ' + versionNumber  );
 
         var dataObj = { 'currVer': versionNumber, 'list': DataVerMove.verRunList };
 
@@ -26,7 +26,7 @@ DataVerMove.dataChangeHandle = function()
 
             if ( !itemData.ver || itemData.ver > dataObj.currVer )
             {
-                console.log( ' ===> DataVerMove RUN [VER: ' + itemData.ver + ']' );
+                console.customLog( ' ===> DataVerMove RUN [VER: ' + itemData.ver + ']' );
 
                 itemData.run( function() {
                     
@@ -39,7 +39,7 @@ DataVerMove.dataChangeHandle = function()
 
         }, function() {
             // Finished
-            console.log( ' ===> DataVerMove.dataChangeHandle() FINISHED' );
+            console.customLog( ' ===> DataVerMove.dataChangeHandle() FINISHED' );
         });
         
     });
@@ -70,7 +70,7 @@ DataVerMove.markDataVersionNumber_LF = function( versionNumber, callBack )
     {
         var dataJson = { 'ver': versionNumber };
 
-        console.log( 'markDataVersionNumber_LF, versionNumber ' + versionNumber  );
+        console.customLog( 'markDataVersionNumber_LF, versionNumber ' + versionNumber  );
     
         DataManager2.saveData_LS( "dataVersion", dataJson, callBack );    
     }
@@ -105,8 +105,8 @@ DataVerMove.lsLocalForageMove = function( callBack )
     {
         if ( needToMove )
         {
-            console.log( ' ===> NEED TO MOVE LS LF, moveKeys: ' );
-            console.log( moveKeys );
+            console.customLog( ' ===> NEED TO MOVE LS LF, moveKeys: ' );
+            console.customLog( moveKeys );
 
             var dataObj = { 'list': moveKeys };
 
@@ -121,7 +121,7 @@ DataVerMove.lsLocalForageMove = function( callBack )
 
             }, function() {
                 // Finished
-                console.log( ' ===> Ran DataVerMove.lsLocalForageMove()' );
+                console.customLog( ' ===> Ran DataVerMove.lsLocalForageMove()' );
                 callBack();
 
                 //DataVerMove.dataCopyToIDBs();
@@ -134,7 +134,7 @@ DataVerMove.lsLocalForageMove = function( callBack )
 
 DataVerMove.blankTest = function( callBack )
 {    
-    console.log( ' ===> Ran DataVerMove.blankTest()' );
+    console.customLog( ' ===> Ran DataVerMove.blankTest()' );
     callBack();
 };
 
@@ -145,7 +145,7 @@ DataVerMove.idbLocalForageMove = function( callBack )
     {
         if ( needToMove )
         {
-            console.log( ' IDB, needToMove: ' + needToMove );
+            console.customLog( ' IDB, needToMove: ' + needToMove );
 
             var dataObj = { 'list': moveKeys };
             
@@ -156,7 +156,7 @@ DataVerMove.idbLocalForageMove = function( callBack )
                     // Change key name
                     DataManager2.saveData_IDB( keyStr, jsonData, function(){
 
-                        console.log( ' ===> IDB COPIED - keyStr: ' + keyStr );
+                        console.customLog( ' ===> IDB COPIED - keyStr: ' + keyStr );
                         continueNext();
                     } );
 
@@ -164,7 +164,7 @@ DataVerMove.idbLocalForageMove = function( callBack )
                 
             }, function() {
                 // Finished
-                console.log( ' ===> Ran DataVerMove.idbLocalForageMove()' );
+                console.customLog( ' ===> Ran DataVerMove.idbLocalForageMove()' );
                 callBack();
             });
             
@@ -184,7 +184,7 @@ DataVerMove.lsRedeemListMove = function( callBack )
         {
             if ( needToMove )
             {
-                console.log( ' lsRedeemList, needToMove: ' + needToMove );
+                console.customLog( ' lsRedeemList, needToMove: ' + needToMove );
     
                 // get from LocalStorage and put it on IDB with localForage..
                 var redeemListDataStr = localStorage.getItem( Constants.storageName_redeemList );
@@ -195,7 +195,7 @@ DataVerMove.lsRedeemListMove = function( callBack )
     
                     DataManager2.saveData_RedeemList( redeemListJson, function( retData )
                     {
-                        console.log( ' ===> RedeemList LS Moved.' );                    
+                        console.customLog( ' ===> RedeemList LS Moved.' );                    
                         localStorage.setItem( Constants.lsFlag_dataMoved_redeemListIDB, "Y" );
     
                         callBackInner();
@@ -262,7 +262,7 @@ DataVerMove.checkIDB_LocalForageNeedMove = function( callBack )
                 // If exists in LS, but Not in IDB, callBack with true..
                 if ( !retData )
                 {
-                    //console.log( searched );
+                    //console.customLog( searched );
                     callBack( true, [ keyStr ] );
                 }
                 else callBack( false, [] );
@@ -317,14 +317,14 @@ DataVerMove.dataCopyToIDB = function( key, value, callBack )
         if( searched === null )
         {
             DataManager2.saveData_IDB( key, JSON.parse( value ), function( retData ){
-                console.log( ' ===> [NEW]: DATA MOVED to indexedDB, key: ' + key + '.' );
+                console.customLog( ' ===> [NEW]: DATA MOVED to indexedDB, key: ' + key + '.' );
 
                 if ( callBack ) callBack( key, retData );
             } );
         }
         else
         {
-            console.log( ' ===> [NEW]: DATA NOT MOVED.  Data in IndexedDB already exists.' );
+            console.customLog( ' ===> [NEW]: DATA NOT MOVED.  Data in IndexedDB already exists.' );
         }
     })
 };

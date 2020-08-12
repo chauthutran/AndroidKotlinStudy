@@ -175,7 +175,7 @@ function DataList( cwsRenderObj, blockObj )
 
             }
 
-            if ( me.debugMode ) console.log( grpByArr );
+            if ( me.debugMode ) console.customLog( grpByArr );
 
             uniqValues.sort();
 
@@ -200,7 +200,7 @@ function DataList( cwsRenderObj, blockObj )
                 for( var r = 0; r < grpByArr.length; r++ )
                 {
 
-                    if ( me.debugMode ) console.log( fldGroupByID, grpByArr[ r ].value );
+                    if ( me.debugMode ) console.customLog( fldGroupByID, grpByArr[ r ].value );
 
                     var tblGrpBy = $( '<table id="groupByFieldBlock_' + g + '_' + r + '" class="groupByFieldResultTable" />' );
                     var trGrpBy = $( '<tr />' );
@@ -270,7 +270,7 @@ function DataList( cwsRenderObj, blockObj )
         var searchPostPayload = FormUtil.getLastPayload();
         var newjsonList = [];
 
-        if ( me.debugMode ) console.log( itemButtons );
+        if ( me.debugMode ) console.customLog( itemButtons );
 
         for( var i = 0; i < jsonList.length; i++ )
         {

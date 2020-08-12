@@ -60,7 +60,7 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj ) //, callBack )
 	}
 	catch( errMsg )
 	{
-		console.log( 'ERROR during ConnManagerNew.firstNetworkConnSet, errMsg: ' + errMsg );
+		console.customLog( 'ERROR during ConnManagerNew.firstNetworkConnSet, errMsg: ' + errMsg );
 		//callBack( false );
 	}
 };
@@ -157,7 +157,7 @@ ConnManagerNew.serverAvailable = function( callBack )
 	}
 	catch (err)
 	{
-		console.log( 'error in ConnManagerNew.serverAvailable ')
+		console.customLog( 'error in ConnManagerNew.serverAvailable ')
 		callBack( false );
 	}
 };

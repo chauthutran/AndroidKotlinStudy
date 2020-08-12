@@ -57,7 +57,7 @@ function LangTerm( cwsRenderObj )
 
 		if ( langTerms )
 		{
-			if ( me.debugMode ) console.log( '=== LANG TERMS ==> Local Storage Data Loaded' );
+			if ( me.debugMode ) console.customLog( '=== LANG TERMS ==> Local Storage Data Loaded' );
 			me.allLangTerms = langTerms;
 			me.setLanguageList( me.allLangTerms );
 			me.currentLangTerms = me.getLangTerms( me.currentLangcode );
@@ -66,7 +66,7 @@ function LangTerm( cwsRenderObj )
 		}
 		else
 		{
-			if ( me.debugMode ) console.log( '=== LANG TERMS ==> Retrieving from Web Service' );
+			if ( me.debugMode ) console.customLog( '=== LANG TERMS ==> Retrieving from Web Service' );
 			me.retrieveAllLangTermInner( function( returnJson )
 			{
 				me.allLangTerms = returnJson; 
@@ -102,7 +102,7 @@ function LangTerm( cwsRenderObj )
 			else
 			{
 				// Try retrieving all dailyCache on WebService..
-				if ( me.debugMode ) console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
+				if ( me.debugMode ) console.customLog( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 				// try running the dailyCache
 				WsCallManager.requestPostDws( dailyCache, { "project": "234823" }, loadingTag, function( success, allLangTermsJson ) {
@@ -125,7 +125,7 @@ function LangTerm( cwsRenderObj )
 	// MAIN METHOD 2.
 	me.translatePage = function()
 	{
-		if ( me.debugMode ) console.log( 'translating page: ' + me.currentLangcode );
+		if ( me.debugMode ) console.customLog( 'translating page: ' + me.currentLangcode );
 
 		if ( me.allLangTerms && !me.currentLangTerms )
 		{
@@ -158,11 +158,11 @@ function LangTerm( cwsRenderObj )
 			{
 				var tag = $( '[term="' + termName + '"]' );
 				tag.html( termVal );
-				if ( me.debugMode ) console.log( ' ~ found term [' + me.currentLangcode + ']: ' + termName);
+				if ( me.debugMode ) console.customLog( ' ~ found term [' + me.currentLangcode + ']: ' + termName);
 			}
 			else
 			{
-				if ( me.debugMode ) console.log( ' ~ missing term [' + me.currentLangcode + ']: ' + termName);
+				if ( me.debugMode ) console.customLog( ' ~ missing term [' + me.currentLangcode + ']: ' + termName);
 			}
 		}
 	}

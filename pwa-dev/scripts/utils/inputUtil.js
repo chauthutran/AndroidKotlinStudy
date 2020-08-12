@@ -67,7 +67,7 @@ function inputMonitor( cwsRenderObj )
 
     function touchStart(e) 
     {
-        //console.log( $( e.touches[0].target ) );
+        //console.customLog( $( e.touches[0].target ) );
         me.initialiseTouchDefaults( e );
 
         if ( startTagRedeemListItem )
@@ -106,7 +106,7 @@ function inputMonitor( cwsRenderObj )
     
             }, parseInt( inputMonLogoutDelay ) * 60 * 1000 ); //60 * 60 * 1000
     
-            //if ( StatusInfoManager.debugMode ) console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+            //if ( StatusInfoManager.debugMode ) console.customLog( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
         }
 
     }
@@ -134,11 +134,11 @@ function inputMonitor( cwsRenderObj )
         {
             if (diffY > 0)  // sliding vertically
             {
-                console.log("swiping up");  // swiping up
+                console.customLog("swiping up");  // swiping up
             } 
             else 
             {
-                console.log("swiping down"); // swiping down
+                console.customLog("swiping down"); // swiping down
             }
         }*/
 
@@ -188,7 +188,7 @@ function inputMonitor( cwsRenderObj )
         navDrawerVisibleOnStart = $( '#navDrawerDiv' ).is( ':visible' );
         thresholdNavDrawerWidth = ( expectedNavDrawerWidth / 2 ).toFixed( 0 );
         dragXoffsetLimit = 50; // touch zone (up to left 50px for start of menu-open swipe)
-        //console.log( $( e.touches[0].target ) );
+        //console.customLog( $( e.touches[0].target ) );
 
         // listPage (containing redeemList) is currently visible
         if ( $( 'div.listDiv' ).is( ':visible' ) ) //div.floatListMenuSubIcons
@@ -343,7 +343,7 @@ function inputMonitor( cwsRenderObj )
         trackY += diffY;
 
         // for debugging
-        //console.log( 'initialX: ' + initialX + ', currentX: ' + currentX + ', trackX: ' + trackX);
+        //console.customLog( 'initialX: ' + initialX + ', currentX: ' + currentX + ', trackX: ' + trackX);
     }
 
     function getSessionSummary()
@@ -400,7 +400,7 @@ function inputMonitor( cwsRenderObj )
         if ( diffX < 0 ) 
         {
             // swiping left
-            //console.log("swiping left");
+            //console.customLog("swiping left");
 
             if ( navDrawerVisibleOnStart )
             {
@@ -424,7 +424,7 @@ function inputMonitor( cwsRenderObj )
         else
         {
             // swiping right
-            //console.log("swiping right");
+            //console.customLog("swiping right");
 
             /* run navDrawer slide-expand (eval) for right-swipe ONLY if starting Xposition < 50px */
             if ( initialX < dragXoffsetLimit )

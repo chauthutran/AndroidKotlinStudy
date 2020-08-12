@@ -210,7 +210,7 @@
         for (var i = 1; i <= $('input.rows').val(); i++) 
         {
             myDateTimeSeed = getCalcTime(myDateTimeSeed, $('select.openHourFrom').val(), $('select.openHourTo').val() );
-            //console.log( ' ~ ' + myDateTimeSeed );
+            //console.customLog( ' ~ ' + myDateTimeSeed );
 
             var myDate = getTodayDate(myDateTimeSeed);
             var myTime = getTimeNow(myDateTimeSeed);
@@ -365,7 +365,7 @@
         var rndOffset = generateRandomNumberRange( min, max );
         var rndDtm = ( new Date( dtmSeed ).getTime() - 86400000 + rndOffset );
 
-        //console.log( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
+        //console.customLog( ' ~  [' + dtmSeed + '] ' + new Date( rndDtm ).toISOString(), new Date( rndDtm ) );
         return new Date( rndDtm ).toISOString();
     }
 
@@ -462,7 +462,7 @@
         {
             if ( inputFld.toLowerCase().indexOf( ( resArr[ i ] ).toLowerCase() ) >= 0 )
                 {
-                    //console.log( 'replacing [' + inputFld + '] with [' + repArr[ i ] + ']')
+                    //console.customLog( 'replacing [' + inputFld + '] with [' + repArr[ i ] + ']')
                     return repArr[ i ];
                 }
         }
@@ -488,8 +488,8 @@
                 var appList = JSON.parse( '[' + $('textarea.output').val() + ']' );
                 var newList = lsRed.list.concat(appList);
 
-                //console.log( newList );
-                //console.log( JSON.stringify( newList ) );
+                //console.customLog( newList );
+                //console.customLog( JSON.stringify( newList ) );
 
                 localStorage.setItem( 'redeemList', '{"list": ' + JSON.stringify( newList ) + ' } ' );
             }

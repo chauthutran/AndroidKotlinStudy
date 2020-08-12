@@ -41,7 +41,7 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 
 	ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
 
-	console.log( 'runSchedules_AfterLogin' );
+	console.customLog( 'runSchedules_AfterLogin' );
 
 	if ( callBack ) callBack();
 };
@@ -52,7 +52,7 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
 	clearInterval ( ScheduleManager.timerID_scheduleSyncAllRun );
 
-	console.log( 'stopSchedules_AfterLogOut' );
+	console.customLog( 'stopSchedules_AfterLogOut' );
 
 	if ( callBack ) callBack();
 };
@@ -94,7 +94,7 @@ ScheduleManager.schedule_syncDownRunOnce = function( cwsRenderObj )
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
+		console.customLog( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
 	}
 };
 
@@ -107,7 +107,7 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 
 			if ( success ) 
 			{  
-				console.log( 'syncDown once schedule finished success.' ); 
+				console.customLog( 'syncDown once schedule finished success.' ); 
 
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
 				if ( changeOccurred )

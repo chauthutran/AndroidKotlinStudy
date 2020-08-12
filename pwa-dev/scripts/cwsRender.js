@@ -12,6 +12,9 @@ function cwsRender()
 	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
 	me.pulsatingProgress = $( '#pulsatingCircle' );
 
+	// service worker obj reference
+	me.swManagerObj;  // set on 'app.js' initialize process
+
 	// global variables
 	//me.configJson;
 	me.areaList = [];
@@ -46,7 +49,6 @@ function cwsRender()
 	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
 	me.autoLogoutDateTime;
 
-
 	me.debugMode = false;
 
 	// =============================================
@@ -63,7 +65,7 @@ function cwsRender()
 
 	me.render = function()
 	{
-		if ( me.debugMode ) console.log( 'cwsRender.render()' );
+		if ( me.debugMode ) console.customLog( 'cwsRender.render()' );
 
 		me.loadSavedUserName();		
 		me.showLoginForm();
@@ -392,7 +394,7 @@ function cwsRender()
 			// var myQueue = FormUtil.records_redeem_queued; 
 			// var myFailed = FormUtil.records_redeem_failed; 
 
-			if ( me.debugMode ) console.log( ' cwsR > navMenuStat data ' );
+			if ( me.debugMode ) console.customLog( ' cwsR > navMenuStat data ' );
 
 		}
 
@@ -473,54 +475,10 @@ function cwsRender()
 	
 	}
 
-	me.setRegistrationObject = function( registrationObj )
-	{
-		me.registrationObj = registrationObj;
-	}
 
-	me.reGetAppShell = function( callBack )
-	{
-		if ( me.registrationObj !== undefined )
-		{
-			me.registrationObj.unregister().then(function(boolean) {
+	// ------------------------------------
+	// PUT THIS ON swManager?
 
-				if ( callBack )
-				{
-					callBack();
-				}
-				else
-				{
-					location.reload( true );
-				}
-
-			})
-			.catch(err => {
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
-				setTimeout( function() {
-					
-					if ( callBack )
-					{
-						callBack();
-					}
-					else
-					{
-						location.reload( true );
-					}
-
-				}, 100 )		
-			
-			});
-		}
-		else
-		{
-			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
-			setTimeout( function() {
-				location.reload( true );
-			}, 100 )		
-		}
-	}
 
 	me.reGetDCDconfig = function()
 	{
@@ -540,7 +498,7 @@ function cwsRender()
 			&& ConfigManager.getConfigJson().settings.theme 
 			&& ConfigManager.getConfigJson().themes )
 		{
-			console.log( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
+			console.customLog( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
 
 			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
 			// var defTheme = SessionManager.getStorageLastSessionData().theme;
@@ -741,8 +699,6 @@ function cwsRender()
 		//syncManager.evalSyncConditions();
 
 		me.hideActiveSession_UIcontent();
-
-		me.clearLoginPin();
 	};
 
 
@@ -866,60 +822,6 @@ function cwsRender()
 
 			$('#nav-toggle').removeClass('active');
 		}		
-	};
-
-	me.createRefreshIntervalTimer = function( ver )
-	{
-		var bDev = WsCallManager.isLocalDevCase;
-		
-		me.newSWrefreshNotification( ver );
-
-		var refreshIntV = setInterval( function() {
-
-			me.newSWrefreshNotification( ver );
-
-			// if running on DEV/Local server, run repeat notification every 2.5min until user refreshes
-		}, ( ( ( ( bDev ) ? 1 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) ); //60 * 60 * 1000 = 3600,000 = 60mins
-
-		console.log( ' ~ auto REFRESH interval timer: ' + refreshIntV + ' {' + ( ( ( ( bDev ) ? 5 : me.autoLogoutDelayMins)  / 2 ) * 60 * 1000 ) + '}');
-
-	};
-
-	me.newSWrefreshNotification = function( ver )
-	{
-
-		/*var swInforData = { 
-			'reloadRequired': false, 
-			'datetimeInstalled': (new Date() ).toISOString() , 
-			'currVersion': ver, 
-			'lastVersion': ver, 
-			'datetimeApplied':''
-		};*/
-
-		// new update available
-		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-		// move to cwsRender ?
-		$( btnUpgrade ).click ( () => {
-
-			/*var SWinfoObj = AppInfoManager.getSWInfo();
-
-			if ( SWinfoObj == undefined )
-			{
-				var jsonData = JSON.parse( JSON.stringify( swInforData ) );
-				jsonData.datetimeApplied = (new Date() ).toISOString();
-
-				AppInfoManager.updateSWInfo( jsonData );
-			}*/
-
-			location.reload( true );
-
-		});
-
-		// MISSING TRANSLATION
-		MsgManager.notificationMessage ( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
-		//AppInfoManager.updateSWInfo( swInforData );
-
 	};
 	
     me.favIcons_Update = function()

@@ -327,7 +327,7 @@ ConfigManager.setConfigJson = function ( configJson )
     }
     catch ( errMsg )
     {
-        console.log( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
+        console.customLog( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
     }
 };
 
@@ -408,7 +408,7 @@ ConfigManager.getLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
     }
     catch( errMsg )
     {
-        console.log( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
+        console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
     }
 
     return userRoles;
@@ -464,7 +464,7 @@ ConfigManager.getActivityDisplaySettings = function()
     }
     catch ( errMsg )
     {
-        console.log( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
+        console.customLog( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
     }
 
 
@@ -489,7 +489,7 @@ ConfigManager.getActivityDisplayBase = function()
     }
     catch ( errMsg )
     {
-        console.log( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
+        console.customLog( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
     }
 
     return displayBase;
@@ -509,7 +509,7 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
     }
     
     return activityStatusConfig;
@@ -527,10 +527,10 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
+		console.customLog( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
 
-    //console.log( activityJson.type, activityTypeConfig );
+    //console.customLog( activityJson.type, activityTypeConfig );
     if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
 
     return activityTypeConfig;
@@ -567,8 +567,6 @@ ConfigManager.getStatisticJson = function()
 {
     var configJson = ConfigManager.getConfigJson();
     var login_UserRoles = ConfigManager.login_UserRoles;
-
-    login_UserRoles = [ { "id": "ipc" },  { "id": "prov" } ];
 
     var statisticJson = {};
 
@@ -610,7 +608,7 @@ ConfigManager.getStatisticJson = function()
         }
     }
 
-    console.log( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
+    //console.customLog( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
 
     return statisticJson;
 };
@@ -624,7 +622,7 @@ ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
     {
         var roleId = configRoleIds[p];
         
-        if ( !ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
+        if ( login_UserRoles.indexOf( roleId ) < 0 ) //!ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
         {
             hasAllConfigRoles = false;
             break;
@@ -635,7 +633,8 @@ ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
 };
 
 
-// userRoles are object array...  
+// NOT USED:
+//  userRoles are object array...  
 ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
 {
     var inList = false;
@@ -644,7 +643,8 @@ ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
     {
         var userRoleDef = login_UserRoles[p];
 
-        if ( userRoleDef.id === roleId )
+        //if ( userRoleDef.id === roleId )
+        if ( userRoleDef === roleId )
         {
             inList = true;
             break;
@@ -654,30 +654,6 @@ ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
     return inList;
 };
 
-/*
-"statistics": [
-    {
-        "userRoles": [],
-        "url": "/PWA.statistic",
-        "fileName": "dc_pwa@MZ@stat1.html"
-    },
-    {
-        "userRoles": [ "ipc" ],
-        "url": "/PWA.statistic",
-        "fileName": "dc_pwa@MZ@statIPC.html"
-    },
-    {
-        "userRoles": [ "prov" ],
-        "url": "/PWA.statistic",
-        "fileName": "dc_pwa@MZ@statPROV.html"
-    },
-    {
-        "userRoles": [ "ipc", "prov" ],
-        "url": "/PWA.statistic",
-        "fileName": "dc_pwa@MZ@statBOTH.html"
-    }
-],  
-*/
 
 ConfigManager.getStatisticApiPath = function()
 {
@@ -934,7 +910,7 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Unique Clients Registrations', 'consult' ); ", 
-                " console.log( 'uniqueRegistrations', INFO.data.c_reg ); ",
+                " console.customLog( 'uniqueRegistrations', INFO.data.c_reg ); ",
                 " me.addTag( INFO.data.c_reg.length, 'uniqueRegistrations', 'h3', 'blockDigit' ); "
             ]
         },
@@ -942,7 +918,7 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Vouchers Issued ', 'details' ); ", 
-                " console.log( 'vouchersIssued', INFO.data.v_iss, INFO.data.v_iss.length ); ",
+                " console.customLog( 'vouchersIssued', INFO.data.v_iss, INFO.data.v_iss.length ); ",
                 " me.addTag( INFO.data.v_iss.length, 'vouchersIssued', 'h3', 'blockDigit' ); "
             ]
         },
@@ -950,7 +926,7 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Total Visits', 'activities' ); ", 
-                " console.log( 'totalVisits', ActivityDataManager._activityList ); ",
+                " console.customLog( 'totalVisits', ActivityDataManager._activityList ); ",
                 " me.addTag( ActivityDataManager._activityList.length, 'totalVisits', 'h3', 'blockDigit' ); "
             ]
         },
@@ -965,8 +941,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by Age', 'table' ); ", 
-                " console.log( 'Registrations by Age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'age' ] ) ); ",
+                " console.customLog( 'Registrations by Age' ); ",
+                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'age' ] ) ); ",
                 " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'age' ] ), 'regByAge' ); ",
             ]
 
@@ -975,8 +951,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType', 'table' ); ", 
-                " console.log( 'Registrations by activityType' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'type' ] ) ); ",
+                " console.customLog( 'Registrations by activityType' ); ",
+                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'type' ] ) ); ",
                 " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'type' ] ), 'regByActivityType' ); ",
             ]
 
@@ -985,8 +961,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType+age', 'table' ); ", 
-                " console.log( 'Registrations by activityType+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ) ); ",
+                " console.customLog( 'Registrations by activityType+age' ); ",
+                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ) ); ",
                 " me.addTable( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ), 'regByActivityTypeByAge' ); ",
             ]
 
@@ -995,8 +971,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'PARTIAL DATASET ERROR: Registrations by activityType+program+age', 'table' ); ", 
-                " console.log( 'Registrations by activityType+program+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ) ); ",
+                " console.customLog( 'Registrations by activityType+program+age' ); ",
+                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ) ); ",
                 " me.addTable( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ), 'regByActivityTypeByServiceByAge' ); ",
             ]
 
@@ -1005,8 +981,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by activityType+transactionYearMonth+age', 'table' ); ", 
-                " console.log( 'Registrations by activityType+program+age' ); ",
-                " console.log( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ) ); ",
+                " console.customLog( 'Registrations by activityType+program+age' ); ",
+                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ) ); ",
                 " me.addTable( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ), 'regByActivityTypeByFullDateByAge' ); ",
             ]
         },
@@ -1014,8 +990,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by ActivityType + Age: PIVOT', 'table' ); ", 
-                " console.log( 'regByActivityTypeByAgePivot' ); ",
-                " console.log( me.createGroup( INFO.data.c_reg, 'age', 'ageGroup5', ConfigManager.FiveYearsAgeGroups ) ); ",
+                " console.customLog( 'regByActivityTypeByAgePivot' ); ",
+                " console.customLog( me.createGroup( INFO.data.c_reg, 'age', 'ageGroup5', ConfigManager.FiveYearsAgeGroups ) ); ",
                 " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'ageGroup5' ] ), 'ageGroup5', 'type', 'count' ), 'regByActivityTypeByAgePivot' ); ",
             ]
 
@@ -1024,8 +1000,8 @@ ConfigManager.statisticConfig = {
             "sequentialEval": "true",
             "runDataEval": [
                 " me.addTitle( 'Registrations by ActivityType + transactionYearMonth: PIVOT', 'table' ); ", 
-                " console.log( 'regByActivityTypeBytransactionYearMonthPivot' ); ",
-                " console.log( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ) ); ",
+                " console.customLog( 'regByActivityTypeBytransactionYearMonthPivot' ); ",
+                " console.customLog( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ) ); ",
                 " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
                 " me.createGroup( INFO.data.c_reg, 'age', 'ageGroup10', ConfigManager.TenYearsAgeGroups ); ",
                 " me.addTitle( 'Another PIVOT', 'table' ); ", 
@@ -1125,7 +1101,7 @@ ConfigManager.statisticConfig2 = {
         "              dataStr += row[key] + ', '; ",
         "        }; ",
         
-        "        console.log( dataStr ); ",
+        "        console.customLog( dataStr ); ",
         "        html += '</tr>'; ",
         "    }); ",
         

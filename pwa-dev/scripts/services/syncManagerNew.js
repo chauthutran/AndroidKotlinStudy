@@ -80,7 +80,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
                     SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync error N.." );
 
 
-                    console.log( 'syncAll finished' );
+                    console.customLog( 'syncAll finished' );
 
                     SyncManagerNew.syncFinish();
                     SyncManagerNew.update_UI_FinishSyncAll();
@@ -98,7 +98,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     {
         SyncManagerNew.SyncMsg_InsertSummaryMsg( "sync_all failed - msg: " + errMsg );
 
-        console.log( 'syncAll not run properly - ' + errMsg );
+        console.customLog( 'syncAll not run properly - ' + errMsg );
 
         SyncManagerNew.syncFinish();
         SyncManagerNew.update_UI_FinishSyncAll();
@@ -124,14 +124,14 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
         SyncManagerNew.SyncMsg_InsertMsg( "download finished.." );
 
         var changeOccurred = false;        
-        //console.log( success ); //console.log( mongoClients );
+        //console.customLog( success ); //console.customLog( mongoClients );
         // S2. NOTE: Mark that download done as just log?
         var mongoClients = [];
         
         if ( returnJson && returnJson.response && returnJson.response.dataList ) mongoClients = returnJson.response.dataList;
         else if ( returnJson && returnJson.clientList ) mongoClients = returnJson.clientList;
 
-        console.log( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
+        console.customLog( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
 
         if ( !downloadSuccess ) 
         { 
@@ -208,7 +208,7 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
     
             activityCardObj.performSyncUp( function( success ) {
     
-                if ( !success ) console.log( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
+                if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
     
                 // update on progress bar
                 FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
@@ -257,7 +257,7 @@ SyncManagerNew.downloadClients = function( callBack )
     }
     catch( errMsg )
     {
-        console.log( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
+        console.customLog( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
         callBack( false );
     }
 };
@@ -359,11 +359,11 @@ SyncManagerNew.SyncMsg_Get = function()
     {
         syncMsgJson = AppInfoManager.getSyncMsg();
                 
-        console.log( syncMsgJson );
+        console.customLog( syncMsgJson );
 
         if ( !syncMsgJson ) syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );    
 
-        console.log( syncMsgJson );
+        console.customLog( syncMsgJson );
 
         SyncManagerNew.syncMsgJson = syncMsgJson;
     }
@@ -386,7 +386,7 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
     }
     else
     {
-        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+        console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
     }
 };
 
@@ -405,7 +405,7 @@ SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
     }
     else
     {
-        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+        console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
     }    
 };
 

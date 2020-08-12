@@ -9,6 +9,8 @@ function swManager( _cwsRenderObj, callBack ) {
     me.swFile =  './service-worker.js';
     me._cwsRenderObj = _cwsRenderObj;
 
+    me._newUpdateInstallMsg_interval = 30000;  //30 seconds
+
     me.swRegObj;
     me.swInstallObj;
     me.swSupported = false;
@@ -26,53 +28,59 @@ function swManager( _cwsRenderObj, callBack ) {
 
     me.debugMode = true;
 
+    // --------------------------------------------
+
     me.initialize = function ( callBack ) 
     {
-        me.checkRegisterSW( callBack );
-    }
 
-    me.checkRegisterSW = function ( callBack ) 
-    {
-        me.swSupported = ('serviceWorker' in navigator);
+        var standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
 
-        if ( me.swSupported )
+        console.customLog( 'App StandAlone Status..: ' + standAlone );
+
+        // checkRegisterSW
+        if ( ( 'serviceWorker' in navigator ) )
         {
             me.runSWregistration( callBack );
         }
         else
         {
-            alert ( 'SERVICE WORKER not supported. Cannot continue' );
+            alert ( 'SERVICE WORKER not supported. Cannot continue!' );
         }
     };
+
+
+    // TODO: TEMP...
+    window.addEventListener('beforeinstallprompt', e => {
+        // this event does not fire if the application is already installed
+        // then your button still hidden ;)
+        console.customLog( 'before install prompt - windows' );
+    });
+
+  
+    // --------------------------------------------
 
      // 1. main one
     me.runSWregistration = function ( callBack ) 
     {
-        navigator.serviceWorker.register( me.swFile ).then( registration => {
-
+        navigator.serviceWorker.register( me.swFile ).then( registration => 
+        {
             me.swRegObj = registration;
 
             // If fresh registration case, we use 'callBack'..
             me.createInstallAndStateChangeEvents( me.swRegObj, callBack );
 
             // share registration obj with cwsRender (for reset App, etc)
-            me._cwsRenderObj.setRegistrationObject( me.swRegObj );
-
-        }).then(function () {
-
-            //console.log( me.registrationState );
-
-            if ( ! me.newRegistration ) 
-            {
-                callBack();
-            }
+            // me.setRegistrationObject( me.swRegObj );  <-- no need.  Methods are moved to this class..
+        }).then(function () 
+        {
+            if ( !me.newRegistration ) callBack();
 
         }).catch(err =>
             // MISSING TRANSLATION
             MsgManager.notificationMessage('SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000)
         );
+    };
 
-    }
 
     me.createInstallAndStateChangeEvents = function( swRegObj, callBack ) 
     {
@@ -89,21 +97,21 @@ function swManager( _cwsRenderObj, callBack ) {
             me.registrationState = 'sw: existing';
         }
 
-        if ( me.debugMode) console.log( ' - ' + me.registrationState );
+        if ( me.debugMode) console.customLog( ' - ' + me.registrationState );
 
         // SW update change event 
         swRegObj.onupdatefound = () => {
 
             me.swInstallObj = swRegObj.installing;
 
-            if ( me.debugMode) console.log( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
+            if ( me.debugMode) console.customLog( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
 
             // sw state changes 1-4 (ref: me.installStateProgress )
             me.swInstallObj.onstatechange = () => {
 
                 me.registrationUpdates = true;
 
-                if ( me.debugMode) console.log( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
+                if ( me.debugMode) console.customLog( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
 
                 switch ( me.swInstallObj.state ) {
 
@@ -113,11 +121,8 @@ function swManager( _cwsRenderObj, callBack ) {
 
                     case 'installed':
                         // SW installed (2) - changes applied
-                        if ( navigator.serviceWorker.controller )
-                        {
-                            // controller present means existing SW was replaced to be made redundant
-                            me.createRefreshPrompt = (true);
-                        }
+                        // controller present means existing SW was replaced to be made redundant
+                        if ( navigator.serviceWorker.controller ) me.createRefreshPrompt = true;
                         break;
 
                     case 'activating':
@@ -126,23 +131,94 @@ function swManager( _cwsRenderObj, callBack ) {
 
                     case 'activated':
                         // SW activated (4) - start up completed: ready
-                        if ( me.createRefreshPrompt ) 
-                        {
-                            // ready for refresh 
-                            me._cwsRenderObj.createRefreshIntervalTimer( _ver );
-                        }
-                        else 
-                        {
-                            // PWA ready - continue with app.js callBack
-                            callBack();
-                        }
+                        if ( me.createRefreshPrompt ) me.createRefreshIntervalTimer();
+                        else callBack();
                         break;
                 }
 
             };
 
+
+            me.swInstallObj.beforeinstallprompt = () => {
+                console.customLog( 'before install prompt' );
+            };
+
         };
     }
+
+    // -----------------------------------
+
+    // Restarting the service worker...
+	me.reGetAppShell = function( callBack )
+	{
+		if ( me.swRegObj !== undefined )
+		{
+			me.swRegObj.unregister().then(function(boolean) {
+
+				if ( callBack )
+				{
+					callBack();
+				}
+				else
+				{
+					location.reload( true );
+				}
+
+			})
+			.catch(err => {
+				// MISSING TRANSLATION
+				MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+				setTimeout( function() {
+					
+					if ( callBack )
+					{
+						callBack();
+					}
+					else
+					{
+						location.reload( true );
+					}
+
+				}, 100 )		
+			
+			});
+		}
+		else
+		{
+			// MISSING TRANSLATION
+			MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+			setTimeout( function() {
+				location.reload( true );
+			}, 100 )		
+		}
+	};
+
+
+	me.createRefreshIntervalTimer = function()
+	{		
+		me.newSWrefreshNotification();
+
+		var refreshIntV = setInterval( function() {
+
+			me.newSWrefreshNotification();
+
+		}, me._newUpdateInstallMsg_interval );
+	};
+
+
+	me.newSWrefreshNotification = function()
+	{
+		// new update available
+		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+		// move to cwsRender ?
+		btnUpgrade.click ( () => {  location.reload( true );  });
+
+		// MISSING TRANSLATION
+		MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
+	};
+
+    // -----------------------------------
 
     me.initialize( callBack );
 

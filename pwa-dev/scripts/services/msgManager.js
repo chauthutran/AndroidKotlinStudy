@@ -269,7 +269,7 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
           }, delayTimer );
     }
 
-    if ( MsgManager.debugMode ) console.log( 'created messageNotification' );
+    if ( MsgManager.debugMode ) console.customLog( 'created messageNotification' );
 
     //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
     if ( ReserveMsgID & ReserveMsgID != 'geolocation' )

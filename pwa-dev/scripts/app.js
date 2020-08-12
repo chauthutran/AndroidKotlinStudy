@@ -10,7 +10,6 @@ function app()
 	var me = this;
 
   me._cwsRenderObj;
-  me._swManagerObj;
 
   // ----------------------------------------------------
 
@@ -27,7 +26,7 @@ function app()
 
     me.App_UI_startUp_loading(); // << should we move this into cwsRender?
 
-    me._swManagerObj = new swManager( me._cwsRenderObj, function() {
+    me._cwsRenderObj.swManagerObj = new swManager( me._cwsRenderObj, function() {
 
       me.App_UI_startUp_Progress( '40%' );
       me.startAppProcess();
@@ -35,9 +34,6 @@ function app()
     } );   
 
   };
-
-
-//  me.startApp = function() { };
 
   // ----------------------------------------------------
 
@@ -92,7 +88,7 @@ function app()
       me.App_UI_startUp_ready();
 
     } catch (err) {
-      console.log('error starting App > startApp() error: ' + err);
+      console.customLog('error starting App > startApp() error: ' + err);
     }
   };
 
@@ -149,14 +145,11 @@ function app()
 
     });
   };
-
-
-  me.App_checkUpdates_found_prompt = function()
-  {
-    if ( me._swManagerObj.createRefreshPrompt ) {
-      me._cwsRenderObj.createRefreshIntervalTimer(_ver);
-    }
-  };
+  
+  //me.App_checkUpdates_found_prompt = function()
+  //{
+  //  if ( me._swManagerObj.createRefreshPrompt ) me.createRefreshIntervalTimer();
+  //};
 
 
   me.App_installed_done = function( event ) {
@@ -170,6 +163,8 @@ function app()
     });
     */
   };
+
+  // ---------------------------------------
 
 	// ======================================
 

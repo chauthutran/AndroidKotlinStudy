@@ -81,7 +81,7 @@ function settingsApp( cwsRender )
                 var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
                 setTimeout( function() {
                     $( '#imgsettingsInfo_dcdVersion_Less' ).click();
-                    me.cwsRenderObj.reGetAppShell(); 
+                    me.cwsRenderObj.swManagerObj.reGetAppShell(); 
                 }, 500 );
             }
         });
@@ -127,7 +127,7 @@ function settingsApp( cwsRender )
 
                 AppInfoManager.removeUserInfo();
 
-                me.cwsRenderObj.reGetAppShell();
+                me.cwsRenderObj.swManagerObj.reGetAppShell();
 
             });
 

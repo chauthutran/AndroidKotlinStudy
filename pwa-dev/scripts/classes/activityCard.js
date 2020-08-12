@@ -98,7 +98,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }
             catch( errMsg )
             {
-                console.log( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+                console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
             }
         }
     };
@@ -109,7 +109,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         activityIconTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
-            console.log( activityJson );
+            console.customLog( activityJson );
         });    
     };
 
@@ -413,7 +413,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch ( errMsg )
         {
-            console.log( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
+            console.customLog( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
         }
     };
 
@@ -435,7 +435,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }
             catch( errMsg )
             {
-                console.log( 'ERROR on running on activityCard.SyncUpItem, errMsg - ' + errMsg );
+                console.customLog( 'ERROR on running on activityCard.SyncUpItem, errMsg - ' + errMsg );
                 SyncManagerNew.syncFinish();     
             }
         }
@@ -444,7 +444,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.reRenderByActivityId = function( activityId )
     {
-        console.log( 'reRenderByActivityId' );
+        console.customLog( 'reRenderByActivityId' );
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
         var activityCardTags = $( '.activity[itemid="' + activityId + '"]' );
@@ -468,7 +468,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch( errMsg )
         {
-            console.log( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
+            console.customLog( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
         }        
     };
 
@@ -495,7 +495,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch( errMsg )
         {
-            console.log( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
+            console.customLog( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
         }        
     };                
 
@@ -571,7 +571,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch ( errMsg )
         {
-            console.log( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
+            console.customLog( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
         }
     };
 
@@ -628,7 +628,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                             FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
 
                             // Error - responseJson
-                            console.log( responseJson );
+                            console.customLog( responseJson );
 
                             // 'syncedUp' processing data                
                             var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + Util.getStr( errMsg ) );
@@ -648,7 +648,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch( errMsg )
         {
-            console.log( 'Error in ActivityCard.syncUp - ' + errMsg );
+            console.customLog( 'Error in ActivityCard.syncUp - ' + errMsg );
 
             // Stop the Sync Icon rotation
             //FormUtil.rotateTag( syncIconTag, false );
@@ -792,8 +792,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             removeActivityBtn.click( function(){
 
-                console.log("=================================");
-                console.log( activityJson );
+                console.customLog("=================================");
+                console.customLog( activityJson );
     
                 var result = confirm("Are you sure you want to delete this client ?");
                 if( result )

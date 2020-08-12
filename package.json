@@ -4,9 +4,11 @@
   "description": "CwS PWA service worker build",
   "author": "James Chang",
   "scripts": {
-    "build": "node cws_sw_build.js"
+    "build": "node cws_sw_build.js",
+    "minifyJS": "uglifyjs scripts.js --compress --mangle --warn --output scripts.min.js"    
   },
   "dependencies": {
+    "uglify-js": "^3.10.1",
     "workbox-build": "^4.3.1"
   },
   "devDependencies": {

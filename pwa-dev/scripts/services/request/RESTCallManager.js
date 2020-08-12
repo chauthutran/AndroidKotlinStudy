@@ -66,7 +66,7 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     //fetch( url, requestData )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
-        //console.log( response );
+        //console.customLog( response );
         if ( response.ok ) 
         {            
             if ( requestData.returnDataType === 'text' ) return response.text();
@@ -81,11 +81,11 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
         }
         catch ( errMsg )
         {
-            console.log( 'RESTCallManager.performREST, Returned Success.  Howerver, had some issue processing the returnFunc somewhere: ' + errMsg );
+            console.customLog( 'RESTCallManager.performREST, Returned Success.  Howerver, had some issue processing the returnFunc somewhere: ' + errMsg );
         }
     })
     .catch( ( error ) => {
-        console.log( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );
+        console.customLog( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;

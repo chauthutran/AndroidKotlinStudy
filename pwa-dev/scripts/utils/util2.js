@@ -197,7 +197,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 // 			if ( obj.checked )
 // 			{
 // 				$( '[name="' + targetInputTagName + '"]' ).val( obj.value );
-// 				// console.log( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
+// 				// console.customLog( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
 
 // 				FormUtil.dispatchOnChangeEvent( $( '[name="' + targetInputTagName + '"]' ) );
 				
@@ -531,12 +531,12 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 			}
 			else
 			{
-				console.log( ' ~ no newLocalSequence comma separator');
+				console.customLog( ' ~ no newLocalSequence comma separator');
 			}
 		}
 		else
 		{
-			console.log( ' ~ no localSequence parms');
+			console.customLog( ' ~ no localSequence parms');
 		}
 
 	}
@@ -638,12 +638,12 @@ Util2.getFormInputValuePattern = function( tagTarget, formInputPattern, patternS
 			}
 			else
 			{
-				console.log( ' no corresponding value [' + formInpFld + ']' );
+				console.customLog( ' no corresponding value [' + formInpFld + ']' );
 			}
 		}
 		else
 		{
-			console.log( ' no corresponding field [' + formInpFld + ']' );
+			console.customLog( ' no corresponding field [' + formInpFld + ']' );
 		}
 	}
 
@@ -775,7 +775,7 @@ Util2.getLocalStorageSizes = function()
 
 Util2.epoch = function( pattern, callBack )
 {
-	//use examples: Util2.epoch( '1000', console.log ); Util2.epoch( '1000,36', console.log ); 
+	//use examples: Util2.epoch( '1000', console.customLog ); Util2.epoch( '1000,36', console.customLog ); 
 	var offSetDate; // always randomize
 	var precision;
 	var base;

@@ -48,7 +48,7 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 				// merge result json..				
 				Util.mergeDeep( payload, tempPayload );
 
-				console.log( payload );
+				console.customLog( payload );
 			}
 		}
 		else if ( activityPayload.payload )
@@ -258,7 +258,7 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error in ActivityUtil.setFormsJsonGroup_Val, errMsg: ' + errMsg );
+		console.customLog( 'Error in ActivityUtil.setFormsJsonGroup_Val, errMsg: ' + errMsg );
 	}
 
 	return nameVal;
@@ -335,7 +335,7 @@ ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValLis
 		inputsJson[ 'password' ] = SessionManager.sessionData.login_Password;
 
 
-		if ( WsCallManager.isLocalDevCase ) console.log ( inputsJson );			
+		if ( WsCallManager.isLocalDevCase ) console.customLog ( inputsJson );			
 	}
 
 	return inputsJson;

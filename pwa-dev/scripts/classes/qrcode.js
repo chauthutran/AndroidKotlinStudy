@@ -599,7 +599,7 @@ var QRCode;
 		this._el.title = sText;
 		this._oDrawing.draw(this._oQRCode);			
 		this.fetchImage( function() {
-			//console.log( this._elCanvas.toDataURL("image/png") )
+			//console.customLog( this._elCanvas.toDataURL("image/png") )
 			if ( callBack ) callBack( this._elCanvas.toDataURL("image/png") );
 		});
 	}; 

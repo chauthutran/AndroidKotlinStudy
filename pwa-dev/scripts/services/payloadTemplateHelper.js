@@ -31,7 +31,7 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     }
     catch( errMsg )
     {
-        console.log( 'Error on PayloadTemplateHelper.generatePayload, errMsg: ' + errMsg );
+        console.customLog( 'Error on PayloadTemplateHelper.generatePayload, errMsg: ' + errMsg );
     }
 
     return finalPayload;
@@ -70,7 +70,7 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
         }
         catch( errMsg )
         {
-            console.log( 'Error in PayloadTemplateHelper.getPayloadListFromTemplate, errMsg: ' + errMsg );
+            console.customLog( 'Error in PayloadTemplateHelper.getPayloadListFromTemplate, errMsg: ' + errMsg );
         }
     }
 

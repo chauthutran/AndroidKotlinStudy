@@ -67,7 +67,7 @@ AppInfoManager.getSessionAutoComplete = function()
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error on AppInfoManager.getSessionAutoComplete, errMsg - ' + errMsg );
+		console.customLog( 'Error on AppInfoManager.getSessionAutoComplete, errMsg - ' + errMsg );
 	}
 
 	return autoComplete;
@@ -314,7 +314,7 @@ AppInfoManager.getLangCode = function()
 	}
 	catch ( err )
 	{
-		console.log( 'Error in AppInfoManager.getLangCode: ' + err );
+		console.customLog( 'Error in AppInfoManager.getLangCode: ' + err );
 	}
 
 	return lang;

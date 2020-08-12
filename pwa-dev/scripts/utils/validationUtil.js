@@ -22,7 +22,7 @@ ValidationUtil.disableValidation = function( execFunc )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error in ValidationUtil.disableValidation execute, errMsg: ' + errMsg );
+		console.customLog( 'Error in ValidationUtil.disableValidation execute, errMsg: ' + errMsg );
 	}
 
 	ValidationUtil._DisableValidation = false;
@@ -300,7 +300,7 @@ ValidationUtil.checkValue_RegxRules = function( inputTag, divTag, type )
             }
             catch( ex )
             {
-                console.log( 'rule regex check failed.. ' + ex );
+                console.customLog( 'rule regex check failed.. ' + ex );
             }
         }
     }

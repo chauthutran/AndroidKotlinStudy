@@ -58,12 +58,12 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 					{
 						if ( regExclude.test( cacheManager.cacheKeys[ i ] ) ) 
 						{
-							console.log( 'skipping {regEx} cache named ' + cacheManager.cacheKeys[ i ] );
+							console.customLog( 'skipping {regEx} cache named ' + cacheManager.cacheKeys[ i ] );
 						}
 						else
 						{
 							let promise = caches.delete( cacheManager.cacheKeys[ i ] );
-							console.log( 'deleting {non-matching} cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
+							console.customLog( 'deleting {non-matching} cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
 							let result = await promise;
 							results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
 						}
@@ -71,7 +71,7 @@ cacheManager.clearCacheKeys = async function( regExclude, returnFunc )
 					else
 					{
 						let promise = caches.delete( cacheManager.cacheKeys[ i ] );
-						console.log( 'deleting cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
+						console.customLog( 'deleting cacheStorage named: ' + cacheManager.cacheKeys[ i ] );
 						let result = await promise;
 						results.push ( { "cacheName": cacheManager.cacheKeys[ i ], "success": result } );
 					}
@@ -121,7 +121,7 @@ cacheManager.getCacheStoragesAssetTotalSize = async function()
 
 	}));
 
-	//console.log(`Cache ${cacheName}: ${cacheSize} bytes`);
+	//console.customLog(`Cache ${cacheName}: ${cacheSize} bytes`);
 	arrSummary.push( { container: 'caches', name: cacheName, bytes: cacheSize, kb: cacheSize / 1024, mb: cacheSize / 1024 / 1024 } )
 
   });

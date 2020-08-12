@@ -89,7 +89,7 @@ ActivityDataManager.removeActivityById = function( activityId )
     }
     catch ( errMsg )
     {
-        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
     }
 };
 
@@ -118,7 +118,7 @@ ActivityDataManager.removeActivityNClientById = function( activityId )
     }
     catch ( errMsg )
     {
-        console.log( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
     }
 };
 
@@ -213,7 +213,7 @@ ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaAc
         }
         catch( errMsg )
         {
-            console.log( 'Error during ActivityDataManager.mergeDownloadedActivities: ', mongoActivity, pwaActivity );
+            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities: ', mongoActivity, pwaActivity );
         }
     }
 
@@ -413,7 +413,7 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
     }
     catch ( errMsg )
     {
-        console.log( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );
+        console.customLog( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );
     }
 
     return jsonCombined;
@@ -446,7 +446,7 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     }
     catch ( errMsg )
     {
-        console.log( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );
+        console.customLog( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );
     }
 
     return dataJson;

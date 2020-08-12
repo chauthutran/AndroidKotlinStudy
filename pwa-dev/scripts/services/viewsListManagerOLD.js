@@ -279,7 +279,7 @@ function ViewsList( blockList )
             success = eval( query );
         }
         catch ( err ) {
-            console.log( 'error evaluating viewList query : ' + err);
+            console.customLog( 'error evaluating viewList query : ' + err);
         }
         return success;
     };
@@ -307,7 +307,7 @@ function ViewsList( blockList )
         if ( nextPageDirection > 0 )
         {
             // next 15
-            console.log( 'next ' );
+            console.customLog( 'next ' );
 
             me.viewsListSorterObj.sortList_Pager_UI_start();
 
@@ -328,7 +328,7 @@ function ViewsList( blockList )
         else
         {
             // prev 15
-            console.log( 'prev ' );
+            console.customLog( 'prev ' );
         }
     }
 
@@ -460,7 +460,7 @@ function ViewsListSorter( viewsList )
 
         }
         catch (err) {
-            console.log( 'error running viewsListManager.sortList_RunSort on field [' + me.sortList_CurrentItem.field + ']');
+            console.customLog( 'error running viewsListManager.sortList_RunSort on field [' + me.sortList_CurrentItem.field + ']');
         }
 
     }

@@ -99,7 +99,7 @@ ClientDataManager.removeClient = function( client )
     }
     catch( errMsg )
     {
-        console.log( 'Error in ClientDataManager.removeClient, errMsg: ' + errMsg );
+        console.customLog( 'Error in ClientDataManager.removeClient, errMsg: ' + errMsg );
     } 
 };
 
@@ -223,7 +223,7 @@ ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInf
         }
         catch( errMsg )
         {
-            console.log( 'Error during ClientDataManager.mergeDownloadedClients', mongoClient, pwaClient );
+            console.customLog( 'Error during ClientDataManager.mergeDownloadedClients', mongoClient, pwaClient );
         }
     }
 

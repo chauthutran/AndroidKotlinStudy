@@ -207,7 +207,7 @@ StatsUtil.dataGroupBy = function( dataArr, levelStr, arrFields )
                     }
                 }
             }
-            catch ( errMsg ) { console.log( 'ERROR in StatsUtil.groupBy_Obj, item: ' + JSON.stringify( item ) ); }
+            catch ( errMsg ) { console.customLog( 'ERROR in StatsUtil.groupBy_Obj, item: ' + JSON.stringify( item ) ); }
         });
     }
 
@@ -249,7 +249,7 @@ StatsUtil.isInDate = function( startDate, endDate, item, datePropertyName )
                 && ( !endDate || itemDate <= endDate ) ) inDate = true;
         }
     }
-    catch ( errMsg ) { console.log( 'ERROR in isInDate item date comparison.' ); }
+    catch ( errMsg ) { console.customLog( 'ERROR in isInDate item date comparison.' ); }
 
     return inDate;
 };

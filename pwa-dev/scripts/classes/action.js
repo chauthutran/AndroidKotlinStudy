@@ -43,7 +43,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			console.log( 'Btn already clicked/in process' );
+			console.customLog( 'Btn already clicked/in process' );
 		}
 	};
 
@@ -64,7 +64,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			console.log( 'Btn already clicked/in process' );
+			console.customLog( 'Btn already clicked/in process' );
 		}
 	}
 
@@ -87,8 +87,8 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
-					if ( moreInfoJson ) console.log( moreInfoJson );
+					console.customLog( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
+					if ( moreInfoJson ) console.customLog( moreInfoJson );
 					endOfActionsFunc( dataPass, "Failed" );
 				}
 			});
@@ -113,9 +113,9 @@ function Action( cwsRenderObj, blockObj )
 			{
 				if ( clickActionJson.actionType === "evaluation" )
 				{
-					//console.log( blockPassingData.displayData );
+					//console.customLog( blockPassingData.displayData );
 					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
-					//console.log( blockPassingData.displayData );
+					//console.customLog( blockPassingData.displayData );
 	
 					afterActionFunc( true );
 				}
@@ -203,7 +203,7 @@ function Action( cwsRenderObj, blockObj )
 				{				
 					if ( clickActionJson.areaId )
 					{
-						//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
+						//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
 						me.cwsRenderObj.renderArea( clickActionJson.areaId );
 					}
 	
@@ -335,7 +335,7 @@ function Action( cwsRenderObj, blockObj )
 								// throw 'canceled on preview';
 
 								me.clearBtn_ClickedMark( btnTag );
-								console.log( " me.clearBtn_ClickedMark( btnTag ) " );
+								console.customLog( " me.clearBtn_ClickedMark( btnTag ) " );
 							}
 						});
 								
@@ -373,7 +373,7 @@ function Action( cwsRenderObj, blockObj )
 						{
 							//me.clearBtn_ClickedMark( btnTag );
 
-							console.log( "queueActivity -  me.clearBtn_ClickedMark( btnTag ) " );
+							console.customLog( "queueActivity -  me.clearBtn_ClickedMark( btnTag ) " );
 							afterActionFunc( false, { 'type': 'previewBtn', 'msg': 'preview cancelled' } );
 							// throw 'canceled on preview';
 						}
@@ -459,8 +459,8 @@ function Action( cwsRenderObj, blockObj )
                     myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
                 }
 
-                //console.log( expString );
-                //console.log( myCondTest );
+                //console.customLog( expString );
+                //console.customLog( myCondTest );
     
                 var result =  eval( myCondTest );
 
@@ -546,7 +546,7 @@ function Action( cwsRenderObj, blockObj )
 						}
 						else
 						{
-							console.log( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
+							console.customLog( ' ~ no Lower/Upper case defined: ' + ta[ i ].id );
 						}
 					}
 					else

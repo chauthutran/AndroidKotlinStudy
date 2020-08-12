@@ -69,7 +69,7 @@ SessionManager.checkLoginData = function( loginData )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
+		console.customLog( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
 	}
 
 	return validLoginData;
@@ -130,7 +130,7 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
+		console.customLog( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
 	}
 
 };

@@ -1328,8 +1328,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			}
 			catch(ex) 
 			{
-				console.log( 'Failed during condition eval: ' );
-				console.log( ex );
+				console.customLog( 'Failed during condition eval: ' );
+				console.customLog( ex );
 			}
 		}
 
@@ -1399,7 +1399,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					targetInputDivTag.show( 'fast' );
 
-					//console.log( 'show by condition: id/name: ' + idStr );
+					//console.customLog( 'show by condition: id/name: ' + idStr );
 
 					// target inputs subsequent show/hide
 					// Due to parent tag initializing show hide of same target
@@ -1472,7 +1472,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.log( 'Error in blockForm.populateFormData_Common: errMsg: ' + errMsg );
+			console.customLog( 'Error in blockForm.populateFormData_Common: errMsg: ' + errMsg );
 		}		
 	};
 
@@ -1512,14 +1512,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					}
 					catch ( errMsg )
 					{
-						console.log( 'Error in inputTag blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
+						console.customLog( 'Error in inputTag blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
 					}
 				});
 			}
 		}
 		catch ( errMsg )
 		{
-			console.log( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
+			console.customLog( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
 		}
 	};
 
@@ -1617,14 +1617,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				}
 				catch ( errMsg )
 				{
-					console.log( 'Error in inputTag blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+					console.customLog( 'Error in inputTag blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
 				}
 
 			});
 		}
 		catch ( errMsg )
 		{
-			console.log( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+			console.customLog( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
 		}
 	};
 
@@ -1667,7 +1667,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.log( 'Error in blockForm.removeGroupDotName: errMsg: ' + errMsg );
+			console.customLog( 'Error in blockForm.removeGroupDotName: errMsg: ' + errMsg );
 		}
 
 		return outputName;

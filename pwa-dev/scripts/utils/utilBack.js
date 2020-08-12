@@ -36,22 +36,22 @@ UtilBack.jsonObjToThisArray = function( jsonObj, inputStructure, namedArrStructu
 	var itm = 0;
 	var thisItem = jsonObj[ arrInp[ itm] ];
 	
-	console.log( jsonObj );
-	console.log( arrInp[ itm] );
+	console.customLog( jsonObj );
+	console.customLog( arrInp[ itm] );
 
 	if ( arrInp[ (itm + 1) ] )
 	{
 		recurseInputArr( thisItem, arrInp, (itm + 1), function( innerData, innerSpec ){
 
-			console.log( innerData );
-			console.log( innerSpec );
+			console.customLog( innerData );
+			console.customLog( innerSpec );
 
 		} )
 	}
 	else
 	{
-		console.log( thisItem );
-		console.log( 'stopped here' );
+		console.customLog( thisItem );
+		console.customLog( 'stopped here' );
 	}
 };
 
@@ -213,7 +213,7 @@ UtilBack.cacheSizeCheckAndRepair = function( callBack )
 
 	  var threshold_UsagePercent = 50, threshold_UsageMBsize = 500;
 
-	  console.log( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) );
+	  console.customLog( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) );
 
 	  if ( parseFloat( storageJSON.usage ) / parseFloat( storageJSON.quota ) > ( threshold_UsagePercent / 100 ) || ( 5752434934 / 1024 / 1024 ) > threshold_UsageMBsize )
 	  {
@@ -282,7 +282,7 @@ UtilBack.storageEstimateWrapper = function( callBack ) {
 
 	arrEpochs.sort();
 
-	console.log( arrEpochs.toString() );
+	console.customLog( arrEpochs.toString() );
 
 	return arrEpochs;
   };

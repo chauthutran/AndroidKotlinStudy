@@ -87,7 +87,7 @@ function Statistics( cwsRender )
             setTimeout( function() {
 
                 loadingImg_statisticTag.hide();
-                console.log( 'Period Selector Changed' );
+                //console.customLog( 'Period Selector Changed' );
             
                 me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {        
     
@@ -101,7 +101,7 @@ function Statistics( cwsRender )
 
         me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).click( function() {
 
-            console.log( 'Custom Period button clicked' );
+            //console.customLog( 'Custom Period button clicked' );
 
             var inputCustomPeriod_StartTag = me.statisticsFormDiv.find( '.inputCustomPeriod_Start' );
             var inputCustomPeriod_EndTag = me.statisticsFormDiv.find( '.inputCustomPeriod_End' );
@@ -112,7 +112,7 @@ function Statistics( cwsRender )
 
         me.statisticsFormDiv.find( 'img.btnBack' ).off( 'click' ).click( function()
         { 
-            console.log( 'CardClose button clicked' );
+            //console.customLog( 'CardClose button clicked' );
             me.allStats = [];
             me.statisticsFormDiv.fadeOut();
             $( '#pageDiv' ).show();
@@ -165,6 +165,8 @@ function Statistics( cwsRender )
 
         var statJson = ConfigManager.getStatisticJson();
 
+        console.customLog( 'loadStatConfigPage - statisticJson Used: ' + JSON.stringify( statJson ) );
+        
         if ( statJson.fileName )
         {
             var statisticPage = AppInfoManager.getStatisticPages( statJson.fileName );
@@ -182,7 +184,7 @@ function Statistics( cwsRender )
             {
                 try
                 {
-                    console.log( el );
+                    //console.customLog( el );
                     if ( el.id === 'mainScript' )
                     {
                         statsContentPageTag.append( '<script>' + el.textContent + '</' + 'script>' );
@@ -193,7 +195,7 @@ function Statistics( cwsRender )
                     }    
                 }
                 catch ( errMsg ) {
-                    console.log( errMsg );
+                    console.customLog( errMsg );
                 }
             });
 
@@ -210,7 +212,7 @@ function Statistics( cwsRender )
                     }
                 }
                 catch ( errMsg ) {
-                    console.log( errMsg );
+                    console.customLog( errMsg );
                 }
             });
 
@@ -226,7 +228,7 @@ function Statistics( cwsRender )
                     }
                 }
                 catch ( errMsg ) {
-                    console.log( errMsg );
+                    console.customLog( errMsg );
                 }
             });
 
@@ -264,7 +266,7 @@ function Statistics( cwsRender )
         // Based on the dates from/to, set the data array from full activity list.
         //for (var d = 0; d < dateGroups.length; d++ ) { dateGroups[ d ].data = me.getRecordsForDateGroup( me.allStats, dateGroups[ d ] ); }
 
-        console.log( periodOptions );
+        //console.customLog( periodOptions );
 
         me.createStatPeriodOptions( me.statsPeriodSelector, periodOptions );
     };

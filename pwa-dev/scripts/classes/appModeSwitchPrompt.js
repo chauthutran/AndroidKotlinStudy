@@ -53,13 +53,15 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
 
     var switchPromptTag = $( '#networkSwitch' );
     var switchPromptContentObj = ( isSwitchToOffline ) ? $( Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts ) : $( Templates.ConnManagerNew_Dialog_Manual_goOnline );
+    switchPromptTag.empty().append( switchPromptContentObj );
+
+
+    // ---------------
+    // Modify the prompt content
 
     var friendlyTitle = ( isSwitchToOffline ) ? 'Go Offline' : 'Back Online';
     var switchPromptText = ( isSwitchToOffline ) ? Templates.ConnManagerNew_Dialog_prompt_manualOffline : Templates.ConnManagerNew_Dialog_prompt_manualOnline;
     var btnActionText = ( isSwitchToOffline ) ? 'GO OFFLINE': 'ACCEPT';
-
-    switchPromptTag.empty();
-    switchPromptTag.append( switchPromptContentObj );
 
     var dvTitle = switchPromptTag.find('.title');
     var imgIcon = switchPromptTag.find('.icon');
@@ -77,6 +79,9 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
     dvPrompt.html( switchPromptText );
 
 
+    // ---------------
+    // Event Handler:
+
     // Switch(MAIN Action) Button Related
     btnAction.click( function () {
         var callBackTime = Number( switchPromptTag.find( "input[name=switch_waitingTimeOpt]:checked" ).val() );
@@ -84,11 +89,11 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
         AppModeSwitchPrompt.hideDialog();
     });
 
-    
     btnCancel.click( function () {
         AppModeSwitchPrompt.hideDialog();                
     });            
 
+    // ---------------
 
     cwsRenderObj.langTermObj.translatePage();
     

@@ -83,7 +83,7 @@ function Login( cwsRenderObj )
 	{
 		me.scrimTag.click( function() {
 
-			console.log( 'scrimTag click - unblock Page' );
+			console.customLog( 'scrimTag click - unblock Page' );
 
 			me.unblockPage();
 		});
@@ -172,7 +172,7 @@ function Login( cwsRenderObj )
 					$("#accept").click( function() {
 						DataManager2.deleteAllStorageData( function() {
 							location.reload( true );
-							//me.cwsRenderObj.reGetAppShell(); 
+							//me.cwsRenderObj.swManagerObj.reGetAppShell(); 
 						});
 					});
 
@@ -501,12 +501,12 @@ function Login( cwsRenderObj )
 					// height ( change ) only value we're interested in comparing
 					if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
 					{
-						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.customLog( 'IS keyboard' );
 						$( '.hideOnKeyboardVisible' ).hide();
 					} 
 					else
 					{
-						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.customLog( 'not keyboard' );
 						$( '.hideOnKeyboardVisible' ).show();
 					}
 
@@ -558,7 +558,7 @@ function Login( cwsRenderObj )
 		inputTags.keyup( function() {  // keydown vs keypress
 			// What about copy and paste?
 			var changedVal = $( this ).val();
-			console.log( 'changedVal: ' + changedVal );
+			console.customLog( 'changedVal: ' + changedVal );
 			inputTags.val( changedVal );
 		});	
 	};

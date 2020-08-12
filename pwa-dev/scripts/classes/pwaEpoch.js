@@ -41,7 +41,7 @@ function pwaEpoch( decimals, base, epochOffsetDate )
                 var end = new Date( ( new Date() - ( ( me.epochOffsetHigh - Math.random() ) * me.dayMS ) - me.dayMS ) ); // 1159 = 365.25 x 3.12 years; 86400000 = 1 days in 1/1000th of a second
 
                 me.epochDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-                //console.log( 'epochDate ~ ' + Util.formatDateAndTime(me.epochDate) + ' { RND between ' + Util.formatDateAndTime(start) + ' _and_ ' + Util.formatDateAndTime(end) );
+                //console.customLog( 'epochDate ~ ' + Util.formatDateAndTime(me.epochDate) + ' { RND between ' + Util.formatDateAndTime(start) + ' _and_ ' + Util.formatDateAndTime(end) );
             }
 
             var baseEpochDate = parseFloat( new Date().getTime() - new Date( me.epochDate ).getTime() );
@@ -77,7 +77,7 @@ function pwaEpoch( decimals, base, epochOffsetDate )
                 if ( i == 36 )
                 {
                     me.failValidBase36Test = me.baseExclusions.test( epochDec12bCalc.toString() );
-                    //console.log( me.baseExclusions + ' > ' + epochDec12bCalc.toString() + ' = ' + me.baseExclusions.test( epochDec12bCalc.toString() )  + ' (' + epochDec12b10 + ')' );
+                    //console.customLog( me.baseExclusions + ' > ' + epochDec12bCalc.toString() + ' = ' + me.baseExclusions.test( epochDec12bCalc.toString() )  + ' (' + epochDec12b10 + ')' );
                 }
 
             }
@@ -131,7 +131,7 @@ function pwaEpoch( decimals, base, epochOffsetDate )
         }
         else
         {
-            console.log( retData );
+            console.customLog( retData );
         }
 
     }
@@ -143,7 +143,7 @@ function pwaEpoch( decimals, base, epochOffsetDate )
 
         myQR.fetchCode ( inputVal, function( retData1ms ){
 
-            console.log( retData1ms );
+            console.customLog( retData1ms );
             if ( callBack ) callBack( retData1ms );
 
         } );
@@ -162,7 +162,7 @@ function pwaEpoch( decimals, base, epochOffsetDate )
 
         myQR.fetchCode ( location.host, function( dataURI ){
 
-            console.log( dataURI );
+            console.customLog( dataURI );
             
         } );
 

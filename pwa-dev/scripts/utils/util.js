@@ -30,7 +30,7 @@ Util.outputAsStr = function( input )
 		else
 		{
 			try { output = '[unknown type, ' + input + ']'; } 
-			catch ( err ) { console.log( 'Error in Util.outputAsStr, err: ' + err ); }
+			catch ( err ) { console.customLog( 'Error in Util.outputAsStr, err: ' + err ); }
 		}
 	}
 
@@ -48,7 +48,7 @@ Util.tryCatchContinue = function( runFunc, optionalMsg )
 	}
 	catch( errMsg )
 	{
-		console.log( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
+		console.customLog( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
 	}
 };
 
@@ -61,7 +61,7 @@ Util.tryCatchCallBack = function( callBack, runFunc )
 	}
 	catch( errMsg )
 	{
-		console.log( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
+		console.customLog( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
 		callBack();
 	}
 };
@@ -84,7 +84,7 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 	{
 		if ( !optionalTitle ) optionalTitle = '';
 
-		console.log( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
+		console.customLog( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
 	}
 
 	return returnVal;
@@ -95,7 +95,7 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
-		console.log( 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth );
+		console.customLog( 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth );
 	}
 	else
 	{
@@ -105,19 +105,19 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 	
 			if ( typeof( propVal ) === "object" ) 
 			{
-				//console.log( prop, propVal );
+				//console.customLog( prop, propVal );
 				Util.traverseEval( propVal, INFO, iDepth++, limit );
 			}
 			else if ( typeof( propVal ) === "string" ) 
 			{
-				//console.log( prop, propVal );
+				//console.customLog( prop, propVal );
 				try
 				{
 					obj[prop] = eval( propVal );
 				}
 				catch( errMsg )
 				{
-					console.log( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+					console.customLog( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
 				}
 			}
 		}
@@ -549,7 +549,7 @@ Util.getJsonDeepCopy = function( jsonObj )
 			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
 		}
 		catch( errMsg ) {
-			console.log( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+			console.customLog( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
 		}
 	} 
 
@@ -1362,7 +1362,7 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 
 	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
 	{
-		console.log( ' exiting getLocalStorageObjectValue ');
+		console.customLog( ' exiting getLocalStorageObjectValue ');
 		return;
 	}
 	else
@@ -1615,13 +1615,13 @@ Util.decrypt = function (garbage,loops)
 		}
 		catch( errMsg )
 		{
-			console.log( 'ERROR in Util.cloneArray(): ' + errMsg );
+			console.customLog( 'ERROR in Util.cloneArray(): ' + errMsg );
 			callBack();
 		}
 	}
 	else
 	{
-		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
+		console.customLog('ERROR in Util.cloneArray(): ~ object is not array ');
 	}
 	
   };

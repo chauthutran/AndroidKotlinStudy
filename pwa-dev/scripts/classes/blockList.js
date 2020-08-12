@@ -191,7 +191,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
-            console.log( ' ===> Error on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
+            console.customLog( ' ===> Error on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
         } 
     };
 
@@ -506,7 +506,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         catch( errMsg )
         {
-            console.log( 'Error in BlockList.setGroupDiv(), errMsg: ' + errMsg );
+            console.customLog( 'Error in BlockList.setGroupDiv(), errMsg: ' + errMsg );
         }
 
         return groupAttrVal;
@@ -560,7 +560,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             }
             catch( errMsg )
             {
-                console.log( 'Error in BlockList.setTdGroupClick(), errMsg: ' + errMsg );
+                console.customLog( 'Error in BlockList.setTdGroupClick(), errMsg: ' + errMsg );
             }
         });        
     };

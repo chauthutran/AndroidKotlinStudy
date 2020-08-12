@@ -76,7 +76,7 @@ function aboutApp( cwsRender )
                 var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
                 setTimeout( function() {
                     $( '#imgaboutInfo_dcdVersion_Less' ).click();
-                    me.cwsRenderObj.reGetAppShell(); 
+                    me.cwsRenderObj.swManagerObj.reGetAppShell(); 
                 }, 500 );
             }
         });
@@ -570,6 +570,12 @@ function aboutApp( cwsRender )
             $( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
         }
 
+
+        // New log open dialog
+        $( '#showLogs' ).off( 'click' ).click( function() 
+        {
+            ConsoleCustomLog.showDialog();
+        });
     }
 
     me.getThemeList = function( jsonThemes )

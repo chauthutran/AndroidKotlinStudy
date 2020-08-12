@@ -2,7 +2,7 @@
 // -------------------------------------------------
 //     DevHelper
 //          - Methods to help debug for developer
-//          - Can run on console.log and can be turned on /off for seeing scheduled task messages..
+//          - Can run on console.customLog and can be turned on /off for seeing scheduled task messages..
 //
 // -------------------------------------------------
 
@@ -120,23 +120,23 @@ DevHelper.switchConnectMode = function( connModeStr )
 
 DevHelper.showClientListData = function()
 {
-    console.log( ClientDataManager.getClientList() );
+    console.customLog( ClientDataManager.getClientList() );
 };
 
 DevHelper.showClientListStr = function()
 {
-    console.log( JSON.stringify( { 'list': ClientDataManager.getClientList() } ) );
+    console.customLog( JSON.stringify( { 'list': ClientDataManager.getClientList() } ) );
 };
 
 
 DevHelper.showActivityListData = function()
 {
-    console.log( ActivityDataManager.getActivityList() );
+    console.customLog( ActivityDataManager.getActivityList() );
 };
 
 DevHelper.showActivityListStr = function()
 {
-    console.log( JSON.stringify( { 'list': ActivityDataManager.getActivityList() } ) );
+    console.customLog( JSON.stringify( { 'list': ActivityDataManager.getActivityList() } ) );
 };
 
 // create load data method..
@@ -178,28 +178,28 @@ DevHelper.loadSampleData = function( icount )
 
         new Date().toISOString().split( 'T')[0].replace(/-/g,'')
 
-        console.log( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
+        console.customLog( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
     
         ClientDataManager.insertClients( JSON.parse( tmp ) );
     }
 
 
-    console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
+    console.customLog( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
 
     ClientDataManager.saveCurrent_ClientsStore( function() {
-        console.log( 'Saved current client data to clientStore IDX' );
+        console.customLog( 'Saved current client data to clientStore IDX' );
     });
 };
 
 
 DevHelper.showActivityCardConfigs = function()
 {
-    console.log( ConfigManager.getConfigJson().settings.redeemDefs );
+    console.customLog( ConfigManager.getConfigJson().settings.redeemDefs );
 };
 
 DevHelper.showINFO = function()
 {
-    console.log( DevHelper.INFO );
+    console.customLog( DevHelper.INFO );
 };
 
 DevHelper.setINFO_ForConsoleDisplay = function( INFO )
@@ -293,7 +293,7 @@ DevHelper.crossfilter = function( clientAttr )
         return client.lastUpdated;  // client.clientDetails.city or age
     });
 
-    //console.log( trans_issued );
+    //console.customLog( trans_issued );
 
     //DevHelper.crossfilter().groupAll().reduceCount().value();
 
@@ -357,11 +357,11 @@ DevHelper.cf_Example = function()
 
     // How many living things are in my house?
     var n = livingThings.groupAll().reduceCount().value();
-    console.log('There are ' + n + ' living things in my house.') // 6
+    console.customLog('There are ' + n + ' living things in my house.') // 6
 
     // How many total legs are in my house?
     var legs = livingThings.groupAll().reduceSum(function(fact) { return fact.legs; }).value()
-    console.log('There are ' + legs + ' legs in my house.') // 14
+    console.customLog('There are ' + legs + ' legs in my house.') // 14
 
     //dimension is something you want to group or filter by. Here, the dimension is going to be the type .
 
@@ -373,10 +373,10 @@ DevHelper.cf_Example = function()
     // How many living things of each type are in my house?
     var countMeasure = typeDimension.group().reduceCount();
     var a = countMeasure.top(4);
-    console.log('There are ' + a[0].value + ' ' + a[0].key + '(s) in my house.');
-    console.log('There are ' + a[1].value + ' ' + a[1].key + '(s) in my house.');
-    console.log('There are ' + a[2].value + ' ' + a[2].key + '(s) in my house.');
-    console.log('There are ' + a[3].value + ' ' + a[3].key + '(s) in my house.');
+    console.customLog('There are ' + a[0].value + ' ' + a[0].key + '(s) in my house.');
+    console.customLog('There are ' + a[1].value + ' ' + a[1].key + '(s) in my house.');
+    console.customLog('There are ' + a[2].value + ' ' + a[2].key + '(s) in my house.');
+    console.customLog('There are ' + a[3].value + ' ' + a[3].key + '(s) in my house.');
 
 
     // How many legs of each type are in my house?
@@ -466,7 +466,7 @@ DevHelper.totable = function( json )
               dataStr += row[key] + ', ';
         };
 
-        console.log( dataStr );
+        console.customLog( dataStr );
 
         html += "</tr>";
     });
@@ -491,12 +491,12 @@ DevHelper.TestRequestSend = function( url )
 
         WsCallManager.requestPostDws( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
-            console.log( success, mongoClientsJson );
+            console.customLog( success, mongoClientsJson );
         });
     }
     catch( errMsg )
     {
-        console.log( 'Error in DevHelper.TestRequestSend - ' + errMsg );
+        console.customLog( 'Error in DevHelper.TestRequestSend - ' + errMsg );
     }
 };
 
@@ -513,7 +513,7 @@ DevHelper.testRun = function()
           };
     Util.mergeDeep( dest, obj );
 
-    console.log( dest );
+    console.customLog( dest );
 };
 
 DevHelper.statPeriodOptions = function()

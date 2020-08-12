@@ -69,7 +69,7 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
+		console.customLog( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
 	}
 
 	return objJson;
@@ -82,12 +82,12 @@ FormUtil.rotateTag = function( tag, runRotation )
 	{
 		if ( runRotation )
 		{
-			console.log( 'ROTATE STARTING..' );
+			console.customLog( 'ROTATE STARTING..' );
 			tag.rotate({ count:999, forceJS: true, startDeg: 0 });
 		}
 		else
 		{
-			console.log( 'ROTATE STOPPING..' );
+			console.customLog( 'ROTATE STOPPING..' );
 			tag.stop().rotate( { endDeg:360, duration:0 } );
 			//tag.stop();
 			//tag.rotate(0);
@@ -281,14 +281,14 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
 {	//test code added by Greg
 	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
-	//console.log( $( targetTag ).css( 'zIndex' ), targetTag );
+	//console.customLog( $( targetTag ).css( 'zIndex' ), targetTag );
 	$( targetTag ).css( 'zIndex', newZidx );
 }
 
 FormUtil.setStackOrder = function( arrObjTags )
 {	//test code added by Greg
 	var stackFrom = FormUtil.screenMaxZindex();
-	//console.log( arrObjTags );
+	//console.customLog( arrObjTags );
 	for ( var i = 0; i < arrObjTags.length; i++ )
 	{
 		var stackObj = arrObjTags[ i ];
@@ -329,11 +329,11 @@ FormUtil.showScreenStackOrder = function( parent )
 		}
 		return val || "";
 	}
-	console.log( length );
+	console.customLog( length );
 
     while(i<length){
 		who = children[i++];
-		//console.log( who );
+		//console.customLog( who );
         if (who.nodeType != 1) continue; // element nodes only
 		//opacity = deepCss(who,"opacity");
 		if ( $( who ).is( ':visible' ) )
@@ -348,7 +348,7 @@ FormUtil.showScreenStackOrder = function( parent )
 			} else { // non-positioned element, a new stacking context for opacity < 1 and zindex shall be treated as if 0
 				(opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
 			}
-			console.log( who, temp );
+			console.customLog( who, temp );
 		}
 
     }
@@ -362,15 +362,15 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 
 	tag.find( 'li' ).on( 'click', function()
 	{
-		console.log( $( this ) );
+		console.customLog( $( this ) );
 		var tab_select = $( this ).attr( 'rel' ); 
 
-		console.log( $( this ) );
+		console.customLog( $( this ) );
 
 		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568)
 		{
-			console.log( 'got here' );
-			console.log( $( this ).find( 'ul' ) );
+			console.customLog( 'got here' );
+			console.customLog( $( this ).find( 'ul' ) );
             if ($( this ).find( 'ul' ).is(':visible')) {
                 $( this ).find( 'ul' ).css('display', 'none');
                 $( this ).find( 'li' ).css('display', 'none');
@@ -604,7 +604,7 @@ FormUtil.eval = function( val )
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error on FormUtil.eval, value: ' + val + ', errMsg: ' + errMsg );
+		console.customLog( 'Error on FormUtil.eval, value: ' + val + ', errMsg: ' + errMsg );
 	}	
 
 	return evalVal;
@@ -743,7 +743,7 @@ FormUtil.tryEval = function( form, evalTry )
 	}
 	catch( errMsg )
 	{
-		console.log( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+		console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
 		return 'error: ' + evalTry;
 	}
 }
@@ -908,11 +908,11 @@ FormUtil.deleteCacheKeys = function( thenFunc )
 			{
 				if ( name.toString().indexOf( 'google' ) >= 0 || name.toString().indexOf( 'workbox' ) >= 0 )
 				{
-					//console.log( 'skipping cache obj ' + name );
+					//console.customLog( 'skipping cache obj ' + name );
 				}
 				else
 				{
-					console.log( 'deleting cacheStorage obj: ' + name );
+					console.customLog( 'deleting cacheStorage obj: ' + name );
 					caches.delete(name);
 				}
 			}
@@ -937,11 +937,11 @@ FormUtil.swCacheReset = function( returnFunc )
 
 			for ( let name of names )
 			{
-				console.log( 'deleting cache: ' + name );
+				console.customLog( 'deleting cache: ' + name );
 
 				caches.delete(name).then( function( status ) {
 
-					console.log( 'Delete Status: ' + status );
+					console.customLog( 'Delete Status: ' + status );
 
 					cachesCount--;
 					if ( status ) deteteLeft--;
@@ -1066,7 +1066,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
-	//console.log( activityType );
+	//console.customLog( activityType );
 	try 
 	{
 		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen
@@ -1124,7 +1124,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
+		console.customLog( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
 	}
 }
 
@@ -1226,7 +1226,7 @@ FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on FormUtil.setStatusOnTag, errMsg: ' + errMsg );
+		console.customLog( 'Error on FormUtil.setStatusOnTag, errMsg: ' + errMsg );
 	}
 }
 
@@ -1262,7 +1262,7 @@ FormUtil.getStatusOpt = function( itemData )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'Error on FormUtil.getStatusOpt, errMsg: ' + errMsg );
+		console.customLog( 'Error on FormUtil.getStatusOpt, errMsg: ' + errMsg );
 	}
 }
 
@@ -1357,10 +1357,10 @@ FormUtil.shareDataURI = function( title, dataURI ) {
 
 FormUtil.testNewSWavailable = function()
 {
-	console.log( 'testing new SW available ');
+	console.customLog( 'testing new SW available ');
 	window['isUpdateAvailable']
 	.then(isAvailable => {
-		console.log( ' ~ SW isUpdateAvailable: ' + isAvailable );
+		console.customLog( ' ~ SW isUpdateAvailable: ' + isAvailable );
 	  if (isAvailable) {
 
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
@@ -1899,7 +1899,7 @@ FormUtil.getMyDetails = function( callBack )
 
 	fetch(request)
         .then((response) => {
-			console.log( response );
+			console.customLog( response );
             if (!response.ok) {
                 throw Error(response.statusText);
 			}
@@ -1945,10 +1945,10 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 					'Content-Type': 'application/json'
 				}
 			})).done(function(data) {
-				console.log("response", data);
+				console.customLog("response", data);
 				return data;
 			})
-			console.log("testing", result);
+			console.customLog("testing", result);
 			return result;
 		}
 		else
@@ -1964,8 +1964,8 @@ FormUtil.fetchMyDetails = function ( useAPI, returnFunc )
 			.catch( error => {
 				if ( WsApiManager.isDebugMode )
 				{
-					console.log( 'Failed to retrieve url - ' + server_url );
-					console.log( error );  
+					console.customLog( 'Failed to retrieve url - ' + server_url );
+					console.customLog( error );  
 					//alert( 'Failed to load the config file' );
 				}
 				if ( returnFunc ) returnFunc( false, { "response": error.toString() } );
