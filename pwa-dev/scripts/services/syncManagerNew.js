@@ -52,47 +52,51 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     try
     {
-        if ( SyncManagerNew.syncStart() )
-        {
-            SyncManagerNew.SyncMsg_InsertMsg( "Started sync_all.." );
+        // Move this out of this method..
+        //if ( SyncManagerNew.syncStart_CheckNSet() )
+        //{
+            SyncManagerNew.SyncMsg_InsertMsg( "syncAll Started.." );
 
             // initialise UI + animation
             SyncManagerNew.update_UI_StartSyncAll();
-    
+
             // get activityItems (for upload) > not already uploaded (to be processed)
-            SyncManagerNew.getActivityItems_ForSync( cwsRenderObj, function( activityDataList ){
-    
+            SyncManagerNew.getActivityItems_ForSync( function( activityDataList )
+            {
                 SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, function() 
                 {
-                    SyncManagerNew.SyncMsg_InsertMsg( "sync_all completed.." );
-    
+                    var successMsg = "syncAll completed..";
+                    
+                    console.customLog( successMsg );
+
+                    SyncManagerNew.update_UI_FinishSyncAll();
+
+                    SyncManagerNew.SyncMsg_InsertMsg( successMsg );
 
                     SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync postponed N.." );
                     SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync error N.." );
 
-
-                    console.customLog( 'syncAll finished' );
-
-                    SyncManagerNew.syncFinish();
-                    SyncManagerNew.update_UI_FinishSyncAll();
-
                     if ( callBack ) callBack( true );
                 });
             });
-        }
-        else
-        {
-            throw "Sync not ready";
-        }
+        //}
+        //else
+        //{
+        //    throw "Sync not ready";
+        //}
     }
     catch( errMsg )
     {
-        SyncManagerNew.SyncMsg_InsertSummaryMsg( "sync_all failed - msg: " + errMsg );
+        var errMsgDetail = "syncAll failed - msg: " + errMsg;
+        
+        console.customLog( errMsgDetail );
 
-        console.customLog( 'syncAll not run properly - ' + errMsg );
+        MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail );
 
-        SyncManagerNew.syncFinish();
         SyncManagerNew.update_UI_FinishSyncAll();
+
+        SyncManagerNew.SyncMsg_InsertSummaryMsg( errMsgDetail );
+
         if( callBack ) callBack( false );
     }
 };
@@ -161,18 +165,19 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 // ===================================================
 // === 2. 'syncAll' Related Methods =============
 
-SyncManagerNew.getActivityItems_ForSync = function( cwsRenderObj, callBack )
+SyncManagerNew.getActivityItems_ForSync = function( callBack )
 {    
     var uploadItems = [];
     
-    var newList = ActivityDataManager.getActivityList().filter( a => ( a.status === Constants.status_queued || a.status === Constants.status_failed ) );
-    //var myQueue = myItems.filter( a=>a.status == Constants.status_queued );
-    //var myFailed = myItems.filter( a=>a.status == Constants.status_failed ); 
-    uploadItems = Util.sortByKey( newList, 'created', undefined, 'Decending' ); // combined list
+    var uploadItems = ActivityDataManager.getActivityList().filter( 
+        a => ( a.status === Constants.status_queued 
+            || a.status === Constants.status_failed ) 
+        );
+
+    // Hard to sort --> processing.created
+    //uploadItems = Util.sortByKey( uploadItems, 'created', undefined, 'Decending' ); // combined list
 
     callBack( uploadItems );
-
-	//});
 };
 
 SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsRenderObj, callBack )
@@ -188,6 +193,7 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
         // CASE: NOTE: DURING syncAll, if Offline mode detected, cancel the syncAll process in the middle.
         if ( !ConnManagerNew.isAppMode_Online() )
         {
+            // TODO: CHECK IF THIS IS PROPER MESSAGE...  <-- We need to open up this..
             SyncManagerNew.SyncMsg_InsertMsg( "App offline mode detected.  Stopping syncAll process.." );
             throw 'Stopping syncAll process due to app mode offline detected.';
         }
@@ -197,9 +203,14 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
         
             var activityCardObj = new ActivityCard( activityData.id, cwsRenderObj );
     
+            // Highlight the activity..
+            activityCardObj.highlightActivityDiv( true );
+
             activityCardObj.performSyncUp( function( success ) {
     
                 if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
+
+                activityCardObj.highlightActivityDiv( false );
     
                 // update on progress bar
                 FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
@@ -295,16 +306,22 @@ SyncManagerNew.hideProgressBar = function()
 // ===================================================
 // === 'syncStart/Finish' Related Methods =============
 
-SyncManagerNew.syncStart = function()
+SyncManagerNew.syncStart_CheckNSet = function( option )
 {
     var isOkToStart = false;
+
+    var hideMsg = ( option && option.hideMsg );
 
     // Return 'false' if there is already running one..
     if ( SyncManagerNew.sync_Running ) 
     {
         isOkToStart = false;
-        // TODO: Change to popup message in the app
-        alert( 'There is another sync job currenly running..' );        
+
+        var msg = 'There is another sync job currenly running..';
+
+        if ( !hideMsg ) MsgManager.msgAreaShow( msg );
+
+        console.customLog( msg );
     }
     else 
     {
@@ -312,7 +329,11 @@ SyncManagerNew.syncStart = function()
         // and set it as running
         if ( !ConnManagerNew.isAppMode_Online() )
         {
-            alert( 'Sync not available with offline appMode status..' );            
+            var msg = 'Sync not available with offline appMode status..';
+
+            if ( !hideMsg ) MsgManager.msgAreaShow( msg );
+    
+            console.customLog( msg );
         }
         else
         {
@@ -328,9 +349,20 @@ SyncManagerNew.syncStart = function()
 SyncManagerNew.syncAll_WithChecks = function()
 {
     // automated sync process
-}
+    // NOT YET Enabled
+    
+    //if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
+    //{
+    //  SyncManagerNew.syncAll( me._cwsRenderObj, '', function( success ) 
+    //  {
+    //    SyncManagerNew.syncFinish_Set();
+    //    SyncManagerNew.SyncMsg_ShowBottomMsg();
+    //  });  
+    //}
+};
 
-SyncManagerNew.syncFinish = function()
+
+SyncManagerNew.syncFinish_Set = function()
 {
     SyncManagerNew.sync_Running = false;  
 };

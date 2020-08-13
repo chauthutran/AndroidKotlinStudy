@@ -10,7 +10,7 @@ function cwsRender()
 	/* me.menuAppMenuIconTag = $( '#nav-toggle' );*/
 	/* me.loggedInDivTag = $( '#loggedInDiv' ); */
 	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
-	me.pulsatingProgress = $( '#pulsatingCircle' );
+	me.pulsatingProgress = $( '#pulsatingDots' );
 
 	// service worker obj reference
 	me.swManagerObj;  // set on 'app.js' initialize process

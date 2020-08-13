@@ -311,7 +311,7 @@ function ViewsList( blockList )
 
             me.viewsListSorterObj.sortList_Pager_UI_start();
 
-            me.blockListObj.cwsRenderObj.pulsatingProgress.show();
+            //me.blockListObj.cwsRenderObj.pulsatingProgress.show();
             me.blockListObj.redeemListScrollingState = 1;
 
             setTimeout( function() {

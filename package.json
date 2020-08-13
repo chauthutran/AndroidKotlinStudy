@@ -5,11 +5,12 @@
   "author": "James Chang",
   "scripts": {
     "build": "node cws_sw_build.js",
-    "minifyJS": "uglifyjs scripts.js --compress --mangle --warn --output scripts.min.js"    
+    "minifyJS": "uglifyjs scripts.js --compress --mangle --warn --output scripts.min.js"
   },
   "dependencies": {
     "uglify-js": "^3.10.1",
-    "workbox-build": "^4.3.1"
+    "workbox-build": "^5.1.3",
+    "workbox-webpack-plugin": "^5.1.3"
   },
   "devDependencies": {
     "karma": "^5.1.0"

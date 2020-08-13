@@ -423,13 +423,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.activitySubmitSyncClick = function()
     {        
-        if ( SyncManagerNew.syncStart() )
+        if ( SyncManagerNew.syncStart_CheckNSet() )
         {
             try
             {
                 me.performSyncUp( function( success ) {
     
-                    SyncManagerNew.syncFinish();     
+                    SyncManagerNew.syncFinish_Set();     
 
                     // reRender all the places for this activity (popup, full detail, activityList)
                     me.reRenderByActivityId( me.activityId );
@@ -439,7 +439,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             catch( errMsg )
             {
                 console.customLog( 'ERROR on running on activityCard.SyncUpItem, errMsg - ' + errMsg );
-                SyncManagerNew.syncFinish();     
+                SyncManagerNew.syncFinish_Set();     
             }
         }
     };
@@ -578,6 +578,18 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
+
+    me.highlightActivityDiv = function( bHighlight )
+    {
+        // If the activityTag is found on the list, highlight it during SyncAll processing.
+        var activityDivTag = $( '.activity[itemid="' + me.activityId + '"]' );
+
+        if ( activityDivTag )
+        {
+            if ( bHighlight ) activityDivTag.css( 'background-color', 'lightyellow' );
+            else activityDivTag.css( 'background-color', '' );
+        }
+    }
 
     // -------------------------------
 

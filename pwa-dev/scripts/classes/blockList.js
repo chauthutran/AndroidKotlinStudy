@@ -77,8 +77,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.BlockListViewObj;
 
     me.scrollEnabled = true;
-    me.scrollLoadingNextPage = false;
+    //me.scrollLoadingNextPage = false;
     me.lastScrollTop = 0;  // For tracking scroll up vs down
+    me.scrollingTimeOutId;
+    me.scrollingTimeOutDuration = 2000;  // 1 sec is 1000
+    
 
     me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
     me.pagingData.currPosition = 0;
@@ -168,25 +171,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
             me.pagingDataReset( me.pagingData );
 
-            me.scrollLoadingNextPage = true;
-            me.cwsRenderObj.pulsatingProgress.show();
+            // TEMP
+            //me.scrollLoadingNextPage = true;
+            //me.cwsRenderObj.pulsatingProgress.show();
 
             // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function(){
-
-                me.scrollLoadingNextPage = true;
-                me.cwsRenderObj.pulsatingProgress.show();
-
-            }, function(){
-
-                setTimeout( function() { 
-
-                    me.cwsRenderObj.pulsatingProgress.hide(); 
-                    me.scrollLoadingNextPage = false;
-    
-                }, 250 );
-
-            } );
+            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
         }
         else
@@ -277,21 +267,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         {
             me.pagingDataReset( me.pagingData );
 
-            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag, function(){
-
-                me.scrollLoadingNextPage = true;
-                me.cwsRenderObj.pulsatingProgress.show();
-
-            }, function(){
-
-                setTimeout( function() { 
-
-                    me.cwsRenderObj.pulsatingProgress.hide(); 
-                    me.scrollLoadingNextPage = false;
-    
-                }, 250 );
-
-            } );
+            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
         }
     };
 
@@ -319,7 +295,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 me.listTableTbodyTag.append( $( me.template_divActivityEmptyTag ) );
             }
 
-            if ( scrollEndFunc ) scrollEndFunc();
+            //if ( scrollEndFunc ) scrollEndFunc();
         }
         else
         {
@@ -330,11 +306,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
             me.pagingData.endAlreadyReached = currPosJson.endAlreadyReached;
 
-
             if ( !currPosJson.endAlreadyReached )
             {
-
-                if ( scrollStartFunc ) scrollStartFunc();
+                if ( scrollStartFunc && currPosJson.startPosIdx > 0 ) scrollStartFunc();
 
                 //for( var i = 0; i < activityList.length; i++ )
                 for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
@@ -348,7 +322,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
             }
 
-            if ( scrollEndFunc ) scrollEndFunc();
+            //if ( scrollEndFunc ) scrollEndFunc();
         }
     };
 
@@ -397,7 +371,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         me.lastScrollTop = currScrollTop;
 
         // Scroll only if this tag is visible, and there are activities
-        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 && ! me.scrollLoadingNextPage )
+        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 ) // && !me.scrollLoadingNextPage )
         {                    
             if ( scrollDirection === 'Down' && ( me.pagingData.endAlreadyReached === undefined || me.pagingData.endAlreadyReached === false ) )
             {
@@ -421,27 +395,36 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     // Get next paging amount data and display it
     me.scrollList = function()
     {
-        me.scrollLoadingNextPage = true;
-        me.cwsRenderObj.pulsatingProgress.show();
+        // TEMP STOP
+        // me.scrollLoadingNextPage = true;
+        // me.cwsRenderObj.pulsatingProgress.show();
 
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, function(){
+        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
-            me.scrollLoadingNextPage = true;
-            me.cwsRenderObj.pulsatingProgress.show();
-
-        }, function(){
-
-            setTimeout( function() { 
-
-                me.cwsRenderObj.pulsatingProgress.hide(); 
-                me.scrollLoadingNextPage = false;
-
-            }, 250 );
-
-        } );
     };
 
+
+    // TODO: Need to mark it with ID?  for ending it?  OR a queue?
+    me.scrollStartFunc = function()
+    {
+        // Used?
+        //me.scrollLoadingNextPage = true;
+        
+        // Set time out of hiding..
+        if ( me.scrollingTimeOutId ) clearTimeout( me.scrollingTimeOutId );
+        me.cwsRenderObj.pulsatingProgress.show();
+        me.scrollingTimeOutId = setTimeout( function() { me.cwsRenderObj.pulsatingProgress.hide() }, me.scrollingTimeOutDuration );
+    };
+
+    me.scrollEndFunc = function()
+    {
+        //me.cwsRenderObj.pulsatingProgress.hide(); 
+        //me.scrollLoadingNextPage = false;
+        //setTimeout( function() { }, 250 );
+    };
+
+    // Want to start over the pulsa if new request is made...
     
     // ------------------------------------
     // --- Create Activity Card Related -------------

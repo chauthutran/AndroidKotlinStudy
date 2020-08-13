@@ -144,9 +144,24 @@ function app()
   me.App_syncIcon_UI_event = function()
   {
     // move into cwsRender?
-    $( SyncManagerNew.imgAppSyncActionButtonId ).click(() => {
+    $( SyncManagerNew.imgAppSyncActionButtonId ).click( () => {
 
-      SyncManagerNew.SyncMsg_ShowBottomMsg();
+      // if already running, no message..
+      // if offline, also, no message in this case about offline...
+
+      if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
+      {
+        SyncManagerNew.syncAll( me._cwsRenderObj, '', function( success ) 
+        {
+          SyncManagerNew.syncFinish_Set();
+
+          SyncManagerNew.SyncMsg_ShowBottomMsg();
+        });  
+      }
+      else
+      {
+        SyncManagerNew.SyncMsg_ShowBottomMsg();
+      }
 
     });
   };

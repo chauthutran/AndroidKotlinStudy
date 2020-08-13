@@ -3,7 +3,7 @@
 const {generateSW} = require('workbox-build');
 
 generateSW({
-
+  mode: 'production',
   swDest: 'pwa-dev/service-worker.js',
   globDirectory: 'pwa-dev',
   globPatterns: [
@@ -23,7 +23,7 @@ generateSW({
     },
     {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
-      handler: 'staleWhileRevalidate',
+      handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'googleFonts'
       }
