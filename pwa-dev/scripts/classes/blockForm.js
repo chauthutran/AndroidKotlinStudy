@@ -476,10 +476,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		entryTag.click( e => e.preventDefault() );
 
 		var yearRange = ( formItemJson.yearRange ) ? formItemJson.yearRange : { 'from': -100, 'to': 1 };
-		var tagOfClick = Util.isMobi() ? button.parent() : button;
+
+		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
 		tagOfClick.click( function(e) {
-			if(Util.isMobi()) entryTag.blur()
+			
+			if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
+
 			var dtmPicker = new mdDateTimePicker.default({
 				type: 'date',
 				init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
@@ -510,7 +513,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		divInputFieldTag.find(".field__left").append( wrapperDad );
 
 		return divInputFieldTag;
-	}
+	};
+	
 
 	me.createRadioFieldTag = function( formItemJson )
 	{

@@ -138,6 +138,11 @@ function app()
     $( '#spanVersion' ).text( 'v' + _ver );
     $( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
     $( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
+
+    // TODO: SHOULD BE MOVED TO LOGIN PAGE
+    $( '#spanRefreshSite' ).click( () => {
+		  location.reload( true );
+    });
   };
 
 
@@ -151,16 +156,17 @@ function app()
 
       if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
       {
-        SyncManagerNew.syncAll( me._cwsRenderObj, '', function( success ) 
+        SyncManagerNew.syncAll( me._cwsRenderObj, 'Manual', function( success ) 
         {
           SyncManagerNew.syncFinish_Set();
 
-          SyncManagerNew.SyncMsg_ShowBottomMsg();
+          setTimeout( SyncManagerNew.SyncMsg_ShowBottomMsg, 700 );
         });  
       }
       else
       {
-        SyncManagerNew.SyncMsg_ShowBottomMsg();
+        setTimeout( SyncManagerNew.SyncMsg_ShowBottomMsg, 700 );
+        //SyncManagerNew.SyncMsg_ShowBottomMsg();
       }
 
     });

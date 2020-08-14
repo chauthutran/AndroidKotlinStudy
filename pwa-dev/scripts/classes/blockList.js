@@ -81,7 +81,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.lastScrollTop = 0;  // For tracking scroll up vs down
     me.scrollingTimeOutId;
     me.scrollingTimeOutDuration = 2000;  // 1 sec is 1000
+    me.scrollFireHeight = 10; // The hight it will fire the scrolling before reaching bottom
     
+    me.blockListDiv_marginBottom = '30px'; // To Lift the list, avoid collpase with Fav.
 
     me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
     me.pagingData.currPosition = 0;
@@ -93,6 +95,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
     me.template_listDivTag = `<div class="list" />`;
+
+    // margin-bottom: 40px;
+    me.template_listBottomDivTag = `<div class="listBottom" style="
+        text-align: center;
+        color: #4753A3;
+        font-style: italic;
+        opacity: 0.4; display:none;"></div>`;
 
     me.template_divActivityTag = `<div class="activity card">
 
@@ -140,6 +149,9 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     {        
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( blockTag );        
+
+        blockTag.css( 'margin-bottom', me.blockListDiv_marginBottom ); // For 'Fav' button not overlapping..
+
 
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
@@ -229,11 +241,12 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
     me.setClassContainerTag = function( blockTag )
     {
         var listTableTag = $( me.template_listDivTag );
-
         blockTag.append( listTableTag );
 
-        var listFavButtonTag = $( Templates.favButtonContainer ); // Copy from list html template located in index.html
+        var listBottomDivTag = $( me.template_listBottomDivTag );
+        blockTag.append( listBottomDivTag );
 
+        var listFavButtonTag = $( Templates.favButtonContainer ); // Copy from list html template located in index.html
         blockTag.append( listFavButtonTag );
 
         return listTableTag; //listTableTag.find( 'tbody' );
@@ -299,14 +312,17 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
+            var listBottomDivTag = $( '.listBottom' );
+
             // Designed to handle with/without scrolling:
             // If setting has no scrolling/paging, me.pagingData has 'enabled': false, and will return endPos as full list size.
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
             me.setNextPagingData( me.pagingData, currPosJson );            
 
-            me.pagingData.endAlreadyReached = currPosJson.endAlreadyReached;
+            //me.pagingData.endAlreadyReached = currPosJson.endReached_Previously;
+            me.pagingData.endReached = currPosJson.endReached;  // endReached - could been reached with this page or already..
 
-            if ( !currPosJson.endAlreadyReached )
+            if ( !currPosJson.endReached_Previously )
             {
                 if ( scrollStartFunc && currPosJson.startPosIdx > 0 ) scrollStartFunc();
 
@@ -319,7 +335,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
                     activityCardObj.render();
                 }    
+            }
 
+
+            // If paging is enabled, display the paging status
+            if ( me.pagingData.enabled ) 
+            {
+                listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
             }
 
             //if ( scrollEndFunc ) scrollEndFunc();
@@ -331,16 +353,21 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.getCurrentPositionRange = function( activityListSize, pagingData )
     {
-        var currPosJson = {};
+        var currPosJson = { 'endReached': false };
         currPosJson.startPosIdx = pagingData.currPosition;
         
         // If paging is disabled, put 'nextPageEnd' to the full activityListSize.
-        var nextPageEnd = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : activityListSize;
-        if ( nextPageEnd >= activityListSize ) nextPageEnd = activityListSize;  // if nextPageEnd is over the limit, set to limit.
+        var nextPageEndPos = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : activityListSize;
+        if ( nextPageEndPos >= activityListSize ) 
+        {
+            nextPageEndPos = activityListSize;  // if nextPageEnd is over the limit, set to limit.
+            currPosJson.endReached = true;
+        }
 
-        currPosJson.endPos = nextPageEnd; 
+        currPosJson.endPos = nextPageEndPos; 
 
-        currPosJson.endAlreadyReached = ( currPosJson.startPosIdx === currPosJson.endPos );
+        // Before start of this, end has reached already..
+        currPosJson.endReached_Previously = ( currPosJson.startPosIdx === currPosJson.endPos );
         
         return currPosJson;
     };
@@ -373,7 +400,8 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         // Scroll only if this tag is visible, and there are activities
         if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 ) // && !me.scrollLoadingNextPage )
         {                    
-            if ( scrollDirection === 'Down' && ( me.pagingData.endAlreadyReached === undefined || me.pagingData.endAlreadyReached === false ) )
+            if ( scrollDirection === 'Down' 
+                && !me.pagingData.endReached )
             {
                 //doc height
                 var docHeight = $( document ).height();
@@ -382,7 +410,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 var scrollPos = $( 'body' ).scrollTop() + $( 'body' ).height();
 
                 // fire if the scroll position is within 100 pixels above the bottom of the page
-                if ( scrollPos > ( docHeight - 100 ) )  
+                if ( scrollPos >= ( docHeight - me.scrollFireHeight ) )  // - 100  <-- due to 'listEnd' div + margin bottom, those cover the height..  
                 {
                     me.scrollList();
                 }

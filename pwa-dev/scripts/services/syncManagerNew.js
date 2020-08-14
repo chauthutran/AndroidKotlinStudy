@@ -55,7 +55,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         // Move this out of this method..
         //if ( SyncManagerNew.syncStart_CheckNSet() )
         //{
-            SyncManagerNew.SyncMsg_InsertMsg( "syncAll Started.." );
+            SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' Started..' );
 
             // initialise UI + animation
             SyncManagerNew.update_UI_StartSyncAll();
@@ -65,7 +65,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             {
                 SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, function() 
                 {
-                    var successMsg = "syncAll completed..";
+                    var successMsg = 'syncAll ' + runType + ' completed..';
                     
                     console.customLog( successMsg );
 
@@ -87,7 +87,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     }
     catch( errMsg )
     {
-        var errMsgDetail = "syncAll failed - msg: " + errMsg;
+        var errMsgDetail = 'syncAll ' + runType + ' failed - msg: ' + errMsg;
         
         console.customLog( errMsgDetail );
 
@@ -169,10 +169,18 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 {    
     var uploadItems = [];
     
-    var uploadItems = ActivityDataManager.getActivityList().filter( 
-        a => ( a.status === Constants.status_queued 
-            || a.status === Constants.status_failed ) 
-        );
+    var uploadItems = ActivityDataManager.getActivityList().filter( function( activityItem ) 
+    {
+        var filterPass = false;
+        if ( activityItem.processing && activityItem.processing.status )
+        {
+            var status = activityItem.processing.status;
+            filterPass = ( status === Constants.status_queued );
+            //|| status === Constants.status_failed
+        }
+
+        return filterPass; 
+    });
 
     // Hard to sort --> processing.created
     //uploadItems = Util.sortByKey( uploadItems, 'created', undefined, 'Decending' ); // combined list
@@ -207,11 +215,13 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
             activityCardObj.highlightActivityDiv( true );
 
             activityCardObj.performSyncUp( function( success ) {
-    
+
                 if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
 
+                activityCardObj.reRenderActivityDiv();
+
                 activityCardObj.highlightActivityDiv( false );
-    
+
                 // update on progress bar
                 FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
     
@@ -353,7 +363,7 @@ SyncManagerNew.syncAll_WithChecks = function()
     
     //if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
     //{
-    //  SyncManagerNew.syncAll( me._cwsRenderObj, '', function( success ) 
+    //  SyncManagerNew.syncAll( me._cwsRenderObj, 'Scheduled', function( success ) 
     //  {
     //    SyncManagerNew.syncFinish_Set();
     //    SyncManagerNew.SyncMsg_ShowBottomMsg();
@@ -494,8 +504,6 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
             msgContentTag.append( sectionTag );
         });
 
-        
-        //    <div class="sync_all__section_msg">Show next sync: in 32m</div>
     });
 
 };

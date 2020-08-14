@@ -83,14 +83,22 @@ FormUtil.rotateTag = function( tag, runRotation )
 		if ( runRotation )
 		{
 			//console.customLog( 'ROTATE STARTING..' );
-			tag.rotate({ count:999, forceJS: true, startDeg: 0 });
+			if ( tag.attr( 'rotating' ) !== 'true' )
+			{
+				tag.attr( 'rotating', 'true' );
+				tag.rotate({ count:999, forceJS: true, startDeg: 0 });
+			}
 		}
 		else
 		{
-			//console.customLog( 'ROTATE STOPPING..' );
-			tag.stop().rotate( { endDeg:360, duration:0 } );
-			//tag.stop();
-			//tag.rotate(0);
+			if ( tag.attr( 'rotating' ) === 'true' )
+			{
+				tag.attr( 'rotating', 'false' );
+				//console.customLog( 'ROTATE STOPPING..' );
+				tag.stop().rotate( { endDeg:360, duration:0 } );
+				//tag.stop();
+				//tag.rotate(0);
+			}
 		}	
 	}
 };

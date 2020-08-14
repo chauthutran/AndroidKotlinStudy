@@ -3834,7 +3834,8 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -5732,7 +5733,8 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -5816,8 +5818,8 @@ textarea {
   -webkit-box-align: right;
       -ms-flex-align: right;
           align-items: right;
-  right: 25px;
-  bottom: 25px;
+  right: 20px;
+  bottom: 10px;
   width: 240;
   height: auto;
   background-color: transparent;

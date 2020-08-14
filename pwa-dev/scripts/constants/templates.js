@@ -789,7 +789,7 @@ Templates.setMsgAreaBottom = function( callBack )
     callBack( syncInfoAreaTag );
 
     // Common ones - make a method out of it..
-    syncInfoAreaTag.show( 200 );//css('display', 'block');
+    syncInfoAreaTag.show( 400 );//css('display', 'block');
     $( '#divMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
 
     syncInfoAreaTag.find( '.divSyncAllClose' ).click( Templates.closeMsgAreaBottomScrim );

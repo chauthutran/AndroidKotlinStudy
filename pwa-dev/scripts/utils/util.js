@@ -343,6 +343,8 @@ Util.getCombinedJsonInArr = function( objArr )
 
 // -------------------------------------------
 
+// TODO: We can create Util.sortByKey with 'eval' of 'key' part..
+
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
 {

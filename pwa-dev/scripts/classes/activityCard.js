@@ -32,7 +32,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     // ----------------------------------------------------
 
-    me.getactivityCardDivTag = function()
+    me.getActivityCardDivTag = function()
     {
         if ( me.options.parentTag_Override )
         {
@@ -47,7 +47,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.getSyncButtonTag = function( activityId )
     {
-        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getactivityCardDivTag();
+        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
 
         return activityCardTags.find( '.activityStatusIcon' );
     };
@@ -57,7 +57,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.render = function()
     {        
-        var activityCardDivTag = me.getactivityCardDivTag();
+        var activityCardDivTag = me.getActivityCardDivTag();
 
         // If tag has been created), perform render
         if ( activityCardDivTag )
@@ -67,8 +67,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             try
             {
-                var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
-
                 var activityContainerTag = activityCardDivTag.find( '.activityContainer' );
                 var activityTypeIconTag = activityCardDivTag.find( '.activityIcon' );
                 var activityContentTag = activityCardDivTag.find( '.activityContent' );
@@ -91,7 +89,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 me.setupSyncBtn( clickEnable, activityCardDivTag, activityJson );    
 
                 // 4. 'phoneNumber' action  button setup
-                me.setupPhoneCallBtn( activityPhoneCallTag, activityJson );
+                me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
 
                 // 5. clickable rerender setup
                 me.setUpReRenderByClick( activityRerenderTag );
@@ -179,16 +177,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
-    me.setupPhoneCallBtn = function( divPhoneCallTag, activityJson )
-    {
-        var activityTrans = ActivityDataManager.getCombinedTrans( activityJson );
+    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
+    {        
+        var clientObj = ClientDataManager.getClientByActivityId( activityId );
 
         divPhoneCallTag.empty();
 
         //if ( activityType && activityType.calls && activityType.calls )
-        if ( activityTrans.phoneNumber )
+        if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
         {
-            var phoneNumber = activityTrans.phoneNumber; // should we define phoneNumber field in config? might change to something else in the future
+            var phoneNumber = clientObj.clientDetails.phoneNumber; // should we define phoneNumber field in config? might change to something else in the future
             //var evalConditions = activityType.calls.evalConditions;
             //var paylDetails = Util.jsonToArray ( activityTrans, 'name:value' );
 
@@ -292,7 +290,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // Wrapper to call displayActivitySyncStatus with fewer parameters
     me.displayActivitySyncStatus_Wrapper = function( activityJson, activityCardDivTag )
     {
-        //var activityCardDivTag = me.getactivityCardDivTag();
+        //var activityCardDivTag = me.getActivityCardDivTag();
         if ( activityCardDivTag && activityCardDivTag.length > 0 )
         {
             var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
@@ -431,9 +429,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
                     SyncManagerNew.syncFinish_Set();     
 
-                    // reRender all the places for this activity (popup, full detail, activityList)
-                    me.reRenderByActivityId( me.activityId );
-                    //me.render();
+                    me.reRenderActivityDiv();
                 });    
             }
             catch( errMsg )
@@ -445,12 +441,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
               
 
-    me.reRenderByActivityId = function( activityId )
+    me.reRenderActivityDiv = function()
     {
         console.customLog( 'reRenderByActivityId' );
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
-        var activityCardTags = $( '.activity[itemid="' + activityId + '"]' );
+        var activityCardTags = $( '.activity[itemid="' + me.activityId + '"]' );
         var reRenderClickDivTags = activityCardTags.find( 'div.activityRerender' );   
         
         reRenderClickDivTags.click();
@@ -608,13 +604,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             // Set the status as processing..
             activityJson_Orig.processing.status = Constants.status_processing;
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getactivityCardDivTag() );
+            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
             // Run UI Animation..
             FormUtil.rotateTag( syncIconTag, true );
 
-
             
             var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
+
+            if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
+            if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
 
             try
             {
@@ -624,24 +622,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
                 {
                     // Stop the Sync Icon rotation
-                    //FormUtil.rotateTag( syncIconTag, false );
-                    FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
+                    FormUtil.rotateTag( syncIconTag, false );
 
                     // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
                     me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) {
 
                         if ( success ) 
                         {
-                            // Why need to call this again?
-                            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
-
                             afterDoneCall( true );
                         }
                         else 
                         {
-                            // Why need to call this again?
-                            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
-
                             // Error - responseJson
                             console.customLog( responseJson );
 
@@ -666,8 +657,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             console.customLog( 'Error in ActivityCard.syncUp - ' + errMsg );
 
             // Stop the Sync Icon rotation
-            //FormUtil.rotateTag( syncIconTag, false );
-            FormUtil.rotateTag( me.getSyncButtonTag( me.activityId ), false );
+            FormUtil.rotateTag( syncIconTag, false );
 
             afterDoneCall( false );
         }
