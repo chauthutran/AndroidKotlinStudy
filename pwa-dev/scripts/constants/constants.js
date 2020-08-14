@@ -15,6 +15,7 @@ Constants.status_processing = "processing"; // initialize from dcd@XX ? //REMOVE
 Constants.status_downloaded = "downloaded"; // DO NOT NEED THIS - SAME AS 'synced'?
 Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
 Constants.status_submit_wMsg = "submit_wMsg"; 
+Constants.status_submit_wMsgRead = "submit_wMsgRead"; // Msg already read.
 Constants.status_error = "error"; // 
 
 

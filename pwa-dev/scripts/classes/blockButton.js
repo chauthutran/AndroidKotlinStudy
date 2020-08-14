@@ -13,7 +13,7 @@ function BlockButton( cwsRenderObj, blockObj )
 	me.divTabsTargetContainer = ` <div class="tab_fs__container" /> `;
 	me.ulTabsHead = ` <ul class="tab_fs__head" /> `;
 	me.divHeadIcon = ` <div class="tab_fs__head-icon" /> `;
-	me.divHeadIconExp = ` <div class="tab_fs__head-icon_exp" /> `;
+	me.divHeadIconExp = ` <div class="tab_fs__head-icon_exp" style="cursor: pointer; pointer-events: none;" /> `;  // Quick Fix, but not good one
 	me.divHeadTextSpan = ` <span /> `;
 	me.ulTab2ndary = ` <ul class="2ndary" style="display:none" /> `;
 	me.liTab2ndary = ` <li class="2ndary" style="display:none" /> `;
@@ -89,6 +89,9 @@ function BlockButton( cwsRenderObj, blockObj )
 
 		var expIconTag = $( me.divHeadIconExp );
 		btnTabsContainerTag.append( expIconTag );
+
+		// TODO: Add to on tab click event..
+
 
 		btnTabsUlTag.css( '--tabs', ( buttonsId.length > 0 ) ? buttonsId.length : 1 );
 

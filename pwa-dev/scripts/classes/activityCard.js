@@ -93,6 +93,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 5. clickable rerender setup
                 me.setUpReRenderByClick( activityRerenderTag );
+
             }
             catch( errMsg )
             {
@@ -100,6 +101,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }
         }
     };
+
+
+    // -----------------------------------------------------
 
 
     me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
@@ -146,33 +150,25 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 }  
                 else 
                 {
-                    // if ( statusVal === Constants.status_processing )
-
                     // Display the popup
                     me.syncResultMsgShow( statusVal, activityJson, activityCardDivTag );
     
-                    // TODO: THIS DOES NOT WORK 100% <-- NEED TO REVISIT!!!
-                    if ( statusVal === Constants.submit_wMsg )        
+
+                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
+                    if ( statusVal === Constants.status_submit_wMsg )        
                     {
-                        activityJson.processing.statusRead = true;
+                        activityJson.processing.status = Constants.status_submit_wMsgRead;
+
+                        // Try getting activity data again and save it.. directly..
+
                         // Need to save storage afterwards..
-                        ClientDataManager.saveCurrent_ClientsStore();                
-                    }    
+                        ClientDataManager.saveCurrent_ClientsStore( function() {
+
+                            me.reRenderActivityDiv();
+
+                        });
+                    }
                 }           
-
-                // List the open (action) status
-                //if ( statusVal === Constants.status_processing ) //{
-                    // TODO: Allow reset to pending?
-                    // TODO: SYNC BLOCK DISABLE?
-
-                    // Case 1. Continue to be in 'Sync' case reset
-                    //      - simple processing status unset.. But the process will continue..
-                    //activityJson.processing.status = Constants.status_queued;
-                    //me.displayActivitySyncStatus_Wrapper( activityJson, activityCardDivTag );
-
-                    // Case 2. Cancel the Sync Process..
-                
-                
             });     
         }
     };
@@ -245,21 +241,25 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' );
-            imgIcon.attr( 'src', 'images/sync_msd.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_submit_wMsg )        
         {
             // already sync..
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg*' );
+            imgIcon.attr( 'src', 'images/sync_msd.svg' ); 
+        }
+        else if ( statusVal === Constants.status_submit_wMsgRead )        
+        {
+            // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
-    
-            if ( activityJson.processing.statusRead ) imgIcon.attr( 'src', 'images/sync_msdr.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync_msdr.svg)' );
-            else imgIcon.attr( 'src', 'images/sync_msd.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync_msd.svg)' );
+            imgIcon.attr( 'src', 'images/sync_msdr.svg' );
         }
         else if ( statusVal === Constants.status_downloaded )        
         {
             // already sync..
             divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' );
-            imgIcon.attr( 'src', 'images/sync_msd.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+            imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
@@ -443,7 +443,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.reRenderActivityDiv = function()
     {
-        console.customLog( 'reRenderByActivityId' );
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
         var activityCardTags = $( '.activity[itemid="' + me.activityId + '"]' );
