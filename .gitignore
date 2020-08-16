@@ -1,3 +1,4 @@
 node_modules/*
-pwa-dev/service-worker.js
 qunittest/coverage/*
+*/service-worker.js
+*/service-worker.js.map

@@ -15,7 +15,7 @@ generateSW({
   cleanupOutdatedCaches: false,
   runtimeCaching: [
     {
-      urlPattern: /.js|.html|.css|.svg|.jpg|.png|.gif|.mp3|.wav/,
+      urlPattern: /^(?!http.*).*\.(?:js|html|css|svg|jpg|png|gif|mp3|wav)$/,      
       handler: 'CacheFirst',
       options: {
         cacheName: 'appShell'

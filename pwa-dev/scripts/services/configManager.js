@@ -305,8 +305,10 @@ ConfigManager.defaultJsonList = {
 
 ConfigManager.default_SettingPaging = { 
     "enabled": true,
-    "pagingSize": 9 // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
+    "pagingSize": 9 
 };
+// 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
+
 
 // ==== Methods ======================
 
