@@ -735,6 +735,11 @@ function cwsRender()
 			$('#fullScreenPreview').hide();
 			$('#pageDiv').hide();
 		}
+		if ( $( '#divMsgAreaBottom' ).is(':visible') ) 
+		{
+			$('#divMsgAreaBottom').hide();
+			$('#divMsgAreaBottomScrim').hide();
+		}
 
 		me.hidenavDrawerDiv();
 
