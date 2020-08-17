@@ -6,11 +6,9 @@ function Login( cwsRenderObj )
 
     me.cwsRenderObj = cwsRenderObj;
 
-	me.loginFormDivTag = $( "#loginFormDiv" );
-	me.pageDivTag = $( "#pageDiv" );	// Get it from cwsRender object?
-	me.menuTopDivTag; // = $( '#menuTopDiv' ); //edited by Greg (2018/12/10)
-
-	me.loggedInDivTag = $("#loggedInDiv");
+	me.loginFormDivTag = $( '#loginFormDiv' );
+	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
+	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.navTitleTextTag = $( '.Nav__Title' );
 	me.pageTitleDivTab = $( 'div.logo-desc-all' );
 	me.scrimTag = $('.scrim');
@@ -18,21 +16,16 @@ function Login( cwsRenderObj )
 
 	me.loginBtnTag = $( '.loginBtn' );
 	me.passRealTag = $( '#passReal' );
-	me.loginUserNameTag = $(".loginUserName");
-	me.loginUserPinTag = $(".loginUserPin");
+	me.loginUserNameTag = $( '.loginUserName' );
+	me.loginUserPinTag = $( '.loginUserPin' );
 	me.loginFormTag = $( 'div.login_data' );
-	me.advanceOptionLoginBtnTag = $("#advanceOptionLoginBtn");
-
+	me.advanceOptionLoginBtnTag = $( '#advanceOptionLoginBtn' );
 
 	
-	me.loginFormTag = $(".login_data__fields");
-	me.loginFieldTag = $("#loginField");
+	me.loginFormTag = $( '.login_data__fields' );
+	me.loginFieldTag = $( '#loginField' );
 
-
-  	// Greg added: 2018/11/23 -- below 3 lines
 	me._userName = '';
-	//me._pHash = '';
-	//me._staySignedIn = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -115,32 +108,37 @@ function Login( cwsRenderObj )
 	{
 		me.scrimTag.show();
 
-		me.scrimTag.off( 'click' );
-
-		me.scrimTag.click( function(){
+		me.scrimTag.off( 'click' ).click( function(){
 			me.unblockPage();
-		} )
+		} );
+
+		me.scrimTag.css( 'z-Index', 1 );
 	}
 
 	me.unblockPage = function()
 	{
 		me.scrimTag.hide();
-		me.sheetBottomTag.html("");
+		me.sheetBottomTag.html( '' );
+		me.scrimTag.css( 'z-Index', 1 );
 	}
 	
 	me.setAdvOptBtnClick = function()
 	{
+
 		me.advanceOptionLoginBtnTag.click( function() {
 
-			if ( ! $( this ).hasClass( 'dis' ) )
+			if ( ! me.advanceOptionLoginBtnTag.hasClass( 'dis' ) )
 			{
 				me.blockPage();
 
 				// create and reference templatesManager here:
 				me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
-				me.sheetBottomTag.show();
 				me.cwsRenderObj.langTermObj.translatePage();
+
+				me.sheetBottomTag.show();
+
 			}
+
 
 			$( '#switchToStagBtn' ).click( function() {
 
@@ -149,41 +147,49 @@ function Login( cwsRenderObj )
 					me.unblockPage();
 					alert('switchToStagBtn');	
 				}
-
+	
 			});
-
+	
 			$( '#demoBtn' ).click( function() {
-
+	
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.unblockPage();
 					alert('demo');
 				}
-
+	
 			});
-
+	
 			$( '#changeUserBtn' ).click( function() {
-
+	
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.sheetBottomTag.html ( Templates.Change_User_Form );
 					me.cwsRenderObj.langTermObj.translatePage();
+	
+					$( '#accept' ).click( function() {
 
-					$("#accept").click( function() {
 						DataManager2.deleteAllStorageData( function() {
 							location.reload( true );
 							//me.cwsRenderObj.swManagerObj.reGetAppShell(); 
 						});
-					});
 
-					$("#cancel").click( function() {
+					});
+	
+					$( '#cancel' ).click( function() {
+
+						$( '.sheet_bottom-btn3' ).remove();
 						me.unblockPage();
 					});
-				}
 
+					me.sheetBottomTag.show();
+
+				}
+	
 			});
 
 		});
+
 	}
 
 	// =============================================

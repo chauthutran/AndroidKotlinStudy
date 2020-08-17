@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "uglify-js": "^3.10.1",
-    "workbox-build": "^5.1.3",
     "workbox-webpack-plugin": "^5.1.3"
   },
   "devDependencies": {
-    "karma": "^5.1.0"
+    "karma": "^5.1.0",
+    "workbox-build": "^5.1.3"
   }
 }

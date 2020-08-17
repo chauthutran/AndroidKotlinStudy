@@ -254,7 +254,7 @@ Templates.activityCardFullScreen = `
         <li class="primary active" rel="tab_previewDetails">
           <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
           <span rel="tab_previewDetails">Details</span>
-          <ul class="2ndary" style="display:none">
+          <ul class="2ndary" style="display: none; z-index: 1;">
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
               <span rel="tab_previewPayload">Payload</span>
@@ -268,7 +268,7 @@ Templates.activityCardFullScreen = `
         <li class="primary" rel="tab_previewPayload">
           <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
           <span rel="tab_previewPayload">Payload</span>
-          <ul class="2ndary" style="display:none">
+          <ul class="2ndary" style="display: none; z-index: 1;">
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
               <span rel="tab_previewDetails">Details</span>
@@ -282,7 +282,7 @@ Templates.activityCardFullScreen = `
         <li class="primary" rel="tab_previewSync">
           <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
           <span rel="tab_previewSync">Sync</span>
-          <ul class="2ndary" style="display:none">
+          <ul class="2ndary" style="display: none; z-index: 1;">
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
               <span rel="tab_previewDetails">Details</span>

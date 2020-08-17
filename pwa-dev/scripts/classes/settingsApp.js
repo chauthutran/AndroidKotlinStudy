@@ -23,8 +23,7 @@ function settingsApp( cwsRender )
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
     me.easterEgg2Timer = 0; // activate Translations debugging
 
-    me.scrimTag = me.settingsFormDivTag.find('.scrim');
-    me.sheetBottomTag = $('.sheet_bottom');
+    me.scrimTag = me.settingsFormDivTag.find('.sheet_bottom-scrim');
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================

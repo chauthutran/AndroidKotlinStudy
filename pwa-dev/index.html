@@ -90,6 +90,7 @@
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
 
+<!-- START > MAIN NAV HEADER (TOOLBAR) DIV -->
   <div class="Nav1">
     <div class='Nav__icon'>
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" version="1.1" id="menu_app">
@@ -123,17 +124,21 @@
       </table>
     </div>
   </div>
+<!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
 
+<!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
   <div class="Nav2" style="display:none;"></div>
+<!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
-  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation"
-    style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+<!-- START > MENU LIST CONTAINER DIV -->
+  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+<!-- END > MENU LIST CONTAINER DIV -->
 
   <div id="divProgressBar" class="progress">
     <div id="divProgressInfo" class="indeterminate"></div>
   </div>
 
-  <!-- LOGIN FORM DIV -->
+<!-- START > LOGIN FORM DIV -->
   <div id="loginFormDiv" style="display:none;">
     <div class="wrapper">
       <div class="login_title">
@@ -202,26 +207,26 @@
     </div>
 
   </div>
-  <div class="sheet_bottom" style="display: none;"></div>
+<!-- END > LOGIN FORM DIV -->
 
-  <!-- AFTER LOGIN - MAIN APP CONTENT DIV -->
+<!-- START > AFTER LOGIN - MAIN APP CONTENT DIV -->
   <div id="pageDiv" class="wrapper"></div>
-
+<!-- END > AFTER LOGIN - MAIN APP CONTENT DIV -->
 
   <div id="pulsatingDots" class="lv-dots lv-mid md" data-label="Loading..." style="display:none;">
     <div></div> <div></div> <div></div> <div></div>
   </div>
 
-  <!-- START > SETTINGS FORM DIV -->
+<!-- START > SETTINGS FORM DIV -->
   <div id="settingsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
-    <div class="scrim" style="display: none;"></div>
     <div class="wapper_card">
       <div class="sheet-title c_900">
         <img src="images/arrow_back.svg" class="btnSettingsBack btnBack">
         <span term="menu_settings">Settings</span>
       </div>
-      <div class="card _tab activity" style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
-
+      <div class="card _tab activity"
+        style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
+  
         <div class="field">
           <div class="field__label"><label>Network sync</label></div>
           <div class="field__controls">
@@ -231,8 +236,8 @@
             <div class="field__right"></div>
           </div>
         </div>
-
-
+  
+  
         <div class="field">
           <div class="field__label"><label term="settings_userLanguage">User language</label></div>
           <div class="field__controls">
@@ -242,8 +247,8 @@
             <div class="field__right"></div>
           </div>
         </div>
-
-
+  
+  
         <div class="field">
           <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
               date</label></div>
@@ -252,16 +257,16 @@
               <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
             </div>
             <div class="field__right"></div>
-
-            
-            <div id="settingsInfo_newLangTermsDownload" >
+  
+  
+            <div id="settingsInfo_newLangTermsDownload">
               <img id="rotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
             </div>
-          
-          
+  
+  
           </div>
         </div>
-
+  
         <div class="field">
           <div class="field__label"><label term="settings_theme">Theme</label></div>
           <div class="field__controls">
@@ -291,7 +296,7 @@
             <div class="field__right"></div>
           </div>
         </div>
-
+  
         <!-- /scripts/classes/settingsApp line 89 -->
         <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px">
           <div class="field__label">
@@ -299,39 +304,42 @@
               <div class="field__controls">
                 <div class="field__left" style="padding: 16px 0;">
                   <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z" fill="#333333" fill-opacity="0.87"></path>
-                  </svg> 
+                    <path
+                      d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
+                      fill="#333333" fill-opacity="0.87"></path>
+                  </svg>
                   <label term="" style="font-size: 1rem;padding: 4px;line-height: 29px;">Reset app data & configuration</label>
-              </div>
-              <div class="field__right"></div>
-            </div>
-
-            <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
-              <div id="bodyCollapsible__text" term="">
-                Your configuration and App data stored in the device will be deleted. You will be asked to log in
-                again and data which is not synced to the server will be lost.
-              </div>
-              <div id="buttonResetData" class="button-text alert" style="float:right;">
-                <div class="button__container">
-                  <div class="button-label" term="">RESET</div>
                 </div>
+                <div class="field__right"></div>
               </div>
-        
+  
+              <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
+                <div id="bodyCollapsible__text" term="">
+                  Your configuration and App data stored in the device will be deleted. You will be asked to log in
+                  again and data which is not synced to the server will be lost.
+                </div>
+                <div id="buttonResetData" class="button-text alert" style="float:right;">
+                  <div class="button__container">
+                    <div class="button-label" term="">RESET</div>
+                  </div>
+                </div>
+  
+              </div>
+  
             </div>
-        
           </div>
+  
         </div>
-
-      </div>
-
+  
       </div>
     </div>
+  
+    <div class="sheet_bottom-scrim" style="display: none;"></div>
+  
   </div>
+<!-- END > SETTINGS FORM DIV -->
 
-  <!-- END > SETTINGS FORM DIV -->
-
-
-  <!-- START > ABOUT FORM DIV -->
+<!-- START > ABOUT FORM DIV -->
   <div id="aboutFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
 
     <div class="wapper_card">
@@ -380,14 +388,13 @@
     </div>
 
   </div>
+<!-- END > ABOUT FORM DIV -->
 
-  <!-- END > ABOUT FORM DIV -->
-
-
-  <!--  START > STATISTICS REPORT -->
+<!--  START > STATISTICS REPORT -->
   <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
-  <!-- END > STATISTICS REPORT -->
+<!-- END > STATISTICS REPORT -->
 
+<!--  START > CUSTOM LOG INFO -->
   <div id="divCustomDataDisplay" style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
     <div class="divMainLayout" style="height:100%;">
       
@@ -404,18 +411,28 @@
     </div>
 
   </div>
+<!--  END > CUSTOM LOG INFO -->
   
+<!-- START > NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
+<!-- END > NETWORK SWITCH DIV -->
 
+<!-- START > ActivityItem PREVIEW DIV -->
   <div id="fullScreenPreview" class="sheet_full-fs" style="display: none;"></div>
+<!-- END > ActivityItem PREVIEW DIV -->
+
+<!-- START > LOGIN ADV/OPTIONS DIV -->
+  <div class="sheet_bottom" style="display: none;"></div>
+<!-- END > LOGIN ADV/OPTIONS DIV -->
+
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
   <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
 
   <div class="scrim" style="display: none;"></div>
 
-
-
+<!-- START > RESERVED QR CREATOR -->
   <div id="qrTemplate"></div>
+<!-- END > RESERVED QR CREATOR -->
 
   <div id="hnqisTemplate" style="display:none;">
     <div id='hnqisHeader'>HNQIS</div>
@@ -479,7 +496,6 @@
         </div>
       </main>
     </section>
-  </div>
   </div>
 
   <script type="text/javascript" src="scripts/services/consoleCustomLog.js"></script>
