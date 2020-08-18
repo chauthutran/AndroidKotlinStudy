@@ -140,7 +140,7 @@ function app()
     $( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
 
     // TODO: SHOULD BE MOVED TO LOGIN PAGE
-    $( '#spanRefreshSite' ).click( () => {
+    $( '#spanLoginAppUpdate' ).click( () => {
 		  location.reload( true );
     });
   };

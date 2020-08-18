@@ -17,7 +17,8 @@ function swManager( _cwsRenderObj, callBack ) {
     me.newRegistration = false;
     me.registrationState;
     me.registrationUpdates = false;
-    me.createRefreshPrompt = false;
+    me.newAppFilesFound = false;
+    me.newAppFileExists_EventCallBack;
 
     me.isApp_standAlone = false;
 
@@ -58,13 +59,13 @@ function swManager( _cwsRenderObj, callBack ) {
             me.swRegObj = registration;
 
             // If fresh registration case, we use 'callBack'..
-            me.createInstallAndStateChangeEvents( me.swRegObj, callBack );
+            me.createInstallAndStateChangeEvents( me.swRegObj ); //, callBack );
 
             // share registration obj with cwsRender (for reset App, etc)
             // me.setRegistrationObject( me.swRegObj );  <-- no need.  Methods are moved to this class..
-        }).then(function () 
-        {
-            if ( !me.newRegistration ) callBack();
+            //}).then(function () 
+
+            callBack();
 
         }).catch(err =>
             // MISSING TRANSLATION
@@ -73,16 +74,14 @@ function swManager( _cwsRenderObj, callBack ) {
     };
 
 
-    me.createInstallAndStateChangeEvents = function( swRegObj, callBack ) 
+    me.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack ) 
     {
         // track status of registration object (for observing updates + install events > prompt)
 
-        if ( ! swRegObj.active )
+        if ( !swRegObj.active )
         {
             me.newRegistration = true; // 1st time running SW registration (1st time running PWA)
             me.registrationState = 'sw: new install';
-
-            // NOTE: DO WE DISPLAY INSTALL ON MOBILE - MESSAGE HERE?
         }
         else 
         {
@@ -93,21 +92,21 @@ function swManager( _cwsRenderObj, callBack ) {
         if ( me.debugMode) console.customLog( ' - ' + me.registrationState );
 
         // SW update change event 
-        swRegObj.onupdatefound = () => {
-
+        swRegObj.onupdatefound = () => 
+        {
             me.swInstallObj = swRegObj.installing;
 
             if ( me.debugMode) console.customLog( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
 
             // sw state changes 1-4 (ref: me.installStateProgress )
-            me.swInstallObj.onstatechange = () => {
-
+            me.swInstallObj.onstatechange = () => 
+            {
                 me.registrationUpdates = true;
 
                 if ( me.debugMode) console.customLog( me.installStateProgress[ me.swInstallObj.state ] + ' {' + Math.round( eval( me.installStateProgress[ me.swInstallObj.state ] ) * 100 ) + '%}' );
 
-                switch ( me.swInstallObj.state ) {
-
+                switch ( me.swInstallObj.state ) 
+                {
                     case 'installing':
                         // SW installing (1) - applying changes
                         break; // do nothing
@@ -115,11 +114,17 @@ function swManager( _cwsRenderObj, callBack ) {
                     case 'installed':
                         // SW installed (2) - changes applied
                         // controller present means existing SW was replaced to be made redundant
-                        if ( navigator.serviceWorker.controller ) console.customLog( 'App updates detected' );
-                        //{
-                            //me.createRefreshPrompt = true;
-                        //    me.createRefreshIntervalTimer();
-                        //}
+                        if ( navigator.serviceWorker.controller ) {
+                            console.customLog( '[sw installed] App updates detected' );
+                            me.newAppFilesFound = true;
+                            $( '#spanLoginAppUpdate' ).show();
+                        }
+                        else
+                        {
+                            me.newAppFilesFound = false;
+                            $( '#spanLoginAppUpdate' ).hide();
+                        }
+
                         break;
 
                     case 'activating':
@@ -127,29 +132,28 @@ function swManager( _cwsRenderObj, callBack ) {
                         break; // do nothing
 
                     case 'activated':
+                        console.customLog( '[sw activated]' );
                         // SW activated (4) - start up completed: ready
-                        //if ( me.createRefreshPrompt ) me.createRefreshIntervalTimer();
+                        
+                        if ( me.newAppFilesFound && me.newAppFileExists_EventCallBack )
+                        {
+                            me.newAppFileExists_EventCallBack();
+                            me.newAppFileExists_EventCallBack = undefined;    
+                        } 
+
                         //callBack();
                         break;
                 }
             };
         };
     };
-    //me.swInstallObj.beforeinstallprompt = () => {
-    //    console.customLog( 'before install prompt' );
-    //};
 
     // -----------------------------------
 
-	me.createRefreshIntervalTimer = function()
-	{		
-		me.newSWrefreshNotification();
-
-		//var refreshIntV = setInterval( function() {
-		//	me.newSWrefreshNotification();
-		//}, me._newUpdateInstallMsg_interval );
-	};
-
+    me.registerEvent_newAppFileExists = function( eventCallBack )
+    {
+        me.newAppFileExists_EventCallBack = eventCallBack;
+    };
 
 	me.newSWrefreshNotification = function()
 	{

@@ -31,18 +31,62 @@ ConsoleCustomLog.showDialog = function()
     try
     {
         // populate the content here..
-        var divMainContent = divDialogTag.find( 'div.divMainContent' );
-        divMainContent.empty();
-        
-        var contentHtml = ConsoleCustomLog.generateContentHtml( ConsoleCustomLog.customLogData );        
-        
-        divMainContent.append( contentHtml );
+        var divMainContentTag = divDialogTag.find( 'div.divMainContent' );
 
-        var btnCancel = divDialogTag.find( 'div.cancel' );
+        // Display the content..
+        ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
 
-        btnCancel.off( 'click' ).click( function () {
+
+        // Add events..
+
+        // Cancel Button
+        var btnCancelTag = divDialogTag.find( 'div.cancel' );
+        btnCancelTag.off( 'click' ).click( function () {
             ConsoleCustomLog.hideDialog();                
         });           
+
+
+        // Run Command Button
+        var btnLogRunCommandTag = divDialogTag.find( '.btnLogRunCommand' );
+        btnLogRunCommandTag.off( 'click' ).click( function() {
+
+            var runCommandVal = divDialogTag.find( '.inputLogRunCommand' ).val();
+
+            console.customLog( 'runCommandVal: ' + runCommandVal );
+
+            Util.tryCatchContinue( function() {
+
+                var valueResult = eval( runCommandVal );
+                console.customLog( valueResult );
+
+                ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
+
+            }, "LogRunCommand Execute" );
+
+        });
+
+
+        // Command Example Selection
+        var selLogRunCommandCaseTag = divDialogTag.find( '.selLogRunCommandCase' );
+        selLogRunCommandCaseTag.off( 'change' ).change( function() 
+        {
+            var caseStr = selLogRunCommandCaseTag.val();
+
+            var inputCommandTag = divDialogTag.find( '.inputLogRunCommand' );
+
+            if ( caseStr === 'custom' )
+            {
+                inputCommandTag.val( '' );
+            }
+            else if ( caseStr === 'loadSampleData' )
+            {
+                inputCommandTag.val( 'DevHelper.loadSampleData(20);' );
+            }
+            else if ( caseStr === 'removeSampleData' )
+            {
+                inputCommandTag.val( 'DevHelper.removeSampleData();' );
+            }
+        });
 
     }
     catch( errMsg )
@@ -52,6 +96,15 @@ ConsoleCustomLog.showDialog = function()
 
     divDialogTag.show();
     $('.scrim').show();
+};
+
+ConsoleCustomLog.setMainContent = function( divMainContentTag, customLogData )
+{
+
+  //divMainContent.empty();
+  //var contentHtml = ConsoleCustomLog.generateContentHtml( ConsoleCustomLog.customLogData );        
+  divMainContentTag.html( ConsoleCustomLog.generateContentHtml( customLogData ) );
+
 };
 
 ConsoleCustomLog.hideDialog = function()

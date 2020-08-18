@@ -16,6 +16,8 @@ $.fn.outerHTML = function(){
 };
 
 
+
+// NOTE: THIS DOES NOT WORK WELL <-- ISSUE WITH STOPPING...  USE OTHER ONES..
 $.fn.rotate = function (options) 
 {
     /* jQuery-Rotate-Plugin v0.2 by anatol.at http://jsfiddle.net/Anatol/T6kDR/ */

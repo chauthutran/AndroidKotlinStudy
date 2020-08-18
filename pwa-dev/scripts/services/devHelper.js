@@ -12,7 +12,7 @@ DevHelper.cwsRenderObj;
 DevHelper.INFO;
 DevHelper.tempCount = 0;
 
-DevHelper.sampleDataList = 
+DevHelper.sampleDataTemplate = 
 [
   {
     "_id": "client_{USERNAME}_{SHORTDATE}_{8DIGITS}",
@@ -81,8 +81,6 @@ DevHelper.sampleDataList =
 }];
 
 
-DevHelper.crossfilterObj;
-
 // =======================================
 
 DevHelper.setUp = function( cwsRenderObj )
@@ -92,15 +90,6 @@ DevHelper.setUp = function( cwsRenderObj )
 
 // =======================================
 
-DevHelper.getCrossfilterObj = function()
-{
-    if ( !DevHelper.crossfilterObj ) 
-    {
-        DevHelper.crossfilterObj = crossfilter( DevHelper.sampleDataList );
-    }
-
-    return DevHelper.crossfilterObj;
-};
 
 DevHelper.switchConnectMode = function( connModeStr )
 {
@@ -139,54 +128,21 @@ DevHelper.showActivityListStr = function()
     console.customLog( JSON.stringify( { 'list': ActivityDataManager.getActivityList() } ) );
 };
 
+DevHelper.removeSampleData = function()
+{
+    ClientDataManager.removeSampleData( function( removedCount ) 
+    {
+        console.customLog( 'DevHelper.removeSampleData Done and saved to IndexedDB.  Removed Count: ' + removedCount );
+        DevHelper.cwsRenderObj.renderArea( DevHelper.cwsRenderObj.areaList[ 0 ].id );
+    });
+};
+
 // create load data method..
 DevHelper.loadSampleData = function( icount ) 
 {
-    var loops = ( icount ? icount : 1 );
-    var rndNames = 'Vickey Simpson,Yuri Youngquist,Sherice Sharma,Ariane Albert,Heather Locklear,Taunya Tubb,Lawanda Lord,Quentin Quesenberry,Terrance Tennyson,Rosaria Romberger,Joann Julius,Doyle Dunker,Carolina Casterline,Sherly Shupe,Dorris Degner,Xuan Xu,Mercedez Matheney,Jacque Jamerson,Lillian Lefler,Derek Deegan,Berenice Barboza,Charlene Marriot,Mariam Malott,Cyndy Carrozza,Shaquana Smith,Kendall Kitterman,Reagan Riehle,Mittie Maez,Carry Carstarphen,Nelida Nakano,Christoper Compo,Sadie Shedd,Coleen Samsonite,Estella Eutsler,Pamula Pannone,Keenan Kerber,Tyisha Tisdale,Ashlyn Aguirre,Ashlie Albritton,Willy Wonka,Diann Yowzer,Asha Carpenter,Devin Dashiell,Arvilla Alers,Sheba Sherron,Richard Racca,Elba Early,Coretta Cossey,Brande Bushnell,Larraine Samsung,Pilar Varillas,Gaspar Hernandez,Greg Rowles,James Chang,Bruno Raimbault,Rodolfo Melia,Chris Purdy,Martin Dale,Sam Sox,Joe Soap,Joan Sope,Marty McFly';
-    var rndMethod =  'Pills,Injection,Implant,IUD,None,Condom,Other';
-
-    for ( var i = 0; i < loops; i++ )
-    {
-        var tmp = JSON.stringify( DevHelper.sampleDataList );
-        var actType = FormUtil.getActivityTypes()[ Util.generateRandomNumberRange(0, FormUtil.getActivityTypes().length-1).toFixed(0) ].name;
-        var status = Configs.statusOptions[ Util.generateRandomNumberRange(0, Configs.statusOptions.length-1).toFixed(0) ].name;
-        var shrtDate = new Date();
-        var recDate = new Date( shrtDate.setDate( shrtDate.getDate() - ( Util.generateRandomNumberRange(0,10 ) ) ) );
-        var earlierDate = new Date( recDate.setDate( recDate.getDate() - ( Util.generateRandomNumberRange(0,60 ) ) ) );
-        var myFirst = Util.getRandomWord( rndNames, i ).trim().split(' ')[0];
-        var myLast = Util.getRandomWord( rndNames, i ).trim().split(' ')[1];
-        var method = Util.getRandomWord( rndMethod, i );
-
-        tmp = tmp.replace( /{ACTIVITY_TYPE}/g, actType );
-        tmp = tmp.replace( /{PROGRAM}/g, actType.split('-')[0] );
-        tmp = tmp.replace( /{STATUS}/g, status );
-
-        tmp = tmp.replace( /{SHORTDATE}/g, shrtDate.toISOString().split( 'T')[0].replace(/-/g,'') );
-        tmp = tmp.replace( /{RECENT_SHORTDATE}/g, recDate.toISOString().split( 'T')[0] );
-        tmp = tmp.replace( /{EARLIER_SHORTDATE}/g, earlierDate.toISOString().split( 'T')[0] );
-        tmp = tmp.replace( /{TIME}/g, new Date().toISOString().split( 'T')[1].replace(/:/g,'').replace('.','').replace('Z','') );
-        tmp = tmp.replace( /{USERNAME}/g, SessionManager.sessionData.login_UserName );
-        tmp = tmp.replace( /{8DIGITS}/g, Util.generateRandomNumber(8) );
-        tmp = tmp.replace( /{10DIGITS}/g, Util.generateRandomNumber(10) );
-        tmp = tmp.replace( /{10RNDCHARS}/g, Util.generateRandomId().substring( 0, 10 ) );
-        tmp = tmp.replace( /{AGE}/g, Util.generateRandomNumberRange( i, (50+i) ).toFixed(0) );
-        tmp = tmp.replace( /{FIRSTNAME}/g, myFirst );
-        tmp = tmp.replace( /{LASTNAME}/g, myLast );
-        tmp = tmp.replace( /{METHOD}/g, method );
-        
-
-        new Date().toISOString().split( 'T')[0].replace(/-/g,'')
-        //console.customLog( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
-    
-        ClientDataManager.insertClients( JSON.parse( tmp ) );
-    }
-
-    ClientDataManager.saveCurrent_ClientsStore( function() {
+    ClientDataManager.loadSampleData( icount, DevHelper.sampleDataTemplate, function() {
         console.customLog( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
-
         DevHelper.cwsRenderObj.renderArea( DevHelper.cwsRenderObj.areaList[ 0 ].id );
-
     });
 };
 
@@ -206,68 +162,6 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
     DevHelper.INFO = INFO;
 };
 
-DevHelper.voucherCodeSearch = function( dataList, voucherCode, type )
-{
-    var foundLatestClient;
-    var latestDate;
-
-    if ( dataList && voucherCode && type )
-    {        
-        for ( var i = dataList.length - 1; i >= 0; i-- )
-        {
-            var client = dataList[i];
-
-            var activities = client.activities;
-
-            for ( var k = activities.length - 1; k >= 0; k-- )
-            { 
-                var activity = activities[k];
-
-                // Check the date 
-                var laterActivityCase = false;
-
-                if ( !latestDate ) 
-                { 
-                    latestDate = activity.date.createdOnMdbUTC;
-                    laterActivityCase = true;
-                }
-                else
-                {
-                    if ( latestDate < activity.date.createdOnMdbUTC )
-                    {
-                        latestDate = activity.date.createdOnMdbUTC;
-                        laterActivityCase = true;
-                    }
-                }
-
-
-                if ( laterActivityCase )
-                {
-                    var transList = activity.transactions;
-
-                    if ( transList ) {
-                        // Check if the client trans has matching voucher
-                        for ( var p = transList.length - 1; p >= 0; p-- )
-                        {
-                            var transItem = transList[p];
-                            if ( transItem.clientDetails 
-                                && transItem.clientDetails.voucherCode === voucherCode
-                                && transItem.type === type ) {
-        
-                                // Only one transaction would exists with this voucher
-                                // Thus, break;                                    
-                                foundLatestClient = client;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return foundLatestClient;
-};
 // =======================================
 
 // Not yet implemented
@@ -276,205 +170,8 @@ DevHelper.setDebugFlag = function() { };
 // Not yet implemented
 DevHelper.setScheduleMsgFlag = function() { };
 
-
 // ======================================
 // === TESTING ONES BELOW ================
-
-
-DevHelper.crossfilter = function( clientAttr )
-{    
-    // How many issued?  redeemed?
-    var dimension = DevHelper.getCrossfilterObj().dimension( function( client ) { 
-        return client[ clientAttr ];
-    });
-
-    var lastUpdatedDim = DevHelper.getCrossfilterObj().dimension( function( client ) { 
-        return client.lastUpdated;  // client.clientDetails.city or age
-    });
-
-    //console.customLog( trans_issued );
-
-    //DevHelper.crossfilter().groupAll().reduceCount().value();
-
-
-    return dimension;
-
-    // Dimension - a target point value accumulated?  -- dataPoint in DHIS?  
-    //  - Expensive to create - Allow only 8 or 16 max dimension on given time...
-    //  var paymentsByTotal = payments.dimension(function(d) { return d.total; });
-
-    // FILTER - trim out/filter the 'dimension' values
-    //  paymentsByTotal.filter([100, 200]); // selects payments whose total is between 100 and 200
-    //  paymentsByTotal.filter(120); // selects payments whose total equals 120
-    //  paymentsByTotal.filter(function(d) { return d % 2; }); // selects payments whose total is odd
-
-    // dimention.top() / bottom() / dispose()
-
-    // Group - grouping by dimension value..
-    //  var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
-
-
-    // Test if child level can be referenced --> dimensioned..
-};
-
-
-DevHelper.cfIssued = function( transactionType )
-{    
-    return DevHelper.getCrossfilterObj().groupAll().reduceSum( function( client ) { 
-        // client -> activities -> transactions -> "transactionType": "v_iss",
-
-        var total_issued = 0;
-
-        for( var i = 0; i < client.activities.length; i++ )
-        {
-            var activity = client.activities[ i ];
-                        
-            // transactionType - "v_iss"
-            var issTransList = Util.getItemsFromList( activity.transactions, transactionType, "type" );
-
-            total_issued += issTransList.length;
-        }
-
-        return total_issued; 
-    }).value();
-};
-
-
-DevHelper.cf_Example = function()
-{
-    // Source - https://blog.rusty.io/2012/09/17/crossfilter-tutorial/
-
-    var livingThings = crossfilter([
-        // Fact data.
-        { name: 'Rusty',  type: 'human', legs: 2 },
-        { name: 'Alex',   type: 'human', legs: 2 },
-        { name: 'Lassie', type: 'dog',   legs: 4 },
-        { name: 'Spot',   type: 'dog',   legs: 4 },
-        { name: 'Polly',  type: 'bird',  legs: 2 },
-        { name: 'Fiona',  type: 'plant', legs: 0 }
-      ]);
-
-    // How many living things are in my house?
-    var n = livingThings.groupAll().reduceCount().value();
-    console.customLog('There are ' + n + ' living things in my house.') // 6
-
-    // How many total legs are in my house?
-    var legs = livingThings.groupAll().reduceSum(function(fact) { return fact.legs; }).value()
-    console.customLog('There are ' + legs + ' legs in my house.') // 14
-
-    //dimension is something you want to group or filter by. Here, the dimension is going to be the type .
-
-    // Filter for dogs.
-    var typeDimension = livingThings.dimension(function(d) { return d.type; });
-    typeDimension.filter('dog')
-
-
-    // How many living things of each type are in my house?
-    var countMeasure = typeDimension.group().reduceCount();
-    var a = countMeasure.top(4);
-    console.customLog('There are ' + a[0].value + ' ' + a[0].key + '(s) in my house.');
-    console.customLog('There are ' + a[1].value + ' ' + a[1].key + '(s) in my house.');
-    console.customLog('There are ' + a[2].value + ' ' + a[2].key + '(s) in my house.');
-    console.customLog('There are ' + a[3].value + ' ' + a[3].key + '(s) in my house.');
-
-
-    // How many legs of each type are in my house?
-    var legMeasure = typeDimension.group().reduceSum(function(fact) { return fact.legs; });
-    var a = legMeasure.top(4);
-};
-
-
-
-DevHelper.cf_Example2 = function()
-{
-    // Source - https://github.com/square/crossfilter/wiki/API-Reference
-
-    var payments = crossfilter([
-        {date: "2011-11-14T16:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
-        {date: "2011-11-14T16:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
-        {date: "2011-11-14T16:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T16:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T16:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
-        {date: "2011-11-14T17:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T17:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
-        {date: "2011-11-14T17:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
-      ]);
-
-
-    // DIMENSION
-    var paymentsByTotal = payments.dimension(function(d) { return d.total; });
-
-    // FILTER
-    paymentsByTotal.filter([100, 200]); // selects payments whose total is between 100 and 200
-    paymentsByTotal.filter(120); // selects payments whose total equals 120
-    paymentsByTotal.filter(function(d) { return d % 2; }); // selects payments whose total is odd
-
-    // TOP
-    var topPayments = paymentsByTotal.top(4); // the top four payments, by total
-    topPayments[0]; // the biggest payment
-
-    // GROUP
-    var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
-    
-
-    // EXAMPLE - Group by type and get 'total' on each group.  Get top 1 total sum by type.
-    var paymentsByType = payments.dimension(function(d) { return d.type; }),
-    paymentVolumeByType = paymentsByType.group().reduceSum(function(d) { return d.total; }),
-    topTypes = paymentVolumeByType.top(1);
-    topTypes[0].key; // the top payment type (e.g., "tab")
-
-    // EXAMPLE - Return the most record counts by 'type'
-    var paymentsByType = payments.dimension(function(d) { return d.type; }),
-    paymentCountByType = paymentsByType.group(),
-    topTypes = paymentCountByType.top(1);
-    topTypes[0].key; // the top payment type (e.g., "tab")
-    topTypes[0].value; // the count of payments of that type (e.g., 8)
-
-};
-
-
-
-DevHelper.cf_e3 = function()
-{
-    var cf = crossfilter([
-        { Country: "Brazil", Year: 1986, DMFT: 6.7 },
-        { Country: "Brazil", Year: 1994, DMFT: 4.9 },
-        { Country: "Canada", Year: 1974, DMFT: 4.4 }
-    ]);
-
-    var cf_country = cf.dimension(function(d) { return d.Country; });
-
-    DevHelper.totable( cf_country.top(Infinity) );
-
-    // Filter
-    DevHelper.totable( cf_country.filter( 'Brazil' ).top(Infinity) );
-};
-
-
-DevHelper.totable = function( json ) 
-{
-    var html = "";
-
-    json.forEach(function(row) {
-        html += "<tr>";
-        var dataStr = '';
-
-        for ( key in row ) {
-              html += "<td>"+row[key]+"</td>";
-
-              dataStr += row[key] + ', ';
-        };
-
-        console.customLog( dataStr );
-
-        html += "</tr>";
-    });
-
-    //return "<table>" + html + "</table>";
-}
-
-//DevHelper.TestRequestSend( 'https://client-dev.psi-connect.org/routeWsTest' );
-//DevHelper.TestRequestSend( 'https://api-dev.psi-connect.org/PWA.locator?1?n=50&iso2=SV&c=13.6929,-89.2182&d=5000000%27' );
 
 DevHelper.TestRequestSend = function( url )
 {

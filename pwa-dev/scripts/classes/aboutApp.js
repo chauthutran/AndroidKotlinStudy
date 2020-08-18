@@ -571,11 +571,7 @@ function aboutApp( cwsRender )
         }
 
 
-        // New log open dialog
-        $( '#showLogs' ).off( 'click' ).click( function() 
-        {
-            ConsoleCustomLog.showDialog();
-        });
+        me.setUpMoreInfoDiv();
     }
 
     me.getThemeList = function( jsonThemes )
@@ -612,13 +608,34 @@ function aboutApp( cwsRender )
 
     // -----------------------------------
 
-    me.setMobileAppPart = function()
+    me.setUpMoreInfoDiv = function()
     {
-        $( '.divAppInstall' ).show();
-        $( '#appInstallTry' ).off( 'click' ).click( function() {
+            // New log open dialog
+        $( '#showLogs' ).off( 'click' ).click( function() 
+        {
+            ConsoleCustomLog.showDialog();
+        });
 
-            console.customLog( 'Try the install - event call!!' );
-        });      
+
+        $( '#linkAppVersionCheck' ).off( 'click' ).click( function() 
+        {
+            console.customLog( 'linkAppVersionCheck clicked!!' );
+        });    
+
+        
+        $( '#linkAppUpdate' ).off( 'click' ).click( function() 
+        {
+            // Optionally, We can even register callBack event - if new version exists...
+            me.cwsRenderObj.swManagerObj.registerEvent_newAppFileExists( function() 
+            {
+                console.customLog( 'FROM AboutApp - newAppFile Found!!' );
+                
+                me.cwsRenderObj.swManagerObj.newSWrefreshNotification();    
+            }); // 
+
+            me.cwsRenderObj.swManagerObj.swRegObj.update();  // Run update to run the sw state changes
+        });    
+        
     }
 
     me.populateLangList_Show = function( languageList, defaultLangCode )

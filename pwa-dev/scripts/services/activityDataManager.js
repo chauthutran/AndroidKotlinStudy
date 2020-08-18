@@ -368,7 +368,7 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
             // update the limited data --> 'status', 'statusRead', 'history' (add)
             activity.processing.status = newProcessingInfo.status;
 
-            if ( newProcessingInfo.statusRead !== undefined ) activity.processing.statusRead = newProcessingInfo.statusRead;
+            //if ( newProcessingInfo.statusRead !== undefined ) activity.processing.statusRead = newProcessingInfo.statusRead;
         
             activity.processing.history.push( Util.getJsonDeepCopy( newProcessingInfo.history[0] ) );        
         }

@@ -50,12 +50,11 @@
 
   <script type="text/javascript" src="scripts/services/manifestData.js"></script>
 
-  <script> 
+  <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _ver = '1.3.0-rc.1.29'; //_manifestData.version;
-    var _verDate = '2020-08-14'; //_manifestData.date;
-    var _versionNote = '- Paging/Sync Changes, Gesture Refresh prevention'; //_manifestData.versionNote;
-
+    var _ver = '1.3.0-rc.1.30'; //_manifestData.version;
+    var _verDate = '2020-08-16'; //_manifestData.date;
+    var _versionNote = '- App New Files Update Logic Change'; //_manifestData.versionNote;
   </script>
 
   <!-- Google Analytics -->
@@ -71,7 +70,7 @@
 
   <link rel="manifest" href="manifest.json">
 
-  <link rel="stylesheet" type="text/css" href="css/style.css" >
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 
   <link rel="stylesheet" type="text/css" href="styles/jquery-autocomplete.css">
   <!--link rel="stylesheet" type="text/css" href="styles/jquery-ui.css"-->
@@ -90,7 +89,7 @@
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
 
-<!-- START > MAIN NAV HEADER (TOOLBAR) DIV -->
+  <!-- START > MAIN NAV HEADER (TOOLBAR) DIV -->
   <div class="Nav1">
     <div class='Nav__icon'>
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" version="1.1" id="menu_app">
@@ -124,21 +123,22 @@
       </table>
     </div>
   </div>
-<!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
+  <!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
 
-<!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
+  <!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
   <div class="Nav2" style="display:none;"></div>
-<!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
+  <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
-<!-- START > MENU LIST CONTAINER DIV -->
-  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
-<!-- END > MENU LIST CONTAINER DIV -->
+  <!-- START > MENU LIST CONTAINER DIV -->
+  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation"
+    style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+  <!-- END > MENU LIST CONTAINER DIV -->
 
   <div id="divProgressBar" class="progress">
     <div id="divProgressInfo" class="indeterminate"></div>
   </div>
 
-<!-- START > LOGIN FORM DIV -->
+  <!-- START > LOGIN FORM DIV -->
   <div id="loginFormDiv" style="display:none;">
     <div class="wrapper">
       <div class="login_title">
@@ -180,9 +180,11 @@
         </div>
         <div id="divAppVersion" class="login_data__more" style="text-align: left;">
           <div>
-            <label id="spanVersion" >Version #.#</label>&nbsp; 
+            <label id="spanVersion">Version #.#</label>&nbsp;
             <label id="spanVerDate" style="margin-left: 7px; color: #777;">[2020---]</label>
-            <span id="spanRefreshSite" style="color: darkslateblue; opacity: 0.7; cursor: pointer;">[REFRESH]</span>
+            <span id="spanLoginAppUpdate"
+              style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top;">[UPDATE
+              APP]</span>
           </div>
           <div id="loginVersionNote"></div>
           <!-- a id="spanVersion" href="versions.html" target="_blank" style="float: left; color: #888;" >Version #.#</a-->
@@ -207,17 +209,20 @@
     </div>
 
   </div>
-<!-- END > LOGIN FORM DIV -->
+  <!-- END > LOGIN FORM DIV -->
 
-<!-- START > AFTER LOGIN - MAIN APP CONTENT DIV -->
+  <!-- START > AFTER LOGIN - MAIN APP CONTENT DIV -->
   <div id="pageDiv" class="wrapper"></div>
-<!-- END > AFTER LOGIN - MAIN APP CONTENT DIV -->
+  <!-- END > AFTER LOGIN - MAIN APP CONTENT DIV -->
 
   <div id="pulsatingDots" class="lv-dots lv-mid md" data-label="Loading..." style="display:none;">
-    <div></div> <div></div> <div></div> <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
 
-<!-- START > SETTINGS FORM DIV -->
+  <!-- START > SETTINGS FORM DIV -->
   <div id="settingsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
     <div class="wapper_card">
       <div class="sheet-title c_900">
@@ -226,7 +231,7 @@
       </div>
       <div class="card _tab activity"
         style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
-  
+
         <div class="field">
           <div class="field__label"><label>Network sync</label></div>
           <div class="field__controls">
@@ -236,8 +241,8 @@
             <div class="field__right"></div>
           </div>
         </div>
-  
-  
+
+
         <div class="field">
           <div class="field__label"><label term="settings_userLanguage">User language</label></div>
           <div class="field__controls">
@@ -247,26 +252,27 @@
             <div class="field__right"></div>
           </div>
         </div>
-  
-  
+
+
         <div class="field">
-          <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language pack
+          <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language
+              pack
               date</label></div>
           <div class="field__controls">
             <div class="field__left">
               <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
             </div>
             <div class="field__right"></div>
-  
-  
+
+
             <div id="settingsInfo_newLangTermsDownload">
               <img id="rotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
             </div>
-  
-  
+
+
           </div>
         </div>
-  
+
         <div class="field">
           <div class="field__label"><label term="settings_theme">Theme</label></div>
           <div class="field__controls">
@@ -296,7 +302,7 @@
             <div class="field__right"></div>
           </div>
         </div>
-  
+
         <!-- /scripts/classes/settingsApp line 89 -->
         <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px">
           <div class="field__label">
@@ -308,11 +314,12 @@
                       d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
                       fill="#333333" fill-opacity="0.87"></path>
                   </svg>
-                  <label term="" style="font-size: 1rem;padding: 4px;line-height: 29px;">Reset app data & configuration</label>
+                  <label term="" style="font-size: 1rem;padding: 4px;line-height: 29px;">Reset app data &
+                    configuration</label>
                 </div>
                 <div class="field__right"></div>
               </div>
-  
+
               <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
                 <div id="bodyCollapsible__text" term="">
                   Your configuration and App data stored in the device will be deleted. You will be asked to log in
@@ -323,23 +330,23 @@
                     <div class="button-label" term="">RESET</div>
                   </div>
                 </div>
-  
+
               </div>
-  
+
             </div>
           </div>
-  
+
         </div>
-  
+
       </div>
     </div>
-  
-    <div class="sheet_bottom-scrim" style="display: none;"></div>
-  
-  </div>
-<!-- END > SETTINGS FORM DIV -->
 
-<!-- START > ABOUT FORM DIV -->
+    <div class="sheet_bottom-scrim" style="display: none;"></div>
+
+  </div>
+  <!-- END > SETTINGS FORM DIV -->
+
+  <!-- START > ABOUT FORM DIV -->
   <div id="aboutFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
 
     <div class="wapper_card">
@@ -350,89 +357,100 @@
     </div>
 
     <div class="wrapper" style="position: absolute;top: 56px;">
-      <div class="principal_section" style="height:75px;margin:0;width:100vw;left:-16px;position:relative;background-color:#fff;padding: 8px 0 12px 8px;">
-          <div class="principal_section__icon">
-            <img src="images/Connect.svg" style="width: inherit;height: inherit;">
-          </div>
-          <div class="principal_section__title">Workforce App</div>
+      <div class="principal_section"
+        style="height:75px;margin:0;width:100vw;left:-16px;position:relative;background-color:#fff;padding: 8px 0 12px 8px;">
+        <div class="principal_section__icon">
+          <img src="images/Connect.svg" style="width: inherit;height: inherit;">
+        </div>
+        <div class="principal_section__title">Workforce App</div>
       </div>
       <div class="field-read_only">
-          <div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
-          <div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
+        <div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
+        <div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
       </div>
       <div class="field-read_only">
-          <div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
-          <div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
+        <div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
+        <div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
       </div>
       <div class="field-read_only">
-          <div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
-          <div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
+        <div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
+        <div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
       </div>
       <div class="field-read_only">
-          <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
-          <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
+        <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
+        <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
       </div>
       <div class="field-read_only">
         <div class="field-read_only__label"><label term="about_browser">Browser</label></div>
         <div class="field-read_only__text" id="aboutInfo_Browser">Chrome -73</div>
       </div>
       <div class="field-read_only">
-        <div class="field-read_only__label"><label>Mobile Install</label></div>
-        <div class="field-read_only__text" id="divMobileInstallTry">NA</div>
-      </div>
-      <div class="field-read_only">
-        <div class="field-read_only__label"><label>Logs</label></div>
-        <div class="field-read_only__text" id="showLogs" style="cursor:pointer;">Open Dialog</div>
-      </div>
-
-    </div>
-
-  </div>
-<!-- END > ABOUT FORM DIV -->
-
-<!--  START > STATISTICS REPORT -->
-  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
-<!-- END > STATISTICS REPORT -->
-
-<!--  START > CUSTOM LOG INFO -->
-  <div id="divCustomDataDisplay" style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
-    <div class="divMainLayout" style="height:100%;">
-      
-      <div style="margin-bottom: 14px;">Logs:</div>
-      <div class="divMainContent" style="overflow: scroll; height: 85%;">
-      </div>
-
-      <div class="button-text warning" style="float: none;">
-        <div class="button__container">
-          <div class="cancel button-label">CANCEL</div>
+        <div class="field-read_only__label"><label>More Info</label></div>
+        <div class="field-read_only__text" style="font-size: 0.85rem; color: #777;">
+          <span id="linkAppUpdate" style="cursor:pointer; color: cadetblue; font-style: italic;">[Check App
+            Updates]</span>&nbsp;&nbsp;
+          <span id="showLogs" style="cursor:pointer; color: cadetblue; font-style: italic;">[Logs]</span>
         </div>
       </div>
-  
+
     </div>
 
   </div>
-<!--  END > CUSTOM LOG INFO -->
-  
-<!-- START > NETWORK SWITCH DIV -->
+  <!-- END > ABOUT FORM DIV -->
+
+  <!--  START > STATISTICS REPORT -->
+  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
+  <!-- END > STATISTICS REPORT -->
+
+  <!--  START > CUSTOM LOG INFO -->
+  <div id="divCustomDataDisplay"
+    style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+    <div class="divMainLayout" style="height:100%;">
+
+      <div style="margin-bottom: 5px;">Logs:</div>
+      <div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
+      <div class="divRunCommand" style="width: 100%; margin-top: 3px;">
+        <select class="selLogRunCommandCase"
+          style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
+          <option value="custom">Custom</option>
+          <option value="loadSampleData">Load Data</option>
+          <option value="removeSampleData">Remove Data</option>
+        </select>
+        <input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnLogRunCommand">Run</button>
+      </div>
+
+      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
+        <div class="button__container">
+          <div class="cancel button-label" style="line-height: unset;cursor: pointer;">CANCEL</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!--  END > CUSTOM LOG INFO -->
+
+  <!-- START > NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
-<!-- END > NETWORK SWITCH DIV -->
+  <!-- END > NETWORK SWITCH DIV -->
 
-<!-- START > ActivityItem PREVIEW DIV -->
+  <!-- START > ActivityItem PREVIEW DIV -->
   <div id="fullScreenPreview" class="sheet_full-fs" style="display: none;"></div>
-<!-- END > ActivityItem PREVIEW DIV -->
+  <!-- END > ActivityItem PREVIEW DIV -->
 
-<!-- START > LOGIN ADV/OPTIONS DIV -->
+  <!-- START > LOGIN ADV/OPTIONS DIV -->
   <div class="sheet_bottom" style="display: none;"></div>
-<!-- END > LOGIN ADV/OPTIONS DIV -->
+  <!-- END > LOGIN ADV/OPTIONS DIV -->
 
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
   <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
 
   <div class="scrim" style="display: none;"></div>
 
-<!-- START > RESERVED QR CREATOR -->
+  <!-- START > RESERVED QR CREATOR -->
   <div id="qrTemplate"></div>
-<!-- END > RESERVED QR CREATOR -->
+  <!-- END > RESERVED QR CREATOR -->
 
   <div id="hnqisTemplate" style="display:none;">
     <div id='hnqisHeader'>HNQIS</div>
@@ -515,7 +533,7 @@
   <script type="text/javascript" src="scripts/utils/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils/validationUtil.js"></script>
   <script type="text/javascript" src="scripts/utils/StatsUtil.js"></script>
-  
+
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/storage/storageMng.js"></script>
@@ -573,10 +591,9 @@
   //DataVerMove.dataChangeHandle();
 
   //new DBStorageSelector();
-    //}, 500 );
+  //}, 500 );
 
   new app();
-
 </script>
 
 </html>
