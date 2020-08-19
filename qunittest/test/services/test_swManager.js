@@ -5,14 +5,6 @@ function test_initSWManager()
     return new swManager( cwsRenderObj, function(){ } );
 }
 
-QUnit.test('Test swManager - checkRegisterSW', function( assert ){
-
-    var swManagerObj = test_initSWManager();
-    swManagerObj.checkRegisterSW( function(){ });
-    assert.equal( true, true, "checkRegisterSW runs successfully !!!" );
-});
-
-
 QUnit.test('Test swManager - runSWregistration', function( assert ){
 
     var swManagerObj = test_initSWManager();

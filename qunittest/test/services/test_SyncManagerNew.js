@@ -31,7 +31,7 @@ QUnit.test('Test SyncManagerNew - syncDown', function( assert ){
 QUnit.test('Test SyncManagerNew - getActivityItems_ForSync', function( assert ){
     
     var cwsRenderObj = new cwsRender();
-    SyncManagerNew.getActivityItems_ForSync(cwsRenderObj, function( uploadItems ){
+    SyncManagerNew.getActivityItems_ForSync( function( uploadItems ){
         assert.equal( true, true, "getActivityItems_ForSync runs successfully !!!" );
     } ); 
 });
@@ -143,7 +143,7 @@ QUnit.test('Test SyncManagerNew - hideProgressBar', function( assert ){
 });
 
 
-QUnit.test('Test SyncManagerNew - syncStart', function( assert ){
+QUnit.test('Test SyncManagerNew - syncStart_CheckNSet', function( assert ){
     
     var statusInfo = {
         "manual_Offline" : {
@@ -153,21 +153,21 @@ QUnit.test('Test SyncManagerNew - syncStart', function( assert ){
     ConnManagerNew.statusInfo = statusInfo;
     
     SyncManagerNew.sync_Running = true;
-    SyncManagerNew.syncStart();
-    assert.equal( true, true, "syncStart with sync_Running as true runs successfully !!!" );
+    SyncManagerNew.syncStart_CheckNSet();
+    assert.equal( true, true, "syncStart_CheckNSet with sync_Running as true runs successfully !!!" );
 
     
     SyncManagerNew.sync_Running = false;
-    SyncManagerNew.syncStart();
-    assert.equal( true, true, "syncStart with sync_Running as false runs successfully !!!" );
+    SyncManagerNew.syncStart_CheckNSet();
+    assert.equal( true, true, "syncStart_CheckNSet with sync_Running as false runs successfully !!!" );
 });
 
 
 
-QUnit.test('Test SyncManagerNew - syncFinish', function( assert ){
+QUnit.test('Test SyncManagerNew - syncFinish_Set', function( assert ){
     
-    SyncManagerNew.syncFinish();
-    assert.equal(  SyncManagerNew.sync_Running, false, "syncFinish runs successfully !!!" );
+    SyncManagerNew.syncFinish_Set();
+    assert.equal(  SyncManagerNew.sync_Running, false, "syncFinish_Set runs successfully !!!" );
 });
 
 

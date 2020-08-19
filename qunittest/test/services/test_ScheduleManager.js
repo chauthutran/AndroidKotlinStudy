@@ -1,7 +1,7 @@
 
 QUnit.test('Test ScheduleManager - runSchedules_AppStart', function( assert ){
 
-    ScheduleManager.runSchedules_AppStart( "111" );
+    ScheduleManager.runSchedules_AppStart();
     assert.equal( true, true, "runSchedules_AppStart runs successfully !!!" );  
 });
 

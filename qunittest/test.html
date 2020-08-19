@@ -5,8 +5,7 @@
   <title>PWA Unit Test</title>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery-3.4.0.min.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery.blockUI.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery-autocomplete.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery-autocomplete.min.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/jquery-dateformat.min.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/aes.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/llqrcode.js"></script>
@@ -15,21 +14,14 @@
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/maska.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/localforage.min.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/libraries/json-viewer.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/libraries/crossfilter.min.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/libraries/d3.min.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/libraries/tabulate.js"></script>
 
   <link rel="stylesheet" href="libs/qunit.css">
+
 </head>
 <body>
-
-    <script>
-       function require(url){
-
-            console.log(url);
-        } 
-
-    </script>
+  <script>
+    function require(url) { console.log(url); } 
+  </script>
   
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
@@ -38,15 +30,15 @@
 
   
   <!-- App Support Files -->
+  <!-- Should be able to get this from index.html file? -->
   
   <script type="text/javascript" src="../pwa-dev/scripts/services/manifestData.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/services/consoleCustomLog.js"></script>
 
   <script type="text/javascript" src="../pwa-dev/scripts/constants/constants.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/constants/templates.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/constants/configs.js"></script>
 
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/pptOptions.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/pptManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/util.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/util2.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/prototypes.js"></script>
@@ -56,7 +48,9 @@
   <script type="text/javascript" src="../pwa-dev/scripts/utils/dbStorageSelector.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/formUtil.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/sounds.js"></script>
-  
+  <script type="text/javascript" src="../pwa-dev/scripts/utils/validationUtil.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/utils/StatsUtil.js"></script>
+
   <script type="text/javascript" src="../pwa-dev/scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/request/wsCallManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/storage/storageMng.js"></script>
@@ -87,7 +81,7 @@
   <script type="text/javascript" src="../pwa-dev/scripts/classes/settingsApp.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/aboutApp.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/menu.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/favIconNew.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/classes/favIcon.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/login.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/action.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/blockForm.js"></script>
@@ -102,7 +96,6 @@
   <script type="text/javascript" src="../pwa-dev/scripts/classes/pwaEpoch.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/baseConverter.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/myDetails.js"></script>
-
 
   <script type="text/javascript" src="../pwa-dev/scripts/cwsRender.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/app.js"></script>
@@ -119,7 +112,7 @@
   <script src="test/services/test_ConfigManager.js"></script>
   <script src="test/services/test_ActivityDataManager.js"></script>
   <script src="test/services/test_ClientDataManager.js"></script>
-  <script src="test/services/test_Login.js"></script>
+  <!--script src="test/services/test_Login.js"></script-->
 
   
   <script src="test/services/test_PayloadTemplateHelper.js"></script>
@@ -136,8 +129,6 @@
   <script src="test/services/storage/test_StorageMng.js"></script>
   
   <script src="test/services/request/test_RESTCallManager.js"></script>
-  
-  
   
 </body>
 </html>
