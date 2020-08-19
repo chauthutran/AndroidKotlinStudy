@@ -164,6 +164,8 @@ function cwsRender()
 
 			me.setAppTitle( clicked_areaId, $( this ).text() ); //$( this ).attr( 'displayName' ) 
 			me.renderArea( clicked_areaId );
+
+			return false;
 		});
 	}
 
@@ -444,7 +446,7 @@ function cwsRender()
 				var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
 
 				menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
-				menuLI.append( $( '<a href="#" ' + FormUtil.getTermAttr( area ) + ' >' + area.name + '</a>' ) );
+				menuLI.append( $( '<a ' + FormUtil.getTermAttr( area ) + ' class="pointer" >' + area.name + '</a>' ) );
 
 				navItemsUL.append( menuLI );
 

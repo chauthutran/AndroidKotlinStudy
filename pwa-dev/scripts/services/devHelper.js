@@ -162,6 +162,11 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
     DevHelper.INFO = INFO;
 };
 
+DevHelper.checkNewAppFile = function()
+{
+    if ( DevHelper.cwsRenderObj ) DevHelper.cwsRenderObj.swManagerObj.checkNewAppFile();
+}
+
 // =======================================
 
 // Not yet implemented

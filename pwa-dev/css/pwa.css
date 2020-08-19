@@ -4,10 +4,15 @@
   /* padding: 0 !important; */
 }
 
-/* Prevent Accidental Refresh */
+/* Disable body scroll - Prevent Accidental Refresh */
 body
 {
-  overscroll-behavior-y: contain;
+  /*overscroll-behavior-y: contain;
+  overflow-y: hidden;*/
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 .modalSymbol{

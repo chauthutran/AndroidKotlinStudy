@@ -168,6 +168,8 @@ function swManager( _cwsRenderObj, callBack ) {
 
     me.checkNewAppFile = function( runFunction )
     {
+        console.log( 'checkNewAppFile performed.' );
+
         me.registerEvent_newAppFileExists( runFunction );
 
         // Trigger the sw change/update check event..
@@ -177,8 +179,6 @@ function swManager( _cwsRenderObj, callBack ) {
 
     me.checkNewAppFile_OnlyOnline = function( runFunction )
     {
-        console.log( 'checkNewAppFile_OnlyOnline DONE!!' );
-
         if ( ConnManagerNew.isAppMode_Online() ) me.checkNewAppFile( runFunction );
     };
 

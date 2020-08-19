@@ -17,11 +17,13 @@ function app()
 	{
 
     me.setBackActionDetect();
-  
+
+    window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
+
     // app startup event setup (for listeners)
     //window.addEventListener( 'appinstalled', me.App_installed_done);
 
-    window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
+    
 
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
@@ -219,9 +221,6 @@ function app()
     });
   };
 
-
-  //jQuery(document).ready(function($) {
-
   me.setBackActionDetect = function()
   {
     // Method 1
@@ -229,8 +228,8 @@ function app()
 
     window.addEventListener('popstate', function (event)
     {
-      alert( 'Back Button is disabled for this app.' );
-      console.customLog( 'back prevented by - popstate 11');
+      MsgManager.msgAreaShow( 'Back Button Clicked' );
+
       history.pushState(null, document.title, location.href);
     });
 
@@ -242,20 +241,6 @@ function app()
     window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
     window.onhashchange=function(){window.location.hash="no-back-button";}
     */
-
-
-    /*
-    if ( window.history && window.history.pushState ) 
-    {
-      window.history.pushState('forward', null, './#forward');
-
-      // TODO: Try using 'hashchange' to support older browser
-      //   - https://stackoverflow.com/questions/47092384/use-javascript-jquery-detect-android-back-button/47092587
-      $(window).on('popstate', function() {
-        alert('Back button was pressed.');
-      });
-  
-    }*/
   };
   
 	// ======================================
