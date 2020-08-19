@@ -32,29 +32,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     // ----------------------------------------------------
 
-    me.getActivityCardDivTag = function()
-    {
-        if ( me.options.parentTag_Override )
-        {
-            return me.options.parentTag_Override.find( '.activity[itemid="' + me.activityId + '"]' );
-        }
-        else
-        {
-            return $( '.activity[itemid="' + me.activityId + '"]' );
-        }
-    };
-
-
-    me.getSyncButtonDivTag = function( activityId )
-    {
-        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
-
-        return activityCardTags.find( '.activityStatusIcon' );
-    };
-
-
-    // ----------------------------------------------------
-
     me.render = function()
     {        
         var activityCardDivTag = me.getActivityCardDivTag();
@@ -63,7 +40,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( activityCardDivTag )
         {
             var activityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
-            var clickEnable = ( me.options.disableClicks ) ? false: true;
+            var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
 
             try
             {
@@ -86,7 +63,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( clickEnable, activityCardDivTag, activityJson );    
+                me.setupSyncBtn( activityCardDivTag, activityJson );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -102,9 +79,29 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
-
     // -----------------------------------------------------
 
+    me.getActivityCardDivTag = function()
+    {
+        if ( me.options.parentTag_Override )
+        {
+            return me.options.parentTag_Override.find( '.activity[itemid="' + me.activityId + '"]' );
+        }
+        else
+        {
+            return $( '.activity[itemid="' + me.activityId + '"]' );
+        }
+    };
+
+
+    me.getSyncButtonDivTag = function( activityId )
+    {
+        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
+
+        return activityCardTags.find( '.activityStatusIcon' );
+    };
+
+    // -----------------------------------------------------
 
     me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
     {
@@ -124,20 +121,18 @@ function ActivityCard( activityId, cwsRenderObj, options )
         });
     };
                 
-    me.setupSyncBtn = function( clickEnable, activityCardDivTag, activityJson )
+    me.setupSyncBtn = function( activityCardDivTag, activityJson )
     {
         var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
         var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
         
         var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
-        //divSyncIconTag.css( "cursor", "pointer" );
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
     
-        /// If in processing, we should be able to cancel it!!!!  <-- if clicked again?
-        if ( clickEnable )
-        {
+        // if ( clickEnable )  <-- Commented out to allow clickable..
+        //{
             divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
             {
                 e.stopPropagation();  // Stops calling parent tags event calls..
@@ -159,18 +154,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     {
                         activityJson.processing.status = Constants.status_submit_wMsgRead;
 
-                        // Try getting activity data again and save it.. directly..
-
                         // Need to save storage afterwards..
                         ClientDataManager.saveCurrent_ClientsStore( function() {
-
                             me.reRenderActivityDiv();
-
                         });
                     }
                 }           
             });     
-        }
+        //}
     };
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
@@ -271,7 +262,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' );
             imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
 
-            // Note this!!!!
+            // NOTE: We are rotating if in 'processing' status!!!
             FormUtil.rotateTag( divSyncIconTag, true );
         }        
         else if ( statusVal === Constants.status_failed )
@@ -305,9 +296,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }    
     };
 
-
     // ------------------------------------------
-
 
     me.setUpReRenderByClick = function( activityRerenderTag )
     {
@@ -597,7 +586,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         var activityJson_Orig;
         var syncIconTag = me.getSyncButtonDivTag( me.activityId );
-        syncIconTag.attr( 'tmpactid', me.activityId ); // Temp debugging id add
+        //syncIconTag.attr( 'tmpactid', me.activityId ); // Temp debugging id add
 
         try
         {

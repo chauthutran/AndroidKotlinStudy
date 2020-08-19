@@ -849,5 +849,18 @@ function cwsRender()
 
 	// ======================================
 
+	me.newSWrefreshNotification = function()
+	{
+		me.swManagerObj.newSWrefreshNotification();
+	};
+
+	me.setNewAppFileStatus = function( newAppFilesFound )
+	{
+		me.loginObj.setNewAppFileStatus( newAppFilesFound );
+		me.aboutApp.setNewAppFileStatus( newAppFilesFound );	
+	};
+
+	// ======================================
+
 	me.initialize();
 }

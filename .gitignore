@@ -2,3 +2,4 @@ node_modules/*
 qunittest/coverage/*
 */service-worker.js
 */service-worker.js.map
+qunittest/node_modules/*

@@ -36,7 +36,9 @@ function Login( cwsRenderObj )
 	}
 
 	me.render = function()
-	{
+	{		
+		me.appVersionInfoDisplay();
+
 		me.openForm();
 
 		me.mobileCssSetup();
@@ -198,6 +200,19 @@ function Login( cwsRenderObj )
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
+	me.appVersionInfoDisplay = function()
+	{
+		$( '#spanVersion' ).text( 'v' + _ver );
+		$( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
+		$( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
+	
+
+		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
+			location.reload( true );
+		});
+	};
+	
+	
 	me.openForm = function()
 	{
 		me.pageDivTag.hide();		
@@ -544,6 +559,14 @@ function Login( cwsRenderObj )
 		$( 'html > head' ).append(style);
 	};
 
+
+	me.setNewAppFileStatus = function( newAppFilesFound )
+	{
+		var loginAppUpdateTag = $( '#spanLoginAppUpdate' );
+
+		if ( newAppFilesFound ) loginAppUpdateTag.show();
+		else loginAppUpdateTag.hide();
+	};
 
 	// --------------------------------------
 	

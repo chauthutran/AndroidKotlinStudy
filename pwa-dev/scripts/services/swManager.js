@@ -117,13 +117,13 @@ function swManager( _cwsRenderObj, callBack ) {
                         if ( navigator.serviceWorker.controller ) {
                             console.customLog( '[sw installed] App updates detected' );
                             me.newAppFilesFound = true;
-                            $( '#spanLoginAppUpdate' ).show();
                         }
                         else
                         {
                             me.newAppFilesFound = false;
-                            $( '#spanLoginAppUpdate' ).hide();
                         }
+
+                        if ( me._cwsRenderObj ) me._cwsRenderObj.setNewAppFileStatus( me.newAppFilesFound );
 
                         break;
 
@@ -140,8 +140,6 @@ function swManager( _cwsRenderObj, callBack ) {
                             me.newAppFileExists_EventCallBack();
                             me.newAppFileExists_EventCallBack = undefined;    
                         } 
-
-                        //callBack();
                         break;
                 }
             };
@@ -166,6 +164,23 @@ function swManager( _cwsRenderObj, callBack ) {
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
 	};
+
+
+    me.checkNewAppFile = function( runFunction )
+    {
+        me.registerEvent_newAppFileExists( runFunction );
+
+        // Trigger the sw change/update check event..
+        if ( me.swRegObj ) me.swRegObj.update();
+    };
+
+
+    me.checkNewAppFile_OnlyOnline = function( runFunction )
+    {
+        console.log( 'checkNewAppFile_OnlyOnline DONE!!' );
+
+        if ( ConnManagerNew.isAppMode_Online() ) me.checkNewAppFile( runFunction );
+    };
 
     // -----------------------------------
 

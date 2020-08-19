@@ -622,21 +622,36 @@ function aboutApp( cwsRender )
             console.customLog( 'linkAppVersionCheck clicked!!' );
         });    
 
-        
-        $( '#linkAppUpdate' ).off( 'click' ).click( function() 
+        $( '#linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
-            // Optionally, We can even register callBack event - if new version exists...
-            me.cwsRenderObj.swManagerObj.registerEvent_newAppFileExists( function() 
+            // ?? Check only if during online?
+            me.cwsRenderObj.swManagerObj.checkNewAppFile( function() 
             {
                 console.customLog( 'FROM AboutApp - newAppFile Found!!' );
                 
-                me.cwsRenderObj.swManagerObj.newSWrefreshNotification();    
-            }); // 
+                me.cwsRenderObj.newSWrefreshNotification();    
+            });
+        });      
 
-            me.cwsRenderObj.swManagerObj.swRegObj.update();  // Run update to run the sw state changes
-        });    
-        
-    }
+        $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
+        {
+			location.reload( true );
+        });      
+    };
+
+    me.setNewAppFileStatus = function( newAppFilesFound )
+	{
+        if ( newAppFilesFound ) 
+        {
+            $( '#linkAppUpdateCheck' ).hide();    
+            $( '#linkAppUpdateRefresh' ).show();
+        }
+        else 
+        {
+            $( '#linkAppUpdateCheck' ).show();    
+            $( '#linkAppUpdateRefresh' ).hide();
+        }
+	};
 
     me.populateLangList_Show = function( languageList, defaultLangCode )
     {   

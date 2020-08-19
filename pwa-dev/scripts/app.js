@@ -16,6 +16,8 @@ function app()
 	me.initialize = function()
 	{
 
+    me.setBackActionDetect();
+  
     // app startup event setup (for listeners)
     //window.addEventListener( 'appinstalled', me.App_installed_done);
 
@@ -34,10 +36,14 @@ function app()
 
     me._cwsRenderObj.swManagerObj = new swManager( me._cwsRenderObj, function() { 
       console.log( 'swManger Processed..' );
+
+      me.App_UI_startUp_Progress( '40%' );
+      me.startAppProcess();
+  
     });
 
-    me.App_UI_startUp_Progress( '40%' );
-    me.startAppProcess();
+    //me.App_UI_startUp_Progress( '40%' );
+    //me.startAppProcess();
 
     //} );   
 
@@ -69,14 +75,12 @@ function app()
       ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
 
       // Start the scheduling on app start
-      ScheduleManager.runSchedules_AppStart();
+      ScheduleManager.runSchedules_AppStart( me._cwsRenderObj );
 
       me.App_UI_startUp_Progress( '70%' );
 
       // --------------------
       // 3. FINISH APP START PHASE
-      
-      me.appVersionInfoDisplay();
 
       me.App_syncIcon_UI_event();
 
@@ -130,19 +134,6 @@ function app()
   me.App_UI_startUp_Progress = function( perc )
   {
     $( 'div.startUpProgress' ).css( 'width', perc );
-  };
-
-
-  me.appVersionInfoDisplay = function()
-  {
-    $( '#spanVersion' ).text( 'v' + _ver );
-    $( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
-    $( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
-
-    // TODO: SHOULD BE MOVED TO LOGIN PAGE
-    $( '#spanLoginAppUpdate' ).click( () => {
-		  location.reload( true );
-    });
   };
 
 
@@ -228,6 +219,45 @@ function app()
     });
   };
 
+
+  //jQuery(document).ready(function($) {
+
+  me.setBackActionDetect = function()
+  {
+    // Method 1
+    history.pushState(null, document.title, location.href);
+
+    window.addEventListener('popstate', function (event)
+    {
+      alert( 'Back Button is disabled for this app.' );
+      console.customLog( 'back prevented by - popstate 11');
+      history.pushState(null, document.title, location.href);
+    });
+
+    // NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
+    // https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
+
+    /*  Method 2
+    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+    */
+
+
+    /*
+    if ( window.history && window.history.pushState ) 
+    {
+      window.history.pushState('forward', null, './#forward');
+
+      // TODO: Try using 'hashchange' to support older browser
+      //   - https://stackoverflow.com/questions/47092384/use-javascript-jquery-detect-android-back-button/47092587
+      $(window).on('popstate', function() {
+        alert('Back button was pressed.');
+      });
+  
+    }*/
+  };
+  
 	// ======================================
 
 	me.initialize();

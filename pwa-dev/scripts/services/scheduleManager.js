@@ -16,32 +16,56 @@
 
 function ScheduleManager() {};
 
-//ScheduleManager.interval_networkStatusCheck = 5000;				// network is onine/offline check
+//ScheduleManager.interval_networkStatusCheck = 5000;			// network is onine/offline check
 ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
 ScheduleManager.interval_scheduleSyncAllRun = 30000;			// automated SyncAll process
 ScheduleManager.interval_syncDownRunOnce = 60000;				// syncDown try interval
+ScheduleManager.interval_checkNewAppFileCheck = 60000;			// background new app file check
 
 // list of Scheduler timerIDs (for cancelling at logoff)
 ScheduleManager.timerID_scheduleSyncAllRun;
 //ScheduleManager.timerID_syncDownRunOnce;
 ScheduleManager.timerID_serverAvilableCheck;
+ScheduleManager.timerID_checkNewAppFileCheck;
+
+
+// List/Controls schedules..
+ScheduleManager.scheduleList = {
+	"OnAppStart": [
+		"SCH_ServerStatusCheck",
+		"SCH_NewAppFileCheck"
+		// Add New App File check.  
+		// Also, 'serverStatus' check on app Start, but diable it on logOut?  Strange.
+	],
+	"AfterLogin": [
+		"SCH_syncDown_RunOnce"  // schedule_syncAll? - based on frequency on setting
+	],
+	"AfterLogOut": [
+		"CLR_syncDown_RunOnce"
+		//"CLR_ServerStatusChecks",
+		//"CLR_SyncAll"
+	]
+};
+
 
 // === PART 1. Schedule Call/Start Methods =============
 
-ScheduleManager.runSchedules_AppStart = function()
+ScheduleManager.runSchedules_AppStart = function( cwsRenderObj )
 {
-	ScheduleManager.schedule_serverStatus_Check( true );
+	ScheduleManager.scheduleList.OnAppStart.forEach( itemName =>
+    {
+		if ( itemName === "SCH_ServerStatusCheck" ) ScheduleManager.schedule_serverStatus_Check( true );
+		else if ( itemName === "SCH_NewAppFileCheck" ) ScheduleManager.schedule_newAppFile_Check( false, cwsRenderObj );
+	});	
 };
 
 
 ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {	
-	// TODO: ENABLE THIS LATER: For 'Sync' Down?
-	//ScheduleManager.schedule_syncAllRun();				//auto sync (enable)
-
-	ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
-
-	//console.customLog( 'runSchedules_AfterLogin' );
+	ScheduleManager.scheduleList.AfterLogin.forEach( itemName =>
+	{
+		if ( itemName === "SCH_syncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
+	});	
 
 	if ( callBack ) callBack();
 };
@@ -49,11 +73,13 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 
 ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 {
-	clearInterval ( ScheduleManager.timerID_serverAvilableCheck );
-	clearInterval ( ScheduleManager.timerID_scheduleSyncAllRun );
-
-	console.customLog( 'stopSchedules_AfterLogOut' );
-
+	ScheduleManager.scheduleList.AfterLogOut.forEach( itemName =>
+	{
+		if ( itemName === "CLR_syncDown_RunOnce" ) clearInterval( ScheduleManager.timerID_checkNewAppFileCheck );
+		//if ( itemName === "CLR_ServerStatusChecks" ) clearInterval( ScheduleManager.timerID_serverAvilableCheck );
+		//else if ( itemName === "CLR_SyncAll" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );			
+	});	
+	
 	if ( callBack ) callBack();
 };
 
@@ -62,17 +88,26 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 
 ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway ) 
 {
-	if ( ! NotRunRightAway ) ConnManagerNew.checkNSet_ServerAvailable();
+	if ( !NotRunRightAway ) ConnManagerNew.checkNSet_ServerAvailable();
 
 	// 30 seconds
 	ScheduleManager.timerID_serverAvilableCheck = setInterval( ConnManagerNew.checkNSet_ServerAvailable, ScheduleManager.interval_serverStatusCheck );
 };
 
 
+ScheduleManager.schedule_newAppFile_Check = function( NotRunRightAway, cwsRenderObj ) 
+{
+	if ( !NotRunRightAway ) cwsRenderObj.swManagerObj.checkNewAppFile_OnlyOnline();
+
+	// 1 min?
+	ScheduleManager.timerID_checkNewAppFileCheck = setInterval( cwsRenderObj.swManagerObj.checkNewAppFile_OnlyOnline, ScheduleManager.interval_checkNewAppFileCheck );
+};
+
+
 // This should be changed to call after syncAllRun is finished <-- use setTimeout to call again after each..
 ScheduleManager.schedule_syncAllRun = function( NotRunRightAway ) 
 {
-	if ( ! NotRunRightAway ) SyncManagerNew.syncAll_WithChecks();
+	if ( !NotRunRightAway ) SyncManagerNew.syncAll_WithChecks();
 
 	// 30 seconds
 	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_WithChecks, ScheduleManager.interval_scheduleSyncAllRun );
@@ -99,6 +134,7 @@ ScheduleManager.schedule_syncDownRunOnce = function( cwsRenderObj )
 };
 
 
+// TODO: Move to 'SyncManager' class later..
 ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 {
 	if ( ConnManagerNew.isAppMode_Online() )

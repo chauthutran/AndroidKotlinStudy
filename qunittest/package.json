@@ -4,7 +4,7 @@
   "main": "test.html",
   "scripts": {
     "test": "nyc qunit",
-    "start" : "karma start"
+    "start": "karma start"
   },
   "author": "PSI",
   "license": "PSI",
