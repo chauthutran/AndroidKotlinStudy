@@ -1,7 +1,9 @@
 
 QUnit.test('Test ScheduleManager - runSchedules_AppStart', function( assert ){
 
-    ScheduleManager.runSchedules_AppStart();
+    var appObj = new app();
+    ScheduleManager.runSchedules_AppStart(appObj._cwsRenderObj);
+    FormMsgManager.appUnblock();
     assert.equal( true, true, "runSchedules_AppStart runs successfully !!!" );  
 });
 
