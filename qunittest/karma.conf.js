@@ -17,8 +17,7 @@ module.exports = function(config) {
     files: [  
       '../pwa-dev/scripts/libraries/jquery-3.4.0.min.js',
       '../pwa-dev/scripts/libraries/jquery.blockUI.js',
-      '../pwa-dev/scripts/libraries/jquery-ui.min.js',
-      '../pwa-dev/scripts/libraries/jquery-autocomplete.js',
+      '../pwa-dev/scripts/libraries/jquery-autocomplete.min.js',
       '../pwa-dev/scripts/libraries/jquery-dateformat.min.js',
       '../pwa-dev/scripts/libraries/aes.js',
       '../pwa-dev/scripts/libraries/llqrcode.js',
@@ -27,9 +26,6 @@ module.exports = function(config) {
       '../pwa-dev/scripts/libraries/maska.js',
       '../pwa-dev/scripts/libraries/localforage.min.js',
       '../pwa-dev/scripts/libraries/json-viewer.js',
-      '../pwa-dev/scripts/libraries/crossfilter.min.js',
-      '../pwa-dev/scripts/libraries/d3.min.js',
-      '../pwa-dev/scripts/libraries/tabulate.js',
 
       'src/simple.js',
       
@@ -63,13 +59,12 @@ module.exports = function(config) {
      */
      
 
+    '../pwa-dev/scripts/services/consoleCustomLog.js' : ['coverage'],
 
      '../pwa-dev/scripts/constants/constants.js' : ['coverage'],
      '../pwa-dev/scripts/constants/templates.js' : ['coverage'],
      '../pwa-dev/scripts/constants/configs.js' : ['coverage'],
    
-     '../pwa-dev/scripts/utils/pptOptions.js' : ['coverage'],
-     '../pwa-dev/scripts/utils/pptManager.js' : ['coverage'],
      '../pwa-dev/scripts/utils/util.js' : ['coverage'],
      '../pwa-dev/scripts/utils/util2.js' : ['coverage'],
      '../pwa-dev/scripts/utils/prototypes.js' : ['coverage'],
@@ -111,7 +106,7 @@ module.exports = function(config) {
      '../pwa-dev/scripts/classes/settingsApp.js' : ['coverage'],
      '../pwa-dev/scripts/classes/aboutApp.js' : ['coverage'],
      '../pwa-dev/scripts/classes/menu.js' : ['coverage'],
-     '../pwa-dev/scripts/classes/favIconNew.js' : ['coverage'],
+     '../pwa-dev/scripts/classes/favIcon.js' : ['coverage'],
      '../pwa-dev/scripts/classes/login.js' : ['coverage'],
      '../pwa-dev/scripts/classes/action.js' : ['coverage'],
      '../pwa-dev/scripts/classes/blockForm.js' : ['coverage'],
@@ -126,7 +121,6 @@ module.exports = function(config) {
      '../pwa-dev/scripts/classes/pwaEpoch.js' : ['coverage'],
      '../pwa-dev/scripts/classes/baseConverter.js' : ['coverage'],
      '../pwa-dev/scripts/classes/myDetails.js' : ['coverage']
-
 
     },
 
