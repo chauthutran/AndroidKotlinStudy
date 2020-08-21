@@ -24,13 +24,13 @@ function SyncManagerNew()  {};
 
 SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 
-//SyncManagerNew.sync_Upload_Running = false;   // to avoid multiple syncRuns in parallel
-//SyncManagerNew.sync_Download_Running = false; // for planned download sync
+// If scheduled syncAll gets delayed, 
+SyncManagerNew.syncAll_conflictShortDelayTime = 10000; // 10 secounds..
+SyncManagerNew.syncAll_conflictShortDelayCall; // 
+
 
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
 SyncManagerNew.subProgressBarId = '#divProgressInfo';
-//.children()[0];
-// $( '#divProgressBar.indeterminate' );
 
 
 // If blockListObj were created and referened..  We could use cwsRenderObj instead..
@@ -61,8 +61,9 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             SyncManagerNew.update_UI_StartSyncAll();
 
             // get activityItems (for upload) > not already uploaded (to be processed)
-            SyncManagerNew.getActivityItems_ForSync( function( activityDataList )
-            {
+            // NOT APPLICABLE..  SHOULD CHECK WITHIN THE RecursiveProcess...
+            //SyncManagerNew.getActivityItems_ForSync( function( activityDataList )
+            //{
                 SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, function() 
                 {
                     var successMsg = 'syncAll ' + runType + ' completed..';
@@ -78,7 +79,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
                     if ( callBack ) callBack( true );
                 });
-            });
+            //});
         //}
         //else
         //{
@@ -165,6 +166,7 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 // ===================================================
 // === 2. 'syncAll' Related Methods =============
 
+// NOT APPLICABLE ANYMORE..
 SyncManagerNew.getActivityItems_ForSync = function( callBack )
 {    
     var uploadItems = [];
@@ -175,8 +177,7 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
         if ( activityItem.processing && activityItem.processing.status )
         {
             var status = activityItem.processing.status;
-            filterPass = ( status === Constants.status_queued );
-            //|| status === Constants.status_failed
+            filterPass = ( status === Constants.status_queued || status === Constants.status_failed );
         }
 
         return filterPass; 
@@ -187,6 +188,28 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 
     callBack( uploadItems );
 };
+
+
+SyncManagerNew.checkActivityStatus_SyncUpReady = function( activity )
+{    
+    var bReady = false;
+
+    try
+    {
+        if ( activity.processing && activity.processing.status )
+        {
+            var status = activity.processing.status;
+            bReady = ( status === Constants.status_queued || status === Constants.status_failed );
+        }    
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in SyncManagerNew.checkActivityStatus_SyncUpReady, errMsg: ' + errMsg );
+    }
+
+    return bReady;
+};
+
 
 SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsRenderObj, callBack )
 {
@@ -209,25 +232,33 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
         {
             var activityData = activityDataList[i];         
         
-            var activityCardObj = new ActivityCard( activityData.id, cwsRenderObj );
-    
-            // Highlight the activity..
-            activityCardObj.highlightActivityDiv( true );
-
-            activityCardObj.performSyncUp( function( success ) {
-
-                if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
-
-                activityCardObj.reRenderActivityDiv();
-
-                activityCardObj.highlightActivityDiv( false );
-
-                // update on progress bar
-                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
-    
-                // Process next item.
+            if ( !SyncManagerNew.checkActivityStatus_SyncUpReady( activityData ) )
+            {
+                // Process next item without performing..
                 SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );
-            });    
+            }
+            else
+            {
+                var activityCardObj = new ActivityCard( activityData.id, cwsRenderObj );
+    
+                // Highlight the activity..
+                activityCardObj.highlightActivityDiv( true );
+    
+                activityCardObj.performSyncUp( function( success ) {
+    
+                    if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
+    
+                    activityCardObj.reRenderActivityDiv();
+    
+                    activityCardObj.highlightActivityDiv( false );
+    
+                    // update on progress bar
+                    FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
+        
+                    // Process next item.
+                    SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );
+                });    
+            }
         }
     }
 };
@@ -356,19 +387,29 @@ SyncManagerNew.syncStart_CheckNSet = function( option )
 };
 
 
-SyncManagerNew.syncAll_WithChecks = function()
+SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
 {
-    // automated sync process
-    // NOT YET Enabled
-    
-    //if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
-    //{
-    //  SyncManagerNew.syncAll( me._cwsRenderObj, 'Scheduled', function( success ) 
-    //  {
-    //    SyncManagerNew.syncFinish_Set();
-    //    SyncManagerNew.SyncMsg_ShowBottomMsg();
-    //  });  
-    //}
+    console.customLog( ' -- SyncManagerNew.syncAll_FromSchedule CALLED!!!' );
+
+    // Only perform this on online mode - Skip this time if offline..
+    if ( ConnManagerNew.isAppMode_Online() )
+    {
+        // If other syncs are running, delay it?
+        if ( SyncManagerNew.sync_Running ) 
+        {
+            // Delay for some time... and call again?
+            // We should simply queue the call with 'type'  <-- so we can decide to clear one type
+            //      later..            
+            MsgManager.msgAreaShow ( 'Auto Sync Skipped..' );
+        }
+        else
+        {
+            SyncManagerNew.syncAll( cwsRenderObj, 'Scheduled', function( success ) 
+            {
+                SyncManagerNew.syncFinish_Set();
+            });  
+        }
+    }
 };
 
 

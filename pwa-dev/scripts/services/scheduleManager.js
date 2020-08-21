@@ -38,10 +38,12 @@ ScheduleManager.scheduleList = {
 		// Also, 'serverStatus' check on app Start, but diable it on logOut?  Strange.
 	],
 	"AfterLogin": [
-		"SCH_syncDown_RunOnce"  // schedule_syncAll? - based on frequency on setting
+		"SCH_SyncDown_RunOnce",  // schedule_syncAll? - based on frequency on setting
+		"SCH_SyncAll_Background"
 	],
 	"AfterLogOut": [
-		"CLR_syncDown_RunOnce"
+		"CLR_syncDown_RunOnce",
+		"CLR_SyncAll_Background"
 		//"CLR_ServerStatusChecks",
 		//"CLR_SyncAll"
 	]
@@ -64,7 +66,8 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {	
 	ScheduleManager.scheduleList.AfterLogin.forEach( itemName =>
 	{
-		if ( itemName === "SCH_syncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
+		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
+		else if ( itemName === "SCH_SyncAll_Background" ) ScheduleManager.schedule_syncAll_Background( cwsRenderObj );
 	});	
 
 	if ( callBack ) callBack();
@@ -105,13 +108,15 @@ ScheduleManager.schedule_newAppFile_Check = function( NotRunRightAway, cwsRender
 
 
 // This should be changed to call after syncAllRun is finished <-- use setTimeout to call again after each..
+/*
 ScheduleManager.schedule_syncAllRun = function( NotRunRightAway ) 
 {
-	if ( !NotRunRightAway ) SyncManagerNew.syncAll_WithChecks();
+	if ( !NotRunRightAway ) SyncManagerNew.syncAll_FromSchedule();
 
 	// 30 seconds
-	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_WithChecks, ScheduleManager.interval_scheduleSyncAllRun );
+	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_FromSchedule, ScheduleManager.interval_scheduleSyncAllRun );
 };
+*/
 
 
 // -----------------------------------------------
@@ -131,6 +136,34 @@ ScheduleManager.schedule_syncDownRunOnce = function( cwsRenderObj )
 	{
 		console.customLog( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
 	}
+};
+
+
+// When to call this?  It gets called on login..  Which is enough..
+// It also gets called again from 'Settings' when sync frequency gets changed..
+ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
+{
+	try
+	{
+		clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
+
+		// get syncAll frequency from storage..
+		var syncScheduleTimeMs = Number( AppInfoManager.getNetworkSync() );  // empty or 0 is no scheduled ones..
+
+		if ( syncScheduleTimeMs > 0 )
+		{
+			console.customLog( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
+
+			ScheduleManager.timerID_scheduleSyncAllRun = setInterval( function() 
+			{
+				SyncManagerNew.syncAll_FromSchedule( cwsRenderObj ); 
+			}, syncScheduleTimeMs );
+		}
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'Error in ScheduleManager.schedule_syncAll_Background, errMsg: ' + errMsg );
+	}		
 };
 
 

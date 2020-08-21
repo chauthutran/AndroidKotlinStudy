@@ -214,17 +214,20 @@ function settingsApp( cwsRender )
 
         me.settingsInfo_NetworkSync.change ( () => 
         {
-            me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_NetworkSync.val();
-
+            // Save Data in AppInfoManager for later use...
             AppInfoManager.updateNetworkSync( me.settingsInfo_NetworkSync.val() );
+
+            ScheduleManager.schedule_syncAll_Background( me.cwsRenderObj );
             
-            $( '#settingsInfo_network_Text' ).html( ( me.settingsInfo_NetworkSync.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getSyncOptions(), me.settingsInfo_NetworkSync.val() ) );
+
+            //$( '#settingsInfo_network_Text' ).html( ( me.settingsInfo_NetworkSync.val() > 0 ? 'every' : '') 
+            //    + ' ' + me.getListNameFromID( me.getSyncOptions(), me.settingsInfo_NetworkSync.val() ) );
         });
 
 
         me.settingsInfo_logoutDelay.change ( () => 
         {
-            me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_logoutDelay.val();
+            //me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_logoutDelay.val();
 
             // TRAN TODO : Have to updateLogoutDelay here. The code in line 237 did update the logoutDelay ???
             AppInfoManager.updateLogoutDelay( me.settingsInfo_logoutDelay.val() );
@@ -748,8 +751,8 @@ function settingsApp( cwsRender )
             if ( dcdConfig.version ) dcdConfigVersion = dcdConfig.version;
             if ( dcdConfig.settings && dcdConfig.settings.theme ) 
             {
-                me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
-                me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins )
+                me.populateNetworkSyncList_Show( me.getSyncOptions(), AppInfoManager.getNetworkSync() );
+                me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins );
 
             }
         }
@@ -944,12 +947,11 @@ function settingsApp( cwsRender )
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
     {
 
-
         Util.populateSelect( me.settingsInfo_NetworkSync, "", syncEveryList );
         Util.setSelectDefaultByName( me.settingsInfo_NetworkSync, syncTimer );
         me.settingsInfo_NetworkSync.val( syncTimer ); 
 
-        $( '#settingsInfo_network_Text' ).html( ( syncTimer > 0 ? 'every' : '') + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
+        //$( '#settingsInfo_network_Text' ).html( ( syncTimer > 0 ? 'every' : '') + ' ' + me.getListNameFromID( syncEveryList, syncTimer ) );
         $( '#settingsInfo_DivnetworkSelect' ).show();
     }
 

@@ -134,6 +134,7 @@ function aboutApp( cwsRender )
             FormUtil.hideProgressBar();
         });
 
+        /*
         me.aboutInfo_NetworkSync.change ( () => 
         {
             me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.aboutInfo_NetworkSync.val();
@@ -145,7 +146,7 @@ function aboutApp( cwsRender )
             //syncManager.reinitialize ( me.cwsRenderObj );
 
         });
-
+        */
 
         $( 'img.btnAboutBack' ).click( () =>
         {
@@ -542,7 +543,7 @@ function aboutApp( cwsRender )
             {
                 me.getThemeList( dcdConfig.themes );
                 me.populateThemeList_Show( me.themeList, dcdConfig.settings.theme );
-                me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
+                //me.populateNetworkSyncList_Show( me.getSyncOptions(), me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval )
             }
         }
 
