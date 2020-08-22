@@ -111,6 +111,8 @@ Configs.transactionTypes = [
 ];
 
 
+
+/*
 Configs.transactionTypePropertyFromName = function( trxName, propName )
 {
     for (var i = 0; i < Configs.transactionTypes.length; i++)
@@ -229,3 +231,4 @@ Configs.getPayloadObject = function( activityID, objectName, transType )
 	return ret;
 
 }
+*/

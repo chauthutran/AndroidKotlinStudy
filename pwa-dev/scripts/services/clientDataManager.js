@@ -309,7 +309,7 @@ ClientDataManager.removeSampleData = function( callBack )
     {
         var client = clientList[i];
 
-        if ( ClientDataManager.isSampleDat( client ) )
+        if ( ClientDataManager.isSampleData( client ) )
         {
             ClientDataManager.removeClient( client );
             removedCount++;    

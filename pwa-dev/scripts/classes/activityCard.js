@@ -630,7 +630,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }
             catch ( errMsg )
             {
-                throw ' Error during WsCallManager.requestPostDws - ' + errMsg;  // Go to next 'catch'
+                throw ' Error on wsActionCall - ' + errMsg;  // Go to next 'catch'
             }    
         }
         catch( errMsg )
@@ -645,7 +645,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
 
-            afterDoneCall( false );
+            afterDoneCall( false, errMsg );
         }
     };
 

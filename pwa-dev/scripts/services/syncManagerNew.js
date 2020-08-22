@@ -64,7 +64,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             // NOT APPLICABLE..  SHOULD CHECK WITHIN THE RecursiveProcess...
             //SyncManagerNew.getActivityItems_ForSync( function( activityDataList )
             //{
-                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, 0, cwsRenderObj, function() 
+                SyncManagerNew.syncUpItem_RecursiveProcess( ActivityDataManager.getActivityList(), 0, cwsRenderObj, function() 
                 {
                     var successMsg = 'syncAll ' + runType + ' completed..';
                     
@@ -244,9 +244,9 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
                 // Highlight the activity..
                 activityCardObj.highlightActivityDiv( true );
     
-                activityCardObj.performSyncUp( function( success ) {
+                activityCardObj.performSyncUp( function( success, errMsg ) {
     
-                    if ( !success ) console.customLog( 'activityItem sync not success, i=' + i + ', id: ' + activityData.id );
+                    if ( !success ) console.customLog( 'activity sync not success, i=' + i + ', id: ' + activityData.id + ', errMsg: ' + errMsg );
     
                     activityCardObj.reRenderActivityDiv();
     
