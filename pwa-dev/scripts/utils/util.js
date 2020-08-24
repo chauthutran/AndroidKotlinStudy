@@ -18,20 +18,23 @@ Util.outputAsStr = function( input )
 	var output = '';
 
 	if ( input )
-	{
+	{	
 		if ( Util.isTypeObject( input ) )
 		{
-			output = JSON.stringify( input );
-		}
-		else if ( Util.isTypeString( input ) )
-		{
-			output = input;
+			try 
+			{ 				
+				output = JSON.stringify( input );
+			} 
+			catch ( err ) 
+			{ 
+				output = 'ErrStringify: ' + input;			
+				console.customLog( 'Error in Util.outputAsStr, err: ' + err ); 
+			}
 		}
 		else
 		{
-			try { output = '[unknown type, ' + input + ']'; } 
-			catch ( err ) { console.customLog( 'Error in Util.outputAsStr, err: ' + err ); }
-		}
+			output = input;
+		} 	
 	}
 
 	return output;

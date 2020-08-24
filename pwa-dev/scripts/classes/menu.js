@@ -33,14 +33,6 @@ Menu.populateStandardMenuList = function( menuItems )
     {
         menuItems.push ( Menu.menuJson_Settings );
     }
-    /*if (JSON.stringify(menuItems).indexOf('hnqisTemplate') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_HNQIS );
-    }*/
-    /*if (JSON.stringify(menuItems).indexOf('detailsFormDiv') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_MyDetails );
-    }*/
 
     if (JSON.stringify(menuItems).indexOf('aboutPage') < 0 )
     {

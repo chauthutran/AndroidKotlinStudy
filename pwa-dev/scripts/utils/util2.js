@@ -650,61 +650,6 @@ Util2.getFormInputValuePattern = function( tagTarget, formInputPattern, patternS
 	return ret;
 };
 
-Util2.arrayPreviewRecord = function( title, arr )
-{
-	var ret = $( '<table />');
-
-	if ( arr )
-	{
-		if ( title )
-		{
-			var tr = $('<tr />');
-			var td = $('<td colspan=2 />');
-			var dv = $( '<div class="section" />');
-			var lbl = $( '<label />');
-
-			lbl.html( title );
-
-			dv.append( lbl );
-			td.append( dv );
-			tr.append( td );
-
-			ret.append( tr );
-		}
-	
-		for ( var i = 0; i < arr.length; i++ )
-		{
-			var tr = $('<tr />');
-			ret.append( tr );
-
-			if ( arr[ i ].type && arr[ i ].type == 'SECTION' ) // Display GROUP names
-			{
-				var td = $('<td colspan=2 />');
-				var dv = $( '<div class="section" />');
-				var lbl = $( '<label />');
-
-				lbl.html( arr[ i ].name );
-
-				dv.append( lbl );
-				td.append( dv );
-				tr.append( td );
-			}
-			else
-			{
-				tr.append( $( '<td class="name" />').html( arr[ i ].name ) );
-				tr.append( $( '<td class="value" />').html( arr[ i ].value ) );
-			}
-		}
-	
-		ret.append(  $( '<tr />') ); // Add an empty row in the end of table
-		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
-
-	}
-
-	return ret;
-
-}
-
 Util2.activityListPreviewTable = function( title, arr )
 {
 	var ret = $( '<table />');

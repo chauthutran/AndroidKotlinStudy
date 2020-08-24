@@ -22,7 +22,7 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.settingsApp;
-	me.myDetails;
+	//me.myDetails;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
@@ -101,7 +101,7 @@ function cwsRender()
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
-		me.myDetails = new myDetails( me );
+		//me.myDetails = new myDetails( me );
 		me.statisticsObj = new Statistics( me );
 		//me.favIconsObj = new favIcons( me );
 	}
@@ -240,10 +240,10 @@ function cwsRender()
 			{
 				me.settingsApp.render();
 			}
-			else if ( areaId === 'myDetails') 
-			{
-				me.myDetails.loadFormData();
-			}
+			//else if ( areaId === 'myDetails') 
+			//{
+			//	me.myDetails.loadFormData();
+			//}
 			else if ( areaId === 'aboutPage') 
 			{
 				me.aboutApp.render();
@@ -639,7 +639,7 @@ function cwsRender()
 		$( 'div.scrim' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
-		$( '#detailsFormDiv' ).hide();
+		//$( '#detailsFormDiv' ).hide();
 		$( '#settingsFormDiv' ).hide();
 
 		// hide the menu div if open
@@ -726,10 +726,10 @@ function cwsRender()
 		{
 			me.settingsApp.hideSettingsPage();
 		}
-		if ( $( 'div.detailsListDiv' ).is(':visible') ) 
-		{
-			me.myDetails.hidemyDetailsPage();
-		}
+		//if ( $( 'div.detailsListDiv' ).is(':visible') ) 
+		//{
+		//	me.myDetails.hidemyDetailsPage();
+		//}
 		if ( $( '#pageDiv' ).is(':visible') ) 
 		{
 			$('#pageDiv').hide();

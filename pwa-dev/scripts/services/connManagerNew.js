@@ -333,11 +333,9 @@ ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 ConnManagerNew.update_UI = function( statusInfo )
 {
 	// update MODE for PWA - cascade throughout app (rebuild menus + repaint screens where required)
-	if ( !SessionManager.getLoginStatus() ) ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
-	else
-	{
-		ConnManagerNew.update_UI_NetworkIcons( statusInfo );
-	}
+	//if ( !SessionManager.getLoginStatus() ) else {}
+	ConnManagerNew.update_UI_LoginStatusIcon( statusInfo );
+	ConnManagerNew.update_UI_NetworkIcons( statusInfo );
 
 	ConnManagerNew.update_UI_statusDots( statusInfo );
 };
@@ -364,28 +362,21 @@ ConnManagerNew.update_UI_NetworkIcons = function( statusInfo )
 {
 	var networkServerConditionsGood = ConnManagerNew.isAppMode_Online();
 
-	// if all conditions good > show online, else if only networkOnline, show red icon (reserved for server unavailable), else show as offline
-	//var imgSrc = ( networkServerConditionsGood ) ? 'images/sharp-cloud_queue-24px.svg': ( ( statusInfo.networkConn.online_Stable ) ? 'images/baseline-cloud_off-24px-unavailable.svg' : 'images/baseline-cloud_off-24px.svg' );
-	var imgSrc = ( networkServerConditionsGood ? 'images/cloud_online_nav.svg': 'images/cloud_offline_nav.svg' );
+	var imgSrc = ( networkServerConditionsGood ) ? 'images/cloud_online_nav.svg': 'images/cloud_offline_nav.svg';
+		
+	$( '#imgNetworkStatus' ).attr( 'src', imgSrc );
 
-	//$( '#imgNetworkStatus' ).css( 'transform', ( networkServerConditionsGood ) ? '' : 'rotateY(180deg)' );
-
-	// timeout (500) used to create image rotation effect (requires 1s transition on img obj)
-	//setTimeout( function() { 
-		$( '#imgNetworkStatus' ).attr( 'src', imgSrc );
-	//}, 500 );
-
-	$( '#divNetworkStatus' ).css( 'display', 'block' );
+	//$( '#divNetworkStatus' ).css( 'display', 'block' );
 };
 
 
 ConnManagerNew.update_UI_statusDots = function( statusInfo ) 
 {	
-	var divStatusDot_networkTag = $( '#divStatusDot_network' );
+	//var divStatusDot_networkTag = $( '#divStatusDot_network' );
 	var divStatusDot_networkStableTag = $( '#divStatusDot_networkStable' );
 	var divStatusDot_serverTag = $( '#divStatusDot_server' );
 
-	ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.online_Current );
+	//ConnManagerNew.setStatusCss( divStatusDot_networkTag, statusInfo.networkConn.online_Current );
 	ConnManagerNew.setStatusCss( divStatusDot_networkStableTag, statusInfo.networkConn.online_Stable );
 	ConnManagerNew.setStatusCss( divStatusDot_serverTag, statusInfo.serverAvailable );
 };

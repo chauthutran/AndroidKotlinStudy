@@ -772,7 +772,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
         }
 
-        $( '[tabButtonId=tab_previewDetails]' ).html( Util2.arrayPreviewRecord( 'clientDetails:', arrDetails) ); //activityListPreviewTable
+        $( '[tabButtonId=tab_previewDetails]' ).html( FormUtil.displayData_Array( 'clientDetails:', arrDetails) ); //activityListPreviewTable
     
     
         // 2. payload Preview

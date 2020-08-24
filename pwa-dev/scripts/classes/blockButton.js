@@ -183,6 +183,8 @@ function BlockButton( cwsRenderObj, blockObj )
 
 					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
 					liSpanTag.text( btnJson.defaultLabel );
+					FormUtil.addTag_TermAttr( liSpanTag, btnJson );
+
 					btnTag = liTabTag;
 				}
 				else
