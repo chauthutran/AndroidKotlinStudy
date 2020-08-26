@@ -243,14 +243,14 @@ function Action( cwsRenderObj, blockObj )
 				{
 					if ( clickActionJson.messageClass )
 					{
-						MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
+						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
 					}
 					else
 					{
-						MsgManager.notificationMessage ( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
+						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
 					}
 					// If term exists, translate it before displaying
-					//MsgManager.msgAreaShow( me.cwsRenderObj.langTermObj.translateText( clickActionJson.message, clickActionJson.term ) );
+					//MsgManager.msgAreaShow( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ) );
 	
 					afterActionFunc( true );
 				}

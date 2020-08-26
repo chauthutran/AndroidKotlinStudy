@@ -107,14 +107,14 @@ function favIcons( cwsRender )
                     }
                     else
                     {
-                        me.cwsRenderObj.langTermObj.translatePage();
+                        TranslationManager.translatePage();
 
                         me.createFavButtonShowHideEvent();
                     }
                 }
                 else
                 {
-                    me.cwsRenderObj.langTermObj.translatePage();
+                    TranslationManager.translatePage();
 
                     me.createFavButtonShowHideEvent();
                 }

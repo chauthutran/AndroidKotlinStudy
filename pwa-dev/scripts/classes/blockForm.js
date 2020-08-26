@@ -362,7 +362,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var optionConfig = optionList[i];
 				if( defaultValueList.includes( optionConfig.value ) )
 				{
-					var displayValue = me.cwsRenderObj.langTermObj.translateText( optionConfig.defaultName, optionConfig.poTerm );
+					var displayValue = TranslationManager.translateText( optionConfig.defaultName, optionConfig.poTerm );
 					displayValues.push( displayValue );
 				}
 			}
@@ -434,7 +434,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		FormUtil.setTagVal( divInputFieldTag.find( 'input.displayValue' ), formItemJson.defaultValue );
 		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', autoComplete );
 
-		Util2.populate_year( yearFieldTag[0], data, me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+		Util2.populate_year( yearFieldTag[0], data, TranslationManager.translateText( formItemJson.defaultName, formItemJson.term ) );
 
 		return divInputFieldTag;
 	}
@@ -584,7 +584,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		optionInputTag.prop( "checked", isChecked );
 
 		var labelTag = optionDivTag.find( 'label' );
-		var labelTerm = me.cwsRenderObj.langTermObj.translateText( optionConfig.defaultName, optionConfig.poTerm );
+		var labelTerm = TranslationManager.translateText( optionConfig.defaultName, optionConfig.poTerm );
 		labelTag.attr( 'for', 'opt_' + optionConfig.value );
 		labelTag.text( labelTerm );
 
@@ -684,7 +684,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		dialogForm.find(".dialog__text").addClass("checkbox"); 
 
 		var optsContainer = dialogForm.find( '.optsContainer' );
-		dialogForm.find( '.title' ).html( me.cwsRenderObj.langTermObj.translateText( formItemJson.defaultName, formItemJson.term ) );
+		dialogForm.find( '.title' ).html( TranslationManager.translateText( formItemJson.defaultName, formItemJson.term ) );
 
 		if( type == 'radio')
 		{
@@ -1559,7 +1559,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					}
 					else if( controlType == "DROPDOWN_AUTOCOMPLETE" || controlType == "MULTI_CHECKBOX" )
 					{	
-						var displayValue = ( searched == undefined ) ? dataValueList[i] : me.cwsRenderObj.langTermObj.translateText( searched.defaultName, searched.poTerm );
+						var displayValue = ( searched == undefined ) ? dataValueList[i] : TranslationManager.translateText( searched.defaultName, searched.poTerm );
 						displayValues.push( displayValue );
 					}
 				}
@@ -1750,7 +1750,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					newOpt = $( Templates.inputFieldCheckbox_Item );
 				}
 
-				var labelTerm = me.cwsRenderObj.langTermObj.translateText( optItem.defaultName, optItem.poTerm )
+				var labelTerm = TranslationManager.translateText( optItem.defaultName, optItem.poTerm )
 
 				if ( addClass ) newOpt.addClass( addClass );
 

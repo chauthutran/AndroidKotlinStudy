@@ -41,7 +41,7 @@ function settingsApp( cwsRender )
 
         me.populateSettingsPageData( ConfigManager.getConfigJson() ); //DataManager.getUserConfigData()
         
-        me.langTermObj.translatePage();
+        TranslationManager.translatePage();
 
         me.showSettingsPage();
 
@@ -120,7 +120,7 @@ function settingsApp( cwsRender )
             me.blockPage();
 
             me.settingsFormDivTag.append ( Templates.settings_app_data_configuration );
-            me.cwsRenderObj.langTermObj.translatePage();
+            TranslationManager.translatePage();
 
             $( '.divResetApp_Accept' ).click( function() {
 
@@ -166,18 +166,12 @@ function settingsApp( cwsRender )
 
         me.settingsInfo_langSelectTag.change( () => 
         {
-            FormUtil.showProgressBar();
+            TranslationManager.setLangCode( me.settingsInfo_langSelectTag.val() );
 
-            me.langTermObj.setCurrentLang( me.settingsInfo_langSelectTag.val() );
-            me.langTermObj.translatePage();
+            TranslationManager.setCurrLangTerms();
 
-            $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( me.langTermObj.getLangList(), me.settingsInfo_langSelectTag.val() ) );
-            $( '#settingsInfo_userLanguage_Update' ).html( 'Refresh date' + ': ' + me.getLanguageUpdate( me.langTermObj.getLangList(), me.settingsInfo_langSelectTag.val() ) );            
-
-            FormUtil.hideProgressBar();
-
+			TranslationManager.translatePage();
         });
-
 
 
         me.settingsInfo_SoundSwitchInput.change(() => {
@@ -274,24 +268,23 @@ function settingsApp( cwsRender )
         $( '#settingsInfo_newLangTermsDownload' ).click( function() 
         {
             var btnDownloadTag = $( this );
-            var langSelVal = me.settingsInfo_langSelectTag.val();
+            //var langSelVal = me.settingsInfo_langSelectTag.val();
             //var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
-            $("#rotate").addClass("rot_l_anim");
+            //$("#imgSettingLangTermRotate").addClass("rot_l_anim");
            // FormUtil.showProgressBar();
 
-            me.langTermObj.retrieveAllLangTerm( function() 
-            {
-               // loadingTag.hide();
-               $("#rotate").removeClass("rot_l_anim");
-                me.populateLangList_Show( me.langTermObj.getLangList(), langSelVal );
-
-                me.settingsInfo_langSelectTag.val( langSelVal ).change();
-
-                FormUtil.hideProgressBar();
-
-            }, true);
-
+           TranslationManager.loadLangTerms_NSetUpData( true, function( allLangTerms ) 
+           {
+               if ( allLangTerms )
+               {
+                    me.populateLangList_Show( TranslationManager.getLangList(), TranslationManager.getLangCode() );
+    
+                    // Translate current page
+                    TranslationManager.translatePage();
+               }
+           });
         });
+
 
         $( '#imgsettingsInfo_AppVersion_Less' ).closest( 'div' ).click( function() 
         {
@@ -312,7 +305,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_AppVersion_More' ).hide( 'fast' );
                 $( '#settingsInfo_AppVersion_Less' ).show( 'fast' );
@@ -341,7 +334,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_dcdVersion_More' ).hide( 'fast' );
                 $( '#settingsInfo_dcdVersion_Less' ).show( 'fast' );
@@ -370,7 +363,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_userLanguage_More' ).hide( 'fast' );
                 $( '#settingsInfo_userLanguage_Less' ).show( 'fast' );
@@ -399,7 +392,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_theme_More' ).hide( 'fast' );
                 $( '#settingsInfo_theme_Less' ).show( 'fast' );
@@ -428,7 +421,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_network_More' ).hide( 'fast' );
                 $( '#settingsInfo_network_Less' ).show( 'fast' );
@@ -457,7 +450,7 @@ function settingsApp( cwsRender )
             }
             else
             {
-                $( 'label.settingsHeader' ).html( me.langTermObj.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
+                $( 'label.settingsHeader' ).html( TranslationManager.translateText(  $( 'label.settingsHeader' ).attr( 'backText' ),  $( 'label.settingsHeader' ).attr( 'backTerm' ) ) );
                 $( 'label.settingsHeader' ).attr( 'term', $( 'label.settingsHeader' ).attr( 'backTerm' ) );
                 $( '#settingsInfo_logoutDelay_More' ).hide( 'fast' );
                 $( '#settingsInfo_logoutDelay_Less' ).show( 'fast' );
@@ -498,9 +491,7 @@ function settingsApp( cwsRender )
 
                     $( '#lblsettings_userLanguage' ).attr( 'counter', 0 );
 
-                    me.langTermObj.debugMode = ( me.langTermObj.debugMode ? false : true );
-                    me.langTermObj.translatePage();
-
+                    TranslationManager.translatePage();
                 }
 
             }
@@ -511,15 +502,6 @@ function settingsApp( cwsRender )
                 me.easterEgg2Timer = setTimeout( function() {
                     $( '#lblsettings_userLanguage' ).attr( 'counter', 0 );
                 }, 3000 );
-            }
-
-            if ( me.langTermObj.debugMode )
-            {
-                $( '#lblsettings_userLanguage' ).css( 'text-decoration', 'underline' );
-            }
-            else
-            {
-                $( '#lblsettings_userLanguage' ).css( 'text-decoration', 'none' );
             }
 
         });
@@ -573,7 +555,7 @@ function settingsApp( cwsRender )
                 //$( '#settingsInfo_network_Less' ).show();
                 //$( '#settingsInfo_network_Less' ).removeClass( 'byPassSettingsMore' )
 
-                if ( me.langTermObj.getLangList() )
+                if ( TranslationManager.getLangList() )
                 {
                     $( '#settingsInfo_userLanguage_Less' ).show();
                     $( '#settingsInfo_userLanguage_Less' ).removeClass( 'byPassSettingsMore' );
@@ -627,7 +609,7 @@ function settingsApp( cwsRender )
             $( '#settingsInfo_autoComplete_Less' ).hide();
             $( '#settingsInfo_autoComplete_Less' ).addClass( 'byPassSettingsMore' );
 
-            if ( me.langTermObj.getLangList() )
+            if ( TranslationManager.getLangList() )
             {
                 $( '#settingsInfo_userLanguage_Less' ).show();
                 $( '#settingsInfo_userLanguage_Less' ).removeClass( 'byPassSettingsMore' );
@@ -730,15 +712,6 @@ function settingsApp( cwsRender )
 
         }
 
-        if ( me.langTermObj.debugMode )
-        {
-            $( '#lblsettings_userLanguage' ).css( 'text-decoration', 'underline' );
-        }
-        else
-        {
-            $( '#lblsettings_userLanguage' ).css( 'text-decoration', 'none' );
-        }
-
     }
 
     me.populateSettingsPageData = function( dcdConfig ) 
@@ -763,7 +736,7 @@ function settingsApp( cwsRender )
 
         $( '#settingsInfo_ThemeSelect' ).val( $("body")[0].classList[ 0 ] );
 
-        if ( ! me.langTermObj.getLangList() )
+        if ( ! TranslationManager.getLangList() )
         {
             $( '#settingsInfo_userLanguage_DBupdate' ).hide();
             $( '#imgsettingsInfo_userLanguage_Less' ).removeClass( 'enabled' );
@@ -900,10 +873,11 @@ function settingsApp( cwsRender )
             me.setLanguageDropdownFromCode( languageList, defaultLangCode )
         }
 
-        $( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
-        $( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date' + ': ' + me.getLanguageUpdate( languageList, defaultLangCode ) );
-        $( '#settingsInfo_DivLangSelect' ).show();
+        //$( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
 
+        $( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date: ' + AppInfoManager.getLangLastDateTime() );
+
+        $( '#settingsInfo_DivLangSelect' ).show();
     }
 
     me.setLanguageDropdownFromCode = function ( languageList, langCode )
@@ -931,7 +905,7 @@ function settingsApp( cwsRender )
 
     me.getLanguageUpdate = function( languageList, defaultLangCode )
     {
-        var langList = me.langTermObj.getLangList();
+        var langList = TranslationManager.getLangList();
 
         for( i = 0; i < languageList.length; i++ )
         {

@@ -389,7 +389,7 @@ ValidationUtil.getMessage = function( type, defaultMessage )
 
 ValidationUtil.getErrorSpanTag = function( keyword, term )
 {
-    var text = ValidationUtil.cwsRenderObj.langTermObj.translateText( keyword, term ); // + optionalStr;
+    var text = TranslationManager.translateText( keyword, term ); // + optionalStr;
     var dvContainer = $( '<div class="errorMsg" /> ' );
     var errorMsg = $( '<div class="errorMsgText" keyword="' + keyword + '" term="' + term + '" > ' + text + ' </div>' );
     var arrow = $( '<div class="errorMsgArrow">&nbsp;</span>' );

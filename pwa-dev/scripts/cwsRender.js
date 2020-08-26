@@ -73,7 +73,7 @@ function cwsRender()
 		me._manageInputSwipe = inputMonitor( me );
 
 		// Translate terms setup
-		if ( me._translateEnable ) me.retrieveAndSetUpTranslate();
+		if ( me._translateEnable ) me.loadLangTermsAndTranslatePage();
 
 		//me.afterRender();
 	}
@@ -568,21 +568,17 @@ function cwsRender()
 	// --------------------------------------------------------
 	// ----------- Translate langTerm retrieval and do lang change -------------
 	
-	me.retrieveAndSetUpTranslate = function()
+	me.loadLangTermsAndTranslatePage = function()
 	{
-		var langCode = AppInfoManager.getLangCode();
-
-		me.langTermObj.setCurrentLang( langCode )
-
-		me.langTermObj.retrieveAllLangTerm( function( allLangTerms ) 
+		TranslationManager.loadLangTerms_NSetUpData( false, function( allLangTerms ) 
 		{
 			if ( allLangTerms )
 			{
 				// Enable the language switch dropdown
-				me.settingsApp.populateLangList_Show( me.langTermObj.getLangList(), langCode );
+				me.settingsApp.populateLangList_Show( TranslationManager.getLangList(), TranslationManager.getLangCode() );
 
 				// Translate current page
-				me.langTermObj.translatePage();
+				TranslationManager.translatePage();
 			}
 		});
 	};

@@ -539,7 +539,7 @@ function DataList( cwsRenderObj, blockObj )
                     {
                         if ( ( dcd.definitionFields[ i ].term ).toString().length )
                         {
-                            retName = me.cwsRenderObj.langTermObj.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
+                            retName = TranslationManager.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
                         }
                         else
                         {

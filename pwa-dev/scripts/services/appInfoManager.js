@@ -3,8 +3,12 @@ function AppInfoManager() {}
 AppInfoManager.KEY_APPINFO = "appInfo";
 
 AppInfoManager.KEY_USERINFO = "userInfo"; 
+
+AppInfoManager.KEY_LANG_CODE = "langCode"; 
+AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
+
 AppInfoManager.KEY_SWINFO = "swInfo"; 
-AppInfoManager.KEY_LANGUAGE = "langTerms"; 
+AppInfoManager.KEY_LANG_TERMS = "langTerms"; 
 AppInfoManager.KEY_SYNCMSG = "syncMsg"; 
 AppInfoManager.KEY_DOWNLOADINFO = "lastDownload"; 
 AppInfoManager.KEY_FAVICONS = "favIcons"; 
@@ -96,12 +100,12 @@ AppInfoManager.getSWInfo = function()
 
 AppInfoManager.updateLangTerms = function( jsonData )
 {
-    AppInfoManager.updateData( AppInfoManager.KEY_LANGUAGE, jsonData );
+    AppInfoManager.updateData( AppInfoManager.KEY_LANG_TERMS, jsonData );
 }	
 
 AppInfoManager.getLangTerms = function()
 {
-    return AppInfoManager.getData( AppInfoManager.KEY_LANGUAGE );
+    return AppInfoManager.getData( AppInfoManager.KEY_LANG_TERMS );
 }	
 
 
@@ -198,7 +202,7 @@ AppInfoManager.getNetworkSync = function()
 // language
 AppInfoManager.updateLanguage = function( dataStr ) 
 {
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANGUAGE, dataStr );
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANG_TERMS, dataStr );
 }	
 
 // logoutDelay
@@ -301,53 +305,86 @@ AppInfoManager.getPropertyValue = function( mainKey, subKey )
 // =========================================
 // === Other Related Methods..
 
+
+// GETS USED WHEN UserInfo gets 1st created..
 AppInfoManager.getLangCode = function()
 {
-	var lang = '';
+	var langCode = '';
 
 	try
-	{
-		var userInfo = AppInfoManager.getUserInfo();
-	
-		if ( userInfo && userInfo.language ) lang = userInfo.language;
-		else ( navigator.language ).toString().substring(0,2);
+	{        
+        var appLangCode = AppInfoManager.getData( AppInfoManager.KEY_LANG_CODE );
+     	
+        if ( appLangCode ) langCode = appLangCode;
+        
+        if ( !langCode )
+        {
+            langCode = ( navigator.language ).toString().substring(0,2);
+
+            if ( langCode )
+            {
+                AppInfoManager.updateData( AppInfoManager.KEY_LANG_CODE, langCode );
+            }
+        }        
 	}
 	catch ( err )
 	{
 		console.customLog( 'Error in AppInfoManager.getLangCode: ' + err );
 	}
 
-	return lang;
+	return langCode;
 };
 
 
+AppInfoManager.setLangCode = function( langCode )
+{
+    AppInfoManager.updateData( AppInfoManager.KEY_LANG_CODE, langCode );
+};
+
+// ------------------------------------------
+
+AppInfoManager.getLangLastDateTime = function()
+{
+    var langLastDateTime = AppInfoManager.getData( AppInfoManager.KEY_LANG_LASTTRYDT );
+    return ( langLastDateTime ) ? langLastDateTime : "";
+};
+
+
+AppInfoManager.setLangLastDateTime = function( dateObj )
+{
+    var langLastDateTimeStr = Util.formatDate( dateObj );
+    AppInfoManager.updateData( AppInfoManager.KEY_LANG_LASTTRYDT, langLastDateTimeStr );
+};
+
+// ------------------------------------------
+
+// Called On Login...?  Why?  Maybe on App Start?
 AppInfoManager.createUpdateUserInfo = function( userName )
 {
-    var lastSession = AppInfoManager.getUserInfo();
+    var userInfo = AppInfoManager.getUserInfo();
     
-    if ( lastSession )
+    // UNDERSTAND ABOUT 'userName' saving & use, but... what about lastUpdated, etc?
+    // All others should move some place else?
+    if ( userInfo )
     {
-        lastSession.user = userName;
+        userInfo.user = userName;
     
-        if ( lastSession.soundEffects == undefined ) lastSession.soundEffects = ( Util.isMobi() );
-        if ( lastSession.autoComplete == undefined ) lastSession.autoComplete = true; 
-        if ( lastSession.logoutDelay == undefined ) lastSession.logoutDelay = 60;
+        //if ( userInfo.soundEffects === undefined ) userInfo.soundEffects = ( Util.isMobi() );
+        //if ( userInfo.autoComplete === undefined ) userInfo.autoComplete = true; 
+        //if ( userInfo.logoutDelay === undefined ) userInfo.logoutDelay = 60;
     }
     else
     {
-        var dtmNow = ( new Date() ).toISOString();
+        //var dtmNow = ( new Date() ).toISOString();
         
-        lastSession = { 
+        userInfo = { 
             user: userName
-            , lastUpdated: dtmNow
-            , language: AppInfoManager.getLangCode()
+            //, language: AppInfoManager.getLangCode()
             , soundEffects: ( Util.isMobi() )
             , autoComplete: true
             , logoutDelay: 60 
         };
     }    
-
     
-    AppInfoManager.updateUserInfo( lastSession );
-
+    AppInfoManager.updateUserInfo( userInfo );
 };

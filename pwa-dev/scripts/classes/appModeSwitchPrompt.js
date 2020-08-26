@@ -39,7 +39,7 @@ AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode, cwsRende
     });
 
 
-    cwsRenderObj.langTermObj.translatePage();
+    TranslationManager.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 };
@@ -95,7 +95,7 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
 
     // ---------------
 
-    cwsRenderObj.langTermObj.translatePage();
+    TranslationManager.translatePage();
     
     AppModeSwitchPrompt.showDialog();
 };
@@ -144,7 +144,7 @@ AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( cwsRe
 
     });
 
-    cwsRenderObj.langTermObj.translatePage();
+    TranslationManager.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 };
@@ -179,7 +179,7 @@ AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function( cwsRen
     });
 
     
-    cwsRenderObj.langTermObj.translatePage();
+    TranslationManager.translatePage();
 
     AppModeSwitchPrompt.showDialog();
 }

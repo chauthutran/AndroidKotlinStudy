@@ -118,12 +118,11 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 			&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
 	
 		newSaveObj.mySession = { 
-			createdDate: dtmNow, 
-			lastUpdated: dtmNow, 
-			pin: Util.encrypt( password, 4 ), 
-			stayLoggedIn: false, 
-			theme: themeStr, 
-			language: AppInfoManager.getLangCode() 
+			createdDate: dtmNow // Not Used For Now
+			,lastUpdated: dtmNow // Not Used For Now
+			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
+			,theme: themeStr 
+			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
 		};
 	
 		LocalStgMng.saveJsonData( userName, newSaveObj );
@@ -144,7 +143,6 @@ SessionManager.updateUserSessionToStorage = function( loginData, userName )
 	if ( loginData.mySession ) 
 	{
 		loginData.mySession.lastUpdated = dtmNow;
-		loginData.mySession.stayLoggedIn = false;
 
 		LocalStgMng.saveJsonData( userName, loginData );
 	}

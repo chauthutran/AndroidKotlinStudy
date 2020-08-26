@@ -91,7 +91,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			}			
 		}
 
-		me.cwsRenderObj.langTermObj.translatePage();
+		TranslationManager.translatePage();
 	}
 
 	// ------------------

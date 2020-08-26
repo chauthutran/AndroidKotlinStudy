@@ -48,6 +48,9 @@ function Login( cwsRenderObj )
 		me.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..
 		
 		FormUtil.positionLoginPwdBlinker();
+
+		// Translate the page..
+		TranslationManager.translatePage();
 	};
 
 	// ------------------
@@ -135,10 +138,9 @@ function Login( cwsRenderObj )
 
 				// create and reference templatesManager here:
 				me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
-				me.cwsRenderObj.langTermObj.translatePage();
+				TranslationManager.translatePage();
 
 				me.sheetBottomTag.show();
-
 			}
 
 
@@ -167,7 +169,7 @@ function Login( cwsRenderObj )
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
 					me.sheetBottomTag.html ( Templates.Change_User_Form );
-					me.cwsRenderObj.langTermObj.translatePage();
+					TranslationManager.translatePage();
 	
 					$( '#accept' ).click( function() {
 
@@ -256,7 +258,7 @@ function Login( cwsRenderObj )
 		{
 			me.loginOffline( userName, password, function( offlineUserData ) 
 			{
-				me.loginSuccessProcess( offlineUserData );
+				me.loginSuccessProcess( userName, offlineUserData );
 			});
 		}
 		else
@@ -267,18 +269,18 @@ function Login( cwsRenderObj )
 			{
 				me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
 
-				me.loginSuccessProcess( loginData );
+				me.loginSuccessProcess( userName, loginData );
 			});
 		}
-
-		// NOTE: Right location to call?  <-- always call even the no login?
-		// If to be called only on sucess login, use this on 'loginSuccessProcess' ?
-		AppInfoManager.createUpdateUserInfo( userName );
 	};
 
 	
 	me.loginSuccessProcess = function( loginData ) 
 	{		
+		// Save userName to 'appInfo.userInfo'
+		AppInfoManager.createUpdateUserInfo( userName );
+		
+		
 		// After Login, run/setup below ones.
 		SessionManager.setLoginStatus( true );		
 
@@ -307,8 +309,6 @@ function Login( cwsRenderObj )
 			}
 
 			$( '.Nav1' ).css( 'display', 'flex' );
-
-			//me.cwsRenderObj.langTermObj.translatePage();
 
 		});
 	};
