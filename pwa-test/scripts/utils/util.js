@@ -1,0 +1,1640 @@
+
+// -------------------------------------------
+// -- Utility Class/Methods
+
+function Util() {}
+
+Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
+Util.termName_listEmpty = "common_listEmpty";
+//Util.termName_confirmed = ""; // 
+
+Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
+
+
+// ----------------------------------------------------
+
+Util.outputAsStr = function( input )
+{	
+	var output = '';
+
+	if ( input )
+	{	
+		if ( Util.isTypeObject( input ) )
+		{
+			try 
+			{ 				
+				output = JSON.stringify( input );
+			} 
+			catch ( err ) 
+			{ 
+				output = 'ErrStringify: ' + input;			
+				console.customLog( 'Error in Util.outputAsStr, err: ' + err ); 
+			}
+		}
+		else
+		{
+			output = input;
+		} 	
+	}
+
+	return output;
+};
+
+// ----------------------------------------------------
+// ---- Try Cache / Eval related methods
+
+Util.tryCatchContinue = function( runFunc, optionalMsg )
+{
+	try
+	{
+		runFunc();
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
+	}
+};
+
+
+Util.tryCatchCallBack = function( callBack, runFunc )
+{
+	try
+	{
+		runFunc( callBack );
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
+		callBack();
+	}
+};
+
+
+Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
+{
+	var returnVal;
+
+	try
+	{
+		returnVal = eval( inputVal );
+
+		if ( returnVal && typeof( returnVal ) === "string" ) 
+		{
+			returnVal = returnVal.replace( /undefined/g, '' );
+		}
+	}
+	catch( errMsg )
+	{
+		if ( !optionalTitle ) optionalTitle = '';
+
+		console.customLog( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
+	}
+
+	return returnVal;
+};
+
+
+Util.traverseEval = function( obj, INFO, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		console.customLog( 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth );
+	}
+	else
+	{
+		for ( var prop in obj ) 
+		{
+			var propVal = obj[prop];
+	
+			if ( typeof( propVal ) === "object" ) 
+			{
+				//console.customLog( prop, propVal );
+				Util.traverseEval( propVal, INFO, iDepth++, limit );
+			}
+			else if ( typeof( propVal ) === "string" ) 
+			{
+				//console.customLog( prop, propVal );
+				try
+				{
+					obj[prop] = eval( propVal );
+				}
+				catch( errMsg )
+				{
+					console.customLog( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+				}
+			}
+		}
+	}
+};	
+
+
+Util.getObjRef_fromList = function( list, prop )
+{
+	var objRef = {};
+
+	if ( list && prop )
+	{
+		for ( var i = 0; i < list.length; i++ )
+		{
+			var obj = list[ i ];
+
+			var objId = obj[ prop ];
+
+			if ( objId ) objRef[ objId ] = obj;
+		}
+	}
+
+	return objRef;
+};
+
+// ----------------------------------------------------
+
+Util.strCombine = function( input )
+{	
+	var output = '';
+
+	if ( input )
+	{
+		if ( Array.isArray( input ) )
+		{
+			output = input.join( ' ' );
+		}
+		else
+		{
+			output = input;
+		}
+	}
+
+	return output;
+};
+
+
+Util.objKeyCount = function( obj )
+{
+	return ( obj ) ? Object.keys( obj ).length: 0;
+};
+
+Util.disableTag = function( tag, isDisable )
+{
+	tag.prop('disabled', isDisable);
+}
+
+// ---------------------------------------
+
+// NOTE: Should be named 'append'?
+Util.mergeArrays = function( mainArr, newArr )
+{
+	for ( var i = 0; i < newArr.length; i++ )
+	{
+		mainArr.push( newArr[ i ] );
+	}
+};
+
+Util.appendArray = function( mainArr, newArr )
+{
+	Util.mergeArrays( mainArr, newArr );
+};
+
+Util.getCombinedArrays = function( arr1, arr2 )
+{
+	var combinedArr = [];
+
+	for ( var i = 0; i < arr1.length; i++ ) combinedArr.push( arr1[ i ] );
+	for ( var i = 0; i < arr2.length; i++ ) combinedArr.push( arr2[ i ] );
+
+	return combinedArr;
+};
+
+Util.mergeJson = function( destObj, srcObj )
+{
+	if ( srcObj )
+	{
+		for( var key in srcObj )
+		{
+			destObj[key] = srcObj[key];
+		}		
+	}
+};
+
+Util.mergeDeep = function ( dest, obj ) 
+{
+	Object.keys( obj ).forEach( key => {
+
+		var dVal = dest[key];
+		var oVal = obj[key];
+
+		if ( Array.isArray( dVal ) && Array.isArray( oVal ) ) 
+		{
+			Util.mergeArrays( dVal, oVal );			
+			//dest[key] = pVal.concat(...oVal);
+		} 
+		else if ( Util.isTypeObject( dVal ) && Util.isTypeObject( oVal ) ) 
+		{
+			//dest[key] = 
+			Util.mergeDeep( dVal, oVal );
+		} 
+		else 
+		{
+			dest[key] = oVal;
+		}
+	});
+
+	//return prev;
+};
+
+
+Util.dotNotation = function ( dest, obj, parentObjName ) 
+{
+	Object.keys( obj ).forEach( function( key ) {
+
+		var oVal = obj[key];
+
+		if ( Array.isArray( oVal ) )  dest[ parentObjName + '.' + key ] = oVal;
+		else if ( typeof oVal === 'object' ) 
+		{
+			Util.dotNotation( dest, oVal, parentObjName + '.' + key );
+		} 
+		else 
+		{
+			dest[ parentObjName + '.' + key ] = oVal;
+		}
+	});
+};
+
+// ---------------------------
+// --- Types Check ----
+Util.isTypeObject = function( obj )
+{
+	return ( obj && typeof obj === 'object' );
+};
+
+Util.isTypeArray = function( obj )
+{
+	return ( obj && Array.isArray( obj ) );
+};
+
+Util.isTypeString = function( obj )
+{
+	return ( obj && typeof( obj ) === 'string' );
+};
+// ------------------------------------
+
+Util.getPathObj = function( obj, pathArr )
+{
+    var tempObj = Util.getJsonDeepCopy( obj );
+
+    for ( var i = 0; i < pathArr.length; i++ )
+    {
+        var path = pathArr[i];
+        tempObj = tempObj[path];
+    }
+
+    return tempObj;
+};
+
+
+// Performs a deep merge of objects and returns new object. Does not modify objects
+Util.mergeDeep_v2 = function (...objects) 
+{
+	const isObject = obj => obj && typeof obj === 'object';
+
+	return objects.reduce( ( prev, obj ) => 
+	{
+		Object.keys( obj ).forEach( key => {
+			const pVal = prev[key];
+			const oVal = obj[key];
+
+			if ( Array.isArray( pVal ) && Array.isArray( oVal ) ) 
+			{
+				prev[key] = pVal.concat(...oVal);
+			} 
+			else if ( isObject( pVal ) && isObject( oVal ) ) 
+			{
+				prev[key] = Util.mergeDeep_v2( pVal, oVal );
+			} 
+			else 
+			{
+				prev[key] = oVal;
+			}
+		});
+
+		return prev;
+	}, {});
+};
+
+Util.getCombinedJson = function( obj1, obj2 )
+{
+	var combinedObj = {};
+
+	for( var key in obj1 ) combinedObj[key] = obj1[key];
+	for( var key in obj2 ) combinedObj[key] = obj2[key];
+
+	return combinedObj;
+};
+
+Util.getCombinedJsonInArr = function( objArr )
+{
+	var combinedObj = {};
+
+	for ( var i = 0; i < objArr.length; i++ ) 
+	{
+		Util.mergeJson( combinedObj, objArr[i] );
+	}
+
+	return combinedObj;
+};
+
+// -------------------------------------------
+
+// TODO: We can create Util.sortByKey with 'eval' of 'key' part..
+
+// Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
+Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
+{
+	if ( array.length == 0 || array[0][key] === undefined ) return array;
+	else
+		{
+		return array.sort( function( a, b ) {
+		
+			var x = a[key]; 
+			var y = b[key];
+
+			if ( x === undefined ) x = "";
+			if ( y === undefined ) y = "";
+
+			if ( noCase !== undefined && noCase )
+			{
+				x = x.toLowerCase();
+				y = y.toLowerCase();
+			}
+
+			if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
+			{
+				if ( x == "" && y == "" ) return 0;
+				else if ( x == "" ) return 1;
+				else if ( y == "" ) return -1;
+			}
+			else
+			{
+				if ( order === undefined )
+				{
+					return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+				}
+				else
+				{
+					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+					else if ( order === "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+				}
+			}
+		});
+	}
+};
+
+
+
+// Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
+Util.sortByKey2 = function( array, key, order, options ) 
+{
+	var noCase;
+	var emptyStringLast;
+
+	if ( options )
+	{
+		noCase = ( options.noCase ) ? options.noCase : undefined;
+		emptyStringLast = ( options.emptyStringLast ) ? options.emptyStringLast : undefined;
+	}
+
+
+	if ( array.length == 0 || array[0][key] === undefined ) return array;
+	else
+	{
+		return array.sort( function( a, b ) {
+		
+
+			noCase, order, emptyStringLast
+
+
+			var x = a[key]; 
+			var y = b[key];
+
+			if ( x === undefined ) x = "";
+			if ( y === undefined ) y = "";
+
+			if ( noCase !== undefined && noCase )
+			{
+				x = x.toLowerCase();
+				y = y.toLowerCase();
+			}
+
+			if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
+			{
+				if ( x == "" && y == "" ) return 0;
+				else if ( x == "" ) return 1;
+				else if ( y == "" ) return -1;
+			}
+			else
+			{
+				if ( order === undefined )
+				{
+					return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+				}
+				else
+				{
+					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+					else if ( order == "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+				}
+			}
+		});
+	}
+};
+
+
+
+Util.sortByKey_Reverse = function( array, key ) {
+	return array.sort( function( b, a ) {
+		var x = a[key]; var y = b[key];
+		return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+	});
+};
+
+// -------------------------------------------
+
+Util.searchByName = function( array, propertyName, value )
+{
+	for( var i in array ){
+		if( array[i][propertyName] == value ){
+			return array[i];
+		}
+	}
+	return "";
+};
+
+Util.trim = function( input )
+{
+	return input.replace( /^\s+|\s+$/gm, '' );
+};
+
+Util.trimTags = function( tags )
+{
+	tags.each( function() {
+		$( this ).val( Util.trim( $( this ).val() ) );
+	});
+};
+
+Util.replaceAllRegx = function( fullText, strReplacing, strReplacedWith )
+{
+	var rePattern = new RegExp( strReplacing, "g" );
+	return fullText.replace( rePattern, strReplacedWith );
+};
+
+Util.replaceAll = function( fullText, keyStr, replaceStr )
+{
+	var index = -1;
+	do {
+		fullText = fullText.replace( keyStr, replaceStr );
+		index = fullText.indexOf( keyStr, index + 1 );
+	} while( index != -1 );
+
+	return fullText;
+};
+
+Util.stringSearch = function( inputString, searchWord )
+{
+	if( inputString.search( new RegExp( searchWord, 'i' ) ) >= 0 )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+};
+
+Util.upcaseFirstCharacterWord = function( text ){
+	var result = text.replace( /([A-Z])/g, " $1" );
+	return result.charAt(0).toUpperCase() + result.slice(1); 
+};
+
+
+Util.startsWith = function( input, suffix )
+{
+    return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
+};
+
+Util.endsWith = function( input, suffix ) 
+{
+    return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
+};
+
+Util.clearList = function( selector ) {
+	selector.children().remove();
+};
+
+Util.moveSelectedById = function( fromListId, targetListId ) {
+	return !$('#' + fromListId + ' option:selected').remove().appendTo('#' + targetListId ); 
+};
+
+Util.selectAllOption = function ( listTag ) {
+	listTag.find('option').attr('selected', true);
+};
+
+Util.unselectAllOption = function ( listTag ) {
+	listTag.find('option').attr('selected', true);
+};
+
+// Handles both object and array
+Util.getJsonDeepCopy = function( jsonObj )
+{
+	var newJsonObj;
+
+	if ( jsonObj )
+	{
+		try
+		{
+			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+		}
+		catch( errMsg ) {
+			console.customLog( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+		}
+	} 
+
+	return newJsonObj;
+};
+
+Util.cloneJson = function( jsonObj )
+{
+	return Util.getJsonDeepCopy( jsonObj );
+};
+
+Util.valueEscape = function( input )
+{
+	//input.replaceAll( '\', '\\' );
+	//input = input.replace( "'", "\'" );
+	input = input.replace( '"', '\"' );
+
+	return input;
+};
+
+Util.valueUnescape = function( input )
+{
+	//input.replaceAll( '\', '\\' );
+	//input = input.replace( "\'", "'" );
+	input = input.replace( '\"', '"' );
+
+	return input;
+};
+
+Util.reverseArray = function( arr )
+{
+	return arr.reverse();
+};
+
+// ----------------------------------
+// Check Variable Related
+
+Util.getStr = function( val )
+{
+	return ( val ) ? val : '';
+}
+
+Util.getProperValue = function( val )
+{
+	Util.getNotEmpty( val );
+}
+
+Util.getNotEmpty = function( input ) {
+
+	if ( Util.checkDefined( input ) )
+	{
+		return input
+	}
+	else return "";
+};
+
+Util.checkDefined = function( input ) {
+
+	if( input !== undefined && input != null ) return true;
+	else return false;
+};
+
+Util.checkValue = function( input ) {
+
+	if ( Util.checkDefined( input ) && input.length > 0 ) return true;
+	else return false;
+};
+
+Util.checkDataExists = function( input ) {
+
+	return Util.checkValue( input );
+};
+
+Util.checkData_WithPropertyVal = function( arr, propertyName, value ) 
+{
+	var found = false;
+
+	if ( Util.checkDataExists( arr ) )
+	{
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			var arrItem = arr[i];
+			if ( Util.checkDefined( arrItem[ propertyName ] ) && arrItem[ propertyName ] == value )
+			{
+				found = true;
+				break;
+			}
+		}
+	}
+
+	return found;
+};
+
+Util.isInt = function(n){
+    return Number(n) === n && n % 1 === 0;
+};
+
+Util.isNumeric = function(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
+Util.getNum = function( n ) {
+	var val = 0;
+	
+	try { 
+		if ( n ) val = Number( n ); 
+	}
+	catch ( err ) { }
+	
+	return val;
+};
+// Check Variable Related
+// ----------------------------------
+
+// ----------------------------------
+// List / Array Related
+
+Util.RemoveFromArray = function( list, propertyName, value )
+{
+	var index;
+
+	$.each( list, function( i, item )
+	{
+		if ( item[ propertyName ] == value ) 
+		{
+			index = i;
+			return false;
+		}
+	});
+
+	if ( index !== undefined ) 
+	{
+		list.splice( index, 1 );
+	}
+
+	return index;
+};
+
+Util.getFromListByName = function( list, name )
+{
+	var item;
+
+	for( i = 0; i < list.length; i++ )
+	{
+		if ( list[i].name === name )
+		{
+			item = list[i];
+			break;
+		}
+	}
+
+	return item;
+};
+
+Util.getFromList = function( list, value, propertyName )
+{
+	var item;
+
+	if ( list )
+	{
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if ( propertyName === undefined )
+		{
+			propertyName = "id";
+		}
+
+		for( i = 0; i < list.length; i++ )
+		{
+			var listItem = list[i];
+
+			if ( listItem[propertyName] && listItem[propertyName] === value )
+			{
+				item = listItem;
+				break;
+			}
+		}
+	}
+
+	return item;
+};
+
+Util.getItemFromList = function( list, value, propertyName )
+{
+	return Util.getFromList( list, value, propertyName );
+};
+
+Util.getItemsFromList = function( list, value, propertyName )
+{
+	var items = [];
+
+	if ( list )
+	{
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if ( propertyName === undefined )
+		{
+			propertyName = "id";
+		}
+
+		for( i = 0; i < list.length; i++ )
+		{
+			var listItem = list[i];
+
+			if ( listItem[propertyName] && listItem[propertyName] === value )
+			{
+				items.push( listItem );
+			}
+		}
+	}
+
+	return items;
+};
+
+
+Util.getMatchData = function( settingData, matchSet )
+{
+	var returnData = new Array();
+	
+	$.each( settingData, function( i, item )
+	{
+		var match = true;
+
+		for ( var propName in matchSet )
+		{
+			if ( matchSet[ propName ] != item[ propName ] ) 
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if ( match )
+		{
+			returnData.push( item );
+		}
+	});
+
+	return returnData;
+};
+
+
+Util.getFirst = function( inputList ) 
+{
+	var returnVal;
+
+	if( inputList !== undefined && inputList != null && inputList.length > 0 )
+	{
+		returnVal = inputList[0];
+	}
+	
+	return returnVal;
+};
+
+
+// $.inArray( item_event.trackedEntityInstance, personList ) == -1
+
+Util.checkExistInList = function( list, value, propertyName )
+{
+	var item = Util.getFromList( list, value, propertyName );
+
+	if ( item === undefined ) return false;
+	else return true;
+};
+
+
+Util.checkEmptyId_FromList = function( list )
+{
+	return ( Util.getFromList( list, '' ) !== undefined );
+};
+
+Util.jsonToArray = function( jsonData, structureConfig )
+{
+	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;
+	//to do: make recursive in the presence of nested json objects (typeOf obj === "object" )
+	var strucConfArr = ( structureConfig ? structureConfig.split( ':' ) : undefined );
+	var arrRet = [];
+	var fldExcl = 'userName,password,';
+
+	for( var keyName in jsonData )
+	{
+		if ( fldExcl.indexOf( keyName ) < 0 )
+		{
+			var obj = jsonData[ keyName ];
+
+			if ( strucConfArr )
+			{
+				var jDat = { [ strucConfArr[ 0 ] ]: keyName, [ strucConfArr[ 1 ] ]: obj };
+			}
+			else
+			{
+				var jDat = { [ keyName ]: obj };
+			}
+	
+			arrRet.push ( jDat );
+		}
+	}
+
+	return arrRet;
+};
+
+
+Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
+{
+    if ( dataObj.list.length <= i )
+    {
+        return finishCallBack();        
+    }
+    else
+    {
+        runMethod( dataObj.list[i], function() {
+            Util.recursiveCalls( dataObj, i + 1, runMethod, finishCallBack );
+        }, finishCallBack );
+    }
+};
+
+// List / Array Related
+// ----------------------------------
+
+Util.getURLParameterByName = function( url, name )
+{
+	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(url);
+	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
+
+Util.getURLParameterByVariables = function( url, name )
+{
+	var result = [];
+	var idx = 0;
+	var pairs = url.split("&");
+	for( var i=0; i< pairs.length; i++ ){
+		var pair = pairs[i].split("=");
+		if( pair[0] == name ){
+			result[idx] = pair[1];
+			idx++;
+		}
+	}
+	return result;
+};
+
+Util.getURL_pathname = function( loc )
+{
+	// '/api/apps/NetworkListing/index.html', loc = 4 by - '', 'api', 'apps', 'NetworkListing'
+	var pathName = "";
+	var strSplits = window.location.pathname.split( '/' );
+
+	if ( strSplits.length >= loc )
+	{
+		pathName = strSplits[ loc - 1 ];
+	}
+
+	return pathName;
+};
+
+
+Util.copyProperties = function( source, dest )
+{
+	for ( var key in source )
+	{
+		dest[ key ] = source[ key ];
+	}
+};
+
+Util.RemoveFromArray = function( list, propertyName, value )
+{
+	var index;
+
+	$.each( list, function( i, item )
+	{
+		if ( item[ propertyName ] == value ) 
+		{
+			index = i;
+			return false;
+		}
+	});
+
+	if ( index !== undefined ) 
+	{
+		list.splice( index, 1 );
+	}
+
+	return index;
+};
+
+Util.getObjPropertyCount = function( list )
+{
+	var count = 0;
+
+	for ( var prop in list )
+	{
+		count++;
+	}
+
+	return count;
+};
+
+// Check Variable or List Related
+// -------
+
+
+// BELOW SHOULD MOVE TO FORM UNIT..
+// ----------------------------------
+// Seletet Tag Populate, Etc Related
+// -- Move to either 'Util2' class, or 'FormUtil' class
+
+Util.populateSelect_ByList = function( selectTag, listData, dataType )
+{
+	selectTag.empty();
+
+	$.each( listData, function( i, item ) 
+	{
+		var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+
+		if ( dataType !== undefined && dataType == "Array" )
+		{
+			option.attr( "value", item ).text( item );
+		}
+		else
+		{
+			option.attr( "value", item.id ).text( item.name );
+		}
+			
+		selectTag.append( option );
+	});
+};
+
+Util.populateSelect_Simple = function( selectObj, json_Data )
+{
+	selectObj.empty();
+
+	$.each( json_Data, function( i, item ) {								
+		selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
+	});
+};
+
+Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inputOption )
+{
+	selectObj.empty();
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>' );
+
+	var valuePropStr = "id";
+	var namePropStr = "name";
+
+	if ( inputOption !== undefined )
+	{
+		valuePropStr = inputOption.val;
+		namePropStr = inputOption.name;
+	}
+
+	if ( json_Data !== undefined )
+	{
+		$.each( json_Data, function( i, item ) {
+
+			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+
+			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
+
+			selectObj.append( optionTag );
+		});
+	}
+};
+
+
+Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
+{
+	selectObj.empty();
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>' );
+	
+	var valuePropStr = "id";
+	var namePropStr = "name";
+
+	if ( inputOption !== undefined )
+	{
+		valuePropStr = inputOption.val;
+		namePropStr = inputOption.name;
+	}
+
+	if ( json_Data !== undefined )
+	{
+		$.each( json_Data, function( i, item ) {
+
+			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+
+			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
+
+			selectObj.append( optionTag );
+		});
+	}
+};
+
+Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
+{
+	json_Data.forEach( optionData => {
+
+		let option = document.createElement('option')
+
+		$(option).css({
+			'display':'none',
+			'width':'100%',
+			'list-style':'none',
+			'background':'white',
+			'padding':'4px 8px',
+			'font-size':'14px'
+		})
+
+		option.textContent = optionData.defaultName
+		option.value = optionData.value
+
+		$(option).click(eventsOptions)
+
+		selectObj.appendChild( option )
+
+	})
+};
+
+
+Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
+{
+	selectObj.empty();
+	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' );
+
+	if ( json_Data !== undefined )
+	{
+		$.each( json_Data, function( i, item ) 
+		{
+			var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+
+			if ( dataType !== undefined && dataType == "Array" )
+			{
+				option.attr( "value", item ).text( item );
+			}
+			else
+			{
+				option.attr( "value", item.id ).text( item.name );
+			}
+				
+			selectObj.append( option );
+		});
+	}
+};
+
+
+Util.decodeURI_ItemList = function( jsonItemList, propName )
+{
+	if ( jsonItemList )
+	{
+		$.each( jsonItemList, function( i, item ) 
+		{
+			if ( item[ propName ] )
+			{
+				item[ propName ] = decodeURI( item[ propName ] );
+			}
+		});
+	}
+};
+
+Util.setSelectDefaultByName = function( ctrlTag, name )
+{
+	ctrlTag.find( "option:contains(" + name + ")" ).attr( 'selected', 'selected' ); //true
+};
+
+Util.getSelectedOptionName = function( ctrlTag )
+{
+	return ctrlTag.find( "option:selected" ).text();
+	// return ctrlTag.options[ ctrlTag.selectedIndex ].text; // Javascript version
+};
+
+Util.reset_tagsListData = function( tags, listJson )
+{
+	tags.each( function() {
+
+		var tag = $( this );
+		var tagVal = tag.val();
+
+		tag.find( 'option' ).remove();
+
+		Util.populateSelectDefault( tag, "", listJson );
+		
+		tag.val( tagVal );
+	});
+};
+// Seletet Tag Populate, Etc Related
+// ----------------------------------
+
+Util.checkInteger = function( input )
+{
+	var intRegex = /^\d+$/;
+	return intRegex.test( input );
+};
+
+Util.checkCalendarDateStrFormat = function( inputStr )
+{
+	if( inputStr.length == 10
+		&& inputStr.substring(4, 5) == '/'
+		&& inputStr.substring(7, 8) == '/'
+		&& Util.checkInteger( inputStr.substring(0, 4) )
+		&& Util.checkInteger( inputStr.substring(5, 7) )
+		&& Util.checkInteger( inputStr.substring(8, 10) )
+		)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+};
+
+Util.isDate = function(date) {
+   return ( (new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
+};
+
+// ----------------------------------
+// Date Formatting Related
+
+
+Util.addZero = function( i )
+{
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+};
+
+Util.dateToString = function( date )
+{
+	var month = eval( date.getMonth() ) + 1;
+	month = ( month < 10 ) ? "0" + month : month;
+	
+	var day = eval( date.getDate() );
+	day = ( day < 10 ) ? "0" + day : day;
+		
+	return date.getFullYear() + "-" + month + "-" + day;
+};
+
+
+Util.dateToStr = function( date, separator )
+{
+	if ( !separator ) separator = "";
+
+	var month = eval( date.getMonth() ) + 1;
+	month = ( month < 10 ) ? "0" + month : month;
+	
+	var day = eval( date.getDate() );
+	day = ( day < 10 ) ? "0" + day : day;
+		
+	return date.getFullYear() + separator + month + separator + day;
+};
+
+
+Util.formatDate = function( date, formatPattern )
+{
+	if ( !formatPattern ) formatPattern = Util.dateType1;
+
+	return $.format.date( date, formatPattern );
+};
+
+Util.formatDateTime = function( dateObj, dateType )
+{
+	return Util.formatDateTimeStr( dateObj.toString(), dateType );
+};
+
+Util.formatDateTimeStr = function( dateStr, dateType )
+{
+	if ( !dateType ) dateType = Util.dateType1;
+
+	return $.format.date( dateStr, dateType );
+};
+
+Util.timeCalculation = function( dtmNewer, dtmOlder )
+{
+	var reSult = { 'hh': 0, 'mm': 0, 'ss': 0 };
+
+	var sec_num = ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / 1000;
+
+    var hours   = Math.floor(sec_num / 3600); // round (down)
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60); // round (down)
+    var seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60) ); // round (up)
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+	if (seconds < 10) {seconds = "0"+seconds;}
+
+	reSult.hh = hours;
+	reSult.mm = minutes;
+	reSult.ss = seconds;
+
+    return reSult;
+
+}
+
+Util.dateUTCToLocal = function( dateStr )
+{
+	var localDateObj;
+
+	try
+	{
+		// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
+		if ( dateStr.indexOf( 'Z' ) === -1 ) 
+		{
+			dateStr += 'Z';
+		}
+
+		localDateObj = new Date( dateStr );
+	}
+	catch ( errMsg )
+	{
+		localDateObj = new Date();
+	}
+
+	return localDateObj;
+};
+
+// Date Formatting Related
+// ----------------------------------
+
+Util.pageHScroll = function( option )
+{
+	if ( option === "Right" )
+	{
+		// Scroll to right end
+		var left = $(document).outerWidth() - $(window).width();
+		$('body, html').scrollLeft( left );
+	}
+	else
+	{
+		$('body, html').scrollLeft( 0 );
+	}
+};
+
+
+// ----------------------------------
+// Others
+
+Util.showDiv = function( tag, show )
+{
+	if ( tag !== undefined && tag.length > 0 )
+	{
+		( show ) ? tag.show() : tag.hide();
+	}
+};
+
+Util.generateRandomId = function( len ) 
+{
+	var id = '';
+	var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var id_size = 12;
+
+	if ( len ) id_size = len;
+
+	for (var i = 1; i <= id_size; i++) 
+	{
+		var randPos = Math.floor( Math.random() * charSet.length );
+		id += charSet[ randPos ];
+	}
+	
+	return id;
+};
+
+Util.generateTimedUid = function() 
+{
+	return ( new Date().getTime() ).toString( 36 );
+}
+
+Util.getParameterByName = function( name ) 
+{
+	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
+
+Util.getParameterInside = function( value, openClose )
+{
+	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
+	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
+	{
+		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
+		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
+	}
+	else
+	{
+		return '';
+	}
+};
+
+
+Util.paddNumeric = function( val, padding )
+{
+	var ret = '';
+	if ( val && padding || val == 0 && padding )
+	{
+		for (var i = 0; i < ( parseInt( padding ) - val.toString().length ); i++)
+		{
+			ret += '0';
+		}
+		ret += val.toString();
+		return ret;
+	}
+	else
+	{
+		if ( val ) return val.toString();
+	}
+}
+
+Util.getLocalStorageObjectValue = function( objKeyVal )
+{
+	var lastSession = AppInfoManager.getUserInfo();
+	var arrKeys;
+
+	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
+	{
+		console.customLog( ' exiting getLocalStorageObjectValue ');
+		return;
+	}
+	else
+	{
+		if ( lastSession )
+		{
+			var localData = SessionManager.sessionData;
+
+			arrKeys = objKeyVal.toString().split( '.' );
+
+			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
+
+		}
+	}
+};
+
+
+Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
+{
+	if ( objArr[ (itm + 1) ] && objJson[ objArr[ (itm + 1) ] ] )
+	{
+		return Util.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
+	}
+	else 	
+	{
+		return objJson.toString();
+	}
+};
+
+
+Util.parseInt = function( input )
+{
+	if ( input === undefined || input == null || input.length == 0 )
+	{
+		return 0;
+	}
+	else
+	{
+		return parseInt( input );
+	}
+};
+
+Util.generateRandomNumberRange = function(min_value , max_value) 
+{
+	return Math.random() * ( max_value - min_value ) + min_value;
+}
+
+Util.getRandomWord = function( slist, anythingRandom )
+{
+	var arrL = slist.split(',');
+	var i = Util.generateRandomNumberRange( 0, arrL.length -1 ).toFixed(0);
+	return arrL[i];
+}
+
+Util.generateRandomAnything = function( len, possible ) 
+{
+	var text = "";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
+
+Util.generateRandomString = function( len ) 
+{
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
+
+Util.generateRandomNumber = function( len ) 
+{
+	var text = "";
+	var possible = "0123456789";
+
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+	return text;
+}
+
+Util.getServerUrl = function()
+{
+	return location.protocol + '//' + location.host;
+};
+
+Util.getIndexes = function( inputStr, keyStr )
+{
+	var indexes = [];
+
+	var idx = inputStr.indexOf( keyStr );
+	while ( idx != -1 ) {
+		indexes.push(idx);
+		  idx = inputStr.indexOf( keyStr, idx + 1 );
+	}
+
+	return indexes;
+};
+
+Util.upNumber_IntArr = function( arr, upNumber )
+{
+	for ( var i = 0; i < arr.length; i++ )
+	{
+		arr[i] = arr[i] + upNumber;
+	}
+};
+
+
+// Others
+// ----------------------------------
+
+Util.encrypt = function (seed,loops) 
+{
+	let ret = seed;
+	
+	if ( seed )
+	{
+		for ( var i = 0; i < loops; i++ )
+		{
+			ret = btoa(ret); //SHA256(ret)
+		}	
+	}
+
+	return ret;
+};
+
+Util.decrypt = function (garbage,loops) 
+{
+	let seed = garbage;
+	for ( var i = 0; i < loops; i++ )
+	{
+		seed = atob(seed);
+	}
+	return seed;
+} ;
+
+
+  Util.isMobi = function ( ) 
+  {
+	return (/Mobi/.test(navigator.userAgent));
+  };
+
+  Util.isAndroid = function ( ) 
+  {
+	return (/Android/.test(navigator.userAgent));
+  };
+
+  Util.isIOS = function ( ) 
+  {
+	return ( navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)/i) !== null );
+  };
+
+  Util.getPeriodName = function( pe )
+  {
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+	var peM = parseInt(pe.substring(4,6));
+	var peF = parseInt(pe.substring(0,4));
+	return ( months[ ( peM - 1) ] + ' ' + peF);
+  };
+
+
+  Util.ageHours = function( dtm ) 
+  {
+	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
+	return Math.abs( Math.round( ageHr ) );
+  };
+
+
+  Util.getBaseFromBase = function ( input, from, to )
+  {
+	  return ConvertBase.custom( input, from, to );
+  };
+
+
+  Util.isJSON = function( objVal ) 
+  {
+	try {
+        JSON.parse(objVal);
+    } catch (e) {
+        return false;
+    }
+    return true;
+  };
+
+
+  Util.isArray = function( objVal ) 
+  {
+	 return Array.isArray ( objVal );
+  };
+
+
+  Util.localStorageSpace = function()
+  {
+	var allStrings = '';
+	for(var key in window.localStorage){
+		if(window.localStorage.hasOwnProperty(key)){
+			allStrings += window.localStorage[key];
+		}
+	}
+	return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+  };
+
+  
+  Util.lengthInUtf8Bytes = function(str) {
+	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+	var m = encodeURIComponent(str).match(/%[89ABab]/g);
+	return str.length + (m ? m.length : 0);
+  }
+
+  Util.getDateSeparator = function( formatDate )
+  {
+	  var toTry = [ '-', '/', ' ' ];
+
+	  for ( var i = 0; i <= toTry.length -1; i++ )
+	  {
+		if ( formatDate.indexOf( toTry[ i ] ) > 0 ) 
+		{ 
+			return toTry[ i ];
+		}
+	  }
+
+  }
+
+  Util.numberWithCommas = function(x) 
+  {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+
+  Util.cloneArray = function( dataArray, callBack )
+  {
+	if ( Array.isArray( dataArray ) )
+	{
+		try
+		{
+			var retArr = []; //[...dataArray]
+
+			for ( i = 0; i < dataArray.length; i++ )
+			{
+				retArr.push( dataArray[ i ] );
+			}
+
+			if ( callBack ) callBack( retArr )
+			else return retArr;
+		}
+		catch( errMsg )
+		{
+			console.customLog( 'ERROR in Util.cloneArray(): ' + errMsg );
+			callBack();
+		}
+	}
+	else
+	{
+		console.customLog('ERROR in Util.cloneArray(): ~ object is not array ');
+	}
+	
+  };
+
+  Util.isFunction = function(functionToCheck) 
+  {
+	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+  }
+
+  // -----------------------------------------------------------------
+

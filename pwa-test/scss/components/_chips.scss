@@ -1,0 +1,113 @@
+.chip {
+    float: left;
+    min-width: 64px;
+    height: 32px;
+    max-height: 32px;
+    margin-bottom: 12px;
+    margin-right: 8px;
+    padding: 0 8px 0 4px;
+    border-radius: 16px;
+    letter-spacing: 1pt;
+    background-color: rgba($comp-border, 20%);
+    @include box-sizing(border-box);
+
+    .chip__container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        @include box-sizing(border-box);
+
+        .Thumbnail {
+            float: left;
+            width: 24px;
+            height: 24px;
+            -webkit-box-align: center;
+                    align-items: center;
+            border-radius: 12px;
+            margin-top: 4px;
+            background-color: $comp-border;
+            @include background-image('gabrielle');
+            @include box-sizing(border-box);
+        }
+
+        .chip-text {
+            display: table;
+            @include font-size(14px);
+            text-align: center;
+            font-style: normal;
+            line-height: 32px;
+            margin: 0 8px;
+            color: $color-typ-dark;
+            @include box-sizing(border-box);
+        }
+
+        .remove-icon {
+            float: left;
+            width: 18px;
+            height: 18px;
+            -webkit-box-align: center;
+                    align-items: center;
+            margin-top: 7px;
+            @include background-image('remove');
+            @include box-sizing(border-box);
+        }
+    }
+}
+
+.chip-outl {
+    float: left;
+    min-width: 64px;
+    height: 32px;
+    max-height: 32px;
+    margin-bottom: 12px;
+    margin-right: 8px;
+    padding: 0 8px 0 4px;
+    border-radius: 16px;
+    letter-spacing: 1pt;
+    border: 1px solid rgba($comp-border, 20%);
+    @include box-sizing(border-box);
+
+    .chip__container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        @include box-sizing(border-box);
+
+        .Thumbnail {
+            float: left;
+            width: 24px;
+            height: 24px;
+            -webkit-box-align: center;
+                    align-items: center;
+            border-radius: 12px;
+            margin-top: 4px;
+            background-color: $comp-border;
+            @include background-image('gabrielle');
+            @include box-sizing(border-box);
+        }
+
+        .chip-text {
+            display: table;
+            @include font-size(14px);
+            text-align: center;
+            font-style: normal;
+            line-height: 32px;
+            margin: 0 8px;
+            color: $color-typ-dark;
+            @include box-sizing(border-box);
+        }
+
+        .remove-icon {
+            float: left;
+            width: 18px;
+            height: 18px;
+            -webkit-box-align: center;
+                    align-items: center;
+            margin-top: 7px;
+            @include background-image('remove');
+            @include box-sizing(border-box);
+        }
+    }
+}

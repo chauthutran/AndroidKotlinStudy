@@ -4,7 +4,6 @@ function myDetails(cwsRender) {
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.myDetailsDivTag = $('#detailsFormDiv');
     me.detailsContentDivTag = $( '#detailsContentDiv' );

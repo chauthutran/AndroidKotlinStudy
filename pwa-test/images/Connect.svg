@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 48 48"
+   version="1.1"
+   id="svg20"
+   width="44px"
+   height="44px"
+   sodipodi:docname="Connect_2.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata24">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Connect</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview22"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="49.196936"
+     inkscape:cy="29.045558"
+     inkscape:window-x="1072"
+     inkscape:window-y="830"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg20"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true">
+    <sodipodi:guide
+       position="24,24"
+       orientation="1,0"
+       id="guide855"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="24,24"
+       orientation="0,1"
+       id="guide857"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="0,48"
+       id="guide859"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="48,0"
+       orientation="-48,0"
+       id="guide861"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="48,48"
+       orientation="0,-48"
+       id="guide863"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,48"
+       orientation="48,0"
+       id="guide865"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#efefef;}.cls-2{fill:#709302;}.cls-3{fill:#e28c05;}.cls-4{fill:#00b5e1;}</style>
+  </defs>
+  <title
+     id="title6">Connect</title>
+  <g
+     id="g1707"
+     transform="matrix(0.96074403,0,0,0.96074403,-1.9879493,-2.0218708)">
+    <circle
+       id="circle1705"
+       class="cls-2"
+       cx="28.719999"
+       cy="6.9699998"
+       r="4.5999999"
+       transform="rotate(-44.75,28.71759,6.9782314)"
+       style="fill:#709302" />
+  </g>
+  <g
+     id="g1711"
+     transform="matrix(0.96074403,0,0,0.96074403,-1.9879493,-2.0218708)">
+    <circle
+       id="circle1709"
+       class="cls-3"
+       cx="12.84"
+       cy="12.68"
+       r="4.5999999"
+       transform="rotate(-44.75,12.849647,12.675893)"
+       style="fill:#e28c05" />
+  </g>
+  <g
+     id="g1715"
+     transform="matrix(0.96074403,0,0,0.96074403,-1.9879493,-2.0218708)">
+    <circle
+       id="circle1713"
+       class="cls-4"
+       cx="6.9299998"
+       cy="28.76"
+       r="4.5999999"
+       transform="rotate(-44.75,6.9247985,28.759211)"
+       style="fill:#00b5e1" />
+  </g>
+  <path
+     id="path1717"
+     class="cls-3"
+     d="m 15.391911,15.271527 a 12.259096,12.259096 0 1 0 17.293393,0.07683 v 0 a 12.259096,12.259096 0 0 0 -17.293393,-0.07683 z m 1.835023,1.806195 a 9.6650842,9.6650842 0 0 1 13.671384,0.05762 v 0 a 9.6650842,9.6650842 0 0 1 -0.05762,13.671392 v 0 A 9.6746913,9.6746913 0 0 1 17.226934,17.077722 Z"
+     inkscape:connector-curvature="0"
+     style="fill:#e28c05;stroke-width:0.96074396" />
+  <path
+     id="path1719"
+     class="cls-2"
+     d="M 8.1286855,31.748284 A 0.96074403,0.96074403 0 0 0 7.9653587,32.910781 18.254137,18.254137 0 1 0 33.127246,7.9314375 0.96074403,0.96074403 0 0 0 31.955139,8.0851563 L 30.93675,9.0939376 a 0.96074403,0.96074403 0 0 0 0.134505,1.4699384 17.293392,17.293392 0 0 1 2.565186,2.123247 c 6.206405,6.26405 6.552273,15.986779 0.768595,21.712815 -5.783679,5.726037 -15.487192,5.341734 -21.693599,-0.874281 A 17.293392,17.293392 0 0 1 10.607405,30.941256 0.96074403,0.96074403 0 0 0 9.1374666,30.797148 Z"
+     inkscape:connector-curvature="0"
+     style="fill:#709302;stroke-width:0.96074396" />
+</svg>

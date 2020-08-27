@@ -168,8 +168,6 @@ function swManager( _cwsRenderObj, callBack ) {
 
     me.checkNewAppFile = function( runFunction )
     {
-        console.log( 'checkNewAppFile performed.' );
-
         me.registerEvent_newAppFileExists( runFunction );
 
         // Trigger the sw change/update check event..

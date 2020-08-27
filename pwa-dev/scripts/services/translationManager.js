@@ -69,8 +69,7 @@ TranslationManager.setCurrLangTerms = function()
 // =============================================
 
 // Retrieve All Languages Term.
-// MAIN METHOD 1.
-// USED TO BE: 'retrieveAllLangTerm'
+// MAIN METHOD 1.   --- USED TO BE: 'retrieveAllLangTerm'
 TranslationManager.loadLangTerms_NSetUpData = function( forceDownload, returnFunc )
 {
 	TranslationManager.loadLangTerms( forceDownload, function( allLangTerms ) 
@@ -92,14 +91,10 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 	
 	if ( allLangTerms_stored && !forceDownload )
 	{
-		console.customLog( '=== LOAD LANG TERMS ==> Local Storage Data Loaded' );
-
 		returnFunc( allLangTerms_stored );
 	}
 	else
 	{
-		console.customLog( '=== LOAD LANG TERMS ==> download' );
-
 		$( "#imgSettingLangTermRotate" ).addClass( "rot_l_anim" );
 
 		TranslationManager.downloadLangTerms( function( allLangTerms_downloaded )
@@ -108,9 +103,6 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 			AppInfoManager.setLangLastDateTime( new Date() );
 
 			$( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date: ' + AppInfoManager.getLangLastDateTime() );
-
-			console.customLog( 'LangTerm Retrieve Result:' );
-			console.customLog( allLangTerms_downloaded );
 
 			if ( allLangTerms_downloaded ) AppInfoManager.updateLangTerms( allLangTerms_downloaded );
 			
@@ -168,8 +160,6 @@ TranslationManager.downloadLangTerms = function( returnFunc )
 // MAIN METHOD 2.
 TranslationManager.translatePage = function()
 {
-	console.customLog( 'translating page: ' + TranslationManager.currentLangcode );
-
 	var currLangTerms = TranslationManager.currentLangTerms;
 
 	if ( currLangTerms )

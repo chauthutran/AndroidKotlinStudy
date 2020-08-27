@@ -1,0 +1,134 @@
+.field {
+    @include comp-tf-sc;
+
+    .field__label {
+        padding: 2px 8px 0 8px;
+
+        label {
+            color: $color-typ-dark;
+            font-style: normal;
+            font-weight: normal;
+            @include font-size(12px);
+            line-height: auto;
+        }
+    }
+
+    span {
+        color: $color-alert;
+        padding-left: 5px;
+    }
+
+    .field__left {
+        float: left;
+        width: calc(100% - 24px);
+        padding: 0 8px 0 8px;
+        @include box-sizing(border-box);
+    }
+
+    input {
+        margin-bottom: 2px;
+        cursor: pointer;
+    }
+
+    .field__controls {
+        display: flex;
+
+        .field__right {
+            display: none;
+            float: right;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            margin-right: 7px;
+            cursor: pointer;
+            @include background-image('close');
+            @include box-sizing(border-box);
+        }
+    }
+
+    .field__selector {
+        width: calc(100% - 6px);
+        padding-left: 2px;
+        @include box-sizing(border-box);
+
+    }
+
+    .field__selector-label {
+        line-height: 48px;
+        padding: 0 8px 0 8px;
+        @include box-sizing(border-box);
+    }
+}
+
+.field_leading_icon {
+    @include comp-tf-sc;
+
+    .field_leading_icon__controls {
+        display: flex;
+
+        .field_leading_icon__l-icon {
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            margin: 12px 8px;
+            cursor: pointer;
+            @include background-image('search');
+            @include box-sizing(border-box);
+        }
+
+        .field_leading_icon__input {
+            float: left;
+            width: calc(100% - 48px);
+            padding: 0 8px 0 8px;
+            @include box-sizing(border-box);
+
+            input {
+                line-height: 46px;
+                margin: 0;
+            }
+        }
+
+        .field_leading_icon__right {
+            display: none;
+            float: right;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            margin: 12px 7px 12px 0;
+            cursor: pointer;
+            @include background-image('close');
+            @include box-sizing(border-box);
+        }
+    }
+}
+
+/**********************/ 
+
+.field-read_only {
+    float: left;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    margin: $field-margin;
+    text-align: left;
+    @include box-sizing(border-box);
+
+    .field-read_only__label {
+        padding: 2px 8px 0 8px;
+
+        label {
+            color: $color-typ-dark;
+            font-style: normal;
+            font-weight: normal;
+            @include font-size(12px);
+            line-height: auto;
+        }
+    }
+
+    .field-read_only__text {
+        float: left;
+        width: calc(100% - 24px);
+        padding: 0 8px 0 8px;
+        @include box-sizing(border-box);
+    }
+}

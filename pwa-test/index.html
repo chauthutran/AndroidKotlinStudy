@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-color">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="cache-control" content="max-age=0" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+  <meta http-equiv="pragma" content="no-cache" />
+
+  <!-- Add to home screen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#FFC61D">
+  <meta name="apple-mobile-web-app-title" content="CwS">
+
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+
+  <!-- Windows -->
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2F3BA2">
+
+  <!-- Chrome, Firefox OS and Opera -->
+  <meta name="theme-color" content="#FFC61D">
+  <!-- Windows Phone -->
+  <meta name="msapplication-navbutton-color" content="#FFC61D">
+
+  <title>CwS - Apps</title>
+
+  <link rel="icon" type="image/png" href="images/icons/icon-144x144.png">
+
+  <script type="text/javascript" src="scripts/libraries/jquery-3.4.0.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js"></script>
+  <!--script type="text/javascript" src="scripts/libraries/jquery-ui.min.js" async></script-->
+  <script type="text/javascript" src="scripts/libraries/jquery-autocomplete.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/jquery-dateformat.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/aes.js"></script>
+  <script type="text/javascript" src="scripts/libraries/llqrcode.js"></script>
+  <script type="text/javascript" src="scripts/libraries/moment.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/mdDateTimePicker.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/maska.js"></script>
+  <script type="text/javascript" src="scripts/libraries/localforage.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/json-viewer.js"></script>
+  <!--script type="text/javascript" src="scripts/libraries/crossfilter.min.js" async></script-->
+  <!--script type="text/javascript" src="scripts/libraries/d3.min.js"></script-->
+  <script type="text/javascript" src="scripts/libraries/tabulate.js"></script>
+
+  <script type="text/javascript" src="scripts/services/manifestData.js"></script>
+
+  <script>
+    //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
+    var _ver = '1.3.0-rc.1.34'; //_manifestData.version;
+    var _verDate = '2020-08-27'; //_manifestData.date;
+    var _versionNote = '- Translation new implementation.'; //_manifestData.versionNote;
+  </script>
+
+  <!-- Google Analytics -->
+  <!--script>
+    window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+    ga('create', 'UA-134670396-1', 'auto');
+    ga('set', 'appName', 'CwS PWA Provider');
+    ga('set', 'appVersion', _ver);
+    ga('send', 'pageview');
+  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script-->
+  <!-- End Google Analytics -->
+
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+
+  <link rel="stylesheet" type="text/css" href="styles/jquery-autocomplete.css">
+  <!--link rel="stylesheet" type="text/css" href="styles/jquery-ui.css"-->
+  <link rel="stylesheet" type="text/css" href="css/pwa.css">
+  <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
+  <link rel="stylesheet" type="text/css" href="css/json-viewer.css">
+
+
+  <!--link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'-->
+
+</head>
+
+<body class="theme-blue">
+
+  <noscript>
+    Your browser does not support JavaScript! Oops, not good :~(
+  </noscript>
+
+  <!-- START > MAIN NAV HEADER (TOOLBAR) DIV -->
+  <div class="Nav1">
+    <div class='Nav__icon'>
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" version="1.1" id="menu_app">
+        <path class="menu-icon" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+      </svg>
+    </div>
+    <div class='Nav__Title'></div>
+    <div class="Nav__Tools" style="margin-right: 3px;margin-top: 5px;right: 0;">
+      <table class="topIconsTbl" style="border-spacing: 0px;">
+        <tr>
+          <td>
+            <div id="divOptionalNav" class="icons-status" style="display:none;"></div>
+          </td>
+          <td>
+            <div id="divAppDataSyncStatus" class="icons-status" style="width:28px;padding: 6px 2px 3px 3px;">
+              <img id="imgAppDataSyncStatus" src="images/sync-button.svg" alt="sync banner" style="cursor:pointer;">
+            </div>
+          </td>
+          <td>
+            <div id="divNetworkStatus" style="padding: 3px 8px 3px 3px; display: block; cursor:pointer;">
+              <img id="imgNetworkStatus" src='images/cloud_online_nav.svg' alt="NetworkStatus"
+                style="width:36px;height: 36px;vertical-align: bottom;margin-bottom: 2px;border-radius: 14px;opacity: 0.95;transition: all 1s linear;" />
+            </div>
+            <div class="networkStatusIcons">
+              <!--div id="divStatusDot_network" class="networkStatusThree" title="Network Status"></div-->
+              <div id="divStatusDot_networkStable" class="networkStatusThree" title="NetworkStable Status"></div>
+              <div id="divStatusDot_server" class="networkStatusThree" title="Server Status"></div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
+
+  <!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
+  <div class="Nav2" style="display:none;"></div>
+  <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
+
+  <!-- START > MENU LIST CONTAINER DIV -->
+  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation"
+    style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+  <!-- END > MENU LIST CONTAINER DIV -->
+
+  <div id="divProgressBar" class="progress">
+    <div id="divProgressInfo" class="indeterminate"></div>
+  </div>
+
+  <!-- START > LOGIN FORM DIV -->
+  <div id="loginFormDiv" style="display:none;">
+    <div class="wrapper">
+      <div class="login_title">
+        <h1>PSI - workforce app</h1>
+      </div>
+      <div class="login_logo-content">
+        <div id='ConnectingWithSara' class="login_logo__image logoOnline"></div>
+      </div>
+      <div class="login_data">
+        <div class="login_data__fields">
+          <h4 id="loginUserNameH4" style="display:none;"></h4>
+          <div id="loginField" class="field">
+            <div class="field__label">
+              <label term="login_userName">User code</label><span>*</span>
+            </div>
+            <div class="field__controls">
+              <div class="field__left">
+                <input class="auto_compl loginUserName" type="text" autocomplete="off" mandatory="true"
+                  placeholder="Enter your user code" tabindex="1">
+              </div>
+              <div class="field__right"></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field__label">
+              <label term="login_password">PIN</label><span>*</span>
+            </div>
+            <div class="field__controls">
+              <div class="field__left">
+                <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
+                  autocomplete="off" mandatory="true">
+                <input type="tel" class="form-type-text loginUserPinNumeric" id="passReal" name="passReal" required=""
+                  data-ng-minlength="4" maxlength="4" data-display-error-onblur="" data-number-mask="telephone"
+                  autocomplete="off" tabindex="2">
+              </div>
+              <div class="field__right"></div>
+            </div>
+          </div>
+        </div>
+        <div id="divAppVersion" class="login_data__more" style="text-align: left;">
+          <div>
+            <label id="spanVersion">Version #.#</label>&nbsp;
+            <label id="spanVerDate" style="margin-left: 7px; color: #777;">[2020---]</label>
+            <span id="spanLoginAppUpdate"
+              style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top;">[UPDATE
+              APP]</span>
+          </div>
+          <div id="loginVersionNote"></div>
+          <!-- a id="spanVersion" href="versions.html" target="_blank" style="float: left; color: #888;" >Version #.#</a-->
+          <!-- <a href="#">Forgot your PIN?</a> -->
+        </div>
+      </div>
+      <div class="login_buttons">
+        <div class="login_buttons__container">
+          <div class="button l-emphasis button-full_width" id="advanceOptionLoginBtn">
+            <div class="button__container">
+              <div class="button-label" term="login_advancedOption">Advanced options</div>
+            </div>
+          </div>
+          <div class="button h-emphasis button-full_width loginBtn" tabindex="3">
+            <div class="button__container ">
+              <div class="button-label" term="login_btn_login">Login</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!-- END > LOGIN FORM DIV -->
+
+  <!-- START > AFTER LOGIN - MAIN APP CONTENT DIV -->
+  <div id="pageDiv" class="wrapper"></div>
+  <!-- END > AFTER LOGIN - MAIN APP CONTENT DIV -->
+
+  <div id="pulsatingDots" class="lv-dots lv-mid md" data-label="Loading..." style="display:none;">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <!-- START > SETTINGS FORM DIV -->
+  <div id="settingsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
+    <div class="wapper_card">
+      <div class="sheet-title c_900">
+        <img src="images/arrow_back.svg" class="btnSettingsBack btnBack">
+        <span term="menu_settings">Settings</span>
+      </div>
+      <div class="card _tab activity"
+        style="padding: 8px;background-color: #FFF;height: calc(100vh - 80px);width: calc(100vw - 16px);">
+
+        <div class="field">
+          <div class="field__label"><label>Network sync</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_networkSync"></select>
+            </div>
+            <div class="field__right"></div>
+          </div>
+        </div>
+
+
+        <div class="field">
+          <div class="field__label"><label term="settings_userLanguage">User language</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_langSelect"></select>
+            </div>
+            <div class="field__right"></div>
+          </div>
+        </div>
+
+
+        <div class="field">
+          <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language
+              pack
+              date</label></div>
+          <div class="field__controls">
+            <div class="field__left">
+              <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
+            </div>
+            <div class="field__right"></div>
+
+
+            <div id="settingsInfo_newLangTermsDownload">
+              <img id="imgSettingLangTermRotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__label"><label term="settings_theme">Theme</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <select id="settingsInfo_ThemeSelect">
+                <option value="theme-red">theme-red</option>
+                <option value="theme-pink">theme-pink</option>
+                <option value="theme-purple">theme-purple</option>
+                <option value="theme-deep_purple">theme-deep_purple</option>
+                <option value="theme-indigo">theme-indigo</option>
+                <option value="theme-blue">theme-blue</option>
+                <option value="theme-light_blue">theme-light_blue</option>
+                <option value="theme-cyan">theme-cyan</option>
+                <option value="theme-teal">theme-teal</option>
+                <option value="theme-green">theme-green</option>
+                <option value="theme-light_green">theme-light_green</option>
+                <option value="theme-lime">theme-lime</option>
+                <option value="theme-yellow">theme-yellow</option>
+                <option value="theme-amber">theme-amber</option>
+                <option value="theme-orange">theme-orange</option>
+                <option value="theme-deep_orange">theme-deep_orange</option>
+                <option value="theme-brown">theme-brown</option>
+                <option value="theme-gray">theme-gray</option>
+                <option value="theme-blue_gray">theme-blue_gray</option>
+              </select>
+            </div>
+            <div class="field__right"></div>
+          </div>
+        </div>
+
+        <!-- /scripts/classes/settingsApp line 89 -->
+        <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px">
+          <div class="field__label">
+            <div class="" id="settingsAppRestHeader" style="cursor: pointer;">
+              <div class="field__controls">
+                <div class="field__left" style="padding: 16px 0;">
+                  <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
+                      fill="#333333" fill-opacity="0.87"></path>
+                  </svg>
+                  <label term="" style="font-size: 1rem;padding: 4px;line-height: 29px;">Reset app data &
+                    configuration</label>
+                </div>
+                <div class="field__right"></div>
+              </div>
+
+              <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
+                <div id="bodyCollapsible__text" term="">
+                  Your configuration and App data stored in the device will be deleted. You will be asked to log in
+                  again and data which is not synced to the server will be lost.
+                </div>
+                <div id="buttonResetData" class="button-text alert" style="float:right;">
+                  <div class="button__container">
+                    <div class="button-label" term="">RESET</div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sheet_bottom-scrim" style="display: none;"></div>
+
+  </div>
+  <!-- END > SETTINGS FORM DIV -->
+
+  <!-- START > ABOUT FORM DIV -->
+  <div id="aboutFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
+
+    <div class="wapper_card">
+      <div class="sheet-title c_900">
+        <img src="images/arrow_back.svg" class="btnAboutBack btnBack">
+        <span term="menu_about">About</span>
+      </div>
+    </div>
+
+    <div class="wrapper" style="position: absolute;top: 56px;">
+      <div class="principal_section"
+        style="height:75px;margin:0;width:100vw;left:-16px;position:relative;background-color:#fff;padding: 8px 0 12px 8px;">
+        <div class="principal_section__icon">
+          <img src="images/Connect.svg" style="width: inherit;height: inherit;">
+        </div>
+        <div class="principal_section__title">Workforce App</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
+        <div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
+        <div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
+        <div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
+        <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label term="about_browser">Browser</label></div>
+        <div class="field-read_only__text" id="aboutInfo_Browser">Chrome -73</div>
+      </div>
+      <div class="field-read_only">
+        <div class="field-read_only__label"><label>More Info</label></div>
+        <div class="field-read_only__text" style="font-size: 0.85rem; color: #777;">
+          <span id="linkAppUpdateCheck" style="cursor:pointer; color: cadetblue; font-style: italic;">[Check App
+            Updates]</span><span id="linkAppUpdateRefresh" style="display: none; cursor:pointer; color: cadetblue; font-style: italic;">[App
+              Updates Available]</span>
+            &nbsp;&nbsp;
+          <span id="showLogs" style="cursor:pointer; color: cadetblue; font-style: italic;">[Logs]</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!-- END > ABOUT FORM DIV -->
+
+  <!--  START > STATISTICS REPORT -->
+  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
+  <!-- END > STATISTICS REPORT -->
+
+  <!--  START > CUSTOM LOG INFO -->
+  <div id="divCustomDataDisplay"
+    style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+    <div class="divMainLayout" style="height:100%;">
+
+      <div style="margin-bottom: 5px;">Logs:</div>
+      <div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
+      <div class="divRunCommand" style="width: 100%; margin-top: 3px;">
+        <select class="selLogRunCommandCase"
+          style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
+          <option value="custom">Custom</option>
+          <option value="loadSampleData">Load Data</option>
+          <option value="removeSampleData">Remove Data</option>
+        </select>
+        <input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnLogRunCommand">Run</button>
+      </div>
+
+      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
+        <div class="button__container">
+          <div class="cancel button-label" style="line-height: unset;cursor: pointer;">CANCEL</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!--  END > CUSTOM LOG INFO -->
+
+  <!-- START > NETWORK SWITCH DIV -->
+  <div id="networkSwitch" style="display:none;"></div>
+  <!-- END > NETWORK SWITCH DIV -->
+
+  <!-- START > ActivityItem PREVIEW DIV -->
+  <div id="fullScreenPreview" class="sheet_full-fs" style="display: none;"></div>
+  <!-- END > ActivityItem PREVIEW DIV -->
+
+  <!-- START > LOGIN ADV/OPTIONS DIV -->
+  <div class="sheet_bottom" style="display: none;"></div>
+  <!-- END > LOGIN ADV/OPTIONS DIV -->
+
+  <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
+  <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
+
+  <div class="scrim" style="display: none;"></div>
+
+  <!-- START > RESERVED QR CREATOR -->
+  <div id="qrTemplate"></div>
+  <!-- END > RESERVED QR CREATOR -->
+
+  <!--div id="hnqisTemplate" style="display:none;">
+    <div id='hnqisHeader'>HNQIS</div>
+    <div id='hnqisHeader2'></div>
+    <div id='hnqisHeader3'></div>
+  </div-->
+
+  <!--div id="detailsFormDiv" style="display:none;">
+    <div name="top-body" class="bodytop bg-color-program-son"></div>
+    <section class="wrapper">
+      <main class="container">
+        <div id="detailsContentDiv " class="detailsListDiv listDiv" style="position:relative;text-align:left;">
+          <ul class="tab_fs__head ">
+            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
+              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
+                class="btnMyDetailsBack" alt="arrowLeft">
+              <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
+              <br>
+            </li>
+          </ul>
+          <div class="title-act-mobile">
+            <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px"
+              class="btnMyDetailsBack" alt="arrowLeft">
+            <img src="images/my_details.svg" class="tab-image" alt="active">
+            <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
+          </div>
+          <ul class="tab_fs__container" style="background-color: #fff;padding: 16px;">
+            <li class="settingsTopfiller" style="width: 97%;"></li>
+            <li>
+              <table class="previewCard" id="" style="width: 100%">
+                <tbody>
+                  <tr>
+                    <td class="searchResultMainName" colspan="2"
+                      style="font-family: Rubik;font-style: normal;font-weight: 800;font-size: 14px;"></td>
+                  </tr>
+                  <td class="previewCardAddress" colspan="2" style="font-size: 12px;"></td>
+                  </tr>
+                  </tr>
+                  <td class="searchResultLocationArea" colspan="2" style="font-size: 12px;"></td>
+                  </tr>
+                  </tr>
+                  <td class="searchResultPhoneNumber" colspan="2"
+                    style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" style="padding-top:8px;"><b>Opening Hours</b></td>
+                  </tr>
+                  <tr>
+                    <td class="previewCardOperatingHours"
+                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-top:8px;padding-bottom:8px;"></td>
+                    <td class="previewCardProviderName"
+                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
+                  </tr>
+                  <tr>
+                    <td class="servicesRow" style="font-size: 12px;padding-top:8px;"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </section-->
+
+
+  </div>
+
+  <script type="text/javascript" src="scripts/services/consoleCustomLog.js"></script>
+
+  <script type="text/javascript" src="scripts/constants/constants.js"></script>
+  <script type="text/javascript" src="scripts/constants/templates.js"></script>
+  <script type="text/javascript" src="scripts/constants/configs.js"></script>
+
+  <script type="text/javascript" src="scripts/utils/util.js"></script>
+  <script type="text/javascript" src="scripts/utils/util2.js"></script>
+  <script type="text/javascript" src="scripts/utils/prototypes.js"></script>
+  <script type="text/javascript" src="scripts/utils/jsonBuiltTable.js"></script>
+  <script type="text/javascript" src="scripts/utils/inputUtil.js"></script>
+  <script type="text/javascript" src="scripts/utils/activityUtil.js"></script>
+  <script type="text/javascript" src="scripts/utils/dbStorageSelector.js"></script>
+  <script type="text/javascript" src="scripts/utils/formUtil.js"></script>
+  <script type="text/javascript" src="scripts/utils/sounds.js"></script>
+  <script type="text/javascript" src="scripts/utils/validationUtil.js"></script>
+  <script type="text/javascript" src="scripts/utils/StatsUtil.js"></script>
+
+  <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
+  <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
+  <script type="text/javascript" src="scripts/services/storage/storageMng.js"></script>
+  <script type="text/javascript" src="scripts/services/storage/dataManager2.js"></script>
+  <script type="text/javascript" src="scripts/services/storage/localStgMng.js"></script>
+  <script type="text/javascript" src="scripts/services/translationManager.js"></script>
+  <script type="text/javascript" src="scripts/services/clientDataManager.js"></script>
+  <script type="text/javascript" src="scripts/services/activityDataManager.js"></script>
+  <script type="text/javascript" src="scripts/services/payloadTemplateHelper.js"></script>
+
+  <script type="text/javascript" src="scripts/services/syncManagerNew.js"></script>
+  <script type="text/javascript" src="scripts/services/configManager.js"></script>
+  <script type="text/javascript" src="scripts/services/msgManager.js"></script>
+  <script type="text/javascript" src="scripts/services/formMsgManager.js"></script>
+  <script type="text/javascript" src="scripts/services/connManagerNew.js"></script>
+
+  <script type="text/javascript" src="scripts/services/appInfoManager.js"></script>
+  <script type="text/javascript" src="scripts/services/sessionManager.js"></script>
+  <script type="text/javascript" src="scripts/services/infoDataManager.js"></script>
+  <script type="text/javascript" src="scripts/services/dataVerMove.js"></script>
+  <script type="text/javascript" src="scripts/services/scheduleManager.js"></script>
+  <script type="text/javascript" src="scripts/services/swManager.js"></script>
+  <script type="text/javascript" src="scripts/services/devHelper.js"></script>
+
+  <script type="text/javascript" src="scripts/classes/activityCard.js"></script>
+  <script type="text/javascript" src="scripts/classes/appModeSwitchPrompt.js"></script>
+  <script type="text/javascript" src="scripts/classes/langTerm.js"></script>
+  <script type="text/javascript" src="scripts/classes/statistics.js"></script>
+  <script type="text/javascript" src="scripts/classes/settingsApp.js"></script>
+  <script type="text/javascript" src="scripts/classes/aboutApp.js"></script>
+  <script type="text/javascript" src="scripts/classes/menu.js"></script>
+  <script type="text/javascript" src="scripts/classes/favIcon.js"></script>
+  <script type="text/javascript" src="scripts/classes/login.js"></script>
+  <script type="text/javascript" src="scripts/classes/action.js"></script>
+  <script type="text/javascript" src="scripts/classes/blockForm.js"></script>
+  <script type="text/javascript" src="scripts/classes/blockList.js"></script>
+  <script type="text/javascript" src="scripts/classes/blockListView.js"></script>
+  <script type="text/javascript" src="scripts/classes/dataList.js"></script>
+  <script type="text/javascript" src="scripts/classes/blockButton.js"></script>
+  <script type="text/javascript" src="scripts/classes/blockMsg.js"></script>
+  <script type="text/javascript" src="scripts/classes/block.js"></script>
+  <script type="text/javascript" src="scripts/classes/webqr.js"></script>
+  <script type="text/javascript" src="scripts/classes/qrcode.js"></script>
+  <script type="text/javascript" src="scripts/classes/pwaEpoch.js"></script>
+  <script type="text/javascript" src="scripts/classes/baseConverter.js"></script>
+  <!--script type="text/javascript" src="scripts/classes/myDetails.js"></script-->
+
+  <script type="text/javascript" src="scripts/cwsRender.js"></script>
+  <script type="text/javascript" src="scripts/app.js"></script>
+
+</body>
+
+<script>
+  //setTimeout( function(){
+  //MoveLocalStorageData.moveData();
+  //DataVerMove.dataChangeHandle();
+
+  //new DBStorageSelector();
+  //}, 500 );
+
+  new app();
+</script>
+
+</html>

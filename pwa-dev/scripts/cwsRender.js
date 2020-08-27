@@ -7,8 +7,6 @@ function cwsRender()
 	// Tags
 	me.pageDivTag = $( '#pageDiv' );
 	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	/* me.menuAppMenuIconTag = $( '#nav-toggle' );*/
-	/* me.loggedInDivTag = $( '#loggedInDiv' ); */
 	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
 	me.pulsatingProgress = $( '#pulsatingDots' );
 
@@ -22,11 +20,9 @@ function cwsRender()
 	me.favIconsObj;
 	me.aboutApp;
 	me.settingsApp;
-	//me.myDetails;
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
-	me.langTermObj;
 	//me.sessionObj; // NEW PROPOSAL
 
 
@@ -39,8 +35,6 @@ function cwsRender()
 	// Create separate class for this?
 	// NOT BEING USED.
 	me.blocks = {};	// "blockId": blockObj..
-	//me.activityList = [];	// Move to FormUtil.activityList?
-
 
 	me._localConfigUse = false;
 	me._translateEnable = true;
@@ -97,7 +91,6 @@ function cwsRender()
 
 	me.createSubClasses = function()
 	{
-		me.langTermObj = new LangTerm( me );
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
@@ -664,25 +657,7 @@ function cwsRender()
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
-		// change to session Management process > forced reload of app (detect new version + forced login)
-		var SWinfoObj = AppInfoManager.getSWInfo()
-
-		if ( SWinfoObj )
-		{
-			if ( SWinfoObj.reloadRequired )
-			{ 
-				location.reload( true );
-			}
-			else
-			{
-				me.closeLoginUI();
-			}
-		}
-		else
-		{
-			me.closeLoginUI();
-		}
-
+		me.closeLoginUI();
 	}
 
 	me.closeLoginUI = function()

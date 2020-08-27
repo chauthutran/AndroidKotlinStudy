@@ -1,0 +1,103 @@
+.checkbox {
+    @include comp-tf-sc;
+    /*border: none !important;*/
+
+    .checkbox__label {
+        padding: 2px 8px 0 8px;
+
+        label {
+            color: $color-typ-dark;
+            font-style: normal;
+            font-weight: normal;
+            @include font-size(12px);
+            line-height: auto;
+        }
+    }
+    
+    span{
+        color: $color-alert;
+        padding-left: 5px;
+    }
+
+    .checkbox__wrapper {
+        width: auto;
+        float: left;
+        padding: 0 16px;
+        //background-color: red;
+        @include box-sizing(border-box);
+
+        .checkbox-col {
+            float: left;
+
+            //background-color: green;
+            @include box-sizing(border-box);
+        }
+
+        .horizontal {
+            float: left;
+        }
+
+        .checkbox-group {
+
+            padding-left: 24px;
+            margin: 24px 8px;
+
+            input[type=checkbox] {
+                display: none;
+
+                @mixin checkbox-structure($width: 24px, $height: 24px, $top: -1px, $left: '', $border-color: '', $background-color: '') {
+                    content: "";
+                    position: absolute;
+                    width: $width;
+                    height: $height;
+                    top: $top;
+                    border-radius: 2px;
+
+                    @if $border-color !='' {
+                        border: 1px solid $border-color;
+                    }
+
+                    @if $background-color !='' {
+                        background-color: $background-color;
+                    }
+
+                    transition: .2s;
+                }
+
+                &:not(:checked)+label::before {
+                    @include checkbox-structure($border-color: $checkbox-border-color-unchecked, $background-color: $checkbox-bg-color-unchecked);
+
+                    left: 0;
+                }
+
+                &:checked+label {
+                    &::before {
+                        @include checkbox-structure($border-color: $checkbox-border-color-checked, $background-color: $checkbox-bg-color-checked);
+
+                        left: 0;
+                    }
+
+                    &::after {
+                        @include checkbox-structure($width: 5px, $height: 9px);
+
+                        left: 8px;
+                        border-top: 8px solid transparent;
+                        border-left: 2px solid transparent;
+                        border-right: 2px solid #fff;
+                        border-bottom: 2px solid #fff;
+                        -webkit-transform: rotate(36deg);
+                        -ms-transform: rotate(36deg);
+                        transform: rotate(36deg);
+                        animation: fade-in .5s;
+                    }
+                }
+            }
+
+            label {
+                cursor: pointer;
+                position: relative;
+                padding: 4px 0 0 40px;
+            }
+        }
+    }
+}

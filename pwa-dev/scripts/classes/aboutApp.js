@@ -5,7 +5,6 @@ function aboutApp( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.aboutFormDivTag = $( '#aboutFormDiv' );
     me.aboutData;
