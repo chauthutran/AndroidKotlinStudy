@@ -6,7 +6,6 @@ function Statistics( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
 

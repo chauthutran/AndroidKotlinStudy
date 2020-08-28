@@ -732,31 +732,8 @@ ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
 
 // ==================================================
 
-ConfigManager.FiveYearsAgeGroups = [
-    { name: '0-4',  from: 0, to: 4 },
-    { name: '5-9',  from: 5, to: 9 },
-    { name: '10-14', from: 10, to: 14 },
-    { name: '15-19', from: 15, to: 19 },
-    { name: '20-24', from: 20, to: 24 },
-    { name: '25-29', from: 25, to: 29 },
-    { name: '30-34', from: 30, to: 34 },
-    { name: '35-39', from: 35, to: 39 },
-    { name: '40+',  from: 40, to: 120 }
-];
 
-ConfigManager.TenYearsAgeGroups = [
-    { name: '0-9',  from: 0, to: 9 },
-    { name: '10-19',  from: 10, to: 19 },
-    { name: '20-29', from: 20, to: 29 },
-    { name: '30-39', from: 30, to: 39 },
-    { name: '40-49', from: 40, to: 49 },
-    { name: '50-59', from: 50, to: 59 },
-    { name: '60-69', from: 60, to: 69 },
-    { name: '70-79', from: 70, to: 79 },
-    { name: '80+',  from: 80, to: 120 }
-];
-
-
+// THIS SHOULD BE OVERWRITTEN BY page ones...
 
 ConfigManager.periodSelectorOptions = {
     "all": {
@@ -767,62 +744,84 @@ ConfigManager.periodSelectorOptions = {
         "enabled": "true",
         "defaultOption": "true"
     },
-    "today": {
-        "name": "today",
-        "term": "",
-        "from": "new Date().toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "24hours": {
-        "name": "last 24 hours",
-        "term": "",
-        "from": "new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0]+'T'+new Date().toISOString().split( 'T' )[ 1 ]",
-        "to": "new Date(new Date().setDate(new Date().getDate())).toISOString().split('T')[0]+'T'+new Date().toISOString().split( 'T' )[ 1 ]",
-        "enabled": "false"
-    },
-    "last3Days": {
-        "name": "last 3 Days",
-        "term": "",
-        "from": "new Date(new Date().setDate(new Date().getDate() - 2)).toISOString().split('T')[0]",
-        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "last7Days": {
-        "name": "last 7 Days",
-        "term": "",
-        "from": "new Date(new Date().setDate(new Date().getDate() - 6)).toISOString().split('T')[0]",
-        "to": "new Date().toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
     "thisWeek": {
         "name": "this Week",
         "term": "",
-        "from": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay())).toISOString().split('T')[0]",
-        "to": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()+6)).toISOString().split('T')[0]",
-        "enabled": "true"
+        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
+        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
+        "enabled": "true",
+        "note": "week starts on Saturday?"
     },
     "lastWeek": {
         "name": "last Week",
         "term": "",
-        "from": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()-7)).toISOString().split('T')[0]",
-        "to": "new Date(new Date().setDate(new Date().getDate() - new Date().getDay()-1)).toISOString().split('T')[0]",
+        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
+        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
         "enabled": "true"
     },
     "thisMonth": {
         "name": "this Month",
         "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth(), 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "true"
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
+        "enabled": "true",
+        "note": "month range is from 2nd of month to 1st of next month?"
     },
     "lastMonth": {
         "name": "last Month",
         "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
         "enabled": "true"
     },
+    "thisYear": {
+        "name": "this Year",
+        "term": "",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
+        "enabled": "true"
+    },
+    "customRange": {
+        "name": "custom range",
+        "term": "",
+        "from": "'custom'",
+        "to": "'custom'",
+        "enabled": "true"
+    }
+};
+
+
+ConfigManager.periodSelectorOptions_Back = {
+
+    "today": {
+        "name": "today",
+        "term": "",
+        "from": "Util.dateStr( 'DATE' );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+    "24hours": {
+        "name": "last 24 hours",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATETIME', -1 );",
+        "to": "Util.dateStr( 'DATETIME' );",
+        "enabled": "false"
+    },
+    "last3Days": {
+        "name": "last 3 Days",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATE', -2 );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+    "last7Days": {
+        "name": "last 7 Days",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATE', -6 );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+
     "thisPaymentPeriod": {
         "name": "this Payment Period",
         "term": "",
@@ -865,254 +864,11 @@ ConfigManager.periodSelectorOptions = {
         "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
         "enabled": "false"
     },
-    "thisYear": {
-        "name": "this Year",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), 0, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear()+1, 0, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "true"
-    },
     "lastYear": {
         "name": "last Year",
         "term": "",
-        "from": "new Date(new Date().getFullYear()-1, 0, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), 0, 1).toISOString().split( 'T' )[ 0 ]",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() - 1, 0, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 1 ) );",
         "enabled": "false"
-    },
-    "customRange": {
-        "name": "custom range",
-        "term": "",
-        "from": "'custom'",
-        "to": "'custom'",
-        "enabled": "true"
     }
-};
-
-ConfigManager.statisticConfig = { 
-    "statsPageContent": [
-        "<div id='statsContent'>",
-        "  <div class='statDiv' statId='uniqueRegistrations'></div>",
-        "  <div class='statDiv' statId='vouchersIssued'></div>",
-        "  <div class='statDiv' statId='totalVisits'></div>",
-        "  <div class='statDiv' statId='returningClients'></div>",
-        "  <div class='statDiv' statId='regByAge'></div>",
-        "  <div class='statDiv' statId='regByActivityType'></div>",
-        "  <div class='statDiv' statId='regByActivityTypeByAge'></div>",
-        "  <div class='statDiv' statId='regByActivityTypeByServiceByAge'></div>",
-        "  <div class='statDiv' statId='regByActivityTypeByFullDateByAge'></div>",
-        "  <div class='statDiv' statId='regByActivityTypeByAgePivot'></div>",
-        "  <div class='statDiv' statId='regByActivityTypeBytransactionYearMonthPivot'></div>",
-        "</div>"
-    ],
-    "statsList": {
-        "uniqueRegistrations": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Unique Clients Registrations', 'consult' ); ", 
-                " console.customLog( 'uniqueRegistrations', INFO.data.c_reg ); ",
-                " me.addTag( INFO.data.c_reg.length, 'uniqueRegistrations', 'h3', 'blockDigit' ); "
-            ]
-        },
-        "vouchersIssued": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Vouchers Issued ', 'details' ); ", 
-                " console.customLog( 'vouchersIssued', INFO.data.v_iss, INFO.data.v_iss.length ); ",
-                " me.addTag( INFO.data.v_iss.length, 'vouchersIssued', 'h3', 'blockDigit' ); "
-            ]
-        },
-        "totalVisits": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Total Visits', 'activities' ); ", 
-                " console.customLog( 'totalVisits', ActivityDataManager._activityList ); ",
-                " me.addTag( ActivityDataManager._activityList.length, 'totalVisits', 'h3', 'blockDigit' ); "
-            ]
-        },
-        "returningClients": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Returning Clients', 'table' ); ", 
-                " me.addTag( INFO.data.s_pro.length + INFO.data.s_apt.length , 'returningClients', 'h3', 'blockDigit' ); "
-            ]
-        },
-        "regByAge": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by Age', 'table' ); ", 
-                " console.customLog( 'Registrations by Age' ); ",
-                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'age' ] ) ); ",
-                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'age' ] ), 'regByAge' ); ",
-            ]
-
-        },
-        "regByActivityType": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by activityType', 'table' ); ", 
-                " console.customLog( 'Registrations by activityType' ); ",
-                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'type' ] ) ); ",
-                " me.addDimensionTable( me.groupBy( INFO.data.c_reg, [ 'type' ] ), 'regByActivityType' ); ",
-            ]
-
-        },
-        "regByActivityTypeByAge": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by activityType+age', 'table' ); ", 
-                " console.customLog( 'Registrations by activityType+age' ); ",
-                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'type', 'age' ] ), 'regByActivityTypeByAge' ); ",
-            ]
-
-        },
-        "regByActivityTypeByServiceByAge": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'PARTIAL DATASET ERROR: Registrations by activityType+program+age', 'table' ); ", 
-                " console.customLog( 'Registrations by activityType+program+age' ); ",
-                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'program', 'type', 'age' ] ), 'regByActivityTypeByServiceByAge' ); ",
-            ]
-
-        },
-        "regByActivityTypeByFullDateByAge": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by activityType+transactionYearMonth+age', 'table' ); ", 
-                " console.customLog( 'Registrations by activityType+program+age' ); ",
-                " console.customLog( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ) ); ",
-                " me.addTable( me.groupBy( INFO.data.c_reg, [ 'transactionYear', 'transactionYearMonth', 'type', 'age' ] ), 'regByActivityTypeByFullDateByAge' ); ",
-            ]
-        },
-        "regByActivityTypeByAgePivot": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by ActivityType + Age: PIVOT', 'table' ); ", 
-                " console.customLog( 'regByActivityTypeByAgePivot' ); ",
-                " console.customLog( me.createGroup( INFO.data.c_reg, 'age', 'ageGroup5', ConfigManager.FiveYearsAgeGroups ) ); ",
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'ageGroup5' ] ), 'ageGroup5', 'type', 'count' ), 'regByActivityTypeByAgePivot' ); ",
-            ]
-
-        },
-        "regByActivityTypeBytransactionYearMonthPivot": {
-            "sequentialEval": "true",
-            "runDataEval": [
-                " me.addTitle( 'Registrations by ActivityType + transactionYearMonth: PIVOT', 'table' ); ", 
-                " console.customLog( 'regByActivityTypeBytransactionYearMonthPivot' ); ",
-                " console.customLog( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ) ); ",
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'transactionYearMonth' ] ), 'transactionYearMonth', 'type', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
-                " me.createGroup( INFO.data.c_reg, 'age', 'ageGroup10', ConfigManager.TenYearsAgeGroups ); ",
-                " me.addTitle( 'Another PIVOT', 'table' ); ", 
-                " me.pivotTable( me.pivot( me.groupBy( INFO.data.c_reg, [ 'type', 'ageGroup10' ] ), 'type', 'ageGroup10', 'count' ), 'regByActivityTypeBytransactionYearMonthPivot' ); ",
-            ]
-
-        }
-    }
-};
-
-ConfigManager.statisticConfig2 = { 
-    "statsPageContent": [
-        "<div id='statsContent'>",
-        "  <div class='statDiv' statId='byYearTable'></div>",
-        "  <div class='statDiv' statId='periodTotal'></div>",
-        "  <div class='statDiv' statId='allTotal'></div>",
-        "</div>"
-    ],
-    "statsList": {
-        "byYearTable": {
-            "periodType": "relational",
-            "runDataEval": [
-                " var cf = crossfilter([ ",
-                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
-                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
-                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
-                " ]); ",
-
-                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
-            
-                " INFO.toTable( INFO.statChartTag, cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ).top( Infinity ) ); "
-            ],
-            "divContent": [
-                "<div>---Table---</div>",
-                "<div>",
-                " displaying table content: <br>",
-                " <div class='statChart'></div>",
-                "</div>"
-            ]
-        },
-        "allTotal": {
-            "periodType": "static",
-            "runDataEval": [
-                " var cf = crossfilter([ ",
-                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
-                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
-                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
-                " ]); ",
-
-                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
-            
-                " INFO.statChartTag.html( cf_year.groupAll().reduceSum( function(d) { return d.DMFT; } ).value() ); "
-            ],
-            "divContent": [
-                "<div>------</div>",
-                "<div>All Year Total: <div class='statChart'></div>",
-                "</div>"
-            ]
-
-        },
-        "periodTotal": {
-            "periodType": "relational",
-            "runDataEval": [
-                " var cf = crossfilter([ ",
-                "    { Country: 'Brazil', Year: 1986, DMFT: 6.7 }, ",
-                "    { Country: 'Brazil', Year: 1994, DMFT: 4.9 }, ",
-                "    { Country: 'Canada', Year: 1974, DMFT: 4.4 } ",
-                " ]); ",
-
-                " var cf_year = cf.dimension( function(d) { return d.Year; } ); ",
-            
-                " var filtered = cf_year.filterRange( [ INFO.startPeriod, INFO.endPeriod ] ); ",
-
-                " INFO.statChartTag.html( INFO.getListSum( filtered.top( Infinity ), 'DMFT' ) ); ",
-
-                " /* filtered.groupAll().reduceSum( function(d) { return d.DMFT; } ).value() */"
-            ],
-            "divContent": [
-                "<div>------</div>",
-                "<div>Period Total: <div class='statChart'></div>",
-                "</div>"
-            ]
-
-        }
-    },
-    "chartMethods": [
-        " INFO.toTable = function( tableTag, json ) { ",
-        "    var html = ''; ",
-
-        "    json.forEach(function(row) { ",
-        "        html += '<tr>'; ",
-        "        var dataStr = ''; ",
-        
-        "        for ( key in row ) { ",
-        "              html += '<td>' + row[key] + '</td>'; ",
-        
-        "              dataStr += row[key] + ', '; ",
-        "        }; ",
-        
-        "        console.customLog( dataStr ); ",
-        "        html += '</tr>'; ",
-        "    }); ",
-        
-        "    tableTag.html( '<table>' + html + '</table>' ); ",
-        " }; ",
-
-        " INFO.getListSum = function( list, prop ) { ",
-        "    var total = 0; ",
-        "    list.forEach(function(item) { ",
-        "       if ( item[prop] ) total += Number( item[prop] ); ",
-        "    }); ",
-        "    return total; ",
-        " }; "
-    ]
 };

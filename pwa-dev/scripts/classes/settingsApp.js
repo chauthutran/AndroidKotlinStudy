@@ -5,7 +5,6 @@ function settingsApp( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.langTermObj = me.cwsRenderObj.langTermObj;
 
     me.settingsFormDivTag = $( '#settingsFormDiv' );
     me.settingsData;

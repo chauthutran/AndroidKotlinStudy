@@ -9,6 +9,8 @@ Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
 
 Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
+Util.dateType_DATE = "yyyy-MM-dd";
+Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 
 // ----------------------------------------------------
@@ -1203,6 +1205,35 @@ Util.dateToStr = function( date, separator )
 		
 	return date.getFullYear() + separator + month + separator + day;
 };
+
+
+// ===============================================
+
+
+// NEW DATE FORMATTER --> DATE STRING..
+Util.dateStr = function( formatType, inputDate )
+{
+	var date = ( inputDate ) ? inputDate: new Date();
+	var formatPattern = Util.dateType1;
+
+	if ( formatType === 'D' || formatType === 'DATE' ) formatPattern = Util.dateType_DATE;
+	if ( formatType === 'DT' || formatType === 'DATETIME' ) formatPattern = Util.dateType_DATETIME;
+
+	return $.format.date( date, formatPattern );
+};
+
+
+Util.dateAddStr = function( formatType, addDateNumber )
+{
+	var date = new Date();
+
+	date.setDate( date.getDate() + addDateNumber );
+
+	return Util.dateStr( formatType, date );
+};
+
+
+// ===============================================
 
 
 Util.formatDate = function( date, formatPattern )
