@@ -31,7 +31,6 @@ function Statistics( cwsRender )
 
     me.initialize = function() 
     {
-        
     }
 
     me.render = function()
@@ -40,21 +39,25 @@ function Statistics( cwsRender )
 
         me.initialize_UI();
 
-        //me.initialize_Data();
-        me.initialise_periodOptions( me.statsPeriodSelector );
+        //me.initialize_Data();        
+
+        me.loadPeriodOptions( me.statsPeriodSelector, ConfigManager.periodSelectorOptions, 'reset' );
 
         me.setEvents_OnRender();
 
-        me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
+        me.loadStatConfigPage( me.statsContentPageTag, function() {
 
-            me.loadStatConfigPage( me.statsContentPageTag, function() {
+            // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
+            me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
+
+            me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
 
                 me._clientList_Clone = me.prepareClientListData( ClientDataManager.getClientList() );            
 
                 // This method should have been loaded by above 'script' content eval
                 renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
-            });    
-        });
+            });
+        });    
 
         me.statisticsFormDiv.fadeIn();
     };
@@ -259,6 +262,8 @@ function Statistics( cwsRender )
         }
     };
 
+
+    // For loading the '<script' 1st before calling 'callBack'
     me.waitForAllLoaded = function( loadList, callBack )
     {
         var allLoaded = true;
@@ -274,9 +279,7 @@ function Statistics( cwsRender )
             }
         }
 
-        if ( allLoaded ) {
-            callBack();
-        }
+        if ( allLoaded ) callBack();
     };
 
 
@@ -303,66 +306,63 @@ function Statistics( cwsRender )
     // -----------------------------------------------
 
 
-    me.initialise_periodOptions = function( control )
+    me.loadPeriodOptions = function( tag, optionsObj, clearOptions )
     {
-        var periodOptions = me.getPeriodOpts();
+        if ( tag )
+        {
+            if ( clearOptions === 'reset' ) tag.find( 'option[type="loaded"]' ).remove();
 
-        // NOTE: Disabled for now:
-        //      - Removing periodOptions that falls outside of date range
-        //      - Counting/Organizing data that falls into the date range
-
-        // new Date( me.statMetaSummary[ 'from' ] ).toISOString().split( 'T' )[ 0 ]
-        //, new Date( me.statMetaSummary[ 'to' ] ).toISOString().split( 'T' )[ 0 ] );
-        
-        // Based on the dates from/to, set the data array from full activity list.
-        //for (var d = 0; d < dateGroups.length; d++ ) { dateGroups[ d ].data = me.getRecordsForDateGroup( me.allStats, dateGroups[ d ] ); }
-
-        //console.customLog( periodOptions );
-
-        me.createStatPeriodOptions( me.statsPeriodSelector, periodOptions );
+            if ( optionsObj )
+            {
+                var periodOptions = me.convertPeriodOpts( optionsObj );
+                me.insertOptions_PeriodTag( tag, periodOptions );        
+            }
+        }
     };
 
 
-    me.getPeriodOpts = function()
+    me.convertPeriodOpts = function( opts )
     {
-        // Get period options from config json.  Filter by enabled true.
-
-        // TODO: date eval expression is using ISO, not local date.  Need to change it later..
-        // Add custom fitlering..
-        var opts = ConfigManager.periodSelectorOptions;
-        var fetchGroups = [];
+        var periodOptions = [];
         
         for ( var key in opts )
         {
-            var newOpt = opts[ key ];
-            var newFrom = ( newOpt.from ) ? eval( newOpt.from ) : '';
-            var newTo = ( newOpt.to ) ? eval( newOpt.to ) : '';
+            var item = opts[ key ];
 
-            if ( newOpt.enabled === 'true' )
+            try
             {
-                fetchGroups.push( { "name": newOpt.name
-                    , "term": ( newOpt.term ) ? newOpt.term : ''
-                    , "from": newFrom
-                    , "to": newTo
+                var fromVal = ( item.from ) ? eval( item.from ) : '';
+                var toVal = ( item.to ) ? eval( item.to ) : '';
+    
+                //if ( item.enabled === 'true' )
+                periodOptions.push( { "name": item.name
+                    , "term": newOpt.term
+                    , "from": fromVal
+                    , "to": toVal
                     , "selected": ( newOpt.defaultOption === 'true' )
-                });
+                }); 
             }
-
-            // REMOVED: Optional param to filter the period options that falls outside of date range
-            // if ( rangeFrom && rangeTo ) if ( ( new Date( newFrom ) <= new Date( rangeFrom ) && new Date( newTo ) >= new Date( rangeFrom )  ) || ( new Date( newFrom ) <= new Date( rangeTo ) && new Date( newTo ) >= new Date( rangeTo )  ) )
+            catch( errMsg )
+            {
+                console.customLog( 'ERROR in statistics.convertPeriodOpts' );
+            }
         }
 
-        return fetchGroups;
+        return periodOptions;
     };
 
 
-    me.createStatPeriodOptions = function ( selectTag, periodOptions )
+    me.insertOptions_PeriodTag = function ( selectTag, periodOptions )
     {
         for ( var i = 0; i < periodOptions.length; i++ )
         {
             var option = periodOptions[ i ];
 
-            var newOpt = $( '<option from="' + option.from + '" to="' + option.to + '" >' + option.name + '</option>' );
+            // Optionally, we can remove already existing duplicate 'name' one..
+
+            var optTerm = ( option.term ) ? ' term="' + option.term + '"' : '';
+
+            var newOpt = $( '<option from="' + option.from + '" to="' + option.to + '" type="loaded" ><span' + optTerm + '>' + option.name + '</span></option>' );
 
             if ( option.selected ) newOpt.attr( 'selected', 'selected' );
 
