@@ -3549,7 +3549,27 @@ textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
-
+.field .split_password {
+  -webkit-text-security: disc;
+}
+.field .split_password [maxlength="4"] {
+  display: none;
+}
+.field .split_password [maxlength="1"] {
+  width: 48px;
+  float: left;
+  height: 48px;
+  min-height: 24px;
+  margin: 2px 4px 4px 4px;
+  border: 1px solid #B1B1B1;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.009);
+  text-align: center;
+  padding-left: 5px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
 .field input {
   margin-bottom: 2px;
   cursor: pointer;
@@ -3720,6 +3740,11 @@ textarea {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+
+.pin {
+  border: none;
+  margin-bottom: 20px;
 }
 
 .btm_nav {

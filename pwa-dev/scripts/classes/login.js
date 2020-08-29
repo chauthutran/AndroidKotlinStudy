@@ -79,25 +79,38 @@ function Login( cwsRenderObj )
 
 	me.setLoginBtnEvents = function()
 	{
-		me.scrimTag.click( function() {
-
+		me.scrimTag.click( function() 
+		{
 			console.customLog( 'scrimTag click - unblock Page' );
 
 			me.unblockPage();
 		});
 
+		// Disable this...
 		me.loginBtnTag.focus( function() {
 			me.passRealTag.hide();
 		});
 
-		me.loginBtnTag.click( function() {
-
+		me.loginBtnTag.click( function() 
+		{
 			var loginUserNameVal = me.loginUserNameTag.val();
-			var loginUserPinVal = me.loginUserPinTag.val();
+			var loginUserPinVal = ''; //me.loginUserPinTag.val();
+
+			var splitPasswordTag = $( '.split_password' );
+			
+			var pin1Val = Util.trim( splitPasswordTag.find( '.pin1' ).val() );
+			var pin2Val = Util.trim( splitPasswordTag.find( '.pin2' ).val() );
+			var pin3Val = Util.trim( splitPasswordTag.find( '.pin3' ).val() );
+			var pin4Val = Util.trim( splitPasswordTag.find( '.pin4' ).val() );
+
+			if ( pin1Val && pin2Val && pin3Val && pin4Val )
+			{
+				loginUserPinVal = pin1Val + pin2Val + pin3Val + pin4Val;
+			}
 
 			if( loginUserNameVal == "" || loginUserPinVal == "" )
 			{
-				MsgManager.notificationMessage ( 'Please enter username / password', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notificationRed', undefined, '', 'right', 'top' );
 			}
 			else
 			{
@@ -106,7 +119,25 @@ function Login( cwsRenderObj )
 			
 		});
 		
-		
+		$( ".onKeyboardOnOff" ).focus( function () 
+		{ // Focus
+			$( ".login_cta" ).hide();
+		});
+	
+		$( ".onKeyboardOnOff" ).blur( function () 
+		{ // Lost focus
+			$( ".login_cta" ).show();
+		});
+	
+		$( ".pin_pw" ).keyup( function () 
+		{		
+			if ( this.value.length == this.maxLength ) 
+			{
+				if ( $(this).hasClass( 'pin4' ) ) me.loginBtnTag.click();
+				else $(this).next( '.pin_pw' ).focus();
+			}
+		});
+	
 	}
 	
 	me.blockPage = function()
