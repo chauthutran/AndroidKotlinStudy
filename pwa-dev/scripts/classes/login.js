@@ -8,9 +8,8 @@ function Login( cwsRenderObj )
 
 	me.loginFormDivTag = $( '#loginFormDiv' );
 	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
-	me.loggedInDivTag = $( '#loggedInDiv' );
 	me.navTitleTextTag = $( '.Nav__Title' );
-	me.pageTitleDivTab = $( 'div.logo-desc-all' );
+	//me.pageTitleDivTab = $( 'div.logo-desc-all' );
 	me.scrimTag = $('.scrim');
 	me.sheetBottomTag = $('.sheet_bottom');
 
@@ -25,7 +24,7 @@ function Login( cwsRenderObj )
 	me.loginFormTag = $( '.login_data__fields' );
 	me.loginFieldTag = $( '#loginField' );
 
-	me._userName = '';
+	me.lastPinTrigger = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -36,18 +35,18 @@ function Login( cwsRenderObj )
 	}
 
 	me.render = function()
-	{		
+	{	
 		me.appVersionInfoDisplay();
 
-		me.openForm();
+		me.openForm();  // with reset Val
 
 		me.mobileCssSetup();
 
-		FormUtil.setUpLoginInputsEvents();
+		//FormUtil.setUpLoginInputsEvents();
 
 		me.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..
 		
-		FormUtil.positionLoginPwdBlinker();
+		//FormUtil.positionLoginPwdBlinker();
 
 		// Translate the page..
 		TranslationManager.translatePage();
@@ -93,6 +92,8 @@ function Login( cwsRenderObj )
 
 		me.loginBtnTag.click( function() 
 		{
+			$( '.pin_pw_loading' ).hide();
+
 			var loginUserNameVal = me.loginUserNameTag.val();
 			var loginUserPinVal = ''; //me.loginUserPinTag.val();
 
@@ -110,13 +111,24 @@ function Login( cwsRenderObj )
 
 			if( loginUserNameVal == "" || loginUserPinVal == "" )
 			{
+				me.clearResetPasswords();
+
 				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notificationRed', undefined, '', 'right', 'top' );
 			}
 			else
 			{
-				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ) );
+				if ( me.lastPinTrigger ) $( '.pin_pw_loading' ).show();
+
+				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ), function( success ) {
+
+					console.customLog( 'finished processLogin' );
+
+					me.clearResetPasswords();
+					//$( '.pin_pw_loading' ).hide();
+				});
 			}
 			
+			//$( '.pin_pw_loading' ).hide();
 		});
 		
 		$( ".onKeyboardOnOff" ).focus( function () 
@@ -133,12 +145,20 @@ function Login( cwsRenderObj )
 		{		
 			if ( this.value.length == this.maxLength ) 
 			{
-				if ( $(this).hasClass( 'pin4' ) ) me.loginBtnTag.click();
+				if ( $(this).hasClass( 'pin4' ) ) 
+				{ 
+					// if userName is already selected /filled
+					if ( Util.trim( me.loginUserNameTag.val() ).length > 0 )
+					{
+						me.lastPinTrigger = true;
+						me.loginBtnTag.click(); 	
+					}
+				}
 				else $(this).next( '.pin_pw' ).focus();
 			}
 		});
-	
-	}
+	};
+
 	
 	me.blockPage = function()
 	{
@@ -224,8 +244,7 @@ function Login( cwsRenderObj )
 			});
 
 		});
-
-	}
+	};
 
 	// =============================================
 
@@ -235,10 +254,9 @@ function Login( cwsRenderObj )
 
 	me.appVersionInfoDisplay = function()
 	{
-		$( '#spanVersion' ).text( 'v' + _ver );
+		$( '#spanVersion' ).text( 'Version ' + _ver );
 		$( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
-		$( '#loginVersionNote' ).append( '<label> ' + _versionNote + '</label>' );
-	
+		$( '#loginVersionNote' ).append( '<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>' );
 
 		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
 			location.reload( true );
@@ -248,15 +266,20 @@ function Login( cwsRenderObj )
 	
 	me.openForm = function()
 	{
+		// Reset vals and set focus
+		me.clearResetPasswords();
+
+		if ( !me.loginUserNameTag.val() ) me.loginUserNameTag.focus();
+		else $( '.pin1' ).focus();
+
+
+		// Hide non login related tags..
+		$( '.Nav1' ).hide();
+
 		me.pageDivTag.hide();		
 		me.loginFormDivTag.show( 'fast' );
 
-		if ( ! me.loginFormDivTag.is( ":visible" ) )
-        {
-            me.loginFormDivTag.show();
-		}
-
-		me.loggedInDivTag.hide();
+		//if ( ! me.loginFormDivTag.is( ":visible" ) ) me.loginFormDivTag.show();
 
 		Menu.setInitialLogInMenu( me.cwsRenderObj );
 	};
@@ -264,22 +287,34 @@ function Login( cwsRenderObj )
 
 	me.closeForm = function()
 	{
+		// '.Nav1' show should be moved to cwsRender.startWithConfigLoad
+		$( '.Nav1' ).css( 'display', 'flex' );			
+		//me.pageTitleDivTab.hide(); 
+
 		me.loginFormDivTag.hide();
 		me.pageDivTag.show( 'fast' );
 
 		me.loginFieldTag.show();		
 	};
 
+	me.clearResetPasswords = function()
+	{
+		// If last pin cause error, move the focus to 1st one.
+		if ( me.lastPinTrigger ) $( '.pin1' ).focus();
+
+		me.lastPinTrigger = false;
+		$( '#pass' ).val( '' );
+		$( '.pin_pw' ).val( '' );
+		$( '.pin_pw_loading' ).hide();
+	};
 
 	// ------------------------------------------
 	// --- Perform Login Related...
 
-	me.processLogin = function( userName, password, server, btnTag )
+	me.processLogin = function( userName, password, server, btnTag, callAfterDone )
 	{
 		var parentTag = btnTag.parent();
 		var dtmNow = ( new Date() ).toISOString();
-
-		me._userName = userName;
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
@@ -287,97 +322,99 @@ function Login( cwsRenderObj )
 		// ONLINE vs OFFLINE HANDLING
 		if ( !ConnManagerNew.isAppMode_Online() )
 		{
-			me.loginOffline( userName, password, function( offlineUserData ) 
+			me.loginOffline( userName, password, function( isSuccess, offlineUserData ) 
 			{
-				me.loginSuccessProcess( userName, offlineUserData );
+				if ( isSuccess ) me.loginSuccessProcess( userName, offlineUserData );
+
+				if ( callAfterDone ) callAfterDone( isSuccess );
 			});
 		}
 		else
 		{
 			var loadingTag = FormUtil.generateLoadingTag( btnTag.find( '.button-label' ) );
 
-			me.loginOnline( userName, password, loadingTag, function( loginData ) 
+			me.loginOnline( userName, password, loadingTag, function( isSuccess, loginData ) 
 			{
-				me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
+				if ( isSuccess )
+				{
+					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
+					me.loginSuccessProcess( userName, loginData );	
+				}
 
-				me.loginSuccessProcess( userName, loginData );
+				if ( callAfterDone ) callAfterDone( isSuccess );
 			});
 		}
 	};
 
 	
 	me.loginSuccessProcess = function( userName, loginData ) 
-	{		
+	{	
+		// Load config and continue the CWS App process
+		if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Login Failed > unexpected error, cannot proceed', 'ERROR' );
+		else
+		{
+			// Load Activities
+			me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
+			{
+				me.loginAfterProcess( userName );
+				
+				// call CWS start with this config data..
+				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
+			});			
+		}
+	};
+
+
+	me.loginAfterProcess = function( userName )
+	{
+		// 1. Data Related Process
+		SyncManagerNew.SyncMsg_Reset();
+
 		// Save userName to 'appInfo.userInfo'
 		AppInfoManager.createUpdateUserInfo( userName );
 		
-		
-		// After Login, run/setup below ones.
 		SessionManager.setLoginStatus( true );		
+		InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
 
-		SyncManagerNew.SyncMsg_Reset();
+		//AppInfoManager.setLastLoginMark( new Date() );
 
-		InfoDataManager.setDataAfterLogin();
 
-		// Load Activities
-		me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
-		{
-			me.closeForm();
-			me.pageTitleDivTab.hide(); 
-
-			// Load config and continue the CWS App process
-			if ( loginData.dcdConfig ) 
-			{
-				// call CWS start with this config data..
-				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
-
-				me.loginAfter();
-			}
-			else
-			{
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > unexpected error, cannot proceed', 'notificationRed', undefined, '', 'right', 'top' );
-			}
-
-			$( '.Nav1' ).css( 'display', 'flex' );
-
-		});
-	};
-
-	me.loginAfter = function()
-	{
+		// 2. UI Related Process
+		me.closeForm();
 		FormUtil.geolocationAllowed();
 
 		me.cwsRenderObj.renderDefaultTheme();
-
 		MsgManager.initialSetup();
 
 		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
 
-		me.loginAfter_UI_Update();
+		me.loginAfter_LoginPageUIUpdate();
 	};
 
 	// ----------------------------------------------
 	
-	me.loginOnline = function( userName, password, loadingTag, execFunc )
+	me.loginOnline = function( userName, password, loadingTag, returnFunc )
 	{
 		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 		{			
-			me.checkLoginData_wthErrMsg( success, loginData, function() {
+			me.checkLoginData_wthErrMsg( success, loginData, function( resultSuccess ) 
+			{
+				if ( resultSuccess )
+				{
+					// Save 'loginData' in localStorage and put it on session memory
+					SessionManager.saveUserSessionToStorage( loginData, userName, password );
+					SessionManager.loadDataInSession( userName, password, loginData );
+				}
 
-				// Save 'loginData' in localStorage and put it on session memory
-				SessionManager.saveUserSessionToStorage( loginData, userName, password );
-				SessionManager.loadDataInSession( userName, password, loginData );
-
-				if( execFunc ) execFunc( loginData );
+				if( returnFunc ) returnFunc( resultSuccess, loginData );
 			});								
-		} );
+		});
 	};
 
 	
-	me.loginOffline = function( userName, password, execFunc )
+	me.loginOffline = function( userName, password, returnFunc )
 	{
-		var offlineUserData = SessionManager.getOfflineUserData( userName );
+		var isSuccess = false;
 
 		// OFFLINE Login - validate encrypted pwd against already stored+encrypted pwd
 		var offlineUserData = SessionManager.getOfflineUserData( userName );
@@ -392,7 +429,7 @@ function Login( cwsRenderObj )
 					SessionManager.updateUserSessionToStorage( offlineUserData, userName );
 					SessionManager.loadDataInSession( userName, password, offlineUserData );
 
-					execFunc( offlineUserData );
+					isSuccess = true;
 				}
 			}
 			else
@@ -406,30 +443,37 @@ function Login( cwsRenderObj )
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
 		}
+
+		if ( returnFunc ) returnFunc( isSuccess, offlineUserData );
 	};
 
 	// ----------------------------
 
 
-	me.checkLoginData_wthErrMsg = function ( success, loginData, noErrorRun )
+	me.checkLoginData_wthErrMsg = function ( success, loginData, callBack )
 	{
+		var resultSuccess = false;
+
 		if ( success )
 		{
 			if ( !loginData )
 			{
 				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				resultSuccess = false;
 			} 
 			else if ( !loginData.orgUnitData ) 
 			{
 				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				resultSuccess = false;
 			}
 			else if ( !loginData.dcdConfig ) 
 			{
 				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				resultSuccess = false;
 			}
 			else
 			{
-				if ( noErrorRun ) noErrorRun();
+				resultSuccess = true;
 			}
 		}
 		else
@@ -438,7 +482,11 @@ function Login( cwsRenderObj )
 
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+
+			resultSuccess = false;
 		}
+
+		if ( callBack ) callBack( resultSuccess );
 	};
 
 	// ----------------------------------------------
@@ -480,19 +528,9 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.loginAfter_UI_Update = function()
+	me.loginAfter_LoginPageUIUpdate = function()
 	{
-
-		/*me.loginUserNameTag.attr( 'readonly',true );
-		$( 'div.loginSwitchUserNotification' ).show();
-		$( 'div.Nav__icon' ).addClass( 'closed' );
-		me.loginFieldTag.hide();
-		me.loginFormTag.find( 'h4' ).remove();
-		$( '<h4>'+ me.loginUserNameTag.val() +'<h4>' ).insertBefore( me.loginFieldTag );*/
-
 		var loginUserNameH4Tag = $( '#loginUserNameH4' );
-
-		//loginUserNameH4Tag.show();
 
 		// Div (Input) part of Login UserName
 		$( '#loginField' ).hide();
@@ -506,18 +544,7 @@ function Login( cwsRenderObj )
 		
 		$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
-		// MOVED TO syncManagerNew
-    	//SyncManagerNew.networkStatusClickSetup();
-
 		FormUtil.hideProgressBar();
-	};
-
-
-	me.clearLoginPin = function()
-	{
-		// clear password pin
-		$( '#pass' ).val( '' );
-		$( '#passReal' ).val( '' );
 	};
 
 	// --------------------------------------
@@ -529,6 +556,7 @@ function Login( cwsRenderObj )
 	};
 
 
+	// TODO: HOW IS THIS APPLIED TO NEW LOGIN PAGE 4 DIGIT PIN?
 	me.browserResizeHandle = function()
 	{
 		if ( me.isMobileDevice() )
@@ -562,7 +590,7 @@ function Login( cwsRenderObj )
 						$( '.hideOnKeyboardVisible' ).show();
 					}
 
-					FormUtil.setTimedOut_PositionLoginPwdBlinker();
+					//FormUtil.setTimedOut_PositionLoginPwdBlinker();
 				}
 			});
 		}
@@ -571,7 +599,7 @@ function Login( cwsRenderObj )
 			// Window Resize detection
 			$( window ).on( 'resize', function () 
 			{
-				FormUtil.setTimedOut_PositionLoginPwdBlinker();		
+				//FormUtil.setTimedOut_PositionLoginPwdBlinker();		
 			});
 		}
 	};

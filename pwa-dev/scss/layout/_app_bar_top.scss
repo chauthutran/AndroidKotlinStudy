@@ -1,8 +1,8 @@
 .Nav1 {
     @include position(sticky);
     top: 0;
-    //display: -webkit-box;
-    display: none;
+    display: -webkit-box;
+    //display: none;
     vertical-align: middle;
     width: 100%;
     height: 56px;

@@ -8,7 +8,7 @@
 body
 {
   /* overscroll-behavior-y: contain; */
-  overflow-y: hidden;
+  /* overflow-y: hidden; disables entire scroll, thus, can not use it.*/
 }
 
 /*.button {
@@ -26,6 +26,10 @@ body
 
 .pointer {
   cursor: pointer;
+}
+
+.pin_pw {
+  background-color: white;
 }
 
 .modalSymbol{

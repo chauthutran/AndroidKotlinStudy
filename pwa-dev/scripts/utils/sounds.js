@@ -46,8 +46,8 @@ function loadSound(name)
 
 function playSound(name, options){
 
-  var sessData = AppInfoManager.getUserInfo ();
-  var play = ( ( sessData == null || sessData === undefined ) ? false : ( sessData.soundEffects != undefined ) ? sessData.soundEffects : false );
+  //var sessData = AppInfoManager.getUserInfo ();
+  var play = ( ConfigManager.staticData.soundEffects === true );
 
   if ( play )
   {

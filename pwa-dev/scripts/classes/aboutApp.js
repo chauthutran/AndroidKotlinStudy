@@ -416,17 +416,6 @@ function aboutApp( cwsRender )
                 $( '#aboutInfo_geoLocation_Less' ).show();
                 $( '#aboutInfo_geoLocation_Less' ).removeClass( 'byPassAboutMore' );
 
-                if ( Util.isMobi() )
-                {
-                    $( '#aboutInfo_soundEffects_Less' ).show();
-                    $( '#aboutInfo_soundEffects_Less' ).removeClass( 'byPassAboutMore' );
-                }
-                else
-                {
-                    $( '#aboutInfo_soundEffects_Less' ).hide();
-                    $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
-                }
-
             }
         }
         else
@@ -440,9 +429,6 @@ function aboutApp( cwsRender )
 
             $( '#aboutInfo_geoLocation_Less' ).hide();
             $( '#aboutInfo_geoLocation_Less' ).addClass( 'byPassAboutMore' );
-
-            $( '#aboutInfo_soundEffects_Less' ).hide();
-            $( '#aboutInfo_soundEffects_Less' ).addClass( 'byPassAboutMore' );
 
             if ( TranslationManager.getLangList() )
             {
@@ -629,7 +615,6 @@ function aboutApp( cwsRender )
                 return arrList[i].name;
             }
         }
-
     }
 
     me.getLanguageUpdate = function( languageList, defaultLangCode )
@@ -643,7 +628,6 @@ function aboutApp( cwsRender )
                 return languageList[i].updated;
             }
         }
-
     }
 
     me.populateThemeList_Show = function( ThemeList, defaultTheme )

@@ -25,6 +25,30 @@
         @include box-sizing(border-box);
     }
 
+    /* Styles for a split password field */
+    .split_password {
+        [maxlength="4"] {
+            display: none;
+        }
+
+        /*-webkit-text-security: disc;*/
+
+        [maxlength="1"] {
+            width: 48px;
+            float: left;
+            height: 48px;
+            min-height: 24px;
+            margin: 2px 4px 4px 4px;
+            border: 1px solid $comp-border;
+            border-radius: $radius;
+            /*background-color: rgba($color-typ-sl, 0.009);*/
+            text-align: center;
+            padding-left: 5px;
+            @include box-sizing(border-box);
+        }
+    }
+
+
     input {
         margin-bottom: 2px;
         cursor: pointer;
@@ -102,7 +126,7 @@
     }
 }
 
-/**********************/ 
+/**********************/
 
 .field-read_only {
     float: left;
@@ -131,4 +155,9 @@
         padding: 0 8px 0 8px;
         @include box-sizing(border-box);
     }
+}
+
+.pin {
+    border: none;
+    margin-bottom:20px;
 }

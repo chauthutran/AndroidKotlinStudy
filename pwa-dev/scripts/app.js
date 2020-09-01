@@ -15,14 +15,14 @@ function app()
 
 	me.initialize = function()
 	{
-
+    // Default Behavior Modify
     me.setBackActionDetect();
 
     window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
+    window.addEventListener( 'error', me.catchErrorInCustomLog );
 
     // app startup event setup (for listeners)
     //window.addEventListener( 'appinstalled', me.App_installed_done);
-
     
 
     // Instantiate Classes
@@ -122,11 +122,11 @@ function app()
 
       FormMsgManager.appUnblock();
 
-      $( 'input.loginUserName' ).focus();
+      //$( 'input.loginUserName' ).focus();
 
-      $( '.Nav1' ).dblclick( function(){
-        DevHelper.loadSampleData();
-      } )
+      //$( '.Nav1' ).dblclick( function(){
+      //  DevHelper.loadSampleData();
+      //} )
 
     }, 500);
 
@@ -207,6 +207,7 @@ function app()
     divMobileInstallTryTag.css( 'cursor', 'pointer' );
     divMobileInstallTryTag.text( '<span>Available - standAlone: ' + isApp_standAlone + '</span>' );
 
+
     divMobileInstallTryTag.off( 'click' ).click( function() 
     {
         // Show the prompt
@@ -242,7 +243,13 @@ function app()
     window.onhashchange=function(){window.location.hash="no-back-button";}
     */
   };
-  
+
+
+  me.catchErrorInCustomLog = function( e )
+  {
+    // const { message, source, lineno, colno, error } = e; 
+    console.customLog( e.message );
+  };
 	// ======================================
 
 	me.initialize();
