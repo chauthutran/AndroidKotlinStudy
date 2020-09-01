@@ -53,12 +53,12 @@ $table_cols: ("greater_than": 2,
                 font-weight: 500;
                 min-width: 100px;
             }
-
+            /*
             &:last-child {
                 padding: 12px 0;
                 font-weight: 500;
             }
-
+            */
             &:before {
                 // title
                 content: attr(data-th)"";
@@ -96,13 +96,14 @@ $table_cols: ("greater_than": 2,
                     width: auto;
                 }
 
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)": ";
                     font-weight: 400;
@@ -131,14 +132,14 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)"";
                     font-weight: 400;
@@ -178,12 +179,12 @@ $table_cols: ("greater_than": 2,
                 font-weight: 500;
 
             }
-
+            /*
             &:last-child {
                 padding: 12px 0;
                 font-weight: 500;
             }
-
+            */
             div {
                 float: right;
                 text-align: right;
@@ -203,13 +204,13 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
-                }
+                }*/
         }
 
         td {
@@ -224,13 +225,13 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
-                }
+                }*/
 
         }
     }
@@ -259,12 +260,12 @@ $table_cols: ("greater_than": 2,
                 font-weight: 500;
                 min-width: 100px;
             }
-
+            /*
             &:last-child {
                 padding: 12px 0;
                 font-weight: 500;
             }
-
+            */
             &:before {
                 // title
                 content: attr(data-th)"";
@@ -301,14 +302,14 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)": ";
                     font-weight: 400;
@@ -337,14 +338,14 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)"";
                     font-weight: 400;
@@ -384,12 +385,12 @@ $table_cols: ("greater_than": 2,
                 font-weight: 500;
                 min-width: 100px;
             }
-
+            /*
             &:last-child {
                 padding: 12px 0;
                 font-weight: 500;
             }
-
+            */
             &:before {
                 // title
                 content: attr(data-th)"";
@@ -426,14 +427,14 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)": ";
                     font-weight: 400;
@@ -462,14 +463,14 @@ $table_cols: ("greater_than": 2,
                     padding-left: 0;
                     width: auto;
                 }
-
+                /*
                 &:last-child {
                     padding-right: 0;
                     width: auto;
                     padding-top: .5em;
                     font-weight: 500;
                 }
-
+                */
                 &:before {
                     content: attr(data-th)"";
                     font-weight: 400;

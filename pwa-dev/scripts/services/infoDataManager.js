@@ -1,6 +1,9 @@
 // -------------------------------------------
 //      InfoDataManager Class/Methods
 //          - Keeps INFO Data updated. (in Memory)
+//			?: Rename to 'EvalInfoDataManager'?
+//			'INFO' object is used when referencing data in 'eval'
+//			We put all the data under 'INFO' object - to be used on 'eval' time.
 // -------------------------------------------------
 function InfoDataManager() {}
 
@@ -34,11 +37,15 @@ InfoDataManager.clearINFOdata = function()
 
 InfoDataManager.setDataAfterLogin = function()
 {
-	var sessionData = SessionManager.sessionData;
-
-	InfoDataManager.setINFOdata( 'login_UserName', sessionData.login_UserName );
-
-	// Any other info?
+	try
+	{
+		InfoDataManager.setINFOdata( 'login_UserName', SessionManager.sessionData.login_UserName );
+		// Any other info?	
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'ERROR in InfoDataManager.setDataAfterLogin, errMsg: ' + errMsg );
+	}
 };
 
 InfoDataManager.setINFOclientByActivity = function( activity )

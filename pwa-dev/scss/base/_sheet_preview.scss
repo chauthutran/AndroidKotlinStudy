@@ -1,0 +1,46 @@
+.sheet_preview {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 224px;
+    @include box-sizing(border-box);
+
+    .section {
+        margin-top:16px;
+        @include font-size(16px);
+        font-weight: 500;
+    }
+
+    .sheet_preview__name {
+        display: inline-flex;
+        flex-wrap: wrap;
+        float: left;
+        width: 50%;
+        padding: 12px 8;
+        @include box-sizing(border-box);
+        border-bottom: 1px solid #DDD;
+
+        @include rwd-max (380) {
+            width: 100%;
+            border-bottom: none;
+            font-weight: 500;
+            @include font-size(10px);
+        }
+    }
+
+    .sheet_preview__value {
+        display: inline-flex;
+        flex-wrap: wrap;
+        float: left;
+        width: 50%;
+        padding: 12px 8;
+        @include box-sizing(border-box);
+        border-bottom: 1px solid #DDD;
+
+        @include rwd-max (380) {
+            width: 100%;
+            @include font-size(10px);
+        }
+    }
+}

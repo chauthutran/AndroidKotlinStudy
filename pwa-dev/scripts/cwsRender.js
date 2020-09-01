@@ -40,7 +40,7 @@ function cwsRender()
 	me._translateEnable = true;
 	me._manageInputSwipe;
 
-	me.autoLogoutDelayMins = 60; //auto logout after X mins (5, 30, 60)
+	me.autoLogoutDelayMins = ConfigManager.staticData.logoutDelay;  //auto logout after X mins (5, 30, 60)  used in 'inputUtil.js'
 	me.autoLogoutDateTime;
 
 	me.debugMode = false;
@@ -62,7 +62,8 @@ function cwsRender()
 		if ( me.debugMode ) console.customLog( 'cwsRender.render()' );
 
 		me.loadSavedUserName();		
-		me.showLoginForm();
+
+		me.loginObj.render(); // Open Log Form
 
 		me._manageInputSwipe = inputMonitor( me );
 
@@ -288,6 +289,9 @@ function cwsRender()
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function()
 	{
+		// '.Nav1' show should be moved to cwsRender.startWithConfigLoad from login closeForm()
+		//$( '.Nav1' ).css( 'display', 'flex' );			
+
 		me.startBlockExecute();
 	}
 
@@ -303,18 +307,10 @@ function cwsRender()
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
 	
 					if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
-	
-					// initialise favIcons
-					//me.favIconsObj = new favIcons( me );
-					//me.favIconsObj.render(); // << rendered from blockList (this method 'belongs' to blockList)
-	
-				} );
-	
+				});
 			}
-
-		} );
-
-	}
+		});
+	};
 
 	me.refreshMenuItems = function()
 	{
@@ -608,14 +604,6 @@ function cwsRender()
 		}
 	};
 
-
-	me.showLoginForm = function()
-	{
-		// If 'initializeStartBlock' case, open the Login form.
-		me.loginObj.loginFormDivTag.show();
-		me.loginObj.render(); // Open Log Form
-	}
-
 	// ----------------------------------------------
 
 	// ----------------------------------------------
@@ -670,7 +658,7 @@ function cwsRender()
 		me.navDrawerDivTag.empty();
 		me.renderDefaultTheme();
 		me.loginObj.openForm();
-		me.loginObj.clearLoginPin();
+		//me.loginObj.clearLoginPin();
 		
 		//syncManager.evalSyncConditions();
 

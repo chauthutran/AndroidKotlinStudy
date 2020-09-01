@@ -25,6 +25,14 @@ ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
 ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
 ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
 
+
+// -- Temp placeholder for some setting data..
+ConfigManager.staticData = { 
+    soundEffects: Util.isMobi()
+    , autoComplete: true
+    , logoutDelay: 60 
+};
+
 // -- Default Configs -----
 
 ConfigManager.defaultActivityType = {

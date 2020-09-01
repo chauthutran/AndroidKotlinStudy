@@ -514,6 +514,7 @@ $retina-suffix: '@2x';
                 li {
                     &:hover {
                         background-color: $bg-50;
+                        color: #333;
                     }
                 }
             }
@@ -603,9 +604,9 @@ $retina-suffix: '@2x';
 
         .sheet_full-fs {
 
-            .wapper_card{
+            .wapper_card {
 
-                .sheet-title { 
+                .sheet-title {
 
                     color: $fc-900;
                     background-color: $bg-900;
@@ -664,13 +665,16 @@ $retina-suffix: '@2x';
                     }
                 }
 
-                &:last-child {
-                    background: $bg-200;
-                    color: $fc-200;
-                    @media (max-width: 600px) {
-                    background-color: #FFF;
-                    }
-                }
+                /*
+                //&:last-child {
+                //    background: $bg-200;
+                //    color: $fc-200;
+
+                //    @media (max-width: 600px) {
+                //        background-color: #FFF;
+                //    }
+                //}
+                */
             }
 
             th {
@@ -679,18 +683,20 @@ $retina-suffix: '@2x';
             }
 
             td {
-                
+
                 @media (max-width: 600px) {
                     background-color: #FFF;
+
                     &:first-child {
                         background: $bg-900;
                         color: $fc-900;
                     }
-
-                    &:last-child {
-                        background: $bg-200;
-                        color: $fc-200;
-                    }
+/*
+                    //&:last-child {
+                    //    background: $bg-200;
+                    //    color: $fc-200;
+                    //}
+                    */
                 }
             }
         }
@@ -706,11 +712,12 @@ $retina-suffix: '@2x';
                     color: $fc-50
                 }
 
-
-                &:last-child {
-                    background: $bg-200;
-                    color: $fc-200;
-                }
+/*
+                //&:last-child {
+                //    background: $bg-200;
+                //    color: $fc-200;
+                //}
+                */
             }
 
             th {
@@ -736,14 +743,15 @@ $retina-suffix: '@2x';
                         color: $fc-50
                     }
                 }
-
-                &:last-child {
-                    background: $bg-200;
-                    color: $fc-200;
-                    @media (max-width: 362px) {
-                    background-color: #FFF;
-                    }
-                }
+/*
+                //&:last-child {
+                //    background: $bg-200;
+                //    color: $fc-200;
+                //    @media (max-width: 362px) {
+                //        background-color: #FFF;
+                //    }
+                //} 
+                */
             }
 
             th {
@@ -752,18 +760,20 @@ $retina-suffix: '@2x';
             }
 
             td {
-                
+
                 @media (max-width: 362px) {
                     background-color: #FFF;
+
                     &:first-child {
                         background: $bg-900;
                         color: $fc-900;
                     }
-
-                    &:last-child {
-                        background: $bg-200;
-                        color: $fc-200;
-                    }
+/*
+                    //&:last-child {
+                    //    background: $bg-200;
+                    //    color: $fc-200;
+                    //}
+                    */
                 }
             }
         }
@@ -785,14 +795,15 @@ $retina-suffix: '@2x';
                         color: $fc-50
                     }
                 }
-
-                &:last-child {
-                    background: $bg-200;
-                    color: $fc-200;
-                    @media (max-width: 428px) {
-                    background-color: #FFF;
-                    }
-                }
+/*
+                //&:last-child {
+                //    background: $bg-200;
+                //    color: $fc-200;
+                //    @media (max-width: 428px) {
+                //        background-color: #FFF;
+                //    }
+                //}
+                */
             }
 
             th {
@@ -801,18 +812,20 @@ $retina-suffix: '@2x';
             }
 
             td {
-                
+
                 @media (max-width: 428px) {
                     background-color: #FFF;
+
                     &:first-child {
                         background: $bg-900;
                         color: $fc-900;
                     }
-
-                    &:last-child {
-                        background: $bg-200;
-                        color: $fc-200;
-                    }
+/*
+                    //&:last-child {
+                    //    background: $bg-200;
+                    //    color: $fc-200;
+                    //}
+                    */
                 }
             }
         }
@@ -820,27 +833,29 @@ $retina-suffix: '@2x';
 }
 
 /* mixin for multiline */
-@mixin multiLineEllipsis($lineHeight, $lineCount, $bgColor){
+@mixin multiLineEllipsis($lineHeight, $lineCount, $bgColor) {
     overflow: hidden;
     position: relative;
     line-height: $lineHeight;
-    max-height: $lineHeight * $lineCount; 
+    max-height: $lineHeight * $lineCount;
     margin-right: -1em;
     padding-right: 1em;
     margin-bottom: 8px;
+
     &:before {
-      content: '...';
-      position: absolute;
-      right: 0;
-      bottom: 0;
+        content: '...';
+        position: absolute;
+        right: 0;
+        bottom: 0;
     }
+
     &:after {
-      content: '';
-      position: absolute;
-      right: 0;
-      width: 1em;
-      height: 1em;
-      margin-top: 0.2em;
-      background: $bgColor;
+        content: '';
+        position: absolute;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin-top: 0.2em;
+        background: $bgColor;
     }
-  }
+}

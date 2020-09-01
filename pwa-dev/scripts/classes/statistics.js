@@ -24,6 +24,7 @@ function Statistics( cwsRender )
 
     me._clientList_Clone = [];  // local modified copy of clientList - used for statistics.
 
+    var _statsPeriodOptions;
 
 	// TODO: NEED TO IMPLEMENT
 	// =============================================
@@ -48,7 +49,7 @@ function Statistics( cwsRender )
         me.loadStatConfigPage( me.statsContentPageTag, function() {
 
             // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
-            me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
+            if ( _statsPeriodOptions ) me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
 
             me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
 
@@ -336,10 +337,10 @@ function Statistics( cwsRender )
     
                 //if ( item.enabled === 'true' )
                 periodOptions.push( { "name": item.name
-                    , "term": newOpt.term
+                    , "term": item.term
                     , "from": fromVal
                     , "to": toVal
-                    , "selected": ( newOpt.defaultOption === 'true' )
+                    , "selected": ( item.defaultOption === 'true' )
                 }); 
             }
             catch( errMsg )

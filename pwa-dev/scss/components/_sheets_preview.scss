@@ -6,12 +6,12 @@
     }
 
     .name, .value {
-        padding: 8px 2px 8px 2px;
+        padding: 8px 8px 8px 12px;
         margin:2px;
         font-size: calc(12px + 0.4vw);
         white-space: nowrap;
         text-align: left;
-        max-width: calc( var(--width) / 2);
+        max-width: 47vw;
         overflow: overlay;
         line-height: 1.9em;
     }

@@ -43,14 +43,15 @@ MsgManager.initialSetup = function()
     {
         MsgManager._autoHide = dcdConfig.settings.message.autoHide;
         MsgManager._autoHideDelay = dcdConfig.settings.message.autoHideTime;
-    }
-    
+    }    
 }
 
 
-MsgManager.msgAreaShow = function( msg )
+MsgManager.msgAreaShow = function( msg, type )
 {
-    MsgManager.notificationMessage ( msg, 'notificationDark', undefined, '', 'right', 'top' );
+    var colorStr = ( type === 'ERROR' ) ? 'notificationRed' : 'notificationDark';
+
+    MsgManager.notificationMessage ( msg, colorStr, undefined, '', 'right', 'top' );
 }
 
 MsgManager.msgAreaClear = function( speed )

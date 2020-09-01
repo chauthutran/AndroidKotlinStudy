@@ -1,5 +1,5 @@
 // -------------------------------------------
-// -- Utility Class/Methods
+// -- ConsoleCustomLog Class/Methods
 
 function ConsoleCustomLog() {};
 
@@ -12,13 +12,22 @@ ConsoleCustomLog.divDialogTagId = '#divCustomDataDisplay';
 
 console.customLog = function ( msg, label ) 
 {
-    console.log( msg );
+    if ( msg )
+    {
+        console.log( msg );
 
-    // NOTE, this could make the app size to get much bigger, 
-    // Thus, we might want to limit the number of storage --> 200?
-    ConsoleCustomLog.customLogData.push( { 'msg': msg, 'label': label } );
+        // NOTE, this could make the app size to get much bigger, 
+        // Thus, we might want to limit the number of storage --> 200?
+        ConsoleCustomLog.customLogData.push( { 'msg': msg, 'label': label } );
+    
+        if ( ConsoleCustomLog.customLogData.length > 200 ) ConsoleCustomLog.customLogData.shift();    
+    }
+};
 
-    if ( ConsoleCustomLog.customLogData.length > 200 ) ConsoleCustomLog.customLogData.shift();
+
+ConsoleCustomLog.clearLogs = function()
+{
+    ConsoleCustomLog.customLogData = [];
 };
 
 // -------------------------------------
@@ -38,55 +47,7 @@ ConsoleCustomLog.showDialog = function()
 
 
         // Add events..
-
-        // Cancel Button
-        var btnCancelTag = divDialogTag.find( 'div.cancel' );
-        btnCancelTag.off( 'click' ).click( function () {
-            ConsoleCustomLog.hideDialog();                
-        });           
-
-
-        // Run Command Button
-        var btnLogRunCommandTag = divDialogTag.find( '.btnLogRunCommand' );
-        btnLogRunCommandTag.off( 'click' ).click( function() {
-
-            var runCommandVal = divDialogTag.find( '.inputLogRunCommand' ).val();
-
-            console.customLog( 'runCommandVal: ' + runCommandVal );
-
-            Util.tryCatchContinue( function() {
-
-                var valueResult = eval( runCommandVal );
-                console.customLog( valueResult );
-
-                ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
-
-            }, "LogRunCommand Execute" );
-
-        });
-
-
-        // Command Example Selection
-        var selLogRunCommandCaseTag = divDialogTag.find( '.selLogRunCommandCase' );
-        selLogRunCommandCaseTag.off( 'change' ).change( function() 
-        {
-            var caseStr = selLogRunCommandCaseTag.val();
-
-            var inputCommandTag = divDialogTag.find( '.inputLogRunCommand' );
-
-            if ( caseStr === 'custom' )
-            {
-                inputCommandTag.val( '' );
-            }
-            else if ( caseStr === 'loadSampleData' )
-            {
-                inputCommandTag.val( 'DevHelper.loadSampleData(20);' );
-            }
-            else if ( caseStr === 'removeSampleData' )
-            {
-                inputCommandTag.val( 'DevHelper.removeSampleData();' );
-            }
-        });
+        ConsoleCustomLog.addEvents( divDialogTag );
 
     }
     catch( errMsg )
@@ -97,6 +58,69 @@ ConsoleCustomLog.showDialog = function()
     divDialogTag.show();
     $('.scrim').show();
 };
+
+
+ConsoleCustomLog.addEvents = function( divDialogTag )
+{
+
+    // Close Button
+    var btnCloseTag = divDialogTag.find( 'div.close' );
+    btnCloseTag.off( 'click' ).click( function () {
+        ConsoleCustomLog.hideDialog();                
+    });           
+
+
+    // Command Example Selection
+    var selLogRunCommandCaseTag = divDialogTag.find( '.selLogRunCommandCase' );
+    selLogRunCommandCaseTag.off( 'change' ).change( function() 
+    {
+        var caseStr = selLogRunCommandCaseTag.val();
+
+        var inputCommandTag = divDialogTag.find( '.inputLogRunCommand' );
+
+        if ( caseStr === 'custom' )
+        {
+            inputCommandTag.val( '' );
+        }
+        else if ( caseStr === 'loadSampleData' )
+        {
+            inputCommandTag.val( 'DevHelper.loadSampleData(20);' );
+        }
+        else if ( caseStr === 'removeSampleData' )
+        {
+            inputCommandTag.val( 'DevHelper.removeSampleData();' );
+        }
+        else if ( caseStr === 'listClientData' )
+        {
+            inputCommandTag.val( 'JSON.stringify( ClientDataManager.getClientList() );' );
+        }
+        else if ( caseStr === 'clearLogs' )
+        {
+            inputCommandTag.val( 'ConsoleCustomLog.clearLogs();' );
+        }
+    });
+
+
+    // Run Command Button
+    var btnLogRunCommandTag = divDialogTag.find( '.btnLogRunCommand' );
+    btnLogRunCommandTag.off( 'click' ).click( function() {
+
+        var runCommandVal = divDialogTag.find( '.inputLogRunCommand' ).val();
+
+        console.customLog( 'runCommandVal: ' + runCommandVal );
+
+        Util.tryCatchContinue( function() {
+
+            var valueResult = eval( runCommandVal );
+            console.customLog( valueResult );
+
+            ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
+
+        }, "LogRunCommand Execute" );
+
+    });
+};
+        
 
 ConsoleCustomLog.setMainContent = function( divMainContentTag, customLogData )
 {

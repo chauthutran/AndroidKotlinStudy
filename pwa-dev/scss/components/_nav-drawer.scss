@@ -67,7 +67,6 @@
                     width: 24px;
                     height: 24px;
                     margin: 12px 8px 12px 8px;
-                    //background-color: red;
                     @include box-sizing(border-box);
                 }
 
@@ -78,9 +77,20 @@
                     text-decoration: none;
                 }
 
-                &:hover {
-                    background-color: #f1f1f1;
-                    color: white;
+                #tile_items{
+                    line-height: 48px;
+                    padding: 0 16px;
+                    font-weight: 700!important;
+                    cursor: context-menu;
+                    &:hover {
+                        background-color: #FFF;
+                    }
+                }
+                
+                .examples{
+                    line-height: 48px;
+                    padding: 0 16px;
+                    cursor: pointer;
                 }
             }
         }

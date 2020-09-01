@@ -44,7 +44,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( formJsonArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
-			var autoComplete = AppInfoManager.getSessionAutoComplete();
+			var autoComplete = ConfigManager.staticData.autoComplete;
 			var formTag = $( '<form autocomplete="' + autoComplete + '"></form>' );
 
 			formDivSecTag.append( formTag );
@@ -297,6 +297,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					+ '" class="dataValue displayValue" />' );
  		Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
+		// When changed/selected, the focus is removed(blured), so that arrow image is switched (defined in css, focus)
+		entryTag.on( 'change', function() {
+			$( this ).blur();
+		});
 
 		divInputFieldTag.find( 'div.field__selector' ).append( entryTag );
 

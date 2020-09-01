@@ -173,28 +173,6 @@ function settingsApp( cwsRender )
         });
 
 
-        me.settingsInfo_SoundSwitchInput.change(() => {
-          var soundSetting = me.settingsInfo_SoundSwitchInput.is( ":checked" ); // load from input checkbox
-          var sessData = AppInfoManager.getUserInfo();
-
-          sessData.soundEffects = soundSetting; //add
-          AppInfoManager.updateUserInfo( sessData );
-
-          if(soundSetting) playSound( "notify") ;
-
-        });
-
-        me.settingsInfo_autoCompleteInput.change(() => {
-            var autoComplete = me.settingsInfo_autoCompleteInput.is( ":checked" ); // load from input checkbox
-            sessData = AppInfoManager.getUserInfo();
-
-            sessData.autoComplete = autoComplete; //add
-            AppInfoManager.updateUserInfo( sessData );
-
-            me.updateAutoComplete( ( autoComplete ? 'on' : 'off' ) );
-
-        });
-
         me.settingsInfo_ThemeSelectTag.change ( () => 
         {    
             $("body").removeClass().addClass( me.settingsInfo_ThemeSelectTag.val() );
@@ -216,26 +194,6 @@ function settingsApp( cwsRender )
             //$( '#settingsInfo_network_Text' ).html( ( me.settingsInfo_NetworkSync.val() > 0 ? 'every' : '') 
             //    + ' ' + me.getListNameFromID( me.getSyncOptions(), me.settingsInfo_NetworkSync.val() ) );
         });
-
-
-        me.settingsInfo_logoutDelay.change ( () => 
-        {
-            //me.cwsRenderObj.storage_offline_SyncExecutionTimerInterval = me.settingsInfo_logoutDelay.val();
-
-            // TRAN TODO : Have to updateLogoutDelay here. The code in line 237 did update the logoutDelay ???
-            AppInfoManager.updateLogoutDelay( me.settingsInfo_logoutDelay.val() );
-
-            $( '#settingsInfo_logout_Text' ).html( ( me.settingsInfo_logoutDelay.val() > 0 ? 'every' : '') + ' ' + me.getListNameFromID( me.getLogoutOptions(), me.settingsInfo_logoutDelay.val() ) );
-
-            //syncManager.reinitialize ( me.cwsRenderObj );
-
-            var sessData = AppInfoManager.getUserInfo();
-
-            sessData.logoutDelay = me.settingsInfo_logoutDelay.val(); //add
-            AppInfoManager.updateUserInfo( sessData );
-
-        });
-        
 
 
         $( 'img.btnSettingsBack' ).click( () =>
@@ -505,10 +463,7 @@ function settingsApp( cwsRender )
 
         });
         
-    
-
         //cacheManager.initialise();
-
     }
 
 
@@ -573,21 +528,6 @@ function settingsApp( cwsRender )
 
                 $( '#settingsInfo_geoLocation_Less' ).show();
                 $( '#settingsInfo_geoLocation_Less' ).removeClass( 'byPassSettingsMore' );
-
-                $( '#settingsInfo_autocomplete_Less' ).show();
-                $( '#settingsInfo_autocomplete_Less' ).removeClass( 'byPassSettingsMore' );
-
-                if ( Util.isMobi() )
-                {
-                    $( '#settingsInfo_soundEffects_Less' ).show();
-                    $( '#settingsInfo_soundEffects_Less' ).removeClass( 'byPassSettingsMore' );
-                }
-                else
-                {
-                    $( '#settingsInfo_soundEffects_Less' ).hide();
-                    $( '#settingsInfo_soundEffects_Less' ).addClass( 'byPassSettingsMore' );
-                }
-
             }
         }
         else
@@ -601,12 +541,6 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_geoLocation_Less' ).hide();
             $( '#settingsInfo_geoLocation_Less' ).addClass( 'byPassSettingsMore' );
-
-            $( '#settingsInfo_soundEffects_Less' ).hide();
-            $( '#settingsInfo_soundEffects_Less' ).addClass( 'byPassSettingsMore' );
-
-            $( '#settingsInfo_autoComplete_Less' ).hide();
-            $( '#settingsInfo_autoComplete_Less' ).addClass( 'byPassSettingsMore' );
 
             if ( TranslationManager.getLangList() )
             {
@@ -624,10 +558,6 @@ function settingsApp( cwsRender )
 
             $( '#settingsInfo_network_Less' ).hide();
             $( '#settingsInfo_network_Less' ).addClass( 'byPassSettingsMore' )
-
-            $( '#settingsInfo_logoutDelay_Less' ).hide();
-            $( '#settingsInfo_logoutDelay_Less' ).addClass( 'byPassSettingsMore' )
-
         }
 
         if ( ! $( '#settingsInfo_networkMode' ).attr( 'unselectable' )  )
@@ -724,8 +654,7 @@ function settingsApp( cwsRender )
             if ( dcdConfig.settings && dcdConfig.settings.theme ) 
             {
                 me.populateNetworkSyncList_Show( me.getSyncOptions(), AppInfoManager.getNetworkSync() );
-                me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins );
-
+                //me.populatelogoutDelayList_Show( me.getLogoutOptions(), me.cwsRenderObj.autoLogoutDelayMins );
             }
         }
 
@@ -755,10 +684,10 @@ function settingsApp( cwsRender )
             $( '#settingsInfo_networkMode' ).html( '<div>' + ConnManagerNew.connStatusStr().toLowerCase() + '</div>' );
             $( '#settingsInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
 
-            var sessData = AppInfoManager.getUserInfo();
+            //var sessData = AppInfoManager.getUserInfo();
 
-            me.settingsInfo_SoundSwitchInput.prop( 'checked', sessData.soundEffects );
-            me.settingsInfo_autoCompleteInput.prop( 'checked', sessData.autoComplete );
+            //me.settingsInfo_SoundSwitchInput.prop( 'checked', sessData.soundEffects );
+            //me.settingsInfo_autoCompleteInput.prop( 'checked', sessData.autoComplete );
 
             // var userConfig = JSON.parse( localStorage.getItem( JSON.parse( localStorage.getItem(Constants.storageName_session) ).user ) );
             var dcdConfig = ConfigManager.getConfigJson();
