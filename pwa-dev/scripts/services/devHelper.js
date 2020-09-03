@@ -12,6 +12,10 @@ DevHelper.cwsRenderObj;
 DevHelper.INFO;
 DevHelper.tempCount = 0;
 
+DevHelper.testRunInterval;
+DevHelper.testRunCount = 0;
+
+
 DevHelper.sampleDataTemplate = 
 [
   {
@@ -201,7 +205,7 @@ DevHelper.TestRequestSend = function( url )
     }
 };
 
-DevHelper.testRun = function()
+DevHelper.testRun2 = function()
 {
     var dest = { 'a1': [ { 'name': 'james' }, { 'name': 'mark' } ],
         'a2': 'james',
@@ -298,3 +302,20 @@ DevHelper.sampleDataList_Static =
         }]
     }]
 }];
+
+
+// =========================
+
+DevHelper.testRunStart = function()
+{
+    DevHelper.testRunInterval = setInterval( function() {
+        DevHelper.testRunCount++;
+        console.customLog( 'count: ' + DevHelper.testRunCount + ', time: ' + new Date().toString() );
+    }, 2000 );
+};
+
+DevHelper.testRunStop = function()
+{
+    clearInterval( DevHelper.testRunInterval );
+};
+

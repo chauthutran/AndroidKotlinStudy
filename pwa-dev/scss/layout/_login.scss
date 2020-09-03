@@ -12,7 +12,7 @@
 
         .login_logo__image {
             float: left;
-            @include background-image('Logo');
+            @include background-image('logo');
             background-position: center;
             background-repeat: no-repeat;
             background-size: 100%;

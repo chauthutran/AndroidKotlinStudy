@@ -3,27 +3,36 @@
 // 2. set up DWS connection settings for API calls
 // 3. start connectionManager (+ scheduler)
 // 4. run other things (memory swap?)
-//
+
+// NOTE:
+//    - app() does not need to be instance..
+//  Re-Organize:
+//  1. From index.html, we load all files
+//      and then, call new app();  app.start();
+//      - basically combining 'app' class and 'cwsRender' class.
+//  2. On the start, it will 
+//    - register windows event
+//    - start the service worker manager class (regiser (grab the working ones..) / monitor it)
+//    - start other services
+//    and do 'render()'
 
 function app()
 {
 	var me = this;
 
   me._cwsRenderObj;
-
+  me.count = 0;
   // ----------------------------------------------------
 
 	me.initialize = function()
 	{
-    // Default Behavior Modify
-    me.setBackActionDetect();
 
+    // Default Behavior Modify
+    me.detectStandAlone();
+    me.windowEvent_BlockBackBtnAction();
     window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
     window.addEventListener( 'error', me.catchErrorInCustomLog );
-
-    // app startup event setup (for listeners)
-    //window.addEventListener( 'appinstalled', me.App_installed_done);
-    
+  
 
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
@@ -222,7 +231,7 @@ function app()
     });
   };
 
-  me.setBackActionDetect = function()
+  me.windowEvent_BlockBackBtnAction = function()
   {
     // Method 1
     history.pushState(null, document.title, location.href);
@@ -244,12 +253,19 @@ function app()
     */
   };
 
+  me.detectStandAlone = function()
+  {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.customLog( "Running as standalone." );
+    }  
+  };
 
   me.catchErrorInCustomLog = function( e )
   {
     // const { message, source, lineno, colno, error } = e; 
     console.customLog( e.message );
   };
+
 	// ======================================
 
 	me.initialize();

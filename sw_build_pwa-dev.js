@@ -1,6 +1,7 @@
 
 // Require WorkBox build
 const {generateSW} = require('workbox-build');
+//const {Workbox} = require('workbox-window');
 
 generateSW({
   mode: 'production',

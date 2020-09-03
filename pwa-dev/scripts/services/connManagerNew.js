@@ -343,7 +343,7 @@ ConnManagerNew.update_UI = function( statusInfo )
 
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 {
-	// update loginScreen Logo (grayscale = offline): offline indicator before logging in
+	// update loginScreen logo (grayscale = offline): offline indicator before logging in
 	//$('#ConnectingWithSara').removeClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOffline' : 'logoOnline' );
 	//$('#ConnectingWithSara').addClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOnline' : 'logoOffline' );
 	

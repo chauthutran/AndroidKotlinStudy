@@ -47,7 +47,7 @@ ConsoleCustomLog.showDialog = function()
 
 
         // Add events..
-        ConsoleCustomLog.addEvents( divDialogTag );
+        ConsoleCustomLog.addEvents( divMainContentTag, divDialogTag );
 
     }
     catch( errMsg )
@@ -60,7 +60,7 @@ ConsoleCustomLog.showDialog = function()
 };
 
 
-ConsoleCustomLog.addEvents = function( divDialogTag )
+ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
 {
 
     // Close Button
@@ -93,6 +93,10 @@ ConsoleCustomLog.addEvents = function( divDialogTag )
         else if ( caseStr === 'listClientData' )
         {
             inputCommandTag.val( 'JSON.stringify( ClientDataManager.getClientList() );' );
+        }
+        else if ( caseStr === 'runTestStart' )
+        {
+            inputCommandTag.val( 'DevHelper.testRunStart();' );
         }
         else if ( caseStr === 'clearLogs' )
         {
