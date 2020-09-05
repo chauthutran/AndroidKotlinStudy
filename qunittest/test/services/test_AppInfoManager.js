@@ -42,69 +42,12 @@ QUnit.test('Test AppInfoManager - updateUserInfo, getUserInfo and removeUserInfo
 });
 
 
-QUnit.test('Test AppInfoManager - getSessionAutoComplete', function( assert ){
-    AppInfoManager.updateUserInfo( { "autoComplete": true } );
-
-    var autoComplete = AppInfoManager.getSessionAutoComplete();
-    assert.equal( autoComplete, true, "Get SessionAutoComplete successfully !!!" );
-});
-
-
-QUnit.test('Test AppInfoManager - updateSWInfo and getSWInfo', function( assert ){
-    AppInfoManager.updateSWInfo( { "test": "testVal" } );
-
-    var data = AppInfoManager.getSWInfo();
-    assert.equal( data.test, "testVal", "Update and get SWInfo successfully !!!" );
-});
-
-
 QUnit.test('Test AppInfoManager - updateLangTerms and getLangTerms', function( assert ){
     AppInfoManager.updateLangTerms( { "test": "testVal" } );
 
     var data = AppInfoManager.getLangTerms();
     assert.equal( data.test, "testVal", "Update and get LangTerms successfully !!!" );
     
-});
-
-
-QUnit.test('Test AppInfoManager - updateSyncMsg and getSyncMsg', function( assert ){
-    AppInfoManager.updateSyncMsg( { "msgList": [] } );
-
-    var data = AppInfoManager.getSyncMsg();
-    assert.equal( data.msgList != undefined, true, "Update and get SyncMsg successfully !!!" );
-});
-
-
-
-QUnit.test('Test AppInfoManager - updateDownloadInfo and getDownloadInfo', function( assert ){
-    
-    var data = AppInfoManager.getDownloadInfo();
-    assert.equal( data, undefined, "Check undefined DowndownInfo." );
-
-    AppInfoManager.updateDownloadInfo( "2020-07-03" );
-
-    data = AppInfoManager.getDownloadInfo();
-    assert.equal( data, "2020-07-03T00:00:00.000Z", "Update and get DownloadInfo successfully !!!" );
-});
-
-
-
-QUnit.test('Test AppInfoManager - updateFavIcons, getFavIcons and removeFavIcon', function( assert ){
-    AppInfoManager.updateFavIcons( { "test": "testVal" } );
-
-    var data = AppInfoManager.getFavIcons();
-    assert.equal( data.test, "testVal", "Update and get FavIcons successfully !!!" );
-
-    AppInfoManager.removeFavIcons();
-    assert.equal( AppInfoManager.getFavIcons() == undefined, true, "Remove FavIcons successfully !!!" );
-});
-
-
-QUnit.test('Test AppInfoManager - updateNetworkConnectionObs and getNetworkConnectionObs', function( assert ){
-    AppInfoManager.updateNetworkConnectionObs( { "test": "testVal" } );
-
-    var data = AppInfoManager.getNetworkConnectionObs();
-    assert.equal( data.test, "testVal", "Update and get NetworkConnectionObs successfully !!!" );
 });
 
 
@@ -122,16 +65,6 @@ QUnit.test('Test AppInfoManager - updateLanguage', function( assert ){
     var data = AppInfoManager.getUserInfo();
     assert.equal( data[AppInfoManager.KEY_LANGUAGE], "testVal", "Update Language successfully !!!" );
 });
-
-
-QUnit.test('Test AppInfoManager - updateLogoutDelay', function( assert ){
-
-    AppInfoManager.updateLogoutDelay( "10" );
-
-    var data = AppInfoManager.getUserInfo();
-    assert.equal( data[AppInfoManager.KEY_LOGOUTDELAY], "10", "Update LogoutDelay successfully !!!" );
-});
-
 
 
 QUnit.test('Test AppInfoManager - getLangCode', function( assert ){

@@ -28,7 +28,7 @@ ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>
 
 // -- Temp placeholder for some setting data..
 ConfigManager.staticData = { 
-    soundEffects: Util.isMobi()
+    soundEffects: false //Util.isMobi()
     , autoComplete: true
     , logoutDelay: 60 
 };

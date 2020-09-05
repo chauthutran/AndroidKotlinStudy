@@ -16,12 +16,22 @@
 //    - start other services
 //    and do 'render()'
 
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+//  Above implemtation work bla bla bal
+
+
 function app()
 {
 	var me = this;
 
   me._cwsRenderObj;
   me.count = 0;
+
   // ----------------------------------------------------
 
 	me.initialize = function()
@@ -238,19 +248,25 @@ function app()
 
     window.addEventListener('popstate', function (event)
     {
-      MsgManager.msgAreaShow( 'Back Button Clicked' );
-
       history.pushState(null, document.title, location.href);
+      
+      var backBtnTags = $( '.btnBack:visible' );
+
+      if ( backBtnTags.length > 0 )
+      {
+        //backBtnTags.click();
+        backBtnTags.first().click();
+      }
+      else
+      {
+        MsgManager.msgAreaShow( 'Back Button Click Blocked!!' );
+      }
+
     });
 
     // NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
     // https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
 
-    /*  Method 2
-    window.location.hash="no-back-button";
-    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
-    window.onhashchange=function(){window.location.hash="no-back-button";}
-    */
   };
 
   me.detectStandAlone = function()
