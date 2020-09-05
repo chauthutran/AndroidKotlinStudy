@@ -4,3 +4,5 @@ node_modules/*
 coverage/*
 pwa-test/*
 pwa/*
+pwa-dev.zip
+pwa-test.zip
