@@ -8,7 +8,7 @@ generateSW({
   swDest: 'pwa-dev/service-worker.js',
   globDirectory: 'pwa-dev',
   globPatterns: [
-    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav}'
+    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav,json}'
   ],
   skipWaiting: true,
   clientsClaim: true,

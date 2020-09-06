@@ -141,20 +141,45 @@ function Login( cwsRenderObj )
 			$( ".login_cta" ).show();
 		});
 	
-		$( ".pin_pw" ).keyup( function () 
+		$( ".pin_pw" ).keyup( function ( event ) 
 		{		
-			if ( this.value.length == this.maxLength ) 
-			{
-				if ( $(this).hasClass( 'pin4' ) ) 
-				{ 
-					// if userName is already selected /filled
-					if ( Util.trim( me.loginUserNameTag.val() ).length > 0 )
-					{
-						me.lastPinTrigger = true;
-						me.loginBtnTag.click(); 	
-					}
+			// 'keyup' - comes here after the value has been affected/entered to the field.
+
+			//console.log( event.keyCode );
+			var isDeleteKey = ( event.keyCode == 46 || event.keyCode == 8 );
+			var hasVal = ( this.value.length > 0 );
+			// Should delete current one if not empty.
+			// if empty, delete previous one and set focus on previous one
+			if ( isDeleteKey ) 
+			{ 
+				console.log( 'Delete Key Pressed' ); 
+
+				if ( !hasVal ) 
+				{
+					// go to previous pin tag.
+					var prevTag = $(this).prev( '.pin_pw' );
+					if ( prevTag ) prevTag.focus();
 				}
-				else $(this).next( '.pin_pw' ).focus();
+			}
+			else
+			{
+				if ( hasVal ) //== this.maxLength ) 
+				{
+					if ( $(this).hasClass( 'pin4' ) ) 
+					{ 
+						// if userName is already selected /filled
+						if ( Util.trim( me.loginUserNameTag.val() ).length > 0 )
+						{
+							me.lastPinTrigger = true;
+							me.loginBtnTag.click();
+						}
+					}
+					else
+					{
+						var nextTag = $(this).next( '.pin_pw' );
+						if ( nextTag ) nextTag.focus();
+					} 
+				}
 			}
 		});
 	};
