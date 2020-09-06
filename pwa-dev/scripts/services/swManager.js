@@ -17,7 +17,7 @@ function swManager( _cwsRenderObj, callBack ) {
     me.newRegistration = false;
     me.registrationState;
     me.registrationUpdates = false;
-    me.newAppFilesFound = false;
+    //me.newAppFilesFound = false;
     me.newAppFileExists_EventCallBack;
 
     me.isApp_standAlone = false;
@@ -114,17 +114,23 @@ function swManager( _cwsRenderObj, callBack ) {
                     case 'installed':
                         // SW installed (2) - changes applied
                         // controller present means existing SW was replaced to be made redundant
-                        if ( navigator.serviceWorker.controller ) {
-                            console.customLog( '[sw installed] App updates detected' );
-                            me.newAppFilesFound = true;
-                        }
-                        else
+                        /*
+                        if ( !AppUtil.appRefreshing )
                         {
-                            me.newAppFilesFound = false;
+                            if ( navigator.serviceWorker.controller ) {
+                                console.customLog( '[sw installed] App updates detected' );
+                                //console.log( navigator.serviceWorker.controller );                            
+                                me.newAppFilesFound = true;
+                            }
+                            else
+                            {
+                                //console.customLog( '[sw installed] App updates NOT detected' );
+                                me.newAppFilesFound = false;
+                            }
+    
+                            //if ( me._cwsRenderObj ) me._cwsRenderObj.setNewAppFileStatus( me.newAppFilesFound );    
                         }
-
-                        if ( me._cwsRenderObj ) me._cwsRenderObj.setNewAppFileStatus( me.newAppFilesFound );
-
+                        */
                         break;
 
                     case 'activating':
@@ -132,18 +138,28 @@ function swManager( _cwsRenderObj, callBack ) {
                         break; // do nothing
 
                     case 'activated':
-                        console.customLog( '[sw activated]' );
+                        //console.customLog( '[sw activated]' );
                         // SW activated (4) - start up completed: ready
                         
-                        if ( me.newAppFilesFound && me.newAppFileExists_EventCallBack )
+                        /*if ( me.newAppFilesFound && me.newAppFileExists_EventCallBack )
                         {
                             me.newAppFileExists_EventCallBack();
                             me.newAppFileExists_EventCallBack = undefined;    
-                        } 
+                        } */
                         break;
                 }
             };
         };
+
+        navigator.serviceWorker.addEventListener( 'controllerchange', () => 
+        {
+            // 
+            if ( !AppUtil.appRefreshing )
+            {
+                if ( me._cwsRenderObj ) me._cwsRenderObj.setNewAppFileStatus( true );
+                if ( me.newAppFileExists_EventCallBack ) me.newAppFileExists_EventCallBack();
+            }
+        })
     };
 
     // -----------------------------------
@@ -159,7 +175,7 @@ function swManager( _cwsRenderObj, callBack ) {
 		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
 		// move to cwsRender ?
-		btnUpgrade.click ( () => {  location.reload( true );  });
+		btnUpgrade.click ( () => {  AppUtil.appRefresh();  });
 
 		// MISSING TRANSLATION
 		MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
@@ -197,7 +213,7 @@ function swManager( _cwsRenderObj, callBack ) {
 				}
 				else
 				{
-					location.reload( true );
+					AppUtil.appRefresh();
 				}
 
 			})
@@ -213,7 +229,7 @@ function swManager( _cwsRenderObj, callBack ) {
 					}
 					else
 					{
-						location.reload( true );
+						AppUtil.appRefresh();
 					}
 
 				}, 100 )		
@@ -225,7 +241,7 @@ function swManager( _cwsRenderObj, callBack ) {
 			// MISSING TRANSLATION
 			MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
 			setTimeout( function() {
-				location.reload( true );
+				AppUtil.appRefresh();
 			}, 100 )		
 		}
 	};

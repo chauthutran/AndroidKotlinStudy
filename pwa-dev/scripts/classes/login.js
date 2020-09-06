@@ -225,7 +225,7 @@ function Login( cwsRenderObj )
 					$( '#accept' ).click( function() {
 
 						DataManager2.deleteAllStorageData( function() {
-							location.reload( true );
+							AppUtil.appRefresh();
 							//me.cwsRenderObj.swManagerObj.reGetAppShell(); 
 						});
 
@@ -259,7 +259,7 @@ function Login( cwsRenderObj )
 		$( '#loginVersionNote' ).append( '<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>' );
 
 		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
-			location.reload( true );
+			AppUtil.appRefresh();
 		});
 	};
 	

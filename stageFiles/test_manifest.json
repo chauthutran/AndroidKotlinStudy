@@ -1,9 +1,9 @@
 {
-  "name": "WFA DEV",
-  "short_name": "WFA DEV",
-  "description": "WFA DEV",  
+  "name": "WFA TEST",
+  "short_name": "WFA TEST",
+  "description": "WFA TEST",  
   "version": "1.3.0",
-  "theme_color": "#000000",
+  "theme_color": "#000099",
   "display": "standalone",
   "orientation": "portrait-primary",
   "start_url": "/?utm_source=standalone&utm_medium=pwa",

@@ -344,17 +344,10 @@ ConnManagerNew.update_UI = function( statusInfo )
 ConnManagerNew.update_UI_LoginStatusIcon = function( statusInfo )
 {
 	// update loginScreen logo (grayscale = offline): offline indicator before logging in
-	//$('#ConnectingWithSara').removeClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOffline' : 'logoOnline' );
-	//$('#ConnectingWithSara').addClass( ( ConnManagerNew.isAppMode_Online() ) ? 'logoOnline' : 'logoOffline' );
-	
-    if ( ConnManagerNew.isAppMode_Online() ) {
-		$('#ConnectingWithSara').removeClass('logoOffline');
-		$('#ConnectingWithSara').addClass('logoOnline');
-	  }
-	  else {
-		$('#ConnectingWithSara').removeClass('logoOnline');
-		$('#ConnectingWithSara').addClass('logoOffline');
-	  }
+	var loginHeaderTag = $( '.login_header' );
+
+	if ( ConnManagerNew.isAppMode_Online() ) loginHeaderTag.removeClass('logoOffline');
+	else loginHeaderTag.addClass('logoOffline');
 };
 
 

@@ -562,7 +562,7 @@ function aboutApp( cwsRender )
 
         $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
-			location.reload( true );
+            AppUtil.appRefresh();
         });      
     };
 

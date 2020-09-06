@@ -207,17 +207,21 @@ input.loginUserPinNumeric:focus
     opacity: 0;
   }
 }
+
 /* 2. logo greyscale for offline/online */
 .logoOffline {
   -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
   filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-  transition: all 1.5s ease;
+  opacity: 0.6;
 }
-.logoOnline {
-  -webkit-filter: grayscale(0); /* Google Chrome, Safari 6+ & Opera 15+ */
-  filter: grayscale(0); /* Microsoft Edge and Firefox 35+ */
+
+/*.logoOnline {
+  -webkit-filter: grayscale(0);
+  filter: grayscale(0);
   transition: all 1s ease;
-}
+}*/
+
+
 /* 3. animated CWS logo spin*/
 .cwsLogoRotateY{
   width: 100%;

@@ -868,11 +868,11 @@ FormUtil.performReget = function( regObj, option )
 				regObj.update().then( function( ){
 					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
 					{
-						location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+						AppUtil.appRefresh();
 					}
 					else
 					{
-						location.reload( true );
+						AppUtil.appRefresh();
 					}
 				});
 				FormMsgManager.appUnblock();	
@@ -885,11 +885,12 @@ FormUtil.performReget = function( regObj, option )
 
 					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
 					{
-						location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+						//forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+						AppUtil.appRefresh();
 					}
 					else
 					{
-						location.reload( true );
+						AppUtil.appRefresh();
 					}
 
 				});
@@ -904,11 +905,11 @@ FormUtil.performReget = function( regObj, option )
 
 			if ( FormUtil.PWAlaunchFrom == 'homeScreen')
 			{
-				location.reload(); //forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
+				AppUtil.appRefresh();
 			}
 			else
 			{
-				location.reload( true );
+				AppUtil.appRefresh();
 			}
 		}  
 	}
@@ -1378,7 +1379,7 @@ FormUtil.testNewSWavailable = function()
 
 		// move to cwsRender ?
 		$( btnUpgrade ).click ( () => {
-		  location.reload( true );
+			AppUtil.appRefresh();
 		});
 
 		// MISSING TRANSLATION
