@@ -16,15 +16,6 @@
 //    - start other services
 //    and do 'render()'
 
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-//  Above implemtation work bla bla bal
-
-
 function app()
 {
 	var me = this;
