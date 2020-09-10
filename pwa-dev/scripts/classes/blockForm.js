@@ -372,17 +372,15 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			}
 
 			displayTag.val( displayValues.join(",") );
-		}
-		
-		
-	}
+		}		
+	};
 	
 
 	me.createLabelFieldTag = function( formItemJson )
 	{
 		var divInputFieldTag = $( Templates.labelField );
 
-		divInputFieldTag.html( formItemJson.defaultName );
+		divInputFieldTag.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
 
 		return divInputFieldTag;
 	}
@@ -525,7 +523,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var divInputFieldTag = $( Templates.inputFieldRadio );
 
 		var checkLabel = divInputFieldTag.find( '.displayName' );
-		checkLabel.html( formItemJson.defaultName );
+		checkLabel.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
 
 		// Create a hidden input tag to save selected option value
 		var hiddenTarget = $( Templates.inputFieldHidden );
@@ -537,21 +535,19 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		me.createRadioItemTags( divInputFieldTag, formItemJson, false );
 
 		return divInputFieldTag;
-	}
+	};
 
 	me.createCheckboxFieldTag = function( formItemJson )
 	{
 		var divInputFieldTag = $( Templates.inputFieldCheckbox );
-		divInputFieldTag.find( '.displayName' ).html( formItemJson.defaultName );
-			
+		var displayNameTag = divInputFieldTag.find( '.displayName' );
+		displayNameTag.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
 
 		// Create Option list
 		me.createCheckboxItemTags( divInputFieldTag, formItemJson, false )
 
 		return divInputFieldTag;
-	}
-
-	
+	};
 
 	// =============================================
 	// === Supportive for INPUT fields =============

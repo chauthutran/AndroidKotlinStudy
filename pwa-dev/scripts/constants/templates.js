@@ -18,7 +18,7 @@ Templates.inputFieldStandard = `<div class="fieldBlock field">
   </div>
 </div>`;
 
-Templates.labelField = `<label class="fieldBlock"></label>`;
+Templates.labelField = `<label class="fieldBlock displayName"></label>`;
 
 Templates.inputFieldCheckbox = `<div class="checkbox fieldBlock">
 <div class="checkbox__label"><label class="displayName"></label></div>

@@ -67,6 +67,7 @@ TranslationManager.setCurrLangTerms = function()
 };
 
 // =============================================
+// MAIN PART 1 - Retrieval / Download of translations
 
 // Retrieve All Languages Term.
 // MAIN METHOD 1.   --- USED TO BE: 'retrieveAllLangTerm'
@@ -155,7 +156,8 @@ TranslationManager.downloadLangTerms = function( returnFunc )
 };
 
 
-// =================================================
+// =============================================
+// MAIN PART 2 - apply transltaions on page or single text
 
 // MAIN METHOD 2.
 TranslationManager.translatePage = function()
@@ -167,6 +169,8 @@ TranslationManager.translatePage = function()
 		// 1. Get the terms unique collection from site/page
 		var tagsWithTerm = $( '[term]' );
 	
+		// Only apply if the term name is not empty, and the term translation for current langugage exists.
+
 		tagsWithTerm.each( function() 
 		{
 			var tag = $( this );
@@ -178,12 +182,19 @@ TranslationManager.translatePage = function()
 	
 				if ( termVal )
 				{
+					//var termOrig = tag.attr( 'termOrig' );  // we might put the original non-translated text as attribute and use it?
+
 					tag.html( termVal );
 				}
 			}
 		});		
 	}
 };
+
+// NOTE: Above logic should work!!!!  Apply to other single term translation...!!!
+// 	- Also, we can save the original text...  <-- put it on attribute...
+//
+//	** Better, yet, in 'origText', we can populate this when we generate page or form/block/terms..
 
 
 // Translate single text by current LangTerms.
