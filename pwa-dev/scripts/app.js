@@ -31,7 +31,7 @@ function app()
     // Default Behavior Modify
     me.detectStandAlone();
     me.windowEvent_BlockBackBtnAction();
-    window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
+    //window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
     window.addEventListener( 'error', me.catchErrorInCustomLog );
   
 

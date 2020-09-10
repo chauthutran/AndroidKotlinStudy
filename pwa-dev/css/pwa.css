@@ -215,6 +215,11 @@ input.loginUserPinNumeric:focus
   opacity: 0.6;
 }
 
+
+.loginPinDiv {
+  -webkit-text-security: disc;
+}
+
 /*.logoOnline {
   -webkit-filter: grayscale(0);
   filter: grayscale(0);

@@ -12,25 +12,34 @@
   <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
   <meta http-equiv="pragma" content="no-cache" />
 
+  <title>WFA</title>
+
+  <script>
+    //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
+    var _ver = '1.3.0-rc.1.40'; //_manifestData.version;
+    var _verDate = '2020-09-09'; //_manifestData.date;
+    var _versionNote = '- Theme color.'; //_manifestData.versionNote;
+    var _themeColor = '#000000';
+  </script>
+
+
   <!-- Add to home screen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="#FFC61D">
-  <meta name="apple-mobile-web-app-title" content="CwS">
+  <script> document.write( '<meta name="apple-mobile-web-app-status-bar-style" content="' + _themeColor + '">'); </script>
+  <meta name="apple-mobile-web-app-title" content="WFA">
 
-  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  <link rel="apple-touch-icon" href="images/icons/Connect_144px.png">
+  <link rel="icon" type="image/png" href="images/icons/Connect_144px.png">
 
   <!-- Windows -->
-  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
-  <meta name="msapplication-TileColor" content="#2F3BA2">
+  <meta name="msapplication-TileImage" content="images/icons/Connect_144px.png">
+  <script> document.write( '<meta name="msapplication-TileColor" content="' + _themeColor + '">'); </script>
 
   <!-- Chrome, Firefox OS and Opera -->
-  <meta name="theme-color" content="#FFC61D">
+  <script> document.write( '<meta name="theme-color" content="' + _themeColor + '">'); </script>
   <!-- Windows Phone -->
-  <meta name="msapplication-navbutton-color" content="#FFC61D">
+  <script> document.write( '<meta name="msapplication-navbutton-color" content="' + _themeColor + '">'); </script>
 
-  <title>CwS - Apps</title>
-
-  <link rel="icon" type="image/png" href="images/icons/icon-144x144.png">
 
   <script type="text/javascript" src="scripts/libraries/jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js"></script>
@@ -49,13 +58,6 @@
   <script type="text/javascript" src="scripts/libraries/tabulate.js"></script>
 
   <script type="text/javascript" src="scripts/services/manifestData.js"></script>
-
-  <script>
-    //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _ver = '1.3.0-rc.1.39'; //_manifestData.version;
-    var _verDate = '2020-09-06'; //_manifestData.date;
-    var _versionNote = '- App Update Event Minor Update, Fix on login online/offline image.'; //_manifestData.versionNote;
-  </script>
 
   <!-- Google Analytics -->
   <!--script>
@@ -167,13 +169,17 @@
             </div>
             <div class="field__controls">
               <div class="field__left split_password">
-                <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
+                <div class="loginPinDiv" style="float: left;">
+                  <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
                   autocomplete="off" mandatory="true">
-                <input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="password" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                <input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="password" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                <input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="password" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                <input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="password" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                <img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;">
+                  <input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+                </div>
+                <div style="float: left;">
+                  <img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;">
+                </div>
               </div>
               <div class="field__right"></div>
             </div>
@@ -458,70 +464,6 @@
   <!-- START > RESERVED QR CREATOR -->
   <div id="qrTemplate"></div>
   <!-- END > RESERVED QR CREATOR -->
-
-  <!--div id="hnqisTemplate" style="display:none;">
-    <div id='hnqisHeader'>HNQIS</div>
-    <div id='hnqisHeader2'></div>
-    <div id='hnqisHeader3'></div>
-  </div-->
-
-  <!--div id="detailsFormDiv" style="display:none;">
-    <div name="top-body" class="bodytop bg-color-program-son"></div>
-    <section class="wrapper">
-      <main class="container">
-        <div id="detailsContentDiv " class="detailsListDiv listDiv" style="position:relative;text-align:left;">
-          <ul class="tab_fs__head ">
-            <li class="inputDiv active" style="width:250px;margin: 15px 0 0 0;border-radius: 5px 5px 0 0;">
-              <img src="images/arrow_left.svg" style="position:fixed;left:10px;width:32px;top:14px;"
-                class="btnMyDetailsBack" alt="arrowLeft">
-              <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
-              <br>
-            </li>
-          </ul>
-          <div class="title-act-mobile">
-            <img src="images/arrow_left.svg" style="position:absolute;right:14px;width:32px;top:8px"
-              class="btnMyDetailsBack" alt="arrowLeft">
-            <img src="images/my_details.svg" class="tab-image" alt="active">
-            <label class="aboutHeader" term="menu_mydetails">MyDetails</label>
-          </div>
-          <ul class="tab_fs__container" style="background-color: #fff;padding: 16px;">
-            <li class="settingsTopfiller" style="width: 97%;"></li>
-            <li>
-              <table class="previewCard" id="" style="width: 100%">
-                <tbody>
-                  <tr>
-                    <td class="searchResultMainName" colspan="2"
-                      style="font-family: Rubik;font-style: normal;font-weight: 800;font-size: 14px;"></td>
-                  </tr>
-                  <td class="previewCardAddress" colspan="2" style="font-size: 12px;"></td>
-                  </tr>
-                  </tr>
-                  <td class="searchResultLocationArea" colspan="2" style="font-size: 12px;"></td>
-                  </tr>
-                  </tr>
-                  <td class="searchResultPhoneNumber" colspan="2"
-                    style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" style="padding-top:8px;"><b>Opening Hours</b></td>
-                  </tr>
-                  <tr>
-                    <td class="previewCardOperatingHours"
-                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-top:8px;padding-bottom:8px;"></td>
-                    <td class="previewCardProviderName"
-                      style="font-size: 12px;border-bottom: 1px solid #ddd;padding-bottom:8px;"></td>
-                  </tr>
-                  <tr>
-                    <td class="servicesRow" style="font-size: 12px;padding-top:8px;"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </li>
-          </ul>
-        </div>
-      </main>
-    </section-->
-
 
   </div>
 
