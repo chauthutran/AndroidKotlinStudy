@@ -374,7 +374,5 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
 
 }
 
-MsgManager.initialSetup();
-
 // -- End of Message Manager Class
 // -------------------------------------

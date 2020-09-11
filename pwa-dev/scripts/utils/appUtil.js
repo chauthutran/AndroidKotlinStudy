@@ -5,12 +5,14 @@ function AppUtil() {}
 
 // Browser refresh/reload
 // Set this before refreshing, thus, sw state event not display the update message.
-AppUtil.appRefreshing = false;  
+AppUtil.appReloading = false;  
 
 // ==== Methods ======================
 
-AppUtil.appRefresh = function()
+AppUtil.appReload = function()
 {    
-	AppUtil.appRefreshing = true;
+	MsgManager.msgAreaShow( 'App Reloading!!' );
+
+	AppUtil.appReloading = true;
 	window.location.reload();
 };

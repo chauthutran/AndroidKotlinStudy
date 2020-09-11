@@ -322,7 +322,7 @@ function Action( cwsRenderObj, blockObj )
 							{
 								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
-								ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, function( activityJson )
+								ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
@@ -362,7 +362,7 @@ function Action( cwsRenderObj, blockObj )
 						{
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
-							ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, function( activityJson )
+							ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 		

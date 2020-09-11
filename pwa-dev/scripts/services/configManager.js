@@ -558,17 +558,22 @@ ConfigManager.getSyncDownSetting = function()
 };
 
 
+ConfigManager.getTestResponseJson = function( useTestResponse )
+{
+    var testResponseJson;
+
+    if ( useTestResponse )
+    {
+        var testResponses = ConfigManager.getConfigJson().definitionTestResponses;
+
+        if ( testResponses ) testResponseJson = testResponses[ useTestResponse ];
+    }
+
+    return testResponseJson;
+};
+
 // ---------------------------------------------
 // ---- Statistic Related --------------------
-
-/*
-ConfigManager.getStatisticJson = function()
-{
-    var configJson = ConfigManager.getConfigJson();
-    
-    return ( configJson.settings && configJson.settings.statistic ) ? configJson.settings.statistic : {};
-};
-*/
 
 ConfigManager.getStatisticJson = function()
 {

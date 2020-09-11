@@ -851,70 +851,6 @@ FormUtil.getLastPayload = function( namedPayload )
 	}
 }
 
-FormUtil.performReget = function( regObj, option )
-{		
-	if ( ConnManagerNew.isAppMode_Online() )
-	{
-		// MISSING TRANSLATION
-		MsgManager.notificationMessage ( 'Cannot re-register service worker when Network Offline', 'notificationDark', undefined, '', 'right', 'top' );
-	}
-	else
-	{
-		if ( regObj !== undefined )
-		{
-			if ( option === "update" )
-			{
-				FormMsgManager.appBlock( "Service Worker Updating.." );
-				regObj.update().then( function( ){
-					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
-					{
-						AppUtil.appRefresh();
-					}
-					else
-					{
-						AppUtil.appRefresh();
-					}
-				});
-				FormMsgManager.appUnblock();	
-			}
-			else
-			{
-				FormMsgManager.appBlock( "Updating App..." );
-
-				regObj.unregister().then(function(boolean) {
-
-					if ( FormUtil.PWAlaunchFrom == 'homeScreen')
-					{
-						//forceGet parameter sometimes unpredictible in homeScreen mode?? Greg : test more + verify
-						AppUtil.appRefresh();
-					}
-					else
-					{
-						AppUtil.appRefresh();
-					}
-
-				});
-	
-				FormMsgManager.appUnblock();	
-			}
-		}
-		else
-		{
-			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'Service worker not found, reloading app', 'notificationDark', undefined, '', 'right', 'top' );
-
-			if ( FormUtil.PWAlaunchFrom == 'homeScreen')
-			{
-				AppUtil.appRefresh();
-			}
-			else
-			{
-				AppUtil.appRefresh();
-			}
-		}  
-	}
-}
-
 FormUtil.deleteCacheKeys = function( thenFunc )
 {
 	if ( caches )
@@ -1365,28 +1301,6 @@ FormUtil.shareDataURI = function( title, dataURI ) {
         // Here we use the WhatsApp API as fallback; remember to encode your text for URI
         location.href = 'https://api.whatsapp.com/send?text=' + dataURI
     }
-}
-
-FormUtil.testNewSWavailable = function()
-{
-	console.customLog( 'testing new SW available ');
-	window['isUpdateAvailable']
-	.then(isAvailable => {
-		console.customLog( ' ~ SW isUpdateAvailable: ' + isAvailable );
-	  if (isAvailable) {
-
-		var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-		// move to cwsRender ?
-		$( btnUpgrade ).click ( () => {
-			AppUtil.appRefresh();
-		});
-
-		// MISSING TRANSLATION
-		MsgManager.notificationMessage ( 'New updates found and applied!', 'notificationDark', btnUpgrade, '', 'left', 'bottom', 5000 );
-	  }
-	});
-
 }
 
 FormUtil.getGeoLocation = function()

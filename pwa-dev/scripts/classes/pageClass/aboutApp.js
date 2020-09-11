@@ -75,7 +75,7 @@ function aboutApp( cwsRender )
                 var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
                 setTimeout( function() {
                     $( '#imgaboutInfo_dcdVersion_Less' ).click();
-                    me.cwsRenderObj.swManagerObj.reGetAppShell(); 
+                    SwManager.reGetAppShell(); 
                 }, 500 );
             }
         });
@@ -552,7 +552,7 @@ function aboutApp( cwsRender )
         $( '#linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
             // ?? Check only if during online?
-            me.cwsRenderObj.swManagerObj.checkNewAppFile( function() 
+            SwManager.checkNewAppFile( function() 
             {
                 console.customLog( 'FROM AboutApp - newAppFile Found!!' );
                 
@@ -562,7 +562,7 @@ function aboutApp( cwsRender )
 
         $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
-            AppUtil.appRefresh();
+            AppUtil.appReload();
         });      
     };
 

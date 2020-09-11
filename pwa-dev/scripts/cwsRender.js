@@ -11,7 +11,7 @@ function cwsRender()
 	me.pulsatingProgress = $( '#pulsatingDots' );
 
 	// service worker obj reference
-	me.swManagerObj;  // set on 'app.js' initialize process
+	//me.SwManager;  // set on 'app.js' initialize process
 
 	// global variables
 	//me.configJson;
@@ -815,7 +815,7 @@ function cwsRender()
 
 	me.newSWrefreshNotification = function()
 	{
-		me.swManagerObj.newSWrefreshNotification();
+		SwManager.newSWrefreshNotification();
 	};
 
 	me.setNewAppFileStatus = function( newAppFilesFound )

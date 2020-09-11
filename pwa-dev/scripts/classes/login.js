@@ -20,7 +20,8 @@ function Login( cwsRenderObj )
 	me.loginFormTag = $( 'div.login_data' );
 	me.advanceOptionLoginBtnTag = $( '#advanceOptionLoginBtn' );
 
-	
+	me.loginPinClearTag = $( '#loginPinClear' );
+
 	me.loginFormTag = $( '.login_data__fields' );
 	me.loginFieldTag = $( '#loginField' );
 
@@ -59,21 +60,14 @@ function Login( cwsRenderObj )
 		// Tab & Anchor UI related click events
 		FormUtil.setUpTabAnchorUI( me.loginFormDivTag );
 
-		me.setLoginFormEvents();
+		me.setLoginBtnEvents();
+		me.setAdvOptBtnClick();
 	}
 	// =============================================
 
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
-
-	me.setLoginFormEvents = function()
-	{
-		me.setLoginBtnEvents();
-		me.setAdvOptBtnClick();
-	}
-
-	// ---------------------------
 	
 
 	me.setLoginBtnEvents = function()
@@ -182,6 +176,15 @@ function Login( cwsRenderObj )
 				}
 			}
 		});
+
+
+		me.loginPinClearTag.off( 'click' ).click( function() 
+		{
+			me.clearResetPasswords();
+			$( '.pin1' ).focus();
+
+			// NOTE: We also need to cancel the current login process..
+		});
 	};
 
 	
@@ -250,8 +253,7 @@ function Login( cwsRenderObj )
 					$( '#accept' ).click( function() {
 
 						DataManager2.deleteAllStorageData( function() {
-							AppUtil.appRefresh();
-							//me.cwsRenderObj.swManagerObj.reGetAppShell(); 
+							AppUtil.appReload();
 						});
 
 					});
@@ -284,7 +286,7 @@ function Login( cwsRenderObj )
 		$( '#loginVersionNote' ).append( '<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>' );
 
 		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
-			AppUtil.appRefresh();
+			AppUtil.appReload();
 		});
 	};
 	

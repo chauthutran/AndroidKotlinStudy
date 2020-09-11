@@ -230,7 +230,7 @@ ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaAc
 // --------------------------------------
 // -- Activity Payload Related Methods
 
-ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJsonActivityPayload )
+ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJsonActivityPayload, actionDefJson )
 {
     var activityJson = {};
 
@@ -259,6 +259,9 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJson
             //"payloadType": payloadType
             // 'actionJson': actionDefJson <-- Do not need this, probably
         };
+
+        if ( actionDefJson ) activityJson.processing.useTestResponse = actionDefJson.useTestResponse;
+
     }
 
     return activityJson;
@@ -266,11 +269,11 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJson
 
 
 // Add new activity with client generation
-ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonActivityPayload, callBack )
+ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonActivityPayload, actionDefJson, callBack )
 {
     try
     {
-        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, formsJsonActivityPayload );
+        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, formsJsonActivityPayload, actionDefJson );
 
         var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
     

@@ -310,7 +310,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.syncResultMsgShow = function( statusVal, activityJson, activityCardDivTag )
     {
         // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
-        Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
+        MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
         {
             me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
             me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson );
@@ -595,6 +595,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
             if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
 
+            var testResponseJson = ConfigManager.getTestResponseJson( activityJson_Orig.processing.useTestResponse );
+
 
             // NOTE:
             // On 'afterDoneCall', the caller normally refreshs activityDivTag with changed data - 'reRenderActivityDiv()'
@@ -605,28 +607,26 @@ function ActivityCard( activityId, cwsRenderObj, options )
             activityJson_Orig.processing.status = Constants.status_processing;
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
 
-            
-            var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
 
             try
             {
-                var loadingTag = undefined;
-                //FormUtil.submitRedeem = function( apiPath, payloadJson, activityJson, loadingTag, returnFunc, asyncCall, syncCall )
-
-                WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, loadingTag, function( success, responseJson )
+                // Fake Test Response Json - SHOULD WE DO THIS HERE, OR BEFORE 'performSyncUp' method?
+                if ( testResponseJson )
                 {
-                    // Stop the Sync Icon rotation
-                    FormUtil.rotateTag( syncIconTag, false );
-
-                    // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
-                    me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
+                    WsCallManager.mockRequestCall( testResponseJson, undefined, function( success, responseJson )
                     {
-                        newActivityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
-                        me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
+                    });
+                }
+                else
+                {
+                    var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
 
-                        afterDoneCall( success );
-                    } );
-                });         
+                    WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
+                    {
+                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
+                    });       
+                }
             }
             catch ( errMsg )
             {
@@ -649,6 +649,21 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
+
+    me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
+    {        
+        // Stop the Sync Icon rotation
+        FormUtil.rotateTag( syncIconTag, false );
+
+        // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
+        me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
+        {
+            newActivityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
+            me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+
+            afterDoneCall( success );
+        });   
+    };
 
     // =============================================
 
@@ -690,7 +705,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 {
                     errMsg += ' Error Response: ' + JSON.stringify( responseJson );
                 }
-            } catch 
+            } 
+            catch 
             { 
                 try
                 {

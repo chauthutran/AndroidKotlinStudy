@@ -26,6 +26,8 @@ WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 
 
 WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
 
+WsCallManager.mockDelayTimeMS = 1000; // default delay time in milliseconds - 1000ms = 1 sec
+
 // ============================================
 // Setup / Set on Start of App Related ========
 
@@ -281,3 +283,49 @@ WsCallManager.composeDwsWsFullUrl = function( targetUrl )
     }
 };
 
+
+WsCallManager.mockRequestCall = function( testResponseJson, loadingTag, returnFunc )
+{	    
+    try
+    {
+        if ( testResponseJson )
+        {
+            var delayTimeMs = WsCallManager.getDelayTimeMS( testResponseJson.delayTimeJson );
+    
+            setTimeout( function() 
+            {
+                var success = ( testResponseJson.responseCode < 400 );
+    
+                WsCallManager.loadingTagClear( loadingTag );
+    
+                returnFunc( success, testResponseJson.responseJson );
+    
+            }, delayTimeMs );
+        }
+        else throw 'testResponseJson param undefined'; 
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in WsCallManager.mockRequestCall, errMsg: ' + errMsg );
+
+        WsCallManager.loadingTagClear( loadingTag );
+
+        returnFunc( false, undefined );
+    }
+};
+
+
+
+WsCallManager.getDelayTimeMS = function( delayTimeJson )
+{
+    var delayTimeMs = WsCallManager.mockDelayTimeMS;
+    
+    if ( delayTimeJson && delayTimeJson.time !== undefined && delayTimeJson.unit )
+    {
+        if ( delayTimeJson.unit === "second" ) delayTimeMs = delayTimeJson.time * 1000;
+        else if ( delayTimeJson.unit === "minute" ) delayTimeMs = delayTimeJson.time * 1000 * 60;
+        else if ( delayTimeJson.unit === "hour" ) delayTimeMs = delayTimeJson.time * 1000 * 60 * 60;
+    }
+
+    return delayTimeMs;
+};

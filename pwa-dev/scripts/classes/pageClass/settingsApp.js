@@ -79,7 +79,7 @@ function settingsApp( cwsRender )
                 var loadingTag = FormUtil.generateLoadingTag( divButtonAppVersionTag );
                 setTimeout( function() {
                     $( '#imgsettingsInfo_dcdVersion_Less' ).click();
-                    me.cwsRenderObj.swManagerObj.reGetAppShell(); 
+                    SwManager.reGetAppShell(); 
                 }, 500 );
             }
         });
@@ -126,12 +126,12 @@ function settingsApp( cwsRender )
                 try
                 {
                     DataManager2.deleteAllStorageData( function() {
-                        me.cwsRenderObj.swManagerObj.reGetAppShell();
+                        SwManager.reGetAppShell();
                     });
                 }
                 catch ( errMsg ) {
                     console.customLog( 'About Page, buttonResetData, errMsg: ' + errMsg );
-                    me.cwsRenderObj.swManagerObj.reGetAppShell();
+                    SwManager.reGetAppShell();
                 }
             });
 

@@ -23,6 +23,8 @@ function app()
   me._cwsRenderObj;
   me.count = 0;
 
+  //me.isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
+
   // ----------------------------------------------------
 
 	me.initialize = function()
@@ -31,9 +33,12 @@ function app()
     // Default Behavior Modify
     me.detectStandAlone();
     me.windowEvent_BlockBackBtnAction();
-    //window.addEventListener( 'beforeinstallprompt', me.appBeforeInstallPrompt );
     window.addEventListener( 'error', me.catchErrorInCustomLog );
   
+
+    // Setup Static Classes
+    MsgManager.initialSetup();
+
 
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
@@ -46,19 +51,19 @@ function app()
 
     me.App_UI_startUp_loading(); // << should we move this into cwsRender?
 
-    me._cwsRenderObj.swManagerObj = new swManager( me._cwsRenderObj, function() { 
+
+    // Service Worker Related Initial Setup
+    SwManager.initialSetup( me._cwsRenderObj, function() 
+    { 
       console.log( 'swManger Processed..' );
+
+      // NOTE: This could be placed right before 'ScheduleManager.runSchedules_AppStart();' in 'me.startAppProcess()'
+      SwManager.checkNewAppFile_OnlyOnline();
 
       me.App_UI_startUp_Progress( '40%' );
       me.startAppProcess();
   
     });
-
-    //me.App_UI_startUp_Progress( '40%' );
-    //me.startAppProcess();
-
-    //} );   
-
   };
 
   // ----------------------------------------------------
@@ -87,7 +92,7 @@ function app()
       ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
 
       // Start the scheduling on app start
-      ScheduleManager.runSchedules_AppStart( me._cwsRenderObj );
+      ScheduleManager.runSchedules_AppStart();
 
       me.App_UI_startUp_Progress( '70%' );
 
@@ -195,43 +200,6 @@ function app()
 
   // ---------------------------------------
 
-  me.appBeforeInstallPrompt = function( e )
-  {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    //e.preventDefault();
-
-    deferredPrompt = e;
-
-    var isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
-
-    console.customLog( 'App StandAlone Status..: ' + isApp_standAlone );
-    // We would allow below link show if not 'standAlone' case only.
-
-    // this event does not fire if the application is already installed
-    // then your button still hidden ;)
-    console.customLog( 'before install prompt' );
-
-
-    // Set display for this!
-    var divMobileInstallTryTag = $( '#divMobileInstallTry' );
-    divMobileInstallTryTag.css( 'cursor', 'pointer' );
-    divMobileInstallTryTag.text( '<span>Available - standAlone: ' + isApp_standAlone + '</span>' );
-
-
-    divMobileInstallTryTag.off( 'click' ).click( function() 
-    {
-        // Show the prompt
-        deferredPrompt.prompt();
-
-        // Wait for the user to respond to the prompt
-        deferredPrompt.userChoice.then( ( choiceResult ) => {
-            if ( choiceResult.outcome === 'accepted' ) console.customLog( 'User accepted the A2HS prompt' );
-            else console.customLog( 'User dismissed the A2HS prompt' );
-            deferredPrompt = null;
-        });
-    });
-  };
-
   me.windowEvent_BlockBackBtnAction = function()
   {
     // Method 1
@@ -239,6 +207,8 @@ function app()
 
     window.addEventListener('popstate', function (event)
     {
+      console.log( '[[popstate]]' );
+
       history.pushState(null, document.title, location.href);
       
       var backBtnTags = $( '.btnBack:visible' );
@@ -254,11 +224,10 @@ function app()
       }
 
     });
-
     // NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
     // https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
-
   };
+
 
   me.detectStandAlone = function()
   {

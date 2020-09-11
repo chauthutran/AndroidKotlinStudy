@@ -168,7 +168,7 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
 
 DevHelper.checkNewAppFile = function()
 {
-    if ( DevHelper.cwsRenderObj ) DevHelper.cwsRenderObj.swManagerObj.checkNewAppFile();
+    if ( DevHelper.cwsRenderObj ) SwManager.checkNewAppFile();
 }
 
 // =======================================

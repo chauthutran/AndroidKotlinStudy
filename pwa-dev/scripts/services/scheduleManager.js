@@ -33,8 +33,7 @@ ScheduleManager.timerID_checkNewAppFileCheck;
 ScheduleManager.scheduleList = {
 	"OnAppStart": [
 		"SCH_ServerStatusCheck",
-		"SCH_NewAppFileCheck"
-		// Add New App File check.  
+		//"SCH_NewAppFileCheck"
 		// Also, 'serverStatus' check on app Start, but diable it on logOut?  Strange.
 	],
 	"AfterLogin": [
@@ -52,12 +51,12 @@ ScheduleManager.scheduleList = {
 
 // === PART 1. Schedule Call/Start Methods =============
 
-ScheduleManager.runSchedules_AppStart = function( cwsRenderObj )
+ScheduleManager.runSchedules_AppStart = function()
 {
 	ScheduleManager.scheduleList.OnAppStart.forEach( itemName =>
     {
 		if ( itemName === "SCH_ServerStatusCheck" ) ScheduleManager.schedule_serverStatus_Check( true );
-		else if ( itemName === "SCH_NewAppFileCheck" ) ScheduleManager.schedule_newAppFile_Check( false, cwsRenderObj );
+		else if ( itemName === "SCH_NewAppFileCheck" ) ScheduleManager.schedule_newAppFile_Check( false );
 	});	
 };
 
@@ -98,12 +97,12 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 };
 
 
-ScheduleManager.schedule_newAppFile_Check = function( NotRunRightAway, cwsRenderObj ) 
+ScheduleManager.schedule_newAppFile_Check = function( NotRunRightAway ) 
 {
-	if ( !NotRunRightAway ) cwsRenderObj.swManagerObj.checkNewAppFile_OnlyOnline();
+	if ( !NotRunRightAway ) SwManager.checkNewAppFile_OnlyOnline();
 
 	// 1 min?
-	ScheduleManager.timerID_checkNewAppFileCheck = setInterval( cwsRenderObj.swManagerObj.checkNewAppFile_OnlyOnline, ScheduleManager.interval_checkNewAppFileCheck );
+	ScheduleManager.timerID_checkNewAppFileCheck = setInterval( SwManager.checkNewAppFile_OnlyOnline, ScheduleManager.interval_checkNewAppFileCheck );
 };
 
 

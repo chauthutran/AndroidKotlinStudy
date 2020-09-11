@@ -25,7 +25,9 @@
 
   <!-- Add to home screen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <script> document.write( '<meta name="apple-mobile-web-app-status-bar-style" content="' + _themeColor + '">'); </script>
+  <script>
+    document.write('<meta name="apple-mobile-web-app-status-bar-style" content="' + _themeColor + '">');
+  </script>
   <meta name="apple-mobile-web-app-title" content="WFA">
 
   <link rel="apple-touch-icon" href="images/icons/Connect_144px.png">
@@ -33,12 +35,18 @@
 
   <!-- Windows -->
   <meta name="msapplication-TileImage" content="images/icons/Connect_144px.png">
-  <script> document.write( '<meta name="msapplication-TileColor" content="' + _themeColor + '">'); </script>
+  <script>
+    document.write('<meta name="msapplication-TileColor" content="' + _themeColor + '">');
+  </script>
 
   <!-- Chrome, Firefox OS and Opera -->
-  <script> document.write( '<meta name="theme-color" content="' + _themeColor + '">'); </script>
+  <script>
+    document.write('<meta name="theme-color" content="' + _themeColor + '">');
+  </script>
   <!-- Windows Phone -->
-  <script> document.write( '<meta name="msapplication-navbutton-color" content="' + _themeColor + '">'); </script>
+  <script>
+    document.write('<meta name="msapplication-navbutton-color" content="' + _themeColor + '">');
+  </script>
 
 
   <script type="text/javascript" src="scripts/libraries/jquery-3.4.1.min.js"></script>
@@ -56,8 +64,6 @@
   <!--script type="text/javascript" src="scripts/libraries/crossfilter.min.js" async></script-->
   <!--script type="text/javascript" src="scripts/libraries/d3.min.js"></script-->
   <script type="text/javascript" src="scripts/libraries/tabulate.js"></script>
-
-  <script type="text/javascript" src="scripts/services/manifestData.js"></script>
 
   <!-- Google Analytics -->
   <!--script>
@@ -171,14 +177,22 @@
               <div class="field__left split_password">
                 <div class="loginPinDiv" style="float: left;">
                   <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
-                  autocomplete="off" mandatory="true">
-                  <input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+                    autocomplete="off" mandatory="true">
+                  <input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="off"
+                    pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="off"
+                    pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="off"
+                    pattern="[0-9]*" inputmode="numeric">
+                  <input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="off"
+                    pattern="[0-9]*" inputmode="numeric">
                 </div>
                 <div style="float: left;">
-                  <img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;">
+                  <button id="loginPinClear" class="cbutton">clear</button>
+                </div>
+                <div style="float: left;">
+                  <img class="pin_pw_loading" src="images/loading_small2.svg"
+                    style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;">
                 </div>
               </div>
               <div class="field__right"></div>
@@ -274,7 +288,8 @@
 
 
             <div id="settingsInfo_newLangTermsDownload">
-              <img id="imgSettingLangTermRotate" src="images/sync-banner.svg" alt="" style="margin-right: 9px; opacity: 0,65;" class="">
+              <img id="imgSettingLangTermRotate" src="images/sync-banner.svg" alt=""
+                style="margin-right: 9px; opacity: 0,65;" class="">
             </div>
 
 
@@ -396,9 +411,10 @@
         <div class="field-read_only__label"><label>More Info</label></div>
         <div class="field-read_only__text" style="font-size: 0.85rem; color: #777;">
           <span id="linkAppUpdateCheck" style="cursor:pointer; color: cadetblue; font-style: italic;">[Check App
-            Updates]</span><span id="linkAppUpdateRefresh" style="display: none; cursor:pointer; color: cadetblue; font-style: italic;">[App
-              Updates Available]</span>
-            &nbsp;&nbsp;
+            Updates]</span><span id="linkAppUpdateRefresh"
+            style="display: none; cursor:pointer; color: cadetblue; font-style: italic;">[App
+            Updates Available]</span>
+          &nbsp;&nbsp;
           <span id="showLogs" style="cursor:pointer; color: cadetblue; font-style: italic;">[Logs]</span>
         </div>
       </div>
@@ -465,14 +481,11 @@
   <div id="qrTemplate"></div>
   <!-- END > RESERVED QR CREATOR -->
 
-  </div>
-
-  <script type="text/javascript" src="scripts/services/consoleCustomLog.js"></script>
-
   <script type="text/javascript" src="scripts/constants/constants.js"></script>
   <script type="text/javascript" src="scripts/constants/templates.js"></script>
   <script type="text/javascript" src="scripts/constants/configs.js"></script>
 
+  <script type="text/javascript" src="scripts/utils/consoleCustomLog.js"></script>
   <script type="text/javascript" src="scripts/utils/util.js"></script>
   <script type="text/javascript" src="scripts/utils/util2.js"></script>
   <script type="text/javascript" src="scripts/utils/prototypes.js"></script>
@@ -486,6 +499,18 @@
   <script type="text/javascript" src="scripts/utils/StatsUtil.js"></script>
   <script type="text/javascript" src="scripts/utils/appUtil.js"></script>
 
+  <script type="text/javascript" src="scripts/helpers/payloadTemplateHelper.js"></script>
+  <script type="text/javascript" src="scripts/helpers/msgManager.js"></script>
+  <script type="text/javascript" src="scripts/helpers/formMsgManager.js"></script>
+  <script type="text/javascript" src="scripts/helpers/msgAreaBottom.js"></script>
+  <script type="text/javascript" src="scripts/helpers/dataVerMove.js"></script>
+  <script type="text/javascript" src="scripts/helpers/devHelper.js"></script>
+  <script type="text/javascript" src="scripts/helpers/appModeSwitchPrompt.js"></script>
+  <script type="text/javascript" src="scripts/helpers/webqr.js"></script>
+  <script type="text/javascript" src="scripts/helpers/qrcode.js"></script>
+  <script type="text/javascript" src="scripts/helpers/pwaEpoch.js"></script>
+  <script type="text/javascript" src="scripts/helpers/baseConverter.js"></script>
+
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/storage/storageMng.js"></script>
@@ -494,27 +519,19 @@
   <script type="text/javascript" src="scripts/services/translationManager.js"></script>
   <script type="text/javascript" src="scripts/services/clientDataManager.js"></script>
   <script type="text/javascript" src="scripts/services/activityDataManager.js"></script>
-  <script type="text/javascript" src="scripts/services/payloadTemplateHelper.js"></script>
-
   <script type="text/javascript" src="scripts/services/syncManagerNew.js"></script>
   <script type="text/javascript" src="scripts/services/configManager.js"></script>
-  <script type="text/javascript" src="scripts/services/msgManager.js"></script>
-  <script type="text/javascript" src="scripts/services/formMsgManager.js"></script>
   <script type="text/javascript" src="scripts/services/connManagerNew.js"></script>
-
   <script type="text/javascript" src="scripts/services/appInfoManager.js"></script>
   <script type="text/javascript" src="scripts/services/sessionManager.js"></script>
   <script type="text/javascript" src="scripts/services/infoDataManager.js"></script>
-  <script type="text/javascript" src="scripts/services/dataVerMove.js"></script>
   <script type="text/javascript" src="scripts/services/scheduleManager.js"></script>
   <script type="text/javascript" src="scripts/services/swManager.js"></script>
-  <script type="text/javascript" src="scripts/services/devHelper.js"></script>
 
+  <script type="text/javascript" src="scripts/classes/pageClass/statistics.js"></script>
+  <script type="text/javascript" src="scripts/classes/pageClass/settingsApp.js"></script>
+  <script type="text/javascript" src="scripts/classes/pageClass/aboutApp.js"></script>
   <script type="text/javascript" src="scripts/classes/activityCard.js"></script>
-  <script type="text/javascript" src="scripts/classes/appModeSwitchPrompt.js"></script>
-  <script type="text/javascript" src="scripts/classes/statistics.js"></script>
-  <script type="text/javascript" src="scripts/classes/settingsApp.js"></script>
-  <script type="text/javascript" src="scripts/classes/aboutApp.js"></script>
   <script type="text/javascript" src="scripts/classes/menu.js"></script>
   <script type="text/javascript" src="scripts/classes/favIcon.js"></script>
   <script type="text/javascript" src="scripts/classes/login.js"></script>
@@ -526,10 +543,7 @@
   <script type="text/javascript" src="scripts/classes/blockButton.js"></script>
   <script type="text/javascript" src="scripts/classes/blockMsg.js"></script>
   <script type="text/javascript" src="scripts/classes/block.js"></script>
-  <script type="text/javascript" src="scripts/classes/webqr.js"></script>
-  <script type="text/javascript" src="scripts/classes/qrcode.js"></script>
-  <script type="text/javascript" src="scripts/classes/pwaEpoch.js"></script>
-  <script type="text/javascript" src="scripts/classes/baseConverter.js"></script>
+
   <!--script type="text/javascript" src="scripts/classes/myDetails.js"></script-->
 
   <script type="text/javascript" src="scripts/cwsRender.js"></script>

@@ -475,7 +475,7 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
     // TODO: Should do toggle of visible - if clicked again, hide it as well..
     //   ?? Where is the hiding logic?
 
-    Templates.setMsgAreaBottom( function( syncInfoAreaTag ) 
+    MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
     {
         var msgHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
         var msgContentTag = syncInfoAreaTag.find( 'div.msgContent' );
