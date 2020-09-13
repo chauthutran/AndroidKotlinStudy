@@ -1,3 +1,4 @@
+//	TODO: ?: Rename to 'LSAppInfoManager'?
 function AppInfoManager() {}
 
 AppInfoManager.KEY_APPINFO = "appInfo";

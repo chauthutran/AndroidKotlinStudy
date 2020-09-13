@@ -39,7 +39,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // If tag has been created), perform render
         if ( activityCardDivTag )
         {
-            var activityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
+            var activityJson = getActivityById( me.activityId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
 
             try
@@ -131,37 +131,37 @@ function ActivityCard( activityId, cwsRenderObj, options )
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
     
-        // if ( clickEnable )  <-- Commented out to allow clickable..
-        //{
-            divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
+        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
+        {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+
+            // NOTE:
+            //  - If status is not syncable one, display bottom message
+            //  - If offline, display the message about it.
+            if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
-                e.stopPropagation();  // Stops calling parent tags event calls..
-                        
-                if ( statusVal === Constants.status_queued
-                    || statusVal === Constants.status_failed
-                    || statusVal === Constants.status_hold )
-                {
-                    me.activitySubmitSyncClick();
-                }  
-                else 
-                {
-                    // Display the popup
-                    me.syncResultMsgShow( statusVal, activityJson, activityCardDivTag );
-    
+                // Main SyncUp Processing
+                if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( me.activityId );
+                else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
+            }  
+            else 
+            {
+                // Display the popup
+                me.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
 
-                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
-                    if ( statusVal === Constants.status_submit_wMsg )        
-                    {
-                        activityJson.processing.status = Constants.status_submit_wMsgRead;
+                // NOTE: STATUS CHANGED!!!!
+                // If submitted with msg one, mark it as 'read' and rerender the activity Div.
+                if ( statusVal === Constants.status_submit_wMsg )        
+                {
+                    activityJson.processing.status = Constants.status_submit_wMsgRead;
 
-                        // Need to save storage afterwards..
-                        ClientDataManager.saveCurrent_ClientsStore( function() {
-                            me.reRenderActivityDiv();
-                        });
-                    }
-                }           
-            });     
-        //}
+                    // Need to save storage afterwards..
+                    ClientDataManager.saveCurrent_ClientsStore( function() {
+                        me.reRenderActivityDiv();
+                    });
+                }
+            }           
+        });     
     };
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
@@ -307,7 +307,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
     
-    me.syncResultMsgShow = function( statusVal, activityJson, activityCardDivTag )
+    me.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag )
     {
         // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
         MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
@@ -411,15 +411,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.activitySubmitSyncClick = function()
-    {        
-        if ( SyncManagerNew.syncStart_CheckNSet() )
+    //me.activitySubmitSyncClick = function() {};
+
+    /*
+    // if ( SyncManagerNew.syncStart_CheckNSet() )
         {
             try
             {
                 me.performSyncUp( function( success ) {
     
-                    SyncManagerNew.syncFinish_Set();     
+                    //SyncManagerNew.syncFinish_Set();     
 
                     me.reRenderActivityDiv();
                 });    
@@ -427,11 +428,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             catch( errMsg )
             {
                 console.customLog( 'ERROR on running on activityCard.SyncUpItem, errMsg - ' + errMsg );
-                SyncManagerNew.syncFinish_Set();     
+                //SyncManagerNew.syncFinish_Set();     
             }
         }
-    };
-              
+    */
 
     me.reRenderActivityDiv = function()
     {
@@ -590,7 +590,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         try
         {
-            activityJson_Orig = ActivityDataManager.getActivityItem( "id", me.activityId );
+            activityJson_Orig = ActivityDataManager.getActivityById( me.activityId );
 
             if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
             if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
@@ -658,7 +658,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
         me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
         {
-            newActivityJson = ActivityDataManager.getActivityItem( "id", me.activityId );
+            newActivityJson = ActivityDataManager.getActivityById( me.activityId );
             me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
 
             afterDoneCall( success );
@@ -671,6 +671,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         var operationSuccess = false;
 
+
+        // Process 'ResponseCaseAction'
+        // 1.   responseJson.result.report  <--- if exists, call a method to handle the action!!!
+
+        // We do need a holding list in memory <-- in scheduler?
+        if ( responseJson && responseJson.result 
+            && responseJson.result.report ) me.processResponseCaseAction( responseJson.result.report, activityJson_Orig.id );
+
+    
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
@@ -728,6 +737,25 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if ( callBack ) callBack( operationSuccess, errMsg );
         } 
     };
+
+
+    // ------------------------------------
+    //   ResponseCaseAction Related 
+
+    //  Could be moved to a seperate class??
+
+    me.processResponseCaseAction = function( reportJson, activityId )
+    {
+        // Check for matching oens..
+        var caseActionJson = ConfigManager.getResponseCaseActionJson( reportJson );
+
+        // 1. perform Action (msg put on history?  or on alert...) - But more type of actions, etc  - for now, simply put this on history...        
+        ScheduleManager.responseCaseAction_AddMsg( activityId, caseActionJson.msg, caseActionJson.status, 401 )
+
+        // 2. Schedule the sync - new type of schedule..
+        ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
+    };
+
 
     // remove this activity from list  (me.activityJson.id ) <-- from common client 
     // =============================================

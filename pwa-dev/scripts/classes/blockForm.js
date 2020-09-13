@@ -72,13 +72,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			}
 
 			
-			ValidationUtil.disableValidation( function() 
+			Validation.disableValidation( function() 
 			{
 				me.populateFormData( passedData, formTag );
 				me.evalFormGroupDisplayStatus( formTag );
 	
 				// NOTE: TRAN VALIDATION
-				ValidationUtil.setUp_Events( formTag );
+				Validation.setUp_Events( formTag );
 	
 				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 				//NOTE (2020/07/22): added sort logic to underlying calculationEval so that 'complex' formulas run last

@@ -15,7 +15,6 @@ DevHelper.tempCount = 0;
 DevHelper.testRunInterval;
 DevHelper.testRunCount = 0;
 
-
 DevHelper.sampleDataTemplate = 
 [
   {

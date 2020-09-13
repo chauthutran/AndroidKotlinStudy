@@ -290,7 +290,7 @@ WsCallManager.mockRequestCall = function( testResponseJson, loadingTag, returnFu
     {
         if ( testResponseJson )
         {
-            var delayTimeMs = WsCallManager.getDelayTimeMS( testResponseJson.delayTimeJson );
+            var delayTimeMs = Util.getTimeMs( testResponseJson.delayTime, WsCallManager.mockDelayTimeMS );
     
             setTimeout( function() 
             {
@@ -312,20 +312,4 @@ WsCallManager.mockRequestCall = function( testResponseJson, loadingTag, returnFu
 
         returnFunc( false, undefined );
     }
-};
-
-
-
-WsCallManager.getDelayTimeMS = function( delayTimeJson )
-{
-    var delayTimeMs = WsCallManager.mockDelayTimeMS;
-    
-    if ( delayTimeJson && delayTimeJson.time !== undefined && delayTimeJson.unit )
-    {
-        if ( delayTimeJson.unit === "second" ) delayTimeMs = delayTimeJson.time * 1000;
-        else if ( delayTimeJson.unit === "minute" ) delayTimeMs = delayTimeJson.time * 1000 * 60;
-        else if ( delayTimeJson.unit === "hour" ) delayTimeMs = delayTimeJson.time * 1000 * 60 * 60;
-    }
-
-    return delayTimeMs;
 };

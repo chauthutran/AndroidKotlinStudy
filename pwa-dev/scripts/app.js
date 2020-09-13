@@ -42,9 +42,11 @@ function app()
 
     // Instantiate Classes
     me._cwsRenderObj = new cwsRender();
+    SessionManager.cwsRenderObj = me._cwsRenderObj; // Global Reference to cwsRenderObj..
 
-    // Set cwsRenderObj for ValidationUtil so that we can use this class later
-    ValidationUtil.setCWSRenderObj( me._cwsRenderObj );
+
+    // Set cwsRenderObj for Validation so that we can use this class later
+    Validation.setCWSRenderObj( me._cwsRenderObj );
 
     // Does this get loaded also when we login?
     AppInfoManager.initialLoad_FromStorage();
@@ -134,17 +136,8 @@ function app()
   {
     // hide PWA (loading) screen: timeout used for delay (UI effect)
     setTimeout(function () {
-
       FormMsgManager.appUnblock();
-
-      //$( 'input.loginUserName' ).focus();
-
-      //$( '.Nav1' ).dblclick( function(){
-      //  DevHelper.loadSampleData();
-      //} )
-
-    }, 500);
-
+    }, 300);
   };
 
 
@@ -160,43 +153,35 @@ function app()
     $( SyncManagerNew.imgAppSyncActionButtonId ).click( () => {
 
       // if already running, no message..
-      // if offline, also, no message in this case about offline...
-
-      if ( SyncManagerNew.syncStart_CheckNSet( { 'hideMsg': true } ) )
+      // if offline, also, no message in this case about offline...      
+      
+      if ( SyncManagerNew.isSyncAll_Running() )
       {
-        SyncManagerNew.syncAll( me._cwsRenderObj, 'Manual', function( success ) 
-        {
-          SyncManagerNew.syncFinish_Set();
-
-          setTimeout( SyncManagerNew.SyncMsg_ShowBottomMsg, 700 );
-        });  
+        SyncManagerNew.SyncMsg_ShowBottomMsg();
       }
       else
       {
-        setTimeout( SyncManagerNew.SyncMsg_ShowBottomMsg, 700 );
-        //SyncManagerNew.SyncMsg_ShowBottomMsg();
+        SyncManagerNew.syncAll( me._cwsRenderObj, 'Manual', function( success ) 
+        {
+          SyncManagerNew.SyncMsg_ShowBottomMsg();
+        });  
       }
 
     });
   };
-  
-  //me.App_checkUpdates_found_prompt = function()
-  //{
-  //  if ( me._swManagerObj.createRefreshPrompt ) me.createRefreshIntervalTimer();
-  //};
 
 
+  /*
   me.App_installed_done = function( event ) {
-
-    /*
     // Track event: The app was installed (banner or manual installation)
     FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
       // Track event: The app was installed (banner or manual installation)
       ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-      playSound("coin");
+      //playSound("coin");
     });
-    */
   };
+  */
+
 
   // ---------------------------------------
 

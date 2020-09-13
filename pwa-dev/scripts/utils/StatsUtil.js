@@ -1,3 +1,9 @@
+// -------------------------------------------
+// -- StatsUtil Class/Methods
+//  - Statistic Util library - must match the standAlone version in Git!!
+//
+// ------------------------------------------
+
 function StatsUtil() {};
 
 StatsUtil._clientsIdx = {};

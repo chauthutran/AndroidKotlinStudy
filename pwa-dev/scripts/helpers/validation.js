@@ -1,20 +1,20 @@
 
-function ValidationUtil() {};
+function Validation() {};
 
-ValidationUtil._DisableValidation = false;
-ValidationUtil.cwsRenderObj;
-ValidationUtil.COLOR_WARNING = "#f19c9c";
+Validation._DisableValidation = false;
+Validation.cwsRenderObj;
+Validation.COLOR_WARNING = "#f19c9c";
 
 
-ValidationUtil.setCWSRenderObj = function( _cwsRenderObj )
+Validation.setCWSRenderObj = function( _cwsRenderObj )
 {
-    ValidationUtil.cwsRenderObj = _cwsRenderObj;
+    Validation.cwsRenderObj = _cwsRenderObj;
 }
 
 
-ValidationUtil.disableValidation = function( execFunc )
+Validation.disableValidation = function( execFunc )
 {
-	ValidationUtil._DisableValidation = true;
+	Validation._DisableValidation = true;
 
 	try
 	{
@@ -22,10 +22,10 @@ ValidationUtil.disableValidation = function( execFunc )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error in ValidationUtil.disableValidation execute, errMsg: ' + errMsg );
+		console.customLog( 'Error in Validation.disableValidation execute, errMsg: ' + errMsg );
 	}
 
-	ValidationUtil._DisableValidation = false;
+	Validation._DisableValidation = false;
 };
 
 
@@ -35,25 +35,25 @@ ValidationUtil.disableValidation = function( execFunc )
 // -------------------------------------------------------------------------------------------------------------------
 
 
-ValidationUtil.setUp_Events = function( formTag ) // setupEventsForForm
+Validation.setUp_Events = function( formTag ) // setupEventsForForm
 {
     // < change to find( '.dataValue' ) ?
     //formTag.find( "input,select,checkbox,textarea" ).each( function() {
         formTag.find( ".dataValue" ).each( function() {
             var inputTag = $( this );
             inputTag.change( function(){ //blur
-                ValidationUtil.checkValidations( inputTag );
+                Validation.checkValidations( inputTag );
             });
         }); 
 }
 
-ValidationUtil.checkValidations = function( tag )
+Validation.checkValidations = function( tag )
 {	
     var valid = true;
 
     // TODO: Make 'skipValidation' a static/constant variable somewhere..
     //if ( tag.attr( 'skipValidation' ) !== 'true' )
-    if ( !ValidationUtil._DisableValidation )
+    if ( !Validation._DisableValidation )
     {
         // Validation Initial Setting Clear
         tag.attr( 'valid', 'true' );
@@ -65,26 +65,26 @@ ValidationUtil.checkValidations = function( tag )
 
         if ( divFieldBlockTag.is( ':visible' ) ) 
         {
-            ValidationUtil.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
-            ValidationUtil.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
         }
 
         // If not valid, set the background color.
         valid = ( tag.attr( 'valid' ) == 'true' );
-        divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : ValidationUtil.COLOR_WARNING );
+        divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : Validation.COLOR_WARNING );
     }
 
     return valid;
 };
 
 
-ValidationUtil.performValidationCheck = function( tag, type, divTag )
+Validation.performValidationCheck = function( tag, type, divTag )
 {
     // check the type of validation (if exists in the tag attribute)
     // , and if not valid, set the tag as '"valid"=false' in the attribute
@@ -94,29 +94,29 @@ ValidationUtil.performValidationCheck = function( tag, type, divTag )
     // If the validation attribute is present in the tag and not empty string or set to false
     if ( validationAttr && validationAttr !== 'false' )
     {
-        if ( type == 'mandatory' ) valid = ValidationUtil.checkRequiredValue( tag, divTag, type );
-        else if ( type == 'minlength' ) valid = ValidationUtil.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
-        else if ( type == 'maxlength' ) valid = ValidationUtil.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
-        else if ( type == 'maxvalue' ) valid = ValidationUtil.checkValueRange( tag, divTag, 0, Number( validationAttr ) );
-        else if ( type == 'exactlength' ) valid = ValidationUtil.checkValueLen( tag, divTag, type, Number( validationAttr ) );
-        else if ( type == 'isNumber' ) valid = ValidationUtil.checkNumberOnly( tag, divTag, type );
-        else if ( type == 'isDate' ) valid = ValidationUtil.checkValidDate( tag, divTag, type );
-        else if ( type == 'phoneNumber' ) valid = ValidationUtil.checkPhoneNumberValue( tag, divTag, type );
-        else if ( type == 'patterns' ) valid = ValidationUtil.checkValue_RegxRules( tag, divTag, type );
+        if ( type == 'mandatory' ) valid = Validation.checkRequiredValue( tag, divTag, type );
+        else if ( type == 'minlength' ) valid = Validation.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
+        else if ( type == 'maxlength' ) valid = Validation.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
+        else if ( type == 'maxvalue' ) valid = Validation.checkValueRange( tag, divTag, 0, Number( validationAttr ) );
+        else if ( type == 'exactlength' ) valid = Validation.checkValueLen( tag, divTag, type, Number( validationAttr ) );
+        else if ( type == 'isNumber' ) valid = Validation.checkNumberOnly( tag, divTag, type );
+        else if ( type == 'isDate' ) valid = Validation.checkValidDate( tag, divTag, type );
+        else if ( type == 'phoneNumber' ) valid = Validation.checkPhoneNumberValue( tag, divTag, type );
+        else if ( type == 'patterns' ) valid = Validation.checkValue_RegxRules( tag, divTag, type );
 
         if ( !valid ) tag.attr( 'valid', false );
     }
 };
 
 
-ValidationUtil.checkFormEntryTagsData = function( formTag )
+Validation.checkFormEntryTagsData = function( formTag )
 {	
     var allValid = true;
 
     // If any of the tag is not valid, mark it as invalid.
     //formTag.find( "input,select,checkbox,textarea" ).each( function() {
     formTag.find( ".dataValue" ).each( function() {
-        if ( !ValidationUtil.checkValidations( $(this) ) )
+        if ( !Validation.checkValidations( $(this) ) )
         {
             allValid = false;
         }
@@ -130,15 +130,15 @@ ValidationUtil.checkFormEntryTagsData = function( formTag )
 // Methods for checking validation types
 // -------------------------------------------------------------------------------------------------------------------
 
-ValidationUtil.checkRequiredValue = function( inputTag, divTag, type )
+Validation.checkRequiredValue = function( inputTag, divTag, type )
 {
     var valid = true;
     var value = inputTag.val();
 
-    if( ! ValidationUtil.checkFalseEvalSpecialCase() && ( ! value || value == "" || value == null ) )
+    if( ! Validation.checkFalseEvalSpecialCase() && ( ! value || value == "" || value == null ) )
     {
-        var message = ValidationUtil.getMessage( type, "This field is required" );
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        var message = Validation.getMessage( type, "This field is required" );
+        divTag.append( Validation.getErrorSpanTag( message ) );
         valid = false;
     }
     
@@ -146,32 +146,32 @@ ValidationUtil.checkRequiredValue = function( inputTag, divTag, type )
 };
 
 
-ValidationUtil.checkValueLen = function( inputTag, divTag, type, length )
+Validation.checkValueLen = function( inputTag, divTag, type, length )
 {		
     var valid = true;
     var value = inputTag.val();
     
     if ( value && type == 'min' && value.length < length )
     {
-        var message = ValidationUtil.getMessage( type, 'Please enter at least ' + length  + ' characters' );
+        var message = Validation.getMessage( type, 'Please enter at least ' + length  + ' characters' );
         message = message.replace("$$length", length);
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message ) );
 
         valid = false;
     }
     else if ( value && type == 'max' && value.length > length )
     {
-        var message = ValidationUtil.getMessage( type, 'Please enter at most ' + length + ' characters' );
+        var message = Validation.getMessage( type, 'Please enter at most ' + length + ' characters' );
         message = message.replace("$$length", length);
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message ) );
         
         valid = false;
     }
     else if ( value && type == 'exactlength' && value.length != length )
     {
-        var message = ValidationUtil.getMessage( type, 'Please enter exactly ' + length + ' characters' );
+        var message = Validation.getMessage( type, 'Please enter exactly ' + length + ' characters' );
         message = message.replace("$$length", length);
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message ) );
         
         valid = false;
     }
@@ -181,16 +181,16 @@ ValidationUtil.checkValueLen = function( inputTag, divTag, type, length )
 };
 
 
-ValidationUtil.checkValueRange = function( inputTag, divTag, type, valFrom, valTo )
+Validation.checkValueRange = function( inputTag, divTag, type, valFrom, valTo )
 {
     var valid = true;
     var value = inputTag.val();
     
     if ( value && ( valFrom > value || valTo < value ) )
     {
-        var message = ValidationUtil.getMessage( type, 'The value should be less than or equal to ' + valTo );
+        var message = Validation.getMessage( type, 'The value should be less than or equal to ' + valTo );
         message = message.replace("$$length", length);
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message ) );
 
         valid = false;
     }
@@ -198,7 +198,7 @@ ValidationUtil.checkValueRange = function( inputTag, divTag, type, valFrom, valT
     return valid;		
 };
 
-ValidationUtil.checkNumberOnly = function( inputTag, divTag, type )
+Validation.checkNumberOnly = function( inputTag, divTag, type )
 {
     var valid = true;
     var value = inputTag.val();
@@ -206,8 +206,8 @@ ValidationUtil.checkNumberOnly = function( inputTag, divTag, type )
 
     if ( value && !reg.test( value ) )
     {
-        var message = ValidationUtil.getMessage( type, 'Please enter number only' );
-        divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+        var message = Validation.getMessage( type, 'Please enter number only' );
+        divTag.append( Validation.getErrorSpanTag( message ) );
         
         valid = false;
     }
@@ -215,7 +215,7 @@ ValidationUtil.checkNumberOnly = function( inputTag, divTag, type )
     return valid;		
 };
 
-ValidationUtil.checkValidDate = function( inputTag, divTag, type )
+Validation.checkValidDate = function( inputTag, divTag, type )
 {
     var valid = true;
     var value = inputTag.val();
@@ -230,16 +230,16 @@ ValidationUtil.checkValidDate = function( inputTag, divTag, type )
             // it is a date
             if ( isNaN( dtm.getTime() ) ) {  // d.valueOf() could also work
                 // date is not valid
-                var message = ValidationUtil.getMessage( type, 'Please enter valid date' );
-                divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+                var message = Validation.getMessage( type, 'Please enter valid date' );
+                divTag.append( Validation.getErrorSpanTag( message ) );
                 valid = false;
             } else {
                 // date is valid
             }
             } else {
             // not a date
-            var message = ValidationUtil.getMessage( type, 'Please enter valid date' );
-            divTag.append( ValidationUtil.getErrorSpanTag( message ) );
+            var message = Validation.getMessage( type, 'Please enter valid date' );
+            divTag.append( Validation.getErrorSpanTag( message ) );
             valid = false;
             }
 
@@ -248,17 +248,17 @@ ValidationUtil.checkValidDate = function( inputTag, divTag, type )
     return valid;	
 }
 
-ValidationUtil.checkPhoneNumberValue = function( inputTag, divTag, type )
+Validation.checkPhoneNumberValue = function( inputTag, divTag, type )
 {
     var valid = true;
     
     // Check if Phone number is in [ 12, 15 ]
     inputTag.attr( 'altval', '' );
 
-    var validationInfo = ValidationUtil.phoneNumberValidation( inputTag.val() );		
+    var validationInfo = Validation.phoneNumberValidation( inputTag.val() );		
     if ( !validationInfo.success ) 
     {
-        divTag.append( ValidationUtil.getErrorSpanTag( validationInfo.msg ) );
+        divTag.append( Validation.getErrorSpanTag( validationInfo.msg ) );
         valid = false;			
     }
     else
@@ -270,7 +270,7 @@ ValidationUtil.checkPhoneNumberValue = function( inputTag, divTag, type )
     return valid;
 };
 
-ValidationUtil.checkValue_RegxRules = function( inputTag, divTag, type )
+Validation.checkValue_RegxRules = function( inputTag, divTag, type )
 {
     var valid = true;
 
@@ -294,7 +294,7 @@ ValidationUtil.checkValue_RegxRules = function( inputTag, divTag, type )
                 {
                     valid = false;
                     var startCommaStr = ( notFirstErr ) ? ", ": "";
-                    divTag.append( ValidationUtil.getErrorSpanTag( startCommaStr + regxRuleJson.msg, regxRuleJson.term ) );
+                    divTag.append( Validation.getErrorSpanTag( startCommaStr + regxRuleJson.msg, regxRuleJson.term ) );
                     notFirstErr = true;
                 }	
             }
@@ -309,7 +309,7 @@ ValidationUtil.checkValue_RegxRules = function( inputTag, divTag, type )
 }
 
 
-ValidationUtil.phoneNumberValidation = function( phoneVal )
+Validation.phoneNumberValidation = function( phoneVal )
 {
     var success = false;
     var finalPhoneNumber = '';
@@ -324,7 +324,7 @@ ValidationUtil.phoneNumberValidation = function( phoneVal )
     {
         if ( !( value.length >= 12 && value.length <= 15 ) )
         {
-            msg += ValidationUtil.getMessage( "phone9Len", 'Number should be 9 digits long (w/o country code' );
+            msg += Validation.getMessage( "phone9Len", 'Number should be 9 digits long (w/o country code' );
         }
         else
         {
@@ -337,7 +337,7 @@ ValidationUtil.phoneNumberValidation = function( phoneVal )
     {
         if ( value.length != 10 )
         {
-            msg += ValidationUtil.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
+            msg += Validation.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
         }
         else
         {
@@ -358,7 +358,7 @@ ValidationUtil.phoneNumberValidation = function( phoneVal )
     }
     else
     {
-        msg += ValidationUtil.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
+        msg += Validation.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
     }
 
     
@@ -370,7 +370,7 @@ ValidationUtil.phoneNumberValidation = function( phoneVal )
 // Supportive methods
 // -------------------------------------------------------------------------------------------------------------------
 
-ValidationUtil.getMessage = function( type, defaultMessage )
+Validation.getMessage = function( type, defaultMessage )
 {
     var message = ConfigManager.getConfigJson().definitionMessages[type];
     if( message === undefined )
@@ -387,7 +387,7 @@ ValidationUtil.getMessage = function( type, defaultMessage )
 };
 
 
-ValidationUtil.getErrorSpanTag = function( keyword, term )
+Validation.getErrorSpanTag = function( keyword, term )
 {
     var text = TranslationManager.translateText( keyword, term ); // + optionalStr;
     var dvContainer = $( '<div class="errorMsg" /> ' );
@@ -400,7 +400,7 @@ ValidationUtil.getErrorSpanTag = function( keyword, term )
 };
 
 
-ValidationUtil.clearTagValidations = function( tags )
+Validation.clearTagValidations = function( tags )
 {
     tags.css( "background-color", "" ).val( "" ).attr( "altval", "" );
     
@@ -411,7 +411,7 @@ ValidationUtil.clearTagValidations = function( tags )
 
 
 // Some values like string 'false', 'NaN', '-0' '+0' are evaluated as false.
-ValidationUtil.checkFalseEvalSpecialCase = function( value ) {
+Validation.checkFalseEvalSpecialCase = function( value ) {
     return ( value !== undefined && value != null && value.length > 0 );
 };
 

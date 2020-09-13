@@ -16,7 +16,7 @@ function inputMonitor( cwsRenderObj )
     var me = this;
     var cwsRenderInputMon = cwsRenderObj;
     var InputMonLogoutTimer = 0;
-    var inputMonLogoutDelay = 0;
+    var inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins;
 
     if ( Util.isMobi() )
     {
@@ -62,8 +62,6 @@ function inputMonitor( cwsRenderObj )
     var listItemDragEnabled = false;
     var startTagRedeemListItem = false;
     var listItemWasExpanded = false;
-
-    inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins;
 
     function touchStart(e) 
     {

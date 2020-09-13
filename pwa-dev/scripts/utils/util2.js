@@ -111,139 +111,73 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 };
 
 
-// ---------------------------------
-// --- Form Related, BlockForm related..
+Util.getLocalStorageObjectValue = function( objKeyVal )
+{
+	var lastSession = AppInfoManager.getUserInfo();
+	var arrKeys;
 
-// Util2.createCheckbox = function( { message='', name='', uid='', updates='', value='' } )
-// {
-// 	var divContainerTag = $( '<div class="inputCheckbox" ></div>' );
-// 	var checkboxReal = $( '<input name="' + name + '" uid="' + uid + '" ' + ( updates ? ' updates="' + updates + '" ' : '' ) + '" value="' + value + '" class="inputHidden CHECKBOX" type="checkbox" style="display:none" />' );
-// 	var checkboxShow = $( '<div class="checkboxShow" ></div>' );
-// 	var text = $( '<span class="checkboxText">' + message + '</span>' )
-// 	var check = $( '<span class="checkboxCheck" ></span>' )
+	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
+	{
+		console.customLog( ' exiting getLocalStorageObjectValue ');
+		return;
+	}
+	else
+	{
+		if ( lastSession )
+		{
+			var localData = SessionManager.sessionData;
 
-// 	divContainerTag.click( function(){
+			arrKeys = objKeyVal.toString().split( '.' );
 
-// 		if ( checkboxReal.prop( 'checked' ) )
-// 		{
-// 			check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-// 			checkboxShow.css( 'background', 'transparent' );
-// 			checkboxReal.prop( 'checked', false );
-// 		} 
-// 		else 
-// 		{
-// 			check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-// 			checkboxShow.css( 'background', 'gray' );
-// 			checkboxReal.prop( 'checked', true );
-// 		}
+			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
 
-// 		if ( updates ) Util2.updateMultiCheckboxPayloadValue( updates )
-
-// 	} );
-
-// 	if ( ( value.toString().toLowerCase() == "true" ) || ( value.toString().toLowerCase() == "checked" ) )
-// 	{
-// 		check.css( { transform: 'rotate(45deg) translateX(20%) translateY(-25%)',borderColor: 'white' } );
-// 		checkboxShow.css( 'background', 'gray' );
-// 		checkboxReal.prop( 'checked', true );
-// 	} 
-// 	else 
-// 	{
-// 		check.css( { borderColor: 'rgba(0,0,0,0)', transform: '' } );
-// 		checkboxShow.css( 'background', 'transparent' );
-// 		checkboxReal.prop( 'checked', false );
-// 	}
-
-// 	checkboxShow.append( check );
-// 	divContainerTag.append( checkboxReal,checkboxShow, text );
-
-// 	return { component: divContainerTag, input:checkboxReal };
-// };
+		}
+	}
+};
 
 
-// Util2.populateDropdown_MultiCheckbox = function ( formItemJson, selectObj, json_Data )
-// {
-// 	selectObj.empty();
+Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
+{
+	if ( objArr[ (itm + 1) ] && objJson[ objArr[ (itm + 1) ] ] )
+	{
+		return Util.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
+	}
+	else 	
+	{
+		return objJson.toString();
+	}
+};
 
-// 	var inputOpts = [];
+Util.paddNumeric = function( val, padding )
+{
+	var ret = '';
+	if ( val && padding || val == 0 && padding )
+	{
+		for (var i = 0; i < ( parseInt( padding ) - val.toString().length ); i++)
+		{
+			ret += '0';
+		}
+		ret += val.toString();
+		return ret;
+	}
+	else
+	{
+		if ( val ) return val.toString();
+	}
+}
 
-// 	json_Data.forEach( obj=> {
+Util.generateRandomAnything = function( len, possible ) 
+{
+	var text = "";
 
-// 		var { component } = Util2.createCheckbox( {
-// 				message:	obj.defaultName,
-// 				name:		'checkbox_' + formItemJson.id + '_' + obj.value,
-// 				updates:	formItemJson.id,
-// 				value: 		obj.value } ),
-// 				li = $( '<li></li>' )
-// 				li.append( component )
-// 				selectObj.append( li );
+	for (var i = 0; i < len; i++)
+		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
 
-// 		inputOpts.push( 'checkbox_' + formItemJson.id + '_' + obj.value );
-
-// 	} );
-// };
-
-
-// Util2.updateRadioPayloadValue = function( targetInputTagName )
-// {
-// 	var vals = '';
-// 	var InpTarg = $( "[name='" + targetInputTagName + "']" );
-
-// 	if ( InpTarg )
-// 	{
-// 		for ( var i = 0; i < InpTarg.length; i++ )
-// 		{
-// 			var obj = InpTarg[ i ];
-// 			if ( obj.checked )
-// 			{
-// 				$( '[name="' + targetInputTagName + '"]' ).val( obj.value );
-// 				// console.customLog( updates + ' = ' + obj.value, $( '[name="' + updates + '"]' ).val() );
-
-// 				FormUtil.dispatchOnChangeEvent( $( '[name="' + targetInputTagName + '"]' ) );
-				
-// 			}
-// 		}
-// 	}
-// };
+	return text;
+};
 
 
-// Util2.updateOtherRadioOptions = function( updates, excludeName )
-// {
-// 	var vals = '';
-// 	var InpTarg = $( "[updates='" + updates + "']" );
-
-// 	if ( InpTarg )
-// 	{
-// 		for ( var i = 0; i < InpTarg.length; i++ )
-// 		{
-// 			var obj = InpTarg[ i ];
-// 			if ( obj.name != excludeName ) obj.checked = false;
-// 		}
-// 	}
-// };
-
-
-
-// Util2.updateMultiCheckboxPayloadValue = function( updates )
-// {
-// 	var vals = '';
-// 	var InpTarg = $( "[updates='" + updates + "']" );
-
-// 	if ( InpTarg )
-// 	{
-// 		for ( var i = 0; i < InpTarg.length; i++ )
-// 		{
-// 			var obj = InpTarg[ i ];
-// 			if ( obj.checked ) vals += ( vals.length ? ',' : '' ) + obj.value;
-// 		}
-// 	}
-
-// 	$( '[name="' + updates + '"]' ).val( vals );
-
-// 	FormUtil.dispatchOnChangeEvent( $( '[name="' + updates + '"]' ) );
-// };
-
-
+// THIS SHOULD BE REPLACED LATER..
 Util2.populate_year = function ( el, data, labelText ) {
 
 	var ul = el.getElementsByClassName('optionsSymbol')[0],
@@ -388,48 +322,6 @@ Util2.populate_year = function ( el, data, labelText ) {
 };
 
 
-// Util2.populateRadios = function ( formItemJson, selectObj, json_Data )
-// {
-// 	selectObj.empty();
-
-// 	json_Data.forEach( obj => {
-
-// 		var content = $( '<div class="radioContent" ></div>' );
-// 		var input = $( '<input type="radio" updates="' + formItemJson.id + '" name="radioOpt_' + obj.value + '" value="' + obj.value + '" style="display:none" >' );
-// 		var picker = $( '<span class="radioPicker"></span>' );
-// 		var pickerOn = $( '<i class="radioPickerOn"></i>' )
-// 		var text = $( '<span class="radioText">' + obj.defaultName + '</span>' );
-
-// 		picker.append( pickerOn );
-// 		content.append( input, picker, text);
-
-// 		content.click( function(e) {
-
-// 			e.stopPropagation();
-
-// 			if (! input.prop('checked') ){
-
-// 				content[0].parentElement.querySelectorAll('i').forEach(i=>{
-// 					$(i).css( 'background', 'transparent' )
-// 				});
-
-// 				pickerOn.css( 'background', 'gray' );
-// 				input.prop( 'checked', true );
-
-// 				Util2.updateOtherRadioOptions( formItemJson.id, input.prop( 'name' ) );
-
-// 			}
-
-// 			Util2.updateRadioPayloadValue( formItemJson.id );
-
-// 		});
-
-// 		selectObj.append( content );
-
-// 	} );
-// };
-
-
 Util2.dateToMyFormat = function( date, myFormat )
 {
 	var y = ( date.getFullYear() ).toString();
@@ -473,74 +365,6 @@ Util2.dateToMyFormat = function( date, myFormat )
 
 
 // ---------------------------------
-
-
-Util2.newLocalSequence = function( pattern, commitSEQIncr )
-{
-	var jsonUserData = SessionManager.getLoginDataFromStorage( SessionManager.sessionData.login_UserName );
-
-	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
-	var ret;
-
-	if ( jsonStorageData == undefined ) 
-	{
-		jsonStorageData = { "DD": Util2.dateToMyFormat( new Date(), 'DD' ), "MM": Util2.dateToMyFormat( new Date(), 'MM' ), "YY": Util2.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
-	}
-
-	if ( pattern.indexOf('[') > 0 )
-	{
-		var parms = Util.getParameterInside( pattern, '[]' );
-
-		if ( parms.length )
-		{
-			if ( parms.indexOf(':') )
-			{
-				var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
-
-				if ( Util2.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
-				{
-					// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
-					ret = 1;
-					jsonStorageData[ arrParm[0] ] = Util2.dateToMyFormat( new Date(), arrParm[0] );
-				}
-				else
-				{
-					var last = jsonStorageData[ (arrParm[0]).slice(1) ];
-
-					if ( last )
-					{
-						ret = ( parseInt( last ) + 1 );
-					}
-					else
-					{
-						ret = 1;
-					}
-
-				}
-
-				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
-				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
-
-				if ( commitSEQIncr != undefined && commitSEQIncr == true )
-				{
-					SessionManager.saveLoginDataFromStorage( SessionManager.sessionData.login_UserName, jsonUserData );
-				}
-
-				return Util.paddNumeric( ret, arrParm[1] );
-
-			}
-			else
-			{
-				console.customLog( ' ~ no newLocalSequence comma separator');
-			}
-		}
-		else
-		{
-			console.customLog( ' ~ no localSequence parms');
-		}
-
-	}
-};
 
 
 Util2.getAgeValueFromPattern = function( tagTarget, pattern )

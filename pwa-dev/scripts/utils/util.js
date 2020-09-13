@@ -13,6 +13,136 @@ Util.dateType_DATE = "yyyy-MM-dd";
 Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 
+// ---------------------------
+// --- Types Check ----
+
+Util.isTypeObject = function( obj )
+{
+	return ( obj && typeof obj === 'object' );
+};
+
+Util.isTypeArray = function( obj )
+{
+	return ( obj && Array.isArray( obj ) );
+};
+
+Util.isTypeString = function( obj )
+{
+	return ( obj && typeof( obj ) === 'string' );
+};
+// ------------------------------------
+
+
+// ----------------------------------
+// Check Variable Related
+
+Util.getStr = function( val )
+{
+	return ( val ) ? val : '';
+}
+
+Util.getProperValue = function( val )
+{
+	Util.getNotEmpty( val );
+}
+
+Util.getNotEmpty = function( input ) {
+
+	if ( Util.checkDefined( input ) )
+	{
+		return input
+	}
+	else return "";
+};
+
+Util.checkDefined = function( input ) {
+
+	if( input !== undefined && input != null ) return true;
+	else return false;
+};
+
+Util.checkValue = function( input ) {
+
+	if ( Util.checkDefined( input ) && input.length > 0 ) return true;
+	else return false;
+};
+
+Util.checkDataExists = function( input ) {
+
+	return Util.checkValue( input );
+};
+
+Util.checkData_WithPropertyVal = function( arr, propertyName, value ) 
+{
+	var found = false;
+
+	if ( Util.checkDataExists( arr ) )
+	{
+		for ( var i = 0; i < arr.length; i++ )
+		{
+			var arrItem = arr[i];
+			if ( Util.checkDefined( arrItem[ propertyName ] ) && arrItem[ propertyName ] == value )
+			{
+				found = true;
+				break;
+			}
+		}
+	}
+
+	return found;
+};
+
+Util.isInt = function(n){
+    return Number(n) === n && n % 1 === 0;
+};
+
+Util.isNumeric = function(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
+Util.getNum = function( n ) {
+	var val = 0;
+	
+	try { 
+		if ( n ) val = Number( n ); 
+	}
+	catch ( err ) { }
+	
+	return val;
+};
+// Check Variable Related
+// ----------------------------------
+
+// ----------------------------------
+// JSON Deep Copy Related
+
+// Handles both object and array
+Util.getJsonDeepCopy = function( jsonObj )
+{
+	var newJsonObj;
+
+	if ( jsonObj )
+	{
+		try
+		{
+			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+		}
+		catch( errMsg ) {
+			console.customLog( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+		}
+	} 
+
+	return newJsonObj;
+};
+
+Util.cloneJson = function( jsonObj )
+{
+	return Util.getJsonDeepCopy( jsonObj );
+};
+// JSON Deep Copy Related
+// ----------------------------------
+
+
 // ----------------------------------------------------
 
 Util.outputAsStr = function( input )
@@ -262,24 +392,6 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 		}
 	});
 };
-
-// ---------------------------
-// --- Types Check ----
-Util.isTypeObject = function( obj )
-{
-	return ( obj && typeof obj === 'object' );
-};
-
-Util.isTypeArray = function( obj )
-{
-	return ( obj && Array.isArray( obj ) );
-};
-
-Util.isTypeString = function( obj )
-{
-	return ( obj && typeof( obj ) === 'string' );
-};
-// ------------------------------------
 
 Util.getPathObj = function( obj, pathArr )
 {
@@ -544,30 +656,6 @@ Util.unselectAllOption = function ( listTag ) {
 	listTag.find('option').attr('selected', true);
 };
 
-// Handles both object and array
-Util.getJsonDeepCopy = function( jsonObj )
-{
-	var newJsonObj;
-
-	if ( jsonObj )
-	{
-		try
-		{
-			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
-		}
-		catch( errMsg ) {
-			console.customLog( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
-		}
-	} 
-
-	return newJsonObj;
-};
-
-Util.cloneJson = function( jsonObj )
-{
-	return Util.getJsonDeepCopy( jsonObj );
-};
-
 Util.valueEscape = function( input )
 {
 	//input.replaceAll( '\', '\\' );
@@ -590,86 +678,6 @@ Util.reverseArray = function( arr )
 {
 	return arr.reverse();
 };
-
-// ----------------------------------
-// Check Variable Related
-
-Util.getStr = function( val )
-{
-	return ( val ) ? val : '';
-}
-
-Util.getProperValue = function( val )
-{
-	Util.getNotEmpty( val );
-}
-
-Util.getNotEmpty = function( input ) {
-
-	if ( Util.checkDefined( input ) )
-	{
-		return input
-	}
-	else return "";
-};
-
-Util.checkDefined = function( input ) {
-
-	if( input !== undefined && input != null ) return true;
-	else return false;
-};
-
-Util.checkValue = function( input ) {
-
-	if ( Util.checkDefined( input ) && input.length > 0 ) return true;
-	else return false;
-};
-
-Util.checkDataExists = function( input ) {
-
-	return Util.checkValue( input );
-};
-
-Util.checkData_WithPropertyVal = function( arr, propertyName, value ) 
-{
-	var found = false;
-
-	if ( Util.checkDataExists( arr ) )
-	{
-		for ( var i = 0; i < arr.length; i++ )
-		{
-			var arrItem = arr[i];
-			if ( Util.checkDefined( arrItem[ propertyName ] ) && arrItem[ propertyName ] == value )
-			{
-				found = true;
-				break;
-			}
-		}
-	}
-
-	return found;
-};
-
-Util.isInt = function(n){
-    return Number(n) === n && n % 1 === 0;
-};
-
-Util.isNumeric = function(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-};
-
-Util.getNum = function( n ) {
-	var val = 0;
-	
-	try { 
-		if ( n ) val = Number( n ); 
-	}
-	catch ( err ) { }
-	
-	return val;
-};
-// Check Variable Related
-// ----------------------------------
 
 // ----------------------------------
 // List / Array Related
@@ -1302,31 +1310,8 @@ Util.dateUTCToLocal = function( dateStr )
 // Date Formatting Related
 // ----------------------------------
 
-Util.pageHScroll = function( option )
-{
-	if ( option === "Right" )
-	{
-		// Scroll to right end
-		var left = $(document).outerWidth() - $(window).width();
-		$('body, html').scrollLeft( left );
-	}
-	else
-	{
-		$('body, html').scrollLeft( 0 );
-	}
-};
-
-
 // ----------------------------------
 // Others
-
-Util.showDiv = function( tag, show )
-{
-	if ( tag !== undefined && tag.length > 0 )
-	{
-		( show ) ? tag.show() : tag.hide();
-	}
-};
 
 Util.generateRandomId = function( len ) 
 {
@@ -1373,74 +1358,6 @@ Util.getParameterInside = function( value, openClose )
 };
 
 
-Util.paddNumeric = function( val, padding )
-{
-	var ret = '';
-	if ( val && padding || val == 0 && padding )
-	{
-		for (var i = 0; i < ( parseInt( padding ) - val.toString().length ); i++)
-		{
-			ret += '0';
-		}
-		ret += val.toString();
-		return ret;
-	}
-	else
-	{
-		if ( val ) return val.toString();
-	}
-}
-
-Util.getLocalStorageObjectValue = function( objKeyVal )
-{
-	var lastSession = AppInfoManager.getUserInfo();
-	var arrKeys;
-
-	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
-	{
-		console.customLog( ' exiting getLocalStorageObjectValue ');
-		return;
-	}
-	else
-	{
-		if ( lastSession )
-		{
-			var localData = SessionManager.sessionData;
-
-			arrKeys = objKeyVal.toString().split( '.' );
-
-			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
-
-		}
-	}
-};
-
-
-Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
-{
-	if ( objArr[ (itm + 1) ] && objJson[ objArr[ (itm + 1) ] ] )
-	{
-		return Util.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
-	}
-	else 	
-	{
-		return objJson.toString();
-	}
-};
-
-
-Util.parseInt = function( input )
-{
-	if ( input === undefined || input == null || input.length == 0 )
-	{
-		return 0;
-	}
-	else
-	{
-		return parseInt( input );
-	}
-};
-
 Util.generateRandomNumberRange = function(min_value , max_value) 
 {
 	return Math.random() * ( max_value - min_value ) + min_value;
@@ -1453,26 +1370,6 @@ Util.getRandomWord = function( slist, anythingRandom )
 	return arrL[i];
 }
 
-Util.generateRandomAnything = function( len, possible ) 
-{
-	var text = "";
-
-	for (var i = 0; i < len; i++)
-		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
-
-	return text;
-}
-
-Util.generateRandomString = function( len ) 
-{
-	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-	for (var i = 0; i < len; i++)
-		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
-
-	return text;
-}
 
 Util.generateRandomNumber = function( len ) 
 {
@@ -1540,132 +1437,121 @@ Util.decrypt = function (garbage,loops)
 	return seed;
 } ;
 
-
-  Util.isMobi = function ( ) 
-  {
+// --------------------------------------
+// Mobile Check Related --------
+Util.isMobi = function () {
 	return (/Mobi/.test(navigator.userAgent));
-  };
+};
 
-  Util.isAndroid = function ( ) 
-  {
+Util.isAndroid = function () {
 	return (/Android/.test(navigator.userAgent));
-  };
+};
 
-  Util.isIOS = function ( ) 
-  {
-	return ( navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)/i) !== null );
-  };
+Util.isIOS = function () {
+	return (navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)/i) !== null);
+};
 
-  Util.getPeriodName = function( pe )
-  {
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-	var peM = parseInt(pe.substring(4,6));
-	var peF = parseInt(pe.substring(0,4));
-	return ( months[ ( peM - 1) ] + ' ' + peF);
-  };
-
-
-  Util.ageHours = function( dtm ) 
-  {
-	var ageHr = ( new Date() - new Date( dtm ) ) / 1000 / ( 60 * 60 );
-	return Math.abs( Math.round( ageHr ) );
-  };
-
-
-  Util.getBaseFromBase = function ( input, from, to )
-  {
-	  return ConvertBase.custom( input, from, to );
-  };
-
-
-  Util.isJSON = function( objVal ) 
-  {
-	try {
-        JSON.parse(objVal);
-    } catch (e) {
-        return false;
-    }
-    return true;
-  };
-
-
-  Util.isArray = function( objVal ) 
-  {
-	 return Array.isArray ( objVal );
-  };
-
-
-  Util.localStorageSpace = function()
-  {
-	var allStrings = '';
-	for(var key in window.localStorage){
-		if(window.localStorage.hasOwnProperty(key)){
-			allStrings += window.localStorage[key];
-		}
-	}
-	return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
-  };
-
-  
-  Util.lengthInUtf8Bytes = function(str) {
+Util.lengthInUtf8Bytes = function (str) {
 	// Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
 	var m = encodeURIComponent(str).match(/%[89ABab]/g);
 	return str.length + (m ? m.length : 0);
-  }
+}
 
-  Util.getDateSeparator = function( formatDate )
-  {
-	  var toTry = [ '-', '/', ' ' ];
+Util.getDateSeparator = function (formatDate) {
+	var toTry = ['-', '/', ' '];
 
-	  for ( var i = 0; i <= toTry.length -1; i++ )
-	  {
-		if ( formatDate.indexOf( toTry[ i ] ) > 0 ) 
-		{ 
-			return toTry[ i ];
+	for (var i = 0; i <= toTry.length - 1; i++) {
+		if (formatDate.indexOf(toTry[i]) > 0) {
+			return toTry[i];
 		}
-	  }
+	}
+};
 
-  }
-
-  Util.numberWithCommas = function(x) 
-  {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+Util.numberWithCommas = function (x) {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 
-  Util.cloneArray = function( dataArray, callBack )
-  {
-	if ( Array.isArray( dataArray ) )
-	{
-		try
-		{
+Util.cloneArray = function (dataArray, callBack) {
+	if (Array.isArray(dataArray)) {
+		try {
 			var retArr = []; //[...dataArray]
 
-			for ( i = 0; i < dataArray.length; i++ )
-			{
-				retArr.push( dataArray[ i ] );
+			for (i = 0; i < dataArray.length; i++) {
+				retArr.push(dataArray[i]);
 			}
 
-			if ( callBack ) callBack( retArr )
+			if (callBack) callBack(retArr)
 			else return retArr;
-		}
-		catch( errMsg )
-		{
-			console.customLog( 'ERROR in Util.cloneArray(): ' + errMsg );
+		} catch (errMsg) {
+			console.customLog('ERROR in Util.cloneArray(): ' + errMsg);
 			callBack();
 		}
-	}
-	else
-	{
+	} else {
 		console.customLog('ERROR in Util.cloneArray(): ~ object is not array ');
 	}
-	
-  };
 
-  Util.isFunction = function(functionToCheck) 
-  {
-	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-  }
+};
 
-  // -----------------------------------------------------------------
+// -----------------------------------------------------------------
 
+Util.getTimeMs = function( input, defaultMs ) 
+{
+	var outputMs = defaultMs;
+
+	if ( input )
+	{
+		if ( Util.isTypeString( input ) ) 
+		{
+			outputMs = Util.getTimeMsStr( input );
+		}
+		else if ( Util.isTypeObject( input ) )
+		{
+			if ( input.time !== undefined && input.unit )
+			{
+				var timeNum = Util.getNum( input.time );
+
+				if ( input.unit === "second" ) outputMs = timeNum * 1000;
+				else if ( input.unit === "minute" ) outputMs = timeNum * 1000 * 60;
+				else if ( input.unit === "hour" ) outputMs = timeNum * 1000 * 60 * 60;
+			}    
+		}
+	} 
+
+	return outputMs;
+};
+
+// '00:00:00' time format
+Util.getTimeMsStr = function( input )
+{
+	var timeMs = 0;
+	var timeStrArr = input.split( ':' );
+
+	var hr = 0;
+	var min = 0;
+	var sec = 0;
+
+	// Hour exists..
+	if ( timeStrArr.length >= 3 )
+	{
+		hr = Util.getNum( timeStrArr[0] );
+		min = Util.getNum( timeStrArr[1] );
+		sec = Util.getNum( timeStrArr[2] );
+	} 
+	else if ( timeStrArr.length == 2 )
+	{
+		// Minuts exists..
+		min = Util.getNum( timeStrArr[0] );
+		sec = Util.getNum( timeStrArr[1] );
+	} 
+	else if ( timeStrArr.length == 1 )
+	{
+		sec = Util.getNum( timeStrArr[0] );
+	} 
+
+	timeMs += hr * 1000 * 60 * 60;
+	timeMs += min * 1000 * 60;
+	timeMs += sec * 1000;
+
+	return timeMs;
+}

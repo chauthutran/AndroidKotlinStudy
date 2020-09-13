@@ -272,7 +272,7 @@ function BlockButton( cwsRenderObj, blockObj )
 							var formDivSecTag = blockDivTag.find( '.formDivSec' );
 	
 							// NOTE: TRAN VALIDATION
-							if( ValidationUtil.checkFormEntryTagsData( formDivSecTag ) )
+							if( Validation.checkFormEntryTagsData( formDivSecTag ) )
 							{				
 								// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
 								//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
@@ -292,7 +292,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					var blockDivTag = btnTag.closest( 'div.block' );
 					var itemBlockTag = btnTag.closest( '.itemBlock' );
 						
-					if( ValidationUtil.checkFormEntryTagsData( itemBlockTag ) )
+					if( Validation.checkFormEntryTagsData( itemBlockTag ) )
 					{
 						// TODO: ACTIVITY ADDING
 						ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );

@@ -13,6 +13,9 @@
 //          7. Create Activity Processing Info Related Methods
 //          8. getCombinedTrans - get single json that combines all data in transactions
 //
+//      NEW:
+//          - Create any static method to update the 'activityCard' (in case it exists) ?
+//
 // -------------------------------------------------
 
 function ActivityDataManager()  {};
@@ -453,4 +456,54 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     }
 
     return dataJson;
+};
+
+
+// --------------------------------------------
+// --- Sync & ActivityCard Related Metods
+
+ActivityDataManager.activityUpdate_Status = function( activityId, status )
+{
+    if ( status )
+    {
+        var activityJson = ActivityDataManager.getActivityById( activityId );
+
+        if ( activityJson && actionJson.processing )
+        {
+            activityJson.processing.status = status;
+            
+            // Need to save storage afterwards..
+            ClientDataManager.saveCurrent_ClientsStore( function() 
+            {
+                // update ActivityCard is visible..
+                var activityCardObj = new ActivityCard( activityData.id, SessionManager.cwsRenderObj );    
+                activityCardObj.reRenderActivityDiv();
+            });
+        }    
+    }
+};
+
+ActivityDataManager.activityUpdate_History = function( activityId, status, msg, httpResponseCode )
+{
+    var activityJson = ActivityDataManager.getActivityById( activityId );
+
+    if ( activityJson )
+    {
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( status, httpResponseCode, msg );
+        ActivityDataManager.insertToProcessing( activityJson, processingInfo );	
+
+        ClientDataManager.saveCurrent_ClientsStore();
+    }
+};
+
+
+ActivityDataManager.activityUpdate_ByResponseCaseAction = function( activityId, actionJson )
+{
+    if ( actionJson )
+    {
+        // Both below methods does saving to clientStore..
+        ActivityDataManager.activityUpdate_Status( activityId, actionJson.status );
+
+        ActivityDataManager.activityUpdate_History( activityId, actionJson.status, actionJson.msg, 0 );
+    }   
 };

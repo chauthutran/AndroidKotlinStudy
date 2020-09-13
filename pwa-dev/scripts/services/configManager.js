@@ -33,6 +33,463 @@ ConfigManager.staticData = {
     , logoutDelay: 60 
 };
 
+ConfigManager.default_SettingPaging = { 
+    "enabled": true,
+    "pagingSize": 9 
+};
+
+// ----- Defined below/bottom in the Page --------
+
+//ConfigManager.defaultActivityType 
+//ConfigManager.defaultJsonList = {
+
+
+// ==== Methods ======================
+
+ConfigManager.setConfigJson = function ( configJson ) 
+{
+    try
+    {
+        if ( configJson )
+        {
+            ConfigManager.configJson_Original = configJson; 
+    
+            ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
+        
+            ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
+
+            ConfigManager.login_UserRoles = ConfigManager.getLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
+        }    
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
+    }
+};
+
+// NOTE: We can override any config setting by modifying 'ConfigManager.configJson' in console.
+
+
+ConfigManager.resetConfigJson = function () 
+{
+    ConfigManager.setConfigJson( ConfigManager.configJson_Original );
+};
+
+ConfigManager.clearConfigJson = function () 
+{
+    ConfigManager.configJson = {};
+    //ConfigManager.configSetting = {};
+};
+
+// ------------------------------------
+// --- 'Get' related methods
+
+ConfigManager.getConfigJson = function () 
+{
+    return ConfigManager.configJson;
+};  
+
+ConfigManager.getAreaListByStatus = function( bOnline, callBack )
+{
+    var configJson = ConfigManager.getConfigJson();
+    
+    var compareList = (bOnline) ? configJson.areas.online : configJson.areas.offline;
+    var retAreaList = [];
+
+    for ( var i = 0; i < compareList.length; i++) 
+    {
+        if ( compareList[i].userRoles) 
+        {
+            for ( var p = 0; p < compareList[i].userRoles.length; p++) 
+            {
+                if ( ConfigManager.login_UserRoles.includes(compareList[i].userRoles[p]) ) 
+                {
+                    retAreaList.push(compareList[i]);
+                    break;
+                }
+            }
+        } 
+        else {
+            retAreaList.push(compareList[i]);
+        }
+    }
+
+    if ( callBack ) callBack( retAreaList );
+};
+
+
+ConfigManager.getLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
+{
+    var userRoles = [];
+
+    try
+    {
+        // login orgUnit groups list..
+        var ouGroups = sessionOrgUnitData.orgUnit.organisationUnitGroups;
+
+        if ( defUserRoles && ouGroups )
+        {
+            for ( var r=0; r < ouGroups.length; r++ )
+            {
+                for ( var i=0; i< defUserRoles.length; i++ )
+                {
+                    // config role definition uid is dhis2 id
+                    if ( defUserRoles[ i ].uid == ouGroups[ r ].id )
+                    {
+                        userRoles.push( defUserRoles[ i ].id );
+                    }
+                }
+            }
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
+    }
+
+    return userRoles;
+};
+
+
+ConfigManager.getAllAreaList = function()
+{
+    var combinedAreaList = [];
+
+    return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
+};
+
+// ----------------------------------------
+        
+ConfigManager.getSettingPaging = function()
+{
+    var pagingSetting = ConfigManager.default_SettingPaging
+
+    var configJson = ConfigManager.getConfigJson();
+
+    if ( configJson && configJson.settings && configJson.settings.paging )
+    {
+        Util.mergeJson( pagingSetting, configJson.settings.paging );
+    }
+    
+    return pagingSetting;
+};
+
+
+ConfigManager.getActivityDisplaySettings = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+
+    var displaySettings = [  
+      ConfigManager.defaultActivityDisplaySettings 
+    ];
+
+    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
+    // "'<b><i>' + activityItem.created + '</i></b>'"
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.redeemDefs
+            && configJson.settings.redeemDefs.displaySettings )
+        {
+            displaySettings = configJson.settings.redeemDefs.displaySettings;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
+    }
+
+
+    return displaySettings;
+};
+
+
+ConfigManager.getActivityDisplayBase = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+
+    var displayBase = ConfigManager.defaultActivityDisplayBase;
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.redeemDefs
+            && configJson.settings.redeemDefs.displayBase )
+        {
+            displayBase = configJson.settings.redeemDefs.displayBase;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
+    }
+
+    return displayBase;
+};
+
+ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
+{
+    var activityStatusConfig;
+    var configJson = ConfigManager.getConfigJson();
+
+	try
+	{        
+        if ( activityJson.processing )
+        {
+            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
+        }
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+    }
+    
+    return activityStatusConfig;
+};
+
+
+ConfigManager.getActivityTypeConfig = function( activityJson )
+{
+	var activityTypeConfig;
+    var configJson = ConfigManager.getConfigJson();
+
+    try
+	{
+        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.type, 'name' );
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
+    }
+
+    //console.customLog( activityJson.type, activityTypeConfig );
+    if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
+
+    return activityTypeConfig;
+};
+
+
+ConfigManager.getSyncMergeDatePaths = function()
+{
+   var configJson = ConfigManager.getConfigJson();
+
+   return configJson.settings.sync.mergeCompare.dateCompareField; // var pathArr = 
+};
+
+
+ConfigManager.getSyncDownSetting = function()
+{
+   return ConfigManager.getConfigJson().settings.sync.syncDown;
+};
+
+
+ConfigManager.getTestResponseJson = function( useTestResponse )
+{
+    var testResponseJson;
+
+    if ( useTestResponse )
+    {
+        var testResponses = ConfigManager.getConfigJson().definitionTestResponses;
+
+        if ( testResponses ) testResponseJson = testResponses[ useTestResponse ];
+    }
+
+    return testResponseJson;
+};
+
+
+ConfigManager.getResponseCaseActionJson = function( reportJson )
+{
+    var caseActionJson;
+
+    if ( reportJson && reportJson.code && reportJson.case )
+    {        
+        var defCaseActions = ConfigManager.getConfigJson().definitionResponseCaseActions;
+
+        if ( defCaseActions ) 
+        {
+            var codeDef = defCaseActions[ reportJson.code ];
+
+            if ( codeDef ) caseActionJson = codeDef[ reportJson.case ];
+        }
+    }
+
+    return caseActionJson;
+};
+
+
+// ---------------------------------------------
+// ---- Statistic Related --------------------
+
+ConfigManager.getStatisticJson = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+    var login_UserRoles = ConfigManager.login_UserRoles;
+
+    var statisticJson = {};
+
+    if ( configJson.settings )
+    {
+        if ( configJson.settings.statistics )
+        {
+            var selectedRoleArrCount = 0;
+
+            // userRole based statistic info..
+            for ( var i = 0; i < configJson.settings.statistics.length; i++ )
+            {
+                var statJson = configJson.settings.statistics[i];
+
+                var statRoleArr = statJson.userRoles;
+
+                // If 'userRoles' is not defined or empty, assign as the base/default selection
+                if ( !statRoleArr || statRoleArr.length === 0 )
+                {
+                    selectedRoleArrCount = 0;
+                    statisticJson = statJson;
+                }
+                else
+                {
+                    var checkRoleArrCount = statRoleArr.length;
+
+                    if ( checkRoleArrCount > selectedRoleArrCount
+                        && ConfigManager.hasAllRoles( statRoleArr, login_UserRoles ) )
+                    {
+                        statisticJson = statJson;
+                        selectedRoleArrCount = checkRoleArrCount;
+                    }
+                }
+            }
+        }
+        else if ( configJson.settings.statistic )
+        {
+            statisticJson = configJson.settings.statistic;
+        }
+    }
+
+    //console.customLog( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
+
+    return statisticJson;
+};
+
+
+ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
+{
+    var hasAllConfigRoles = true;
+
+    for ( var p = 0; p < configRoleIds.length; p++ )
+    {
+        var roleId = configRoleIds[p];
+        
+        if ( login_UserRoles.indexOf( roleId ) < 0 ) //!ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
+        {
+            hasAllConfigRoles = false;
+            break;
+        }
+    }
+
+    return hasAllConfigRoles;
+};
+
+
+// NOT USED:
+//  userRoles are object array...  
+ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
+{
+    var inList = false;
+
+    for ( var p = 0; p < login_UserRoles.length; p++ )
+    {
+        var userRoleDef = login_UserRoles[p];
+
+        //if ( userRoleDef.id === roleId )
+        if ( userRoleDef === roleId )
+        {
+            inList = true;
+            break;
+        }
+    }
+
+    return inList;
+};
+
+
+ConfigManager.getStatisticApiPath = function()
+{
+    var statisticJson = ConfigManager.getStatisticJson();
+
+    var urlPath = ( statisticJson.url ) ? statisticJson.url : '/PWA.statistic';
+    var fileName = ( statisticJson.fileName ) ? statisticJson.fileName : ''; // DWS Endpoint has default value..'dc_pwa@LA@stat1.html';
+
+    return urlPath + '?stage=' + WsCallManager.stageName + '&fileName=' + fileName;
+};
+
+
+// ------------------------------------------------------
+// -- Apply Defaults related methods.
+
+ConfigManager.applyDefaults = function( configJson, defaults )
+{
+   ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
+
+   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
+
+   // Other defaults could be placed here..
+   ConfigManager.applyDefault_favList( configJson, defaults.favList );
+
+   ConfigManager.applyDefault_themes( configJson, defaults.themes );
+
+};
+
+ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
+{
+   if ( syncDownJson )
+   {
+      // 1. Check if 'configJson' has the content in path.
+      //    If not exists, set the 'content' of json..
+      if ( !configJson.settings ) configJson.settings = {};
+      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+
+      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson.content );
+   }
+};
+
+
+// TODO: Change to 'mergeCompare'
+ConfigManager.applyDefault_mergeCompare = function( configJson, mregeCompareJson )
+{
+   if ( mregeCompareJson )
+   {
+      // 1. Check if 'configJson' has the content in path.
+      //    If not exists, set the 'content' of json..
+      if ( !configJson.settings ) configJson.settings = {};
+      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+
+      if ( !configJson.settings.sync.mregeCompare ) configJson.settings.sync.mregeCompare = Util.getJsonDeepCopy( mregeCompareJson.content );
+   }
+};
+
+
+ConfigManager.applyDefault_favList = function( configJson, favListJson )
+{
+   if ( favListJson )
+   {
+      if ( !configJson.favList ) configJson.favList = Util.getJsonDeepCopy( favListJson );
+   }
+};
+
+
+ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
+{
+   if ( themesJsonArr )
+   {
+      if ( !configJson.themes ) configJson.themes = themesJsonArr;
+   }
+};
+
+// ========================================================
+
+
 // -- Default Configs -----
 
 ConfigManager.defaultActivityType = {
@@ -310,438 +767,6 @@ ConfigManager.defaultJsonList = {
         }
      ]    
 };
-
-ConfigManager.default_SettingPaging = { 
-    "enabled": true,
-    "pagingSize": 9 
-};
-// 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
-
-
-// ==== Methods ======================
-
-ConfigManager.setConfigJson = function ( configJson ) 
-{
-    try
-    {
-        if ( configJson )
-        {
-            ConfigManager.configJson_Original = configJson; 
-    
-            ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
-        
-            ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
-
-            ConfigManager.login_UserRoles = ConfigManager.getLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
-        }    
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
-    }
-};
-
-// NOTE: We can override any config setting by modifying 'ConfigManager.configJson' in console.
-
-
-ConfigManager.resetConfigJson = function () 
-{
-    ConfigManager.setConfigJson( ConfigManager.configJson_Original );
-};
-
-ConfigManager.clearConfigJson = function () 
-{
-    ConfigManager.configJson = {};
-    //ConfigManager.configSetting = {};
-};
-
-// ------------------------------------
-// --- 'Get' related methods
-
-ConfigManager.getConfigJson = function () 
-{
-    return ConfigManager.configJson;
-};  
-
-ConfigManager.getAreaListByStatus = function( bOnline, callBack )
-{
-    var configJson = ConfigManager.getConfigJson();
-    
-    var compareList = (bOnline) ? configJson.areas.online : configJson.areas.offline;
-    var retAreaList = [];
-
-    for ( var i = 0; i < compareList.length; i++) 
-    {
-        if ( compareList[i].userRoles) 
-        {
-            for ( var p = 0; p < compareList[i].userRoles.length; p++) 
-            {
-                if ( ConfigManager.login_UserRoles.includes(compareList[i].userRoles[p]) ) 
-                {
-                    retAreaList.push(compareList[i]);
-                    break;
-                }
-            }
-        } 
-        else {
-            retAreaList.push(compareList[i]);
-        }
-    }
-
-    if ( callBack ) callBack( retAreaList );
-};
-
-
-ConfigManager.getLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
-{
-    var userRoles = [];
-
-    try
-    {
-        // login orgUnit groups list..
-        var ouGroups = sessionOrgUnitData.orgUnit.organisationUnitGroups;
-
-        if ( defUserRoles && ouGroups )
-        {
-            for ( var r=0; r < ouGroups.length; r++ )
-            {
-                for ( var i=0; i< defUserRoles.length; i++ )
-                {
-                    // config role definition uid is dhis2 id
-                    if ( defUserRoles[ i ].uid == ouGroups[ r ].id )
-                    {
-                        userRoles.push( defUserRoles[ i ].id );
-                    }
-                }
-            }
-        }
-    }
-    catch( errMsg )
-    {
-        console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
-    }
-
-    return userRoles;
-};
-
-
-ConfigManager.getAllAreaList = function()
-{
-    var combinedAreaList = [];
-
-    return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
-};
-
-// ----------------------------------------
-        
-ConfigManager.getSettingPaging = function()
-{
-    var pagingSetting = ConfigManager.default_SettingPaging
-
-    var configJson = ConfigManager.getConfigJson();
-
-    if ( configJson && configJson.settings && configJson.settings.paging )
-    {
-        Util.mergeJson( pagingSetting, configJson.settings.paging );
-    }
-    
-    return pagingSetting;
-};
-
-
-ConfigManager.getActivityDisplaySettings = function()
-{
-    var configJson = ConfigManager.getConfigJson();
-
-    var displaySettings = [  
-      ConfigManager.defaultActivityDisplaySettings 
-    ];
-
-    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
-    // "'<b><i>' + activityItem.created + '</i></b>'"
-
-    try
-    {
-        if ( configJson.settings 
-            && configJson.settings.redeemDefs
-            && configJson.settings.redeemDefs.displaySettings )
-        {
-            displaySettings = configJson.settings.redeemDefs.displaySettings;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
-    }
-
-
-    return displaySettings;
-};
-
-
-ConfigManager.getActivityDisplayBase = function()
-{
-    var configJson = ConfigManager.getConfigJson();
-
-    var displayBase = ConfigManager.defaultActivityDisplayBase;
-
-    try
-    {
-        if ( configJson.settings 
-            && configJson.settings.redeemDefs
-            && configJson.settings.redeemDefs.displayBase )
-        {
-            displayBase = configJson.settings.redeemDefs.displayBase;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
-    }
-
-    return displayBase;
-};
-
-ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
-{
-    var activityStatusConfig;
-    var configJson = ConfigManager.getConfigJson();
-
-	try
-	{        
-        if ( activityJson.processing )
-        {
-            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
-        }
-	}
-	catch ( errMsg )
-	{
-		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
-    }
-    
-    return activityStatusConfig;
-};
-
-
-ConfigManager.getActivityTypeConfig = function( activityJson )
-{
-	var activityTypeConfig;
-    var configJson = ConfigManager.getConfigJson();
-
-    try
-	{
-        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.type, 'name' );
-	}
-	catch ( errMsg )
-	{
-		console.customLog( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
-    }
-
-    //console.customLog( activityJson.type, activityTypeConfig );
-    if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
-
-    return activityTypeConfig;
-};
-
-
-ConfigManager.getSyncMergeDatePaths = function()
-{
-   var configJson = ConfigManager.getConfigJson();
-
-   return configJson.settings.sync.mergeCompare.dateCompareField; // var pathArr = 
-};
-
-
-ConfigManager.getSyncDownSetting = function()
-{
-   return ConfigManager.getConfigJson().settings.sync.syncDown;
-};
-
-
-ConfigManager.getTestResponseJson = function( useTestResponse )
-{
-    var testResponseJson;
-
-    if ( useTestResponse )
-    {
-        var testResponses = ConfigManager.getConfigJson().definitionTestResponses;
-
-        if ( testResponses ) testResponseJson = testResponses[ useTestResponse ];
-    }
-
-    return testResponseJson;
-};
-
-// ---------------------------------------------
-// ---- Statistic Related --------------------
-
-ConfigManager.getStatisticJson = function()
-{
-    var configJson = ConfigManager.getConfigJson();
-    var login_UserRoles = ConfigManager.login_UserRoles;
-
-    var statisticJson = {};
-
-    if ( configJson.settings )
-    {
-        if ( configJson.settings.statistics )
-        {
-            var selectedRoleArrCount = 0;
-
-            // userRole based statistic info..
-            for ( var i = 0; i < configJson.settings.statistics.length; i++ )
-            {
-                var statJson = configJson.settings.statistics[i];
-
-                var statRoleArr = statJson.userRoles;
-
-                // If 'userRoles' is not defined or empty, assign as the base/default selection
-                if ( !statRoleArr || statRoleArr.length === 0 )
-                {
-                    selectedRoleArrCount = 0;
-                    statisticJson = statJson;
-                }
-                else
-                {
-                    var checkRoleArrCount = statRoleArr.length;
-
-                    if ( checkRoleArrCount > selectedRoleArrCount
-                        && ConfigManager.hasAllRoles( statRoleArr, login_UserRoles ) )
-                    {
-                        statisticJson = statJson;
-                        selectedRoleArrCount = checkRoleArrCount;
-                    }
-                }
-            }
-        }
-        else if ( configJson.settings.statistic )
-        {
-            statisticJson = configJson.settings.statistic;
-        }
-    }
-
-    //console.customLog( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
-
-    return statisticJson;
-};
-
-
-ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
-{
-    var hasAllConfigRoles = true;
-
-    for ( var p = 0; p < configRoleIds.length; p++ )
-    {
-        var roleId = configRoleIds[p];
-        
-        if ( login_UserRoles.indexOf( roleId ) < 0 ) //!ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
-        {
-            hasAllConfigRoles = false;
-            break;
-        }
-    }
-
-    return hasAllConfigRoles;
-};
-
-
-// NOT USED:
-//  userRoles are object array...  
-ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
-{
-    var inList = false;
-
-    for ( var p = 0; p < login_UserRoles.length; p++ )
-    {
-        var userRoleDef = login_UserRoles[p];
-
-        //if ( userRoleDef.id === roleId )
-        if ( userRoleDef === roleId )
-        {
-            inList = true;
-            break;
-        }
-    }
-
-    return inList;
-};
-
-
-ConfigManager.getStatisticApiPath = function()
-{
-    var statisticJson = ConfigManager.getStatisticJson();
-
-    var urlPath = ( statisticJson.url ) ? statisticJson.url : '/PWA.statistic';
-    var fileName = ( statisticJson.fileName ) ? statisticJson.fileName : ''; // DWS Endpoint has default value..'dc_pwa@LA@stat1.html';
-
-    return urlPath + '?stage=' + WsCallManager.stageName + '&fileName=' + fileName;
-};
-
-
-// ------------------------------------------------------
-// -- Apply Defaults related methods.
-
-ConfigManager.applyDefaults = function( configJson, defaults )
-{
-   ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
-
-   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
-
-   // Other defaults could be placed here..
-   ConfigManager.applyDefault_favList( configJson, defaults.favList );
-
-   ConfigManager.applyDefault_themes( configJson, defaults.themes );
-
-};
-
-ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
-{
-   if ( syncDownJson )
-   {
-      // 1. Check if 'configJson' has the content in path.
-      //    If not exists, set the 'content' of json..
-      if ( !configJson.settings ) configJson.settings = {};
-      if ( !configJson.settings.sync ) configJson.settings.sync = {};
-
-      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson.content );
-   }
-};
-
-
-// TODO: Change to 'mergeCompare'
-ConfigManager.applyDefault_mergeCompare = function( configJson, mregeCompareJson )
-{
-   if ( mregeCompareJson )
-   {
-      // 1. Check if 'configJson' has the content in path.
-      //    If not exists, set the 'content' of json..
-      if ( !configJson.settings ) configJson.settings = {};
-      if ( !configJson.settings.sync ) configJson.settings.sync = {};
-
-      if ( !configJson.settings.sync.mregeCompare ) configJson.settings.sync.mregeCompare = Util.getJsonDeepCopy( mregeCompareJson.content );
-   }
-};
-
-
-ConfigManager.applyDefault_favList = function( configJson, favListJson )
-{
-   if ( favListJson )
-   {
-      if ( !configJson.favList ) configJson.favList = Util.getJsonDeepCopy( favListJson );
-   }
-};
-
-
-ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
-{
-   if ( themesJsonArr )
-   {
-      if ( !configJson.themes ) configJson.themes = themesJsonArr;
-   }
-};
-
-// ========================================================
-
 
 // ==================================================
 

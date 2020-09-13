@@ -48,6 +48,75 @@ ScheduleManager.scheduleList = {
 	]
 };
 
+ScheduleManager.syncUpResponseActionList = { 
+	//"--activityId--": {}
+};
+
+
+ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activityId ) 
+{ 
+	var activityActionJson = ScheduleManager.syncUpResponseActionList[ activityId ];
+
+	// Only if not already in list, create and run it..
+	if ( !activityActionJson )
+	{
+		var newActivityActionJson = Util.getJsonDeepCopy( syncActionJson );
+		newActivityActionJson.activityId = activityId;
+		newActivityActionJson.tryCount = 0;
+		newActivityActionJson.syncIntervalTimeMs = Util.getTimeMs( syncActionJson.syncInterval, 1000 );
+
+		ScheduleManager.syncUpResponseActionList[ activityId ] = newActivityActionJson;
+
+
+		newActivityActionJson.intervalRef = setInterval( function( activityActionJson ) 
+		{
+
+			// Perform syncUp...
+			SyncManagerNew.syncUpActivity( activityId, undefined, function( syncReadyJson, syncUpSuccess ) 
+			{
+				// If syncUp was performed and has result ('success' true/false).  Undefined is case where it was not performed..
+				if ( syncUpSuccess !== undefined )
+				{
+					// Check the ScheduleManager.syncUpActionList by activityId and increment the count...
+					activityActionJson.tryCount++;
+					console.customLog( activityActionJson );
+
+					if ( syncUpSuccess )
+					{
+						clearInterval( activityActionJson.intervalRef );
+					}
+					else 
+					{
+						if ( activityActionJson.tryCount > activityActionJson.maxAttemps )
+						{
+							// If 'maxAttemps' reached, update the activity status + stop the intervals.
+							ActivityDataManager.activityUpdate_ByResponseCaseAction( activityActionJson.activityId, activityActionJson.maxAction );
+							clearInterval( activityActionJson.intervalRef );
+						}
+					}
+				}
+			});
+
+		}, newActivityActionJson.syncIntervalTimeMs, newActivityActionJson );
+	}
+};
+
+
+//ActivityDataManager.updateActivityStatus( activityActionJson.activityId, actionJson.status, actionJson );  
+
+
+	/*
+	"syncAction": {
+		"syncInterval": { "time": "4", "unit": "minute", "alt": "01:00:00" },                
+		"maxAttempts": 10,
+		"questionNote1": "This sync attempt could trigger more actions --> Make it to only accept 'X200'?  Or no other error case actions..",
+		"questionNote2": "For now, only accept",
+		"maxReached": {
+		   "actions": [ { "addActivityNotification": "The voucher code has not found in the remote DB  after X attempts."  } ]
+		}   
+	 }
+	*/
+
 
 // === PART 1. Schedule Call/Start Methods =============
 

@@ -277,11 +277,11 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     {
         if ( actionButton && autoClick )
         {
-            playSound("notify");
+            //playSound("notify");
         }
         else
         {
-            playSound("ping");
+            //playSound("ping");
         }
     }
 

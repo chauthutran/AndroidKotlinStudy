@@ -137,7 +137,7 @@ function readQR( valueTag ){
                     {
                         console.customLog( qrData );
                     }
-                    playSound("beep");
+                    //playSound("beep");
                     me.endQRstream();
                     me.hideQR();
                 }
@@ -151,7 +151,7 @@ function readQR( valueTag ){
                         }
                         else
                         {
-                            playSound("ping");
+                            //playSound("ping");
                             me.endQRstream();
                             me.hideQR();
                         }

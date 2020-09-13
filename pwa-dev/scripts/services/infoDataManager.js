@@ -1,7 +1,7 @@
 // -------------------------------------------
 //      InfoDataManager Class/Methods
 //          - Keeps INFO Data updated. (in Memory)
-//			?: Rename to 'EvalInfoDataManager'?
+//			TODO: ?: Rename to 'EvalInfoDataManager'?
 //			'INFO' object is used when referencing data in 'eval'
 //			We put all the data under 'INFO' object - to be used on 'eval' time.
 // -------------------------------------------------

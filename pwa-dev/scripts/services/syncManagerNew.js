@@ -22,6 +22,11 @@
 
 function SyncManagerNew()  {};
 
+
+SyncManagerNew.syncAll_Running_Manual = false;
+SyncManagerNew.syncAll_Running_Scheduled = false; // SyncManagerNew.isSyncAll_Running();
+
+// Should be obsolete soon, but use the marker as actiivty processing status as 'processing'
 SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 
 // If scheduled syncAll gets delayed, 
@@ -46,64 +51,51 @@ SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
 // ===================================================
 // === MAIN 2 FEATURES =============
 
+
 // 2. Run 'sync' on All activityItems
 // TRAN TODO : "runType" param doesn't get used in any places
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     try
     {
-        // Move this out of this method..
-        //if ( SyncManagerNew.syncStart_CheckNSet() )
-        //{
-            SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' Started..' );
+        SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' Started..' );
+        SyncManagerNew.setSyncAll_Running( runType, true );
 
-            // initialise UI + animation
-            SyncManagerNew.update_UI_StartSyncAll();
+        // initialise UI + animation
+        SyncManagerNew.update_UI_StartSyncAll();
 
-            // get activityItems (for upload) > not already uploaded (to be processed)
-            // NOT APPLICABLE..  SHOULD CHECK WITHIN THE RecursiveProcess...
-            //SyncManagerNew.getActivityItems_ForSync( function( activityDataList )
-            //{
-                SyncManagerNew.syncUpItem_RecursiveProcess( ActivityDataManager.getActivityList(), 0, cwsRenderObj, function() 
-                {
-                    var successMsg = 'syncAll ' + runType + ' completed..';
-                    
-                    console.customLog( successMsg );
+        var resultData = { 'success': 0, 'failure': 0 };
 
-                    SyncManagerNew.update_UI_FinishSyncAll();
+        // NOTE: CHECK ONLINE is done within syncUpItem_RecursiveProcess
+        SyncManagerNew.syncUpItem_RecursiveProcess( ActivityDataManager.getActivityList(), 0, cwsRenderObj, resultData, function() 
+        {
+            SyncManagerNew.setSyncAll_Running( runType, false );
+            SyncManagerNew.update_UI_FinishSyncAll();
 
-                    SyncManagerNew.SyncMsg_InsertMsg( successMsg );
+            var successMsg = 'syncAll ' + runType + ' completed..';
+            SyncManagerNew.SyncMsg_InsertMsg( successMsg );
+            console.customLog( successMsg );
 
-                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync postponed N.." );
-                    SyncManagerNew.SyncMsg_InsertSummaryMsg( "Sync error N.." );
+            SyncManagerNew.SyncMsg_InsertSummaryMsg( 'Processed with success ' + resultData.success + ', failure ' + resultData.failure + '..' );
 
-                    if ( callBack ) callBack( true );
-                });
-            //});
-        //}
-        //else
-        //{
-        //    throw "Sync not ready";
-        //}
+            if ( callBack ) callBack( true );
+        });
     }
     catch( errMsg )
     {
-        var errMsgDetail = 'syncAll ' + runType + ' failed - msg: ' + errMsg;
-        
-        console.customLog( errMsgDetail );
-
-        MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail );
-
+        SyncManagerNew.setSyncAll_Running( runType, false );
         SyncManagerNew.update_UI_FinishSyncAll();
 
+        var errMsgDetail = 'syncAll ' + runType + ' failed - msg: ' + errMsg;        
         SyncManagerNew.SyncMsg_InsertSummaryMsg( errMsgDetail );
+        MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail );
+        console.customLog( errMsgDetail );
 
         if( callBack ) callBack( false );
     }
 };
 
 
-// NEW: JAMES: ----
 SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 {
     // NOTE: We can check network connection here, or from calling place.  
@@ -163,6 +155,52 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 // ===================================================
 // === 1. 'syncUpItem' Related Methods =============
 
+
+// Q1. Does 'performSyncUp' at here do everything properly?  - Yes.. 
+// Q2. Anyway that we can use this for syncAll process??? = 
+SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
+{    
+    var activityJson = ActivityDataManager.getActivityById( activityId );
+    var syncReadyJson = SyncManagerNew.syncUpReadyCheck( activityJson );
+
+    // NOTE: Need try/catch here?
+    if ( syncReadyJson.ready )
+    {
+        var activityCardObj = new ActivityCard( activityJson.id, SessionManager.cwsRenderObj );
+
+        activityCardObj.highlightActivityDiv( true );
+
+        activityCardObj.performSyncUp( function( success, errMsg ) {
+
+            if ( resultData ) SyncManagerNew.syncUpActivityResultUpdate( success, resultData );
+
+            activityCardObj.reRenderActivityDiv();
+
+            activityCardObj.highlightActivityDiv( false );
+            
+            if ( returnFunc ) returnFunc( syncReadyJson, success );
+        });
+    }
+    else
+    {
+        if ( returnFunc ) returnFunc( syncReadyJson );
+    }
+};
+
+SyncManagerNew.syncUpActivityResultUpdate = function( success, resultData )
+{
+    if ( success === true )
+    {
+        if ( resultData.success === undefined ) resultData.success = 0;
+        resultData.success++;
+    }
+    else if ( success === false )
+    {
+        if ( resultData.failure === undefined ) resultData.failure = 0;
+        resultData.failure++;
+    }
+};
+
 // ===================================================
 // === 2. 'syncAll' Related Methods =============
 
@@ -190,31 +228,10 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 };
 
 
-SyncManagerNew.checkActivityStatus_SyncUpReady = function( activity )
-{    
-    var bReady = false;
-
-    try
-    {
-        if ( activity.processing && activity.processing.status )
-        {
-            var status = activity.processing.status;
-            bReady = ( status === Constants.status_queued || status === Constants.status_failed );
-        }    
-    }
-    catch( errMsg )
-    {
-        console.customLog( 'ERROR in SyncManagerNew.checkActivityStatus_SyncUpReady, errMsg: ' + errMsg );
-    }
-
-    return bReady;
-};
-
-
-SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsRenderObj, callBack )
+SyncManagerNew.syncUpItem_RecursiveProcess = function( activityJsonList, i, cwsRenderObj, resultData, callBack )
 {
     // length is 1  index 'i' = 0; next time 'i' = 1
-    if ( activityDataList.length <= i )
+    if ( activityJsonList.length <= i )
     {
         // If index is equal or bigger to list, return back. - End reached.
         return callBack();        
@@ -226,39 +243,21 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityDataList, i, cwsR
         {
             // TODO: CHECK IF THIS IS PROPER MESSAGE...  <-- We need to open up this..
             SyncManagerNew.SyncMsg_InsertMsg( "App offline mode detected.  Stopping syncAll process.." );
-            throw 'Stopping syncAll process due to app mode offline detected.';
+            //throw 'Stopping syncAll process due to app mode offline detected.';
+            return callBack();  // with summary..
         }
         else
         {
-            var activityData = activityDataList[i];         
+            var activityJson = activityJsonList[i];         
         
-            if ( !SyncManagerNew.checkActivityStatus_SyncUpReady( activityData ) )
+            SyncManagerNew.syncUpActivity( activityJson.id, resultData, function( syncReadyJson, syncUpSuccess ) 
             {
+                // Update on progress bar
+                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityJsonList.length * 100 ).toFixed( 1 ) + '%' );
+
                 // Process next item without performing..
-                SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );
-            }
-            else
-            {
-                var activityCardObj = new ActivityCard( activityData.id, cwsRenderObj );
-    
-                // Highlight the activity..
-                activityCardObj.highlightActivityDiv( true );
-    
-                activityCardObj.performSyncUp( function( success, errMsg ) {
-    
-                    if ( !success ) console.customLog( 'activity sync not success, i=' + i + ', id: ' + activityData.id + ', errMsg: ' + errMsg );
-    
-                    activityCardObj.reRenderActivityDiv();
-    
-                    activityCardObj.highlightActivityDiv( false );
-    
-                    // update on progress bar
-                    FormUtil.updateProgressWidth( ( ( i + 1 ) / activityDataList.length * 100 ).toFixed( 1 ) + '%' );
-        
-                    // Process next item.
-                    SyncManagerNew.syncUpItem_RecursiveProcess( activityDataList, i + 1, cwsRenderObj, callBack );
-                });    
-            }
+                SyncManagerNew.syncUpItem_RecursiveProcess( activityJsonList, i + 1, cwsRenderObj, resultData, callBack );
+            });
         }
     }
 };
@@ -347,7 +346,55 @@ SyncManagerNew.hideProgressBar = function()
 // ===================================================
 // === 'syncStart/Finish' Related Methods =============
 
-SyncManagerNew.syncStart_CheckNSet = function( option )
+// use as callBack?  
+SyncManagerNew.syncUpReadyCheck = function( activityJson )
+{    
+    var readyJson = { 'ready': false, 'online': false, 'syncableStatus': false };
+
+    readyJson.online = ConnManagerNew.isAppMode_Online();
+    readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady( activityJson );
+
+    readyJson.ready = ( readyJson.online && readyJson.syncableStatus );
+
+    return readyJson;
+};
+      
+
+// Check Activity Status for 'SyncUp'
+SyncManagerNew.checkActivityStatus_SyncUpReady = function( activityJson )
+{    
+    var bReady = false;
+
+    if ( activityJson && activityJson.processing && activityJson.processing.status )
+    {
+        bReady = SyncManagerNew.isSyncReadyStatus( activityJson.processing.status ); 
+    }    
+
+    return bReady;
+};
+                  
+SyncManagerNew.isSyncReadyStatus = function( status )
+{
+    return ( status === Constants.status_queued
+        || status === Constants.status_failed
+        || status === Constants.status_hold );    
+};
+
+
+SyncManagerNew.isSyncAll_Running = function()
+{
+    return ( SyncManagerNew.syncAll_Running_Manual || SyncManagerNew.syncAll_Running_Scheduled );
+};
+
+SyncManagerNew.setSyncAll_Running = function( runType, bRunning )
+{
+    if ( runType === 'Manual' ) SyncManagerNew.syncAll_Running_Manual = bRunning;
+    else if ( runType === 'Scheduled' ) SyncManagerNew.syncAll_Running_Scheduled = bRunning;    
+}
+
+/*
+// NOBODY USES ANYMORE..  <-- CREATE A VERSION FOR INDIVIDUAL ACTIVITY USAGE..
+//SyncManagerNew.syncStart_CheckNSet = function( option )
 {
     var isOkToStart = false;
 
@@ -385,6 +432,8 @@ SyncManagerNew.syncStart_CheckNSet = function( option )
 
     return isOkToStart;
 };
+*/
+
 
 
 SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
@@ -406,16 +455,9 @@ SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
         {
             SyncManagerNew.syncAll( cwsRenderObj, 'Scheduled', function( success ) 
             {
-                SyncManagerNew.syncFinish_Set();
             });  
         }
     }
-};
-
-
-SyncManagerNew.syncFinish_Set = function()
-{
-    SyncManagerNew.sync_Running = false;  
 };
 
 

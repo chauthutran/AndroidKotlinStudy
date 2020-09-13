@@ -65,6 +65,8 @@ function cwsRender()
 
 		me.loginObj.render(); // Open Log Form
 
+		
+		// This probably gets used for menu swipe?
 		me._manageInputSwipe = inputMonitor( me );
 
 		// Translate terms setup
