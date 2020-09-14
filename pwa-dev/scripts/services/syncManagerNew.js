@@ -52,8 +52,8 @@ SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
 // === MAIN 2 FEATURES =============
 
 
-// 2. Run 'sync' on All activityItems
-// TRAN TODO : "runType" param doesn't get used in any places
+// 2. Run 'sync' on All activityItems - NOTE: 'SyncAll_Running' checking/blocking happenes before this method.
+//      - In this method, we simply mark them... by 'runType'
 SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 {
     try
@@ -156,8 +156,6 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 // === 1. 'syncUpItem' Related Methods =============
 
 
-// Q1. Does 'performSyncUp' at here do everything properly?  - Yes.. 
-// Q2. Anyway that we can use this for syncAll process??? = 
 SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
 {    
     var activityJson = ActivityDataManager.getActivityById( activityId );
@@ -172,10 +170,9 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
 
         activityCardObj.performSyncUp( function( success, errMsg ) {
 
-            if ( resultData ) SyncManagerNew.syncUpActivityResultUpdate( success, resultData );
+            SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 
             activityCardObj.reRenderActivityDiv();
-
             activityCardObj.highlightActivityDiv( false );
             
             if ( returnFunc ) returnFunc( syncReadyJson, success );
@@ -187,17 +184,20 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
     }
 };
 
-SyncManagerNew.syncUpActivityResultUpdate = function( success, resultData )
+SyncManagerNew.syncUpActivity_ResultUpdate = function( success, resultData )
 {
-    if ( success === true )
+    if ( resultData )
     {
-        if ( resultData.success === undefined ) resultData.success = 0;
-        resultData.success++;
-    }
-    else if ( success === false )
-    {
-        if ( resultData.failure === undefined ) resultData.failure = 0;
-        resultData.failure++;
+        if ( success === true )
+        {
+            if ( resultData.success === undefined ) resultData.success = 0;
+            resultData.success++;
+        }
+        else if ( success === false )
+        {
+            if ( resultData.failure === undefined ) resultData.failure = 0;
+            resultData.failure++;
+        }    
     }
 };
 

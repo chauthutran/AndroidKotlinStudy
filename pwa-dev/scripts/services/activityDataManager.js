@@ -462,6 +462,19 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
 // --------------------------------------------
 // --- Sync & ActivityCard Related Metods
 
+
+ActivityDataManager.activityUpdate_ByResponseCaseAction = function( activityId, actionJson )
+{
+    if ( actionJson )
+    {
+        // Both below methods does saving to clientStore..
+        ActivityDataManager.activityUpdate_Status( activityId, actionJson.status );
+
+        ActivityDataManager.activityUpdate_History( activityId, actionJson.status, actionJson.msg, 0 );
+    }   
+};
+
+
 ActivityDataManager.activityUpdate_Status = function( activityId, status )
 {
     if ( status )
@@ -476,8 +489,9 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status )
             ClientDataManager.saveCurrent_ClientsStore( function() 
             {
                 // update ActivityCard is visible..
-                var activityCardObj = new ActivityCard( activityData.id, SessionManager.cwsRenderObj );    
-                activityCardObj.reRenderActivityDiv();
+                var activityCardObj = new ActivityCard( activityJson.id, SessionManager.cwsRenderObj );
+                activityCardObj.displayActivitySyncStatus_Wrapper( activityJson, activityCardObj.getActivityCardDivTag() );
+                //activityCardObj.reRenderActivityDiv();
             });
         }    
     }
@@ -494,16 +508,4 @@ ActivityDataManager.activityUpdate_History = function( activityId, status, msg, 
 
         ClientDataManager.saveCurrent_ClientsStore();
     }
-};
-
-
-ActivityDataManager.activityUpdate_ByResponseCaseAction = function( activityId, actionJson )
-{
-    if ( actionJson )
-    {
-        // Both below methods does saving to clientStore..
-        ActivityDataManager.activityUpdate_Status( activityId, actionJson.status );
-
-        ActivityDataManager.activityUpdate_History( activityId, actionJson.status, actionJson.msg, 0 );
-    }   
 };

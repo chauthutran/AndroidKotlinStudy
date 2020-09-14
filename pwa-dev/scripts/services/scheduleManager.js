@@ -48,29 +48,31 @@ ScheduleManager.scheduleList = {
 	]
 };
 
-ScheduleManager.syncUpResponseActionList = { 
-	//"--activityId--": {}
-};
+// ------------------------------------
+// --- SyncUpResponseAction Variables
+ScheduleManager.syncUpResponseAction_DefaultIntervalTime = 1000 * 60 * 60; // 1 hr ( 1 sec, 1min, 1hr)
+ScheduleManager.syncUpResponseActionList = {};  // "activityId": {}, ...
+ScheduleManager.syncUpResponseActionList_History = [];  // { activityId, ... }, ...
 
+// =======================================================
 
 ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activityId ) 
-{ 
+{ 	
 	var activityActionJson = ScheduleManager.syncUpResponseActionList[ activityId ];
 
 	// Only if not already in list, create and run it..
-	if ( !activityActionJson )
+	if ( syncActionJson && !activityActionJson )
 	{
 		var newActivityActionJson = Util.getJsonDeepCopy( syncActionJson );
 		newActivityActionJson.activityId = activityId;
 		newActivityActionJson.tryCount = 0;
-		newActivityActionJson.syncIntervalTimeMs = Util.getTimeMs( syncActionJson.syncInterval, 1000 );
+		newActivityActionJson.syncIntervalTimeMs = Util.getTimeMs( syncActionJson.syncInterval, ScheduleManager.syncUpResponseAction_DefaultIntervalTime );
 
 		ScheduleManager.syncUpResponseActionList[ activityId ] = newActivityActionJson;
 
 
 		newActivityActionJson.intervalRef = setInterval( function( activityActionJson ) 
 		{
-
 			// Perform syncUp...
 			SyncManagerNew.syncUpActivity( activityId, undefined, function( syncReadyJson, syncUpSuccess ) 
 			{
@@ -83,17 +85,25 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 
 					if ( syncUpSuccess )
 					{
-						clearInterval( activityActionJson.intervalRef );
+						// If success response, finish the scheduled calls.  (Activity status has already been updated in above call..)
+						ScheduleManager.syncUpResponseAction_ScheduleFinish( activityActionJson );
 					}
 					else 
 					{
+						// If not success, if max reached, update status/msg on activity and finish the scheduled calls.
 						if ( activityActionJson.tryCount > activityActionJson.maxAttemps )
 						{
 							// If 'maxAttemps' reached, update the activity status + stop the intervals.
 							ActivityDataManager.activityUpdate_ByResponseCaseAction( activityActionJson.activityId, activityActionJson.maxAction );
-							clearInterval( activityActionJson.intervalRef );
+							ScheduleManager.syncUpResponseAction_ScheduleFinish( activityActionJson );
 						}
+						// If not success, and not max reached, continue with 'scheduled calls'
 					}
+				}
+				else
+				{
+					console.customLog( 'SKIPPED - syncUpResponseAction INTERVAL' );
+					console.log( activityActionJson );
 				}
 			});
 
@@ -101,6 +111,27 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 	}
 };
 
+ScheduleManager.syncUpResponseAction_ScheduleFinish = function( activityActionJson ) 
+{
+	try
+	{
+		var activityId = activityActionJson.activityId;
+		activityActionJson.stoppedTime = Util.dateStr( 'DATETIME' );
+	
+		// 1. clear from interval - schedule / repeat
+		clearInterval( activityActionJson.intervalRef );
+		
+		// 2. add to history one (make a copy)
+		ScheduleManager.syncUpResponseActionList_History.push( Util.getJsonDeepCopy( activityActionJson ) );	
+		
+		// 3. remove the item
+		delete ScheduleManager.syncUpResponseActionList[ activityId ];	
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in ScheduleManager.syncUpResponseAction_ScheduleFinish, errMsg: ' + errMsg );
+	}
+};
 
 //ActivityDataManager.updateActivityStatus( activityActionJson.activityId, actionJson.status, actionJson );  
 

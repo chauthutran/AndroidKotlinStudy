@@ -598,15 +598,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             var testResponseJson = ConfigManager.getTestResponseJson( activityJson_Orig.processing.useTestResponse );
 
 
-            // NOTE:
-            // On 'afterDoneCall', the caller normally refreshs activityDivTag with changed data - 'reRenderActivityDiv()'
-            //      However, even though somewhat duplicating on visible UI refresh, we are using
-            //      'displayActivitySyncStatus_Wrapper' to show the change right away - also for covering error case as well.
-
-            // Set the status as processing..  The '--_Warpper' method has 'rotate' if in 'processing' status, thus, no need to call 'FormUtil.rotateTag()'
+            // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
+            //  'displayActivitySyncStatus_Wrapper()' gets used to refresh status only. 'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
             activityJson_Orig.processing.status = Constants.status_processing;
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
-
 
             try
             {
@@ -658,8 +653,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
         me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
         {
-            newActivityJson = ActivityDataManager.getActivityById( me.activityId );
+            // If 'syncUpResponse' changed status, make the UI applicable..
+            var newActivityJson = ActivityDataManager.getActivityById( me.activityId );
             me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+
+
+            // [*NEW] Process 'ResponseCaseAction' - responseJson.result.report - This changes activity status again if applicable
+            if ( responseJson && responseJson.result && responseJson.result.report ) 
+            {
+                me.processResponseCaseAction( responseJson.result.report, activityJson_Orig.id );
+            }
 
             afterDoneCall( success );
         });   
@@ -671,15 +674,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         var operationSuccess = false;
 
-
-        // Process 'ResponseCaseAction'
-        // 1.   responseJson.result.report  <--- if exists, call a method to handle the action!!!
-
-        // We do need a holding list in memory <-- in scheduler?
-        if ( responseJson && responseJson.result 
-            && responseJson.result.report ) me.processResponseCaseAction( responseJson.result.report, activityJson_Orig.id );
-
-    
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
@@ -749,11 +743,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // Check for matching oens..
         var caseActionJson = ConfigManager.getResponseCaseActionJson( reportJson );
 
-        // 1. perform Action (msg put on history?  or on alert...) - But more type of actions, etc  - for now, simply put this on history...        
-        ScheduleManager.responseCaseAction_AddMsg( activityId, caseActionJson.msg, caseActionJson.status, 401 )
+        if ( caseActionJson )
+        {
+            // 1. Activity status + msg update if available..
+            ActivityDataManager.activityUpdate_ByResponseCaseAction( activityId, caseActionJson );
 
-        // 2. Schedule the sync - new type of schedule..
-        ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
+            // 2. Schedule the sync - new type of schedule..
+            ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
+        }
     };
 
 
