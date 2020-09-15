@@ -34,6 +34,7 @@ function app()
     me.detectStandAlone();
     me.windowEvent_BlockBackBtnAction();
     window.addEventListener( 'error', me.catchErrorInCustomLog );
+    window.addEventListener( 'beforeinstallprompt', me.beforeinstallprompt );
   
 
     // Setup Static Classes
@@ -170,7 +171,6 @@ function app()
     });
   };
 
-
   /*
   me.App_installed_done = function( event ) {
     // Track event: The app was installed (banner or manual installation)
@@ -181,7 +181,6 @@ function app()
     });
   };
   */
-
 
   // ---------------------------------------
 
@@ -226,6 +225,68 @@ function app()
     // const { message, source, lineno, colno, error } = e; 
     console.customLog( e.message );
   };
+
+  me.beforeinstallprompt = function( e )
+  {
+    console.customLog( '[AppInstall READY]' );
+
+    var appInstallTag = $( '#appInstall' );
+    appInstallTag.show();
+
+    var deferredPrompt = e;
+
+    appInstallTag.off( 'click' ).click( function() 
+    {
+      deferredPrompt.prompt();
+      $( '#appInstall' ).hide();
+
+      // Wait for the user to respond to the prompt
+      deferredPrompt.userChoice.then( ( choiceResult ) => 
+      {
+        if ( choiceResult.outcome === 'accepted' ) console.customLog('User accepted the A2HS prompt');
+        else console.customLog('User dismissed the A2HS prompt');
+
+        deferredPrompt = null;
+      });
+  
+    });
+
+  };
+
+  /*
+  me.beforeinstallprompt = function( e )
+  {
+    console.customLog('beforeinstallprompt begin');
+
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    //e.preventDefault();
+
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+
+    // Update UI to notify the user they can add to home screen
+    addBtn.style.display = 'block';  // <-- button is initially hidden...
+  
+    addBtn.addEventListener( 'click', ( e ) => 
+    {
+      // hide our user interface that shows our A2HS button
+      addBtn.style.display = 'none';
+      // Show the prompt
+      deferredPrompt.prompt();
+
+      // Wait for the user to respond to the prompt
+      deferredPrompt.userChoice.then( (choiceResult) => 
+      {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+    });
+  };
+  */
 
 	// ======================================
 

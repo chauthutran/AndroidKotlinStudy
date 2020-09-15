@@ -16,8 +16,8 @@
 
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-09-14'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.41'; //_manifestData.version;
+    var _verDate = '2020-09-15'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.42'; //_manifestData.version;
     var _versionNote = '- ResponseCode Action Implemented.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
@@ -409,13 +409,13 @@
       </div>
       <div class="field-read_only">
         <div class="field-read_only__label"><label>More Info</label></div>
-        <div class="field-read_only__text" style="font-size: 0.85rem; color: #777;">
-          <span id="linkAppUpdateCheck" style="cursor:pointer; color: cadetblue; font-style: italic;">[Check App
-            Updates]</span><span id="linkAppUpdateRefresh"
-            style="display: none; cursor:pointer; color: cadetblue; font-style: italic;">[App
-            Updates Available]</span>
+        <div class="field-read_only__text">
+          <button id="linkAppUpdateCheck" class="cbutton">App Update Check</button>
+          <button id="linkAppUpdateRefresh" class="cbutton" style="display: none;">App Update Apply</button>
           &nbsp;&nbsp;
-          <span id="showLogs" style="cursor:pointer; color: cadetblue; font-style: italic;">[Logs]</span>
+          <button id="showLogs" class="cbutton">Logs</button>
+          &nbsp;&nbsp;
+          <button id="appInstall" class="cbutton" style="display: none;">App Install</button>
         </div>
       </div>
 
