@@ -91,7 +91,7 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 					else 
 					{
 						// If not success, if max reached, update status/msg on activity and finish the scheduled calls.
-						if ( activityActionJson.tryCount > activityActionJson.maxAttemps )
+						if ( activityActionJson.tryCount >= activityActionJson.maxAttempts )
 						{
 							// If 'maxAttemps' reached, update the activity status + stop the intervals.
 							ActivityDataManager.activityUpdate_ByResponseCaseAction( activityActionJson.activityId, activityActionJson.maxAction );

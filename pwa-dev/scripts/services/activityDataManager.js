@@ -481,7 +481,7 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status )
     {
         var activityJson = ActivityDataManager.getActivityById( activityId );
 
-        if ( activityJson && actionJson.processing )
+        if ( activityJson && activityJson.processing )
         {
             activityJson.processing.status = status;
             

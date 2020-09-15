@@ -146,8 +146,6 @@ function Login( cwsRenderObj )
 			// if empty, delete previous one and set focus on previous one
 			if ( isDeleteKey ) 
 			{ 
-				console.log( 'Delete Key Pressed' ); 
-
 				if ( !hasVal ) 
 				{
 					// go to previous pin tag.

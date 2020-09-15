@@ -4032,7 +4032,9 @@ textarea {
 
 .list .card .card__container .card__cta .card__cta_two {
   float: right;
-  width: 40px;
+  width: 36px;
+  height: 36px;
+  margin-right: 4px;
 }
 
 .snackbar {
@@ -5859,7 +5861,9 @@ textarea {
 
 .wapper_card .card .card__container .card__cta .card__cta_two {
   float: right;
-  width: 40px;
+  width: 36px;
+  height: 36px;
+  margin-right: 4px;
 }
 
 .wapper_card .tab_fs {

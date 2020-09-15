@@ -39,7 +39,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // If tag has been created), perform render
         if ( activityCardDivTag )
         {
-            var activityJson = getActivityById( me.activityId );
+            var activityJson = ActivityDataManager.getActivityById( me.activityId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
 
             try
