@@ -94,9 +94,9 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
         {
             inputCommandTag.val( 'JSON.stringify( ClientDataManager.getClientList() );' );
         }
-        else if ( caseStr === 'runTestStart' )
+        else if ( caseStr === 'devMode' )
         {
-            inputCommandTag.val( 'DevHelper.testRunStart();' );
+            inputCommandTag.val( 'DevHelper.setDevMode( true );' );
         }
         else if ( caseStr === 'clearLogs' )
         {

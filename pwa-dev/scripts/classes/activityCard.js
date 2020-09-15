@@ -63,7 +63,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardDivTag, activityJson );  // clickEnable - not checked for SyncBtn/Icon
+                me.setupSyncBtn( activityCardDivTag, activityJson, !clickEnable );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -121,12 +121,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
         });
     };
                 
-    me.setupSyncBtn = function( activityCardDivTag, activityJson )
+    me.setupSyncBtn = function( activityCardDivTag, activityJson, detailViewCase )
     {
         var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
         var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
-        
         var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+
+        // if 'detailView' mode, the bottom message should not show..
+        if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
 
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
@@ -146,19 +148,22 @@ function ActivityCard( activityId, cwsRenderObj, options )
             }  
             else 
             {
-                // Display the popup
-                me.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
-
-                // NOTE: STATUS CHANGED!!!!
-                // If submitted with msg one, mark it as 'read' and rerender the activity Div.
-                if ( statusVal === Constants.status_submit_wMsg )        
+                if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
                 {
-                    activityJson.processing.status = Constants.status_submit_wMsgRead;
+                    // Display the popup
+                    me.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
 
-                    // Need to save storage afterwards..
-                    ClientDataManager.saveCurrent_ClientsStore( function() {
-                        me.reRenderActivityDiv();
-                    });
+                    // NOTE: STATUS CHANGED!!!!
+                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
+                    if ( statusVal === Constants.status_submit_wMsg )        
+                    {
+                        activityJson.processing.status = Constants.status_submit_wMsgRead;
+
+                        // Need to save storage afterwards..
+                        ClientDataManager.saveCurrent_ClientsStore( function() {
+                            me.reRenderActivityDiv();
+                        });
+                    }
                 }
             }           
         });     
@@ -768,6 +773,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // populate template
             sheetFull.html( $( Templates.activityCardFullScreen ) );
 
+            // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
+            if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( sheetFull, activityId );
+
+
             // create tab click events
             FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
         
@@ -800,6 +809,25 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
     
+    me.setUpActivityDetailTabDev = function( sheetFullTag, activityId )
+    {
+        sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).show();
+        sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
+
+        var statusSelTag = sheetFullTag.find( '.devActivityStatusSel' );
+        var statusSelResultTag = sheetFullTag.find( '.devActivityStatusResult' );
+
+        statusSelTag.change( function() 
+        {
+            var statusVal = $( this ).val();
+
+            ActivityDataManager.activityUpdate_Status( activityId, statusVal, function() {
+                statusSelResultTag.text( "Activity status changed to '" + statusVal + "'" );
+            });
+        });
+    };
+
+
     me.setFullPreviewTabContent = function( activityId, sheetFull )
     {
         var clientObj = ClientDataManager.getClientByActivityId( activityId );

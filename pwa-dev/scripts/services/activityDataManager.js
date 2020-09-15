@@ -475,7 +475,7 @@ ActivityDataManager.activityUpdate_ByResponseCaseAction = function( activityId, 
 };
 
 
-ActivityDataManager.activityUpdate_Status = function( activityId, status )
+ActivityDataManager.activityUpdate_Status = function( activityId, status, returnFunc )
 {
     if ( status )
     {
@@ -492,6 +492,8 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status )
                 var activityCardObj = new ActivityCard( activityJson.id, SessionManager.cwsRenderObj );
                 activityCardObj.displayActivitySyncStatus_Wrapper( activityJson, activityCardObj.getActivityCardDivTag() );
                 //activityCardObj.reRenderActivityDiv();
+
+                if ( returnFunc ) returnFunc();
             });
         }    
     }

@@ -251,48 +251,102 @@ Templates.activityCardFullScreen = `
       </div>
 
       <ul class="tab_fs__head" style="background-color: #fff;">
+
         <li class="primary active" rel="tab_previewDetails">
           <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
           <span rel="tab_previewDetails">Details</span>
+
           <ul class="2ndary" style="display: none; z-index: 1;">
+
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
               <span rel="tab_previewPayload">Payload</span>
             </li>
+  
             <li class="2ndary" style="display:none" rel="tab_previewSync">
               <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
               <span rel="tab_previewSync">Sync</span>
             </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span rel="tab_optionalDev">Dev</span>
+            </li>    
+
           </ul>
         </li>
+
         <li class="primary" rel="tab_previewPayload">
           <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
           <span rel="tab_previewPayload">Payload</span>
+
           <ul class="2ndary" style="display: none; z-index: 1;">
+
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
               <span rel="tab_previewDetails">Details</span>
             </li>
+  
             <li class="2ndary" style="display:none" rel="tab_previewSync">
               <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
               <span rel="tab_previewSync">Sync</span>
             </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span rel="tab_optionalDev">Dev</span>
+            </li>    
+
           </ul>
         </li>
+
         <li class="primary" rel="tab_previewSync">
           <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
           <span rel="tab_previewSync">Sync</span>
           <ul class="2ndary" style="display: none; z-index: 1;">
+
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
               <span rel="tab_previewDetails">Details</span>
             </li>
+
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
               <span rel="tab_previewPayload">Payload</span>
             </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span rel="tab_optionalDev">Dev</span>
+            </li>            
+
           </ul>
         </li>
+
+        <li class="primary tab_optionalDev" rel="tab_optionalDev" style="display: none;">
+          <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+          <span rel="tab_optionalDev">Dev</span>
+
+          <ul class="2ndary" style="display: none; z-index: 1;">
+
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span rel="tab_previewDetails">Details</span>
+            </li>
+
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span rel="tab_previewPayload">Payload</span>
+            </li>
+  
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span rel="tab_previewSync">Sync</span>
+            </li>
+
+          </ul>
+        </li>
+
       </ul>
       <div class="tab_fs__head-icon_exp"></div>
     </div>
@@ -300,17 +354,26 @@ Templates.activityCardFullScreen = `
     <div class="tab_fs__container">
       <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
         blockid="tab_previewDetails" />
-      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload"
-        style="display:none;" />
+      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
       <div class="tab_fs__container-content" tabButtonId="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
+      <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
+        <div>Status Change: 
+          <select class="devActivityStatusSel" style="border: solid 1px #ccc; width: 120px;">
+            <option value="">Select One</option>
+            <option value="queued">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="submit">Synced</option>
+            <option value="failed">Failed</option>
+            <option value="error">Error</option>
+          </select>
+          <span class="devActivityStatusResult"></span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 `;
-
 /* ACTIVITY CARD FULL SCREEN PREVIEW << END */
-
-
 
 
 /* STATISTICS >> START */

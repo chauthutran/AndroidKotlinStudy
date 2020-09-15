@@ -15,6 +15,8 @@ DevHelper.tempCount = 0;
 DevHelper.testRunInterval;
 DevHelper.testRunCount = 0;
 
+DevHelper.devMode = false;
+
 DevHelper.sampleDataTemplate = 
 [
   {
@@ -93,6 +95,11 @@ DevHelper.setUp = function( cwsRenderObj )
 
 // =======================================
 
+
+DevHelper.setDevMode = function( bDev )
+{
+    DevHelper.devMode = bDev;
+};
 
 DevHelper.switchConnectMode = function( connModeStr )
 {

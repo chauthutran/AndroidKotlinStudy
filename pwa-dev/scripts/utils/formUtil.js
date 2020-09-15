@@ -181,7 +181,6 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
-
 // -----------------------------------
 // ---- Login And Fetch WS Related ------
 // ---------------------------------------------------------
@@ -468,14 +467,16 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 		var Secondary = $( this ).hasClass( '2ndary' );
 		var ulOptionsPopup = $( this ).find( 'ul' );
 
-		if ( FormUtil.orientation() === 'portrait' && $( window ).width() <= 568 && $( this ).hasClass( 'active' )  ) // class 'active' will always be li.primary
+		if ( FormUtil.orientation() === 'portrait' 
+			&& $( window ).width() <= 568 
+			&& $( this ).hasClass( 'active' )  ) // class 'active' will always be li.primary
 		{
             if ( ulOptionsPopup.is(':visible') ) {
                 ulOptionsPopup.css('display', 'none');
                 $( this ).find( 'li' ).css('display', 'none');
             } else {
                 ulOptionsPopup.css('display', 'block');
-                $( this ).find( 'li' ).css('display', 'block');
+                $( this ).find( 'li' ).not( '.tabHide' ).css('display', 'block');
                 $( this ).next( 'ul' ).toggle();
 			}
 		}
