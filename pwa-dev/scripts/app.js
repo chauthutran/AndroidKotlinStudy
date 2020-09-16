@@ -58,8 +58,6 @@ function app()
     // Service Worker Related Initial Setup
     SwManager.initialSetup( me._cwsRenderObj, function() 
     { 
-      console.log( 'swManger Processed..' );
-
       // NOTE: This could be placed right before 'ScheduleManager.runSchedules_AppStart();' in 'me.startAppProcess()'
       SwManager.checkNewAppFile_OnlyOnline();
 
@@ -220,12 +218,14 @@ function app()
     }  
   };
 
+
   me.catchErrorInCustomLog = function( e )
   {
     // const { message, source, lineno, colno, error } = e; 
     console.customLog( e.message );
   };
 
+  
   me.beforeinstallprompt = function( e )
   {
     console.customLog( '[AppInstall READY]' );
@@ -252,41 +252,6 @@ function app()
     });
 
   };
-
-  /*
-  me.beforeinstallprompt = function( e )
-  {
-    console.customLog('beforeinstallprompt begin');
-
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    //e.preventDefault();
-
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-
-    // Update UI to notify the user they can add to home screen
-    addBtn.style.display = 'block';  // <-- button is initially hidden...
-  
-    addBtn.addEventListener( 'click', ( e ) => 
-    {
-      // hide our user interface that shows our A2HS button
-      addBtn.style.display = 'none';
-      // Show the prompt
-      deferredPrompt.prompt();
-
-      // Wait for the user to respond to the prompt
-      deferredPrompt.userChoice.then( (choiceResult) => 
-      {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
-        } else {
-          console.log('User dismissed the A2HS prompt');
-        }
-        deferredPrompt = null;
-      });
-    });
-  };
-  */
 
 	// ======================================
 

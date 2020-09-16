@@ -9,9 +9,15 @@ AppUtil.appReloading = false;
 
 // ==== Methods ======================
 
-AppUtil.appReload = function()
+AppUtil.appReloadWtMsg = function( optionalMsg )
 {    
-	MsgManager.msgAreaShow( 'App Reloading!!' );
+	var defaultMsg = 'App Reloading!!';
+
+	if ( optionalMsg === undefined ) MsgManager.msgAreaShow( defaultMsg );
+	else if ( optionalMsg !== '' ) // if 'optionMsg' is '', skip the msgAreaShow.
+	{
+		MsgManager.msgAreaShow( optionalMsg );		
+	}
 
 	AppUtil.appReloading = true;
 	window.location.reload();

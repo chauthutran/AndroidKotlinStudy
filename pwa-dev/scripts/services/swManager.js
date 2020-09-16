@@ -6,7 +6,7 @@ function SwManager() {};
 
 //function swManager( _cwsRenderObj, callBack ) {
 SwManager.swFile =  './service-worker.js';
-SwManager._cwsRenderObj;
+//SwManager._cwsRenderObj;
 
 SwManager._newUpdateInstallMsg_interval = 30000;  //30 seconds
 
@@ -34,7 +34,7 @@ SwManager.debugMode = true;
 
 SwManager.initialSetup = function ( cwsRenderObj, callBack ) 
 {
-    SwManager._cwsRenderObj = cwsRenderObj;
+    //SwManager._cwsRenderObj = cwsRenderObj;
 
     // checkRegisterSW
     if ( ( 'serviceWorker' in navigator ) )
@@ -126,14 +126,23 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         // 
         if ( !AppUtil.appReloading )
         {
-            if ( SwManager._cwsRenderObj ) SwManager._cwsRenderObj.setNewAppFileStatus( true );
+            if ( SessionManager._cwsRenderObj ) SessionManager._cwsRenderObj.setNewAppFileStatus( true );
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
+            // 'About page' app update uses above '_EventCallBack'
 
-            // NEW:  
-            //  - If login page, not in login state, refresh it..
-            if ( !SessionManager.getLoginStatus() )
+            // For Login page case, we use below 2..
+            if ( SessionManager.getLoginStatus() )
             {
-                AppUtil.appReload();
+                console.customLog( 'NewAppUpdate - already logged In.  Do Nothing.' );
+            }
+            else if ( SessionManager.Status_LogIn_InProcess )
+            {
+                MsgManager.msgAreaShow ( 'App update cancelled - LogIn in progress!' );
+            }
+            else
+            {
+                // Not logged in, yet (In login page).  Not in progress of login..
+                AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
             }
         }
     })
@@ -141,27 +150,9 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
-SwManager.registerEvent_newAppFileExists = function( eventCallBack )
-{
-    SwManager.newAppFileExists_EventCallBack = eventCallBack;
-};
-
-SwManager.newSWrefreshNotification = function()
-{
-    // new update available
-    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
-
-    // move to cwsRender ?
-    btnUpgrade.click ( () => {  AppUtil.appReload();  });
-
-    // MISSING TRANSLATION
-    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
-};
-
-
 SwManager.checkNewAppFile = function( runFunction )
 {
-    SwManager.registerEvent_newAppFileExists( runFunction );
+    SwManager.newAppFileExists_EventCallBack = runFunction;
 
     // Trigger the sw change/update check event..
     if ( SwManager.swRegObj ) SwManager.swRegObj.update();
@@ -170,12 +161,25 @@ SwManager.checkNewAppFile = function( runFunction )
 
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
 {
-    console.customLog( 'swManager.checkNewAppFile_OnlyOnline called, time: ' + new Date().toString() );
-
     if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
 };
 
+
 // -----------------------------------
+
+// Not used, but might later..
+SwManager.newSWrefreshNotification = function()
+{
+    // new update available
+    var btnUpgrade = $( '<a class="notifBtn" term=""> REFRESH </a>');
+
+    // move to cwsRender ?
+    btnUpgrade.click ( () => {  AppUtil.appReloadWtMsg();  });
+
+    // MISSING TRANSLATION
+    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
+};
+
 
 // NEED TO CONFIRM/REVIEW/REDO THIS METHOD!!
 // Restarting the service worker...
@@ -188,7 +192,7 @@ SwManager.reGetAppShell = function( callBack )
             MsgManager.notificationMessage ( 'SW UnRegistered', 'notificationDark', undefined, '', 'left', 'bottom', 1000 );
             
             if ( callBack ) callBack();
-            else AppUtil.appReload();
+            else AppUtil.appReloadWtMsg();
         })
         .catch(err => 
         {
@@ -198,7 +202,7 @@ SwManager.reGetAppShell = function( callBack )
             setTimeout( function() 
             {                
                 if ( callBack ) callBack();
-                else AppUtil.appReload();
+                else AppUtil.appReloadWtMsg();
             }, 100 )		        
         });
     }
@@ -207,7 +211,7 @@ SwManager.reGetAppShell = function( callBack )
         // MISSING TRANSLATION
         MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
         setTimeout( function() {
-            AppUtil.appReload();
+            AppUtil.appReloadWtMsg();
         }, 100 )		
     }
 };

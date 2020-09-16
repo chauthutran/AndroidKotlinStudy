@@ -648,6 +648,8 @@ function cwsRender()
 		ScheduleManager.stopSchedules_AfterLogOut();
 
 		me.closeLoginUI();
+
+		SwManager.checkNewAppFile_OnlyOnline();
 	}
 
 	me.closeLoginUI = function()

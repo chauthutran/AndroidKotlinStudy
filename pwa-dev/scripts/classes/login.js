@@ -251,7 +251,7 @@ function Login( cwsRenderObj )
 					$( '#accept' ).click( function() {
 
 						DataManager2.deleteAllStorageData( function() {
-							AppUtil.appReload();
+							AppUtil.appReloadWtMsg();
 						});
 
 					});
@@ -284,7 +284,7 @@ function Login( cwsRenderObj )
 		$( '#loginVersionNote' ).append( '<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>' );
 
 		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
-			AppUtil.appReload();
+			AppUtil.appReloadWtMsg();
 		});
 	};
 	
@@ -343,12 +343,16 @@ function Login( cwsRenderObj )
 
 		parentTag.find( 'div.loadingImg' ).remove();
 
+		SessionManager.Status_LogIn_InProcess = true;
+
 
 		// ONLINE vs OFFLINE HANDLING
 		if ( !ConnManagerNew.isAppMode_Online() )
 		{
 			me.loginOffline( userName, password, function( isSuccess, offlineUserData ) 
 			{
+				SessionManager.Status_LogIn_InProcess = false;
+
 				if ( isSuccess ) me.loginSuccessProcess( userName, offlineUserData );
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
@@ -360,6 +364,8 @@ function Login( cwsRenderObj )
 
 			me.loginOnline( userName, password, loadingTag, function( isSuccess, loginData ) 
 			{
+				SessionManager.Status_LogIn_InProcess = false;
+
 				if ( isSuccess )
 				{
 					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );

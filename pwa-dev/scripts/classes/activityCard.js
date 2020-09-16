@@ -415,29 +415,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
-
-    //me.activitySubmitSyncClick = function() {};
-
-    /*
-    // if ( SyncManagerNew.syncStart_CheckNSet() )
-        {
-            try
-            {
-                me.performSyncUp( function( success ) {
-    
-                    //SyncManagerNew.syncFinish_Set();     
-
-                    me.reRenderActivityDiv();
-                });    
-            }
-            catch( errMsg )
-            {
-                console.customLog( 'ERROR on running on activityCard.SyncUpItem, errMsg - ' + errMsg );
-                //SyncManagerNew.syncFinish_Set();     
-            }
-        }
-    */
-
     me.reRenderActivityDiv = function()
     {
         // There are multiple places presenting same activityId info.
@@ -774,8 +751,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             sheetFull.html( $( Templates.activityCardFullScreen ) );
 
             // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
-            if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( sheetFull, activityId );
-
+            if ( DevHelper.devMode )
+            {
+                me.setUpActivityDetailTabDev( sheetFull, activityId );
+            } 
 
             // create tab click events
             FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
@@ -811,7 +790,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
     me.setUpActivityDetailTabDev = function( sheetFullTag, activityId )
     {
-        sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).show();
+        sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
         sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
 
         var statusSelTag = sheetFullTag.find( '.devActivityStatusSel' );

@@ -471,6 +471,7 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 			&& $( window ).width() <= 568 
 			&& $( this ).hasClass( 'active' )  ) // class 'active' will always be li.primary
 		{
+			// On Small Screen Case, Show the dropdown (collapsed tab list)
             if ( ulOptionsPopup.is(':visible') ) {
                 ulOptionsPopup.css('display', 'none');
                 $( this ).find( 'li' ).css('display', 'none');
@@ -482,13 +483,12 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 		}
 		else
 		{
+			// On tab (li) selection. (On Small Screen Case, not 'active' )
+
 			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
 			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).hide();
-			//.each( function( index, element ){
-			//	$( element ).hide();
-			//});
 
 			var tab_select = $( this ).attr( 'rel' );
 			var activeTab = tag.siblings( '.tab_fs__container' ).find( '.tab_fs__container-content[tabButtonId="' + tab_select + '"]' );
@@ -510,8 +510,6 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 			activeTab.fadeIn(); //show();
 
 		}
-
-		//e.stopPropagation();
 	});
 };
 

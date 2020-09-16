@@ -29,10 +29,10 @@ SessionManager.sessionData = {
 };
 
 SessionManager.Status_LoggedIn = false;  // Login Flag is kept in here, sessionManager.
+SessionManager.Status_LogIn_InProcess = false;
 
 // TODO: SHOULD BE MOVED --> GlobalVar..?   AppRef?
 SessionManager.cwsRenderObj;  // Login Flag is kept in here, sessionManager.
-
 
 // ---------------------------------------
 

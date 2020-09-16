@@ -554,15 +554,14 @@ function aboutApp( cwsRender )
             // ?? Check only if during online?
             SwManager.checkNewAppFile( function() 
             {
-                console.customLog( 'FROM AboutApp - newAppFile Found!!' );
-                
+                MsgManager.msgAreaShow( 'New App Update Found!' );
                 me.cwsRenderObj.newSWrefreshNotification();    
             });
         });      
 
         $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
-            AppUtil.appReload();
+            AppUtil.appReloadWtMsg();
         });      
     };
 

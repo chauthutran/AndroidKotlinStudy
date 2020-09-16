@@ -392,49 +392,6 @@ SyncManagerNew.setSyncAll_Running = function( runType, bRunning )
     else if ( runType === 'Scheduled' ) SyncManagerNew.syncAll_Running_Scheduled = bRunning;    
 }
 
-/*
-// NOBODY USES ANYMORE..  <-- CREATE A VERSION FOR INDIVIDUAL ACTIVITY USAGE..
-//SyncManagerNew.syncStart_CheckNSet = function( option )
-{
-    var isOkToStart = false;
-
-    var hideMsg = ( option && option.hideMsg );
-
-    // Return 'false' if there is already running one..
-    if ( SyncManagerNew.sync_Running ) 
-    {
-        isOkToStart = false;
-
-        var msg = 'There is another sync job currenly running..';
-
-        if ( !hideMsg ) MsgManager.msgAreaShow( msg );
-
-        console.customLog( msg );
-    }
-    else 
-    {
-        // If not already running sync in process, check the network mode
-        // and set it as running
-        if ( !ConnManagerNew.isAppMode_Online() )
-        {
-            var msg = 'Sync not available with offline appMode status..';
-
-            if ( !hideMsg ) MsgManager.msgAreaShow( msg );
-    
-            console.customLog( msg );
-        }
-        else
-        {
-            SyncManagerNew.sync_Running = true;
-            isOkToStart = true;    
-        }        
-    }
-
-    return isOkToStart;
-};
-*/
-
-
 
 SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
 {
