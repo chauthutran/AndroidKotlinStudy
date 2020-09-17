@@ -217,6 +217,8 @@ AppInfoManager.setLangCode = function( langCode )
 
 // ------------------
 
+// TRAN TODO : the result is a string date, but "getSyncLastDownloadInfo" return a Date object.
+//             Should we result the same value for two methods, String date OR Date object ???
 AppInfoManager.getLangLastDateTime = function()
 {
     var langLastDateTime = AppInfoManager.getPropertyValue( AppInfoManager.KEY_TRANSLATION, AppInfoManager.KEY_LANG_LASTTRYDT );
