@@ -1,8 +1,8 @@
 node_modules/*
-*/service-worker.js
-*/service-worker.js.map
 coverage/*
 pwa-test/*
 pwa/*
 pwa-dev.zip
 pwa-test.zip
+pwa-dev/service-worker.js
+pwa-dev/service-worker.js.map

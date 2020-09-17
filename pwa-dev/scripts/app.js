@@ -29,7 +29,7 @@ function app()
 
 	me.initialize = function()
 	{
-
+    // test..
     // Default Behavior Modify
     me.detectStandAlone();
     me.windowEvent_BlockBackBtnAction();
