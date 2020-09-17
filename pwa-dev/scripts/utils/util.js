@@ -1409,6 +1409,12 @@ Util.upNumber_IntArr = function( arr, upNumber )
 };
 
 
+Util.getBaseFromBase = function ( input, from, to )
+{
+	return ConvertBase.custom( input, from, to );
+};
+
+
 // Others
 // ----------------------------------
 
