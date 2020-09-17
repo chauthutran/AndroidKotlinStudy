@@ -3,6 +3,7 @@ function AppInfoManager() {}
 
 AppInfoManager.KEY_APPINFO = "appInfo";
 
+// TRAN TODO : "logInOut" should be "lastLogInOut" ?????
 AppInfoManager.data = { 'translation': {}, 'sync': {}, 'logInOut': {} };  // minimum basic 'appInfo' shell structure
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
@@ -172,6 +173,7 @@ AppInfoManager.removeUserInfo = function()
 // ------------------------------------------------------------------------------------  
 // ----------------  langTerms
 
+// TRAN TODO : the method name should be "setLangTerms", instead of using "updateLangTerms"
 AppInfoManager.updateLangTerms = function( jsonData )
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_TRANSLATION, AppInfoManager.KEY_LANG_TERMS, jsonData );
@@ -260,6 +262,7 @@ AppInfoManager.getNetworkSync = function()
 }	
 
 
+// TRAN  TODO : We should use "updateLangTerms" instead of this method "updateLanguage"
 // language
 AppInfoManager.updateLanguage = function( dataStr ) 
 {
@@ -269,16 +272,16 @@ AppInfoManager.updateLanguage = function( dataStr )
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in "statisticPages"
 
+// TRAN TODO : We have duplicate methods "updateStatisticPages" and "getStatisticPages"
+// AppInfoManager.updateStatisticPages = function( fileName, dataStr ) 
+// {
+//     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
+// };
 
-AppInfoManager.updateStatisticPages = function( fileName, dataStr ) 
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
-};
-
-AppInfoManager.getStatisticPages = function( fileName ) 
-{
-    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName );
-};
+// AppInfoManager.getStatisticPages = function( fileName ) 
+// {
+//     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName );
+// };
 
 
 // ------------------------------------------------------------------------------------  
