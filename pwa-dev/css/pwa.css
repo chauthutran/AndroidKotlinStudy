@@ -43,6 +43,17 @@ body
   opacity: 0.8;
 }
 
+.statsCusDate {
+  width: 90px; 
+  border: solid 1px #888; 
+  line-height: 17px; 
+  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 3px;
+}
+
+/* --------------------- */
+
 .pointer {
   cursor: pointer;
 }

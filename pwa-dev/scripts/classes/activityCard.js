@@ -132,10 +132,19 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
-    
+        me.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityJson.id ); //me.activityId );   
+    };
+
+
+    me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
+    {
         divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
         {
+            // This could be called again after activityJson/status is changed, thus, get everything again from activityId
             e.stopPropagation();  // Stops calling parent tags event calls..
+
+            var activityJson = ActivityDataManager.getActivityById( activityId );
+            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
             // NOTE:
             //  - If status is not syncable one, display bottom message
@@ -143,7 +152,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
                 // Main SyncUp Processing
-                if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( me.activityId );
+                if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
                 else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
             }  
             else 
@@ -157,17 +166,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     // If submitted with msg one, mark it as 'read' and rerender the activity Div.
                     if ( statusVal === Constants.status_submit_wMsg )        
                     {
-                        activityJson.processing.status = Constants.status_submit_wMsgRead;
-
-                        // Need to save storage afterwards..
-                        ClientDataManager.saveCurrent_ClientsStore( function() {
-                            me.reRenderActivityDiv();
-                        });
+                        ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
                     }
                 }
             }           
-        });     
+        });  
     };
+
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
     {        

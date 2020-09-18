@@ -47,8 +47,6 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 				
 				// merge result json..				
 				Util.mergeDeep( payload, tempPayload );
-
-				console.customLog( payload );
 			}
 		}
 		else if ( activityPayload.payload )
@@ -65,13 +63,6 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 
 	return { 'payload': payload };
 };
-		// If '.localPayload' exists, override the 'payload'
-		//if ( activityPayload.localPayload && WsCallManager.isLocalDevCase ) 
-		//{
-		//	if ( activityPayload.payload ) activityPayload.payload = activityPayload.localPayload;
-		//}
-
-
 
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.

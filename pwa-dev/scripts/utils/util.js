@@ -18,7 +18,7 @@ Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 Util.isTypeObject = function( obj )
 {
-	return ( obj && typeof obj === 'object' );
+	return ( obj && typeof( obj ) === 'object' );
 };
 
 Util.isTypeArray = function( obj )
@@ -230,32 +230,42 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
-		console.customLog( 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth );
+		var errMsg = 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth;
+		console.customLog( errMsg );
+		throw errMsg;
 	}
 	else
 	{
-		for ( var prop in obj ) 
+		Object.keys( obj ).forEach( key => 
 		{
-			var propVal = obj[prop];
+			var prop = obj[key];
 	
-			if ( typeof( propVal ) === "object" ) 
+			if ( Util.isTypeArray( prop ) )
 			{
-				//console.customLog( prop, propVal );
-				Util.traverseEval( propVal, INFO, iDepth++, limit );
+				var iDepthArr = iDepth++;
+				for( var i = 0; i < prop.length; i++ )
+				{
+					Util.traverseEval( prop[i], INFO, iDepthArr, limit );
+				}
 			}
-			else if ( typeof( propVal ) === "string" ) 
+			else if ( Util.isTypeObject( prop ) )
 			{
-				//console.customLog( prop, propVal );
+				Util.traverseEval( prop, INFO, iDepth++, limit );
+			}
+			else if ( Util.isTypeString( prop ) )
+			{
 				try
 				{
-					obj[prop] = eval( propVal );
+					obj[key] = eval( prop );
 				}
 				catch( errMsg )
 				{
-					console.customLog( 'Error on Json traverseEval, prop: ' + prop + ', propVal: ' + propVal + ', errMsg: ' + errMsg );
+					var errMsgStr = 'Error in Util.traverseEval, key: ' + key + ', prop: ' + prop + ', errMsg: ' + errMsg ;
+					console.customLog( errMsgStr );
+					throw errMsgStr;
 				}
 			}
-		}
+		});
 	}
 };	
 
@@ -287,7 +297,7 @@ Util.strCombine = function( input )
 
 	if ( input )
 	{
-		if ( Array.isArray( input ) )
+		if ( Util.isTypeArray( input ) )
 		{
 			output = input.join( ' ' );
 		}
@@ -355,7 +365,7 @@ Util.mergeDeep = function ( dest, obj )
 		var dVal = dest[key];
 		var oVal = obj[key];
 
-		if ( Array.isArray( dVal ) && Array.isArray( oVal ) ) 
+		if ( Util.isTypeArray( dVal ) && Util.isTypeArray( oVal ) ) 
 		{
 			Util.mergeArrays( dVal, oVal );			
 			//dest[key] = pVal.concat(...oVal);
@@ -381,7 +391,7 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 
 		var oVal = obj[key];
 
-		if ( Array.isArray( oVal ) )  dest[ parentObjName + '.' + key ] = oVal;
+		if ( Util.isTypeArray( oVal ) )  dest[ parentObjName + '.' + key ] = oVal;
 		else if ( typeof oVal === 'object' ) 
 		{
 			Util.dotNotation( dest, oVal, parentObjName + '.' + key );
@@ -418,7 +428,7 @@ Util.mergeDeep_v2 = function (...objects)
 			const pVal = prev[key];
 			const oVal = obj[key];
 
-			if ( Array.isArray( pVal ) && Array.isArray( oVal ) ) 
+			if ( Util.isTypeArray( pVal ) && Util.isTypeArray( oVal ) ) 
 			{
 				prev[key] = pVal.concat(...oVal);
 			} 
@@ -1479,7 +1489,7 @@ Util.numberWithCommas = function (x) {
 
 
 Util.cloneArray = function (dataArray, callBack) {
-	if (Array.isArray(dataArray)) {
+	if (Util.isTypeArray(dataArray)) {
 		try {
 			var retArr = []; //[...dataArray]
 
