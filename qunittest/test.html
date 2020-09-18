@@ -32,55 +32,55 @@
   <!-- App Support Files -->
   <!-- Should be able to get this from index.html file? -->
   
-  <script type="text/javascript" src="../pwa-dev/scripts/services/manifestData.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/consoleCustomLog.js"></script>
-
   <script type="text/javascript" src="../pwa-dev/scripts/constants/constants.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/constants/templates.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/constants/configs.js"></script>
 
+  <script type="text/javascript" src="../pwa-dev/scripts/utils/consoleCustomLog.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/util.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/util2.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/consoleCustomLog"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/prototypes.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/jsonBuiltTable.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/inputUtil.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/activityUtil.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/dbStorageSelector.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/formUtil.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/sounds.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/utils/validationUtil.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/utils/StatsUtil.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/utils/appUtil.js"></script>
+
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/validation.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/payloadTemplateHelper.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/msgManager.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/formMsgManager.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/msgAreaBottom.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/dataVerMove.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/devHelper.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/appModeSwitchPrompt.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/webqr.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/qrcode.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/pwaEpoch.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/helpers/baseConverter.js"></script>
 
   <script type="text/javascript" src="../pwa-dev/scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/request/wsCallManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/storage/storageMng.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/storage/dataManager2.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/storage/localStgMng.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/services/translationManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/clientDataManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/activityDataManager.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/payloadTemplateHelper.js"></script>
-
   <script type="text/javascript" src="../pwa-dev/scripts/services/syncManagerNew.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/configManager.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/msgManager.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/formMsgManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/connManagerNew.js"></script>
-
   <script type="text/javascript" src="../pwa-dev/scripts/services/appInfoManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/sessionManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/infoDataManager.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/dataVerMove.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/scheduleManager.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/services/swManager.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/services/devHelper.js"></script>
 
+  <script type="text/javascript" src="../pwa-dev/scripts/classes/pageClass/statistics.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/classes/pageClass/settingsApp.js"></script>
+  <script type="text/javascript" src="../pwa-dev/scripts/classes/pageClass/aboutApp.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/activityCard.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/appModeSwitchPrompt.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/langTerm.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/statistics.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/settingsApp.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/aboutApp.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/menu.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/favIcon.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/login.js"></script>
@@ -92,11 +92,8 @@
   <script type="text/javascript" src="../pwa-dev/scripts/classes/blockButton.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/blockMsg.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/classes/block.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/webqr.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/qrcode.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/pwaEpoch.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/baseConverter.js"></script>
-  <script type="text/javascript" src="../pwa-dev/scripts/classes/myDetails.js"></script>
+
+  <!--script type="text/javascript" src="../pwa-dev/scripts/classes/myDetails.js"></script-->
 
   <script type="text/javascript" src="../pwa-dev/scripts/cwsRender.js"></script>
   <script type="text/javascript" src="../pwa-dev/scripts/app.js"></script>
