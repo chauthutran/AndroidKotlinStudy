@@ -21,13 +21,13 @@ QUnit.test('Test SessionManager - saveUserSessionToStorage and updateUserSession
 
     // Get data from storage
     var testedData = LocalStgMng.getJsonData( userName );
-    assert.equal( testedData.loginStatus, true, "Save data successully !!!" );
+    assert.equal( testedData.mySession.lastUpdated != undefined, true, "Save data successully !!!" );
 
 
     // Update loginData.mySession.lastUpdated 
     SessionManager.updateUserSessionToStorage( loginData, userName );
-    testedData = LocalStgMng.getJsonData( userName );
-    assert.equal( testedData.mySession.stayLoggedIn , false, "Update 'mySession' data successully !!!" );
+    var updatedData = LocalStgMng.getJsonData( userName );
+    assert.equal( updatedData.mySession.lastUpdated > testedData.mySession.lastUpdated, true, "Update 'mySession' data successully !!!" );
 
 
     LocalStgMng.deleteData( userName ); // Delete this data so that no gagabage data into database after running testing
