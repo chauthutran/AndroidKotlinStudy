@@ -13,16 +13,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.activityId = activityId;
     me.cwsRenderObj = cwsRenderObj;
     me.options = ( options ) ? options : {};
-    //me.parentTag_Override = parentTag_Override;
 
-    // -----------------------------------
-    // Greg notes: 
-    // Assumptions: 1) not all cards (itemData objects) are visible/loaded on screen >> initialize() can determine this
-    //              2) cards layout contain (referenceable) attribute + id information as per v1.2.1 design
-    // Reorganized class layout: 
-    //              [UI] methods grouped together above [DATA] methods 
+    me.cardHighlightColor = '#fffff9'; // #fcffff
     
-    //me.template_ActivityContentDateTag = `<div class="activityContentDisplay card-date" style="cursor: pointer;"></div>`;
+    // -----------------------------------
+
     me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
 
 	// =============================================
@@ -560,7 +555,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         if ( activityDivTag )
         {
-            if ( bHighlight ) activityDivTag.css( 'background-color', 'lightyellow' );
+            if ( bHighlight ) activityDivTag.css( 'background-color', me.cardHighlightColor );
             else activityDivTag.css( 'background-color', '' );
         }
     }

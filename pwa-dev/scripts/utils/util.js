@@ -1005,8 +1005,15 @@ Util.populateSelect_Simple = function( selectObj, json_Data )
 {
 	selectObj.empty();
 
-	$.each( json_Data, function( i, item ) {								
-		selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
+	$.each( json_Data, function( i, item ) {	
+		if ( Util.isTypeObject( item ) )
+		{
+			selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
+		}
+		else if ( Util.isTypeString( item ) )
+		{
+			selectObj.append( '<option value="' + item + '">' + item + '</option>' );
+		}
 	});
 };
 
