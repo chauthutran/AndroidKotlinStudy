@@ -401,9 +401,11 @@ Templates.statisticsFullScreen = `
           Between <span class="spanPeriod_Start"></span> and <span class="spanPeriod_End"></span>
         </div>
         <div class="stats_t_custom text_help" style="display:none;">
-          Between <input class="inputCustomPeriod_Start" placeholder="YYYY-MM-DD" style="width: 80px; border: solid 1px #888; line-height: 15px; font-size: 0.7rem;" /> 
-          and <input class="inputCustomPeriod_End" placeholder="YYYY-MM-DD" style="width: 80px; border: solid 1px #888; line-height: 15px; font-size: 0.7rem;"/> 
-          <button class="btnCustomPeriodRun">Go</button>
+          <span style="font-size: 0.71rem;">Between</span>
+          <input class="inputCustomPeriod_Start statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*" />
+          <span style="font-size: 0.71rem;">And</span>
+          <input class="inputCustomPeriod_End statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*"/> 
+          <button class="btnCustomPeriodRun cbutton" style="background-color: cornflowerblue;">Run</button>
         </div>
     </div>
   </div>

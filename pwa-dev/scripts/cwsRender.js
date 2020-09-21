@@ -825,7 +825,7 @@ function cwsRender()
 	me.setNewAppFileStatus = function( newAppFilesFound )
 	{
 		me.loginObj.setNewAppFileStatus( newAppFilesFound );
-		me.aboutApp.setNewAppFileStatus( newAppFilesFound );	
+		me.settingsApp.setNewAppFileStatus( newAppFilesFound );	
 	};
 
 	// ======================================

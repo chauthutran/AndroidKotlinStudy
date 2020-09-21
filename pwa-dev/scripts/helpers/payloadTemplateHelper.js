@@ -31,7 +31,9 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     }
     catch( errMsg )
     {
-        console.customLog( 'Error on PayloadTemplateHelper.generatePayload, errMsg: ' + errMsg );
+        var errMsgStr = 'Error on PayloadTemplateHelper.generatePayload, errMsg: ' + errMsg;
+        console.customLog( errMsgStr );
+        alert( errMsgStr );
     }
 
     return finalPayload;
@@ -100,7 +102,7 @@ PayloadTemplateHelper.evalPayloads = function( payloadList, INFO )
 
         INFO.payloadJson = payloadJson; 
         
-        Util.traverseEval( payloadJson, INFO, 0, 15 );
+        Util.traverseEval( payloadJson, INFO, 0, 50 );
     }
 };
 

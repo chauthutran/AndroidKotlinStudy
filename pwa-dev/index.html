@@ -14,11 +14,12 @@
 
   <title>WFA</title>
 
+  
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-09-16'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.43'; //_manifestData.version;
-    var _versionNote = '- Manual App Install.'; //_manifestData.versionNote;
+    var _verDate = '2020-09-18a'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.44'; //_manifestData.version;
+    var _versionNote = '- Fix payloadTemplate array limit.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -300,38 +301,35 @@
           <div class="field__label"><label term="settings_theme">Theme</label></div>
           <div class="field__controls">
             <div class="field__selector">
-              <select id="settingsInfo_ThemeSelect">
-                <option value="theme-red">theme-red</option>
-                <option value="theme-pink">theme-pink</option>
-                <option value="theme-purple">theme-purple</option>
-                <option value="theme-deep_purple">theme-deep_purple</option>
-                <option value="theme-indigo">theme-indigo</option>
-                <option value="theme-blue">theme-blue</option>
-                <option value="theme-light_blue">theme-light_blue</option>
-                <option value="theme-cyan">theme-cyan</option>
-                <option value="theme-teal">theme-teal</option>
-                <option value="theme-green">theme-green</option>
-                <option value="theme-light_green">theme-light_green</option>
-                <option value="theme-lime">theme-lime</option>
-                <option value="theme-yellow">theme-yellow</option>
-                <option value="theme-amber">theme-amber</option>
-                <option value="theme-orange">theme-orange</option>
-                <option value="theme-deep_orange">theme-deep_orange</option>
-                <option value="theme-brown">theme-brown</option>
-                <option value="theme-gray">theme-gray</option>
-                <option value="theme-blue_gray">theme-blue_gray</option>
-              </select>
+              <select id="settingsInfo_ThemeSelect"></select>
             </div>
             <div class="field__right"></div>
           </div>
         </div>
+
+        
+        <div class="field">
+          <div class="field__label"><label term="settings_theme">Others</label></div>
+          <div class="field__controls">
+            <div class="field__selector">
+              <button id="linkAppUpdateCheck" class="cbutton" style="background-color: cadetblue;">App Update Check</button>
+              <button id="linkAppUpdateRefresh" class="cbutton" style="display: none;">App Update Apply</button>
+              &nbsp;
+              <button id="showLogs" class="cbutton" style="background-color: cadetblue;">Logs</button>
+              &nbsp;
+              <button id="appInstall" class="cbutton" style="display: none;">App Install</button>        
+            </div>
+            <div class="field__right"></div>
+          </div>
+        </div>
+
 
         <!-- /scripts/classes/settingsApp line 89 -->
         <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px">
           <div class="field__label">
             <div class="" id="settingsAppRestHeader" style="cursor: pointer;">
               <div class="field__controls">
-                <div class="field__left" style="padding: 16px 0;">
+                <div class="field__left" style="padding: 4px 0;">
                   <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
@@ -407,18 +405,6 @@
         <div class="field-read_only__label"><label term="about_browser">Browser</label></div>
         <div class="field-read_only__text" id="aboutInfo_Browser">Chrome -73</div>
       </div>
-      <div class="field-read_only">
-        <div class="field-read_only__label"><label>More Info</label></div>
-        <div class="field-read_only__text">
-          <button id="linkAppUpdateCheck" class="cbutton" style="background-color: cadetblue;">App Update Check</button>
-          <button id="linkAppUpdateRefresh" class="cbutton" style="display: none;">App Update Apply</button>
-          &nbsp;&nbsp;
-          <button id="showLogs" class="cbutton" style="background-color: cadetblue;">Logs</button>
-          &nbsp;&nbsp;
-          <button id="appInstall" class="cbutton" style="display: none;">App Install</button>
-        </div>
-      </div>
-
     </div>
 
   </div>
