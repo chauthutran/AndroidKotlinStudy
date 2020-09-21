@@ -59,13 +59,10 @@ function cwsRender()
 
 	me.render = function()
 	{
-		if ( me.debugMode ) console.customLog( 'cwsRender.render()' );
-
 		me.loadSavedUserName();		
 
 		me.loginObj.render(); // Open Log Form
-
-		
+	
 		// This probably gets used for menu swipe?
 		me._manageInputSwipe = inputMonitor( me );
 
