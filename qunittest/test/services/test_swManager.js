@@ -1,31 +1,37 @@
 
-function test_initSWManager()
+function test_initSWManager( callBack )
 {
     var cwsRenderObj = new cwsRender();
-    return new swManager( cwsRenderObj, function(){ } );
+    SwManager.initialSetup( cwsRenderObj, callBack );
 }
 
 QUnit.test('Test swManager - runSWregistration', function( assert ){
-
-    var swManagerObj = test_initSWManager();
-    swManagerObj.runSWregistration( function(){ });
-    assert.equal( true, true, "checkRegisterSW runs successfully !!!" );
+    var done = assert.async();
+    var swManagerObj = test_initSWManager( function(){
+        swManagerObj.runSWregistration( function(){ });
+        assert.equal( true, true, "checkRegisterSW runs successfully !!!" );
+        done();
+    });
+   
 });
 
 
 QUnit.test('Test swManager - createInstallAndStateChangeEvents', function( assert ){
-
-    var swRegObj = {
-        "active" : {
-            onerror: null,
-            onstatechange: null,
-            scriptURL: "http://localhost:8080/pwa-dev/service-worker.js",
-            state: "activated"
+    var done = assert.async();
+    var swManagerObj = test_initSWManager( function(){
+        var swRegObj = {
+            "active" : {
+                onerror: null,
+                onstatechange: null,
+                scriptURL: "http://localhost:8080/pwa-dev/service-worker.js",
+                state: "activated"
+            }
+           
         }
-       
-    }
-    var swManagerObj = test_initSWManager();
-    swManagerObj.createInstallAndStateChangeEvents( swRegObj, function(){ });
-    assert.equal( true, true, "createInstallAndStateChangeEvents runs successfully !!!" );
+        swManagerObj.createInstallAndStateChangeEvents( swRegObj, function(){ });
+        assert.equal( true, true, "createInstallAndStateChangeEvents runs successfully !!!" );
+        done();
+    });
+    
 });
 

@@ -48,16 +48,16 @@ QUnit.test('Test ScheduleManager - schedule_serverStatus_Check', function( asser
 });
 
 
-QUnit.test('Test ScheduleManager - schedule_syncAllRun', function( assert ){
+// QUnit.test('Test ScheduleManager - schedule_syncAllRun', function( assert ){
 
-    ScheduleManager.schedule_syncAllRun( true );
-    assert.equal( true, true, "schedule_syncAllRun without NotRunRightAway runs successfully !!!" );  
+//     ScheduleManager.schedule_syncAllRun( true );
+//     assert.equal( true, true, "schedule_syncAllRun without NotRunRightAway runs successfully !!!" );  
 
 
-    ScheduleManager.schedule_syncAllRun( false );
-    assert.equal( true, true, "schedule_syncAllRun with NotRunRightAway runs successfully !!!" );  
+//     ScheduleManager.schedule_syncAllRun( false );
+//     assert.equal( true, true, "schedule_syncAllRun with NotRunRightAway runs successfully !!!" );  
     
-});
+// });
 
 
 QUnit.test('Test ScheduleManager - schedule_syncDownRunOnce', function( assert ){
