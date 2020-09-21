@@ -739,17 +739,17 @@ Templates.template_dialog = `
 Templates.Advance_Login_Buttons = `
   <div class="sheet_bottom-btn3" style="display: block;">
     <div class="sbtt-btn__header">
-      <div class="sbtt-btn__header_title">Advanced options</div>
+      <div class="sbtt-btn__header_title" term="login_advancedOptions">Advanced options</div>
     </div>
     <div class="cta_buttons">
       <div class="button c_500 dis" id="switchToStagBtn">
         <div class="button__container">
-          <div class="button-label">switch to Staging</div>
+          <div class="button-label" term="login_switchToStaging">switch to Staging</div>
         </div>
       </div>
       <div class="button c_500 dis" id="demoBtn">
         <div class="button__container">
-          <div class="button-label">Demo mode</div>
+          <div class="button-label" term="login_demoMode">Demo mode</div>
         </div>
       </div>
       <div class="button c_500" id="changeUserBtn">
@@ -764,7 +764,7 @@ Templates.Advance_Login_Buttons = `
   Templates.Change_User_Form = `
    <dialog id="dialog_confirmation" style="display: block;">
     <div class="dialog__title">
-      <label>Confirmation dialog</label>
+      <label term="login_confirmDialogTitle">Confirmation dialog</label>
     </div>
     <div class="dialog__text" term="change_user_msg">
         Changing user will delete all data for the user, including any data not syncronized. 
@@ -787,7 +787,7 @@ Templates.Advance_Login_Buttons = `
        <div class="dialog__title">
         <label term="aboutInfo_Reset">Reset app data & configuration</label>
        </div>
-       <div class="dialog__text" term="">
+       <div class="dialog__text" term="settingPage_appDataDeleteConfirmMsg">
           Your configuration and App data stored in the device will be deleted. Are you sure?
        </div>
        <div class="dialog__action"><div class="button-text warning">
