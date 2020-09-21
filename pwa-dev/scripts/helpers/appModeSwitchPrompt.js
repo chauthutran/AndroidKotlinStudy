@@ -13,9 +13,9 @@ AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode, cwsRende
     var switchPromptTag = $( '#networkSwitch' );
     var switchPromptContentObj = $(Templates.ConnManagerNew_Dialog_notSupportedMode);
 
-    var friendlyTitle = ConnManagerNew.isStrONLINE( appMode ) ? 'Back Online!' : 'you need to start again :-('; // <move into templates/(new)translations class
+    var friendlyTitle = ConnManagerNew.isStrONLINE( appMode ) ? '<span term="networkSwitch_titleBackOnline">Back Online!<span>' : '<span term="networkSwitch_titleNeedStartAgain">you need to start again :-(</span>'; // <move into templates/(new)translations class
     var switchPromptText = Templates.ConnManagerNew_Dialog_prompt_notSupportedMode;
-    var btnActionText = 'Got to activity list';
+    var btnActionText = '<span term="networkSwitch_btnGoToactivityList">Go to activity list</span>';
 
     switchPromptTag.empty();
     switchPromptTag.append(switchPromptContentObj);
@@ -59,9 +59,9 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
     // ---------------
     // Modify the prompt content
 
-    var friendlyTitle = ( isSwitchToOffline ) ? 'Go Offline' : 'Back Online';
+    var friendlyTitle = ( isSwitchToOffline ) ? '<span term="networkSwitch_titleGoOffline">Go Offline</span>' : '<span term="networkSwitch_titleBackOnline">Back Online</span>';
     var switchPromptText = ( isSwitchToOffline ) ? Templates.ConnManagerNew_Dialog_prompt_manualOffline : Templates.ConnManagerNew_Dialog_prompt_manualOnline;
-    var btnActionText = ( isSwitchToOffline ) ? 'GO OFFLINE': 'ACCEPT';
+    var btnActionText = ( isSwitchToOffline ) ? '<span term="networkSwitch_btnGoOffline">GO OFFLINE</span>': '<span term="networkSwitch_btnAccept">ACCEPT</span>';
 
     var dvTitle = switchPromptTag.find('.title');
     var imgIcon = switchPromptTag.find('.icon');
@@ -108,7 +108,7 @@ AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( cwsRe
     var switchPromptTag = $( '#networkSwitch' );
     var switchPromptContentObj = ( Templates.ConnManagerNew_Dialog_NoInternet );
 
-    var friendlyTitle = 'No internet :~(';
+    var friendlyTitle = '<span term="networkSwitch_titleNoInternet">No internet :~(</span>';
     var switchPromptText = Templates.ConnManagerNew_Dialog_prompt_network_Unavailable;
 
     switchPromptTag.empty();
@@ -126,11 +126,11 @@ AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog = function( cwsRe
 
     if ( rePromptWithCancel )
     {
-        btnCancel.html( 'OK' );
+        btnCancel.html( '<span term="networkSwitch_btnOK">OK</span>' );
     }
     else
     {
-        btnCancel.html( 'CANCEL' );
+        btnCancel.html( '<span term="networkSwitch_btnCANCEL">CANCEL</span>' );
     }
 
     btnCancel.click( function () {
@@ -157,7 +157,7 @@ AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog = function( cwsRen
     var switchPromptTag = $( '#networkSwitch' );
     var switchPromptContentObj = ( Templates.ConnManagerNew_Dialog_ServerUnavailable );
 
-    var friendlyTitle = 'PSI CwS DWS not available :(';
+    var friendlyTitle = '<span term="networkSwitch_titleServerUnavailable">Backend webService not available :(</span>';
     var switchPromptText = Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable;
 
     switchPromptTag.empty();

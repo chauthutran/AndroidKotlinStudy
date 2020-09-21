@@ -40,16 +40,20 @@ function Statistics( cwsRender )
 
         me.initialize_UI();
 
-        //me.initialize_Data();        
-
         me.loadPeriodOptions( me.statsPeriodSelector, ConfigManager.periodSelectorOptions, 'reset' );
+
+        TranslationManager.translatePage();
+
 
         me.setEvents_OnRender();
 
+        
         me.loadStatConfigPage( me.statsContentPageTag, function() {
 
             // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
             if ( _statsPeriodOptions ) me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
+            TranslationManager.translatePage();
+
 
             me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
 
@@ -71,11 +75,11 @@ function Statistics( cwsRender )
 
         //me.statsFormContainerTag = $( Templates.statisticsFullScreen );
         me.statisticsFormDiv.empty().append( Templates.statisticsFullScreen );
+        //TranslationManager.translatePage();  <-- call in 'render()'
 
         me.statsContentPageTag = me.statisticsFormDiv.find( ".statsContentPage" );
 
-        me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );
-        
+        me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );        
     };
 
     

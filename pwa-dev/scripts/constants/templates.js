@@ -388,22 +388,22 @@ Templates.statisticsFullScreen = `
   <div class="Nav2" style="position:absolute !important;">
     <div class="controls">
         <div class="field">
-            <div class="field__label"><label>Select a period</label><span>*</span></div>
+            <div class="field__label"><label term="stats_period_select">Select a period</label><span>*</span></div>
             <div class="field__controls">
                 <div class="field__selector">
                     <select class="stats_select_period" mandatory="true">
-                        <option from="0" to="0" value="0">Select a period</option>
+                        <option from="0" to="0" value="0" term="stats_period_select">Select a period</option>
                     </select>
                 </div>
             </div>
         </div>
         <div class="stats_t_info text_help" style="display:none;">
-          Between <span class="spanPeriod_Start"></span> and <span class="spanPeriod_End"></span>
+          <span term="stats_periodDateBetween">Between</span> <span class="spanPeriod_Start"></span> <span term="stats_periodDateAnd">and</span> <span class="spanPeriod_End"></span>
         </div>
         <div class="stats_t_custom text_help" style="display:none;">
-          <span style="font-size: 0.71rem;">Between</span>
+          <span style="font-size: 0.71rem;" term="stats_periodDateBetween">Between</span>
           <input class="inputCustomPeriod_Start statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*" />
-          <span style="font-size: 0.71rem;">And</span>
+          <span style="font-size: 0.71rem;" term="stats_periodDateAnd">And</span>
           <input class="inputCustomPeriod_End statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*"/> 
           <button class="btnCustomPeriodRun cbutton" style="background-color: cornflowerblue;">Run</button>
         </div>
@@ -501,28 +501,25 @@ Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
 <div class="networkSwitchOpts">
   <div class="networkSwitchOpt radio-group">
     <input type="radio" name="switch_waitingTimeOpt" value="10" id="waitingTimeOpt_10s">
-    <label for="waitingTimeOpt_10s" term="">Try to connect in 10sec</label>
+    <label for="waitingTimeOpt_10s" term="networkSwitch_tryConnect_10sec">Try to connect in 10sec</label>
   </div>
   <div class="networkSwitchOpt radio-group">
     <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60s">
-    <label for="waitingTimeOpt_60s" term="">Try to connect in 60sec</label>
+    <label for="waitingTimeOpt_60s" term="networkSwitch_tryConnect_60sec">Try to connect in 60sec</label>
   </div>
   <div class="networkSwitchOpt radio-group">
     <input type="radio" name="switch_waitingTimeOpt" CHECKED value="180" id="waitingTimeOpt_30m">
-    <label for="waitingTimeOpt_30m" term="">Try to connect in 30min</label>
+    <label for="waitingTimeOpt_30m" term="networkSwitch_tryConnect_30min">Try to connect in 30min</label>
   </div>
   <div class="networkSwitchOpt radio-group">
     <input type="radio" name="switch_waitingTimeOpt" value="360" id="waitingTimeOpt_1h">
-    <label for="waitingTimeOpt_1h" term="">Try to connect in 1hr</label>
+    <label for="waitingTimeOpt_1h" term="networkSwitch_tryConnect_1hr">Try to connect in 1hr</label>
   </div>
   <div class="networkSwitchOpt radio-group">
     <input type="radio" name="switch_waitingTimeOpt" value="1440" id="waitingTimeOpt_4h">
-    <label for="waitingTimeOpt_4h" term="">Try to connect in 4hr</label>
+    <label for="waitingTimeOpt_4h" term="networkSwitch_tryConnect_4hr">Try to connect in 4hr</label>
   </div>
 </div>
-
-
-
 
 <div class="dialog__action">
   <div id="dialog_act2" class="button-text warning">
@@ -648,20 +645,17 @@ and continue working. The app will try to reconnect in 10m.`;
 
 Templates.ConnManagerNew_Dialog_prompt_onlineButOffline = `Oops - PSI WFA DWS is not availalbe. You can continue working offline - only the online search will be disabled. The app will try to reconnect in 10m.`;
 
-Templates.ConnManagerNew_Dialog_prompt_notSupportedMode = `This functionality is not supported under current networkMode - you need to restart the process`;
+Templates.ConnManagerNew_Dialog_prompt_notSupportedMode = `<span term="networkSwitch_prompt_notSupportedMode">This functionality is not supported under current networkMode - you need to restart the process</span>`;
 
-Templates.ConnManagerNew_Dialog_prompt_manualOffline = `Are you sure you want to go offline? The app will continue working, but some operations like online search will not be available.`;
+Templates.ConnManagerNew_Dialog_prompt_manualOffline = `<span term="networkSwitch_prompt_manualOffline">Are you sure you want to go offline? The app will continue working, but some operations like online search will not be available.</span>`;
 
-Templates.ConnManagerNew_Dialog_prompt_manualOnline = `Hurray ! There is internet available. We will connect you back, so all operations, including online search, are available. We will also sync all pending records`;
+Templates.ConnManagerNew_Dialog_prompt_manualOnline = `<span term="networkSwitch_prompt_manualOnline">Hurray ! There is internet available. We will connect you back, so all operations, including online search, are available. We will also sync all pending records</span>`;
 
-Templates.ConnManagerNew_Dialog_prompt_network_Unavailable = `Oops - it looks like you no longer have access to the internet. Ensure that you are in an area with network cover, and that you have data active on your mobile plan. Alternatively you can go offline and continue working.`;
+Templates.ConnManagerNew_Dialog_prompt_network_Unavailable = `<span term="networkSwitch_prompt_networkUnavailable">Oops - it looks like you no longer have access to the internet. Ensure that you are in an area with network cover, and that you have data active on your mobile plan. Alternatively you can go offline and continue working.</span>`;
 
-Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable = `Oops - PSI CwS DWS is not availalbe. You can continue  working offline - only the online search will be disabled. The app will try to reconnect in 10m.`;
+Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable = `<span term="networkSwitch_prompt_switchOnlineUnavailable">Oops - PSI CwS DWS is not availalbe. You can continue  working offline - only the online search will be disabled. The app will try to reconnect in 10m.</span>`;
 
 /* ONLINE/OFFLINE SWITCHING PROMPT << END */
-
-
-
 
 
 /* lOGIN/CHANGE USER >> START */

@@ -776,7 +776,7 @@ ConfigManager.defaultJsonList = {
 ConfigManager.periodSelectorOptions = {
     "all": {
         "name": "All periods",
-        "term": "",
+        "term": "stats_period_allPeriods",
         "from": "",
         "to": "",
         "enabled": "true",
@@ -784,7 +784,7 @@ ConfigManager.periodSelectorOptions = {
     },
     "thisWeek": {
         "name": "this Week",
-        "term": "",
+        "term": "stats_period_thisWeek",
         "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
         "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
         "enabled": "true",
@@ -792,14 +792,14 @@ ConfigManager.periodSelectorOptions = {
     },
     "lastWeek": {
         "name": "last Week",
-        "term": "",
+        "term": "stats_period_lastWeek",
         "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
         "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
         "enabled": "true"
     },
     "thisMonth": {
         "name": "this Month",
-        "term": "",
+        "term": "stats_period_thisMonth",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
         "enabled": "true",
@@ -807,21 +807,21 @@ ConfigManager.periodSelectorOptions = {
     },
     "lastMonth": {
         "name": "last Month",
-        "term": "",
+        "term": "stats_period_lastMonth",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
         "enabled": "true"
     },
     "thisYear": {
         "name": "this Year",
-        "term": "",
+        "term": "stats_period_thisYear",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
         "enabled": "true"
     },
     "customRange": {
         "name": "custom range",
-        "term": "",
+        "term": "stats_period_customRange",
         "from": "'custom'",
         "to": "'custom'",
         "enabled": "true"
