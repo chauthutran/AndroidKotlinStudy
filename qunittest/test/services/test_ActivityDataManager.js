@@ -30,7 +30,7 @@ QUnit.test('Test ActivityDataManager - createNewPayloadActivity', function( asse
         } 
     }
 
-    ActivityDataManager.createNewPayloadActivity( "www.tes_turl.com", formsJsonActivityPayload, function(){
+    ActivityDataManager.createNewPayloadActivity( "www.tes_turl.com", formsJsonActivityPayload, {},function(){
 
         assert.equal( !jQuery.isEmptyObject( ClientDataManager._clientsStore ), true, "createNewPayloadActivity runs successfully !!!" );
         done();

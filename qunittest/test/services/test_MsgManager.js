@@ -74,6 +74,6 @@ QUnit.test('Test MsgManager - confirmPayloadPreview', function( assert ){
         }
     ];
 
-    MsgManager.confirmPayloadPreview( $("<div></div>"), jsonPreviewData, true, function(){ } );
+    MsgManager.confirmPayloadPreview( $("<div></div>"), jsonPreviewData, "Test Title", function(){ } );
     assert.equal( true, true, "clearReservedMessage runs successfully !!!" );  
 });

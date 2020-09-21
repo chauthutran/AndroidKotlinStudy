@@ -42,7 +42,7 @@ QUnit.test('Test SyncManagerNew - syncUpItem_RecursiveProcess', function( assert
     var cwsRenderObj = new cwsRender();
     var activityDataList = [];
      
-    SyncManagerNew.syncUpItem_RecursiveProcess(activityDataList, 1, cwsRenderObj, function( ){
+    SyncManagerNew.syncUpItem_RecursiveProcess(activityDataList, 1, cwsRenderObj, {}, function( ){
         assert.equal( true, true, "syncUpItem_RecursiveProcess runs successfully !!!" );
     } ); 
 });
@@ -53,7 +53,7 @@ QUnit.test('Test SyncManagerNew - downloadClients', function( assert ){
     var done = assert.async();
 
     SessionManager.sessionData.login_UserName = "test_username";
-    AppInfoManager.updateDownloadInfo( "2020-07-03" );
+    // AppInfoManager.updateDownloadInfo( "2020-07-03" );
 
     var dcdConfig = {
         "settings" : {
@@ -143,50 +143,21 @@ QUnit.test('Test SyncManagerNew - hideProgressBar', function( assert ){
 });
 
 
-QUnit.test('Test SyncManagerNew - syncStart_CheckNSet', function( assert ){
-    
-    var statusInfo = {
-        "manual_Offline" : {
-            "enabled" : true
-        }
-    }
-    ConnManagerNew.statusInfo = statusInfo;
-    
-    SyncManagerNew.sync_Running = true;
-    SyncManagerNew.syncStart_CheckNSet();
-    assert.equal( true, true, "syncStart_CheckNSet with sync_Running as true runs successfully !!!" );
-
-    
-    SyncManagerNew.sync_Running = false;
-    SyncManagerNew.syncStart_CheckNSet();
-    assert.equal( true, true, "syncStart_CheckNSet with sync_Running as false runs successfully !!!" );
-});
-
-
-
-QUnit.test('Test SyncManagerNew - syncFinish_Set', function( assert ){
-    
-    SyncManagerNew.syncFinish_Set();
-    assert.equal(  SyncManagerNew.sync_Running, false, "syncFinish_Set runs successfully !!!" );
-});
-
-
 QUnit.test('Test SyncManagerNew - SyncMsg_Get', function( assert ){
     SyncManagerNew.syncMsgJson = undefined;
     AppInfoManager.removeData( AppInfoManager.KEY_SYNCMSG );
     var syncMsgJson = SyncManagerNew.SyncMsg_Get();
     assert.equal( syncMsgJson.msgList.length == 0 && syncMsgJson.summaryList.length == 0, true, "SyncMsg_Get with template runs successfully !!!" );
 
-
-    SyncManagerNew.syncMsgJson = undefined;
-    AppInfoManager.updateSyncMsg( { "msgList": 
+    
+    SyncManagerNew.syncMsgJson = { "msgList": 
         [
             {
                 "datetime" : "2039-07-22",
                 "msg" : "Test message 1"
             }
         ] 
-    } );
+    };
     var syncMsgJson = SyncManagerNew.SyncMsg_Get();
     assert.equal( syncMsgJson.msgList.length == 1 && syncMsgJson.msgList[0].msg == "Test message 1", true, "SyncMsg_Get with undefined syncMsgJson runs successfully !!!" );
 
