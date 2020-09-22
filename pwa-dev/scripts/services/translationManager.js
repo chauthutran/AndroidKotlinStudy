@@ -187,9 +187,10 @@ TranslationManager.translatePage = function()
 	
 				if ( termVal )
 				{
-					//var termOrig = tag.attr( 'termOrig' );  // we might put the original non-translated text as attribute and use it?
-
-					tag.html( termVal );
+					if ( tag.is( 'input' ) ) {
+						if ( tag.attr( 'placeholder' ) ) tag.attr( 'placeholder', termVal );
+					} 
+					else tag.html( termVal );
 				}
 			}
 		});		
