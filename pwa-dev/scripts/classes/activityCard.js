@@ -14,7 +14,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.cwsRenderObj = cwsRenderObj;
     me.options = ( options ) ? options : {};
 
-    me.cardHighlightColor = '#fffff9'; // #fcffff
+    me.cardHighlightColor = '#fcffff'; // #fffff9
     
     // -----------------------------------
 
@@ -640,10 +640,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
 
 
-            // [*NEW] Process 'ResponseCaseAction' - responseJson.result.report - This changes activity status again if applicable
-            if ( responseJson && responseJson.result && responseJson.result.report ) 
+            // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
+            if ( responseJson && responseJson.report ) 
             {
-                me.processResponseCaseAction( responseJson.result.report, activityJson_Orig.id );
+                me.processResponseCaseAction( responseJson.report, activityJson_Orig.id );
             }
 
             afterDoneCall( success );

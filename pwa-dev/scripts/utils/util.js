@@ -692,6 +692,16 @@ Util.reverseArray = function( arr )
 // ----------------------------------
 // List / Array Related
 
+Util.arrayReplaceData = function( orig, newData )
+{
+	orig.splice(0); // Remove all data in array
+
+	newData.forEach( item => {
+		orig.push( item );
+	});
+};
+
+
 Util.RemoveFromArray = function( list, propertyName, value )
 {
 	var index;

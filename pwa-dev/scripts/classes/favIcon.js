@@ -36,31 +36,11 @@ function favIcons( cwsRender )
     {
         var bOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' );
         var areaItems = ( bOnline ) ? favData.online : favData.offline;
-        var areaFavItems = [];
-
-        for ( var i=0; i< areaItems.length; i++ )
-        {
-           if ( areaItems[ i ].userRoles )
-           {
-               for ( var p=0; p< areaItems[ i ].userRoles.length; p++ )
-               {
-                   if ( ConfigManager.login_UserRoles.includes( areaItems[ i ].userRoles[ p ] ) )
-                   {
-                       areaFavItems.push( areaItems[ i ] );
-                       break;
-                   }
-               }
-           }
-           else
-           {
-            areaFavItems.push( areaItems[ i ] );
-           }
-        }
+        var areaFavItems = ConfigManager.filterListByUserRoles( areaItems );
 
         Util.sortByKey( areaFavItems, 'id');
 
-        return areaFavItems;
-    
+        return areaFavItems;    
     };
 
 	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )

@@ -3972,8 +3972,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4032,7 +4031,9 @@ textarea {
 
 .list .card .card__container .card__cta .card__cta_two {
   float: right;
-  width: 40px;
+  width: 36px;
+  height: 36px;
+  margin-right: 4px;
 }
 
 .snackbar {
@@ -5799,8 +5800,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -5859,7 +5859,9 @@ textarea {
 
 .wapper_card .card .card__container .card__cta .card__cta_two {
   float: right;
-  width: 40px;
+  width: 36px;
+  height: 36px;
+  margin-right: 4px;
 }
 
 .wapper_card .tab_fs {
@@ -6736,7 +6738,7 @@ textarea {
   -moz-box-sizing: border-box;
 }
 
-.wrapper_login .login_header .logilogogo__image {
+.wrapper_login .login_header .login_logo__image {
   float: left;
   background-image: url(../images/logo.svg);
   background-position: center;
@@ -6754,7 +6756,7 @@ textarea {
   background-image: url(../images/logo.png);
 }
 
-@media only screen and (-moz-min-devlogopixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
+@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
   .no-svg .wrapper_login .login_header .login_logo__image {
     background-image: url(../images/logo@2x.png);
   }
