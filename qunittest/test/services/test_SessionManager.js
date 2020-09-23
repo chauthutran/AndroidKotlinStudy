@@ -14,7 +14,7 @@ var loginData = {
 
 
 QUnit.test('Test SessionManager - saveUserSessionToStorage and updateUserSessionToStorage', function( assert ){
-    
+    var done = assert.async();
     // Save data
     SessionManager.saveUserSessionToStorage( loginData, userName, password );
 
@@ -25,12 +25,17 @@ QUnit.test('Test SessionManager - saveUserSessionToStorage and updateUserSession
 
 
     // Update loginData.mySession.lastUpdated 
-    SessionManager.updateUserSessionToStorage( loginData, userName );
-    var updatedData = LocalStgMng.getJsonData( userName );
-    assert.equal( updatedData.mySession.lastUpdated > testedData.mySession.lastUpdated, true, "Update 'mySession' data successully !!!" );
-
-
-    LocalStgMng.deleteData( userName ); // Delete this data so that no gagabage data into database after running testing
+    setTimeout(function(){ 
+        SessionManager.updateUserSessionToStorage( loginData, userName );
+        var updatedData = LocalStgMng.getJsonData( userName );
+    
+        assert.equal( updatedData.mySession.lastUpdated != testedData.mySession.lastUpdated, true, "Update 'mySession' data successully !!!" );
+    
+    
+        LocalStgMng.deleteData( userName ); // Delete this data so that no gagabage data into database after running testing
+        done();
+    }, 1000);
+    
 });
 
 

@@ -9,9 +9,11 @@ QUnit.test('Test ConnManagerNew - appStartUp_SetStatus and changeNetworkConnStab
         "networkConn" : {
             "online_Stable" : modeOnline,
             "online_Current" : true
+        },
+        "manual_Offline": {
+            "enabled" : !modeOnline
         }
     };
-
     
     ConnManagerNew.statusInfo = statusInfo;
     ConnManagerNew.appStartUp_SetStatus( cwsRenderObj );
@@ -26,8 +28,19 @@ QUnit.test('Test ConnManagerNew - appStartUp_SetStatus and changeNetworkConnStab
 QUnit.test('Test ConnManagerNew - updateNetworkConnStatus', function( assert ){
     
     var modeOnline = navigator.onLine;
-    ConnManagerNew.updateNetworkConnStatus();
+    var statusInfo = {
+        "networkConn" : {
+            "online_Stable" : modeOnline,
+            "online_Current" : true
+        },
+        "manual_Offline": {
+            "enabled" : !modeOnline
+        }
+    };
+    
+    ConnManagerNew.statusInfo = statusInfo;
 
+    ConnManagerNew.updateNetworkConnStatus();
     assert.equal( ConnManagerNew.statusInfo.networkConn.online_Current, modeOnline, "online_Current is set up successfully !!!" );
 
 });
@@ -46,8 +59,9 @@ QUnit.test('Test ConnManagerNew - checkNSet_ServerAvailable', function( assert )
             "online_Stable" : true
         }
     };
+    
     ConnManagerNew.statusInfo = statusInfo;
-
+    
     ConnManagerNew.checkNSet_ServerAvailable( function(){
         assert.equal( 1, 1, "checkNSet_ServerAvailable runs successfully !!!" );    
         done();
@@ -83,7 +97,8 @@ QUnit.test('Test ConnManagerNew - changeServerAvailableIfDiff', function( assert
             "online_Stable" : true
         }
     }
-
+    ConnManagerNew.statusInfo = statusInfo;
+    
     ConnManagerNew.changeServerAvailableIfDiff( newAvailable, statusInfo );
     
     assert.equal( statusInfo.serverAvailable, newAvailable, "serverAvailable is updated successfully !!!" );   

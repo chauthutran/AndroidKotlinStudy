@@ -2,6 +2,18 @@
 QUnit.test('Test DataManager2 - saveData_IDB, getData_IDB, encryptData and decriptData', function( assert ){
    var done = assert.async();
 
+   var statusInfo = { 
+        "serverAvailable" : false,
+        "appMode" : ConnManagerNew.OFFLINE,
+        "manual_Offline": {
+            "enabled" : false
+        },
+        "networkConn" : {
+            "online_Stable" : true
+        }
+    }
+    ConnManagerNew.statusInfo = statusInfo;
+
     var jsonData = {"test": "testVal"};
     var secName = "testIDB";
 
@@ -108,6 +120,7 @@ QUnit.test('Test DataManager2 - saveData_LS_Str and getData_LS_Str', function( a
 
 QUnit.test('Test DataManager2 - deleteAllStorageData', function( assert ){
     var done = assert.async();
+
 
     var secName_IDB = "testKey_IDB";
     var jsonData_IPB = { "test_IDB" : "testVal1" };
