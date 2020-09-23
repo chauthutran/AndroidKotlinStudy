@@ -297,7 +297,7 @@ function cwsRender()
 	me.startBlockExecute = function( initializationInstructions )
 	{
 		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
-		ConfigManager.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), function( areaList ){
+		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList ){
 
 			if ( areaList )
 			{
@@ -313,7 +313,7 @@ function cwsRender()
 
 	me.refreshMenuItems = function()
 	{
-		ConfigManager.getAreaListByStatus( ( ConnManagerNew.statusInfo.appMode === 'Online' ), function( areaList ){
+		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList ){
 
 			if ( areaList )
 			{
@@ -747,39 +747,6 @@ function cwsRender()
 	// USED?  Put in back file?
 	me.trackUserLocation = function( clicked_area )
 	{
-		// var userInfo = AppInfoManager.getUserInfo();
-
-		// 	var thisNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'online' : 'offline' );
-		// 	// var altNetworkMode = ( ConnManagerNew.statusInfo.appMode.toLowerCase() ? 'offline' : 'online' );
-		// 	// var matchOn = [ "id", "startBlockName", "name" ];
-		// 	// var matchedOn, areaMatched;
-
-		// 	if ( userInfo )
-		// 	{
-
-		// 		// DataManager.getUserConfigData( function( loginData ){
-
-		// 			// if (loginData)
-		// 			// {
-		// 				var dcdConfig = ConfigManager.getConfigJson();
-		// 				for ( var i = 0; i < dcdConfig.areas[thisNetworkMode].length; i++ )
-		// 				{
-		// 					dcdConfig.areas[thisNetworkMode][i].startArea = false;
-
-		// 					if ( clicked_area.id == dcdConfig.areas[thisNetworkMode][i].id )
-		// 					{
-		// 						dcdConfig.areas[thisNetworkMode][i].startArea = true;
-		// 					}
-
-		// 				}
-			
-		// 				//UPDATE lastStorage session for current user (based on last menu selection)
-		// 				// DataManager.saveData( lastSession.user, loginData );
-
-		// 			// }
-		// 		// });
-				
-		// 	}
 	};
 
 	me.hidenavDrawerDiv = function()

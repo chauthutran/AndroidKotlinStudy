@@ -60,7 +60,7 @@ ConfigManager.setConfigJson = function ( configJson )
 
             ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
 
-            ConfigManager.applyUserRoleFilters( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptionList' ] );
+            ConfigManager.applyUserRoleFilters( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptions' ] );
         }    
     }
     catch ( errMsg )
@@ -78,17 +78,27 @@ ConfigManager.applyUserRoleFilters = function( configJson, list )
         {
             list.forEach( defName => 
             { 
-                var defList = configJson[ defName ];
+                try
+                {
+                    var defList = configJson[ defName ];
 
-                if ( Util.isTypeObject( defList ) )
-                {
-                    ConfigManager.filterListByUserRoles( defList.online, true );
-                    ConfigManager.filterListByUserRoles( defList.offline, true );
+                    // If Object, look for arrayList in one level below..
+                    if ( Util.isTypeObject( defList ) )
+                    {
+                        Object.keys( defList ).forEach( key => 
+                        {
+                            ConfigManager.filterListByUserRoles( defList[key], true );
+                        });
+                    }
+                    else if ( Util.isTypeArray( defList ) )
+                    {
+                        ConfigManager.filterListByUserRoles( defList, true );
+                    }
                 }
-                else if ( Util.isTypeArray( defList ) )
+                catch( errMsg )
                 {
-                    ConfigManager.filterListByUserRoles( defList, true );
-                }
+                    console.customLog( 'ERROR in ConfigManager.applyUserRoleFilters defName: ' + defName + ', errMsg: ' + errMsg );
+                }               
             });
         }
     }
@@ -128,12 +138,10 @@ ConfigManager.getConfigJson = function ()
 ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 {
     var configJson = ConfigManager.getConfigJson();
-    
-    var compareList = (bOnline) ? configJson.areas.online : configJson.areas.offline;
+    var areaList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
+    //var retAreaList = ConfigManager.filterListByUserRoles( compareList );
 
-    var retAreaList = ConfigManager.filterListByUserRoles( compareList );
-
-    if ( callBack ) callBack( retAreaList );
+    if ( callBack ) callBack( areaList );
 };
 
 // Use this to define the login_userRoles array list.

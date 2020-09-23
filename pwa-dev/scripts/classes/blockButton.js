@@ -181,6 +181,7 @@ function BlockButton( cwsRenderObj, blockObj )
 					var liDivTag = divTag.find( 'div[rel=' + btnId + ']' );
 					var liSpanTag = divTag.find( 'span[rel=' + btnId + ']' );
 
+					liTabTag.attr( 'title', btnJson.defaultLabel );	
 					liDivTag.css( 'background', 'url(' + btnJson.imageSrc + ')' );
 					liSpanTag.text( btnJson.defaultLabel );
 					FormUtil.addTag_TermAttr( liSpanTag, btnJson );

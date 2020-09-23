@@ -18,13 +18,14 @@ function favIcons( cwsRender )
     me.render = function() 
     {
         var favData = ConfigManager.getConfigJson().favList;
-        var favList = me.getFavIconsByAreaRole( favData );
+        var favList = ( ConnManagerNew.isAppMode_Online() ) ? favData.online : favData.offline;
+        Util.sortByKey( favList, 'id');
 
         me.initialize_UI();
 
         me.createRecursiveFavIcons ( favList, 0, false ); //( favItems !== undefined )
+    };
 
-    }
 
     me.initialize_UI = function()
     {
@@ -32,16 +33,16 @@ function favIcons( cwsRender )
         $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
     }
 
-    me.getFavIconsByAreaRole = function( favData, callBack )
-    {
-        var bOnline = ( ConnManagerNew.statusInfo.appMode === 'Online' );
-        var areaItems = ( bOnline ) ? favData.online : favData.offline;
-        var areaFavItems = ConfigManager.filterListByUserRoles( areaItems );
 
-        Util.sortByKey( areaFavItems, 'id');
+    //me.getFavIconsByAreaRole = function( favData )
+    //{
+    //    var areaItems = ( ConnManagerNew.isAppMode_Online() ) ? favData.online : favData.offline;
+    //    //var areaFavItems = ConfigManager.filterListByUserRoles( areaItems );
 
-        return areaFavItems;    
-    };
+    //    Util.sortByKey( areaItems, 'id');
+
+    //    return areaItems;    
+    //};
 
 	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )
 	{
