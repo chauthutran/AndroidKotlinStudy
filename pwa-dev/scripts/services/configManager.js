@@ -58,7 +58,9 @@ ConfigManager.setConfigJson = function ( configJson )
         
             ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
 
-            ConfigManager.login_UserRoles = ConfigManager.getLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
+            ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
+
+            ConfigManager.applyUserRoleFilters( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptionList' ] );
         }    
     }
     catch ( errMsg )
@@ -67,7 +69,41 @@ ConfigManager.setConfigJson = function ( configJson )
     }
 };
 
-// NOTE: We can override any config setting by modifying 'ConfigManager.configJson' in console.
+// Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
+ConfigManager.applyUserRoleFilters = function( configJson, list )
+{
+    try
+    {
+        if ( list )
+        {
+            list.forEach( defName => 
+            { 
+                var defList = configJson[ defName ];
+
+                if ( Util.isTypeObject( defList ) )
+                {
+                    ConfigManager.filterListByUserRoles( defList.online, true );
+                    ConfigManager.filterListByUserRoles( defList.offline, true );
+                }
+                else if ( Util.isTypeArray( defList ) )
+                {
+                    ConfigManager.filterListByUserRoles( defList, true );
+                }
+            });
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.applyUserRoleFilters, errMsg: ' + errMsg );
+    }   
+};
+
+// TODO: 
+// Adjust/Filter by userRole <-- 
+//      - definitionOptionList
+//      - areaList
+//      - favList
+
 
 
 ConfigManager.resetConfigJson = function () 
@@ -94,31 +130,14 @@ ConfigManager.getAreaListByStatus = function( bOnline, callBack )
     var configJson = ConfigManager.getConfigJson();
     
     var compareList = (bOnline) ? configJson.areas.online : configJson.areas.offline;
-    var retAreaList = [];
 
-    for ( var i = 0; i < compareList.length; i++) 
-    {
-        if ( compareList[i].userRoles) 
-        {
-            for ( var p = 0; p < compareList[i].userRoles.length; p++) 
-            {
-                if ( ConfigManager.login_UserRoles.includes(compareList[i].userRoles[p]) ) 
-                {
-                    retAreaList.push(compareList[i]);
-                    break;
-                }
-            }
-        } 
-        else {
-            retAreaList.push(compareList[i]);
-        }
-    }
+    var retAreaList = ConfigManager.filterListByUserRoles( compareList );
 
     if ( callBack ) callBack( retAreaList );
 };
 
-
-ConfigManager.getLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
+// Use this to define the login_userRoles array list.
+ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
 {
     var userRoles = [];
 
@@ -159,7 +178,7 @@ ConfigManager.getAllAreaList = function()
 };
 
 // ----------------------------------------
-        
+
 ConfigManager.getSettingPaging = function()
 {
     var pagingSetting = ConfigManager.default_SettingPaging
@@ -373,6 +392,20 @@ ConfigManager.getStatisticJson = function()
 };
 
 
+ConfigManager.getStatisticApiPath = function()
+{
+    var statisticJson = ConfigManager.getStatisticJson();
+
+    var urlPath = ( statisticJson.url ) ? statisticJson.url : '/PWA.statistic';
+    var fileName = ( statisticJson.fileName ) ? statisticJson.fileName : ''; // DWS Endpoint has default value..'dc_pwa@LA@stat1.html';
+
+    return urlPath + '?stage=' + WsCallManager.stageName + '&fileName=' + fileName;
+};
+
+
+// ------------------------------------------------------
+// -- User Role Related Methods
+
 ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
 {
     var hasAllConfigRoles = true;
@@ -414,14 +447,36 @@ ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
 };
 
 
-ConfigManager.getStatisticApiPath = function()
+ConfigManager.filterListByUserRoles = function( itemList, bChangeToList )
 {
-    var statisticJson = ConfigManager.getStatisticJson();
+    var loginUserRoles = ConfigManager.login_UserRoles;
+    var outList = [];
 
-    var urlPath = ( statisticJson.url ) ? statisticJson.url : '/PWA.statistic';
-    var fileName = ( statisticJson.fileName ) ? statisticJson.fileName : ''; // DWS Endpoint has default value..'dc_pwa@LA@stat1.html';
+    if ( Util.isTypeArray( itemList ) )
+    {
+        itemList.forEach( item => 
+        {
+            // If userRoles exists in item def, filter against loginUserRoles
+            if ( item.userRoles ) 
+            {
+                var itemAdded = false;
+                item.userRoles.forEach( roleId => 
+                {
+                    if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
+                    { 
+                        itemAdded = true; // User instead of 'break'
+                        outList.push( item ); 
+                    }
+                });            
+            }
+            else outList.push( item );
+        });
 
-    return urlPath + '?stage=' + WsCallManager.stageName + '&fileName=' + fileName;
+        // Optional - Change the original list (while keeping the reference)
+        if ( bChangeToList ) Util.arrayReplaceData( itemList, outList );
+    }
+    
+    return outList;    
 };
 
 
@@ -776,7 +831,7 @@ ConfigManager.defaultJsonList = {
 ConfigManager.periodSelectorOptions = {
     "all": {
         "name": "All periods",
-        "term": "",
+        "term": "stats_period_allPeriods",
         "from": "",
         "to": "",
         "enabled": "true",
@@ -784,7 +839,7 @@ ConfigManager.periodSelectorOptions = {
     },
     "thisWeek": {
         "name": "this Week",
-        "term": "",
+        "term": "stats_period_thisWeek",
         "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
         "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
         "enabled": "true",
@@ -792,14 +847,14 @@ ConfigManager.periodSelectorOptions = {
     },
     "lastWeek": {
         "name": "last Week",
-        "term": "",
+        "term": "stats_period_lastWeek",
         "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
         "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
         "enabled": "true"
     },
     "thisMonth": {
         "name": "this Month",
-        "term": "",
+        "term": "stats_period_thisMonth",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
         "enabled": "true",
@@ -807,21 +862,21 @@ ConfigManager.periodSelectorOptions = {
     },
     "lastMonth": {
         "name": "last Month",
-        "term": "",
+        "term": "stats_period_lastMonth",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
         "enabled": "true"
     },
     "thisYear": {
         "name": "this Year",
-        "term": "",
+        "term": "stats_period_thisYear",
         "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
         "enabled": "true"
     },
     "customRange": {
         "name": "custom range",
-        "term": "",
+        "term": "stats_period_customRange",
         "from": "'custom'",
         "to": "'custom'",
         "enabled": "true"

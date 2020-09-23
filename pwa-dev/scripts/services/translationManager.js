@@ -106,7 +106,12 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 			$( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date: ' + AppInfoManager.getLangLastDateTime() );
 
 			if ( allLangTerms_downloaded ) AppInfoManager.updateLangTerms( allLangTerms_downloaded );
-			
+
+
+			// CHECK:
+			// ?? This does not select the language by default?  Or does it populate the language by default?
+
+
 			returnFunc( allLangTerms_downloaded );
 		});
 	}
@@ -182,9 +187,10 @@ TranslationManager.translatePage = function()
 	
 				if ( termVal )
 				{
-					//var termOrig = tag.attr( 'termOrig' );  // we might put the original non-translated text as attribute and use it?
-
-					tag.html( termVal );
+					if ( tag.is( 'input' ) ) {
+						if ( tag.attr( 'placeholder' ) ) tag.attr( 'placeholder', termVal );
+					} 
+					else tag.html( termVal );
 				}
 			}
 		});		
