@@ -841,27 +841,25 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
 	{
-
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
 		var groupNone = me._groupNoneId; 
-		var nonGroup = [];
-		var retGrpArr = [];
+		var arrWtGroup = [];
+		var arrNoGroup = [];
 
 		// 1. copy the array..
 		var newArr = Util.getJsonDeepCopy( formJsonArr );
 
 		// 2. loop each form control and create formGroup...  even none ones...
-		for( var i = 0; i < newArr.length; i++ )
+		newArr.forEach( frmCtrl => 
 		{
-			var frmCtrl = newArr[ i ];
-
 			// NOTE: ISSUES - Currently, definition name is used as id..  but we should have id in it...
 			var frmCtrlGroup = FormUtil.getObjFromDefinition( frmCtrl.formGroup, frmGroupJson );
 			var formCtrlGroupId = frmCtrl.formGroup;
 
 			if ( frmCtrlGroup )
 			{
+				// Data with group info
 				var dataJson = { 
 					'id': frmCtrl.id
 					,'group': frmCtrlGroup.defaultName
@@ -872,10 +870,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					,order: frmCtrlGroup.order 
 				};
 
-				retGrpArr.push ( dataJson );
+				arrWtGroup.push( dataJson );
 			}
 			else
 			{
+				// Data with no group info
 				var dataJson = { 
 					'id': frmCtrl.id
 					,'group': groupNone
@@ -886,30 +885,26 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					, order: 999 
 				}; 
 				
-				nonGroup.push ( dataJson );
+				arrNoGroup.push( dataJson );
 			}
-		}
+		});
+
 
 		// SORTING should be inherited from preconfigured 'Group' object sort value
-		Util.sortByKey( retGrpArr, 'order' );
+		Util.sortByKey( arrWtGroup, 'order' );
+		
 
-		// Add "non group" INPUT fields in beginging of list  
-		//	<-- but this will reverse the order if noGroup controls, no?
-		for( var i = 0; i < nonGroup.length; i++ )
-		{
-			retGrpArr.unshift( nonGroup[i] );
-		}
+		// Combine the 'noGroup' with 'withGroup' array
+		var combinedArr = Util.getCombinedArrays( arrNoGroup, arrWtGroup );
 
-		for( var i = 0; i < retGrpArr.length; i++ )
-		{
-			if ( retGrpArr[ i ].group == groupNone )
-			{
-				retGrpArr[ i ].group = '';
-			}
-		}
+		combinedArr.forEach( item => {
+			if ( item.group == groupNone ) item.group = '';
+		});
 
-		return retGrpArr;
-	}
+		return combinedArr;
+	};
+
+
 
 	me.getFormUniqueGroups = function( JsonArr )
 	{

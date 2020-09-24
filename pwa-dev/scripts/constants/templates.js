@@ -748,7 +748,7 @@ Templates.Advance_Login_Buttons = `
       </div>
       <div class="button c_500" id="changeUserBtn">
         <div class="button__container">
-          <div class="button-label" term="change_user">Change user</div>
+          <div class="button-label" term="login_changeUser">Change user</div>
         </div>
       </div>
     </div>
@@ -760,18 +760,18 @@ Templates.Advance_Login_Buttons = `
     <div class="dialog__title">
       <label term="login_confirmDialogTitle">Confirmation dialog</label>
     </div>
-    <div class="dialog__text" term="change_user_msg">
+    <div class="dialog__text" term="login_changeUserMsg">
         Changing user will delete all data for the user, including any data not syncronized. 
         Are you sure that you want to delete the data for user and allow new user login ?
     </div>
     <div class="dialog__action"><div class="button-text warning" id="accept">
       <div class="button__container">
-        <div class="button-label" term="accept">Accept</div>
+        <div class="button-label" term="common_accept">Accept</div>
       </div>
     </div>
     <div class="button-text primary c_500" id="cancel">
       <div class="button__container">
-        <div class="button-label" term="Cancel">Cancel</div>
+        <div class="button-label" term="common_cancel">Cancel</div>
       </div>
     </div>
    </dialog>`;
@@ -779,19 +779,19 @@ Templates.Advance_Login_Buttons = `
     Templates.settings_app_data_configuration = `
      <dialog id="dialog_confirmation" style="display: block;">
        <div class="dialog__title">
-        <label term="aboutInfo_Reset">Reset app data & configuration</label>
+        <label term="settingPage_resetDialogTitle">Reset app data & configuration</label>
        </div>
        <div class="dialog__text" term="settingPage_appDataDeleteConfirmMsg">
           Your configuration and App data stored in the device will be deleted. Are you sure?
        </div>
        <div class="dialog__action"><div class="button-text warning">
           <div class="button__container">
-            <div class="button-label divResetApp_Accept" term="accept">ACCEPT</div>
+            <div class="button-label divResetApp_Accept" term="common_accept">ACCEPT</div>
           </div>
        </div>
        <div class="button-text primary c_500">
           <div class="button__container">
-            <div class="button-label divResetApp_Cancel" term="Cancel">DECLINE</div>
+            <div class="button-label divResetApp_Cancel" term="common_cancel">DECLINE</div>
           </div>
        </div>
      </dialog>`;
