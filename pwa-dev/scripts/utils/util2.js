@@ -69,7 +69,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 			}
 			else if ( (( arrPattern[ i ] ).match(new RegExp("X", "g")) || []).length == ( arrPattern[ i ] ).toString().length )
 			{
-				returnPart = Util.generateRandomAnything( ( arrPattern[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+				returnPart = Util2.generateRandomAnything( ( arrPattern[ i ] ).toString().length, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( 'SEQ[' ) >= 0 )
 			{
@@ -77,7 +77,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( '.' ) > 0 )
 			{
-				returnPart = Util.getLocalStorageObjectValue( arrPattern[ i ] );
+				returnPart = Util2.getLocalStorageObjectValue( arrPattern[ i ] );
 			}
 			else if ( ( arrPattern[ i ] ).indexOf( 'form:' ) >= 0 )
 			{
@@ -93,7 +93,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 		{
 			if ( parseFloat( arrPattern[ i ] ) == 0 )
 			{
-				returnPart = Util.paddNumeric( ( Util.generateRandomNumberRange( 0, Math.pow(10, ( arrPattern[ i ] ).toString().length ) -1 ) ).toFixed(0), (arrPattern[ i ]).toString().length );
+				returnPart = Util2.paddNumeric( ( Util.generateRandomNumberRange( 0, Math.pow(10, ( arrPattern[ i ] ).toString().length ) -1 ) ).toFixed(0), (arrPattern[ i ]).toString().length );
 			}
 
 		}
@@ -111,7 +111,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 };
 
 
-Util.getLocalStorageObjectValue = function( objKeyVal )
+Util2.getLocalStorageObjectValue = function( objKeyVal )
 {
 	var lastSession = AppInfoManager.getUserInfo();
 	var arrKeys;
@@ -129,18 +129,85 @@ Util.getLocalStorageObjectValue = function( objKeyVal )
 
 			arrKeys = objKeyVal.toString().split( '.' );
 
-			return Util.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
+			return Util2.recFetchLocalKeyVal( localData[arrKeys[ 0] ], arrKeys, 0 );
 
 		}
 	}
 };
 
 
-Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
+Util2.newLocalSequence = function( pattern, commitSEQIncr )
+{
+	var jsonUserData = SessionManager.getLoginDataFromStorage( SessionManager.sessionData.login_UserName );
+
+	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
+	var ret;
+
+	if ( jsonStorageData == undefined ) 
+	{
+		jsonStorageData = { "DD": Util2.dateToMyFormat( new Date(), 'DD' ), "MM": Util2.dateToMyFormat( new Date(), 'MM' ), "YY": Util2.dateToMyFormat( new Date(), 'YY' ), "D": 0, "M": 0, "Y": 0 };
+	}
+
+	if ( pattern.indexOf('[') > 0 )
+	{
+		var parms = Util.getParameterInside( pattern, '[]' );
+
+		if ( parms.length )
+		{
+			if ( parms.indexOf(':') )
+			{
+				var arrParm = parms.split( ':' ); // e.g. DD, 4 = daily incremental sequence, padded with 4 zeroes, e.g. returning 0001
+
+				if ( Util2.dateToMyFormat( new Date(), arrParm[0] ) != jsonStorageData[ arrParm[0] ] )
+				{
+					// current incrementer 'date-determined offset', e.g. DD,4 > TODAY's day number IS DIFFERENT TO LAST TIME USED, THEN RESET TO ZERO
+					ret = 1;
+					jsonStorageData[ arrParm[0] ] = Util2.dateToMyFormat( new Date(), arrParm[0] );
+				}
+				else
+				{
+					var last = jsonStorageData[ (arrParm[0]).slice(1) ];
+
+					if ( last )
+					{
+						ret = ( parseInt( last ) + 1 );
+					}
+					else
+					{
+						ret = 1;
+					}
+
+				}
+
+				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
+				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
+
+				if ( commitSEQIncr != undefined && commitSEQIncr == true )
+				{
+					SessionManager.saveLoginDataFromStorage( SessionManager.sessionData.login_UserName, jsonUserData );
+				}
+
+				return Util2.paddNumeric( ret, arrParm[1] );
+
+			}
+			else
+			{
+				console.customLog( ' ~ no newLocalSequence comma separator');
+			}
+		}
+		else
+		{
+			console.customLog( ' ~ no localSequence parms');
+		}
+
+	}
+};
+
+Util2.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 {
 	if ( objArr[ (itm + 1) ] && objJson[ objArr[ (itm + 1) ] ] )
 	{
-		return Util.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
+		return Util2.recFetchLocalKeyVal( objJson[ objArr[ ( itm + 1 ) ] ], objArr, (itm+1) );
 	}
 	else 	
 	{
@@ -148,7 +215,7 @@ Util.recFetchLocalKeyVal = function ( objJson, objArr, itm )
 	}
 };
 
-Util.paddNumeric = function( val, padding )
+Util2.paddNumeric = function( val, padding )
 {
 	var ret = '';
 	if ( val && padding || val == 0 && padding )
@@ -166,7 +233,7 @@ Util.paddNumeric = function( val, padding )
 	}
 }
 
-Util.generateRandomAnything = function( len, possible ) 
+Util2.generateRandomAnything = function( len, possible ) 
 {
 	var text = "";
 
@@ -452,7 +519,7 @@ Util2.getFormInputValuePattern = function( tagTarget, formInputPattern, patternS
 						}
 						else if ( oper[ 0 ] == 'PADDNUMERIC' )
 						{
-							InpVal = Util.paddNumeric( InpVal, oper[ 1 ] );
+							InpVal = Util2.paddNumeric( InpVal, oper[ 1 ] );
 						}
 					}
 
