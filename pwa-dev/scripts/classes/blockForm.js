@@ -54,22 +54,20 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
 			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
-
 			var groupsCreated = [];
-
-			for( var i = 0; i < formFieldGroups.length; i++ )
+			
+			formFieldGroups.forEach( formGroup => 
 			{
-				var groupDivTag = me.createGroupDivTag( formFieldGroups[ i ], groupsCreated, formTag );
+				var groupDivTag = me.createGroupDivTag( formGroup, groupsCreated, formTag );
+				var formItemJson = formGroup.item;
 
-				var formItemJson = formJsonArr[ formFieldGroups[ i ].seq ];
-
-				me.formJsonConfig[formItemJson.id] = formItemJson;
+				me.formJsonConfig[ formItemJson.id ] = formItemJson;
 
 				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr, autoComplete );
 				groupDivTag.append( inputFieldTag );
 
 				formTag.append( groupDivTag );
-			}
+			});
 
 			
 			Validation.disableValidation( function() 
@@ -864,7 +862,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					'id': frmCtrl.id
 					,'group': frmCtrlGroup.defaultName
 					,'groupId': formCtrlGroupId
-					,seq: i
+					,'item': frmCtrl
 					,created: 0
 					,display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
 					,order: frmCtrlGroup.order 
@@ -879,7 +877,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					'id': frmCtrl.id
 					,'group': groupNone
 					,'groupId': groupNone
-					,seq: i
+					,'item': frmCtrl
 					,created: 0
 					, display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
 					, order: 999 
