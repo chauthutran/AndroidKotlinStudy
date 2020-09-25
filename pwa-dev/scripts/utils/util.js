@@ -243,31 +243,45 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 			if ( Util.isTypeArray( prop ) )
 			{
 				var iDepthArr = iDepth++;
-				for( var i = 0; i < prop.length; i++ )
+
+				prop.forEach( pArrItem => 
 				{
-					Util.traverseEval( prop[i], INFO, iDepthArr, limit );
-				}
+					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
+					{						
+						Util.traverseEval( pArrItem, INFO, iDepthArr, limit );
+					}
+					else if ( Util.isTypeString( pArrItem ) )
+					{						
+						Util.traverseEval_StrCase( obj, key, pArrItem, INFO );
+					}
+				});
 			}
 			else if ( Util.isTypeObject( prop ) )
 			{
 				Util.traverseEval( prop, INFO, iDepth++, limit );
 			}
 			else if ( Util.isTypeString( prop ) )
-			{
-				try
-				{
-					obj[key] = eval( prop );
-				}
-				catch( errMsg )
-				{
-					var errMsgStr = 'Error in Util.traverseEval, key: ' + key + ', prop: ' + prop + ', errMsg: ' + errMsg ;
-					console.customLog( errMsgStr );
-					throw errMsgStr;
-				}
+			{				
+				Util.traverseEval_StrCase( obj, key, prop, INFO );
 			}
 		});
 	}
 };	
+
+
+Util.traverseEval_StrCase = function( obj, key, prop, INFO )
+{
+	try
+	{
+		obj[key] = eval( prop );
+	}
+	catch( errMsg )
+	{
+		var errMsgStr = 'Error in Util.traverseEval_StrCase, key: ' + key + ', prop: ' + prop + ', errMsg: ' + errMsg ;
+		console.customLog( errMsgStr );
+		throw errMsgStr;
+	}
+};
 
 
 Util.getObjRef_fromList = function( list, prop )
