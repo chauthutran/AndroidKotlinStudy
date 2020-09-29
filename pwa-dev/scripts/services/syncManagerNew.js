@@ -96,8 +96,14 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 };
 
 
+
 SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
 {
+    // TODO: 
+    //      - divide dhis2 version vs mongodb version..
+
+
+
     // NOTE: We can check network connection here, or from calling place.  
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
     SyncManagerNew.update_UI_StartSyncAll();
@@ -271,8 +277,7 @@ SyncManagerNew.downloadClients = function( callBack )
 {
     try
     {
-        // TODO: 
-        var activeUser = SessionManager.sessionData.login_UserName; //"qwertyuio2";  // Replace with 'loginUser'?  8004?    
+        var activeUser = SessionManager.sessionData.login_UserName;
         var dateRange_gtStr;
 
         var payloadJson = { 'find': {} };

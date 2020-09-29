@@ -321,7 +321,7 @@ function DataList( cwsRenderObj, blockObj )
 
             var trTopObjTag = $( '<tr class="itemBlock">' );
             var tdLeftIconTag = $( '<td rowspan=2 class="resultsImgContainer">' );
-            var tdIconTag = $( '<img src="images/user.svg" class="imgSearchResultUser" >' );
+            var tdIconTag = $( '<img src="images/user.svg" class="imgSearchResultUser" style="width:60px;" >' );
             var tdLeftobjTag =  $( '<td class="">' );
 
             tblObjTag.append( trTopObjTag );

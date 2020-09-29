@@ -63,6 +63,9 @@ RESTCallManager.fetchTimeout = function( url, options )
 // Only for JSON return type of REST call.
 RESTCallManager.performREST = function( url, requestData, returnFunc )
 {
+    var reponseNotOK = false;
+    var notOKJson = {};
+
     //fetch( url, requestData )
     RESTCallManager.fetchTimeout( url, requestData )
     .then( response => {
@@ -72,20 +75,37 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
             if ( requestData.returnDataType === 'text' ) return response.text();
             else return response.json();
         }
-        else throw { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
+        else
+        {
+            reponseNotOK = true;
+            notOKJson = { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
+
+            return response.text();            
+        }         
     })
-    .then( jsonData => {
+    .then( responseBody => {
         try
         {
-            returnFunc( true, jsonData );
+            if ( reponseNotOK )
+            {
+                RESTCallManager.setDwsErrMsg( notOKJson, responseBody );
+                throw notOKJson;
+            }
+            else
+            {
+                returnFunc( true, responseBody );
+            }
         }
         catch ( errMsg )
         {
-            console.customLog( 'RESTCallManager.performREST, Returned Success.  Howerver, had some issue processing the returnFunc somewhere: ' + errMsg );
+            errMag = 'RESTCallManager.performREST, responseBody handling err: ' + errMsg;
+            console.customLog( errMsg );
+            throw errMsg;
         }
     })
     .catch( ( error ) => {
-        console.customLog( 'RESTCallManager.performREST, Error Catched, url: ' + url + ', error: ' + Util.outputAsStr( error ) );
+        console.customLog( 'RESTCallManager.performREST Cached Error: ' );
+        console.customLog( error ); 
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;
@@ -96,3 +116,25 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     });
 };
 
+
+RESTCallManager.setDwsErrMsg = function( notOKJson, responseBodyStr )
+{
+    try
+    {
+        if ( responseBodyStr.indexOf( 'ERROR_CASE' ) )
+        {
+            var returnJson = JSON.parse( responseBodyStr );
+
+            notOKJson.errMsg += ' ERROR_MSG: ' + returnJson.ERROR_MSG;
+        }
+        else
+        {
+            var msg = ( responseBodyStr.length > 50 ) ? responseBodyStr.substring( 0, 50 ) + '...' : responseBodyStr;
+            notOKJson.errMsg += ' ErrMsg: ' + msg;            
+        }
+    }
+    catch ( errMsgInner )
+    {
+        notOKJson.errMsg += ' ErrMsg: ' + errMsgInner;
+    }
+};

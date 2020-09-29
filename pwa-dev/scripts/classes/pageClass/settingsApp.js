@@ -350,7 +350,7 @@ function settingsApp( cwsRender )
 
     me.setUpMoreInfoDiv = function()
     {
-            // New log open dialog
+        // New log open dialog
         $( '#showLogs' ).off( 'click' ).click( function() 
         {
             ConsoleCustomLog.showDialog();
@@ -376,6 +376,36 @@ function settingsApp( cwsRender )
         {
             AppUtil.appReloadWtMsg();
         });      
+
+        $( '#syncDown' ).off( 'click' ).click( function() 
+        {
+            if ( ConnManagerNew.isAppMode_Online() )
+            {
+                SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function( success, changeOccurred ) {
+        
+                    if ( success ) 
+                    {  
+                        // NOTE: If there was a new merge, for now, alert the user to reload the list?
+                        if ( changeOccurred )
+                        {
+                            var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+        
+                            $( btnRefresh ).click ( () => {
+                                cwsRenderObj.renderArea( cwsRenderObj.areaList[ 0 ].id );
+                            });
+        
+                            MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
+                        }
+                    } 
+                    else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
+                });
+            }
+            else
+            {
+                alert( 'App not in online mode.' );
+            }
+        });
+
     };
 
 

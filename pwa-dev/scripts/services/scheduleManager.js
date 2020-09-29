@@ -48,6 +48,10 @@ ScheduleManager.scheduleList = {
 	]
 };
 
+// -- Available Check Disable/ReEnable
+// disable --> clearInterval( ScheduleManager.timerID_serverAvilableCheck );
+// reEnable --> ScheduleManager.schedule_serverStatus_Check( false );
+
 // ------------------------------------
 // --- SyncUpResponseAction Variables
 ScheduleManager.syncUpResponseAction_DefaultIntervalTime = 1000 * 60 * 60; // 1 hr ( 1 sec, 1min, 1hr)
@@ -132,21 +136,6 @@ ScheduleManager.syncUpResponseAction_ScheduleFinish = function( activityActionJs
 		console.customLog( 'ERROR in ScheduleManager.syncUpResponseAction_ScheduleFinish, errMsg: ' + errMsg );
 	}
 };
-
-//ActivityDataManager.updateActivityStatus( activityActionJson.activityId, actionJson.status, actionJson );  
-
-
-	/*
-	"syncAction": {
-		"syncInterval": { "time": "4", "unit": "minute", "alt": "01:00:00" },                
-		"maxAttempts": 10,
-		"questionNote1": "This sync attempt could trigger more actions --> Make it to only accept 'X200'?  Or no other error case actions..",
-		"questionNote2": "For now, only accept",
-		"maxReached": {
-		   "actions": [ { "addActivityNotification": "The voucher code has not found in the remote DB  after X attempts."  } ]
-		}   
-	 }
-	*/
 
 
 // === PART 1. Schedule Call/Start Methods =============
@@ -275,8 +264,6 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 
 			if ( success ) 
 			{  
-				console.customLog( 'syncDown once schedule finished success.' ); 
-
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
 				if ( changeOccurred )
 				{
@@ -287,7 +274,6 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
 					});
 
 					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
-					//alert( 'SyncDown changed list.  Please refresh the list.' );
 				}
 			} 
 			else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );

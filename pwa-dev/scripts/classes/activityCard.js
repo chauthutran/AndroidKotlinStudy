@@ -678,33 +678,39 @@ function ActivityCard( activityId, cwsRenderObj, options )
         else
         {
             var errMsg = '';
-            
+            var errStatusCode = 400;
+
             try
             {
+                if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
+
                 if ( responseJson.result )
                 {
                     if ( responseJson.result.operation ) errMsg += ' operation: ' + responseJson.result.operation;
-                    if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData );    
+                    if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData ); 
+                }
+                else if ( responseJson.errMsg ) 
+                {
+                    errMsg += responseJson.errMsg;
                 }
                 else
                 {
-                    errMsg += ' Error Response: ' + JSON.stringify( responseJson );
+                    errMsg += JSON.stringify( responseJson );
                 }
             } 
-            catch 
+            catch ( errMsgCatched )
             { 
                 try
                 {
-                    errMsg += ' Error Response: ' + JSON.stringify( responseJson );
+                    errMsg += JSON.stringify( responseJson );
                 }
                 catch {}
             }
 
-
             console.customLog( responseJson ); // error data display
 
             // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 401, 'Failed to syncUp, msg - ' + Util.getStr( errMsg ) );
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
 
             ClientDataManager.saveCurrent_ClientsStore();                                      
