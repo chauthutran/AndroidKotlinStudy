@@ -167,64 +167,70 @@ ClientDataManager.removeClientIndex = function( client )
 // ======================================================
 // === MERGE RELATED =====================
 
-ClientDataManager.mergeDownloadedClients = function( mongoClients, processingInfo, callBack )
+ClientDataManager.mergeDownloadedClients = function( downloadedData, processingInfo, callBack )
 {
-    var pwaClients = ClientDataManager.getClientList();
     var changeOccurred = false;
     var updateOccurred = false;
     var newClients = [];
 
-    // Check list for matching client
 
-    //  If does not exists in pwaClients, put into the pwaClients..
-    //  If exists, and if new one is later one, copy the content into main item (merging) 
+    // 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
+    if ( downloadedData && downloadedData.clients && Util.isTypeArray( downloadedData.clients ) )
+    {
+        var case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
 
-    for ( var i = 0; i < mongoClients.length; i++ )
-    {        
-        // OPTION 1.  We can simply add the download info to all activities in Monogo?
-
-        var mongoClient = mongoClients[i];
-        // TODO: This pwaClientList should be indexed on 'clientDataManager' for performance..
-        var pwaClient = Util.getFromList( pwaClients, mongoClient._id, "_id" );
-
-        try
+        downloadedData.clients.forEach( dwClient => 
         {
-            // CASE #1. Client Update (Server version has later update)
-            // If matching id item(activity) already exists in device, 
-            // if mongoDB one is later one, overwrite the device one.  // <-- test the this overwrite..
-            if ( pwaClient )
+            try 
             {
-                //ClientDataManager.getDateStr_LastUpdated = function( clientJson )
-                if ( ClientDataManager.getDateStr_LastUpdated( mongoClient ) 
-                        > ClientDataManager.getDateStr_LastUpdated( pwaClient ) ) 
+                if ( dwClient._id )
                 {
-                    // Get activities in mongoClient that does not exists...
-                    ActivityDataManager.mergeDownloadedActivities( mongoClient.activities, pwaClient.activities, pwaClient
-                        , Util.getJsonDeepCopy( processingInfo ) );
+                    var appClient = ClientDataManager.getClientById( dwClient._id );
 
-                    // Update clientDetail from mongoClient
-                    pwaClient.clientDetails = mongoClient.clientDetails;
-                    pwaClient.clientConsent = mongoClient.clientConsent;
+                    if ( appClient )
+                    {
+                        var clientDateCheckPass = ( case_dhis2RedeemMerge ) ? true : ( ClientDataManager.getDateStr_LastUpdated( dwClient ) > ClientDataManager.getDateStr_LastUpdated( appClient ) );
 
-                    pwaClient.date = mongoClient.date;
+                        if ( clientDateCheckPass )
+                        {
+                            // Get activities in dwClient that does not exists...
+                            var addedActivityCount = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ) );
 
-                    changeOccurred = true;
-                    updateOccurred = true;
+                            if ( case_dhis2RedeemMerge )
+                            {
+                                // merge data..
+                                Util.mergeJson( appClient.clientDetails, dwClient.clientDetails );                                
+                                Util.mergeJson( appClient.clientConsent, dwClient.clientConsent );                                
+                                Util.mergeJson( appClient.date, dwClient.date );                                
+                            }
+                            else
+                            {
+                                // Update clientDetail from dwClient
+                                appClient.clientDetails = dwClient.clientDetails;
+                                appClient.clientConsent = dwClient.clientConsent;
+                                appClient.date = dwClient.date;
+                            }
+
+                            changeOccurred = true;
+                            updateOccurred = true;
+                        }
+                    }
+                    else
+                    {
+                        // Logic: For 'dhis2RedeemMerge' case, if the downloaded client does not already exists, do not merge it..
+                        if ( !case_dhis2RedeemMerge )
+                        {
+                            newClients.push( dwClient );
+                            changeOccurred = true;    
+                        }
+                    }
                 }
-            }
-            else
+            }        
+            catch( errMsg )
             {
-                // CASE #2. New Client Download Case
-                // If not existing on device, simply add it.
-                newClients.push( mongoClient );
-
-                changeOccurred = true;
+                console.customLog( 'Error during ClientDataManager.mergeDownloadedClients, errMsg: ' + errMsg );
             }
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'Error during ClientDataManager.mergeDownloadedClients', mongoClient, pwaClient );
-        }
+        });
     }
 
 

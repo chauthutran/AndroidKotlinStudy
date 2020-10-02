@@ -18,7 +18,9 @@ Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 
 Util.isTypeObject = function( obj )
 {
-	return ( obj && typeof( obj ) === 'object' );
+	// Array is also 'object' type, thus, check to make sure this is not array.
+	if ( Util.isTypeArray( obj ) ) return false;
+	else return ( obj && typeof( obj ) === 'object' );
 };
 
 Util.isTypeArray = function( obj )
@@ -36,9 +38,36 @@ Util.isTypeString = function( obj )
 // ----------------------------------
 // Check Variable Related
 
-Util.getStr = function( val )
+Util.getStr = function( input )
 {
-	return ( val ) ? val : '';
+	var value = '';
+
+	try
+	{
+		if ( input )
+		{
+			if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) value = JSON.stringify( input );
+			else if ( Util.isTypeString( input ) ) value = input;
+			else value = input.toString();
+		}
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in Util.getStr, errMsg: ' + errMsg );
+	}
+
+	return value;
+};
+
+// Checks if the json is emtpy
+Util.isObjEmpty = function( obj ) 
+{
+    for ( var key in obj ) {
+        if ( obj.hasOwnProperty( key ) )
+            return false;
+	}
+	
+    return true;
 }
 
 Util.getProperValue = function( val )
@@ -281,6 +310,38 @@ Util.traverseEval_StrCase = function( obj, key, prop, INFO )
 		console.customLog( errMsgStr );
 		throw errMsgStr;
 	}
+};
+
+
+Util.jsonCleanEmptyRunTimes = function( obj, runTime )
+{
+	for ( var i = 0; i < runTime; i++ )
+	{
+		Util.jsonCleanEmpty( obj );
+	}
+};
+
+Util.jsonCleanEmpty = function( obj )
+{
+	Object.keys(obj).forEach( key => 
+	{
+		var item = obj[key];
+
+		if ( item )
+		{
+			if ( Util.isTypeArray( item ) )
+			{
+				if ( item.length == 0 ) delete obj[key];
+				else Util.jsonCleanEmpty( item );
+			}
+			else if ( Util.isTypeObject( item ) )
+			{
+				if ( Util.isObjEmpty( item ) ) delete obj[key];
+				else Util.jsonCleanEmpty( item );	
+			}
+		}		
+		else if ( item === "" || item === undefined ) delete obj[key];
+	});
 };
 
 
@@ -1353,6 +1414,11 @@ Util.dateUTCToLocal = function( dateStr )
 
 // ----------------------------------
 // Others
+
+Util.getStrLastChar = function( inputVal )
+{
+	return inputVal.slice( inputVal.length - 1 );
+};
 
 Util.generateRandomId = function( len ) 
 {

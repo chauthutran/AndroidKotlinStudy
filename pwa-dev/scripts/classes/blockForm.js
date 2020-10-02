@@ -451,7 +451,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
 		var dtmSeparator = Util.getDateSeparator( formatDate );
-		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => {
+		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => 
+		{
 			let arr="";
 			for ( let i = 0; i < item.length; i++ )
 			{
@@ -475,38 +476,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		entryTag.click( e => e.preventDefault() );
 
-		var yearRange = ( formItemJson.yearRange ) ? formItemJson.yearRange : { 'from': -100, 'to': 1 };
-
 		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
 		tagOfClick.click( function(e) {
-			
-			if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
-
-			var dtmPicker = new mdDateTimePicker.default({
-				type: 'date',
-				init: ( entryTag[ 0 ].value == '') ? moment() : moment( entryTag[ 0 ].value ),
-				past: moment().add( yearRange.from, 'years'), // Date min 
-				future: moment().add( yearRange.to, 'years')  // Date max
-			} );
-
-			e.preventDefault();
-			dtmPicker.toggle();
-
-			var inputDate = entryTag[ 0 ];
-			dtmPicker.trigger = inputDate;
-
-			inputDate.addEventListener('onOk', function() {
-
-				var trueFormat = ( formatDate == '' ) ? 'YYYY' : formatDate;
-				var inpDate = $( '[name=' + formItemJson.id + ']' );
-
-				inpDate.val( dtmPicker.time.format( trueFormat ) );
-
-				FormUtil.dispatchOnChangeEvent( inpDate );
-
-			});
-
+			FormUtil.mdDateTimePicker( e, entryTag, formatDate, formItemJson.yearRange );
 		});
 
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );

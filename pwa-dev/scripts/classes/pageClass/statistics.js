@@ -9,6 +9,11 @@ function Statistics( cwsRender )
 
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
 
+    me.inputCustomPeriod_StartTag; // Mark it after generating content from template..
+    me.inputCustomPeriod_EndTag;
+    me.customStartPeriodBtnTag;
+    me.customEndPeriodBtnTag;
+
     me.statsFormContainerTag;
     me.statsPeriodSelector;
     me.statsContentPageTag;
@@ -40,7 +45,7 @@ function Statistics( cwsRender )
 
         me.initialize_UI();
 
-        me.loadPeriodOptions( me.statsPeriodSelector, ConfigManager.periodSelectorOptions, 'reset' );
+        me.loadPeriodOptions( me.statsPeriodSelector, StatisticsUtil.periodSelectorOptions, 'reset' );
 
         TranslationManager.translatePage();
 
@@ -80,12 +85,17 @@ function Statistics( cwsRender )
         me.statsContentPageTag = me.statisticsFormDiv.find( ".statsContentPage" );
 
         me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );        
+
+        me.inputCustomPeriod_StartTag = me.statisticsFormDiv.find( '.inputCustomPeriod_Start' );
+        me.inputCustomPeriod_EndTag = me.statisticsFormDiv.find( '.inputCustomPeriod_End' );   
+        me.customStartPeriodBtnTag = me.statisticsFormDiv.find( '.customStartPeriodBtn' );
+        me.customEndPeriodBtnTag = me.statisticsFormDiv.find( '.customEndPeriodBtn' );
     };
 
     
 	me.setEvents_OnRender = function()
 	{	
-        me.statsPeriodSelector.change( function() {
+        me.statsPeriodSelector.off( 'change' ).change( function() {
 
             // Wipe the conent blank - if there is period selection change event..
             //me.statsContentPageTag.empty();  <-- we can not emtpy it... Need HTML tags..
@@ -106,14 +116,9 @@ function Statistics( cwsRender )
         });
 
 
-        me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).click( function() {
+        me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).off( 'click' ).click( function() {
 
-            //console.customLog( 'Custom Period button clicked' );
-
-            var inputCustomPeriod_StartTag = me.statisticsFormDiv.find( '.inputCustomPeriod_Start' );
-            var inputCustomPeriod_EndTag = me.statisticsFormDiv.find( '.inputCustomPeriod_End' );
-
-            renderAllStats( me._clientList_Clone, inputCustomPeriod_StartTag.val(), inputCustomPeriod_EndTag.val() );
+            renderAllStats( me._clientList_Clone, me.inputCustomPeriod_StartTag.val(), me.inputCustomPeriod_EndTag.val() );
         });
 
 
@@ -124,6 +129,15 @@ function Statistics( cwsRender )
             me.statisticsFormDiv.fadeOut();
             $( '#pageDiv' ).show();
         });
+
+        me.customStartPeriodBtnTag.off( 'click' ).click( function( e ) {
+			FormUtil.mdDateTimePicker2( e, me.inputCustomPeriod_StartTag, 'YYYY-MM-DD' );
+        });
+
+        me.customEndPeriodBtnTag.off( 'click' ).click( function( e ) {
+			FormUtil.mdDateTimePicker2( e, me.inputCustomPeriod_EndTag, 'YYYY-MM-DD' );
+        });
+
     };
 
 
@@ -143,8 +157,8 @@ function Statistics( cwsRender )
             divDateInfoTag.hide();
 
             // Set custom value if already decided
-            if ( opt_startPeriod !== 'custom' ) divCustomDateTag.find( '.inputCustomPeriod_Start' ).val( opt_startPeriod );
-            if ( opt_endPeriod !== 'custom' ) divCustomDateTag.find( '.inputCustomPeriod_End' ).val( opt_endPeriod );
+            if ( opt_startPeriod !== 'custom' ) me.inputCustomPeriod_StartTag.val( opt_startPeriod );
+            if ( opt_endPeriod !== 'custom' ) me.inputCustomPeriod_EndTag.val( opt_endPeriod );
 
             divCustomDateTag.show( 'fast' );
         }
@@ -401,4 +415,145 @@ function Statistics( cwsRender )
 
 	me.initialize();
 
-}
+};
+
+
+function StatisticsUtil() {};
+// THIS SHOULD BE OVERWRITTEN BY page ones...
+
+StatisticsUtil.periodSelectorOptions = {
+    "all": {
+        "name": "All periods",
+        "term": "stats_period_allPeriods",
+        "from": "",
+        "to": "",
+        "enabled": "true",
+        "defaultOption": "true"
+    },
+    "thisWeek": {
+        "name": "this Week",
+        "term": "stats_period_thisWeek",
+        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
+        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
+        "enabled": "true",
+        "note": "week starts on Saturday?"
+    },
+    "lastWeek": {
+        "name": "last Week",
+        "term": "stats_period_lastWeek",
+        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
+        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
+        "enabled": "true"
+    },
+    "thisMonth": {
+        "name": "this Month",
+        "term": "stats_period_thisMonth",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
+        "enabled": "true",
+        "note": "month range is from 2nd of month to 1st of next month?"
+    },
+    "lastMonth": {
+        "name": "last Month",
+        "term": "stats_period_lastMonth",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
+        "enabled": "true"
+    },
+    "thisYear": {
+        "name": "this Year",
+        "term": "stats_period_thisYear",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
+        "enabled": "true"
+    },
+    "customRange": {
+        "name": "custom range",
+        "term": "stats_period_customRange",
+        "from": "'custom'",
+        "to": "'custom'",
+        "enabled": "true"
+    }
+};
+
+
+StatisticsUtil.periodSelectorOptions_Back = {
+    "today": {
+        "name": "today",
+        "term": "",
+        "from": "Util.dateStr( 'DATE' );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+    "24hours": {
+        "name": "last 24 hours",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATETIME', -1 );",
+        "to": "Util.dateStr( 'DATETIME' );",
+        "enabled": "false"
+    },
+    "last3Days": {
+        "name": "last 3 Days",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATE', -2 );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+    "last7Days": {
+        "name": "last 7 Days",
+        "term": "",
+        "from": "Util.dateAddStr( 'DATE', -6 );",
+        "to": "Util.dateStr( 'DATE' );",
+        "enabled": "false"
+    },
+
+    "thisPaymentPeriod": {
+        "name": "this Payment Period",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 22).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth(), 21).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "lastPaymentPeriod": {
+        "name": "last Payment Period",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 22).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 21).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "thisQuarter": {
+        "name": "this Quarter",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 + 3, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "lastQuarter": {
+        "name": "last Quarter",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 - 3, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "last3Months": {
+        "name": "last 3 Months",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "last6Months": {
+        "name": "last 6 Months",
+        "term": "",
+        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 5, 2).toISOString().split( 'T' )[ 0 ]",
+        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
+        "enabled": "false"
+    },
+    "lastYear": {
+        "name": "last Year",
+        "term": "",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() - 1, 0, 2 ) );",
+        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 1 ) );",
+        "enabled": "false"
+    }
+};

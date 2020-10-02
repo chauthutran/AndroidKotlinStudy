@@ -97,13 +97,8 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
 
 
-SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
+SyncManagerNew.syncDown = function( runType, callBack )
 {
-    // TODO: 
-    //      - divide dhis2 version vs mongodb version..
-
-
-
     // NOTE: We can check network connection here, or from calling place.  
     //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
     SyncManagerNew.update_UI_StartSyncAll();
@@ -111,51 +106,66 @@ SyncManagerNew.syncDown = function( cwsRenderObj, runType, callBack )
     SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
 
     // Retrieve data..
-    SyncManagerNew.downloadClients( function( downloadSuccess, returnJson ) 
+    SyncManagerNew.downloadClients( function( downloadSuccess, returnJson, mockCase ) 
     {
         SyncManagerNew.update_UI_FinishSyncAll();
 
-        SyncManagerNew.SyncMsg_InsertMsg( "download finished.." );
-
         var changeOccurred = false;        
-        //console.customLog( success ); //console.customLog( mongoClients );
-        // S2. NOTE: Mark that download done as just log?
-        var mongoClients = [];
-        
-        if ( returnJson && returnJson.response && returnJson.response.dataList ) mongoClients = returnJson.response.dataList;
-        else if ( returnJson && returnJson.clientList ) mongoClients = returnJson.clientList;
-
-        console.customLog( 'SyncManagerNew.downloadClients, after, downloadSuccess: ' + downloadSuccess );
+ 
 
         if ( !downloadSuccess ) 
         { 
-            SyncManagerNew.SyncMsg_InsertMsg( "download result - not success.." );
+            SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson ) );
 
             if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
         }
         else
         {
+            var downloadedData = SyncManagerNew.formatDownloadedData( returnJson );
+                                
             // 'download' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );
 
-            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + mongoClients.length + " clients: " );
+            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + downloadedData.clients.length + " clients: " );
 
-            SyncManagerNew.SyncMsg_InsertMsg( "Synchronizing..." );
-
-            ClientDataManager.mergeDownloadedClients( mongoClients, processingInfo, function( changeOccurred_atMerge ) 
+            ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge ) 
             {
-                SyncManagerNew.SyncMsg_InsertMsg( "merged.." );
-                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + mongoClients.length + " clients: " );
-
+                SyncManagerNew.SyncMsg_InsertMsg( "Merged data.." );
+                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + downloadedData.clients.length + " clients: " );
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
 
-                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge );
-            });
-            
+                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase );
+            });            
         }
     });    
+};
+
+SyncManagerNew.formatDownloadedData = function( returnJson )
+{
+    var outputData = { 'clients': [] };
+
+    if ( returnJson )
+    {
+        if ( returnJson.response && returnJson.response.dataList ) 
+        {
+            // mongo web service return data format.
+            outputData.clients = returnJson.response.dataList;
+        }
+        else if ( returnJson.clientList ) 
+        {
+            // dws syncUp return format.
+            outputData.clients = returnJson.clientList;
+        }
+        else if ( returnJson.clients )
+        {
+            outputData.case = 'dhis2RedeemMerge';
+            outputData.clients = returnJson.clients;            
+        }    
+    }
+    
+    return outputData;
 };
 
 // ===================================================
@@ -277,35 +287,41 @@ SyncManagerNew.downloadClients = function( callBack )
 {
     try
     {
-        var activeUser = SessionManager.sessionData.login_UserName;
-        var dateRange_gtStr;
+        var syncDownJson = ConfigManager.getSyncDownSetting();
+   
+        var mockResponseJson = ConfigManager.getMockResponseJson( syncDownJson.useMockResponse );
 
-        var payloadJson = { 'find': {} };
-
-        payloadJson.find = {
-            "clientDetails.users": activeUser
-            //"activities": { "$elemMatch": { "activeUser": activeUser } } 
-        };
-
-        // If last download date exists, search after that. Otherwise, get all
-        var lastDownloadDateISOStr = AppInfoManager.getSyncLastDownloadInfo();
-
-        if ( lastDownloadDateISOStr ) 
-        { 
-            dateRange_gtStr = lastDownloadDateISOStr.replace( 'Z', '' );
-            payloadJson.find[ 'date.updatedOnMdbUTC' ] = { "$gte": dateRange_gtStr };
+        // Fake Test Response Json - SHOULD WE DO THIS HERE, OR BEFORE 'performSyncUp' method?
+        if ( mockResponseJson )
+        {
+            WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, returnJson )
+            {
+                callBack( success, returnJson, true );
+            });
         }
+        else
+        {            
+            var payloadJson = ConfigManager.getSyncDownSearchBodyEvaluated();       
+            Util.jsonCleanEmptyRunTimes( payloadJson, 2 );
 
-        var loadingTag = undefined;
-        WsCallManager.requestPostDws( ConfigManager.getSyncDownSetting().url, payloadJson, loadingTag, function( success, returnJson ) {
-
-            callBack( success, returnJson );
-        });        
+            if ( payloadJson )
+            {
+                var loadingTag = undefined;
+                WsCallManager.requestPostDws( syncDownJson.url, payloadJson, loadingTag, function( success, returnJson ) 
+                {    
+                    callBack( success, returnJson );
+                });
+            }
+            else
+            {
+                callBack( false, ' searchBodyEval not provided' );
+            }
+        }
     }
     catch( errMsg )
     {
         console.customLog( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
-        callBack( false );
+        callBack( false, ' ErrorMsg - ' + errMsg );
     }
 };
 

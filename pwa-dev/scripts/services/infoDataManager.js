@@ -12,6 +12,9 @@ InfoDataManager.INFO = {};
 InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 InfoDataManager.NAME_login_UserName = 'login_UserName';
+InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
+InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';
+InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';
 
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..
 
@@ -39,8 +42,16 @@ InfoDataManager.setDataAfterLogin = function()
 {
 	try
 	{
-		InfoDataManager.setINFOdata( 'login_UserName', SessionManager.sessionData.login_UserName );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_UserName, SessionManager.sessionData.login_UserName );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, SessionManager.sessionData.orgUnitData.orgUnitId );
+
 		// Any other info?	
+		var syncLastDownloaded = AppInfoManager.getSyncLastDownloadInfo();
+		if ( syncLastDownloaded )
+		{
+			InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded, syncLastDownloaded );
+			InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded_noZ, syncLastDownloaded.replace( 'Z', '' ) );
+		}
 	}
 	catch ( errMsg )
 	{
@@ -52,7 +63,7 @@ InfoDataManager.setINFOclientByActivity = function( activity )
 {
 	var clientJson = ClientDataManager.getClientByActivityId( activity.id );
 
-	InfoDataManager.setINFOdata( 'client', clientJson );
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_client, clientJson );
 };
 
 // ------------------------------------------------

@@ -41,7 +41,7 @@ WsCallManager.setWsTarget = function()
 
     // use current site 
     // localhost is set to use 'stage'
-    if ( WsCallManager.isLocalDevCase ) stageName = 'dev';
+    if ( WsCallManager.isLocalDevCase ) stageName = 'test';
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
@@ -284,25 +284,25 @@ WsCallManager.composeDwsWsFullUrl = function( targetUrl )
 };
 
 
-WsCallManager.mockRequestCall = function( testResponseJson, loadingTag, returnFunc )
+WsCallManager.mockRequestCall = function( mockResponseJson, loadingTag, returnFunc )
 {	    
     try
     {
-        if ( testResponseJson )
+        if ( mockResponseJson )
         {
-            var delayTimeMs = Util.getTimeMs( testResponseJson.delayTime, WsCallManager.mockDelayTimeMS );
+            var delayTimeMs = Util.getTimeMs( mockResponseJson.delayTime, WsCallManager.mockDelayTimeMS );
     
             setTimeout( function() 
             {
-                var success = ( testResponseJson.responseCode < 400 );
+                var success = ( mockResponseJson.responseCode < 400 );
     
                 WsCallManager.loadingTagClear( loadingTag );
     
-                returnFunc( success, testResponseJson.responseJson );
+                returnFunc( success, mockResponseJson.responseJson );
     
             }, delayTimeMs );
         }
-        else throw 'testResponseJson param undefined'; 
+        else throw 'mockResponseJson param undefined'; 
     }
     catch( errMsg )
     {

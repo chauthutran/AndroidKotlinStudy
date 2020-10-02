@@ -298,10 +298,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
-            for ( var i = 0; i < mainList.length; i++ )
+            mainList.forEach( activity => 
             {
-                var activity = mainList[ i ]; 
-                
                 InfoDataManager.setINFOdata( 'activity', activity );
                 InfoDataManager.setINFOclientByActivity( activity );
                 
@@ -310,7 +308,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                     // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
                     filteredData.push( activity );
                 }    
-            }    
+            });                
         }
 
         return filteredData;

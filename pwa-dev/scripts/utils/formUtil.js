@@ -178,8 +178,71 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 
 	return newJsonArr;
 }
+
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------
+
+
+FormUtil.mdDateTimePicker = function( e, entryTag, formatDate, yearRange ) 
+{
+	e.preventDefault();			
+	if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
+
+	var entryTagVal = entryTag.val();
+	var jsEntryTag = entryTag[0];
+
+	if ( !yearRange ) yearRange = { 'from': -100, 'to': 1 };
+	if ( !formatDate ) formatDate = 'YYYY';
+
+
+	var mdDTObj = new mdDateTimePicker.default({
+		type: 'date',
+		init: ( entryTagVal == '') ? moment() : moment( entryTagVal ),
+		past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined, // Date min 
+		future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+	} );
+
+	mdDTObj.toggle();
+
+	mdDTObj.trigger = jsEntryTag;
+	jsEntryTag.addEventListener( 'onOk', function() 
+	{
+		//var inpDate = $( '[name=' + formItemJson.id + ']' );
+		entryTag.val( mdDTObj.time.format( formatDate ) );
+		FormUtil.dispatchOnChangeEvent( entryTag );
+	});
+
+};
+
+
+FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange ) 
+{
+	var entryTagVal = entryTag.val();
+	var jsEntryTag = entryTag[0];
+
+	if ( !yearRange ) yearRange = { 'from': -100, 'to': 1 };
+	if ( !formatDate ) formatDate = 'YYYY';
+
+
+	var mdDTObj = new mdDateTimePicker.default({
+		type: 'date',
+		init: ( entryTagVal == '') ? moment() : moment( entryTagVal ),
+		past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined, // Date min 
+		future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+	} );
+
+	mdDTObj.toggle();
+
+	mdDTObj.trigger = jsEntryTag;
+
+	jsEntryTag.addEventListener( 'onOk', function() 
+	{
+		//var inpDate = $( '[name=' + formItemJson.id + ']' );
+		entryTag.val( mdDTObj.time.format( formatDate ) );
+		//FormUtil.dispatchOnChangeEvent( entryTag );
+	});
+
+};
 
 // -----------------------------------
 // ---- Login And Fetch WS Related ------

@@ -379,30 +379,31 @@ function settingsApp( cwsRender )
 
         $( '#syncDown' ).off( 'click' ).click( function() 
         {
-            if ( ConnManagerNew.isAppMode_Online() )
-            {
-                SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function( success, changeOccurred ) {
-        
-                    if ( success ) 
-                    {  
-                        // NOTE: If there was a new merge, for now, alert the user to reload the list?
-                        if ( changeOccurred )
-                        {
-                            var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
-        
-                            $( btnRefresh ).click ( () => {
-                                cwsRenderObj.renderArea( cwsRenderObj.areaList[ 0 ].id );
-                            });
-        
-                            MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
-                        }
-                    } 
-                    else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
-                });
-            }
+            if ( !ConfigManager.getSyncDownSetting().enable ) MsgManager.msgAreaShow( 'SyncDown not enabled in config settings.' );
             else
             {
-                alert( 'App not in online mode.' );
+                if ( !ConnManagerNew.isAppMode_Online() ) MsgManager.msgAreaShow( 'SyncDown not available on offline.' );
+                else
+                {
+                    SyncManagerNew.syncDown( 'manualClick', function( success, changeOccurred ) 
+                    {        
+                        if ( success ) 
+                        {  
+                            // NOTE: If there was a new merge, for now, alert the user to reload the list?
+                            if ( changeOccurred )
+                            {
+                                var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+            
+                                $( btnRefresh ).click ( () => {
+                                    SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                                });
+            
+                                MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
+                            }
+                        }
+                        else MsgManager.msgAreaShow( 'SyncDown not successful.' );
+                    });   
+                }
             }
         });
 

@@ -402,9 +402,11 @@ Templates.statisticsFullScreen = `
         </div>
         <div class="stats_t_custom text_help" style="display:none;">
           <span style="font-size: 0.71rem;" term="stats_periodDateBetween">Between</span>
-          <input class="inputCustomPeriod_Start statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*" />
+          <input class="inputCustomPeriod_Start statsCusDate" readonly />
+          <button class="customStartPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
           <span style="font-size: 0.71rem;" term="stats_periodDateAnd">And</span>
-          <input class="inputCustomPeriod_End statsCusDate" placeholder="YYYY-MM-DD" type="number" inputmode="numeric" pattern="[0-9]*"/> 
+          <input class="inputCustomPeriod_End statsCusDate" readonly/> 
+          <button class="customEndPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
           <button class="btnCustomPeriodRun cbutton" style="background-color: cornflowerblue;">Run</button>
         </div>
     </div>

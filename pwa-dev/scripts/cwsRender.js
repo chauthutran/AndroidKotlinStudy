@@ -393,6 +393,9 @@ function cwsRender()
 
 	}
 
+
+
+	// TODO: THIS SHOULD BE MOVED TO MENU CLASS
 	me.populateMenuList = function( areaList, exeFunc )
 	{
 		var startMenuTag;
@@ -482,76 +485,20 @@ function cwsRender()
 	}
 
 
-	/* @Greg: do we create a new class for managing color-scheme themes? */
-	// Yes, it will be nice. : )
 	me.renderDefaultTheme = function ()
 	{
-		if ( ConfigManager.getConfigJson() 
-			&& ConfigManager.getConfigJson().settings 
-			&& ConfigManager.getConfigJson().settings.theme 
-			&& ConfigManager.getConfigJson().themes )
+		if ( ConfigManager.getConfigJson().settings 
+			&& ConfigManager.getConfigJson().settings.theme )
 		{
-			//console.customLog( 'Updating to theme: ' + ConfigManager.getConfigJson().settings.theme );
-
-			//var defTheme = me.getThemeConfig( ConfigManager.getConfigJson().themes, ConfigManager.getConfigJson().settings.theme );
-			// var defTheme = SessionManager.getStorageLastSessionData().theme;
-			var defTheme = "";
-			if( AppInfoManager.getUserInfo() != undefined )
-			{
-				defTheme = AppInfoManager.getUserInfo().theme;
-			}
-
-			$('#styleCssMobileRow').remove();
-			$('#styleCssPulse').remove();
-			$('#styleCssProgress').remove();
-
-			//$( 'head' ).append('<style id="styleCssProgress"> .determinate, .indeterminate { background-color: ' + defTheme.navTop.colors.foreground + ' } </style>');
-
-			/*if ( defTheme.button.colors )
-			{
-				var btnStyle = '';
-				if ( defTheme.button.colors.foreground )
-				{
-					btnStyle += ' color: ' + defTheme.button.colors.foreground + ';'
-				}
-				if ( defTheme.button.colors.background )
-				{
-					btnStyle += ' background-color: ' + defTheme.button.colors.background + ';'
-
-					$( 'head' ).append('<style id="styleCssPulse"> #pulsatingCircle:before, #pulsatingCircle:after { ' + btnStyle + ' } </style>');
-				}
-				else
-				{
-					$( 'head' ).append('<style id="styleCssPulse"> #pulsatingCircle:before, #pulsatingCircle:after { background-Color: #FFC61D; } </style>');
-				}
-
-				$( 'head' ).append('<style id="styleCssMobileRow"> .navMenuHeader, .tb-content-buttom { ' + btnStyle + ' } </style>');
-
-			}*/
+			var defTheme = ( AppInfoManager.getUserInfo() && AppInfoManager.getUserInfo().theme ) ? AppInfoManager.getUserInfo().theme : "";
 
 			if ( defTheme ) $("body").removeClass().addClass( defTheme );
-
 		}
 		else
 		{
 			$("body").removeClass().addClass( 'theme-blue' );
-		}
-		
-	}
-
-	me.getThemeConfig = function ( themeArr, theme )
-	{
-		for ( var i = 0; i < themeArr.length; i++ )
-		{
-			if ( themeArr[i].name == theme )
-			{
-				return themeArr[i].spec;
-			}
-
-		}
-
-	}
-
+		}		
+	};
 
 	// --------------------------------------------------------
 	// ----------- Translate langTerm retrieval and do lang change -------------
@@ -647,6 +594,16 @@ function cwsRender()
 		me.closeLoginUI();
 
 		SwManager.checkNewAppFile_OnlyOnline();
+
+		/*
+		setTimeout( function() {
+
+			$( '.pin1' ).focus();
+
+			setTimeout( function() { $( '.pin1' ).blur(); }, 100 );
+
+		}, 200 );
+		*/
 	}
 
 	me.closeLoginUI = function()
@@ -657,13 +614,13 @@ function cwsRender()
 
 		me.clearMenuPlaceholders();
 		me.navDrawerDivTag.empty();
-		me.renderDefaultTheme();
-		me.loginObj.openForm();
-		//me.loginObj.clearLoginPin();
-		
-		//syncManager.evalSyncConditions();
 
 		me.hideActiveSession_UIcontent();
+
+		me.renderDefaultTheme();
+		me.loginObj.openForm();
+		
+		// me.loginBottomButtonsVisible( true );
 	};
 
 

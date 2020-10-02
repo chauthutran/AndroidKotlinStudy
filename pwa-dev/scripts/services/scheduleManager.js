@@ -210,14 +210,14 @@ ScheduleManager.schedule_syncAllRun = function( NotRunRightAway )
 // -----------------------------------------------
 // --- SyncDown Once when Online Schedule ----
 
-ScheduleManager.schedule_syncDownRunOnce = function( cwsRenderObj )
+ScheduleManager.schedule_syncDownRunOnce = function()
 {
 	try
 	{
 		if ( ConfigManager.getSyncDownSetting().enable )
 		{
 			// Call this.  If does not success, schedule to call
-			ScheduleManager.syncDownRunIfOnlineSchedule( cwsRenderObj );
+			ScheduleManager.syncDownRunIfOnlineSchedule();
 		}
 	}
 	catch( errMsg )
@@ -256,39 +256,39 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 
 
 // TODO: Move to 'SyncManager' class later..
-ScheduleManager.syncDownRunIfOnlineSchedule = function( cwsRenderObj )
+ScheduleManager.syncDownRunIfOnlineSchedule = function()
 {
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		SyncManagerNew.syncDown( cwsRenderObj, 'AfterLogin', function( success, changeOccurred ) {
+		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase ) {
 
 			if ( success ) 
 			{  
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
-				if ( changeOccurred )
+				if ( changeOccurred && !mockCase )
 				{
-					var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+					var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
-					$( btnRefresh ).click ( () => {
-						cwsRenderObj.renderArea( cwsRenderObj.areaList[ 0 ].id );
+					btnRefreshTag.off( 'click' ).click ( () => {
+						SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
 					});
 
-					MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
+					MsgManager.notificationMessage( 'SyncDown data found', 'notificationBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
 				}
 			} 
-			else ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
+			else ScheduleManager.syncDownTimeoutCall();
 		});
 	}
 	else
 	{
 		// Could create AppMode_Online wait run tasks.. and have this in..
-		ScheduleManager.syncDownTimeoutCall( cwsRenderObj );
+		ScheduleManager.syncDownTimeoutCall();
 	}
 };
 
-ScheduleManager.syncDownTimeoutCall = function( cwsRenderObj )
+ScheduleManager.syncDownTimeoutCall = function()
 {
-	setTimeout( ScheduleManager.syncDownRunIfOnlineSchedule, ScheduleManager.interval_syncDownRunOnce, cwsRenderObj );
+	setTimeout( ScheduleManager.syncDownRunIfOnlineSchedule, ScheduleManager.interval_syncDownRunOnce );
 }
 
 

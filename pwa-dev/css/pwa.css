@@ -44,7 +44,7 @@ body
 }
 
 .statsCusDate {
-  width: 90px; 
+  width: 80px; 
   border: solid 1px #888; 
   line-height: 17px; 
   font-size: 0.75rem;
@@ -60,6 +60,13 @@ body
 
 .pin_pw {
   background-color: white;
+}
+
+.pin_pw:focus {
+  box-shadow: 0 0 5px #aae6f7;  /* was rgba(81, 203, 238, 1); */
+  padding: 3px 0px 3px 3px;
+  margin: 5px 1px 3px 0px;
+  border: 1px solid #aae6f7;
 }
 
 .modalSymbol{
@@ -1218,12 +1225,22 @@ div.errorMsgArrow
 .dateWrapper {
   flex-grow:1;
 }
+
 .dateButton {
   background: none;
   border: none;
   position: relative;
   left: 30px;
 }
+
+.dateButton2 {
+  background: none;
+  border: none;
+  vertical-align: bottom;
+  margin: 0px -2px 0px -6px;
+  cursor: pointer;
+}
+
 .imgCalendarInput {
   height: 18px;
 }

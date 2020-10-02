@@ -46,7 +46,11 @@ ConfigManager.default_SettingPaging = {
 
 // ==== Methods ======================
 
-ConfigManager.setConfigJson = function ( configJson ) 
+
+// ---------------------------------
+// --- Initial Set (called from session?)
+
+ConfigManager.setConfigJson = function ( configJson, userRolesOverrides ) 
 {
     try
     {
@@ -58,10 +62,12 @@ ConfigManager.setConfigJson = function ( configJson )
         
             ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
 
-            ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData );
+            ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData, userRolesOverrides );
 
-            ConfigManager.applyUserRoleFilters( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptions' ] );
-        }    
+            // Filter some list in config by 'sourceType' / 'userRole'
+            ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
+            ConfigManager.applyFilter_UserRole( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
+        }
     }
     catch ( errMsg )
     {
@@ -69,8 +75,22 @@ ConfigManager.setConfigJson = function ( configJson )
     }
 };
 
+
+ConfigManager.applyFilter_SourceType = function( configJson )
+{
+    try
+    {
+        // For now, just one item that does filter by soruceType..
+        ConfigManager.filterBySourceType_SyncDownList( configJson );        
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.applyFilter_SourceType, errMsg: ' + errMsg );
+    }   
+};
+
 // Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
-ConfigManager.applyUserRoleFilters = function( configJson, list )
+ConfigManager.applyFilter_UserRole = function( configJson, list )
 {
     try
     {
@@ -80,48 +100,46 @@ ConfigManager.applyUserRoleFilters = function( configJson, list )
             { 
                 try
                 {
-                    var defList = configJson[ defName ];
+                    var defList;
+
+                    if ( defName === 'settings.sync.syncDown' ) defList = configJson.settings.sync.syncDown;
+                    else defList = configJson[ defName ];
 
                     // If Object, look for arrayList in one level below..
-                    if ( Util.isTypeObject( defList ) )
+                    if ( Util.isTypeArray( defList ) )
+                    {
+                        ConfigManager.filterListByUserRoles( defList, true );
+                    }
+                    else if ( Util.isTypeObject( defList ) )
                     {
                         Object.keys( defList ).forEach( key => 
                         {
                             ConfigManager.filterListByUserRoles( defList[key], true );
                         });
                     }
-                    else if ( Util.isTypeArray( defList ) )
-                    {
-                        ConfigManager.filterListByUserRoles( defList, true );
-                    }
                 }
                 catch( errMsg )
                 {
-                    console.customLog( 'ERROR in ConfigManager.applyUserRoleFilters defName: ' + defName + ', errMsg: ' + errMsg );
+                    console.customLog( 'ERROR in ConfigManager.applyFilter_UserRole defName: ' + defName + ', errMsg: ' + errMsg );
                 }               
             });
         }
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in ConfigManager.applyUserRoleFilters, errMsg: ' + errMsg );
+        console.customLog( 'ERROR in ConfigManager.applyFilter_UserRole, errMsg: ' + errMsg );
     }   
 };
 
-// TODO: 
-// Adjust/Filter by userRole <-- 
-//      - definitionOptionList
-//      - areaList
-//      - favList
+// ---------------------------------
+// --- reset / clear configJson
 
-
-
-ConfigManager.resetConfigJson = function () 
+ConfigManager.resetConfigJson = function( userRolesOverrides ) 
 {
-    ConfigManager.setConfigJson( ConfigManager.configJson_Original );
+    ConfigManager.setConfigJson( ConfigManager.configJson_Original, userRolesOverrides );
 };
 
-ConfigManager.clearConfigJson = function () 
+ConfigManager.clearConfigJson = function() 
 {
     ConfigManager.configJson = {};
     //ConfigManager.configSetting = {};
@@ -139,39 +157,42 @@ ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 {
     var configJson = ConfigManager.getConfigJson();
     var areaList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
-    //var retAreaList = ConfigManager.filterListByUserRoles( compareList );
 
     if ( callBack ) callBack( areaList );
 };
 
 // Use this to define the login_userRoles array list.
-ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData )
+ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData, userRolesOverrides )
 {
     var userRoles = [];
 
-    try
+    if ( userRolesOverrides ) userRoles = userRolesOverrides;
+    else
     {
-        // login orgUnit groups list..
-        var ouGroups = sessionOrgUnitData.orgUnit.organisationUnitGroups;
-
-        if ( defUserRoles && ouGroups )
+        try
         {
-            for ( var r=0; r < ouGroups.length; r++ )
+            // login orgUnit groups list..
+            var ouGroups = sessionOrgUnitData.orgUnit.organisationUnitGroups;
+    
+            if ( defUserRoles && ouGroups )
             {
-                for ( var i=0; i< defUserRoles.length; i++ )
+                for ( var r=0; r < ouGroups.length; r++ )
                 {
-                    // config role definition uid is dhis2 id
-                    if ( defUserRoles[ i ].uid == ouGroups[ r ].id )
+                    for ( var i=0; i< defUserRoles.length; i++ )
                     {
-                        userRoles.push( defUserRoles[ i ].id );
+                        // config role definition uid is dhis2 id
+                        if ( defUserRoles[ i ].uid == ouGroups[ r ].id )
+                        {
+                            userRoles.push( defUserRoles[ i ].id );
+                        }
                     }
                 }
             }
         }
-    }
-    catch( errMsg )
-    {
-        console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
+        }
     }
 
     return userRoles;
@@ -296,33 +317,84 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
     return activityTypeConfig;
 };
 
-
+/*
 ConfigManager.getSyncMergeDatePaths = function()
 {
    var configJson = ConfigManager.getConfigJson();
 
    return configJson.settings.sync.mergeCompare.dateCompareField; // var pathArr = 
 };
+*/
+
+ConfigManager.filterBySourceType_SyncDownList = function( configJson )
+{
+    try
+    {
+        var syncDownList = configJson.settings.sync.syncDown;
+
+        if ( syncDownList )
+        {
+            // 1. filter by 'sourceType'..
+            if ( configJson.sourceType )
+            {
+                var syncDownList_New = [];
+
+                syncDownList.forEach( item => {
+                    if ( !item.sourceType || item.sourceType === configJson.sourceType ) syncDownList_New.push( item );
+                });
+
+                // Change the original list (while keeping the reference)
+                Util.arrayReplaceData( syncDownList, syncDownList_New );
+            }        
+        }    
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR on ConfigManager.filterBySourceType_SyncDownList, errMsg: ' + errMsg );
+    }
+};
 
 
 ConfigManager.getSyncDownSetting = function()
 {
-   return ConfigManager.getConfigJson().settings.sync.syncDown;
+    var syncDownList = ConfigManager.getConfigJson().settings.sync.syncDown;
+
+    // get 1st item from the list.  Empty list returns emtpy object.
+    var syncDownJson = ( syncDownList.length > 0 ) ? syncDownList[0] : {};
+
+    return syncDownJson;
+};
+
+// Called from 'syncManagerNew' 
+ConfigManager.getSyncDownSearchBodyEvaluated = function()
+{
+    var searchBodyJson;
+
+    var searchBodyEval = ConfigManager.getSyncDownSetting().searchBodyEval;
+
+    if ( searchBodyEval )
+    {
+        searchBodyJson = Util.getJsonDeepCopy( searchBodyEval );
+
+        Util.traverseEval( searchBodyJson, InfoDataManager.getINFO(), 0, 50 );
+    }
+
+    return searchBodyJson;
 };
 
 
-ConfigManager.getTestResponseJson = function( useTestResponse )
+ConfigManager.getMockResponseJson = function( useMockResponse )
 {
-    var testResponseJson;
+    var mockResponseJson;
 
-    if ( useTestResponse )
+    if ( useMockResponse )
     {
-        var testResponses = ConfigManager.getConfigJson().definitionTestResponses;
+        var mockResponses = ConfigManager.getConfigJson().definitionMockResponses;
 
-        if ( testResponses ) testResponseJson = testResponses[ useTestResponse ];
+        if ( mockResponses ) mockResponseJson = mockResponses[ useMockResponse ];
     }
 
-    return testResponseJson;
+    return mockResponseJson;
 };
 
 
@@ -495,13 +567,10 @@ ConfigManager.applyDefaults = function( configJson, defaults )
 {
    ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
 
-   ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
+   //ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
 
    // Other defaults could be placed here..
    ConfigManager.applyDefault_favList( configJson, defaults.favList );
-
-   ConfigManager.applyDefault_themes( configJson, defaults.themes );
-
 };
 
 ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
@@ -513,24 +582,26 @@ ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
       if ( !configJson.settings ) configJson.settings = {};
       if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
-      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson.content );
+      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson );
    }
 };
 
 
+/*
 // TODO: Change to 'mergeCompare'
-ConfigManager.applyDefault_mergeCompare = function( configJson, mregeCompareJson )
+ConfigManager.applyDefault_mergeCompare = function( configJson, mergeCompareJson )
 {
-   if ( mregeCompareJson )
+   if ( mergeCompareJson )
    {
       // 1. Check if 'configJson' has the content in path.
       //    If not exists, set the 'content' of json..
       if ( !configJson.settings ) configJson.settings = {};
       if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
-      if ( !configJson.settings.sync.mregeCompare ) configJson.settings.sync.mregeCompare = Util.getJsonDeepCopy( mregeCompareJson.content );
+      if ( !configJson.settings.sync.mergeCompare ) configJson.settings.sync.mergeCompare = Util.getJsonDeepCopy( mergeCompareJson );
    }
 };
+*/
 
 
 ConfigManager.applyDefault_favList = function( configJson, favListJson )
@@ -538,15 +609,6 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
    if ( favListJson )
    {
       if ( !configJson.favList ) configJson.favList = Util.getJsonDeepCopy( favListJson );
-   }
-};
-
-
-ConfigManager.applyDefault_themes = function( configJson, themesJsonArr )
-{
-   if ( themesJsonArr )
-   {
-      if ( !configJson.themes ) configJson.themes = themesJsonArr;
    }
 };
 
@@ -575,38 +637,26 @@ ConfigManager.defaultActivityType = {
 //   "displayBase": "Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );",
 //    "displaySettings": [ "INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName" ]
 
+
+///"mergeCompare": { "dateCompareField": [ "updated" ] },
+
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
 
-   "syncDown": {
-      "pathNote": "settings.sync.syncDown",
-      "content": {
-         "clientSearch": {
-            "mainSearch_Eval": {
-                  "activities": {
-                     "$elemMatch": {
-                        "activeUser": "INFO.login_UserName"
-                     }
-                  }
+    // 'syncDown' changed to array due to 'userRole' filtering..  In use, we simply get 1st one in the array after userRole filter + filter by dataType
+   "syncDown": [
+        {   "searchBodyEval": {
+                "find": {
+                    "clientDetails.users": "INFO.login_UserName",
+                    "date.updatedOnMdbUTC": { "$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );" }
+                }
             },
-            "dateSearch_Eval": {
-                  "updated": {
-                     "$gte": "INFO.dateRange_gtStr"
-                  }
-            }
-         },
-         "url": "/PWA.syncDown",
-         "syncDownPoint": "login",
-         "enable": true
-      }
-   },
-
-   "mergeCompare": {
-      "pathNote": "settings.sync.mergeCompare",
-      "content": {
-         "dateCompareField": [ "updated" ]
-      }
-   },
+            "url": "/PWA.syncDown",
+            "userRoles": [],
+            "sourceType": "mongo",
+            "enable": true
+        }
+   ],
 
    "favList": {
 
@@ -630,36 +680,6 @@ ConfigManager.defaultJsonList = {
         },
         {
             "id": "2",
-            "name": "Queued",
-            "term": "",
-            "img": "images/sync-pending_36.svg",
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList",
-                "options": {
-                    "filter": [{
-                        "status": "queued"
-                    }]
-                }
-            }
-        },
-        {
-            "id": "3",
-            "name": "Completed",
-            "term": "",
-            "img": "images/sync.svg",
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList",
-                "options": {
-                    "filter": [{
-                        "status": "submit"
-                    }]
-                }
-            }
-        },
-        {
-            "id": "4",
             "name": "Entry Online only",
             "term": "menu_entry",
             "img": "images/act_col.svg",
@@ -694,282 +714,10 @@ ConfigManager.defaultJsonList = {
                 "actionType": "openBlock",
                 "blockId": "blockRedeemList"
             }
-        },
-        {
-            "id": "2",
-            "name": "Queued",
-            "term": "",
-            "img": "images/sync-pending_36.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#008234"
-                    }
-                }
-            },
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList",
-                "options": {
-                    "filter": [{
-                        "status": "queued"
-                    }]
-                }
-            }
-        },
-        {
-            "id": "3",
-            "name": "Completed",
-            "term": "",
-            "img": "images/sync.svg",
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList",
-                "options": {
-                    "filter": [{
-                        "status": "submit"
-                    }]
-                }
-            }
-        },
-        {
-            "id": "4",
-            "name": "Entry (On + Off)",
-            "term": "menu_entry",
-            "img": "images/act_col.svg",
-            "style": {
-                "icon": {
-                    "colors": { 
-                        "background": "none", 
-                        "foreground": "#19DD89" 
-                    }
-                }
-            },
-            "target": {
-                "actionType": "openBlock",
-                "startBlockName": "blockDefaultOptionsOffline",
-                "blockId": "blockDefaultOptionsOffline"
-            }
         }
     ]
-    },
-
-    "themes":[  
-        {  
-           "id":"default",
-           "name":"default",
-           "spec":{  
-              "navTop":{  
-                 "colors":{  
-                    "background":"#ffc61d",
-                    "foreground":"#101010"
-                 }
-              },
-              "navMiddle":{  
-                 "colors":{  
-                    "background":"#ffda6d",
-                    "foreground":"#50555a"
-                 }
-              },
-              "button":{  
-                 "colors":{  
-                    "background":"#ffc61d",
-                    "foreground":"#333333"
-                 }
-              }
-           }
-        },
-        {  
-           "id":"opule",
-           "name":"opule",
-           "spec":{  
-              "navTop":{  
-                 "colors":{  
-                    "background":"#00ACC1",
-                    "foreground":"#ffffff"
-                 }
-              },
-              "navMiddle":{  
-                 "colors":{  
-                    "background":"#0093A3",
-                    "foreground":"#333333"
-                 }
-              },
-              "button":{  
-                 "colors":{  
-                    "background":"#0093A3",
-                    "foreground":"#ffffff"
-                 }
-              }
-           }
-        },
-        {  
-           "id":"ocean",
-           "name":"ocean",
-           "spec":{  
-              "navTop":{  
-                 "colors":{  
-                    "background":"#8DC9F7",
-                    "foreground":"#E5EBEB"
-                 }
-              },
-              "navMiddle":{  
-                 "colors":{  
-                    "background":"#059ADC",
-                    "foreground":"#FFFFFF"
-                 }
-              },
-              "button":{  
-                 "colors":{  
-                    "background":"#059ADC",
-                    "foreground":"#F8FAF5"
-                 }
-              }
-           }
-        }
-     ]    
+    }  
 };
 
 // ==================================================
 
-
-// THIS SHOULD BE OVERWRITTEN BY page ones...
-
-ConfigManager.periodSelectorOptions = {
-    "all": {
-        "name": "All periods",
-        "term": "stats_period_allPeriods",
-        "from": "",
-        "to": "",
-        "enabled": "true",
-        "defaultOption": "true"
-    },
-    "thisWeek": {
-        "name": "this Week",
-        "term": "stats_period_thisWeek",
-        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
-        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
-        "enabled": "true",
-        "note": "week starts on Saturday?"
-    },
-    "lastWeek": {
-        "name": "last Week",
-        "term": "stats_period_lastWeek",
-        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
-        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
-        "enabled": "true"
-    },
-    "thisMonth": {
-        "name": "this Month",
-        "term": "stats_period_thisMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
-        "enabled": "true",
-        "note": "month range is from 2nd of month to 1st of next month?"
-    },
-    "lastMonth": {
-        "name": "last Month",
-        "term": "stats_period_lastMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
-        "enabled": "true"
-    },
-    "thisYear": {
-        "name": "this Year",
-        "term": "stats_period_thisYear",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
-        "enabled": "true"
-    },
-    "customRange": {
-        "name": "custom range",
-        "term": "stats_period_customRange",
-        "from": "'custom'",
-        "to": "'custom'",
-        "enabled": "true"
-    }
-};
-
-
-ConfigManager.periodSelectorOptions_Back = {
-
-    "today": {
-        "name": "today",
-        "term": "",
-        "from": "Util.dateStr( 'DATE' );",
-        "to": "Util.dateStr( 'DATE' );",
-        "enabled": "false"
-    },
-    "24hours": {
-        "name": "last 24 hours",
-        "term": "",
-        "from": "Util.dateAddStr( 'DATETIME', -1 );",
-        "to": "Util.dateStr( 'DATETIME' );",
-        "enabled": "false"
-    },
-    "last3Days": {
-        "name": "last 3 Days",
-        "term": "",
-        "from": "Util.dateAddStr( 'DATE', -2 );",
-        "to": "Util.dateStr( 'DATE' );",
-        "enabled": "false"
-    },
-    "last7Days": {
-        "name": "last 7 Days",
-        "term": "",
-        "from": "Util.dateAddStr( 'DATE', -6 );",
-        "to": "Util.dateStr( 'DATE' );",
-        "enabled": "false"
-    },
-
-    "thisPaymentPeriod": {
-        "name": "this Payment Period",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 22).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth(), 21).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "lastPaymentPeriod": {
-        "name": "last Payment Period",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 22).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth() - 1, 21).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "thisQuarter": {
-        "name": "this Quarter",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 + 3, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "lastQuarter": {
-        "name": "last Quarter",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3 - 3, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), Math.floor((new Date().getMonth() / 3)) * 3, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "last3Months": {
-        "name": "last 3 Months",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 2, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "last6Months": {
-        "name": "last 6 Months",
-        "term": "",
-        "from": "new Date(new Date().getFullYear(), new Date().getMonth() - 5, 2).toISOString().split( 'T' )[ 0 ]",
-        "to": "new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString().split( 'T' )[ 0 ]",
-        "enabled": "false"
-    },
-    "lastYear": {
-        "name": "last Year",
-        "term": "",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() - 1, 0, 2 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 1 ) );",
-        "enabled": "false"
-    }
-};

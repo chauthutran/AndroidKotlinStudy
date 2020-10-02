@@ -115,41 +115,37 @@ function Login( cwsRenderObj )
 
 				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ), function( success ) {
 
-					console.customLog( 'finished processLogin' );
-
 					me.clearResetPasswords();
-					//$( '.pin_pw_loading' ).hide();
+					if ( !success ) $( '.pin1' ).focus();
 				});
-			}
-			
-			//$( '.pin_pw_loading' ).hide();
+			}			
 		});
 		
 		$( ".onKeyboardOnOff" ).focus( function () 
-		{ // Focus
-			$( ".login_cta" ).hide();
+		{ // Focus		
+			me.loginBottomButtonsVisible( false );
 		});
 	
 		$( ".onKeyboardOnOff" ).blur( function () 
 		{ // Lost focus
-			$( ".login_cta" ).show();
+			me.loginBottomButtonsVisible( true );
 		});
 	
 		$( ".pin_pw" ).keyup( function ( event ) 
 		{		
 			// 'keyup' - comes here after the value has been affected/entered to the field.
+			var tag = $( this );
+			var tagVal = tag.val();
 
-			//console.log( event.keyCode );
 			var isDeleteKey = ( event.keyCode == 46 || event.keyCode == 8 );
-			var hasVal = ( this.value.length > 0 );
-			// Should delete current one if not empty.
-			// if empty, delete previous one and set focus on previous one
+			var hasVal = ( tagVal.length > 0 );
+
 			if ( isDeleteKey ) 
 			{ 
 				if ( !hasVal ) 
 				{
 					// go to previous pin tag.
-					var prevTag = $(this).prev( '.pin_pw' );
+					var prevTag = tag.prev( '.pin_pw' );
 					if ( prevTag ) prevTag.focus();
 				}
 			}
@@ -168,6 +164,9 @@ function Login( cwsRenderObj )
 					}
 					else
 					{
+						// If multiple char entered, just leave last one.
+						if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
+
 						var nextTag = $(this).next( '.pin_pw' );
 						if ( nextTag ) nextTag.focus();
 					} 
@@ -185,7 +184,16 @@ function Login( cwsRenderObj )
 		});
 	};
 
-	
+
+	me.loginBottomButtonsVisible = function( bShow )
+	{
+		var buttonsDivTag = $( ".login_cta" );
+		
+		if ( bShow) buttonsDivTag.show();
+		else buttonsDivTag.hide();
+	};
+
+
 	me.blockPage = function()
 	{
 		me.scrimTag.show();
@@ -194,6 +202,7 @@ function Login( cwsRenderObj )
 			me.unblockPage();
 		} );
 
+		// TODO: MOVE AWAY FROM THIS..
 		me.scrimTag.css( 'z-Index', 1 );
 	}
 
@@ -201,6 +210,8 @@ function Login( cwsRenderObj )
 	{
 		me.scrimTag.hide();
 		me.sheetBottomTag.html( '' );
+
+		// TODO: MOVE AWAY FROM THIS..
 		me.scrimTag.css( 'z-Index', 1 );
 	}
 	
@@ -221,6 +232,7 @@ function Login( cwsRenderObj )
 			}
 
 
+			// TODO: MOVE AWAY FROM TEMPLATING..
 			$( '#switchToStagBtn' ).click( function() {
 
 				if ( ! $( this ).hasClass( 'dis' ) )
@@ -291,22 +303,28 @@ function Login( cwsRenderObj )
 	
 	me.openForm = function()
 	{
-		// Reset vals and set focus
-		me.clearResetPasswords();
-
-		if ( !me.loginUserNameTag.val() ) me.loginUserNameTag.focus();
-		else $( '.pin1' ).focus();
-
-
 		// Hide non login related tags..
 		$( '.Nav1' ).hide();
 
 		me.pageDivTag.hide();		
-		me.loginFormDivTag.show( 'fast' );
-
-		//if ( ! me.loginFormDivTag.is( ":visible" ) ) me.loginFormDivTag.show();
+		me.loginFormDivTag.show();
 
 		Menu.setInitialLogInMenu( me.cwsRenderObj );
+
+
+		// Reset vals and set focus
+		me.clearResetPasswords();
+
+		if ( !me.loginUserNameTag.val() ) 
+		{
+			me.loginUserNameTag.focus();
+		}
+		else 
+		{
+			//setTimeout( function() { $( '.pin1' ).focus(); }, 100 );			
+		}
+
+		me.loginBottomButtonsVisible( true );
 	};
 
 
@@ -325,7 +343,7 @@ function Login( cwsRenderObj )
 	me.clearResetPasswords = function()
 	{
 		// If last pin cause error, move the focus to 1st one.
-		if ( me.lastPinTrigger ) $( '.pin1' ).focus();
+		// if ( me.lastPinTrigger ) $( '.pin1' ).focus();
 
 		me.lastPinTrigger = false;
 		$( '#pass' ).val( '' );

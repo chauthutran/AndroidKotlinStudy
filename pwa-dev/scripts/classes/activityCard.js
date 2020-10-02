@@ -577,7 +577,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
             if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
 
-            var testResponseJson = ConfigManager.getTestResponseJson( activityJson_Orig.processing.useTestResponse );
+            var mockResponseJson = ConfigManager.getMockResponseJson( activityJson_Orig.processing.useMockResponse );
 
 
             // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
@@ -588,9 +588,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             try
             {
                 // Fake Test Response Json - SHOULD WE DO THIS HERE, OR BEFORE 'performSyncUp' method?
-                if ( testResponseJson )
+                if ( mockResponseJson )
                 {
-                    WsCallManager.mockRequestCall( testResponseJson, undefined, function( success, responseJson )
+                    WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
                     {
                         me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
                     });
@@ -668,7 +668,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
 
-            ClientDataManager.mergeDownloadedClients( [ responseJson.result.client ], processingInfo, function( changeOccurred_atMerge ) 
+            ClientDataManager.mergeDownloadedClients( { 'clients': [ responseJson.result.client ] }, processingInfo, function( changeOccurred_atMerge ) 
             {
                 ClientDataManager.saveCurrent_ClientsStore();
 

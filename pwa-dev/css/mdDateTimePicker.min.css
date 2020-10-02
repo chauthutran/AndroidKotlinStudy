@@ -1,6 +1,7 @@
 .mddtp-button,
 .mddtp-picker {
-	font-family: Roboto, Helvetica, Arial, sans-serif!important
+	/* font-family: Roboto, Helvetica, Arial, sans-serif!important */
+	font-family: auto !important;
 }
 .mddtp-button {
 	height: 36px;
@@ -86,12 +87,14 @@
 	background-color: #fff;
 }
 .mddtp-picker .mddtp-picker__body .mddtp-picker__action {
-	margin-top: 24px;
+	margin-top: -30px;
 	padding: 8px 0;
 	text-align: left;
 	display: inline-flex;
     flex-flow: unset;
-    float: right;
+	float: right;
+	z-index: 1000;
+	position: relative;
 }
 .mddtp-picker .mddtp-picker__body,
 .mddtp-picker .mddtp-picker__header {

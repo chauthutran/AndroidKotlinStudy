@@ -263,7 +263,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, formsJson
             // 'actionJson': actionDefJson <-- Do not need this, probably
         };
 
-        if ( actionDefJson ) activityJson.processing.useTestResponse = actionDefJson.useTestResponse;
+        if ( actionDefJson ) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
 
     }
 
