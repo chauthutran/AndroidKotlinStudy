@@ -122,14 +122,17 @@ function cwsRender()
 
 	me.setOtherEvents = function() 
 	{ 
-
 		// msg hide click event
-		$( '.sheet_bottom-scrim' ).click( function () 
+		$( '.sheet_bottom-scrim' ).click( function() 
 		{
             $( '.sheet_bottom-fs' ).css( 'display', 'none' );
             $( '.sheet_bottom-scrim' ).css( 'display', 'none' );
 		});
-				
+	
+		// Menu 'settings'/'about' backbutton to hide 'scrim' (since came from menu..)
+		//$( '.btnBack' ).click( function() {
+		//	$( '.scrim' ).hide();
+		//});
 	};
 
 
@@ -156,6 +159,9 @@ function cwsRender()
 	{
 		menuTag.click( function() 
 		{
+			// scrim hide
+			$( '.scrim' ).hide();
+
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
 			me.setAppTitle( clicked_areaId, $( this ).text() ); //$( this ).attr( 'displayName' ) 
@@ -356,43 +362,10 @@ function cwsRender()
 	
 	me.setNavMenuIconEvents = function()
 	{
-
-		me.navDrawerShowIconTag.on( "click", function() {
-
-			this.classList.toggle( "active" );
-
-			if ( $( this ).hasClass( 'active' ) )
-			{
-				me.updateNavDrawerHeaderContent();
-			}
-
+		me.navDrawerShowIconTag.click( function() {
+			FormUtil.menuDivShow( me.navDrawerDivTag, $( '.navigation__close' ),  $( 'div.scrim') );
 		});
-
-		FormUtil.setClickSwitchEvent( me.navDrawerShowIconTag, me.navDrawerDivTag, [ 'open', 'close' ], me );
-
 	}
-
-	me.updateNavDrawerHeaderContent = function()
-	{
-		if( !SessionManager.getLoginStatus() )
-		{
-			return;
-		}
-
-		$( 'div.navigation__user' ).html( SessionManager.sessionData.login_UserName );
-
-		if ( SessionManager.getLoginStatus() ) //myData && SessionManager.getLoginStatus()
-		{
-			// var mySubmit = FormUtil.records_redeem_submit; 
-			// var myQueue = FormUtil.records_redeem_queued; 
-			// var myFailed = FormUtil.records_redeem_failed; 
-
-			if ( me.debugMode ) console.customLog( ' cwsR > navMenuStat data ' );
-
-		}
-
-	}
-
 
 
 	// TODO: THIS SHOULD BE MOVED TO MENU CLASS
@@ -460,7 +433,8 @@ function cwsRender()
 		me.navDrawerDivTag.append( navMenuItems );
 
 		navMenuClose.on( 'click', function(){
-			$( 'div.Nav__icon' ).click();
+			//$( 'div.Nav__icon' ).click();
+			FormUtil.menuDivHide( me.navDrawerDivTag, $( 'div.scrim') );
 		});
 
 		navMenuUser.html( SessionManager.sessionData.login_UserName );
@@ -733,7 +707,7 @@ function cwsRender()
 
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
 	{
-        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ], me );
+        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ] );
 	};
 
 	// ======================================

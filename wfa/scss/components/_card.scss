@@ -1,0 +1,90 @@
+.wapper_card {
+    min-width: 240px;
+
+    .card {
+        width: 100%;
+        height: auto;
+        padding: 8px 0 0;
+        background-color: #FFF;
+
+        .card__container {
+            display: grid;
+            grid-gap: 8px;
+            width: 100%;
+            grid-template-areas:
+                "card__support_visuals card__content card__cta";
+            grid-template-columns: 56px auto 90px;
+            align-items: center;
+
+            @include rwd-max (380) {
+                grid-template-areas:
+                    "card__support_visuals card__content card__content"
+                    "card__cta card__cta card__cta";
+                grid-template-columns: 56px auto auto;
+            }
+
+            .card__support_visuals {
+                grid-area: card__support_visuals;
+            }
+
+            .card__content {
+                grid-area: card__content;
+                @include font-size(16px);
+                box-sizing: border-box;;
+
+                .card__row{
+                    float: left;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+            }
+
+            .card__cta {
+                grid-area: card__cta;
+
+                @include rwd-max (380) {
+                    padding: 8px 0;
+                }
+
+                .card__cta_status {
+                    @include font-size(12px);
+                    text-align: right;
+                    padding-right: 8px;
+                }
+
+                .card__cta_one {
+                    float: left;
+                    width: 40px;
+
+                    @include rwd-max (380) {
+                        padding-left: 62px;
+                    }
+
+                }
+
+                .card__cta_two {
+                    float: right;
+                    width: 36px;
+                    height: 36px;
+                    margin-right: 4px;
+                }
+            }
+        }
+    }
+
+    .tab_fs {
+        padding-top:8px;
+        width: 100%!important;
+        max-width: 100%!important;
+    }
+
+    .tab_fs__container {
+        width: 100%!important;
+        max-width: 2100px!important;
+
+        .tab_fs__container-content {
+            width: 100%!important;
+            max-width: 100%!important;
+        }
+    }
+}

@@ -19,7 +19,8 @@ WsCallManager.wsUrlList = {
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
     'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
     'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
-    'test': 'https://pwa-test.psi-connect.org/ws/dws-test'
+    'test': 'https://pwa-test.psi-connect.org/ws/dws-test',
+    'wfaProd': 'https://wfa[country].psi-connect.org/ws/dws'
 };
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
@@ -38,6 +39,7 @@ WsCallManager.setWsTarget = function()
     WsCallManager.isLocalDevCase = WsCallManager.checkLocalDevCase( originUrl );
 
     var stageName = 'dev';  // Default to 'dev'.
+    var isWfaProd = false;
 
     // use current site 
     // localhost is set to use 'stage'
@@ -47,11 +49,36 @@ WsCallManager.setWsTarget = function()
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
     else if ( originUrl.indexOf( 'https://pwa-test.' ) === 0 ) stageName = 'test';
-    
+    else if ( originUrl.indexOf( 'https://wfa' ) === 0 ) 
+    {
+        stageName = 'prod';
+        isWfaProd = true;
+    }
+
+    // Set final data into the 'WsCallManager' global value..
     WsCallManager.stageName = stageName;
-    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
+    WsCallManager.wsTargetUrl = ( isWfaProd ) ? WsCallManager.getWfaProdWsUrl( originUrl ) : WsCallManager.wsUrlList[ stageName ];
 };
 
+
+// If 'wfa' case, get properly named web service url
+WsCallManager.getWfaProdWsUrl = function( originUrl )
+{
+    var wsTargetUrl = '';
+    var wsTargetUrlTemp = WsCallManager.wsUrlList[ 'wfaProd' ];
+    //'wfaProd': 'https://wfa[country].psi-connect.org/ws/dws'
+    var countryCode = '';
+
+    if ( originUrl.indexOf( 'https://wfa.' ) === 0 ) countryCode = '';
+    else if ( originUrl.indexOf( 'https://wfa-mz.' ) === 0 ) countryCode = '-mz';
+    else if ( originUrl.indexOf( 'https://wfa-np.' ) === 0 ) countryCode = '-np';
+    else if ( originUrl.indexOf( 'https://wfa-tz.' ) === 0 ) countryCode = '-tz';
+    else if ( originUrl.indexOf( 'https://wfa-lac.' ) === 0 ) countryCode = '-lac';
+    
+    wsTargetUrl = wsTargetUrlTemp.replace( '[country]', countryCode );
+
+    return wsTargetUrl;
+};
 
 // =======================================
 // === Specific Usage Calls =========
@@ -228,14 +255,6 @@ WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
         if ( SessionManager.sessionData.login_UserName ) payloadJson.userName = SessionManager.sessionData.login_UserName;
         if ( SessionManager.sessionData.login_Password ) payloadJson.password = SessionManager.sessionData.login_Password;    
     }      
-};
-
-
-// Used to force the ws target - by console
-WsCallManager.forceWsTarget = function( stageName )
-{
-    WsCallManager.wsTargetUrl = WsCallManager.wsUrlList[ stageName ];
-    WsCallManager.isLocalDevCase = true; // if changed to 'stage' (from 'dev'), we should also use 'cors' redirection service.
 };
 
 

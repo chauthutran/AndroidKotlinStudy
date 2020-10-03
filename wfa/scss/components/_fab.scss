@@ -1,0 +1,56 @@
+.fab-wrapper {
+    position: fixed;
+    display: table;
+    align-items: right;
+    right: 16px; //16px
+    bottom: 22px; //72px
+    width: 240;
+    height: auto;
+    background-color: transparent;
+    z-index: 1599;
+
+    .fab__section {
+        display:none;
+        display: table-row;
+
+        .fab {
+            display: table-cell;
+            float: right;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            @include shadow-b(2px 2px 5px 0px $color-shadow);
+        }
+    }
+
+    .fab__child-section {
+        display: none;
+        //display: table-row;
+
+        .fab__child {
+            display: table-cell;
+            float: right;
+            width: 40px;
+            height: 40px;
+            margin: 0 8px 12px 8px;
+            border-radius: 50%;
+            @include shadow-b(2px 2px 5px 0px $color-shadow);
+        }
+
+        .fab__child-text {
+            text-align: right;
+            display: table-cell;
+            word-wrap: break-word;
+            max-width: calc(100% - 40px);
+            float: right;
+            height: auto;
+            margin: 5px 0;
+            border-radius: $radius;
+            line-height: 30px;
+            padding: 0 8px;
+            @include font-size(14px);
+            background-color: $color-background;
+            @include shadow-b(2px 2px 5px 0px $color-shadow);
+        }
+    }
+}

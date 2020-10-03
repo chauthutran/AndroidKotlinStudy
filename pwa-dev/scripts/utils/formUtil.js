@@ -248,11 +248,12 @@ FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange )
 // ---- Login And Fetch WS Related ------
 // ---------------------------------------------------------
 
-FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openCloseClass, cwsRenderObj )
+// NOTE: NOT being used for 'MENU' anymore.  ONLY USED BY DataList groupby.. (But do not know what that is..).
+FormUtil.setClickSwitchEvent = function( clickBtnTag, showDivTag, openCloseClass )
 {
-	mainIconTag.off( 'click' ); //clear existing click events
-
-	mainIconTag.on('click', function( event )
+	// In menu show case, 'clickBtnTag' is the menu icon for showing menu div.
+	//		- 'showDivTag' is the menu div that gets shown.
+	clickBtnTag.off( 'click' ).on('click', function( event )
 	{
 		event.preventDefault();
 
@@ -266,25 +267,21 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 			thisTag.removeClass( className_Open );
 			thisTag.addClass( className_Close );
 
-			// CLOSE NAVMENU (clicked from navHeader bar)
+			// OBSOLETE - CLOSE NAVMENU (clicked from navHeader bar)
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				thisTag.removeClass( 'active' );
 
-				subListIconsTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
-				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+				showDivTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+				showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 
-				setTimeout( function() {
-					subListIconsTag.hide(); 
-				}, 500 );
+				setTimeout( function() { showDivTag.hide(); }, 500 );
 
 				$( 'div.scrim').hide();
-
-				//do not set zIndex for navDrawer (subListIconsTag) > navHeader (.Nav1) shows above closing menu
 			}
 			else 
 			{
-				subListIconsTag.fadeOut( 'fast', 'linear' );
+				showDivTag.fadeOut( 'fast', 'linear' );
 
 				if ( ! $( '#navDrawerDiv' ).is( ':visible' ) )
 				{
@@ -292,13 +289,11 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 				}
 				else
 				{
-					subListIconsTag.css( 'opacity', '0' );
+					showDivTag.css( 'opacity', '0' );
 				}
 
-				subListIconsTag.css( 'zIndex', 1);
-
+				showDivTag.css( 'zIndex', 1);
 			}
-
 		}
 		else 
 		{
@@ -309,52 +304,76 @@ FormUtil.setClickSwitchEvent = function( mainIconTag, subListIconsTag, openClose
 
 			thisTag.css('zIndex',199);
 
-			// OPEN/SHOW NAVMENU (clicked from navHeader bar)
+			// OBSOLETE - OPEN/SHOW NAVMENU (clicked from navHeader bar)
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
-				//subListIconsTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
-				subListIconsTag.css('zIndex', parseInt( $( '.Nav1').css('zIndex') ) + 1 );
-				subListIconsTag.show();
-				subListIconsTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
-				subListIconsTag.css( 'left', '0px' );
+				//showDivTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
+				showDivTag.css('zIndex', parseInt( $( '.Nav1').css('zIndex') ) + 1 );
+				showDivTag.show();
+				showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+				showDivTag.css( 'left', '0px' );
 
-				if ( $( 'div.floatListMenuSubIcons' ).hasClass( className_Open ) )
-				{
-					$( 'div.floatListMenuIcon' ).css('zIndex',1);
-					$( 'div.floatListMenuIcon' ).click();
-				}
+				//if ( $( 'div.floatListMenuSubIcons' ).hasClass( className_Open ) )
+				//{
+				//	$( 'div.floatListMenuIcon' ).css('zIndex',1);
+				//	$( 'div.floatListMenuIcon' ).click();
+				//}
 			} 
 			else
 			{
-				subListIconsTag.css('zIndex',200);
-				subListIconsTag.fadeIn( 'fast', 'linear' );
+				showDivTag.css('zIndex',200);
+				showDivTag.fadeIn( 'fast', 'linear' );
 			}
 
+
+			// OBSOLETE - USED FOR MENU SHOW..
 			if ( className_Open.indexOf( 'imggroupBy' ) < 0 )
 			{
-
-				$( 'div.scrim').off( 'click' ); //clear existing click events
-
-				$( 'div.scrim').on( 'click' , function( event )
+				$( 'div.scrim').off( 'click' ).on( 'click' , function( event )
 				{
 					thisTag.css('zIndex',1);
-
 					event.preventDefault();
-
 					thisTag.click();
 				});
 
 				if ( $( 'div.scrim').css( 'opacity' ) !== Constants.focusRelegator_MaxOpacity ) $( 'div.scrim').css( 'opacity', Constants.focusRelegator_MaxOpacity );
-
 				$( 'div.scrim').show();
 
-				if ( subListIconsTag ) FormUtil.setStackOrder( subListIconsTag, 'div.scrim' );
-
+				if ( showDivTag ) FormUtil.setStackOrder( showDivTag, 'div.scrim' );
 			}
 
 		} 
 	});	
 }
+
+
+FormUtil.menuDivShow = function( showDivTag, closeBtnTag, scrimTag )
+{
+	showDivTag.show();
+
+	showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+	showDivTag.css( 'left', '0px' );
+
+
+	scrimTag.show();
+	scrimTag.off( 'click' ).click( function( event )
+	{
+		event.preventDefault();
+		closeBtnTag.click();
+	});
+};
+
+
+FormUtil.menuDivHide = function( showDivTag, scrimTag )
+{
+	showDivTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+	showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
+
+	setTimeout( function() { showDivTag.hide(); }, 500 );
+
+	scrimTag.hide();
+};
+
 
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
 {	//test code added by Greg

@@ -1,0 +1,85 @@
+.radiobutton {
+    @include comp-tf-sc;
+
+    .radiobutton__label {
+        padding: 2px 8px 0 8px;
+
+        label {
+            color: $color-typ-dark;
+            font-style: normal;
+            font-weight: normal;
+            @include font-size(12px);
+            line-height: auto;
+        }
+    }
+
+    span{
+        color: $color-alert;
+        padding-left: 5px;
+    }
+
+    .radiobutton__wrapper {
+        width: auto;
+        float: right;
+        padding: 0 16px;
+        //background-color: red;
+        @include box-sizing(border-box);
+
+        .radiobutton-col {
+            float: left;
+            //background-color: green;
+            @include box-sizing(border-box);
+        }
+
+        .horizontal {
+            float: left;
+        }
+
+    }
+}
+
+.radio-group {
+
+    padding-left: 24px;
+    margin: 24px 8px;
+
+    input[type=radio] {
+        display: none;
+
+        &:not(:checked)+label::before {
+            @include radio-structure($radio-unchecked-color);
+        }
+
+        &:checked+label {
+            &::before {
+                @include radio-structure($radio-checked-color);
+            }
+
+            &::after {
+                @include radio-structure($radio-checked-color);
+
+                background-color: $radio-checked-color;
+                -webkit-transform: scale(0.4);
+                -ms-transform: scale(0.4);
+                transform: scale(0.4);
+                animation: fade-in .5s;
+            }
+        }
+    }
+
+    label {
+        cursor: pointer;
+        position: relative;
+        padding-left: 25px;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

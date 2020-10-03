@@ -191,32 +191,13 @@ function inputMonitor( cwsRenderObj )
         // listPage (containing redeemList) is currently visible
         if ( $( 'div.listDiv' ).is( ':visible' ) ) //div.floatListMenuSubIcons
         {
-            //dragXoffsetLimit = 50; // touch zone (up to left 50px for start of menu-open swipe)
-
-            //if ( Util.isMobi() )
-            /*{
-                $( 'ul.tab__content_act' ).offset().left;
-            }
-            else
-            {
-                dragXoffsetLimit = $( 'ul.tab__content_act' ).offset().left;
-            }*/
-
-            // disabled for now - no redeemList "card" swiping into 'archive' state
-            /*if ( initialX < dragXoffsetLimit && !navDrawerVisibleOnStart )
-            {
-                listItemDragEnabled = false;
-            }
-            else
-            {
-                listItemDragEnabled = true; 
-            }*/
         }
         else
         {
             listItemDragEnabled = false;
         }
 
+        /*
         if ( !listItemDragEnabled && $( 'div.floatListMenuSubIcons' ).is( ':visible' ) ) //div.floatListMenuSubIcons
         {
             $( 'div.floatListMenuIcon' ).css('zIndex',1);
@@ -231,6 +212,7 @@ function inputMonitor( cwsRenderObj )
             }
 
         }
+        */
 
         if ( listItemDragEnabled && initialX >= dragXoffsetLimit )
         {

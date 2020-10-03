@@ -1702,6 +1702,7 @@ hr {
   left: 0;
   background-color: black;
   opacity: 0.4;
+  z-index: 1550;
 }
 
 .sheet_bottom-scrim {
@@ -3484,7 +3485,7 @@ textarea {
   position: fixed;
   width: 0;
   min-height: 100%;
-  z-index: 1600;
+  /*z-index: 1600;*/
   bottom: 0;
   left: 0;
   background-color: #FFFFFF;
@@ -4424,7 +4425,7 @@ textarea {
   bottom: 0px;
   left: 0px;
   top: 0px;
-  z-index: 2999;
+  z-index: 2000;
   background-image: url(../images/logo_bk.svg);
   /*background-color: #FFF;*/
   background-position: right;
@@ -5893,7 +5894,7 @@ textarea {
   width: 240;
   height: auto;
   background-color: transparent;
-  z-index: 1599;
+  z-index: 1500;
 }
 
 .fab-wrapper .fab__section {

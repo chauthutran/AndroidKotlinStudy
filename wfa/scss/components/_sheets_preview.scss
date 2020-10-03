@@ -1,0 +1,19 @@
+.sheet_preview {
+
+    h4, h5 {
+        padding-left: 8px;
+        font-weight: 500;
+    }
+
+    .name, .value {
+        padding: 8px 8px 8px 12px;
+        margin:2px;
+        font-size: calc(12px + 0.4vw);
+        white-space: nowrap;
+        text-align: left;
+        max-width: 47vw;
+        overflow: overlay;
+        line-height: 1.9em;
+    }
+
+}

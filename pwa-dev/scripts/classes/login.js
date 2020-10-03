@@ -210,7 +210,6 @@ function Login( cwsRenderObj )
 	{
 		me.scrimTag.hide();
 		me.sheetBottomTag.html( '' );
-
 		// TODO: MOVE AWAY FROM THIS..
 		me.scrimTag.css( 'z-Index', 1 );
 	}
@@ -233,7 +232,7 @@ function Login( cwsRenderObj )
 
 
 			// TODO: MOVE AWAY FROM TEMPLATING..
-			$( '#switchToStagBtn' ).click( function() {
+			me.sheetBottomTag.find( '.switchToStagBtn' ).click( function() {
 
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
@@ -243,7 +242,7 @@ function Login( cwsRenderObj )
 	
 			});
 	
-			$( '#demoBtn' ).click( function() {
+			me.sheetBottomTag.find( '.demoBtn' ).click( function() {
 	
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
@@ -253,7 +252,7 @@ function Login( cwsRenderObj )
 	
 			});
 	
-			$( '#changeUserBtn' ).click( function() {
+			me.sheetBottomTag.find( '.changeUserBtn' ).click( function() {
 	
 				if ( ! $( this ).hasClass( 'dis' ) )
 				{
@@ -426,6 +425,9 @@ function Login( cwsRenderObj )
 		InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
 
 		//AppInfoManager.setLastLoginMark( new Date() );
+
+		// menu area user name show
+		$( 'div.navigation__user' ).html( userName );
 
 
 		// 2. UI Related Process

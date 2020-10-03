@@ -1,0 +1,76 @@
+.Nav2 {
+    @include position(sticky);
+    top: 56px;
+    display: -webkit-box;
+    display: flex;
+    vertical-align: middle;
+    width: 100%;
+    min-height: 56px;
+    height: auto;
+    color: $color-typ-p;
+    background-color: $color_white;
+    padding: 8px 12px 0px 16px;
+    @include box-sizing(border-box);
+    @include shadow-b(0px 2px 5px 0px $color-shadow);
+    z-index: 1499;
+
+    .Nav2__icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin: 12px 0 12px 12px;
+        cursor: pointer;
+    }
+
+    .Menus_display {
+        display: none;
+        //display: table;
+        position: absolute;
+        margin: 24px 8px 0 0;
+        width: auto;
+        min-width: 112px;
+        max-width: 240px;
+        height: auto;
+        z-index: 1999;
+        right: 8px;
+        background-color: $color-background;
+        @include box-sizing(border-box);
+        @include shadow-b(0px 2px 5px 0px $color-shadow);
+
+        .menu_item_comtainer {
+            display: table-row;
+            width: 100%;
+            text-align: right;
+            @include box-sizing(border-box);
+
+            .menu_item_text {
+                display: table-cell;
+                color: $color-typ-dark;
+                padding: 0 16px;
+                line-height: 48px;
+                @include font-size(14px);
+                @include box-sizing(border-box);
+            }
+
+            &:hover {
+                background-color: rgba($color-typ-dark, 0.10);
+            }
+        }
+    }
+
+    .controls {
+        width: 100%;
+        height: auto;
+        text-align: right;
+        @include box-sizing(border-box);
+
+        .text_help {
+            clear: both;
+            text-align: left;
+            padding-bottom: 8px;
+            color: #222;
+            @include font-size(10px);
+            @include box-sizing(border-box);
+        }
+    }
+}
