@@ -17,9 +17,9 @@
   
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-10-02'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.52'; //_manifestData.version;
-    var _versionNote = '- Statistic custom date range date picker.'; //_manifestData.versionNote;
+    var _verDate = '2020-10-03'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.53'; //_manifestData.version;
+    var _versionNote = '- Login user change on mobile issue, z-index fixes.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -365,8 +365,6 @@
       </div>
     </div>
 
-    <div class="sheet_bottom-scrim" style="display: none;"></div>
-
   </div>
   <!-- END > SETTINGS FORM DIV -->
 
@@ -502,7 +500,7 @@
   <!-- END > LOGIN ADV/OPTIONS DIV -->
 
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
-  <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
+  <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none; z-index: 1550"></div>
 
   <!-- Shoudl be ID.. -->
   <div class="scrim" style="display: none;"></div>

@@ -4476,7 +4476,7 @@ textarea {
   height: 60%;
   bottom: 0px;
   left: 0px;
-  z-index: 1999;
+  z-index: 2000;
   max-height: 270px;
   -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);

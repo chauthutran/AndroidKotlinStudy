@@ -520,7 +520,7 @@ function cwsRender()
 		}
 		else
 		{
-			$( '#advanceOptionLoginBtn' ).removeClass( 'l-emphasis' ).addClass( 'dis' );
+			//me.advanceOptionLoginBtnTag.removeClass( 'l-emphasis' ).addClass( 'dis' );
 		}
 	};
 

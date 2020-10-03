@@ -72,12 +72,11 @@ function Login( cwsRenderObj )
 
 	me.setLoginBtnEvents = function()
 	{
-		me.scrimTag.click( function() 
-		{
-			console.customLog( 'scrimTag click - unblock Page' );
+		//me.scrimTag.click( function() 
+		//{
+		//	me.unblockPage();
+		//});
 
-			me.unblockPage();
-		});
 
 		// Disable this...
 		me.loginBtnTag.focus( function() {
@@ -194,95 +193,100 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.blockPage = function()
+	me.blockPage = function( runFunc )
 	{
 		me.scrimTag.show();
-
-		me.scrimTag.off( 'click' ).click( function(){
-			me.unblockPage();
-		} );
-
-		// TODO: MOVE AWAY FROM THIS..
-		me.scrimTag.css( 'z-Index', 1 );
+		runFunc();
 	}
 
 	me.unblockPage = function()
 	{
+		me.scrimTag.off( 'click' );
 		me.scrimTag.hide();
-		me.sheetBottomTag.html( '' );
-		// TODO: MOVE AWAY FROM THIS..
-		me.scrimTag.css( 'z-Index', 1 );
 	}
-	
+
+
 	me.setAdvOptBtnClick = function()
 	{
-
 		me.advanceOptionLoginBtnTag.click( function() {
 
-			if ( ! me.advanceOptionLoginBtnTag.hasClass( 'dis' ) )
+			me.blockPage( function() 
 			{
-				me.blockPage();
-
-				// create and reference templatesManager here:
-				me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
-				TranslationManager.translatePage();
-
-				me.sheetBottomTag.show();
-			}
-
-
-			// TODO: MOVE AWAY FROM TEMPLATING..
-			me.sheetBottomTag.find( '.switchToStagBtn' ).click( function() {
-
-				if ( ! $( this ).hasClass( 'dis' ) )
+				me.scrimTag.off( 'click' ).click( function() 
 				{
+					me.empty_SheetBottom();
 					me.unblockPage();
-					alert('switchToStagBtn');	
-				}
-	
+				});
 			});
-	
-			me.sheetBottomTag.find( '.demoBtn' ).click( function() {
-	
-				if ( ! $( this ).hasClass( 'dis' ) )
-				{
+
+
+			me.populateNShow_SheetBottomTemplate( me.sheetBottomTag, Templates.Advance_Login_Buttons, function( tag ) 
+			{
+				// Template events..
+				tag.find( '.switchToStagBtn' ).click( function() {
+					alert('switchToStagBtn');		
+					me.empty_SheetBottom();
 					me.unblockPage();
+				});
+		
+				tag.find( '.demoBtn' ).click( function() {	
 					alert('demo');
-				}
-	
+					me.empty_SheetBottom();
+					me.unblockPage();
+				});
+		
+				tag.find( '.changeUserBtn' ).click( function() {
+					me.changeUserBtnClick();
+				});
 			});
-	
-			me.sheetBottomTag.find( '.changeUserBtn' ).click( function() {
-	
-				if ( ! $( this ).hasClass( 'dis' ) )
-				{
-					me.sheetBottomTag.html ( Templates.Change_User_Form );
-					TranslationManager.translatePage();
-	
-					$( '#accept' ).click( function() {
+		});
+	};
 
-						DataManager2.deleteAllStorageData( function() {
-							AppUtil.appReloadWtMsg();
-						});
-
-					});
 	
-					$( '#cancel' ).click( function() {
+	me.changeUserBtnClick = function()
+	{		
+		me.scrimTag.off( 'click' );  // Make it not cancelable by clicking on scrim anymore...
 
-						$( '.sheet_bottom-btn3' ).remove();
-						me.unblockPage();
-					});
-
-					me.sheetBottomTag.show();
-
-				}
-	
+		// Populates the center aligned #dialog_confirmation div
+		me.populateNShow_SheetBottomTemplate( me.sheetBottomTag, Templates.Change_User_Form, function( tag ) 
+		{
+			$( '#accept' ).click( function() {
+				DataManager2.deleteAllStorageData( function() {
+					AppUtil.appReloadWtMsg();
+					me.unblockPage();
+				});
 			});
 
+			$( '#cancel' ).click( function() 
+			{				
+				me.empty_SheetBottom();
+				me.unblockPage();
+			});
 		});
 	};
 
 	// =============================================
+
+	me.populateNShow_SheetBottomTemplate = function( tag, template, runFunc )
+	{
+		tag.html( template );
+		TranslationManager.translatePage();
+		tag.show();
+
+		runFunc( tag ); // Add event methods or anything related to the created template tag things.
+	};
+
+	// This is a bottom sheet div that gets never hidden, but content emptied to be collapsed..
+	me.empty_SheetBottom = function() 
+	{
+		me.sheetBottomTag.html( '' );
+	};
+
+	me.remove_3ButtonDiv = function()
+	{
+		$( '.sheet_bottom-btn3' ).remove();  // 3 button 		
+	};
+
 
 
 	// =============================================
@@ -593,7 +597,8 @@ function Login( cwsRenderObj )
 		// Display login name as Big text part - if we already have user..
 		loginUserNameH4Tag.text( me.loginUserNameTag.val() ).show();
 		
-		$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
+
+		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
 		FormUtil.hideProgressBar();
 	};
