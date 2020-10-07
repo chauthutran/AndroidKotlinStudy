@@ -31,6 +31,68 @@ const CHAR_SPACING_WIDTH = 12;
 
 // ==== Methods ======================
 
+
+// ==========================================
+// ====  BLOCK / UNBLOCK PAGE  <-- TODO: LATER, MOVE TO IT'S OWN CLASS?
+
+FormUtil.blockPage = function( scrimTag, runFunc )
+{
+	if ( !scrimTag ) scrimTag = FormUtil.getScrimTag();
+
+	scrimTag.off( 'click' );
+	scrimTag.show();
+
+	if ( runFunc ) runFunc( scrimTag );
+};
+
+FormUtil.unblockPage = function( scrimTag )
+{
+	if ( !scrimTag ) scrimTag = FormUtil.getScrimTag();
+
+	scrimTag.off( 'click' );
+	scrimTag.hide();
+};
+
+// -- GET ----
+FormUtil.getScrimTag = function()
+{
+	return $( '.scrim' );
+};
+
+FormUtil.getSheetBottomTag = function()
+{
+	return $( '.sheet_bottom' );
+};
+
+FormUtil.getSheetBottom3BtnTag = function()
+{
+	return $( '.sheet_bottom-btn3' );
+};
+
+// -------------
+
+FormUtil.emptySheetBottomTag = function() 
+{
+	FormUtil.getSheetBottomTag().html( '' );
+};
+
+// Never need this since we can do 'emptySheetBottomTag()' instead..
+FormUtil.remove_3ButtonDiv = function()
+{
+	FormUtil.getSheetBottom3BtnTag().remove();  // 3 button 		
+};
+
+// --------------
+
+FormUtil.genTagByTemplate = function( tag, template, runFunc )
+{
+	tag.html( template );
+	TranslationManager.translatePage();
+	tag.show();
+
+	runFunc( tag ); // Add event methods or anything related to the created template tag things.
+};
+
 // ==========================================
 // ====  GET/SET Form Control Tag value ====
 FormUtil.getFormCtrlTag = function( formTag, ctrlTagName )
@@ -739,7 +801,7 @@ FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent
 				FormUtil.refreshGeoLocation( function() {
 					if ( FormUtil.geoLocationLatLon.length )
 					{
-						MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notificationGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true );
+						MsgManager.notificationMessage ( '<img src="images/sharp-my_location-24px.svg">', 'notifGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true );
 					}
 					tagTarget.val( FormUtil.geoLocationCoordinates );
 				});

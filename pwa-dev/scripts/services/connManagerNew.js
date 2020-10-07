@@ -29,8 +29,8 @@ ConnManagerNew.statusInfo = {
 };
 
 ConnManagerNew.efficiency = {
-	'wsAvailCheck_Immediate': true  // After network Stable become online (from offline), try the ws available check immedicatley..
-	,'networkConnOnline_Immediate': false  // If there is any one online signal, consider it as online stable
+	'Immediate_wsAvailCheck': true  // After network Stable become online (from offline), try the ws available check immedicatley..
+	,'Immediate_OneCheckOnline': false  // If there is any one online signal, consider it as online stable
 };
 
 ConnManagerNew.switchPrompt_reservedMsgID;
@@ -77,13 +77,13 @@ ConnManagerNew.updateNetworkConnStatus = function()
 	//	if no change has happened in some period of time.
 	clearTimeout( ConnManagerNew.networkConnTimeOut );
 
-	var modeOnline = navigator.onLine;	
-	ConnManagerNew.statusInfo.networkConn.online_Current = modeOnline;
+	var bDeviceConnected = navigator.onLine;	// 'navigator.online' returns 'true/false' based on device connectivity
+	ConnManagerNew.statusInfo.networkConn.online_Current = bDeviceConnected;
 	ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
 
 	
-	// If there is any one online signal, consider it as online stable
-	if ( modeOnline && ConnManagerNew.efficiency.networkConnOnline_Immediate )
+	// DIABLED - If there is any one online signal, consider it as online stable
+	if ( bDeviceConnected && ConnManagerNew.efficiency.Immediate_OneCheckOnline )
 	{
 		ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, modeOnline );
 	}
@@ -92,8 +92,10 @@ ConnManagerNew.updateNetworkConnStatus = function()
 		ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStableStatus
 			, ConnManagerNew.networkConnStableCheckTime
 			, ConnManagerNew.statusInfo
-			, modeOnline );
+			, bDeviceConnected );
 	}
+
+	return bDeviceConnected;
 };
 
 
@@ -112,7 +114,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 
 
 	// If optional flag is to check server available immedicatley, perform it.
-	if ( optionStr === 'startUp' || ConnManagerNew.efficiency.wsAvailCheck_Immediate )
+	if ( optionStr === 'startUp' || ConnManagerNew.efficiency.Immediate_wsAvailCheck )
 	{
 		// Below only gets called (has checks inside) if stable online..
 		ConnManagerNew.checkNSet_ServerAvailable();
@@ -254,7 +256,6 @@ ConnManagerNew.createNetworkConnListeners = function()
 // Call this when app starts.
 ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 {
-    //$( '#divNetworkStatus' ).click( function()
     divNetworkStatusTag.off( 'click' ).click( function()
     {
         if ( ConnManagerNew.isAppMode_Online() )
@@ -286,8 +287,28 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 			}
 			else
 			{
+				// CASE: If currently in offline status, 
+				//		If not manual offline, we simply sent msg about that it was not manual offline case.
+				//		However, we sometimes saw on mobile that it was offline when opening the app back from not using it for a while.
+				// 		Thus, We added extra logic for extra network connectivity status re-check
+				//			- If current connection is on/true, go for stable (10s) check - with msg.
+
+				var notManualCaseStr = 'Not Manual Offline Case.';
+
+				// Check the online status again.. - For unintended network situation..
+				var bIsConnected = ConnManagerNew.updateNetworkConnStatus();
+				if ( bIsConnected )
+				{
+					var sec = Util.getSecFromMiliSec( ConnManagerNew.networkConnStableCheckTime );
+					MsgManager.msgAreaShow( notManualCaseStr + ' Network connection exists.  Retry for ' + sec + 's stable network check.' );
+				}
+				else
+				{
+					MsgManager.msgAreaShow( notManualCaseStr );
+				}
+
 				// Show no manual offline existing..  
-				MsgManager.msgAreaShow( 'AppMode is Offline without manual offline setting.' );
+				// MsgManager.msgAreaShow( 'AppMode is Offline without manual offline setting.' );
 			}			
         }
 	});

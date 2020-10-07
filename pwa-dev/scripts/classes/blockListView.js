@@ -227,9 +227,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             var viewDef = viewsDefinitionList[ viewName ];
 
             if ( viewDef ) retObj.push ( viewDef );
-            //name: viewsDef[ viewName ].name,
-            //text: viewsDef[ viewName ].name,
-            //query: viewsDef[ viewName ].query,
         }
 
         return retObj;
@@ -598,7 +595,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.setViewListEvent = function( viewSelectTag )
     {
-        viewSelectTag.change( function() {
+        viewSelectTag.off( 'change' ).change( function() {
             me.switchViewNSort( $( this ).val(), me.viewListDefs, me.mainList );
         });
     };
@@ -619,11 +616,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 me.toggleDisplay_SortList( $( '.Menus_display' ) );
             }
         });
-        
-        // NOTE: This would not work <-- Not created, yet..
-        //$(".menu_item_comtainer").click(function () {
-        //    me.toggleDisplay_SortList( $( '.Menus_display' ) );
-        //});
     };
 
     
@@ -643,11 +635,12 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.setSortDivTagClickEvent = function( divTag, sortDefs )
     {
+        // NOTE: Below is not firing!!!
+
         divTag.click( function()
         {            
             // Hide the sort list popup menu
             me.toggleDisplay_SortList( $( '.Menus_display' ) );
-
 
             var sortId = $( this ).attr( 'sortid' );
 
@@ -658,10 +651,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             {
                 me.sortViewList( sortDef, me.viewFilteredList );                        
 
-                //me.clearGroupBy_UsedInBlockList_status();
-                
-                // TODO:
-                //      - This should call 'setActivityListNRender()'
                 me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..            
             }
         });

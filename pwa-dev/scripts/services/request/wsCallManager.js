@@ -12,6 +12,7 @@ function WsCallManager() {}
 WsCallManager.wsTargetUrl = '';  // get set when start..
 WsCallManager.localhostProxyUrl = 'http://localhost:3020';
 WsCallManager.isLocalDevCase = false;
+WsCallManager.versionNumber = '1.3';
 
 WsCallManager.stageName = '';
 WsCallManager.wsUrlList = {
@@ -154,8 +155,8 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	    
     if ( !payloadJson ) payloadJson = {};
-
     if ( SessionManager.getLoginStatus() ) WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
+    WsCallManager.addExtraPayload_Version( payloadJson );
 
 
     var url = WsCallManager.composeDwsWsFullUrl( apiPath );
@@ -174,6 +175,7 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
 WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnFunc )
 {	
     var url = WsCallManager.composeDwsWsFullUrl( apiPath );
+    url = WsCallManager.addUrlParam_Version( url );
 
     var requestOption = {
         headers: {
@@ -235,7 +237,6 @@ WsCallManager.requestGet = function( url, requestOption, loadingTag, returnFunc 
 
 // ========================================
 
-
 WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
 {
     if ( configJson.sourceType )
@@ -257,6 +258,17 @@ WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
     }      
 };
 
+WsCallManager.addExtraPayload_Version = function( payloadJson )
+{
+    if ( WsCallManager.versionNumber ) payloadJson.version = WsCallManager.versionNumber;
+};  
+
+WsCallManager.addUrlParam_Version = function( url )
+{
+    if ( WsCallManager.versionNumber ) url = Util.setUrlParam( url, 'version', WsCallManager.versionNumber );
+
+    return url;
+};
 
 WsCallManager.checkLocalDevCase = function( originUrl )
 {

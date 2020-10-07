@@ -17,9 +17,9 @@
   
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-10-03'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.53'; //_manifestData.version;
-    var _versionNote = '- Login user change on mobile issue, z-index fixes.'; //_manifestData.versionNote;
+    var _verDate = '2020-10-07'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.56'; //_manifestData.version;
+    var _versionNote = '- Auto login with app update.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -139,8 +139,7 @@
   <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
   <!-- START > MENU LIST CONTAINER DIV -->
-  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation"
-    style="z-index: 2000; display: none; width: 280px; left: -280px;"></div>
+  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 2100; display: none; width: 280px; left: -280px;"></div>
   <!-- END > MENU LIST CONTAINER DIV -->
 
   <div id="divProgressBar" class="progress">
@@ -454,8 +453,8 @@
   <!-- END > STATISTICS REPORT -->
 
   <!--  START > CUSTOM LOG INFO -->
-  <div id="divCustomDataDisplay"
-    style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+  <div id="divCustomLogDisplay"
+    style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
     <div class="divMainLayout" style="height:100%;">
 
       <div style="margin-bottom: 5px;">Logs:</div>
@@ -500,7 +499,7 @@
   <!-- END > LOGIN ADV/OPTIONS DIV -->
 
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
-  <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none; z-index: 1550"></div>
+  <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
 
   <!-- Shoudl be ID.. -->
   <div class="scrim" style="display: none;"></div>

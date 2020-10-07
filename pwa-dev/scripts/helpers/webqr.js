@@ -60,7 +60,7 @@ function readQR( valueTag ){
         else 
         {
 
-            MsgManager.notificationMessage ( 'Browser not supporting canvas', 'notificationDark', undefined, '', 'left', 'top', 5000 )
+            MsgManager.notificationMessage ( 'Browser not supporting canvas', 'notifDark', undefined, '', 'left', 'top', 5000 )
         }
 
     }
@@ -185,7 +185,7 @@ function readQR( valueTag ){
 
         if ( html.length )
         {
-            MsgManager.notificationMessage ( 'URL found', 'notificationDark', $( html ), '', 'left', 'top', 10000 )
+            MsgManager.notificationMessage ( 'URL found', 'notifDark', $( html ), '', 'left', 'top', 10000 )
         }
         else
         {

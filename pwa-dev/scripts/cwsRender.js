@@ -128,11 +128,6 @@ function cwsRender()
             $( '.sheet_bottom-fs' ).css( 'display', 'none' );
             $( '.sheet_bottom-scrim' ).css( 'display', 'none' );
 		});
-	
-		// Menu 'settings'/'about' backbutton to hide 'scrim' (since came from menu..)
-		//$( '.btnBack' ).click( function() {
-		//	$( '.scrim' ).hide();
-		//});
 	};
 
 
@@ -159,8 +154,8 @@ function cwsRender()
 	{
 		menuTag.click( function() 
 		{
-			// scrim hide
-			$( '.scrim' ).hide();
+			// scrim hide			
+			FormUtil.unblockPage();
 
 			var clicked_areaId = $( this ).attr( 'areaId' );
 
@@ -363,7 +358,7 @@ function cwsRender()
 	me.setNavMenuIconEvents = function()
 	{
 		me.navDrawerShowIconTag.click( function() {
-			FormUtil.menuDivShow( me.navDrawerDivTag, $( '.navigation__close' ),  $( 'div.scrim') );
+			FormUtil.menuDivShow( me.navDrawerDivTag, $( '.navigation__close' ),  FormUtil.getScrimTag() );
 		});
 	}
 
@@ -434,7 +429,7 @@ function cwsRender()
 
 		navMenuClose.on( 'click', function(){
 			//$( 'div.Nav__icon' ).click();
-			FormUtil.menuDivHide( me.navDrawerDivTag, $( 'div.scrim') );
+			FormUtil.menuDivHide( me.navDrawerDivTag, FormUtil.getScrimTag() );
 		});
 
 		navMenuUser.html( SessionManager.sessionData.login_UserName );
@@ -445,6 +440,10 @@ function cwsRender()
 	
 	}
 
+	me.hideMenuDiv = function() 
+	{
+		$( '.navigation__close' ).click();
+	}
 
 	// ------------------------------------
 	// PUT THIS ON swManager?
@@ -533,14 +532,15 @@ function cwsRender()
 	{
 		me.pulsatingProgress.hide();
 		$( '#divProgressBar' ).hide();
-		$( 'div.scrim' ).hide();
 		$( '#statisticsFormDiv' ).hide();
 		$( '#aboutFormDiv' ).hide();
 		//$( '#detailsFormDiv' ).hide();
 		$( '#settingsFormDiv' ).hide();
 
+		FormUtil.unblockPage();
+
 		// hide the menu div if open
-		me.hidenavDrawerDiv();
+		me.hideMenuDiv();
 	}
 
 	me.clearMenuClickStyles = function()
@@ -637,7 +637,7 @@ function cwsRender()
 			$('#divMsgAreaBottomScrim').hide();
 		}
 
-		me.hidenavDrawerDiv();
+		me.hideMenuDiv();
 
 		// hide control Popups
 
@@ -680,17 +680,6 @@ function cwsRender()
 	{
 	};
 
-	me.hidenavDrawerDiv = function()
-	{
-		// hide the menu
-		if ( me.navDrawerDivTag.is( ":visible" ) )
-		{
-			me.navDrawerShowIconTag.click();
-			me.navDrawerDivTag.css( 'width', 0 );
-
-			$('#nav-toggle').removeClass('active');
-		}		
-	};
 	
     me.favIcons_Update = function()
     {

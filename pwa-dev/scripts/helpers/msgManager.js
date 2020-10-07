@@ -49,7 +49,7 @@ MsgManager.initialSetup = function()
 
 MsgManager.msgAreaShow = function( msg, type )
 {
-    var colorStr = ( type === 'ERROR' ) ? 'notificationRed' : 'notificationDark';
+    var colorStr = ( type === 'ERROR' ) ? 'notifRed' : 'notifDark';
 
     MsgManager.notificationMessage ( msg, colorStr, undefined, '', 'right', 'top' );
 }
@@ -65,7 +65,7 @@ MsgManager.msgAreaClear = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, messageType, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
+MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
 {
     var unqID = Util.generateRandomId();
 
@@ -92,33 +92,17 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     var screenHeight = document.body.clientHeight;
     var offsetPosition = ( disableAutoWidth != undefined ? ( disableAutoWidth ? '4%' : ( screenWidth < 480 ? '0' : '4%' ) ) : ( screenWidth < 480 ? '0' : '4%' ) );
     var optStyle = ( disableAutoWidth != undefined ? 'style="max-width:93%;"' : ( screenWidth < 480 ? 'style="width:100%;height:55px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ) ); //93% = 97% - 4% (offsetPosition)
-    var className = ( disableAutoWidth != undefined && disableAutoWidth ? ' rounded' : ( screenWidth < 480 ? '' : ' rounded' ) );
-    var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + ' class="' + messageType + className + '" >' );
+
+    var class_RoundType = ( disableAutoWidth != undefined && disableAutoWidth ) ? 'rounded' : ( ( screenWidth < 480 ) ? '' : 'rounded' );
+    var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + '>' ); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
+    notifDiv.addClass( [ 'notifBase', cssClasses, class_RoundType, ] );
+
 
     $( 'body' ).append( notifDiv )
 
-    if ( Xpos )
-    {
-        notifDiv.css( Xpos, offsetPosition );
-    }
-
-    if ( Ypos )
-    {
-        notifDiv.css( Ypos, offsetPosition );
-    }
-
-    if ( styles )
-    {
-        var arrStyles = styles.split(';')
-        for (var i = 0; i < arrStyles.length; i++)
-        {
-            if ( arrStyles[ i ] )
-            {
-                var thisStyle = (arrStyles[ i ]).split( ':' );
-                notifDiv.css( thisStyle[0], thisStyle[1] );
-            }
-        }
-    }
+    if ( Xpos ) notifDiv.css( Xpos, offsetPosition );
+    if ( Ypos ) notifDiv.css( Ypos, offsetPosition );
+    if ( styles ) Util.stylesStrAppy( styles, notifDiv );
 
     var Tbl = $( '<table style="width:100%;padding:6px 4px;">' );
     var tBody = $( '<tbody>' );
@@ -131,6 +115,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
     trBody.append ( tdMessage );
     tdMessage.html( '<span>&nbsp;</span>' + bodyMessage + '<span>&nbsp;</span>' );
 
+
+    // TODO: These 'actionButton' need to be redesigned / cleaned...
     if ( actionButton )
     {
         var tdAction = $( '<td>' );
@@ -284,8 +270,8 @@ MsgManager.notificationMessage = function( bodyMessage, messageType, actionButto
             //playSound("ping");
         }
     }
-
 }
+
 
 MsgManager.clearReservedMessage = function( reservedID )
 {

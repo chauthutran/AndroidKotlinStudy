@@ -330,16 +330,16 @@ input.loginUserPinNumeric:focus
   top: -4px;
   cursor: pointer;
 }
-.notificationDark
+
+.notifBase
 {
   box-sizing: border-box;
   position: fixed;
   vertical-align: middle;
-  z-index: 100000; 
+  z-index: 3000; 
   text-align: center; 
   cursor: default;
   font-size: calc(12px + 0.2vw);; 
-  background-color: #404040;
   color: #fff;
   white-space: normal;
   opacity:1;
@@ -348,177 +348,22 @@ input.loginUserPinNumeric:focus
   -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
 }
-.notificationDark a {
-  color: #8AB4F8 !important;
-}
-.notificationLight
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #F5F5F5;
-  color: #404040;
-  white-space: normal;
-  opacity:1;
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationLight a {
-  color: #8AB4F8 !important;
-}
-.notificationGray
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #F1F3F4;
-  color: #404040;
-  white-space: normal;
-  opacity:1;
+.notifDark { background-color: #404040; }
+.notifDark a { color: #8AB4F8 !important; }
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationGray a {
-  color: #8AB4F8 !important;
-}
-.notificationGreen
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #31B031;
-  color: #fff;
-  white-space: normal;
-  opacity:1;
+.notifRed { background-color: #B30000; }
+.notifRed a { color: #FFA500 !important; }
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationGreen a {
-  color: #FFC800 !important;
-}
-.notificationRed
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #B30000;
-  color: #fff;
-  white-space: normal;
-  opacity:1;
+.notifBlue { background-color: #0048FF; }
+.notifBlue a { color: #BFD8FF !important; }
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationRed a {
-  color: #FFA500 !important;
-}
-.notificationYellow
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #FFC800;
-  color: #000;
-  white-space: normal;
-  opacity:1;
+.notifGreen { background-color: #31B031; }
+.notifGreen a { color: #FFC800 !important; }
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationYellow a {
-  color: #000 !important;
-}
-.notificationOrange
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #B34A00;
-  color: #fff;
-  white-space: normal;
-  opacity:1;
+.notifGray { background-color: #F1F3F4; }
+.notifGray a { color: #8AB4F8 !important; }
 
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationYellow a {
-  color: #fff !important;
-}
-.notificationBlue
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #0048FF;
-  color: #fff;
-  white-space: normal;
-  opacity:1;
-
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationBlue a {
-  color: #BFD8FF !important;
-}
-.notificationPurple
-{
-  box-sizing: border-box;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 100000; 
-  text-align: center; 
-  cursor: default;
-  font-size: calc(12px + 0.2vw);; 
-  background-color: #9B7FE6;
-  color: #fff;
-  white-space: normal;
-  opacity:1;
-
-  -webkit-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5);
-}
-.notificationPurple a {
-  color: #FFC800 !important;
-}
 .notifProgress
 {
   background-Color:#202020;
@@ -566,6 +411,8 @@ div.fixed_child {
   content: '\2807';
   font-size: 20px;
 }
+
+/*
 .viewsSorter > ul {
   display: flex; 
   flex-grow: 0; 
@@ -589,6 +436,9 @@ div.fixed_child {
   line-height: 20px;
   color: #333333;
 }
+*/
+
+
 /* 3. blockList Items */
 .tab__content_act {
   list-style-type: none;
@@ -988,27 +838,7 @@ div.errorMsgArrow
 
 
 /* NEW UI >> NETWORK SWITCHING */
-#networkSwitch {
-  /*z-index: 1999;
 
-  background-color: rgb(255, 255, 255);
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.22);
-  border-radius: 2px;
-
-  width: 80vw;
-  height: 60vh;
-
-  position: fixed;
-  float: right;
-
-  top: 2%;
-  left: 2%;
-
-  margin: 5%;
-  padding: 10px;
-  text-align: center;*/
-
-}
 .networkSwitchTitle {
   /*height: 52px;*/
   left: 16px;

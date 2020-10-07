@@ -180,7 +180,7 @@ Util.outputAsStr = function( input )
 
 	if ( input )
 	{	
-		if ( Util.isTypeObject( input ) )
+		if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) )
 		{
 			try 
 			{ 				
@@ -1000,6 +1000,7 @@ Util.getURLParameterByVariables = function( url, name )
 	return result;
 };
 
+
 Util.getURL_pathname = function( loc )
 {
 	// '/api/apps/NetworkListing/index.html', loc = 4 by - '', 'api', 'apps', 'NetworkListing'
@@ -1014,6 +1015,16 @@ Util.getURL_pathname = function( loc )
 	return pathName;
 };
 
+Util.setUrlParam = function( url, paramKey, paramVal )
+{
+    var startChar = ( url.indexOf( '?' ) < 0 ) ? '?' : '&';
+
+	url += startChar + paramKey + '=' + paramVal;
+
+	return url;
+}
+
+// --------------------------------------------
 
 Util.copyProperties = function( source, dest )
 {
@@ -1343,6 +1354,11 @@ Util.dateAddStr = function( formatType, addDateNumber )
 };
 
 
+Util.getDateTimeStr = function()
+{
+	return Util.formatDateTime( new Date() );
+};
+
 // ===============================================
 
 
@@ -1668,3 +1684,37 @@ Util.getTimeMsStr = function( input )
 
 	return timeMs;
 }
+
+
+
+// -----------------------------------------------------------------
+
+Util.stylesStrAppy = function( stylesStr, tag ) 
+{
+	try {
+		stylesStr.split( ';' ).forEach( style => {
+			var styleData = style.split( ':' );
+			if ( styleData.length >= 2 ) tag.css( styleData[0], styleData[1] );
+		});
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
+	}
+};
+
+
+Util.getSecFromMiliSec = function( miliSec ) 
+{
+	sec = 0;
+
+	try {
+		if ( miliSec ) sec = miliSec / 1000;
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in Util.getSecFromMiliSec, errMsg: ' + errMsg );
+	}
+
+	return sec;
+};

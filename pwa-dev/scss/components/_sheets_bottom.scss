@@ -5,7 +5,7 @@
     height: 60%;
     bottom: 0px;
     left: 0px;
-    z-index: 2000;
+    z-index: 2100;
     max-height: 270px;
     @include shadow-b(-2px -2px 5px 0px $color-shadow);
     @include box-sizing(border-box);
@@ -541,7 +541,7 @@
     height: 80%;
     bottom: 0px;
     left: 0px;
-    z-index: 1999;
+    z-index: 2100;
     max-height: 270px;
     @include shadow-b(-2px -2px 5px 0px $color-shadow);
     @include box-sizing(border-box);

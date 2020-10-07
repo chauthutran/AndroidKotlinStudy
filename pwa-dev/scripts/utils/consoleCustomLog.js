@@ -5,7 +5,7 @@ function ConsoleCustomLog() {};
 
 ConsoleCustomLog.customLogData = [];
 
-ConsoleCustomLog.divDialogTagId = '#divCustomDataDisplay';
+ConsoleCustomLog.divDialogTagId = '#divCustomLogDisplay';
 
 // -------------------------------------
 // Custom console log method:

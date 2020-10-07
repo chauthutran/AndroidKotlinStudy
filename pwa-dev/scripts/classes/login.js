@@ -10,8 +10,8 @@ function Login( cwsRenderObj )
 	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
 	me.navTitleTextTag = $( '.Nav__Title' );
 	//me.pageTitleDivTab = $( 'div.logo-desc-all' );
-	me.scrimTag = $('.scrim');
-	me.sheetBottomTag = $('.sheet_bottom');
+	//me.scrimTag = $('.scrim');
+	//me.sheetBottomTag = $('.sheet_bottom');
 
 	me.loginBtnTag = $( '.loginBtn' );
 	me.passRealTag = $( '#passReal' );
@@ -51,9 +51,16 @@ function Login( cwsRenderObj )
 
 		// Translate the page..
 		TranslationManager.translatePage();
+
+		// Perform autoCheckIn Flag (dateTimeStr), and run the auto checkIn..
+		me.autoLoginCheck( function() {
+			me.populateSessionPin();
+			me.lastPinTrigger = true;
+			me.loginBtnTag.click();
+		});
 	};
 
-	// ------------------
+	// =============================================
 
 	me.setEvents_OnInit = function()
 	{
@@ -63,21 +70,12 @@ function Login( cwsRenderObj )
 		me.setLoginBtnEvents();
 		me.setAdvOptBtnClick();
 	}
-	// =============================================
-
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
 	
-
 	me.setLoginBtnEvents = function()
 	{
-		//me.scrimTag.click( function() 
-		//{
-		//	me.unblockPage();
-		//});
-
-
 		// Disable this...
 		me.loginBtnTag.focus( function() {
 			me.passRealTag.hide();
@@ -106,7 +104,7 @@ function Login( cwsRenderObj )
 			{
 				me.clearResetPasswords();
 
-				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notifRed', undefined, '', 'right', 'top' );
 			}
 			else
 			{
@@ -183,6 +181,7 @@ function Login( cwsRenderObj )
 		});
 	};
 
+	// ============================================
 
 	me.loginBottomButtonsVisible = function( bShow )
 	{
@@ -193,46 +192,33 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.blockPage = function( runFunc )
-	{
-		me.scrimTag.show();
-		runFunc();
-	}
-
-	me.unblockPage = function()
-	{
-		me.scrimTag.off( 'click' );
-		me.scrimTag.hide();
-	}
-
-
 	me.setAdvOptBtnClick = function()
 	{
 		me.advanceOptionLoginBtnTag.click( function() {
 
-			me.blockPage( function() 
+			FormUtil.blockPage( undefined, function( scrimTag ) 
 			{
-				me.scrimTag.off( 'click' ).click( function() 
+				scrimTag.off( 'click' ).click( function() 
 				{
-					me.empty_SheetBottom();
-					me.unblockPage();
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage( scrimTag );
 				});
 			});
 
 
-			me.populateNShow_SheetBottomTemplate( me.sheetBottomTag, Templates.Advance_Login_Buttons, function( tag ) 
+			FormUtil.genTagByTemplate( FormUtil.getSheetBottomTag(), Templates.Advance_Login_Buttons, function( tag ) 
 			{
 				// Template events..
 				tag.find( '.switchToStagBtn' ).click( function() {
 					alert('switchToStagBtn');		
-					me.empty_SheetBottom();
-					me.unblockPage();
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage();
 				});
 		
 				tag.find( '.demoBtn' ).click( function() {	
 					alert('demo');
-					me.empty_SheetBottom();
-					me.unblockPage();
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage();
 				});
 		
 				tag.find( '.changeUserBtn' ).click( function() {
@@ -245,49 +231,66 @@ function Login( cwsRenderObj )
 	
 	me.changeUserBtnClick = function()
 	{		
-		me.scrimTag.off( 'click' );  // Make it not cancelable by clicking on scrim anymore...
+		FormUtil.getScrimTag().off( 'click' );  // Make it not cancelable by clicking on scrim anymore...
 
 		// Populates the center aligned #dialog_confirmation div
-		me.populateNShow_SheetBottomTemplate( me.sheetBottomTag, Templates.Change_User_Form, function( tag ) 
+		FormUtil.genTagByTemplate( FormUtil.getSheetBottomTag(), Templates.Change_User_Form, function( tag ) 
 		{
 			$( '#accept' ).click( function() {
-				DataManager2.deleteAllStorageData( function() {
-					AppUtil.appReloadWtMsg();
-					me.unblockPage();
+				DataManager2.deleteAllStorageData( function() {					
+					FormUtil.emptySheetBottomTag();
+					
+					FormMsgManager.appBlockTemplate('appLoad');
+	
+					AppUtil.appReloadWtMsg( "User Change - Deleteting Existing Data.." );
 				});
 			});
 
 			$( '#cancel' ).click( function() 
 			{				
-				me.empty_SheetBottom();
-				me.unblockPage();
+				FormUtil.emptySheetBottomTag();
+				FormUtil.unblockPage();
 			});
 		});
 	};
 
 	// =============================================
+	// == Auto Login Related
 
-	me.populateNShow_SheetBottomTemplate = function( tag, template, runFunc )
+	me.autoLoginCheck = function( runFunc )
 	{
-		tag.html( template );
-		TranslationManager.translatePage();
-		tag.show();
+		if ( AppInfoManager.getAutoLogin() )
+		{
+			AppInfoManager.clearAutoLogin();
 
-		runFunc( tag ); // Add event methods or anything related to the created template tag things.
+			runFunc();
+		}
 	};
 
-	// This is a bottom sheet div that gets never hidden, but content emptied to be collapsed..
-	me.empty_SheetBottom = function() 
+	me.populateSessionPin = function()
 	{
-		me.sheetBottomTag.html( '' );
+		Util.tryCatchContinue( function() 
+		{
+			var userName = me.loginUserNameTag.val();
+			var offlineUserData = SessionManager.getOfflineUserData( userName );
+			if ( offlineUserData )
+			{
+				var password = SessionManager.getOfflineUserPin( offlineUserData );
+				if ( password )
+				{
+					var splitPasswordTag = $( '.split_password' );
+
+					for ( var i = 0; i < password.length; i++ ) 
+					{
+						var charVal = password.charAt(i);
+						var pinClassName = '.pin' + ( i + 1 );
+	
+						splitPasswordTag.find( pinClassName ).val( charVal );
+					}	
+				}
+			}	
+		}, 'populateSessionPin' );
 	};
-
-	me.remove_3ButtonDiv = function()
-	{
-		$( '.sheet_bottom-btn3' ).remove();  // 3 button 		
-	};
-
-
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
@@ -490,13 +493,13 @@ function Login( cwsRenderObj )
 			else
 			{
 				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
 			}
 		}
 		else
 		{
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
 		}
 
 		if ( returnFunc ) returnFunc( isSuccess, offlineUserData );
@@ -513,17 +516,17 @@ function Login( cwsRenderObj )
 		{
 			if ( !loginData )
 			{
-				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			} 
 			else if ( !loginData.orgUnitData ) 
 			{
-				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			}
 			else if ( !loginData.dcdConfig ) 
 			{
-				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			}
 			else
@@ -536,7 +539,7 @@ function Login( cwsRenderObj )
 			var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notifRed', undefined, '', 'right', 'top' );
 
 			resultSuccess = false;
 		}
