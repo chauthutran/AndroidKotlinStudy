@@ -177,6 +177,8 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
     // 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
     if ( downloadedData && downloadedData.clients && Util.isTypeArray( downloadedData.clients ) )
     {
+        var case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
+
         downloadedData.clients.forEach( dwClient => 
         {
             try 
@@ -187,8 +189,6 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
                     if ( appClient )
                     {
-                        var case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
-
                         var clientDateCheckPass = ( case_dhis2RedeemMerge ) ? true : ( ClientDataManager.getDateStr_LastUpdated( dwClient ) > ClientDataManager.getDateStr_LastUpdated( appClient ) );
 
                         if ( clientDateCheckPass )
@@ -217,8 +217,12 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                     }
                     else
                     {
-                        newClients.push( dwClient );
-                        changeOccurred = true;
+                        // Logic: For 'dhis2RedeemMerge' case, if the downloaded client does not already exists, do not merge it..
+                        if ( !case_dhis2RedeemMerge )
+                        {
+                            newClients.push( dwClient );
+                            changeOccurred = true;    
+                        }
                     }
                 }
             }        

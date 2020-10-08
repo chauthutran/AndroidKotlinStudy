@@ -12,6 +12,7 @@ InfoDataManager.INFO = {};
 InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 InfoDataManager.NAME_login_UserName = 'login_UserName';
+InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
 InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';
 InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';
 
@@ -42,10 +43,10 @@ InfoDataManager.setDataAfterLogin = function()
 	try
 	{
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_UserName, SessionManager.sessionData.login_UserName );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, SessionManager.sessionData.orgUnitData.orgUnitId );
 
 		// Any other info?	
 		var syncLastDownloaded = AppInfoManager.getSyncLastDownloadInfo();
-
 		if ( syncLastDownloaded )
 		{
 			InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded, syncLastDownloaded );

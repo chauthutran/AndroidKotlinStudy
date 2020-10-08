@@ -6,6 +6,8 @@ function MsgAreaBottom() {};
 
 MsgAreaBottom.targetTag = $( 'div.sheet_bottom' );
 
+
+// NOTE: NOT USED? ANYMORE?
 MsgAreaBottom.setContent = function( htmlStructure, ignoreScrim )
 {
   MsgAreaBottom.targetTag.empty();
@@ -45,7 +47,8 @@ MsgAreaBottom.getMsgAreaBottom = function()
     return msgAreaBottomTag;
 };
 
-
+// NOTE: ONLY Method used in this class...  - on 'activityCard', 'syncManagerNew'
+//  - Both related to sync..  single syncUp or syncDown all..
 MsgAreaBottom.setMsgAreaBottom = function( callBack )
 {    
     var syncInfoAreaTag = MsgAreaBottom.getMsgAreaBottom();
@@ -62,8 +65,8 @@ MsgAreaBottom.setMsgAreaBottom = function( callBack )
 
 MsgAreaBottom.closeMsgAreaBottomScrim = function()
 {    
-		// msg hide click event
-		//$( '.sheet_bottom-scrim' ).click( function () 
+	// msg hide click event
+	//$( '.sheet_bottom-scrim' ).click( function () 
     $( '.sheet_bottom-fs' ).css( 'display', 'none' );
     $( '.sheet_bottom-scrim' ).css( 'display', 'none' );
 };
@@ -71,8 +74,8 @@ MsgAreaBottom.closeMsgAreaBottomScrim = function()
 
 MsgAreaBottom.setEvent_closeMsgAreaBottomScrim = function()
 {    
-		// msg hide click event '#divMsgAreaBottomScrim' is used for '.sheet_bottom-scrim'
-		$( '.sheet_bottom-scrim' ).click( MsgAreaBottom.closeMsgAreaBottomScrim );
+	// msg hide click event '#divMsgAreaBottomScrim' is used for '.sheet_bottom-scrim'
+	$( '.sheet_bottom-scrim' ).click( MsgAreaBottom.closeMsgAreaBottomScrim );
 };
 
 				

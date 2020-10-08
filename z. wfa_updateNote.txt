@@ -1,0 +1,3 @@
+1. copy 'scripts' file from 'pwa-dev' to 'wfa'.
+2. run 'node sw_build-wfa.js'
+3. zip the file and upload.

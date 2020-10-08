@@ -83,15 +83,22 @@ function settingsApp( cwsRender )
         });
 
 
-        $( '#buttonResetData' ).click(function(){
-
-            me.blockPage();
-
+        $( '#buttonResetData' ).click( function()
+        {
+            FormUtil.blockPage( undefined, function( scrimTag ) 
+			{
+				scrimTag.off( 'click' ).click( function() 
+				{
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage( scrimTag );
+				});
+            });
+            
             me.settingsFormDivTag.append ( Templates.settings_app_data_configuration );
             TranslationManager.translatePage();
 
-            $( '.divResetApp_Accept' ).click( function() {
-
+            $( '.divResetApp_Accept' ).click( function() 
+            {
                 try
                 {
                     DataManager2.deleteAllStorageData( function() {
@@ -104,9 +111,10 @@ function settingsApp( cwsRender )
                 }
             });
 
-            $( '.divResetApp_Cancel' ).click( function() {
-                me.unblockPage();
-                $( '#dialog_confirmation' ).remove();
+            $( '.divResetApp_Cancel' ).click( function() 
+            {
+                FormUtil.emptySheetBottomTag();
+                FormUtil.unblockPage(); 
             });
 
         });
@@ -321,8 +329,7 @@ function settingsApp( cwsRender )
                 return languageList[i].updated;
             }
         }
-
-    }
+    };
 
 
     me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
@@ -353,7 +360,15 @@ function settingsApp( cwsRender )
         // New log open dialog
         $( '#showLogs' ).off( 'click' ).click( function() 
         {
-            ConsoleCustomLog.showDialog();
+			FormUtil.blockPage( undefined, function( scrimTag ) 
+			{            
+                ConsoleCustomLog.showDialog();
+                   
+				scrimTag.off( 'click' ).click( function() 
+				{
+					FormUtil.unblockPage( scrimTag );
+				});
+			});
         });
 
 
@@ -398,7 +413,7 @@ function settingsApp( cwsRender )
                                     SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
                                 });
             
-                                MsgManager.notificationMessage ( 'SyncDown data found', 'notificationBlue', btnRefresh, '', 'right', 'top', 10000, false );
+                                MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );
                             }
                         }
                         else MsgManager.msgAreaShow( 'SyncDown not successful.' );
@@ -484,6 +499,8 @@ function settingsApp( cwsRender )
     }
 
 
+    
+
 	me.blockPage = function()
 	{
 		me.scrimTag.show();
@@ -499,7 +516,6 @@ function settingsApp( cwsRender )
 	{
         me.scrimTag.hide();
 
-		$( '#dialog_confirmation' ).remove();
 	}
 
 	// ------------------------------------

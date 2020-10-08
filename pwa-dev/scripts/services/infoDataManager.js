@@ -13,8 +13,8 @@ InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 InfoDataManager.NAME_login_UserName = 'login_UserName';
 InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
-InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';
-InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';
+InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';	// These get changed, thus, need to be updated.
+InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These get changed, thus, need to be updated.
 
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..
 
@@ -47,11 +47,7 @@ InfoDataManager.setDataAfterLogin = function()
 
 		// Any other info?	
 		var syncLastDownloaded = AppInfoManager.getSyncLastDownloadInfo();
-		if ( syncLastDownloaded )
-		{
-			InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded, syncLastDownloaded );
-			InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded_noZ, syncLastDownloaded.replace( 'Z', '' ) );
-		}
+		InfoDataManager.setINFO_lastDownloaded( syncLastDownloaded );
 	}
 	catch ( errMsg )
 	{
@@ -65,6 +61,16 @@ InfoDataManager.setINFOclientByActivity = function( activity )
 
 	InfoDataManager.setINFOdata( InfoDataManager.NAME_client, clientJson );
 };
+
+// ------------------------------------------------
+InfoDataManager.setINFO_lastDownloaded = function( syncLastDownloaded )
+{
+	if ( syncLastDownloaded )
+	{
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded, syncLastDownloaded );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded_noZ, syncLastDownloaded.replace( 'Z', '' ) );
+	}
+}
 
 // ------------------------------------------------
 // --- Create Array for Activity/Client Object under INFO <-- for sorting

@@ -274,10 +274,12 @@ AppInfoManager.setLangLastDateTime = function( dateObj )
 // ------------------------------------------------------------------------------------  
 // ----------------  sync Last Downloaded
 
-
 AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_lastDownloaded( dateStr );
 }	
 
 AppInfoManager.getSyncLastDownloadInfo = function()

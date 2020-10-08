@@ -288,7 +288,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonAct
     }
     catch( errMsg )
     {    
-        MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notificationDark', undefined, '', 'right', 'top' );
+        MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notifDark', undefined, '', 'right', 'top' );
 
         if ( callBack ) callBack();    
     }

@@ -3,15 +3,17 @@ function AppInfoManager() {}
 
 AppInfoManager.KEY_APPINFO = "appInfo";
 
-// TRAN TODO : "logInOut" should be "lastLogInOut" ?????
 AppInfoManager.data = { 'translation': {}, 'sync': {}, 'logInOut': {} };  // minimum basic 'appInfo' shell structure
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
 AppInfoManager.KEY_SYNC = "sync"; 
-AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
+AppInfoManager.KEY_LOGINOUT = "logInOut"; 
 
 AppInfoManager.KEY_USERINFO = "userInfo"; 
 
+
+AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
+AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
@@ -107,6 +109,23 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
 };
 
+AppInfoManager.removeProperty = function( mainKey, subKey )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.data;
+
+    if ( appInfo[mainKey] )
+    {
+        Util.tryCatchContinue( function() 
+        {
+            delete appInfo[mainKey][subKey];
+
+            // Update the 'appInfo' data
+            LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+
+        }, 'AppInfoManager.removeProperty' );
+    }
+};
 // ------------------------------------------------------------------------------------  
 // ----------------  load App Info
 
@@ -121,13 +140,32 @@ AppInfoManager.loadAppInfo = function()
     }
     else
     {
+        // On Local Storage data, check the missing data.
         // Set minial structure - 'translation' and 'sync' shell should always exists..
         if ( !appInfo.translation ) appInfo.translation = {};
         if ( !appInfo.sync ) appInfo.sync = {};
-        if ( !appInfo.lastLogInOut ) appInfo.lastLogInOut = {};
+        if ( !appInfo.logInOut ) appInfo.logInOut = {};
     }
 
     return appInfo;
+};
+
+// ------------------------------------------------------------------------------------  
+// ----------------  Auto Login Related..
+
+AppInfoManager.setAutoLogin = function( dateObj )
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET, Util.formatDateTime( dateObj ) );
+};
+
+AppInfoManager.getAutoLogin = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
+};
+
+AppInfoManager.clearAutoLogin = function()
+{    
+    AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
 };
 
 // ------------------------------------------------------------------------------------  
@@ -270,20 +308,6 @@ AppInfoManager.updateLanguage = function( dataStr )
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_LANG_TERMS, dataStr );
 }	
-
-// ------------------------------------------------------------------------------------  
-// ----------------  Update properties in "statisticPages"
-
-// TRAN TODO : We have duplicate methods "updateStatisticPages" and "getStatisticPages"
-// AppInfoManager.updateStatisticPages = function( fileName, dataStr ) 
-// {
-//     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
-// };
-
-// AppInfoManager.getStatisticPages = function( fileName ) 
-// {
-//     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName );
-// };
 
 
 // ------------------------------------------------------------------------------------  

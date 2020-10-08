@@ -76,8 +76,6 @@ function inputMonitor( cwsRenderObj )
 
         me.setFocusRelegatorInitialState();
 
-        if ( SessionManager.getLoginStatus() ) cwsRenderInputMon.updateNavDrawerHeaderContent();
-
         updateLogoutTimer();
 
     };

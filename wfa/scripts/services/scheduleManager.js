@@ -273,7 +273,7 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function()
 						SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
 					});
 
-					MsgManager.notificationMessage( 'SyncDown data found', 'notificationBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
+					MsgManager.notificationMessage( 'SyncDown data found', 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
 				}
 			} 
 			else ScheduleManager.syncDownTimeoutCall();

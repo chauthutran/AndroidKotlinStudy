@@ -17,9 +17,9 @@
   
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-10-07'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.56'; //_manifestData.version;
-    var _versionNote = '- Auto login with app update.'; //_manifestData.versionNote;
+    var _verDate = '2020-10-08'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.58'; //_manifestData.version;
+    var _versionNote = '- Fix for lastDownload INFO, network switch.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -135,7 +135,7 @@
   <!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
 
   <!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
-  <div class="Nav2" style="display:none;"></div>
+  <div id="activityListViewNav" class="Nav2" style="display:none;"></div>
   <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
   <!-- START > MENU LIST CONTAINER DIV -->
@@ -418,7 +418,7 @@
         <span term="menu_statistics">Statistics</span>
       </div>
     
-      <div class="Nav2" style="position:absolute !important;">
+      <div id="statsNav2" class="Nav2" style="position:absolute !important;">
         <div class="controls">
             <div class="field">
                 <div class="field__label"><label term="stats_period_select">Select a period</label><span>*</span></div>

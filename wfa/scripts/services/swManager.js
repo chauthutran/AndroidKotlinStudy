@@ -64,7 +64,7 @@ SwManager.runSWregistration = function ( callBack )
 
     }).catch(err =>
         // MISSING TRANSLATION
-        MsgManager.notificationMessage('SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000)
+        MsgManager.notificationMessage('SW ERROR: ' + err, 'notifDark', undefined, '', 'left', 'bottom', 5000)
     );
 };
 
@@ -130,20 +130,16 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
             // 'About page' app update uses above '_EventCallBack'
 
-            // For Login page case, we use below 2..
-            if ( SessionManager.getLoginStatus() )
-            {
-                console.customLog( 'NewAppUpdate - already logged In.  Do Nothing.' );
+
+            // For Already logged in or in process, reload the app, but also mark 
+            //      Mark for auto restart -  once used (on app start), clear this out..
+            if ( SessionManager.getLoginStatus() || SessionManager.Status_LogIn_InProcess )
+            {            
+                AppInfoManager.setAutoLogin( new Date() );
             }
-            else if ( SessionManager.Status_LogIn_InProcess )
-            {
-                MsgManager.msgAreaShow ( 'App update cancelled - LogIn in progress!' );
-            }
-            else
-            {
-                // Not logged in, yet (In login page).  Not in progress of login..
-                AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
-            }
+
+            // Not logged in, yet (In login page).  Not in progress of login..
+            AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
         }
     })
 };
@@ -177,7 +173,7 @@ SwManager.newSWrefreshNotification = function()
     btnUpgrade.click ( () => {  AppUtil.appReloadWtMsg();  });
 
     // MISSING TRANSLATION
-    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notificationDark', btnUpgrade, '', 'right', 'top', 25000 );
+    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notifDark', btnUpgrade, '', 'right', 'top', 25000 );
 };
 
 
@@ -189,7 +185,7 @@ SwManager.reGetAppShell = function( callBack )
     {
         SwManager.swRegObj.unregister().then( function(boolean) 
         {
-            MsgManager.notificationMessage ( 'SW UnRegistered', 'notificationDark', undefined, '', 'left', 'bottom', 1000 );
+            MsgManager.notificationMessage ( 'SW UnRegistered', 'notifDark', undefined, '', 'left', 'bottom', 1000 );
             
             if ( callBack ) callBack();
             else AppUtil.appReloadWtMsg();
@@ -197,7 +193,7 @@ SwManager.reGetAppShell = function( callBack )
         .catch(err => 
         {
             // MISSING TRANSLATION
-            MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+            MsgManager.notificationMessage ( 'SW ERROR: ' + err, 'notifDark', undefined, '', 'left', 'bottom', 5000 );
 
             setTimeout( function() 
             {                
@@ -209,7 +205,7 @@ SwManager.reGetAppShell = function( callBack )
     else
     {
         // MISSING TRANSLATION
-        MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notificationDark', undefined, '', 'left', 'bottom', 5000 );
+        MsgManager.notificationMessage ( 'SW unavailable - restarting app', 'notifDark', undefined, '', 'left', 'bottom', 5000 );
         setTimeout( function() {
             AppUtil.appReloadWtMsg();
         }, 100 )		

@@ -78,10 +78,6 @@ function Statistics( cwsRender )
     {
         $( window ).scrollTop(0);
 
-        //me.statsFormContainerTag = $( Templates.statisticsFullScreen );
-        me.statisticsFormDiv.empty().append( Templates.statisticsFullScreen );
-        //TranslationManager.translatePage();  <-- call in 'render()'
-
         me.statsContentPageTag = me.statisticsFormDiv.find( ".statsContentPage" );
 
         me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );        

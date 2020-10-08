@@ -105,13 +105,13 @@ DevHelper.switchConnectMode = function( connModeStr )
 {
     if ( connModeStr === "STABLE" )
     {
-        ConnManagerNew.efficiency.wsAvailCheck_Immediate = true;
-        ConnManagerNew.efficiency.networkConnOnline_Immediate = false;
+        ConnManagerNew.efficiency.Immediate_wsAvailCheck = true;
+        ConnManagerNew.efficiency.Immediate_OneCheckOnline = false;
     }
     else if ( connModeStr === "ACCESSIBLE" )
     {
-        ConnManagerNew.efficiency.wsAvailCheck_Immediate = true;
-        ConnManagerNew.efficiency.networkConnOnline_Immediate = true;
+        ConnManagerNew.efficiency.Immediate_wsAvailCheck = true;
+        ConnManagerNew.efficiency.Immediate_OneCheckOnline = true;
         // More settings to ...
     }
 };

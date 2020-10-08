@@ -99,10 +99,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
 SyncManagerNew.syncDown = function( runType, callBack )
 {
-    // NOTE: We can check network connection here, or from calling place.  
-    //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
     SyncManagerNew.update_UI_StartSyncAll();
-
     SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
 
     // Retrieve data..
@@ -303,6 +300,13 @@ SyncManagerNew.downloadClients = function( callBack )
         {            
             var payloadJson = ConfigManager.getSyncDownSearchBodyEvaluated();       
             Util.jsonCleanEmptyRunTimes( payloadJson, 2 );
+
+
+            // TODO: for dhis2 type, the lastDownloaded is emtpy, we can send current dateTime...
+            // --> put that info on INFO.last...
+
+            // ALSO, ON INFO, we should update this value everytimme!!!! usage!!
+
 
             if ( payloadJson )
             {

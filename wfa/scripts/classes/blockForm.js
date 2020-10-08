@@ -1055,6 +1055,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
+
+	// TODO: Need to review and re-orgnize the code..
 	me.evalFormInputFunctions = function( formDivSecTag, thisTag, dispatchChangeEvent )
 	{
 		// 1. get all evalFunctions (using calculatedValue / defaultValue)
@@ -1093,6 +1095,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	};
 
+
+
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
 	{
 		if ( entryTag )
@@ -1100,8 +1104,20 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// Set Event
 			entryTag.change( function() 
 			{
-				me.evalFormInputFunctions( formDivSecTag, $( this ), true ); //.parent()
-				me.performEvalActions( $(this), formItemJson, formDivSecTag, formFull_IdList );
+				var thisTag = $( this );
+
+				if ( thisTag.attr( 'type' ) === 'checkbox' )
+				{
+					setTimeout( function() {
+						me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
+						me.performEvalActions( thisTag, formItemJson, formDivSecTag, formFull_IdList );		
+					}, 100 );
+				}
+				else
+				{
+					me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
+					me.performEvalActions( thisTag, formItemJson, formDivSecTag, formFull_IdList );		
+				}
 			});
 		}
 
@@ -1109,6 +1125,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		me.addDataTargets( divInputFieldTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 		me.addStylesForField( divInputFieldTag, formItemJson );
 	};
+
+
+
+	// ===================================================================
+
 
 
 	me.setFieldTagVisibility = function( formItemJson, divInputFieldTag, passedData )
@@ -1250,37 +1271,54 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var tagVal = FormUtil.getTagVal( tag );
 
+		InfoDataManager.setINFOdata( 'thisTag', tag );
+		InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
+		InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
+		InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
+
 		if ( tagVal )
 		{
-			if ( formItemJson.evalActions !== undefined )
+			if ( formItemJson.evalActions )
 			{
-				for ( var i = 0; i < formItemJson.evalActions.length; i++ )
-				{
-					me.performEvalAction( formItemJson.evalActions[i], tagVal, formDivSecTag, formFull_IdList );
-				}
+				formItemJson.evalActions.forEach( evalActionJson => {
+
+					me.performEvalAction( evalActionJson, tagVal, formDivSecTag, formFull_IdList );
+				});
 			}	
 		}
 	}
 
 	me.performEvalAction = function( evalAction, tagVal, formDivSecTag, formFull_IdList )
 	{
-		if ( evalAction !== undefined )
+		if ( evalAction )
 		{
-			if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, formFull_IdList ) )
+			var conditionPass = false;
+
+			// if condition exists, check to run the conditional case or inverse one..
+			if ( evalAction.condition !== undefined )
 			{
-				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
-				me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
-				me.performCondiAction( evalAction.actions, formDivSecTag, false );
-			}
-			else
-			{
-				if ( evalAction.conditionInverse !== undefined )
+				if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, formFull_IdList ) )
+				{
+					me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
+					me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
+					me.performCondiAction( evalAction.actions, formDivSecTag, false );
+
+					conditionPass = true;
+				}
+				else if ( evalAction.conditionInverse !== undefined )
 				{
 					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, false );
 					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, true );
 					if ( evalAction.conditionInverse.indexOf( "actions" ) >= 0 ) me.performCondiAction( evalAction.actions, formDivSecTag, true );
-				}
-			}			
+				}	
+			} 
+
+			// If condition does not exists OR condition has passed, run more related things..
+			if ( evalAction.condition === undefined || conditionPass )
+			{
+				// If no condition, simply run the eval..				
+				if ( evalAction.runEval ) Util.evalTryCatch( evalAction.runEval, InfoDataManager.getINFO(), 'blockForm.performEvalAction' );
+			}
 		}
 	}
 

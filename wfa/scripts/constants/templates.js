@@ -378,46 +378,6 @@ Templates.activityCardFullScreen = `
 
 /* STATISTICS >> START */
 
-Templates.statisticsFullScreen = `
-<div class="wapper_card">
-  <div class="sheet-title c_900" >
-    <img src='images/arrow_back.svg' class='btnBack'>
-    <span term="menu_statistics">Statistics</span>
-  </div>
-
-  <div class="Nav2" style="position:absolute !important;">
-    <div class="controls">
-        <div class="field">
-            <div class="field__label"><label term="stats_period_select">Select a period</label><span>*</span></div>
-            <div class="field__controls">
-                <div class="field__selector">
-                    <select class="stats_select_period" mandatory="true">
-                        <option from="0" to="0" value="0" term="stats_period_select">Select a period</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="stats_t_info text_help" style="display:none;">
-          <span term="stats_periodDateBetween">Between</span> <span class="spanPeriod_Start"></span> <span term="stats_periodDateAnd">and</span> <span class="spanPeriod_End"></span>
-        </div>
-        <div class="stats_t_custom text_help" style="display:none;">
-          <span style="font-size: 0.71rem;" term="stats_periodDateBetween">Between</span>
-          <input class="inputCustomPeriod_Start statsCusDate" readonly />
-          <button class="customStartPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-          <span style="font-size: 0.71rem;" term="stats_periodDateAnd">And</span>
-          <input class="inputCustomPeriod_End statsCusDate" readonly/> 
-          <button class="customEndPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-          <button class="btnCustomPeriodRun cbutton" style="background-color: cornflowerblue;">Run</button>
-        </div>
-    </div>
-  </div>
-  
-  <div class="loadingImg_statistic" style="margin: 80px 0px 0px 50px; display: none;"><img src="images/loading_big_blue.gif"></div>
-
-  <div class="statsContentPage card _tab activity" style="overflow: auto !important;" />
-</div>
-`;
-
 Templates.title_section = `<div class="title_section">
   <div class="title_section__icon" />
   <div class="title_section__title">Title of Table</div>
@@ -738,17 +698,17 @@ Templates.Advance_Login_Buttons = `
       <div class="sbtt-btn__header_title" term="login_advancedOptions">Advanced options</div>
     </div>
     <div class="cta_buttons">
-      <div class="button c_500 dis" id="switchToStagBtn">
+      <div class="button c_500 dis switchToStagBtn">
         <div class="button__container">
           <div class="button-label" term="login_switchToStaging">switch to Staging</div>
         </div>
       </div>
-      <div class="button c_500 dis" id="demoBtn">
+      <div class="button c_500 dis demoBtn">
         <div class="button__container">
           <div class="button-label" term="login_demoMode">Demo mode</div>
         </div>
       </div>
-      <div class="button c_500" id="changeUserBtn">
+      <div class="button c_500 changeUserBtn">
         <div class="button__container">
           <div class="button-label" term="login_changeUser">Change user</div>
         </div>

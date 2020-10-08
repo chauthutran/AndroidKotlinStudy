@@ -220,11 +220,11 @@ function DataList( cwsRenderObj, blockObj )
 
                     me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, fldGroupByID, grpByArr[ r ].value, dataJson, blockJson, grpByArr[ r ].buttons )
 
-                    FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+                    FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
 
                 }
 
-                FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ], me );
+                FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
 
             }
 

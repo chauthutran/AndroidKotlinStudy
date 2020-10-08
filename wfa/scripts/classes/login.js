@@ -10,8 +10,8 @@ function Login( cwsRenderObj )
 	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
 	me.navTitleTextTag = $( '.Nav__Title' );
 	//me.pageTitleDivTab = $( 'div.logo-desc-all' );
-	me.scrimTag = $('.scrim');
-	me.sheetBottomTag = $('.sheet_bottom');
+	//me.scrimTag = $('.scrim');
+	//me.sheetBottomTag = $('.sheet_bottom');
 
 	me.loginBtnTag = $( '.loginBtn' );
 	me.passRealTag = $( '#passReal' );
@@ -51,9 +51,16 @@ function Login( cwsRenderObj )
 
 		// Translate the page..
 		TranslationManager.translatePage();
+
+		// Perform autoCheckIn Flag (dateTimeStr), and run the auto checkIn..
+		me.autoLoginCheck( function() {
+			me.populateSessionPin();
+			me.lastPinTrigger = true;
+			me.loginBtnTag.click();
+		});
 	};
 
-	// ------------------
+	// =============================================
 
 	me.setEvents_OnInit = function()
 	{
@@ -63,22 +70,12 @@ function Login( cwsRenderObj )
 		me.setLoginBtnEvents();
 		me.setAdvOptBtnClick();
 	}
-	// =============================================
-
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
 	
-
 	me.setLoginBtnEvents = function()
 	{
-		me.scrimTag.click( function() 
-		{
-			console.customLog( 'scrimTag click - unblock Page' );
-
-			me.unblockPage();
-		});
-
 		// Disable this...
 		me.loginBtnTag.focus( function() {
 			me.passRealTag.hide();
@@ -107,7 +104,7 @@ function Login( cwsRenderObj )
 			{
 				me.clearResetPasswords();
 
-				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notifRed', undefined, '', 'right', 'top' );
 			}
 			else
 			{
@@ -184,6 +181,7 @@ function Login( cwsRenderObj )
 		});
 	};
 
+	// ============================================
 
 	me.loginBottomButtonsVisible = function( bShow )
 	{
@@ -194,93 +192,105 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.blockPage = function()
-	{
-		me.scrimTag.show();
-
-		me.scrimTag.off( 'click' ).click( function(){
-			me.unblockPage();
-		} );
-
-		me.scrimTag.css( 'z-Index', 1 );
-	}
-
-	me.unblockPage = function()
-	{
-		me.scrimTag.hide();
-		me.sheetBottomTag.html( '' );
-		me.scrimTag.css( 'z-Index', 1 );
-	}
-	
 	me.setAdvOptBtnClick = function()
 	{
-
 		me.advanceOptionLoginBtnTag.click( function() {
 
-			if ( ! me.advanceOptionLoginBtnTag.hasClass( 'dis' ) )
+			FormUtil.blockPage( undefined, function( scrimTag ) 
 			{
-				me.blockPage();
-
-				// create and reference templatesManager here:
-				me.sheetBottomTag.html ( Templates.Advance_Login_Buttons );
-				TranslationManager.translatePage();
-
-				me.sheetBottomTag.show();
-			}
-
-
-			$( '#switchToStagBtn' ).click( function() {
-
-				if ( ! $( this ).hasClass( 'dis' ) )
+				scrimTag.off( 'click' ).click( function() 
 				{
-					me.unblockPage();
-					alert('switchToStagBtn');	
-				}
-	
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage( scrimTag );
+				});
 			});
-	
-			$( '#demoBtn' ).click( function() {
-	
-				if ( ! $( this ).hasClass( 'dis' ) )
-				{
-					me.unblockPage();
+
+
+			FormUtil.genTagByTemplate( FormUtil.getSheetBottomTag(), Templates.Advance_Login_Buttons, function( tag ) 
+			{
+				// Template events..
+				tag.find( '.switchToStagBtn' ).click( function() {
+					alert('switchToStagBtn');		
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage();
+				});
+		
+				tag.find( '.demoBtn' ).click( function() {	
 					alert('demo');
-				}
-	
+					FormUtil.emptySheetBottomTag();
+					FormUtil.unblockPage();
+				});
+		
+				tag.find( '.changeUserBtn' ).click( function() {
+					me.changeUserBtnClick();
+				});
 			});
-	
-			$( '#changeUserBtn' ).click( function() {
-	
-				if ( ! $( this ).hasClass( 'dis' ) )
-				{
-					me.sheetBottomTag.html ( Templates.Change_User_Form );
-					TranslationManager.translatePage();
-	
-					$( '#accept' ).click( function() {
+		});
+	};
 
-						DataManager2.deleteAllStorageData( function() {
-							AppUtil.appReloadWtMsg();
-						});
-
-					});
 	
-					$( '#cancel' ).click( function() {
+	me.changeUserBtnClick = function()
+	{		
+		FormUtil.getScrimTag().off( 'click' );  // Make it not cancelable by clicking on scrim anymore...
 
-						$( '.sheet_bottom-btn3' ).remove();
-						me.unblockPage();
-					});
-
-					me.sheetBottomTag.show();
-
-				}
+		// Populates the center aligned #dialog_confirmation div
+		FormUtil.genTagByTemplate( FormUtil.getSheetBottomTag(), Templates.Change_User_Form, function( tag ) 
+		{
+			$( '#accept' ).click( function() {
+				DataManager2.deleteAllStorageData( function() {					
+					FormUtil.emptySheetBottomTag();
+					
+					FormMsgManager.appBlockTemplate('appLoad');
 	
+					AppUtil.appReloadWtMsg( "User Change - Deleteting Existing Data.." );
+				});
 			});
 
+			$( '#cancel' ).click( function() 
+			{				
+				FormUtil.emptySheetBottomTag();
+				FormUtil.unblockPage();
+			});
 		});
 	};
 
 	// =============================================
+	// == Auto Login Related
 
+	me.autoLoginCheck = function( runFunc )
+	{
+		if ( AppInfoManager.getAutoLogin() )
+		{
+			AppInfoManager.clearAutoLogin();
+
+			runFunc();
+		}
+	};
+
+	me.populateSessionPin = function()
+	{
+		Util.tryCatchContinue( function() 
+		{
+			var userName = me.loginUserNameTag.val();
+			var offlineUserData = SessionManager.getOfflineUserData( userName );
+			if ( offlineUserData )
+			{
+				var password = SessionManager.getOfflineUserPin( offlineUserData );
+				if ( password )
+				{
+					var splitPasswordTag = $( '.split_password' );
+
+					for ( var i = 0; i < password.length; i++ ) 
+					{
+						var charVal = password.charAt(i);
+						var pinClassName = '.pin' + ( i + 1 );
+	
+						splitPasswordTag.find( pinClassName ).val( charVal );
+					}	
+				}
+			}	
+		}, 'populateSessionPin' );
+	};
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
@@ -423,6 +433,9 @@ function Login( cwsRenderObj )
 
 		//AppInfoManager.setLastLoginMark( new Date() );
 
+		// menu area user name show
+		$( 'div.navigation__user' ).html( userName );
+
 
 		// 2. UI Related Process
 		me.closeForm();
@@ -480,13 +493,13 @@ function Login( cwsRenderObj )
 			else
 			{
 				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
 			}
 		}
 		else
 		{
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notificationDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
 		}
 
 		if ( returnFunc ) returnFunc( isSuccess, offlineUserData );
@@ -503,17 +516,17 @@ function Login( cwsRenderObj )
 		{
 			if ( !loginData )
 			{
-				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			} 
 			else if ( !loginData.orgUnitData ) 
 			{
-				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			}
 			else if ( !loginData.dcdConfig ) 
 			{
-				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notificationRed', undefined, '', 'right', 'top' );
+				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notifRed', undefined, '', 'right', 'top' );
 				resultSuccess = false;
 			}
 			else
@@ -526,7 +539,7 @@ function Login( cwsRenderObj )
 			var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
 
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notificationRed', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notifRed', undefined, '', 'right', 'top' );
 
 			resultSuccess = false;
 		}
@@ -587,7 +600,8 @@ function Login( cwsRenderObj )
 		// Display login name as Big text part - if we already have user..
 		loginUserNameH4Tag.text( me.loginUserNameTag.val() ).show();
 		
-		$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
+
+		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
 		FormUtil.hideProgressBar();
 	};

@@ -174,7 +174,7 @@ function cwsRender()
 
 	me.resetVisibility_ViewListDiv = function()
 	{
-		$( 'div.Nav2' ).hide();
+		$( '#activityListViewNav' ).hide();
 	};
 
 
@@ -321,17 +321,10 @@ function cwsRender()
 				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
 				me.populateMenuList( finalAreaList, function( startMenuTag ){
-
-					me.updateNavDrawerHeaderContent();
-	
 					//if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
-
 				} );
-	
 			}
-
 		} );
-
 	}
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
@@ -663,7 +656,8 @@ function cwsRender()
 
 		// hide navBar items
 		$( '.Nav1' ).hide();
-		$( '.Nav2' ).hide();
+		$( '#activityListViewNav' ).hide();  // $( '.Nav2' ).hide();
+
 	}
 
 	me.clearMenuPlaceholders = function()

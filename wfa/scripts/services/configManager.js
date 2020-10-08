@@ -66,7 +66,9 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
 
             // Filter some list in config by 'sourceType' / 'userRole'
             ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
-            ConfigManager.applyFilter_UserRole( ConfigManager.configJson, [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
+            ConfigManager.applyFilter_UserRole( ConfigManager.configJson
+                , [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
+                // 'definitionActivityListViews'
         }
     }
     catch ( errMsg )
@@ -90,13 +92,13 @@ ConfigManager.applyFilter_SourceType = function( configJson )
 };
 
 // Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
-ConfigManager.applyFilter_UserRole = function( configJson, list )
+ConfigManager.applyFilter_UserRole = function( configJson, arrList, objList )
 {
     try
     {
-        if ( list )
+        if ( arrList )
         {
-            list.forEach( defName => 
+            arrList.forEach( defName => 
             { 
                 try
                 {
@@ -108,13 +110,25 @@ ConfigManager.applyFilter_UserRole = function( configJson, list )
                     // If Object, look for arrayList in one level below..
                     if ( Util.isTypeArray( defList ) )
                     {
+                        // Type1. list: [ { .. userRoles[ ipc ] }, {} ]
                         ConfigManager.filterListByUserRoles( defList, true );
                     }
                     else if ( Util.isTypeObject( defList ) )
                     {
                         Object.keys( defList ).forEach( key => 
                         {
-                            ConfigManager.filterListByUserRoles( defList[key], true );
+                            var itemObj = defList[key];
+
+                            if ( Util.isTypeArray( itemObj ) )
+                            {
+                                // Type2. obj: { item: [ { .. userRoles[ ipc ] }, {} ], [...], .. }
+                                ConfigManager.filterListByUserRoles( itemObj, true );
+                            }
+                            else if ( Util.isTypeObject( itemObj ) )
+                            {
+                                // Type3. obj: { { .. userRoles[ ipc ] }, {} }
+                                defList[key] = ConfigManager.filterObjsByUserRoles( itemObj );
+                            }
                         });
                     }
                 }
@@ -559,6 +573,36 @@ ConfigManager.filterListByUserRoles = function( itemList, bChangeToList )
     return outList;    
 };
 
+
+ConfigManager.filterObjsByUserRoles = function( itemObj )
+{
+    var loginUserRoles = ConfigManager.login_UserRoles;
+    var newItemObj = {};
+
+    if ( Util.isTypeObject( itemObj ) )
+    {
+        for ( var key in itemObj )
+        {
+            var keyItem = itemObj[ key ];
+
+            if ( keyItem.userRoles ) 
+            {
+                var itemAdded = false;
+                item.userRoles.forEach( roleId => 
+                {
+                    if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
+                    { 
+                        itemAdded = true; // User instead of 'break'
+                        newItemObj.key = keyItem;
+                    }
+                });            
+            }
+            else newItemObj.key = keyItem;
+        }
+    }
+
+    return newItemObj;    
+};
 
 // ------------------------------------------------------
 // -- Apply Defaults related methods.

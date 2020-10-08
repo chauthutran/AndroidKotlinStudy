@@ -234,7 +234,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else
 					{
-						MsgManager.notificationMessage ( clickActionJson.message, 'notificationDark', undefined, '', 'right', 'top' );
+						MsgManager.notificationMessage ( clickActionJson.message, 'notifDark', undefined, '', 'right', 'top' );
 					}
 	
 					afterActionFunc( true );
@@ -247,7 +247,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else
 					{
-						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), 'notificationDark', undefined, '', 'right', 'top' );
+						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), 'notifDark', undefined, '', 'right', 'top' );
 					}
 					// If term exists, translate it before displaying
 					//MsgManager.msgAreaShow( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ) );
@@ -421,7 +421,7 @@ function Action( cwsRenderObj, blockObj )
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Request Call Failed From Web Service', 'notificationDark', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage ( 'Request Call Failed From Web Service', 'notifDark', undefined, '', 'right', 'top' );
 					// Should we stop at here?  Or continue with subActions?
 
 					bResult = false; // "actionFailed";
@@ -434,7 +434,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			MsgManager.notificationMessage ( 'Failed - No ActionUrl Provided.', 'notificationDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage ( 'Failed - No ActionUrl Provided.', 'notifDark', undefined, '', 'right', 'top' );
 			// Do not need to returnFunc?  --> 	 if ( afterActionFunc ) afterActionFunc( resultStr );
 
 			throw 'url info missing on actionDef - during submitToWs';
