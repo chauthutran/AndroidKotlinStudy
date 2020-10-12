@@ -18,7 +18,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.payloadConfigSelection;
 	me.formJsonArr;
 	me.formJsonConfig = {};
-	me.formDivSecTag;
 	me._childTargetActionDelay = 400;
 	me._groupNoneId = 'zzzGroupNone';
 
@@ -52,7 +51,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			blockTag.append( formDivSecTag );
 
-			me.formDivSecTag = formDivSecTag;
 
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
 			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
@@ -481,8 +479,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
 		tagOfClick.click( function(e) {
-			//FormUtil.mdDateTimePicker( e, entryTag, formatDate, formItemJson.yearRange );
-			FormUtil.mdDateTimePicker( e, me.formDivSecTag.find( '[name=' + formItemJson.id + ']' ), formatDate, formItemJson.yearRange );
+			FormUtil.mdDateTimePicker( e, entryTag, formatDate, formItemJson.yearRange );
 		});
 
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
@@ -533,22 +530,19 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
 		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
 		var displayTag = divInputFieldTag.find(".displayValue");
-		var randomId = Util.generateRandomId( 8 );
-
-
+		
+		
 		for ( var i = 0; i < optionList.length; i++ )
 		{
 			var optionDivTag = $( Templates.inputFieldRadio_Item );
 
-			//me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
-			me.setAttributesForInputItem( displayTag, optionDivTag, randomId, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+			me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 			optionDivListTag.append( optionDivTag );
 
 			me.setupEvents_RadioItemTags( divInputFieldTag, optionDivTag.find( 'input' ) );
 
-			//if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
-			if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'displayValue' );
+			if ( ! onDialog ) optionDivTag.find( 'input' ).addClass( 'dataValue' );
 		}
 	}
 
@@ -556,13 +550,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var optionInputTag = optionDivTag.find( 'input' );
 		optionInputTag.attr( 'name', 'opt_' + targetId );
-		optionInputTag.attr( 'id', 'opt_' + targetId + '_' + optionConfig.value ); // Need for css to make check-mark
+		optionInputTag.attr( 'id', 'opt_' + optionConfig.value ); // Need for css to make check-mark
 		optionInputTag.attr( 'value', optionConfig.value ); // Use to fill the selected option value to input.dataValue
 		optionInputTag.prop( "checked", isChecked );
 
 		var labelTag = optionDivTag.find( 'label' );
 		var labelTerm = TranslationManager.translateText( optionConfig.defaultName, optionConfig.poTerm );
-		labelTag.attr( 'for', 'opt_' + targetId + '_' + optionConfig.value );
+		labelTag.attr( 'for', 'opt_' + optionConfig.value );
 		labelTag.text( labelTerm );
 
 		// Set DEFAULT display value if any
@@ -579,7 +573,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		optionInputTag.click( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
 			targetInputTag.val( $(this).val() );
-			FormUtil.dispatchOnChangeEvent( targetInputTag ); // added by Greg (2020-10-12) > change event not dispatching with 'new' value
 		});
 	}
 
@@ -593,14 +586,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( optionList === undefined )
 		{
 			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
-			var randomId = Util.generateRandomId( 8 );
 
 			var optionInputTag = optionDivTag.find( 'input' );
-			optionInputTag.attr( 'id', "opt_" + randomId + '_' + formItemJson.id );
+			optionInputTag.attr( 'id', "opt_" + formItemJson.id );
 			optionInputTag.attr( 'name', formItemJson.id );
 
 
-			optionDivTag.find("label").attr("for", "opt_" + randomId + '_' + formItemJson.id );
+			optionDivTag.find("label").attr("for", "opt_" + formItemJson.id );
 
 			optionDivListTag.append( optionDivTag ); 
 
