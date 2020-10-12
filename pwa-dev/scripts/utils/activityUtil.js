@@ -571,16 +571,23 @@ ActivityUtil.getTagText = function( entryTag )
 		else // if( entryTag.attr("type") == "checkbox" || entryTag.attr("type") == "radio" ) 
 		{
 			var selectedValues = fieldBlockTag.find(".dataValue").val().split(",");
-			var displayValues = [];
-			for( var i=0; i<selectedValues.length; i++ )
+			
+			// only run this concatenation IF multiple display values are found + no 'dataValue' is already loaded with data
+			// GREG: not sure if this is still relevant, as `id='opt_" + selectedValues[i] + "` has changed to include random ID < review with James (2020-10-12)
+			if ( selectedValues.length > 1 && displayValue.length == 0 )
 			{
-				displayValues.push( fieldBlockTag.find("input[id='opt_" + selectedValues[i] + "']").closest("div").find("label").text() );
+				var displayValues = [];
+				for( var i=0; i<selectedValues.length; i++ )
+				{
+					displayValues.push( fieldBlockTag.find("input[id='opt_" + selectedValues[i] + "']").closest("div").find("label").text() );
+				}
+	
+				if( displayValues.length != 0 )
+				{
+					displayValue = displayValues.join(",");
+				}
 			}
 
-			if( displayValues.length != 0 )
-			{
-				displayValue = displayValues.join(",");
-			}
 		}
 	}
 	
