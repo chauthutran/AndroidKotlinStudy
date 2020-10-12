@@ -357,27 +357,12 @@ function settingsApp( cwsRender )
 
     me.setUpMoreInfoDiv = function()
     {
-        // New log open dialog
-        $( '#showLogs' ).off( 'click' ).click( function() 
-        {
-			FormUtil.blockPage( undefined, function( scrimTag ) 
-			{            
-                ConsoleCustomLog.showDialog();
-                   
-				scrimTag.off( 'click' ).click( function() 
-				{
-					FormUtil.unblockPage( scrimTag );
-				});
-			});
-        });
-
-
-        $( '#linkAppVersionCheck' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppVersionCheck' ).off( 'click' ).click( function() 
         {
             console.customLog( 'linkAppVersionCheck clicked!!' );
         });    
 
-        $( '#linkAppUpdateCheck' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
             // ?? Check only if during online?
             SwManager.checkNewAppFile( function() 
@@ -387,12 +372,26 @@ function settingsApp( cwsRender )
             });
         });      
 
-        $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
             AppUtil.appReloadWtMsg();
         });      
 
-        $( '#syncDown' ).off( 'click' ).click( function() 
+        // New log open dialog
+        me.settingsFormDivTag.find( '.showLogs' ).off( 'click' ).click( function() 
+        {
+            FormUtil.blockPage( undefined, function( scrimTag ) 
+            {            
+                ConsoleCustomLog.showDialog();
+                    
+                scrimTag.off( 'click' ).click( function() 
+                {
+                    FormUtil.unblockPage( scrimTag );
+                });
+            });
+        });
+        
+        me.settingsFormDivTag.find( '.syncDown' ).off( 'click' ).click( function() 
         {
             if ( !ConfigManager.getSyncDownSetting().enable ) MsgManager.msgAreaShow( 'SyncDown not enabled in config settings.' );
             else
@@ -422,6 +421,19 @@ function settingsApp( cwsRender )
             }
         });
 
+        me.settingsFormDivTag.find( '.dataExchange' ).off( 'click' ).click( function() 
+        {
+            FormUtil.blockPage( undefined, function( scrimTag ) 
+            {            
+                ConsoleCustomLog.showDialog();
+                    
+                scrimTag.off( 'click' ).click( function() 
+                {
+                    FormUtil.unblockPage( scrimTag );
+                });
+            });
+        });     
+
     };
 
 
@@ -429,13 +441,13 @@ function settingsApp( cwsRender )
 	{
         if ( newAppFilesFound ) 
         {
-            $( '#linkAppUpdateCheck' ).hide();    
-            $( '#linkAppUpdateRefresh' ).show();
+            me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).hide();    
+            me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).show();
         }
         else 
         {
-            $( '#linkAppUpdateCheck' ).show();    
-            $( '#linkAppUpdateRefresh' ).hide();
+            me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).show();    
+            me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).hide();
         }
 	};
 

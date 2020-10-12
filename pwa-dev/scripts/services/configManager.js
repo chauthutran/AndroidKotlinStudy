@@ -38,14 +38,10 @@ ConfigManager.default_SettingPaging = {
     "pagingSize": 9 
 };
 
-// ----- Defined below/bottom in the Page --------
-
-//ConfigManager.defaultActivityType 
-//ConfigManager.defaultJsonList = {
-
+ConfigManager.KEY_SourceType_Mongo = 'mongo';
+ConfigManager.KEY_SourceType_Dhis2 = 'dhis2';
 
 // ==== Methods ======================
-
 
 // ---------------------------------
 // --- Initial Set (called from session?)
@@ -218,6 +214,12 @@ ConfigManager.getAllAreaList = function()
     var combinedAreaList = [];
 
     return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
+};
+
+
+ConfigManager.isSourceTypeDhis2 = function()
+{
+    return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Dhis2 );
 };
 
 // ----------------------------------------

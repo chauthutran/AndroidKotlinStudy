@@ -685,9 +685,9 @@ function cwsRender()
 
 		me.favIconsObj = new favIcons( me );
 		me.favIconsObj.render();
-
 	};
 
+	
     me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
 	{
         FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ] );

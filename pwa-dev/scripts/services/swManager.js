@@ -1,6 +1,16 @@
 // -------------------------------------------
 // -- Service Worker Manager Class/Methods
 //	  - Register Service Worker and setup app updates
+//  App Update Detect Feature:
+//      - 4 places it does detect..
+//      1. At App Start
+//      2. At manual check button click
+//      3. At log out
+//      4. At login 1st activity.. (NotYet)
+//          - In all tags in login page, if there is a focus, initiate the check, but only on 1st focus..
+//            Thus, we need a flag.. (within login obj)  
+//               And the flag gets reset when it 'renders' again?
+//
 // -----------------------------------------
 function SwManager() {};
 

@@ -256,7 +256,7 @@ function app()
   {
     console.customLog( '[AppInstall READY]' );
 
-    var appInstallTag = $( '#appInstall' );
+    var appInstallTag = $( '.appInstall' );
     appInstallTag.show();
 
     var deferredPrompt = e;
@@ -264,7 +264,7 @@ function app()
     appInstallTag.off( 'click' ).click( function() 
     {
       deferredPrompt.prompt();
-      $( '#appInstall' ).hide();
+      $( '.appInstall' ).hide();
 
       // Wait for the user to respond to the prompt
       deferredPrompt.userChoice.then( ( choiceResult ) => 

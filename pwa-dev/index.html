@@ -17,9 +17,9 @@
   
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-10-08'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.58'; //_manifestData.version;
-    var _versionNote = '- Fix for lastDownload INFO, network switch.'; //_manifestData.versionNote;
+    var _verDate = '2020-10-09'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.61'; //_manifestData.version;
+    var _versionNote = '- Test version login button not hide.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -311,15 +311,12 @@
           <div class="field__label"><label term="settings_theme">Others</label></div>
           <div class="field__controls">
             <div class="field__selector">
-              <button id="linkAppUpdateCheck" class="cbutton" style="background-color: cadetblue;">App Update Check</button>
-              <button id="linkAppUpdateRefresh" class="cbutton" style="display: none;">App Update Apply</button>
-              &nbsp;
-              <button id="showLogs" class="cbutton" style="background-color: cadetblue;">Logs</button>
-              &nbsp;
-              <button id="appInstall" class="cbutton" style="display: none;">App Install</button>       
-              &nbsp;
-              <button id="syncDown" class="cbutton">Sync Down</button>       
-               
+              <button class="linkAppUpdateCheck cbutton" style="background-color: cadetblue;">App Update Check</button>
+              <button class="linkAppUpdateRefresh cbutton" style="display: none;">App Update Apply</button>
+              <button class="showLogs cbutton" style="background-color: cadetblue;">Logs</button>
+              <button class="appInstall cbutton" style="display: none;">App Install</button>
+              <button class="syncDown cbutton">Sync Down</button>
+              <button class="dataExchange cbutton">dataExchange</button>               
             </div>
             <div class="field__right"></div>
           </div>
@@ -486,6 +483,25 @@
   </div>
   <!--  END > CUSTOM LOG INFO -->
 
+  <div id="divBackUpProcess" style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+    <div class="divMainLayout" style="height:100%;">
+
+      <div style="margin-bottom: 5px;">Logs:</div>
+      <div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
+      <div class="divRunCommand" style="width: 100%; margin-top: 3px;">
+        <input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnLogRunCommand">Run</button>
+      </div>
+
+      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
+        <div class="button__container">
+          <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
   <!-- START > NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
   <!-- END > NETWORK SWITCH DIV -->

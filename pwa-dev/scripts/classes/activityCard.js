@@ -668,8 +668,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
 
-            ClientDataManager.mergeDownloadedClients( { 'clients': [ responseJson.result.client ] }, processingInfo, function( changeOccurred_atMerge ) 
+            ClientDataManager.mergeDownloadedClients( { 'clients': [ responseJson.result.client ] }, processingInfo, function() 
             {
+                // 'mergeDownload' does saving if there were changes..
                 ClientDataManager.saveCurrent_ClientsStore();
 
                 if ( callBack ) callBack( operationSuccess );
