@@ -611,7 +611,8 @@ Templates.ConnManagerNew_Dialog_prompt_notSupportedMode = `<span term="networkSw
 
 Templates.ConnManagerNew_Dialog_prompt_manualOffline = `<span term="networkSwitch_prompt_manualOffline">Are you sure you want to go offline? The app will continue working, but some operations like online search will not be available.</span>`;
 
-Templates.ConnManagerNew_Dialog_prompt_manualOnline = `<span term="networkSwitch_prompt_manualOnline">Hurray ! There is internet available. We will connect you back, so all operations, including online search, are available. We will also sync all pending records</span>`;
+Templates.ConnManagerNew_Dialog_prompt_manualOnline = `<span term="networkSwitch_prompt_manualOnline">Hurray ! There is internet available. We will connect you back, so all operations, including online search, are available.</span>`;
+//  We will also sync all pending records
 
 Templates.ConnManagerNew_Dialog_prompt_network_Unavailable = `<span term="networkSwitch_prompt_networkUnavailable">Oops - it looks like you no longer have access to the internet. Ensure that you are in an area with network cover, and that you have data active on your mobile plan. Alternatively you can go offline and continue working.</span>`;
 

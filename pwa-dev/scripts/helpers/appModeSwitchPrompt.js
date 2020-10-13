@@ -75,7 +75,7 @@ AppModeSwitchPrompt.showManualSwitch_Dialog = function ( switchTo_appMode, cwsRe
     btnAction.html( btnActionText );
     // calculate elapsed time since going 'OFFLINE'
     //var timeWaited = AppModeSwitchPrompt.getTimeWaitedText();
-    switchPromptText += ( isSwitchToOnline ) ? '<br><br>You have been offline for ---' : '';    
+    //switchPromptText += ( isSwitchToOnline ) ? '<br><br>You have been offline for ---' : '';    
     dvPrompt.html( switchPromptText );
 
 

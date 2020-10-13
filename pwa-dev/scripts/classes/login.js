@@ -175,8 +175,8 @@ function Login( cwsRenderObj )
 					}
 					else
 					{
-						// If multiple char entered, just leave last one.
-						if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
+						// If multiple char entered, just leave last one. <-- Obsolete by 'keydown' implementation
+						//if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
 
 						var nextTag = $(this).next( '.pin_pw' );
 						if ( nextTag ) nextTag.focus();
@@ -185,6 +185,11 @@ function Login( cwsRenderObj )
 			}
 		});
 
+		// 
+		$( ".pin_pw" ).keydown( function ( event ) 
+		{		
+			if ( $( this ).val().length >= 1 ) return false;			
+		});
 
 		me.loginPinClearTag.off( 'click' ).click( function() 
 		{

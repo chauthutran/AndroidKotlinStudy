@@ -246,7 +246,7 @@ function settingsApp( cwsRender )
     
     me.populateSettingsPageData = function( dcdConfig ) 
     {
-        me.populateNetworkSyncList_Show( me.getSyncOptions(), AppInfoManager.getNetworkSync() );
+        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.getSyncOptions(), AppInfoManager.getNetworkSync() );
 
         me.populateThemeList( me.settingsInfo_ThemeSelectTag, me.themeList );
 
@@ -332,11 +332,19 @@ function settingsApp( cwsRender )
     };
 
 
-    me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
+    me.populateNetworkSyncList_Show = function( listTag, syncEveryList, syncTimer )
     {
-        Util.populateSelect( me.settingsInfo_NetworkSync, "", syncEveryList );
-        Util.setSelectDefaultByName( me.settingsInfo_NetworkSync, syncTimer );
-        me.settingsInfo_NetworkSync.val( syncTimer ); 
+        Util.populateSelect( listTag, "", syncEveryList );
+        
+        if ( !Util.checkItemOnSelect( listTag, syncTimer ) )
+        {
+            // If the value passed in is not in the list, add to the list...
+            var optionName = Util.getTimeFromMs( syncTimer, 'minute', ' mins' );
+            Util.appendOnSelect( listTag, [ { 'id': syncTimer, 'name': optionName } ] );
+        }
+
+        listTag.val( syncTimer );
+        //Util.setSelectDefaultByName( listTag, syncTimer );
 
         $( '#settingsInfo_DivnetworkSelect' ).show();
     }
@@ -421,12 +429,13 @@ function settingsApp( cwsRender )
             }
         });
 
-        me.settingsFormDivTag.find( '.dataExchange' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.dataShare' ).off( 'click' ).click( function() 
         {
             FormUtil.blockPage( undefined, function( scrimTag ) 
             {            
-                ConsoleCustomLog.showDialog();
-                    
+                //ConsoleCustomLog.showDialog();
+                me.showDataShareDiv( $( '#divDataShare' ) );
+
                 scrimTag.off( 'click' ).click( function() 
                 {
                     FormUtil.unblockPage( scrimTag );
@@ -436,6 +445,28 @@ function settingsApp( cwsRender )
 
     };
 
+
+    me.showDataShareDiv = function( divDataShareTag )
+    {
+        divDataShareTag.show();
+        $('.scrim').show();
+
+        var btnCloseTag = divDataShareTag.find( 'div.close' );
+        btnCloseTag.off( 'click' ).click( function () {
+            $('.scrim').hide();
+            divDataShareTag.hide();
+        });       
+
+
+        /*
+        <input class="inputShareCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnShare cbutton" >Share</button>  
+      </div>
+      <div>
+        <input class="inputLoadCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnLoad cbutton">Load</button>  
+        */
+    }
 
     me.setNewAppFileStatus = function( newAppFilesFound )
 	{

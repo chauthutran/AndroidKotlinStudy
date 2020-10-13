@@ -4,7 +4,7 @@ function AppInfoManager() {}
 AppInfoManager.KEY_APPINFO = "appInfo";
 
 AppInfoManager.data;
-AppInfoManager.dataBase = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { 'networkSync': '3600000' } };
+AppInfoManager.dataBase = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { } };
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
 AppInfoManager.KEY_SYNC = "sync"; 
@@ -147,9 +147,6 @@ AppInfoManager.loadAppInfo = function()
         if ( !appInfo.sync ) appInfo.sync = Util.getJsonDeepCopy( AppInfoManager.dataBase.sync );
         if ( !appInfo.logInOut ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.logInOut );
         if ( !appInfo.userInfo ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.userInfo );
-
-        // Tempory fix on unassigned ones from previous versions case handling.
-        if ( appInfo.userInfo.networkSync === undefined ) appInfo.userInfo.networkSync = AppInfoManager.dataBase.userInfo.networkSync;
     }
 
     return appInfo;
@@ -297,6 +294,15 @@ AppInfoManager.updateNetworkSync = function( dataStr )
 
 AppInfoManager.getNetworkSync = function() 
 {
+    var appInfo = AppInfoManager.data;
+
+    if ( !appInfo.userInfo ) appInfo.userInfo = {};
+    
+    if ( appInfo.userInfo.networkSync === undefined ) 
+    {
+        AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, ConfigManager.getSettingNetworkSync() );
+    }
+
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
 }	
 
