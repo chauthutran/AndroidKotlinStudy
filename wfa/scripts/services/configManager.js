@@ -38,14 +38,10 @@ ConfigManager.default_SettingPaging = {
     "pagingSize": 9 
 };
 
-// ----- Defined below/bottom in the Page --------
-
-//ConfigManager.defaultActivityType 
-//ConfigManager.defaultJsonList = {
-
+ConfigManager.KEY_SourceType_Mongo = 'mongo';
+ConfigManager.KEY_SourceType_Dhis2 = 'dhis2';
 
 // ==== Methods ======================
-
 
 // ---------------------------------
 // --- Initial Set (called from session?)
@@ -220,6 +216,12 @@ ConfigManager.getAllAreaList = function()
     return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
 };
 
+
+ConfigManager.isSourceTypeDhis2 = function()
+{
+    return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Dhis2 );
+};
+
 // ----------------------------------------
 
 ConfigManager.getSettingPaging = function()
@@ -366,6 +368,14 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
     {
         console.customLog( 'ERROR on ConfigManager.filterBySourceType_SyncDownList, errMsg: ' + errMsg );
     }
+};
+
+
+// -----------  Sync Related ------------
+
+ConfigManager.getSettingNetworkSync = function()
+{
+    return ConfigManager.getConfigJson().settings.sync.networkSync;
 };
 
 
@@ -609,6 +619,8 @@ ConfigManager.filterObjsByUserRoles = function( itemObj )
 
 ConfigManager.applyDefaults = function( configJson, defaults )
 {
+
+   ConfigManager.applyDefault_networkSync( configJson, defaults.networkSync );
    ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
 
    //ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
@@ -616,6 +628,22 @@ ConfigManager.applyDefaults = function( configJson, defaults )
    // Other defaults could be placed here..
    ConfigManager.applyDefault_favList( configJson, defaults.favList );
 };
+
+
+ConfigManager.applyDefault_networkSync = function( configJson, networkSync )
+{
+   if ( networkSync )
+   {
+      // 1. Check if 'configJson' has the content in path.
+      //    If not exists, set the 'content' of json..
+      if ( !configJson.settings ) configJson.settings = {};
+      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+
+      if ( configJson.settings.sync.networkSync === undefined 
+        || configJson.settings.sync.networkSync === "" ) configJson.settings.sync.networkSync = networkSync;
+   }
+};
+
 
 ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
 {
@@ -687,8 +715,10 @@ ConfigManager.defaultActivityType = {
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
 
+    "networkSync": "3600000",
+
     // 'syncDown' changed to array due to 'userRole' filtering..  In use, we simply get 1st one in the array after userRole filter + filter by dataType
-   "syncDown": [
+    "syncDown": [
         {   "searchBodyEval": {
                 "find": {
                     "clientDetails.users": "INFO.login_UserName",

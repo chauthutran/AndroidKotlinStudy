@@ -57,8 +57,6 @@ function Statistics( cwsRender )
 
             // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
             if ( _statsPeriodOptions ) me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
-            TranslationManager.translatePage();
-
 
             me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
 
@@ -66,6 +64,8 @@ function Statistics( cwsRender )
 
                 // This method should have been loaded by above 'script' content eval
                 renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+
+                TranslationManager.translatePage();
             });
         });    
 
@@ -105,6 +105,8 @@ function Statistics( cwsRender )
                 me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {        
     
                     renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+
+                    TranslationManager.translatePage();
                 });
     
             }, 700 );
@@ -162,8 +164,30 @@ function Statistics( cwsRender )
         {
             divCustomDateTag.hide();
 
-            divDateInfoTag.find( '.spanPeriod_Start' ).text( ( opt_startPeriod ) ? opt_startPeriod : 'ALL' );
-            divDateInfoTag.find( '.spanPeriod_End' ).text( ( opt_endPeriod ) ? opt_endPeriod : 'ALL' );
+            var spanPeriod_StartTag = divDateInfoTag.find( '.spanPeriod_Start' );
+            var spanPeriod_EndTag = divDateInfoTag.find( '.spanPeriod_End' );
+
+            if ( opt_startPeriod ) 
+            {
+                spanPeriod_StartTag.attr( 'term', '' );
+                spanPeriod_StartTag.text( opt_startPeriod );
+            }
+            else
+            {
+                spanPeriod_StartTag.attr( 'term', 'stats_period_ALL' );
+                spanPeriod_StartTag.text( 'ALL' );
+            }
+
+            if ( opt_endPeriod ) 
+            {
+                spanPeriod_EndTag.attr( 'term', '' );
+                spanPeriod_EndTag.text( opt_endPeriod );
+            }
+            else
+            {
+                spanPeriod_EndTag.attr( 'term', 'stats_period_ALL' );
+                spanPeriod_EndTag.text( 'ALL' );
+            }
 
             divDateInfoTag.show( 'fast' );
 
@@ -377,7 +401,7 @@ function Statistics( cwsRender )
 
             var optTerm = ( option.term ) ? ' term="' + option.term + '"' : '';
 
-            var newOpt = $( '<option from="' + option.from + '" to="' + option.to + '" type="loaded" ><span' + optTerm + '>' + option.name + '</span></option>' );
+            var newOpt = $( '<option from="' + option.from + '" to="' + option.to + '" type="loaded" ' + optTerm + '>' + option.name + '</option>' );
 
             if ( option.selected ) newOpt.attr( 'selected', 'selected' );
 

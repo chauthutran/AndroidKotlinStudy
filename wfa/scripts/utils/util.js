@@ -1220,6 +1220,30 @@ Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
 };
 
 
+Util.appendOnSelect = function( selectObj, dataArr, dataType )
+{
+	if ( dataArr )
+	{
+		dataArr.forEach( item => 
+		{
+			var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+
+			if ( dataType === "Array" ) option.attr( "value", item ).text( item );
+			else option.attr( "value", item.id ).text( item.name );
+
+			selectObj.append( option );
+		});
+	}
+};
+
+
+Util.checkItemOnSelect = function( selectObj, itemValue )
+{
+	return ( selectObj.find( 'option[value="' + itemValue + '"]' ).length > 0 );
+};
+
+// -------------------------
+
 Util.decodeURI_ItemList = function( jsonItemList, propName )
 {
 	if ( jsonItemList )
@@ -1238,6 +1262,7 @@ Util.setSelectDefaultByName = function( ctrlTag, name )
 {
 	ctrlTag.find( "option:contains(" + name + ")" ).attr( 'selected', 'selected' ); //true
 };
+
 
 Util.getSelectedOptionName = function( ctrlTag )
 {
@@ -1683,9 +1708,23 @@ Util.getTimeMsStr = function( input )
 	timeMs += sec * 1000;
 
 	return timeMs;
-}
+};
 
 
+Util.getTimeFromMs = function( inputMsTime, toTimeName, optionalStr ) 
+{	
+	var outputVal = 0;
+	var msTimeNum = Util.getNum( inputMsTime );
+
+	Util.tryCatchContinue( function() 
+	{
+		if ( toTimeName === "second" ) outputVal = Math.round( msTimeNum / 1000 );
+		else if ( toTimeName === "minute" ) outputVal = Math.round( timeNum / 1000 / 60 );
+		else if ( toTimeName === "hour" ) outputVal = Math.round( timeNum / 1000 / 60 / 60 );	
+	}, 'Util.getTimeFromMs' );
+
+	return ( optionalStr ) ? outputVal + optionalStr : outputVal;
+};
 
 // -----------------------------------------------------------------
 

@@ -246,7 +246,7 @@ function settingsApp( cwsRender )
     
     me.populateSettingsPageData = function( dcdConfig ) 
     {
-        me.populateNetworkSyncList_Show( me.getSyncOptions(), AppInfoManager.getNetworkSync() );
+        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.getSyncOptions(), AppInfoManager.getNetworkSync() );
 
         me.populateThemeList( me.settingsInfo_ThemeSelectTag, me.themeList );
 
@@ -332,11 +332,19 @@ function settingsApp( cwsRender )
     };
 
 
-    me.populateNetworkSyncList_Show = function( syncEveryList, syncTimer )
+    me.populateNetworkSyncList_Show = function( listTag, syncEveryList, syncTimer )
     {
-        Util.populateSelect( me.settingsInfo_NetworkSync, "", syncEveryList );
-        Util.setSelectDefaultByName( me.settingsInfo_NetworkSync, syncTimer );
-        me.settingsInfo_NetworkSync.val( syncTimer ); 
+        Util.populateSelect( listTag, "", syncEveryList );
+        
+        if ( !Util.checkItemOnSelect( listTag, syncTimer ) )
+        {
+            // If the value passed in is not in the list, add to the list...
+            var optionName = Util.getTimeFromMs( syncTimer, 'minute', ' mins' );
+            Util.appendOnSelect( listTag, [ { 'id': syncTimer, 'name': optionName } ] );
+        }
+
+        listTag.val( syncTimer );
+        //Util.setSelectDefaultByName( listTag, syncTimer );
 
         $( '#settingsInfo_DivnetworkSelect' ).show();
     }
@@ -357,27 +365,12 @@ function settingsApp( cwsRender )
 
     me.setUpMoreInfoDiv = function()
     {
-        // New log open dialog
-        $( '#showLogs' ).off( 'click' ).click( function() 
-        {
-			FormUtil.blockPage( undefined, function( scrimTag ) 
-			{            
-                ConsoleCustomLog.showDialog();
-                   
-				scrimTag.off( 'click' ).click( function() 
-				{
-					FormUtil.unblockPage( scrimTag );
-				});
-			});
-        });
-
-
-        $( '#linkAppVersionCheck' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppVersionCheck' ).off( 'click' ).click( function() 
         {
             console.customLog( 'linkAppVersionCheck clicked!!' );
         });    
 
-        $( '#linkAppUpdateCheck' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
             // ?? Check only if during online?
             SwManager.checkNewAppFile( function() 
@@ -387,12 +380,26 @@ function settingsApp( cwsRender )
             });
         });      
 
-        $( '#linkAppUpdateRefresh' ).off( 'click' ).click( function() 
+        me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
             AppUtil.appReloadWtMsg();
         });      
 
-        $( '#syncDown' ).off( 'click' ).click( function() 
+        // New log open dialog
+        me.settingsFormDivTag.find( '.showLogs' ).off( 'click' ).click( function() 
+        {
+            FormUtil.blockPage( undefined, function( scrimTag ) 
+            {            
+                ConsoleCustomLog.showDialog();
+                    
+                scrimTag.off( 'click' ).click( function() 
+                {
+                    FormUtil.unblockPage( scrimTag );
+                });
+            });
+        });
+        
+        me.settingsFormDivTag.find( '.syncDown' ).off( 'click' ).click( function() 
         {
             if ( !ConfigManager.getSyncDownSetting().enable ) MsgManager.msgAreaShow( 'SyncDown not enabled in config settings.' );
             else
@@ -422,20 +429,56 @@ function settingsApp( cwsRender )
             }
         });
 
+        me.settingsFormDivTag.find( '.dataShare' ).off( 'click' ).click( function() 
+        {
+            FormUtil.blockPage( undefined, function( scrimTag ) 
+            {            
+                //ConsoleCustomLog.showDialog();
+                me.showDataShareDiv( $( '#divDataShare' ) );
+
+                scrimTag.off( 'click' ).click( function() 
+                {
+                    FormUtil.unblockPage( scrimTag );
+                });
+            });
+        });     
+
     };
 
+
+    me.showDataShareDiv = function( divDataShareTag )
+    {
+        divDataShareTag.show();
+        $('.scrim').show();
+
+        var btnCloseTag = divDataShareTag.find( 'div.close' );
+        btnCloseTag.off( 'click' ).click( function () {
+            $('.scrim').hide();
+            divDataShareTag.hide();
+        });       
+
+
+        /*
+        <input class="inputShareCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnShare cbutton" >Share</button>  
+      </div>
+      <div>
+        <input class="inputLoadCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+        <button class="btnLoad cbutton">Load</button>  
+        */
+    }
 
     me.setNewAppFileStatus = function( newAppFilesFound )
 	{
         if ( newAppFilesFound ) 
         {
-            $( '#linkAppUpdateCheck' ).hide();    
-            $( '#linkAppUpdateRefresh' ).show();
+            me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).hide();    
+            me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).show();
         }
         else 
         {
-            $( '#linkAppUpdateCheck' ).show();    
-            $( '#linkAppUpdateRefresh' ).hide();
+            me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).show();    
+            me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).hide();
         }
 	};
 

@@ -5,11 +5,19 @@
   "author": "James Chang",
   "scripts": {
     "localDev": "node sw_build_pwa-dev.js && xcopy pwa-dev C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
+
     "devBuild": "node sw_build_pwa-dev.js && tar.exe cf pwa-dev.zip pwa-dev",
+
     "t_copyDev": "xcopy pwa-dev pwa-test /E/H/C/I/Y",
     "t_setFiles": "xcopy stageFiles\\test_manifest.json pwa-test\\manifest.json /Y && xcopy stageFiles\\test-icons pwa-test\\images\\icons /E/H/C/I/Y",
     "t_swZipFolder" : "node sw_build_pwa-test.js && tar.exe cf pwa-test.zip pwa-test && RMDIR /Q /S pwa-test",
     "tBuild": "npm run t_copyDev && npm run t_setFiles && npm run t_swZipFolder",
+
+    "w_copyDev": "xcopy pwa-dev wfa /E/H/C/I/Y",
+    "w_setFiles": "xcopy stageFiles\\wfa_manifest.json pwa-test\\manifest.json /Y && xcopy stageFiles\\wfa-icons pwa-test\\images\\icons /E/H/C/I/Y",
+    "w_swZipFolder" : "node sw_build-wfa.js && tar.exe cf wfa.zip wfa && RMDIR /Q /S wfa",
+    "wBuild": "npm run w_copyDev && npm run w_setFiles && npm run w_swZipFolder",
+
     "minifyJS": "uglifyjs scripts.js --compress --mangle --warn --output scripts.min.js",
     "utest": "karma start",
     "todoScript": "Should use karma start to pass/fail before devBuild & tBuild!!!"

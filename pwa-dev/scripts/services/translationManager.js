@@ -3,6 +3,9 @@
 //     TranslationManager (old 'langTerm.js')
 //          - Downloads and stores the translation data
 //          - Provide html tag translation
+
+// 			- Ways to refresh the cache of translation..
+// 				https://www.psi-connect.org/connectTranslation/api/retrieveTranslations?project=234823
 // -------------------------------------------------
 
 function TranslationManager()  {};
@@ -111,6 +114,8 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 			// CHECK:
 			// ?? This does not select the language by default?  Or does it populate the language by default?
 
+			// Ways to refresh the cache of translation..
+			// https://www.psi-connect.org/connectTranslation/api/retrieveTranslations?project=234823
 
 			returnFunc( allLangTerms_downloaded );
 		});

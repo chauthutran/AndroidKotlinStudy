@@ -260,20 +260,27 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function()
 {
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase ) {
+		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, activityListChanged ) {
 
 			if ( success ) 
 			{  
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
 				if ( changeOccurred && !mockCase )
 				{
-					var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
+					if ( ConfigManager.isSourceTypeDhis2() && !activityListChanged )
+					{
+						// For 'dhis2' case, if new activities found, do not display 'Refresh' message..
+					}
+					else
+					{
+						var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
-					btnRefreshTag.off( 'click' ).click ( () => {
-						SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
-					});
-
-					MsgManager.notificationMessage( 'SyncDown data found', 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
+						btnRefreshTag.off( 'click' ).click ( () => {
+							SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+						});
+	
+						MsgManager.notificationMessage( 'SyncDown data found', 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
+					}
 				}
 			} 
 			else ScheduleManager.syncDownTimeoutCall();

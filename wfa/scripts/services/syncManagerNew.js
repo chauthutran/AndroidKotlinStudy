@@ -66,8 +66,12 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
         var resultData = { 'success': 0, 'failure': 0 };
 
+        // During the 'sync', it updates the activity list..  
+        // Thus, we get below list for just list of activityId..  Copy of the original list. 
+        var activityListCopy = Util.getJsonDeepCopy( ActivityDataManager.getActivityList() );
+
         // NOTE: CHECK ONLINE is done within syncUpItem_RecursiveProcess
-        SyncManagerNew.syncUpItem_RecursiveProcess( ActivityDataManager.getActivityList(), 0, cwsRenderObj, resultData, function() 
+        SyncManagerNew.syncUpItem_RecursiveProcess( activityListCopy, 0, cwsRenderObj, resultData, function() 
         {
             SyncManagerNew.setSyncAll_Running( runType, false );
             SyncManagerNew.update_UI_FinishSyncAll();
@@ -96,13 +100,9 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 };
 
 
-
 SyncManagerNew.syncDown = function( runType, callBack )
 {
-    // NOTE: We can check network connection here, or from calling place.  
-    //  Choose to check on calling place for now.  ConnManagerNew.isAppMode_Online();
     SyncManagerNew.update_UI_StartSyncAll();
-
     SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
 
     // Retrieve data..
@@ -128,7 +128,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
             SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + downloadedData.clients.length + " clients: " );
 
-            ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge ) 
+            ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge, activityListChanged ) 
             {
                 SyncManagerNew.SyncMsg_InsertMsg( "Merged data.." );
                 SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + downloadedData.clients.length + " clients: " );
@@ -136,7 +136,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
 
-                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase );
+                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase, activityListChanged );
             });            
         }
     });    

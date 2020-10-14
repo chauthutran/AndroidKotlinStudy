@@ -17,9 +17,9 @@
   
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2020-10-02'; //_manifestData.date;
-    var _ver = '1.3.0-rc.1.52'; //_manifestData.version;
-    var _versionNote = '- Statistic custom date range date picker.'; //_manifestData.versionNote;
+    var _verDate = '2020-10-13'; //_manifestData.date;
+    var _ver = '1.3.0-rc.1.62'; //_manifestData.version;
+    var _versionNote = '- DatePicker issue fix.'; //_manifestData.versionNote;
     var _themeColor = '#000000';
   </script>
 
@@ -135,12 +135,11 @@
   <!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
 
   <!-- START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
-  <div class="Nav2" style="display:none;"></div>
+  <div id="activityListViewNav" class="Nav2" style="display:none;"></div>
   <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
   <!-- START > MENU LIST CONTAINER DIV -->
-  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation"
-    style="z-index: 1; display: none; width: 280px; left: -280px;"></div>
+  <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 2100; display: none; width: 280px; left: -280px;"></div>
   <!-- END > MENU LIST CONTAINER DIV -->
 
   <div id="divProgressBar" class="progress">
@@ -312,15 +311,12 @@
           <div class="field__label"><label term="settings_theme">Others</label></div>
           <div class="field__controls">
             <div class="field__selector">
-              <button id="linkAppUpdateCheck" class="cbutton" style="background-color: cadetblue;">App Update Check</button>
-              <button id="linkAppUpdateRefresh" class="cbutton" style="display: none;">App Update Apply</button>
-              &nbsp;
-              <button id="showLogs" class="cbutton" style="background-color: cadetblue;">Logs</button>
-              &nbsp;
-              <button id="appInstall" class="cbutton" style="display: none;">App Install</button>       
-              &nbsp;
-              <button id="syncDown" class="cbutton">Sync Down</button>       
-               
+              <button class="appInstall cbutton" style="display: none;">App Install</button>
+              <button class="linkAppUpdateCheck cbutton" style="background-color: cadetblue;">App Update Check</button>
+              <button class="linkAppUpdateRefresh cbutton" style="display: none;">App Update Apply</button>
+              <button class="syncDown cbutton">Sync Down</button>
+              <button class="showLogs cbutton" style="background-color: cadetblue;">Logs</button>
+              <button class="dataShare cbutton">Data Share</button>               
             </div>
             <div class="field__right"></div>
           </div>
@@ -364,8 +360,6 @@
 
       </div>
     </div>
-
-    <div class="sheet_bottom-scrim" style="display: none;"></div>
 
   </div>
   <!-- END > SETTINGS FORM DIV -->
@@ -414,12 +408,50 @@
   <!-- END > ABOUT FORM DIV -->
 
   <!--  START > STATISTICS REPORT -->
-  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
+  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;">
+    <div class="wapper_card">
+      <div class="sheet-title c_900" >
+        <img src='images/arrow_back.svg' class='btnBack'>
+        <span term="menu_statistics">Statistics</span>
+      </div>
+    
+      <div id="statsNav2" class="Nav2" style="position:absolute !important;">
+        <div class="controls">
+            <div class="field">
+                <div class="field__label"><label term="stats_period_select">Select a period</label><span>*</span></div>
+                <div class="field__controls">
+                    <div class="field__selector">
+                        <select class="stats_select_period" mandatory="true">
+                            <option from="0" to="0" value="0" term="stats_period_select">Select a period</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="stats_t_info text_help" style="display:none;">
+              <span term="stats_periodDateBetween">Between</span> <span class="spanPeriod_Start"></span> <span term="stats_periodDateAnd">and</span> <span class="spanPeriod_End"></span>
+            </div>
+            <div class="stats_t_custom text_help" style="display:none;">
+              <span style="font-size: 0.71rem;" term="stats_periodDateBetween">Between</span>
+              <input class="inputCustomPeriod_Start statsCusDate" readonly />
+              <button class="customStartPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+              <span style="font-size: 0.71rem;" term="stats_periodDateAnd">And</span>
+              <input class="inputCustomPeriod_End statsCusDate" readonly/> 
+              <button class="customEndPeriodBtn dateButton2"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+              <button class="btnCustomPeriodRun cbutton" style="background-color: cornflowerblue;">Run</button>
+            </div>
+        </div>
+      </div>
+      
+      <div class="loadingImg_statistic" style="margin: 80px 0px 0px 50px; display: none;"><img src="images/loading_big_blue.gif"></div>
+    
+      <div class="statsContentPage card _tab activity" style="overflow: auto !important;"></div>
+    </div>
+  </div>
   <!-- END > STATISTICS REPORT -->
 
   <!--  START > CUSTOM LOG INFO -->
-  <div id="divCustomDataDisplay"
-    style="display:none; z-index: 9999; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+  <div id="divCustomLogDisplay"
+    style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
     <div class="divMainLayout" style="height:100%;">
 
       <div style="margin-bottom: 5px;">Logs:</div>
@@ -451,6 +483,34 @@
   </div>
   <!--  END > CUSTOM LOG INFO -->
 
+  <div id="divDataShare" style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+    <div class="divMainLayout" style="height:100%;">
+
+      <div style="margin-bottom: 5px;">Data Share:</div>
+
+      <div>
+        <div>
+          <input class="inputShareCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+          <button class="btnShare cbutton" style="background-color: cadetblue;" >Share</button>  
+        </div>
+        <div>
+          <input class="inputLoadCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
+          <button class="btnLoad cbutton">Load</button>  
+        </div>  
+      </div>
+
+      <div class="divMainContent" style="overflow: scroll;height: 65%; margin-top: 10px; background-color: #eee;padding: 7px;">
+      </div>
+
+      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
+        <div class="button__container">
+          <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- START > NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
   <!-- END > NETWORK SWITCH DIV -->
@@ -466,6 +526,7 @@
   <div id="divMsgAreaBottom" class="sheet_bottom-fs" style="display: none;"></div>
   <div id="divMsgAreaBottomScrim" class="sheet_bottom-scrim" style="display: none;"></div>
 
+  <!-- Shoudl be ID.. -->
   <div class="scrim" style="display: none;"></div>
 
   <!-- START > RESERVED QR CREATOR -->

@@ -3,7 +3,8 @@ function AppInfoManager() {}
 
 AppInfoManager.KEY_APPINFO = "appInfo";
 
-AppInfoManager.data = { 'translation': {}, 'sync': {}, 'logInOut': {} };  // minimum basic 'appInfo' shell structure
+AppInfoManager.data;
+AppInfoManager.dataBase = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { } };
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
 AppInfoManager.KEY_SYNC = "sync"; 
@@ -136,15 +137,16 @@ AppInfoManager.loadAppInfo = function()
 
     if ( !appInfo )
     {
-        appInfo = AppInfoManager.data;
+        appInfo = Util.getJsonDeepCopy( AppInfoManager.dataBase );
     }
     else
     {
         // On Local Storage data, check the missing data.
         // Set minial structure - 'translation' and 'sync' shell should always exists..
-        if ( !appInfo.translation ) appInfo.translation = {};
-        if ( !appInfo.sync ) appInfo.sync = {};
-        if ( !appInfo.logInOut ) appInfo.logInOut = {};
+        if ( !appInfo.translation ) appInfo.translation = Util.getJsonDeepCopy( AppInfoManager.dataBase.translation );
+        if ( !appInfo.sync ) appInfo.sync = Util.getJsonDeepCopy( AppInfoManager.dataBase.sync );
+        if ( !appInfo.logInOut ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.logInOut );
+        if ( !appInfo.userInfo ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.userInfo );
     }
 
     return appInfo;
@@ -178,14 +180,9 @@ AppInfoManager.createUpdateUserInfo = function( userName )
     
     // UNDERSTAND ABOUT 'userName' saving & use, but... what about lastUpdated, etc?
     // All others should move some place else?
-    if ( userInfo )
-    {
-        userInfo.user = userName;
-    }
-    else
-    {
-        userInfo = { user: userName };
-    }    
+    if ( !userInfo ) userInfo = Util.getJsonDeepCopy( AppInfoManager.dataBase.userInfo );
+        
+    userInfo.user = userName;
     
     AppInfoManager.updateUserInfo( userInfo );
 };
@@ -199,14 +196,12 @@ AppInfoManager.updateUserInfo = function( jsonData )
 
 AppInfoManager.getUserInfo = function()
 {
+    //return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
+
     return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
 };
 
-
-AppInfoManager.removeUserInfo = function()
-{
-    AppInfoManager.removeData( AppInfoManager.KEY_USERINFO );
-};
+//AppInfoManager.removeUserInfo = function() { AppInfoManager.removeData( AppInfoManager.KEY_USERINFO ); };
 
 // ------------------------------------------------------------------------------------  
 // ----------------  langTerms
@@ -274,10 +269,12 @@ AppInfoManager.setLangLastDateTime = function( dateObj )
 // ------------------------------------------------------------------------------------  
 // ----------------  sync Last Downloaded
 
-
 AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_lastDownloaded( dateStr );
 }	
 
 AppInfoManager.getSyncLastDownloadInfo = function()
@@ -289,7 +286,6 @@ AppInfoManager.getSyncLastDownloadInfo = function()
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in "userinfo"
 
-
 // networkSync
 AppInfoManager.updateNetworkSync = function( dataStr ) 
 {
@@ -298,9 +294,19 @@ AppInfoManager.updateNetworkSync = function( dataStr )
 
 AppInfoManager.getNetworkSync = function() 
 {
+    var appInfo = AppInfoManager.data;
+
+    if ( !appInfo.userInfo ) appInfo.userInfo = {};
+    
+    if ( appInfo.userInfo.networkSync === undefined ) 
+    {
+        AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, ConfigManager.getSettingNetworkSync() );
+    }
+
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
 }	
 
+// -----------------------------------------------
 
 // TRAN  TODO : We should use "updateLangTerms" instead of this method "updateLanguage"
 // language

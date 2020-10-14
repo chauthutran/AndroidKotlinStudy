@@ -196,7 +196,7 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack )
 	var existingAppMode = statusInfo.appMode;
 
 	// Set appMode
-	if ( statusInfo.manual_Offline.enabled ) statusInfo.appMode = ConnManagerNew.OFFLINE;
+	if ( statusInfo.manual_Offline.enabled ) statusInfo.appMode = ConnManagerNew.OFFLINE;  // THIS NEVER GETS CALLED PROPERLY?
 	else statusInfo.appMode = appModeNew;
 	
 

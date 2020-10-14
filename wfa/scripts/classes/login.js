@@ -25,7 +25,10 @@ function Login( cwsRenderObj )
 	me.loginFormTag = $( '.login_data__fields' );
 	me.loginFieldTag = $( '#loginField' );
 
+	// Flags
 	me.lastPinTrigger = false;
+	me.loginPage1stTouchFlag = false;
+	me.loginBtn_NotHideFlag = false;
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -37,6 +40,9 @@ function Login( cwsRenderObj )
 
 	me.render = function()
 	{	
+		// In test version with special url param, do not hide login buttons
+		me.testVersion_LoginBtn_NotHide( window.location.href, 'test', 'Y' );
+
 		me.appVersionInfoDisplay();
 
 		me.openForm();  // with reset Val
@@ -58,6 +64,7 @@ function Login( cwsRenderObj )
 			me.lastPinTrigger = true;
 			me.loginBtnTag.click();
 		});
+
 	};
 
 	// =============================================
@@ -76,6 +83,13 @@ function Login( cwsRenderObj )
 	
 	me.setLoginBtnEvents = function()
 	{
+		// Detect Activity - But How do we know when this activity happened after logout/inactivity?
+		// - No way to tell the inactivity...   We can kind of tell if it was inactive for last 5 min?
+		//me.loginFormDivTag.find( 'div' ).hover( function() {
+			// Mark it and canel this event..
+		//	console.log( 'OnHover' );
+		//});
+
 		// Disable this...
 		me.loginBtnTag.focus( function() {
 			me.passRealTag.hide();
@@ -161,8 +175,8 @@ function Login( cwsRenderObj )
 					}
 					else
 					{
-						// If multiple char entered, just leave last one.
-						if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
+						// If multiple char entered, just leave last one. <-- Obsolete by 'keydown' implementation
+						//if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
 
 						var nextTag = $(this).next( '.pin_pw' );
 						if ( nextTag ) nextTag.focus();
@@ -171,6 +185,11 @@ function Login( cwsRenderObj )
 			}
 		});
 
+		// 
+		$( ".pin_pw" ).keydown( function ( event ) 
+		{		
+			if ( $( this ).val().length >= 1 ) return false;			
+		});
 
 		me.loginPinClearTag.off( 'click' ).click( function() 
 		{
@@ -183,12 +202,28 @@ function Login( cwsRenderObj )
 
 	// ============================================
 
+	me.testVersion_LoginBtn_NotHide = function( url, paramName, paramVal )
+	{
+		Util.tryCatchContinue( function() 
+		{
+			me.loginBtn_NotHideFlag = ( Util.getURLParameterByName( url, paramName ) === paramVal );			
+		}, 'Login.testVersion_LoginBtn_NotHide' );
+	};
+
 	me.loginBottomButtonsVisible = function( bShow )
 	{
 		var buttonsDivTag = $( ".login_cta" );
-		
-		if ( bShow) buttonsDivTag.show();
-		else buttonsDivTag.hide();
+
+		if ( me.loginBtn_NotHideFlag )
+		{
+			// Always show
+			buttonsDivTag.show();
+		}
+		else
+		{		
+			if ( bShow) buttonsDivTag.show();
+			else buttonsDivTag.hide();
+		}
 	};
 
 
@@ -309,6 +344,10 @@ function Login( cwsRenderObj )
 	
 	me.openForm = function()
 	{
+		// ReSet the 1st touch/focus flag..
+		me.loginPage1stTouchFlag = false;
+
+
 		// Hide non login related tags..
 		$( '.Nav1' ).hide();
 

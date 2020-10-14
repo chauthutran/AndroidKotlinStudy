@@ -169,15 +169,16 @@ ClientDataManager.removeClientIndex = function( client )
 
 ClientDataManager.mergeDownloadedClients = function( downloadedData, processingInfo, callBack )
 {
-    var changeOccurred = false;
-    var updateOccurred = false;
+    var dataChangeOccurred = false;
+    var activityListChanged = false;
+    var case_dhis2RedeemMerge = false;
     var newClients = [];
 
 
     // 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
     if ( downloadedData && downloadedData.clients && Util.isTypeArray( downloadedData.clients ) )
     {
-        var case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
+        case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
 
         downloadedData.clients.forEach( dwClient => 
         {
@@ -211,8 +212,9 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                                 appClient.date = dwClient.date;
                             }
 
-                            changeOccurred = true;
-                            updateOccurred = true;
+                            if ( addedActivityCount > 0 ) activityListChanged = true;
+
+                            dataChangeOccurred = true;
                         }
                     }
                     else
@@ -221,7 +223,9 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                         if ( !case_dhis2RedeemMerge )
                         {
                             newClients.push( dwClient );
-                            changeOccurred = true;    
+                            dataChangeOccurred = true;  
+
+                            if ( dwClient.activities && dwClient.activities > 0 ) activityListChanged = true;
                         }
                     }
                 }
@@ -234,7 +238,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
     }
 
 
-    if ( changeOccurred ) 
+    if ( dataChangeOccurred ) 
     {
         // if new list to push to pwaClients exists, add to the list.
         if ( newClients.length > 0 ) 
@@ -246,12 +250,12 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
         // Need to create ClientDataManager..
         ClientDataManager.saveCurrent_ClientsStore( function() {
-            if ( callBack ) callBack( changeOccurred );
+            if ( callBack ) callBack( true, activityListChanged );
         });
     } 
     else 
     {
-        if ( callBack ) callBack( changeOccurred );
+        if ( callBack ) callBack( false, activityListChanged );
     }
 }; 
 
