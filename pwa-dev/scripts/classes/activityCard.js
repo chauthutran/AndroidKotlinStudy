@@ -225,7 +225,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.displayActivitySyncStatus = function( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson )
+    me.displayActivitySyncStatus = function( statusVal, divSyncStatusTextTag, divSyncIconTag )
     {
         // reset..
         divSyncIconTag.empty();
@@ -295,9 +295,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
             var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
             
-            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+            var statusVal = ( activityJson && activityJson.processing ) ? activityJson.processing.status: '';
     
-            me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson ); 
+            me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag ); 
         }    
     };
 
@@ -637,13 +637,20 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             // If 'syncUpResponse' changed status, make the UI applicable..
             var newActivityJson = ActivityDataManager.getActivityById( me.activityId );
-            me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
 
-
-            // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
-            if ( responseJson && responseJson.report ) 
+            if ( newActivityJson )
             {
-                me.processResponseCaseAction( responseJson.report, activityJson_Orig.id );
+                me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+
+                // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
+                if ( responseJson && responseJson.report ) 
+                {
+                    me.processResponseCaseAction( responseJson.report, activityJson_Orig.id );
+                }    
+            }
+            else
+            {
+                throw 'FAILED to handle syncUp response, activityId lost: ' + me.activityId;
             }
 
             afterDoneCall( success );

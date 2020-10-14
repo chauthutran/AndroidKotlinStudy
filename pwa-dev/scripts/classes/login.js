@@ -1,5 +1,12 @@
 // -------------------------------------------
 // -- Login Class/Methods
+//
+//  - Collect userName input and pin in real time..
+//		- use it on 'render' as needed (load it.)
+//		- clear on render..
+//		- test2
+// 
+// -------------------------------------------- 
 function Login( cwsRenderObj )
 {
     var me = this;
@@ -25,11 +32,16 @@ function Login( cwsRenderObj )
 	me.loginFormTag = $( '.login_data__fields' );
 	me.loginFieldTag = $( '#loginField' );
 
+	// ------------
+
 	// Flags
 	me.lastPinTrigger = false;
 	me.loginPage1stTouchFlag = false;
 	me.loginBtn_NotHideFlag = false;
 
+	me.current_userName = "";	// Used to load the userName/password when it got refreshed by mistake - or by appUpdate
+	me.current_password = {};
+	
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
@@ -65,6 +77,75 @@ function Login( cwsRenderObj )
 			me.loginBtnTag.click();
 		});
 
+		// If AppUpdate Refresh happened during Login, restore the current key typings
+		me.tempCurrentKeysRestore();
+	};
+
+	// -----------------------------------
+
+	
+	// =============================================
+	// === TEMP CURRENT KEYS RESTORE RELATED =======
+	
+	me.tempCurrentKeysRestore = function()
+	{
+		me.resetLoginCurrentKeys();
+
+		var tempCurrentKeys = AppInfoManager.getLoginCurrentKeys();
+		if ( tempCurrentKeys )
+		{
+			// load the keys to login page..
+			me.restoreLoginKeys( tempCurrentKeys );
+
+			AppInfoManager.clearLoginCurrentKeys();
+		}
+	};
+
+
+	// This method is used by 'swManager'
+	me.getLoginCurrentKeys = function()
+	{
+		return { 'userName': me.current_userName, 'password': me.current_password };
+	};
+
+	me.resetLoginCurrentKeys = function()
+	{
+		me.current_userName = '';
+		me.current_password = {};		
+	};
+
+	me.restoreLoginKeys = function( keysJson )
+	{
+		if ( keysJson.keys )
+		{
+			if ( keysJson.keys.userName	) me.loginUserNameTag.val( keysJson.keys.userName );
+			if ( keysJson.keys.password	) me.restoreCurrentPassword( keysJson.keys.password );
+		}
+	};
+	
+	me.getCurrentPassword = function()
+	{
+		var splitPasswordTag = $( '.split_password' );
+
+		return { 
+			'p1': splitPasswordTag.find( '.pin1' ).val()
+			,'p2': splitPasswordTag.find( '.pin2' ).val()
+			,'p3': splitPasswordTag.find( '.pin3' ).val()
+			,'p4': splitPasswordTag.find( '.pin4' ).val()
+		};
+	};
+
+	me.restoreCurrentPassword = function( pwdJson )
+	{
+		var splitPasswordTag = $( '.split_password' );
+
+		if ( pwdJson )
+		{
+			if ( pwdJson.p1 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p1 );
+			if ( pwdJson.p2 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p2 );
+			if ( pwdJson.p3 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p3 );
+			if ( pwdJson.p4 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p4 );
+		}
 	};
 
 	// =============================================
@@ -74,14 +155,14 @@ function Login( cwsRenderObj )
 		// Tab & Anchor UI related click events
 		FormUtil.setUpTabAnchorUI( me.loginFormDivTag );
 
-		me.setLoginBtnEvents();
+		me.setLoginEvents();
 		me.setAdvOptBtnClick();
 	}
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
 	
-	me.setLoginBtnEvents = function()
+	me.setLoginEvents = function()
 	{
 		// Detect Activity - But How do we know when this activity happened after logout/inactivity?
 		// - No way to tell the inactivity...   We can kind of tell if it was inactive for last 5 min?
@@ -89,6 +170,13 @@ function Login( cwsRenderObj )
 			// Mark it and canel this event..
 		//	console.log( 'OnHover' );
 		//});
+
+
+		// Save userName that user has entered - to restore when App refreshed by appUpdate
+		me.loginUserNameTag.keyup( function() {
+			me.current_userName = me.loginUserNameTag.val();
+		});
+
 
 		// Disable this...
 		me.loginBtnTag.focus( function() {
@@ -183,12 +271,18 @@ function Login( cwsRenderObj )
 					} 
 				}
 			}
+
+			me.current_password = me.getCurrentPassword();
 		});
 
 		// 
 		$( ".pin_pw" ).keydown( function ( event ) 
 		{		
-			if ( $( this ).val().length >= 1 ) return false;			
+			var isDeleteKey = ( event.keyCode == 46 || event.keyCode == 8 );
+
+			// If there is already a char in the pin, do not add it.
+			// However, if that is delete key, allow it.
+			if ( !isDeleteKey && $( this ).val().length >= 1 ) return false;			
 		});
 
 		me.loginPinClearTag.off( 'click' ).click( function() 
@@ -199,33 +293,6 @@ function Login( cwsRenderObj )
 			// NOTE: We also need to cancel the current login process..
 		});
 	};
-
-	// ============================================
-
-	me.testVersion_LoginBtn_NotHide = function( url, paramName, paramVal )
-	{
-		Util.tryCatchContinue( function() 
-		{
-			me.loginBtn_NotHideFlag = ( Util.getURLParameterByName( url, paramName ) === paramVal );			
-		}, 'Login.testVersion_LoginBtn_NotHide' );
-	};
-
-	me.loginBottomButtonsVisible = function( bShow )
-	{
-		var buttonsDivTag = $( ".login_cta" );
-
-		if ( me.loginBtn_NotHideFlag )
-		{
-			// Always show
-			buttonsDivTag.show();
-		}
-		else
-		{		
-			if ( bShow) buttonsDivTag.show();
-			else buttonsDivTag.hide();
-		}
-	};
-
 
 	me.setAdvOptBtnClick = function()
 	{
@@ -287,6 +354,33 @@ function Login( cwsRenderObj )
 				FormUtil.unblockPage();
 			});
 		});
+	};
+
+	
+	// ============================================
+
+	me.testVersion_LoginBtn_NotHide = function( url, paramName, paramVal )
+	{
+		Util.tryCatchContinue( function() 
+		{
+			me.loginBtn_NotHideFlag = ( Util.getURLParameterByName( url, paramName ) === paramVal );			
+		}, 'Login.testVersion_LoginBtn_NotHide' );
+	};
+
+	me.loginBottomButtonsVisible = function( bShow )
+	{
+		var buttonsDivTag = $( ".login_cta" );
+
+		if ( me.loginBtn_NotHideFlag )
+		{
+			// Always show
+			buttonsDivTag.show();
+		}
+		else
+		{		
+			if ( bShow) buttonsDivTag.show();
+			else buttonsDivTag.hide();
+		}
 	};
 
 	// =============================================
@@ -724,6 +818,9 @@ function Login( cwsRenderObj )
 		if ( newAppFilesFound ) loginAppUpdateTag.show();
 		else loginAppUpdateTag.hide();
 	};
+
+	// --------------------------------------
+	
 
 	// --------------------------------------
 	

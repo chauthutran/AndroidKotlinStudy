@@ -15,6 +15,7 @@ AppInfoManager.KEY_USERINFO = "userInfo";
 
 AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
+AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
@@ -169,6 +170,26 @@ AppInfoManager.clearAutoLogin = function()
 {    
     AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
 };
+
+// ------------------------------------------------------------------------------------  
+// ----------------  Login Current Keys Related..
+
+AppInfoManager.setLoginCurrentKeys = function( dateObj, currentKeysJson )
+{
+    var dataJson = { 'timestamp': Util.formatDateTime( dateObj ), 'keys': currentKeysJson };
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS, dataJson );
+};
+
+AppInfoManager.getLoginCurrentKeys = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS );
+};
+
+AppInfoManager.clearLoginCurrentKeys = function()
+{    
+    AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS );
+};
+
 
 // ------------------------------------------------------------------------------------  
 // ----------------  User info

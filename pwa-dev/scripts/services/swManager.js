@@ -133,7 +133,6 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
     navigator.serviceWorker.addEventListener( 'controllerchange', () => 
     {
-        // 
         if ( !AppUtil.appReloading )
         {
             if ( SessionManager._cwsRenderObj ) SessionManager._cwsRenderObj.setNewAppFileStatus( true );
@@ -146,6 +145,11 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( SessionManager.getLoginStatus() || SessionManager.Status_LogIn_InProcess )
             {            
                 AppInfoManager.setAutoLogin( new Date() );
+            }
+            else
+            {
+                // If app update happens before login, save the username keys + pins..
+                AppInfoManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
             }
 
             // Not logged in, yet (In login page).  Not in progress of login..
