@@ -14,7 +14,7 @@
     "tBuild": "npm run t_copyDev && npm run t_setFiles && npm run t_swZipFolder",
 
     "w_copyDev": "xcopy pwa-dev wfa /E/H/C/I/Y",
-    "w_setFiles": "xcopy stageFiles\\wfa_manifest.json pwa-test\\manifest.json /Y && xcopy stageFiles\\wfa-icons pwa-test\\images\\icons /E/H/C/I/Y",
+    "w_setFiles": "xcopy stageFiles\\wfa_manifest.json wfa\\manifest.json /Y && xcopy stageFiles\\wfa-icons wfa\\images\\icons /E/H/C/I/Y",
     "w_swZipFolder" : "node sw_build-wfa.js && tar.exe cf wfa.zip wfa && RMDIR /Q /S wfa",
     "wBuild": "npm run w_copyDev && npm run w_setFiles && npm run w_swZipFolder",
 
