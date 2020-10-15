@@ -139,11 +139,6 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
             // 'About page' app update uses above '_EventCallBack'
 
-            
-            // Reset this value
-            AppInfoManager.clearAutoLogin();
-            AppInfoManager.clearLoginCurrentKeys();
-
 
             // For Already logged in or in process, reload the app, but also mark 
             //      Mark for auto restart -  once used (on app start), clear this out..
