@@ -135,7 +135,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         if ( !AppUtil.appReloading )
         {
-            if ( SessionManager._cwsRenderObj ) SessionManager._cwsRenderObj.setNewAppFileStatus( true );
+            if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.setNewAppFileStatus( true );
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
             // 'About page' app update uses above '_EventCallBack'
 
