@@ -312,6 +312,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var divInputFieldTag = $( Templates.inputFieldStandard );
 		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
 
+        // Greg1-radio [review]
+		var uniqueId = Util.generateRandomId( 8 );
+		divInputFieldTag.attr( 'uniqueID', uniqueId );
+
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
 		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
@@ -533,15 +537,24 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
 		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
 		var displayTag = divInputFieldTag.find(".displayValue");
-		var randomId = Util.generateRandomId( 8 );
+		var uniqueId; // Greg1-radio [review]
 
+		if ( onDialog )
+		{
+			uniqueId = divInputFieldTag.attr( 'uniqueID' );
+		}
+		else
+		{
+			uniqueId = Util.generateRandomId( 8 );
+			divInputFieldTag.attr( 'uniqueID', uniqueId );				
+		}
 
 		for ( var i = 0; i < optionList.length; i++ )
 		{
 			var optionDivTag = $( Templates.inputFieldRadio_Item );
 
 			//me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
-			me.setAttributesForInputItem( displayTag, optionDivTag, randomId, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+			me.setAttributesForInputItem( displayTag, optionDivTag, uniqueId, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 			optionDivListTag.append( optionDivTag );
 
@@ -578,8 +591,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		optionInputTag.click( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
-			targetInputTag.val( $(this).val() );
-			FormUtil.dispatchOnChangeEvent( targetInputTag ); // added by Greg (2020-10-12) > change event not dispatching with 'new' value
+            // Greg1-radio [review]
+			if ( targetInputTag.length )
+			{
+				targetInputTag.val( $(this).val() );
+				FormUtil.dispatchOnChangeEvent( targetInputTag ); // added by Greg (2020-10-12) > change event not dispatching with 'new' value
+			}
 		});
 	}
 
@@ -593,14 +610,16 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( optionList === undefined )
 		{
 			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
-			var randomId = Util.generateRandomId( 8 );
+			var uniqueId = Util.generateRandomId( 8 ); // Greg1-radio [review]
+
+			divInputFieldTag.attr( 'uniqueID', uniqueId );
 
 			var optionInputTag = optionDivTag.find( 'input' );
-			optionInputTag.attr( 'id', "opt_" + randomId + '_' + formItemJson.id );
+			optionInputTag.attr( 'id', "opt_" + uniqueId + '_' + formItemJson.id );
 			optionInputTag.attr( 'name', formItemJson.id );
 
 
-			optionDivTag.find("label").attr("for", "opt_" + randomId + '_' + formItemJson.id );
+			optionDivTag.find("label").attr("for", "opt_" + uniqueId + '_' + formItemJson.id );
 
 			optionDivListTag.append( optionDivTag ); 
 
@@ -661,6 +680,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var dialogForm = $( Templates.searchOptions_Dialog );
 		dialogForm.find(".dialog__text").addClass("checkbox"); 
+
+        // Greg1-radio [review]
+		dialogForm.attr( 'uniqueID', divInputFieldTag.attr( 'uniqueID' ) );
 
 		var optsContainer = dialogForm.find( '.optsContainer' );
 		dialogForm.find( '.title' ).html( TranslationManager.translateText( formItemJson.defaultName, formItemJson.term ) );
@@ -785,7 +807,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			var targetInputTag = targetDivInputFieldTag.find("input.dataValue");
 			var targetDisplayTag = targetDivInputFieldTag.find("input.displayValue");
 
-			var checkedItems = dialogTag.find("input[name='opt_" + targetInputTag.attr("name") + "']:checked");
+			//var checkedItems = dialogTag.find("input[name='opt_" + targetInputTag.attr("name") + "']:checked");
+			var checkedItems = dialogTag.find("input[name='opt_" + targetDivInputFieldTag.attr("uniqueID") + "']:checked");
 			var selectedValues = [];
 			var selectedTexts = [];
 			for( var i=0; i<checkedItems.length; i++ )
