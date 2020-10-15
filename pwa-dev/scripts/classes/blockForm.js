@@ -605,22 +605,15 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
 		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-		var uniqueId; // Greg1-radio [review]
-
-		if ( onDialog )
-		{
-			uniqueId = divInputFieldTag.attr( 'uniqueID' );
-		}
-		else
-		{
-			uniqueId = Util.generateRandomId( 8 );
-			divInputFieldTag.attr( 'uniqueID', uniqueId );				
-		}
-
+		
 		// For TRUE/FALSE case without options defination
 		if ( optionList === undefined )
 		{
 			var optionDivTag = $( Templates.inputFieldCheckbox_SingleItem );
+			var uniqueId = Util.generateRandomId( 8 ); // Greg1-radio [review]
+
+			divInputFieldTag.attr( 'uniqueID', uniqueId );
+
 			var optionInputTag = optionDivTag.find( 'input' );
 			optionInputTag.attr( 'id', "opt_" + uniqueId + '_' + formItemJson.id );
 			optionInputTag.attr( 'name', formItemJson.id );
@@ -647,8 +640,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			for ( var i = 0; i < optionList.length; i++ )
 			{
 				var optionDivTag = $( Templates.inputFieldCheckbox_Item );
-				//me.setAttributesForInputItem ( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
-				me.setAttributesForInputItem ( displayTag, optionDivTag, uniqueId, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+				me.setAttributesForInputItem ( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 				optionDivListTag.append( optionDivTag );
 
@@ -672,7 +664,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		optionInputTag.change( function(){
 			var targetInputTag = divInputFieldTag.find("input.dataValue");
-			var checkedItems = divInputFieldTag.find("input[name='opt_" + divInputFieldTag.attr("uniqueID") + "']:checked");
+			var checkedItems = divInputFieldTag.find("input[name='opt_" + targetInputTag.attr("name") + "']:checked");
 			var selectedValues = [];
 			for( var i=0; i<checkedItems.length; i++ )
 			{
