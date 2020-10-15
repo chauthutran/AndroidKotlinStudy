@@ -258,10 +258,12 @@ FormUtil.mdDateTimePicker = function( e, entryTag, formatDate, yearRange )
 
 
 	var mdDTObj = new mdDateTimePicker.default({
-		type: 'date',
-		init: ( entryTagVal == '') ? moment() : moment( entryTagVal ),
-		past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined, // Date min 
-		future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+		type: 'date'
+		,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
+		,past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined // Date min 
+		,future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+		,orientation: 'PORTRAIT'
+		,autoClose2: true
 	} );
 
 	mdDTObj.toggle();
@@ -287,10 +289,12 @@ FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange )
 
 
 	var mdDTObj = new mdDateTimePicker.default({
-		type: 'date',
-		init: ( entryTagVal == '') ? moment() : moment( entryTagVal ),
-		past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined, // Date min 
-		future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+		type: 'date'
+		,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
+		,past: ( yearRange ) ? moment().add( yearRange.from, 'years') : undefined // Date min 
+		,future: ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+		,orientation: 'PORTRAIT'
+		,autoClose2: true
 	} );
 
 	mdDTObj.toggle();
