@@ -26,6 +26,7 @@ body
 /* MD DatePicker Related Adjustment  */
 /* font-family: Roboto, Helvetica, Arial, sans-serif!important */
 .mddtp-button, .mddtp-picker { font-family: auto !important; }
+.mddtp-picker .mddtp-picker__header .mddtp-picker__title { font-family: auto !important; }
 .mddtp-picker__action { margin-top: -30px !important; }
 .mddtp-button { position: relative; z-index: 1000; }
 /* ------------ */
