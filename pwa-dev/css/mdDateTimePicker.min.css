@@ -1,6 +1,6 @@
 .mddtp-button,
 .mddtp-picker {
-	font-family: Roboto, Helvetica, Arial, sans-serif!important
+	font-family: auto !important;
 }
 .mddtp-button {
 	height: 36px;
@@ -56,7 +56,7 @@
 	padding: 24px 24px 20px
 }
 .mddtp-picker .mddtp-picker__header .mddtp-picker__title {
-	font-family: Roboto, Helvetica, Arial, sans-serif;
+	font-family: auto !important;
 	font-size: 28px;
 	font-weight: 700
 }
