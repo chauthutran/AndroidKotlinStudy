@@ -541,9 +541,13 @@ function Login( cwsRenderObj )
 		if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Login Failed > unexpected error, cannot proceed', 'ERROR' );
 		else
 		{
+			console.log( 'loginSuccessProcess BEFORE - loadActivityListData_AfterLogin ');
+
 			// Load Activities
 			me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
 			{
+				console.log( 'loginSuccessProcess AFTER - loadActivityListData_AfterLogin ');
+
 				me.loginAfterProcess( userName );
 				
 				// call CWS start with this config data..
