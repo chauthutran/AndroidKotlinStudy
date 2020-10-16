@@ -102,8 +102,16 @@ function favIcons( cwsRender )
             }
             else
             {
+                var imgPath = favList[ favItm ].img;
+
+                if ( ! imgPath && favList[ favItm ].activityType )
+                {
+                    var actType = FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType );
+                    imgPath = actType.icon.path;
+                }
+
                 // create + add SVG styled icons to localStorage
-                $.get( favList[ favItm ].img, function( data ) {
+                $.get( imgPath, function( data ) {
 
                     var svgObject = ( $( data )[0].documentElement );
                     var activityItem = ( favList[ favItm ].activityType ?  FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType ) : undefined );
