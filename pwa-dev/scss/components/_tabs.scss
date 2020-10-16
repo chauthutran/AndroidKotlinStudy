@@ -95,6 +95,10 @@ $active-tab :$color-p;
             &.active {
                 display: block;
                 opacity: 1;
+
+                .tab_fs__head-icon {
+                    opacity: 1;
+                }
             }
 
             ul {
