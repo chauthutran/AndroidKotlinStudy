@@ -29,6 +29,7 @@ body
 .mddtp-picker .mddtp-picker__header .mddtp-picker__title { font-family: auto !important; }
 .mddtp-picker__action { margin-top: -30px !important; }
 .mddtp-button { position: relative; z-index: 1000; }
+/* .mddtp-picker .mddtp-picker__header { background-color: #93bcff !important; } */
 /* ------------ */
 
 .activityContent {

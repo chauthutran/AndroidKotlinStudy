@@ -222,6 +222,11 @@ ConnManagerNew.isAppMode_Online = function()
 	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE );
 };
 
+ConnManagerNew.isAppMode_Offline = function()
+{
+	return !ConnManagerNew.isAppMode_Online();
+};
+
 ConnManagerNew.isStrONLINE = function( appModeStr )
 {
 	return ( appModeStr === ConnManagerNew.ONLINE );

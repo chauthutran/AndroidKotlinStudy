@@ -50,6 +50,11 @@ FormMsgManager.appBlockTemplate = function( template )
         block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important' };
     }
+    else if ( template == 'loginAfterLoad' )
+    {
+        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
+        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#ccc !important' };
+    }
     else if ( template == 'appLoadProgress' )
     {
         block = "<img src='images/Connect.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>" +

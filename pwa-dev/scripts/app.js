@@ -58,8 +58,7 @@ function app()
     // Service Worker Related Initial Setup
     SwManager.initialSetup( me._cwsRenderObj, function() 
     { 
-      // TODO: NEED TO REMOVE THIS!!
-      setTimeout( SwManager.checkNewAppFile_OnlyOnline(), 2000 );
+      SwManager.checkNewAppFile_OnlyOnline();
 
       me.App_UI_startUp_Progress( '40%' );
       me.startAppProcess();

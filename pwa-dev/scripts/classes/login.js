@@ -504,7 +504,7 @@ function Login( cwsRenderObj )
 
 
 		// ONLINE vs OFFLINE HANDLING
-		if ( !ConnManagerNew.isAppMode_Online() )
+		if ( ConnManagerNew.isAppMode_Offline() )
 		{
 			me.loginOffline( userName, password, function( isSuccess, offlineUserData ) 
 			{
@@ -541,15 +541,15 @@ function Login( cwsRenderObj )
 		if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Login Failed > unexpected error, cannot proceed', 'ERROR' );
 		else
 		{
-			console.log( 'loginSuccessProcess BEFORE - loadActivityListData_AfterLogin ');
+			FormMsgManager.appBlockTemplate( 'loginAfterLoad' );
 
 			// Load Activities
 			me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
 			{
-				console.log( 'loginSuccessProcess AFTER - loadActivityListData_AfterLogin ');
-
 				me.loginAfterProcess( userName );
 				
+				FormMsgManager.appUnblock();
+
 				// call CWS start with this config data..
 				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
 			});			
