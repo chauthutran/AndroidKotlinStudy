@@ -15,13 +15,13 @@
 //
 //      NEW:
 //          - Create any static method to update the 'activityCard' (in case it exists) ?
-//
 // -------------------------------------------------
 
 function ActivityDataManager()  {};
 
 ActivityDataManager._activityList = []; // Activity reference list - original data are  in each client activities.
 ActivityDataManager._activityToClient = {};  // Fast reference - activity to client
+//ActivityDataManager._activitiesIdx = {};  // index..  <-- need to put add / delete
 
 ActivityDataManager.jsonSignature_Dhis2 = {
     "client": {}
@@ -51,9 +51,25 @@ ActivityDataManager.getActivityItem = function( propName, propVal )
     return Util.getFromList( ActivityDataManager.getActivityList(), propVal, propName );    
 };
 
+// Use index...  for faster..
 ActivityDataManager.getActivityById = function( activityId )
 {
     return Util.getFromList( ActivityDataManager._activityList, activityId, 'id' );
+};
+
+// ------------------------------------------------
+// ---- Get Activity Id copied list - Used to delete or loop data without being affected by change data.
+ActivityDataManager.getActivityIdCopyList = function()
+{
+    var activityIdList = [];
+
+    var activityList = ActivityDataManager.getActivityList();
+
+    activityList.forEach( activity => {
+        if ( activity.id ) activityIdList.push( activity.id );
+    });
+
+    return activityIdList;
 };
 
 // ---------------------------------------

@@ -456,8 +456,7 @@ function settingsApp( cwsRender )
             $('.scrim').hide();
             divDataShareTag.hide();
         });       
-
-
+        
         /*
         <input class="inputShareCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
         <button class="btnShare cbutton" >Share</button>  
@@ -466,6 +465,79 @@ function settingsApp( cwsRender )
         <input class="inputLoadCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
         <button class="btnLoad cbutton">Load</button>  
         */
+       
+        divDataShareTag.find( '.btnShare' ).off( 'click' ).click( function () 
+        {
+            var shareCodeTag = divDataShareTag.find( '.inputShareCode' );
+            var shareCode = Util.trim( shareCodeTag.val() );
+
+            if ( !shareCode ) MsgManager.msgAreaShow( 'Need shareCode!', 'ERROR' );
+            else 
+            {
+                var loadingTag = FormUtil.generateLoadingTag( $( this ) );
+
+                var infoJson = { 'userName': SessionManager.sessionData.login_UserName, 'shareCode': shareCode };
+                var dataJson = { 'info': infoJson, 'clientList': ClientDataManager.getClientList() };
+                var payloadJson = { 'dataJson': dataJson };
+    
+                WsCallManager.requestPostDws( '/PWA.shareData', payloadJson, loadingTag, function( success, returnJson ) 
+                {
+                    var isSuccess = false;
+                    if ( success && returnJson )
+                    {					
+                        if ( returnJson && returnJson.response && returnJson.response.result 
+                            && returnJson.response.result.insertedCount === 1 )
+                        {
+                            shareCodeTag.val( '' );
+                            isSuccess = true;
+                            //console.customLog( returnJson );    
+                        }
+                    }
+
+                    if ( isSuccess ) MsgManager.msgAreaShow( 'DataShare Submit Success!' );
+                    else MsgManager.msgAreaShow( 'DataShare Submit FAILED!', 'ERROR' );
+                });	
+            }
+        });       
+
+        divDataShareTag.find( '.btnLoad' ).off( 'click' ).click( function () 
+        {
+            var loadCodeTag = divDataShareTag.find( '.inputLoadCode' );
+            var loadCode = Util.trim( loadCodeTag.val() );
+
+            if ( !loadCode ) MsgManager.msgAreaShow( 'Need loadCode!', 'ERROR' );
+            else 
+            {
+                var loadingTag = FormUtil.generateLoadingTag( $( this ) );
+
+                var findJson = { 'info.userName': SessionManager.sessionData.login_UserName, 'info.shareCode': loadCode };
+                var payloadJson = { 'find': findJson };
+    
+                WsCallManager.requestPostDws( '/PWA.loadData', payloadJson, loadingTag, function( success, returnJson ) 
+                {
+                    var isSuccess = false;
+                    if ( success && returnJson )
+                    {					
+                        if ( returnJson && returnJson.response && returnJson.response.dataList
+                            && returnJson.response.dataList.length > 0 )
+                        {
+                            var clientList = returnJson.response.dataList[0].clientList;
+                            loadCodeTag.val( '' );
+                            isSuccess = true;
+                            
+                            ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
+                            {
+                                console.customLog( 'LoadData clients merged' );
+                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                            });
+                        }
+                    }
+
+                    if ( isSuccess ) MsgManager.msgAreaShow( 'DataLoad Success!' );
+                    else MsgManager.msgAreaShow( 'DataLoad FAILED!', 'ERROR' );
+                });	
+            }            
+        });       
     }
 
     me.setNewAppFileStatus = function( newAppFilesFound )

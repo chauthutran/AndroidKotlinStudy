@@ -174,7 +174,6 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
     var case_dhis2RedeemMerge = false;
     var newClients = [];
 
-
     // 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
     if ( downloadedData && downloadedData.clients && Util.isTypeArray( downloadedData.clients ) )
     {
@@ -243,7 +242,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
         // if new list to push to pwaClients exists, add to the list.
         if ( newClients.length > 0 ) 
         {
-            ClientDataManager.clientsActivities_AddProcessingInfo( newClients, processingInfo );
+            if ( processingInfo ) ClientDataManager.clientsActivities_AddProcessingInfo( newClients, processingInfo );
 
             ClientDataManager.insertClients( newClients );        
         }        
@@ -312,19 +311,23 @@ ClientDataManager.getDateStr_LastUpdated = function( clientJson )
 
 ClientDataManager.removeSampleData = function( callBack )
 {
-    var clientList = ClientDataManager.getClientList();
     var removedCount = 0;
 
-    for ( var i = 0; i < clientList.length; i++ )
-    {
-        var client = clientList[i];
+    var clientIdList = ClientDataManager.getClientIdCopyList();
 
-        if ( ClientDataManager.isSampleData( client ) )
+    clientIdList.forEach( clientId => 
+    {
+        var client = ClientDataManager.getClientById( clientId );
+
+        if ( client )
         {
-            ClientDataManager.removeClient( client );
-            removedCount++;    
+            if ( ClientDataManager.isSampleData( client ) )
+            {
+                ClientDataManager.removeClient( client );
+                removedCount++;    
+            }    
         }
-    }
+    });
 
     ClientDataManager.saveCurrent_ClientsStore( function() {
         if ( callBack ) callBack( removedCount );
@@ -382,4 +385,19 @@ ClientDataManager.loadSampleData = function( icount, sampleDataTemplate, callBac
     ClientDataManager.saveCurrent_ClientsStore( function() {
         if ( callBack ) callBack();
     });
+};
+
+// ------------------------------------------------
+// ---- Get Client Id copied list - Used to delete or loop data without being affected by change data.
+ClientDataManager.getClientIdCopyList = function()
+{
+    var clientIdList = [];
+
+    var clientList = ClientDataManager.getClientList();
+
+    clientList.forEach( client => {
+        if ( client._id ) clientIdList.push( client._id );
+    });
+
+    return clientIdList;
 };

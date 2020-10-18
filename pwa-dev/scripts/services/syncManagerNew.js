@@ -68,10 +68,10 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
         // During the 'sync', it updates the activity list..  
         // Thus, we get below list for just list of activityId..  Copy of the original list. 
-        var activityListCopy = Util.getJsonDeepCopy( ActivityDataManager.getActivityList() );
+        var activityIdCopyList = ActivityDataManager.getActivityIdCopyList();
 
         // NOTE: CHECK ONLINE is done within syncUpItem_RecursiveProcess
-        SyncManagerNew.syncUpItem_RecursiveProcess( activityListCopy, 0, cwsRenderObj, resultData, function() 
+        SyncManagerNew.syncUpItem_RecursiveProcess( activityIdCopyList, 0, cwsRenderObj, resultData, function() 
         {
             SyncManagerNew.setSyncAll_Running( runType, false );
             SyncManagerNew.update_UI_FinishSyncAll();
@@ -244,10 +244,10 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 };
 
 
-SyncManagerNew.syncUpItem_RecursiveProcess = function( activityJsonList, i, cwsRenderObj, resultData, callBack )
+SyncManagerNew.syncUpItem_RecursiveProcess = function( activityIdCopyList, i, cwsRenderObj, resultData, callBack )
 {
     // length is 1  index 'i' = 0; next time 'i' = 1
-    if ( activityJsonList.length <= i )
+    if ( activityIdCopyList.length <= i )
     {
         // If index is equal or bigger to list, return back. - End reached.
         return callBack();        
@@ -264,15 +264,15 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function( activityJsonList, i, cwsR
         }
         else
         {
-            var activityJson = activityJsonList[i];         
+            var activityId = activityIdCopyList[i];         
         
-            SyncManagerNew.syncUpActivity( activityJson.id, resultData, function( syncReadyJson, syncUpSuccess ) 
+            SyncManagerNew.syncUpActivity( activityId, resultData, function( syncReadyJson, syncUpSuccess ) 
             {
                 // Update on progress bar
-                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityJsonList.length * 100 ).toFixed( 1 ) + '%' );
+                FormUtil.updateProgressWidth( ( ( i + 1 ) / activityIdCopyList.length * 100 ).toFixed( 1 ) + '%' );
 
                 // Process next item without performing..
-                SyncManagerNew.syncUpItem_RecursiveProcess( activityJsonList, i + 1, cwsRenderObj, resultData, callBack );
+                SyncManagerNew.syncUpItem_RecursiveProcess( activityIdCopyList, i + 1, cwsRenderObj, resultData, callBack );
             });
         }
     }
