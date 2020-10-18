@@ -205,8 +205,6 @@ function Statistics( cwsRender )
         statsContentPageTag.empty();
 
         var statJson = ConfigManager.getStatisticJson();
-
-        console.customLog( 'loadStatConfigPage - statisticJson Used: ' + JSON.stringify( statJson ) );
         
         if ( statJson.fileName )
         {

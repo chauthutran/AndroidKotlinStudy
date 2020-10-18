@@ -119,15 +119,17 @@ StatsUtil.getActivityById = function( activityId )
         3. activity date, ActivtyType, location, etc.. activeUser, creditedUsers
         4. transaction dataValue?  <-- this should have everything...  while 'clientDetails' should be subset of 'dataValue'
 */
-StatsUtil.createDateFilteredList = function( startPeriod, endPeriod, clientList )
+StatsUtil.createDateFilteredList = function( startPeriod, endPeriod, clientList, datePropName )
 {
+    if ( !datePropName ) datePropName = 'capturedLoc';
+
     var dateFilteredData = { 'startPeriod': startPeriod, 'endPeriod': endPeriod
         , activityList: [], tranList: [], tranGroupByType: {} };
 
     var activityList = StatsUtil.getActivityList( clientList );
 
     /* 1. filter by date */
-    var activityList_DateFiltered = StatsUtil.filterListByDate( startPeriod, endPeriod, activityList, 'capturedLoc' );
+    var activityList_DateFiltered = StatsUtil.filterListByDate( startPeriod, endPeriod, activityList, datePropName );
     dateFilteredData.activityList = activityList_DateFiltered;
 
     /* 2. trans list */
