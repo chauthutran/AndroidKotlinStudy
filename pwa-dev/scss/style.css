@@ -1702,7 +1702,6 @@ hr {
   left: 0;
   background-color: black;
   opacity: 0.4;
-  z-index: 2000;
 }
 
 .sheet_bottom-scrim {
@@ -1713,7 +1712,6 @@ hr {
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.35);
-  z-index: 2000;
 }
 
 input,
@@ -3828,7 +3826,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 50px;
+  min-height: 48px;
   margin: 0px 0px 12px 0px;
   text-align: left;
   box-sizing: border-box;
@@ -3974,7 +3972,8 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4245,10 +4244,6 @@ textarea {
   opacity: 1;
 }
 
-.tab_fs .tab_fs__head li.active .tab_fs__head-icon {
-  opacity: 1;
-}
-
 .tab_fs .tab_fs__head li ul {
   width: 100%;
   padding: 0;
@@ -4429,7 +4424,7 @@ textarea {
   bottom: 0px;
   left: 0px;
   top: 0px;
-  z-index: 1600;
+  z-index: 2000;
   background-image: url(../images/logo_bk.svg);
   /*background-color: #FFF;*/
   background-position: right;
@@ -4480,7 +4475,7 @@ textarea {
   height: 60%;
   bottom: 0px;
   left: 0px;
-  z-index: 2100;
+  z-index: 1999;
   max-height: 270px;
   -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
@@ -5460,7 +5455,7 @@ textarea {
   height: 80%;
   bottom: 0px;
   left: 0px;
-  z-index: 2100;
+  z-index: 1999;
   max-height: 270px;
   -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
@@ -5806,7 +5801,8 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content" "card__cta card__cta card__cta";
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -6424,7 +6420,6 @@ textarea {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  cursor: pointer;
 }
 
 .Nav2 .Menus_display .menu_item_comtainer .menu_item_text {
