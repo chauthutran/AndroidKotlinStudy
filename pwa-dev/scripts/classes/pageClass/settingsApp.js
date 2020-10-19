@@ -476,8 +476,12 @@ function settingsApp( cwsRender )
             {
                 var loadingTag = FormUtil.generateLoadingTag( $( this ) );
 
+                var idenObj = { 'info.userName': SessionManager.sessionData.login_UserName, 'info.shareCode': shareCode };
+
                 var infoJson = { 'userName': SessionManager.sessionData.login_UserName, 'shareCode': shareCode };
-                var dataJson = { 'info': infoJson, 'clientList': ClientDataManager.getClientList() };
+                var updateData = { 'info': infoJson, 'clientList': ClientDataManager.getClientList() };
+
+                var dataJson = { 'idenObj': idenObj, 'updateData': updateData, 'option': { 'upsert': true } };
                 var payloadJson = { 'dataJson': dataJson };
     
                 WsCallManager.requestPostDws( '/PWA.shareData', payloadJson, loadingTag, function( success, returnJson ) 
@@ -486,7 +490,7 @@ function settingsApp( cwsRender )
                     if ( success && returnJson )
                     {					
                         if ( returnJson && returnJson.response && returnJson.response.result 
-                            && returnJson.response.result.insertedCount === 1 )
+                            && returnJson.response.result.n === 1 )  // also .result.ok = 1 could be checked?
                         {
                             shareCodeTag.val( '' );
                             isSuccess = true;
