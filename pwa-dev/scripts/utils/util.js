@@ -1450,6 +1450,16 @@ Util.dateUTCToLocal = function( dateStr )
 	return localDateObj;
 };
 
+Util.getUTCDateTimeStr = function( dateObj, optionStr )
+{
+	if ( !dateObj ) dateObj = new Date();
+
+	var dtStr = dateObj.toISOString();
+	if ( optionStr === 'noZ' ) dtStr = dtStr.replace( 'Z', '' );
+
+	return dtStr;
+};
+
 // Date Formatting Related
 // ----------------------------------
 

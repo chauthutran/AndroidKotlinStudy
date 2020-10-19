@@ -478,7 +478,8 @@ function settingsApp( cwsRender )
 
                 var idenObj = { 'info.userName': SessionManager.sessionData.login_UserName, 'info.shareCode': shareCode };
 
-                var infoJson = { 'userName': SessionManager.sessionData.login_UserName, 'shareCode': shareCode };
+                var infoJson = { 'userName': SessionManager.sessionData.login_UserName, 'shareCode': shareCode
+                    , 'timestamp': Util.getUTCDateTimeStr() };
                 var updateData = { 'info': infoJson, 'clientList': ClientDataManager.getClientList() };
 
                 var dataJson = { 'idenObj': idenObj, 'updateData': updateData, 'option': { 'upsert': true } };
