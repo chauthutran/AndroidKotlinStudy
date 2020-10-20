@@ -128,6 +128,9 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
             SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + downloadedData.clients.length + " clients: " );
 
+
+            ClientDataManager.setActivityDateLocal_clientList( downloadedData.clients );
+
             ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge, activityListChanged ) 
             {
                 SyncManagerNew.SyncMsg_InsertMsg( "Merged data.." );

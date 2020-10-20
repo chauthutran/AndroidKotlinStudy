@@ -530,6 +530,8 @@ function settingsApp( cwsRender )
                             loadCodeTag.val( '' );
                             isSuccess = true;
                             
+                            ClientDataManager.setActivityDateLocal_clientList( clientList );
+
                             ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
                             {
                                 console.customLog( 'LoadData clients merged' );

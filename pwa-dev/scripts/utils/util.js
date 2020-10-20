@@ -1434,17 +1434,24 @@ Util.dateUTCToLocal = function( dateStr )
 
 	try
 	{
-		// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
-		if ( dateStr.indexOf( 'Z' ) === -1 ) 
+		if ( dateStr )
 		{
-			dateStr += 'Z';
-		}
+			// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
+			if ( dateStr.indexOf( 'Z' ) === -1 ) 
+			{
+				dateStr += 'Z';
+			}
 
-		localDateObj = new Date( dateStr );
+			localDateObj = new Date( dateStr );
+		}
+		else
+		{
+			localDateObj = new Date();
+		}
 	}
 	catch ( errMsg )
 	{
-		localDateObj = new Date();
+		console.customLog( 'ERROR in Util.dateUTCToLocal, errMsg: ' + errMsg );
 	}
 
 	return localDateObj;

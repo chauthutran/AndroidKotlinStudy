@@ -666,6 +666,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
+            var clientJson = responseJson.result.client;
             operationSuccess = true;
 
             // remove client as well if started with 'client_'
@@ -675,7 +676,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
 
-            ClientDataManager.mergeDownloadedClients( { 'clients': [ responseJson.result.client ] }, processingInfo, function() 
+            ClientDataManager.setActivityDateLocal_client( clientJson );
+
+            ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ] }, processingInfo, function() 
             {
                 // 'mergeDownload' does saving if there were changes..
                 ClientDataManager.saveCurrent_ClientsStore();

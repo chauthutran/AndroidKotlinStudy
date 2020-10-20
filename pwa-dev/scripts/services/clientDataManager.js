@@ -389,6 +389,7 @@ ClientDataManager.loadSampleData = function( icount, sampleDataTemplate, callBac
 
 // ------------------------------------------------
 // ---- Get Client Id copied list - Used to delete or loop data without being affected by change data.
+
 ClientDataManager.getClientIdCopyList = function()
 {
     var clientIdList = [];
@@ -401,3 +402,47 @@ ClientDataManager.getClientIdCopyList = function()
 
     return clientIdList;
 };
+
+
+ClientDataManager.getClientIdCopyList = function()
+{
+    var clientIdList = [];
+
+    var clientList = ClientDataManager.getClientList();
+
+    clientList.forEach( client => {
+        if ( client._id ) clientIdList.push( client._id );
+    });
+
+    return clientIdList;
+};
+
+// ----------------------------------------
+
+ClientDataManager.setActivityDateLocal_clientList = function( clientList )
+{
+    if ( clientList )
+    {
+        clientList.forEach( client => 
+        {
+            if ( client.activities ) 
+            {
+                client.activities.forEach( activity => {
+                    ActivityDataManager.setActivityDateLocal( activity );
+                });
+            }
+        });
+    }
+};
+
+ClientDataManager.setActivityDateLocal_client = function( client )
+{
+    if ( client ) ClientDataManager.setActivityDateLocal_clientList( [ client ] );
+};
+
+ClientDataManager.setActivityDateLocal_clientsAll = function()
+{
+    ClientDataManager.setActivityDateLocal_clientList( ClientDataManager.getClientList() );
+};
+
+// ----------------------------------------

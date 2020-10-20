@@ -379,8 +379,11 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
                 else if ( activity.date.createdOnMdbUTC ) activityUtcDate = activity.date.createdOnMdbUTC;
 
                 if ( activityUtcDate )
-                {
-                    var updateCreated = Util.formatDateTime( Util.dateUTCToLocal( activityUtcDate ) );
+                {                    
+                    var localDateTime = Util.dateUTCToLocal( activityUtcDate );
+                    if ( !localDateTime ) localDateTime = new Date();
+
+                    var updateCreated = Util.formatDateTime( localDateTime );
                     if ( updateCreated ) activity.processing.created = updateCreated;
                 }
             }
@@ -474,6 +477,22 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     return dataJson;
 };
 
+
+ActivityDataManager.setActivityDateLocal = function( activityJson )
+{
+    try
+    {
+        if ( activityJson.date && activityJson.date.capturedUTC )
+        {
+            var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
+            if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ActivityDataManager.setActivityDateLocal, errMsg: ' + errMsg );
+    }
+};
 
 // --------------------------------------------
 // --- Sync & ActivityCard Related Metods
