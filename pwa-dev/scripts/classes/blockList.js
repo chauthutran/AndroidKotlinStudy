@@ -530,7 +530,13 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         groupTrTag.attr( 'group', groupJson.id );
 
         var tdGroupTag = groupTrTag.find( 'div.blockListGroupBySection' );
-        tdGroupTag.text( groupJson.name + ' (' + groupJson.activities.length + ')' ); // attr( 'group', groupJson.id ).
+        var tdGroupSpanTag = $( '<span></span>' );
+        tdGroupSpanTag.text( groupJson.name );
+        if( groupJson.term ) tdGroupSpanTag.attr( 'term', groupJson.term );
+    
+        tdGroupTag.append( tdGroupSpanTag );
+        tdGroupTag.append( '<span style="margin-left: 5px;">(' + groupJson.activities.length + ')' + '</span>' );
+        //tdGroupTag.text( groupJson.name +  ); // attr( 'group', groupJson.id ).
 
         // Set event
         me.setTdGroupClick( tdGroupTag, listTableTbodyTag );

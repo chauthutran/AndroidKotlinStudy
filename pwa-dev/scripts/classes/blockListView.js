@@ -143,6 +143,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
         // Events handling
         me.setRenderEvents( me.viewSelectTag, me.sortListButtonTag );
+        
+        TranslationManager.translatePage();
     };
 
     // ----------------------------
@@ -242,6 +244,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         viewListDefs.forEach( viewDef =>
         {
             var optionTag = $( me.viewOptionTagTemplate ).attr( 'value', viewDef.id ).html( viewDef.name );
+            if ( viewDef.term ) optionTag.attr( 'term', viewDef.term );
             //`<option value="${viewDef.id}">${viewDef.name}</option>` );
             viewSelectTag.append( optionTag );
         });
@@ -282,6 +285,8 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         // Once the viewFiltered List is decided and sorted, reRender it 
         me.blockListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..  
 
+        
+        TranslationManager.translatePage();
     };
 
     
@@ -452,7 +457,10 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
                 var divTag = $( me.sortDivTagTemplate );
 
                 divTag.attr( 'sortid', sortDef.id );
-                divTag.find( 'div.menu_item_text' ).html( sortDef.name );
+
+                var itemTag = divTag.find( 'div.menu_item_text' );
+                itemTag.html( sortDef.name )
+                if ( sortDef.term ) itemTag.attr( 'term', sortDef.term );
 
                 sortListDivTag.append( divTag );
 
