@@ -62,6 +62,12 @@ WsCallManager.setWsTarget = function()
 };
 
 
+WsCallManager.getGitBranchName = function( stageName )
+{
+
+};
+
+
 // If 'wfa' case, get properly named web service url
 WsCallManager.getWfaProdWsUrl = function( originUrl )
 {

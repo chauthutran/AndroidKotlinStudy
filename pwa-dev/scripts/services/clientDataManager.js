@@ -103,6 +103,25 @@ ClientDataManager.removeClient = function( client )
     } 
 };
 
+ClientDataManager.removeClientsAll = function()
+{
+    try
+    {
+        var clients = ClientDataManager.getClientList();
+        var clientCount = clients.length;
+
+        clients.forEach( client => {
+            ClientDataManager.removeClient( client );
+        });
+
+        console.customLog( 'Removed ' + clientCount + ' clients.' );
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'Error in ClientDataManager.removeAllClient, errMsg: ' + errMsg );
+    } 
+};
+
 
 // --------------------------------------------
 
@@ -170,14 +189,17 @@ ClientDataManager.removeClientIndex = function( client )
 ClientDataManager.mergeDownloadedClients = function( downloadedData, processingInfo, callBack )
 {
     var dataChangeOccurred = false;
-    var activityListChanged = false;
+    //var activityListChanged = false;
     var case_dhis2RedeemMerge = false;
+    var case_noClientDateCheck = false;
     var newClients = [];
+    var mergedActivities = [];
 
     // 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
     if ( downloadedData && downloadedData.clients && Util.isTypeArray( downloadedData.clients ) )
     {
         case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
+        case_noClientDateCheck = ( downloadedData.case === 'syncUpActivity' );
 
         downloadedData.clients.forEach( dwClient => 
         {
@@ -189,12 +211,12 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
                     if ( appClient )
                     {
-                        var clientDateCheckPass = ( case_dhis2RedeemMerge ) ? true : ( ClientDataManager.getDateStr_LastUpdated( dwClient ) > ClientDataManager.getDateStr_LastUpdated( appClient ) );
+                        var clientDateCheckPass = ( case_dhis2RedeemMerge || case_noClientDateCheck ) ? true : ( ClientDataManager.getDateStr_LastUpdated( dwClient ) > ClientDataManager.getDateStr_LastUpdated( appClient ) );
 
                         if ( clientDateCheckPass )
                         {
                             // Get activities in dwClient that does not exists...
-                            var addedActivityCount = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ) );
+                            var addedActivities = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ) );
 
                             if ( case_dhis2RedeemMerge )
                             {
@@ -211,8 +233,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                                 appClient.date = dwClient.date;
                             }
 
-                            if ( addedActivityCount > 0 ) activityListChanged = true;
-
+                            Util.appendArray( mergedActivities, addedActivities );
                             dataChangeOccurred = true;
                         }
                     }
@@ -224,7 +245,10 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                             newClients.push( dwClient );
                             dataChangeOccurred = true;  
 
-                            if ( dwClient.activities && dwClient.activities > 0 ) activityListChanged = true;
+                            if ( dwClient.activities && dwClient.activities > 0 )
+                            {
+                                Util.appendArray( mergedActivities, dwClient.activities );
+                            }
                         }
                     }
                 }
@@ -249,12 +273,12 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
         // Need to create ClientDataManager..
         ClientDataManager.saveCurrent_ClientsStore( function() {
-            if ( callBack ) callBack( true, activityListChanged );
+            if ( callBack ) callBack( true, mergedActivities );
         });
     } 
     else 
     {
-        if ( callBack ) callBack( false, activityListChanged );
+        if ( callBack ) callBack( false, mergedActivities );
     }
 }; 
 

@@ -407,20 +407,23 @@ function settingsApp( cwsRender )
                 if ( !ConnManagerNew.isAppMode_Online() ) MsgManager.msgAreaShow( 'SyncDown not available on offline.' );
                 else
                 {
-                    SyncManagerNew.syncDown( 'manualClick', function( success, changeOccurred ) 
-                    {        
+                    SyncManagerNew.syncDown( 'manualClick', function( success, changeOccurred, mockCase, mergedActivities ) {
+
                         if ( success ) 
                         {  
                             // NOTE: If there was a new merge, for now, alert the user to reload the list?
-                            if ( changeOccurred )
+                            if ( changeOccurred && !mockCase )
                             {
-                                var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+                                if ( mergedActivities.length > 0 )
+                                {
+                                    var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
             
-                                $( btnRefresh ).click ( () => {
-                                    SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
-                                });
-            
-                                MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );
+                                    $( btnRefresh ).click ( () => {
+                                        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                                    });
+                
+                                    MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );    
+                                }                                
                             }
                         }
                         else MsgManager.msgAreaShow( 'SyncDown not successful.' );

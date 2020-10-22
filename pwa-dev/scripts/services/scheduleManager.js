@@ -260,18 +260,14 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function()
 {
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, activityListChanged ) {
+		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) {
 
 			if ( success ) 
 			{  
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?
 				if ( changeOccurred && !mockCase )
 				{
-					if ( ConfigManager.isSourceTypeDhis2() && !activityListChanged )
-					{
-						// For 'dhis2' case, if new activities found, do not display 'Refresh' message..
-					}
-					else
+					if ( mergedActivities.length > 0 )
 					{
 						var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
 

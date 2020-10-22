@@ -157,7 +157,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client )
 
         client.activities.push( activity );
 
-        ActivityDataManager.updateActivityList_NIndexes( activity, client );
+        ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client );
     }
 };
 
@@ -183,12 +183,26 @@ ActivityDataManager.regenActivityList_NIndexes = function()
 };
 
 
-ActivityDataManager.updateActivityList_NIndexes = function( activity, client )
+ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client )
 {
-    // Might use 'unshift' to add to top?
-    ActivityDataManager._activityList.push( activity );
+    // Check if the same activity id exists in the '_acitivtyList'.  If so, remove it
+    var activityId = activity.id;
 
-    if ( activity.id ) ActivityDataManager._activityToClient[ activity.id ] = client;
+    if ( activityId ) 
+    {
+        var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
+        // NOTE: This also removes temporary client ('client_').
+        if ( existingActivity ) ActivityDataManager.removeActivityNClientById( activityId );
+
+
+        // TODO: Might use 'unshift' to add to top?
+        ActivityDataManager._activityList.push( activity );
+        ActivityDataManager._activityToClient[ activityId ] = client;
+    }
+    else 
+    {
+        throw "ERROR, Downloaded activity does not contain 'id'.";
+    }    
 };
 
 
@@ -200,7 +214,7 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
         {
             var activity = client.activities[ x ];
 
-            ActivityDataManager.updateActivityList_NIndexes( activity, client );
+            ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client );
         }
     }
 };
@@ -209,41 +223,42 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
 // ====================================================
 // === Merge downloaded activities related
 
-ActivityDataManager.mergeDownloadedActivities = function( mongoActivities, pwaActivities, pwaClient, processingInfo )
+// Used by both 'SyncUp' or 'Download Merge'.
+// 'SyncUp' - Use Temporary Client which gets deleted.
+// 'Download Merge' - Normally, both app client and downloaded client exists.  Only get the activities not already exists..
+ActivityDataManager.mergeDownloadedActivities = function( downActivities, appClientActivities, appClient, processingInfo )
 {
     var newActivities = [];
 
-    for ( var i = 0; i < mongoActivities.length; i++ )
-    {        
-        var mongoActivity = mongoActivities[i];
-
-        // TODO: Should use index for faster search
-        var pwaActivity = Util.getFromList( pwaActivities, mongoActivity.id, "id" );
-
+    downActivities.forEach( dwActivity => 
+    {
         try
         {
-            // Only the ones (mongo) that does not exists in PWA, add to the list..
-            if ( !pwaActivity )
+            // 'appClientActivities' is the matching client (by downloaded client id)'s activities
+            // If the matching app client does not already hold the same activity (by id), proceed with ADD!!
+            var appClientActivity = Util.getFromList( appClientActivities, dwActivity.id, "id" );
+            if ( !appClientActivity )
             {
-                ActivityDataManager.insertToProcessing( mongoActivity, processingInfo );
+                ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
 
-                newActivities.push( mongoActivity );                
+                newActivities.push( dwActivity );                
             }
         }
         catch( errMsg )
         {
-            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities: ', mongoActivity, pwaActivity );
+            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities: ', dwActivity, appClientActivity );
         }
-    }
+    });
 
-    // if new list to push to pwaActivities exists, add to the list.
+
+    // if new list to push to appClientActivities exists, add to the list.
     if ( newActivities.length > 0 ) 
     {
-        ActivityDataManager.insertActivitiesToClient( newActivities, pwaClient );
+        ActivityDataManager.insertActivitiesToClient( newActivities, appClient );
     }
 
     // Return the number of added ones.
-    return newActivities.length;
+    return newActivities;
 };
 
 // --------------------------------------

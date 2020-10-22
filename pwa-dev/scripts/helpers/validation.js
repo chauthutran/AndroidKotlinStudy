@@ -109,18 +109,22 @@ Validation.performValidationCheck = function( tag, type, divTag )
 };
 
 
-Validation.checkFormEntryTagsData = function( formTag )
+Validation.checkFormEntryTagsData = function( formTag, optionStr )
 {	
     var allValid = true;
 
     // If any of the tag is not valid, mark it as invalid.
     //formTag.find( "input,select,checkbox,textarea" ).each( function() {
-    formTag.find( ".dataValue" ).each( function() {
-        if ( !Validation.checkValidations( $(this) ) )
-        {
-            allValid = false;
-        }
+    formTag.find( ".dataValue" ).each( function() 
+    {
+        if ( !Validation.checkValidations( $(this) ) ) allValid = false;
     });
+
+
+    if ( !allValid )
+    {
+        if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( 'Validation Note: Review input fields.', 'ERROR' );
+    }
 
     return allValid;
 };

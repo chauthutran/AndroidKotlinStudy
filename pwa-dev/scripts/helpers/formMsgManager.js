@@ -52,7 +52,7 @@ FormMsgManager.appBlockTemplate = function( template )
     }
     else if ( template == 'loginAfterLoad' )
     {
-        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
+        block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:38px; height:38px;'><span>Loading Data...</span>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#ccc !important' };
     }
     else if ( template == 'appLoadProgress' )

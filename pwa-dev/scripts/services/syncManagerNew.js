@@ -131,7 +131,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
             ClientDataManager.setActivityDateLocal_clientList( downloadedData.clients );
 
-            ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge, activityListChanged ) 
+            ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge, mergedActivities ) 
             {
                 SyncManagerNew.SyncMsg_InsertMsg( "Merged data.." );
                 SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + downloadedData.clients.length + " clients: " );
@@ -139,7 +139,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
 
-                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase, activityListChanged );
+                if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities );
             });            
         }
     });    

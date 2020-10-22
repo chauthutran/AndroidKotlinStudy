@@ -4,7 +4,6 @@
 //  - Collect userName input and pin in real time..
 //		- use it on 'render' as needed (load it.)
 //		- clear on render..
-//		- test2
 // 
 // -------------------------------------------- 
 function Login( cwsRenderObj )
@@ -142,9 +141,9 @@ function Login( cwsRenderObj )
 		if ( pwdJson )
 		{
 			if ( pwdJson.p1 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p1 );
-			if ( pwdJson.p2 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p2 );
-			if ( pwdJson.p3 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p3 );
-			if ( pwdJson.p4 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p4 );
+			if ( pwdJson.p2 ) splitPasswordTag.find( '.pin2' ).val( pwdJson.p2 );
+			if ( pwdJson.p3 ) splitPasswordTag.find( '.pin3' ).val( pwdJson.p3 );
+			if ( pwdJson.p4 ) splitPasswordTag.find( '.pin4' ).val( pwdJson.p4 );
 		}
 	};
 
@@ -537,6 +536,11 @@ function Login( cwsRenderObj )
 	
 	me.loginSuccessProcess = function( userName, loginData ) 
 	{	
+		// Reset this value
+		//AppInfoManager.clearAutoLogin();
+		AppInfoManager.clearLoginCurrentKeys();
+		me.resetLoginCurrentKeys();
+		
 		// Load config and continue the CWS App process
 		if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Login Failed > unexpected error, cannot proceed', 'ERROR' );
 		else
@@ -845,7 +849,6 @@ function Login( cwsRenderObj )
 		inputTags.keyup( function() {  // keydown vs keypress
 			// What about copy and paste?
 			var changedVal = $( this ).val();
-			console.customLog( 'changedVal: ' + changedVal );
 			inputTags.val( changedVal );
 		});	
 	};

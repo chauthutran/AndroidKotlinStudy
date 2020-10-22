@@ -662,29 +662,51 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.syncUpResponseHandle = function( activityJson_Orig, success, responseJson, callBack )
     {
         var operationSuccess = false;
+        var activityId = me.activityId;
 
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
             var clientJson = responseJson.result.client;
-            operationSuccess = true;
 
-            // remove client as well if started with 'client_'
-            ActivityDataManager.removeActivityNClientById( me.activityId );
-            
-
-            // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
-
-            ClientDataManager.setActivityDateLocal_client( clientJson );
-
-            ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ] }, processingInfo, function() 
+            // #1. Check if current activity Id exists in 'result.client' activities..
+            if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )
             {
-                // 'mergeDownload' does saving if there were changes..
-                ClientDataManager.saveCurrent_ClientsStore();
+                operationSuccess = true;
 
-                if ( callBack ) callBack( operationSuccess );
-            });
+                // #2. Remove the activity from activityList and Client.activities
+                // Also, remove client as well if the client name started with 'client_', temporary client
+                // ActivityDataManager.removeActivityNClientById( activityId );
+                
+
+                // 'syncedUp' processing data                
+                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
+
+                ClientDataManager.setActivityDateLocal_client( clientJson );
+
+                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity' }, processingInfo, function() 
+                {
+                    // 'mergeDownload' does saving if there were changes..
+                    ClientDataManager.saveCurrent_ClientsStore();
+
+                    if ( callBack ) callBack( operationSuccess );
+                });
+            }
+            else
+            {
+                var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
+                var errStatusCode = 400;
+    
+                // 'syncedUp' processing data                
+                var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
+                ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
+                ClientDataManager.saveCurrent_ClientsStore();                                      
+
+                // Add activityJson processing
+                if ( callBack ) callBack( operationSuccess, errMsg );
+            }
+            
         }
         else
         {
