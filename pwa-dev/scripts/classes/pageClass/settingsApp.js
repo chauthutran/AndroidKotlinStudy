@@ -459,16 +459,7 @@ function settingsApp( cwsRender )
             $('.scrim').hide();
             divDataShareTag.hide();
         });       
-        
-        /*
-        <input class="inputShareCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
-        <button class="btnShare cbutton" >Share</button>  
-      </div>
-      <div>
-        <input class="inputLoadCode" style="width: 80px; border: solid 1px #ccc; font-size: 0.75rem;" />
-        <button class="btnLoad cbutton">Load</button>  
-        */
-       
+               
         divDataShareTag.find( '.btnShare' ).off( 'click' ).click( function () 
         {
             var shareCodeTag = divDataShareTag.find( '.inputShareCode' );
@@ -499,6 +490,8 @@ function settingsApp( cwsRender )
                             shareCodeTag.val( '' );
                             isSuccess = true;
                             //console.customLog( returnJson );    
+
+                            me.AddShareLogMsg( divDataShareTag, 'SHARE UPLOADED. shareCode: ' + shareCode );
                         }
                     }
 
@@ -507,6 +500,7 @@ function settingsApp( cwsRender )
                 });	
             }
         });       
+
 
         divDataShareTag.find( '.btnLoad' ).off( 'click' ).click( function () 
         {
@@ -540,6 +534,8 @@ function settingsApp( cwsRender )
                                 console.customLog( 'LoadData clients merged' );
                                 SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
                             });
+
+                            me.AddShareLogMsg( divDataShareTag, 'LOADED. loadCode: ' + loadCode );
                         }
                     }
 
@@ -549,6 +545,20 @@ function settingsApp( cwsRender )
             }            
         });       
     }
+
+    me.AddShareLogMsg = function( divDataShareTag, logMsg )
+    {
+        var dateTimeStr = Util.formatDateTime( new Date(), "MM-dd HH:mm" );
+        logMsg = '[' + dateTimeStr + '] ' + logMsg;
+        
+        //var logMsg = '[Time: ' + infoJson.timestamp + '] ' + 'SHARE UPLOADED. shareCode: ' + infoJson.shareCode;
+        var logMsgDivTag = $( '<div style="font-weight: 300;">' + logMsg + '</div>' );
+
+        var divMainContentTag = divDataShareTag.find( '.divMainContent' );
+
+        divMainContentTag.append( logMsgDivTag );
+    };
+
 
     me.setNewAppFileStatus = function( newAppFilesFound )
 	{
