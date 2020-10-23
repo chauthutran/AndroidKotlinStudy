@@ -3973,11 +3973,12 @@ textarea {
 }
 
 @media (max-width: 380px) {
-  .list .card .card__container {
-        /*grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta"; */
+.list .card .card__container {
+    /* grid-template-areas: "card__support_visuals card__content card__content"
+      "card__cta card__cta card__cta"; */
     -ms-grid-columns: 56px auto auto;
-        grid-template-columns: 56px auto auto;
+    grid-template-columns: 56px auto auto;
+    grid-gap: 0px;        
   }
 }
 
@@ -3994,6 +3995,13 @@ textarea {
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+
+@media (max-width: 380px) {
+  .list .card .card__container .card__content {
+    font-size: 0.94rem;
+    margin-left: 4px;
+  }
 }
 
 .list .card .card__container .card__content .card__row {
@@ -4909,10 +4917,11 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        /*grid-template-areas: "card__support_visuals card__content card__content"
+    /*grid-template-areas: "card__support_visuals card__content card__content"
  "card__cta card__cta card__cta";*/
     -ms-grid-columns: 56px auto auto;
-        grid-template-columns: 56px auto auto;
+    grid-template-columns: 56px auto auto;
+    grid-gap: 0px;      
   }
 }
 
@@ -4929,6 +4938,12 @@ textarea {
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+
+@media (max-width: 380px) {
+.wapper_card .card .card__container .card__content {
+  font-size: 0.94rem;
+  margin-left: 4px;
 }
 
 .wapper_card .card .card__container .card__content .card__row {
