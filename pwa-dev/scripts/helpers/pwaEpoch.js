@@ -1,5 +1,20 @@
 // -------------------------------------------
 // -- pwaEpoch Class/Methods
+//
+//      - To generate a unique number
+//
+//      - Take YY MM DD HH mm ss sss <-- compress as number only or num/char presenation
+//          + take some big enough random range, thus, the duplicate encounter is highly unlikely..
+//          - But try to make it in as short lengh as possible.
+//
+//      - Base 10 - just numberic number generate
+//      - Base 36 - number + char
+//
+//      - ##{epoch(1000,36)} --> '1000' 1000th of seconds (using milliseconds (upto) value ), 36 means alpha + numeric.
+//      - 
+//
+//      - Do not use 'me.baseExclusions' /i|l|o/; characters..
+//
 function pwaEpoch( decimals, base, epochOffsetDate )
 {
     var me = this;
@@ -79,7 +94,6 @@ function pwaEpoch( decimals, base, epochOffsetDate )
                     me.failValidBase36Test = me.baseExclusions.test( epochDec12bCalc.toString() );
                     //console.customLog( me.baseExclusions + ' > ' + epochDec12bCalc.toString() + ' = ' + me.baseExclusions.test( epochDec12bCalc.toString() )  + ' (' + epochDec12b10 + ')' );
                 }
-
             }
 
             epochDec12seed.bases = epochDec12bases;

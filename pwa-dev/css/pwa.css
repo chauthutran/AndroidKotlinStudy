@@ -1496,7 +1496,7 @@ img.round:hover{
   text-align: center;
 }
 
-.statDiv > table 
+.statDiv table 
 {
   width: max-content;
   border: 1px solid #C0C0C0;
@@ -1506,7 +1506,7 @@ img.round:hover{
   box-shadow: 0px 6px 6px 0px rgba(0,0,0,0.5);
 }
 
-.statDiv > table > thead > tr > th 
+.statDiv table > thead > tr > th 
 {
   padding: 4px;
   font-size: 12px;
@@ -1514,11 +1514,11 @@ img.round:hover{
   font-weight: 600;
 } 
 
-.statDiv > table > tbody > tr:nth-of-type(odd) {
+.statDiv table > tbody > tr:nth-of-type(odd) {
       background: rgb(248, 248, 248);
 }
 
-.statDiv > table > tbody > tr > td 
+.statDiv table > tbody > tr > td 
 {
   padding: 4px;
   font-size: 12px;
