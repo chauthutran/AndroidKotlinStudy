@@ -3974,8 +3974,8 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        /*grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta"; */
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4011,7 +4011,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta {
-    padding: 0px 0;
+    padding: 8px 0;
   }
 }
 
@@ -4028,7 +4028,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta .card__cta_one {
-    padding-left: 0px;
+    padding-left: 62px;
   }
 }
 
@@ -4909,8 +4909,8 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        /*grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";*/
+        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4946,7 +4946,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta {
-    padding: 0px 0;
+    padding: 8px 0;
   }
 }
 
@@ -4963,7 +4963,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta .card__cta_one {
-    padding-left: 0px;
+    padding-left: 62px;
   }
 }
 
