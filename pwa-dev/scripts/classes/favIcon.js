@@ -114,10 +114,10 @@ function favIcons( cwsRender )
                 if ( imgPath )
                 {
                     // create + add SVG styled icons to localStorage
-                    $.get( imgPath, function( data ) {
-
-                        var svgObject = ( $( data )[0].documentElement );
-                        var activityItem = ( favList[ favItm ].activityType ?  FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType ) : undefined );
+                    $.get( imgPath, function( data ) 
+                    {
+                        var svgObject = $( data )[0].documentElement;
+                        var activityItem = ( favList[ favItm ].activityType ) ?  FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType ) : undefined;
 
                         if ( favList[ favItm ].term ) $( svgObject ).html( $( svgObject ).html().replace( /{term}/g, favList[ favItm ].term ) );
 
@@ -130,7 +130,7 @@ function favIcons( cwsRender )
                             favList[ favItm ][ 'svgObject' ] = me.styleIconByConfig( favList[ favItm ], svgObject );
                         }
 
-                        var favNum = ( parseInt(favItm) + 1 );
+                        var favNum = parseInt( favItm ) + 1;
 
                         if ( favList.length > favNum && favList[ favNum ] )
                         {
