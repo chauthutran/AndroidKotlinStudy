@@ -48,24 +48,24 @@ FormMsgManager.appBlockTemplate = function( template )
     if ( template == 'appLoad' )
     {
         block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
-        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important' };
+        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
     }
     else if ( template == 'loginAfterLoad' )
     {
         block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:38px; height:38px;'><span>Loading Data...</span>";
-        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#ccc !important' };
+        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#ccc !important', 'margin-top': '-40px', 'margin-left': '-40px' };
     }
     else if ( template == 'appLoadProgress' )
     {
         block = "<img src='images/Connect.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>" +
                 "<div term='' style='font-size:7pt;position:relative;top:-4px;'>processing</div></div>";
         //css = 'border: none !important;background-color:rbga(0,0,0,0.5);'
-        css = { 'border': 'none !important', 'background-color': 'rbga(0,0,0,0.5) !important' };
+        css = { 'border': 'none !important', 'background-color': 'rbga(0,0,0,0.5) !important', 'margin-top': '-50px', 'margin-left': '-50px' };
     }
     else if ( template == 'appDiagnostic' )
     {
         block = "<img src='images/care.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>";
-        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important' };
+        css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
 
     }
     else

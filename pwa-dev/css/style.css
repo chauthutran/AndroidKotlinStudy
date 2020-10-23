@@ -3954,7 +3954,6 @@ textarea {
 .list .card {
   width: 100%;
   height: auto;
-  padding: 8px 0 0;
   border-bottom: 1px solid #ddd;
   padding: 4px 0;
 }
@@ -3962,22 +3961,22 @@ textarea {
 .list .card .card__container {
   display: -ms-grid;
   display: grid;
-  grid-gap: 8px;
+  /*grid-gap: 8px; Add margin-left instead..*/
   width: 100%;
-      grid-template-areas: "card__support_visuals card__content card__cta";
+  grid-template-areas: "card__support_visuals card__content card__cta";
   -ms-grid-columns: 56px auto 90px;
-      grid-template-columns: 56px auto 90px;
+  grid-template-columns: 56px auto 90px;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
+/*        grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta";*/
     -ms-grid-columns: 56px auto auto;
-        grid-template-columns: 56px auto auto;
+    grid-template-columns: 56px auto auto;
   }
 }
 
@@ -3993,8 +3992,16 @@ textarea {
   grid-area: card__content;
   font-size: 1rem;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
+  margin-left: 4px;    
 }
+
+@media (max-width: 380px) {
+  .list .card .card__container .card__content {
+    font-size: 0.94rem;
+  }
+}
+
 
 .list .card .card__container .card__content .card__row {
   float: left;
@@ -4011,7 +4018,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta {
-    padding: 8px 0;
+    padding: 0px;
   }
 }
 
@@ -4028,7 +4035,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta .card__cta_one {
-    padding-left: 62px;
+    padding-left: 0px;
   }
 }
 
@@ -4909,8 +4916,8 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
+  /*      grid-template-areas: "card__support_visuals card__content card__content"
+ "card__cta card__cta card__cta"; */
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4946,7 +4953,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta {
-    padding: 8px 0;
+    padding: 0px;
   }
 }
 
@@ -4963,7 +4970,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta .card__cta_one {
-    padding-left: 62px;
+    padding-left: 0px;
   }
 }
 
