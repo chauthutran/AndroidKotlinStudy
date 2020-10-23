@@ -102,48 +102,51 @@ function favIcons( cwsRender )
             }
             else
             {
-                var imgPath = favList[ favItm ].img;
+                var imgPath = '';
 
-                if ( ! imgPath && favList[ favItm ].activityType )
+                if ( favList[ favItm ].img ) imgPath = favList[ favItm ].img;
+                else if ( favList[ favItm ].activityType )
                 {
                     var actType = FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType );
                     imgPath = actType.icon.path;
                 }
 
-                // create + add SVG styled icons to localStorage
-                $.get( imgPath, function( data ) {
+                if ( imgPath )
+                {
+                    // create + add SVG styled icons to localStorage
+                    $.get( imgPath, function( data ) {
 
-                    var svgObject = ( $( data )[0].documentElement );
-                    var activityItem = ( favList[ favItm ].activityType ?  FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType ) : undefined );
-                    //$( svgObject ).find( 'tspan' ).html( favList[ favItm ].name ); // LABELS no longer supported from v1.3
+                        var svgObject = ( $( data )[0].documentElement );
+                        var activityItem = ( favList[ favItm ].activityType ?  FormUtil.getActivityTypeByRef( "name", favList[ favItm ].activityType ) : undefined );
 
-                    if ( favList[ favItm ].term ) $( svgObject ).html( $( svgObject ).html().replace( /{term}/g, favList[ favItm ].term ) );
+                        if ( favList[ favItm ].term ) $( svgObject ).html( $( svgObject ).html().replace( /{term}/g, favList[ favItm ].term ) );
 
-                    if ( activityItem )
-                    {
-                        favList[ favItm ][ 'svgObject' ] = me.styleIconByActivityItem( favList[ favItm ], activityItem, svgObject );
-                    }
-                    else
-                    {
-                        favList[ favItm ][ 'svgObject' ] = me.styleIconByConfig( favList[ favItm ], svgObject );
-                    }
+                        if ( activityItem )
+                        {
+                            favList[ favItm ][ 'svgObject' ] = me.styleIconByActivityItem( favList[ favItm ], activityItem, svgObject );
+                        }
+                        else
+                        {
+                            favList[ favItm ][ 'svgObject' ] = me.styleIconByConfig( favList[ favItm ], svgObject );
+                        }
 
+                        var favNum = ( parseInt(favItm) + 1 );
 
-                    if ( favList.length > ( parseInt(favItm) +1 ) && favList[ ( parseInt(favItm) +1 ) ] )
-                    {
-                        me.createRecursiveFavIcons( favList, ( parseInt(favItm) +1 ), bAppend )
-                    }
-                    else
-                    {
-                        me.createRecursiveFavIcons ( favList, 0, true );
-                    }
+                        if ( favList.length > favNum && favList[ favNum ] )
+                        {
+                            me.createRecursiveFavIcons( favList, favNum, bAppend )
+                        }
+                        else
+                        {
+                            me.createRecursiveFavIcons ( favList, 0, true );
+                        }
 
-                });
+                    });
+                }
             }
-
         }
+    };
 
-    }
 
     me.styleIconByActivityItem = function( favObj, actTypeObj, svgObject )
     {
