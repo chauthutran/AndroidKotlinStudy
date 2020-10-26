@@ -2473,12 +2473,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .from_six_cols td:first-child {
@@ -2514,14 +2508,6 @@ textarea {
   .table_container .from_six_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .from_six_cols th:first-child {
     text-align: left;
@@ -2551,14 +2537,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .from_six_cols td:first-child {
     text-align: left;
@@ -2597,12 +2575,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .three_cols td:first-child {
@@ -2621,13 +2593,6 @@ textarea {
 .table_container .three_cols th {
   display: table-cell;
   padding: 102px;
-  /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }*/
 }
 
 .table_container .three_cols th:first-child {
@@ -2641,13 +2606,6 @@ textarea {
   display: table-cell;
   text-align: right;
   padding: 102px;
-  /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }*/
 }
 
 .table_container .three_cols td:first-child {
@@ -2675,12 +2633,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .four_cols td:first-child {
@@ -2716,14 +2668,6 @@ textarea {
   .table_container .four_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .four_cols th:first-child {
     text-align: left;
@@ -2753,14 +2697,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .four_cols td:first-child {
     text-align: left;
@@ -2799,12 +2735,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .five_cols td:first-child {
@@ -2840,14 +2770,6 @@ textarea {
   .table_container .five_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .five_cols th:first-child {
     text-align: left;
@@ -2877,14 +2799,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .five_cols td:first-child {
     text-align: left;
@@ -3486,7 +3400,6 @@ textarea {
   position: fixed;
   width: 0;
   min-height: 100%;
-  /*z-index: 1600;*/
   bottom: 0;
   left: 0;
   background-color: #FFFFFF;
@@ -3623,7 +3536,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 50px;
+  min-height: 48px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
@@ -3961,22 +3874,19 @@ textarea {
 .list .card .card__container {
   display: -ms-grid;
   display: grid;
-  /*grid-gap: 8px; Add margin-left instead..*/
   width: 100%;
-  grid-template-areas: "card__support_visuals card__content card__cta";
+      grid-template-areas: "card__support_visuals card__content card__cta";
   -ms-grid-columns: 56px auto 90px;
-  grid-template-columns: 56px auto 90px;
+      grid-template-columns: 56px auto 90px;
   -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 @media (max-width: 380px) {
   .list .card .card__container {
-/*        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";*/
     -ms-grid-columns: 56px auto auto;
-    grid-template-columns: 56px auto auto;
+        grid-template-columns: 56px auto auto;
   }
 }
 
@@ -3992,16 +3902,15 @@ textarea {
   grid-area: card__content;
   font-size: 1rem;
   -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  margin-left: 4px;    
+          box-sizing: border-box;
+  margin-left: 4px;
 }
 
 @media (max-width: 380px) {
   .list .card .card__container .card__content {
-    font-size: 0.94rem;
+    font-size: 0.9375rem;
   }
 }
-
 
 .list .card .card__container .card__content .card__row {
   float: left;
@@ -4725,7 +4634,6 @@ textarea {
   -moz-box-sizing: border-box;
 }
 
-
 .sheet_bottom-btn3 {
   display: none;
   position: fixed;
@@ -4873,7 +4781,6 @@ textarea {
   margin-bottom: 8px;
 }
 
-
 .sheet_preview h4, .sheet_preview h5 {
   padding-left: 8px;
   font-weight: 500;
@@ -4897,14 +4804,13 @@ textarea {
 .wapper_card .card {
   width: 100%;
   height: auto;
-  padding: 8px 0 0;
   background-color: #FFF;
+  padding: 4px 0;
 }
 
 .wapper_card .card .card__container {
   display: -ms-grid;
   display: grid;
-  grid-gap: 8px;
   width: 100%;
       grid-template-areas: "card__support_visuals card__content card__cta";
   -ms-grid-columns: 56px auto 90px;
@@ -4916,8 +4822,6 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-  /*      grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta"; */
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -4936,6 +4840,13 @@ textarea {
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  margin-left: 4px;
+}
+
+@media (max-width: 380px) {
+  .wapper_card .card .card__container .card__content {
+    font-size: 0.9375rem;
+  }
 }
 
 .wapper_card .card .card__container .card__content .card__row {
@@ -6967,16 +6878,6 @@ dialog .dialog__action div {
 
 .theme-green .from_six_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-green .from_six_cols tr:nth-of-type(odd) {
@@ -6999,12 +6900,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-green .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .from_six_cols td:first-child {
     background: #1B5E20;
@@ -7018,12 +6913,6 @@ dialog .dialog__action div {
 
 .theme-green .three_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-green .three_cols tr:nth-of-type(odd) {
@@ -7042,15 +6931,6 @@ dialog .dialog__action div {
 
 .theme-green .four_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-green .four_cols tr:nth-of-type(odd) {
@@ -7073,12 +6953,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-green .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .four_cols td:first-child {
     background: #1B5E20;
@@ -7092,15 +6966,6 @@ dialog .dialog__action div {
 
 .theme-green .five_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-green .five_cols tr:nth-of-type(odd) {
@@ -7123,12 +6988,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-green .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .five_cols td:first-child {
     background: #1B5E20;
@@ -7329,16 +7188,6 @@ dialog .dialog__action div {
 
 .theme-red .from_six_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-red .from_six_cols tr:nth-of-type(odd) {
@@ -7361,12 +7210,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-red .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .from_six_cols td:first-child {
     background: #B71C1C;
@@ -7380,12 +7223,6 @@ dialog .dialog__action div {
 
 .theme-red .three_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-red .three_cols tr:nth-of-type(odd) {
@@ -7404,15 +7241,6 @@ dialog .dialog__action div {
 
 .theme-red .four_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-red .four_cols tr:nth-of-type(odd) {
@@ -7435,12 +7263,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-red .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .four_cols td:first-child {
     background: #B71C1C;
@@ -7454,15 +7276,6 @@ dialog .dialog__action div {
 
 .theme-red .five_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-red .five_cols tr:nth-of-type(odd) {
@@ -7485,12 +7298,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-red .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .five_cols td:first-child {
     background: #B71C1C;
@@ -7691,16 +7498,6 @@ dialog .dialog__action div {
 
 .theme-pink .from_six_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-pink .from_six_cols tr:nth-of-type(odd) {
@@ -7723,12 +7520,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-pink .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .from_six_cols td:first-child {
     background: #880E4F;
@@ -7742,12 +7533,6 @@ dialog .dialog__action div {
 
 .theme-pink .three_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-pink .three_cols tr:nth-of-type(odd) {
@@ -7766,15 +7551,6 @@ dialog .dialog__action div {
 
 .theme-pink .four_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-pink .four_cols tr:nth-of-type(odd) {
@@ -7797,12 +7573,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-pink .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .four_cols td:first-child {
     background: #880E4F;
@@ -7816,15 +7586,6 @@ dialog .dialog__action div {
 
 .theme-pink .five_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-pink .five_cols tr:nth-of-type(odd) {
@@ -7847,12 +7608,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-pink .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .five_cols td:first-child {
     background: #880E4F;
@@ -8053,16 +7808,6 @@ dialog .dialog__action div {
 
 .theme-purple .from_six_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-purple .from_six_cols tr:nth-of-type(odd) {
@@ -8085,12 +7830,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-purple .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .from_six_cols td:first-child {
     background: #4A148C;
@@ -8104,12 +7843,6 @@ dialog .dialog__action div {
 
 .theme-purple .three_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-purple .three_cols tr:nth-of-type(odd) {
@@ -8128,15 +7861,6 @@ dialog .dialog__action div {
 
 .theme-purple .four_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-purple .four_cols tr:nth-of-type(odd) {
@@ -8159,12 +7883,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-purple .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .four_cols td:first-child {
     background: #4A148C;
@@ -8178,15 +7896,6 @@ dialog .dialog__action div {
 
 .theme-purple .five_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-purple .five_cols tr:nth-of-type(odd) {
@@ -8209,12 +7918,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-purple .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .five_cols td:first-child {
     background: #4A148C;
@@ -8415,16 +8118,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .from_six_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_purple .from_six_cols tr:nth-of-type(odd) {
@@ -8447,12 +8140,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-deep_purple .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .from_six_cols td:first-child {
     background: #311B92;
@@ -8466,12 +8153,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .three_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-deep_purple .three_cols tr:nth-of-type(odd) {
@@ -8490,15 +8171,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .four_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-deep_purple .four_cols tr:nth-of-type(odd) {
@@ -8521,12 +8193,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-deep_purple .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .four_cols td:first-child {
     background: #311B92;
@@ -8540,15 +8206,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .five_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_purple .five_cols tr:nth-of-type(odd) {
@@ -8571,12 +8228,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-deep_purple .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .five_cols td:first-child {
     background: #311B92;
@@ -8777,16 +8428,6 @@ dialog .dialog__action div {
 
 .theme-indigo .from_six_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-indigo .from_six_cols tr:nth-of-type(odd) {
@@ -8809,12 +8450,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-indigo .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .from_six_cols td:first-child {
     background: #1A237E;
@@ -8828,12 +8463,6 @@ dialog .dialog__action div {
 
 .theme-indigo .three_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-indigo .three_cols tr:nth-of-type(odd) {
@@ -8852,15 +8481,6 @@ dialog .dialog__action div {
 
 .theme-indigo .four_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-indigo .four_cols tr:nth-of-type(odd) {
@@ -8883,12 +8503,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-indigo .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .four_cols td:first-child {
     background: #1A237E;
@@ -8902,15 +8516,6 @@ dialog .dialog__action div {
 
 .theme-indigo .five_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-indigo .five_cols tr:nth-of-type(odd) {
@@ -8933,12 +8538,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-indigo .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .five_cols td:first-child {
     background: #1A237E;
@@ -9139,16 +8738,6 @@ dialog .dialog__action div {
 
 .theme-blue .from_six_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue .from_six_cols tr:nth-of-type(odd) {
@@ -9171,12 +8760,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-blue .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .from_six_cols td:first-child {
     background: #0D47A1;
@@ -9190,12 +8773,6 @@ dialog .dialog__action div {
 
 .theme-blue .three_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-blue .three_cols tr:nth-of-type(odd) {
@@ -9214,15 +8791,6 @@ dialog .dialog__action div {
 
 .theme-blue .four_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-blue .four_cols tr:nth-of-type(odd) {
@@ -9245,12 +8813,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-blue .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .four_cols td:first-child {
     background: #0D47A1;
@@ -9264,15 +8826,6 @@ dialog .dialog__action div {
 
 .theme-blue .five_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue .five_cols tr:nth-of-type(odd) {
@@ -9295,12 +8848,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-blue .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .five_cols td:first-child {
     background: #0D47A1;
@@ -9501,16 +9048,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .from_six_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_blue .from_six_cols tr:nth-of-type(odd) {
@@ -9533,12 +9070,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-light_blue .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .from_six_cols td:first-child {
     background: #01579B;
@@ -9552,12 +9083,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .three_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-light_blue .three_cols tr:nth-of-type(odd) {
@@ -9576,15 +9101,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .four_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-light_blue .four_cols tr:nth-of-type(odd) {
@@ -9607,12 +9123,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-light_blue .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .four_cols td:first-child {
     background: #01579B;
@@ -9626,15 +9136,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .five_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_blue .five_cols tr:nth-of-type(odd) {
@@ -9657,12 +9158,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-light_blue .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .five_cols td:first-child {
     background: #01579B;
@@ -9863,16 +9358,6 @@ dialog .dialog__action div {
 
 .theme-cyan .from_six_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-cyan .from_six_cols tr:nth-of-type(odd) {
@@ -9895,12 +9380,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-cyan .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .from_six_cols td:first-child {
     background: #006064;
@@ -9914,12 +9393,6 @@ dialog .dialog__action div {
 
 .theme-cyan .three_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-cyan .three_cols tr:nth-of-type(odd) {
@@ -9938,15 +9411,6 @@ dialog .dialog__action div {
 
 .theme-cyan .four_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-cyan .four_cols tr:nth-of-type(odd) {
@@ -9969,12 +9433,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-cyan .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .four_cols td:first-child {
     background: #006064;
@@ -9988,15 +9446,6 @@ dialog .dialog__action div {
 
 .theme-cyan .five_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-cyan .five_cols tr:nth-of-type(odd) {
@@ -10019,12 +9468,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-cyan .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .five_cols td:first-child {
     background: #006064;
@@ -10225,16 +9668,6 @@ dialog .dialog__action div {
 
 .theme-teal .from_six_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-teal .from_six_cols tr:nth-of-type(odd) {
@@ -10257,12 +9690,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-teal .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .from_six_cols td:first-child {
     background: #004D40;
@@ -10276,12 +9703,6 @@ dialog .dialog__action div {
 
 .theme-teal .three_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-teal .three_cols tr:nth-of-type(odd) {
@@ -10300,15 +9721,6 @@ dialog .dialog__action div {
 
 .theme-teal .four_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-teal .four_cols tr:nth-of-type(odd) {
@@ -10331,12 +9743,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-teal .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .four_cols td:first-child {
     background: #004D40;
@@ -10350,15 +9756,6 @@ dialog .dialog__action div {
 
 .theme-teal .five_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-teal .five_cols tr:nth-of-type(odd) {
@@ -10381,12 +9778,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-teal .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .five_cols td:first-child {
     background: #004D40;
@@ -10587,16 +9978,6 @@ dialog .dialog__action div {
 
 .theme-light_green .from_six_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_green .from_six_cols tr:nth-of-type(odd) {
@@ -10619,12 +10000,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-light_green .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .from_six_cols td:first-child {
     background: #33691E;
@@ -10638,12 +10013,6 @@ dialog .dialog__action div {
 
 .theme-light_green .three_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-light_green .three_cols tr:nth-of-type(odd) {
@@ -10662,15 +10031,6 @@ dialog .dialog__action div {
 
 .theme-light_green .four_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-light_green .four_cols tr:nth-of-type(odd) {
@@ -10693,12 +10053,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-light_green .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .four_cols td:first-child {
     background: #33691E;
@@ -10712,15 +10066,6 @@ dialog .dialog__action div {
 
 .theme-light_green .five_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_green .five_cols tr:nth-of-type(odd) {
@@ -10743,12 +10088,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-light_green .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .five_cols td:first-child {
     background: #33691E;
@@ -10949,16 +10288,6 @@ dialog .dialog__action div {
 
 .theme-lime .from_six_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-lime .from_six_cols tr:nth-of-type(odd) {
@@ -10981,12 +10310,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-lime .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .from_six_cols td:first-child {
     background: #827717;
@@ -11000,12 +10323,6 @@ dialog .dialog__action div {
 
 .theme-lime .three_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-lime .three_cols tr:nth-of-type(odd) {
@@ -11024,15 +10341,6 @@ dialog .dialog__action div {
 
 .theme-lime .four_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-lime .four_cols tr:nth-of-type(odd) {
@@ -11055,12 +10363,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-lime .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .four_cols td:first-child {
     background: #827717;
@@ -11074,15 +10376,6 @@ dialog .dialog__action div {
 
 .theme-lime .five_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-lime .five_cols tr:nth-of-type(odd) {
@@ -11105,12 +10398,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-lime .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .five_cols td:first-child {
     background: #827717;
@@ -11311,16 +10598,6 @@ dialog .dialog__action div {
 
 .theme-yellow .from_six_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-yellow .from_six_cols tr:nth-of-type(odd) {
@@ -11343,12 +10620,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-yellow .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .from_six_cols td:first-child {
     background: #F57F17;
@@ -11362,12 +10633,6 @@ dialog .dialog__action div {
 
 .theme-yellow .three_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-yellow .three_cols tr:nth-of-type(odd) {
@@ -11386,15 +10651,6 @@ dialog .dialog__action div {
 
 .theme-yellow .four_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-yellow .four_cols tr:nth-of-type(odd) {
@@ -11417,12 +10673,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-yellow .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .four_cols td:first-child {
     background: #F57F17;
@@ -11436,15 +10686,6 @@ dialog .dialog__action div {
 
 .theme-yellow .five_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-yellow .five_cols tr:nth-of-type(odd) {
@@ -11467,12 +10708,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-yellow .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .five_cols td:first-child {
     background: #F57F17;
@@ -11673,16 +10908,6 @@ dialog .dialog__action div {
 
 .theme-amber .from_six_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-amber .from_six_cols tr:nth-of-type(odd) {
@@ -11705,12 +10930,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-amber .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .from_six_cols td:first-child {
     background: #FF6F00;
@@ -11724,12 +10943,6 @@ dialog .dialog__action div {
 
 .theme-amber .three_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-amber .three_cols tr:nth-of-type(odd) {
@@ -11748,15 +10961,6 @@ dialog .dialog__action div {
 
 .theme-amber .four_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-amber .four_cols tr:nth-of-type(odd) {
@@ -11779,12 +10983,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-amber .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .four_cols td:first-child {
     background: #FF6F00;
@@ -11798,15 +10996,6 @@ dialog .dialog__action div {
 
 .theme-amber .five_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-amber .five_cols tr:nth-of-type(odd) {
@@ -11829,12 +11018,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-amber .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .five_cols td:first-child {
     background: #FF6F00;
@@ -12035,16 +11218,6 @@ dialog .dialog__action div {
 
 .theme-orange .from_six_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-orange .from_six_cols tr:nth-of-type(odd) {
@@ -12067,12 +11240,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-orange .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .from_six_cols td:first-child {
     background: #FF6F00;
@@ -12086,12 +11253,6 @@ dialog .dialog__action div {
 
 .theme-orange .three_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-orange .three_cols tr:nth-of-type(odd) {
@@ -12110,15 +11271,6 @@ dialog .dialog__action div {
 
 .theme-orange .four_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-orange .four_cols tr:nth-of-type(odd) {
@@ -12141,12 +11293,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-orange .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .four_cols td:first-child {
     background: #FF6F00;
@@ -12160,15 +11306,6 @@ dialog .dialog__action div {
 
 .theme-orange .five_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-orange .five_cols tr:nth-of-type(odd) {
@@ -12191,12 +11328,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-orange .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .five_cols td:first-child {
     background: #FF6F00;
@@ -12397,16 +11528,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .from_six_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_orange .from_six_cols tr:nth-of-type(odd) {
@@ -12429,12 +11550,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-deep_orange .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .from_six_cols td:first-child {
     background: #BF360C;
@@ -12448,12 +11563,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .three_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-deep_orange .three_cols tr:nth-of-type(odd) {
@@ -12472,15 +11581,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .four_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-deep_orange .four_cols tr:nth-of-type(odd) {
@@ -12503,12 +11603,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-deep_orange .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .four_cols td:first-child {
     background: #BF360C;
@@ -12522,15 +11616,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .five_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_orange .five_cols tr:nth-of-type(odd) {
@@ -12553,12 +11638,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-deep_orange .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .five_cols td:first-child {
     background: #BF360C;
@@ -12759,16 +11838,6 @@ dialog .dialog__action div {
 
 .theme-brown .from_six_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-brown .from_six_cols tr:nth-of-type(odd) {
@@ -12791,12 +11860,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-brown .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .from_six_cols td:first-child {
     background: #3E2723;
@@ -12810,12 +11873,6 @@ dialog .dialog__action div {
 
 .theme-brown .three_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-brown .three_cols tr:nth-of-type(odd) {
@@ -12834,15 +11891,6 @@ dialog .dialog__action div {
 
 .theme-brown .four_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-brown .four_cols tr:nth-of-type(odd) {
@@ -12865,12 +11913,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-brown .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .four_cols td:first-child {
     background: #3E2723;
@@ -12884,15 +11926,6 @@ dialog .dialog__action div {
 
 .theme-brown .five_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-brown .five_cols tr:nth-of-type(odd) {
@@ -12915,12 +11948,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-brown .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .five_cols td:first-child {
     background: #3E2723;
@@ -13121,16 +12148,6 @@ dialog .dialog__action div {
 
 .theme-gray .from_six_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-gray .from_six_cols tr:nth-of-type(odd) {
@@ -13153,12 +12170,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-gray .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .from_six_cols td:first-child {
     background: #212121;
@@ -13172,12 +12183,6 @@ dialog .dialog__action div {
 
 .theme-gray .three_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-gray .three_cols tr:nth-of-type(odd) {
@@ -13196,15 +12201,6 @@ dialog .dialog__action div {
 
 .theme-gray .four_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-gray .four_cols tr:nth-of-type(odd) {
@@ -13227,12 +12223,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-gray .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .four_cols td:first-child {
     background: #212121;
@@ -13246,15 +12236,6 @@ dialog .dialog__action div {
 
 .theme-gray .five_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-gray .five_cols tr:nth-of-type(odd) {
@@ -13277,12 +12258,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-gray .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .five_cols td:first-child {
     background: #212121;
@@ -13483,16 +12458,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .from_six_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue_gray .from_six_cols tr:nth-of-type(odd) {
@@ -13515,12 +12480,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-blue_gray .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .from_six_cols td:first-child {
     background: #263238;
@@ -13534,12 +12493,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .three_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-blue_gray .three_cols tr:nth-of-type(odd) {
@@ -13558,15 +12511,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .four_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-blue_gray .four_cols tr:nth-of-type(odd) {
@@ -13589,12 +12533,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-blue_gray .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .four_cols td:first-child {
     background: #263238;
@@ -13608,15 +12546,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .five_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue_gray .five_cols tr:nth-of-type(odd) {
@@ -13639,12 +12568,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-blue_gray .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .five_cols td:first-child {
     background: #263238;

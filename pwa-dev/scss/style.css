@@ -1702,6 +1702,7 @@ hr {
   left: 0;
   background-color: black;
   opacity: 0.4;
+  z-index: 2000;
 }
 
 .sheet_bottom-scrim {
@@ -1712,6 +1713,7 @@ hr {
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.35);
+  z-index: 2000;
 }
 
 input,
@@ -2471,12 +2473,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .from_six_cols td:first-child {
@@ -2512,14 +2508,6 @@ textarea {
   .table_container .from_six_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .from_six_cols th:first-child {
     text-align: left;
@@ -2549,14 +2537,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .from_six_cols td:first-child {
     text-align: left;
@@ -2595,12 +2575,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .three_cols td:first-child {
@@ -2619,13 +2593,6 @@ textarea {
 .table_container .three_cols th {
   display: table-cell;
   padding: 102px;
-  /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }*/
 }
 
 .table_container .three_cols th:first-child {
@@ -2639,13 +2606,6 @@ textarea {
   display: table-cell;
   text-align: right;
   padding: 102px;
-  /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }*/
 }
 
 .table_container .three_cols td:first-child {
@@ -2673,12 +2633,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .four_cols td:first-child {
@@ -2714,14 +2668,6 @@ textarea {
   .table_container .four_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .four_cols th:first-child {
     text-align: left;
@@ -2751,14 +2697,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .four_cols td:first-child {
     text-align: left;
@@ -2797,12 +2735,6 @@ textarea {
   display: block;
   font-weight: 400;
   font-size: 0.75rem;
-  /*
-            &:last-child {
-                padding: 12px 0;
-                font-weight: 500;
-            }
-            */
 }
 
 .table_container .five_cols td:first-child {
@@ -2838,14 +2770,6 @@ textarea {
   .table_container .five_cols th {
     display: table-cell;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .five_cols th:first-child {
     text-align: left;
@@ -2875,14 +2799,6 @@ textarea {
     display: table-cell;
     text-align: right;
     padding: 102px;
-    /*
-                &:last-child {
-                    padding-right: 0;
-                    width: auto;
-                    padding-top: .5em;
-                    font-weight: 500;
-                }
-                */
   }
   .table_container .five_cols td:first-child {
     text-align: left;
@@ -3484,7 +3400,6 @@ textarea {
   position: fixed;
   width: 0;
   min-height: 100%;
-  z-index: 1600;
   bottom: 0;
   left: 0;
   background-color: #FFFFFF;
@@ -3952,7 +3867,6 @@ textarea {
 .list .card {
   width: 100%;
   height: auto;
-  padding: 8px 0 0;
   border-bottom: 1px solid #ddd;
   padding: 4px 0;
 }
@@ -3960,7 +3874,6 @@ textarea {
 .list .card .card__container {
   display: -ms-grid;
   display: grid;
-  grid-gap: 8px;
   width: 100%;
       grid-template-areas: "card__support_visuals card__content card__cta";
   -ms-grid-columns: 56px auto 90px;
@@ -3972,8 +3885,6 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -3992,6 +3903,13 @@ textarea {
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  margin-left: 4px;
+}
+
+@media (max-width: 380px) {
+  .list .card .card__container .card__content {
+    font-size: 0.9375rem;
+  }
 }
 
 .list .card .card__container .card__content .card__row {
@@ -4009,7 +3927,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta {
-    padding: 8px 0;
+    padding: 0px;
   }
 }
 
@@ -4026,7 +3944,7 @@ textarea {
 
 @media (max-width: 380px) {
   .list .card .card__container .card__cta .card__cta_one {
-    padding-left: 62px;
+    padding-left: 0px;
   }
 }
 
@@ -4424,7 +4342,7 @@ textarea {
   bottom: 0px;
   left: 0px;
   top: 0px;
-  z-index: 2000;
+  z-index: 1600;
   background-image: url(../images/logo_bk.svg);
   /*background-color: #FFF;*/
   background-position: right;
@@ -4475,7 +4393,7 @@ textarea {
   height: 60%;
   bottom: 0px;
   left: 0px;
-  z-index: 1999;
+  z-index: 2100;
   max-height: 270px;
   -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
@@ -4716,738 +4634,6 @@ textarea {
   -moz-box-sizing: border-box;
 }
 
-.sheet_bottom-s {
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 60%;
-  bottom: 0px;
-  left: 0px;
-  z-index: 1999;
-  max-height: 270px;
-  -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  background-color: #FFF;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-s {
-    height: 80%;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-s {
-    height: 80%;
-    max-height: 260px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 360px) {
-  .sheet_bottom-s {
-    max-height: 240px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 411px) {
-  .sheet_bottom-s {
-    max-height: 230px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 600px) {
-  .sheet_bottom-s {
-    max-height: 210px;
-  }
-}
-
-.sheet_bottom-s .cta_buttons-text {
-  float: left;
-  width: 100%;
-  height: auto;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sync_all {
-  width: 100%;
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sync_all .sync_all__header {
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sync_all .sync_all__header .sync_all__header_title {
-  float: left;
-  width: calc(100% - 80px);
-  text-align: left;
-  color: #333;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-s .sync_all .sync_all__header .sync_all__header_title {
-    height: 36px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-s .sync_all .sync_all__header .sync_all__header_title {
-    height: 40px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-s .sync_all .sync_all__header .sync_all__header_title {
-    height: 36px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-.sheet_bottom-s .sync_all .sync_all__header .sync_all__anim {
-  float: right;
-  width: 36px;
-  height: 36px;
-  margin: 0px 8px 0 0;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sync_all .bottom__wrapper {
-  overflow-x: hidden;
-  width: 100%;
-}
-
-.sheet_bottom-s .sync_all .bottom__wrapper .sync_all__section {
-  float: left;
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sync_all .bottom__wrapper .sync_all__section .sync_all__section_title {
-  float: left;
-  width: 100%;
-  font-weight: 500;
-  line-height: 18px;
-  text-align: left;
-  margin-top: 8px;
-  color: #333;
-  font-size: 1rem;
-}
-
-.sheet_bottom-s .sync_all .bottom__wrapper .sync_all__section .sync_all__section_log {
-  float: left;
-  width: calc(100% - 16px);
-  padding: 8px 8px 0 16px;
-  font-weight: 400;
-  line-height: 18px;
-  text-align: left;
-  color: #333;
-  font-size: 1rem;
-}
-
-.sheet_bottom-s .sync_all .bottom__wrapper .sync_all__section .sync_all__section_msg {
-  float: left;
-  width: 100%;
-  font-weight: 400;
-  line-height: 18px;
-  text-align: right;
-  margin-top: 8px;
-  color: #333;
-  font-size: 0.9375rem;
-}
-
-.sheet_bottom-s .bottom__wrapper {
-  overflow-x: hidden;
-  width: 100%;
-  height: calc(100% - 48px);
-}
-
-.sheet_bottom-s .bottom__wrapper-btn {
-  overflow-x: hidden;
-  width: 100%;
-  height: calc(100% - 170px);
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-s .bottom__wrapper-btn {
-    height: calc(100% - 170px);
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-s .bottom__wrapper-btn {
-    height: calc(100% - 170px);
-  }
-}
-
-@media (orientation: portrait) and (min-width: 360px) {
-  .sheet_bottom-s .bottom__wrapper-btn {
-    height: calc(100% - 100px);
-  }
-}
-
-.sheet_bottom-s .sheet_bottom_card {
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container {
-  width: 100%;
-  height: 48px;
-  margin-bottom: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card-suppor_visuals {
-  float: left;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #5e92f3;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content {
-  float: left;
-  width: calc(100% - 172px);
-  margin-right: 8px;
-  height: auto;
-  text-align: left;
-  line-height: 16px;
-  font-size: 0.75rem;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-@media (max-width: 380px) {
-  .sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content {
-    width: calc(100% - 64px);
-    border-bottom: none;
-    margin-bottom: 12px;
-  }
-}
-
-.sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content .sheet_bottom_card-date {
-  font-weight: 500;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-s .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content .sheet_bottom_card-text {
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn {
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 80%;
-  bottom: 0px;
-  left: 0px;
-  z-index: 1999;
-  max-height: 270px;
-  -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  background-color: #FFF;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-sbtn {
-    height: calc(100% - 74px);
-    padding: 0 8px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-sbtn {
-    padding: 0 8px;
-  }
-  .sheet_bottom-sbtn .button-text {
-    height: 36px;
-    min-height: 36px;
-  }
-  .sheet_bottom-sbtn .button-text .button__container .button-label {
-    min-width: 36px;
-    font-size: 0.9375rem;
-    line-height: 36px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-sbtn {
-    padding: 0 8px;
-    max-height: 280px;
-  }
-  .sheet_bottom-sbtn .button-text {
-    height: 48px;
-    min-height: 48px;
-  }
-  .sheet_bottom-sbtn .button-text .button__container .button-label {
-    min-width: 48px;
-    font-size: 1.125rem;
-    line-height: 48px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-sbtn {
-    max-height: 280px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 598px) {
-  .sheet_bottom-sbtn {
-    padding: 0 8px;
-    max-height: 240px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 598px) {
-  .sheet_bottom-sbtn {
-    padding: 0 8px;
-    max-height: 240px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-sbtn {
-    height: 80%;
-    max-height: 350px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 360px) {
-  .sheet_bottom-sbtn {
-    height: 60%;
-    max-height: 280px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 384px) {
-  .sheet_bottom-sbtn {
-    max-height: 270px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 400px) {
-  .sheet_bottom-sbtn {
-    max-height: 280px;
-  }
-}
-
-.sheet_bottom-sbtn .cta_buttons-text {
-  float: left;
-  width: 100%;
-  height: auto;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sync_all {
-  width: 100%;
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sync_all .sync_all__header {
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sync_all .sync_all__header .sync_all__header_title {
-  float: left;
-  width: calc(100% - 80px);
-  text-align: left;
-  color: #333;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-sbtn .sync_all .sync_all__header .sync_all__header_title {
-    height: 36px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-sbtn .sync_all .sync_all__header .sync_all__header_title {
-    height: 40px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-sbtn .sync_all .sync_all__header .sync_all__header_title {
-    height: 36px;
-    font-weight: 500;
-    line-height: 18px;
-    font-size: 1rem;
-  }
-}
-
-.sheet_bottom-sbtn .sync_all .sync_all__header .sync_all__anim {
-  float: right;
-  width: 36px;
-  height: 36px;
-  margin: 0px 8px 0 0;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sync_all .bottom__wrapper {
-  overflow-x: hidden;
-  width: 100%;
-}
-
-.sheet_bottom-sbtn .sync_all .bottom__wrapper .sync_all__section {
-  float: left;
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sync_all .bottom__wrapper .sync_all__section .sync_all__section_title {
-  float: left;
-  width: 100%;
-  font-weight: 500;
-  line-height: 18px;
-  text-align: left;
-  margin-top: 8px;
-  color: #333;
-  font-size: 1rem;
-}
-
-.sheet_bottom-sbtn .sync_all .bottom__wrapper .sync_all__section .sync_all__section_log {
-  float: left;
-  width: calc(100% - 16px);
-  padding: 8px 8px 0 16px;
-  font-weight: 400;
-  line-height: 18px;
-  text-align: left;
-  color: #333;
-  font-size: 1rem;
-}
-
-.sheet_bottom-sbtn .sync_all .bottom__wrapper .sync_all__section .sync_all__section_msg {
-  float: left;
-  width: 100%;
-  font-weight: 400;
-  line-height: 18px;
-  text-align: right;
-  margin-top: 8px;
-  color: #333;
-  font-size: 0.9375rem;
-}
-
-.sheet_bottom-sbtn .bottom__wrapper {
-  overflow-x: hidden;
-  width: 100%;
-  height: calc(100% - 48px);
-}
-
-.sheet_bottom-sbtn .bottom__wrapper-btn {
-  overflow-x: hidden;
-  width: 100%;
-  height: calc(100% - 170px);
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-sbtn .bottom__wrapper-btn {
-    height: calc(100% - 170px);
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-sbtn .bottom__wrapper-btn {
-    height: calc(100% - 170px);
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-sbtn .bottom__wrapper-btn {
-    height: calc(100% - 100px);
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-sbtn .bottom__wrapper-btn {
-    height: calc(100% - 110px);
-  }
-}
-
-@media (orientation: portrait) and (min-width: 360px) {
-  .sheet_bottom-sbtn .bottom__wrapper-btn {
-    height: calc(100% - 100px);
-  }
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card {
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container {
-  width: 100%;
-  height: 48px;
-  margin-bottom: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card-suppor_visuals {
-  float: left;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #5e92f3;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content {
-  float: left;
-  width: calc(100% - 172px);
-  margin-right: 8px;
-  height: auto;
-  text-align: left;
-  line-height: 16px;
-  font-size: 0.75rem;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-@media (max-width: 380px) {
-  .sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content {
-    width: calc(100% - 64px);
-    border-bottom: none;
-    margin-bottom: 12px;
-  }
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content .sheet_bottom_card-date {
-  font-weight: 500;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-sbtn .sheet_bottom_card .sheet_bottom_card__container .sheet_bottom_card_content .sheet_bottom_card-text {
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-btn2 {
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 80%;
-  bottom: 0px;
-  left: 0px;
-  z-index: 1999;
-  max-height: 270px;
-  -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  background-color: #FFF;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn2 {
-    height: calc(100% - 174px);
-    padding: 0 8px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-btn2 {
-    height: 52%;
-    padding: 0 8px;
-  }
-  .sheet_bottom-btn2 .button {
-    height: 36px;
-    min-height: 36px;
-  }
-  .sheet_bottom-btn2 .button .button__container .button-label {
-    min-width: 36px;
-    font-size: 1rem;
-    line-height: 36px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn2 {
-    max-height: 164px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-btn2 {
-    height: 54%;
-    padding: 0 8px;
-  }
-  .sheet_bottom-btn2 .button {
-    height: 48px;
-    min-height: 48px;
-  }
-  .sheet_bottom-btn2 .button .button__container .button-label {
-    min-width: 48px;
-    font-size: 1rem;
-    line-height: 48px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 360px) {
-  .sheet_bottom-btn2 {
-    max-height: 218px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 598px) {
-  .sheet_bottom-btn2 {
-    max-height: 170px;
-  }
-}
-
-.sheet_bottom-btn2 .sbtt-btn__header {
-  width: 100%;
-  height: 34px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn2 .sbtt-btn__header {
-    height: 34px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn2 .sbtt-btn__header {
-    height: calc(100% - 224px);
-  }
-}
-
-.sheet_bottom-btn2 .sbtt-btn__header .sbtt-btn__header_title {
-  float: left;
-  width: 100%;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn2 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 18px;
-    margin-top: 8px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn2 .sbtt-btn__header .sbtt-btn__header_title {
-    height: 40px;
-    line-height: 36px;
-    font-size: 1.25rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-btn2 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 20px;
-    margin-top: 8px;
-    font-size: 1.125rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-btn2 .sbtt-btn__header .sbtt-btn__header_title {
-    height: 48px;
-    line-height: 36px;
-    margin-top: 8px;
-    font-size: 1.125rem;
-  }
-}
-
-.sheet_bottom-btn2 .cta_buttons {
-  float: left;
-  width: 100%;
-  padding-bottom: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-btn2 .cta_buttons .button {
-  float: left;
-  width: 100%;
-  margin-bottom: 8px;
-}
-
 .sheet_bottom-btn3 {
   display: none;
   position: fixed;
@@ -5455,7 +4641,7 @@ textarea {
   height: 80%;
   bottom: 0px;
   left: 0px;
-  z-index: 1999;
+  z-index: 2100;
   max-height: 270px;
   -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
   box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
@@ -5595,170 +4781,6 @@ textarea {
   margin-bottom: 8px;
 }
 
-.sheet_bottom-btn4 {
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 80%;
-  bottom: 0px;
-  left: 0px;
-  z-index: 1999;
-  max-height: 270px;
-  -webkit-box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-shadow: -2px -2px 5px 0px rgba(0, 0, 0, 0.35);
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  background-color: #FFF;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn4 {
-    height: calc(100% - 62px);
-    padding: 0 8px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-btn4 {
-    height: 80%;
-    padding: 0 8px;
-  }
-  .sheet_bottom-btn4 .button {
-    height: 36px;
-    min-height: 36px;
-  }
-  .sheet_bottom-btn4 .button .button__container .button-label {
-    min-width: 36px;
-    font-size: 1rem;
-    line-height: 36px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn4 {
-    max-height: 274px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-btn4 {
-    height: 85%;
-    padding: 0 8px;
-  }
-  .sheet_bottom-btn4 .button {
-    height: 48px;
-    min-height: 48px;
-  }
-  .sheet_bottom-btn4 .button .button__container .button-label {
-    min-width: 48px;
-    font-size: 1rem;
-    line-height: 48px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 360px) {
-  .sheet_bottom-btn4 {
-    max-height: 274px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 384px) {
-  .sheet_bottom-btn4 {
-    max-height: 273px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 393px) {
-  .sheet_bottom-btn4 {
-    max-height: 274px;
-  }
-}
-
-.sheet_bottom-btn4 .sbtt-btn__header {
-  width: 100%;
-  height: 34px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn4 .sbtt-btn__header {
-    height: 34px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 320px) {
-  .sheet_bottom-btn4 .sbtt-btn__header {
-    height: 18px;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 533px) {
-  .sheet_bottom-btn4 .sbtt-btn__header {
-    height: 36px;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn4 .sbtt-btn__header {
-    height: calc(100% - 224px);
-  }
-}
-
-.sheet_bottom-btn4 .sbtt-btn__header .sbtt-btn__header_title {
-  float: left;
-  width: 100%;
-}
-
-@media (orientation: portrait) and (min-width: 240px) {
-  .sheet_bottom-btn4 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 18px;
-    margin-top: 8px;
-    font-size: 1rem;
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .sheet_bottom-btn4 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 25px;
-    margin-top: 8px;
-    font-size: 1.25rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 480px) {
-  .sheet_bottom-btn4 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 20px;
-    margin-top: 8px;
-    font-size: 1.125rem;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 533px) {
-  .sheet_bottom-btn4 .sbtt-btn__header .sbtt-btn__header_title {
-    line-height: 36px;
-    margin-top: 8px;
-    font-size: 1.125rem;
-  }
-}
-
-.sheet_bottom-btn4 .cta_buttons {
-  float: left;
-  width: 100%;
-  padding-bottom: 8px;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-
-.sheet_bottom-btn4 .cta_buttons .button {
-  float: left;
-  width: 100%;
-  margin-bottom: 8px;
-}
-
 .sheet_preview h4, .sheet_preview h5 {
   padding-left: 8px;
   font-weight: 500;
@@ -5782,14 +4804,13 @@ textarea {
 .wapper_card .card {
   width: 100%;
   height: auto;
-  padding: 8px 0 0;
   background-color: #FFF;
+  padding: 4px 0;
 }
 
 .wapper_card .card .card__container {
   display: -ms-grid;
   display: grid;
-  grid-gap: 8px;
   width: 100%;
       grid-template-areas: "card__support_visuals card__content card__cta";
   -ms-grid-columns: 56px auto 90px;
@@ -5801,8 +4822,6 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container {
-        grid-template-areas: "card__support_visuals card__content card__content"
- "card__cta card__cta card__cta";
     -ms-grid-columns: 56px auto auto;
         grid-template-columns: 56px auto auto;
   }
@@ -5821,6 +4840,13 @@ textarea {
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  margin-left: 4px;
+}
+
+@media (max-width: 380px) {
+  .wapper_card .card .card__container .card__content {
+    font-size: 0.9375rem;
+  }
 }
 
 .wapper_card .card .card__container .card__content .card__row {
@@ -5838,7 +4864,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta {
-    padding: 8px 0;
+    padding: 0px;
   }
 }
 
@@ -5855,7 +4881,7 @@ textarea {
 
 @media (max-width: 380px) {
   .wapper_card .card .card__container .card__cta .card__cta_one {
-    padding-left: 62px;
+    padding-left: 0px;
   }
 }
 
@@ -6420,6 +5446,7 @@ textarea {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  cursor: pointer;
 }
 
 .Nav2 .Menus_display .menu_item_comtainer .menu_item_text {
@@ -7851,16 +6878,6 @@ dialog .dialog__action div {
 
 .theme-green .from_six_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-green .from_six_cols tr:nth-of-type(odd) {
@@ -7883,12 +6900,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-green .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .from_six_cols td:first-child {
     background: #1B5E20;
@@ -7902,12 +6913,6 @@ dialog .dialog__action div {
 
 .theme-green .three_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-green .three_cols tr:nth-of-type(odd) {
@@ -7926,15 +6931,6 @@ dialog .dialog__action div {
 
 .theme-green .four_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-green .four_cols tr:nth-of-type(odd) {
@@ -7957,12 +6953,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-green .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .four_cols td:first-child {
     background: #1B5E20;
@@ -7976,15 +6966,6 @@ dialog .dialog__action div {
 
 .theme-green .five_cols tr {
   border-bottom: 1px solid #C8E6C9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-green .five_cols tr:nth-of-type(odd) {
@@ -8007,12 +6988,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-green .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-green .five_cols td:first-child {
     background: #1B5E20;
@@ -8213,16 +7188,6 @@ dialog .dialog__action div {
 
 .theme-red .from_six_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-red .from_six_cols tr:nth-of-type(odd) {
@@ -8245,12 +7210,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-red .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .from_six_cols td:first-child {
     background: #B71C1C;
@@ -8264,12 +7223,6 @@ dialog .dialog__action div {
 
 .theme-red .three_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-red .three_cols tr:nth-of-type(odd) {
@@ -8288,15 +7241,6 @@ dialog .dialog__action div {
 
 .theme-red .four_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-red .four_cols tr:nth-of-type(odd) {
@@ -8319,12 +7263,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-red .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .four_cols td:first-child {
     background: #B71C1C;
@@ -8338,15 +7276,6 @@ dialog .dialog__action div {
 
 .theme-red .five_cols tr {
   border-bottom: 1px solid #FFCDD2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-red .five_cols tr:nth-of-type(odd) {
@@ -8369,12 +7298,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-red .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-red .five_cols td:first-child {
     background: #B71C1C;
@@ -8575,16 +7498,6 @@ dialog .dialog__action div {
 
 .theme-pink .from_six_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-pink .from_six_cols tr:nth-of-type(odd) {
@@ -8607,12 +7520,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-pink .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .from_six_cols td:first-child {
     background: #880E4F;
@@ -8626,12 +7533,6 @@ dialog .dialog__action div {
 
 .theme-pink .three_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-pink .three_cols tr:nth-of-type(odd) {
@@ -8650,15 +7551,6 @@ dialog .dialog__action div {
 
 .theme-pink .four_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-pink .four_cols tr:nth-of-type(odd) {
@@ -8681,12 +7573,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-pink .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .four_cols td:first-child {
     background: #880E4F;
@@ -8700,15 +7586,6 @@ dialog .dialog__action div {
 
 .theme-pink .five_cols tr {
   border-bottom: 1px solid #F8BBD0;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-pink .five_cols tr:nth-of-type(odd) {
@@ -8731,12 +7608,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-pink .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-pink .five_cols td:first-child {
     background: #880E4F;
@@ -8937,16 +7808,6 @@ dialog .dialog__action div {
 
 .theme-purple .from_six_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-purple .from_six_cols tr:nth-of-type(odd) {
@@ -8969,12 +7830,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-purple .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .from_six_cols td:first-child {
     background: #4A148C;
@@ -8988,12 +7843,6 @@ dialog .dialog__action div {
 
 .theme-purple .three_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-purple .three_cols tr:nth-of-type(odd) {
@@ -9012,15 +7861,6 @@ dialog .dialog__action div {
 
 .theme-purple .four_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-purple .four_cols tr:nth-of-type(odd) {
@@ -9043,12 +7883,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-purple .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .four_cols td:first-child {
     background: #4A148C;
@@ -9062,15 +7896,6 @@ dialog .dialog__action div {
 
 .theme-purple .five_cols tr {
   border-bottom: 1px solid #E1BEE7;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-purple .five_cols tr:nth-of-type(odd) {
@@ -9093,12 +7918,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-purple .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-purple .five_cols td:first-child {
     background: #4A148C;
@@ -9299,16 +8118,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .from_six_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_purple .from_six_cols tr:nth-of-type(odd) {
@@ -9331,12 +8140,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-deep_purple .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .from_six_cols td:first-child {
     background: #311B92;
@@ -9350,12 +8153,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .three_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-deep_purple .three_cols tr:nth-of-type(odd) {
@@ -9374,15 +8171,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .four_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-deep_purple .four_cols tr:nth-of-type(odd) {
@@ -9405,12 +8193,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-deep_purple .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .four_cols td:first-child {
     background: #311B92;
@@ -9424,15 +8206,6 @@ dialog .dialog__action div {
 
 .theme-deep_purple .five_cols tr {
   border-bottom: 1px solid #D1C4E9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_purple .five_cols tr:nth-of-type(odd) {
@@ -9455,12 +8228,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-deep_purple .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_purple .five_cols td:first-child {
     background: #311B92;
@@ -9661,16 +8428,6 @@ dialog .dialog__action div {
 
 .theme-indigo .from_six_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-indigo .from_six_cols tr:nth-of-type(odd) {
@@ -9693,12 +8450,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-indigo .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .from_six_cols td:first-child {
     background: #1A237E;
@@ -9712,12 +8463,6 @@ dialog .dialog__action div {
 
 .theme-indigo .three_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-indigo .three_cols tr:nth-of-type(odd) {
@@ -9736,15 +8481,6 @@ dialog .dialog__action div {
 
 .theme-indigo .four_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-indigo .four_cols tr:nth-of-type(odd) {
@@ -9767,12 +8503,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-indigo .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .four_cols td:first-child {
     background: #1A237E;
@@ -9786,15 +8516,6 @@ dialog .dialog__action div {
 
 .theme-indigo .five_cols tr {
   border-bottom: 1px solid #C5CAE9;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-indigo .five_cols tr:nth-of-type(odd) {
@@ -9817,12 +8538,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-indigo .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-indigo .five_cols td:first-child {
     background: #1A237E;
@@ -10023,16 +8738,6 @@ dialog .dialog__action div {
 
 .theme-blue .from_six_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue .from_six_cols tr:nth-of-type(odd) {
@@ -10055,12 +8760,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-blue .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .from_six_cols td:first-child {
     background: #0D47A1;
@@ -10074,12 +8773,6 @@ dialog .dialog__action div {
 
 .theme-blue .three_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-blue .three_cols tr:nth-of-type(odd) {
@@ -10098,15 +8791,6 @@ dialog .dialog__action div {
 
 .theme-blue .four_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-blue .four_cols tr:nth-of-type(odd) {
@@ -10129,12 +8813,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-blue .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .four_cols td:first-child {
     background: #0D47A1;
@@ -10148,15 +8826,6 @@ dialog .dialog__action div {
 
 .theme-blue .five_cols tr {
   border-bottom: 1px solid #BBDEFB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue .five_cols tr:nth-of-type(odd) {
@@ -10179,12 +8848,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-blue .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue .five_cols td:first-child {
     background: #0D47A1;
@@ -10385,16 +9048,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .from_six_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_blue .from_six_cols tr:nth-of-type(odd) {
@@ -10417,12 +9070,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-light_blue .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .from_six_cols td:first-child {
     background: #01579B;
@@ -10436,12 +9083,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .three_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-light_blue .three_cols tr:nth-of-type(odd) {
@@ -10460,15 +9101,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .four_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-light_blue .four_cols tr:nth-of-type(odd) {
@@ -10491,12 +9123,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-light_blue .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .four_cols td:first-child {
     background: #01579B;
@@ -10510,15 +9136,6 @@ dialog .dialog__action div {
 
 .theme-light_blue .five_cols tr {
   border-bottom: 1px solid #B3E5FC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_blue .five_cols tr:nth-of-type(odd) {
@@ -10541,12 +9158,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-light_blue .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_blue .five_cols td:first-child {
     background: #01579B;
@@ -10747,16 +9358,6 @@ dialog .dialog__action div {
 
 .theme-cyan .from_six_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-cyan .from_six_cols tr:nth-of-type(odd) {
@@ -10779,12 +9380,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-cyan .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .from_six_cols td:first-child {
     background: #006064;
@@ -10798,12 +9393,6 @@ dialog .dialog__action div {
 
 .theme-cyan .three_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-cyan .three_cols tr:nth-of-type(odd) {
@@ -10822,15 +9411,6 @@ dialog .dialog__action div {
 
 .theme-cyan .four_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-cyan .four_cols tr:nth-of-type(odd) {
@@ -10853,12 +9433,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-cyan .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .four_cols td:first-child {
     background: #006064;
@@ -10872,15 +9446,6 @@ dialog .dialog__action div {
 
 .theme-cyan .five_cols tr {
   border-bottom: 1px solid #B2EBF2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-cyan .five_cols tr:nth-of-type(odd) {
@@ -10903,12 +9468,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-cyan .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-cyan .five_cols td:first-child {
     background: #006064;
@@ -11109,16 +9668,6 @@ dialog .dialog__action div {
 
 .theme-teal .from_six_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-teal .from_six_cols tr:nth-of-type(odd) {
@@ -11141,12 +9690,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-teal .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .from_six_cols td:first-child {
     background: #004D40;
@@ -11160,12 +9703,6 @@ dialog .dialog__action div {
 
 .theme-teal .three_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-teal .three_cols tr:nth-of-type(odd) {
@@ -11184,15 +9721,6 @@ dialog .dialog__action div {
 
 .theme-teal .four_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-teal .four_cols tr:nth-of-type(odd) {
@@ -11215,12 +9743,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-teal .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .four_cols td:first-child {
     background: #004D40;
@@ -11234,15 +9756,6 @@ dialog .dialog__action div {
 
 .theme-teal .five_cols tr {
   border-bottom: 1px solid #B2DFDB;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-teal .five_cols tr:nth-of-type(odd) {
@@ -11265,12 +9778,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-teal .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-teal .five_cols td:first-child {
     background: #004D40;
@@ -11471,16 +9978,6 @@ dialog .dialog__action div {
 
 .theme-light_green .from_six_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_green .from_six_cols tr:nth-of-type(odd) {
@@ -11503,12 +10000,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-light_green .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .from_six_cols td:first-child {
     background: #33691E;
@@ -11522,12 +10013,6 @@ dialog .dialog__action div {
 
 .theme-light_green .three_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-light_green .three_cols tr:nth-of-type(odd) {
@@ -11546,15 +10031,6 @@ dialog .dialog__action div {
 
 .theme-light_green .four_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-light_green .four_cols tr:nth-of-type(odd) {
@@ -11577,12 +10053,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-light_green .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .four_cols td:first-child {
     background: #33691E;
@@ -11596,15 +10066,6 @@ dialog .dialog__action div {
 
 .theme-light_green .five_cols tr {
   border-bottom: 1px solid #DCEDC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-light_green .five_cols tr:nth-of-type(odd) {
@@ -11627,12 +10088,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-light_green .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-light_green .five_cols td:first-child {
     background: #33691E;
@@ -11833,16 +10288,6 @@ dialog .dialog__action div {
 
 .theme-lime .from_six_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-lime .from_six_cols tr:nth-of-type(odd) {
@@ -11865,12 +10310,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-lime .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .from_six_cols td:first-child {
     background: #827717;
@@ -11884,12 +10323,6 @@ dialog .dialog__action div {
 
 .theme-lime .three_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-lime .three_cols tr:nth-of-type(odd) {
@@ -11908,15 +10341,6 @@ dialog .dialog__action div {
 
 .theme-lime .four_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-lime .four_cols tr:nth-of-type(odd) {
@@ -11939,12 +10363,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-lime .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .four_cols td:first-child {
     background: #827717;
@@ -11958,15 +10376,6 @@ dialog .dialog__action div {
 
 .theme-lime .five_cols tr {
   border-bottom: 1px solid #F0F4C3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-lime .five_cols tr:nth-of-type(odd) {
@@ -11989,12 +10398,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-lime .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-lime .five_cols td:first-child {
     background: #827717;
@@ -12195,16 +10598,6 @@ dialog .dialog__action div {
 
 .theme-yellow .from_six_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-yellow .from_six_cols tr:nth-of-type(odd) {
@@ -12227,12 +10620,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-yellow .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .from_six_cols td:first-child {
     background: #F57F17;
@@ -12246,12 +10633,6 @@ dialog .dialog__action div {
 
 .theme-yellow .three_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-yellow .three_cols tr:nth-of-type(odd) {
@@ -12270,15 +10651,6 @@ dialog .dialog__action div {
 
 .theme-yellow .four_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-yellow .four_cols tr:nth-of-type(odd) {
@@ -12301,12 +10673,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-yellow .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .four_cols td:first-child {
     background: #F57F17;
@@ -12320,15 +10686,6 @@ dialog .dialog__action div {
 
 .theme-yellow .five_cols tr {
   border-bottom: 1px solid #FFF9C4;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-yellow .five_cols tr:nth-of-type(odd) {
@@ -12351,12 +10708,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-yellow .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-yellow .five_cols td:first-child {
     background: #F57F17;
@@ -12557,16 +10908,6 @@ dialog .dialog__action div {
 
 .theme-amber .from_six_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-amber .from_six_cols tr:nth-of-type(odd) {
@@ -12589,12 +10930,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-amber .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .from_six_cols td:first-child {
     background: #FF6F00;
@@ -12608,12 +10943,6 @@ dialog .dialog__action div {
 
 .theme-amber .three_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-amber .three_cols tr:nth-of-type(odd) {
@@ -12632,15 +10961,6 @@ dialog .dialog__action div {
 
 .theme-amber .four_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-amber .four_cols tr:nth-of-type(odd) {
@@ -12663,12 +10983,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-amber .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .four_cols td:first-child {
     background: #FF6F00;
@@ -12682,15 +10996,6 @@ dialog .dialog__action div {
 
 .theme-amber .five_cols tr {
   border-bottom: 1px solid #FFECB3;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-amber .five_cols tr:nth-of-type(odd) {
@@ -12713,12 +11018,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-amber .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-amber .five_cols td:first-child {
     background: #FF6F00;
@@ -12919,16 +11218,6 @@ dialog .dialog__action div {
 
 .theme-orange .from_six_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-orange .from_six_cols tr:nth-of-type(odd) {
@@ -12951,12 +11240,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-orange .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .from_six_cols td:first-child {
     background: #FF6F00;
@@ -12970,12 +11253,6 @@ dialog .dialog__action div {
 
 .theme-orange .three_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-orange .three_cols tr:nth-of-type(odd) {
@@ -12994,15 +11271,6 @@ dialog .dialog__action div {
 
 .theme-orange .four_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-orange .four_cols tr:nth-of-type(odd) {
@@ -13025,12 +11293,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-orange .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .four_cols td:first-child {
     background: #FF6F00;
@@ -13044,15 +11306,6 @@ dialog .dialog__action div {
 
 .theme-orange .five_cols tr {
   border-bottom: 1px solid #FFE0B2;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-orange .five_cols tr:nth-of-type(odd) {
@@ -13075,12 +11328,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-orange .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-orange .five_cols td:first-child {
     background: #FF6F00;
@@ -13281,16 +11528,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .from_six_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_orange .from_six_cols tr:nth-of-type(odd) {
@@ -13313,12 +11550,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-deep_orange .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .from_six_cols td:first-child {
     background: #BF360C;
@@ -13332,12 +11563,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .three_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-deep_orange .three_cols tr:nth-of-type(odd) {
@@ -13356,15 +11581,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .four_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-deep_orange .four_cols tr:nth-of-type(odd) {
@@ -13387,12 +11603,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-deep_orange .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .four_cols td:first-child {
     background: #BF360C;
@@ -13406,15 +11616,6 @@ dialog .dialog__action div {
 
 .theme-deep_orange .five_cols tr {
   border-bottom: 1px solid #FFCCBC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-deep_orange .five_cols tr:nth-of-type(odd) {
@@ -13437,12 +11638,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-deep_orange .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-deep_orange .five_cols td:first-child {
     background: #BF360C;
@@ -13643,16 +11838,6 @@ dialog .dialog__action div {
 
 .theme-brown .from_six_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-brown .from_six_cols tr:nth-of-type(odd) {
@@ -13675,12 +11860,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-brown .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .from_six_cols td:first-child {
     background: #3E2723;
@@ -13694,12 +11873,6 @@ dialog .dialog__action div {
 
 .theme-brown .three_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-brown .three_cols tr:nth-of-type(odd) {
@@ -13718,15 +11891,6 @@ dialog .dialog__action div {
 
 .theme-brown .four_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-brown .four_cols tr:nth-of-type(odd) {
@@ -13749,12 +11913,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-brown .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .four_cols td:first-child {
     background: #3E2723;
@@ -13768,15 +11926,6 @@ dialog .dialog__action div {
 
 .theme-brown .five_cols tr {
   border-bottom: 1px solid #D7CCC8;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-brown .five_cols tr:nth-of-type(odd) {
@@ -13799,12 +11948,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-brown .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-brown .five_cols td:first-child {
     background: #3E2723;
@@ -14005,16 +12148,6 @@ dialog .dialog__action div {
 
 .theme-gray .from_six_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-gray .from_six_cols tr:nth-of-type(odd) {
@@ -14037,12 +12170,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-gray .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .from_six_cols td:first-child {
     background: #212121;
@@ -14056,12 +12183,6 @@ dialog .dialog__action div {
 
 .theme-gray .three_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-gray .three_cols tr:nth-of-type(odd) {
@@ -14080,15 +12201,6 @@ dialog .dialog__action div {
 
 .theme-gray .four_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-gray .four_cols tr:nth-of-type(odd) {
@@ -14111,12 +12223,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-gray .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .four_cols td:first-child {
     background: #212121;
@@ -14130,15 +12236,6 @@ dialog .dialog__action div {
 
 .theme-gray .five_cols tr {
   border-bottom: 1px solid #F5F5F5;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-gray .five_cols tr:nth-of-type(odd) {
@@ -14161,12 +12258,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-gray .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-gray .five_cols td:first-child {
     background: #212121;
@@ -14367,16 +12458,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .from_six_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-
-                //    @media (max-width: 600px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue_gray .from_six_cols tr:nth-of-type(odd) {
@@ -14399,12 +12480,6 @@ dialog .dialog__action div {
 @media (max-width: 600px) {
   .theme-blue_gray .from_six_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .from_six_cols td:first-child {
     background: #263238;
@@ -14418,12 +12493,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .three_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //}
-                */
 }
 
 .theme-blue_gray .three_cols tr:nth-of-type(odd) {
@@ -14442,15 +12511,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .four_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 362px) {
-                //        background-color: #FFF;
-                //    }
-                //} 
-                */
 }
 
 .theme-blue_gray .four_cols tr:nth-of-type(odd) {
@@ -14473,12 +12533,6 @@ dialog .dialog__action div {
 @media (max-width: 362px) {
   .theme-blue_gray .four_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .four_cols td:first-child {
     background: #263238;
@@ -14492,15 +12546,6 @@ dialog .dialog__action div {
 
 .theme-blue_gray .five_cols tr {
   border-bottom: 1px solid #CFD8DC;
-  /*
-                //&:last-child {
-                //    background: $bg-200;
-                //    color: $fc-200;
-                //    @media (max-width: 428px) {
-                //        background-color: #FFF;
-                //    }
-                //}
-                */
 }
 
 .theme-blue_gray .five_cols tr:nth-of-type(odd) {
@@ -14523,12 +12568,6 @@ dialog .dialog__action div {
 @media (max-width: 428px) {
   .theme-blue_gray .five_cols td {
     background-color: #FFF;
-    /*
-                    //&:last-child {
-                    //    background: $bg-200;
-                    //    color: $fc-200;
-                    //}
-                    */
   }
   .theme-blue_gray .five_cols td:first-child {
     background: #263238;

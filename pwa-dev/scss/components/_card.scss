@@ -4,12 +4,11 @@
     .card {
         width: 100%;
         height: auto;
-        padding: 8px 0 0;
         background-color: #FFF;
+        padding: 4px 0;
 
         .card__container {
             display: grid;
-            grid-gap: 8px;
             width: 100%;
             grid-template-areas:
                 "card__support_visuals card__content card__cta";
@@ -17,9 +16,6 @@
             align-items: center;
 
             @include rwd-max (380) {
-                grid-template-areas:
-                    "card__support_visuals card__content card__content"
-                    "card__cta card__cta card__cta";
                 grid-template-columns: 56px auto auto;
             }
 
@@ -30,7 +26,12 @@
             .card__content {
                 grid-area: card__content;
                 @include font-size(16px);
-                box-sizing: border-box;;
+                box-sizing: border-box;
+                margin-left: 4px;
+
+                @include rwd-max (380) {
+                    @include font-size(15px);                    
+                }
 
                 .card__row{
                     float: left;
@@ -43,7 +44,7 @@
                 grid-area: card__cta;
 
                 @include rwd-max (380) {
-                    padding: 8px 0;
+                    padding: 0px;
                 }
 
                 .card__cta_status {
@@ -57,7 +58,7 @@
                     width: 40px;
 
                     @include rwd-max (380) {
-                        padding-left: 62px;
+                        padding-left: 0px;
                     }
 
                 }
