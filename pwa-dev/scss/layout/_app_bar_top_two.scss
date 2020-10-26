@@ -73,5 +73,28 @@
             @include font-size(10px);
             @include box-sizing(border-box);
         }
+
+        .wraper_custom_range {
+            float: left;
+            width: 100%;
+            height: auto;
+            padding-bottom: 4px;
+            box-sizing: border-box;
+        
+            .wraper_custom_range__field {
+                float: left;
+                width: 40%;
+                height: auto;
+                padding: 0 12px 0 0;
+                box-sizing: border-box;
+            }
+        
+            .wraper_custom_range__button {
+                float: left;
+                width: 20%;
+                height: auto;
+                box-sizing: border-box;
+            }
+        }
     }
 }
