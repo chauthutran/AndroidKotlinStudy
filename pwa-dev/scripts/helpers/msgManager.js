@@ -85,7 +85,14 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
             MsgManager.reservedIDs.push ( ReserveMsgID.toString() );
             MsgManager.reservedMsgBlocks.push( { "msgid": ReserveMsgID.toString(), "blockid": unqID } );
         }
-    }   
+    }
+    else
+    {
+        if ( $( '.notifBase' ).length )
+        {
+            $( '.notifBase' ).remove();
+        }
+    }
 
     var delayTimer;
     var screenWidth = document.body.clientWidth;
