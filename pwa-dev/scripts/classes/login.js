@@ -163,14 +163,6 @@ function Login( cwsRenderObj )
 	
 	me.setLoginEvents = function()
 	{
-		// Detect Activity - But How do we know when this activity happened after logout/inactivity?
-		// - No way to tell the inactivity...   We can kind of tell if it was inactive for last 5 min?
-		//me.loginFormDivTag.find( 'div' ).hover( function() {
-			// Mark it and canel this event..
-		//	console.log( 'OnHover' );
-		//});
-
-
 		// Save userName that user has entered - to restore when App refreshed by appUpdate
 		me.loginUserNameTag.keyup( function() {
 			me.current_userName = me.loginUserNameTag.val();

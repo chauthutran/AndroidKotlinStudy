@@ -103,8 +103,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
         activityIconTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
+            console.customLog( 'activityJson: ' );
             console.customLog( activityJson );
-        });    
+        });
     };
 
     me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, activityId )
@@ -769,8 +770,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 }
                 catch {}
             }
-
-            console.customLog( responseJson ); // error data display
 
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );

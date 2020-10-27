@@ -214,8 +214,6 @@ function app()
 
     window.addEventListener('popstate', function (event)
     {
-      console.log( '[[popstate]]' );
-
       history.pushState(null, document.title, location.href);
       
       var backBtnTags = $( '.btnBack:visible' );

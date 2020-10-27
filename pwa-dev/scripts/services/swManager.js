@@ -94,7 +94,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         SwManager.registrationState = 'sw: existing';
     }
 
-    if ( SwManager.debugMode) console.customLog( ' - ' + SwManager.registrationState );
+    //if ( SwManager.debugMode) console.customLog( ' - ' + SwManager.registrationState );
 
     // SW update change event 
     swRegObj.onupdatefound = () => 
@@ -149,9 +149,6 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             //      Mark for auto restart -  once used (on app start), clear this out..
             if ( SessionManager.getLoginStatus() || SessionManager.Status_LogIn_InProcess )
             {            
-                if ( SessionManager.getLoginStatus() ) console.log( 'AppUpdate - Already Logged In' );
-                if ( SessionManager.Status_LogIn_InProcess ) console.log( 'AppUpdate - In Process of Logging In' );
-
                 AppInfoManager.setAutoLogin( new Date() );
             }
             else

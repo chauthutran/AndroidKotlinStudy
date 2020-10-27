@@ -107,7 +107,6 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 				else
 				{
 					console.customLog( 'SKIPPED - syncUpResponseAction INTERVAL' );
-					console.log( activityActionJson );
 				}
 			});
 
@@ -240,8 +239,7 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 
 		if ( syncScheduleTimeMs > 0 )
 		{
-			console.customLog( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
-
+			//console.customLog( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
 			ScheduleManager.timerID_scheduleSyncAllRun = setInterval( function() 
 			{
 				SyncManagerNew.syncAll_FromSchedule( cwsRenderObj ); 

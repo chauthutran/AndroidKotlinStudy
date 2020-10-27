@@ -569,11 +569,6 @@ ActivityDataManager.activityUpdate_History = function( activityId, status, msg, 
 ActivityDataManager.setActivityLastSynced = function( activityId )
 {
     ActivityDataManager.activitiesLastSyncedInfo[ activityId ] = UtilDate.getDateTimeStr();
-
-    console.log( new Date() );
-    // NOTE: We could create/store a callback that will finish the UI thing?
-    // But, probably better to handle on UI parts themselves..
-
 };
 
 ActivityDataManager.getActivityLastSynced = function( activityId )
