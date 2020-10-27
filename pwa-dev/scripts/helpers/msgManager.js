@@ -71,15 +71,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 
     if ( ReserveMsgID != undefined )
     {
-        if ( MsgManager.reservedIDs.length > 0 ) 
-        {
-            if ( MsgManager.reservedIDs.indexOf( ReserveMsgID ) >= 0 )  return false;
-            else 
-            {
-                MsgManager.reservedIDs.push ( ReserveMsgID.toString() );
-                MsgManager.reservedMsgBlocks.push( { "msgid": ReserveMsgID.toString(), "blockid": unqID } );
-            }
-        }
+        if ( MsgManager.reservedIDs.length > 0 && MsgManager.reservedIDs.indexOf( ReserveMsgID ) >= 0 )  return false;
         else
         {
             MsgManager.reservedIDs.push ( ReserveMsgID.toString() );
