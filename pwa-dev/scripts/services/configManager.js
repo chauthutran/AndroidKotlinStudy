@@ -333,14 +333,6 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
     return activityTypeConfig;
 };
 
-/*
-ConfigManager.getSyncMergeDatePaths = function()
-{
-   var configJson = ConfigManager.getConfigJson();
-
-   return configJson.settings.sync.mergeCompare.dateCompareField; // var pathArr = 
-};
-*/
 
 ConfigManager.filterBySourceType_SyncDownList = function( configJson )
 {
@@ -375,7 +367,20 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
 
 ConfigManager.getSettingNetworkSync = function()
 {
-    return ConfigManager.getConfigJson().settings.sync.networkSync;
+    var networkSync = '3600000';  // 1 hour
+
+    try
+    {
+        var schedulerTime = ConfigManager.getConfigJson().settings.sync.syncUp.schedulerTime;
+		networkSync = Util.getTimeMs( schedulerTime, networkSync );
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.getSettingNetworkSync, errMsg: ' + errMsg );
+    }
+
+    //return ConfigManager.getConfigJson().settings.sync.networkSync;
+    return networkSync;
 };
 
 
@@ -419,6 +424,47 @@ ConfigManager.getMockResponseJson = function( useMockResponse )
     }
 
     return mockResponseJson;
+};
+
+
+ConfigManager.getSyncUpCoolDownTime = function( option )
+{
+    var coolDownTime = '90000'; // 90 seconds
+
+    try
+    {
+        var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncUp.coolDownTime;
+		coolDownTime = Util.getTimeMs( coolDownTimeStr, coolDownTime );
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.getSyncUpCoolDownTime, errMsg: ' + errMsg );
+    }
+
+    if ( option )
+    {
+        if ( option === 'sec' ) coolDownTime = UtilDate.getSecFromMiliSec( coolDownTime );
+    }
+
+    return coolDownTime;
+};
+
+
+ConfigManager.getSyncAllCoolDownTime = function()
+{
+    var coolDownTime = '90000'; // 90 seconds
+
+    try
+    {
+        var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncAll.coolDownTime;
+		coolDownTime = Util.getTimeMs( coolDownTimeStr, coolDownTime );
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR in ConfigManager.getSyncAllCoolDownTime, errMsg: ' + errMsg );
+    }
+
+    return coolDownTime;
 };
 
 
@@ -619,62 +665,34 @@ ConfigManager.filterObjsByUserRoles = function( itemObj )
 
 ConfigManager.applyDefaults = function( configJson, defaults )
 {
+    if ( !configJson.settings ) configJson.settings = {};
+    if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
-   ConfigManager.applyDefault_networkSync( configJson, defaults.networkSync );
-   ConfigManager.applyDefault_syncDown( configJson, defaults.syncDown );
+    ConfigManager.applyDefault_syncRelated( configJson, defaults.sync );
 
-   //ConfigManager.applyDefault_mergeCompare( configJson, defaults.mergeCompare );
-
-   // Other defaults could be placed here..
-   ConfigManager.applyDefault_favList( configJson, defaults.favList );
+    // Other defaults could be placed here..
+    ConfigManager.applyDefault_favList( configJson, defaults.favList );
 };
 
 
-ConfigManager.applyDefault_networkSync = function( configJson, networkSync )
+ConfigManager.applyDefault_syncRelated = function( configJson, defaultSync )
 {
-   if ( networkSync )
-   {
-      // 1. Check if 'configJson' has the content in path.
-      //    If not exists, set the 'content' of json..
-      if ( !configJson.settings ) configJson.settings = {};
-      if ( !configJson.settings.sync ) configJson.settings.sync = {};
+    if ( defaultSync )
+    {
+        var mergeDest_Sync = Util.getJsonDeepCopy( defaultSync );
+        Util.mergeDeep( mergeDest_Sync, Util.getJsonDeepCopy( configJson.settings.sync ), { 'arrOverwrite': true } );
+        // merge array, 'syncDown' - if 'syncDown' exists, simply overwrite the default?
 
-      if ( configJson.settings.sync.networkSync === undefined 
-        || configJson.settings.sync.networkSync === "" ) configJson.settings.sync.networkSync = networkSync;
-   }
+        configJson.settings.sync = Util.getJsonDeepCopy( mergeDest_Sync );
+
+        /*
+        if ( defaultSync.networkSync && !configJson.settings.sync.networkSync ) configJson.settings.sync.networkSync = defaultSync.networkSync;
+        if ( defaultSync.syncUp && !configJson.settings.sync.syncUp ) configJson.settings.sync.syncUp = Util.getJsonDeepCopy( defaultSync.syncUp );
+        if ( defaultSync.syncDown && !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( defaultSync.syncDown );
+        if ( defaultSync.syncAll && !configJson.settings.sync.syncAll ) configJson.settings.sync.syncAll = Util.getJsonDeepCopy( defaultSync.syncAll );    
+        */
+    }
 };
-
-
-ConfigManager.applyDefault_syncDown = function( configJson, syncDownJson )
-{
-   if ( syncDownJson )
-   {
-      // 1. Check if 'configJson' has the content in path.
-      //    If not exists, set the 'content' of json..
-      if ( !configJson.settings ) configJson.settings = {};
-      if ( !configJson.settings.sync ) configJson.settings.sync = {};
-
-      if ( !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( syncDownJson );
-   }
-};
-
-
-/*
-// TODO: Change to 'mergeCompare'
-ConfigManager.applyDefault_mergeCompare = function( configJson, mergeCompareJson )
-{
-   if ( mergeCompareJson )
-   {
-      // 1. Check if 'configJson' has the content in path.
-      //    If not exists, set the 'content' of json..
-      if ( !configJson.settings ) configJson.settings = {};
-      if ( !configJson.settings.sync ) configJson.settings.sync = {};
-
-      if ( !configJson.settings.sync.mergeCompare ) configJson.settings.sync.mergeCompare = Util.getJsonDeepCopy( mergeCompareJson );
-   }
-};
-*/
-
 
 ConfigManager.applyDefault_favList = function( configJson, favListJson )
 {
@@ -715,22 +733,37 @@ ConfigManager.defaultActivityType = {
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
 
-    "networkSync": "3600000",
+   "sync": {
+        "networkSync": "3600000",
 
-    // 'syncDown' changed to array due to 'userRole' filtering..  In use, we simply get 1st one in the array after userRole filter + filter by dataType
-    "syncDown": [
-        {   "searchBodyEval": {
+        "syncUp": {
+            "syncUpAttemptLimit": {
+                "maxAttempts": 10,
+                "maxAction": {
+                    "status": "error",
+                    "msg": "Reached the max sync attempt."
+                }
+            },
+            "coolDownTime": "00:01:30",
+            "schedulerTime": "01:00:00"            
+        },
+        "syncAll": {
+            "coolDownTime": "00:01:30"
+        },
+        "syncDown": [{
+            "userRoles": [],
+            "enable": true,
+            "sourceType": "mongo",
+            "url": "/PWA.syncDown",
+            "searchBodyEval": {
                 "find": {
                     "clientDetails.users": "INFO.login_UserName",
                     "date.updatedOnMdbUTC": { "$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );" }
                 }
-            },
-            "url": "/PWA.syncDown",
-            "userRoles": [],
-            "sourceType": "mongo",
-            "enable": true
-        }
-   ],
+            }
+        }]
+    },    
+
 
    "favList": {
 

@@ -12,6 +12,10 @@
 
 //		TODO: If task is taking long, it might overlap with next scheduled one.  
 //			We might need some check for this.  <-- Or use setTimeout to call itself after a try (after success/failing?)
+
+// -- Available Check Disable/ReEnable
+// disable --> clearInterval( ScheduleManager.timerID_serverAvilableCheck );
+// reEnable --> ScheduleManager.schedule_serverStatus_Check( false );
 // -----------------------------------------
 
 function ScheduleManager() {};
@@ -47,10 +51,6 @@ ScheduleManager.scheduleList = {
 		//"CLR_SyncAll"
 	]
 };
-
-// -- Available Check Disable/ReEnable
-// disable --> clearInterval( ScheduleManager.timerID_serverAvilableCheck );
-// reEnable --> ScheduleManager.schedule_serverStatus_Check( false );
 
 // ------------------------------------
 // --- SyncUpResponseAction Variables

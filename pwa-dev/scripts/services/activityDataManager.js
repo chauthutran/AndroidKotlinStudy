@@ -31,7 +31,8 @@ ActivityDataManager.jsonSignature_Mongo = {
     "transactions": []
 };
 
-// ActivityDataManager.wsSubmit_AppVersionStr = "1.3";  _ver
+// - ActivityCoolTime Variables
+ActivityDataManager.activitiesLastSyncedInfo = {};  // "activityId": 'lastSyncDateTime' }, ...
 
 
 // ===================================================
@@ -560,4 +561,55 @@ ActivityDataManager.activityUpdate_History = function( activityId, status, msg, 
 
         ClientDataManager.saveCurrent_ClientsStore();
     }
+};
+
+// =======================================================
+// ===== ActivityCoolDownTime Related Methods
+
+ActivityDataManager.setActivityLastSynced = function( activityId )
+{
+    ActivityDataManager.activitiesLastSyncedInfo[ activityId ] = UtilDate.getDateTimeStr();
+
+    console.log( new Date() );
+    // NOTE: We could create/store a callback that will finish the UI thing?
+    // But, probably better to handle on UI parts themselves..
+
+};
+
+ActivityDataManager.getActivityLastSynced = function( activityId )
+{
+    return ActivityDataManager.activitiesLastSyncedInfo[ activityId ];
+};
+
+
+ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBack )
+{
+	var coolDownPassed = true;  // 'false' means it is still during/within coolDown time.
+
+	try
+	{
+        var lastSynced = ActivityDataManager.getActivityLastSynced( activityId );
+
+		if ( lastSynced )
+		{
+			var coolDownMs = ConfigManager.getSyncUpCoolDownTime();
+    
+			// 0 ~ 90000 check..
+			var timePassedMs = UtilDate.getTimePassedMs( lastSynced );
+
+			if ( timePassedMs > 0 && coolDownMs && timePassedMs <= coolDownMs )
+			{
+                var timeRemain = coolDownMs - timePassedMs;
+
+                coolDownPassed = false;
+                if ( optionalCallBack ) optionalCallBack( timeRemain );
+			}
+		}
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in ActivityDataManager.checkActivityCoolDown, errMsg: ' + errMsg );
+	}
+
+	return coolDownPassed;
 };

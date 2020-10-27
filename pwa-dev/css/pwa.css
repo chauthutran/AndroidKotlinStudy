@@ -32,6 +32,11 @@ body
 /* .mddtp-picker .mddtp-picker__header { background-color: #93bcff !important; } */
 /* ------------ */
 
+.syncUpCoolDown {
+  opacity: 0.3;
+  background-color: silver;
+}
+
 .activityContent {
   cursor: pointer;
 }

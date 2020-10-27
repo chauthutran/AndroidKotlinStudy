@@ -146,9 +146,21 @@ function ActivityCard( activityId, cwsRenderObj, options )
             //  - If offline, display the message about it.
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
-                // Main SyncUp Processing
-                if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
-                else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
+                if ( divSyncIconTag.hasClass( 'syncUpCoolDown' ) )
+                {
+                    ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+                    {                                   
+                        var leftSec = Util.getSecFromMiliSec( timeRemainMs );
+                        var coolTime = ConfigManager.getSyncUpCoolDownTime( 'sec' );
+                        MsgManager.msgAreaShow( 'In coolDown mode, left: ' + leftSec + 's out of ' + coolTime + 's' ); 
+                    });
+                }
+                else
+                {
+                    // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
+                    else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
+                }
             }  
             else 
             {
@@ -179,49 +191,37 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
         {
             var phoneNumber = clientObj.clientDetails.phoneNumber; // should we define phoneNumber field in config? might change to something else in the future
+
             //var evalConditions = activityType.calls.evalConditions;
             //var paylDetails = Util.jsonToArray ( activityTrans, 'name:value' );
-
-            //for( var i = 0; ( i < evalConditions.length ) ; i++ )
-            //{
+            //for( var i = 0; ( i < evalConditions.length ) ; i++ ) {
                 //var phoneCondition = evalConditions[ i ].condition;
-
                 //me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
-
                     //if ( passConditionTest )
                     //{
-                        var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+            var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
 
-                        cellphoneTag.click( function(e) {
+            cellphoneTag.click( function(e) {
 
-                            e.stopPropagation();
+                e.stopPropagation();
 
-                            if ( Util.isMobi() )
-                            {
-                                window.location.href = `tel:${phoneNumber}`;
-                            }
-                            else
-                            {
-                                alert( phoneNumber );
-                            }
-                        });
+                if ( Util.isMobi() )
+                {
+                    window.location.href = `tel:${phoneNumber}`;
+                }
+                else
+                {
+                    alert( phoneNumber );
+                }
+            });
 
-                        divPhoneCallTag.append( cellphoneTag );
-                        divPhoneCallTag.show();
-
+            divPhoneCallTag.append( cellphoneTag );
+            divPhoneCallTag.show();
                     //}
-    
                 //})
-
-            
             //}
-
         }
-        /*else
-        {
-            divPhoneCallTag.hide();
-        }*/
-
+        //else divPhoneCallTag.hide();
     };
 
 
@@ -283,6 +283,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
 
         divSyncIconTag.append( imgIcon );
+
+
+        // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
+        if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) me.syncUpCoolDownTime_CheckNProgressSet( divSyncIconTag );
     };
     
 
@@ -567,12 +571,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.performSyncUp = function( afterDoneCall )
     {
         var activityJson_Orig;
-        var syncIconTag = me.getSyncButtonDivTag( me.activityId );
+        var activityId = me.activityId;
+        var syncIconTag = me.getSyncButtonDivTag( activityId );
         //syncIconTag.attr( 'tmpactid', me.activityId ); // Temp debugging id add
 
         try
         {
-            activityJson_Orig = ActivityDataManager.getActivityById( me.activityId );
+            activityJson_Orig = ActivityDataManager.getActivityById( activityId );
 
             if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
             if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
@@ -626,6 +631,31 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
+
+    me.syncUpCoolDownTime_CheckNProgressSet = function( syncIconDivTag )
+    {
+        var activityId = me.activityId;
+
+        ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs ) 
+        {            
+            //var syncIconTag = me.getSyncButtonDivTag( activityId );
+            if ( syncIconDivTag && timeRemainMs > 0 )
+            {
+                me.syncUpCoolDownTime_disableUI( syncIconDivTag, timeRemainMs );
+            }
+        });
+    };
+
+    me.syncUpCoolDownTime_disableUI = function( syncIconDivTag, timeRemainMs )
+    {
+        clearTimeout( me.syncUpCoolDownUI_timeOutId );
+
+        syncIconDivTag.addClass( 'syncUpCoolDown' );
+
+        me.syncUpCoolDownUI_timeOutId = setTimeout( function() {
+            syncIconDivTag.removeClass( 'syncUpCoolDown' );
+        }, timeRemainMs );
+    };
 
     me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
     {        

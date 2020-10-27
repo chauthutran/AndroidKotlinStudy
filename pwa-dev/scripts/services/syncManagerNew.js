@@ -183,7 +183,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
     // NOTE: Need try/catch here?
     if ( syncReadyJson.ready )
     {
-        var activityCardObj = new ActivityCard( activityJson.id, SessionManager.cwsRenderObj );
+        var activityCardObj = new ActivityCard( activityId, SessionManager.cwsRenderObj );
 
         activityCardObj.highlightActivityDiv( true );
 
@@ -191,9 +191,12 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
 
             SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 
+            // Cool Down ... Set time out?
+            ActivityDataManager.setActivityLastSynced( activityId );
+
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );
-            
+
             if ( returnFunc ) returnFunc( syncReadyJson, success );
         });
     }
@@ -373,12 +376,13 @@ SyncManagerNew.hideProgressBar = function()
 // use as callBack?  
 SyncManagerNew.syncUpReadyCheck = function( activityJson )
 {    
-    var readyJson = { 'ready': false, 'online': false, 'syncableStatus': false };
+    var readyJson = { 'ready': false, 'online': false, 'syncableStatus': false, 'coolDownPass': false };
 
     readyJson.online = ConnManagerNew.isAppMode_Online();
     readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady( activityJson );
+    readyJson.coolDownPass = ActivityDataManager.checkActivityCoolDown( activityJson.id );
 
-    readyJson.ready = ( readyJson.online && readyJson.syncableStatus );
+    readyJson.ready = ( readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass );
 
     return readyJson;
 };

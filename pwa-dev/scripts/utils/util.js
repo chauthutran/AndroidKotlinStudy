@@ -433,7 +433,7 @@ Util.mergeJson = function( destObj, srcObj )
 	}
 };
 
-Util.mergeDeep = function ( dest, obj ) 
+Util.mergeDeep = function ( dest, obj, option ) 
 {
 	Object.keys( obj ).forEach( key => {
 
@@ -442,12 +442,11 @@ Util.mergeDeep = function ( dest, obj )
 
 		if ( Util.isTypeArray( dVal ) && Util.isTypeArray( oVal ) ) 
 		{
-			Util.mergeArrays( dVal, oVal );			
-			//dest[key] = pVal.concat(...oVal);
+			if ( option && option.arrOverwrite && oVal.length > 0 ) dest[key] = oVal;
+			else Util.mergeArrays( dVal, oVal );			
 		} 
 		else if ( Util.isTypeObject( dVal ) && Util.isTypeObject( oVal ) ) 
 		{
-			//dest[key] = 
 			Util.mergeDeep( dVal, oVal );
 		} 
 		else 
@@ -1426,7 +1425,26 @@ Util.timeCalculation = function( dtmNewer, dtmOlder )
 
     return reSult;
 
-}
+};
+
+Util.getTimePassedMs = function( fromDtStr )
+{
+	var timePassedMs = -1;
+
+	try
+	{
+		var currDt = new Date().getTime();
+		var fromDt = new Date( fromDtStr ).getTime();
+
+		var timePassedMs = currDt - fromDt;
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'ERROR in Util.getTimePassedMs, errMsg: ' + errMsg );
+	}
+
+	return timePassedMs;
+};
 
 Util.dateUTCToLocal = function( dateStr )
 {
@@ -1765,7 +1783,7 @@ Util.getSecFromMiliSec = function( miliSec )
 	sec = 0;
 
 	try {
-		if ( miliSec ) sec = miliSec / 1000;
+		if ( miliSec ) sec = Math.round( miliSec / 1000 );
 	}
 	catch( errMsg )
 	{
