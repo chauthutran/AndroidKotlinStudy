@@ -27,6 +27,12 @@ function settingsApp( cwsRender )
     , 'theme-light_blue', 'theme-cyan', 'theme-teal', 'theme-green', 'theme-light_green', 'theme-lime', 'theme-yellow'
     , 'theme-amber', 'theme-orange', 'theme-deep_orange', 'theme-brown', 'theme-gray', 'theme-blue_gray', ];
 
+    me.syncOptions = [ { 'id': 0, 'name': 'off' }
+        ,{ 'id': 300000, 'name': '5 min' }
+       ,{ 'id': 600000, 'name': '10 min' }
+       ,{ 'id': 1800000, 'name': '30 min' }
+       ,{ 'id': 3600000, 'name': '1 hr' }
+       ,{ 'id': 86400000, 'name': '24 hr' } ];
 
 	// === TEMPLATE METHODS ========================
 
@@ -246,7 +252,7 @@ function settingsApp( cwsRender )
     
     me.populateSettingsPageData = function( dcdConfig ) 
     {
-        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.getSyncOptions(), AppInfoManager.getNetworkSync() );
+        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.syncOptions, AppInfoManager.getNetworkSync() );
 
         me.populateThemeList( me.settingsInfo_ThemeSelectTag, me.themeList );
 
@@ -315,11 +321,12 @@ function settingsApp( cwsRender )
                 return arrList[i].name;
             }
         }
-
-    }
+    };
+    
 
     me.getLanguageUpdate = function( languageList, defaultLangCode )
     {
+        // getLangList not used?
         var langList = TranslationManager.getLangList();
 
         for( i = 0; i < languageList.length; i++ )
@@ -588,39 +595,6 @@ function settingsApp( cwsRender )
         return ret;
     }
 
-    me.getSyncOptions = function()
-    {
-        var retOpts = []
-        var syncOpts = {};
-
-        syncOpts.id = 0;
-        syncOpts.name = 'off';
-        retOpts.push( syncOpts );
-
-        syncOpts = {};
-        syncOpts.id = 60000;
-        syncOpts.name = '1 min';
-        retOpts.push( syncOpts );
-
-        syncOpts = {};
-        syncOpts.id = 1800000;
-        syncOpts.name = '30 mins';
-        retOpts.push( syncOpts );
-
-        syncOpts = {};
-        syncOpts.id = 3600000;
-        syncOpts.name = '60 mins';
-        retOpts.push( syncOpts );
-
-        syncOpts = {};
-        syncOpts.id = 86400000;
-        syncOpts.name = '24 hrs';
-        retOpts.push( syncOpts );
-
-        return retOpts;
-
-    }
-
     me.updateAutoComplete = function( newValue )
     {
 		var tagsWithAutoCompl = $( '[autocomplete]' );
@@ -631,10 +605,7 @@ function settingsApp( cwsRender )
             tag.attr( 'autocomplete', newValue );
         });
 
-    }
-
-
-    
+    }   
 
 	me.blockPage = function()
 	{

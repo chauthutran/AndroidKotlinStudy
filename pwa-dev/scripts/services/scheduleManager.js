@@ -80,12 +80,26 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 			// Perform syncUp...
 			SyncManagerNew.syncUpActivity( activityId, undefined, function( syncReadyJson, syncUpSuccess ) 
 			{
+				if ( syncUpSuccess === undefined )
+				{
+					// SyncUp condition failed.  --> offline, cooldown, or not in proper status.
+
+					// If not in proper status, cancel whole thing with message..
+					if ( syncReadyJson && syncReadyJson.syncableStatus === false ) 
+					{
+						// Put message to history?
+
+						// TODO: update activity processing history with ...
+
+						ScheduleManager.syncUpResponseAction_ScheduleFinish( activityActionJson );
+					}
+				}
 				// If syncUp was performed and has result ('success' true/false).  Undefined is case where it was not performed..
-				if ( syncUpSuccess !== undefined )
+				else // if ( syncUpSuccess !== undefined )
 				{
 					// Check the ScheduleManager.syncUpActionList by activityId and increment the count...
 					activityActionJson.tryCount++;
-					console.customLog( activityActionJson );
+					//console.customLog( activityActionJson );
 
 					if ( syncUpSuccess )
 					{
@@ -103,10 +117,6 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 						}
 						// If not success, and not max reached, continue with 'scheduled calls'
 					}
-				}
-				else
-				{
-					console.customLog( 'SKIPPED - syncUpResponseAction INTERVAL' );
 				}
 			});
 

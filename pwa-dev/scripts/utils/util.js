@@ -139,6 +139,12 @@ Util.getNum = function( n ) {
 	
 	return val;
 };
+
+Util.getNumber = function( n ) 
+{
+	return Util.getNum( n );
+};
+
 // Check Variable Related
 // ----------------------------------
 

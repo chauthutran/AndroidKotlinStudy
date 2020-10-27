@@ -353,15 +353,24 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
 // ----------------------------------------------
 // --- Create Activity Processing Info Related
 
-ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr )
+ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, prev_ProcessingInfo )
 {
     var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
-    var processingInfo = {
-        'created': dateStr,
-        'status': statusStr,
-        'history': [ { 'status': statusStr, 'responseCode': 200, 'datetime': dateStr, 'msg': msgStr } ]
-    };    
+    var currInfo = { 'status': statusStr, 'responseCode': 200, 'datetime': dateStr, 'msg': msgStr };
+    var processingInfo;
 
+    if ( prev_ProcessingInfo )
+    {
+        processingInfo = Util.getJsonDeepCopy( prev_ProcessingInfo );        
+    }
+    else 
+    {
+        processingInfo = { 'created': dateStr, 'history': [] };
+    }
+
+    processingInfo.status = statusStr;
+    processingInfo.history.push( currInfo );
+    
     return processingInfo;
 };
 
@@ -406,12 +415,9 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
         }
         else 
         {
-            // update the limited data --> 'status', 'statusRead', 'history' (add)
+            // update the limited data --> 'status', 'history' (add)
             activity.processing.status = newProcessingInfo.status;
-
-            //if ( newProcessingInfo.statusRead !== undefined ) activity.processing.statusRead = newProcessingInfo.statusRead;
-        
-            activity.processing.history.push( Util.getJsonDeepCopy( newProcessingInfo.history[0] ) );        
+            Util.appendArray( activity.processing.history, Util.getJsonDeepCopy( newProcessingInfo.history ) );
         }
     }
 };
@@ -607,4 +613,22 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBa
 	}
 
 	return coolDownPassed;
+};
+
+// ------------------------------------
+//   ResponseCaseAction Related 
+
+ActivityDataManager.processResponseCaseAction = function( reportJson, activityId )
+{
+    // Check for matching oens..
+    var caseActionJson = ConfigManager.getResponseCaseActionJson( reportJson );
+
+    if ( caseActionJson )
+    {
+        // 1. Activity status + msg update if available..
+        ActivityDataManager.activityUpdate_ByResponseCaseAction( activityId, caseActionJson );
+
+        // 2. Schedule the sync - new type of schedule..
+        ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
+    }
 };

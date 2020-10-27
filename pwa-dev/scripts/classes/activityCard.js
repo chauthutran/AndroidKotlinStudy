@@ -588,12 +588,15 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
             //  'displayActivitySyncStatus_Wrapper()' gets used to refresh status only. 'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
+            //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
             activityJson_Orig.processing.status = Constants.status_processing;
+            activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
+
             me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
 
             try
             {
-                // Fake Test Response Json - SHOULD WE DO THIS HERE, OR BEFORE 'performSyncUp' method?
+                // Fake Test Response Json
                 if ( mockResponseJson )
                 {
                     WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
@@ -660,14 +663,23 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
     {        
+        var activityId = me.activityId;
         // Stop the Sync Icon rotation
         FormUtil.rotateTag( syncIconTag, false );
 
-        // Replace the downloaded activity with existing one - thus 'processing.status' gets emptyed out/undefined
+        // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
+
+        // Based on response(success/fail), perform app/activity/client data change
         me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
         {
+            // Updates UI & perform any followUp actions - 'responseCaseAction'
+
+            // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
+            var newActivityJson = ActivityDataManager.getActivityById( activityId );
+
+
             // If 'syncUpResponse' changed status, make the UI applicable..
-            var newActivityJson = ActivityDataManager.getActivityById( me.activityId );
+            var newActivityJson = ActivityDataManager.getActivityById( activityId );
 
             if ( newActivityJson )
             {
@@ -676,12 +688,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
                 if ( responseJson && responseJson.report ) 
                 {
-                    me.processResponseCaseAction( responseJson.report, activityJson_Orig.id );
+                    ActivityDataManager.processResponseCaseAction( responseJson.report, activityId );
                 }    
             }
             else
             {
-                throw 'FAILED to handle syncUp response, activityId lost: ' + me.activityId;
+                throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
             }
 
             afterDoneCall( success );
@@ -705,16 +717,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
             {
                 operationSuccess = true;
 
-                // #2. Remove the activity from activityList and Client.activities
-                // Also, remove client as well if the client name started with 'client_', temporary client
-                // ActivityDataManager.removeActivityNClientById( activityId );
-                
-
-                // 'syncedUp' processing data                
-                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.' );
+                // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
 
                 ClientDataManager.setActivityDateLocal_client( clientJson );
 
+                // Removal of existing activity/client happends within 'mergeDownloadClients()'
                 ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity' }, processingInfo, function() 
                 {
                     // 'mergeDownload' does saving if there were changes..
@@ -780,27 +788,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // Add activityJson processing
             if ( callBack ) callBack( operationSuccess, errMsg );
         } 
-    };
-
-
-    // ------------------------------------
-    //   ResponseCaseAction Related 
-
-    //  Could be moved to a seperate class??
-
-    me.processResponseCaseAction = function( reportJson, activityId )
-    {
-        // Check for matching oens..
-        var caseActionJson = ConfigManager.getResponseCaseActionJson( reportJson );
-
-        if ( caseActionJson )
-        {
-            // 1. Activity status + msg update if available..
-            ActivityDataManager.activityUpdate_ByResponseCaseAction( activityId, caseActionJson );
-
-            // 2. Schedule the sync - new type of schedule..
-            ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
-        }
     };
 
 

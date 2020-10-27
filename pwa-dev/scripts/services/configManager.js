@@ -450,24 +450,6 @@ ConfigManager.getSyncUpCoolDownTime = function( option )
 };
 
 
-ConfigManager.getSyncAllCoolDownTime = function()
-{
-    var coolDownTime = '90000'; // 90 seconds
-
-    try
-    {
-        var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncAll.coolDownTime;
-		coolDownTime = Util.getTimeMs( coolDownTimeStr, coolDownTime );
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'ERROR in ConfigManager.getSyncAllCoolDownTime, errMsg: ' + errMsg );
-    }
-
-    return coolDownTime;
-};
-
-
 ConfigManager.getResponseCaseActionJson = function( reportJson )
 {
     var caseActionJson;
@@ -746,9 +728,6 @@ ConfigManager.defaultJsonList = {
             },
             "coolDownTime": "00:01:30",
             "schedulerTime": "01:00:00"            
-        },
-        "syncAll": {
-            "coolDownTime": "00:01:30"
         },
         "syncDown": [{
             "userRoles": [],
