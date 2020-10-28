@@ -174,6 +174,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     // If submitted with msg one, mark it as 'read' and rerender the activity Div.
                     if ( statusVal === Constants.status_submit_wMsg )        
                     {
+                        // TODO: Should create a history...
                         ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
                     }
                 }
@@ -635,7 +636,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };
 
-
+    // ----------------------------------------------
+    // -- CoolDown 
     me.syncUpCoolDownTime_CheckNProgressSet = function( syncIconDivTag )
     {
         var activityId = me.activityId;
@@ -645,21 +647,25 @@ function ActivityCard( activityId, cwsRenderObj, options )
             //var syncIconTag = me.getSyncButtonDivTag( activityId );
             if ( syncIconDivTag && timeRemainMs > 0 )
             {
-                me.syncUpCoolDownTime_disableUI( syncIconDivTag, timeRemainMs );
+                me.syncUpCoolDownTime_disableUI( activityId, syncIconDivTag, timeRemainMs );
             }
         });
     };
 
-    me.syncUpCoolDownTime_disableUI = function( syncIconDivTag, timeRemainMs )
+    me.syncUpCoolDownTime_disableUI = function( activityId, syncIconDivTag, timeRemainMs )
     {
-        clearTimeout( me.syncUpCoolDownUI_timeOutId );
+        ActivityDataManager.clearSyncUpCoolDown_TimeOutId( activityId );
 
         syncIconDivTag.addClass( 'syncUpCoolDown' );
 
-        me.syncUpCoolDownUI_timeOutId = setTimeout( function() {
+        var timeOutId = setTimeout( function() {
             syncIconDivTag.removeClass( 'syncUpCoolDown' );
         }, timeRemainMs );
+
+        ActivityDataManager.setSyncUpCoolDown_TimeOutId( activityId, timeOutId );
     };
+
+    // ----------------------------------------------
 
     me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
     {        

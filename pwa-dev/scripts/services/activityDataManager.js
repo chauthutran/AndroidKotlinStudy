@@ -33,7 +33,7 @@ ActivityDataManager.jsonSignature_Mongo = {
 
 // - ActivityCoolTime Variables
 ActivityDataManager.activitiesLastSyncedInfo = {};  // "activityId": 'lastSyncDateTime' }, ...
-
+ActivityDataManager.syncUpCoolDownTimeOuts = {};
 
 // ===================================================
 // === MAIN FEATURES =============
@@ -391,36 +391,80 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
 {
     if ( activity )
     {
-        if ( !activity.processing ) 
+        if ( activity.processing ) 
         {
-            activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
-
-            // update the 'created' as mongoDB one if exists..            
-            if ( activity.date )
-            {
-                var activityUtcDate = '';
-
-                if ( activity.date.createdOnDeviceUTC ) activityUtcDate = activity.date.createdOnDeviceUTC;
-                else if ( activity.date.createdOnMdbUTC ) activityUtcDate = activity.date.createdOnMdbUTC;
-
-                if ( activityUtcDate )
-                {                    
-                    var localDateTime = Util.dateUTCToLocal( activityUtcDate );
-                    if ( !localDateTime ) localDateTime = new Date();
-
-                    var updateCreated = Util.formatDateTime( localDateTime );
-                    if ( updateCreated ) activity.processing.created = updateCreated;
-                }
-            }
-        }
-        else 
-        {
-            // update the limited data --> 'status', 'history' (add)
+            // Update the 'processing' data with 'status' & 'history'
             activity.processing.status = newProcessingInfo.status;
             Util.appendArray( activity.processing.history, Util.getJsonDeepCopy( newProcessingInfo.history ) );
         }
+        else
+        {
+            // Create New 'processing' data.
+            activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
+
+            // update the 'created' as mongoDB one if exists..            
+            if ( activity.date ) ActivityDataManager.updateProcessing_CreatedDate( activity );
+        }
     }
 };
+
+
+ActivityDataManager.updateProcessing_CreatedDate = function( activity )
+{
+    // Based on 'activity.date' UTC date, create 'processing.created'
+    try
+    {
+        var activityUtcDate = '';
+
+        if ( activity.date.createdOnDeviceUTC ) activityUtcDate = activity.date.createdOnDeviceUTC;
+        else if ( activity.date.createdOnMdbUTC ) activityUtcDate = activity.date.createdOnMdbUTC;
+
+        if ( activityUtcDate )
+        {                    
+            var localDateTime = Util.dateUTCToLocal( activityUtcDate );
+            if ( !localDateTime ) localDateTime = new Date();
+
+            var updateCreated = Util.formatDateTime( localDateTime );
+            if ( updateCreated ) activity.processing.created = updateCreated;
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in ActivityDataManager.updateProcessing_Created, errMsg: ' + errMsg );
+    }
+};
+
+
+/*
+ActivityDataManager.activityUpdate_Status_WtHistory = function( activityId, status, activityCard, msg, httpResponseCode, returnFunc )
+{
+    if ( status )
+    {
+        var activityJson = ActivityDataManager.getActivityById( activityId );
+
+        if ( activityJson && activityJson.processing )
+        {
+            var oldStatus = activityJson.processing.status;         
+
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( status, httpResponseCode, msg );
+            ActivityDataManager.insertToProcessing( activityJson, processingInfo );	
+    
+            // Need to save storage afterwards..
+            ClientDataManager.saveCurrent_ClientsStore( function() 
+            {
+                if ( oldStatus !== status )
+                {
+                    if ( !activityCard ) activityCard = new ActivityCard( activityId, SessionManager.cwsRenderObj );
+                    // Update ActivityCard is visible..                        
+                    activityCard.displayActivitySyncStatus_Wrapper( activityJson, activityCard.getActivityCardDivTag() );
+                }
+
+                if ( returnFunc ) returnFunc();
+            });
+        }    
+    }
+};
+*/
 
 // --------------------------------------------
 // --- Other Methods
@@ -532,6 +576,7 @@ ActivityDataManager.activityUpdate_ByResponseCaseAction = function( activityId, 
 };
 
 
+// NOTE: Update Status + 
 ActivityDataManager.activityUpdate_Status = function( activityId, status, returnFunc )
 {
     if ( status )
@@ -556,6 +601,8 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status, return
     }
 };
 
+
+// NOTE: This also saves status as well, but does not refresh the UI status part!!
 ActivityDataManager.activityUpdate_History = function( activityId, status, msg, httpResponseCode )
 {
     var activityJson = ActivityDataManager.getActivityById( activityId );
@@ -572,16 +619,30 @@ ActivityDataManager.activityUpdate_History = function( activityId, status, msg, 
 // =======================================================
 // ===== ActivityCoolDownTime Related Methods
 
-ActivityDataManager.setActivityLastSynced = function( activityId )
+ActivityDataManager.setActivityLastSyncedUp = function( activityId )
 {
     ActivityDataManager.activitiesLastSyncedInfo[ activityId ] = UtilDate.getDateTimeStr();
 };
 
-ActivityDataManager.getActivityLastSynced = function( activityId )
+ActivityDataManager.getActivityLastSyncedUp = function( activityId )
 {
     return ActivityDataManager.activitiesLastSyncedInfo[ activityId ];
 };
 
+// ----------------------------------------------
+
+ActivityDataManager.setSyncUpCoolDown_TimeOutId = function( activityId, timeOutId )
+{
+    ActivityDataManager.syncUpCoolDownTimeOuts[ activityId ] = timeOutId;
+};
+
+ActivityDataManager.clearSyncUpCoolDown_TimeOutId = function( activityId )
+{
+    var timeOutId = ActivityDataManager.syncUpCoolDownTimeOuts[ activityId ];
+    if ( timeOutId ) clearTimeout( timeOutId );
+};
+
+// ----------------------------------------------
 
 ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBack )
 {
@@ -589,7 +650,7 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBa
 
 	try
 	{
-        var lastSynced = ActivityDataManager.getActivityLastSynced( activityId );
+        var lastSynced = ActivityDataManager.getActivityLastSyncedUp( activityId );
 
 		if ( lastSynced )
 		{

@@ -192,7 +192,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 
             // Cool Down Related Last synced time Set ...
-            ActivityDataManager.setActivityLastSynced( activityId );
+            ActivityDataManager.setActivityLastSyncedUp( activityId );
 
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );
