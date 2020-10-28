@@ -87,8 +87,7 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 					// If not in proper status, cancel whole thing with message..
 					if ( syncReadyJson && syncReadyJson.syncableStatus === false ) 
 					{
-						// Put message to history?
-
+						// Put message to history
 						// TODO: update activity processing history with ...
 
 						ScheduleManager.syncUpResponseAction_ScheduleFinish( activityActionJson );
@@ -176,12 +175,12 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 	ScheduleManager.scheduleList.AfterLogOut.forEach( itemName =>
 	{
 		if ( itemName === "CLR_syncDown_RunOnce" ) clearInterval( ScheduleManager.timerID_checkNewAppFileCheck );
-		//if ( itemName === "CLR_ServerStatusChecks" ) clearInterval( ScheduleManager.timerID_serverAvilableCheck );
-		//else if ( itemName === "CLR_SyncAll" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );			
+		else if ( itemName === "CLR_SyncAll_Background" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
 	});	
 	
 	if ( callBack ) callBack();
 };
+
 
 // -------------------------------------------------------------------
 // ------ Sub Methods ------------------------------

@@ -376,13 +376,17 @@ SyncManagerNew.hideProgressBar = function()
 // use as callBack?  
 SyncManagerNew.syncUpReadyCheck = function( activityJson )
 {    
-    var readyJson = { 'ready': false, 'online': false, 'syncableStatus': false, 'coolDownPass': false };
+    var readyJson = { 'ready': false, 'loggedIn': false, 'online': false, 'syncableStatus': false, 'coolDownPass': false };
 
+    readyJson.loggedIn = SessionManager.Status_LoggedIn;
     readyJson.online = ConnManagerNew.isAppMode_Online();
     readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady( activityJson );
     readyJson.coolDownPass = ActivityDataManager.checkActivityCoolDown( activityJson.id );
 
-    readyJson.ready = ( readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass );
+    readyJson.ready = ( readyJson.loggedIn && readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass );
+    // For 'ResponseAction' scheduling case, we should stop the calling in background if 'syncableStatus' is false..
+    //      For 'loggedIn' is false, (logged out case), should we stop it?  For now, have it running.
+    //          The best would be 
 
     return readyJson;
 };
