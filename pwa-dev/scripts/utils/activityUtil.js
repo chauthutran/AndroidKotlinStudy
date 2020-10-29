@@ -441,9 +441,8 @@ ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnT
 		formDivSecTag.hide();
 		btnTag.hide();
 
-        var confirmMessage = 'Please check before confirm'; // MISSING TRANSLATION
-
-        MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, confirmMessage, function( confirmed ){
+		var titleTag = $( '<label term="payloadPreview_title">Please check before confirm</label>' )
+        MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, titleTag, function( confirmed ){
 
 			formDivSecTag.show();
 			btnTag.show();
@@ -481,7 +480,7 @@ ActivityUtil.handlePayloadPreview_New = function( previewPrompt, formDivSecTag, 
 		var previewData_JsonArr = ActivityUtil.generatePreviewDataArray( inputsJson_visible, formConfig );
 
 		// Change this as well..
-        MsgManager.confirmPayloadPreview( dataPass, 'Please check before Confirm', function( confirmed ){
+        MsgManager.confirmPayloadPreview( dataPass, $( '<label term="payloadPreview_title">Please check before Confirm</label>' ), function( confirmed ){
 
             if ( callBack ) callBack( confirmed );
         });
@@ -500,7 +499,7 @@ ActivityUtil.previewActivityJson = function( inputsJson, callBack )
 
 	var previewData_JsonArr = ActivityUtil.generatePreviewDataArray( inputsJson, formConfig );
 
-	MsgManager.confirmPayloadPreview( dataPass, 'Please check before Confirm', function( confirmed ) {
+	MsgManager.confirmPayloadPreview( dataPass, $( '<label term="payloadPreview_title">Please check before Confirm</label>' ), function( confirmed ) {
 
 		if ( callBack ) callBack( confirmed );
 	});

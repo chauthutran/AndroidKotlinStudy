@@ -470,6 +470,30 @@ ConfigManager.getResponseCaseActionJson = function( reportJson )
 };
 
 
+ConfigManager.getDefinitionFieldById = function( fieldId )
+{
+    var fieldJson;
+
+    if ( fieldId )
+    {
+        var configJson = ConfigManager.getConfigJson();
+
+        try
+        {
+            if ( configJson.definitionFields )
+            {
+				fieldJson = Util.getFromList( configJson.definitionFields, fieldId, "id" );
+            }
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in ConfigManager.getDefinitionFieldById, errMsg: ' + errMsg );
+        }    
+    }
+
+    return fieldJson;
+};
+
 // ---------------------------------------------
 // ---- Statistic Related --------------------
 

@@ -291,7 +291,7 @@ MsgManager.clearReservedMessage = function( reservedID )
 }
 
 
-MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBackSuccess )
+MsgManager.confirmPayloadPreview = function( parentTag, jsonData, titleTag, callBackSuccess )
 {
     if ( jsonData )
     {
@@ -324,7 +324,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
         notifDiv.append( prevRow )
         notifDiv.append( btnRow );
 
-        prevRow.append( FormUtil.displayData_Array( title, jsonData ) );
+        prevRow.append( FormUtil.displayData_Array( titleTag, jsonData ) );
         //prevRow.find( 'table' ).css( 'max-width', prevRow.css( 'width' ) );
 
         btnRow.append( btnConfirm )
@@ -348,6 +348,7 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, title, callBac
 
         prevRow.css( '--width', parentTag.css( 'width' ) );
 
+        TranslationManager.translatePage();
     }
 
 }

@@ -39,6 +39,8 @@ function DataList( cwsRenderObj, blockObj )
         {
             me.renderDataList( jsonListData.displayData, blockJson.displayResult, newBlockTag, blockJson );	
         }
+
+        TranslationManager.translatePage();
 	}
 
     me.renderDataList = function( jsonList, itemDisplayAttrList, blockTag, blockJson )
@@ -62,7 +64,7 @@ function DataList( cwsRenderObj, blockObj )
 
             var dvgrpBySearchContainer = $( '<div class="groupBySearchContainer" />' );
             var dvgrpBySearchSummary = $( '<div class="groupBySearchResults" />' );
-            dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + 'results for' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
+            dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + '<label term="dataListSearch_resultFor">results for</label>' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
             divFormContainerTag.append( dvgrpBySearchContainer );
             dvgrpBySearchContainer.append( dvgrpBySearchSummary );
 

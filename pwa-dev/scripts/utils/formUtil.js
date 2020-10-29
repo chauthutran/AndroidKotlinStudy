@@ -1950,22 +1950,22 @@ FormUtil.loaderRing = function()
 
 // Util2.arrayPreviewRecord = function( title, arr )
 
-FormUtil.displayData_Array = function( title, arr )
+FormUtil.displayData_Array = function( titleTag, arr, caseName )
 {
 	var ret = $( '<table />');
 
 	if ( arr )
 	{
-		if ( title )
+		if ( titleTag )
 		{
 			var tr = $('<tr />');
 			var td = $('<td colspan=2 />');
 			var dv = $( '<div class="section" />');
-			var lbl = $( '<label />');
+			//var lbl = $( '<label />');
 
-			lbl.html( title );
+			//lbl.html( title );
 
-			dv.append( lbl );
+			dv.append( titleTag );
 			td.append( dv );
 			tr.append( td );
 
@@ -1991,7 +1991,12 @@ FormUtil.displayData_Array = function( title, arr )
 			}
 			else
 			{
-				tr.append( $( '<td class="name" />').html( arr[ i ].name ) );
+				var arrName = arr[ i ].name;
+				var arrNameTdTag = $( '<td class="name"/>' ).html( arrName );
+
+				if ( caseName === 'clientDetail' ) FormUtil.populateFieldTerms( arrName, arrNameTdTag );
+
+				tr.append( arrNameTdTag );
 
 				tr.append( $( '<td class="value" />').html( Util.outputAsStr( arr[ i ].value ) ) );
 			}
@@ -2003,4 +2008,19 @@ FormUtil.displayData_Array = function( title, arr )
 	}
 
 	return ret;
+};
+
+
+FormUtil.populateFieldTerms = function( idName, tag )
+{
+	if ( idName && tag )
+	{
+		var fieldJson = ConfigManager.getDefinitionFieldById( idName );
+
+		if ( fieldJson )
+		{
+			tag.attr( 'term', fieldJson.term );
+			tag.html( fieldJson.defaultName );
+		}
+	}
 };

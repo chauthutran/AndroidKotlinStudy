@@ -113,7 +113,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         activityContentTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();
-            me.showFullPreview( activityId, activityContainerTag );
+            me.showFullPreview( activityId, activityContainerTag );            
         });
     };
                 
@@ -846,6 +846,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
             sheetFull.fadeIn();
         
             $( '#pageDiv' ).hide();
+
+            TranslationManager.translatePage();            
         }
     };
     
@@ -881,8 +883,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
             arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
         }
 
-        $( '[tabButtonId=tab_previewDetails]' ).html( FormUtil.displayData_Array( 'clientDetails:', arrDetails) ); //activityListPreviewTable
-    
+        var clientDetailsTabTag = $( '[tabButtonId=tab_previewDetails]' );
+        var titleTag = $( '<label term="activityDetail_details_title">clientDetails:</label>' );
+
+        clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //activityListPreviewTable
     
         // 2. payload Preview
         var jv_payload = new JSONViewer();
