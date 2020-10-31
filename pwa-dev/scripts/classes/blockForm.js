@@ -70,6 +70,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				formTag.append( groupDivTag );
 			});
+			
+
+			// Translate Page after the rendering..
+			TranslationManager.translatePage();
 
 			
 			Validation.disableValidation( function() 
@@ -88,7 +92,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	
 				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
 				formDivSecTag.find('.dataValue:not(:empty)').change(); // * BUG > only highlights SELECT controls (ignores inputs): https://stackoverflow.com/questions/8639282/notempty-css-selector-is-not-working
-
 			});
 		}
 	}
@@ -97,11 +100,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var groupDivTag = formTag;
 
-		if ( ( formFieldGroup.group ).toString().length )
+		if ( formFieldGroup.group )
 		{
 			if ( ! groupsCreated.includes( formFieldGroup.group ) )
 			{
-				groupDivTag = $( '<div class="formGroupSection" name="' + formFieldGroup.group + '"><div class="section"><label>' + formFieldGroup.group + '</label></div></div>' );
+				groupDivTag = $( '<div class="formGroupSection" name="' + formFieldGroup.group + '"><div class="section"><label term="' + formFieldGroup.groupTerm + '">' + formFieldGroup.group + '</label></div></div>' );
 				formTag.append( groupDivTag );
 				groupsCreated.push( formFieldGroup.group );
 			}
@@ -113,8 +116,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		else 
 		{
+			// JAMES NOTE: THIS NEVER GETS CALLED? (Due to 'noGroup' used..)  <-- ASK GREG TO TEST THIS PART!!!
+
 			// TRAN TODO : NEED TO do something about it
-			if ( ( formFieldGroup.group ).toString().length == 0 )
+			if ( formFieldGroup.group.length === 0 )
 			{
 				if ( ! groupsCreated.includes( me._groupNoneId ) )
 				{
@@ -865,6 +870,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var dataJson = { 
 					'id': frmCtrl.id
 					,'group': frmCtrlGroup.defaultName
+					,'groupTerm': Util.getStr( frmCtrlGroup.term )
 					,'groupId': formCtrlGroupId
 					,'item': frmCtrl
 					,created: 0
@@ -880,6 +886,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var dataJson = { 
 					'id': frmCtrl.id
 					,'group': groupNone
+					,'groupTerm': ''
 					,'groupId': groupNone
 					,'item': frmCtrl
 					,created: 0
