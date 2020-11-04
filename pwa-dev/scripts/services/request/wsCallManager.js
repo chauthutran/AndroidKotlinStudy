@@ -140,15 +140,12 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     if ( sourceType === "mongo" )
     {
         if ( mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
-        // For 'mongo' sourceType, do not need to send userName & password in payload.
     }
-    else
-    {
-        // if ( sourceType !== "mongo" )
-        // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
-        payloadJson.userName = SessionManager.sessionData.login_UserName;
-        payloadJson.password = SessionManager.sessionData.login_Password;    
-    }
+
+    // OLD: For 'mongo' sourceType, do not need to send userName & password in payload.
+    // OLD: For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
+    payloadJson.userName = SessionManager.sessionData.login_UserName;
+    payloadJson.password = SessionManager.sessionData.login_Password;    
 
     WsCallManager.requestPostDws( apiPath, payloadJson, loadingTag, returnFunc );
 };
