@@ -1363,6 +1363,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.checkCondition = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
 		var result = false;
+		var INFO = { 'userRole': ConfigManager.login_UserRoles };
 
 		if ( evalCondition )
 		{
