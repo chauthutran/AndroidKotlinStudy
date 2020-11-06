@@ -189,41 +189,32 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         divPhoneCallTag.empty();
 
-        //if ( activityType && activityType.calls && activityType.calls )
         if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
         {
-            var phoneNumber = clientObj.clientDetails.phoneNumber; // should we define phoneNumber field in config? might change to something else in the future
+            var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
 
-            //var evalConditions = activityType.calls.evalConditions;
-            //var paylDetails = Util.jsonToArray ( activityTrans, 'name:value' );
-            //for( var i = 0; ( i < evalConditions.length ) ; i++ ) {
-                //var phoneCondition = evalConditions[ i ].condition;
-                //me.checkCondition( phoneCondition, paylDetails, function( passConditionTest ){
-                    //if ( passConditionTest )
-                    //{
-            var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+            if ( phoneNumber && phoneNumber !== '+' )
+            {
+                var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
 
-            cellphoneTag.click( function(e) {
-
-                e.stopPropagation();
-
-                if ( Util.isMobi() )
-                {
-                    window.location.href = `tel:${phoneNumber}`;
-                }
-                else
-                {
-                    alert( phoneNumber );
-                }
-            });
-
-            divPhoneCallTag.append( cellphoneTag );
-            divPhoneCallTag.show();
-                    //}
-                //})
-            //}
+                cellphoneTag.click( function(e) {
+    
+                    e.stopPropagation();
+    
+                    if ( Util.isMobi() )
+                    {
+                        window.location.href = `tel:${phoneNumber}`;
+                    }
+                    else
+                    {
+                        alert( phoneNumber );
+                    }
+                });
+    
+                divPhoneCallTag.append( cellphoneTag );
+                divPhoneCallTag.show();    
+            }
         }
-        //else divPhoneCallTag.hide();
     };
 
 
