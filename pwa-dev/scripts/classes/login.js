@@ -60,8 +60,6 @@ function Login( cwsRenderObj )
 
 		me.mobileCssSetup();
 
-		//FormUtil.setUpLoginInputsEvents();
-
 		me.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..
 		
 		//FormUtil.positionLoginPwdBlinker();
@@ -227,7 +225,7 @@ function Login( cwsRenderObj )
 			var tag = $( this );
 			var tagVal = tag.val();
 
-			var isDeleteKey = ( event.keyCode == 46 || event.keyCode == 8 );
+			var isDeleteKey = ( event.keyCode == FormUtil.keyCode_Delete || event.keyCode == FormUtil.keyCode_Backspace );
 			var hasVal = ( tagVal.length > 0 );
 
 			if ( isDeleteKey ) 
@@ -269,7 +267,7 @@ function Login( cwsRenderObj )
 		// 
 		$( ".pin_pw" ).keydown( function ( event ) 
 		{		
-			var isDeleteKey = ( event.keyCode == 46 || event.keyCode == 8 );
+			var isDeleteKey = ( event.keyCode == FormUtil.keyCode_Delete || event.keyCode == FormUtil.keyCode_Backspace );
 
 			// If there is already a char in the pin, do not add it.
 			// However, if that is delete key, allow it.
@@ -845,9 +843,10 @@ function Login( cwsRenderObj )
 		});	
 	};
 
+	/*
 	me.setUpEnterKeyExecute = function( inputTag, btnTag ) {
 		inputTag.keypress( function(e) {
-			if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+			if ((e.which && e.which == FormUtil.keyCode_Enter) || (e.keyCode && e.keyCode == FormUtil.keyCode_Enter)) {
 				btnTag.click();
 				return false;
 			} else {
@@ -855,7 +854,7 @@ function Login( cwsRenderObj )
 			}			
 		});		
 	};
-
+	*/
 
 	// ================================
 

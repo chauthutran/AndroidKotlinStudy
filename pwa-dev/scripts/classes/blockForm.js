@@ -1139,6 +1139,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		if ( entryTag )
 		{
+			// If 'Enter' key is pressed in any entry field, set to ignore that action.
+			entryTag.keypress( function( e ) {
+				if ( e.which === FormUtil.keyCode_Enter || e.keyCode === FormUtil.keyCode_Enter ) return false;
+			});
+
 			// Set Event
 			entryTag.change( function() 
 			{
