@@ -93,36 +93,28 @@ function settingsApp( cwsRender )
         {
             FormUtil.blockPage( undefined, function( scrimTag ) 
 			{
-				scrimTag.off( 'click' ).click( function() 
-				{
-					FormUtil.emptySheetBottomTag();
-					FormUtil.unblockPage( scrimTag );
-				});
-            });
-            
-            me.settingsFormDivTag.append ( Templates.settings_app_data_configuration );
-            TranslationManager.translatePage();
-
-            $( '.divResetApp_Accept' ).click( function() 
-            {
-                try
+                // Populates the center aligned #dialog_confirmation div
+                FormUtil.genTagByTemplate( FormUtil.getSheetBottomTag(), Templates.settings_app_data_configuration, function( tag ) 
                 {
-                    DataManager2.deleteAllStorageData( function() {
-                        SwManager.reGetAppShell();
+                    TranslationManager.translatePage();
+
+                    $( '.divResetApp_Accept' ).click( function() {
+                        DataManager2.deleteAllStorageData( function() {					
+                            FormUtil.emptySheetBottomTag();
+                            
+                            FormMsgManager.appBlockTemplate('appLoad');
+            
+                            SwManager.reGetAppShell();
+                        });
                     });
-                }
-                catch ( errMsg ) {
-                    console.customLog( 'About Page, buttonResetData, errMsg: ' + errMsg );
-                    SwManager.reGetAppShell();
-                }
+        
+                    $( '.divResetApp_Cancel' ).click( function() 
+                    {				
+                        FormUtil.emptySheetBottomTag();
+                        FormUtil.unblockPage( scrimTag );
+                    });
+                });
             });
-
-            $( '.divResetApp_Cancel' ).click( function() 
-            {
-                FormUtil.emptySheetBottomTag();
-                FormUtil.unblockPage(); 
-            });
-
         });
 
 
