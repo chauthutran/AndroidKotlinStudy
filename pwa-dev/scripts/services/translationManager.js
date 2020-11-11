@@ -170,18 +170,18 @@ TranslationManager.downloadLangTerms = function( returnFunc )
 // MAIN PART 2 - apply transltaions on page or single text
 
 // MAIN METHOD 2.
-TranslationManager.translatePage = function()
+TranslationManager.translatePage = function( sectionTag )
 {
 	var currLangTerms = TranslationManager.currentLangTerms;
 
 	if ( currLangTerms )
 	{
 		// 1. Get the terms unique collection from site/page
-		var tagsWithTerm = $( '[term]' );
+		var tagsWithTerms = ( sectionTag ) ? sectionTag.find( '[term]' ) : $( '[term]' );
 	
 		// Only apply if the term name is not empty, and the term translation for current langugage exists.
 
-		tagsWithTerm.each( function() 
+		tagsWithTerms.each( function() 
 		{
 			var tag = $( this );
 			var termName = tag.attr( 'term' );

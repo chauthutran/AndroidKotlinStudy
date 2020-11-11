@@ -195,13 +195,15 @@ function BlockButton( cwsRenderObj, blockObj )
 			}
 			else if ( btnJson.buttonType === 'textButton' )
 			{
+				var btnIdAttr = ' btnId="' + btnId + '"';
+
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					btnTag = $( '<div class="button primary button-full_width" />' );
+					btnTag = $( '<div ' + btnIdAttr + ' class="button primary button-full_width ' + btnJson.buttonType + '" />' );
 				}
 				else
 				{
-					btnTag = $( '<button ' + FormUtil.getTermAttr( btnJson ) + ' ranid="' + Util.generateRandomId() + '" class="button primary button-full_width ' + btnJson.buttonType + '" />' );
+					btnTag = $( '<button ' + btnIdAttr + ' ' + FormUtil.getTermAttr( btnJson ) + ' ranid="' + Util.generateRandomId() + '" class="button primary button-full_width ' + btnJson.buttonType + '" />' );
 				}
 
 				var btnContainerTag = $( '<div class="button__container" />' );

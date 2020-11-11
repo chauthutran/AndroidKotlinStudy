@@ -153,7 +153,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     {                                   
                         var leftSec = Util.getSecFromMiliSec( timeRemainMs );
                         var coolTime = ConfigManager.getSyncUpCoolDownTime( 'sec' );
-                        MsgManager.msgAreaShow( 'In coolDown mode, left: ' + leftSec + 's out of ' + coolTime + 's' ); 
+                        MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
                     });
                 }
                 else

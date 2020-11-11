@@ -1140,8 +1140,28 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( entryTag )
 		{
 			// If 'Enter' key is pressed in any entry field, set to ignore that action.
-			entryTag.keypress( function( e ) {
-				if ( e.which === FormUtil.keyCode_Enter || e.keyCode === FormUtil.keyCode_Enter ) return false;
+			entryTag.keydown( function( e ) 
+			{
+				if ( e.which === FormUtil.keyCode_Enter || e.keyCode === FormUtil.keyCode_Enter ) 
+				{
+					try
+					{
+						var blockTag = formDivSecTag.closest( 'div.block' )
+						var btnClick = formItemJson.onEnterKeyBtnClick;
+
+						if ( btnClick && blockTag ) 
+						{
+							if ( btnClick === true ) blockTag.find( 'div.button' ).first().click();
+							else blockTag.find( '[btnId="' + formItemJson.onEnterKeyBtnClick + '"]' ).click();
+						}
+					}
+					catch( errMsg )
+					{
+						console.customLog( 'ERROR in blockForm.setEventsAndRules entryTag.keydown, errMsg: ' + errMsg );
+					}
+					
+					return false;
+				}
 			});
 
 			// Set Event

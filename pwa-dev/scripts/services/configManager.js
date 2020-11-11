@@ -238,6 +238,21 @@ ConfigManager.getSettingPaging = function()
     return pagingSetting;
 };
 
+ConfigManager.getSettingsTermId = function( termName )
+{
+    var termId = '';
+
+    var configJson = ConfigManager.getConfigJson();
+
+    if ( configJson && configJson.settings && configJson.settings.terms )
+    {
+        var termIdTemp = configJson.settings.terms[ termName ];
+        if ( termIdTemp ) termId = termIdTemp;
+    }
+
+    return termId;
+};
+
 
 ConfigManager.getActivityDisplaySettings = function()
 {

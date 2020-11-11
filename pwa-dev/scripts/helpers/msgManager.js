@@ -99,13 +99,13 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     var Tbl = $( '<table style="width:100%;padding:6px 4px;">' );
     var tBody = $( '<tbody>' );
     var trBody = $( '<tr>' );
-    var tdMessage = $( '<td>' );
+    var tdMessage = $( '<td style="padding: 0px 5px;">' );
 
     notifDiv.append ( Tbl );
     Tbl.append ( tBody );
     tBody.append ( trBody );
     trBody.append ( tdMessage );
-    tdMessage.html( '<span>&nbsp;</span>' + bodyMessage + '<span>&nbsp;</span>' );
+    tdMessage.append( bodyMessage );
 
 
     // TODO: These 'actionButton' need to be redesigned / cleaned...
@@ -153,8 +153,10 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 
     }
 
+    // If 'delayHide' is intentionally set ( with some number or '0' for not hide ), set to 'delayTimer..
     if ( delayHide != undefined || delayHide == 0 ) delayTimer = delayHide;
     else delayTimer = MsgManager._autoHideDelay;
+
 
     if ( actionButton && autoClick )
     {
@@ -262,6 +264,8 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
             //playSound("ping");
         }
     }
+
+    if ( bodyMessage.indexOf( 'term=' ) >=0 ) TranslationManager.translatePage( tdMessage );
 }
 
 

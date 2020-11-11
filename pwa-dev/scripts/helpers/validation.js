@@ -123,7 +123,7 @@ Validation.checkFormEntryTagsData = function( formTag, optionStr )
 
     if ( !allValid )
     {
-        if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( 'Validation Note: Review input fields.', 'ERROR' );
+        if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "formValidationMsgTerm" ) + '">Validation Note: Review input fields.</span>', 'ERROR' );
     }
 
     return allValid;
