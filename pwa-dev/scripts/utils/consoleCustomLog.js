@@ -98,6 +98,10 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
         {
             inputCommandTag.val( 'DevHelper.setDevMode( true );' );
         }
+        else if ( caseStr === 'serverAvailableCheck' )
+        {
+            inputCommandTag.val( 'ConnManagerNew.checkNSet_ServerAvailable();' );
+        }
         else if ( caseStr === 'disableConnCheck' )
         {
             inputCommandTag.val( 'clearInterval( ScheduleManager.timerID_serverAvilableCheck );' );

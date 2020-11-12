@@ -138,12 +138,14 @@ function cwsRender()
 	};
 
 	// This or other classes use this to control the scrolling..
-	me.setAppTitle = function( clicked_areaId, displayText )
+	me.setAppTitle = function( clicked_areaId, displayText, termId )
 	{
 		// these items show up full-screen (sheet_full-fs)
-		if ( clicked_areaId !== 'statisticsPage' && clicked_areaId !== 'settingsPage' && clicked_areaId !== 'aboutPage' )
+		if ( clicked_areaId !== 'statisticsPage' 
+			&& clicked_areaId !== 'settingsPage' 
+			&& clicked_areaId !== 'aboutPage' )
 		{
-			$( 'div.Nav__Title' ).html( displayText );
+			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 		}
 	};
 	
@@ -154,12 +156,15 @@ function cwsRender()
 	{
 		menuTag.click( function() 
 		{
+			var menuLiTag = $( this );
+			var anchorTag = menuLiTag.find( 'a' ).first();
+
 			// scrim hide			
 			FormUtil.unblockPage();
 
-			var clicked_areaId = $( this ).attr( 'areaId' );
+			var clicked_areaId = menuLiTag.attr( 'areaId' );
 
-			me.setAppTitle( clicked_areaId, $( this ).text() ); //$( this ).attr( 'displayName' ) 
+			me.setAppTitle( clicked_areaId, anchorTag.text(), anchorTag.attr( 'term' ) ); //$( this ).attr( 'displayName' ) 
 			me.renderArea( clicked_areaId );
 
 			return false;
@@ -398,7 +403,7 @@ function cwsRender()
 					navItemsUL.append( groupRow );
 				}
 
-				var menuLI = $( '<li areaId="' + area.id + '" displayName="' + area.name + '" />' );
+				var menuLI = $( '<li areaId="' + area.id + '" />' ); // displayName="' + area.name + '"
 
 				menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
 				menuLI.append( $( '<a ' + FormUtil.getTermAttr( area ) + ' class="pointer" >' + area.name + '</a>' ) );

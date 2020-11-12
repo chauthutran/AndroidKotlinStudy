@@ -101,7 +101,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         text-align: center;
         color: #4753A3;
         font-style: italic;
-        opacity: 0.4; display:none;"></div>`;
+        opacity: 0.2; display:none;"></div>`;
 
     me.template_divActivityTag = `<div class="activity card">
 

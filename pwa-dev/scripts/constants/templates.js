@@ -254,23 +254,23 @@ Templates.activityCardFullScreen = `
 
         <li class="primary active" rel="tab_previewDetails">
           <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-          <span rel="tab_previewDetails">Details</span>
+          <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
 
           <ul class="2ndary" style="display: none; z-index: 1;">
 
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-              <span rel="tab_previewPayload">Payload</span>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
             </li>
   
             <li class="2ndary" style="display:none" rel="tab_previewSync">
               <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-              <span rel="tab_previewSync">Sync</span>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
             </li>
 
             <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
               <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-              <span rel="tab_optionalDev">Dev</span>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
             </li>    
 
           </ul>
@@ -278,23 +278,23 @@ Templates.activityCardFullScreen = `
 
         <li class="primary" rel="tab_previewPayload">
           <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-          <span rel="tab_previewPayload">Payload</span>
+          <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
 
           <ul class="2ndary" style="display: none; z-index: 1;">
 
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-              <span rel="tab_previewDetails">Details</span>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
             </li>
   
             <li class="2ndary" style="display:none" rel="tab_previewSync">
               <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-              <span rel="tab_previewSync">Sync</span>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
             </li>
 
             <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
               <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-              <span rel="tab_optionalDev">Dev</span>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
             </li>    
 
           </ul>
@@ -302,22 +302,22 @@ Templates.activityCardFullScreen = `
 
         <li class="primary" rel="tab_previewSync">
           <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-          <span rel="tab_previewSync">Sync</span>
+          <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
           <ul class="2ndary" style="display: none; z-index: 1;">
 
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-              <span rel="tab_previewDetails">Details</span>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
             </li>
 
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-              <span rel="tab_previewPayload">Payload</span>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
             </li>
 
             <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
               <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-              <span rel="tab_optionalDev">Dev</span>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
             </li>            
 
           </ul>
@@ -325,23 +325,23 @@ Templates.activityCardFullScreen = `
 
         <li class="primary tab_optionalDev" rel="tab_optionalDev" style="display: none;">
           <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-          <span rel="tab_optionalDev">Dev</span>
+          <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
 
           <ul class="2ndary" style="display: none; z-index: 1;">
 
             <li class="2ndary" style="display:none" rel="tab_previewDetails">
               <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
-              <span rel="tab_previewDetails">Details</span>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
             </li>
 
             <li class="2ndary" style="display:none" rel="tab_previewPayload">
               <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-              <span rel="tab_previewPayload">Payload</span>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
             </li>
   
             <li class="2ndary" style="display:none" rel="tab_previewSync">
               <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
-              <span rel="tab_previewSync">Sync</span>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
             </li>
 
           </ul>

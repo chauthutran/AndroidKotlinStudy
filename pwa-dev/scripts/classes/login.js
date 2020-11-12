@@ -14,7 +14,7 @@ function Login( cwsRenderObj )
 
 	me.loginFormDivTag = $( '#loginFormDiv' );
 	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
-	me.navTitleTextTag = $( '.Nav__Title' );
+	//me.navTitleTextTag = $( '.Nav__Title' );
 	//me.pageTitleDivTab = $( 'div.logo-desc-all' );
 	//me.scrimTag = $('.scrim');
 	//me.sheetBottomTag = $('.sheet_bottom');
@@ -532,8 +532,8 @@ function Login( cwsRenderObj )
 		me.resetLoginCurrentKeys();
 		
 		// Load config and continue the CWS App process
-		if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Login Failed > unexpected error, cannot proceed', 'ERROR' );
-		else
+		if ( !loginData.dcdConfig || loginData.dcdConfig.ERROR ) MsgManager.msgAreaShow( '<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR' );
+		else 
 		{
 			FormMsgManager.appBlockTemplate( 'loginAfterLoad' );
 
