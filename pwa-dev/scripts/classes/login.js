@@ -27,8 +27,6 @@ function Login( cwsRenderObj )
 	me.advanceOptionLoginBtnTag = $( '#advanceOptionLoginBtn' );
 
 	me.loginPinClearTag = $( '#loginPinClear' );
-
-	me.loginFormTag = $( '.login_data__fields' );
 	me.loginFieldTag = $( '#loginField' );
 
 	// ------------
@@ -422,6 +420,16 @@ function Login( cwsRenderObj )
 		$( '#spanLoginAppUpdate' ).off( 'click' ).click( () => {
 			AppUtil.appReloadWtMsg();
 		});
+
+		if ( WsCallManager.isLocalDevCase )
+		{
+			// Also, display the localhost dev web service site 
+			var localSiteStr = '[Connected To: <span style="font-weight: bold">' + WsCallManager.stageName.toUpperCase() + '</span>]';
+			var localSiteInfoTag = $( '<div class="localSiteInfo" style="color: orange;text-align: left;">' + localSiteStr + '</div>' );
+		
+			me.loginFormTag.find( 'div.localSiteInfo' ).remove();
+			me.loginFormTag.append( localSiteInfoTag );
+		}
 	};
 	
 	
