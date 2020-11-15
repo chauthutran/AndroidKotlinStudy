@@ -5336,9 +5336,10 @@ textarea {
 
 .Nav1 .Nav__icon {
   display: inline-block;
-  width: 24px;
+  padding: 16px 12px 16px 16px;
+  /*width: 24px;  Need to change the source scss - but test it 1st..
   height: 24px;
-  margin: 16px 12px 16px 16px;
+  margin: 16px 12px 16px 16px;*/
   cursor: pointer;
 }
 
