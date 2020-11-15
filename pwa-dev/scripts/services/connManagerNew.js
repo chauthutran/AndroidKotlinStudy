@@ -13,8 +13,8 @@ ConnManagerNew.OFFLINE = 'Offline';
 
 ConnManagerNew.statusInfo = {
     'networkConn': {
-		'online_Current': false,
-        'online_Stable': false // 'Offline',  // CHANGE TO boolean <-- with variable 'networkConn'?
+		'online_Current': false
+        ,'online_Stable': false // false == 'Offline'
     },
     'serverAvailable': true,	// Start with 'true' for serverAvailable (webService)
 	'appMode': ConnManagerNew.OFFLINE, 	// 'Online' = ( statusInfo.serverAvailable = true && statusInfo.networkConn.connected_Stable == 'Online' )
@@ -69,6 +69,14 @@ ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj ) //, callBack )
 // =====================================================
 // ------ Network Connection Status Check Related -----
 
+// Event Listeners for Network Change - call for 'stable' network deciding/waiting method
+ConnManagerNew.createNetworkConnListeners = function()
+{
+    window.addEventListener( 'online', ConnManagerNew.updateNetworkConnStatus );
+	window.addEventListener( 'offline', ConnManagerNew.updateNetworkConnStatus );
+};
+
+
 // CHECK #1
 // Event Handler for checking / updating consistant(not frequently changed) network connection status.
 ConnManagerNew.updateNetworkConnStatus = function() 
@@ -79,21 +87,21 @@ ConnManagerNew.updateNetworkConnStatus = function()
 
 	var bDeviceConnected = navigator.onLine;	// 'navigator.online' returns 'true/false' based on device connectivity
 	ConnManagerNew.statusInfo.networkConn.online_Current = bDeviceConnected;
-	ConnManagerNew.update_UI( ConnManagerNew.statusInfo );
+	//ConnManagerNew.update_UI( ConnManagerNew.statusInfo );  <-- Since we do not display 'current' network status, no need to call this now.
+
+
+	// Start the timer.  If this method is not called again in the time, run 'stable' connection set.
+	ConnManagerNew.networkConnTimeOut = setTimeout( function() 
+	{			
+		ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, bDeviceConnected );
+
+	} ,ConnManagerNew.networkConnStableCheckTime );
 
 	
-	// DIABLED - If there is any one online signal, consider it as online stable
-	if ( bDeviceConnected && ConnManagerNew.efficiency.Immediate_OneCheckOnline )
-	{
-		ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, modeOnline );
-	}
-	else
-	{
-		ConnManagerNew.networkConnTimeOut = setTimeout( ConnManagerNew.changeNetworkConnStableStatus
-			, ConnManagerNew.networkConnStableCheckTime
-			, ConnManagerNew.statusInfo
-			, bDeviceConnected );
-	}
+	// DIABLED - Optional Immediate stable online - If there is any one online signal
+	//if ( bDeviceConnected && ConnManagerNew.efficiency.Immediate_OneCheckOnline )
+	//{ ConnManagerNew.changeNetworkConnStableStatus( ConnManagerNew.statusInfo, modeOnline ); } 
+	// else
 
 	return bDeviceConnected;
 };
@@ -104,7 +112,6 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 {
 	// MAIN - Mark the network connection as stable Online/Offline
 	statusInfo.networkConn.online_Stable = modeOnline;
-
 
 	// Trigger AppMode Check
 	ConnManagerNew.appModeSwitchRequest( statusInfo );
@@ -120,6 +127,27 @@ ConnManagerNew.changeNetworkConnStableStatus = function( statusInfo, modeOnline,
 		ConnManagerNew.checkNSet_ServerAvailable();
 	}	
 };
+
+
+// Additional Confirmation Check(Re) - For network change event use method..
+//	There are cases when network connection is set wrongly, but does not get adjusted if no network changes after.
+//  Call this with schedule - every 5 sec?
+ConnManagerNew.networkCurrentRecheck = function()
+{
+	if ( ConnManagerNew.statusInfo.networkConn.online_Current !== navigator.onLine )
+	{
+		console.customLog( '==> NOTE: Network Connection Discrepancy Detected!! Running Adjustment!' );
+		console.customLog( 'APP CURR: ' + ConnManagerNew.statusInfo.networkConn.online_Current + ' vs NET: ' + navigator.onLine );
+		ConnManagerNew.updateNetworkConnStatus();
+	}
+};
+
+
+// Alternative Network Stable..every 5 seconds ones..
+// 1. On method call, Set Current network status
+// 2. Use 'progressCount' = 0..  reset if diff conn status comes
+//    If same status, add another count
+//	  If reaches the target, set it as 'stable'
 
 
 // ====================================================
@@ -244,16 +272,6 @@ ConnManagerNew.connStatusStr = function()
 
 // ===============================================
 // --- Others --------------------
-
-
-// ===============================================
-// --- Event Listeners for Connection Changes ---
-
-ConnManagerNew.createNetworkConnListeners = function()
-{
-    window.addEventListener( 'online', ConnManagerNew.updateNetworkConnStatus );
-	window.addEventListener( 'offline', ConnManagerNew.updateNetworkConnStatus );
-};
 
 // ===============================================
 // --- Manual AppMode Swtich related Tasks ---

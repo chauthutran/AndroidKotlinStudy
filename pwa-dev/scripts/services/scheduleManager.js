@@ -20,8 +20,9 @@
 
 function ScheduleManager() {};
 
-//ScheduleManager.interval_networkStatusCheck = 5000;			// network is onine/offline check
 ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
+ScheduleManager.interval_networkCurrentRecheck = 5000;			// recheck/confirm network current status
+
 ScheduleManager.interval_scheduleSyncAllRun = 30000;			// automated SyncAll process
 ScheduleManager.interval_syncDownRunOnce = 60000;				// syncDown try interval
 ScheduleManager.interval_checkNewAppFileCheck = 60000;			// background new app file check
@@ -37,8 +38,7 @@ ScheduleManager.timerID_checkNewAppFileCheck;
 ScheduleManager.scheduleList = {
 	"OnAppStart": [
 		"SCH_ServerStatusCheck",
-		//"SCH_NewAppFileCheck"
-		// Also, 'serverStatus' check on app Start, but diable it on logOut?  Strange.
+		"SCH_NetworkCurrentRecheck"
 	],
 	"AfterLogin": [
 		"SCH_SyncDown_RunOnce",  // schedule_syncAll? - based on frequency on setting
@@ -47,8 +47,6 @@ ScheduleManager.scheduleList = {
 	"AfterLogOut": [
 		"CLR_syncDown_RunOnce",
 		"CLR_SyncAll_Background"
-		//"CLR_ServerStatusChecks",
-		//"CLR_SyncAll"
 	]
 };
 
@@ -153,7 +151,7 @@ ScheduleManager.runSchedules_AppStart = function()
 	ScheduleManager.scheduleList.OnAppStart.forEach( itemName =>
     {
 		if ( itemName === "SCH_ServerStatusCheck" ) ScheduleManager.schedule_serverStatus_Check( true );
-		else if ( itemName === "SCH_NewAppFileCheck" ) ScheduleManager.schedule_newAppFile_Check( false );
+		else if ( itemName === "SCH_NetworkCurrentRecheck" ) ScheduleManager.schedule_networkCurrentRecheck( true );
 	});	
 };
 
@@ -194,25 +192,12 @@ ScheduleManager.schedule_serverStatus_Check = function( NotRunRightAway )
 };
 
 
-ScheduleManager.schedule_newAppFile_Check = function( NotRunRightAway ) 
+ScheduleManager.schedule_networkCurrentRecheck = function( NotRunRightAway ) 
 {
-	if ( !NotRunRightAway ) SwManager.checkNewAppFile_OnlyOnline();
+	if ( !NotRunRightAway ) ConnManagerNew.networkCurrentRecheck();
 
-	// 1 min?
-	ScheduleManager.timerID_checkNewAppFileCheck = setInterval( SwManager.checkNewAppFile_OnlyOnline, ScheduleManager.interval_checkNewAppFileCheck );
+	ScheduleManager.timerID_networkCurrentRecheck = setInterval( ConnManagerNew.networkCurrentRecheck, ScheduleManager.interval_networkCurrentRecheck );
 };
-
-
-// This should be changed to call after syncAllRun is finished <-- use setTimeout to call again after each..
-/*
-ScheduleManager.schedule_syncAllRun = function( NotRunRightAway ) 
-{
-	if ( !NotRunRightAway ) SyncManagerNew.syncAll_FromSchedule();
-
-	// 30 seconds
-	ScheduleManager.timerID_scheduleSyncAllRun = setInterval( SyncManagerNew.syncAll_FromSchedule, ScheduleManager.interval_scheduleSyncAllRun );
-};
-*/
 
 
 // -----------------------------------------------
