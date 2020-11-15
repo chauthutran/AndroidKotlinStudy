@@ -565,4 +565,53 @@ SyncManagerNew.SyncMsg_createSectionTag = function( sectionTitle, callBack )
 };
 
 // ===================================================
+// === Sync All Button (App Top) Click =============
+
+SyncManagerNew.setAppTopSyncAllBtnClick = function()
+{
+    $( SyncManagerNew.imgAppSyncActionButtonId ).off( 'click' ).click( () => 
+    {
+        // if already running, just show message..
+        // if offline, also, no message in this case about offline...              
+        if ( SyncManagerNew.isSyncAll_Running() )
+        {
+            SyncManagerNew.SyncMsg_ShowBottomMsg();
+        }
+        else
+        {
+            // 1. SyncDown
+            if ( ConfigManager.getSyncDownSetting().enable && ConnManagerNew.isAppMode_Online() ) 
+            {
+                // TODO: WE NEED TO ADD BELOW NOTES TO SYNCALL HISTORY...
+                SyncManagerNew.syncDown( 'manualClick_syncAll', function( success, changeOccurred ) 
+                {        
+                    if ( success ) 
+                    {  
+                        // NOTE: If there was a new merge, for now, alert the user to reload the list?
+                        if ( changeOccurred )
+                        {
+                            var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
+        
+                            $( btnRefresh ).click ( () => {
+                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                            });
+        
+                            MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );
+                        }
+                    }
+                    else MsgManager.msgAreaShow( 'SyncDown not successful.' );  // Add to syncAll history?
+                });   
+            }
+                
+        
+            // 2. SyncUp All
+            SyncManagerNew.syncAll( SessionManager.cwsRenderObj, 'Manual', function( success ) 
+            {
+                SyncManagerNew.SyncMsg_ShowBottomMsg();
+            });  
+        }
+    });  
+};
+
+// ===================================================
 // === OTHERS Methods =============

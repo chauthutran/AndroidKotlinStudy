@@ -2,14 +2,7 @@
 function Validation() {};
 
 Validation._DisableValidation = false;
-Validation.cwsRenderObj;
 Validation.COLOR_WARNING = "#f19c9c";
-
-
-Validation.setCWSRenderObj = function( _cwsRenderObj )
-{
-    Validation.cwsRenderObj = _cwsRenderObj;
-}
 
 
 Validation.disableValidation = function( execFunc )

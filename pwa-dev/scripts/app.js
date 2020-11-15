@@ -20,7 +20,6 @@ function app()
 {
 	var me = this;
 
-  me._cwsRenderObj;
   me.count = 0;
 
   //me.isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
@@ -42,12 +41,8 @@ function app()
 
 
     // Instantiate Classes
-    me._cwsRenderObj = new cwsRender();
-    SessionManager.cwsRenderObj = me._cwsRenderObj; // Global Reference to cwsRenderObj..
+    SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
 
-
-    // Set cwsRenderObj for Validation so that we can use this class later
-    Validation.setCWSRenderObj( me._cwsRenderObj );
 
     // Does this get loaded also when we login?
     AppInfoManager.initialLoad_FromStorage();
@@ -56,7 +51,7 @@ function app()
 
 
     // Service Worker Related Initial Setup
-    SwManager.initialSetup( me._cwsRenderObj, function() 
+    SwManager.initialSetup( function() 
     { 
       SwManager.checkNewAppFile_OnlyOnline();
 
@@ -78,8 +73,6 @@ function app()
 
       ConnManagerNew.createNetworkConnListeners();
 
-      DevHelper.setUp( me._cwsRenderObj );
-
       me.App_UI_startUp_Progress( '50%' );
 
 
@@ -89,7 +82,7 @@ function app()
       ConnManagerNew.cloudConnStatusClickSetup( $( '#divNetworkStatus' ) );
 
       // Start Connection..
-      ConnManagerNew.appStartUp_SetStatus( me._cwsRenderObj );
+      ConnManagerNew.appStartUp_SetStatus();
 
       // Start the scheduling on app start
       ScheduleManager.runSchedules_AppStart();
@@ -103,11 +96,9 @@ function app()
 
       me.App_UI_startUp_Progress( '80%' );
 
-      me._cwsRenderObj.render();
+      SessionManager.cwsRenderObj.render();
 
       //me.App_UI_startUp_Progress( '90%' );
-
-      //me.App_checkUpdates_found_prompt();
 
       me.App_UI_startUp_Progress( '100%' );
 
@@ -147,63 +138,8 @@ function app()
 
   me.App_syncIcon_UI_event = function()
   {
-    // move into cwsRender?
-    $( SyncManagerNew.imgAppSyncActionButtonId ).click( () => {
-
-      // if already running, no message..
-      // if offline, also, no message in this case about offline...      
-      
-      if ( SyncManagerNew.isSyncAll_Running() )
-      {
-        SyncManagerNew.SyncMsg_ShowBottomMsg();
-      }
-      else
-      {
-        // 1. SyncDown
-        if ( ConfigManager.getSyncDownSetting().enable && ConnManagerNew.isAppMode_Online() ) 
-        {
-          // TODO: WE NEED TO ADD BELOW NOTES TO SYNCALL HISTORY...
-          SyncManagerNew.syncDown( 'manualClick_syncAll', function( success, changeOccurred ) 
-          {        
-              if ( success ) 
-              {  
-                  // NOTE: If there was a new merge, for now, alert the user to reload the list?
-                  if ( changeOccurred )
-                  {
-                      var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
-  
-                      $( btnRefresh ).click ( () => {
-                          SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
-                      });
-  
-                      MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );
-                  }
-              }
-              else MsgManager.msgAreaShow( 'SyncDown not successful.' );  // Add to syncAll history?
-          });   
-        }
-          
-
-        // 2. SyncUp All
-        SyncManagerNew.syncAll( me._cwsRenderObj, 'Manual', function( success ) 
-        {
-          SyncManagerNew.SyncMsg_ShowBottomMsg();
-        });  
-      }
-
-    });
+    SyncManagerNew.setAppTopSyncAllBtnClick();
   };
-
-  /*
-  me.App_installed_done = function( event ) {
-    // Track event: The app was installed (banner or manual installation)
-    FormUtil.gAnalyticsEventAction(function (analyticsEvent) {
-      // Track event: The app was installed (banner or manual installation)
-      ga('send', { 'hitType': 'event', 'eventCategory': 'appinstalled', 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
-      //playSound("coin");
-    });
-  };
-  */
 
   // ---------------------------------------
 

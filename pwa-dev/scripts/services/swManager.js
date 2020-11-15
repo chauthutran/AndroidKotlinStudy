@@ -14,9 +14,7 @@
 // -----------------------------------------
 function SwManager() {};
 
-//function swManager( _cwsRenderObj, callBack ) {
 SwManager.swFile =  './service-worker.js';
-//SwManager._cwsRenderObj;
 
 SwManager._newUpdateInstallMsg_interval = 30000;  //30 seconds
 
@@ -42,10 +40,8 @@ SwManager.debugMode = true;
 
 // --------------------------------------------
 
-SwManager.initialSetup = function ( cwsRenderObj, callBack ) 
+SwManager.initialSetup = function ( callBack ) 
 {
-    //SwManager._cwsRenderObj = cwsRenderObj;
-
     // checkRegisterSW
     if ( ( 'serviceWorker' in navigator ) )
     {

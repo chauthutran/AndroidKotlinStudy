@@ -8,7 +8,6 @@
 
 function DevHelper() {};
 
-DevHelper.cwsRenderObj;
 DevHelper.INFO;
 DevHelper.tempCount = 0;
 
@@ -86,16 +85,6 @@ DevHelper.sampleDataTemplate =
 }];
 
 
-// =======================================
-
-DevHelper.setUp = function( cwsRenderObj )
-{
-    DevHelper.cwsRenderObj = cwsRenderObj;
-};
-
-// =======================================
-
-
 DevHelper.setDevMode = function( bDev )
 {
     DevHelper.devMode = bDev;
@@ -143,7 +132,7 @@ DevHelper.removeSampleData = function()
     ClientDataManager.removeSampleData( function( removedCount ) 
     {
         console.customLog( 'DevHelper.removeSampleData Done and saved to IndexedDB.  Removed Count: ' + removedCount );
-        DevHelper.cwsRenderObj.renderArea( DevHelper.cwsRenderObj.areaList[ 0 ].id );
+        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
     });
 };
 
@@ -152,7 +141,7 @@ DevHelper.loadSampleData = function( icount )
 {
     ClientDataManager.loadSampleData( icount, DevHelper.sampleDataTemplate, function() {
         console.customLog( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
-        DevHelper.cwsRenderObj.renderArea( DevHelper.cwsRenderObj.areaList[ 0 ].id );
+        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
     });
 };
 
@@ -171,11 +160,6 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
 {
     DevHelper.INFO = INFO;
 };
-
-DevHelper.checkNewAppFile = function()
-{
-    if ( DevHelper.cwsRenderObj ) SwManager.checkNewAppFile();
-}
 
 // =======================================
 

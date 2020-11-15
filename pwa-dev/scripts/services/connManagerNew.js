@@ -3,8 +3,6 @@
 
 function ConnManagerNew() {};
 
-ConnManagerNew._cwsRenderObj;  // <-- Tran wants to make this class instantiating if we use 'cwsRenderObj'..
-
 ConnManagerNew.networkConnStableCheckTime = 10000; // ms, 5000ms = 5 seconds
 ConnManagerNew.networkConnTimeOut;
 
@@ -40,10 +38,8 @@ ConnManagerNew.switchPrompt_reservedMsgID;
 
 // THIS IS EXCEPTION CASE - NOT MAIN CASE...
 // On start of the app, we set this initially..
-ConnManagerNew.appStartUp_SetStatus = function( cwsRenderObj ) //, callBack ) 
+ConnManagerNew.appStartUp_SetStatus = function() //, callBack ) 
 {
-	ConnManagerNew._cwsRenderObj = cwsRenderObj;
-
 	try
 	{
 		// To start off > update UI to 'defaults' for connection settings
@@ -232,7 +228,7 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack )
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
-		if ( SessionManager.getLoginStatus() ) ConnManagerNew._cwsRenderObj.handleAppMode_Switch();	
+		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.handleAppMode_Switch();	
 	}
 };
 
@@ -284,7 +280,7 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
         if ( ConnManagerNew.isAppMode_Online() )
         {
 			// Show Dialog for Manual Offline - If currently online..
-			AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, ConnManagerNew._cwsRenderObj );
+			AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.OFFLINE, SessionManager.cwsRenderObj );
         }
         else
         {
@@ -296,16 +292,16 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 				// NOTE: TODO: Manual Online Failure --> Could have both condition, thus, show combined issue message?
 				if ( !statusInfoRef.networkConn.online_Stable )
 				{
-					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( ConnManagerNew._cwsRenderObj );
+					AppModeSwitchPrompt.showManualSwitch_NetworkUnavailable_Dialog( SessionManager.cwsRenderObj );
 				}
 				else if ( !statusInfoRef.serverAvailable )
 				{
-					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog( ConnManagerNew._cwsRenderObj );					
+					AppModeSwitchPrompt.showManualSwitch_ServerUnavailable_Dialog( SessionManager.cwsRenderObj );					
 				}
 				else
 				{
 					// Perform Manual Online 
-					AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE, ConnManagerNew._cwsRenderObj );
+					AppModeSwitchPrompt.showManualSwitch_Dialog( ConnManagerNew.ONLINE, SessionManager.cwsRenderObj );
 				}
 			}
 			else
