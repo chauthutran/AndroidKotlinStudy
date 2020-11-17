@@ -252,10 +252,9 @@ function favIcons( cwsRender )
             {
                 if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
 
-                me.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name );
+                me.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
                 me.cwsRenderObj.renderNewAreaBlock( favItem.target.blockId, favItem.target.options );
             }
-
         });
     }
 

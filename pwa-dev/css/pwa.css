@@ -11,17 +11,10 @@ body
   /* overflow-y: hidden; disables entire scroll, thus, can not use it.*/
 }
 
-/*.button {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
 
-.button:focus {
-  background-color: #CCC;
+.fab__section, .fab__child-section {
+  cursor: pointer;
 }
-
-.button:active {
-  background-color:lightyellow;
-}*/
 
 /* MD DatePicker Related Adjustment  */
 /* font-family: Roboto, Helvetica, Arial, sans-serif!important */
