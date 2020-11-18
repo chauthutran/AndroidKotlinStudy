@@ -318,6 +318,98 @@ Util.traverseEval_StrCase = function( obj, key, prop, INFO )
 	}
 };
 
+/*
+Util.jsonKeysReplace_Deep = function( obj, keyListSet, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		var errMsg = 'Error in Util.jsonKeysReplace, Traverse depth limit has reached: ' + iDepth;
+		console.customLog( errMsg );
+		throw errMsg;
+	}
+	else
+	{
+		Object.keys( obj ).forEach( key => 
+		{
+			var prop = obj[key];	
+
+			if ( Util.isTypeArray( prop ) )
+			{
+				var iDepthArr = iDepth++;
+
+				prop.forEach( pArrItem => 
+				{
+					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
+					{						
+						Util.jsonKeysReplace_Deep( pArrItem, keyListSet, iDepthArr, limit );
+					}
+				});
+			}
+			else if ( Util.isTypeObject( prop ) )
+			{
+				Util.jsonKeysReplace_Deep( prop, keyListSet, iDepth++, limit );
+			}				
+			else if ( Util.isTypeString( prop ) )
+			{						
+				// For now, only do this for string value type keys..
+				Util.jsonKeyReplace( obj, key, keyListSet );		
+			}
+		});
+	}
+};	
+
+// Only do obj that is key/value one...
+Util.jsonKeyReplace = function( obj, key, keyListSet )
+{
+	var foundIndex = keyListSet.keys.indexOf( key );
+
+	if ( foundIndex >= 0 ) 
+	{
+		var origVal = obj[ key ]; 
+		var keyNew = keyListSet.keysNew[ foundIndex ];
+
+		// get the value/object set from 'key' before deleting the key.
+		obj[ keyNew ] = ( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.getJsonDeepCopy( origVal ) : origVal;
+
+		delete obj[ key ];
+	}
+};
+*/
+
+
+
+Util.jsonKeysReplace = function( obj, subObjKey, keyListSet )
+{
+	if ( obj && Util.isTypeObject( obj ) )
+	{
+		// Since we can not replace with original obj itself, use the sub one.
+		var subObj = obj[ subObjKey ];
+
+		if ( subObj && Util.isTypeObject( subObj ) )
+		{
+			var objInStr = JSON.stringify( subObj );
+			var keys = keyListSet.keys;
+
+			keys.forEach( ( key, i ) => 
+			{
+				var keyProp = '"' + key + '":';
+
+				if ( objInStr.indexOf( keyProp ) >= 0 )
+				{
+					var newKey = keyListSet.keysNew[i];
+					var newkeyProp = '"' + newKey + '":';
+
+					objInStr = objInStr.replaceAll( keyProp, newkeyProp );
+				}	
+			});		
+
+			newObj = JSON.parse( objInStr );
+
+			obj[ subObjKey ] = newObj;
+		}
+	}
+};
+
 
 Util.jsonCleanEmptyRunTimes = function( obj, runTime )
 {
