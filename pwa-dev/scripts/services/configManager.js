@@ -723,6 +723,22 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
    }
 };
 
+
+// ------------------------------------------------------
+// -- UidMapping after download..
+
+ConfigManager.downloadedData_UidMapping = function( dataJson )
+{
+    // Get uidMapping from ConfigManager
+    var configJson = ConfigManager.getConfigJson();
+
+    if ( configJson.download_UidMapping && configJson.download_UidMapping.mapping )
+    {
+        return Util.jsonKeysReplace_Str( dataJson, configJson.download_UidMapping.mapping );        
+    }
+    else return dataJson;
+};
+
 // ========================================================
 
 

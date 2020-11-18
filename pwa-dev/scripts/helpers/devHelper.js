@@ -161,6 +161,20 @@ DevHelper.setINFO_ForConsoleDisplay = function( INFO )
     DevHelper.INFO = INFO;
 };
 
+
+DevHelper.runTest = function()
+{
+    var testJson = {
+        "1d1": "1",
+        "d1": {
+            "1d2": "2",
+            "1d3": "mark"
+        }
+    };
+
+    //Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit );
+};
+
 // =======================================
 
 // Not yet implemented

@@ -112,7 +112,6 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
         var changeOccurred = false;        
  
-
         if ( !downloadSuccess ) 
         { 
             SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson ) );
@@ -122,6 +121,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
         else
         {
             var downloadedData = SyncManagerNew.formatDownloadedData( returnJson );
+            downloadedData = ConfigManager.downloadedData_UidMapping( downloadedData );
                                 
             // 'download' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );

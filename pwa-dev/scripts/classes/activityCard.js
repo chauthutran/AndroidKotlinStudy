@@ -707,7 +707,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
-            var clientJson = responseJson.result.client;
+            var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
 
             // #1. Check if current activity Id exists in 'result.client' activities..
             if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )

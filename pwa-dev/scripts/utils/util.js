@@ -318,8 +318,9 @@ Util.traverseEval_StrCase = function( obj, key, prop, INFO )
 	}
 };
 
-/*
-Util.jsonKeysReplace_Deep = function( obj, keyListSet, iDepth, limit )
+// Replace json 'key' names using 'keyListset' ( { 'keys': [], 'keysNew': [] } (same list) )
+// Only replace 'key' where the value is string or number/boolean?..
+Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
@@ -337,20 +338,21 @@ Util.jsonKeysReplace_Deep = function( obj, keyListSet, iDepth, limit )
 			{
 				var iDepthArr = iDepth++;
 
-				prop.forEach( pArrItem => 
+				prop.forEach( ( pArrItem, i ) => 
 				{
 					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
 					{						
-						Util.jsonKeysReplace_Deep( pArrItem, keyListSet, iDepthArr, limit );
+						Util.jsonKeysReplace_Ref( pArrItem, keyListSet, iDepthArr, limit );
 					}
+					//else if ( Util.isTypeString( pArrItem ) ) Util.jsonKeyReplace( obj, obj[ i ], keyListSet, 'array' );		
 				});
 			}
 			else if ( Util.isTypeObject( prop ) )
 			{
-				Util.jsonKeysReplace_Deep( prop, keyListSet, iDepth++, limit );
+				Util.jsonKeysReplace_Ref( prop, keyListSet, iDepth++, limit );
 			}				
-			else if ( Util.isTypeString( prop ) )
-			{						
+			else //if ( Util.isTypeString( prop ) )
+			{
 				// For now, only do this for string value type keys..
 				Util.jsonKeyReplace( obj, key, keyListSet );		
 			}
@@ -369,45 +371,48 @@ Util.jsonKeyReplace = function( obj, key, keyListSet )
 		var keyNew = keyListSet.keysNew[ foundIndex ];
 
 		// get the value/object set from 'key' before deleting the key.
-		obj[ keyNew ] = ( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.getJsonDeepCopy( origVal ) : origVal;
+		obj[ keyNew ] = origVal;
+		//( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.getJsonDeepCopy( origVal ) : origVal;
 
 		delete obj[ key ];
 	}
 };
-*/
 
 
-
-Util.jsonKeysReplace = function( obj, subObjKey, keyListSet )
+// Return new obj with key replaced. New obj created, thus will loose reference..
+//   keyListSet - { "asofiajs": "firstName", "asjfoasdjif": "lastName }
+Util.jsonKeysReplace_Str = function( obj, keyListSet )
 {
-	if ( obj && Util.isTypeObject( obj ) )
+	var newObj = obj;  // set to original data by default if there is issue..
+
+	try
 	{
-		// Since we can not replace with original obj itself, use the sub one.
-		var subObj = obj[ subObjKey ];
-
-		if ( subObj && Util.isTypeObject( subObj ) )
+		if ( obj && Util.isTypeObject( obj ) && keyListSet )
 		{
-			var objInStr = JSON.stringify( subObj );
-			var keys = keyListSet.keys;
-
-			keys.forEach( ( key, i ) => 
+			var objInStr = JSON.stringify( obj );
+	
+			Object.keys( keyListSet ).forEach( key => 
 			{
 				var keyProp = '"' + key + '":';
-
+	
 				if ( objInStr.indexOf( keyProp ) >= 0 )
 				{
-					var newKey = keyListSet.keysNew[i];
+					var newKey = keyListSet[key];
 					var newkeyProp = '"' + newKey + '":';
-
+	
 					objInStr = objInStr.replaceAll( keyProp, newkeyProp );
 				}	
 			});		
-
+	
 			newObj = JSON.parse( objInStr );
-
-			obj[ subObjKey ] = newObj;
-		}
+		}	
 	}
+	catch ( errMsg )
+	{
+		console.customLog( 'ERROR in Util.jsonKeysReplace_Str, errMsg: ' + errMsg );
+	}
+
+	return newObj;
 };
 
 
