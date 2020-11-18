@@ -190,7 +190,8 @@ function app()
     console.customLog( '[AppInstall READY]' );
 
     var appInstallTag = $( '.appInstall' );
-    appInstallTag.show();
+    // appInstallTag.show();  - not needed since we made it always visible
+    appInstallTag.css( 'background-color', 'tomato' );
 
     var deferredPrompt = e;
 
