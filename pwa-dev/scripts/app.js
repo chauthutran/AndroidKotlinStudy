@@ -22,6 +22,8 @@ function app()
 
   me.count = 0;
 
+  var appInstallBtnTag = $( '.appInstall' );
+
   //me.isApp_standAlone = ( window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true );
 
   // ----------------------------------------------------
@@ -184,21 +186,28 @@ function app()
     console.customLog( e.message );
   };
 
-  
+
+  me.setUpAppInstallNotReadyMsg = function()
+  {  
+    appInstallBtnTag.off( 'click' ).click( function() 
+    {
+      MsgManager.msgAreaShow( 'App is already installed in this device.' );
+    });  
+  };
+
+
   me.beforeinstallprompt = function( e )
   {
-    console.customLog( '[AppInstall READY]' );
-
-    var appInstallTag = $( '.appInstall' );
     // appInstallTag.show();  - not needed since we made it always visible
-    appInstallTag.css( 'background-color', 'tomato' );
+    appInstallBtnTag.css( 'background-color', 'tomato' );
 
     var deferredPrompt = e;
 
-    appInstallTag.off( 'click' ).click( function() 
+    appInstallBtnTag.off( 'click' ).click( function() 
     {
       deferredPrompt.prompt();
-      $( '.appInstall' ).hide();
+
+      appInstallBtnTag.hide();
 
       // Wait for the user to respond to the prompt
       deferredPrompt.userChoice.then( ( choiceResult ) => 
