@@ -92,7 +92,8 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
         var errMsgDetail = 'syncAll ' + runType + ' failed - msg: ' + errMsg;        
         SyncManagerNew.SyncMsg_InsertSummaryMsg( errMsgDetail );
-        MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail );
+        MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail, 'ERROR' );
+
         console.customLog( errMsgDetail );
 
         if( callBack ) callBack( false );

@@ -414,18 +414,20 @@ function Action( cwsRenderObj, blockObj )
 				var bResult = true;
 				var moreInfoJson;
 
-				if ( success )
+				if (success && ( redeemReturnJson.status === "success" || redeemReturnJson.status === "pass" ) )
 				{
 					dataPass.prevWsReplyData = redeemReturnJson;
 				}
 				else
 				{
+					var errMsg = (redeemReturnJson.report && redeemReturnJson.report.msg) ? ' - ' + redeemReturnJson.report.msg : '';				
+					var errMsgFull = 'Request Call Failed' + errMsg;
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Request Call Failed From Web Service', 'notifDark', undefined, '', 'right', 'top' );
+					MsgManager.msgAreaShow(errMsgFull, 'ERROR' );
 					// Should we stop at here?  Or continue with subActions?
 
 					bResult = false; // "actionFailed";
-					moreInfoJson = { 'type': 'requestFailed', 'msg': 'Request call returned with failure.'}
+					moreInfoJson = { 'type': 'requestFailed', 'msg': errMsgFull };
 				}
 
 				if ( afterActionFunc ) afterActionFunc( bResult, moreInfoJson );
