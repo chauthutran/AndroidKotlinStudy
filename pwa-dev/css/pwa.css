@@ -725,6 +725,9 @@ img.rotateImg {
   padding: 0 0 0 4px;
   vertical-align: middle;
 }
+.groupByImgTd {
+  width: 28px;
+}
 .groupByFieldName
 {
   color: #50555a;
