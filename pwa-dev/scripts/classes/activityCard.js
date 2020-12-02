@@ -835,6 +835,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
         
             // render
             sheetFull.fadeIn();
+
+// NEW: PREVIEW STYLE CHANGES
+            sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
         
             $( '#pageDiv' ).hide();
 
