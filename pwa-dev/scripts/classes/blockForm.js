@@ -972,11 +972,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				if ( formFieldDef.payload && formFieldDef.payload[ pConf ] && formFieldDef.payload[ pConf ].calculatedValue ) 
 				{
-					retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload[ pConf ].calculatedValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].calculatedValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload[ pConf ].calculatedValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].calculatedValue, formFieldDef.id ) } );
 				}
 				if ( formFieldDef.payload && formFieldDef.payload[ pConf ] && formFieldDef.payload[ pConf ].defaultValue ) 
 				{
-					retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload[ pConf ].defaultValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].defaultValue ) } );
+					retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload[ pConf ].defaultValue, byConfig: pConf, dependencies: me.getFieldsFromFormula( formFieldDef.payload[ pConf ].defaultValue, formFieldDef.id ) } );
 				}
 			}
 			else
@@ -986,11 +986,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					if ( formFieldDef.payload && formFieldDef.payload.default && formFieldDef.payload.default.calculatedValue ) 
 					{
-						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload.default.calculatedValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.calculatedValue ) } );
+						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.payload.default.calculatedValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.calculatedValue, formFieldDef.id ) } );
 					}
 					if ( formFieldDef.payload && formFieldDef.payload.default && formFieldDef.payload.default.defaultValue ) 
 					{
-						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload.default.defaultValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.defaultValue ) } );
+						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.payload.default.defaultValue, byConfig: 'default', dependencies: me.getFieldsFromFormula( formFieldDef.payload.default.defaultValue, formFieldDef.id ) } );
 					}
 				}
 				else
@@ -998,11 +998,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					// 3. finally prioritize root calculatedValue/defaultValue (if present)
 					if ( formFieldDef.calculatedValue ) 
 					{
-						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.calculatedValue ) } );
+						retArr.push( { name: formFieldDef.id, type: 'calculatedValue', formula: formFieldDef.calculatedValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.calculatedValue, formFieldDef.id ) } );
 					}
 					if ( formFieldDef.defaultValue ) 
 					{
-						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue ) } );
+						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue, formFieldDef.id ) } );
 					}
 				}
 
@@ -1014,11 +1014,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		retArr.sort( function( a, b ) {
 			return ( a.dependencies.length < b.dependencies.length ) ? -1 : ( a.dependencies.length > b.dependencies.length ) ? 1 : 0;
 		});
-
+		console.log( retArr );
 		return retArr;
 	};
 
-	me.getFieldsFromFormula = function( evalFormula )
+	me.getFieldsFromFormula = function( evalFormula, parentName )
 	{
 
 		// accepts formula, e.g. 1: "##{generatePattern(form:walkIn_firstName[LEFT:3]-form:walkIn_motherName[LEFT:3]-form:walkIn_birthDistrict[LEFT:3]-form:walkIn_birthOrder[PADDNUMERIC:2],-,true)}"
@@ -1079,7 +1079,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 						if ( ! returnFields.includes( sepPart ) )
 						{
-							returnFields.push( fieldName );
+							if ( ! returnFields.includes( fieldName ) && parentName !== fieldName ) returnFields.push( fieldName );
 							bFoundCharMatch = true;
 						}
 					}
