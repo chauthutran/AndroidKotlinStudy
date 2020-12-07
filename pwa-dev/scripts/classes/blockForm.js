@@ -1014,7 +1014,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		retArr.sort( function( a, b ) {
 			return ( a.dependencies.length < b.dependencies.length ) ? -1 : ( a.dependencies.length > b.dependencies.length ) ? 1 : 0;
 		});
-		console.log( retArr );
+		//console.log( retArr );
 		return retArr;
 	};
 
