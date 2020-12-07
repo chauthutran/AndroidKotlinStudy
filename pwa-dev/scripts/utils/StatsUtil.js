@@ -254,7 +254,7 @@ StatsUtil.isInDate = function( startDate, endDate, item, datePropertyName )
 
             //  If 'startDate' or 'endDate' is not available, no need to compare for that date for range.
             if ( ( !startDate || itemDate >= startDate ) 
-                && ( !endDate || itemDate <= endDate ) ) inDate = true;
+                && ( !endDate || itemDate < endDate ) ) inDate = true;
         }
     }
     catch ( errMsg ) { console.customLog( 'ERROR in isInDate item date comparison.' ); }

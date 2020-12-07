@@ -699,16 +699,6 @@ Templates.Advance_Login_Buttons = `
       <div class="sbtt-btn__header_title" term="login_advancedOptions">Advanced options</div>
     </div>
     <div class="cta_buttons">
-      <div class="button c_500 dis switchToStagBtn">
-        <div class="button__container">
-          <div class="button-label" term="login_switchToStaging">switch to Staging</div>
-        </div>
-      </div>
-      <div class="button c_500 dis demoBtn">
-        <div class="button__container">
-          <div class="button-label" term="login_demoMode">Demo mode</div>
-        </div>
-      </div>
       <div class="button c_500 changeUserBtn">
         <div class="button__container">
           <div class="button-label" term="login_changeUser">Change user</div>

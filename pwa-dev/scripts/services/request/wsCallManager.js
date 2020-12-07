@@ -13,15 +13,17 @@ WsCallManager.wsTargetUrl = '';  // get set when start..
 WsCallManager.localhostProxyUrl = 'http://localhost:3020';
 WsCallManager.isLocalDevCase = false;
 WsCallManager.versionNumber = '1.3';
+WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 
 WsCallManager.stageName = '';
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
+    'wfaProd': 'https://wfa[country].psi-connect.org/ws/dws',
     'stage': 'https://pwa-stage.psi-connect.org/ws/dws-stage',
     'train': 'https://pwa-train.psi-connect.org/ws/dws-train',
-    'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
     'test': 'https://pwa-test.psi-connect.org/ws/dws-test',
-    'wfaProd': 'https://wfa[country].psi-connect.org/ws/dws'
+    'dev': 'https://pwa-dev.psi-connect.org/ws/dws-dev',
+    'noSrv': 'https://pwa-noSrv.psi-connect.org/ws/dws-dev'  // or pwa-dev.---/ws/
 };
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
@@ -33,9 +35,9 @@ WsCallManager.mockDelayTimeMS = 1000; // default delay time in milliseconds - 10
 // ============================================
 // Setup / Set on Start of App Related ========
 
-WsCallManager.setWsTarget = function()
+WsCallManager.setWsTarget = function( overrideOriginUrl )
 {
-    var originUrl = window.location.origin;  // https://pwa.psi-connect.. OR http://localhsot
+    var originUrl = ( overrideOriginUrl ) ? overrideOriginUrl : window.location.origin;  // https://pwa.psi-connect.. OR http://localhsot
 
     WsCallManager.isLocalDevCase = WsCallManager.checkLocalDevCase( originUrl );
 
@@ -50,6 +52,7 @@ WsCallManager.setWsTarget = function()
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
     else if ( originUrl.indexOf( 'https://pwa-dev.' ) === 0 ) stageName = 'dev';    
     else if ( originUrl.indexOf( 'https://pwa-test.' ) === 0 ) stageName = 'test';
+    else if ( originUrl.indexOf( 'https://pwa-noSrv.' ) === 0 ) stageName = 'noSrv';
     else if ( originUrl.indexOf( 'https://wfa' ) === 0 ) 
     {
         stageName = 'prod';
@@ -62,8 +65,10 @@ WsCallManager.setWsTarget = function()
 };
 
 
-//WsCallManager.getGitBranchName = function( stageName ) {};
-
+WsCallManager.setWsTarget_NoServer = function()
+{
+    WsCallManager.setWsTarget( WsCallManager.noServerUrl );    
+};
 
 // If 'wfa' case, get properly named web service url
 WsCallManager.getWfaProdWsUrl = function( originUrl )

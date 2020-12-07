@@ -117,7 +117,7 @@
     bottom: 0px;
     left: 0px;
     z-index: 2100;
-    max-height: 270px;
+    max-height: 120px;
     @include shadow-b(-2px -2px 5px 0px $color-shadow);
     @include box-sizing(border-box);
     background-color: #FFF;
@@ -147,7 +147,7 @@
     }
 
     @include p-device(320) {
-        max-height: 218px;
+        max-height: 120px;
     }
 
     @include l-device(480) {
@@ -170,11 +170,11 @@
     }
 
     @include l-device(360) {
-        max-height: 218px;
+        max-height: 120px;
     }
 
     @include l-device(598) {
-        max-height: 224px;
+        max-height: 120px;
     }
 
     .sbtt-btn__header {
