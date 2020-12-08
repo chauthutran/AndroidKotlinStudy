@@ -25,6 +25,14 @@ body
 /* .mddtp-picker .mddtp-picker__header { background-color: #93bcff !important; } */
 /* ------------ */
 
+.statsTableSpanSpecialCase {
+  position: relative;
+  left: 4px;
+  top: -4px;
+  font-size: 7pt;
+  color: blueviolet;
+}
+
 .syncUpCoolDown {
   opacity: 0.3;
   background-color: silver;
