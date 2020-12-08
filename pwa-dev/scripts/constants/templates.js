@@ -61,7 +61,7 @@ Templates.inputFieldRadio_Item = `<div class="radio-group horizontal">
 
 
 Templates.inputFieldYear = `
-<div class="containerSymbol fieldBlock">
+<div class="containerSymbol">
   <input type="text" class="inputTrue dataValue"/>
   <input type="text" class="inputShow displayValue form-type-text inputValidation" isNumber="true" >
   <dialog class="inputFieldYear">
