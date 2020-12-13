@@ -94,6 +94,20 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
         {
             inputCommandTag.val( 'JSON.stringify( ClientDataManager.getClientList() );' );
         }
+
+        else if ( caseStr === 'overrideSyncLastDwDate' )
+        {
+            var lastDwDateStr = AppInfoManager.getSyncLastDownloadInfo();
+
+            inputCommandTag.val( 'AppInfoManager.updateSyncLastDownloadInfo( "' + lastDwDateStr + '" );' );
+        }
+        else if ( caseStr === 'showOtherUsefulCommands' )
+        {
+            console.customLog( '1. ClientDataManager.getClientById( "-----" );' );
+            console.customLog( '2. ClientDataManager.getClientByActivityId( "------" );' );
+            inputCommandTag.val( '/* Commands shown on above log area. */' );
+        }
+
         else if ( caseStr === 'devMode' )
         {
             inputCommandTag.val( 'DevHelper.setDevMode( true );' );
