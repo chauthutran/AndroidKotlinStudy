@@ -829,7 +829,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             cardCloseTag.off( 'click' ).click( function(){ 
                 sheetFull.empty();
                 sheetFull.fadeOut();
-                $( '#pageDiv' ).show();
+                //$( '#pageDiv' ).show();
             });
         
         
@@ -839,7 +839,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 // NEW: PREVIEW STYLE CHANGES
             sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
         
-            $( '#pageDiv' ).hide();
+            //$( '#pageDiv' ).hide();
 
             TranslationManager.translatePage();            
         }
