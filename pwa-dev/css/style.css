@@ -3738,7 +3738,7 @@ textarea {
 
 /**********************/
 .field-read_only {
-  float: left;
+  /*float: left;*/
   width: 100%;
   height: auto;
   min-height: 50px;

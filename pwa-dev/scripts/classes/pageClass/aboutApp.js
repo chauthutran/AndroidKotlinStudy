@@ -77,10 +77,6 @@ function aboutApp( cwsRender )
 
     me.showAboutPage = function()
     {
-        if ( $( '#pageDiv' ).is( ":visible" ) )
-        {
-            $( '#pageDiv' ).hide();
-        }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
             $( '#loginFormDiv' ).hide();
@@ -95,8 +91,6 @@ function aboutApp( cwsRender )
     {
         //me.aboutFormDivTag.fadeOut( 500 );
         me.aboutFormDivTag.hide();
-
-        $( '#pageDiv' ).show( 'fast' );
     }
 
 

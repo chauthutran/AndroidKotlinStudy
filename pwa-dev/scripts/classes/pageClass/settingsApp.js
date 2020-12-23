@@ -218,10 +218,6 @@ function settingsApp( cwsRender )
 
     me.showSettingsPage = function()
     {
-        if ( $( '#pageDiv' ).is( ":visible" ) )
-        {
-            $( '#pageDiv' ).hide();
-        }
         if ( $( '#loginFormDiv' ).is( ":visible" ) )
         {
             $( '#loginFormDiv' ).hide();
@@ -236,12 +232,10 @@ function settingsApp( cwsRender )
     {
         //me.settingsFormDivTag.fadeOut( 500 );
         me.settingsFormDivTag.hide();
-
-        $( '#pageDiv' ).show();
     }
 
-    
-    
+	// ------------------
+
     me.populateSettingsPageData = function( dcdConfig ) 
     {
         me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.syncOptions, AppInfoManager.getNetworkSync() );

@@ -41,8 +41,6 @@ function Statistics( cwsRender )
 
     me.render = function()
     {
-        $( '#pageDiv' ).hide();  // TODO: WILL REMOVE THIS SOON..
-
         me.initialize_UI();
 
         me.loadPeriodOptions( me.statsPeriodSelector, StatisticsUtil.periodSelectorOptions, 'reset' );
@@ -125,7 +123,6 @@ function Statistics( cwsRender )
             //console.customLog( 'CardClose button clicked' );
             me.allStats = [];
             me.statisticsFormDiv.fadeOut();
-            $( '#pageDiv' ).show();
         });
 
         me.customStartPeriodBtnTag.off( 'click' ).click( function( e ) {
