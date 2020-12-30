@@ -14,6 +14,8 @@ console.customLog = function ( msg, label )
 {
     if ( msg )
     {
+        // TODO: Ways to display / show the location of error?
+
         console.log( msg );
 
         // NOTE, this could make the app size to get much bigger, 

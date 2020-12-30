@@ -305,124 +305,121 @@ function DataList( cwsRenderObj, blockObj )
 
         for( var r = 0; r < newjsonList.length; r++ )
         {
-            if ( r > 0 )
+            try
             {
-                var divSpacerTag = $( '<div class="searchResultTableSpacer" />' );
-                divFormContainerTag.append( divSpacerTag );
-            }
+                if (r > 0) {
+                    var divSpacerTag = $('<div class="searchResultTableSpacer" />');
+                    divFormContainerTag.append(divSpacerTag);
+                }
 
-            var itemAttrDataList = ( newjsonList[r] );
-            var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
-            var validResultData = objResult.length;
-            var tblObjTag = $( '<table class="searchResultTable" id="searchResult_'+r+'">' );
+                var itemAttrDataList = (newjsonList[r]);
+                var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
+                var validResultData = objResult.length;
+                var tblObjTag = $('<table class="searchResultTable" id="searchResult_' + r + '">');
 
-            divFormContainerTag.append( tblObjTag );
+                divFormContainerTag.append(tblObjTag);
 
-            if ( blockJson.displayHeader )
-            {
+                if (blockJson.displayHeader) {
 
-                var tritemHeaderTag = $( '<tr>' );
-                var tditemHeaderTag = $( '<td class="groupByResultHeader">' );
+                    var tritemHeaderTag = $('<tr>');
+                    var tditemHeaderTag = $('<td class="groupByResultHeader">');
 
-                tblObjTag.append( tritemHeaderTag );
-                tritemHeaderTag.append( tditemHeaderTag );
+                    tblObjTag.append(tritemHeaderTag);
+                    tritemHeaderTag.append(tditemHeaderTag);
 
-                var imginfoTag = $( '<img src="images/about.svg" class="imgSearchResultAbout" >' );
-                var lblSpacer = $( '<span>&nbsp;&nbsp;</span>' );
-                var labelTag = $( '<span class="groupByHeaderField">' + me.resolvedefinitionField( { "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] } ) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr( itemAttrDataList, 'id', 'value', blockJson.displayHeader[0] ) + '</span>' );
+                    var imginfoTag = $('<img src="images/about.svg" class="imgSearchResultAbout" >');
+                    var lblSpacer = $('<span>&nbsp;&nbsp;</span>');
+                    var labelTag = $('<span class="groupByHeaderField">' + me.resolvedefinitionField({ "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] }) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr(itemAttrDataList, 'id', 'value', blockJson.displayHeader[0]) + '</span>');
 
-                tditemHeaderTag.append( imginfoTag );
-                tditemHeaderTag.append( lblSpacer );
-                tditemHeaderTag.append( labelTag );
+                    tditemHeaderTag.append(imginfoTag);
+                    tditemHeaderTag.append(lblSpacer);
+                    tditemHeaderTag.append(labelTag);
 
-            }
+                }
 
-            var trTopObjTag = $( '<tr class="itemBlock">' );
-            var tdLeftIconTag = $( '<td rowspan=2 class="resultsImgContainer">' );
-            var tdIconTag = $( '<img src="images/user.svg" class="imgSearchResultUser" style="width:60px;" >' );
-            var tdLeftobjTag =  $( '<td class="">' );
+                var trTopObjTag = $('<tr class="itemBlock">');
+                var tdLeftIconTag = $('<td rowspan=2 class="resultsImgContainer">');
+                var tdIconTag = $('<img src="images/user.svg" class="imgSearchResultUser" style="width:60px;" >');
+                var tdLeftobjTag = $('<td class="">');
 
-            tblObjTag.append( trTopObjTag );
-            trTopObjTag.append( tdLeftIconTag );
-            tdLeftIconTag.append( tdIconTag );
-            trTopObjTag.append( tdLeftobjTag );
+                tblObjTag.append(trTopObjTag);
+                trTopObjTag.append(tdLeftIconTag);
+                tdLeftIconTag.append(tdIconTag);
+                trTopObjTag.append(tdLeftobjTag);
 
-            if ( !validResultData )
-            {
-                var divAttrTag = $( '<div class="" />' );
-                var labelTag = $( '<label class="titleLabel" />' );
-                var valueTag = $( '<span class="">');
+                if (!validResultData) {
+                    var divAttrTag = $('<div class="" />');
+                    var labelTag = $('<label class="titleLabel" />');
+                    var valueTag = $('<span class="">');
 
-                tdLeftobjTag.append( divAttrTag );
-                divAttrTag.append( labelTag );
-                divAttrTag.append( valueTag );
+                    tdLeftobjTag.append(divAttrTag);
+                    divAttrTag.append(labelTag);
+                    divAttrTag.append(valueTag);
 
-                labelTag.html( 'dcd Config issue' );
-                valueTag.html( 'no valid IDs for "displayResult":[]' );
-            }
-            else
-            {
+                    labelTag.html('dcd Config issue');
+                    valueTag.html('no valid IDs for "displayResult":[]');
+                }
+                else {
 
-                var condObj;
+                    var condObj;
 
-                for( var i = 0; i < newjsonList.length; i++ )
-                {
-                    for( var p = 0; p < newjsonList[ i ].length; p++ )
-                    {
-                        if ( newjsonList[ i ][ p ].id == 'condition' )
-                        {
-                            condObj = newjsonList[ i ][ p ];
+                    for (var i = 0; i < newjsonList.length; i++) {
+                        for (var p = 0; p < newjsonList[i].length; p++) {
+                            if (newjsonList[i][p].id == 'condition') {
+                                condObj = newjsonList[i][p];
+                            }
                         }
                     }
-                }
 
-                for( var o = 0; o < objResult.length; o++ )
-                {
-                    var fieldObj = me.resolvedefinitionFieldObj( { id: objResult[o].id, defaultName: '' } );
-                    var divAttrTag = $( '<div class="" />' );
-                    var labelTag = $( '<label class="titleLabel" />' );
-                    var valueTag = $( '<span id="'+objResult[o].id+'" class="">');
+                    for (var o = 0; o < objResult.length; o++) {
+                        var fieldObj = me.resolvedefinitionFieldObj({ id: objResult[o].id, defaultName: '' });
+                        var divAttrTag = $('<div class="" />');
+                        var labelTag = $('<label class="titleLabel" />');
+                        var valueTag = $('<span id="' + objResult[o].id + '" class="">');
 
-                    tdLeftobjTag.append( divAttrTag );
-                    divAttrTag.append( labelTag );
-                    divAttrTag.append( valueTag );
+                        tdLeftobjTag.append(divAttrTag);
+                        divAttrTag.append(labelTag);
+                        divAttrTag.append(valueTag);
 
-                    if ( fieldObj.term.length ) labelTag.attr( "term", fieldObj.term );
+                        if (fieldObj.term && fieldObj.term.length) labelTag.attr("term", fieldObj.term);
 
-                    labelTag.html( me.resolvedefinitionField( objResult[o] ) );
-                    valueTag.html( ': ' + me.resolvedefinitionOptionValue( objResult[o].value ) );
+                        labelTag.html(me.resolvedefinitionField(objResult[o]));
+                        valueTag.html(': ' + me.resolvedefinitionOptionValue(objResult[o].value));
 
-                    if ( objResult[o].id == '' ) //added from search criteria
-                    {
-                        //labelTag.css('font-weight',"600");
-                        valueTag.css('color','#909090');
+                        if (objResult[o].id == '') //added from search criteria
+                        {
+                            //labelTag.css('font-weight',"600");
+                            valueTag.css('color', '#909090');
+                        }
+
+                    };
+
+                    var tdRightobjTag = $('<td class="searchResultGroupByButtons" info="' + r + '" ></td>');
+                    trTopObjTag.append(tdRightobjTag);
+
+                    me.renderHiddenKeys(blockJson.keyList, itemAttrDataList, tdRightobjTag); // replace `blockJson.keyList` with `[ "clientId" ]` to remove dependency on dcdConfig use of `keyList` array 
+
+                    if (itemButtons != undefined) {
+                        me.renderButtons(tdRightobjTag, itemButtons);
                     }
+                    else {
+                        // Readjust json for passing
+                        var passedData = Util.getJsonDeepCopy(me.jsonListData);
+                        passedData.displayData = itemAttrDataList;
+                        passedData.resultData = {};
 
-                };
+                        // BUTTON LIST
+                        var buttonDefList = [];
+                        if (blockJson.itemButtons) buttonDefList = blockJson.itemButtons;
+                        else if (blockJson.buttons) buttonDefList = blockJson.buttons;
 
-                var tdRightobjTag = $( '<td class="searchResultGroupByButtons" info="' + r + '" ></td>' );
-                trTopObjTag.append( tdRightobjTag );
-
-                me.renderHiddenKeys( blockJson.keyList, itemAttrDataList, tdRightobjTag ); // replace `blockJson.keyList` with `[ "clientId" ]` to remove dependency on dcdConfig use of `keyList` array 
-
-                if ( itemButtons != undefined )
-                {
-                    me.renderButtons( tdRightobjTag, itemButtons );
+                        me.renderButtons(tdRightobjTag, buttonDefList, passedData);
+                    }
                 }
-                else
-                {
-                    // Readjust json for passing
-                    var passedData = Util.getJsonDeepCopy( me.jsonListData );
-                    passedData.displayData = itemAttrDataList;
-                    passedData.resultData = {};
-
-                    // BUTTON LIST
-                    var buttonDefList = [];
-                    if ( blockJson.itemButtons ) buttonDefList = blockJson.itemButtons;
-                    else if ( blockJson.buttons ) buttonDefList = blockJson.buttons;
-
-                    me.renderButtons( tdRightobjTag, buttonDefList, passedData );
-                }
+            }
+            catch( errMsg )
+            {
+                console.customLog( 'ERROR in renderSearchResultBlocks, errMsg: ' + errMsg );
             }
         }
     }
