@@ -598,7 +598,7 @@ function DataList( cwsRenderObj, blockObj )
     me.resolvedefinitionOptionObj = function( val )
     {
         var dcd = ConfigManager.getConfigJson();
-        var ret;
+        var ret = val;
 
         if ( dcd && dcd.definitionOptions )
         {
