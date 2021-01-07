@@ -128,71 +128,10 @@ function DataList( cwsRenderObj, blockObj )
                 }
             }
 
-            // store tally of unique values
-            var grpByArr = [];
-            for (val in lookup) {
-                var count = lookup[ val ];
-                grpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
-            }
-
-            // create 'grpByArr' with 'val' and their 'count' with other prop - to be populated later.
-
-            if ( complexGroupBy ) // always true - obj type groupby.
-            {
-                if ( fldGroupByObj[ fldGroupByID ].values )
-                {
-                    // go through arrays of 'values' and process them..
-                    for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
-                    {
-                        var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
-                        var keyVal = Object.keys( keyValObj )[ 0 ];
-
-                        for( var r = 0; r < grpByArr.length; r++ )
-                        {
-                            if ( grpByArr[ r ].value == keyVal )
-                            {
-                                if ( keyValObj[ keyVal ].buttons )
-                                {
-                                    grpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
-                                }
-                                else
-                                {
-                                    grpByArr[ r ].buttons = blockJson.itemButtons;
-                                }
-                                if ( keyValObj[ keyVal ].opened != undefined )
-                                {
-                                    grpByArr[ r ].opened = keyValObj[ keyVal ].opened;
-                                }
-                                if ( keyValObj[ keyVal ].order != undefined )
-                                {
-                                    grpByArr[ r ].order = keyValObj[ keyVal ].order;
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-                else
-                {
-                    if ( fldGroupByObj[ fldGroupByID ].buttons )
-                    {
-
-                    }
-                }
-
-            }
-
-            if ( me.debugMode ) console.customLog( grpByArr );
-
             uniqValues.sort();
 
-            grpByArr.sort(function(a, b)
-            {
-                if (a.order < b.order) { return -1; }
-                if (b.order < a.order) return 1;
-                else return 0;
-            });
+            // store tally of unique values
+            var grpByArr = me.createGroupBySummaryArray( lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
 
             // If there is no result, do not do this. But, if there is result
             if ( uniqValues.length )
@@ -248,6 +187,76 @@ function DataList( cwsRenderObj, blockObj )
 
         }
     };
+
+    me.createGroupBySummaryArray = function( lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
+    {
+        var retGrpByArr = [];
+
+        for (val in lookup) {
+            var count = lookup[ val ];
+            retGrpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
+        }
+
+        // create 'retGrpByArr' with 'val' and their 'count' with other prop - to be populated later.
+
+        if ( complexGroupBy ) // always true - obj type groupby.
+        {
+            if ( fldGroupByObj[ fldGroupByID ].values )
+            {
+                // go through arrays of 'values' and process them..
+                for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
+                {
+                    var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
+                    var keyVal = Object.keys( keyValObj )[ 0 ];
+
+                    for( var r = 0; r < retGrpByArr.length; r++ )
+                    {
+                        if ( retGrpByArr[ r ].value == keyVal )
+                        {
+                            if ( keyValObj[ keyVal ].buttons )
+                            {
+                                retGrpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
+                            }
+                            else
+                            {
+                                retGrpByArr[ r ].buttons = blockJson.itemButtons;
+                            }
+                            if ( keyValObj[ keyVal ].opened != undefined )
+                            {
+                                retGrpByArr[ r ].opened = keyValObj[ keyVal ].opened;
+                            }
+                            if ( keyValObj[ keyVal ].order != undefined )
+                            {
+                                retGrpByArr[ r ].order = keyValObj[ keyVal ].order;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            else
+            {
+                if ( fldGroupByObj[ fldGroupByID ].buttons )
+                {
+
+                }
+            }
+
+        }
+
+        if ( me.debugMode ) console.customLog( retGrpByArr );
+
+        retGrpByArr.sort(function(a, b)
+        {
+            if (a.order < b.order) { return -1; }
+            if (b.order < a.order) return 1;
+            else return 0;
+        });
+
+        return retGrpByArr;
+
+    }
 
     // TODO: NOT USED ANYMORE?
     me.actionExpressionEvaluate = function( jsonList, actionTypeObj )
@@ -598,7 +607,7 @@ function DataList( cwsRenderObj, blockObj )
     me.resolvedefinitionOptionObj = function( val )
     {
         var dcd = ConfigManager.getConfigJson();
-        var ret;
+        var ret = { id: '', name: val, term: ''};
 
         if ( dcd && dcd.definitionOptions )
         {
@@ -623,7 +632,7 @@ function DataList( cwsRenderObj, blockObj )
     me.resolvedefinitionOptionValue = function( val )
     {
         var dcd = ConfigManager.getConfigJson();
-        var ret = '';
+        var ret = val;
 
         if ( dcd && dcd.definitionOptions )
         {
@@ -641,14 +650,7 @@ function DataList( cwsRenderObj, blockObj )
             }
         }
 
-        if ( ret.length )
-        {
-            return ret;
-        }
-        else
-        {
-            return val;
-        }
+        return ret;
 
     }
 
