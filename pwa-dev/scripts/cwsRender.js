@@ -430,7 +430,10 @@ function cwsRender()
 			FormUtil.menuDivHide( me.navDrawerDivTag, FormUtil.getScrimTag() );
 		});
 
-		navMenuUser.html( SessionManager.sessionData.login_UserName );
+		var menuUserName = $( '<div>' + SessionManager.sessionData.login_UserName + '</div>' );
+		var menuUserRoles = $( '<div style="color: #F06D24;font-size: 10pt;">[' + ConfigManager.login_UserRoles + ']</div>' );
+
+		navMenuUser.append( menuUserName, menuUserRoles );
 
 		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
 
