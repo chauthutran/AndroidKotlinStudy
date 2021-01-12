@@ -72,7 +72,7 @@ function DataList( cwsRenderObj, blockObj )
             
             if ( blockJson.groupBy )
             {
-                me.groupByRender( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList );
+                me.renderGroupByBlocks( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList );
             }
             else
             {
@@ -82,7 +82,7 @@ function DataList( cwsRenderObj, blockObj )
     }
 
 
-    me.groupByRender = function( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList )
+    me.renderGroupByBlocks = function( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList )
     {
         for( var g = 0; g < blockJson.groupBy.length; g++ )
         {
@@ -128,71 +128,10 @@ function DataList( cwsRenderObj, blockObj )
                 }
             }
 
-            // store tally of unique values
-            var grpByArr = [];
-            for (val in lookup) {
-                var count = lookup[ val ];
-                grpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
-            }
-
-            // create 'grpByArr' with 'val' and their 'count' with other prop - to be populated later.
-
-            if ( complexGroupBy ) // always true - obj type groupby.
-            {
-                if ( fldGroupByObj[ fldGroupByID ].values )
-                {
-                    // go through arrays of 'values' and process them..
-                    for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
-                    {
-                        var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
-                        var keyVal = Object.keys( keyValObj )[ 0 ];
-
-                        for( var r = 0; r < grpByArr.length; r++ )
-                        {
-                            if ( grpByArr[ r ].value == keyVal )
-                            {
-                                if ( keyValObj[ keyVal ].buttons )
-                                {
-                                    grpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
-                                }
-                                else
-                                {
-                                    grpByArr[ r ].buttons = blockJson.itemButtons;
-                                }
-                                if ( keyValObj[ keyVal ].opened != undefined )
-                                {
-                                    grpByArr[ r ].opened = keyValObj[ keyVal ].opened;
-                                }
-                                if ( keyValObj[ keyVal ].order != undefined )
-                                {
-                                    grpByArr[ r ].order = keyValObj[ keyVal ].order;
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-                else
-                {
-                    if ( fldGroupByObj[ fldGroupByID ].buttons )
-                    {
-
-                    }
-                }
-
-            }
-
-            if ( me.debugMode ) console.customLog( grpByArr );
-
             uniqValues.sort();
 
-            grpByArr.sort(function(a, b)
-            {
-                if (a.order < b.order) { return -1; }
-                if (b.order < a.order) return 1;
-                else return 0;
-            });
+            // store tally of unique values
+            var grpByArr = me.createGroupBySummaryArray( blockJson, lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
 
             // If there is no result, do not do this. But, if there is result
             if ( uniqValues.length )
@@ -248,6 +187,76 @@ function DataList( cwsRenderObj, blockObj )
 
         }
     };
+
+    me.createGroupBySummaryArray = function( blockJson, lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
+    {
+        var retGrpByArr = [];
+
+        for (val in lookup) {
+            var count = lookup[ val ];
+            retGrpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
+        }
+
+        // create 'retGrpByArr' with 'val' and their 'count' with other prop - to be populated later.
+
+        if ( complexGroupBy ) // always true - obj type groupby.
+        {
+            if ( fldGroupByObj[ fldGroupByID ].values )
+            {
+                // go through arrays of 'values' and process them..
+                for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
+                {
+                    var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
+                    var keyVal = Object.keys( keyValObj )[ 0 ];
+
+                    for( var r = 0; r < retGrpByArr.length; r++ )
+                    {
+                        if ( retGrpByArr[ r ].value == keyVal )
+                        {
+                            if ( keyValObj[ keyVal ].buttons )
+                            {
+                                retGrpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
+                            }
+                            else
+                            {
+                                retGrpByArr[ r ].buttons = blockJson.itemButtons;
+                            }
+                            if ( keyValObj[ keyVal ].opened != undefined )
+                            {
+                                retGrpByArr[ r ].opened = keyValObj[ keyVal ].opened;
+                            }
+                            if ( keyValObj[ keyVal ].order != undefined )
+                            {
+                                retGrpByArr[ r ].order = keyValObj[ keyVal ].order;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            else
+            {
+                if ( fldGroupByObj[ fldGroupByID ].buttons )
+                {
+
+                }
+            }
+
+        }
+
+        if ( me.debugMode ) console.customLog( retGrpByArr );
+
+        retGrpByArr.sort(function(a, b)
+        {
+            if (a.order < b.order) { return -1; }
+            if (b.order < a.order) return 1;
+            else return 0;
+        });
+
+        return retGrpByArr;
+
+    }
 
     // TODO: NOT USED ANYMORE?
     me.actionExpressionEvaluate = function( jsonList, actionTypeObj )
@@ -312,10 +321,11 @@ function DataList( cwsRenderObj, blockObj )
                     divFormContainerTag.append(divSpacerTag);
                 }
 
-                var itemAttrDataList = (newjsonList[r]);
+                var itemAttrDataList = newjsonList[r];
                 var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
                 var validResultData = objResult.length;
                 var tblObjTag = $('<table class="searchResultTable" id="searchResult_' + r + '">');
+                var groupByValueObj = me.resolveGroupByValueObj( blockJson, fieldId, lookupVal );
 
                 divFormContainerTag.append(tblObjTag);
 
@@ -339,20 +349,29 @@ function DataList( cwsRenderObj, blockObj )
 
                 var trTopObjTag = $('<tr class="itemBlock">');
                 var tdLeftIconTag = $('<td rowspan=2 class="resultsImgContainer">');
-                var tdIconTag = $('<img src="images/user.svg" class="imgSearchResultUser" style="width:60px;" >');
-                var tdLeftobjTag = $('<td class="">');
+                var tdIconTag;
+                var tdRecordDataTag = $('<td class="" style="padding-left:16px;">');
+
+                if ( groupByValueObj.icon && groupByValueObj.icon.path )
+                {
+                    tdIconTag = $('<img src="' + groupByValueObj.icon.path + '" class="imgSearchResultUser" style="width:56px;" >');
+                }
+                else
+                {
+                    tdIconTag = $('<img src="images/user.svg" class="imgSearchResultUser" style="width:56px" >');
+                }
 
                 tblObjTag.append(trTopObjTag);
                 trTopObjTag.append(tdLeftIconTag);
                 tdLeftIconTag.append(tdIconTag);
-                trTopObjTag.append(tdLeftobjTag);
+                trTopObjTag.append(tdRecordDataTag);
 
                 if (!validResultData) {
                     var divAttrTag = $('<div class="" />');
                     var labelTag = $('<label class="titleLabel" />');
                     var valueTag = $('<span class="">');
 
-                    tdLeftobjTag.append(divAttrTag);
+                    tdRecordDataTag.append(divAttrTag);
                     divAttrTag.append(labelTag);
                     divAttrTag.append(valueTag);
 
@@ -375,9 +394,9 @@ function DataList( cwsRenderObj, blockObj )
                         var fieldObj = me.resolvedefinitionFieldObj({ id: objResult[o].id, defaultName: '' });
                         var divAttrTag = $('<div class="" />');
                         var labelTag = $('<label class="titleLabel" />');
-                        var valueTag = $('<span id="' + objResult[o].id + '" class="">');
+                        var valueTag = $('<span fieldId="' + objResult[o].id + '" class="">');
 
-                        tdLeftobjTag.append(divAttrTag);
+                        tdRecordDataTag.append(divAttrTag);
                         divAttrTag.append(labelTag);
                         divAttrTag.append(valueTag);
 
@@ -598,7 +617,7 @@ function DataList( cwsRenderObj, blockObj )
     me.resolvedefinitionOptionObj = function( val )
     {
         var dcd = ConfigManager.getConfigJson();
-        var ret;
+        var ret = { id: '', name: val, term: ''};
 
         if ( dcd && dcd.definitionOptions )
         {
@@ -623,7 +642,7 @@ function DataList( cwsRenderObj, blockObj )
     me.resolvedefinitionOptionValue = function( val )
     {
         var dcd = ConfigManager.getConfigJson();
-        var ret = '';
+        var ret = val;
 
         if ( dcd && dcd.definitionOptions )
         {
@@ -641,15 +660,47 @@ function DataList( cwsRenderObj, blockObj )
             }
         }
 
-        if ( ret.length )
+        return ret;
+
+    }
+
+    me.resolveGroupByValueObj = function( blockJson, fieldId, lookupVal )
+    {
+        var ret = {};
+
+        if ( fieldId && lookupVal && blockJson.groupBy )
         {
-            return ret;
-        }
-        else
-        {
-            return val;
+            for( var g = 0; g < blockJson.groupBy.length; g++ )
+            {
+                var groupByItm = blockJson.groupBy[ g ];
+
+                for ( var grpField in groupByItm ) 
+                {
+
+                    if ( grpField === fieldId )
+                    {
+                        var grpByObj = groupByItm[ grpField ];
+
+                        for( var p = 0; p < grpByObj.values.length; p++ )
+                        {
+                            var groupByVal = grpByObj.values[ p ];
+
+                            for ( var fldVal in groupByVal ) 
+                            {
+                                if ( fldVal === lookupVal )
+                                {
+                                    ret = groupByVal[ fldVal ];
+                                }
+                            }
+                        }
+
+                    }
+                }
+  
+            }
         }
 
+        return ret;
     }
 
 	// -------------------------------
