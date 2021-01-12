@@ -424,6 +424,15 @@ Util.jsonCleanEmptyRunTimes = function( obj, runTime )
 	}
 };
 
+Util.getJsonCleanEmpty = function( obj )
+{
+	var jsonNew = Util.cloneJson( obj );
+
+	Util.jsonCleanEmpty( jsonNew );
+
+	return jsonNew;
+}
+
 Util.jsonCleanEmpty = function( obj )
 {
 	Object.keys(obj).forEach( key => 
