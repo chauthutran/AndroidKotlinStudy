@@ -15,6 +15,10 @@ WsCallManager.isLocalDevCase = false;
 WsCallManager.versionNumber = '1.3';
 WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 
+// Temp Setting - available check override
+WsCallManager.availableAlways = false;
+
+
 WsCallManager.stageName = '';
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',

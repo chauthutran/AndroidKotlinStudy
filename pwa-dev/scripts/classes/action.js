@@ -322,6 +322,7 @@ function Action( cwsRenderObj, blockObj )
 							{
 								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
+								// Put the composed activity json in list and have 'sync' submit.
 								ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
@@ -331,9 +332,6 @@ function Action( cwsRenderObj, blockObj )
 							}
 							else
 							{
-								//afterActionFunc( false );
-								// throw 'canceled on preview';
-
 								me.clearBtn_ClickedMark( btnTag );
 								console.customLog( " me.clearBtn_ClickedMark( btnTag ) " );
 							}
@@ -346,6 +344,7 @@ function Action( cwsRenderObj, blockObj )
 
 						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
 						me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+
 							afterActionFunc( bResult, optionJson );
 						} );
 					}
@@ -362,6 +361,7 @@ function Action( cwsRenderObj, blockObj )
 						{
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
+							// Put the composed activity json in list and have 'sync' submit.
 							ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
@@ -396,7 +396,7 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 
-	me.submitToWs = function( actionUrl, formsJson, actionDefJson, btnTag, dataPass, afterActionFunc )
+	me.submitToWs = function( actionUrl, formsJson, actionDefJson, btnTag, dataPass, returnFunc )
 	{
 		// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
 
@@ -416,6 +416,14 @@ function Action( cwsRenderObj, blockObj )
 
 				if (success && ( redeemReturnJson.status === "success" || redeemReturnJson.status === "pass" ) )
 				{
+					// Change voucherCodes ==> voucherCode string list..  (should also include the status? --> I think so..)
+					// Should have more complicated voucher search..
+					// Should be only done for voucher search.. by Provider...
+					if ( actionDefJson.searchType === 'voucherSearch' ) me.handleMultipleVouchersSplit(redeemReturnJson, formsJson );
+					
+					console.log( 'submitToWs' );
+					console.log(redeemReturnJson);
+
 					dataPass.prevWsReplyData = redeemReturnJson;
 				}
 				else
@@ -430,8 +438,8 @@ function Action( cwsRenderObj, blockObj )
 					moreInfoJson = { 'type': 'requestFailed', 'msg': errMsgFull };
 				}
 
-				if ( afterActionFunc ) afterActionFunc( bResult, moreInfoJson );
 
+				if (returnFunc) returnFunc( bResult, moreInfoJson );
 			});
 		}
 		else
@@ -562,6 +570,129 @@ function Action( cwsRenderObj, blockObj )
 				}
 			}
 		}
-	}
+	};
+
+
+	// -------------------------------------------------------
+
+	me.handleMultipleVouchersSplit = function( responseJson, formsJson )
+	{
+		try
+		{
+			if ( responseJson && responseJson.displayData ) 
+			{
+				var newList = [];
+
+				var resultList = responseJson.displayData;
+
+				resultList.forEach(clientAttr => 
+				{
+					var bDataSplited = false;
+
+					if (formsJson.voucherCode) clientAttr.push({ 'id': 'voucherCode', 'value': formsJson.voucherCode });
+					else if (formsJson.searchFields && formsJson.searchFields.voucherCode) 
+					{
+						// If the search is by voucherCode, simply add 'voucherCode' data in search result..
+						//searchFields: { voucherCode: "987654321" }
+						clientAttr.push({ 'id': 'voucherCode', 'value': formsJson.searchFields.voucherCode });
+					}										
+					else
+					{
+						var voucherCodes = Util.getFromList(clientAttr, 'voucherCodes', 'id');
+
+						if (voucherCodes && Util.isTypeArray(voucherCodes.value)) {
+							if (voucherCodes.value.length === 0) { }
+							else if (voucherCodes.value.length === 1) {
+								clientAttr.push({ 'id': 'voucherCode', 'value': voucherCodes.value[0] });
+							}
+							else if (voucherCodes.value.length > 1) {
+								bDataSplited = true;
+
+								var voucherCodeList = Util.cloneJson(voucherCodes.value);
+
+								voucherCodeList.forEach(voucherCodeStr => {
+
+									var clientAttrTemp = Util.cloneJson(clientAttr);
+
+									clientAttrTemp.push({ 'id': 'voucherCode', 'value': voucherCodeStr });
+
+									newList.push(clientAttrTemp);
+								});
+							}
+						}
+					}
+
+					if (!bDataSplited) newList.push( clientAttr );
+				});
+
+				responseJson.displayData = newList;
+			}
+		}
+		catch ( errMsg )
+		{
+			console.customLog( 'ERROR in action.handleMultipleVouchersSplit, errMsg: ' + errMsg );
+		}
+	};
+
+
+
+					// TODO: We could handle this by
+
+					// If the search fields has 'voucherCode' --> searchFields: {voucherCode: "987654321"}
+					// No need to take care of it. <-- we only accept single client result.  No need to look at voucherCode(s) array to confirm the voucherCode.
+
+					// However, if other searches (by phone, by detail), we need to split the search result by voucherCode list. (if more than one)
+					// <-- only happens on Provider?
+
+					// redeemReturnJson = me.handleMultipleVouchersSplit(redeemReturnJson );
+
+					// More DETAIL:
+					// "displayData": [ [], [] ] // could have multiple clients as result of search.
+
+					//'oneClient':
+/*[ {"id": "firstName", "value": "Fernando"},
+	{"id": "lastName", "value": "Gomez"},
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"},
+	{"id": "phoneNumber", "value": "+50379904490"},
+	{"id": "service", "value": "PIL"},
+	{"id": "program", "value": "FPL"},
+	{"id": "countryType", "value": "LA"},
+	{"id": "age", "value": "24"},
+	{"id": "users", "value": ["LA_TEST_IPC"]},
+	{"id": "voucherCodes", "value": ["12123232", "987654321"]},
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"}
+]
+*/
+					// per client, check if there is multiple voucherCode(s).  If so, split them
+
+
+					// In Backend Dhis version 'displayData', we return everything (including 'voucherCode') as a string..
+/*[ {"id": "firstName", "value": "Fernando"},
+	{"id": "lastName", "value": "Gomez"},
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"},
+	{"id": "phoneNumber", "value": "+50379904490"},
+	{"id": "service", "value": "PIL"},
+	{"id": "program", "value": "FPL"},
+	{"id": "countryType", "value": "LA"},
+	{"id": "age", "value": "24"},
+	{"id": "users", "value": ["LA_TEST_IPC"]},
+	{"id": "voucherCode", "value": "12123232"},
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"}
+],
+[ {"id": "firstName", "value": "Fernando"},
+	{"id": "lastName", "value": "Gomez"},
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"},
+	{"id": "phoneNumber", "value": "+50379904490"},
+	{"id": "service", "value": "PIL"},
+	{"id": "program", "value": "FPL"},
+	{"id": "countryType", "value": "LA"},
+	{"id": "age", "value": "24"},
+	{"id": "users", "value": ["LA_TEST_IPC"]},
+	{"id": "voucherCode", "value": "987654321" },
+	{"id": "clientId", "value": "5ff8c70619130f4150809267"}
+]
+*/
+
+
 
 }
