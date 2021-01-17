@@ -265,9 +265,7 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
-		var errMsg = 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth;
-		console.customLog( errMsg );
-		throw errMsg;
+		throw 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth;
 	}
 	else
 	{
@@ -279,15 +277,16 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 			{
 				var iDepthArr = iDepth++;
 
-				prop.forEach( pArrItem => 
+				prop.forEach( ( pArrItem, i ) => 
 				{
 					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
 					{						
 						Util.traverseEval( pArrItem, INFO, iDepthArr, limit );
 					}
 					else if ( Util.isTypeString( pArrItem ) )
-					{						
-						Util.traverseEval_StrCase( obj, key, pArrItem, INFO );
+					{		
+						try { prop[i] = eval( pArrItem ); } 
+						catch ( errMsg ) { throw 'Error in Util.traverseEval, arrayItem str eval: ' + errMsg; }
 					}
 				});
 			}
@@ -297,26 +296,13 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 			}
 			else if ( Util.isTypeString( prop ) )
 			{				
-				Util.traverseEval_StrCase( obj, key, prop, INFO );
+				try { obj[key] = eval( prop ); } 
+				catch ( errMsg ) { throw 'Error in Util.traverseEval, str eval: ' + errMsg; }
 			}
 		});
 	}
 };	
 
-
-Util.traverseEval_StrCase = function( obj, key, prop, INFO )
-{
-	try
-	{
-		obj[key] = eval( prop );
-	}
-	catch( errMsg )
-	{
-		var errMsgStr = 'Error in Util.traverseEval_StrCase, key: ' + key + ', prop: ' + prop + ', errMsg: ' + errMsg ;
-		console.customLog( errMsgStr );
-		throw errMsgStr;
-	}
-};
 
 // Replace json 'key' names using 'keyListset' ( { 'keys': [], 'keysNew': [] } (same list) )
 // Only replace 'key' where the value is string or number/boolean?..
