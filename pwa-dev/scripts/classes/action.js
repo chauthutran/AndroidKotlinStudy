@@ -281,6 +281,7 @@ function Action( cwsRenderObj, blockObj )
 					// If statusActions did not get started for some reason, return as this action finished
 					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc( true );
 				}
+				// NO NEED FOR THIS... both 'dhis' & 'mongo' version..
 				else if ( clickActionJson.actionType === "WSlocalData" )
 				{
 					var statusActionsCalled = false;
@@ -293,6 +294,10 @@ function Action( cwsRenderObj, blockObj )
 	
 						statusActionsCalled = true;
 	
+						// 'wsExchangeData' should have 'resultData' & 'displayData' for form population.
+						// 'displayData' is the one that gets used..
+						wsExchangeData.displayData = blockPassingData;
+
 						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
 							afterActionFunc( true );
 						} );

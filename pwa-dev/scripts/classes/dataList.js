@@ -419,7 +419,7 @@ function DataList( cwsRenderObj, blockObj )
                     me.renderHiddenKeys(blockJson.keyList, itemAttrDataList, tdRightobjTag); // replace `blockJson.keyList` with `[ "clientId" ]` to remove dependency on dcdConfig use of `keyList` array 
 
                     if (itemButtons != undefined) {
-                        me.renderButtons(tdRightobjTag, itemButtons);
+                        me.renderButtons(tdRightobjTag, itemButtons, itemAttrDataList);
                     }
                     else {
                         // Readjust json for passing

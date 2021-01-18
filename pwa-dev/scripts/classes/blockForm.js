@@ -1509,20 +1509,27 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// PopulateFormData by passed in json (Not by config, but by external data)
 	me.populateFormData = function( passedData, formDivSecTag )
 	{
-		if ( passedData !== undefined && passedData.resultData !== undefined )
+		if ( passedData )
 		{
-			// TODO: On WebService side, we should simply create
-			//   a list that holds 'id' and 'value' for population...
-			//	regardless of type 'tei attribute val', 'dataElement value'
-				
-			me.populateFormData_Common( formDivSecTag, passedData.resultData );
+			if ( passedData.resultData ) // if data is in 'resultData' & 'simpleData/displayData' format.
+			{
+				// TODO: On WebService side, we should simply create
+				//   a list that holds 'id' and 'value' for population...
+				//	regardless of type 'tei attribute val', 'dataElement value'
 
-			// Simpler data population
-			if ( passedData.simpleData ) me.populateFormData_ObjByName( formDivSecTag, passedData.simpleData );
+				me.populateFormData_Common(formDivSecTag, passedData.resultData);
 
-			// (Preivously only used for Dhis2 attribute data population) <-- we are assuming this is single list... (could be 2 dimensional array)
-			// 
-			if ( passedData.displayData ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData.displayData );
+				// Simpler data population
+				if (passedData.simpleData) me.populateFormData_ObjByName(formDivSecTag, passedData.simpleData);
+
+				// (Preivously only used for Dhis2 attribute data population) <-- we are assuming this is single list... (could be 2 dimensional array)
+				// 
+				if (passedData.displayData) me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.displayData);
+			}
+			else if ( Util.isTypeArray( passedData ) )
+			{
+				me.populateFormData_ArrayDataByUid( formDivSecTag, passedData );
+			}
 		}
 	};
 
