@@ -895,7 +895,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // Set event for "Remove" button for "Pending" client
         var activity = ActivityDataManager.getActivityById( activityId );
         var removeActivityBtn = sheetFull.find("#removeActivity");
-        if( activity.processing.status == "queued" )
+        if (activity.processing.status == Constants.status_queued || activity.processing.status == Constants.status_failed )
         {
             removeActivityBtn.click( function(){
 

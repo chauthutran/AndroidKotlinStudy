@@ -59,6 +59,30 @@ Util.getStr = function( input )
 	return value;
 };
 
+Util.getJson = function( input )
+{
+	var value = {};
+
+	try
+	{
+		if ( input )
+		{
+			if ( !Util.isObjEmpty( input ) )
+			{
+				if ( Util.isTypeString( input ) ) value = JSON.parse( input );
+				else if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) value = JSON.parse( JSON.stringify( input ) );
+				else value = JSON.parse( input.toString() );
+			}
+		}
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in Util.getJson, errMsg: ' + errMsg );
+	}
+
+	return value;
+};
+
 // Checks if the json is emtpy
 Util.isObjEmpty = function( obj ) 
 {
@@ -438,7 +462,7 @@ Util.jsonCleanEmpty = function( obj )
 				else Util.jsonCleanEmpty( item );	
 			}
 		}		
-		else if ( item === "" || item === undefined ) delete obj[key];
+		else if ( item === "" || item === undefined || item === null ) delete obj[key];
 	});
 };
 

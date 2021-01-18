@@ -245,7 +245,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                             newClients.push( dwClient );
                             dataChangeOccurred = true;  
 
-                            if ( dwClient.activities && dwClient.activities > 0 )
+                            if ( dwClient.activities && dwClient.activities.length > 0 )
                             {
                                 Util.appendArray( mergedActivities, dwClient.activities );
                             }
@@ -259,6 +259,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
             }
         });
     }
+
 
 
     if ( dataChangeOccurred ) 
