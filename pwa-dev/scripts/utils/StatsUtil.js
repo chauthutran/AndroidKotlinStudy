@@ -135,7 +135,7 @@ StatsUtil.createDateFilteredList = function( startPeriod, endPeriod, clientList,
     /* 2. trans list */
     dateFilteredData.tranList = StatsUtil.getTranList( dateFilteredData.activityList );
 
-    /* 2. create list by type - var trxTypes = [ 'c_reg', 'v_iss', 'v_rdm' ]; */
+    /* 2. create list by type - var trxTypes = [ 'c_reg', 'v_iss', 'v_rdx' ]; */
     dateFilteredData.tranGroupByType = StatsUtil.getTranGroupByType( dateFilteredData.tranList );
 
     return dateFilteredData;
