@@ -17,7 +17,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 	var arrParms;
 	var ret = '';
 
-	if ( pattern.indexOf( ',' ) )
+	if ( pattern.indexOf( ',' ) > 0 )
 	{
 		arrParms = pattern.split( ',' );
 		patternSeparator = ( arrParms[ 1 ] ).trim();
