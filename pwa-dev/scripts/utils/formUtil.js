@@ -907,7 +907,7 @@ FormUtil.tryEval = function( form, evalTry )
 	catch( errMsg )
 	{
 		console.customLog( 'Error on FormUtil.tryEval, errMsg: ' + errMsg );
-		return 'error: ' + evalTry;
+		return null; //'error: ' + evalTry; << returning null because this function is only used for calculated values in blockForm
 	}
 }
 
