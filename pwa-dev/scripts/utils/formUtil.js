@@ -906,7 +906,7 @@ FormUtil.tryEval = function( form, evalTry )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+		console.customLog( 'Error on FormUtil.tryEval, errMsg: ' + errMsg );
 		return 'error: ' + evalTry;
 	}
 }
