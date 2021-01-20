@@ -512,6 +512,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var hiddenTarget = $( Templates.inputFieldHidden );
 		hiddenTarget.addClass( "dataValue" );
 		hiddenTarget.attr( "name", formItemJson.id );
+		hiddenTarget.attr( "dataGroup", formItemJson.dataGroup );
 		divInputFieldTag.append( hiddenTarget );
 
 		// Create Option list
@@ -622,6 +623,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			var optionInputTag = optionDivTag.find( 'input' );
 			optionInputTag.attr( 'id', "opt_" + uniqueId + '_' + formItemJson.id );
 			optionInputTag.attr( 'name', formItemJson.id );
+			optionInputTag.attr( 'dataGroup', formItemJson.dataGroup );
 
 
 			optionDivTag.find("label").attr("for", "opt_" + uniqueId + '_' + formItemJson.id );
@@ -636,6 +638,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			var hiddenTarget = $( Templates.inputFieldHidden );
 			hiddenTarget.addClass( 'dataValue' );
 			hiddenTarget.attr( 'name', formItemJson.id );
+			hiddenTarget.attr( 'dataGroup', formItemJson.dataGroup );
 			divInputFieldTag.append( hiddenTarget );
 
 			
