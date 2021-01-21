@@ -239,7 +239,12 @@ function DataList( cwsRenderObj, blockObj )
             {
                 if ( fldGroupByObj[ fldGroupByID ].buttons )
                 {
-
+                    for( var r = 0; r < retGrpByArr.length; r++ )
+                    {
+                        retGrpByArr[ r ].buttons = fldGroupByObj[ fldGroupByID ].buttons;
+                        retGrpByArr[ r ].opened = true;
+                        retGrpByArr[ r ].order = r;
+                    }
                 }
             }
 
@@ -681,18 +686,26 @@ function DataList( cwsRenderObj, blockObj )
                     {
                         var grpByObj = groupByItm[ grpField ];
 
-                        for( var p = 0; p < grpByObj.values.length; p++ )
+                        if ( ! grpByObj.values || grpByObj.values.length === 0 )
                         {
-                            var groupByVal = grpByObj.values[ p ];
-
-                            for ( var fldVal in groupByVal ) 
+                            ret = grpByObj;
+                        }
+                        else
+                        {
+                            for( var p = 0; p < grpByObj.values.length; p++ )
                             {
-                                if ( fldVal === lookupVal )
+                                var groupByVal = grpByObj.values[ p ];
+
+                                for ( var fldVal in groupByVal ) 
                                 {
-                                    ret = groupByVal[ fldVal ];
+                                    if ( fldVal === lookupVal )
+                                    {
+                                        ret = groupByVal[ fldVal ];
+                                    }
                                 }
                             }
                         }
+
 
                     }
                 }
