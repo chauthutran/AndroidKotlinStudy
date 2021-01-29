@@ -1388,7 +1388,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 	}
 
-	me.checkCondition = function( evalCondition, tagVal, form, formFull_IdList )
+	me.checkCondition = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
 		var result = false;
 		var INFO = { 'userRole': ConfigManager.login_UserRoles };
@@ -1397,7 +1397,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{
 			try
 			{
-				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, form, formFull_IdList )
+				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
 				result = eval( afterCondStr );	
 			}
