@@ -906,8 +906,8 @@ FormUtil.tryEval = function( form, evalTry )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
-		return 'error: ' + evalTry;
+		console.customLog( 'Error on FormUtil.tryEval, errMsg: ' + errMsg );
+		return null; //'error: ' + evalTry; << returning null because this function is only used for calculated values in blockForm
 	}
 }
 
