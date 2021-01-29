@@ -194,11 +194,6 @@ function cwsRender()
 
 				ActivityDataManager.regenActivityList_NIndexes();
 
-				// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
-				ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( ActivityDataManager.getActivityList() );
-
-				ClientDataManager.saveCurrent_ClientsStore();    
-
 				callBack();
 			});
 		});

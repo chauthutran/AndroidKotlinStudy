@@ -600,8 +600,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 {
                     var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
 
-
-                    // NOTE: We need to add app timeout, from 'request'... and throw error...
                     WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
                     {
                         me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
@@ -859,12 +857,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             var statusVal = $( this ).val();
 
-            ActivityDataManager.activityUpdate_Status( activityId, statusVal, function() 
-            {
-                var msg = "With 'DEV' mode, activity status has been manually changed to '" + statusVal + "'";
-
-                statusSelResultTag.text( msg );
-                ActivityDataManager.activityUpdate_History( activityId, statusVal, msg, 0 );                         
+            ActivityDataManager.activityUpdate_Status( activityId, statusVal, function() {
+                statusSelResultTag.text( "Activity status changed to '" + statusVal + "'" );
             });
         });
     };

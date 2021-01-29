@@ -222,33 +222,6 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
 
 
 // ====================================================
-// === Processing Activity timeOut to 'Failed' related
-
-ActivityDataManager.updateActivitiesStatus_ProcessingToFailed = function( activityList ) 
-{
-    if ( activityList )
-    {
-        activityList.forEach( activity => {
-            ActivityDataManager.updateStatus_ProcessingToFailed( activity );
-        });
-    }
-};
-
-
-ActivityDataManager.updateStatus_ProcessingToFailed = function( activity ) 
-{
-    if ( activity && activity.processing && activity.processing.status === Constants.status_processing )
-    {
-        var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 408, 'Processing activity timed out case changed to failed status.' );
-        ActivityDataManager.insertToProcessing( activity, processingInfo );
-
-        // To prevent too fast updates, make the storage update outside..
-        // ClientDataManager.saveCurrent_ClientsStore();    
-    }
-};
-
-
-// ====================================================
 // === Merge downloaded activities related
 
 // Used by both 'SyncUp' or 'Download Merge'.
