@@ -39,7 +39,7 @@ WsCallManager.mockDelayTimeMS = 1000; // default delay time in milliseconds - 10
 // ============================================
 // Setup / Set on Start of App Related ========
 
-WsCallManager.setWsTarget = function( overrideOriginUrl )
+WsCallManager.setWsTarget = function( overrideOriginUrl, overrideStageName )
 {
     var originUrl = ( overrideOriginUrl ) ? overrideOriginUrl : window.location.origin;  // https://pwa.psi-connect.. OR http://localhsot
 
@@ -50,7 +50,15 @@ WsCallManager.setWsTarget = function( overrideOriginUrl )
 
     // use current site 
     // localhost is set to use 'stage'
-    if ( WsCallManager.isLocalDevCase ) stageName = 'test';
+    if ( WsCallManager.isLocalDevCase )
+    {
+        if ( overrideStageName ) stageName = overrideStageName;
+        else 
+        {
+            var savedLocalStageName = AppInfoManager.getLocalStageName();
+            stageName = ( savedLocalStageName ) ? savedLocalStageName : 'test';
+        }
+    }
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
     else if ( originUrl.indexOf( 'https://pwa-stage.' ) === 0 ) stageName = 'stage';
     else if ( originUrl.indexOf( 'https://pwa-train.' ) === 0 ) stageName = 'train';
@@ -68,11 +76,22 @@ WsCallManager.setWsTarget = function( overrideOriginUrl )
     WsCallManager.wsTargetUrl = ( isWfaProd ) ? WsCallManager.getWfaProdWsUrl( originUrl ) : WsCallManager.wsUrlList[ stageName ];
 };
 
+// ----------------------------------------------------
+// --- Override the target stage ------
 
+// Testing server offline/unreachable case..
 WsCallManager.setWsTarget_NoServer = function()
 {
     WsCallManager.setWsTarget( WsCallManager.noServerUrl );    
 };
+
+// Local 
+WsCallManager.setWsTarget_Stage = function( stage )
+{
+    WsCallManager.setWsTarget( undefined, stage );    
+};
+
+// ----------------------------------------------------
 
 // If 'wfa' case, get properly named web service url
 WsCallManager.getWfaProdWsUrl = function( originUrl )

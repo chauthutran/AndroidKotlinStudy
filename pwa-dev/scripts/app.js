@@ -37,16 +37,12 @@ function app()
     window.addEventListener( 'error', me.catchErrorInCustomLog );
     window.addEventListener( 'beforeinstallprompt', me.beforeinstallprompt );
   
-
     // Setup Static Classes
     MsgManager.initialSetup();
-
 
     // Instantiate Classes
     SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
 
-
-    // Does this get loaded also when we login?
     AppInfoManager.initialLoad_FromStorage();
 
     me.App_UI_startUp_loading(); // << should we move this into cwsRender?

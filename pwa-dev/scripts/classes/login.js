@@ -423,15 +423,33 @@ function Login( cwsRenderObj )
 
 		if ( WsCallManager.isLocalDevCase )
 		{
-			// Also, display the localhost dev web service site 
-			var localSiteStr = '[Connected To: <span style="font-weight: bold">' + WsCallManager.stageName.toUpperCase() + '</span>]';
-			var localSiteInfoTag = $( '<div class="localSiteInfo" style="color: orange;text-align: left;">' + localSiteStr + '</div>' );
+			var localSiteInfoTag = $( '#localSiteInfo' );
+			localSiteInfoTag.show();
+
+			var localStageTag = $( '#localStage' );
 		
-			me.loginFormTag.find( 'div.localSiteInfo' ).remove();
-			me.loginFormTag.append( localSiteInfoTag );
+			//var savedLocalStageName = AppInfoManager.getLocalStageName();
+			localStageTag.val( WsCallManager.stageName );			
+
+			localStageTag.off( 'change' ).change( () => {
+				var stage = localStageTag.val();
+				AppInfoManager.setLocalStageName( stage );
+				WsCallManager.setWsTarget_Stage( stage );
+				alert( 'Changed Stage!' );
+			});
 		}
 	};
 	
+
+
+	// // ---- Localhost Stage related..
+	//AppInfoManager.getLocalStageName = function() 
+
+	//AppInfoManager.setLocalStageName = function( stageName ) 
+
+
+	// -----------------------------------
+
 	
 	me.openForm = function()
 	{

@@ -4,14 +4,14 @@ function AppInfoManager() {}
 AppInfoManager.KEY_APPINFO = "appInfo";
 
 AppInfoManager.data;
-AppInfoManager.dataBase = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { } };
+AppInfoManager.template = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { } };
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
 AppInfoManager.KEY_SYNC = "sync"; 
 AppInfoManager.KEY_LOGINOUT = "logInOut"; 
 
 AppInfoManager.KEY_USERINFO = "userInfo"; 
-
+AppInfoManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 
 AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
@@ -78,6 +78,30 @@ AppInfoManager.removeData = function( keyword )
      LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
 };
     
+// --------------------------------------------------
+// ------ 1st level 'key': 'value' get/update
+
+AppInfoManager.updateKey_StrValue = function( key, valueStr )
+{
+    var appInfo = AppInfoManager.data;
+        
+    appInfo[key] = valueStr;
+
+    // Update data in memory
+    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+};
+
+AppInfoManager.getKeyValue = function( key )
+{
+    var appInfo = AppInfoManager.data;
+        
+    var value = appInfo[key];
+    if ( value === undefined ) value = '';
+
+    return value;
+};
+
+// ------------------------------------
 
 AppInfoManager.getPropertyValue = function( mainKey, subKey )
 {
@@ -138,16 +162,16 @@ AppInfoManager.loadAppInfo = function()
 
     if ( !appInfo )
     {
-        appInfo = Util.getJsonDeepCopy( AppInfoManager.dataBase );
+        appInfo = Util.getJsonDeepCopy( AppInfoManager.template );
     }
     else
     {
         // On Local Storage data, check the missing data.
         // Set minial structure - 'translation' and 'sync' shell should always exists..
-        if ( !appInfo.translation ) appInfo.translation = Util.getJsonDeepCopy( AppInfoManager.dataBase.translation );
-        if ( !appInfo.sync ) appInfo.sync = Util.getJsonDeepCopy( AppInfoManager.dataBase.sync );
-        if ( !appInfo.logInOut ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.logInOut );
-        if ( !appInfo.userInfo ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.dataBase.userInfo );
+        if ( !appInfo.translation ) appInfo.translation = Util.getJsonDeepCopy( AppInfoManager.template.translation );
+        if ( !appInfo.sync ) appInfo.sync = Util.getJsonDeepCopy( AppInfoManager.template.sync );
+        if ( !appInfo.logInOut ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.template.logInOut );
+        if ( !appInfo.userInfo ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.template.userInfo );
     }
 
     return appInfo;
@@ -201,7 +225,7 @@ AppInfoManager.createUpdateUserInfo = function( userName )
     
     // UNDERSTAND ABOUT 'userName' saving & use, but... what about lastUpdated, etc?
     // All others should move some place else?
-    if ( !userInfo ) userInfo = Util.getJsonDeepCopy( AppInfoManager.dataBase.userInfo );
+    if ( !userInfo ) userInfo = Util.getJsonDeepCopy( AppInfoManager.template.userInfo );
         
     userInfo.user = userName;
     
@@ -354,5 +378,18 @@ AppInfoManager.updateStatisticPages = function( fileName, dataStr )
 
 
 // ------------------------------------------------------------------------------------  
+// -----------------------------------------------
+
+// ---- Localhost Stage related..
+AppInfoManager.getLocalStageName = function() 
+{
+    return AppInfoManager.getKeyValue( AppInfoManager.KEY_LOCAL_STAGENAME );
+};
+
+AppInfoManager.setLocalStageName = function( stageName ) 
+{
+    AppInfoManager.updateKey_StrValue( AppInfoManager.KEY_LOCAL_STAGENAME, stageName );
+};
+
 // ------------------------------------------------------------------------------------  
 // ------------------------------------------------------------------------------------  
