@@ -122,20 +122,22 @@ SyncManagerNew.syncDown = function( runType, callBack )
         else
         {
             var downloadedData = SyncManagerNew.formatDownloadedData( returnJson );
+            var clientDwnLength = downloadedData.clients.length;
             downloadedData = ConfigManager.downloadedData_UidMapping( downloadedData );
                                 
             // 'download' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and synced.' );
 
-            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + downloadedData.clients.length + " clients: " );
-
+            SyncManagerNew.SyncMsg_InsertMsg( "downloaded " + clientDwnLength + " clients" );
 
             ClientDataManager.setActivityDateLocal_clientList( downloadedData.clients );
 
             ClientDataManager.mergeDownloadedClients( downloadedData, processingInfo, function( changeOccurred_atMerge, mergedActivities ) 
             {
-                SyncManagerNew.SyncMsg_InsertMsg( "Merged data.." );
-                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + downloadedData.clients.length + " clients: " );
+                var mergedActivityLength = mergedActivities.length;
+
+                SyncManagerNew.SyncMsg_InsertMsg( "Merged " + mergedActivityLength + " activities.." );
+                SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities." );
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
                 AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
@@ -583,7 +585,6 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
             // 1. SyncDown
             if ( ConfigManager.getSyncDownSetting().enable && ConnManagerNew.isAppMode_Online() ) 
             {
-                // TODO: WE NEED TO ADD BELOW NOTES TO SYNCALL HISTORY...
                 SyncManagerNew.syncDown( 'manualClick_syncAll', function( success, changeOccurred ) 
                 {        
                     if ( success ) 
@@ -591,6 +592,9 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
                         // NOTE: If there was a new merge, for now, alert the user to reload the list?
                         if ( changeOccurred )
                         {
+                            // Display the summary of 'syncDown'.  However, this could be a bit confusing
+                            SyncManagerNew.SyncMsg_ShowBottomMsg();
+
                             var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
         
                             $( btnRefresh ).click ( () => {
