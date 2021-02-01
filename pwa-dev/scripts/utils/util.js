@@ -11,6 +11,7 @@ Util.termName_listEmpty = "common_listEmpty";
 Util.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 Util.dateType_DATE = "yyyy-MM-dd";
 Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
+Util.dateType_DATETIME_s1 = "MMM dd - HH:mm:ss";
 
 
 // ---------------------------

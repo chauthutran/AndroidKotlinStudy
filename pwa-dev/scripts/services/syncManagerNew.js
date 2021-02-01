@@ -462,6 +462,7 @@ SyncManagerNew.SyncMsg_Reset = function()
     SyncManagerNew.SyncMsg_SetAsNew();
 };
 
+// Gets called by 'SyncMsg_Reset' & if this is empty.. (by 'SyncMsg_Get')
 SyncManagerNew.SyncMsg_SetAsNew = function()
 {
     SyncManagerNew.syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );
@@ -478,7 +479,7 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
 {
     try
     {
-        var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
+        var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date(), Util.dateType_DATETIME_s1 ) };
         SyncManagerNew.SyncMsg_Get().msgList.push( newMsgJson );
     }
     catch( errMsg )
@@ -529,7 +530,7 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
                 //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
                 var msgJson = syncMsgJson.msgList[i];
     
-                var msgStr = msgJson.datetime + ' ' + msgJson.msg;
+                var msgStr = msgJson.datetime + '&bnsp; &nbsp;' + msgJson.msg;
     
                 sectionLogTag.append( '<div>' + msgStr + '</div>' );
             }
