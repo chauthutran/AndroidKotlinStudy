@@ -1399,6 +1399,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
+				var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
+
 				result = eval( afterCondStr );	
 			}
 			catch(ex) 

@@ -530,7 +530,7 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function()
                 //{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
                 var msgJson = syncMsgJson.msgList[i];
     
-                var msgStr = msgJson.datetime + '&bnsp; &nbsp;' + msgJson.msg;
+                var msgStr = msgJson.datetime + '&nbsp; &nbsp;' + msgJson.msg;
     
                 sectionLogTag.append( '<div>' + msgStr + '</div>' );
             }
