@@ -25,7 +25,7 @@ ClientDataManager.template_Client = {
     'activities': []        
 };
 
-ClientDataManager.payloadClientNameStart = 'client_';
+ClientDataManager.tempClientNamePre = 'client_';
 
 // ===================================================
 // ----- Get  Client ----------------
@@ -308,7 +308,7 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     // Call it from template?
     var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
 
-    acitivityPayloadClient._id = ClientDataManager.payloadClientNameStart + activity.id;
+    acitivityPayloadClient._id = ClientDataManager.tempClientNamePre + activity.id;
     acitivityPayloadClient.clientDetails = ActivityDataManager.getData_FromTrans( activity, "clientDetails" );
     acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
 

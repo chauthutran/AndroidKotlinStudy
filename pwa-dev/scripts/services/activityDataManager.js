@@ -113,7 +113,9 @@ ActivityDataManager.removeActivityById = function( activityId )
     }
 };
 
-ActivityDataManager.removeActivityNClientById = function( activityId )
+
+// TODO: Need to work on this - rename method & activity/client id related..
+ActivityDataManager.removeTempClient_Activity = function( activityId )
 {
     try
     {
@@ -129,7 +131,7 @@ ActivityDataManager.removeActivityNClientById = function( activityId )
 
             Util.RemoveFromArray( client.activities, "id", activityId );
 
-            if ( client._id.indexOf( ClientDataManager.payloadClientNameStart ) === 0 )
+            if ( client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
             {
                 // Delete 'client' that was created for the activity payload..
                 ClientDataManager.removeClient( client );
@@ -192,8 +194,10 @@ ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( a
     if ( activityId ) 
     {
         var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
+
+        // Remove activity?  Why?
         // NOTE: This also removes temporary client ('client_').
-        if ( existingActivity ) ActivityDataManager.removeActivityNClientById( activityId );
+        if ( existingActivity ) ActivityDataManager.removeTempClient_Activity( activityId );
 
 
         // TODO: Might use 'unshift' to add to top?
@@ -548,17 +552,37 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
 
         if ( tranList )
         {
-            for( var i = 0; i < tranList.length; i++ )
+            // TranList could be object type or array list..
+            if ( Util.isTypeArray( tranList ) )
             {
-                var tranData_cd = tranList[i][ propName ];
-        
-                if ( tranData_cd )
+                tranList.forEach( tran => 
                 {
-                    for ( var prop in tranData_cd ) 
+                    var tranData_cd = tran[ propName ];
+                    if ( tranData_cd )
                     {
-                        dataJson[ prop ] = tranData_cd[ prop ];
+                        for ( var prop in tranData_cd ) 
+                        {
+                            dataJson[ prop ] = tranData_cd[ prop ];
+                        }
+                    }
+                });    
+            }
+            else if ( Util.isTypeObject( tranList ) )
+            {
+                for ( var tranTypeKey in tranList ) 
+                {
+                    var tran = tranList[ tranTypeKey ];
+
+                    var tranData_cd = tran[ propName ];
+                    if ( tranData_cd )
+                    {
+                        for ( var prop in tranData_cd ) 
+                        {
+                            dataJson[ prop ] = tranData_cd[ prop ];
+                        }
                     }
                 }
+
             }
         }
     }
