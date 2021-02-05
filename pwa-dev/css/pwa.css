@@ -668,6 +668,10 @@ img.rotateImg {
 {
   width: 100%;
 }
+.searchResultTable:hover
+{
+  background-color: #f5f5f5;
+}
 .searchResultTable td
 {
   font-family: 'Rubik', 'Roboto','RobotoDraft', 'Open Sans', sans-serif;
