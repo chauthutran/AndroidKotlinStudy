@@ -159,11 +159,13 @@ function DataList( cwsRenderObj, blockObj )
                     var trGrpBy = $( '<tr />' );
                     var tdGrpBy = $( '<td colspan=2 />' );                    
                     var dvGrpByTitle = $( '<div class="groupByField" />' );
+                    var dvContents = $( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div class="imgGrpByIcon ' 
+                                        + ( groupByObj.opened != undefined ? ( groupByObj.opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) 
+                                        + '" /> </td> <td class="groupByFieldName"> <span term="' + fieldOptObj.term + '">' + me.resolvedefinitionOptionValue( groupByObj.value )
+                                        + '</span>: <strong class="">' + groupByObj.count + '</strong></td></tr></table> </div>' );
+                    var dvIcon = dvContents.find( '.imgGrpByIcon' );
 
-                    dvGrpByTitle.html( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div id="imggroupBy_' + g + '_' + r + '" class="' 
-                        + ( groupByObj.opened != undefined ? ( groupByObj.opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) 
-                        + '" /> </td> <td class="groupByFieldName"> <span term="' + fieldOptObj.term + '">' + me.resolvedefinitionOptionValue( groupByObj.value )
-                        + '</span>: <strong class="">' + groupByObj.count + '</strong></td></tr></table> </div>' );
+                    dvGrpByTitle.append( dvContents )
                     dvGrpByTitle.attr( 'title', groupByObj.value );
 
                     var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' 
@@ -177,7 +179,7 @@ function DataList( cwsRenderObj, blockObj )
 
                     me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, fldGroupByID, groupByObj.value, dataJson, blockJson, groupByObj.buttons )
 
-                    FormUtil.setClickSwitchEvent( $( "#imggroupBy_" + g + "_" + r),  $( "#groupResults_" + g + "_" + r), [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
+                    FormUtil.setClickSwitchEvent( dvIcon, dvGrpByRows, [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
 
                 }
 
