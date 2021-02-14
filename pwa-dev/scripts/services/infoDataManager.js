@@ -13,6 +13,7 @@ InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 InfoDataManager.NAME_login_UserName = 'login_UserName';
 InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
+InfoDataManager.NAME_login_CountryOuCode = 'login_CountryOuCode';
 InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';	// These get changed, thus, need to be updated.
 InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These get changed, thus, need to be updated.
 
@@ -44,6 +45,7 @@ InfoDataManager.setDataAfterLogin = function()
 	{
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_UserName, SessionManager.sessionData.login_UserName );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, SessionManager.sessionData.orgUnitData.orgUnitId );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_CountryOuCode, SessionManager.sessionData.orgUnitData.countryOuCode );
 
 		// Any other info?	
 		var syncLastDownloaded = AppInfoManager.getSyncLastDownloadInfo();
