@@ -1922,13 +1922,20 @@ FormUtil.displayData_Array = function( titleTag, arr, caseName )
 			else
 			{
 				var arrName = arr[ i ].name;
-				var arrNameTdTag = $( '<td class="name"/>' ).html( arrName );
+				var fieldJson = ConfigManager.getDefinitionFieldById( arrName );
+				var showField = ( fieldJson && fieldJson.hidden === true ) ? false : true;
+				
+				if ( showField )
+				{
+					var arrNameTdTag = $( '<td class="name"/>' ).html( arrName );
 
-				if ( caseName === 'clientDetail' ) FormUtil.populateFieldTerms( arrName, arrNameTdTag );
+					if ( caseName === 'clientDetail' ) FormUtil.populateFieldTerms( arrName, arrNameTdTag );
+	
+					tr.append( arrNameTdTag );
+	
+					tr.append( $( '<td class="value" />').html( Util.outputAsStr( arr[ i ].value ) ) );
+				}
 
-				tr.append( arrNameTdTag );
-
-				tr.append( $( '<td class="value" />').html( Util.outputAsStr( arr[ i ].value ) ) );
 			}
 		}
 	
