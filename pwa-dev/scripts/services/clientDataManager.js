@@ -322,9 +322,11 @@ ClientDataManager.getDateStr_LastUpdated = function( clientJson )
 {
     var dateStr = '';
 
-    if ( clientJson && clientJson.date && clientJson.date.updatedOnMdbUTC )
+    if ( clientJson && clientJson.date )
     {
-        dateStr = clientJson.date.updatedOnMdbUTC;
+        // NOTE: Temporary fix while we resolve 'updatedUTC' vs 'updatedOnMdbUTC' for client date 
+        if ( clientJson.date.updatedOnMdbUTC ) dateStr = clientJson.date.updatedOnMdbUTC;
+        else if ( clientJson.date.updatedUTC ) dateStr = clientJson.date.updatedUTC;
     }
 
     return dateStr;
