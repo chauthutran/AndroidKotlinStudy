@@ -760,7 +760,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		// Item CLICK event
 		optsContainer.find("input").click( function(){
-			me.setupEvents_DialogSelectedItemTags( divInputFieldTag, dialogForm, $(this) );
+			me.setupEvents_DialogSelectedItemTags( divInputFieldTag, dialogForm, $(this), type );
 		});
 
 		// Close button event
@@ -809,7 +809,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		 }, 250 ) */
 	}
 
-	me.setupEvents_DialogSelectedItemTags = function( targetDivInputFieldTag, dialogTag, optionInputTag )
+	me.setupEvents_DialogSelectedItemTags = function( targetDivInputFieldTag, dialogTag, optionInputTag, type )
 	{
 		optionInputTag.change( function(){
 			var targetInputTag = targetDivInputFieldTag.find("input.dataValue");
@@ -828,6 +828,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			targetInputTag.val( selectedValues.join(",") );
 			targetDisplayTag.val( selectedTexts.join(",") );
+
+			if ( type === 'radio' ) setTimeout( function() { $( '#closeBtn' ).click(); }, 200 ); //consider adding delay so UI has time to reflect user's selection
 		});
 	}
 
