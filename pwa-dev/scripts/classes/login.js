@@ -435,7 +435,7 @@ function Login( cwsRenderObj )
 				var stage = localStageTag.val();
 				AppInfoManager.setLocalStageName( stage );
 				WsCallManager.setWsTarget_Stage( stage );
-				alert( 'Changed Stage!' );
+				alert( 'Changed to [' + stage + ']' );
 			});
 		}
 	};
