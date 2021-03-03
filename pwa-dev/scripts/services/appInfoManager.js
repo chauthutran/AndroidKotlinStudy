@@ -248,6 +248,35 @@ AppInfoManager.getUserInfo = function()
 
 //AppInfoManager.removeUserInfo = function() { AppInfoManager.removeData( AppInfoManager.KEY_USERINFO ); };
 
+
+AppInfoManager.getUserConfigSourceType = function()
+{
+    var sourceType = 'mongo'; // <-- default one.  Should be between 'mongo' / 'dhis2'
+
+    try
+    {
+        var userInfo = AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
+
+        if ( userInfo && userInfo.user )
+        {
+            // get dcdConfig of the user..
+            var userLoginData = SessionManager.getLoginDataFromStorage( userInfo.user );
+    
+            if ( userLoginData && userLoginData.dcdConfig && userLoginData.dcdConfig.sourceType )
+            {
+                sourceType = userLoginData.dcdConfig.sourceType;
+            }    
+        }    
+    }
+    catch ( errMsg )
+    {
+		console.customLog( 'ERROR in AppInfoManager.getUserConfigSourceType: ' + errMsg );
+    }
+
+    return sourceType;
+};
+
+
 // ------------------------------------------------------------------------------------  
 // ----------------  langTerms
 

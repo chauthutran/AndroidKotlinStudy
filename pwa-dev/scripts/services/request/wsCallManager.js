@@ -16,7 +16,11 @@ WsCallManager.versionNumber = '1.3';
 WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 
 // Temp Setting - available check override
-WsCallManager.availableAlways = false;
+WsCallManager.availableAlways = false;  // Used in ConnManagerNew.serverAvailable();
+WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available check. 
+
+WsCallManager.available_PWAAvailable = '/PWA.available';
+WsCallManager.available_Availability = '/availability';
 
 
 WsCallManager.stageName = '';
@@ -33,6 +37,7 @@ WsCallManager.wsUrlList = {
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
 
 WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
+WsCallManager.timeOut_DwsAvailabilityCheck = 10000; // timeout number used for 'available' request
 
 WsCallManager.mockDelayTimeMS = 1000; // default delay time in milliseconds - 1000ms = 1 sec
 
@@ -135,7 +140,48 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 	});
 };
 
+// --------------------------------------------------
 
+WsCallManager.serverAvailable = function( callBack )
+{
+    try
+    {
+        if ( WsCallManager.availableAlways ) callBack( true );
+        else
+        {            
+            if ( WsCallManager.availableCheckType === 'v1' )
+            {
+                WsCallManager.getDataServerAvailable(function (success, jsonData) 
+                {    
+                    // if check succeeds with valid [jsonData] payload
+                    if (success && jsonData && jsonData.available != undefined) {
+                        callBack( jsonData.available );
+                    }
+                    else {
+                        callBack(false);
+                    }
+                });
+            }
+            else if ( WsCallManager.availableCheckType === 'v2' )
+            {
+                // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.
+                var configJson = ConfigManager.getConfigJson();
+                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoManager.getUserConfigSourceType();
+                if ( sourceType !== 'mongo' ) sourceType = 'dhis2';
+                
+                WsCallManager.dwsAvailabilityCheck( sourceType, callBack );   
+            }
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR in WsCallManager.serverAvailable, errMsg: ' + errMsg );
+        callBack( false );
+    }    
+};
+
+
+//  Old legacy available check.. (use dhis2 ping only)
 WsCallManager.getDataServerAvailable = function( returnFunc )
 {
     var sourceTypeParam = '';
@@ -147,8 +193,47 @@ WsCallManager.getDataServerAvailable = function( returnFunc )
     }
     else sourceTypeParam = 'notLoggedIn';
 
-    WsCallManager.requestGetDws( '/PWA.available?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
+    WsCallManager.requestGetDws( WsCallManager.available_PWAAvailable + '?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
+
+
+WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
+{
+    WsCallManager.requestGetDws( WsCallManager.available_Availability
+        , { 'timeOut': WsCallManager.timeOut_DwsAvailabilityCheck }
+        , undefined
+        , function( success, returnJson ) 
+    {
+        var bCheck = false;
+
+        try 
+        {
+            if ( success && returnJson )
+            {
+                if ( sourceType === 'mongo' )
+                {
+                    bCheck = ( returnJson.MONGO && returnJson.MONGO.isAvailable );
+                    //console.log( bCheck + ' - availability mongo' );
+                }
+                else if ( sourceType === 'dhis2' )
+                {
+                    // Check both 'DHIS2' & 'LEGACY'
+                    bCheck = ( returnJson.DHIS2 && returnJson.DHIS2.isAvailable 
+                        && returnJson.LEGACY && returnJson.LEGACY.isAvailable );
+                    //console.log( bCheck + ' - availability dhis2' );
+                }
+            }
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in WsCallManager.getDwsAvailabilityCheck, errMsg: ' + errMsg );
+        }
+
+        returnFunc( bCheck );
+    });
+};
+
+// --------------------------------------------------
 
 
 WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnFunc )

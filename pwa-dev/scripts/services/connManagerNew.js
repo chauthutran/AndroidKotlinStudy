@@ -166,28 +166,7 @@ ConnManagerNew.checkNSet_ServerAvailable = function( callBack )
 
 ConnManagerNew.serverAvailable = function( callBack )
 {
-	try
-	{
-		if ( WsCallManager.availableAlways ) callBack( true );
-		else
-		{
-			WsCallManager.getDataServerAvailable(function (success, jsonData) {
-
-				// if check succeeds with valid [jsonData] payload
-				if (success && jsonData && jsonData.available != undefined) {
-					callBack(jsonData.available);
-				}
-				else {
-					callBack(false);
-				}
-			});
-		}
-	}
-	catch (err)
-	{
-		console.customLog( 'error in ConnManagerNew.serverAvailable ')
-		callBack( false );
-	}
+	WsCallManager.serverAvailable( callBack );
 };
 
 

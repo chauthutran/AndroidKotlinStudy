@@ -35,6 +35,17 @@ Util.isTypeString = function( obj )
 };
 // ------------------------------------
 
+//Util.getSub = function( obj )
+//{
+	//return 
+//};
+
+// undefined is no good.  we can either do 'false' & do prototype on 'boolean'
+// or return object & check the object empty status on calling method..
+//Object.prototype.getProp = function( subProp )
+//{
+//	return ( this && this.subProp ) ? this.subProp : undefined;
+//};
 
 // ----------------------------------
 // Check Variable Related

@@ -572,6 +572,10 @@ function Login( cwsRenderObj )
 
 				// call CWS start with this config data..
 				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
+
+				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
+				// For availableType 'v2' only.
+				ConnManagerNew.checkNSet_ServerAvailable();
 			});			
 		}
 	};
