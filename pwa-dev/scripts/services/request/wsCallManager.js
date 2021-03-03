@@ -281,7 +281,7 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
         body: JSON.stringify( payloadJson )
     };
 
-    // Send the POST reqesut	
+    // Send the POST reqesut (always catches the error case..)
 	WsCallManager.requestPost( url, requestOption, loadingTag, returnFunc );
 };
 

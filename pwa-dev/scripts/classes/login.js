@@ -575,7 +575,14 @@ function Login( cwsRenderObj )
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
 				// For availableType 'v2' only.
-				ConnManagerNew.checkNSet_ServerAvailable();
+				ConnManagerNew.checkNSet_ServerAvailable( function() {
+
+					// If Online mode, check the config setting to see if we like to do tempActivity fix.
+					if ( ConfigManager.getConfigJson().tempActivitiesFix )
+					{
+						me.performTempActivitiesFix( userName );
+					}
+				});
 			});			
 		}
 	};
@@ -852,6 +859,63 @@ function Login( cwsRenderObj )
 
 	// --------------------------------------
 	
+
+	me.performTempActivitiesFix = function( userName )
+	{
+		var findJson = { 'userName': userName };
+		var payloadJson = { 'find': findJson };
+
+		WsCallManager.requestPostDws( '/PWA.tempActivitiesGet', payloadJson, undefined, function( success, returnJson ) 
+		{
+			if ( success && returnJson )
+			{					
+				if ( returnJson && returnJson.response && returnJson.response.dataList
+					&& returnJson.response.dataList.length > 0 )
+				{
+					me.checkActivityFixes( returnJson.response.dataList );
+				}
+			}
+		});	
+	};
+
+
+	me.checkActivityFixes = function( activityList )
+	{
+		activityList.forEach( activity => 
+		{
+			var activityJson = ActivityDataManager.getActivityById( activity.activityId );
+
+			if ( activityJson )
+			{
+				//activity.processing.status === Constants.status_processing )
+
+				var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
+				ActivityDataManager.insertToProcessing( activityJson, processingInfo );
+
+				console.log( activityJson );
+
+
+				
+	//"PWA.tempActivitiesGet": "ws_v2@PWA@sync:tempActivitiesGet",
+	//"PWA.tempActivityUpd": "ws_v2@PWA@sync:tempActivityUpd",
+	// "var dataPayload = { 'payload': { 'mongoDB': { 'update': incomingPayload.dataJson } } };"
+				// Need to save storage afterwards..
+				//ClientDataManager.saveCurrent_ClientsStore( function() {
+					// send 'delete' request..
+				//});
+				
+
+				// set the activity status as pending and set history about it + delete on database..
+				// console log this as well..
+				// <-- or we could update the activityId as 'deleted_---'?
+			}
+		});
+
+
+		// if ( isSuccess ) MsgManager.msgAreaShow( 'DataLoad Success!' );
+	};
+
+
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )
 	{
 		$( formDivStr ).each( function( i ) {
@@ -863,7 +927,7 @@ function Login( cwsRenderObj )
 			returnFunc( loginUserPinTag, loginBtnTag );
 
 		});	
-	}
+	};
 
 	me.setUpInputTypeCopy = function( inputTags ) {
 		inputTags.keyup( function() {  // keydown vs keypress

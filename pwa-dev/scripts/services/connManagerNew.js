@@ -161,6 +161,10 @@ ConnManagerNew.checkNSet_ServerAvailable = function( callBack )
 			if ( callBack ) callBack( bServerAvailableNew );		
 		});	
 	}
+	else
+	{
+		if ( callBack ) callBack();
+	}
 };
 
 
