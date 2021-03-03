@@ -17,6 +17,11 @@
 
 //  GREG ==> COULD YOU TRY WRITING HIGH LEVEL OPERATION LOGIC ABOVE?
 
+
+  gregNotes:
+    - previously showed search criteria on results (as header summary, e.g. X results for "phoneNumber=+2775463213") < used FormUtil.getLastPayload( 'sent' ) for this
+
+
 */
 
 
@@ -59,50 +64,88 @@ function DataList2( cwsRenderObj, blockObj )
 	};
 
 
-
-    me.renderDataList = function( jsonList, itemDisplayAttrList, blockTag, blockJson )
+    me.renderDataList = function( dataList, displayFields, blockTag, blockDef )
     {
-        if ( jsonList === undefined || jsonList.length == 0 )
+        // if block def has 'groupBy' in it, we render with 'groupBy' fashion
+        if ( blockJson.groupBy )
         {
-            // Emmpty case
-            var divTag = $( '<div class="emptyListDiv" ></div>' );
-            var aTag = $( '<a term="">List is empty.</a>' ); // MISSING TRANSLATION
-
-            divTag.append( aTag );
-            blockTag.append( divTag );
+            me.renderGroupBy( dataList, displayFields, blockTag, blockDef );
         }
         else
         {
-
-            var dataJson = jsonList;
-            var searchPostPayload = FormUtil.getLastPayload( 'sent' );
-            var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
-            blockTag.append( divFormContainerTag );
-
-
-            // HTML Tags/structures setup for groups, div, etc..
-            var dvgrpBySearchContainer = $( '<div class="groupBySearchContainer" />' );
-            var dvgrpBySearchSummary = $( '<div class="groupBySearchResults" />' );
-            dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + '<label term="dataListSearch_resultFor">results for</label>' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
-            divFormContainerTag.append( dvgrpBySearchContainer );
-            dvgrpBySearchContainer.append( dvgrpBySearchSummary );
-
-            // if block def has 'groupBy' in it, we render with 'groupBy' fashion
-            if ( blockJson.groupBy )
-            {
-                me.renderGroupByBlocks( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList );
-            }
-            else
-            {
-                // Render list without groupBy..
-                me.renderSearchResultBlocks( divFormContainerTag, itemDisplayAttrList, undefined, undefined, jsonList, blockJson )
-            }
+            // Render list without groupBy..
+            me.renderStraightList();
         }
     }
 
 
+    me.renderGroupByBlocks_New = function( blockDef, dataList, blockTag,  itemDisplayAttrList )
+    {
+        /*
+            1. Look into block definition 'groupBy'.
+            2. Each 'groupBy' represent grouping view of result data
+            3. property name is the matching action Result expression in previous action
+            4. Look into 'values' to display the group config?
+        */
+
+        var blockDef_GroupBy = blockDef.groupBy;
+
+        blockDef_GroupBy.forEach( groupByDef => {
+
+            me.createGroupByView( groupByDef, dataList, blockTag );
+        });
+    };
+
+    
+
+    me.createGroupByView = function( groupByDef, dataList, blockTag )
+    {
+        // "evalVoucherStatusGroupBy" tag create
+        var gropuByDivTag = blockTag.append( templateTag );
+
+        var groupBy_FieldName = me.getGroupBy_FieldName( groupByDef );
+        var groupByDefJson = me.getGroupBy_DefJson( groupByDef );
+
+        groupByDefJson.values.forEach( valueViewDef => 
+        {                
+            me.renderGroup( valueViewDef, dataList, groupBy_FieldName, gropuByDivTag );
+        });
+    };
+
+    me.renderGroup = function( valueViewDef, dataList, groupBy_FieldName, gropuByDivTag )
+    {
+        var valueName = me.getValue_FieldName( valueViewDef ); // "v_active";//valueViewDef[0];
+        var valueViewDefJson = me.getValue_DefJson( valueViewDef ); // "v_active";//valueViewDef[0];
+
+        // Need to create this value 'v_iss' div
+        var valGroupDivTag = $( '' ); // gropuByDivTag.append();
+
+        // client list get - the has certain field with a value
+        var clientsFitlered = me.filterData_ByFieldValue( dataList, valueName );
+
+        clientsFitlered.forEach( clientData => {
+            me.renderClient_InGroupByView( clientData, valueViewDefJson, valGroupDivTag ); //Client
+        });
+    };
+
+
+
+
+
+
     me.renderGroupByBlocks = function( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList )
     {
+        /*
+            1. Look into block definition 'groupBy'.
+            2. Each 'groupBy' represent grouping view of result data
+            3. property name is the matching action Result expression in previous action
+            4. Look into 'values' to display the group config?
+            
+            refactorNotes:
+             1. getGroupByUniqueValuesAndSort: per groupByField [e.g. voucherStatus] get all unique values from results (dataJson) payload [e.g. v_rdx, v_iss]
+             2. getGroupByArrayWithCountsFromSearchResults: per groupByField [e.g. voucherStatus] create array objects containing 'match' counts from [1] [e.g. ]
+        */
+
         for( var g = 0; g < blockJson.groupBy.length; g++ )
         {
             var bGroupByObj = blockJson.groupBy[g];

@@ -340,6 +340,84 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 };	
 
 
+Util.trvEval_SubTmp = function( obj, INFO, defPTemplates, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		throw 'Error in Util.trvEval_SubTmp, Traverse depth limit has reached: ' + iDepth;
+	}
+	else
+	{
+		Object.keys( obj ).forEach( key => 
+		{			
+			var prop = obj[key];
+
+			if ( key === 'SUB_TMP' ) 
+			{
+				var templateObj = defPTemplates[ prop ];
+
+				if ( templateObj )
+				{
+					var subTemplate = Util.cloneJson( templateObj );
+					Util.trvEval_SubTmp( subTemplate, INFO, defPTemplates, iDepth, limit );
+
+					Util.mergeDeep( obj, subTemplate );
+				}
+
+				delete obj[ key ];
+			}
+			else if ( key === 'SUB_TMP_ARR' ) 
+			{
+				prop.forEach( pArrItem => 
+				{
+					var templateObj = defPTemplates[ pArrItem ];
+
+					if ( templateObj )
+					{
+						var subTemplate = Util.cloneJson( templateObj );
+						Util.trvEval_SubTmp( subTemplate, INFO, defPTemplates, iDepth, limit );
+	
+						Util.mergeDeep( obj, subTemplate );
+					}
+				});
+
+				delete obj[ key ];
+			}
+			else
+			{	
+				if ( Util.isTypeArray( prop ) )
+				{
+					var iDepthArr = iDepth++;
+	
+					prop.forEach( ( pArrItem, i ) => 
+					{
+						if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
+						{						
+							Util.trvEval_SubTmp( pArrItem, INFO, defPTemplates, iDepthArr, limit );
+						}
+						else if ( Util.isTypeString( pArrItem ) )
+						{		
+							try { prop[i] = eval( pArrItem ); } 
+							catch ( errMsg ) { throw 'Error in Util.trvEval_SubTmp, arrayItem str eval: ' + errMsg; }
+						}
+					});
+				}
+				else if ( Util.isTypeObject( prop ) )
+				{
+					Util.trvEval_SubTmp( prop, INFO, defPTemplates, iDepth++, limit );
+				}
+				else if ( Util.isTypeString( prop ) )
+				{				
+					try { obj[key] = eval( prop ); } 
+					catch ( errMsg ) { throw 'Error in Util.trvEval_SubTmp, str eval: ' + errMsg; }
+				}
+			}
+		});
+	}
+};	
+
+
+
 // Replace json 'key' names using 'keyListset' ( { 'keys': [], 'keysNew': [] } (same list) )
 // Only replace 'key' where the value is string or number/boolean?..
 Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )

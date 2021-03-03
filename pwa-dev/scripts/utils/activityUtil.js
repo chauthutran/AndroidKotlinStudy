@@ -94,7 +94,7 @@ ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJ
 		{
 			var blockInfo = ActivityUtil.getBlockInfo_Attr( formDivSecTag.closest( 'div.block' ) );
 			var createdDT = new Date();		// Should we match this with activityDataManager.generatePayload...
-			formsJson = PayloadTemplateHelper.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, payloadDefJson.payloadTemplate );
+			formsJson = PayloadTemplateHelper.generatePayload( createdDT, formsJson, formsJsonGroup, blockInfo, payloadDefJson.payloadTemplate, payloadDefJson.INFO_Var );
 		}
 	}
 

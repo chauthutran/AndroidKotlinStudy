@@ -14,20 +14,19 @@ function PayloadTemplateHelper()  {};
 // ------------------------------------------------------------
 // --- Main 'payload' generation method
 
-PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, payloadTemplate )
+PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, payloadTemplate, INFO_Var )
 {
     var finalPayload = {};
 
     try
     {
-        var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, ConfigManager.getConfigJson().definitionPayloadTemplates );
-                
-        PayloadTemplateHelper.setINFO_payload( dateTimeObj, formsJson, formsJsonGroup, blockInfo );
+        var defPayloadTemplates = ConfigManager.getConfigJson().definitionPayloadTemplates;
+        var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, defPayloadTemplates );
+        var INFO_Copy = PayloadTemplateHelper.getINFO_Copy_wtPayloadSet( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var );
 
-        PayloadTemplateHelper.evalPayloads( payloadList, InfoDataManager.getINFO() );
-
+        PayloadTemplateHelper.evalPayloads( payloadList, INFO_Copy, defPayloadTemplates );
+        
         finalPayload = PayloadTemplateHelper.combinePayloads( payloadList );
-
     }
     catch( errMsg )
     {
@@ -79,9 +78,10 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
     return payloadList;
 };
 
-PayloadTemplateHelper.setINFO_payload = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo )
+PayloadTemplateHelper.getINFO_Copy_wtPayloadSet = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var )
 {
-    //var INFO = {};    
+    var INFO = Util.cloneJson( InfoDataManager.getINFO() );   
+
     var payload = {};
 
     payload.date = dateTimeObj;
@@ -90,11 +90,16 @@ PayloadTemplateHelper.setINFO_payload = function( dateTimeObj, formsJson, formsJ
 
     Util.mergeJson( payload, blockInfo ); // activityType
 
-    InfoDataManager.setINFOdata( 'payload', payload );
+    INFO.payload = payload;
+
+    // NEW - add 'INFO_Var'
+    if ( INFO_Var ) Util.mergeJson( INFO, INFO_Var );
+
+    return INFO;
 };
 
 
-PayloadTemplateHelper.evalPayloads = function( payloadList, INFO )
+PayloadTemplateHelper.evalPayloads = function( payloadList, INFO, defPayloadTemplates )
 {    
     for ( var i = 0; i < payloadList.length; i++ ) 
     {
@@ -102,7 +107,8 @@ PayloadTemplateHelper.evalPayloads = function( payloadList, INFO )
 
         INFO.payloadJson = payloadJson; 
         
-        Util.traverseEval( payloadJson, INFO, 0, 50 );
+        //Util.traverseEval( payloadJson, INFO, 0, 50 );
+        Util.trvEval_SubTmp( payloadJson, INFO, defPayloadTemplates, 0, 50 );
     }
 };
 
