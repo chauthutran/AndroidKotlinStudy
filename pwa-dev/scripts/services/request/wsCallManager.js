@@ -25,6 +25,7 @@ WsCallManager.available_PWAAvailable = '/PWA.available';
 WsCallManager.available_Availability = '/availability';
 
 WsCallManager.EndPoint_PWATempActivitiesGet = '/PWA.tempActivitiesGet';
+WsCallManager.EndPoint_PWATempActivitiesDelete = '/PWA.tempActivitiesDelete';
 WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
 WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 
@@ -505,6 +506,22 @@ WsCallManager.requestDWS_SAVE = function( endPoint, payloadJson, loadingTag, ret
         }
 
         returnFunc( savedResultCount );
+    });	
+};
+
+// DELETE..
+WsCallManager.requestDWS_DELETE = function( endPoint, payloadJson, loadingTag, returnFunc )
+{
+    WsCallManager.requestPostDws( endPoint, payloadJson, loadingTag, function( success, returnJson ) 
+    {    
+        var deletedResultCount = 0;
+
+        if ( success && returnJson && returnJson.response && returnJson.response.result && returnJson.response.result.n )
+        {
+            deletedResultCount = returnJson.response.result.n;
+        }
+
+        returnFunc( deletedResultCount );
     });	
 };
 

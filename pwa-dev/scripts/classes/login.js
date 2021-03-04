@@ -862,50 +862,72 @@ function Login( cwsRenderObj )
 
 	me.performTempActivitiesFix = function( userName )
 	{
-		var findJson = { 'userName': userName };
-		var payloadJson = { 'find': findJson };
-
-		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWATempActivitiesGet, payloadJson, undefined, function( resultList )
+		me.retrieveFixActivities( userName, function( resultList )
 		{
-			if ( resultList.length > 0 ) me.checkActivityFixes( resultList );
+			if ( resultList.length > 0 ) 
+			{
+				me.performActivityFixes( resultList, function( fixedActivityList ) 
+				{
+					me.deleteTempFixActivityList( fixedActivityList );
+				});
+			}
 		});
 	};
 
 
-	me.checkActivityFixes = function( activityList )
+	me.retrieveFixActivities = function( userName, returnFunc )
 	{
+		var payloadJson = { 'find': { 'userName': userName } };
+
+		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWATempActivitiesGet, payloadJson, undefined, returnFunc );
+	};
+
+
+	me.performActivityFixes = function( activityList, returnFunc )
+	{
+		var fixedActivityList = [];
+
 		activityList.forEach( activity => 
 		{
-			var activityJson = ActivityDataManager.getActivityById( activity.activityId );
-
-			if ( activityJson )
+			try
 			{
-				//activity.processing.status === Constants.status_processing )
+				var activityJson = ActivityDataManager.getActivityById( activity.activityId );
 
-				var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
-				ActivityDataManager.insertToProcessing( activityJson, processingInfo );
-
-				console.log( activityJson );
-
-
-				
-	//"PWA.tempActivitiesGet": "ws_v2@PWA@sync:tempActivitiesGet",
-	//"PWA.tempActivityUpd": "ws_v2@PWA@sync:tempActivityUpd",
-	// "var dataPayload = { 'payload': { 'mongoDB': { 'update': incomingPayload.dataJson } } };"
-				// Need to save storage afterwards..
-				//ClientDataManager.saveCurrent_ClientsStore( function() {
-					// send 'delete' request..
-				//});
-				
-
-				// set the activity status as pending and set history about it + delete on database..
-				// console log this as well..
-				// <-- or we could update the activityId as 'deleted_---'?
+				if ( activityJson )
+				{
+					var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
+					ActivityDataManager.insertToProcessing( activityJson, processingInfo );
+	
+					console.log( activityJson );	
+	
+					ClientDataManager.saveCurrent_ClientsStore( function() 
+					{	
+						fixedActivityList.push( activity.activityId );
+					});				
+				}	
+			}
+			catch( errMsg )
+			{
+				console.customLog( 'ERROR in performActivityFixes, errMsg: ' + errMsg );
 			}
 		});
 
+		returnFunc( fixedActivityList );
+	};
 
-		// if ( isSuccess ) MsgManager.msgAreaShow( 'DataLoad Success!' );
+
+	me.deleteTempFixActivityList = function( fixedActivityList )
+	{
+		if ( fixedActivityList && fixedActivityList.length > 0 )
+		{
+			var payloadJson = { 'find': { 'activityId': { "$in": fixedActivityList } } };
+
+			// Need to create endpoint action config...
+
+			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWATempActivitiesDelete, payloadJson, loadingTag, function() {
+				console.customLog( 'Deleted..' );
+			});
+		}
 	};
 
 
