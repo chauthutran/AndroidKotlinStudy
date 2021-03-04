@@ -19,9 +19,16 @@ WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 WsCallManager.availableAlways = false;  // Used in ConnManagerNew.serverAvailable();
 WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available check. 
 
+// -------------------------
+
 WsCallManager.available_PWAAvailable = '/PWA.available';
 WsCallManager.available_Availability = '/availability';
 
+WsCallManager.EndPoint_PWATempActivitiesGet = '/PWA.tempActivitiesGet';
+WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
+WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
+
+// -------------------------
 
 WsCallManager.stageName = '';
 WsCallManager.wsUrlList = {
@@ -457,3 +464,47 @@ WsCallManager.mockRequestCall = function( mockResponseJson, loadingTag, returnFu
         returnFunc( false, undefined );
     }
 };
+
+
+// ===========================================
+// ==== COMMON DWS ENDPOINT - REST Calls (POST)
+
+
+//WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
+
+// SEARCH - Mongo
+WsCallManager.requestDWS_GET = function( endPoint, payloadJson, loadingTag, returnFunc )
+{
+    WsCallManager.requestPostDws( endPoint, payloadJson, loadingTag, function( success, returnJson ) 
+    {
+        var resultList = [];
+
+        if ( success && returnJson )
+        {					
+            if ( returnJson && returnJson.response && returnJson.response.dataList
+                && returnJson.response.dataList.length > 0 )
+            {
+                resultList = returnJson.response.dataList;
+            }
+        }
+
+        returnFunc( resultList );
+    });	
+};
+    
+// SAVE..
+WsCallManager.requestDWS_SAVE = function( endPoint, payloadJson, loadingTag, returnFunc )
+{
+    WsCallManager.requestPostDws( endPoint, payloadJson, loadingTag, function( success, returnJson ) 
+    {    
+        var savedResultCount = 0;
+
+        if ( success && returnJson && returnJson.response && returnJson.response.result && returnJson.response.result.n )  // also .result.ok = 1 could be checked?
+        {
+            savedResultCount = returnJson.response.result.n;
+        }
+
+        returnFunc( savedResultCount );
+    });	
+};
+

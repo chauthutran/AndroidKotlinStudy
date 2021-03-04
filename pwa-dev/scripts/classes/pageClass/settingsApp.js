@@ -472,25 +472,22 @@ function settingsApp( cwsRender )
                 var dataJson = { 'idenObj': idenObj, 'updateData': updateData, 'option': { 'upsert': true } };
                 var payloadJson = { 'dataJson': dataJson };
     
-                WsCallManager.requestPostDws( '/PWA.shareData', payloadJson, loadingTag, function( success, returnJson ) 
+                WsCallManager.requestDWS_SAVE( WsCallManager.EndPoint_ShareDataSave, payloadJson, loadingTag, function( savedResultCount ) 
                 {
                     var isSuccess = false;
-                    if ( success && returnJson )
-                    {					
-                        if ( returnJson && returnJson.response && returnJson.response.result 
-                            && returnJson.response.result.n === 1 )  // also .result.ok = 1 could be checked?
-                        {
-                            shareCodeTag.val( '' );
-                            isSuccess = true;
-                            //console.customLog( returnJson );    
 
-                            me.AddShareLogMsg( divDataShareTag, 'SHARE UPLOADED. shareCode: ' + shareCode );
-                        }
+                    if ( savedResultCount === 1 )
+                    {					
+                        shareCodeTag.val( '' );
+                        isSuccess = true;
+                        //console.customLog( returnJson );    
+
+                        me.AddShareLogMsg( divDataShareTag, 'SHARE UPLOADED. shareCode: ' + shareCode );
                     }
 
                     if ( isSuccess ) MsgManager.msgAreaShow( 'DataShare Submit Success!' );
                     else MsgManager.msgAreaShow( 'DataShare Submit FAILED!', 'ERROR' );
-                });	
+                });
             }
         });       
 
@@ -507,29 +504,26 @@ function settingsApp( cwsRender )
 
                 var findJson = { 'info.userName': SessionManager.sessionData.login_UserName, 'info.shareCode': loadCode };
                 var payloadJson = { 'find': findJson };
-    
-                WsCallManager.requestPostDws( '/PWA.loadData', payloadJson, loadingTag, function( success, returnJson ) 
+            
+                WsCallManager.requestDWS_GET( WsCallManager.EndPoint_ShareDataLoad, payloadJson, loadingTag, function( resultList )
                 {
                     var isSuccess = false;
-                    if ( success && returnJson )
+
+                    if ( resultList.length > 0 )
                     {					
-                        if ( returnJson && returnJson.response && returnJson.response.dataList
-                            && returnJson.response.dataList.length > 0 )
+                        var clientList = resultList[0].clientList;
+                        loadCodeTag.val( '' );
+                        isSuccess = true;
+                        
+                        ClientDataManager.setActivityDateLocal_clientList( clientList );
+
+                        ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
                         {
-                            var clientList = returnJson.response.dataList[0].clientList;
-                            loadCodeTag.val( '' );
-                            isSuccess = true;
-                            
-                            ClientDataManager.setActivityDateLocal_clientList( clientList );
+                            console.customLog( 'LoadData clients merged' );
+                            SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                        });
 
-                            ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
-                            {
-                                console.customLog( 'LoadData clients merged' );
-                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
-                            });
-
-                            me.AddShareLogMsg( divDataShareTag, 'LOADED. loadCode: ' + loadCode );
-                        }
+                        me.AddShareLogMsg( divDataShareTag, 'LOADED. loadCode: ' + loadCode );
                     }
 
                     if ( isSuccess ) MsgManager.msgAreaShow( 'DataLoad Success!' );

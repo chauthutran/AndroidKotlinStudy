@@ -865,17 +865,10 @@ function Login( cwsRenderObj )
 		var findJson = { 'userName': userName };
 		var payloadJson = { 'find': findJson };
 
-		WsCallManager.requestPostDws( '/PWA.tempActivitiesGet', payloadJson, undefined, function( success, returnJson ) 
+		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWATempActivitiesGet, payloadJson, undefined, function( resultList )
 		{
-			if ( success && returnJson )
-			{					
-				if ( returnJson && returnJson.response && returnJson.response.dataList
-					&& returnJson.response.dataList.length > 0 )
-				{
-					me.checkActivityFixes( returnJson.response.dataList );
-				}
-			}
-		});	
+			if ( resultList.length > 0 ) me.checkActivityFixes( resultList );
+		});
 	};
 
 
