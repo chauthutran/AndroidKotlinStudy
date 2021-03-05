@@ -900,10 +900,7 @@ function Login( cwsRenderObj )
 	
 					console.log( activityJson );	
 	
-					ClientDataManager.saveCurrent_ClientsStore( function() 
-					{	
-						fixedActivityList.push( activity.activityId );
-					});				
+					fixedActivityList.push( activity.activityId );
 				}	
 			}
 			catch( errMsg )
@@ -911,6 +908,10 @@ function Login( cwsRenderObj )
 				console.customLog( 'ERROR in performFixActivities, errMsg: ' + errMsg );
 			}
 		});
+
+
+		// Save data if there has been any matching activity
+		if ( fixedActivityList.length > 0 ) ClientDataManager.saveCurrent_ClientsStore();
 
 		returnFunc( fixedActivityList );
 	};
@@ -920,9 +921,9 @@ function Login( cwsRenderObj )
 	{
 		if ( fixedActivityList && fixedActivityList.length > 0 )
 		{
-			var payloadJson = { 'find': { 'activityId': { "$in": fixedActivityList } } };
+			var payloadJson = { 'find': { 'activityId': { '$in': fixedActivityList } } };
 
-			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, loadingTag, function() 
+			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
 			{
 				console.customLog( 'Deleted..' );
 				console.customLog( fixedActivityList );
