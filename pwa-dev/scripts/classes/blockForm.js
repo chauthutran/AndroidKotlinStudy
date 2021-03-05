@@ -321,8 +321,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var uniqueId = Util.generateRandomId( 8 );
 		divInputFieldTag.attr( 'uniqueID', uniqueId );
 
-		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
+		
+		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '"type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="hidden" class="dataValue" />' );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
@@ -345,7 +346,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
 
 		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
+		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" dataGroup="' + formItemJson.dataGroup + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
