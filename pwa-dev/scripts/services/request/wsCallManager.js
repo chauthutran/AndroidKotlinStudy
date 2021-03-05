@@ -24,8 +24,8 @@ WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available ch
 WsCallManager.available_PWAAvailable = '/PWA.available';
 WsCallManager.available_Availability = '/availability';
 
-WsCallManager.EndPoint_PWATempActivitiesGet = '/PWA.tempActivitiesGet';
-WsCallManager.EndPoint_PWATempActivitiesDelete = '/PWA.tempActivitiesDelete';
+WsCallManager.EndPoint_PWAFixActivitiesGET = '/PWA.fixActivitiesGET';
+WsCallManager.EndPoint_PWAFixActivitiesDEL = '/PWA.fixActivitiesDEL';
 WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
 WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 

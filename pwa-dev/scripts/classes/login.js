@@ -866,9 +866,9 @@ function Login( cwsRenderObj )
 		{
 			if ( resultList.length > 0 ) 
 			{
-				me.performActivityFixes( resultList, function( fixedActivityList ) 
+				me.performFixActivities( resultList, function( fixedActivityList ) 
 				{
-					me.deleteTempFixActivityList( fixedActivityList );
+					me.deleteFixActivityList( fixedActivityList );
 				});
 			}
 		});
@@ -879,11 +879,11 @@ function Login( cwsRenderObj )
 	{
 		var payloadJson = { 'find': { 'userName': userName } };
 
-		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWATempActivitiesGet, payloadJson, undefined, returnFunc );
+		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWAFixActivitiesGET, payloadJson, undefined, returnFunc );
 	};
 
 
-	me.performActivityFixes = function( activityList, returnFunc )
+	me.performFixActivities = function( activityList, returnFunc )
 	{
 		var fixedActivityList = [];
 
@@ -908,7 +908,7 @@ function Login( cwsRenderObj )
 			}
 			catch( errMsg )
 			{
-				console.customLog( 'ERROR in performActivityFixes, errMsg: ' + errMsg );
+				console.customLog( 'ERROR in performFixActivities, errMsg: ' + errMsg );
 			}
 		});
 
@@ -916,16 +916,16 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.deleteTempFixActivityList = function( fixedActivityList )
+	me.deleteFixActivityList = function( fixedActivityList )
 	{
 		if ( fixedActivityList && fixedActivityList.length > 0 )
 		{
 			var payloadJson = { 'find': { 'activityId': { "$in": fixedActivityList } } };
 
-			// Need to create endpoint action config...
-
-			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWATempActivitiesDelete, payloadJson, loadingTag, function() {
+			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, loadingTag, function() 
+			{
 				console.customLog( 'Deleted..' );
+				console.customLog( fixedActivityList );
 			});
 		}
 	};
