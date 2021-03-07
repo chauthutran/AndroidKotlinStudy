@@ -675,10 +675,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
             var newActivityJson = ActivityDataManager.getActivityById( activityId );
-
-
             // If 'syncUpResponse' changed status, make the UI applicable..
-            var newActivityJson = ActivityDataManager.getActivityById( activityId );
+            //var newActivityJson = ActivityDataManager.getActivityById( activityId );
 
             if ( newActivityJson )
             {
@@ -718,11 +716,16 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
                 var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
-
                 ClientDataManager.setActivityDateLocal_client( clientJson );
 
+
+                // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
+                // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
+                // But have the merge take care of this!!
+
+
                 // Removal of existing activity/client happends within 'mergeDownloadClients()'
-                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity' }, processingInfo, function() 
+                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
                 {
                     // 'mergeDownload' does saving if there were changes..
                     ClientDataManager.saveCurrent_ClientsStore();

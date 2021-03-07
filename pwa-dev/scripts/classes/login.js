@@ -575,14 +575,7 @@ function Login( cwsRenderObj )
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
 				// For availableType 'v2' only.
-				ConnManagerNew.checkNSet_ServerAvailable( function() {
-
-					// If Online mode, check the config setting to see if we like to do tempActivity fix.
-					if ( ConfigManager.getConfigJson().tempActivitiesFix )
-					{
-						me.performTempActivitiesFix( userName );
-					}
-				});
+				ConnManagerNew.checkNSet_ServerAvailable();
 			});			
 		}
 	};
@@ -858,79 +851,6 @@ function Login( cwsRenderObj )
 	
 
 	// --------------------------------------
-	
-
-	me.performTempActivitiesFix = function( userName )
-	{
-		me.retrieveFixActivities( userName, function( resultList )
-		{
-			if ( resultList.length > 0 ) 
-			{
-				me.performFixActivities( resultList, function( fixedActivityList ) 
-				{
-					me.deleteFixActivityList( fixedActivityList );
-				});
-			}
-		});
-	};
-
-
-	me.retrieveFixActivities = function( userName, returnFunc )
-	{
-		var payloadJson = { 'find': { 'userName': userName } };
-
-		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWAFixActivitiesGET, payloadJson, undefined, returnFunc );
-	};
-
-
-	me.performFixActivities = function( activityList, returnFunc )
-	{
-		var fixedActivityList = [];
-
-		activityList.forEach( activity => 
-		{
-			try
-			{
-				var activityJson = ActivityDataManager.getActivityById( activity.activityId );
-
-				if ( activityJson )
-				{
-					var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
-					ActivityDataManager.insertToProcessing( activityJson, processingInfo );
-	
-					console.log( activityJson );	
-	
-					fixedActivityList.push( activity.activityId );
-				}	
-			}
-			catch( errMsg )
-			{
-				console.customLog( 'ERROR in performFixActivities, errMsg: ' + errMsg );
-			}
-		});
-
-
-		// Save data if there has been any matching activity
-		if ( fixedActivityList.length > 0 ) ClientDataManager.saveCurrent_ClientsStore();
-
-		returnFunc( fixedActivityList );
-	};
-
-
-	me.deleteFixActivityList = function( fixedActivityList )
-	{
-		if ( fixedActivityList && fixedActivityList.length > 0 )
-		{
-			var payloadJson = { 'find': { 'activityId': { '$in': fixedActivityList } } };
-
-			WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
-			{
-				console.customLog( 'Deleted..' );
-				console.customLog( fixedActivityList );
-			});
-		}
-	};
-
 
 	me.getInputBtnPairTags = function( formDivStr, pwdInputStr, btnStr, returnFunc )
 	{

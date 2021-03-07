@@ -216,7 +216,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                         if ( clientDateCheckPass )
                         {
                             // Get activities in dwClient that does not exists...
-                            var addedActivities = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ) );
+                            var addedActivities = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ), downloadedData );
 
                             if ( case_dhis2RedeemMerge )
                             {

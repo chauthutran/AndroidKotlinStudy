@@ -355,7 +355,7 @@ function settingsApp( cwsRender )
     }
  
 
-
+    // ========== ************* ==============
     me.setUpMoreInfoDiv = function()
     {
         me.settingsFormDivTag.find( '.linkAppVersionCheck' ).off( 'click' ).click( function() 
@@ -437,6 +437,27 @@ function settingsApp( cwsRender )
                     FormUtil.unblockPage( scrimTag );
                 });
             });
+        });     
+
+
+        me.settingsFormDivTag.find( '.fixActivities' ).off( 'click' ).click( function() 
+        {
+            // check connectivity..
+            if ( !ConnManagerNew.isAppMode_Online() )
+            {
+                MsgManager.msgAreaShow( 'Only available on Online Mode!', 'ERROR' );            
+            }
+            else
+            {
+                // --> Call auto fix on login?
+                //if ( ConfigManager.getConfigJson().tempActivitiesFix )                
+                me.checkFixActivities( SessionManager.sessionData.login_UserName, function( fixActivityList ) 
+                {
+                    if ( fixActivityList.length > 0 ) me.performFixActivities( fixActivityList );
+                } );
+                
+                MsgManager.msgAreaShow( 'Finished the perform' );
+            }
         });     
 
     };
@@ -586,6 +607,91 @@ function settingsApp( cwsRender )
         });
 
     }   
+
+
+    // =============================================
+    
+
+	me.checkFixActivities = function( userName, returnFunc )
+	{
+		me.retrieveFixActivities( userName, function( resultList )
+		{
+            var fixActivityList = [];
+
+			if ( resultList.length > 0 ) fixActivityList = me.filterFixActivities_alreadySet( resultList );            
+
+            returnFunc( fixActivityList );
+		});
+	};
+
+
+	me.retrieveFixActivities = function( userName, returnFunc )
+	{
+		var payloadJson = { 'find': { 'userName': userName } };
+
+		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWAFixActivitiesGET, payloadJson, undefined, returnFunc );
+	};
+
+
+	me.filterFixActivities_alreadySet = function( resultList )
+	{
+		var fixActivityList = [];
+
+		resultList.forEach( activity => 
+		{
+			var activityJson = ActivityDataManager.getActivityById( activity.activityId );
+
+			if ( activityJson )
+			{
+				if ( activityJson.processing ) 
+				{
+					if ( activityJson.processing.fixActivityCase !== true )
+					{
+						fixActivityList.push( activityJson );
+					}
+				}
+			}
+		});
+
+		return fixActivityList;
+	};
+
+
+	me.performFixActivities = function( fixActivityList )
+	{
+		fixActivityList.forEach( activityJson => 
+		{
+			try
+			{
+				var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
+				ActivityDataManager.insertToProcessing( activityJson, processingInfo );	
+				activityJson.processing.fixActivityCase = true;
+			}
+			catch( errMsg )
+			{
+				console.customLog( 'ERROR in performFixActivities, errMsg: ' + errMsg );
+			}
+		});
+
+		// Save data if there has been any matching activity
+		ClientDataManager.saveCurrent_ClientsStore();
+
+        var fullListCount = fixActivityList.length;
+        var performCount = 0;
+
+        // Run sync on these items
+		fixActivityList.forEach( activityJson => 
+		{
+            SyncManagerNew.syncUpActivity( activityJson.id, undefined, function() 
+            {
+                performCount++;
+                MsgManager.msgAreaShow ( 'fixActivities performed: ' + performCount + '/' + fullListCount );
+			} );
+		});
+	};
+
+
+    // =============================================
 
 	me.blockPage = function()
 	{

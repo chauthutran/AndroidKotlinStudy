@@ -258,7 +258,7 @@ ActivityDataManager.updateStatus_ProcessingToFailed = function( activity )
 // Used by both 'SyncUp' or 'Download Merge'.
 // 'SyncUp' - Use Temporary Client which gets deleted.
 // 'Download Merge' - Normally, both app client and downloaded client exists.  Only get the activities not already exists..
-ActivityDataManager.mergeDownloadedActivities = function( downActivities, appClientActivities, appClient, processingInfo )
+ActivityDataManager.mergeDownloadedActivities = function( downActivities, appClientActivities, appClient, processingInfo, downloadedData )
 {
     var newActivities = [];
 
@@ -266,14 +266,30 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
     {
         try
         {
+            // 'syncDown' - NEW ACTIVITY - only add new ones with passed 'processingInfo' ('download')
+            // 'syncUp' - NEW ACTIVITY - same as above ('synced')
+            // 'syncUp' - EXISTING ACTIVITY - override the status + history..
+
             // 'appClientActivities' is the matching client (by downloaded client id)'s activities
             // If the matching app client does not already hold the same activity (by id), proceed with ADD!!
             var appClientActivity = Util.getFromList( appClientActivities, dwActivity.id, "id" );
+
+            // New Activity Case
             if ( !appClientActivity )
             {
                 ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
 
                 newActivities.push( dwActivity );                
+            }
+            else
+            {
+                // Existing Activity Case - On syncUp activity Id matching case, override it.
+                if ( downloadedData.syncUpActivityId && dwActivity.id === downloadedData.syncUpActivityId )
+                {
+                    // This 'processingInfo' is already has 'history' of previous activity..
+                    ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
+                    newActivities.push( dwActivity );
+                }
             }
         }
         catch( errMsg )
