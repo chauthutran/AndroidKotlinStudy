@@ -600,7 +600,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 {
                     var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
 
-
                     // NOTE: We need to add app timeout, from 'request'... and throw error...
                     WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
                     {
@@ -719,6 +718,13 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 ClientDataManager.setActivityDateLocal_client( clientJson );
 
 
+                // If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+                if ( processingInfo.fixActivityCase )
+                {
+                    delete processingInfo.fixActivityCase;
+                    me.deleteFixActivityRecord( activityId );
+                }
+
                 // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
                 // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
                 // But have the merge take care of this!!
@@ -791,6 +797,26 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if ( callBack ) callBack( operationSuccess, errMsg );
         } 
     };
+
+
+    me.deleteFixActivityRecord = function( activityId )
+	{
+        try
+        {
+            //if ( fixedActivityList && fixedActivityList.length > 0 )
+            var payloadJson = { 'find': { 'activityId': activityId } }; //{ '$in': fixedActivityList } } };
+
+            WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
+            {
+                console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
+            });
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR during ActivityCard.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
+        }
+	};
+
 
 
     // remove this activity from list  (me.activityJson.id ) <-- from common client 

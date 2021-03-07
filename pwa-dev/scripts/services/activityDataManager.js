@@ -384,14 +384,27 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         "payload": undefined
     };
 
-    // 'activity' are not in 'search/capture' structure.  Change it to that structure.
-    var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
-    delete activityJson_Copy.processing;
-    
-    payloadJson.payload = {
-        'searchValues': activityJson.processing.searchValues,
-        'captureValues': activityJson_Copy
-    };
+    if ( activityJson.processing.fixActivityCase ) 
+    {
+        //payloadJson.skipLogDataCheck = true;
+        payloadJson.fixActivityCase = true;
+        // This uses existing log payload...
+        payloadJson.payload = {
+            'searchValues': {},
+            'captureValues': { "id": activityJson.id }
+        };
+    }
+    else
+    {
+        // 'activity' are not in 'search/capture' structure.  Change it to that structure.
+        var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
+        delete activityJson_Copy.processing;
+        
+        payloadJson.payload = {
+            'searchValues': activityJson.processing.searchValues,
+            'captureValues': activityJson_Copy
+        };
+    }
 
     return payloadJson;
 };
@@ -408,9 +421,9 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
 
     if ( prev_ProcessingInfo )
     {
-        processingInfo = Util.getJsonDeepCopy( prev_ProcessingInfo );        
+        processingInfo = Util.getJsonDeepCopy( prev_ProcessingInfo );
     }
-    else 
+    else
     {
         processingInfo = { 'created': dateStr, 'history': [] };
     }
