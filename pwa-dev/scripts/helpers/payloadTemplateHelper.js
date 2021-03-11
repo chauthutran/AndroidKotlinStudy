@@ -108,7 +108,9 @@ PayloadTemplateHelper.evalPayloads = function( payloadList, INFO, defPayloadTemp
         INFO.payloadJson = payloadJson; 
         
         //Util.traverseEval( payloadJson, INFO, 0, 50 );
-        Util.trvEval_SubTmp( payloadJson, INFO, defPayloadTemplates, 0, 50 );
+        Util.trvEval_payload = payloadJson;
+        Util.trvEval_INSERT_SUBTEMPLATES( payloadJson, INFO, defPayloadTemplates, 0, 50 );
+        Util.trvEval_TEMPLATE( payloadJson, INFO, defPayloadTemplates, 0, 50 );
     }
 };
 

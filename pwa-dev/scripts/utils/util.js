@@ -13,6 +13,11 @@ Util.dateType_DATE = "yyyy-MM-dd";
 Util.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 Util.dateType_DATETIME_s1 = "MMM dd - HH:mm:ss";
 
+Util.KEY_TEMPLATE_ADD = '[TMPL_ADD]';
+Util.KEY_TEMPLATE_ADD_ARR = '[TMPL_ADD_ARR]';
+Util.KEY_CONDITION_CHECK = '[COND_CHECK]';
+Util.KEY_PROPERTY_REMOVE = '[PROP_REMOVE]';
+Util.KEY_OBJECT_REMOVE = '[OBJ_REMOVE]';
 
 // ---------------------------
 // --- Types Check ----
@@ -311,7 +316,7 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 	
 			if ( Util.isTypeArray( prop ) )
 			{
-				var iDepthArr = iDepth++;
+				var iDepthArr = iDepth + 1;
 
 				prop.forEach( ( pArrItem, i ) => 
 				{
@@ -328,7 +333,7 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 			}
 			else if ( Util.isTypeObject( prop ) )
 			{
-				Util.traverseEval( prop, INFO, iDepth++, limit );
+				Util.traverseEval( prop, INFO, iDepth + 1, limit );
 			}
 			else if ( Util.isTypeString( prop ) )
 			{				
@@ -340,43 +345,48 @@ Util.traverseEval = function( obj, INFO, iDepth, limit )
 };	
 
 
-Util.trvEval_SubTmp = function( obj, INFO, defPTemplates, iDepth, limit )
+Util.trvEval_payload = {};
+
+// Traverse and Add all the templates
+Util.trvEval_INSERT_SUBTEMPLATES = function( obj, INFO, defPTemplates, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
-		throw 'Error in Util.trvEval_SubTmp, Traverse depth limit has reached: ' + iDepth;
+		throw 'Error in Util.trvEval_INSERT_SUBTEMPLATES, Traverse depth limit has reached: ' + iDepth;
 	}
 	else
 	{
-		Object.keys( obj ).forEach( key => 
-		{			
-			var prop = obj[key];
+		var keyArr = Object.keys( obj );
 
-			if ( key === 'SUB_TMP' ) 
+		for ( var i = 0; i < keyArr.length; i++) 
+		{
+			var key = keyArr[i];
+			var propVal = obj[key];
+
+			if ( key === Util.KEY_TEMPLATE_ADD ) 
 			{
-				var templateObj = defPTemplates[ prop ];
+				var templateObj = defPTemplates[ propVal ];
 
 				if ( templateObj )
 				{
 					var subTemplate = Util.cloneJson( templateObj );
-					Util.trvEval_SubTmp( subTemplate, INFO, defPTemplates, iDepth, limit );
-
+					// OPTIONALLY, WE CAN LOOK FOR SAME SUBTEMP INSERT ON HERE AS WELL..
+					// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
 					Util.mergeDeep( obj, subTemplate );
 				}
 
 				delete obj[ key ];
 			}
-			else if ( key === 'SUB_TMP_ARR' ) 
+			else if ( key === Util.KEY_TEMPLATE_ADD_ARR ) 
 			{
-				prop.forEach( pArrItem => 
+				propVal.forEach( pArrItem => 
 				{
 					var templateObj = defPTemplates[ pArrItem ];
 
 					if ( templateObj )
 					{
-						var subTemplate = Util.cloneJson( templateObj );
-						Util.trvEval_SubTmp( subTemplate, INFO, defPTemplates, iDepth, limit );
-	
+						var subTemplate = Util.cloneJson( templateObj );	
+						// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
 						Util.mergeDeep( obj, subTemplate );
 					}
 				});
@@ -385,34 +395,98 @@ Util.trvEval_SubTmp = function( obj, INFO, defPTemplates, iDepth, limit )
 			}
 			else
 			{	
-				if ( Util.isTypeArray( prop ) )
+				if ( Util.isTypeArray( propVal ) )
 				{
-					var iDepthArr = iDepth++;
+					var iDepthArr = iDepth + 1;
 	
-					prop.forEach( ( pArrItem, i ) => 
+					propVal.forEach( pArrItem => 
 					{
 						if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
 						{						
-							Util.trvEval_SubTmp( pArrItem, INFO, defPTemplates, iDepthArr, limit );
-						}
-						else if ( Util.isTypeString( pArrItem ) )
-						{		
-							try { prop[i] = eval( pArrItem ); } 
-							catch ( errMsg ) { throw 'Error in Util.trvEval_SubTmp, arrayItem str eval: ' + errMsg; }
+							Util.trvEval_INSERT_SUBTEMPLATES( pArrItem, INFO, defPTemplates, iDepthArr, limit );
 						}
 					});
 				}
-				else if ( Util.isTypeObject( prop ) )
+				else if ( Util.isTypeObject( propVal ) )
 				{
-					Util.trvEval_SubTmp( prop, INFO, defPTemplates, iDepth++, limit );
-				}
-				else if ( Util.isTypeString( prop ) )
-				{				
-					try { obj[key] = eval( prop ); } 
-					catch ( errMsg ) { throw 'Error in Util.trvEval_SubTmp, str eval: ' + errMsg; }
+					Util.trvEval_INSERT_SUBTEMPLATES( propVal, INFO, defPTemplates, iDepth + 1, limit );
 				}
 			}
-		});
+		}
+	}	
+};
+
+
+Util.trvEval_TEMPLATE = function( obj, INFO, defPTemplates, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		throw 'Error in Util.trvEval_TEMPLATE, Traverse depth limit has reached: ' + iDepth;
+	}
+	else
+	{
+		var keyArr = Object.keys( obj );
+
+		for ( var i = 0; i < keyArr.length; i++) 
+		{
+			var key = keyArr[i];
+			var propVal = obj[key];
+
+			if ( key === Util.KEY_CONDITION_CHECK ) 
+			{
+				try
+				{
+					// If condition pass (as 'true'), remove this condition check property and simply move on.
+					// Otherwise, return with this object remove marking..
+					if ( eval( propVal ) === true ) delete obj[key];
+					else {
+						obj[key] = Util.KEY_OBJECT_REMOVE;
+						return Util.KEY_OBJECT_REMOVE;
+					}
+				}
+				catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, Key ConditionCheck: ' + errMsg; }
+			}
+			else
+			{	
+				if ( Util.isTypeArray( propVal ) )
+				{
+					var iDepthArr = iDepth + 1;
+	
+					propVal.forEach( ( pArrItem, p, object ) => 
+					{
+						if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
+						{						
+							Util.trvEval_TEMPLATE( pArrItem, INFO, defPTemplates, iDepthArr, limit );
+						}
+						else if ( Util.isTypeString( pArrItem ) )
+						{		
+							try { propVal[p] = eval( pArrItem ); } 
+							catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, ArrayItem String Eval: ' + errMsg; }
+						}
+					});
+
+					
+					// Due to some unknown issue of removing the item on above loop, use here to remov eit..
+					Util.RemoveFromArrayAll( propVal, Util.KEY_CONDITION_CHECK, Util.KEY_OBJECT_REMOVE );
+				}
+				else if ( Util.isTypeObject( propVal ) )
+				{
+					var returnVal = Util.trvEval_TEMPLATE( propVal, INFO, defPTemplates, iDepth + 1, limit );
+					if ( returnVal === Util.KEY_OBJECT_REMOVE ) delete obj[key];
+				}
+				else if ( Util.isTypeString( propVal ) )
+				{		
+					try
+					{
+						var evalResult = eval( propVal );
+						if ( evalResult === Util.KEY_PROPERTY_REMOVE ) delete obj[key];
+						else if ( evalResult === Util.KEY_OBJECT_REMOVE ) return Util.KEY_OBJECT_REMOVE;
+						else obj[key] = evalResult;
+					}
+					catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, String Eval: ' + errMsg; }
+				}
+			}
+		}
 	}
 };	
 
@@ -436,7 +510,7 @@ Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )
 
 			if ( Util.isTypeArray( prop ) )
 			{
-				var iDepthArr = iDepth++;
+				var iDepthArr = iDepth + 1;
 
 				prop.forEach( ( pArrItem, i ) => 
 				{
@@ -449,7 +523,7 @@ Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )
 			}
 			else if ( Util.isTypeObject( prop ) )
 			{
-				Util.jsonKeysReplace_Ref( prop, keyListSet, iDepth++, limit );
+				Util.jsonKeysReplace_Ref( prop, keyListSet, iDepth + 1, limit );
 			}				
 			else //if ( Util.isTypeString( prop ) )
 			{
@@ -1009,6 +1083,16 @@ Util.RemoveFromArray = function( list, propertyName, value )
 	return index;
 };
 
+
+Util.RemoveFromArrayAll = function( list, propertyName, value )
+{
+	list.forEach( function(item, index, object) {
+		var prop = item[propertyName];
+		if ( prop && prop === value ) object.splice(index, 1);
+	});
+};
+
+
 Util.getFromListByName = function( list, name )
 {
 	var item;
@@ -1243,27 +1327,6 @@ Util.copyProperties = function( source, dest )
 	{
 		dest[ key ] = source[ key ];
 	}
-};
-
-Util.RemoveFromArray = function( list, propertyName, value )
-{
-	var index;
-
-	$.each( list, function( i, item )
-	{
-		if ( item[ propertyName ] == value ) 
-		{
-			index = i;
-			return false;
-		}
-	});
-
-	if ( index !== undefined ) 
-	{
-		list.splice( index, 1 );
-	}
-
-	return index;
 };
 
 Util.getObjPropertyCount = function( list )
