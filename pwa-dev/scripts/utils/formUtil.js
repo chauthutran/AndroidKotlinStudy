@@ -106,10 +106,29 @@ FormUtil.getFormCtrlDataValue = function( inputDataValueTag )
 	return inputDataValueTag.val();
 };
 
+FormUtil.getFormCtrlDisplayValue = function( inputDataValueTag )
+{
+	var inputDisplayValueTag = inputDataValueTag.closest( '.fieldBlock' ).find( '.displayValue' );
+
+	if ( inputDisplayValueTag !== undefined && inputDisplayValueTag[ 0 ] !== inputDataValueTag[ 0 ] )
+	{
+		return inputDisplayValueTag.val();
+	}
+	else
+	{
+		return inputDataValueTag.val();
+	}
+};
 
 FormUtil.setFormCtrlDataValue = function( inputDataValueTag, value )
 {
 	inputDataValueTag.val( value );
+};
+
+FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
+{
+	var inputDisplayValueTag = inputDataValueTag.closest( '.fieldBlock' ).find( '.displayValue' );
+	if ( inputDisplayValueTag !== undefined && inputDisplayValueTag[ 0 ] !== inputDataValueTag[ 0 ] ) inputDisplayValueTag.val( value );
 };
 
 // ==============================================
