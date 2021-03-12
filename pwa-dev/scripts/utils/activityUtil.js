@@ -242,9 +242,27 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 		// if dataGroup exists, put it ..
 		if ( dataGroup ) 
 		{
-			if ( !formsJsonGroup[ dataGroup ] ) formsJsonGroup[ dataGroup ] = {};
+			// if multiple dataGroups are listed
+			if ( dataGroup.indexOf( ',' ) > 0 )
+			{
+				var arrDataGroup = dataGroup.split( ',' );
 
-			formsJsonGroup[ dataGroup ][ nameVal ] = val;
+				for ( var g = 0; g < arrDataGroup.length; g++ )
+				{
+					var thisDataGroup = arrDataGroup[ g ];
+
+					if ( !formsJsonGroup[ thisDataGroup ] ) formsJsonGroup[ thisDataGroup ] = {};
+
+					formsJsonGroup[ thisDataGroup ][ nameVal ] = val;
+				}
+			}
+			else
+			{
+				if ( !formsJsonGroup[ dataGroup ] ) formsJsonGroup[ dataGroup ] = {};
+
+				formsJsonGroup[ dataGroup ][ nameVal ] = val;
+			}
+
 		}
 	}
 	catch( errMsg )
