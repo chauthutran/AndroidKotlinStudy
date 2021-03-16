@@ -620,6 +620,8 @@ function Login( cwsRenderObj )
 			{
 				if ( resultSuccess )
 				{
+					me.setModifiedOUAttrList( loginData );
+
 					// Save 'loginData' in localStorage and put it on session memory
 					SessionManager.saveUserSessionToStorage( loginData, userName, password );
 					SessionManager.loadDataInSession( userName, password, loginData );
@@ -707,6 +709,31 @@ function Login( cwsRenderObj )
 
 		if ( callBack ) callBack( resultSuccess );
 	};
+
+
+	me.setModifiedOUAttrList = function( loginData )
+	{
+		try
+		{
+			var ouAttrVals = {};
+
+			if ( loginData.orgUnitData.orgUnit && loginData.orgUnitData.orgUnit.attributeValuesJson )
+			{
+				var attrJson = loginData.orgUnitData.orgUnit.attributeValuesJson;
+
+				Object.keys( attrJson ).forEach( key => {
+					ouAttrVals[key] = attrJson[key].value;
+				});
+			}
+
+			loginData.orgUnitData.ouAttrVals = ouAttrVals;
+		}
+		catch( errMsg )
+		{
+			console.customLog( 'ERROR in login.setModifiedOUAttrList, errMsg: ' + errMsg );
+		}
+	};
+
 
 	// ----------------------------------------------
 	
