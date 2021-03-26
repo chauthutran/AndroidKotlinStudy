@@ -298,6 +298,7 @@ FormUtil.mdDateTimePicker = function( e, entryTag, formatDate, yearRange )
 };
 
 
+// NOTE: Only used on statistics..
 FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange ) 
 {
 	var entryTagVal = entryTag.val();
@@ -327,6 +328,78 @@ FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange )
 		//FormUtil.dispatchOnChangeEvent( entryTag );
 	});
 
+};
+
+
+FormUtil.mdDateTimePicker_New = function( e, entryTag, formatDate, formDefJson ) // yearRange
+{
+	e.preventDefault();			
+	if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
+
+	var entryTagVal = entryTag.val();
+	var jsEntryTag = entryTag[0];
+
+	
+	var datePastFuture = FormUtil.getDatePastFuture( formDefJson );
+	//if ( !yearRange ) yearRange = { 'from': -100, 'to': 1 };
+	if ( !formatDate ) formatDate = 'YYYY';
+
+
+	var mdDTObj = new mdDateTimePicker.default({
+		type: 'date'
+		,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
+		,past: datePastFuture.past //( yearRange ) ? moment().add( yearRange.from, 'years') : undefined // Date min 
+		,future: datePastFuture.future // ( yearRange ) ? moment().add( yearRange.to, 'years') : undefined  // Date max
+		,orientation: 'PORTRAIT'
+		,autoClose2: true
+	} );
+
+	mdDTObj.toggle();
+
+	mdDTObj.trigger = jsEntryTag;
+	jsEntryTag.addEventListener( 'onOk', function() 
+	{
+		//var inpDate = $( '[name=' + formItemJson.id + ']' );
+		entryTag.val( mdDTObj.time.format( formatDate ) );
+		FormUtil.dispatchOnChangeEvent( entryTag );
+	});
+
+};
+
+
+FormUtil.getDatePastFuture = function( formDefJson ) 
+{
+	//var datePastFuture = { 'past': undefined, 'future': undefined };
+	var datePastFuture = { 'past': moment().add( -100, 'years'), 'future': moment().add( 1, 'years') }; // Default Year setting..
+
+	try
+	{
+		if ( formDefJson )
+		{
+			if ( formDefJson.dateRange )
+			{
+				// Maybe we should have individual 'type'..
+				//  'from': { 'type': 'year', 'value': '-1' }, 'to':  { 'type': 'day', 'value': '10' }
+				//  { type: 'fix', from: '[-1]-[0]-01', to: '' }
+
+			
+
+			}
+			else if ( formDefJson.yearRange )
+			{
+				var yRange = formDefJson.yearRange;
+	
+				datePastFuture.past = ( yRange.from ) ? moment().add( yRange.from, 'years') : undefined;
+				datePastFuture.future = ( yRange.to ) ? moment().add( yRange.to, 'years') : undefined;
+			}
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'ERROR on FormUtil.getDatePastFuture, errMsg: ' + errMsg );
+	}
+
+	return datePastFuture;
 };
 
 // -----------------------------------
