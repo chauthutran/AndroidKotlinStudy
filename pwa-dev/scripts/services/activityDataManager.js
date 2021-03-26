@@ -147,12 +147,12 @@ ActivityDataManager.removeTempClient_Activity = function( activityId )
 // ---------------------------------------
 // --- Insert Activity
 
-ActivityDataManager.insertActivityToClient = function( activity, client )
+ActivityDataManager.insertActivityToClient = function( activity, client, option )
 {
-    ActivityDataManager.insertActivitiesToClient( [ activity ], client );
+    ActivityDataManager.insertActivitiesToClient( [ activity ], client, option );
 };
 
-ActivityDataManager.insertActivitiesToClient = function( activities, client )
+ActivityDataManager.insertActivitiesToClient = function( activities, client, option )
 {
     for ( var i = 0; i < activities.length; i++ )
     {
@@ -160,7 +160,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client )
 
         client.activities.push( activity );
 
-        ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client );
+        ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client, option );
     }
 };
 
@@ -186,7 +186,7 @@ ActivityDataManager.regenActivityList_NIndexes = function()
 };
 
 
-ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client )
+ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client, option )
 {
     // Check if the same activity id exists in the '_acitivtyList'.  If so, remove it
     var activityId = activity.id;
@@ -201,7 +201,12 @@ ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( a
 
 
         // TODO: Might use 'unshift' to add to top?
-        ActivityDataManager._activityList.push( activity );
+        if ( option && option.addToTop ) {
+            ActivityDataManager._activityList.unshift( activity );
+        }
+        else {
+            ActivityDataManager._activityList.push( activity );
+        }
         ActivityDataManager._activityToClient[ activityId ] = client;
     }
     else 
@@ -359,7 +364,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, formsJsonAct
 
         var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
     
-        ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient );
+        ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient, { 'addToTop': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( function() {
             if ( callBack ) callBack( activityJson );    
