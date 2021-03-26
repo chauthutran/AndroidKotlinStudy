@@ -381,9 +381,10 @@ FormUtil.getDatePastFuture = function( formDefJson )
 				// Maybe we should have individual 'type'..
 				//  'from': { 'type': 'year', 'value': '-1' }, 'to':  { 'type': 'day', 'value': '10' }
 				//  { type: 'fix', from: '[-1]-[0]-01', to: '' }
-
+				//  'from': { 'type': 'eval', 'value': 'moment([2010, 0, 31])' }, 'to':  { 'type': 'eval', 'value': 'moment([2025, 0, 31])' }
 			
-
+				datePastFuture.past = FormUtil.getCustomDate( formDefJson.dateRange.from );
+				datePastFuture.future = FormUtil.getCustomDate( formDefJson.dateRange.to );
 			}
 			else if ( formDefJson.yearRange )
 			{
@@ -400,6 +401,28 @@ FormUtil.getDatePastFuture = function( formDefJson )
 	}
 
 	return datePastFuture;
+};
+
+FormUtil.getCustomDate = function( customDateJson )
+{
+	var customDate = undefined;
+
+	try
+	{
+		if ( customDateJson )
+		{
+			if ( customDateJson.type === 'eval' )
+			{
+				customDate = eval( customDateJson.value );
+			}
+		} 	
+	}
+	catch( errMsg ) 
+	{
+		console.customLog( 'ERROR on FormUtil.getCustomDate, errMsg: ' + errMsg );
+	}
+
+	return customDate;
 };
 
 // -----------------------------------

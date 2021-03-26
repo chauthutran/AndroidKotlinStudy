@@ -492,7 +492,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		tagOfClick.click( function(e) {
 			//FormUtil.mdDateTimePicker( e, entryTag, formatDate, formItemJson.yearRange );
-			FormUtil.mdDateTimePicker( e, me.formDivSecTag.find( '[name=' + formItemJson.id + ']' ), formatDate, formItemJson.yearRange );
+			FormUtil.mdDateTimePicker_New( e, me.formDivSecTag.find( '[name=' + formItemJson.id + ']' ), formatDate, formItemJson );
 		});
 
 		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
