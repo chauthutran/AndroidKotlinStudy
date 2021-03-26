@@ -102,6 +102,26 @@ ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJ
 };
 
 
+// 'payloadDefJson' and 'actionDefJson' could be same or different.
+ActivityUtil.generateFormsJsonData_ByForm = function( formDivSecTag )
+{
+	var formsJson = [];
+
+	formDivSecTag.find( '.dataValue' ).each( function()
+	{		
+		var inputFieldTag = $(this);
+		var displayValueFieldTag = inputFieldTag.parent().find(".displayValue");
+		formsJson.push({ 
+			"name": inputFieldTag.attr("name"), 
+			"value": FormUtil.getTagVal( inputFieldTag ),
+			"displayValue": FormUtil.getTagVal( displayValueFieldTag )
+		});
+	});
+
+	return formsJson;
+};
+
+
 ActivityUtil.mergeFormsJson_ActionDef = function( formsJson, actionDefJson )
 {
 	if ( actionDefJson.formsJsonInsert ) Util.mergeJson( formsJson, actionDefJson.formsJsonInsert );

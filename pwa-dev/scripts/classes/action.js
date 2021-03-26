@@ -104,6 +104,8 @@ function Action( cwsRenderObj, blockObj )
 		// TODO: all the blockDivTag related should be done by 'block' class method
 		try
 		{
+			var blockId = blockDivTag.attr("blockId");
+
 			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
 			// ACTIVITY ADDING
@@ -330,7 +332,7 @@ function Action( cwsRenderObj, blockObj )
 								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 								// Put the composed activity json in list and have 'sync' submit.
-								ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
+								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, function( activityJson )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
@@ -369,7 +371,7 @@ function Action( cwsRenderObj, blockObj )
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 							// Put the composed activity json in list and have 'sync' submit.
-							ActivityDataManager.createNewPayloadActivity( actionUrl, formsJsonActivityPayload, clickActionJson, function( activityJson )
+							ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, function( activityJson )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 		

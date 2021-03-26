@@ -40,10 +40,10 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		me.setInitialData();				
 	}
 
-	me.render = function()
+	me.render = function( areaType )
 	{
 		// TEMP - For now, set 'Nav2' visible reset/hide here.. - should move to 'area'?
-		$( '#activityListViewNav' ).hide();
+		if ( areaType !== 'blockList' ) $( '#activityListViewNav' ).hide();
 		//$( '#pageDiv' ).css( 'height', '' ); // or could do .removeAttr( 'style' )
 
 

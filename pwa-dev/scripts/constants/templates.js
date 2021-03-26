@@ -354,7 +354,11 @@ Templates.activityCardFullScreen = `
     <div class="tab_fs__container">
       <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
         blockid="tab_previewDetails" />
-      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
+      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
+        <button id="editPaylayLoadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
+        <div class="payloadData"></div>
+        <div class="editForm" style="display: none;"></div>
+      </div>
       <div class="tab_fs__container-content" tabButtonId="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
       <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
         <div>Status Change: 

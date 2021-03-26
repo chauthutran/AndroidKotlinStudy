@@ -831,10 +831,15 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		{
 			// Non-Object types value set to inputTag
 
-			// [REMOVED] CheckBox SET  // if ( FormUtil.checkTag_CheckBox( tag ) )    tag.prop( 'checked', ( val === 'true' || val === true ) ); 
-			
+
+			// TODO: NEED TO FIND OUT WHY THIS WAS DISABLED --> PROBABLY WAS IN CONFLICT WITH SOME PARTS 
+			// [REMOVED] CheckBox SET  // RESTORED FOR EDIT FEATURE 
+			if ( FormUtil.checkTag_CheckBox( tag ) ) {
+				tag.prop( 'checked', ( val === 'true' || val === true ) ); 
+				tag.val( val );
+			}
 			// Special eval key type field - '{ ~~~ }' - HAS SOME DATA MANIPULATION FUNCTIONS PATTERN..
-			if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
+			else if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
 			{
 				FormUtil.evalReservedField( tag.closest( 'form' ), tag, val );
 			}
@@ -971,7 +976,15 @@ FormUtil.getTagVal = function( tag )
 
 	if( tag )
 	{
-		val = tag.val();
+        // TODO: ADDED FOR 'EDIT' FEATURE
+		if( FormUtil.checkTag_CheckBox( tag ) )
+		{
+			val = tag.prop( 'checked' ); 
+		}
+		else
+		{
+			val = tag.val();
+		}
 	}
 
 	return val;
