@@ -317,7 +317,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
 // --------------------------------------
 // -- Activity Payload Related Methods
 
-ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson )
+ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData )
 {
     var activityJson = {};
 
@@ -366,9 +366,12 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // ===============================================================
         // TRAN NEW 2: SHOULD ADD TO processing!!!
         // Form Information
-        activityJson.processing.form = {};
-        activityJson.processing.form.id = blockId;
-        activityJson.processing.form.data = ActivityUtil.generateFormsJsonData_ByForm( $("[blockId='" + blockId + "']" ) );
+        activityJson.processing.form = { 
+            'blockId': blockId
+            ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
+            ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
+            ,'data': ActivityUtil.generateFormsJsonData_ByForm( $("[blockId='" + blockId + "']" ) ) 
+        };
     }
 
     return activityJson;
@@ -376,11 +379,11 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
 
 // Add new activity with client generation
-ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, callBack )
+ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData, callBack )
 {
     try
     {
-        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson );
+        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
         var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
     

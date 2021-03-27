@@ -69,7 +69,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 me.setUpReRenderByClick( activityRerenderTag );
 
                 // Set up "editPaylayLoadBtn"
-                me.setUpEditPayload( activityEditPaylayLoadBtnTag );
+                me.setUpEditPayload( activityEditPaylayLoadBtnTag, activityJson );
             }
             catch( errMsg )
             {
@@ -119,87 +119,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             e.stopPropagation();
             me.showFullPreview( activityId, activityContainerTag );            
         });
-
-    }
-
-    me.setUpEditPayload = function( activityEditPaylayLoadBtnTag )
-    {
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-
-        var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-        var editReadyStatus = ( SyncManagerNew.isSyncReadyStatus( statusVal ) || statusVal === Constants.status_error );
-
-
-        if ( editReadyStatus && activityJson.processing.form )
-        {   
-            activityEditPaylayLoadBtnTag.show();
-
-            activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
-            {
-                var activityJson = ActivityDataManager.getActivityById( activityId );
-                var blockJson;
-
-                if( activityJson && activityJson.processing.form )
-                {
-                    blockJson = FormUtil.getObjFromDefinition( activityJson.processing.form.id, ConfigManager.getConfigJson().definitionBlocks );
-                } 
-
-                if( blockJson )
-                {
-                    var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
-                    var payloadTag = activityCardDivTag.find(".payloadData");                    
-                    var editFormTag = activityCardDivTag.find(".editForm");                    
-                    
-                    activityEditPaylayLoadBtnTag.hide();
-                    payloadTag.hide();
-                    editFormTag.show();
-
-                    var newBlockObj = new Block( me.cwsRenderObj, blockJson, activityJson.processing.form.id, editFormTag, {}, undefined, undefined );
-                    newBlockObj.render( 'blockList' );
-
-                    if ( activityJson )
-                    {
-                        // Populate data in the form
-                        var formTag = $("[blockId='" + activityJson.processing.form.id + "']");
-
-                        // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
-                        var data = activityJson.processing.form.data;
-
-                        if ( data )
-                        {
-                            for( var i in data )
-                            {
-                                var fieldName = data[i].name;
-                                var value = data[i].value;
-                                var displayValue = data[i].displayValue;
-    
-                                var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
-                                FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
-                                FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
-    
-                                FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
-                                divFieldTag.find(".dataValue").change();
-                            }    
-                        }
-                    }
-                    // else
-                    // {
-                    //     FormUtil.block_payloadConfig = ''; // ??
-                    // }
-
-                    formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
-                }
-                else
-                {
-                    alert("Cannot find block with id '" + activityJson.processing.form.id + "'");
-                }
-                        
-            });
-        }
-        else activityEditPaylayLoadBtnTag.hide();
-
     };
-                
+
+    
     me.setupSyncBtn = function( activityCardDivTag, activityJson, detailViewCase )
     {
         var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
@@ -1043,6 +965,90 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
     
     
+    // =============================================
+	// === Activity 'EDIT' Form - Related Methods ========================
+
+    me.setUpEditPayload = function( activityEditPaylayLoadBtnTag, activityJson )
+    {
+        try
+        {
+            if( activityJson )
+            {
+                var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+                var editReadyStatus = ( SyncManagerNew.isSyncReadyStatus( statusVal ) || statusVal === Constants.status_error );
+        
+                if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
+                {
+                    activityEditPaylayLoadBtnTag.show();
+                    var editForm = activityJson.processing.form;
+        
+                    activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
+                    {
+                        var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
+        
+                        if( blockJson )
+                        {
+                            var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
+                            var payloadTag = activityCardDivTag.find(".payloadData");                    
+                            var editFormTag = activityCardDivTag.find(".editForm");                    
+                            
+                            activityEditPaylayLoadBtnTag.hide();
+                            payloadTag.hide();
+                            editFormTag.show();
+
+                            var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
+
+                            var newBlockObj = new Block( me.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
+                            newBlockObj.render( 'blockList' );
+
+                            if ( activityJson )
+                            {
+                                // Populate data in the form
+                                var formTag = $("[blockId='" + editForm.blockId + "']");
+
+                                // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
+                                var data = editForm.data;
+
+                                if ( data )
+                                {
+                                    for( var i in data )
+                                    {
+                                        var fieldName = data[i].name;
+                                        var value = data[i].value;
+                                        var displayValue = data[i].displayValue;
+            
+                                        var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
+                                        FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
+                                        FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
+            
+                                        FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
+                                        divFieldTag.find(".dataValue").change();
+                                    }    
+                                }
+                            }
+                            // else
+                            // {
+                            //     FormUtil.block_payloadConfig = ''; // ??
+                            // }
+
+                            formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
+                        }
+                        else
+                        {
+                            alert("Cannot find block with id '" + editForm.blockId + "'");
+                        }
+                        
+                    });
+                }
+                else activityEditPaylayLoadBtnTag.hide();    
+            }
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in ActivityCard.setUpEditPayload, errMsg: ' + errMsg );
+        }
+    };
+          
     // =============================================
 	// === Other Supporting METHODS ========================
 

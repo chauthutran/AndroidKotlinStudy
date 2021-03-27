@@ -281,6 +281,10 @@ function BlockButton( cwsRenderObj, blockObj )
 								//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
 								ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
 
+								// NOTE: buttons normally do not need to get passedData unless we want to pass something on action..
+								// If the button has action that does queueActivity, we would need current block's show/hideCase in passedData.
+								if ( !passedData ) passedData = me.blockObj.passedData;
+
 								me.actionObj.handleClickActions( btnTag, btnJson.onClick, me.blockObj.parentTag, blockDivTag, formDivSecTag, passedData );
 							}
 						}	

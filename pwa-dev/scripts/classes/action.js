@@ -185,18 +185,6 @@ function Action( cwsRenderObj, blockObj )
 						// REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
 						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
 						newBlockObj.render();
-
-						/*if ( clickActionJson.payloadConfig )
-						{
-							// TODO: REMOVE <-- FormUtil.block_payloadConfig  <--- Passed in on new Block( --- clickActionJson )
-							FormUtil.block_payloadConfig = clickActionJson.payloadConfig;
-							// NOT SURE IF THIS IS PROPER PLACE..
-							FormUtil.setPayloadConfig( newBlockObj, clickActionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
-						}
-						else
-						{
-							FormUtil.block_payloadConfig = '';
-						}*/
 					}
 	
 					afterActionFunc( true );
@@ -332,7 +320,7 @@ function Action( cwsRenderObj, blockObj )
 								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 								// Put the composed activity json in list and have 'sync' submit.
-								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, function( activityJson )
+								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
 								{
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
@@ -371,7 +359,7 @@ function Action( cwsRenderObj, blockObj )
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 							// Put the composed activity json in list and have 'sync' submit.
-							ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, function( activityJson )
+							ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
 							{
 								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 		
