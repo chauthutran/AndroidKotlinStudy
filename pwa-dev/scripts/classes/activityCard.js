@@ -762,38 +762,49 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         else
         {
-            var errMsg = '';
+            var errMsg = 'Error Msg: ';
             var errStatusCode = 400;
+            var newStatus = Constants.status_failed;
 
-            try
+            if ( responseJson )
             {
-                if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
-
-                if ( responseJson.result )
-                {
-                    if ( responseJson.result.operation ) errMsg += ' operation: ' + responseJson.result.operation;
-                    if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData ); 
-                }
-                else if ( responseJson.errMsg ) 
-                {
-                    errMsg += responseJson.errMsg;
-                }
-                else
-                {
-                    errMsg += JSON.stringify( responseJson );
-                }
-            } 
-            catch ( errMsgCatched )
-            { 
                 try
                 {
-                    errMsg += JSON.stringify( responseJson );
+                    if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
+    
+                    if ( responseJson.result )
+                    {
+                        if ( responseJson.result.operation ) errMsg += ' operation: ' + responseJson.result.operation;
+                        if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData ); 
+                    }
+                    else if ( responseJson.errMsg ) 
+                    {
+                        errMsg += responseJson.errMsg;
+                    }
+                    else if ( responseJson.report )
+                    {
+                        errMsg += responseJson.report.msg;
+                    }
+                    else
+                    {
+                        errMsg += JSON.stringify( responseJson );
+                    }
+    
+                    // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
+                    //if ( responseJson.subStatus === 'errorStop' ) newStatus = Constants.status_error;
+                } 
+                catch ( errMsgCatched )
+                { 
+                    try
+                    {
+                        errMsg += JSON.stringify( responseJson );
+                    }
+                    catch {}
                 }
-                catch {}
             }
 
             // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
 
             ClientDataManager.saveCurrent_ClientsStore();                                      
