@@ -390,8 +390,8 @@ FormUtil.getDatePastFuture = function( formDefJson )
 			{
 				var yRange = formDefJson.yearRange;
 	
-				datePastFuture.past = ( yRange.from ) ? moment().add( yRange.from, 'years') : undefined;
-				datePastFuture.future = ( yRange.to ) ? moment().add( yRange.to, 'years') : undefined;
+				datePastFuture.past = ( yRange.from !== undefined ) ? moment().add( yRange.from, 'years') : undefined;
+				datePastFuture.future = ( yRange.to !== undefined ) ? moment().add( yRange.to, 'years') : undefined;
 			}
 		}	
 	}
