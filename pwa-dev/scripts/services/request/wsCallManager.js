@@ -18,6 +18,7 @@ WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 // Temp Setting - available check override
 WsCallManager.availableAlways = false;  // Used in ConnManagerNew.serverAvailable();
 WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available check. 
+WsCallManager.actionErr = ''; // For making intentional failure for tesing.
 
 // -------------------------
 
@@ -250,15 +251,10 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     var sourceType = configJson.sourceType;
     var mongoSchemaVersion = configJson.mongoSchemaVersion;
 
-    if ( sourceType )
-    {
-        payloadJson.sourceType = sourceType;
-    }
+    if ( sourceType ) payloadJson.sourceType = sourceType;
+    if ( sourceType === "mongo" && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
 
-    if ( sourceType === "mongo" )
-    {
-        if ( mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
-    }
+    if ( WsCallManager.actionErr ) payloadJson.actionErr = WsCallManager.actionErr;
 
     // OLD: For 'mongo' sourceType, do not need to send userName & password in payload.
     // OLD: For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 

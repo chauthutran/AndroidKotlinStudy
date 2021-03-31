@@ -409,9 +409,10 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
     // We should put this one some place else is better to manager
     var payloadJson = {
         "appVersion": _version,  //ActivityDataManager.wsSubmit_AppVersionStr,
-        "payload": undefined
+        "payload": undefined,
+        "historyData": ActivityDataManager.getHistoryData( activityJson.processing.history )
     };
-
+    
     if ( activityJson.processing.fixActivityCase ) 
     {
         //payloadJson.skipLogDataCheck = true;
@@ -434,9 +435,48 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         };
     }
 
+    // Future Special Cases Flags..
+
     return payloadJson;
 };
 
+ActivityDataManager.getHistoryData = function( history )
+{
+    var historyData = { 'failedCount': 0, 'failed1stDate': '' };
+
+    if ( history )
+    {
+        try
+        {
+            var foundList = Util.getItemsFromList( history, Constants.status_failed, "status" );
+            historyData.failedCount = foundList.length;
+    
+            if ( foundList.length > 0 ) 
+            {
+                var item1st = foundList[0];    
+                if ( item1st.datetime ) historyData.failed1stDate = Util.getUTCDateTimeStr( new Date( item1st.datetime ), 'noZ' );
+            }    
+        }
+        catch ( errMsg )
+        {
+            console.customLog( 'ERROR on ActivityDataManager.getHistoryData, errMsg: ' + errMsg );
+        }
+    }
+
+    return historyData;
+};
+
+
+
+Util.getUTCDateTimeStr = function( dateObj, optionStr )
+{
+	if ( !dateObj ) dateObj = new Date();
+
+	var dtStr = dateObj.toISOString();
+	if ( optionStr === 'noZ' ) dtStr = dtStr.replace( 'Z', '' );
+
+	return dtStr;
+};
 
 // ----------------------------------------------
 // --- Create Activity Processing Info Related
