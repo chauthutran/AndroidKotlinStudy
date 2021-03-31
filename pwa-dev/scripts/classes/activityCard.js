@@ -792,6 +792,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
                     // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
                     //if ( responseJson.subStatus === 'errorStop' ) newStatus = Constants.status_error;
+                    if ( responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
                 } 
                 catch ( errMsgCatched )
                 { 

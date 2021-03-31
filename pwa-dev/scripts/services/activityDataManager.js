@@ -413,7 +413,6 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         "historyData": ActivityDataManager.getHistoryData( activityJson.processing.history )
     };
     
-
     if ( activityJson.processing.fixActivityCase ) 
     {
         //payloadJson.skipLogDataCheck = true;
@@ -436,9 +435,7 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         };
     }
 
-
     // Future Special Cases Flags..
-
 
     return payloadJson;
 };
@@ -451,7 +448,7 @@ ActivityDataManager.getHistoryData = function( history )
     {
         try
         {
-            var foundList = Util.getItemsFromList( history, statusStr, "status" );
+            var foundList = Util.getItemsFromList( history, Constants.status_failed, "status" );
             historyData.failedCount = foundList.length;
     
             if ( foundList.length > 0 ) 
