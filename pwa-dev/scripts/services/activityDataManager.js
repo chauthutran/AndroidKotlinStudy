@@ -692,7 +692,6 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     return dataJson;
 };
 
-
 ActivityDataManager.setActivityDateLocal = function( activityJson )
 {
     try
@@ -709,6 +708,79 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     }
 };
 
+// --------------------------------------------
+// --- Duplicate Voucher Code Check
+
+// for each activities that is voucher..
+// trans.forEach( trans ) {
+// [ 'v_iss', 'v_rdx', 'v_exp' ].indexOf( trans )
+// check against  existing activities?  or simply check against clientDetails?  'voucherCode' or 'voucherCodes' check?
+
+// NOTE: ALSO, CREATE CLIENT.CLIENTDETAILS SEARCH FOR VOUCHER..  
+
+
+// ActivityDataManager.getActivitiesByVoucherCode( voucherCode, opt_TransType, opt_bGetOnlyOnce );
+// var matchActivities = ActivityDataManager.getActivitiesByVoucherCode( voucherCode, 'v_iss', true );
+// if ( matchActivities.length > 0 )
+
+ActivityDataManager.getActivitiesByVoucherCode = function( voucherCode, opt_TransType, opt_bGetOnlyOnce )
+{
+    var matchActivities = [];
+
+    var activityList = ActivityDataManager.getActivityList();
+    
+    for( var i = 0; i < activityList.length; i++ )
+    {
+        var activityJson = activityList[i];
+        var tranList = activityJson.transactions;
+        var matchingTrans;
+
+        if ( Util.isTypeArray( tranList ) )
+        {
+            for( var p = 0; p < tranList.length; p++ )
+            {
+                var tran = tranList[p];                
+                var matchingTrans = ActivityDataManager.checkTransByVoucherCode( tran, voucherCode, opt_TransType );
+                if ( matchingTrans ) break;
+            }   
+        }
+        else if ( Util.isTypeObject( tranList ) )
+        {
+            for ( var tranTypeKey in tranList ) 
+            {
+                var tran = tranList[ tranTypeKey ];
+                var matchingTrans = ActivityDataManager.checkTransByVoucherCode( tran, voucherCode, opt_TransType );
+                if ( matchingTrans ) break;
+            }
+        }
+
+        if ( matchingTrans )
+        {
+            matchActivities.push( activityJson )            
+            if ( opt_bGetOnlyOnce ) break;
+        }
+    }
+
+    return matchActivities;
+};
+
+ActivityDataManager.checkTransByVoucherCode = function( tran, voucherCode, opt_TransType )
+{
+    var matchingTrans;
+
+    if ( tran.clientDetails && tran.clientDetails.voucherCode === voucherCode )
+    {
+        if ( opt_TransType )
+        {
+            // Match found - with transType
+            if ( tran.type === opt_TransType ) matchingTrans = tran;
+        }
+        // Match found - without transType
+        else matchingTrans = tran;
+    }   
+
+    return matchingTrans;
+};
 // --------------------------------------------
 // --- Sync & ActivityCard Related Metods
 

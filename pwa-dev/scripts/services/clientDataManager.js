@@ -60,6 +60,18 @@ ClientDataManager.getClientByActivityId = function( activityId )
     return client;
 };
 
+ClientDataManager.getClientByActivity = function( activity )
+{
+    var client;
+
+    if ( activity && activity.id && ActivityDataManager._activityToClient[ activity.id ] )
+    {
+        client = ActivityDataManager._activityToClient[ activity.id ];
+    }
+
+    return client;
+};
+
 // ----- Insert Client ----------------
 
 ClientDataManager.insertClient = function( client )
@@ -330,6 +342,22 @@ ClientDataManager.getDateStr_LastUpdated = function( clientJson )
     }
 
     return dateStr;
+};
+
+
+// ===============================================
+// === Others ====
+
+ClientDataManager.getClientsByVoucherCode = function( voucherCode, opt_TransType, opt_bGetOnlyOnce )
+{
+    var clients = [];
+    var matchActivities = ActivityDataManager.getActivitiesByVoucherCode( voucherCode, opt_TransType, opt_bGetOnlyOnce );
+
+    matchActivities.forEach( activity => {
+        clients.push( ClientDataManager.getClientByActivity( activity ) );
+    });
+
+    return clients;
 };
 
 
