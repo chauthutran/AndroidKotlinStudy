@@ -34,7 +34,7 @@ MsgManager.initialSetup = function()
 
     MsgManager.btnMsgAreaCloseTag.click( function()
     {
-        MsgManager.msgAreaClear( 'fast' );
+        MsgManager.msgAreaClear_Alt( 'fast' );
         MsgManager.divProgressAreaTag.empty();
     });
 
@@ -44,20 +44,25 @@ MsgManager.initialSetup = function()
         MsgManager._autoHide = dcdConfig.settings.message.autoHide;
         MsgManager._autoHideDelay = dcdConfig.settings.message.autoHideTime;
     }    
-}
+};
 
 
 MsgManager.msgAreaShow = function( msg, type )
 {
     var colorStr = ( type === 'ERROR' ) ? 'notifRed' : 'notifDark';
-
     MsgManager.notificationMessage( msg, colorStr, undefined, '', 'right', 'top' );
-}
+};
 
-MsgManager.msgAreaClear = function( speed )
+MsgManager.msgAreaClearAll = function()
+{
+    $( '.notifMsg' ).remove();
+};
+
+MsgManager.msgAreaClear_Alt = function( speed )
 {
     if ( speed ) MsgManager.divMsgAreaTag.hide( speed );
     else MsgManager.divMsgAreaTag.hide();
+
     if ( MsgManager.countDownNumerator ) 
     {
         MsgManager.divProgressAreaTag.empty();
@@ -86,7 +91,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     var optStyle = ( disableAutoWidth != undefined ? 'style="max-width:93%;"' : ( screenWidth < 480 ? 'style="width:100%;height:55px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ) ); //93% = 97% - 4% (offsetPosition)
 
     var class_RoundType = ( disableAutoWidth != undefined && disableAutoWidth ) ? 'rounded' : ( ( screenWidth < 480 ) ? '' : 'rounded' );
-    var notifDiv = $( '<div id="notif_' + unqID + '" ' + optStyle + '>' ); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
+    var notifDiv = $( '<div id="notif_' + unqID + '" class="notifMsg" ' + optStyle + '>' ); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
     notifDiv.addClass( [ 'notifBase', cssClasses, class_RoundType, ] );
 
 

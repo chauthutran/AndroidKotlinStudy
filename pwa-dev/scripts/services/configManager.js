@@ -25,6 +25,7 @@ ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
 ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
 ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
 
+ConfigManager.coolDownTime = '90000'; // 90 seconds - default.  Could be updated by country config setting
 
 // -- Temp placeholder for some setting data..
 ConfigManager.staticData = { 
@@ -65,6 +66,9 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
             ConfigManager.applyFilter_UserRole( ConfigManager.configJson
                 , [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
                 // 'definitionActivityListViews'
+
+
+            ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
         }
     }
     catch ( errMsg )
@@ -442,10 +446,10 @@ ConfigManager.getMockResponseJson = function( useMockResponse )
 };
 
 
-ConfigManager.getSyncUpCoolDownTime = function( option )
+ConfigManager.getSyncUpCoolDownTime = function()
 {
-    var coolDownTime = '90000'; // 90 seconds
-
+    var coolDownTime;
+    
     try
     {
         var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncUp.coolDownTime;
@@ -456,12 +460,7 @@ ConfigManager.getSyncUpCoolDownTime = function( option )
         console.customLog( 'ERROR in ConfigManager.getSyncUpCoolDownTime, errMsg: ' + errMsg );
     }
 
-    if ( option )
-    {
-        if ( option === 'sec' ) coolDownTime = UtilDate.getSecFromMiliSec( coolDownTime );
-    }
-
-    return coolDownTime;
+    return ( coolDownTime ) ? coolDownTime : ConfigManager.coolDownTime;
 };
 
 

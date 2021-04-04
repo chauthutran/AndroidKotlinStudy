@@ -250,6 +250,9 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
+					// Clear All Previous Msgs..
+					MsgManager.msgAreaClearAll();
+
 					if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
 					{
 						AppModeSwitchPrompt.showInvalidNetworkMode_Dialog( ConnManagerNew.statusInfo.appMode, cwsRenderObj );
@@ -295,6 +298,9 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
+					// Clear All Previous Msgs..
+					MsgManager.msgAreaClearAll();
+
 					//var btnTag = $( this );
 					var blockDivTag = btnTag.closest( 'div.block' );
 					var itemBlockTag = btnTag.closest( '.itemBlock' );
@@ -341,37 +347,6 @@ function BlockButton( cwsRenderObj, blockObj )
 		return ( btnJson.notSupportedMode 
 			&& btnJson.notSupportedMode[ appMode.toLowerCase() ] );
 	}
-
-	/*
-	me.renderBlockTabContent = function( tabContentTag, onClick )
-	{
-		if ( onClick && onClick.length > 0 )
-		{
-			var actionJsonArr = FormUtil.convertNamedJsonArr( onClick, ConfigManager.getConfigJson().definitionActions );
-			var actionJson = Util.getFromList( actionJsonArr, 'openBlock', 'actionType' );
-
-			if ( actionJson && actionJson.blockId !== undefined )
-			{
-				var blockJson = FormUtil.getObjFromDefinition( actionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
-
-				// Create the block and render it.
-				var newBlockObj = new Block( me.cwsRenderObj, blockJson, actionJson.blockId, tabContentTag, actionJson );
-				newBlockObj.render();
-
-				if ( actionJson.payloadConfig )
-				{
-					FormUtil.block_payloadConfig = actionJson.payloadConfig;
-					FormUtil.setPayloadConfig( newBlockObj, actionJson.payloadConfig, ConfigManager.getConfigJson().definitionForms[ blockJson.form ] );
-				}
-				else
-				{
-					FormUtil.block_payloadConfig = '';
-				}
-
-			}
-		}
-	}
-	*/
 
 	me.getActionCases = function( objClick )
 	{

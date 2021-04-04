@@ -15,7 +15,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.options = ( options ) ? options : {};
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
-    
+    me.coolDownMoveRate = 300; // 100 would move 10 times per sec..
+
     // -----------------------------------
 
     me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
@@ -147,26 +148,29 @@ function ActivityCard( activityId, cwsRenderObj, options )
             var activityJson = ActivityDataManager.getActivityById( activityId );
             var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
+            // TEMP TESTING..
+            //me.syncUpCoolDownTime_disableUI2( activityId, divSyncIconTag, 20000 );
+            
             // NOTE:
             //  - If status is not syncable one, display bottom message
             //  - If offline, display the message about it.
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
-                if ( divSyncIconTag.hasClass( 'syncUpCoolDown' ) )
-                {
-                    ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
-                    {                                   
-                        var leftSec = Util.getSecFromMiliSec( timeRemainMs );
-                        var coolTime = ConfigManager.getSyncUpCoolDownTime( 'sec' );
-                        MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
-                    });
-                }
-                else
+
+                // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
+                ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+                {         
+                    // Display Left Msg <-- Do not need if?                          
+                    var leftSec = Util.getSecFromMiliSec( timeRemainMs );
+                    var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
+                    MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
+
+                }, function() 
                 {
                     // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
                     if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
                     else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
-                }
+                });
             }  
             else 
             {
@@ -183,7 +187,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                         ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
                     }
                 }
-            }           
+            }
         });  
     };
 
@@ -639,12 +643,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         var activityId = me.activityId;
 
+        // Unwrap previous one 1st..
+        me.clearCoolDownWrap( syncIconDivTag );
+
         ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs ) 
         {            
             //var syncIconTag = me.getSyncButtonDivTag( activityId );
-            if ( syncIconDivTag && timeRemainMs > 0 )
+            if ( syncIconDivTag.length > 0 && timeRemainMs > 0 )
             {
-                me.syncUpCoolDownTime_disableUI( activityId, syncIconDivTag, timeRemainMs );
+                // New one can be called here..
+                me.syncUpCoolDownTime_disableUI2( activityId, syncIconDivTag, timeRemainMs );
+                // me.syncUpCoolDownTime_disableUI( activityId, syncIconDivTag, timeRemainMs );
             }
         });
     };
@@ -656,11 +665,81 @@ function ActivityCard( activityId, cwsRenderObj, options )
         syncIconDivTag.addClass( 'syncUpCoolDown' );
 
         var timeOutId = setTimeout( function() {
+
+            // TODO: This sometimes does not work - if the tag is re-rendered..  <-- get class instead..
             syncIconDivTag.removeClass( 'syncUpCoolDown' );
         }, timeRemainMs );
 
         ActivityDataManager.setSyncUpCoolDown_TimeOutId( activityId, timeOutId );
     };
+
+
+    me.syncUpCoolDownTime_disableUI2 = function( activityId, syncIconDivTag, timeRemainMs )
+    {
+        // Set CoolDown UI (Tags) & related valriable for 'interval' to use.
+
+        syncIconDivTag.addClass( 'syncUpCoolDown' );
+        var imgTag = syncIconDivTag.find( 'img' );
+        imgTag.wrap( '<div class="myBar" style="position: absolute; background-color: lightGray;"></div>' );
+
+        var myBarTag = syncIconDivTag.find( '.myBar' );        
+        var fullWidthSize = syncIconDivTag.width();
+        var coolDownTime = ConfigManager.coolDownTime;
+        
+        myBarTag.width( me.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
+
+
+        // Interval..
+        var intervalId = setInterval( function() 
+        {
+            var myBarTag = syncIconDivTag.find( '.myBar' );
+
+            if ( myBarTag.length === 0 ) 
+            {
+                clearInterval( intervalId );
+                syncIconDivTag.removeClass( 'syncUpCoolDown' );
+            } 
+            else
+            {
+                timeRemainMs -= me.coolDownMoveRate;
+                
+                if ( timeRemainMs <= 0 ) // or check perc..
+                {
+                    clearInterval( intervalId );
+                    me.clearCoolDownWrap( syncIconDivTag ); // imgTag.unwrap();
+                }
+                else 
+                {
+                    myBarTag.width( me.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
+                } 
+            }
+
+        }, me.coolDownMoveRate );  // update refresh rate
+    };
+
+
+    // NOTE: Use Div width changes by time..
+    // http://ww2.cs.fsu.edu/~faizian/cgs3066/resources/Lecture12-Animating%20Elements%20in%20Javascript.pdf
+    me.clearCoolDownWrap = function( syncIconDivTag ) // pass id instead?  
+    {
+        if ( syncIconDivTag.length > 0 )
+        {
+            syncIconDivTag.removeClass( 'syncUpCoolDown' );
+
+            var imgTag = syncIconDivTag.find( 'img' );
+            if ( imgTag.length > 0 && imgTag.parent( '.myBar' ).length > 0 ) imgTag.unwrap();
+        }
+    };
+
+
+    me.getPercentageWidth = function( timeRemainMs, coolDownTime, fullWidthSize )
+    {
+        var perc = ( timeRemainMs / coolDownTime );
+        var width = ( fullWidthSize * perc ).toFixed( 1 );
+        //console.log( 'width: ' + width + ', timeRemainMs: ' + timeRemainMs );
+        return width;
+    };
+
 
     // ----------------------------------------------
 

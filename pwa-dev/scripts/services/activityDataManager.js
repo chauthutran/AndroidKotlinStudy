@@ -34,6 +34,7 @@ ActivityDataManager.jsonSignature_Mongo = {
 // - ActivityCoolTime Variables
 ActivityDataManager.activitiesLastSyncedInfo = {};  // "activityId": 'lastSyncDateTime' }, ...
 ActivityDataManager.syncUpCoolDownTimeOuts = {};
+ActivityDataManager.syncUpCoolDownList = {};
 
 // ===================================================
 // === MAIN FEATURES =============
@@ -777,7 +778,14 @@ ActivityDataManager.getActivityLastSyncedUp = function( activityId )
     return ActivityDataManager.activitiesLastSyncedInfo[ activityId ];
 };
 
+ActivityDataManager.clearActivityLastSyncedUp = function( activityId )
+{
+    if ( ActivityDataManager.activitiesLastSyncedInfo[ activityId ] ) delete ActivityDataManager.activitiesLastSyncedInfo[ activityId ];
+};
+
 // ----------------------------------------------
+
+// OBSOLETE - REMOVE THIS..
 
 ActivityDataManager.setSyncUpCoolDown_TimeOutId = function( activityId, timeOutId )
 {
@@ -792,9 +800,10 @@ ActivityDataManager.clearSyncUpCoolDown_TimeOutId = function( activityId )
 
 // ----------------------------------------------
 
-ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBack )
+ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_coolDown, optCallBack_noCoolDown )
 {
 	var coolDownPassed = true;  // 'false' means it is still during/within coolDown time.
+    var timeRemain;
 
 	try
 	{
@@ -802,17 +811,13 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBa
 
 		if ( lastSynced )
 		{
-			var coolDownMs = ConfigManager.getSyncUpCoolDownTime();
-    
-			// 0 ~ 90000 check..
+			var coolDownMs = ConfigManager.coolDownTime;    
 			var timePassedMs = UtilDate.getTimePassedMs( lastSynced );
 
 			if ( timePassedMs > 0 && coolDownMs && timePassedMs <= coolDownMs )
 			{
                 var timeRemain = coolDownMs - timePassedMs;
-
                 coolDownPassed = false;
-                if ( optionalCallBack ) optionalCallBack( timeRemain );
 			}
 		}
 	}
@@ -820,6 +825,20 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optionalCallBa
 	{
 		console.customLog( 'ERROR in ActivityDataManager.checkActivityCoolDown, errMsg: ' + errMsg );
 	}
+
+
+    if ( coolDownPassed ) 
+    {
+        if ( optCallBack_noCoolDown ) 
+        {
+            ActivityDataManager.clearSyncUpCoolDown_TimeOutId( activityId );            
+            optCallBack_noCoolDown();
+        }
+    }
+    else 
+    {
+        if ( timeRemain && optCallBack_coolDown ) optCallBack_coolDown( timeRemain );
+    }
 
 	return coolDownPassed;
 };

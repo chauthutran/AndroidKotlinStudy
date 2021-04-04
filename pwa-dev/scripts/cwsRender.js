@@ -207,80 +207,57 @@ function cwsRender()
 
 	me.renderArea = function( areaId )
 	{
+		// Clear All Previous Msgs..
+		MsgManager.msgAreaClearAll();
 
-		// NOTE: TODO: BELOW LOGIC NEEDS TO BE RE-ORGANIZED..
-		//		-- SWITCHING SHOULD HAPPEN WITH CLEARING OUT OTHER PARTS..
-		//
+		// NOTE: TODO: BELOW LOGIC NEEDS TO BE RE-ORGANIZED..  -- SWITCHING SHOULD HAPPEN WITH CLEARING OUT OTHER PARTS..
 
 		// On each area render, clear out the pageDiv content (which represent area div)..
 		//me.pageDivTag.empty();
 
-		// 
 		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )
 		{
 			me.pageDivTag.empty();
-
 			me.resetVisibility_ViewListDiv();
 		}
-
 
 		// TODO: REVIEW IF WE NEED THIS PART..
 		//FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
-			me.hideAreaRelatedParts();
+		me.hideAreaRelatedParts();
 
-			// added by Greg (2019-02-18) > test track googleAnalytics
-			//ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
+		// added by Greg (2019-02-18) > test track googleAnalytics
+		//ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
-			if (areaId === 'logOut') 
+		if ( areaId === 'logOut' ) me.logOutProcess();
+		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+		else if ( areaId === 'settingsPage') me.settingsApp.render();
+		//else if ( areaId === 'myDetails') { me.myDetails.loadFormData(); }
+		else if ( areaId === 'aboutPage') me.aboutApp.render();
+		else
+		{
+			//me.clearMenuClickStyles();
+
+			me.areaList = ConfigManager.getAllAreaList();
+
+			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
+
+			// TODO: ACTIVITY ADDING
+			ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+
+			// if menu is clicked, reload the block refresh?
+			if ( selectedArea && selectedArea.startBlockName )
 			{
-				me.logOutProcess();
+				if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
+
+				var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
+				startBlockObj.render();  // should been done/rendered automatically?
+
+				// Change start area mark based on last user info.. //me.trackUserLocation( selectedArea );
 			}
-			else if ( areaId === 'statisticsPage') 
-			{
-				me.statisticsObj.render();
-			}
-			else if ( areaId === 'settingsPage')
-			{
-				me.settingsApp.render();
-			}
-			//else if ( areaId === 'myDetails') 
-			//{
-			//	me.myDetails.loadFormData();
-			//}
-			else if ( areaId === 'aboutPage') 
-			{
-				me.aboutApp.render();
-			}
-			else
-			{
-				//me.clearMenuClickStyles();
-
-				me.areaList = ConfigManager.getAllAreaList();
-
-				var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-
-				// TODO: ACTIVITY ADDING
-				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
-
-				// if menu is clicked, reload the block refresh?
-				if ( selectedArea && selectedArea.startBlockName )
-				{
-
-					if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
-
-					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
-					startBlockObj.render();  // should been done/rendered automatically?
-
-					// Change start area mark based on last user info..
-					//me.trackUserLocation( selectedArea );				
-				}
-
-			}
-
+		}
 		//});
-
-	}
+	};
 
 
 	// Area is always an entry location, right?
@@ -293,7 +270,7 @@ function cwsRender()
 		blockObj.render();
 
 		return blockObj;
-	}
+	};
 
 	// --------------------------------------
 	// -- START POINT (FROM LOGIN) METHODS
@@ -303,7 +280,7 @@ function cwsRender()
 		//$( '.Nav1' ).css( 'display', 'flex' );			
 
 		me.startBlockExecute();
-	}
+	};
 
 	me.startBlockExecute = function( initializationInstructions )
 	{
