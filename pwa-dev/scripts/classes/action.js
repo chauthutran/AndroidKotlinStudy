@@ -193,6 +193,11 @@ function Action( cwsRenderObj, blockObj )
 				{				
 					if ( clickActionJson.areaId )
 					{
+						// If 'back button' is visible (which could a layer over existing), click it to close that.
+						// For being able to see..
+						var backBtnTags = $( '.btnBack:visible' );
+						if ( backBtnTags.length > 0 ) backBtnTags.first().click();
+						
 						//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
 						me.cwsRenderObj.renderArea( clickActionJson.areaId );
 					}
@@ -302,51 +307,21 @@ function Action( cwsRenderObj, blockObj )
 	
 					// If statusActions did not get started for some reason, return as this action finished
 				}
-				else if ( clickActionJson.actionType === "sendToWS" )
+				else if ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert !== "true" )
 				{
-					//var inputsJson = ActivityUtil.generateInputJsonByType( clickActionJson, formDivSecTag, formsJsonGroup );
+					// NOTE: Most Case - 'Search'
+
 					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );
 					
-					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+					var formsJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
 
-					// NOTE: 'Activity' payload generate case, we would always use 'redeemListInsert' now..
-					if ( clickActionJson.redeemListInsert === "true" )
-					{						
-						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
-						{ 
-							//var currBlockId = blockDivTag.attr( 'blockId' );
-							if ( passed )
-							{
-								var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+					// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
+					me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
 
-								// Put the composed activity json in list and have 'sync' submit.
-								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
-								{
-									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-			
-									afterActionFunc( true );
-								} );		
-							}
-							else
-							{
-								me.clearBtn_ClickedMark( btnTag );
-								console.customLog( " me.clearBtn_ClickedMark( btnTag ) " );
-							}
-						});
-								
-					}
-					else
-					{
-						var formsJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
-
-						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
-						me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
-
-							afterActionFunc( bResult, optionJson );
-						} );
-					}
+						afterActionFunc( bResult, optionJson );
+					} );
 				}
-				else if ( clickActionJson.actionType === "queueActivity" )
+				else if ( clickActionJson.actionType === "queueActivity" || ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert === "true" ) )
 				{
 					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
 					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
@@ -356,15 +331,31 @@ function Action( cwsRenderObj, blockObj )
 						//var currBlockId = blockDivTag.attr( 'blockId' );
 						if ( passed )
 						{
+							// Generete payload - by template or other structure/format from 'forms'
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
-							// Put the composed activity json in list and have 'sync' submit.
-							ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
+							var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
+
+							var dupVoucherActivityPass = me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId );
+							
+							if ( dupVoucherActivityPass )
 							{
-								dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-		
-								afterActionFunc( true );
-							} );		
+								// Put the composed activity json in list and have 'sync' submit.
+								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
+								{
+									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+			
+									if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+
+									afterActionFunc( true );
+								} );									
+							}
+							else
+							{
+								MsgManager.msgAreaShow( 'Same voucherCode operation already exists.', 'ERROR' );
+								// MsgManager.msgAreaShow( 'Same type of voucher activity already exists.', 'ERROR' );
+								afterActionFunc( false, { 'type': 'dupVoucherAction', 'msg': 'Duplicate voucher action detected' } );								
+							}	
 						}
 						else
 						{
@@ -383,6 +374,53 @@ function Action( cwsRenderObj, blockObj )
 			afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
 		}
 	};
+
+
+	// ----------------------------------------------
+	// ---- Duplicate Voucher Check -----
+
+	// However, if same activityId, it is on edit mode, thus, ignore it..
+	me.checkDuplicate_VoucherTransActivity = function( formsJsonActivityPayload, editModeActivityId )
+	{
+		var dupVoucherActivityPass = true;
+
+		try
+		{
+			var activityJson = formsJsonActivityPayload.payload.captureValues;
+			var formTransList = ActivityDataManager.getTransByTypes( activityJson, [ 'v_iss', 'v_rdx', 'v_exp' ] );
+
+			for ( var i = 0; i < formTransList.length; i++ )
+			{
+				var formTrans = formTransList[ i ];
+
+				if ( formTrans.clientDetails )
+				{
+					var voucherCode = formTrans.clientDetails.voucherCode;
+					var matchActivities = ActivityDataManager.getActivitiesByVoucherCode( voucherCode, formTrans.type ); //, true );
+
+					if ( matchActivities.length > 0 ) 
+					{
+						if ( editModeActivityId && matchActivities.length === 1 && matchActivities[0].id === editModeActivityId )
+						{
+							// If the only one match activity is editMode activity, disregard this.
+						} 
+						else 
+						{				
+							dupVoucherActivityPass = false;
+							break;	
+						}						
+					}
+				}
+			}
+		}
+		catch( errMsg )
+		{
+			console.customLog( "ERROR in action.checkDuplicate_VoucherTransActivity, errMsg: " + errMsg );
+		}	
+
+		return dupVoucherActivityPass;
+	};
+
 
 
 	// ----------------------------------------------

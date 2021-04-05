@@ -331,18 +331,17 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
         // CONVERT 'searchValues'/'captureValues' structure ==> 'captureValues.processing': { 'searchValues' }
         activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
-
         // FAILED TO GENERATE - ERROR MESSAGE..
         if ( !activityJson ) throw 'payload captureValues not exists!';
         
 
         // ===============================================================
         // TRAN NEW 1: If this is an existing activity, then remove the exiting one and add a new one
-        var editModeActivityId = $("[blockId='" + blockId + "']").find( "#editModeActivityId" );
-        if( editModeActivityId.length > 0 )
+        var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
+        if ( editModeActivityId )
         {
-            ActivityDataManager.removeActivityById( editModeActivityId.val() );
-            activityJson.id = editModeActivityId.val();
+            ActivityDataManager.removeActivityById( editModeActivityId );
+            activityJson.id = editModeActivityId;
         }
 
 
@@ -376,6 +375,12 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
     }
 
     return activityJson;
+};
+
+
+ActivityDataManager.getEditModeActivityId = function( blockId )
+{
+    return $("[blockId='" + blockId + "']").find( "#editModeActivityId" ).val();
 };
 
 
@@ -604,14 +609,14 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
 
     try
     {
-        var tranList = activityJson.transactions;
+        var transList = activityJson.transactions;
 
-        if ( tranList )
+        if ( transList )
         {
-            for( var i = 0; i < tranList.length; i++ )
+            for( var i = 0; i < transList.length; i++ )
             {
-                var tranData_dv = tranList[i].dataValues;
-                var tranData_cd = tranList[i].clientDetails;
+                var tranData_dv = transList[i].dataValues;
+                var tranData_cd = transList[i].clientDetails;
     
                 if ( tranData_dv )
                 {
@@ -646,42 +651,22 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
 
     try
     {
-        var tranList = activityJson.transactions;
+        var transList = ActivityDataManager.getTransAsList( activityJson.transactions );
 
-        if ( tranList )
+        // transList could be object type or array list..
+        if ( Util.isTypeArray( transList ) )
         {
-            // TranList could be object type or array list..
-            if ( Util.isTypeArray( tranList ) )
+            transList.forEach( tran => 
             {
-                tranList.forEach( tran => 
+                var tranData_cd = tran[ propName ];
+                if ( tranData_cd )
                 {
-                    var tranData_cd = tran[ propName ];
-                    if ( tranData_cd )
+                    for ( var prop in tranData_cd ) 
                     {
-                        for ( var prop in tranData_cd ) 
-                        {
-                            dataJson[ prop ] = tranData_cd[ prop ];
-                        }
-                    }
-                });    
-            }
-            else if ( Util.isTypeObject( tranList ) )
-            {
-                for ( var tranTypeKey in tranList ) 
-                {
-                    var tran = tranList[ tranTypeKey ];
-
-                    var tranData_cd = tran[ propName ];
-                    if ( tranData_cd )
-                    {
-                        for ( var prop in tranData_cd ) 
-                        {
-                            dataJson[ prop ] = tranData_cd[ prop ];
-                        }
+                        dataJson[ prop ] = tranData_cd[ prop ];
                     }
                 }
-
-            }
+            });    
         }
     }
     catch ( errMsg )
@@ -727,60 +712,92 @@ ActivityDataManager.getActivitiesByVoucherCode = function( voucherCode, opt_Tran
 {
     var matchActivities = [];
 
-    var activityList = ActivityDataManager.getActivityList();
-    
-    for( var i = 0; i < activityList.length; i++ )
+    if ( voucherCode )
     {
-        var activityJson = activityList[i];
-        var tranList = activityJson.transactions;
-        var matchingTrans;
-
-        if ( Util.isTypeArray( tranList ) )
+        var activityList = ActivityDataManager.getActivityList();
+    
+        for( var i = 0; i < activityList.length; i++ )
         {
-            for( var p = 0; p < tranList.length; p++ )
+            var matchingTrans;
+            var activityJson = activityList[i];
+            var transList = ActivityDataManager.getTransAsList( activityJson.transactions );
+    
+            for( var p = 0; p < transList.length; p++ )
             {
-                var tran = tranList[p];                
-                var matchingTrans = ActivityDataManager.checkTransByVoucherCode( tran, voucherCode, opt_TransType );
+                var trans = transList[p];                
+                var matchingTrans = ActivityDataManager.checkTransByVoucherCode( trans, voucherCode, opt_TransType );
                 if ( matchingTrans ) break;
             }   
-        }
-        else if ( Util.isTypeObject( tranList ) )
-        {
-            for ( var tranTypeKey in tranList ) 
+    
+            if ( matchingTrans )
             {
-                var tran = tranList[ tranTypeKey ];
-                var matchingTrans = ActivityDataManager.checkTransByVoucherCode( tran, voucherCode, opt_TransType );
-                if ( matchingTrans ) break;
+                matchActivities.push( activityJson )            
+                if ( opt_bGetOnlyOnce ) break;
             }
-        }
-
-        if ( matchingTrans )
-        {
-            matchActivities.push( activityJson )            
-            if ( opt_bGetOnlyOnce ) break;
-        }
+        }    
     }
 
     return matchActivities;
 };
 
-ActivityDataManager.checkTransByVoucherCode = function( tran, voucherCode, opt_TransType )
+ActivityDataManager.checkTransByVoucherCode = function( trans, voucherCode, opt_TransType )
 {
     var matchingTrans;
 
-    if ( tran.clientDetails && tran.clientDetails.voucherCode === voucherCode )
+    if ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
     {
         if ( opt_TransType )
         {
             // Match found - with transType
-            if ( tran.type === opt_TransType ) matchingTrans = tran;
+            if ( trans.type === opt_TransType ) matchingTrans = trans;
         }
         // Match found - without transType
-        else matchingTrans = tran;
+        else matchingTrans = trans;
     }   
 
     return matchingTrans;
 };
+
+
+ActivityDataManager.getTransByTypes = function( activityJson, typesArr )
+{
+    var transListFound = [];
+
+    if ( activityJson && activityJson.transactions && typesArr )
+    {
+        var transList = ActivityDataManager.getTransAsList( activityJson.transactions );
+
+        transList.forEach( trans => {
+            if ( typesArr.indexOf( trans.type ) >= 0 ) transListFound.push( trans );
+        });
+    }
+    
+    return transListFound;
+};
+
+// Get Transactions (array or object) as array list
+ActivityDataManager.getTransAsList = function( transactions )
+{
+    var transList = [];
+
+    if ( transactions )
+    {
+        if ( Util.isTypeArray( transactions ) ) transList = transactions;
+        else if ( Util.isTypeObject( transactions ) )
+        {
+            for ( var tranTypeKey in transactions ) 
+            {
+                var trans = transactions[ tranTypeKey ];
+                trans.type = tranTypeKey;
+                transList.push( trans );
+            }
+        }    
+    }
+
+    return transList;
+};
+
+
 // --------------------------------------------
 // --- Sync & ActivityCard Related Metods
 

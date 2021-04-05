@@ -24,6 +24,15 @@ MsgManager.reservedMsgBlocks = [];
 
 MsgManager.debugMode = false;
 
+// --------------------------
+
+MsgManager.CLNAME_NotifMsg = 'notifMsg';
+MsgManager.CLNAME_NotifRed = 'notifRed';
+MsgManager.CLNAME_NotifDark = 'notifDark';
+MsgManager.CLNAME_PersistSwitch = 'persistSwitch';
+
+// ============================
+
 MsgManager.initialSetup = function()
 {
     MsgManager.divMsgAreaTag = $( '#divMsgArea' );
@@ -47,15 +56,27 @@ MsgManager.initialSetup = function()
 };
 
 
-MsgManager.msgAreaShow = function( msg, type )
+MsgManager.msgAreaShow = function( msg, type, optClasses )
 {
-    var colorStr = ( type === 'ERROR' ) ? 'notifRed' : 'notifDark';
-    MsgManager.notificationMessage( msg, colorStr, undefined, '', 'right', 'top' );
+    var msgTag;
+
+    try
+    {
+        var colorClass = ( type === 'ERROR' ) ? 'notifRed' : 'notifDark';
+        msgTag = MsgManager.notificationMessage( msg, colorClass, undefined, '', 'right', 'top' );
+        if ( optClasses ) msgTag.addClass( optClasses ); // Use 'persistSwitch' - for persisting between block button click/area close.    
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'ERROR in MsgManager.msgAreaShow, errMsg: ' + errMsg );
+    }
+
+    return msgTag;
 };
 
 MsgManager.msgAreaClearAll = function()
 {
-    $( '.notifMsg' ).remove();
+    $( '.notifMsg' ).not( '.' + MsgManager.CLNAME_PersistSwitch ).remove();
 };
 
 MsgManager.msgAreaClear_Alt = function( speed )
@@ -90,9 +111,11 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     var offsetPosition = ( disableAutoWidth != undefined ? ( disableAutoWidth ? '4%' : ( screenWidth < 480 ? '0' : '4%' ) ) : ( screenWidth < 480 ? '0' : '4%' ) );
     var optStyle = ( disableAutoWidth != undefined ? 'style="max-width:93%;"' : ( screenWidth < 480 ? 'style="width:100%;height:55px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"' ) ); //93% = 97% - 4% (offsetPosition)
 
+    // cssClasses <-- We could accept it as a single string class name or array of class names and apply properly..
+
     var class_RoundType = ( disableAutoWidth != undefined && disableAutoWidth ) ? 'rounded' : ( ( screenWidth < 480 ) ? '' : 'rounded' );
     var notifDiv = $( '<div id="notif_' + unqID + '" class="notifMsg" ' + optStyle + '>' ); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
-    notifDiv.addClass( [ 'notifBase', cssClasses, class_RoundType, ] );
+    notifDiv.addClass( [ 'notifBase', cssClasses, class_RoundType ] );
 
 
     $( 'body' ).append( notifDiv )
@@ -133,10 +156,9 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
             if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
 
             $( '#notif_' + unqID ).remove();
-
         });
-
     }
+
 
     if ( disableClose == undefined || disableClose === false )
     {
@@ -155,8 +177,8 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 
         trBody.append ( tdClose );
         tdClose.append ( notifClose );
-
     }
+
 
     // If 'delayHide' is intentionally set ( with some number or '0' for not hide ), set to 'delayTimer..
     if ( delayHide != undefined || delayHide == 0 ) delayTimer = delayHide;
@@ -234,8 +256,8 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
             }
 
         }, (delayTimer / stepCount) );
-
     }
+
 
     if ( delayTimer > 0 )
     {
@@ -271,7 +293,9 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     }
 
     if ( bodyMessage.indexOf( 'term=' ) >=0 ) TranslationManager.translatePage( tdMessage );
-}
+
+    return notifDiv;
+};
 
 
 MsgManager.clearReservedMessage = function( reservedID )

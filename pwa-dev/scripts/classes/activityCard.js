@@ -70,7 +70,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 me.setUpReRenderByClick( activityRerenderTag );
 
                 // Set up "editPaylayLoadBtn"
-                me.setUpEditPayload( activityEditPaylayLoadBtnTag, activityJson );
+                me.setUpEditPayloadLoadBtn( activityEditPaylayLoadBtnTag, activityJson );
             }
             catch( errMsg )
             {
@@ -1059,7 +1059,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     // =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
 
-    me.setUpEditPayload = function( activityEditPaylayLoadBtnTag, activityJson )
+    me.setUpEditPayloadLoadBtn = function( activityEditPaylayLoadBtnTag, activityJson )
     {
         try
         {
@@ -1136,7 +1136,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR in ActivityCard.setUpEditPayload, errMsg: ' + errMsg );
+            console.customLog( 'ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg );
         }
     };
           
