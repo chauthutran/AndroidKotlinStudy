@@ -28,15 +28,14 @@ SyncManagerNew.syncAll_Running_Scheduled = false; // SyncManagerNew.isSyncAll_Ru
 
 // Should be obsolete soon, but use the marker as actiivty processing status as 'processing'
 SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
+SyncManagerNew.coolDownEnabled = true;
 
 // If scheduled syncAll gets delayed, 
 SyncManagerNew.syncAll_conflictShortDelayTime = 10000; // 10 secounds..
 SyncManagerNew.syncAll_conflictShortDelayCall; // 
 
-
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
 SyncManagerNew.subProgressBarId = '#divProgressInfo';
-
 
 // If blockListObj were created and referened..  We could use cwsRenderObj instead..
 SyncManagerNew.blockListObj;  // If
@@ -195,7 +194,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 
             // Cool Down Related Last synced time Set ...
-            ActivityDataManager.setActivityLastSyncedUp( activityId );
+            if ( SyncManagerNew.coolDownEnabled ) ActivityDataManager.setActivityLastSyncedUp( activityId );
 
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );
