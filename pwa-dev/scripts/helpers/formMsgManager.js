@@ -30,20 +30,20 @@ FormMsgManager.block = function( block, msg, cssSetting, tag )
 
 	if ( tag === undefined )
 	{
-		if ( block ) $.blockUI( msgAndStyle );
-		else $.unblockUI();
+		if ( block ) return $.blockUI( msgAndStyle );
+		else return $.unblockUI();
 	}
 	else
 	{
-		if ( block ) tag.block( msgAndStyle );
-		else tag.unblock();
+		if ( block ) return tag.block( msgAndStyle );
+		else return tag.unblock();
 	}
 }
 
-FormMsgManager.appBlockTemplate = function( template )
+FormMsgManager.appBlockTemplate = function( template, cssInput )
 {
     var block;
-    var css;
+    var css = cssInput;
 
     if ( template == 'appLoad' )
     {
@@ -66,14 +66,13 @@ FormMsgManager.appBlockTemplate = function( template )
     {
         block = "<img src='images/care.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
-
     }
     else
     {
         block = template;
     }
 
-    FormMsgManager.appBlock( block, css );
+    return FormMsgManager.appBlock( block, css );
 }
 
 // Actual calling method (to be used) 'appBlock/appUnblock'
@@ -83,7 +82,7 @@ FormMsgManager.appBlock = function( msg, customCss )
 
     var css = ( customCss ?  $.extend(FormMsgManager.cssBlock_Body, customCss) : FormMsgManager.cssBlock_Body );
 
-    FormMsgManager.block( true, msg, css  );
+    return FormMsgManager.block( true, msg, css  );
 };
 
 FormMsgManager.appUnblock = function()

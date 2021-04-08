@@ -166,8 +166,8 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function()
 {
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) {
-
+		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) 
+		{
 			if ( success ) 
 			{  
 				// NOTE: If there was a new merge, for now, alert the user to reload the list?

@@ -218,36 +218,6 @@ Util.cloneJson = function( jsonObj )
 // JSON Deep Copy Related
 // ----------------------------------
 
-
-// ----------------------------------------------------
-
-Util.outputAsStr = function( input )
-{	
-	var output = '';
-
-	if ( input )
-	{	
-		if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) )
-		{
-			try 
-			{ 				
-				output = JSON.stringify( input );
-			} 
-			catch ( err ) 
-			{ 
-				output = 'ErrStringify: ' + input;			
-				console.customLog( 'Error in Util.outputAsStr, err: ' + err ); 
-			}
-		}
-		else
-		{
-			output = input;
-		} 	
-	}
-
-	return output;
-};
-
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods
 
@@ -1872,6 +1842,26 @@ Util.getBaseFromBase = function ( input, from, to )
 	return ConvertBase.custom( input, from, to );
 };
 
+
+Util.getJsonStr = function( json )
+{
+	var output = '';
+
+	try
+	{
+		if ( json )
+		{
+			if ( typeof( json ) === 'object' )  output = JSON.stringify( json );
+			else output = json.toString();
+		}
+	}
+	catch ( errMsg )
+	{
+		output = ' convert to string failed: ' + errMsg;
+	}
+
+	return output;
+};
 
 // Others
 // ----------------------------------

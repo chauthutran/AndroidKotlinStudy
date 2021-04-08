@@ -133,6 +133,54 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
+FormUtil.showErrActivityMsg = function( errActList )
+{
+	var errCount = errActList.length;
+	//var errActList_Copy = Util.cloneJson( errActList );
+
+    var divMainTag = $( '<div></div>' );
+    var msgDivTag = $( '<div><span style="font-weight: bold;">' + errCount + ' New Errored Activities Found.</span></div>' );
+    var btnDivTag = $( '<div style="margin-top: 10px;"><button class="cbutton">OK</button></div>' );
+
+    btnDivTag.click( function() 
+    {				
+        FormMsgManager.appUnblock();
+        
+        var viewListTag = $( '.selViewsListSelector' );
+        if ( viewListTag.is(':visible') )
+        {
+            viewListTag.val( 'showErrored' );
+
+			AppInfoManager.clearNewErrorActivities();
+		
+			setTimeout( function() 
+			{
+				errActList.forEach( errActId => 
+				{
+					$( '.activity[itemid="' + errActId + '"]' ).css( 'background-color', '#ffdede' );
+				});
+			}, 500 );
+        }
+    });
+
+    divMainTag.append( msgDivTag );
+    divMainTag.append( btnDivTag );
+
+
+    // Main FormMsg Setup/Show
+    FormMsgManager.appBlockTemplate( divMainTag );
+
+
+    // Modify FormMsg width
+    var blockMsgTag = $( '.blockMsg' );
+    if ( blockMsgTag.length > 0 )
+    {
+        blockMsgTag.css( 'margin', '-50px 0px 0px -50px' );
+        blockMsgTag.css( 'width', '100px' );    
+    }
+};
+
+
 FormUtil.getObjFromDefinition = function( def, definitions )
 {
 	var objJson = def;  // default is the passed in object/name
@@ -2060,7 +2108,7 @@ FormUtil.displayData_Array = function( titleTag, arr, caseName )
 	
 					tr.append( arrNameTdTag );
 	
-					tr.append( $( '<td class="value" />').html( Util.outputAsStr( arr[ i ].value ) ) );
+					tr.append( $( '<td class="value" />').html( Util.getJsonStr( arr[ i ].value ) ) );
 				}
 
 			}

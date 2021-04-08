@@ -496,6 +496,7 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
     if ( prev_ProcessingInfo )
     {
         processingInfo = Util.getJsonDeepCopy( prev_ProcessingInfo );
+        delete processingInfo.form;
     }
     else
     {
@@ -504,7 +505,7 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
 
     processingInfo.status = statusStr;
     processingInfo.history.push( currInfo );
-    
+
     return processingInfo;
 };
 
@@ -539,6 +540,8 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
             // update the 'created' as mongoDB one if exists..            
             if ( activity.date ) ActivityDataManager.updateProcessing_CreatedDate( activity );
         }
+
+        if ( activity.processing.status === Constants.status_error ) AppInfoManager.addNewErrorActivityId( activity.id );
     }
 };
 

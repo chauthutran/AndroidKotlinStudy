@@ -480,6 +480,8 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
     {
         var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date(), Util.dateType_DATETIME_s1 ) };
         SyncManagerNew.SyncMsg_Get().msgList.push( newMsgJson );
+
+        console.customLog( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
     }
     catch( errMsg )
     {
@@ -497,6 +499,8 @@ SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
         var newSummaryMsgJson = { "msg": summaryMsgStr };
         
         syncMsgJson.summaryList.push( newSummaryMsgJson );
+
+        console.customLog( 'SyncManagerNew.SummarySyncMsg: ' + JSON.stringify( newSummaryMsgJson ) );
     }
     else
     {

@@ -276,28 +276,39 @@ function cwsRender()
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function()
 	{
-		// '.Nav1' show should be moved to cwsRender.startWithConfigLoad from login closeForm()
-		//$( '.Nav1' ).css( 'display', 'flex' );			
-
 		me.startBlockExecute();
 	};
 
 	me.startBlockExecute = function( initializationInstructions )
 	{
 		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
-		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList ){
-
+		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList )
+		{
 			if ( areaList )
 			{
 				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
 	
-				me.populateMenuList( finalAreaList, function( startMenuTag ){
-	
+				me.populateMenuList( finalAreaList, function( startMenuTag )
+				{	
 					if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
+
+					// TODO: CHECK New errored list..
+					me.checkErrActivityList( function( errActList ) 
+					{						
+						FormUtil.showErrActivityMsg( errActList );
+					});
 				});
 			}
 		});
 	};
+
+	me.checkErrActivityList = function( callBack ) 
+	{
+		var errActList = AppInfoManager.getNewErrorActivities();
+		if ( errActList.length > 0 ) callBack( errActList );
+	};
+	
+	//var errActList = AppInfoManager.getNewErrorActivities();
 
 	me.refreshMenuItems = function()
 	{
@@ -317,20 +328,13 @@ function cwsRender()
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
 	me.handleAppMode_Switch = function()
 	{
-		//me.startBlockExecuteAgain();
 		me.refreshMenuItems();
 
 		if ( $( 'div.fab' ) ) 
 		{
 			me.favIcons_Update();
 		}
-
-	}
-
-	me.startBlockExecuteAgain = function()
-	{
-		me.startBlockExecute();
-	}
+	};
 
 	// ----------------------------------
 

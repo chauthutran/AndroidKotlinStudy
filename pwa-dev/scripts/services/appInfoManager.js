@@ -16,6 +16,7 @@ AppInfoManager.KEY_LOCAL_STAGENAME = "localStageName";
 AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
 AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
+AppInfoManager.KEY_NEW_ERROR_ACT = "newErrActivityIds"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
@@ -106,16 +107,10 @@ AppInfoManager.getKeyValue = function( key )
 AppInfoManager.getPropertyValue = function( mainKey, subKey )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.data;
-    
+    var appInfo = AppInfoManager.data;    
     var mainInfo = appInfo[mainKey];
-    if( mainInfo == undefined )
-    {
-        return undefined;
-    }
 
-    // Get Sub data if any
-    return appInfo[mainKey][subKey];
+    return ( mainInfo == undefined ) ? undefined : appInfo[mainKey][subKey];
 };
 
 AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
@@ -214,6 +209,29 @@ AppInfoManager.clearLoginCurrentKeys = function()
     AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS );
 };
 
+// ------------------------------------------------------------------------------------  
+// ----------------  New Error ActivityId List Related..
+
+AppInfoManager.getNewErrorActivities = function()
+{    
+    var errList = AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_NEW_ERROR_ACT );
+    return ( errList ) ? errList : [];
+};
+
+AppInfoManager.addNewErrorActivityId = function( newActivityId )
+{    
+    if ( newActivityId ) 
+    {
+        var errList = AppInfoManager.getNewErrorActivitiesJson();
+        errList.push( newActivityId );
+        AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_NEW_ERROR_ACT, errList );    
+    }
+};
+
+AppInfoManager.clearNewErrorActivities = function()
+{    
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_NEW_ERROR_ACT, [] );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  User info

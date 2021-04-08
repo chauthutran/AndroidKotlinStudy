@@ -33,7 +33,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         var activityCardDivTag = me.getActivityCardDivTag();
 
         // If tag has been created), perform render
-        if ( activityCardDivTag )
+        if ( activityCardDivTag.length > 0 )
         {
             var activityJson = ActivityDataManager.getActivityById( me.activityId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
@@ -559,7 +559,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // If the activityTag is found on the list, highlight it during SyncAll processing.
         var activityDivTag = $( '.activity[itemid="' + me.activityId + '"]' );
 
-        if ( activityDivTag )
+        if ( activityDivTag.length > 0 )
         {
             if ( bHighlight ) activityDivTag.css( 'background-color', me.cardHighlightColor );
             else activityDivTag.css( 'background-color', '' );
@@ -853,20 +853,22 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
                     if ( responseJson.result )
                     {
-                        if ( responseJson.result.operation ) errMsg += ' operation: ' + responseJson.result.operation;
-                        if ( responseJson.result.errData ) errMsg += ' errorData: ' + JSON.stringify( responseJson.result.errData ); 
+                        if ( responseJson.result.operation ) errMsg += ' [result.operation]: ' + responseJson.result.operation;
+                        if ( responseJson.result.errData ) errMsg += ' [result.errData]: ' + Util.getJsonStr( responseJson.result.errData ); 
                     }
                     else if ( responseJson.errMsg ) 
                     {
-                        errMsg += responseJson.errMsg;
+                        errMsg += ' [errMsg]: ' + responseJson.errMsg;
                     }
                     else if ( responseJson.report )
                     {
-                        errMsg += responseJson.report.msg;
+                        errMsg += ' [report.msg]: ' + responseJson.report.msg;
                     }
                     else
                     {
-                        errMsg += JSON.stringify( responseJson );
+                        // TODO: Need to simplify this...
+                        me.cleanUpErrJson( responseJson );
+                        errMsg += ' [else]: ' + Util.getJsonStr( responseJson );
                     }
     
                     // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
@@ -874,12 +876,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     if ( responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
                 } 
                 catch ( errMsgCatched )
-                { 
-                    try
-                    {
-                        errMsg += JSON.stringify( responseJson );
-                    }
-                    catch {}
+                {
+                    errMsg += ' [errMsgCatched]: ' + Util.getJsonStr( responseJson ) + 'errMsgCatched: ' + errMsgCatched;
                 }
             }
 
@@ -914,6 +912,23 @@ function ActivityCard( activityId, cwsRenderObj, options )
 	};
 
 
+    me.cleanUpErrJson = function( responseJson )
+    {
+        try
+        {
+            if ( responseJson.report )
+            {
+                var report = responseJson.report;
+                if ( report.process ) delete report.process;
+                if ( report.log ) delete report.log;
+                if ( report.req ) delete report.req;
+            }
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR during ActivityCard.cleanUpErrJson, errMsg: ' + errMsg );
+        }        
+    };
 
     // remove this activity from list  (me.activityJson.id ) <-- from common client 
     // =============================================
@@ -1051,10 +1066,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         {
             removeActivityBtn.remove();
         }
-        
-        
-    };
-    
+    };    
     
     // =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
@@ -1154,7 +1166,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.updateItem_UI_Button = function( btnTag )
     {
-        if ( btnTag )
+        if ( btnTag.length > 0 )
         {
             if ( btnTag.hasClass( 'clicked' ) )
             { 
