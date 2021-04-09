@@ -149,7 +149,7 @@ FormUtil.showErrActivityMsg = function( errActList )
         var viewListTag = $( '.selViewsListSelector' );
         if ( viewListTag.is(':visible') )
         {
-            viewListTag.val( 'showErrored' );
+            viewListTag.val( 'showErrored' ).change();
 
 			AppInfoManager.clearNewErrorActivities();
 		
