@@ -493,12 +493,9 @@ function Action( cwsRenderObj, blockObj )
 		// METHOD evaluates a multidimensional array (double set of for loops) because data returned from serch results
 		//   is structured like this: records[  [ 1 ], [ 2 ], [ 3 ] ], where records [ 1, 2, 3 ] each contain an array of fields 
 
-		var INFOmethod = actionExpObj.expressionNew || actionExpObj.expression.indexOf( 'INFO.' ) >= 0; /* old method does inline value replacement */
+		//var INFOmethod = actionExpObj.expressionNew || actionExpObj.expression.indexOf( 'INFO.' ) >= 0; /* old method does inline value replacement */
 
-		if ( INFOmethod ) 
-		{
-			me.runNewEvaluateExpression( actionExpObj, jsonList );
-		}
+		if ( actionExpObj.expressionNew ) me.runNewEvaluateExpression( actionExpObj, jsonList );
 		else
 		{
 
@@ -554,49 +551,41 @@ function Action( cwsRenderObj, blockObj )
         return jsonList;
     };
 
+
 	me.runNewEvaluateExpression = function( actionExpObj, jsonList )
 	{
-		var myCondTest = actionExpObj.expressionNew || actionExpObj.expression;
+		//var myCondTest = actionExpObj.expressionNew || actionExpObj.expression;
+		var INFO = InfoDataManager.getINFO();
 
-		for( var i = 0; i < jsonList.length; i++ )
+		// jsonList holds list of (search) result json that mostly represent client + voucher tei attributes & others.
+		jsonList.forEach( resultJson => 
 		{
-			var newObj = {};
-
-			// overwrite existing object
-			InfoDataManager.setINFOdata( 'searchResults', {} );
-
-			// create new payload object { 'name': 'abc', 'age': '123', 'etc': 'etc' }
-			for( var p = 0; p < jsonList[ i ].length; p++ )
+			try
 			{
-				newObj[ jsonList[ i ][ p ].id ] = jsonList[ i ][ p ].value;
+				INFO.searchResults = {};
+
+				// Convert { 'id': '', 'value': '' } format to ==> { id: value }
+				resultJson.forEach( attrJson => {
+					INFO.searchResults[ attrJson.id ] = attrJson.value;
+				});
+	
+				// Main Eval method.
+				var result =  Util.evalTryCatch( actionExpObj.defaultValue, INFO, 'Action.runNewEvaluationExpression' );
+	
+				if ( result === undefined )
+				{
+					result = ( actionExpObj.defaultValue ) ? actionExpObj.defaultValue : '';
+				}
+				
+				resultJson.push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );	
 			}
-
-			InfoDataManager.setINFOdata( 'searchResults', newObj );
-
-			var INFO = InfoDataManager.getINFO();
-
-			// use try+catch? might be useful if we decide to use a defaultValue
-			var result =  eval( myCondTest );
-
-			if ( result === undefined && actionExpObj.defaultValue !== undefined )
+			catch( errMsg )
 			{
-				result =  Util.evalTryCatch( actionExpObj.defaultValue );
+				console.customLog( 'ERROR in Action.runNewEvaluateExpression, errMsg: ' + errMsg );
 			}
-
-			if ( actionExpObj.attribute )
-			{
-				jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
-			}
-			else
-			{
-				jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
-			}
-
-		}
-
-		// empty object after use: remove instead?
-		InfoDataManager.setINFOdata( 'searchResults', {} );
+		});
 	};
+
 
 	me.getUniqueFieldListFromEvaluateExpression = function( actionExpObj )
 	{
