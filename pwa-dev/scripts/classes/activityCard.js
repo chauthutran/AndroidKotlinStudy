@@ -872,8 +872,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     }
     
                     // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
-                    //if ( responseJson.subStatus === 'errorStop' ) newStatus = Constants.status_error;
-                    if ( responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
+                    if ( responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
                 } 
                 catch ( errMsgCatched )
                 {
@@ -1035,8 +1034,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
 
         // 3. sync History
-        $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
-
+        var syncHistoryTag = $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
+        syncHistoryTag.find( '.bt_td_head' ).filter( function( i, tag ) { return ( $( tag ).html() === 'responseCode' ); } ).html( 'response code' );
         
         // Set event for "Remove" button for "Pending" client
         var activity = ActivityDataManager.getActivityById( activityId );

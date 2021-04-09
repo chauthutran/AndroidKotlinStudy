@@ -43,8 +43,11 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.render = function( areaType )
 	{
 		// TEMP - For now, set 'Nav2' visible reset/hide here.. - should move to 'area'?
-		if ( areaType !== 'blockList' ) $( '#activityListViewNav' ).hide();
-		//$( '#pageDiv' ).css( 'height', '' ); // or could do .removeAttr( 'style' )
+		if ( areaType !== 'blockList' ) 
+		{
+			$( '#activityListViewNav' ).hide();
+			//$( '#pageDiv' ).css( 'height', '' ); // or could do .removeAttr( 'style' )
+		}
 
 
 		// Form BlockTag generate/assign
