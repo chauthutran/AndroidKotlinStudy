@@ -490,39 +490,156 @@ function Action( cwsRenderObj, blockObj )
 	
     me.actionEvaluateExpression = function( jsonList, actionExpObj )
     {
-        //for( var a = 0; a < actionTypeObj.length; a++ )
-        {
-            var expString = actionExpObj.expression;
+		// METHOD evaluates a multidimensional array (double set of for loops) because data returned from serch results
+		//   is structured like this: records[  [ 1 ], [ 2 ], [ 3 ] ], where records [ 1, 2, 3 ] each contain an array of fields 
 
-            for( var i = 0; i < jsonList.length; i++ )
-            {
-                var myCondTest = expString.replace( new RegExp( '[$${]', 'g'), "" ).replace( new RegExp( '}', 'g'), "" );
-    
-                for( var p = 0; p < jsonList[ i ].length; p++ )
-                {
-                    var regFind = new RegExp(jsonList[ i ][ p ].id, 'g');
-                    myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
-                }
+		var INFOmethod = actionExpObj.expressionNew || actionExpObj.expression.indexOf( 'INFO.' ) >= 0; /* old method does inline value replacement */
 
-                //console.customLog( expString );
-                //console.customLog( myCondTest );
-    
-                var result =  eval( myCondTest );
+		if ( INFOmethod ) 
+		{
+			me.runNewEvaluateExpression( actionExpObj, jsonList );
+		}
+		else
+		{
 
-                if ( actionExpObj.attribute )
-                {
-                    jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
-                }
-                else
-                {
-                    jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
-                }
-    
-            }
-        }
+			//  1 check passes fieldList test ( fieldComparison.containsExpectedFields )
+			//  2.1 Y > run value replacement + eval
+			//  2.2 N > run defaultValue 
+
+			var myCondTest = actionExpObj.expression;
+			var expectedFieldList = me.getUniqueFieldListFromEvaluateExpression( myCondTest );
+
+			for( var i = 0; i < jsonList.length; i++ )
+			{
+				var fieldComparison = me.compareExpressionFieldList_withDataFieldList( expectedFieldList, jsonList[ i ] );
+
+				if ( fieldComparison.containsExpectedFields )
+				{
+					var expString = myCondTest;
+					var myCondTest = expString.replace( new RegExp( '[$${]', 'g'), "" ).replace( new RegExp( '}', 'g'), "" );
+
+					for( var p = 0; p < jsonList[ i ].length; p++ )
+					{
+						var regFind = new RegExp(jsonList[ i ][ p ].id, 'g');
+						myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
+					}
+
+					var result =  Util.evalTryCatch( myCondTest );
+
+					if ( result === undefined && actionExpObj.defaultValue !== undefined )
+					{
+						result =  Util.evalTryCatch( actionExpObj.defaultValue );
+					}
+
+				}
+				else
+				{
+					// assess whether to run a 'defaultValue' evaluation ...
+					result =  Util.evalTryCatch( actionExpObj.defaultValue );
+				}
+
+				if ( actionExpObj.attribute )
+				{
+					jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
+				}
+				else
+				{
+					jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
+				}
+
+			}
+
+		}
 
         return jsonList;
     };
+
+	me.runNewEvaluateExpression = function( actionExpObj, jsonList )
+	{
+		var myCondTest = actionExpObj.expressionNew || actionExpObj.expression;
+
+		for( var i = 0; i < jsonList.length; i++ )
+		{
+			var newObj = {};
+
+			// overwrite existing object
+			InfoDataManager.setINFOdata( 'searchResults', {} );
+
+			// create new payload object { 'name': 'abc', 'age': '123', 'etc': 'etc' }
+			for( var p = 0; p < jsonList[ i ].length; p++ )
+			{
+				newObj[ jsonList[ i ][ p ].id ] = jsonList[ i ][ p ].value;
+			}
+
+			InfoDataManager.setINFOdata( 'searchResults', newObj );
+
+			var INFO = InfoDataManager.getINFO();
+
+			// use try+catch? might be useful if we decide to use a defaultValue
+			var result =  eval( myCondTest );
+
+			if ( result === undefined && actionExpObj.defaultValue !== undefined )
+			{
+				result =  Util.evalTryCatch( actionExpObj.defaultValue );
+			}
+
+			if ( actionExpObj.attribute )
+			{
+				jsonList[ i ].push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );
+			}
+			else
+			{
+				jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
+			}
+
+		}
+
+		// empty object after use: remove instead?
+		InfoDataManager.setINFOdata( 'searchResults', {} );
+	};
+
+	me.getUniqueFieldListFromEvaluateExpression = function( actionExpObj )
+	{
+		var arrExprList = actionExpObj.split( '$${' );
+		var ret = [];
+
+		for( var i = 1; i < arrExprList.length; i++ )
+		{
+			var arrField = arrExprList[ i ].split( '}' );
+			if ( ! ret.includes( arrField[ 0 ] ) ) ret.push( arrField[ 0 ] );
+		}
+
+		return ret;
+	};
+
+	me.compareExpressionFieldList_withDataFieldList = function( exprFieldsArray, recordArray )
+	{
+		var resultJson = { 'found': [], 'missing': [], 'containsExpectedFields': true };
+
+		for( var i = 0; i < exprFieldsArray.length; i++ )
+		{
+			for( var r = 0; r < recordArray.length; r++ )
+			{
+				// load 'expected' array if not already containing field
+				if ( exprFieldsArray.includes( recordArray[ r ].id ) && ! resultJson.found.includes( recordArray[ r ].id ) ) 
+				{
+					resultJson.found.push( recordArray[ r ].id );
+				}
+			}
+		}
+
+		for( var i = 0; i < exprFieldsArray.length; i++ )
+		{
+			if ( ! resultJson.found.includes( exprFieldsArray[ i ] ) )
+			{
+				resultJson.missing.push( exprFieldsArray[ i ] );
+			}
+		}
+
+		resultJson.containsExpectedFields = ( resultJson.missing.length === 0 );
+
+		return resultJson;
+	};
 
 	// ========================================================
 	
