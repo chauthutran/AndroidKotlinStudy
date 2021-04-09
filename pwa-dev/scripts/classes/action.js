@@ -570,7 +570,7 @@ function Action( cwsRenderObj, blockObj )
 				});
 	
 				// Main Eval method.
-				var result =  Util.evalTryCatch( actionExpObj.defaultValue, INFO, 'Action.runNewEvaluationExpression' );
+				var result =  Util.evalTryCatch( actionExpObj.expressionNew, INFO, 'Action.runNewEvaluationExpression' );
 	
 				if ( result === undefined )
 				{
