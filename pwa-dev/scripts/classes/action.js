@@ -342,7 +342,9 @@ function Action( cwsRenderObj, blockObj )
 							{
 								// Put the composed activity json in list and have 'sync' submit.
 								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
-								{
+								{									
+									AppInfoManager.addToActivityHistory( activityJson );
+
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 			
 									if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );

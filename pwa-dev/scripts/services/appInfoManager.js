@@ -1,22 +1,31 @@
 //	TODO: ?: Rename to 'LSAppInfoManager'?
 function AppInfoManager() {}
 
+AppInfoManager.ActivityHistoryMaxLength = 100;
+
+// ---------------------------
+
 AppInfoManager.KEY_APPINFO = "appInfo";
 
 AppInfoManager.data;
-AppInfoManager.template = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { } };
 
 AppInfoManager.KEY_TRANSLATION = "translation"; 
 AppInfoManager.KEY_SYNC = "sync"; 
 AppInfoManager.KEY_LOGINOUT = "logInOut"; 
-
 AppInfoManager.KEY_USERINFO = "userInfo"; 
+AppInfoManager.KEY_DEBUG = "debug"; 
+
+AppInfoManager.template = { 'translation': {}, 'sync': {}, 'logInOut': {}, 'userInfo': { }, 'debug': {} };
+
+// ---------------------------
+
 AppInfoManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 
 AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
 AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
 AppInfoManager.KEY_NEW_ERROR_ACT = "newErrActivityIds"; 
+AppInfoManager.KEY_ACTIVITY_HISTORY = "activityHistory"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
@@ -232,6 +241,52 @@ AppInfoManager.clearNewErrorActivities = function()
 {    
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_NEW_ERROR_ACT, [] );
 };
+
+// ------------------------------------------------------------------------------------  
+// ----------------  DEBUG activityHistory List Related..
+
+AppInfoManager.getActivityHistory = function()
+{    
+    var activityHistory = AppInfoManager.getPropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_ACTIVITY_HISTORY );
+    return ( activityHistory ) ? activityHistory : [];
+};
+
+AppInfoManager.addToActivityHistory = function( activityJson )
+{    
+    if ( activityJson ) 
+    {
+        try
+        {
+            var activityJsonCopy = Util.cloneJson( activityJson );
+
+            // Remove processing.form
+            if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processingform;
+
+            
+            var activityHistory = AppInfoManager.getActivityHistory();
+
+            activityHistory.unshift( activityJsonCopy );
+
+            var exceedCount = activityHistory.length - AppInfoManager.ActivityHistoryMaxLength;
+    
+            // Remove if equal to or exceed to 100.  if 100, remove 1.  if 101, remove 2.
+            if ( exceedCount > 0 ) 
+            {
+                for( var i = 0; i < exceedCount; i++ )
+                {
+                    activityHistory.pop();
+                }
+            }
+            
+            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_ACTIVITY_HISTORY, activityHistory );    
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in AppInfoManager.addToActivityHistory, errMsg: ' + errMsg );
+        }
+    }
+};
+
 
 // ------------------------------------------------------------------------------------  
 // ----------------  User info
