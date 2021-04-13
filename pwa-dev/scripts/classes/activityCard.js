@@ -1047,18 +1047,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 console.customLog("=================================");
                 console.customLog( activityJson );
     
-                var result = confirm("Are you sure you want to delete this client ?");
+                var result = confirm("Are you sure you want to delete this activity?");
                 if( result )
-                {
-                    var client = ClientDataManager.getClientByActivityId( activityId );
-                    ClientDataManager.removeClient( client );
-                    ClientDataManager.saveCurrent_ClientsStore( function(){
-                        $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
-                        sheetFull.find( 'img.btnBack' ).click();
-                    });
-                }
-    
-               
+                {                    
+                    me.removeActivityNCard( activityId, sheetFull.find( 'img.btnBack' ) );
+                }               
             });
         }
         else
@@ -1067,6 +1060,21 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };    
     
+
+    me.removeActivityNCard = function( activityId, btnBackTag )
+    {
+        ActivityDataManager.removeTempClient_Activity( activityId );
+
+        //var client = ClientDataManager.getClientByActivityId( activityId );
+        //ClientDataManager.removeClient( client );
+
+        ClientDataManager.saveCurrent_ClientsStore( function()
+        {
+            $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
+            btnBackTag.click();
+        });
+    };
+
     // =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
 

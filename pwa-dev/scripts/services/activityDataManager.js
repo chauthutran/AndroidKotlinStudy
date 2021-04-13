@@ -141,7 +141,7 @@ ActivityDataManager.removeTempClient_Activity = function( activityId )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.removeTempClient_Activity, errMsg: ' + errMsg );
     }
 };
 
