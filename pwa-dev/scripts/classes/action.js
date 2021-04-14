@@ -558,6 +558,7 @@ function Action( cwsRenderObj, blockObj )
 	{
 		//var myCondTest = actionExpObj.expressionNew || actionExpObj.expression;
 		var INFO = InfoDataManager.getINFO();
+		INFO.searchResultsList = [];
 
 		// jsonList holds list of (search) result json that mostly represent client + voucher tei attributes & others.
 		jsonList.forEach( resultJson => 
@@ -565,6 +566,7 @@ function Action( cwsRenderObj, blockObj )
 			try
 			{
 				INFO.searchResults = {};
+				INFO.searchResultsList.push( INFO.searchResults );
 
 				// Convert { 'id': '', 'value': '' } format to ==> { id: value }
 				resultJson.forEach( attrJson => {

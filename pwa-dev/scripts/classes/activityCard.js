@@ -108,8 +108,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         activityIconTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
-            console.customLog( 'activityJson: ' );
-            console.customLog( activityJson );
+            console.log( activityJson );
         });
     };
 
@@ -147,16 +146,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             var activityJson = ActivityDataManager.getActivityById( activityId );
             var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-
-            // TEMP TESTING..
-            //me.syncUpCoolDownTime_disableUI2( activityId, divSyncIconTag, 20000 );
             
             // NOTE:
             //  - If status is not syncable one, display bottom message
             //  - If offline, display the message about it.
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
-
                 // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
                 ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
                 {         
@@ -324,12 +319,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
         {
             me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
-            me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson );
+            me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal );
         });
-
-        // activityJson.processing  <-- activityJson.appData?
-        // activityJson.processing.history..  <-- save error / downloaded / synced info..
-        // activityJson.processing.status       <-- quick info of current (last)
     };
 
     me.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
@@ -344,7 +335,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson )
+    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal )
     {
         var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
         divBottomTag.empty();
@@ -359,17 +350,43 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             if ( historyList.length > 0 )
             {
-                var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
-                var latestItem = historyList_Sorted[0];    
+                //var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
+                var latestItem = historyList[ historyList.length - 1];    
                 var msgSectionTag = $( Templates.msgSection );
     
                 msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
-                msgSectionTag.find( 'div.msgSectionLog' ).text( Util.getStr( latestItem.msg ) );        
+
+                var formattedMsg = me.getMsgFormatted( latestItem.msg, statusVal );
+                msgSectionTag.find( 'div.msgSectionLog' ).text( formattedMsg );
     
                 divBottomTag.append( msgSectionTag );
             }        
         }, "syncResultMsg_content, activity processing history lookup" );
+    };
 
+
+    me.getMsgFormatted = function( msg, statusVal )
+    {
+        var formattedMsg = '';
+
+        if ( msg )
+        {
+            if ( statusVal === Constants.status_error || statusVal === Constants.status_failed ) 
+            {
+                if ( msg.indexOf( 'Value is not valid' ) >= 0 ) formattedMsg = 'One of the field has not acceptable value.';
+                else if ( msg.indexOf( 'not a valid' ) >= 0 ) formattedMsg = 'One of the field has wrong Dhis2 Uid in the country setting.';
+                else if ( msg.indexOf( 'Voucher not in Issue status' ) >= 0 ) formattedMsg = 'The voucher is not in issue status.';
+                else if ( msg.indexOf( 'Repeat Fail Marked as ERROR' ) >= 0 ) formattedMsg = 'Marked as error status due to more than 10 failure in sync attempts.';
+                else
+                {
+                    if ( msg.length > 60 ) formattedMsg = msg.substr( 0, 30 ) + '....' + msg.substr( msg.length - 31, 30 );
+                    else formattedMsg = msg;
+                }
+            }   
+            else formattedMsg = Util.getStr( msg );
+        }
+
+        return formattedMsg;
     };
 
 
@@ -1042,11 +1059,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
         var removeActivityBtn = sheetFull.find("#removeActivity");
         if (activity.processing.status == Constants.status_queued || activity.processing.status == Constants.status_failed )
         {
-            removeActivityBtn.click( function(){
-
-                console.customLog("=================================");
-                console.customLog( activityJson );
-    
+            removeActivityBtn.click( function()
+            {    
                 var result = confirm("Are you sure you want to delete this activity?");
                 if( result )
                 {                    
