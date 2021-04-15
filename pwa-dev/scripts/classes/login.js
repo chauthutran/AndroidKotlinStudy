@@ -199,6 +199,11 @@ function Login( cwsRenderObj )
 			{
 				if ( me.lastPinTrigger ) $( '.pin_pw_loading' ).show();
 
+				// NOTE: On login button click, also check app update..
+				SwManager.checkNewAppFile_OnlyOnline();
+
+
+				// Main Login Processing
 				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ), function( success ) {
 
 					me.clearResetPasswords();

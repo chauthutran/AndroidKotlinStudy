@@ -556,15 +556,8 @@ function cwsRender()
 
 		SwManager.checkNewAppFile_OnlyOnline();
 
-		/*
-		setTimeout( function() {
-
-			$( '.pin1' ).focus();
-
-			setTimeout( function() { $( '.pin1' ).blur(); }, 100 );
-
-		}, 200 );
-		*/
+		// On LogOut, update the delayed appUpdate..
+		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline, this seems to be working?
 	}
 
 	me.closeLoginUI = function()

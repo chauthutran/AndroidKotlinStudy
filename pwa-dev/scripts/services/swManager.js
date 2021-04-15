@@ -127,7 +127,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         };
     };
 
-    navigator.serviceWorker.addEventListener( 'controllerchange', () => 
+    navigator.serviceWorker.addEventListener( 'controllerchange', ( e ) => 
     {
         if ( !AppUtil.appReloading )
         {
@@ -143,10 +143,18 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
             // For Already logged in or in process, reload the app, but also mark 
             //      Mark for auto restart -  once used (on app start), clear this out..
-            if ( SessionManager.getLoginStatus() || SessionManager.Status_LogIn_InProcess )
+            if ( SessionManager.Status_LogIn_InProcess )
             {            
                 AppInfoManager.setAutoLogin( new Date() );
             }
+            else if ( SessionManager.getLoginStatus() )
+            {
+                // Set for delayed login  <-- Set variable in storage...
+                //console.log( 'delyaed appUpdate - on logout' );                
+                // NOTE: Do not need both below..  remove one later..
+                e.preventDefault();
+                return false;
+            }   
             else
             {
                 // If app update happens before login, save the username keys + pins..
@@ -175,6 +183,14 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
     if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
 };
 
+
+// NOTE: Only do this if new refresh?
+SwManager.refreshForNewAppFile_IfAvailable = function()
+{
+    //if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
+    var spanLoginAppUpdateTag = $( '#spanLoginAppUpdate' );
+    if ( spanLoginAppUpdateTag.is( ':visible' ) ) spanLoginAppUpdateTag.click();
+};
 
 // -----------------------------------
 
