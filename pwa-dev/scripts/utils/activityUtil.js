@@ -294,7 +294,6 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 };
 
 
-
 ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValList )
 {
 	var inputsJson = {};
@@ -361,10 +360,7 @@ ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValLis
 		}
 
 		inputsJson[ 'userName' ] = SessionManager.sessionData.login_UserName;
-		inputsJson[ 'password' ] = SessionManager.sessionData.login_Password;
-
-
-		if ( WsCallManager.isLocalDevCase ) console.customLog ( inputsJson );			
+		inputsJson[ 'password' ] = SessionManager.sessionData.login_Password;		
 	}
 
 	return inputsJson;

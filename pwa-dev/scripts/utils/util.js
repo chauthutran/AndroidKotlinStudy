@@ -70,7 +70,7 @@ Util.getStr = function( input )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in Util.getStr, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.getStr, errMsg: ' + errMsg );
 	}
 
 	return value;
@@ -94,7 +94,7 @@ Util.getJson = function( input )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in Util.getJson, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.getJson, errMsg: ' + errMsg );
 	}
 
 	return value;
@@ -204,7 +204,7 @@ Util.getJsonDeepCopy = function( jsonObj )
 			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
 		}
 		catch( errMsg ) {
-			console.customLog( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+			console.log( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
 		}
 	} 
 
@@ -229,7 +229,7 @@ Util.tryCatchContinue = function( runFunc, optionalMsg )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
+		console.log( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
 	}
 };
 
@@ -242,7 +242,7 @@ Util.tryCatchCallBack = function( callBack, runFunc )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
+		console.log( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
 		callBack();
 	}
 };
@@ -265,7 +265,7 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 	{
 		if ( !optionalTitle ) optionalTitle = '';
 
-		console.customLog( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
+		console.log( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
 	}
 
 	return returnVal;
@@ -469,7 +469,7 @@ Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )
 	if ( iDepth === limit )
 	{
 		var errMsg = 'Error in Util.jsonKeysReplace, Traverse depth limit has reached: ' + iDepth;
-		console.customLog( errMsg );
+		console.log( errMsg );
 		throw errMsg;
 	}
 	else
@@ -553,7 +553,7 @@ Util.jsonKeysReplace_Str = function( obj, keyListSet )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in Util.jsonKeysReplace_Str, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.jsonKeysReplace_Str, errMsg: ' + errMsg );
 	}
 
 	return newObj;
@@ -1685,7 +1685,7 @@ Util.getTimePassedMs = function( fromDtStr )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in Util.getTimePassedMs, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.getTimePassedMs, errMsg: ' + errMsg );
 	}
 
 	return timePassedMs;
@@ -1714,7 +1714,7 @@ Util.dateUTCToLocal = function( dateStr )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in Util.dateUTCToLocal, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.dateUTCToLocal, errMsg: ' + errMsg );
 	}
 
 	return localDateObj;
@@ -1938,11 +1938,11 @@ Util.cloneArray = function (dataArray, callBack) {
 			if (callBack) callBack(retArr)
 			else return retArr;
 		} catch (errMsg) {
-			console.customLog('ERROR in Util.cloneArray(): ' + errMsg);
+			console.log('ERROR in Util.cloneArray(): ' + errMsg);
 			callBack();
 		}
 	} else {
-		console.customLog('ERROR in Util.cloneArray(): ~ object is not array ');
+		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
 	}
 
 };
@@ -2038,7 +2038,7 @@ Util.stylesStrAppy = function( stylesStr, tag )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
 	}
 };
 
@@ -2052,7 +2052,7 @@ Util.getSecFromMiliSec = function( miliSec )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in Util.getSecFromMiliSec, errMsg: ' + errMsg );
+		console.log( 'ERROR in Util.getSecFromMiliSec, errMsg: ' + errMsg );
 	}
 
 	return sec;

@@ -2,6 +2,7 @@
 function AppInfoManager() {}
 
 AppInfoManager.ActivityHistoryMaxLength = 100;
+AppInfoManager.CustomLogHistoryMaxLength = 100;
 
 // ---------------------------
 
@@ -26,6 +27,7 @@ AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet";
 AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
 AppInfoManager.KEY_NEW_ERROR_ACT = "newErrActivityIds"; 
 AppInfoManager.KEY_ACTIVITY_HISTORY = "activityHistory"; 
+AppInfoManager.KEY_CUSTOM_LOG_HISTORY = "customLogHistory"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
@@ -231,7 +233,7 @@ AppInfoManager.addNewErrorActivityId = function( newActivityId )
 {    
     if ( newActivityId ) 
     {
-        var errList = AppInfoManager.getNewErrorActivitiesJson();
+        var errList = AppInfoManager.getNewErrorActivities();
         errList.push( newActivityId );
         AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_NEW_ERROR_ACT, errList );    
     }
@@ -260,7 +262,7 @@ AppInfoManager.addToActivityHistory = function( activityJson )
             var activityJsonCopy = Util.cloneJson( activityJson );
 
             // Remove processing.form
-            if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processingform;
+            if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processing.form;
 
             
             var activityHistory = AppInfoManager.getActivityHistory();
@@ -284,6 +286,46 @@ AppInfoManager.addToActivityHistory = function( activityJson )
         {
             console.customLog( 'ERROR in AppInfoManager.addToActivityHistory, errMsg: ' + errMsg );
         }
+    }
+};
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  DEBUG customLog List Related..
+
+AppInfoManager.getCustomLogHistory = function()
+{    
+    var customLogHistory = AppInfoManager.getPropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY );
+    return ( customLogHistory ) ? customLogHistory : [];
+};
+
+AppInfoManager.addToCustomLogHistory = function( log )
+{    
+    try
+    {
+        if ( log && Util.isTypeString( log ) ) 
+        {
+            var customLogHistory = AppInfoManager.getCustomLogHistory();
+
+            customLogHistory.unshift( log );
+
+            var exceedCount = customLogHistory.length - AppInfoManager.CustomLogHistoryMaxLength;
+    
+            // Remove if equal to or exceed to 100.  if 100, remove 1.  if 101, remove 2.
+            if ( exceedCount > 0 ) 
+            {
+                for( var i = 0; i < exceedCount; i++ )
+                {
+                    customLogHistory.pop();
+                }
+            }
+            
+            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY, customLogHistory );    
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in AppInfoManager.addToCustomLog, errMsg: ' + errMsg );
     }
 };
 

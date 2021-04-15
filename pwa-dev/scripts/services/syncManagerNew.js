@@ -77,7 +77,6 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
             var successMsg = 'syncAll ' + runType + ' completed..';
             SyncManagerNew.SyncMsg_InsertMsg( successMsg );
-            console.customLog( successMsg );
 
             SyncManagerNew.SyncMsg_InsertSummaryMsg( 'Processed with success ' + resultData.success + ', failure ' + resultData.failure + '..' );
 
@@ -429,8 +428,6 @@ SyncManagerNew.setSyncAll_Running = function( runType, bRunning )
 
 SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
 {
-    console.customLog( ' -- SyncManagerNew.syncAll_FromSchedule CALLED!!!' );
-
     // Only perform this on online mode - Skip this time if offline..
     if ( ConnManagerNew.isAppMode_Online() )
     {
@@ -481,7 +478,7 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
         var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date(), Util.dateType_DATETIME_s1 ) };
         SyncManagerNew.SyncMsg_Get().msgList.push( newMsgJson );
 
-        console.customLog( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
+        //console.customLog( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
     }
     catch( errMsg )
     {
@@ -500,11 +497,11 @@ SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
         
         syncMsgJson.summaryList.push( newSummaryMsgJson );
 
-        console.customLog( 'SyncManagerNew.SummarySyncMsg: ' + JSON.stringify( newSummaryMsgJson ) );
+        //console.customLog( 'SyncManagerNew.SummarySyncMsg: ' + JSON.stringify( newSummaryMsgJson ) );
     }
     else
     {
-        console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+        //console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
     }    
 };
 

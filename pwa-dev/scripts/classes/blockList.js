@@ -193,7 +193,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
-            console.customLog( ' ===> Error on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
+            console.customLog( 'ERROR on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
         } 
     };
 

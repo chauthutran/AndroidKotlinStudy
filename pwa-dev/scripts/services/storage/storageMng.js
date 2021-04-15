@@ -117,16 +117,16 @@ localforage.setDriver( localforage.LOCALSTORAGE ).then( function() {
 
   localforage.setItem(key, value, function() {
 
-    console.customLog('Saved: ' + value);
+    console.log('Saved: ' + value);
 
     localforage.getItem(key, function(err, readValue) {
 
-      console.customLog('Read: ', readValue);
+      console.log('Read: ', readValue);
     });
 
     // Since this key hasn't been set yet, we'll get a null value
     localforage.getItem(UNKNOWN_KEY, function(err, readValue) {
-      console.customLog('Result of reading ' + UNKNOWN_KEY, readValue);
+      console.log('Result of reading ' + UNKNOWN_KEY, readValue);
     });
 
   });

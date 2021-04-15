@@ -32,7 +32,7 @@ function app()
 	{
     // test..
     // Default Behavior Modify
-    me.detectStandAlone();
+    //me.detectStandAlone();
     me.windowEvent_BlockBackBtnAction();
     window.addEventListener( 'error', me.catchErrorInCustomLog );
     window.addEventListener( 'beforeinstallprompt', me.beforeinstallprompt );
@@ -171,7 +171,7 @@ function app()
   me.detectStandAlone = function()
   {
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      console.customLog( "Running as standalone." );
+      // console.customLog( "Running as standalone." );
     }  
   };
 
@@ -208,8 +208,8 @@ function app()
       // Wait for the user to respond to the prompt
       deferredPrompt.userChoice.then( ( choiceResult ) => 
       {
-        if ( choiceResult.outcome === 'accepted' ) console.customLog('User accepted the A2HS prompt');
-        else console.customLog('User dismissed the A2HS prompt');
+        if ( choiceResult.outcome === 'accepted' ) console.log('User accepted the A2HS prompt');
+        else console.log('User dismissed the A2HS prompt');
 
         deferredPrompt = null;
       });

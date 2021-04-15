@@ -132,8 +132,8 @@ ConnManagerNew.networkCurrentRecheck = function()
 {
 	if ( ConnManagerNew.statusInfo.networkConn.online_Current !== navigator.onLine )
 	{
-		console.customLog( '==> NOTE: Network Connection Discrepancy Detected!! Running Adjustment!' );
-		console.customLog( 'APP CURR: ' + ConnManagerNew.statusInfo.networkConn.online_Current + ' vs NET: ' + navigator.onLine );
+		console.log( '==> NOTE: Network Connection Discrepancy Detected!! Running Adjustment!' );
+		console.log( 'APP CURR: ' + ConnManagerNew.statusInfo.networkConn.online_Current + ' vs NET: ' + navigator.onLine );
 		ConnManagerNew.updateNetworkConnStatus();
 	}
 };

@@ -2,7 +2,7 @@
 // -------------------------------------------------
 //     DevHelper
 //          - Methods to help debug for developer
-//          - Can run on console.customLog and can be turned on /off for seeing scheduled task messages..
+//          - Can run on console.log and can be turned on /off for seeing scheduled task messages..
 //
 // -------------------------------------------------
 
@@ -108,30 +108,30 @@ DevHelper.switchConnectMode = function( connModeStr )
 
 DevHelper.showClientListData = function()
 {
-    console.customLog( ClientDataManager.getClientList() );
+    console.log( ClientDataManager.getClientList() );
 };
 
 DevHelper.showClientListStr = function()
 {
-    console.customLog( JSON.stringify( { 'list': ClientDataManager.getClientList() } ) );
+    console.log( JSON.stringify( { 'list': ClientDataManager.getClientList() } ) );
 };
 
 
 DevHelper.showActivityListData = function()
 {
-    console.customLog( ActivityDataManager.getActivityList() );
+    console.log( ActivityDataManager.getActivityList() );
 };
 
 DevHelper.showActivityListStr = function()
 {
-    console.customLog( JSON.stringify( { 'list': ActivityDataManager.getActivityList() } ) );
+    console.log( JSON.stringify( { 'list': ActivityDataManager.getActivityList() } ) );
 };
 
 DevHelper.removeSampleData = function()
 {
     ClientDataManager.removeSampleData( function( removedCount ) 
     {
-        console.customLog( 'DevHelper.removeSampleData Done and saved to IndexedDB.  Removed Count: ' + removedCount );
+        console.log( 'DevHelper.removeSampleData Done and saved to IndexedDB.  Removed Count: ' + removedCount );
         SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
     });
 };
@@ -140,7 +140,7 @@ DevHelper.removeSampleData = function()
 DevHelper.loadSampleData = function( icount ) 
 {
     ClientDataManager.loadSampleData( icount, DevHelper.sampleDataTemplate, function() {
-        console.customLog( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
+        console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
         SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
     });
 };
@@ -148,12 +148,12 @@ DevHelper.loadSampleData = function( icount )
 
 DevHelper.showActivityCardConfigs = function()
 {
-    console.customLog( ConfigManager.getConfigJson().settings.redeemDefs );
+    console.log( ConfigManager.getConfigJson().settings.redeemDefs );
 };
 
 DevHelper.showINFO = function()
 {
-    console.customLog( DevHelper.INFO );
+    console.log( DevHelper.INFO );
 };
 
 DevHelper.setINFO_ForConsoleDisplay = function( INFO )
@@ -200,12 +200,12 @@ DevHelper.TestRequestSend = function( url )
 
         WsCallManager.requestPostDws( url, payloadJson, loadingTag, function( success, mongoClientsJson ) {
 
-            console.customLog( success, mongoClientsJson );
+            console.log( success, mongoClientsJson );
         });
     }
     catch( errMsg )
     {
-        console.customLog( 'Error in DevHelper.TestRequestSend - ' + errMsg );
+        console.log( 'Error in DevHelper.TestRequestSend - ' + errMsg );
     }
 };
 
@@ -222,7 +222,7 @@ DevHelper.testRun2 = function()
           };
     Util.mergeDeep( dest, obj );
 
-    console.customLog( dest );
+    console.log( dest );
 };
 
 DevHelper.statPeriodOptions = function()
@@ -314,7 +314,7 @@ DevHelper.testRunStart = function()
 {
     DevHelper.testRunInterval = setInterval( function() {
         DevHelper.testRunCount++;
-        console.customLog( 'count: ' + DevHelper.testRunCount + ', time: ' + new Date().toString() );
+        console.log( 'count: ' + DevHelper.testRunCount + ', time: ' + new Date().toString() );
     }, 2000 );
 };
 

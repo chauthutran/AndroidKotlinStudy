@@ -828,12 +828,12 @@ function Login( cwsRenderObj )
 					// height ( change ) only value we're interested in comparing
 					if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
 					{
-						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.customLog( 'IS keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
 						$( '.hideOnKeyboardVisible' ).hide();
 					} 
 					else
 					{
-						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.customLog( 'not keyboard' );
+						//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
 						$( '.hideOnKeyboardVisible' ).show();
 					}
 

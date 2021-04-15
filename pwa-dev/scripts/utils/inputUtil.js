@@ -102,7 +102,7 @@ function inputMonitor( cwsRenderObj )
     
             }, parseInt( inputMonLogoutDelay ) * 60 * 1000 ); //60 * 60 * 1000
     
-            //if ( StatusInfoManager.debugMode ) console.customLog( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+            //if ( StatusInfoManager.debugMode ) console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
         }
 
     }
@@ -130,11 +130,11 @@ function inputMonitor( cwsRenderObj )
         {
             if (diffY > 0)  // sliding vertically
             {
-                console.customLog("swiping up");  // swiping up
+                console.log("swiping up");  // swiping up
             } 
             else 
             {
-                console.customLog("swiping down"); // swiping down
+                console.log("swiping down"); // swiping down
             }
         }*/
 

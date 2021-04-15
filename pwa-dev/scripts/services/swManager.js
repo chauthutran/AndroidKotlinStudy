@@ -36,7 +36,7 @@ SwManager.installStateProgress = {
         'activated': '4/4'
 };
 
-SwManager.debugMode = true;
+SwManager.debugMode = false;
 
 // --------------------------------------------
 
@@ -97,14 +97,14 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        if ( SwManager.debugMode) console.customLog( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
+        //if ( SwManager.debugMode) console.log( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
         {
             SwManager.registrationUpdates = true;
 
-            if ( SwManager.debugMode) console.customLog( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
+            //if ( SwManager.debugMode) console.log( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
 
             switch ( SwManager.swInstallObj.state ) 
             {

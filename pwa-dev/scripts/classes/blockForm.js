@@ -1136,9 +1136,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, affectedControls[ i ].formula, dispatchChangeEvent );
 		}
-
 	};
-
 
 
 	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )

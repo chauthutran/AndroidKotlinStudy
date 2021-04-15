@@ -486,9 +486,16 @@ function settingsApp( cwsRender )
 
                 var idenObj = { 'info.userName': SessionManager.sessionData.login_UserName, 'info.shareCode': shareCode };
 
-                var infoJson = { 'userName': SessionManager.sessionData.login_UserName, 'shareCode': shareCode
-                    , 'timestamp': Util.getUTCDateTimeStr() };
-                var updateData = { 'info': infoJson, 'clientList': ClientDataManager.getClientList() };
+                var updateData = { 
+                    'info': { 
+                        'userName': SessionManager.sessionData.login_UserName
+                        , 'shareCode': shareCode
+                        , 'timestamp': Util.getUTCDateTimeStr() 
+                    }
+                    , 'clientList': ClientDataManager.getClientList()
+                    , 'activityHistory': AppInfoManager.getActivityHistory()
+                    , 'customLogHistory': AppInfoManager.getCustomLogHistory() 
+                };
 
                 var dataJson = { 'idenObj': idenObj, 'updateData': updateData, 'option': { 'upsert': true } };
                 var payloadJson = { 'dataJson': dataJson };
@@ -532,20 +539,47 @@ function settingsApp( cwsRender )
 
                     if ( resultList.length > 0 )
                     {					
-                        var clientList = resultList[0].clientList;
                         loadCodeTag.val( '' );
                         isSuccess = true;
-                        
-                        ClientDataManager.setActivityDateLocal_clientList( clientList );
 
-                        ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
+                        var shareData = resultList[0];
+
+                        // 1. Load ClientList
+                        var clientList = shareData.clientList;
+                        if ( clientList )
                         {
-                            console.customLog( 'LoadData clients merged' );
-                            SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
-                        });
+                            ClientDataManager.setActivityDateLocal_clientList( clientList );
+
+                            ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
+                            {
+                                console.customLog( 'LoadData clients merged' );
+                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                            });    
+                        }
+
+                        // 2. load ActivityHistory <-- merge it?  by loading individual adding by loop..
+                        var activityHistory = shareData.activityHistory;                        
+                        if ( activityHistory )
+                        {
+                            activityHistory.forEach( activity => {
+                                AppInfoManager.addToActivityHistory( activity );
+                            });                            
+                        }
+
+                        // 3. load CustomLogHistory <-- merge it?  by loading individual adding by loop..
+                        var customLogHistory = shareData.customLogHistory;
+                        if ( customLogHistory )
+                        {
+                            customLogHistory.forEach( log => {
+                                AppInfoManager.addToCustomLogHistory( log );
+                            });                            
+                        }
 
                         me.AddShareLogMsg( divDataShareTag, 'LOADED. loadCode: ' + loadCode );
                     }
+
+
+
 
                     if ( isSuccess ) MsgManager.msgAreaShow( 'DataLoad Success!' );
                     else MsgManager.msgAreaShow( 'DataLoad FAILED!', 'ERROR' );

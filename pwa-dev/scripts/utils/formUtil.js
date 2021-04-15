@@ -157,7 +157,7 @@ FormUtil.showErrActivityMsg = function( errActList )
 			{
 				errActList.forEach( errActId => 
 				{
-					$( '.activity[itemid="' + errActId + '"]' ).css( 'background-color', '#ffdede' );
+					$( '.activity[itemid="' + errActId + '"]' ).css( 'background-color', '#fff4f4' );
 				});
 			}, 500 );
         }
@@ -607,14 +607,14 @@ FormUtil.menuDivHide = function( showDivTag, scrimTag )
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
 {	//test code added by Greg
 	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
-	//console.customLog( $( targetTag ).css( 'zIndex' ), targetTag );
+	//console.log( $( targetTag ).css( 'zIndex' ), targetTag );
 	$( targetTag ).css( 'zIndex', newZidx );
 }
 
 FormUtil.setStackOrder = function( arrObjTags )
 {	//test code added by Greg
 	var stackFrom = FormUtil.screenMaxZindex();
-	//console.customLog( arrObjTags );
+	//console.log( arrObjTags );
 	for ( var i = 0; i < arrObjTags.length; i++ )
 	{
 		var stackObj = arrObjTags[ i ];
@@ -655,11 +655,11 @@ FormUtil.showScreenStackOrder = function( parent )
 		}
 		return val || "";
 	}
-	console.customLog( length );
+	console.log( length );
 
     while(i<length){
 		who = children[i++];
-		//console.customLog( who );
+		//console.log( who );
         if (who.nodeType != 1) continue; // element nodes only
 		//opacity = deepCss(who,"opacity");
 		if ( $( who ).is( ':visible' ) )
@@ -674,7 +674,7 @@ FormUtil.showScreenStackOrder = function( parent )
 			} else { // non-positioned element, a new stacking context for opacity < 1 and zindex shall be treated as if 0
 				(opacity > 0)? temp = FormUtil.screenMaxZindex(who): temp=0;
 			}
-			console.customLog( who, temp );
+			console.log( who, temp );
 		}
 
     }
@@ -688,15 +688,15 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 
 	tag.find( 'li' ).on( 'click', function()
 	{
-		console.customLog( $( this ) );
+		console.log( $( this ) );
 		var tab_select = $( this ).attr( 'rel' ); 
 
-		console.customLog( $( this ) );
+		console.log( $( this ) );
 
 		if ( FormUtil.orientation() == 'portrait' && $( window ).width() <= 568)
 		{
-			console.customLog( 'got here' );
-			console.customLog( $( this ).find( 'ul' ) );
+			console.log( 'got here' );
+			console.log( $( this ).find( 'ul' ) );
             if ($( this ).find( 'ul' ).is(':visible')) {
                 $( this ).find( 'ul' ).css('display', 'none');
                 $( this ).find( 'li' ).css('display', 'none');
@@ -1183,11 +1183,11 @@ FormUtil.deleteCacheKeys = function( thenFunc )
 			{
 				if ( name.toString().indexOf( 'google' ) >= 0 || name.toString().indexOf( 'workbox' ) >= 0 )
 				{
-					//console.customLog( 'skipping cache obj ' + name );
+					//console.log( 'skipping cache obj ' + name );
 				}
 				else
 				{
-					console.customLog( 'deleting cacheStorage obj: ' + name );
+					console.log( 'deleting cacheStorage obj: ' + name );
 					caches.delete(name);
 				}
 			}
@@ -1212,11 +1212,11 @@ FormUtil.swCacheReset = function( returnFunc )
 
 			for ( let name of names )
 			{
-				console.customLog( 'deleting cache: ' + name );
+				console.log( 'deleting cache: ' + name );
 
 				caches.delete(name).then( function( status ) {
 
-					console.customLog( 'Delete Status: ' + status );
+					console.log( 'Delete Status: ' + status );
 
 					cachesCount--;
 					if ( status ) deteteLeft--;
@@ -1336,7 +1336,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
-	//console.customLog( activityType );
+	//console.log( activityType );
 	try 
 	{
 		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen

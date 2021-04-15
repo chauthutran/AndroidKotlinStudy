@@ -14,9 +14,13 @@ console.customLog = function ( msg, label )
 {
     if ( msg )
     {
-        // TODO: Ways to display / show the location of error?
-
         console.log( msg );
+        
+        // TODO: Ways to display / show the location of error?
+        // NOTE: WAYS TO TELL WHICH METHOD CALLED THIS --> console.log(new Error('I was called').stack) OR Use 'this' on caller!!!
+
+        // Add to debug appInfo - only if the msg is string..
+        AppInfoManager.addToCustomLogHistory( msg );
 
         // NOTE, this could make the app size to get much bigger, 
         // Thus, we might want to limit the number of storage --> 200?
