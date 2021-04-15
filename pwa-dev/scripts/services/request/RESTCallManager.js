@@ -104,8 +104,7 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
         }
     })
     .catch( ( error ) => {
-        console.customLog( 'RESTCallManager.performREST Cached Error: ' );
-        console.customLog( error ); 
+        console.customLog( 'RESTCallManager.performREST Cached Error: ' + Util.getStr( error, 300 ) );
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;

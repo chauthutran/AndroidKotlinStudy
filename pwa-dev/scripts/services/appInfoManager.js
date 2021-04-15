@@ -299,12 +299,14 @@ AppInfoManager.getCustomLogHistory = function()
     return ( customLogHistory ) ? customLogHistory : [];
 };
 
-AppInfoManager.addToCustomLogHistory = function( log )
+AppInfoManager.addToCustomLogHistory = function( msg )
 {    
     try
     {
-        if ( log && Util.isTypeString( log ) ) 
+        if ( msg ) 
         {
+            var log = Util.getStr( msg, 400 );
+
             var customLogHistory = AppInfoManager.getCustomLogHistory();
 
             customLogHistory.unshift( log );
@@ -320,7 +322,7 @@ AppInfoManager.addToCustomLogHistory = function( log )
                 }
             }
             
-            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY, customLogHistory );    
+            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY, customLogHistory );
         }
     }
     catch( errMsg )

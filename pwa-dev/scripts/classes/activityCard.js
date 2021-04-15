@@ -383,7 +383,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                     else formattedMsg = msg;
                 }
             }   
-            else formattedMsg = Util.getStr( msg );
+            else formattedMsg = Util.getStr( msg, 200 );
         }
 
         return formattedMsg;

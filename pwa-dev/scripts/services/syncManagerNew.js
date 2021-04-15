@@ -113,7 +113,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
  
         if ( !downloadSuccess ) 
         { 
-            SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson ) );
+            SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson, 300 ) );
 
             if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
         }

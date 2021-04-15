@@ -55,7 +55,7 @@ Util.isTypeString = function( obj )
 // ----------------------------------
 // Check Variable Related
 
-Util.getStr = function( input )
+Util.getStr = function( input, limit )
 {
 	var value = '';
 
@@ -63,9 +63,16 @@ Util.getStr = function( input )
 	{
 		if ( input )
 		{
+			// Convert the input into string value.
 			if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) value = JSON.stringify( input );
 			else if ( Util.isTypeString( input ) ) value = input;
 			else value = input.toString();
+
+			// If limit is passed, cut the length of string value to that limit length.
+			if ( limit && value.length > limit ) 
+			{
+				value = value.substr( 0, limit ) + '...';
+			}
 		}
 	}
 	catch( errMsg )
