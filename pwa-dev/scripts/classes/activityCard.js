@@ -379,7 +379,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 else if ( msg.indexOf( 'Repeat Fail Marked as ERROR' ) >= 0 ) formattedMsg = 'Marked as error status due to more than 10 failure in sync attempts.';
                 else
                 {
-                    if ( msg.length > 60 ) formattedMsg = msg.substr( 0, 30 ) + '....' + msg.substr( msg.length - 31, 30 );
+                    if ( msg.length > 140 ) formattedMsg = msg.substr( 0, 70 ) + '....' + msg.substr( msg.length - 71, 70 );
                     else formattedMsg = msg;
                 }
             }   
