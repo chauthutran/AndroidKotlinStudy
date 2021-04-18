@@ -15,6 +15,9 @@ DevHelper.testRunInterval;
 DevHelper.testRunCount = 0;
 
 DevHelper.devMode = false;
+DevHelper.devModeAccessCode = '4512';
+DevHelper.devModeFailCount = 0;
+DevHelper.devModeFailMax = 5;
 
 DevHelper.sampleDataTemplate = 
 [
@@ -87,7 +90,40 @@ DevHelper.sampleDataTemplate =
 
 DevHelper.setDevMode = function( bDev )
 {
-    DevHelper.devMode = bDev;
+    if ( bDev )
+    {
+        // ALERT HERE TO GET CONFIRMATION..
+        var devModeAccessCode = Util.trim( prompt( 'Please enter the dev mode access code.' ) );
+        if( devModeAccessCode === DevHelper.devModeAccessCode )
+        {   
+            console.customLog( 'DevMode set.' );
+            MsgManager.msgAreaShow( 'DevMode set.' );
+                 
+            DevHelper.devMode = true;
+            SyncManagerNew.coolDownEnabled = false;
+        }
+        else
+        {
+            DevHelper.devModeFailCount++;
+            
+            if( DevHelper.devModeFailCount > DevHelper.devModeFailMax )
+            {
+                MsgManager.msgAreaShow( 'Wrong DevMode access code. Forcing logOut due to too many failure.', 'ERROR' );
+                console.customLog( 'Too many DevMode set failed - wrong access code.  FailedCount: ' + DevHelper.devModeFailCount );
+                SessionManager.cwsRenderObj.logOutProcess();
+            }
+            else
+            {
+                MsgManager.msgAreaShow( 'Wrong DevMode access code.', 'ERROR' );
+                console.customLog( 'DevMode set failed - wrong access code.' )    
+            }
+        }
+    }
+    else
+    {
+        DevHelper.devMode = false;
+        SyncManagerNew.coolDownEnabled = true;
+    }
 };
 
 DevHelper.switchConnectMode = function( connModeStr )

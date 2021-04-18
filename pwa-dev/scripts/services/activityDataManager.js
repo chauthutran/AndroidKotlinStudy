@@ -908,7 +908,7 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_co
 
 			if ( timePassedMs > 0 && coolDownMs && timePassedMs <= coolDownMs )
 			{
-                var timeRemain = coolDownMs - timePassedMs;
+                timeRemain = coolDownMs - timePassedMs;
                 coolDownPassed = false;
 			}
 		}
@@ -919,17 +919,20 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_co
 	}
 
 
-    if ( coolDownPassed ) 
+    // Check coolDown still going on status, and perform some callBacks..
+    if ( !coolDownPassed )
     {
+        // If cool down time has not passed, perform coolDown callBack.
+        if ( timeRemain && optCallBack_coolDown ) optCallBack_coolDown( timeRemain );
+    }
+    else
+    {
+        // If coolDown has passed, perform below noCoolDown callback if passed...
         if ( optCallBack_noCoolDown ) 
         {
             ActivityDataManager.clearSyncUpCoolDown_TimeOutId( activityId );            
             optCallBack_noCoolDown();
         }
-    }
-    else 
-    {
-        if ( timeRemain && optCallBack_coolDown ) optCallBack_coolDown( timeRemain );
     }
 
 	return coolDownPassed;

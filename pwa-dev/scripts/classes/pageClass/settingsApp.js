@@ -28,11 +28,11 @@ function settingsApp( cwsRender )
     , 'theme-amber', 'theme-orange', 'theme-deep_orange', 'theme-brown', 'theme-gray', 'theme-blue_gray', ];
 
     me.syncOptions = [ { 'id': 0, 'name': 'off' }
-        ,{ 'id': 300000, 'name': '5 min' }
-       ,{ 'id': 600000, 'name': '10 min' }
-       ,{ 'id': 1800000, 'name': '30 min' }
-       ,{ 'id': 3600000, 'name': '1 hr' }
-       ,{ 'id': 86400000, 'name': '24 hr' } ];
+        ,{ 'id': Util.MS_MIN * 5, 'name': '5 min' }
+       ,{ 'id': Util.MS_MIN * 10, 'name': '10 min' }
+       ,{ 'id': Util.MS_MIN * 30, 'name': '30 min' }
+       ,{ 'id': Util.MS_HR, 'name': '1 hr' }
+       ,{ 'id': Util.MS_HR * 24, 'name': '24 hr' } ];
 
 	// === TEMPLATE METHODS ========================
 

@@ -4,6 +4,10 @@
 
 function Util() {}
 
+Util.MS_HR = 3600000;
+Util.MS_MIN = 60000;
+Util.MS_SEC = 1000;
+
 Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
 //Util.termName_confirmed = ""; // 
@@ -1661,7 +1665,7 @@ Util.timeCalculation = function( dtmNewer, dtmOlder )
 {
 	var reSult = { 'hh': 0, 'mm': 0, 'ss': 0 };
 
-	var sec_num = ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / 1000;
+	var sec_num = ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / Util.MS_SEC;
 
     var hours   = Math.floor(sec_num / 3600); // round (down)
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60); // round (down)
@@ -1972,9 +1976,9 @@ Util.getTimeMs = function( input, defaultMs )
 			{
 				var timeNum = Util.getNum( input.time );
 
-				if ( input.unit === "second" ) outputMs = timeNum * 1000;
-				else if ( input.unit === "minute" ) outputMs = timeNum * 1000 * 60;
-				else if ( input.unit === "hour" ) outputMs = timeNum * 1000 * 60 * 60;
+				if ( input.unit === "second" ) outputMs = timeNum * Util.MS_SEC;
+				else if ( input.unit === "minute" ) outputMs = timeNum * Util.MS_MIN;
+				else if ( input.unit === "hour" ) outputMs = timeNum * Util.MS_HR;
 			}    
 		}
 	} 
@@ -2010,9 +2014,9 @@ Util.getTimeMsStr = function( input )
 		sec = Util.getNum( timeStrArr[0] );
 	} 
 
-	timeMs += hr * 1000 * 60 * 60;
-	timeMs += min * 1000 * 60;
-	timeMs += sec * 1000;
+	timeMs += hr * Util.MS_HR;
+	timeMs += min * Util.MS_MIN;
+	timeMs += sec * Util.MS_SEC;
 
 	return timeMs;
 };
@@ -2025,9 +2029,9 @@ Util.getTimeFromMs = function( inputMsTime, toTimeName, optionalStr )
 
 	Util.tryCatchContinue( function() 
 	{
-		if ( toTimeName === "second" ) outputVal = Math.round( msTimeNum / 1000 );
-		else if ( toTimeName === "minute" ) outputVal = Math.round( timeNum / 1000 / 60 );
-		else if ( toTimeName === "hour" ) outputVal = Math.round( timeNum / 1000 / 60 / 60 );	
+		if ( toTimeName === "second" ) outputVal = Math.round( msTimeNum / Util.MS_SEC );
+		else if ( toTimeName === "minute" ) outputVal = Math.round( timeNum / Util.MS_MIN );
+		else if ( toTimeName === "hour" ) outputVal = Math.round( timeNum / Util.MS_HR );	
 	}, 'Util.getTimeFromMs' );
 
 	return ( optionalStr ) ? outputVal + optionalStr : outputVal;
@@ -2055,7 +2059,7 @@ Util.getSecFromMiliSec = function( miliSec )
 	sec = 0;
 
 	try {
-		if ( miliSec ) sec = Math.round( miliSec / 1000 );
+		if ( miliSec ) sec = Math.round( miliSec / Util.MS_SEC );
 	}
 	catch( errMsg )
 	{

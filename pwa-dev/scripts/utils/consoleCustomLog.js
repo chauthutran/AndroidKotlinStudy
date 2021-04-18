@@ -113,12 +113,10 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
             console.customLog( '2. ClientDataManager.getClientByActivityId( "------" );' );
             inputCommandTag.val( '/* Commands shown on above log area. */' );
         }
-
         else if ( caseStr === 'devMode' )
         {
             inputCommandTag.val( 'DevHelper.setDevMode( true );' );
         }
-
         else if ( caseStr === 'serverLinkOff' )
         {
             inputCommandTag.val( 'WsCallManager.setWsTarget_NoServer(); ConnManagerNew.checkNSet_ServerAvailable();' );

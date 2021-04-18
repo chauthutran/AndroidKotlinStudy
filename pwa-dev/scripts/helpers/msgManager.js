@@ -16,7 +16,7 @@ MsgManager.countDownDenominator = 0;
 MsgManager.progressBarUpdateTimer = 25;
 MsgManager.progressCheckCount = 0;
 MsgManager._autoHide = true;
-MsgManager._autoHideDelay = 10000; // 10 sec - default setting.
+MsgManager._autoHideDelay = Util.MS_SEC * 10; // 10 sec - default setting.
 MsgManager.timer = 0;
 MsgManager.clicktimer = 0;
 MsgManager.reservedIDs = []; //collection of predefined COMMON identifiable notification messages (if match exists in this array, do not create)
@@ -271,7 +271,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
                     
                     if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
                     else $( '#notif_' + unqID ).remove();
-                }, 1000 );
+                }, Util.MS_SEC );
             }
 
           }, delayTimer );

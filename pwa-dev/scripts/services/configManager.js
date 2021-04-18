@@ -386,7 +386,7 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
 
 ConfigManager.getSettingNetworkSync = function()
 {
-    var networkSync = '3600000';  // 1 hour
+    var networkSync = '' + Util.MS_HR;  // 1 hour
 
     try
     {

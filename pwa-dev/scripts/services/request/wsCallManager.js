@@ -45,10 +45,10 @@ WsCallManager.wsUrlList = {
 
 WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
 
-WsCallManager.timeOut_AvailableCheck = 60000; // timeout number used for 'available' request
+WsCallManager.timeOut_AvailableCheck = Util.MS_MIN; // timeout number used for 'available' request
 WsCallManager.timeOut_DwsAvailabilityCheck = 10000; // timeout number used for 'available' request
 
-WsCallManager.mockDelayTimeMS = 1000; // default delay time in milliseconds - 1000ms = 1 sec
+WsCallManager.mockDelayTimeMS = Util.MS_SEC; // default delay time in milliseconds - 1000ms = 1 sec
 
 // ============================================
 // Setup / Set on Start of App Related ========

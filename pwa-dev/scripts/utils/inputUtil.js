@@ -14,9 +14,7 @@
 function inputMonitor( cwsRenderObj ) 
 {
     var me = this;
-    var cwsRenderInputMon = cwsRenderObj;
-    var InputMonLogoutTimer = 0;
-    var inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins;
+    me.inputMonLogoutTimer;
 
     if ( Util.isMobi() )
     {
@@ -68,43 +66,28 @@ function inputMonitor( cwsRenderObj )
         //console.customLog( $( e.touches[0].target ) );
         me.initialiseTouchDefaults( e );
 
-        if ( startTagRedeemListItem )
-        {
-            //DO NOT REMOVE: temp disabled (2019/06/13)
-            //me.initialiseListItemVars();
-        }
-
         me.setFocusRelegatorInitialState();
 
         updateLogoutTimer();
-
     };
 
     function updateLogoutTimer()
     {
-        if ( InputMonLogoutTimer > 0 )
-        {
-            clearInterval(  InputMonLogoutTimer );
-            cwsRenderInputMon.autoLogoutDateTime = '';
-        }
+        if ( me.inputMonLogoutTimer ) clearInterval( me.inputMonLogoutTimer );
 
         if ( SessionManager.getLoginStatus() )
         {
-            inputMonLogoutDelay = cwsRenderInputMon.autoLogoutDelayMins; //JSON.parse(localStorage.getItem( "session" )).logoutDelay;
-            cwsRenderInputMon.autoLogoutDateTime = new Date( ( new Date ).getTime() + parseInt( inputMonLogoutDelay ) * 60 * 1000 )
-
-            InputMonLogoutTimer = setInterval( function() 
+            var logOutDelayMin = ConfigManager.staticData.logoutDelay;
+            var logOutDelayMs = Number( logOutDelayMin ) * Util.MS_MIN;
+            
+            me.inputMonLogoutTimer = setTimeout( function() 
             {
-                if ( SessionManager.getLoginStatus() )
-                {
-                    cwsRenderInputMon.logOutProcess();
+                if ( SessionManager.getLoginStatus() ) {
+                    console.customLog( 'Auto LogOut performed due to inactivity of ' + logOutDelayMin + ' minutes.' );
+                    SessionManager.cwsRenderObj.logOutProcess();
                 }
-    
-            }, parseInt( inputMonLogoutDelay ) * 60 * 1000 ); //60 * 60 * 1000
-    
-            //if ( StatusInfoManager.debugMode ) console.log( ' ~ auto Logout time: ' + cwsRenderInputMon.autoLogoutDateTime + ' {' + InputMonLogoutTimer + '}');
+            }, logOutDelayMs ); 
         }
-
     }
 
     function touchMove(e) 
@@ -569,10 +552,4 @@ function inputMonitor( cwsRenderObj )
         }
 
     }
-
-    me.updateTimer = function( cwsRenderObj )
-    {
-        inputMonLogoutDelay = cwsRenderObj.autoLogoutDelayMins;
-    }
-
 }

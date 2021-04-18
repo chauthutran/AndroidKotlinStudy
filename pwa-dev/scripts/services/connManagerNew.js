@@ -3,7 +3,7 @@
 
 function ConnManagerNew() {};
 
-ConnManagerNew.networkConnStableCheckTime = 10000; // ms, 5000ms = 5 seconds
+ConnManagerNew.networkConnStableCheckTime = Util.MS_SEC * 10; // ms, 10000ms = 10 seconds
 ConnManagerNew.networkConnTimeOut;
 
 ConnManagerNew.ONLINE = 'Online';
@@ -338,7 +338,7 @@ ConnManagerNew.setManualAppModeSwitch = function( newAppModeStr, callBackTime )
 			statusInfoRef.manual_Offline.enabled = false;
 			ConnManagerNew.appModeSwitchRequest( statusInfoRef );
 		
-		}, callBackTime * 1000, statusInfoRef );
+		}, callBackTime * Util.MS_SEC, statusInfoRef );
 	}
 	else
 	{

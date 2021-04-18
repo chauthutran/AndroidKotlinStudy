@@ -31,7 +31,7 @@ SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 SyncManagerNew.coolDownEnabled = true;
 
 // If scheduled syncAll gets delayed, 
-SyncManagerNew.syncAll_conflictShortDelayTime = 10000; // 10 secounds..
+SyncManagerNew.syncAll_conflictShortDelayTime = Util.MS_SEC * 10; // 10 secounds..
 SyncManagerNew.syncAll_conflictShortDelayCall; // 
 
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';

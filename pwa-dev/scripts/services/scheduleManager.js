@@ -20,12 +20,12 @@
 
 function ScheduleManager() {};
 
-ScheduleManager.interval_serverStatusCheck = 30000;				// server is available check
-ScheduleManager.interval_networkCurrentRecheck = 5000;			// recheck/confirm network current status
+ScheduleManager.interval_serverStatusCheck = Util.MS_SEC * 30;				// server is available check
+ScheduleManager.interval_networkCurrentRecheck = Util.MS_SEC * 5;			// recheck/confirm network current status
 
-ScheduleManager.interval_scheduleSyncAllRun = 30000;			// automated SyncAll process
-ScheduleManager.interval_syncDownRunOnce = 60000;				// syncDown try interval
-ScheduleManager.interval_checkNewAppFileCheck = 60000;			// background new app file check
+ScheduleManager.interval_scheduleSyncAllRun = Util.MS_SEC * 30;			// automated SyncAll process
+ScheduleManager.interval_syncDownRunOnce = Util.MS_MIN;				// syncDown try interval
+ScheduleManager.interval_checkNewAppFileCheck = Util.MS_MIN;			// background new app file check
 
 // list of Scheduler timerIDs (for cancelling at logoff)
 ScheduleManager.timerID_scheduleSyncAllRun;
@@ -52,7 +52,7 @@ ScheduleManager.scheduleList = {
 
 // ------------------------------------
 // --- SyncUpResponseAction Variables
-ScheduleManager.syncUpResponseAction_DefaultIntervalTime = 1000 * 60 * 60; // 1 hr ( 1 sec, 1min, 1hr)
+ScheduleManager.syncUpResponseAction_DefaultIntervalTime = Util.MS_HR; // 1 hr ( 1 sec, 1min, 1hr)
 ScheduleManager.syncUpResponseActionList = {};  // "activityId": {}, ...
 ScheduleManager.syncUpResponseActionList_History = [];  // { activityId, ... }, ...
 

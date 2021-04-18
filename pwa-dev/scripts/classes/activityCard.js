@@ -636,7 +636,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             catch ( errMsg )
             {
                 throw ' Error on wsActionCall - ' + errMsg;  // Go to next 'catch'
-            }    
+            }
         }
         catch( errMsg )
         {
@@ -728,7 +728,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 else 
                 {
                     myBarTag.width( me.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
-                } 
+                }
             }
 
         }, me.coolDownMoveRate );  // update refresh rate

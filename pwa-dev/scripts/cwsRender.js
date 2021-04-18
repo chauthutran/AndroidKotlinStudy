@@ -28,8 +28,8 @@ function cwsRender()
 
 	// Settings var
 	me.storage_offline_ItemNetworkAttemptLimit = Constants.storage_offline_ItemNetworkAttemptLimit; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
-    //me.storage_offline_SyncExecutionTimerInterval = 60000; // make 60 seconds?  // move to SchedManager?
-    me.storage_offline_SyncConditionsTimerInterval = 10000; // make 10 seconds? // move to SchedManager?
+    //me.storage_offline_SyncExecutionTimerInterval = Util.MS_MIN; // make 60 seconds?  // move to SchedManager?
+    me.storage_offline_SyncConditionsTimerInterval = Util.MS_SEC * 10; // make 10 seconds? // move to SchedManager?
 
 
 	// Create separate class for this?
@@ -40,7 +40,6 @@ function cwsRender()
 	me._translateEnable = true;
 	me._manageInputSwipe;
 
-	me.autoLogoutDelayMins = ConfigManager.staticData.logoutDelay;  //auto logout after X mins (5, 30, 60)  used in 'inputUtil.js'
 	me.autoLogoutDateTime;
 
 	me.debugMode = false;
