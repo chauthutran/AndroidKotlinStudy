@@ -505,7 +505,8 @@ function Action( cwsRenderObj, blockObj )
 
 			for( var i = 0; i < jsonList.length; i++ )
 			{
-				var fieldComparison = me.compareExpressionFieldList_withDataFieldList( expectedFieldList, jsonList[ i ] );
+				// temp disabled compareExpressionFieldList_withDataFieldList() { 'containsExpectedFields': true }; //
+				var fieldComparison = { 'containsExpectedFields': true }; //me.compareExpressionFieldList_withDataFieldList( expectedFieldList, jsonList[ i ] );
 
 				if ( fieldComparison.containsExpectedFields )
 				{
@@ -573,9 +574,15 @@ function Action( cwsRenderObj, blockObj )
 	
 				if ( result === undefined )
 				{
-					result = ( actionExpObj.defaultValue ) ? actionExpObj.defaultValue : '';
+					if ( actionExpObj.defaultValue !== undefined ) 
+					{
+						result = Util.evalTryCatch( actionExpObj.defaultValue )
+					}
+					else
+					{
+						result = '';
+					}
 				}
-				
 				resultJson.push ( { "displayName": actionExpObj.attribute.displayName, "id": actionExpObj.attribute.id, "value": result } );	
 			}
 			catch( errMsg )
