@@ -449,13 +449,34 @@ function settingsApp( cwsRender )
             }
             else
             {
-                // --> Call auto fix on login?
-                //if ( ConfigManager.getConfigJson().tempActivitiesFix )                
-                me.checkFixActivities( SessionManager.sessionData.login_UserName, function( fixActivityList ) 
+                // TODO:
+                //      1. Once when come online operation --> trigger after login & online (has similar operation already)
+                //      2. [DONE] This fix operations..
+                //      3. Post the after operation log --> client Id..
+
+                me.checkFixOperations( SessionManager.sessionData.login_UserName, AppInfoManager.getFixOperationLast()
+                , function( fixOperationList ) 
                 {
-                    if ( fixActivityList.length > 0 ) me.performFixActivities( fixActivityList );
+                    console.customLog( fixOperationList );
+
+                    var INFO = InfoDataManager.getINFO();
+                    INFO.activityList = ActivityDataManager.getActivityList();
+                    INFO.clientList = ActivityDataManager.getClientList();
+
+                    // Eval each one?..
+                    fixOperationList.forEach( fixOpt => {
+                        Util.evalTryCatch( fixOpt, INFO, "fixOperation" );
+                    });
+
+                    AppInfoManager.updateFixOperationLast( ( new Date() ).toISOString() );
+                    //if ( fixActivityList.length > 0 ) me.performFixActivities( fixActivityList );
                 } );
-                
+
+
+                // me.checkFixActivities( SessionManager.sessionData.login_UserName, function( fixActivityList ) {
+                //    if ( fixActivityList.length > 0 ) me.performFixActivities( fixActivityList );
+                // } );
+
                 MsgManager.msgAreaShow( 'Finished the perform' );
             }
         });     
@@ -644,7 +665,27 @@ function settingsApp( cwsRender )
 
 
     // =============================================
-    
+    // === FIX OPERATIONS RELATED 
+
+    me.checkFixOperations = function( login_UserName, fixOperationLast, returnFunc )
+    {
+		me.retrieveFixOperations( login_UserName, fixOperationLast, function( resultList )
+		{
+            returnFunc( resultList );
+		});
+    };
+
+
+	me.retrieveFixOperations = function( userName, fixOperationLast, returnFunc )
+	{
+		var payloadJson = { 'find': { 'userName': userName, 'dateTime': fixOperationLast } };
+
+		WsCallManager.requestDWS_GET( WsCallManager.EndPoint_PWAFixOperationsGET, payloadJson, undefined, returnFunc );
+	};
+
+
+    // =============================================
+    // === FIX ACTIVITIES RELATED 
 
 	me.checkFixActivities = function( userName, returnFunc )
 	{

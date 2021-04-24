@@ -21,12 +21,12 @@ WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available ch
 WsCallManager.actionErr = ''; // For making intentional failure for tesing.
 
 // -------------------------
-
-WsCallManager.available_PWAAvailable = '/PWA.available';
-WsCallManager.available_Availability = '/availability';
+WsCallManager.available_PWAAvailable = '/PWA.available';    // Older operation 
+WsCallManager.available_Availability = '/availability';     // New operation
 
 WsCallManager.EndPoint_PWAFixActivitiesGET = '/PWA.fixActivitiesGET';
 WsCallManager.EndPoint_PWAFixActivitiesDEL = '/PWA.fixActivitiesDEL';
+WsCallManager.EndPoint_PWAFixOperationsGET = '/PWA.fixOperationsGET';
 WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
 WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 

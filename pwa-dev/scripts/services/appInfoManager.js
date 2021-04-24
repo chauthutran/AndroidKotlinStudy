@@ -34,7 +34,7 @@ AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT";
 
 AppInfoManager.KEY_LANG_TERMS = "langTerms"; 
 AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
-
+AppInfoManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
 
 AppInfoManager.KEY_NETWORKSYNC = "networkSync";
 
@@ -466,13 +466,29 @@ AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
 
     // Update the 'INFO' when updated - since we use this through 'INFO' object.
     InfoDataManager.setINFO_lastDownloaded( dateStr );
-}	
+};	
 
 AppInfoManager.getSyncLastDownloadInfo = function()
 {
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO );
-}	
+};	
 
+
+// ------------------------------------------------------------------------------------  
+// ----------------  fix Operation Last Performed
+
+AppInfoManager.updateFixOperationLast = function( dateStr )
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_lastDownloaded( dateStr );
+};	
+
+AppInfoManager.getFixOperationLast = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in "userinfo"
@@ -481,7 +497,7 @@ AppInfoManager.getSyncLastDownloadInfo = function()
 AppInfoManager.updateNetworkSync = function( dataStr ) 
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, dataStr );
-}	
+};
 
 AppInfoManager.getNetworkSync = function() 
 {
@@ -495,7 +511,7 @@ AppInfoManager.getNetworkSync = function()
     }
 
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
-}	
+};
 
 // -----------------------------------------------
 
