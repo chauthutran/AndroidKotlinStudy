@@ -21,12 +21,13 @@ WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available ch
 WsCallManager.actionErr = ''; // For making intentional failure for tesing.
 
 // -------------------------
-
-WsCallManager.available_PWAAvailable = '/PWA.available';
-WsCallManager.available_Availability = '/availability';
+WsCallManager.available_PWAAvailable = '/PWA.available';    // Older operation 
+WsCallManager.available_Availability = '/availability';     // New operation
 
 WsCallManager.EndPoint_PWAFixActivitiesGET = '/PWA.fixActivitiesGET';
 WsCallManager.EndPoint_PWAFixActivitiesDEL = '/PWA.fixActivitiesDEL';
+WsCallManager.EndPoint_PWAFixOperationsGET = '/PWA.fixOperationsGET';
+WsCallManager.EndPoint_PWAFixOperationsUserUpdate = '/PWA.fixOperationsUserUpdate';
 WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
 WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 
@@ -470,22 +471,23 @@ WsCallManager.mockRequestCall = function( mockResponseJson, loadingTag, returnFu
 //WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, returnFunc )
 
 // SEARCH - Mongo
-WsCallManager.requestDWS_GET = function( endPoint, payloadJson, loadingTag, returnFunc )
+WsCallManager.requestDWS_RETRIEVE = function( endPoint, payloadJson, loadingTag, returnFunc )
 {
     WsCallManager.requestPostDws( endPoint, payloadJson, loadingTag, function( success, returnJson ) 
     {
         var resultList = [];
+        var realSuccess = false
 
         if ( success && returnJson )
         {					
-            if ( returnJson && returnJson.response && returnJson.response.dataList
-                && returnJson.response.dataList.length > 0 )
+            if ( returnJson && returnJson.response && returnJson.response.dataList )
             {
                 resultList = returnJson.response.dataList;
+                realSuccess = true;  // response.dataList has to exist to be real success.
             }
         }
 
-        returnFunc( resultList );
+        returnFunc( resultList, realSuccess );
     });	
 };
     

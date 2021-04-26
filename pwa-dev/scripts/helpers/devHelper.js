@@ -359,3 +359,85 @@ DevHelper.testRunStop = function()
     clearInterval( DevHelper.testRunInterval );
 };
 
+
+// =========================
+// == FIX OPERATION RELATED METHODS
+
+DevHelper.fixOpt_0426_wsSetting = function()
+{
+    var fixOptName = 'fixOpt_0426_wsSetting';
+    var statusFailed = Constants.status_failed;
+    var searchFailMsg = "ERROR in sendPost_ac_eval, TypeError: Cannot read property 'status' of undefined";
+
+    var activityList = ActivityDataManager.getActivityList();
+    var changeActivities = [];
+    var returnMsg = '';
+
+    activityList.forEach( activity => 
+    {
+        try
+        {
+            var activityId = activity.id;
+
+            if ( activityId )
+            {
+                var actProcs= activity.processing;
+
+                if ( actProcs && actProcs.status === Constants.status_error )
+                {
+                    var bWsConfigFail = false;
+    
+                    for( var i = 0; i < actProcs.history.length; i++ )
+                    {
+                        try
+                        {
+                            var hLog = actProcs.history[i];
+    
+                            if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) )
+                            {
+                                console.log( 'found wsConfig Error: ' + activityId );
+                                bWsConfigFail = true;
+                                break;
+                            }
+                        }
+                        catch( errMsg )
+                        {
+                            console.log( 'ERROR during history loop: ' + errMsg );
+                        }
+                    }
+    
+    
+                    if ( bWsConfigFail )
+                    {
+                        changeActivities.push( activityId );
+                        
+                        // 0. change 'failed' --> 'failed_back'
+                        actProcs.history.forEach( his => 
+                        {
+                            if ( his.status === Constants.status_failed ) his.status = 'failed_back';
+                        }); 
+    
+                        // 1. Set status as failed & apply the changes to UI
+                        ActivityDataManager.activityUpdate_Status( activityId, statusFailed, function() 
+                        {
+                            var msg = "With fix operation, " + fixOptName + ", status has been changed to '" + statusFailed + "'";
+                            ActivityDataManager.activityUpdate_History( activityId, statusFailed, msg, 0 );                         
+                        });
+                    }    
+                }
+            }            
+        }
+        catch( errMsg )
+        {
+            console.log( 'ERROR during activity looping: ' + errMsg );
+        }
+    });
+
+    if ( changeActivities.length > 0 ) 
+    {
+        ClientDataManager.saveCurrent_ClientsStore();
+        returnMsg = 'FixOpt, ' + fixOptName + ', changed ' + changeActivities.length + ' activities: ' + changeActivities.join( ', ' );
+    }
+
+    return returnMsg;
+}

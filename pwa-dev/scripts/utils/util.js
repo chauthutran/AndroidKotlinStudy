@@ -265,11 +265,14 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 
 	try
 	{
-		returnVal = eval( inputVal );
-
-		if ( returnVal && typeof( returnVal ) === "string" ) 
+		if ( inputVal )
 		{
-			returnVal = returnVal.replace( /undefined/g, '' );
+			returnVal = eval( inputVal );
+
+			if ( returnVal && typeof( returnVal ) === "string" ) 
+			{
+				returnVal = returnVal.replace( /undefined/g, '' );
+			}	
 		}
 	}
 	catch( errMsg )

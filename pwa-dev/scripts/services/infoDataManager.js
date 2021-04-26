@@ -20,6 +20,9 @@ InfoDataManager.NAME_login_OrgUnitData = 'login_OrgUnitData';
 InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';	// These get changed, thus, need to be updated.
 InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These get changed, thus, need to be updated.
 
+InfoDataManager.NAME_fixOperationLast = 'fixOperationLast';
+InfoDataManager.NAME_fixOperationLast_noZ = 'fixOperationLast_noZ';
+
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..
 
 // ---------------------------------------
@@ -50,10 +53,13 @@ InfoDataManager.setDataAfterLogin = function()
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, SessionManager.sessionData.orgUnitData.orgUnitId );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_CountryOuCode, SessionManager.sessionData.orgUnitData.countryOuCode );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitData, SessionManager.sessionData.orgUnitData );
+		//INFO.activityList = ActivityDataManager.getActivityList();
+		//INFO.clientList = ActivityDataManager.getClientList();
 
 		// Any other info?	
-		var syncLastDownloaded = AppInfoManager.getSyncLastDownloadInfo();
-		InfoDataManager.setINFO_lastDownloaded( syncLastDownloaded );
+		InfoDataManager.setINFO_lastDownloaded( AppInfoManager.getSyncLastDownloadInfo() );
+		InfoDataManager.setINFO_fixOperationLast( AppInfoManager.getFixOperationLast() );
+
 	}
 	catch ( errMsg )
 	{
@@ -76,7 +82,16 @@ InfoDataManager.setINFO_lastDownloaded = function( syncLastDownloaded )
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded, syncLastDownloaded );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_syncLastDownloaded_noZ, syncLastDownloaded.replace( 'Z', '' ) );
 	}
-}
+};
+
+InfoDataManager.setINFO_fixOperationLast = function( fixOperationLast )
+{
+	if ( fixOperationLast )
+	{
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_fixOperationLast, fixOperationLast );
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_fixOperationLast_noZ, fixOperationLast.replace( 'Z', '' ) );
+	}
+};
 
 // ------------------------------------------------
 // --- Create Array for Activity/Client Object under INFO <-- for sorting

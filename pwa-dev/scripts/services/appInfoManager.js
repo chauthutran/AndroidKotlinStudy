@@ -3,6 +3,7 @@ function AppInfoManager() {}
 
 AppInfoManager.ActivityHistoryMaxLength = 100;
 AppInfoManager.CustomLogHistoryMaxLength = 100;
+AppInfoManager.FixOperationMaxLength = 30;
 
 // ---------------------------
 
@@ -26,15 +27,18 @@ AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut";
 AppInfoManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
 AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
 AppInfoManager.KEY_NEW_ERROR_ACT = "newErrActivityIds"; 
+
+// DEBUG Related..
 AppInfoManager.KEY_ACTIVITY_HISTORY = "activityHistory"; 
 AppInfoManager.KEY_CUSTOM_LOG_HISTORY = "customLogHistory"; 
+AppInfoManager.KEY_FIX_OPERATION_HISTORY = "fixOperationHistory"; 
 
 AppInfoManager.KEY_LANG_CODE = "langCode"; 
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
 
 AppInfoManager.KEY_LANG_TERMS = "langTerms"; 
 AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
-
+AppInfoManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
 
 AppInfoManager.KEY_NETWORKSYNC = "networkSync";
 
@@ -249,43 +253,22 @@ AppInfoManager.clearNewErrorActivities = function()
 
 AppInfoManager.getActivityHistory = function()
 {    
-    var activityHistory = AppInfoManager.getPropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_ACTIVITY_HISTORY );
-    return ( activityHistory ) ? activityHistory : [];
+    return AppInfoManager.getHistory_CMN( AppInfoManager.KEY_ACTIVITY_HISTORY );
 };
 
 AppInfoManager.addToActivityHistory = function( activityJson )
 {    
     if ( activityJson ) 
     {
-        try
-        {
-            var activityJsonCopy = Util.cloneJson( activityJson );
+        var activityJsonCopy = Util.cloneJson( activityJson );
+        // Remove processing.form
+        if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processing.form;
 
-            // Remove processing.form
-            if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processing.form;
-
-            
-            var activityHistory = AppInfoManager.getActivityHistory();
-
-            activityHistory.unshift( activityJsonCopy );
-
-            var exceedCount = activityHistory.length - AppInfoManager.ActivityHistoryMaxLength;
-    
-            // Remove if equal to or exceed to 100.  if 100, remove 1.  if 101, remove 2.
-            if ( exceedCount > 0 ) 
-            {
-                for( var i = 0; i < exceedCount; i++ )
-                {
-                    activityHistory.pop();
-                }
-            }
-            
-            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_ACTIVITY_HISTORY, activityHistory );    
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in AppInfoManager.addToActivityHistory, errMsg: ' + errMsg );
-        }
+        AppInfoManager.addHistory_CMN( activityJsonCopy
+            , AppInfoManager.KEY_ACTIVITY_HISTORY
+            , AppInfoManager.getActivityHistory()
+            , AppInfoManager.ActivityHistoryMaxLength
+            , 'addToActivityHistory' );    
     }
 };
 
@@ -295,39 +278,69 @@ AppInfoManager.addToActivityHistory = function( activityJson )
 
 AppInfoManager.getCustomLogHistory = function()
 {    
-    var customLogHistory = AppInfoManager.getPropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY );
-    return ( customLogHistory ) ? customLogHistory : [];
+    return AppInfoManager.getHistory_CMN( AppInfoManager.KEY_CUSTOM_LOG_HISTORY );
 };
 
 AppInfoManager.addToCustomLogHistory = function( msg )
 {    
+    AppInfoManager.addHistory_CMN( msg
+        , AppInfoManager.KEY_CUSTOM_LOG_HISTORY
+        , AppInfoManager.getCustomLogHistory()
+        , AppInfoManager.CustomLogHistoryMaxLength
+        , 'addToCustomLogHistory' );
+};
+
+// ------------------------------------------------------------------------------------  
+// ----------------  DEBUG fix operation List Related..
+
+AppInfoManager.getFixOperationHistory = function()
+{    
+    return AppInfoManager.getHistory_CMN( AppInfoManager.KEY_FIX_OPERATION_HISTORY );
+};
+
+AppInfoManager.addToFixOperationHistory = function( msg )
+{
+    AppInfoManager.addHistory_CMN( msg
+        , AppInfoManager.KEY_FIX_OPERATION_HISTORY
+        , AppInfoManager.getFixOperationHistory()
+        , AppInfoManager.FixOperationMaxLength
+        , 'addToFixOperationHistory' );
+};
+
+// ------------------------------------------------------------------------------------  
+// ----------------  DEBUG history List Common Related..
+
+AppInfoManager.getHistory_CMN = function( subKey )
+{    
+    var history = AppInfoManager.getPropertyValue( AppInfoManager.KEY_DEBUG, subKey );
+    return ( history ) ? history : [];
+};
+
+AppInfoManager.addHistory_CMN = function( data, subKey, historyList, historyMax, optTitle )
+{    
     try
     {
-        if ( msg ) 
+        if ( data ) 
         {
-            var log = Util.getStr( msg, 400 );
+            historyList.unshift( data );
 
-            var customLogHistory = AppInfoManager.getCustomLogHistory();
-
-            customLogHistory.unshift( log );
-
-            var exceedCount = customLogHistory.length - AppInfoManager.CustomLogHistoryMaxLength;
+            var exceedCount = historyList.length - historyMax; //AppInfoManager.CustomLogHistoryMaxLength;
     
             // Remove if equal to or exceed to 100.  if 100, remove 1.  if 101, remove 2.
             if ( exceedCount > 0 ) 
             {
                 for( var i = 0; i < exceedCount; i++ )
                 {
-                    customLogHistory.pop();
+                    historyList.pop();
                 }
             }
             
-            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, AppInfoManager.KEY_CUSTOM_LOG_HISTORY, customLogHistory );
+            AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, subKey, historyList );
         }
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in AppInfoManager.addToCustomLog, errMsg: ' + errMsg );
+        console.customLog( 'ERROR in AppInfoManager.' + optTitle + '(addHistory_CMN), errMsg: ' + errMsg );
     }
 };
 
@@ -466,13 +479,29 @@ AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
 
     // Update the 'INFO' when updated - since we use this through 'INFO' object.
     InfoDataManager.setINFO_lastDownloaded( dateStr );
-}	
+};	
 
 AppInfoManager.getSyncLastDownloadInfo = function()
 {
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO );
-}	
+};	
 
+
+// ------------------------------------------------------------------------------------  
+// ----------------  fix Operation Last Performed
+
+AppInfoManager.updateFixOperationLast = function( dateStr )
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_fixOperationLast( dateStr );
+};	
+
+AppInfoManager.getFixOperationLast = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in "userinfo"
@@ -481,7 +510,7 @@ AppInfoManager.getSyncLastDownloadInfo = function()
 AppInfoManager.updateNetworkSync = function( dataStr ) 
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC, dataStr );
-}	
+};
 
 AppInfoManager.getNetworkSync = function() 
 {
@@ -495,7 +524,7 @@ AppInfoManager.getNetworkSync = function()
     }
 
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_USERINFO, AppInfoManager.KEY_NETWORKSYNC );
-}	
+};
 
 // -----------------------------------------------
 

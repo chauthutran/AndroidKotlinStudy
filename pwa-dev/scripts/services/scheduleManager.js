@@ -25,13 +25,17 @@ ScheduleManager.interval_networkCurrentRecheck = Util.MS_SEC * 5;			// recheck/c
 
 ScheduleManager.interval_scheduleSyncAllRun = Util.MS_SEC * 30;			// automated SyncAll process
 ScheduleManager.interval_syncDownRunOnce = Util.MS_MIN;				// syncDown try interval
-ScheduleManager.interval_checkNewAppFileCheck = Util.MS_MIN;			// background new app file check
+ScheduleManager.interval_fixOperationRunOnce = Util.MS_MIN;				// syncDown try interval
+// NOTE: after 10 times try, we can slow down the interval to 3 min?  or 5 min?
+
+//ScheduleManager.interval_checkNewAppFileCheck = Util.MS_MIN;			// background new app file check
 
 // list of Scheduler timerIDs (for cancelling at logoff)
 ScheduleManager.timerID_scheduleSyncAllRun;
-//ScheduleManager.timerID_syncDownRunOnce;
 ScheduleManager.timerID_serverAvilableCheck;
-ScheduleManager.timerID_checkNewAppFileCheck;
+//ScheduleManager.timerID_checkNewAppFileCheck;
+ScheduleManager.timerID_syncDownRunOnce;
+ScheduleManager.timerID_fixOperationRunOnce;
 
 
 // List/Controls schedules..
@@ -42,10 +46,12 @@ ScheduleManager.scheduleList = {
 	],
 	"AfterLogin": [
 		"SCH_SyncDown_RunOnce",  // schedule_syncAll? - based on frequency on setting
+		"SCH_FixOper_RunOnce",  // schedule_syncAll? - based on frequency on setting
 		"SCH_SyncAll_Background"
 	],
 	"AfterLogOut": [
 		"CLR_syncDown_RunOnce",
+		"CLR_FixOper_RunOnce",
 		"CLR_SyncAll_Background"
 	]
 };
@@ -74,7 +80,8 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 {	
 	ScheduleManager.scheduleList.AfterLogin.forEach( itemName =>
 	{
-		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce( cwsRenderObj );
+		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce();
+		else if ( itemName === "SCH_FixOper_RunOnce" ) ScheduleManager.schedule_fixOperationRunOnce();
 		else if ( itemName === "SCH_SyncAll_Background" ) ScheduleManager.schedule_syncAll_Background( cwsRenderObj );
 	});	
 
@@ -86,7 +93,8 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 {
 	ScheduleManager.scheduleList.AfterLogOut.forEach( itemName =>
 	{
-		if ( itemName === "CLR_syncDown_RunOnce" ) clearInterval( ScheduleManager.timerID_checkNewAppFileCheck );
+		if ( itemName === "CLR_syncDown_RunOnce" ) clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
+		else if ( itemName === "CLR_FixOper_RunOnce" ) ScheduleManager.clearTimeout_fixOperationRunOnce();
 		else if ( itemName === "CLR_SyncAll_Background" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
 	});	
 	
@@ -124,7 +132,9 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 		if ( ConfigManager.getSyncDownSetting().enable )
 		{
 			// Call this.  If does not success, schedule to call
-			ScheduleManager.syncDownRunIfOnlineSchedule();
+			clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
+			ScheduleManager.timerID_syncDownRunOnce = undefined;
+			ScheduleManager.syncDownRun_Online_Login();
 		}
 	}
 	catch( errMsg )
@@ -133,6 +143,18 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 	}
 };
 
+ScheduleManager.schedule_fixOperationRunOnce = function()
+{
+	try
+	{
+		ScheduleManager.clearTimeout_fixOperationRunOnce();
+		ScheduleManager.fixOperationRun_Online_Login();
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'Error in ScheduleManager.schedule_fixOperationRunOnce, errMsg: ' + errMsg );
+	}
+};
 
 // When to call this?  It gets called on login..  Which is enough..
 // It also gets called again from 'Settings' when sync frequency gets changed..
@@ -162,9 +184,9 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 
 
 // TODO: Move to 'SyncManager' class later..
-ScheduleManager.syncDownRunIfOnlineSchedule = function()
+ScheduleManager.syncDownRun_Online_Login = function()
 {
-	if ( ConnManagerNew.isAppMode_Online() )
+	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() )
 	{
 		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) 
 		{
@@ -197,8 +219,34 @@ ScheduleManager.syncDownRunIfOnlineSchedule = function()
 
 ScheduleManager.syncDownTimeoutCall = function()
 {
-	setTimeout( ScheduleManager.syncDownRunIfOnlineSchedule, ScheduleManager.interval_syncDownRunOnce );
+	ScheduleManager.timerID_syncDownRunOnce = setTimeout( ScheduleManager.syncDownRun_Online_Login, ScheduleManager.interval_syncDownRunOnce );
 }
+
+// ----------------------------
+
+ScheduleManager.clearTimeout_fixOperationRunOnce = function()
+{
+	clearTimeout( ScheduleManager.timerID_fixOperationRunOnce );
+};
+
+ScheduleManager.fixOperationRun_Online_Login = function()
+{
+	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() )
+	{
+		SettingsStatic.fixOperationRun();	
+	}
+	else
+	{
+		// Could create AppMode_Online wait run tasks.. and have this in..
+		ScheduleManager.fixOperationTimeoutCall();
+	}
+};
+
+ScheduleManager.fixOperationTimeoutCall = function()
+{
+	ScheduleManager.timerID_fixOperationRunOnce = setTimeout( ScheduleManager.fixOperationRun_Online_Login, ScheduleManager.interval_fixOperationRunOnce );
+}
+
 
 // -----------------------------------------------
 // --- SyncUpResponseAction Related --------------
