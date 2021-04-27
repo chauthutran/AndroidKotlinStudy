@@ -26,8 +26,10 @@ WsCallManager.available_Availability = '/availability';     // New operation
 
 WsCallManager.EndPoint_PWAFixActivitiesGET = '/PWA.fixActivitiesGET';
 WsCallManager.EndPoint_PWAFixActivitiesDEL = '/PWA.fixActivitiesDEL';
-WsCallManager.EndPoint_PWAFixOperationsGET = '/PWA.fixOperationsGET';
-WsCallManager.EndPoint_PWAFixOperationsUserUpdate = '/PWA.fixOperationsUserUpdate';
+
+WsCallManager.EndPoint_PWAFixOp_GET = '/PWA.fixOp_GET';
+WsCallManager.EndPoint_PWAFixOp_RunUpdates = '/PWA.fixOp_RunUpdates';
+
 WsCallManager.EndPoint_ShareDataLoad = '/PWA.loadData';
 WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 

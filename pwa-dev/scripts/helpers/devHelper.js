@@ -395,7 +395,7 @@ DevHelper.fixOpt_0426_wsSetting = function()
     
                             if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) )
                             {
-                                console.log( 'found wsConfig Error: ' + activityId );
+                                //console.log( 'found wsConfig Error: ' + activityId );
                                 bWsConfigFail = true;
                                 break;
                             }
@@ -436,7 +436,7 @@ DevHelper.fixOpt_0426_wsSetting = function()
     if ( changeActivities.length > 0 ) 
     {
         ClientDataManager.saveCurrent_ClientsStore();
-        returnMsg = 'FixOpt, ' + fixOptName + ', changed ' + changeActivities.length + ' activities: ' + changeActivities.join( ', ' );
+        returnMsg = '[' + fixOptName + '] ' + changeActivities.length + ' activities changed' + SettingsStatic.CUT_LIST_MSG + changeActivities.join( ', ' ) + ']';
     }
 
     return returnMsg;

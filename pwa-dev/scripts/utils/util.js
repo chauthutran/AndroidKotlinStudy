@@ -279,7 +279,12 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 	{
 		if ( !optionalTitle ) optionalTitle = '';
 
-		console.log( 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg + ', inputVal: ' + inputVal );
+		var errMsg1 = 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg;
+		var errMsg2 = ', inputVal: ' + inputVal;
+
+		returnVal += ', catchMsg: ' + errMsg1;
+		
+		console.log( errMsg1 + errMsg2 );
 	}
 
 	return returnVal;

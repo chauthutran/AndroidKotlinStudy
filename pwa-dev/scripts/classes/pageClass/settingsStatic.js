@@ -1,6 +1,8 @@
 //	TODO: ?: Rename to 'LSAppInfoManager'?
 function SettingsStatic() {};
 
+SettingsStatic.CUT_LIST_MSG = '. [LIST:';
+
 SettingsStatic.fixOperationRun = function( returnFunc )
 {
     // TODO:
@@ -23,20 +25,24 @@ SettingsStatic.fixOperationRun = function( returnFunc )
 
 
             if ( fixOperationList.length > 0 )
-            {
-                INFO.activityList = ActivityDataManager.getActivityList();
-                INFO.clientList = ClientDataManager.getClientList();
-                
+            {                
                 // Eval each one?..
-                fixOperationList.forEach( fixOpt => {
-                    Util.evalTryCatch( fixOpt.operation, INFO, "fixOperation - " + fixOpt.operationName );
+                fixOperationList.forEach( fixOpt => 
+                {
+                    fixOpt.resultMsg = Util.evalTryCatch( fixOpt.operation, INFO, "fixOperation - " + fixOpt.operationName );
+
+                    if ( fixOpt.resultMsg ) 
+                    {
+                        console.customLog( fixOpt.resultMsg );
+                        SettingsStatic.showMsg( fixOpt.resultMsg );
+                    }
                 });
                     
                 // Add the name of each fixOperations...
                 SettingsStatic.updateOnDebugHistory( fixOperationList, isoDateStr );
     
                 // Update the user done with this operation..
-                SettingsStatic.requestUpdate_FixOperations( fixOperationList, userName, function() {
+                SettingsStatic.requestUpdate_FixOperations( fixOperationList, userName, isoDateStr, function() {
                     console.log( 'requestUpdate_FixOperations performed' );
                 } );
             }
@@ -44,6 +50,23 @@ SettingsStatic.fixOperationRun = function( returnFunc )
             if ( returnFunc ) returnFunc();
         }
     } );
+};
+
+SettingsStatic.showMsg = function( returnMsg )
+{
+    try
+    {
+        if ( returnMsg )
+        {
+            var cutMsg = str.substring( 0, returnMsg.indexOf( SettingsStatic.CUT_LIST_MSG ) );
+
+            MsgManager.msgAreaShow( '[FIX DATA APPLIED]: ' + cutMsg );
+        }    
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in SettingsStatic.showMsg, errMsg: ' + errMsg );
+    }
 };
 
 
@@ -68,7 +91,7 @@ SettingsStatic.retrieveFixOperations = function( userName, fixOperationLast, ret
     if ( fixOperationLast ) payloadJson.find.dateTime = { "$gte": fixOperationLast };
     //"date.updatedUTC": { "$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );"
 
-    WsCallManager.requestDWS_RETRIEVE( WsCallManager.EndPoint_PWAFixOperationsGET, payloadJson, undefined, returnFunc );
+    WsCallManager.requestDWS_RETRIEVE( WsCallManager.EndPoint_PWAFixOp_GET, payloadJson, undefined, returnFunc );
 };
 
 
@@ -80,106 +103,33 @@ SettingsStatic.updateOnDebugHistory = function( fixOperationList, isoDateStr )
 };
 
 
-SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userName, returnFunc )
+SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userName, isoDateStr, returnFunc )
 {
-    var fixOptIdList = [];
-
-    fixOperationList.forEach( fixOpt => {
-        fixOptIdList.push( fixOpt._id );                
-    });
-
-    if ( fixOptIdList.length > 0 )
+    if ( fixOperationList.length > 0 )
     {
         // Create document with these fields - 'userName', 'dateTime'
-        var payloadJson = { 'updateMany': { 
-            'find': { '_ids': fixOptIdList }
-            , 'updateData': { '$addToSet': { 'doneUsers': userName } } 
-        } }; 
+        var payloadJson = { 'updatelist': [] };
 
-        WsCallManager.requestDWS_SAVE( WsCallManager.EndPoint_PWAFixOperationsUserUpdate, payloadJson, undefined, returnFunc );
+        fixOperationList.forEach( fixOpt => 
+        {
+            if ( fixOpt._id )
+            {
+                var recordJson = { 'dateTime': isoDateStr, 'userName': userName, 'result': fixOpt.resultMsg }; 
+
+                var updateCmd = { 
+                    'find': { '_id': fixOpt._id }
+                    , 'updateData': { 
+                        '$addToSet': { 'doneUsers': userName }
+                        , '$push': { 'records': recordJson } 
+                    }
+                };
+
+                payloadJson.updatelist.push( updateCmd );
+            }
+        });
+
+        WsCallManager.requestDWS_SAVE( WsCallManager.EndPoint_PWAFixOp_RunUpdates, payloadJson, undefined, returnFunc );
     }
     else returnFunc();
 };
 
-
-// [OBSOLETE]
-// =============================================
-// === FIX ACTIVITIES RELATED 
-
-SettingsStatic.checkFixActivities = function( userName, returnFunc )
-{
-    SettingsStatic.retrieveFixActivities( userName, function( resultList )
-    {
-        var fixActivityList = [];
-
-        if ( resultList.length > 0 ) fixActivityList = SettingsStatic.filterFixActivities_alreadySet( resultList );            
-
-        returnFunc( fixActivityList );
-    });
-};
-
-
-SettingsStatic.retrieveFixActivities = function( userName, returnFunc )
-{
-    var payloadJson = { 'find': { 'userName': userName } };
-
-    WsCallManager.requestDWS_RETRIEVE( WsCallManager.EndPoint_PWAFixActivitiesGET, payloadJson, undefined, returnFunc );
-};
-
-
-SettingsStatic.filterFixActivities_alreadySet = function( resultList )
-{
-    var fixActivityList = [];
-
-    resultList.forEach( activity => 
-    {
-        var activityJson = ActivityDataManager.getActivityById( activity.activityId );
-
-        if ( activityJson )
-        {
-            if ( activityJson.processing ) 
-            {
-                if ( activityJson.processing.fixActivityCase !== true )
-                {
-                    fixActivityList.push( activityJson );
-                }
-            }
-        }
-    });
-
-    return fixActivityList;
-};
-
-
-SettingsStatic.performFixActivities = function( fixActivityList )
-{
-    fixActivityList.forEach( activityJson => 
-    {
-        try
-        {
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 400, 'Redeem status not properly set case - changed from synced to failed status.' );					
-            ActivityDataManager.insertToProcessing( activityJson, processingInfo );	
-            activityJson.processing.fixActivityCase = true;
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in performFixActivities, errMsg: ' + errMsg );
-        }
-    });
-
-    // Save data if there has been any matching activity
-    ClientDataManager.saveCurrent_ClientsStore();
-
-    var fullListCount = fixActivityList.length;
-    var performCount = 0;
-
-    // Run sync on these items
-    fixActivityList.forEach( activityJson => 
-    {
-        SyncManagerNew.syncUpActivity( activityJson.id, undefined, function() 
-        {
-            performCount++;
-            MsgManager.msgAreaShow ( 'fixActivities performed: ' + performCount + '/' + fullListCount );
-        } );
-    });
-};
