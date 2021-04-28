@@ -106,7 +106,7 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 			$( "#imgSettingLangTermRotate" ).removeClass( "rot_l_anim" );
 			AppInfoManager.setLangLastDateTime( new Date() );
 
-			$( '#settingsInfo_userLanguage_Update' ).val( 'Refresh date: ' + AppInfoManager.getLangLastDateTime() );
+			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoManager.getLangLastDateTime() );
 
 			if ( allLangTerms_downloaded ) AppInfoManager.updateLangTerms( allLangTerms_downloaded );
 
