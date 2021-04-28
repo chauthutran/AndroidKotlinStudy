@@ -393,7 +393,7 @@ DevHelper.fixOpt_0426_wsSetting = function()
                         {
                             var hLog = actProcs.history[i];
     
-                            if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) )
+                            if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) >= 0 )
                             {
                                 //console.log( 'found wsConfig Error: ' + activityId );
                                 bWsConfigFail = true;

@@ -114,15 +114,20 @@ SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userNam
         {
             if ( fixOpt._id )
             {
-                var recordJson = { 'dateTime': isoDateStr, 'userName': userName, 'result': fixOpt.resultMsg }; 
+                var recordJson = { 'dateTime': isoDateStr, 'userName': userName };
+                if ( fixOpt.resultMsg ) recordJson.result = fixOpt.resultMsg;
+
+                var recordTarget = ( fixOpt.resultMsg ) ? 'records' : 'recordsEmpty';
 
                 var updateCmd = { 
                     'find': { '_id': fixOpt._id }
                     , 'updateData': { 
                         '$addToSet': { 'doneUsers': userName }
-                        , '$push': { 'records': recordJson } 
+                        , '$push': { } 
                     }
                 };
+
+                updateCmd.updateData.$push[ recordTarget ] = recordJson;
 
                 payloadJson.updatelist.push( updateCmd );
             }
