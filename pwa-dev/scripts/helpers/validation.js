@@ -38,7 +38,7 @@ Validation.setUp_Events = function( formTag ) // setupEventsForForm
                 Validation.checkValidations( inputTag );
             });
         }); 
-}
+};
 
 Validation.checkValidations = function( tag )
 {	
@@ -116,7 +116,9 @@ Validation.checkFormEntryTagsData = function( formTag, optionStr )
 
     if ( !allValid )
     {
-        if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "formValidationMsgTerm" ) + '">Validation Note: Review input fields.</span>', 'ERROR' );
+        // we need to confirm that TranslationManager.translatePage() is being called after loading this
+        if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( '<span term="msgNotif_formValidation">Validation Note: Review input fields.</span>', 'ERROR' );
+        //if ( optionStr === 'showMsg' ) MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "formValidationMsgTerm" ) + '">Validation Note: Review input fields.</span>', 'ERROR' );
     }
 
     return allValid;
@@ -135,7 +137,7 @@ Validation.checkRequiredValue = function( inputTag, divTag, type )
     if( ! Validation.checkFalseEvalSpecialCase() && ( ! value || value == "" || value == null ) )
     {
         var message = Validation.getMessage( type, "This field is required" );
-        divTag.append( Validation.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
         valid = false;
     }
     
@@ -147,33 +149,33 @@ Validation.checkValueLen = function( inputTag, divTag, type, length )
 {		
     var valid = true;
     var value = inputTag.val();
-    
+    var term = 'validationMsg_' + type;
+
     if ( value && type == 'min' && value.length < length )
     {
         var message = Validation.getMessage( type, 'Please enter at least ' + length  + ' characters' );
-        message = message.replace("$$length", length);
-        divTag.append( Validation.getErrorSpanTag( message ) );
+        //message = message.replace("$$length", length);
+        divTag.append( Validation.getErrorSpanTag( message, term, function( text ) { return text.replace( "$$length", length ); } ) );
 
         valid = false;
     }
     else if ( value && type == 'max' && value.length > length )
     {
         var message = Validation.getMessage( type, 'Please enter at most ' + length + ' characters' );
-        message = message.replace("$$length", length);
-        divTag.append( Validation.getErrorSpanTag( message ) );
+        //message = message.replace("$$length", length);
+        divTag.append( Validation.getErrorSpanTag( message, term, function( text ) { return text.replace( "$$length", length ); } ) );
         
         valid = false;
     }
     else if ( value && type == 'exactlength' && value.length != length )
     {
         var message = Validation.getMessage( type, 'Please enter exactly ' + length + ' characters' );
-        message = message.replace("$$length", length);
-        divTag.append( Validation.getErrorSpanTag( message ) );
+        //message = message.replace("$$length", length);
+        divTag.append( Validation.getErrorSpanTag( message, term, function( text ) { return text.replace( "$$length", length ); } ) );
         
         valid = false;
     }
     
-
     return valid;
 };
 
@@ -186,8 +188,8 @@ Validation.checkValueRange = function( inputTag, divTag, type, valFrom, valTo )
     if ( value && ( valFrom > value || valTo < value ) )
     {
         var message = Validation.getMessage( type, 'The value should be less than or equal to ' + valTo );
-        message = message.replace("$$length", length);
-        divTag.append( Validation.getErrorSpanTag( message ) );
+
+        divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type, function( text ) { return text.replace("$$value", valTo ); } ) );
 
         valid = false;
     }
@@ -204,7 +206,7 @@ Validation.checkNumberOnly = function( inputTag, divTag, type )
     if ( value && !reg.test( value ) )
     {
         var message = Validation.getMessage( type, 'Please enter number only' );
-        divTag.append( Validation.getErrorSpanTag( message ) );
+        divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
         
         valid = false;
     }
@@ -223,27 +225,29 @@ Validation.checkValidDate = function( inputTag, divTag, type )
     {
         var dtm = new Date( value );
 
-        if (Object.prototype.toString.call( dtm ) === "[object Date]") {
+        if (Object.prototype.toString.call( dtm ) === "[object Date]") 
+        {
             // it is a date
-            if ( isNaN( dtm.getTime() ) ) {  // d.valueOf() could also work
-                // date is not valid
+            if ( isNaN( dtm.getTime() ) ) 
+            {
+                // date is not valid  // d.valueOf() could also work
                 var message = Validation.getMessage( type, 'Please enter valid date' );
-                divTag.append( Validation.getErrorSpanTag( message ) );
+                divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
                 valid = false;
-            } else {
-                // date is valid
-            }
-            } else {
+            } 
+            //else {}  // date is valid
+        } 
+        else 
+        {
             // not a date
             var message = Validation.getMessage( type, 'Please enter valid date' );
-            divTag.append( Validation.getErrorSpanTag( message ) );
+            divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
             valid = false;
-            }
-
+        }
     }
 
     return valid;	
-}
+};
 
 Validation.checkPhoneNumberValue = function( inputTag, divTag, type )
 {
@@ -255,7 +259,7 @@ Validation.checkPhoneNumberValue = function( inputTag, divTag, type )
     var validationInfo = Validation.phoneNumberValidation( inputTag.val() );		
     if ( !validationInfo.success ) 
     {
-        divTag.append( Validation.getErrorSpanTag( validationInfo.msg ) );
+        divTag.append( Validation.getErrorSpanTag( validationInfo.msg, validationInfo.term ) );
         valid = false;			
     }
     else
@@ -311,7 +315,7 @@ Validation.phoneNumberValidation = function( phoneVal )
     var success = false;
     var finalPhoneNumber = '';
     var msg = '';
-
+    var type = '';
 
     // Trim value
     var value = Util.trim( phoneVal );
@@ -321,7 +325,8 @@ Validation.phoneNumberValidation = function( phoneVal )
     {
         if ( !( value.length >= 12 && value.length <= 15 ) )
         {
-            msg += Validation.getMessage( "phone9Len", 'Number should be 9 digits long (w/o country code' );
+            type = "phone9Len";
+            msg += Validation.getMessage( type, 'Number should be 9 digits long (w/o country code' );
         }
         else
         {
@@ -334,7 +339,8 @@ Validation.phoneNumberValidation = function( phoneVal )
     {
         if ( value.length != 10 )
         {
-            msg += Validation.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
+            type = "phoneStartWith";
+            msg += Validation.getMessage( type, "Number should start with '+2588' or '002588'" );
         }
         else
         {
@@ -355,12 +361,13 @@ Validation.phoneNumberValidation = function( phoneVal )
     }
     else
     {
-        msg += Validation.getMessage( "phoneStartWith", "Number should start with '+2588' or '002588'" );
+        type = "phoneStartWith";
+        msg += Validation.getMessage( type, "Number should start with '+2588' or '002588'" );
     }
 
     
-    return { 'success': success, 'phoneNumber': finalPhoneNumber, 'msg': msg };	
-}
+    return { 'success': success, 'phoneNumber': finalPhoneNumber, 'msg': msg, 'term': 'validationMsg_' + type };	
+};
 
 	
 // -------------------------------------------------------------------------------------------------------------------
@@ -370,6 +377,7 @@ Validation.phoneNumberValidation = function( phoneVal )
 Validation.getMessage = function( type, defaultMessage )
 {
     var message = ConfigManager.getConfigJson().definitionMessages[type];
+
     if( message === undefined )
     {
         message = defaultMessage;
@@ -384,11 +392,16 @@ Validation.getMessage = function( type, defaultMessage )
 };
 
 
-Validation.getErrorSpanTag = function( keyword, term )
+Validation.getErrorSpanTag = function( keyword, term, modifyFunc )
 {
     var text = TranslationManager.translateText( keyword, term ); // + optionalStr;
+
+    if ( modifyFunc ) text = modifyFunc( text );
+    // optionally modigy below text?
+
     var dvContainer = $( '<div class="errorMsg" /> ' );
-    var errorMsg = $( '<div class="errorMsgText" keyword="' + keyword + '" term="' + term + '" > ' + text + ' </div>' );
+    var errorMsg = $( '<div class="errorMsgText" keyword="' + keyword + '" termRef="' + term + '"> ' + text + ' </div>' );
+    //var errorMsg = $( '<div class="errorMsgText" keyword="' + keyword + '" term="' + term + '" > ' + text + ' </div>' );
     var arrow = $( '<div class="errorMsgArrow">&nbsp;</span>' );
 
     dvContainer.append( errorMsg, arrow );

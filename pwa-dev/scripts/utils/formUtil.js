@@ -1041,7 +1041,7 @@ FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 
 }
 
-FormUtil.getTagVal = function( tag )
+FormUtil.getTagVal = function( tag, option )
 {
 	var val = '';
 
@@ -1055,6 +1055,7 @@ FormUtil.getTagVal = function( tag )
 		else
 		{
 			val = tag.val();
+			if ( val && option === 'removeDBQuote' ) val = val.replace(/"/g, '' );
 		}
 	}
 
@@ -1832,7 +1833,7 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 
 		if ( getVal )
 		{
-			var val = FormUtil.getTagVal( inputTag );
+			var val = FormUtil.getTagVal( inputTag, 'removeDBQuote' );
 
 			inputsJson[ nameVal ] = val;
 		}

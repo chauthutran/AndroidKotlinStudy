@@ -1272,6 +1272,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					var regxRuleJson = {};
 					regxRuleJson.pattern = ruleJson.pattern;
 					regxRuleJson.msg = ruleJson.msg;
+					regxRuleJson.term = ruleJson.term;
 
 					regxRules.push( regxRuleJson );
 				}
@@ -1336,7 +1337,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
 	{
-		var tagVal = FormUtil.getTagVal( tag );
+		var tagVal = FormUtil.getTagVal( tag, 'removeDBQuote' );
 
 		InfoDataManager.setINFOdata( 'thisTag', tag );
 		InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );

@@ -233,7 +233,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( statusVal === Constants.status_submit )        
         {
             // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' );
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
             imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_submit_wMsg )        
@@ -251,17 +251,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
         else if ( statusVal === Constants.status_downloaded )        
         {
             // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' );
+            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' ).attr( 'term', 'activitycard_status_downloaded' );
             imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
         }
         else if ( statusVal === Constants.status_queued )
         {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' );
+            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
             imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
         }
         else if ( statusVal === Constants.status_processing )
         {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' );
+            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
             imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
 
             // NOTE: We are rotating if in 'processing' status!!!
@@ -270,7 +270,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         else if ( statusVal === Constants.status_failed )
         {
             // Not closed status, yet
-            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' );
+            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' ).attr( 'term', 'activitycard_status_failed' );
             imgIcon.attr( 'src', 'images/sync-postponed_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
         }
         else if ( statusVal === Constants.status_error )

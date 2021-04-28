@@ -344,6 +344,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
                 listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
             }
 
+            TranslationManager.translatePage();
             //if ( scrollEndFunc ) scrollEndFunc();
         }
     };

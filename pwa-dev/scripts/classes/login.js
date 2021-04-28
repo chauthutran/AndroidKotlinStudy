@@ -418,7 +418,7 @@ function Login( cwsRenderObj )
 
 	me.appVersionInfoDisplay = function()
 	{
-		$( '#spanVersion' ).text( 'Version ' + _ver );
+		$( '#spanVersion' ).text( TranslationManager.translateText( 'Version', 'landingPage_version_label' ) + ' ' + _ver );
 		$( '#spanVerDate' ).text( ' [' + _verDate + ']' );    
 		$( '#loginVersionNote' ).append( '<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>' );
 
