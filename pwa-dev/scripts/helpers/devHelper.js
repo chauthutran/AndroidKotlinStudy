@@ -364,10 +364,24 @@ DevHelper.testRunStop = function()
 // == FIX OPERATION RELATED METHODS
 
 DevHelper.fixOpt_0426_wsSetting = function()
-{
+{    
     var fixOptName = 'fixOpt_0426_wsSetting';
-    var statusFailed = Constants.status_failed;
     var searchFailMsg = "ERROR in sendPost_ac_eval, TypeError: Cannot read property 'status' of undefined";
+
+    return DevHelper.fixOpt_Common( fixOptName, searchFailMsg );
+};
+
+DevHelper.fixOpt_0429_coord = function()
+{    
+    var fixOptName = 'fixOpt_0429_coord';
+    var searchFailMsg = "SyntaxError: Unexpected token l in JSON at position 1";
+
+    return DevHelper.fixOpt_Common( fixOptName, searchFailMsg );
+};
+
+DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
+{
+    var statusFailed = Constants.status_failed;
 
     var activityList = ActivityDataManager.getActivityList();
     var changeActivities = [];
@@ -395,7 +409,6 @@ DevHelper.fixOpt_0426_wsSetting = function()
     
                             if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) >= 0 )
                             {
-                                //console.log( 'found wsConfig Error: ' + activityId );
                                 bWsConfigFail = true;
                                 break;
                             }
@@ -440,4 +453,4 @@ DevHelper.fixOpt_0426_wsSetting = function()
     }
 
     return returnMsg;
-}
+};

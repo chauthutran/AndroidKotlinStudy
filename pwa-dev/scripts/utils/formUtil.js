@@ -1055,7 +1055,7 @@ FormUtil.getTagVal = function( tag, option )
 		else
 		{
 			val = tag.val();
-			if ( val && option === 'removeDBQuote' ) val = val.replace(/"/g, '' );
+			//if ( val && option === 'removeDBQuote' ) val = val.replace(/"/g, '' );
 		}
 	}
 
