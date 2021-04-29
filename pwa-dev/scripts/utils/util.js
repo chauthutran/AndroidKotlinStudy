@@ -23,6 +23,8 @@ Util.KEY_CONDITION_CHECK = '[COND_CHECK]';
 Util.KEY_PROPERTY_REMOVE = '[PROP_REMOVE]';
 Util.KEY_OBJECT_REMOVE = '[OBJ_REMOVE]';
 
+Util.evalTryCatch_ERR = 'ERROR, evalTryCatch, ';
+
 // ---------------------------
 // --- Types Check ----
 
@@ -259,7 +261,7 @@ Util.tryCatchCallBack = function( callBack, runFunc )
 };
 
 
-Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
+Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
 {
 	var returnVal;
 
@@ -279,12 +281,14 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle )
 	{
 		if ( !optionalTitle ) optionalTitle = '';
 
-		var errMsg1 = 'ERROR, evalTryCatch ' + optionalTitle + ', errMsg - ' + errMsg;
-		var errMsg2 = ', inputVal: ' + inputVal;
-
-		returnVal += ', catchMsg: ' + errMsg1;
+		var errMsgMain = Util.evalTryCatch_ERR + optionalTitle + ', ErrMsg - ' + errMsg;
+		var errMsgSub = ( inputVal ) ? ', EvalVal: ' + inputVal.substr( 0, 40 ) : '';
+		var errMsgFull = errMsgMain + errMsgSub;
 		
-		console.log( errMsg1 + errMsg2 );
+		if ( optionalFunc ) optionalFunc( errMsgFull );
+		else console.log( errMsgFull );
+
+		returnVal = errMsgFull; // + ': ' + returnVal;
 	}
 
 	return returnVal;

@@ -452,7 +452,7 @@ function settingsApp( cwsRender )
                 ScheduleManager.clearTimeout_fixOperationRunOnce();
 
                 SettingsStatic.fixOperationRun( function() {
-                    MsgManager.msgAreaShow( 'Fix Operation Performed.' );
+                    //MsgManager.msgAreaShow( 'Fix Operation Performed.' );
                 });
             }
         });     

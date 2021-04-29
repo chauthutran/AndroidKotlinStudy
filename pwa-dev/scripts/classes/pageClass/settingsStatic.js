@@ -16,7 +16,7 @@ SettingsStatic.fixOperationRun = function( returnFunc )
 
     SettingsStatic.retrieveFixOperations( userName, fixOptLast, function( fixOperationList, success ) 
     {
-        console.log( 'SettingsStatic.retrieveFixOperations success: ' + success );
+        //console.log( 'SettingsStatic.retrieveFixOperations success: ' + success );
 
         if ( success && fixOperationList )
         {
@@ -29,12 +29,16 @@ SettingsStatic.fixOperationRun = function( returnFunc )
                 // Eval each one?..
                 fixOperationList.forEach( fixOpt => 
                 {
-                    fixOpt.resultMsg = Util.evalTryCatch( fixOpt.operation, INFO, "fixOperation - " + fixOpt.operationName );
+                    // If this fails, we should simply skip to the 'done' list?
+                    // -- Then, we should group the log 'records' - by userName?
+                    fixOpt.resultMsg = Util.evalTryCatch( fixOpt.operation, INFO, "Fix Operation " + fixOpt.operationName, function( errMsgFull ) {
+                        console.customLog( errMsgFull );                        
+                    });
 
                     if ( fixOpt.resultMsg ) 
                     {
-                        console.customLog( fixOpt.resultMsg );
-                        SettingsStatic.showMsg( fixOpt.resultMsg );
+                        fixOpt.errCase = ( fixOpt.resultMsg.indexOf( Util.evalTryCatch_ERR ) === 0 );
+                        SettingsStatic.showMsg( fixOpt.resultMsg, fixOpt.errCase );
                     }
                 });
                     
@@ -52,15 +56,17 @@ SettingsStatic.fixOperationRun = function( returnFunc )
     } );
 };
 
-SettingsStatic.showMsg = function( returnMsg )
+SettingsStatic.showMsg = function( returnMsg, errCase )
 {
     try
     {
-        if ( returnMsg )
+        if ( returnMsg && !errCase )
         {
-            var cutMsg = str.substring( 0, returnMsg.indexOf( SettingsStatic.CUT_LIST_MSG ) );
+            var cutListIndex = returnMsg.indexOf( SettingsStatic.CUT_LIST_MSG );
 
-            MsgManager.msgAreaShow( '[FIX DATA APPLIED]: ' + cutMsg );
+            var cutMsg = ( cutListIndex > 0 ) ? returnMsg.substring( 0, cutListIndex ) : returnMsg;
+
+            MsgManager.msgAreaShow( cutMsg );
         }    
     }
     catch( errMsg )
@@ -98,7 +104,7 @@ SettingsStatic.retrieveFixOperations = function( userName, fixOperationLast, ret
 SettingsStatic.updateOnDebugHistory = function( fixOperationList, isoDateStr )
 {
     fixOperationList.forEach( fixOpt => {
-        AppInfoManager.addToFixOperationHistory( { 'dateTime': isoDateStr, 'operationName': fixOpt.operationName, 'optId': fixOpt._id } );
+        AppInfoManager.addToFixOperationHistory( { 'dateTime': isoDateStr, 'operationName': fixOpt.operationName, 'optId': fixOpt._id, 'result': fixOpt.resultMsg } );
     });
 };
 
@@ -117,17 +123,21 @@ SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userNam
                 var recordJson = { 'dateTime': isoDateStr, 'userName': userName };
                 if ( fixOpt.resultMsg ) recordJson.result = fixOpt.resultMsg;
 
-                var recordTarget = ( fixOpt.resultMsg ) ? 'records' : 'recordsEmpty';
-
                 var updateCmd = { 
                     'find': { '_id': fixOpt._id }
                     , 'updateData': { 
-                        '$addToSet': { 'doneUsers': userName }
-                        , '$push': { } 
+                        '$push': { } 
+                        //,'$addToSet': { 'doneUsers': userName }
                     }
                 };
-
+            
+                // Set the right 'records' target (has resultMsg or not)
+                var recordTarget = ( fixOpt.resultMsg ) ? 'records' : 'recordsEmpty';
                 updateCmd.updateData.$push[ recordTarget ] = recordJson;
+
+                // If the fix run was successful, add the user to 'doneUsers' list. 
+                if ( !fixOpt.errCase ) updateCmd.updateData.$addToSet = { 'doneUsers': userName };
+
 
                 payloadJson.updatelist.push( updateCmd );
             }
