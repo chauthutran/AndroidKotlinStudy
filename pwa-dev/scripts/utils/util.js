@@ -24,6 +24,7 @@ Util.KEY_PROPERTY_REMOVE = '[PROP_REMOVE]';
 Util.KEY_OBJECT_REMOVE = '[OBJ_REMOVE]';
 
 Util.evalTryCatch_ERR = 'ERROR, evalTryCatch, ';
+Util.ERR_FIX_OP = 'ERR_FixOp';
 
 // ---------------------------
 // --- Types Check ----

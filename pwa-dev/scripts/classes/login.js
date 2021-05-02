@@ -39,6 +39,9 @@ function Login( cwsRenderObj )
 	me.current_userName = "";	// Used to load the userName/password when it got refreshed by mistake - or by appUpdate
 	me.current_password = {};
 	
+	me.loginAppUpdateCheck = false;
+
+
 	// =============================================
 	// === TEMPLATE METHODS ========================
 
@@ -152,11 +155,40 @@ function Login( cwsRenderObj )
 
 		me.setLoginEvents();
 		me.setAdvOptBtnClick();
+
+		me.setUserUsageDetect();
 	}
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
-	
+
+	me.setUserUsageDetect = function()
+	{
+		me.loginFormDivTag.focusin( function() {
+			// console.log( 'FUCUS - loginPage On User Focused ' + (new Date()).toString() );
+			me.checkAppUpdate_InLoginOnce();
+		});
+
+		me.loginFormDivTag.click( function() {
+			// console.log( 'CLICK - loginPage On User Clicked ' + (new Date()).toString() );
+			me.checkAppUpdate_InLoginOnce();
+		});
+	};	
+
+
+	me.checkAppUpdate_InLoginOnce = function()
+	{
+		if ( !me.loginAppUpdateCheck )
+		{
+			console.log( 'checkAppUpdate_InLoginOnce --> SwManager.checkNewAppFile_OnlyOnline()' );
+
+			SwManager.checkNewAppFile_OnlyOnline();
+
+			me.loginAppUpdateCheck = true;
+		}
+	};
+
+
 	me.setLoginEvents = function()
 	{
 		// Save userName that user has entered - to restore when App refreshed by appUpdate
@@ -458,8 +490,9 @@ function Login( cwsRenderObj )
 	
 	me.openForm = function()
 	{
-		// ReSet the 1st touch/focus flag..
+		// Reset various login related flags - the 1st touch/focus flag..
 		me.loginPage1stTouchFlag = false;
+		me.loginAppUpdateCheck = false;
 
 
 		// Hide non login related tags..
@@ -873,6 +906,8 @@ function Login( cwsRenderObj )
 
 	me.setNewAppFileStatus = function( newAppFilesFound )
 	{
+		me.loginAppUpdateCheck = true;
+
 		var loginAppUpdateTag = $( '#spanLoginAppUpdate' );
 
 		if ( newAppFilesFound ) loginAppUpdateTag.show();

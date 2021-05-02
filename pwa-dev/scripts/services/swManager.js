@@ -38,6 +38,8 @@ SwManager.installStateProgress = {
 
 SwManager.debugMode = false;
 
+SwManager.waitNewAppFileCheckDuringOffline = false;
+
 // --------------------------------------------
 
 SwManager.initialSetup = function ( callBack ) 
@@ -169,25 +171,48 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
-SwManager.checkNewAppFile = function( runFunction )
-{
-    SwManager.newAppFileExists_EventCallBack = runFunction;
-
-    // Trigger the sw change/update check event..
-    if ( SwManager.swRegObj ) SwManager.swRegObj.update();
-};
-
-
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
 {
-    if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
+    if ( ConnManagerNew.isAppMode_Online() ) 
+    {
+        // No need to call this, but just to make sure..
+        SwManager.waitNewAppFileCheckDuringOffline = false;
+
+        SwManager.newAppFileExists_EventCallBack = runFunction;
+
+        // Trigger the sw change/update check event..
+        if ( SwManager.swRegObj ) SwManager.swRegObj.update();
+    }
+    else 
+    {
+        if ( SwManager.waitNewAppFileCheckDuringOffline )
+        {
+            console.log( 'Already In-Wait NewAppFileCheck - when become online mode' );
+        }
+        else 
+        {
+            SwManager.waitNewAppFileCheckDuringOffline = true;
+
+            // If not in AppMode_Online, schedule it to run as soon as it come online..
+            ScheduleManager.addToRunSwitchToOnlineList( "appFileUpdateCheck", function() 
+            { 
+                SwManager.waitNewAppFileCheckDuringOffline = false;
+                SwManager.checkNewAppFile_OnlyOnline( runFunction ); 
+            });    
+        }
+    }
 };
 
+//SwManager.checkNewAppFile = function( runFunction ) {
+//    SwManager.newAppFileExists_EventCallBack = runFunction;
+
+    // Trigger the sw change/update check event..
+//    if ( SwManager.swRegObj ) SwManager.swRegObj.update();
+//};
 
 // NOTE: Only do this if new refresh?
 SwManager.refreshForNewAppFile_IfAvailable = function()
 {
-    //if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
     var spanLoginAppUpdateTag = $( '#spanLoginAppUpdate' );
     if ( spanLoginAppUpdateTag.is( ':visible' ) ) spanLoginAppUpdateTag.click();
 };

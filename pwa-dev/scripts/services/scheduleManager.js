@@ -56,6 +56,10 @@ ScheduleManager.scheduleList = {
 	]
 };
 
+
+// List to run when appMode switches from offline to online
+ScheduleManager.runSwitchToOnlineList = {};
+
 // ------------------------------------
 // --- SyncUpResponseAction Variables
 ScheduleManager.syncUpResponseAction_DefaultIntervalTime = Util.MS_HR; // 1 hr ( 1 sec, 1min, 1hr)
@@ -119,6 +123,39 @@ ScheduleManager.schedule_networkCurrentRecheck = function( NotRunRightAway )
 	if ( !NotRunRightAway ) ConnManagerNew.networkCurrentRecheck();
 
 	ScheduleManager.timerID_networkCurrentRecheck = setInterval( ConnManagerNew.networkCurrentRecheck, ScheduleManager.interval_networkCurrentRecheck );
+};
+
+
+// -----------------------------------------------
+// --- Run List Once switched to Online ----
+
+ScheduleManager.runWhenSwitchedToOnline = function()
+{
+	Object.keys( ScheduleManager.runSwitchToOnlineList ).forEach( requestId => 
+	{
+		try
+		{
+			ScheduleManager.runSwitchToOnlineList[ requestId ];
+
+			delete ScheduleManager.runSwitchToOnlineList[ requestId ];
+		}
+		catch( errMsg )
+		{
+			console.customLog( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
+		}
+	});            
+};
+
+
+ScheduleManager.addToRunSwitchToOnlineList = function( requestId, runFunc )
+{
+	ScheduleManager.runSwitchToOnlineList[ requestId ] = runFunc;
+};
+
+
+ScheduleManager.clearRunSwitchToOnlineList = function()
+{
+	ScheduleManager.runSwitchToOnlineList = {};
 };
 
 

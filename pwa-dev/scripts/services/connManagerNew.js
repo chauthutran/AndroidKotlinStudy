@@ -200,7 +200,7 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 };
 
 
-ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack ) 
+ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 {
 	var existingAppMode = statusInfo.appMode;
 
@@ -208,12 +208,13 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo ) //, callBack )
 	if ( statusInfo.manual_Offline.enabled ) statusInfo.appMode = ConnManagerNew.OFFLINE;  // THIS NEVER GETS CALLED PROPERLY?
 	else statusInfo.appMode = appModeNew;
 	
-
-	// call CallBack Method
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
 		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.handleAppMode_Switch();	
+		
+		// **When Switching From Offline -> Online, perform the runOnceOnline things..
+		if ( ConnManagerNew.isAppMode_Online() ) ScheduleManager.runWhenSwitchedToOnline();
 	}
 };
 

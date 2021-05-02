@@ -23,23 +23,15 @@ SettingsStatic.fixOperationRun = function( returnFunc )
             var isoDateStr = ( new Date() ).toISOString();                
             AppInfoManager.updateFixOperationLast( isoDateStr );
 
-
             if ( fixOperationList.length > 0 )
             {                
                 // Eval each one?..
                 fixOperationList.forEach( fixOpt => 
                 {
-                    // If this fails, we should simply skip to the 'done' list?
-                    // -- Then, we should group the log 'records' - by userName?
-                    fixOpt.resultMsg = Util.evalTryCatch( fixOpt.operation, INFO, "Fix Operation " + fixOpt.operationName, function( errMsgFull ) {
-                        console.customLog( errMsgFull );                        
-                    });
+                    // Main eval run..  'INFO' is not used for now..
+                    SettingsStatic.fixOptEvalRun( fixOpt, INFO );
 
-                    if ( fixOpt.resultMsg ) 
-                    {
-                        fixOpt.errCase = ( fixOpt.resultMsg.indexOf( Util.evalTryCatch_ERR ) === 0 );
-                        SettingsStatic.showMsg( fixOpt.resultMsg, fixOpt.errCase );
-                    }
+                    if ( fixOpt.resultMsg ) SettingsStatic.showMsg( fixOpt.resultMsg, fixOpt.errCase );
                 });
                     
                 // Add the name of each fixOperations...
@@ -48,13 +40,40 @@ SettingsStatic.fixOperationRun = function( returnFunc )
                 // Update the user done with this operation..
                 SettingsStatic.requestUpdate_FixOperations( fixOperationList, userName, isoDateStr, function() {
                     console.log( 'requestUpdate_FixOperations performed' );
-                } );
+                });
             }
 
             if ( returnFunc ) returnFunc();
         }
-    } );
+    });
 };
+
+
+SettingsStatic.fixOptEvalRun = function( fixOpt, INFO )
+{
+	var returnVal;
+
+	try
+	{
+		if ( fixOpt.operation )
+		{
+			returnVal = eval( fixOpt.operation );
+		}
+	}
+	catch( errMsg )
+	{
+		fixOpt.errCase = true;
+
+		var errMsgMain = Util.ERR_FIX_OP + ' ' + fixOpt.operationName + ', ErrMsg: ' + errMsg;
+        if ( fixOpt.operation ) errMsgMain += ', EvalVal: ' + fixOpt.operation.substr( 0, 40 );
+
+        console.customLog( errMsgMain );
+		returnVal = errMsgMain;
+	}
+
+	fixOpt.resultMsg = returnVal;
+};
+
 
 SettingsStatic.showMsg = function( returnMsg, errCase )
 {
@@ -104,7 +123,7 @@ SettingsStatic.retrieveFixOperations = function( userName, fixOperationLast, ret
 SettingsStatic.updateOnDebugHistory = function( fixOperationList, isoDateStr )
 {
     fixOperationList.forEach( fixOpt => {
-        AppInfoManager.addToFixOperationHistory( { 'dateTime': isoDateStr, 'operationName': fixOpt.operationName, 'optId': fixOpt._id, 'result': fixOpt.resultMsg } );
+        AppInfoManager.addToFixOperationHistory( { 'dateTime': isoDateStr, 'fixOpt': fixOpt } );
     });
 };
 
@@ -123,17 +142,25 @@ SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userNam
                 var recordJson = { 'dateTime': isoDateStr, 'userName': userName };
                 if ( fixOpt.resultMsg ) recordJson.result = fixOpt.resultMsg;
 
-                var updateCmd = { 
-                    'find': { '_id': fixOpt._id }
-                    , 'updateData': { 
-                        '$push': { } 
-                        //,'$addToSet': { 'doneUsers': userName }
+                var updateCmd = 
+                { 
+                    'find': { 
+                        '_id': fixOpt._id 
+                    }
+                    ,'updateData': { 
+                        '$push': { }
                     }
                 };
-            
+                //,'$addToSet': { 'doneUsers': userName }
+
+
                 // Set the right 'records' target (has resultMsg or not)
-                var recordTarget = ( fixOpt.resultMsg ) ? 'records' : 'recordsEmpty';
+                var recordTarget = 'recordsEmpty';
+                if ( fixOpt.errCase ) recordTarget = 'recordsErr';
+                else if ( fixOpt.resultMsg ) recordTarget = 'records';
+
                 updateCmd.updateData.$push[ recordTarget ] = recordJson;
+
 
                 // If the fix run was successful, add the user to 'doneUsers' list. 
                 if ( !fixOpt.errCase ) updateCmd.updateData.$addToSet = { 'doneUsers': userName };

@@ -1,16 +1,3 @@
-/* ## Inconsistent layouts due to SCSS: this fixes that ## */
-
-#pageDiv {
-  /* padding: 0 !important; */
-}
-
-/* Disable body scroll - Prevent Accidental Refresh */
-body
-{
-  /* overscroll-behavior-y: contain; */
-  /* overflow-y: hidden; disables entire scroll, thus, can not use it.*/
-}
-
 
 .fab__section, .fab__child-section {
   cursor: pointer;
