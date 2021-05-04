@@ -454,3 +454,89 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 
     return returnMsg;
 };
+
+/*
+DevHelper.fixOpt_Common2 = function( fixOptName, searchFailMsg )
+{
+    var statusFailed = Constants.status_failed;
+
+    var activityList = ActivityDataManager.getActivityList();
+    var changeActivities = [];
+    var returnMsg = '';
+
+    activityList.forEach( activity => 
+    {
+        try
+        {
+            var activityId = activity.id;
+
+            if ( activityId )
+            {
+                var actProcs= activity.processing;
+
+                if ( actProcs && actProcs.status === Constants.status_error )
+                {
+                    var bWsConfigFail = false;
+    
+                    for( var i = 0; i < actProcs.history.length; i++ )
+                    {
+                        try
+                        {
+                            var hLog = actProcs.history[i];
+    
+                            if ( hLog.msg && hLog.msg.indexOf( searchFailMsg ) >= 0 )
+                            {
+                                bWsConfigFail = true;
+                                break;
+                            }
+                        }
+                        catch( errMsg )
+                        {
+                            console.log( 'ERROR during history loop: ' + errMsg );
+                        }
+                    }
+    
+    
+                    if ( bWsConfigFail )
+                    {
+                        changeActivities.push( activityId );
+                        
+                        actProcs.history.forEach( his => 
+                        {
+                            if ( his.status === Constants.status_failed ) his.status = 'failed_back';
+                        }); 
+    
+                        ActivityDataManager.activityUpdate_Status( activityId, statusFailed, function() 
+                        {
+                            var msg = "With fix operation, " + fixOptName + ", status has been changed to '" + statusFailed + "'";
+                            ActivityDataManager.activityUpdate_History( activityId, statusFailed, msg, 0 );                         
+                        });
+                    }    
+                }
+            }            
+        }
+        catch( errMsg )
+        {
+            console.log( 'ERROR during activity looping: ' + errMsg );
+        }
+    });
+
+    if ( changeActivities.length > 0 ) 
+    {
+        ClientDataManager.saveCurrent_ClientsStore();
+        returnMsg = '[' + fixOptName + '] ' + changeActivities.length + ' activities changed' + SettingsStatic.CUT_LIST_MSG + changeActivities.join( ', ' ) + ']';
+    }
+
+    return returnMsg;
+};
+
+DevHelper.fixOpt_Run = function()
+{    
+    var fixOptName = 'fixOpt_0429_coord';
+    var searchFailMsg = "SyntaxError: Unexpected token l in JSON at position 1";
+
+    return DevHelper.fixOpt_Common2( fixOptName, searchFailMsg );
+};
+
+DevHelper.fixOpt_Run();
+*/

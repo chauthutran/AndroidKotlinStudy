@@ -12,6 +12,8 @@ InfoDataManager.INFO = {};
 InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 
+InfoDataManager.NAME_app_version = 'app_version';
+
 InfoDataManager.NAME_login_UserName = 'login_UserName';
 InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
 InfoDataManager.NAME_login_CountryOuCode = 'login_CountryOuCode';
@@ -60,6 +62,8 @@ InfoDataManager.setDataAfterLogin = function()
 		InfoDataManager.setINFO_lastDownloaded( AppInfoManager.getSyncLastDownloadInfo() );
 		InfoDataManager.setINFO_fixOperationLast( AppInfoManager.getFixOperationLast() );
 
+		// NOTE: But we can access by '_ver' in anywhere.
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_app_version, Util.getStr( _ver ) );
 	}
 	catch ( errMsg )
 	{

@@ -162,8 +162,8 @@ SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userNam
                 updateCmd.updateData.$push[ recordTarget ] = recordJson;
 
 
-                // If the fix run was successful, add the user to 'doneUsers' list. 
-                if ( !fixOpt.errCase ) updateCmd.updateData.$addToSet = { 'doneUsers': userName };
+                // If the fix run was successful, add the user to 'doneUsers' list. Also, if 'doneUsers_Disable is setTo true, do not add it.
+                if ( !fixOpt.errCase && !fixOpt.doneUsers_Disable ) updateCmd.updateData.$addToSet = { 'doneUsers': userName };
 
 
                 payloadJson.updatelist.push( updateCmd );
