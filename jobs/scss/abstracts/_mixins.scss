@@ -1,0 +1,855 @@
+// Small devices
+@mixin sm {
+    @media (min-width: #{$screen-sm-min}) {
+        @content;
+    }
+}
+
+// Medium devices
+@mixin md {
+    @media (min-width: #{$screen-md-min}) {
+        @content;
+    }
+}
+
+// Large devices
+@mixin lg {
+    @media (min-width: #{$screen-lg-min}) {
+        @content;
+    }
+}
+
+// Extra large devices
+@mixin xl {
+    @media (min-width: #{$screen-xl-min}) {
+        @content;
+    }
+}
+
+// Extra small devices
+@mixin xs {
+    @media (max-width: #{$screen-xs-max}) {
+        @content;
+    }
+}
+
+// Custom devices
+@mixin rwd-max($screen) {
+    @media (max-width: $screen+'px') {
+        @content;
+    }
+}
+
+@mixin rwd-min($screen) {
+    @media (min-width: $screen+'px') {
+        @content;
+    }
+}
+
+// Custom devices
+@mixin p-device($breakpoint) {
+    @media (orientation: portrait) {
+        @media (min-width: $breakpoint+'px') {
+            @content;
+        }
+    }
+}
+
+@mixin l-device($breakpoint) {
+    @media (orientation: landscape) {
+        @media (min-width: $breakpoint+'px') {
+            @content;
+        }
+    }
+}
+
+@mixin box-sizing($box) {
+    box-sizing: $box;
+    -webkit-box-sizing: $box;
+    -moz-box-sizing: $box;
+}
+
+@mixin appearance($appe) {
+    appearance: $appe;
+    -webkit-appearance: $appe;
+    -moz-appearance: $appe;
+}
+
+@mixin position($sticky) {
+    position: $sticky;
+    position: -webkit-+$sticky;
+}
+
+@mixin shadow-b($shadow) {
+    -webkit-box-shadow: $shadow;
+    -moz-box-shadow: $shadow;
+    box-shadow: $shadow;
+}
+
+@mixin user-select($u-select) {
+    user-select: $u-select;
+    -webkit-user-select: $u-select;
+    -moz-user-select: $u-select;
+    -ms-user-select: $u-select;
+}
+
+//Typography font-size
+@function calculateRem($size) {
+    $remSize: $size / 16px;
+    @return $remSize * 1rem;
+}
+
+@mixin font-size($size) {
+    font-size: calculateRem($size);
+}
+
+// components
+@mixin comp-tf-sc {
+    float: left;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    margin: $field-margin;
+    border: 1px solid $comp-border;
+    border-radius: $radius;
+    background-color: rgba($color-typ-sl, 0.009);
+    text-align: left;
+    @include box-sizing(border-box);
+}
+
+// buttons
+@mixin button($colors...) {
+    @if $buttons {
+        .button {
+            background-color: map-get($button-colors, nth($colors, 1));
+
+            &:hover {
+                background-color: rgba(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+                        background-color: map-get($button-colors, nth($colors, $i));
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                background-color: rgba(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .button-outline {
+            border: 1px solid map-get($button-colors, nth($colors, 1));
+            background-color: transparent !important;
+
+            .button-label {
+                color: map-get($button-colors, nth($colors, 1));
+            }
+
+            &:hover {
+                border: 1px solid rgba(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+                        border: 1px solid map-get($button-colors, nth($colors, $i));
+
+                        .button-label {
+                            color: map-get($button-colors, nth($colors, $i));
+                        }
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                border: 1px solid rgba(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .button-text {
+            background-color: transparent !important;
+
+            .button-label {
+                color: map-get($button-colors, nth($colors, 1));
+            }
+
+            &:hover {
+                color: rgba(map-get($button-colors, nth($colors, 1)), 80%);
+
+                @if(nth($colors, 1)==primary) {
+                    cursor: pointer;
+                }
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors,$i)} {
+                        color: $color-typ-s;
+
+                        .button-label {
+                            color: map-get($button-colors, nth($colors, $i));
+                        }
+
+                        @if(nth($colors, $i) !=dis) {
+                            &:hover {
+                                color: rgba(map-get($button-colors, nth($colors, $i)), 80%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+// Bottom navigation
+@mixin btm-nav-section-icon {
+    margin: auto;
+    width: 24px;
+    height: 24px;
+    //background-color: $color-background;
+    @include box-sizing(border-box);
+}
+
+// background images
+$fallback-extension: 'png' !default;
+$retina-suffix: '@2x';
+
+@mixin background-image($name, $size:false) {
+    background-image: url(#{$image-path}#{$name}.svg);
+
+    @if($size) {
+        background-size: $size;
+    }
+
+    .no-svg & {
+        background-image: url(#{$image-path}#{$name}.#{$fallback-extension});
+
+        @media only screen and (-moz-min-device-pixel-ratio: 1.5),
+        only screen and (-o-min-device-pixel-ratio: 3/2),
+        only screen and (-webkit-min-device-pixel-ratio: 1.5),
+        only screen and (min-device-pixel-ratio: 1.5) {
+            background-image: url(#{$image-path}#{$name}#{$retina-suffix}.#{$fallback-extension});
+        }
+    }
+}
+
+@mixin radio-structure($color) {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 0;
+    top: -1px;
+    border-radius: 50%;
+    border: 2px solid $color;
+}
+
+
+@-webkit-keyframes rotation-right {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-webkit-keyframes rotation-left {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(-359deg);
+    }
+}
+
+.rot_r_anim {
+    -webkit-animation: rotation-right 2s infinite linear;
+}
+
+.rot_l_anim {
+    -webkit-animation: rotation-left 2s infinite linear;
+}
+
+@mixin sync_all () {
+    .sync_all {
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        @include box-sizing(border-box);
+
+        .sync_all__header {
+            width: 100%;
+            height: 48px;
+            @include box-sizing(border-box);
+
+            .sync_all__header_title {
+                float: left;
+                width: calc(100% - 80px);
+                text-align: left;
+                color: $color-typ-dark;
+
+                @include p-device(240) {
+                    height: 36px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+
+                @include p-device(320) {
+                    height: 40px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+
+                @include l-device(320) {
+                    height: 36px;
+                    font-weight: 500;
+                    line-height: 18px;
+                    @include font-size(16px);
+                }
+            }
+
+            .sync_all__anim {
+                float: right;
+                width: 36px;
+                height: 36px;
+                margin: 0px 8px 0 0;
+                @include box-sizing(border-box);
+            }
+        }
+
+        .bottom__wrapper {
+            overflow-x: hidden;
+            width: 100%;
+
+            .sync_all__section {
+                float: left;
+                width: 100%;
+                height: auto;
+                @include box-sizing(border-box);
+
+                .sync_all__section_title {
+                    float: left;
+                    width: 100%;
+                    font-weight: 500;
+                    line-height: 18px;
+                    text-align: left;
+                    margin-top: 8px;
+                    color: $color-typ-dark;
+                    @include font-size(16px);
+                }
+
+                .sync_all__section_log {
+                    float: left;
+                    width: calc(100% - 16px);
+                    padding: 8px 8px 0 16px;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-align: left;
+                    color: $color-typ-dark;
+                    @include font-size(16px);
+                }
+
+                .sync_all__section_msg {
+                    float: left;
+                    width: 100%;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-align: right;
+                    margin-top: 8px;
+                    color: $color-typ-dark;
+                    @include font-size(15px);
+                }
+            }
+        }
+    }
+}
+
+
+@mixin themable($theme-name, $fc-50, $bg-50, $fc-100, $bg-100, $fc-200, $bg-200, $fc-300, $bg-300, $fc-400, $bg-400, $fc-500, $bg-500, $fc-600, $bg-600, $fc-700, $bg-700, $fc-800, $bg-800, $fc-900, $bg-900) {
+    .#{$theme-name} {
+        .Nav1 {
+            color: $fc-900;
+            background-color: $bg-900;
+
+            .Nav__icon {
+                .menu-icon {
+                    fill: $fc-900;
+                }
+            }
+
+            .Nav__sync {
+                .Nav__sync-s {
+                    fill: $bg-900;
+                }
+
+                .Nav__sync-d {
+                    fill: $bg-50;
+                }
+            }
+
+            .Nav__status {
+                .online_nav {
+
+                    .online_nav-cloud {
+                        fill: $fc-900;
+                    }
+
+                    .online_nav-i {
+                        fill: $fc-900;
+                    }
+
+                    .online_nav-s {
+                        fill: $fc-900;
+                    }
+                }
+
+                .offline_nav {
+                    .offline_nav-cloud {
+                        fill: $fc-900;
+                    }
+
+                    .offline_nav-i {
+                        fill: $fc-900;
+                    }
+
+                    .offline_nav-s {
+                        fill: $fc-900;
+                    }
+                }
+            }
+        }
+
+        .icon_field {
+            .Nav2__icon {
+                svg {
+                    fill: $fc-900;
+                }
+            }
+        }
+
+        .fab__child {
+            color: $fc-300;
+            background-color: $bg-300;
+
+            svg {
+                fill: $fc-400;
+            }
+        }
+
+        .fab {
+            color: $fc-900;
+            background-color: $bg-600;
+
+            svg {
+                fill: $fc-900;
+            }
+        }
+
+        .navigation__header {
+            background-color: $bg-200;
+        }
+
+        .primary {
+            background-color: $bg-700;
+        }
+
+        .button-outline.primary {
+            border: 1px solid $bg-700;
+
+            .button__container {
+                .button-label {
+                    color: $bg-700;
+                }
+            }
+        }
+
+        .button-text.primary {
+
+            .button__container {
+                .button-label {
+                    color: $bg-700;
+                }
+            }
+        }
+
+        .chip {
+            background-color: $bg-50
+        }
+
+        .chip-outl {
+            border: 1px solid $bg-100;
+        }
+
+        .navigation__items {
+
+            ul {
+
+                li {
+                    &:hover {
+                        background-color: $bg-50;
+                        color: #333;
+                    }
+                }
+            }
+        }
+
+        .tab_fs__head {
+
+            li {
+                background-color: $color_white;
+                border-bottom: 2px solid $color_white;
+
+                &.active {
+                    background-color: $color_white;
+                    border-bottom: 2px solid $bg-900;
+                }
+            }
+        }
+
+        .tab_fs {
+            @include rwd-min(558) {
+                border-bottom: 1px solid $bg-100;
+            }
+        }
+
+        .tab_fs__container {
+            @include rwd-min(558) {
+                border-left: 1px solid $bg-100;
+                border-right: 1px solid $bg-100;
+                border-bottom: 1px solid $bg-100;
+            }
+        }
+
+        .btm_nav {
+            background-color: #FFF;
+
+            .btm_nav__content {
+
+                .btm_nav__section {
+                    background-color: #FFF;
+
+                    &:hover {
+                        background-color: $bg-900;
+
+                        .btm_nav__section-icon {
+                            svg {
+                                path {
+                                    fill: $fc-900;
+                                }
+                            }
+                        }
+
+                        .btm_nav__section-label {
+                            color: $fc-900;
+                        }
+                    }
+
+                    .btm_nav__section-icon {
+                        svg {
+                            path {
+                                fill: $bg-900;
+                            }
+                        }
+                    }
+
+                    .btm_nav__section-label {
+                        color: $bg-900;
+                    }
+                }
+
+                .active {
+                    background-color: $bg-900;
+
+                    .btm_nav__section-icon {
+                        svg {
+                            path {
+                                fill: $fc-900;
+                            }
+                        }
+                    }
+
+                    .btm_nav__section-label {
+                        color: $fc-900;
+                    }
+                }
+            }
+        }
+
+        .sheet_full-fs {
+
+            .wapper_card {
+
+                .sheet-title {
+
+                    color: $fc-900;
+                    background-color: $bg-900;
+
+                }
+
+            }
+
+        }
+
+        #page-wrap {
+            table {
+                background-color: #FFF;
+
+                tr {
+                    &:nth-of-type(odd) {
+                        background: $bg-50;
+                        color: $fc-50
+                    }
+                }
+
+                th {
+                    background: $bg-900;
+                    color: $fc-900;
+                }
+
+                th {
+                    border: 1px solid $bg-100;
+                }
+
+                td {
+                    border: 1px solid $bg-100;
+                }
+            }
+        }
+
+        // XXXXXXXXXXXXXX
+
+        // presentational styling
+
+        .from_six_cols {
+            background-color: #FFF;
+
+            tr {
+                border-bottom: 1px solid $bg-100;
+
+                &:nth-of-type(odd) {
+                    background: $bg-50;
+                    color: $fc-50
+                }
+
+                @media (max-width: 600px) {
+                    &:nth-of-type(odd) {
+                        background: #FFF;
+                        color: $fc-50
+                    }
+                }
+
+                &:last-child {
+                    background: $bg-200;
+                    color: $fc-200;
+
+                    @media (max-width: 600px) {
+                        background-color: #FFF;
+                    }
+                }
+            }
+
+            th {
+                background: $bg-900;
+                color: $fc-900;
+            }
+
+            td {
+
+                @media (max-width: 600px) {
+                    background-color: #FFF;
+
+                    &:first-child {
+                        background: $bg-900;
+                        color: $fc-900;
+                    }
+
+                    &:last-child {
+                        background: $bg-200;
+                        color: $fc-200;
+                    }
+                }
+            }
+        }
+
+        .three_cols {
+            background-color: #FFF;
+
+            tr {
+                border-bottom: 1px solid $bg-100;
+
+                &:nth-of-type(odd) {
+                    background: $bg-50;
+                    color: $fc-50
+                }
+
+
+                &:last-child {
+                    background: $bg-200;
+                    color: $fc-200;
+                }
+            }
+
+            th {
+                background: $bg-900;
+                color: $fc-900;
+            }
+        }
+
+        .four_cols {
+            background-color: #FFF;
+
+            tr {
+                border-bottom: 1px solid $bg-100;
+
+                &:nth-of-type(odd) {
+                    background: $bg-50;
+                    color: $fc-50
+                }
+
+                @media (max-width: 362px) {
+                    &:nth-of-type(odd) {
+                        background: #FFF;
+                        color: $fc-50
+                    }
+                }
+
+                &:last-child {
+                    background: $bg-200;
+                    color: $fc-200;
+
+                    @media (max-width: 362px) {
+                        background-color: #FFF;
+                    }
+                }
+            }
+
+            th {
+                background: $bg-900;
+                color: $fc-900;
+            }
+
+            td {
+
+                @media (max-width: 362px) {
+                    background-color: #FFF;
+
+                    &:first-child {
+                        background: $bg-900;
+                        color: $fc-900;
+                    }
+
+                    &:last-child {
+                        background: $bg-200;
+                        color: $fc-200;
+                    }
+                }
+            }
+        }
+
+        .five_cols {
+            background-color: #FFF;
+
+            tr {
+                border-bottom: 1px solid $bg-100;
+
+                &:nth-of-type(odd) {
+                    background: $bg-50;
+                    color: $fc-50
+                }
+
+                @media (max-width: 428px) {
+                    &:nth-of-type(odd) {
+                        background: #FFF;
+                        color: $fc-50
+                    }
+                }
+
+                &:last-child {
+                    background: $bg-200;
+                    color: $fc-200;
+
+                    @media (max-width: 428px) {
+                        background-color: #FFF;
+                    }
+                }
+            }
+
+            th {
+                background: $bg-900;
+                color: $fc-900;
+            }
+
+            td {
+
+                @media (max-width: 428px) {
+                    background-color: #FFF;
+
+                    &:first-child {
+                        background: $bg-900;
+                        color: $fc-900;
+                    }
+
+                    &:last-child {
+                        background: $bg-200;
+                        color: $fc-200;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* mixin for multiline */
+@mixin multiLineEllipsis($lineHeight, $lineCount, $bgColor) {
+    overflow: hidden;
+    position: relative;
+    line-height: $lineHeight;
+    max-height: $lineHeight * $lineCount;
+    margin-right: -1em;
+    padding-right: 1em;
+    margin-bottom: 8px;
+
+    &:before {
+        content: '...';
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    &:after {
+        content: '';
+        position: absolute;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin-top: 0.2em;
+        background: $bgColor;
+    }
+}

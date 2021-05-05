@@ -1,0 +1,1570 @@
+// Design color palettes
+
+.color_red {
+    .c_50 {
+        color: $color_black;
+        background-color: #FFEBEE;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #FFCDD2;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #EF9A9A;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #E57373;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #EF5350;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #F44336;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #E53935;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #D32F2F;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #C62828;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #B71C1C;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FF8A80;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #FF5252;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #FF1744;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #D50000;
+        fill: $color_white;
+    }
+}
+
+.color_pink {
+    .c_50 {
+        color: $color_black;
+        background-color: #FCE4EC;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #F8BBD0;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #F48FB1;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #F06292;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #EC407A;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #E91E63;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #D81B60;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #C2185B;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #AD1457;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #880E4F;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FF80AB;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #FF4081;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #F50057;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #C51162;
+        fill: $color_white;
+    }
+}
+
+.color_purple {
+    .c_50 {
+        color: $color_black;
+        background-color: #F3E5F5;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #E1BEE7;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #CE93D8;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_white;
+        background-color: #BA68C8;
+        fill: $color_white;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #AB47BC;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #9C27B0;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #8E24AA;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #7B1FA2;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #6A1B9A;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #4A148C;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #EA80FC;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #E040FB;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #D500F9;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #AA00FF;
+        fill: $color_white;
+    }
+}
+
+.color_deep_purple {
+    .c_50 {
+        color: $color_black;
+        background-color: #EDE7F6;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #D1C4E9;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #B39DDB;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_white;
+        background-color: #9575CD;
+        fill: $color_white;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #7E57C2;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #673AB7;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #5E35B1;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #512DA8;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #4527A0;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #311B92;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #B388FF;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #7C4DFF;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #651FFF;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #6200EA;
+        fill: $color_white;
+    }
+}
+
+.color_indigo {
+    .c_50 {
+        color: $color_black;
+        background-color: #E8EAF6;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #C5CAE9;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #9FA8DA;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_white;
+        background-color: #7986CB;
+        fill: $color_white;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #5C6BC0;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #3F51B5;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #3949AB;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #303F9F;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #283593;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #1A237E;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #8C9EFF;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #536DFE;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #3D5AFE;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #304FFE;
+        fill: $color_white;
+    }
+}
+
+.color_blue {
+
+    .c_50 {
+        color: $color_black;
+        background-color: #E3F2FD;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #BBDEFB;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #90CAF9;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #64B5F6;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #42A5F5;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #2196F3;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #1E88E5;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #1976D2;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #1565C0;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #0D47A1;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #82B1FF;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_white;
+        background-color: #448AFF;
+        fill: $color_white;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #2979FF;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #2962FF;
+        fill: $color_white;
+    }
+}
+
+.color_light_blue {
+    .c_50 {
+        color: $color_black;
+        background-color: #E1F5FE;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #B3E5FC;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #81D4FA;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #4FC3F7;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #29B6F6;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #03A9F4;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #039BE5;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #0288D1;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #0277BD;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #01579B;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #80D8FF;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #40C4FF;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #00B0FF;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #0091EA;
+        fill: $color_white;
+    }
+}
+
+.color_cyan {
+    .c_50 {
+        color: $color_black;
+        background-color: #E0F7FA;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #B2EBF2;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #80DEEA;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #4DD0E1;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #26C6DA;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #00BCD4;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #00ACC1;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #0097A7;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #00838F;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #006064;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #84FFFF;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #18FFFF;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #00E5FF;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #00B8D4;
+        fill: $color_black;
+    }
+}
+
+.color_teal {
+    .c_50 {
+        color: $color_black;
+        background-color: #E0F2F1;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #B2DFDB;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #80CBC4;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #4DB6AC;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #26A69A;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #009688;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #00897B;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #00796B;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #00695C;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #004D40;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #A7FFEB;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #64FFDA;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #1DE9B6;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #00BFA5;
+        fill: $color_black;
+    }
+}
+
+.color_green {
+    .c_50 {
+        color: $color_black;
+        background-color: #E8F5E9;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #C8E6C9;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #A5D6A7;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #81C784;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #66BB6A;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #4CAF50;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #43A047;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #388E3C;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #2E7D32;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #1B5E20;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #B9F6CA;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #69F0AE;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #00E676;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #00C853;
+        fill: $color_black;
+    }
+}
+
+.color_light_green {
+    .c_50 {
+        color: $color_black;
+        background-color: #F1F8E9;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #DCEDC8;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #C5E1A5;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #AED581;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #9CCC65;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #8BC34A;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #7CB342;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_black;
+        background-color: #689F38;
+        fill: $color_black;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #558B2F;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #33691E;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #CCFF90;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #B2FF59;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #76FF03;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #64DD17;
+        fill: $color_black;
+    }
+}
+
+.color_lime {
+    .c_50 {
+        color: $color_black;
+        background-color: #F9FBE7;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #F0F4C3;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #E6EE9C;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #DCE775;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #D4E157;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #CDDC39;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #C0CA33;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_black;
+        background-color: #AFB42B;
+        fill: $color_black;
+    }
+
+    .c_800 {
+        color: $color_black;
+        background-color: #9E9D24;
+        fill: $color_black;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #827717;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #F4FF81;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #EEFF41;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #C6FF00;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #AEEA00;
+        fill: $color_black;
+    }
+}
+
+.color_yellow {
+    .c_50 {
+        color: $color_black;
+        background-color: #FFFDE7;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #FFF9C4;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #FFF59D;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #FFF176;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #FFEE58;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #FFEB3B;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #FDD835;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_black;
+        background-color: #FBC02D;
+        fill: $color_black;
+    }
+
+    .c_800 {
+        color: $color_black;
+        background-color: #F9A825;
+        fill: $color_black;
+    }
+
+    .c_900 {
+        color: $color_black;
+        background-color: #F57F17;
+        fill: $color_black;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FFFF8D;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #FFFF00;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #FFEA00;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #FFD600;
+        fill: $color_black;
+    }
+}
+
+.color_amber {
+    .c_50 {
+        color: $color_black;
+        background-color: #FFF8E1;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #FFECB3;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #FFE082;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #FFD54F;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #FFCA28;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #FFC107;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #FFB300;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_black;
+        background-color: #FFA000;
+        fill: $color_black;
+    }
+
+    .c_800 {
+        color: $color_black;
+        background-color: #FF8F00;
+        fill: $color_black;
+    }
+
+    .c_900 {
+        color: $color_black;
+        background-color: #FF6F00;
+        fill: $color_black;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FFE57F;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #FFD740;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #FFC400;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #FFAB00;
+        fill: $color_black;
+    }
+}
+
+.color_orange {
+    .c_50 {
+        color: $color_black;
+        background-color: #FFF3E0;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #FFE0B2;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #FFCC80;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #FFB74D;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #FFA726;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #FF9800;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_black;
+        background-color: #FB8C00;
+        fill: $color_black;
+    }
+
+    .c_700 {
+        color: $color_black;
+        background-color: #F57C00;
+        fill: $color_black;
+    }
+
+    .c_800 {
+        color: $color_black;
+        background-color: #EF6C00;
+        fill: $color_black;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #FF6F00;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FFD180;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #FFAB40;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_black;
+        background-color: #FF9100;
+        fill: $color_black;
+    }
+
+    .c_A700 {
+        color: $color_black;
+        background-color: #FF6D00;
+        fill: $color_black;
+    }
+}
+
+.color_deep_orange {
+    .c_50 {
+        color: $color_black;
+        background-color: #FBE9E7;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #FFCCBC;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #FFAB91;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #FF8A65;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #FF7043;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #FF5722;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #F4511E;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #E64A19;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #D84315;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #BF360C;
+        fill: $color_white;
+    }
+
+    .c_A100 {
+        color: $color_black;
+        background-color: #FF9E80;
+        fill: $color_black;
+    }
+
+    .c_A200 {
+        color: $color_black;
+        background-color: #FF6E40;
+        fill: $color_black;
+    }
+
+    .c_A400 {
+        color: $color_white;
+        background-color: #FF3D00;
+        fill: $color_white;
+    }
+
+    .c_A700 {
+        color: $color_white;
+        background-color: #DD2C00;
+        fill: $color_white;
+    }
+}
+
+.color_brown {
+    .c_50 {
+        color: $color_black;
+        background-color: #EFEBE9;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #D7CCC8;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #BCAAA4;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_white;
+        background-color: #A1887F;
+        fill: $color_white;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #8D6E63;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #795548;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #6D4C41;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #5D4037;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #4E342E;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #3E2723;
+        fill: $color_white;
+    }
+}
+
+.color_gray {
+    .c_50 {
+        color: $color_black;
+        background-color: #FAFAFA;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #F5F5F5;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #EEEEEE;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #E0E0E0;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_black;
+        background-color: #9E9E9E;
+        fill: $color_black;
+    }
+
+    .c_500 {
+        color: $color_black;
+        background-color: #9E9E9E;
+        fill: $color_black;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #757575;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #616161;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #424242;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #212121;
+        fill: $color_white;
+    }
+}
+
+.color_blue_gray {
+    .c_50 {
+        color: $color_black;
+        background-color: #ECEFF1;
+        fill: $color_black;
+    }
+
+    .c_100 {
+        color: $color_black;
+        background-color: #CFD8DC;
+        fill: $color_black;
+    }
+
+    .c_200 {
+        color: $color_black;
+        background-color: #B0BEC5;
+        fill: $color_black;
+    }
+
+    .c_300 {
+        color: $color_black;
+        background-color: #90A4AE;
+        fill: $color_black;
+    }
+
+    .c_400 {
+        color: $color_white;
+        background-color: #78909C;
+        fill: $color_white;
+    }
+
+    .c_500 {
+        color: $color_white;
+        background-color: #607D8B;
+        fill: $color_white;
+    }
+
+    .c_600 {
+        color: $color_white;
+        background-color: #546E7A;
+        fill: $color_white;
+    }
+
+    .c_700 {
+        color: $color_white;
+        background-color: #455A64;
+        fill: $color_white;
+    }
+
+    .c_800 {
+        color: $color_white;
+        background-color: #37474F;
+        fill: $color_white;
+    }
+
+    .c_900 {
+        color: $color_white;
+        background-color: #263238;
+        fill: $color_white;
+    }
+}
+
+.w_button{
+    color: $color_white;
+    background-color: #FF1744;
+    fill: $color_white;
+}
