@@ -142,7 +142,8 @@ function cwsRender()
 		// these items show up full-screen (sheet_full-fs)
 		if ( clicked_areaId !== 'statisticsPage' 
 			&& clicked_areaId !== 'settingsPage' 
-			&& clicked_areaId !== 'aboutPage' )
+			&& clicked_areaId !== 'aboutPage' 
+			&& clicked_areaId !== 'jobAids' )  // [JOB_AID]
 		{
 			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 		}
@@ -214,7 +215,11 @@ function cwsRender()
 		// On each area render, clear out the pageDiv content (which represent area div)..
 		//me.pageDivTag.empty();
 
-		if ( areaId !== 'statisticsPage' && areaId !== 'settingsPage' && areaId !== 'aboutPage' )
+        // [JOB_AID]
+		if ( areaId !== 'jobAids' 
+             && areaId !== 'statisticsPage' 
+             && areaId !== 'settingsPage' 
+             && areaId !== 'aboutPage' )
 		{
 			me.pageDivTag.empty();
 			me.resetVisibility_ViewListDiv();
@@ -231,7 +236,13 @@ function cwsRender()
 		if ( areaId === 'logOut' ) me.logOutProcess();
 		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 		else if ( areaId === 'settingsPage') me.settingsApp.render();
-		//else if ( areaId === 'myDetails') { me.myDetails.loadFormData(); }
+        // [JOB_AID]
+		else if ( areaId === 'jobAids') 
+		{ 
+			// window.open("jobs/index.html");
+            $( '#jobAidIFrame' ).attr( 'src', 'jobs/index.html' );
+            $( '#divJobAid' ).show();
+		}
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
 		{

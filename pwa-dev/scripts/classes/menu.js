@@ -4,7 +4,10 @@
 function Menu() {}
 
 Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
+Menu.jobAids = false;
 
+// [JOB_AID]
+Menu.menuJson_JobAids = { id: "jobAids", name: "Job Aids", term: "menu_jobAids", icon: "settings", groupBefore: true, groupAfter: false };
 Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "menu_statistics", icon: "statistics", groupBefore: true, groupAfter: false };
 Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "menu_settings", icon: "settings", groupBefore: true, groupAfter: false };
 Menu.menuJson_About = { id: "aboutPage", name: "About", term: "menu_about", icon: "about", groupBefore: false, groupAfter: true };
@@ -28,25 +31,14 @@ Menu.setInitialLogInMenu = function( cwsRenderObj )
 
 Menu.populateStandardMenuList = function( menuItems )
 {
-    if (JSON.stringify(menuItems).indexOf('statisticsPage') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_Statistics );
-    }
+    // [JOB_AID]
+    if ( Menu.jobAids ) menuItems.push ( Menu.menuJson_JobAids );
 
-    if (JSON.stringify(menuItems).indexOf('settingsPage') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_Settings );
-    }
-
-    if (JSON.stringify(menuItems).indexOf('aboutPage') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_About );
-    }
-
-    if (JSON.stringify(menuItems).indexOf('logOut') < 0 )
-    {
-        menuItems.push ( Menu.menuJson_LogOut );
-    }
+    menuItems.push ( Menu.menuJson_Statistics );    
+    menuItems.push ( Menu.menuJson_Settings );
+    menuItems.push ( Menu.menuJson_About );        
+    menuItems.push ( Menu.menuJson_LogOut );
+    //if (JSON.stringify(menuItems).indexOf('statisticsPage') < 0 )
 
     return menuItems;
 }
