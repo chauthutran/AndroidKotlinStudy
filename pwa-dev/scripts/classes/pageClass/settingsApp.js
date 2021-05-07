@@ -457,6 +457,13 @@ function settingsApp( cwsRender )
             }
         });     
 
+        me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
+        {
+            JobAidHelper.runTimeCache_JobAid( function() {
+                MsgManager.msgAreaShow( 'Job Aid Filing Success' );
+            });
+        });      
+
     };
 
 

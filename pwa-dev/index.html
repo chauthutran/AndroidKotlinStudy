@@ -324,8 +324,9 @@
               <button class="linkAppUpdateRefresh cbutton" style="display: none;">App Update Apply</button>
               <button class="syncDown cbutton">Sync Down</button>
               <button class="showLogs cbutton" style="background-color: cadetblue;">Logs</button>
-              <button class="dataShare cbutton">Data Share</button>               
-              <button class="fixActivities cbutton">Fix Activities</button>               
+              <button class="dataShare cbutton">Data Share</button>
+              <button class="fixActivities cbutton">Fix Data</button>
+              <button class="jobAidFiling cbutton" style="display: none;">JobAid</button>
             </div>
             <div class="field__right"></div>
           </div>
@@ -546,7 +547,7 @@
 
   <!-- LV1. Job Aid iFrame -->
   <div id="divJobAid" class="iframeDiv" style="display: none;">
-    <iframe id="jobAidIFrame" src="jobs/index.html" style="width:100%; height: 100%; overflow:auto; border:none;"></iframe>
+    <iframe id="jobAidIFrame" src="" style="width:100%; height: 100%; overflow:auto; border:none;"></iframe>
   </div>
   
   <!-- App Files -->
@@ -578,6 +579,7 @@
   <script type="text/javascript" src="scripts/helpers/qrcode.js"></script>
   <script type="text/javascript" src="scripts/helpers/pwaEpoch.js"></script>
   <script type="text/javascript" src="scripts/helpers/baseConverter.js"></script>
+  <script type="text/javascript" src="scripts/helpers/jobAidHelper.js"></script>
 
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
@@ -595,7 +597,6 @@
   <script type="text/javascript" src="scripts/services/infoDataManager.js"></script>
   <script type="text/javascript" src="scripts/services/scheduleManager.js"></script>
   <script type="text/javascript" src="scripts/services/swManager.js"></script>
-  <script type="text/javascript" src="scripts/services/fileCacheStorage/cacheStorage.js"></script>
 
   <script type="text/javascript" src="scripts/classes/pageClass/statistics.js"></script>
   <script type="text/javascript" src="scripts/classes/pageClass/settingsStatic.js"></script>
