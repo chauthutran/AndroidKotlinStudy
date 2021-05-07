@@ -239,8 +239,7 @@ function cwsRender()
         // [JOB_AID]
 		else if ( areaId === 'jobAids') 
 		{ 
-			// window.open("jobs/index.html");
-            $( '#jobAidIFrame' ).attr( 'src', 'jobs/index.html' );
+            $( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPage );
             $( '#divJobAid' ).show();
 		}
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
@@ -274,6 +273,7 @@ function cwsRender()
 	me.renderNewAreaBlock = function( blockName, options )
 	{
 		// On each area render, clear out the pageDiv content (which represent area div)..
+		// if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();  // <-- Need this?
 		me.pageDivTag.empty();
 
 		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );

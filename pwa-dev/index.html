@@ -17,9 +17,9 @@
 
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2021-05-05';
-    var _ver = '1.3.0-rc.3.05';
-    var _versionNote = '- Detail: FixDeploy update.';
+    var _verDate = '2021-05-07';
+    var _ver = '1.3.0-rc.3.06';
+    var _versionNote = '- Detail: Minor fix.';
     var _themeColor = '#000000';
   </script>
 
@@ -58,7 +58,6 @@
   <script type="text/javascript" src="scripts/libraries/aes.js"></script>
   <script type="text/javascript" src="scripts/libraries/llqrcode.js"></script>
   <script type="text/javascript" src="scripts/libraries/moment.min.js"></script>
-  <script type="text/javascript" src="scripts/libraries/moment.es.js"></script>
   <script type="text/javascript" src="scripts/libraries/mdDateTimePicker.min.js"></script>
   <script type="text/javascript" src="scripts/libraries/maska.js"></script>
   <script type="text/javascript" src="scripts/libraries/localforage.min.js"></script>
@@ -324,8 +323,9 @@
               <button class="linkAppUpdateRefresh cbutton" style="display: none;">App Update Apply</button>
               <button class="syncDown cbutton">Sync Down</button>
               <button class="showLogs cbutton" style="background-color: cadetblue;">Logs</button>
-              <button class="dataShare cbutton">Data Share</button>               
-              <button class="fixActivities cbutton">Fix Activities</button>               
+              <button class="dataShare cbutton">Data Share</button>
+              <button class="fixActivities cbutton">Fix Data</button>
+              <button class="jobAidFiling cbutton" style="display: none;">JobAid</button>
             </div>
             <div class="field__right"></div>
           </div>
@@ -578,6 +578,7 @@
   <script type="text/javascript" src="scripts/helpers/qrcode.js"></script>
   <script type="text/javascript" src="scripts/helpers/pwaEpoch.js"></script>
   <script type="text/javascript" src="scripts/helpers/baseConverter.js"></script>
+  <script type="text/javascript" src="scripts/helpers/jobAidHelper.js"></script>
 
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>
@@ -595,7 +596,6 @@
   <script type="text/javascript" src="scripts/services/infoDataManager.js"></script>
   <script type="text/javascript" src="scripts/services/scheduleManager.js"></script>
   <script type="text/javascript" src="scripts/services/swManager.js"></script>
-  <script type="text/javascript" src="scripts/services/fileCacheStorage/cacheStorage.js"></script>
 
   <script type="text/javascript" src="scripts/classes/pageClass/statistics.js"></script>
   <script type="text/javascript" src="scripts/classes/pageClass/settingsStatic.js"></script>

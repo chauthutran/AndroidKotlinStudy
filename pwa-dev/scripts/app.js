@@ -34,6 +34,7 @@ function app()
     if ( location.href.indexOf( 'pwa-dev' ) >= 0 )
     {
       Menu.jobAids = true;
+      $( '.jobAidFiling' ).show();
     }
 
 
@@ -61,10 +62,6 @@ function app()
 
       me.App_UI_startUp_Progress( '40%' );
       me.startAppProcess();
-
-      // [JOB_AID] - Should run by demand?
-      if ( Menu.jobAids ) new CacheStorage();
-  
     });
   };
 
@@ -232,19 +229,7 @@ function app()
   // [JOB_AID]    
   window.addEventListener('message', function(event)
   {
-    console.log( 'message called - in app.js' );
-
-    if ( event.data.from === 'jobAidIFrame')
-    {
-      if ( event.data.action === 'hideIFrame') 
-      {
-        $( '#divJobAid' ).hide();
-      }
-      else if ( event.data.action === 'sendMsg')
-      {
-        MsgManager.msgAreaShow( event.data.msg );        
-      }
-    }
+    if ( event.data.from === 'jobAidIFrame') JobAidHelper.msgHandle( event.data );      
   });
 
 	// ======================================

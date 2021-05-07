@@ -365,12 +365,18 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
-            // ?? Check only if during online?
-            SwManager.checkNewAppFile( function() 
+            if ( ConnManagerNew.isAppMode_Online() ) 
             {
-                MsgManager.msgAreaShow( 'New App Update Found!' );
-                SessionManager.cwsRenderObj.newSWrefreshNotification();    
-            });
+                SwManager.checkNewAppFile_OnlyOnline( function() 
+                {
+                    MsgManager.msgAreaShow( 'New App Update Found!' );
+                    SessionManager.cwsRenderObj.newSWrefreshNotification();    
+                });
+            }
+            else
+            {
+                MsgManager.msgAreaShow( 'This feature is only available in App Online Mode!' );
+            }
         });      
 
         me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).off( 'click' ).click( function() 
@@ -456,6 +462,13 @@ function settingsApp( cwsRender )
                 });
             }
         });     
+
+        me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
+        {
+            JobAidHelper.runTimeCache_JobAid( function() {
+                MsgManager.msgAreaShow( 'Job Aid Filing Success' );
+            });
+        });      
 
     };
 

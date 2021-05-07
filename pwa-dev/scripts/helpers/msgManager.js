@@ -74,6 +74,13 @@ MsgManager.msgAreaShow = function( msg, type, optClasses )
     return msgTag;
 };
 
+
+MsgManager.msgAreaShowErr = function( msg, optClasses )
+{
+    return MsgManager.msgAreaShow( msg, 'ERROR', optClasses );
+};
+
+
 MsgManager.msgAreaClearAll = function()
 {
     $( '.notifMsg' ).not( '.' + MsgManager.CLNAME_PersistSwitch ).remove();
