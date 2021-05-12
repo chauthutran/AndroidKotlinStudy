@@ -357,7 +357,7 @@ function cwsRender()
 	}
 
 
-	// TODO: THIS SHOULD BE MOVED TO MENU CLASS
+	// TODO: THIS SHOULD BE MOVED TO MENU CLASS  <-- Populate Top Dynamic Menu Items..
 	me.populateMenuList = function( areaList, exeFunc )
 	{
 		var startMenuTag;

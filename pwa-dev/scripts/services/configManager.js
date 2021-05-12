@@ -172,7 +172,7 @@ ConfigManager.getAreaListByStatus = function( bOnline, callBack )
     var configJson = ConfigManager.getConfigJson();
     var areaList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
 
-    if ( callBack ) callBack( areaList );
+    if ( callBack ) callBack( Util.getJsonDeepCopy( areaList ) );
 };
 
 // Use this to define the login_userRoles array list.
