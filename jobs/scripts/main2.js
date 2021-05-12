@@ -1,4 +1,6 @@
-$(document).ready(function () {
+$(document).ready(function () 
+{
+  var vtest = "version 0.2";
   var vw = $(window).width();
   var vh = $(window).height();
   var letsGo_slider = 0;
@@ -9,20 +11,6 @@ $(document).ready(function () {
   var button_cls = "";
 
   var count = 0; // needed for safari
-  window.onload = function () {
-    if (typeof history.pushState === "function") {
-      history.pushState("back", null, null);
-      window.onpopstate = function () {
-        history.pushState('back', null, null);
-        if (count == 1) { window.location = 'http://127.0.0.1:5500index.html'; }
-      };
-    }
-  }
-  setTimeout(function () { count = 1; }, 200);
-
-  function goBack() {
-    window.history.go(-1);
-  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   /*------------------------------------*\
@@ -374,22 +362,6 @@ $(document).ready(function () {
   });
 
   $(".btn_o").click(function () {
-
-    /*
-    $(".arrow_box_e").hide("slide", { direction: "left" }, 200);
-    $(".Nav1").animate({ height: 'toggle' });
-    $(".list").show();
-    $("Body").css({
-      "background-image": "url('./images/logo_bk.svg')"
-    });
-    */
-
-    // Add Page a
-      // Cost of house
-      // Cost of a cow
-    // Page b
-    // First Name
-    //Second Name
 
     var dataJson = {};
 
