@@ -29,10 +29,9 @@
     .fab_close { z-index: 3500; }
   </style>
 
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <!--script type="text/javascript" src="./scripts/main2.js"></script-->
+  <script src="../scripts/libraries/jquery-3.4.1.min.js"></script>
+  <script src="./scripts/libraries/jquery-ui.js"></script>
+  <script src="./scripts/pdfChecker.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -49,6 +48,11 @@
 
     $('#btnSendMsg').click(function () {
       var data = { 'from': 'jobAidIFrame', 'action': 'sendMsg', 'msg': $('#inputMsg').val() };
+      window.parent.postMessage(data, '*');
+    });
+
+    $( '.exitJobAids' ).click( function() {
+      var data = { 'from': 'jobAidIFrame', 'action': 'hideIFrame' };
       window.parent.postMessage(data, '*');
     });
 
@@ -72,17 +76,29 @@
 
     $("#pdfStart").click(function () 
     {
-      $(".Nav1").animate({ height: 'toggle' });
-      $(".list").hide();
-      $("Body").css({ "background-image": "none" });
+      var info = getAcrobatInfo();
 
-      $( '.pdfGoIFrame' ).attr( 'data', 'job5.pdf#toolbar=0&navpanes=0&scrollbar=0' );
-      $( '.divPdfGo' ).show();
+      console.log( info );
 
-      $(".nav_bottom").delay(500).fadeIn();
-      $(".fab_info").delay(500).fadeIn().css({ "left": "25%" })
-      $(".fab_close").delay(500).fadeIn().css({ "left": "45%" });
-      $(".fab_next").delay(600).fadeIn();
+      if ( info && info.acrobat ) 
+      {
+        $(".Nav1").animate({ height: 'toggle' });
+        $(".list").hide();
+        $("Body").css({ "background-image": "none" });
+
+        $( '.pdfGoIFrame' ).attr( 'data', 'job5.pdf#toolbar=0&navpanes=0&scrollbar=0' );
+        $( '.divPdfGo' ).show();
+
+        $(".nav_bottom").delay(500).fadeIn();
+        $(".fab_info").delay(500).fadeIn().css({ "left": "25%" })
+        $(".fab_close").delay(500).fadeIn().css({ "left": "45%" });
+        $(".fab_next").delay(600).fadeIn();        
+      }
+      else
+      {
+        $( '.aPdfTab' ).attr( 'href', 'job5.pdf' )[0].click();        
+      }
+
     });
 
     // -----------------------
@@ -471,33 +487,9 @@
     </div>
     <div class="navigation__items">
       <ul>
-        <li>
-          <div class="items"><img src="./images/list.svg"> <a>Records list</a></div>
-        </li>
-        <li>
-          <div class="items"><img src="./images/pills.svg"> <a>Service Delivery</a></div>
-        </li>
-        <li>
-          <div class="items"><img src="./images/Follow-up.svg"> <a>Follow-Up</a></div>
-        </li>
         <hr />
         <li>
-          <div class="items"><img src="./images/JobAidicons_item.png"> <a>Job Aids</a></div>
-        </li>
-        <hr />
-        <li>
-          <div class="items"><img src="./images/Statistics.svg"> <a>Statistics</a></div>
-        </li>
-        <hr />
-        <li>
-          <div class="items"><img src="./images/settings.png"> <a>Settings</a></div>
-        </li>
-        <li>
-          <div class="items"><img src="./images/about.svg"> <a>About</a></div>
-        </li>
-        <hr />
-        <li>
-          <div class="items"><img src="./images/logout.svg"> <a>Log out</a></div>
+          <div class="items exitJobAids"><img src="./images/logout.svg"> <a>Exit JobAids</a></div>
         </li>
       </ul>
     </div>
@@ -509,7 +501,7 @@
         <path class="menu-icon" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
       </svg>
     </div>
-    <div class="Nav__Title">Job Aids James Change</div>
+    <div class="Nav__Title">Job Aids</div>
     <div class="Nav__sync">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path class="Nav__sync-d"
@@ -548,7 +540,7 @@
             <img src="./images/JobAidicons.svg">
           </card__support_visuals>
           <card__content class="card__content">
-            <div class="card__row"><b>Smart Start James</b></div>
+            <div class="card__row"><b>Smart Start</b></div>
             <div class="card__row">ver 1.45 Apr 12, 2021</div>
             <div class="card__row">1.2 GB</div>
           </card__content>
@@ -562,7 +554,7 @@
           <card__content class="card__content">
             <div class="card__row"><b>Kuwa Mjanja</b></div>
             <div class="card__row">ver 2.4.13 Feb 3/2019</div>
-            <div class="card__row">2.5 GB</div>
+            <div class="card__row">2.5 GB<a href="" class="aPdfTab" target="_blank"></a></div>
           </card__content>
         </div>
       </div>

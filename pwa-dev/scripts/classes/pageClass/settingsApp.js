@@ -381,6 +381,7 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
+            AppInfoManager.setAutoLogin( new Date() );
             AppUtil.appReloadWtMsg();
         });      
 
@@ -465,9 +466,14 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
         {
-            JobAidHelper.runTimeCache_JobAid( function() {
-                MsgManager.msgAreaShow( 'Job Aid Filing Success' );
-            });
+            var reply = confirm( 'This will reload the app.  Do you want to continue?' );
+
+            if ( reply === true )
+            {
+                JobAidHelper.runTimeCache_JobAid( function() {
+                    AppUtil.appReloadWtMsg( 'Job Aid Filing Success.  Reloading App in process.' );
+                });    
+            }
         });      
 
     };
