@@ -239,7 +239,7 @@ function cwsRender()
         // [JOB_AID]
 		else if ( areaId === 'jobAids') 
 		{ 
-            $( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPage );
+            $( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
             $( '#divJobAid' ).show();
 		}
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
