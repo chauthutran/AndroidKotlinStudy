@@ -67,7 +67,17 @@ TranslationManager.setCurrLangTerms = function()
 {
 	var currLangcode = TranslationManager.getLangCode();
 	TranslationManager.currentLangTerms = TranslationManager.pullOut_LangTerms( TranslationManager.allLangTerms, currLangcode );
+	TranslationManager.setCurrLangTerms_After( currLangcode );
 };
+
+TranslationManager.setCurrLangTerms_After = function( currLangcode )
+{
+	moment.locale( currLangcode ); // ...[ currLangcode, 'en' ] ... will use the first one it has localizations for;
+	//moment.format('LLLL');
+
+	TranslationManager.clearDatePicker();
+	//TranslationManager.refreshScriptElement_bySource( 'scripts/libraries/mdDateTimePicker.min.js' );
+}
 
 // =============================================
 // MAIN PART 1 - Retrieval / Download of translations
@@ -265,3 +275,20 @@ TranslationManager.pullOut_LangTerms = function( allLangTerms, langCode )
 	return returnLangTerms;
 };
 
+// ---------------------------------------------------
+
+
+// TODO: GREG: ?? THIS WILL NOT WORK IN OFFLINE?
+TranslationManager.refreshScriptElement_bySource = function( src )
+{
+	if ( $('script[src^="' + src + '"]').length ) $('script[src^="' + src + '"]').remove();
+
+	var script = $( '<script type="text/javascript" src="' + src + '?v=' + ( new Date() ).getTime() + '" />' );
+
+	$( "body" ).append( script );
+}
+
+TranslationManager.clearDatePicker = function()
+{
+	$( '#mddtp-picker__date' ).remove();
+}
