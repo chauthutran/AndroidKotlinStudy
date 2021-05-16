@@ -1034,10 +1034,10 @@ function ActivityCard( activityId, cwsRenderObj, options )
     
         var arrDetails = [];
     
-        // 1 clientDetails
+        // 1 clientDetails properties = key
         for ( var key in clientObj.clientDetails ) 
         {
-            arrDetails.push( { 'name': key, 'value': clientObj.clientDetails[ key ] } );
+            arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientObj.clientDetails[ key ] ) } );
         }
 
         var clientDetailsTabTag = $( '[tabButtonId=tab_previewDetails]' );
@@ -1075,6 +1075,60 @@ function ActivityCard( activityId, cwsRenderObj, options )
         }
     };    
     
+    me.getFieldOption_LookupValue = function( key, val )
+    {
+        var fieldOptions = me.getFieldOptions( key );
+        var retValue = val;
+
+        // If the field is in 'definitionFields' & the field def has 'options' name, get the option val.
+        try
+        {
+            if ( fieldOptions )
+            {
+                var matchingOption = Util.getFromList( fieldOptions, val, "value" );
+    
+                if ( matchingOption )
+                {
+                    retValue = ( matchingOption.term ) ? TranslationManager.translateText( matchingOption.defaultName, matchingOption.term ) : matchingOption.defaultName;
+                }
+            }    
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in AcitivityCard.getFieldOptionLookupValue, errMsg: ' + errMsg );
+        }
+
+        //console.log( key + ': ' + retValue + ' (' + val + ')' );
+        return retValue;
+    };
+
+    me.getFieldOptions = function( fieldId )
+    {
+        var defFields = ConfigManager.getConfigJson().definitionFields;
+        var defOptions = ConfigManager.getConfigJson().definitionOptions;
+
+        var matchingOptions;
+        var optionsName;
+
+        // 1. Check if the field is defined in definitionFields & has 'options' field for optionsName used.
+        if ( defFields )
+        {
+			var matchField = Util.getFromList( defFields, fieldId, "id" );
+
+            if ( matchField && matchField.options )
+            {
+               optionsName =  matchField.options;
+            }
+        }
+
+        // 2. Get options by name.
+        if ( optionsName && defOptions )
+        {
+            matchingOptions = defOptions[ optionsName ];
+        }
+
+        return matchingOptions;
+    };
 
     me.removeActivityNCard = function( activityId, btnBackTag )
     {
