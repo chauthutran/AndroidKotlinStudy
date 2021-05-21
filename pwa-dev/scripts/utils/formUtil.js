@@ -1703,29 +1703,35 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 
 FormUtil.geolocationAllowed = function()
 {
-	navigator.permissions.query({
-		name: 'geolocation'
-	}).then(function(result) {
-
-		FormUtil.geoLocationState = result.state;
-
-		/*if (result.state == 'granted') {
-			report(result.state);
-			geoBtn.style.display = 'none';
-		} else if (result.state == 'prompt') {
-			report(result.state);
-			geoBtn.style.display = 'none';
-			navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
-		} else if (result.state == 'denied') {
-			report(result.state);
-			geoBtn.style.display = 'inline';
-		}*/
-
-		result.onchange = function() {
+	try
+	{
+		navigator.permissions.query({
+			name: 'geolocation'
+		}).then(function(result) {
+	
 			FormUtil.geoLocationState = result.state;
-		}
-	});
-
+	
+			/*if (result.state == 'granted') {
+				report(result.state);
+				geoBtn.style.display = 'none';
+			} else if (result.state == 'prompt') {
+				report(result.state);
+				geoBtn.style.display = 'none';
+				navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
+			} else if (result.state == 'denied') {
+				report(result.state);
+				geoBtn.style.display = 'inline';
+			}*/
+	
+			result.onchange = function() {
+				FormUtil.geoLocationState = result.state;
+			}
+		});	
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in FormUtil.geolocationAllowed(), errMsg: ' + errMsg );
+	}
 }
 
 FormUtil.getGeoLocationIndex = function( separator, group )

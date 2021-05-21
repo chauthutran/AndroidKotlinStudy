@@ -638,7 +638,9 @@ function Login( cwsRenderObj )
 
 		// 2. UI Related Process
 		me.closeForm();
-		FormUtil.geolocationAllowed();
+
+		// Disabled due to error
+		//FormUtil.geolocationAllowed();
 
 		me.cwsRenderObj.renderDefaultTheme();
 		MsgManager.initialSetup();
