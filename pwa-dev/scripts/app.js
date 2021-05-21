@@ -28,8 +28,16 @@ function app()
 
   // ----------------------------------------------------
 
-	me.initialize = function()
-	{
+  me.initialize = function()
+  {
+    // Show footer for DEBUG mode
+    var appMode = Util.getParameterByName( "mode" );
+    if( appMode == "debug" )
+    {
+       DebugLog.start();
+    }
+
+
     // 'pwa-dev' only enabling
     if ( location.href.indexOf( 'pwa-dev' ) >= 0 )
     {
