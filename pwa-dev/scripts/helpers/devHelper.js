@@ -455,7 +455,7 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 };
 
 /*
-DevHelper.fixOpt_Common2 = function( fixOptName, searchFailMsg )
+DevHelper.fixOpt_Common3 = function( fixOptName, searchFailMsg )
 {
     var statusFailed = Constants.status_failed;
 
@@ -473,7 +473,7 @@ DevHelper.fixOpt_Common2 = function( fixOptName, searchFailMsg )
             {
                 var actProcs= activity.processing;
 
-                if ( actProcs && actProcs.status === Constants.status_error )
+                if ( actProcs && ( actProcs.status === Constants.status_error || actProcs.status === Constants.status_failed ) )
                 {
                     var bWsConfigFail = false;
     
@@ -498,18 +498,31 @@ DevHelper.fixOpt_Common2 = function( fixOptName, searchFailMsg )
     
                     if ( bWsConfigFail )
                     {
-                        changeActivities.push( activityId );
-                        
-                        actProcs.history.forEach( his => 
+                        try
                         {
-                            if ( his.status === Constants.status_failed ) his.status = 'failed_back';
-                        }); 
+                            if ( activity.client && activity.client.tea )
+                            {
+                                var matchAttr = Util.getFromList( activity.client.tea.attributes, 'iSi69xEg8EP', 'attribute' );
+                                if ( matchAttr && matchAttr.value !== '' ) matchAttr.value = Number( matchAttr.value ) + '';
+                            }
+                            
+                            changeActivities.push( activityId );
     
-                        ActivityDataManager.activityUpdate_Status( activityId, statusFailed, function() 
+                            actProcs.history.forEach( his => 
+                            {
+                                if ( his.status === Constants.status_failed ) his.status = 'failed_back';
+                            }); 
+        
+                            ActivityDataManager.activityUpdate_Status( activityId, statusFailed, function() 
+                            {
+                                var msg = "With fix operation, " + fixOptName + ", status has been changed to '" + statusFailed + "'";
+                                ActivityDataManager.activityUpdate_History( activityId, statusFailed, msg, 0 );                         
+                            });    
+                        }
+                        catch( errMsg )
                         {
-                            var msg = "With fix operation, " + fixOptName + ", status has been changed to '" + statusFailed + "'";
-                            ActivityDataManager.activityUpdate_History( activityId, statusFailed, msg, 0 );                         
-                        });
+                            console.log( 'ERROR during activityEdit errMsg: ' + errMsg );
+                        }
                     }    
                 }
             }            
@@ -529,13 +542,13 @@ DevHelper.fixOpt_Common2 = function( fixOptName, searchFailMsg )
     return returnMsg;
 };
 
-DevHelper.fixOpt_Run = function()
+DevHelper.fixOpt_Run2 = function()
 {    
-    var fixOptName = 'fixOpt_0429_coord';
-    var searchFailMsg = "SyntaxError: Unexpected token l in JSON at position 1";
+    var fixOptName = 'fixOpt_0521_MZ';
+    var searchFailMsg = "value_not_integer";
 
-    return DevHelper.fixOpt_Common2( fixOptName, searchFailMsg );
+    return DevHelper.fixOpt_Common3( fixOptName, searchFailMsg );
 };
 
-DevHelper.fixOpt_Run();
+DevHelper.fixOpt_Run2();
 */

@@ -1156,7 +1156,8 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
                 var editReadyStatus = ( SyncManagerNew.isSyncReadyStatus( statusVal ) || statusVal === Constants.status_error );
         
-                if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
+                //if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
+                if ( editReadyStatus && activityJson.processing.form )
                 {
                     activityEditPaylayLoadBtnTag.show();
                     var editForm = activityJson.processing.form;
