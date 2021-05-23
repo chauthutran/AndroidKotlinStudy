@@ -697,10 +697,10 @@ function cwsRender()
 		SwManager.newSWrefreshNotification();
 	};
 
-	me.setNewAppFileStatus = function( newAppFilesFound )
+	me.showNewAppAvailable = function( newAppFilesFound )
 	{
-		me.loginObj.setNewAppFileStatus( newAppFilesFound );
-		me.settingsApp.setNewAppFileStatus( newAppFilesFound );	
+		me.loginObj.showNewAppAvailable( newAppFilesFound );
+		me.settingsApp.showNewAppAvailable( newAppFilesFound );	
 	};
 
 	// ======================================

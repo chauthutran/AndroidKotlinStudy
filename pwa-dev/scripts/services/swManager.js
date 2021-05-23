@@ -40,6 +40,8 @@ SwManager.debugMode = false;
 
 SwManager.waitNewAppFileCheckDuringOffline = false;
 
+SwManager.swUpdateCase = false;
+
 // --------------------------------------------
 
 SwManager.initialSetup = function ( callBack ) 
@@ -131,9 +133,26 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
     navigator.serviceWorker.addEventListener( 'controllerchange', ( e ) => 
     {
-        if ( !AppUtil.appReloading )
+        // The oncontrollerchange property of the ServiceWorkerContainer interface is 
+        // an event handler fired whenever a controllerchange event occurs 
+        //  — when the document's associated ServiceWorkerRegistration acquires a new active worker.
+
+
+        // The known WFA App triggered App Reloading Process Flag..
+	    if ( AppUtil.appReloading )
         {
-            if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.setNewAppFileStatus( true );
+            // In app reload/refresh, this also gets called since new service worker gets to start.
+            console.log( 'app intentional Reloading in SwManager.controllerchanged' );
+        }
+        // Service Worker update check requested case.
+        else if ( SwManager.swUpdateCase )
+        {
+            console.log( 'swUpdateCase in SwManager.controllerchanged' );
+
+
+            // NOTE: Thus, this gets called whenever there is a page reload.
+            // --> ONLY display the message or run this if we called for reload or app Check...
+            if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.showNewAppAvailable( true );
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
             // 'About page' app update uses above '_EventCallBack'
 
@@ -142,34 +161,34 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             AppInfoManager.clearAutoLogin();
             AppInfoManager.clearLoginCurrentKeys();
 
-
-            // For Already logged in or in process, reload the app, but also mark 
-            //      Mark for auto restart -  once used (on app start), clear this out..
-            if ( SessionManager.Status_LogIn_InProcess )
-            {            
-                AppInfoManager.setAutoLogin( new Date() );
-            }
-            else if ( SessionManager.getLoginStatus() )
+            
+            // For Already logged in, simply delay it --> which the logOut will perform the update.
+            if ( SessionManager.getLoginStatus() )
             {
-                // Set for delayed login  <-- Set variable in storage...
-                //console.log( 'delyaed appUpdate - on logout' );                
-                // NOTE: Do not need both below..  remove one later..
+                console.log( 'LoggedIn, thus, delayed the reload.' );
+                // Set for delayed app reload if already logged in.
                 e.preventDefault();
                 return false;
-            }   
+            }
             else
             {
-                // If app update happens before login, save the username keys + pins..
-                AppInfoManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
-            }
+                // If Not logged in
+                // [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
+                                
+                if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
+                else AppInfoManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
 
-            // Not logged in, yet (In login page).  Not in progress of login..
-            AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
+                // If app update happens before login, save the username keys + pins..
+
+                // Not logged in, yet (In login page).  Not in progress of login..
+                AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
+            }   
         }
     })
 };
 
 // -----------------------------------
+
 
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
 {
@@ -181,7 +200,11 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
         SwManager.newAppFileExists_EventCallBack = runFunction;
 
         // Trigger the sw change/update check event..
-        if ( SwManager.swRegObj ) SwManager.swRegObj.update();
+        if ( SwManager.swRegObj ) 
+        {
+            SwManager.swUpdateCase = true;
+            SwManager.swRegObj.update();
+        }        
     }
     else 
     {
@@ -203,12 +226,27 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
     }
 };
 
-//SwManager.checkNewAppFile = function( runFunction ) {
-//    SwManager.newAppFileExists_EventCallBack = runFunction;
+
+/*
+SwManager.checkNewAppFile_OnlyOnline_Back = function( runFunction )
+{
+    if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
+};
+
+SwManager.checkNewAppFile = function( runFunction )
+{
+    SwManager.newAppFileExists_EventCallBack = runFunction;
+    SwManager.swUpdateCase = false;
 
     // Trigger the sw change/update check event..
-//    if ( SwManager.swRegObj ) SwManager.swRegObj.update();
-//};
+    if ( SwManager.swRegObj ) 
+    {
+        SwManager.swUpdateCase = true;
+        SwManager.swRegObj.update();
+    }
+};
+*/
+
 
 // NOTE: Only do this if new refresh?
 SwManager.refreshForNewAppFile_IfAvailable = function()

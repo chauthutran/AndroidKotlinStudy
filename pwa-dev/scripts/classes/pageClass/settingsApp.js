@@ -622,7 +622,7 @@ function settingsApp( cwsRender )
     };
 
 
-    me.setNewAppFileStatus = function( newAppFilesFound )
+    me.showNewAppAvailable = function( newAppFilesFound )
 	{
         if ( newAppFilesFound ) 
         {

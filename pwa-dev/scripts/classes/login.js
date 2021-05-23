@@ -72,6 +72,7 @@ function Login( cwsRenderObj )
 		me.autoLoginCheck( function() {
 			me.populateSessionPin();
 			me.lastPinTrigger = true;
+			MsgManager.msgAreaShow( 'Auto Login After AppUpdate.' );
 			me.loginBtnTag.click();
 		});
 
@@ -156,13 +157,13 @@ function Login( cwsRenderObj )
 		me.setLoginEvents();
 		me.setAdvOptBtnClick();
 
-		me.setUserUsageDetect();
+		me.setUpInteractionDetect();
 	}
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
 
-	me.setUserUsageDetect = function()
+	me.setUpInteractionDetect = function()
 	{
 		me.loginFormDivTag.focusin( function() {
 			// console.log( 'FUCUS - loginPage On User Focused ' + (new Date()).toString() );
@@ -906,7 +907,7 @@ function Login( cwsRenderObj )
 	};
 
 
-	me.setNewAppFileStatus = function( newAppFilesFound )
+	me.showNewAppAvailable = function( newAppFilesFound )
 	{
 		me.loginAppUpdateCheck = true;
 
