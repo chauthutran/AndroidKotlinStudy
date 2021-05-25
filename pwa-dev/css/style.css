@@ -1629,8 +1629,8 @@ body {
   overflow-x: hidden;
   width: 100%;
   height: 100%;
-  /* Disables pull-to-refresh and overscroll glow effect.*/
-  overscroll-behavior-y: none;
+  /* Disables pull-to-refresh and overscroll glow effect.  none vs contain*/
+  overscroll-behavior-y: contain;
 }
 
 body {

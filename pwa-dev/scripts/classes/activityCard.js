@@ -1154,7 +1154,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             if( activityJson )
             {
                 var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-                var editReadyStatus = ( SyncManagerNew.isSyncReadyStatus( statusVal ) || statusVal === Constants.status_error );
+                var editReadyStatus = ( statusVal === Constants.status_error );  // SyncManagerNew.isSyncReadyStatus( statusVal ) ||
         
                 //if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
                 if ( editReadyStatus && activityJson.processing.form )

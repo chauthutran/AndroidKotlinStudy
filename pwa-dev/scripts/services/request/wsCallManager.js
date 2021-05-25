@@ -73,7 +73,7 @@ WsCallManager.setWsTarget = function( overrideOriginUrl, overrideStageName )
         else 
         {
             var savedLocalStageName = AppInfoManager.getLocalStageName();
-            stageName = ( savedLocalStageName ) ? savedLocalStageName : 'test';
+            stageName = ( savedLocalStageName ) ? savedLocalStageName : 'dev';
         }
     }
     else if ( originUrl.indexOf( 'https://pwa.' ) === 0 ) stageName = 'prod';
