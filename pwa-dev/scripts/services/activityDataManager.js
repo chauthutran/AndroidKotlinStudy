@@ -303,11 +303,26 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
                     ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
                     newActivities.push( dwActivity );
                 }
+                else if ( dwActivity.date && dwActivity.date.updateFromMongo 
+                        && ( !appClientActivity.date.updateFromMongo 
+                            || ( appClientActivity.date.updateFromMongo 
+                                && dwActivity.date.updateFromMongo > appClientActivity.date.updateFromMongo ) 
+                        ) 
+                    ) 
+                {
+                    // NOTE:
+                    // If 'dwActivity.date.updateFromMongo' exists and later then appClientActivity one (if exists)
+                    // Adding to 'newActivities' would update/replace the activity in 'appClient'
+
+                    // NEED TO TEST THIS
+                    ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
+                    newActivities.push( dwActivity );
+                }
             }
         }
         catch( errMsg )
         {
-            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities: ', dwActivity, appClientActivity );
+            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities, errMsg: ' + errMsg );
         }
     });
 
