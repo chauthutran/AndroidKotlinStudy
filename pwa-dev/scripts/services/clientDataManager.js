@@ -221,6 +221,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                 {
                     var appClient = ClientDataManager.getClientById( dwClient._id );
 
+                    // If matching client exists in App already.
                     if ( appClient )
                     {
                         var clientDateCheckPass = ( case_dhis2RedeemMerge || case_noClientDateCheck ) ? true : ( ClientDataManager.getDateStr_LastUpdated( dwClient ) > ClientDataManager.getDateStr_LastUpdated( appClient ) );
@@ -281,7 +282,9 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
         {
             if ( processingInfo ) ClientDataManager.clientsActivities_AddProcessingInfo( newClients, processingInfo );
 
-            ClientDataManager.insertClients( newClients );        
+            // NOTE: new client insert -> new activity insert -> during this, we check if other client (temp client case) has same activityId.
+            //   and remove the client (temp) & activity (before sync) in it.
+            ClientDataManager.insertClients( newClients );
         }        
 
         // Need to create ClientDataManager..

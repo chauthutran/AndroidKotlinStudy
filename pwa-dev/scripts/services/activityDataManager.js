@@ -115,15 +115,20 @@ ActivityDataManager.removeActivityById = function( activityId )
 };
 
 
-// TODO: Need to work on this - rename method & activity/client id related..
 ActivityDataManager.removeTempClient_Activity = function( activityId )
 {
+    // NOTE: Removing temp client (temp) & activity (before sync)
+    // In synced up new activity indexing, if same activityId exists, we like to remove the client & all the indexing related to that clinet/activity
+    // New activity and existing activity (before sync) has same activityId, but different. 
+    // And before sync one should be deleted as well as the temporary client that holds the activity
+    // MORE: All the new activities are created with temporary client, not existing client..
+
     try
     {
-        // 1. remove from activityList
+        // 1. Remove from activityList Index (We will add back, though)
         Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
         
-        // 2. remove from activityClientMap, 3. remove from client activities
+        // 2. remove from activityClientMap (temporary client, likely), 3. remove from client activities
         if ( ActivityDataManager._activityToClient[ activityId ] )
         {
             var client = ActivityDataManager._activityToClient[ activityId ];
@@ -161,7 +166,12 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
 
         client.activities.push( activity );
 
-        ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client, option );
+        if ( activity.id ) 
+        {
+            ActivityDataManager.cleanUp_SyncUp_TempClient( activity.id );
+            ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
+        }
+        //else throw "ERROR, Downloaded activity does not contain 'id'.";
     }
 };
 
@@ -187,36 +197,6 @@ ActivityDataManager.regenActivityList_NIndexes = function()
 };
 
 
-ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client, option )
-{
-    // Check if the same activity id exists in the '_acitivtyList'.  If so, remove it
-    var activityId = activity.id;
-
-    if ( activityId ) 
-    {
-        var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
-
-        // Remove activity?  Why?
-        // NOTE: This also removes temporary client ('client_').
-        if ( existingActivity ) ActivityDataManager.removeTempClient_Activity( activityId );
-
-
-        // TODO: Might use 'unshift' to add to top?
-        if ( option && option.addToTop ) {
-            ActivityDataManager._activityList.unshift( activity );
-        }
-        else {
-            ActivityDataManager._activityList.push( activity );
-        }
-        ActivityDataManager._activityToClient[ activityId ] = client;
-    }
-    else 
-    {
-        throw "ERROR, Downloaded activity does not contain 'id'.";
-    }    
-};
-
-
 ActivityDataManager.addToActivityList_NIndexes = function( client )
 {
     if ( client.activities ) 
@@ -225,9 +205,36 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
         {
             var activity = client.activities[ x ];
 
-            ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete( activity, client );
+            if ( activity.id ) 
+            {
+                ActivityDataManager.cleanUp_SyncUp_TempClient( activity.id );
+                ActivityDataManager.updateActivityIdx( activity.id, activity, client );
+            }
         }
     }
+};
+
+
+ActivityDataManager.cleanUp_SyncUp_TempClient = function( activityId )
+{
+    // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
+    var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
+    if ( existingActivity ) ActivityDataManager.removeTempClient_Activity( activityId );
+};
+
+//ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client, option )
+ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
+{
+    if ( option && option.addToTop ) 
+    {
+        ActivityDataManager._activityList.unshift( activity );
+    }
+    else 
+    {
+        ActivityDataManager._activityList.push( activity );
+    }
+
+    ActivityDataManager._activityToClient[ activityId ] = client;
 };
 
 

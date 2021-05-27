@@ -831,6 +831,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
                 // But have the merge take care of this!!
 
+                //else throw "ERROR, Downloaded activity does not contain 'id'.";
 
                 // Removal of existing activity/client happends within 'mergeDownloadClients()'
                 ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 

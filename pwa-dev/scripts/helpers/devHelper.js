@@ -454,7 +454,64 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
     return returnMsg;
 };
 
+
+// =============================================
+// OLD ONES
+
 /*
+
+DevHelper.fixOpt_Common4 = function( fixOptName, dataInfo )
+{
+    var activityList = ActivityDataManager.getActivityList();
+    var changeActivities = [];
+    var returnMsg = '';
+
+    activityList.forEach( activity => 
+    {
+        try
+        {
+            var activityId = activity.id;
+
+            if ( activityId === dataInfo.searchActivityId )
+            {        
+                activity.transactions.forEach( trans => 
+                {
+                    if ( trans.dataValues && trans.dataValues.provisionMethod )
+                    {
+                        trans.dataValues.provisionMethod = 'IUD';
+                    }
+                });
+
+                changeActivities.push( activity );
+            }            
+        }
+        catch( errMsg )
+        {
+            console.log( 'ERROR during activity looping: ' + errMsg );
+        }
+    });
+
+    if ( changeActivities.length > 0 ) 
+    {
+        ClientDataManager.saveCurrent_ClientsStore();
+        returnMsg = '[' + fixOptName + '] ' + 'changed provisionMethod value.';
+    }
+
+    return returnMsg;
+};
+
+DevHelper.fixOpt_Run4 = function()
+{    
+    var fixOptName = 'fixOpt_0525_CI';
+    var dataInfo = {};
+    dataInfo.searchActivityId = 'CI_IGNITE_007-1_20210520_142036120';
+    dataInfo.changeDVName = 'provisionMethod';
+
+    return DevHelper.fixOpt_Common4( fixOptName, dataInfo );
+};
+
+// -----------------------------------------
+
 DevHelper.fixOpt_Common3 = function( fixOptName, searchFailMsg )
 {
     var statusFailed = Constants.status_failed;
@@ -542,7 +599,7 @@ DevHelper.fixOpt_Common3 = function( fixOptName, searchFailMsg )
     return returnMsg;
 };
 
-DevHelper.fixOpt_Run2 = function()
+DevHelper.fixOpt_Run3 = function()
 {    
     var fixOptName = 'fixOpt_0521_MZ';
     var searchFailMsg = "value_not_integer";
@@ -550,5 +607,5 @@ DevHelper.fixOpt_Run2 = function()
     return DevHelper.fixOpt_Common3( fixOptName, searchFailMsg );
 };
 
-DevHelper.fixOpt_Run2();
+DevHelper.fixOpt_Run3();
 */
