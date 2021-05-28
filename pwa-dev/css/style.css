@@ -6131,6 +6131,7 @@ dialog {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   padding: 16px 16px 4px 16px;
+  background-color: #fff;
 }
 
 @media (min-width: 800px) {
