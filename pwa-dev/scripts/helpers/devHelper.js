@@ -455,6 +455,30 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 };
 
 
+
+DevHelper.mzRun = function( dateFrom, dateTo, endpoint )
+{    
+    endpoint = ( endpoint ) ? endpoint : 'PWA.legacy_captureIPC';
+
+    // Create document with these fields - 'userName', 'dateTime'
+    var payloadJson = { 'searchJson': { 
+        "find": {
+            "endpoint": endpoint,
+            "time.start":  {
+              "$gte": "2021-05-28T00:00:00.000Z"
+            },
+            "response": { "$exists": false }
+        },
+        "queryLimit": 2        
+    } };
+
+    WsCallManager.requestDWS_RETRIEVE( '/TTS.prodLog', payloadJson, undefined, function( resultList ) {
+        console.log( resultList );
+    } );
+};
+
+
+
 // =============================================
 // OLD ONES
 
