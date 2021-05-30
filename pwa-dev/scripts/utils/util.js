@@ -117,18 +117,20 @@ Util.getJson = function( input )
 // Checks if the json is emtpy
 Util.isObjEmpty = function( obj ) 
 {
-    for ( var key in obj ) {
-        if ( obj.hasOwnProperty( key ) )
-            return false;
-	}
-	
-    return true;
-}
+    //for ( var key in obj ) { if ( obj.hasOwnProperty( key ) ) return false; }	
+    //return true;
+	return ( Object.keys( obj ).length === 0 );
+};
+
+Util.isJsonEmpty = function( obj ) 
+{
+	Util.isObjEmpty( obj );
+};
 
 Util.getProperValue = function( val )
 {
 	Util.getNotEmpty( val );
-}
+};
 
 Util.getNotEmpty = function( input ) {
 
@@ -1752,6 +1754,11 @@ Util.getUTCDateTimeStr = function( dateObj, optionStr )
 	if ( optionStr === 'noZ' ) dtStr = dtStr.replace( 'Z', '' );
 
 	return dtStr;
+};
+
+Util.addDay = function( dateObj, addDay )
+{
+	return dateObj.setDate( dateObj.getDate() + addDay );
 };
 
 // Date Formatting Related
