@@ -391,11 +391,6 @@ function settingsApp( cwsRender )
             FormUtil.blockPage( undefined, function( scrimTag ) 
             {            
                 ConsoleCustomLog.showDialog();
-                    
-                scrimTag.off( 'click' ).click( function() 
-                {
-                    FormUtil.unblockPage( scrimTag );
-                });
             });
         });
         
