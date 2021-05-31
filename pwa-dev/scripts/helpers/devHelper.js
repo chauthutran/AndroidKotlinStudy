@@ -455,6 +455,54 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 };
 
 
+
+DevHelper.dupCases = function( dateFrom, dateTo, endpoint )
+{    
+    endpoint = ( endpoint ) ? endpoint : 'PWA.legacy_captureIPC';
+
+    var timeStartJson = {};
+    if ( dateFrom ) timeStartJson[ '$gte' ] = dateFrom;
+    if ( dateTo ) timeStartJson[ '$lt' ] = dateTo;
+
+    if ( Util.isObjEmpty( timeStartJson ) ) timeStartJson[ '$gte' ] = Util.addDay( new Date(), -1 ).toISOString().replace( 'Z', '' );
+
+    // Create document with these fields - 'userName', 'dateTime'
+    var payloadJson = { 'searchJson': { 
+        "find": {
+            "endpoint": endpoint,
+            "time.start": timeStartJson,
+            "response": { "$exists": false }
+        },
+        "queryLimit": 2        
+    } };
+
+    WsCallManager.requestDWS_RETRIEVE( '/TTS.prodLog', payloadJson, undefined, function( resultList ) {
+        console.log( resultList );
+
+
+
+
+    } );
+};
+
+DevHelper.dupList = function( )
+{
+    // 1. Filter the ones what would have the duplicate error pattern..
+
+    // 2. Create as object to keep it as unique list
+
+    // 3. store 
+};
+
+
+DevHelper.storeInMongo = function( )
+{
+    // Use the unique mongo '$set' to update array to add only the not existing one?
+
+    // Add a bit more info?  the source id?  This should also be an array?
+};
+
+
 // =============================================
 // OLD ONES
 
