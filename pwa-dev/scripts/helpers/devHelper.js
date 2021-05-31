@@ -455,10 +455,36 @@ DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 };
 
 
+// =====================================
+// == Log Search + Handler
 
-DevHelper.dupCases = function( dateFrom, dateTo, endpoint )
+
+DevHelper.mzFind = function()
+{
+    mzList_May.forEach( activityId => {
+// Dhis2 Check:
+// https://data.psi-mis.org/api/events.json?pageSize=7&program=A7SRy7lpk1x&programStage=G3HhsA7BiNs&filter=ikGT37ZiDl8:EQ:MZ_PMT_7587307_20210511_102601669&startDate=2021-05-01T00:14:43.000&endDate=2021-05-31T00:14:43.000&fields=trackedEntityInstance
+
+    });
+}
+
+
+DevHelper.mzDup = function()
+{ 
+    //DevHelper.dupCases( '2021-05-06', '2021-05-07', 40, undefined, function( resultList ) {
+    //} );
+
+    var resultList = mz0531.response.dataList;
+
+    var uniqueList = DevHelper.dupListClassify( resultList ).sort();
+
+    console.log( uniqueList );
+};
+
+DevHelper.dupCases = function( dateFrom, dateTo, limit, endpoint, returnFunc )
 {    
     endpoint = ( endpoint ) ? endpoint : 'PWA.legacy_captureIPC';
+    limit = ( limit ) ? limit : 30;
 
     var timeStartJson = {};
     if ( dateFrom ) timeStartJson[ '$gte' ] = dateFrom;
@@ -471,27 +497,41 @@ DevHelper.dupCases = function( dateFrom, dateTo, endpoint )
         "find": {
             "endpoint": endpoint,
             "time.start": timeStartJson,
-            "response": { "$exists": false }
+            "response": { "$exists": false },
+            "responseErr": { "$exists": false }
         },
-        "queryLimit": 2        
+        "queryLimit": limit
     } };
 
     WsCallManager.requestDWS_RETRIEVE( '/TTS.prodLog', payloadJson, undefined, function( resultList ) {
         console.log( resultList );
 
+        if ( returnFunc ) returnFunc( resultList );
+        //var dupList = DevHelper.dupListClassify( resultList );
 
-
+        //DevHelper.storeInMongo( dupList );
 
     } );
 };
 
-DevHelper.dupList = function( )
+DevHelper.dupListClassify = function( resultList )
 {
-    // 1. Filter the ones what would have the duplicate error pattern..
+    var dupList = [];
+    var dupObj = {};
 
-    // 2. Create as object to keep it as unique list
+    // 1. Create as object to keep it as unique list
 
-    // 3. store 
+    resultList.forEach( item => {
+        if( item.dcId )
+        {
+            if ( dupObj[ item.dcId ] === undefined ) dupObj[ item.dcId ] = 0;
+            else dupObj[ item.dcId ]++;
+        }
+    });
+
+    console.log( dupObj );
+
+    return Object.keys( dupObj );    
 };
 
 
@@ -502,6 +542,32 @@ DevHelper.storeInMongo = function( )
     // Add a bit more info?  the source id?  This should also be an array?
 };
 
+// Dhis2 Check:
+// https://data.psi-mis.org/api/events.json?pageSize=7&program=A7SRy7lpk1x&programStage=G3HhsA7BiNs&filter=ikGT37ZiDl8:EQ:MZ_PMT_7587307_20210511_102601669&startDate=2021-05-11T00:14:43.000&endDate=2021-05-12T00:14:43.000&fields=trackedEntityInstance
+/*
+{
+  "pager": {
+    "page": 1,
+    "pageCount": 1,
+    "total": 0,
+    "pageSize": 7
+  },
+  "events": [
+    {
+      "trackedEntityInstance": "SEq1gQ2gYXS"
+    },
+    {
+      "trackedEntityInstance": "nhUP4A8Mk0P"
+    },
+    {
+      "trackedEntityInstance": "WAXrb8c4xE8"
+    },
+    {
+      "trackedEntityInstance": "loSA2lGTTTA"
+    }
+  ]
+}
+*/
 
 // =============================================
 // OLD ONES
@@ -657,3 +723,6 @@ DevHelper.fixOpt_Run3 = function()
 
 DevHelper.fixOpt_Run3();
 */
+
+var mzList_May = ["MZ_PMT_1034248_20210528_085730756", "MZ_PMT_10829_20210511_105040144", "MZ_PMT_1148264_20210514_133918624", "MZ_PMT_1552215_20210511_105250545", "MZ_PMT_1761236_20210511_064300276", "MZ_PMT_1761236_20210511_10004989", "MZ_PMT_1761236_20210511_101519926", "MZ_PMT_1761236_20210511_10162845", "MZ_PMT_1761236_20210511_101810225", "MZ_PMT_1761236_20210511_103317226", "MZ_PMT_1878_20210517_103244165", "MZ_PMT_1998_20210511_102759584", "MZ_PMT_1998_20210511_102953257", "MZ_PMT_1998_20210511_103300683", "MZ_PMT_1998_20210511_103626600", "MZ_PMT_1998_20210511_104003112", "MZ_PMT_2054362_20210511_095318903", "MZ_PMT_2054362_20210511_100153536", "MZ_PMT_2054362_20210511_100927718", "MZ_PMT_2054362_20210511_101801580", "MZ_PMT_2054362_20210511_102623411", "MZ_PMT_211891_20210511_072345679", "MZ_PMT_211891_20210511_100932806", "MZ_PMT_211895_20210511_111841544", "MZ_PMT_211895_20210511_112133373", "MZ_PMT_211895_20210511_113021742", "MZ_PMT_212384_20210511_100929394", "MZ_PMT_212384_20210511_105724772", "MZ_PMT_212384_20210511_113030997", "MZ_PMT_212384_20210517_10385788", "MZ_PMT_2473562_20210511_09224451", "MZ_PMT_2473562_20210511_112700881", "MZ_PMT_2473562_20210511_112945540", "MZ_PMT_2473562_20210515_110925377", "MZ_PMT_2595_20210511_095238930", "MZ_PMT_266551_20210517_103848496", "MZ_PMT_2757_20210515_104255512", "MZ_PMT_2757_20210515_104649924", "MZ_PMT_3236_20210511_103204160", "MZ_PMT_3236_20210511_111659728", "MZ_PMT_3328_20210511_09480042", "MZ_PMT_3328_20210511_103813392", "MZ_PMT_337120_20210511_104713584", "MZ_PMT_337120_20210511_110411138", "MZ_PMT_337120_20210511_111954742", "MZ_PMT_3734695_20210511_070137670", "MZ_PMT_3734695_20210511_105314113", "MZ_PMT_3734695_20210511_105937113", "MZ_PMT_3734695_20210511_110131933", "MZ_PMT_5512410_20210511_103830376", "MZ_PMT_5512410_20210511_10422636", "MZ_PMT_5512410_20210511_104601134", "MZ_PMT_5557_20210506_125201966", "MZ_PMT_5557_20210506_125341526", "MZ_PMT_5557_20210506_125758472", "MZ_PMT_56422_20210517_102922555", "MZ_PMT_56422_20210517_103139573", "MZ_PMT_56422_20210517_103329198", "MZ_PMT_56422_20210517_103440157", "MZ_PMT_56422_20210517_103551226", "MZ_PMT_56422_20210517_103715440", "MZ_PMT_56422_20210517_103849865", "MZ_PMT_56422_20210528_090922754", "MZ_PMT_5788473_20210511_103323688", "MZ_PMT_63285_20210517_103912965", "MZ_PMT_6594_20210520_111931433", "MZ_PMT_6594_20210520_112159709", "MZ_PMT_6989366_20210520_111920300", "MZ_PMT_6989366_20210520_112134110", "MZ_PMT_7537283_20210520_112329737", "MZ_PMT_7587307_20210511_063050745", "MZ_PMT_7587307_20210511_064323383", "MZ_PMT_7587307_20210511_102601669", "MZ_PMT_7587307_20210511_102827984", "MZ_PMT_7587307_20210511_103040160", "MZ_PMT_7587307_20210515_100529203", "MZ_PMT_8222102_20210511_10481148", "MZ_PMT_9971_20210511_105432578", "MZ_PMT_9971_20210511_105750789", "MZ_PMT_9971_20210511_11121774", "MZ_PMT_9971_20210511_111454630", "MZ_TEST_IPC_20210522_044449767", "tzi1003_20210517_094421940"];
+
