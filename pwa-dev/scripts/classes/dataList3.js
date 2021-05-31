@@ -26,41 +26,110 @@ function DataList3( cwsRenderObj, blockObj )
 	{
         me.blockJson = blockJson;
         var dataList = jsonListData.displayData;
-                
+        // NOTE 1. 'dataList' is 2 dimentional data.  1D: Client.  2D: Attributes (id/val) in client.
+        //  [
+        //     [ 'displayName': 'clientId', 'id': 'clientId', 'value': '---'  ]
+        //     [ 'displayName': 'CORE - Age', 'id': 'age', 'value': '---'  ]
+        //     [ 'displayName': 'Status', 'id': 'statusClient', 'value': '---'  ]  <-- This is generated attribute by 'Action' expression
+        //  ]
+        
+        // NOTE 1.X
+        // actionExpression generating new attribute example  MZ
+        //"act_eval_checkClient": {
+        //    "actionType": "evaluation",
+        //    "expression": "'$${KRdnyGwNZyW}' === 'ISS' ? 'v_iss' : '$${clientId}'.length !== 0 ? 'c_reg' : 'c_non'",
+        //    "attribute": { "id": "statusClient" }
+
+
 		if ( blockJson && blockJson.list === 'dataList' && dataList )
         {
-            // Create Search Result div tag
-            var divFormContainerTag = me.createSearchResultDivTag( dataList );
-            newBlockTag.append( divFormContainerTag );
-
-            // Create and Populate data list by groupIds and group values
-            var dataListByGroups = me.groupDataList( blockJson.groupBy, dataList );
-            var groupIdList = Object.keys( dataListByGroups );
-            
-            for( var i in groupIdList )
-            {
-                var groupId = groupIdList[i];
-                var groupValueList = Object.keys( dataListByGroups[groupId] );
-                for( var j in groupValueList )
-                {
-                    var groupValue = groupValueList[j];
-                    var dataListByGroup = dataListByGroups[groupId][groupValue];
-                    if( dataListByGroup.length > 0 )
-                    {
-                        var groupDataConfig =  me.getGroupDataConfigById( blockJson.groupBy, groupId, groupValue );
-
-                        var dataListbByGroupTag = me.createDataListByGroupValueTag( blockJson.displayResult, blockJson, dataListByGroup, groupValue, groupDataConfig );
-                        divFormContainerTag.append( dataListbByGroupTag );
-                    }
-                  
-                }
-                
-            }
-
+            if ( dataList.length === 0 ) me.renderAsEmptyList( newBlockTag );
+            else me.renderListByGroup( dataList, blockJson, newBlockTag );
         }
 
         TranslationManager.translatePage();
-	}
+	};
+
+
+    // -----------------------------------------------------
+
+    me.renderAsEmptyList = function( newBlockTag )
+    {
+        // Emmpty case
+        var divTag = $( '<div class="emptyListDiv" ></div>' );
+        var aTag = $( '<a term="">List is empty.</a>' ); // MISSING TRANSLATION
+
+        divTag.append( aTag );
+        newBlockTag.append( divTag );
+    };
+
+
+    me.renderListByGroup = function( dataList, blockJson, newBlockTag )
+    {
+        // 1. Create Search Result div tag
+        var divFormContainerTag = me.createSearchResultDivTag( dataList );
+        newBlockTag.append( divFormContainerTag );
+
+        // 2. Create and Populate data list by groupIds and group values
+        // 2.1 Modify data into groups 
+        var dataListByGroups = me.groupDataList( blockJson.groupBy, dataList );
+        var groupIdList = Object.keys( dataListByGroups );
+        // NOTE 2. 'blockJson.group' is group metadata (definition).  Could be multiple groups definitions.
+        //          'groupId' ('statusClient') is the attribute Id.  It looks for clients that has this attribute Id.
+        // 'statusClient': { 'opened': true, ... 'values': [  'v_iss': { ---- button: --- }] }
+        //      --> 'v_iss' is the matchign value.  Get only clients that has this attribute value ('v_iss') for groupId.
+
+        // 'statusClient': {
+        //   'c_reg': [ [-- client attr arr -- ], [-- client attr arr -- ] ]
+        //   'v_iss': [ [-- client attr arr -- ], [-- client attr arr -- ] ]
+        
+
+        // 2.2 Render data by group
+        groupIdList.forEach( groupId => 
+        {
+            // Ex. groupId = 'statusClient'
+            var groupDataList = dataListByGroups[groupId];
+            var groupValueList = Object.keys( groupDataList );
+
+            groupValueList.forEach( groupValue => 
+            {
+                // Ex. groupValue = 'c_reg'
+                var clientsInVal = groupDataList[groupValue];
+
+                if( clientsInVal.length > 0 )
+                {
+                    // clientsInVal - list of clients that has matching id (groupId) and val (groupVal)
+                    var valDef =  me.getValueDef( blockJson.groupBy, groupId, groupValue );
+
+                    // 'valDef' is definition of the matching value - what to display:  Ex. 'v_iss': { -- valDef -- }
+                    //   'values': [  'v_iss': { ---- button: --- }  ] }
+                    var dataListbByGroupTag = me.renderDataList_ByValDef( blockJson.displayResult, blockJson, clientsInVal, groupValue, valDef );
+                    divFormContainerTag.append( dataListbByGroupTag );
+                }                    
+            });
+        });
+
+        /*
+        for( var i in groupIdList )
+        {
+            var groupId = groupIdList[i];
+            var groupValueList = Object.keys( dataListByGroups[groupId] );
+            for( var j in groupValueList )
+            {
+                var groupValue = groupValueList[j];
+                var dataListByGroup = dataListByGroups[groupId][groupValue];
+                if( dataListByGroup.length > 0 )
+                {
+                    var groupDataConfig =  me.getGroupDataConfigById( blockJson.groupBy, groupId, groupValue );
+
+                    var dataListbByGroupTag = me.renderDataList_ByValDef( blockJson.displayResult, blockJson, dataListByGroup, groupValue, groupDataConfig );
+                    divFormContainerTag.append( dataListbByGroupTag );
+                }                  
+            }                
+        }
+        */
+    };
+
 
     // Group data list by groups if any
     /** 
@@ -142,14 +211,39 @@ function DataList3( cwsRenderObj, blockObj )
         ]
 
      */
-    me.getGroupDataConfigById = function( groupList, searchGroupId, searchGroupValue )
+    me.getValueDef = function( groupDefList, searchGroupId, searchGroupValue )
     {
-        for( var i=0; i<groupList.length; i++ )
+        var foundValDef;
+
+        groupDefList.forEach( groupDef => 
         {
-            var groupData = groupList[i];
-            if( groupData[searchGroupId] !== undefined )
+            if ( groupDef[searchGroupId] )
             {
-                var values = groupData[searchGroupId].values;
+                var matchingGroupDef = groupDef[searchGroupId];
+                var valuesDef = matchingGroupDef.values;
+
+                valuesDef.forEach( valDef => 
+                {
+                    if ( valDef[searchGroupValue] )
+                    {
+                        foundValDef = valDef[searchGroupValue];
+                        foundValDef.nameConfig = me.getGroupValueTranslationInfo( searchGroupValue );
+                    }
+                })
+            }
+        });
+
+        return foundValDef;
+
+        /*
+        for( var i=0; i<groupDefList.length; i++ )
+        {
+            var groupDef = groupDefList[i];
+
+
+            if( groupDef[searchGroupId] !== undefined )
+            {
+                var values = groupDef[searchGroupId].values;
                 for( var j in values )
                 {
                     var groupValue = Object.keys( values[j] )[0];
@@ -157,8 +251,7 @@ function DataList3( cwsRenderObj, blockObj )
                     {
                         var groupConfig = values[j][searchGroupValue];
 
-                        var nameConfig = me.getGroupValueTranslationInfo( searchGroupValue );
-                        groupConfig.nameConfig = nameConfig;
+                        groupConfig.nameConfig = me.getGroupValueTranslationInfo( searchGroupValue );
 
                         return groupConfig;
 
@@ -168,6 +261,7 @@ function DataList3( cwsRenderObj, blockObj )
         }
 
         return;
+        */
     }
 
 
@@ -191,7 +285,7 @@ function DataList3( cwsRenderObj, blockObj )
                 {
                     if ( defOptGroup[p].value == groupValue )
                     {
-                        ret = defOptGroup[p]
+                        ret = defOptGroup[p];
                     }
                 }
             }
@@ -213,7 +307,7 @@ function DataList3( cwsRenderObj, blockObj )
 
         divFormContainerTag.append( summaryTag );
         return divFormContainerTag;
-    }
+    };
 
     // Create Search Result Summary
     me.createSearchResultSummaryTag = function( jsonList )
@@ -224,7 +318,7 @@ function DataList3( cwsRenderObj, blockObj )
         summaryTag.append("<label term='dataListSearch_resultFor'>results</label>");
         
         return summaryTag;
-    }
+    };
 
   
     // ================================================================================================================================================
@@ -244,9 +338,9 @@ function DataList3( cwsRenderObj, blockObj )
             "order": "1"
         } 
     **/
-    me.createDataListByGroupValueTag = function( displayedAttributeList, blockJson, dataList, groupValue, groupDataConfig )
+    me.renderDataList_ByValDef = function( displayedAttributeList, blockJson, dataList, groupValue, groupDataConfig )
     {
-        var groupDivTag = $("<div id='" + groupValue + "' class='groupByFieldResultTable'/>");
+        var groupDivTag = $("<div groupVal='" + groupValue + "' class='groupByFieldResultTable'/>");
 
         // Create header
         groupDivTag.append( $("<div class='imgGrpByIcon imggroupByExpanded' style='display: inline;float: left;'></div>") );
@@ -267,8 +361,7 @@ function DataList3( cwsRenderObj, blockObj )
         me.setupEvents_GroupHeader( groupDivTag );
 
         return groupDivTag;
-
-    }
+    };
 
     me.setupEvents_GroupHeader = function( groupDivTag )
     {
