@@ -463,7 +463,7 @@ function DataList3( cwsRenderObj, blockObj )
     {
         if ( itemButtons )
         {
-            var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj );
+            var newItemBtn = new BlockButton( me.cwsRenderObj, me.blockObj );
 
             newItemBtn.render( itemButtons, divItemTag, dataItem );
         } 
