@@ -232,7 +232,7 @@ SwManager.checkNewAppFile_OnlyOnline2 = function( runFunction )
     }
     else 
     {
-        console.log( 'AppMode_Offline' );
+        console.log( 'AppMode_Offline' ); // <-- ISSUE: GETS called when app starts...  Why Offline?
 
         if ( SwManager.waitNewAppFileCheckDuringOffline )
         {
