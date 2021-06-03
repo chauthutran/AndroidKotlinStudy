@@ -1,6 +1,6 @@
 // =========================================
 //   ClientList Class/Methods
-//          - Display List like 'activityList' - within BlockObject (Parent)
+//          - Display List like 'clientList' - within BlockObject (Parent)
 // -------------------------------------------------
 
 function ClientList( cwsRenderObj, blockObj, blockJson ) 
@@ -11,7 +11,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     me.blockObj = blockObj;     
     me.blockJson = blockJson;   
 
-    me.activityList = [];
+    me.clientList = [];
     me.viewGroupByData; // set from 'blockListView'
 
     me.hasView = false;  
@@ -44,7 +44,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         font-style: italic;
         opacity: 0.2; display:none;"></div>`;
 
-    me.template_divActivityTag = `<div class="activity card">
+    me.template_divClientTag = `<div class="activity card">
 
         <div class="activityContainer card__container">
 
@@ -64,7 +64,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     </div>`;
 
-    me.template_divActivityEmptyTag = `<div class="activity emptyList">
+    me.template_divClientEmptyTag = `<div class="activity emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
     </div>`;
 
@@ -102,8 +102,8 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         // Set class level tags
         me.setClassVariableTags( blockTag );
 
-        // Populate controls - ActivityLists, viewFilter/sort, related.
-        me.populateControls( me.blockJson, me.hasView, me.activityList, me.listTableTbodyTag );
+        // Populate controls - clientLists, viewFilter/sort, related.
+        me.populateControls( me.blockJson, me.hasView, me.clientList, me.listTableTbodyTag );
 
         // Events handling
         //me.setRenderEvents();
@@ -111,14 +111,14 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
 
     // Used by viewFilter.. - 
-    me.reRenderWithList = function( newActivityList, groupByData, callBack )
+    me.reRenderWithList = function( newClientList, groupByData, callBack )
     {
         if ( me.listTableTbodyTag )
         {
             $( 'body' ).scrollTop( 0 ); // Scroll top
             me.lastScrollTop = 0;
 
-            me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
+            me.clientList = newClientList;  // NOTE: We expect this list already 'cloned'...
             me.viewGroupByData = groupByData;
 
             me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
@@ -129,7 +129,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             //me.cwsRenderObj.pulsatingProgress.show();
 
             // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateClientCardList( me.clientList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
         }
         else
@@ -146,9 +146,9 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         if ( me.hasView ) me.clientListViewObj.viewSelect_1st(); 
         else 
         {
-            var newActivityList = Util.cloneArray( ActivityDataManager.getActivityList() );
+            var newClientList = Util.cloneArray( ClientDataManager.getClientList() );
 
-            me.reRenderWithList( newActivityList, me.viewGroupByData, callBack );    
+            me.reRenderWithList( newClientList, me.viewGroupByData, callBack );    
         }
     };
 
@@ -166,7 +166,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
-        me.activityList = Util.cloneArray( ActivityDataManager.getActivityList() );
+        me.clientList = Util.cloneArray( ClientDataManager.getClientList() );
         //me.blockJson = blockJson;
         
         me.hasView = ( blockJson.clientListViews && blockJson.clientListViews.length > 0 );
@@ -206,7 +206,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
+    me.populateControls = function ( blockJson, hasView, clientList, listTableTbodyTag )
     {
 
         if ( hasView )
@@ -214,14 +214,14 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             me.clientListViewObj = new ClientListView( me.cwsRenderObj, me, blockJson.clientListViews );
             me.clientListViewObj.render();
 
-            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityCardList' with some clean up )?
+            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateClientCardList' with some clean up )?
             me.clientListViewObj.viewSelect_1st();    
         }
         else
         {
             me.pagingDataReset( me.pagingData );
 
-            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateClientCardList( clientList, me.viewGroupByData, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
         }
     };
 
@@ -239,14 +239,14 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
+    me.populateClientCardList = function( clientList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
     {
-        if ( activityList.length === 0 ) 
+        if ( clientList.length === 0 ) 
         {
             // If already have added emtpyList, no need to add emptyList
             if ( me.listTableTbodyTag.find( 'div.emptyList' ).length === 0 )
             {
-                me.listTableTbodyTag.append( $( me.template_divActivityEmptyTag ) );
+                me.listTableTbodyTag.append( $( me.template_divClientEmptyTag ) );
             }
 
             //if ( scrollEndFunc ) scrollEndFunc();
@@ -257,7 +257,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
             // Designed to handle with/without scrolling:
             // If setting has no scrolling/paging, me.pagingData has 'enabled': false, and will return endPos as full list size.
-            var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
+            var currPosJson = me.getCurrentPositionRange( clientList.length, me.pagingData );
             me.setNextPagingData( me.pagingData, currPosJson );            
 
             //me.pagingData.endAlreadyReached = currPosJson.endReached_Previously;
@@ -267,14 +267,14 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             {
                 if ( scrollStartFunc && currPosJson.startPosIdx > 0 ) scrollStartFunc();
 
-                //for( var i = 0; i < activityList.length; i++ )
+                //for( var i = 0; i < clientList.length; i++ )
                 for ( var i = currPosJson.startPosIdx; i < currPosJson.endPos; i++ )
                 {
-                    var activityJson = activityList[i];
+                    var clientJson = clientList[i];
 
-                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, viewGroupByData );
+                    var clientCardObj = me.createClientCard( clientJson, listTableTbodyTag, viewGroupByData );
 
-                    activityCardObj.render();
+                    clientCardObj.render();
                 }    
             }
 
@@ -293,16 +293,16 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Paging Related -------------
 
-    me.getCurrentPositionRange = function( activityListSize, pagingData )
+    me.getCurrentPositionRange = function( clientListSize, pagingData )
     {
         var currPosJson = { 'endReached': false };
         currPosJson.startPosIdx = pagingData.currPosition;
         
-        // If paging is disabled, put 'nextPageEnd' to the full activityListSize.
-        var nextPageEndPos = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : activityListSize;
-        if ( nextPageEndPos >= activityListSize ) 
+        // If paging is disabled, put 'nextPageEnd' to the full clientListSize.
+        var nextPageEndPos = ( pagingData.enabled ) ? pagingData.currPosition + pagingData.pagingSize : clientListSize;
+        if ( nextPageEndPos >= clientListSize ) 
         {
-            nextPageEndPos = activityListSize;  // if nextPageEnd is over the limit, set to limit.
+            nextPageEndPos = clientListSize;  // if nextPageEnd is over the limit, set to limit.
             currPosJson.endReached = true;
         }
 
@@ -340,7 +340,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         me.lastScrollTop = currScrollTop;
 
         // Scroll only if this tag is visible, and there are activities
-        if ( me.listTableTbodyTag.is( ":visible" ) && me.activityList.length > 0 ) // && !me.scrollLoadingNextPage )
+        if ( me.listTableTbodyTag.is( ":visible" ) && me.clientList.length > 0 ) // && !me.scrollLoadingNextPage )
         {                    
             if ( scrollDirection === 'Down' 
                 && !me.pagingData.endReached )
@@ -369,8 +369,8 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         // me.scrollLoadingNextPage = true;
         // me.cwsRenderObj.pulsatingProgress.show();
 
-        // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+        // 2. check current paging, get next paging record data.. - populateClientList has this in it.
+        me.populateClientCardList( me.clientList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
     };
 
@@ -397,28 +397,28 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     // Want to start over the pulsa if new request is made...
     
     // ------------------------------------
-    // --- Create Activity Card Related -------------
+    // --- Create Client Card Related -------------
 
-    me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
+    me.createClientCard = function( clientJson, listTableTbodyTag, viewGroupByData )
     {
-        var activityCardTrTag = $( me.template_divActivityTag );
+        var clientCardTrTag = $( me.template_divClientTag );
 
-        activityCardTrTag.attr( 'itemId', activityJson.id );
+        clientCardTrTag.attr( 'itemId', clientJson._id );
 
-        var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
+        var groupAttrVal = me.setGroupDiv( clientJson, viewGroupByData, listTableTbodyTag );
 
-        activityCardTrTag.attr( 'group', groupAttrVal );
+        clientCardTrTag.attr( 'group', groupAttrVal );
 
-        listTableTbodyTag.append( activityCardTrTag );     
+        listTableTbodyTag.append( clientCardTrTag );     
 
-        return new ActivityCard( activityJson.id, me.cwsRenderObj );
+        return new ClientCard( clientJson._id, me.cwsRenderObj );
     };
 
 
     // ------------------------------------
     // --- Create GROUP Related -------------
 
-    me.setGroupDiv = function( activityJson, viewGroupByData, listTableTbodyTag )
+    me.setGroupDiv = function( clientJson, viewGroupByData, listTableTbodyTag )
     {
         var groupAttrVal = '';
 
@@ -426,19 +426,19 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         {            
             if ( viewGroupByData && viewGroupByData.groupByUsed )
             {
-                var groupJson = viewGroupByData.activitiesRefGroupBy[ activityJson.id ];
+                var groupJson = viewGroupByData.activitiesRefGroupBy[ clientJson._id ];
 
                 groupAttrVal = groupJson.id;
 
                 if ( groupJson.id !== undefined )
                 {        
-                    // get previous activity groupBy
-                    var lastActivityTrTag = listTableTbodyTag.find( 'div.activity' ).last();
+                    // get previous client groupBy
+                    var lastClientTrTag = listTableTbodyTag.find( 'div.activity' ).last();
 
-                    if ( lastActivityTrTag && lastActivityTrTag.length === 1 )
+                    if ( lastClientTrTag && lastClientTrTag.length === 1 )
                     {
                         // get groupby
-                        var lastGroupId = lastActivityTrTag.attr( 'group' );
+                        var lastGroupId = lastClientTrTag.attr( 'group' );
 
                         if ( lastGroupId )
                         {                    

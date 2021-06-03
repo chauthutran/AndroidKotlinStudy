@@ -140,3 +140,9 @@ InfoDataManager.createObj_ActivityClient = function( activity )
 
 	return { 'activity': activity, 'client': client };
 };
+
+
+// ========================================
+// ==== New for ClientList?
+
+

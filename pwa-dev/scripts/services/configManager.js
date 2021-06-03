@@ -22,6 +22,9 @@ ConfigManager.configJson_Original = {};  // Downloaded country PWA config origin
 //ConfigManager.configSetting = {}; // Not Yet coded for it.
 ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
 
+ConfigManager.defaultClientDisplayBase = `Util.formatDate( INFO.client.date.createdOnMdbUTC, 'MMM dd, yyyy - HH:mm' );`;
+ConfigManager.defaultClientDisplaySettings = `'<i>' + INFO.client._id + '</i>'`;
+
 ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
 ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
 
@@ -310,6 +313,83 @@ ConfigManager.getActivityDisplayBase = function()
 
     return displayBase;
 };
+
+// ---------------------------------------------
+
+ConfigManager.getClientDisplayBase = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+
+    var displayBase = ConfigManager.defaultClientDisplayBase;
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.clientCardDef
+            && configJson.settings.clientCardDef.displayBase )
+        {
+            displayBase = configJson.settings.clientCardDef.displayBase;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getClientDisplayBase, errMsg: ' + errMsg );
+    }
+
+    return displayBase;
+};
+
+
+ConfigManager.getClientDisplaySettings = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+
+    var displaySettings = [  
+      ConfigManager.defaultClientDisplaySettings 
+    ];
+
+    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
+    // "'<b><i>' + activityItem.created + '</i></b>'"
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.clientCardDef
+            && configJson.settings.clientCardDef.displaySettings )
+        {
+            displaySettings = configJson.settings.clientCardDef.displaySettings;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getClientDisplaySettings, errMsg: ' + errMsg );
+    }
+
+    return displaySettings;
+};
+
+// ---------------------------------------------
+
+ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
+{
+    var activityStatusConfig;
+    var configJson = ConfigManager.getConfigJson();
+
+	try
+	{        
+        if ( activityJson.processing )
+        {
+            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
+        }
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+    }
+    
+    return activityStatusConfig;
+};
+
 
 ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 {

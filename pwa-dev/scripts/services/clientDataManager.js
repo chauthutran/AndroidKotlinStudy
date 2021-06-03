@@ -326,10 +326,32 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     acitivityPayloadClient._id = ClientDataManager.tempClientNamePre + activity.id;
     acitivityPayloadClient.clientDetails = ActivityDataManager.getData_FromTrans( activity, "clientDetails" );
     acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
+    acitivityPayloadClient.date = ClientDataManager.dateConvertFromActivityDate( activity );
 
     ClientDataManager.insertClient( acitivityPayloadClient );
 
     return acitivityPayloadClient;
+};
+
+
+ClientDataManager.dateConvertFromActivityDate = function( activity )
+{
+    var clientDate = {};
+
+    try
+    {
+        var actDate = activity.date;
+
+        //updatedOnMdbUTC: "2021-06-02T02:02:57.026", createdOnMdbUTC: "2021-06-02T02:02:56.550"
+        clientDate.createdOnMdbUTC = ( actDate.capturedUTC ) ? actDate.capturedUTC : Util.formatDate( ( new Date() ).toUTCString(), 'yyyyMMdd_HHmmssSSS' );
+        clientDate.updatedOnMdbUTC = clientDate.createdOnMdbUTC;
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ClientDataManager.dateConvertFromActivityDate, errMsg: ' + errMsg );
+    }
+
+    return clientDate;
 };
 
 

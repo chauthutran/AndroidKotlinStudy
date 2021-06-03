@@ -114,7 +114,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.setUpInitialData = function()
     {
-        me.mainList = ActivityDataManager.getActivityList();
+        me.mainList = ClientDataManager.getClientList();
         me.viewsDefinitionList = ConfigManager.getConfigJson().definitionClientListViews; // full complete view def list    
         me.groupByDefinitionList = ( ConfigManager.getConfigJson().definitionGroupBy ) ? Util.getJsonDeepCopy( ConfigManager.getConfigJson().definitionGroupBy ) : {}; // full complete view def list
 
@@ -218,16 +218,16 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
         
             // NOTE: TODO: if groupBy exists, we need different sorting?!! <-- 
-            me.groupByData = me.setGroupByList( me.viewDef_Selected, me.viewFilteredList, me.groupByDefinitionList ); 
+            //me.groupByData = me.setGroupByList( me.viewDef_Selected, me.viewFilteredList, me.groupByDefinitionList ); 
 
 
             // TODO: Sort would be effected by GROUP BY <-- If exists and used, 
             // Populate Sort List - based on viewDef..
-            me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort, me.groupByData ); 
+            //me.populateSorts( me.sortListDivTag, me.viewDef_Selected.sort, me.groupByData ); 
     
     
             // Sort with 1st one..
-            me.sortViewList_wt1stOne( me.viewDef_Selected.sort );    
+            //me.sortViewList_wt1stOne( me.viewDef_Selected.sort );    
         }
         else
         {
@@ -253,15 +253,14 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
-            mainList.forEach( activity => 
+            mainList.forEach( client => 
             {
-                InfoDataManager.setINFOdata( 'activity', activity );
-                InfoDataManager.setINFOclientByActivity( activity );
+                InfoDataManager.setINFOdata( 'client', client );
                 
                 if ( Util.evalTryCatch( viewDef.dataFilterEval, InfoDataManager.getINFO(), 'clientListView.viewFilterData()' ) === true )
                 {
                     // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
-                    filteredData.push( activity );
+                    filteredData.push( client );
                 }    
             });                
         }
@@ -273,6 +272,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     // --------------------------------------------
     // --- GroupBy Related -----
 
+    // TODO: NOT USED FOR NOW
     me.setGroupByList = function( viewDef, activityList, groupByDefinitionList )
     {
         var groupByData = { 'groupByList': {}, 'groupListArr': [], 'activitiesRefGroupBy': {}, 'groupByDef': {}, 'groupByUsed': false, 'groupSort': '' };  // reset list.
@@ -286,15 +286,15 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             {
                 groupByData.groupByDef = groupByDef;
 
-                for ( var i = 0; i < activityList.length; i++ )
+                for ( var i = 0; i < clientList.length; i++ )
                 {
-                    var activity = activityList[i];
+                    var client = clientList[i];
     
-                    // GroupJson could be 'unique' one created from activity, or from group list.
-                    var groupJson = me.getGroup_FromViewDef( activity, groupByDef );
+                    // GroupJson could be 'unique' one created from client, or from group list.
+                    var groupJson = me.getGroup_FromViewDef( client, groupByDef );
     
-                    // Set groupByData.groupByList & activitiesRefGroupBy with 'groupJson' & activityId
-                    me.setGroupByData_withActivity( groupJson, activity, groupByData );
+                    // Set groupByData.groupByList & activitiesRefGroupBy with 'groupJson' & clientId
+                    me.setGroupByData_withActivity( groupJson, client, groupByData );
                 }
 
                 // Set 'groupByUsed' true/false.
@@ -306,14 +306,13 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     };
 
 
-    me.getGroup_FromViewDef = function( activity, groupByDef )
+    me.getGroup_FromViewDef = function( client, groupByDef )
     {
         var groupMatched;
 
         try
         {    
-            InfoDataManager.setINFOdata( 'activity', activity );
-            InfoDataManager.setINFOclientByActivity( activity );
+            InfoDataManager.setINFOdata( 'client', client );
 
             var evalField = Util.evalTryCatch( groupByDef.evalField, InfoDataManager.getINFO(), 'clientListView.getGroupId_FromViewDef()' );
         
@@ -353,7 +352,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     };
 
 
-    me.setGroupByData_withActivity = function( groupJson, activity, groupByData )
+    // TODO: activity ==> client
+    me.setGroupByData_withActivity = function( groupJson, client, groupByData )
     {
         // ?? TODO: HOW SHOULD WE FORMAT THE GROUPS?  WITH 'ACTIVITIES' IN IT?
         if ( groupJson && groupJson.id && activity.id )
@@ -448,7 +448,9 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
 
     me.sortViewList = function( sortDef )
-    {        
+    {     
+        // TODO: NO SORTING FOR NOW..  
+        /* 
         Util.tryCatchContinue( function() {
 
             // Which name to use - 'INFO' vs 'LIST'
@@ -460,6 +462,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             me.viewFilteredList = InfoDataManager.getActivityList_fromINFOList( INFOList_activity );
 
         }, "clientListView.sortViewList()" );
+        */
     };
 
     // ------------------------------------------
@@ -633,7 +636,6 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             }
         }
     };
-
 
 
     me.usedGroupBy = function( groupByData )

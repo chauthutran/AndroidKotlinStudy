@@ -6,11 +6,11 @@
 //          - There will be cases where activity items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ClientCard( activityId, cwsRenderObj, options )
+function ClientCard( clientId, cwsRenderObj, options )
 {
 	var me = this;
 
-    me.activityId = activityId;
+    me.clientId = clientId;
     me.cwsRenderObj = cwsRenderObj;
     me.options = ( options ) ? options : {};
 
@@ -30,122 +30,123 @@ function ClientCard( activityId, cwsRenderObj, options )
 
     me.render = function()
     {        
-        var activityCardDivTag = me.getActivityCardDivTag();
+        var clientCardDivTag = me.getClientCardDivTag();
 
         // If tag has been created), perform render
-        if ( activityCardDivTag.length > 0 )
+        if ( clientCardDivTag.length > 0 )
         {
-            var activityJson = ActivityDataManager.getActivityById( me.activityId );
+            var clientJson = ClientDataManager.getClientById( me.clientId );
             var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
 
             try
             {
-                var activityContainerTag = activityCardDivTag.find( '.activityContainer' );
-                var activityTypeIconTag = activityCardDivTag.find( '.activityIcon' );
-                var activityContentTag = activityCardDivTag.find( '.activityContent' );
-                var activityRerenderTag = activityCardDivTag.find( '.activityRerender' );
-                var activityPhoneCallTag = activityCardDivTag.find( '.activityPhone' );
+                var activityContainerTag = clientCardDivTag.find( '.activityContainer' );
+                var activityTypeIconTag = clientCardDivTag.find( '.activityIcon' );
+                var activityContentTag = clientCardDivTag.find( '.activityContent' );
+                var activityRerenderTag = clientCardDivTag.find( '.activityRerender' );
+                var activityPhoneCallTag = clientCardDivTag.find( '.activityPhone' );
 
-                var activityEditPaylayLoadBtnTag = activityCardDivTag.find( '#editPaylayLoadBtn' );
+                var activityEditPaylayLoadBtnTag = clientCardDivTag.find( '#editPaylayLoadBtn' );
 
 
                 // 1. activityType (Icon) display (LEFT SIDE)
-                me.activityTypeDisplay( activityTypeIconTag, activityJson );
-                if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeIconTag, activityJson );
+                //me.activityTypeDisplay( activityTypeIconTag, clientJson );
+                //if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeIconTag, clientJson );
 
 
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityContentTag, activityJson );
-                if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
+                me.setClientContentDisplay( activityContentTag, clientJson );
+
+                //if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, clientJson.id );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardDivTag, activityJson, !clickEnable );  // clickEnable - not checked for SyncBtn/Icon
+                //me.setupSyncBtn( clientCardDivTag, clientJson, !clickEnable );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
-                me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
+                //me.setupPhoneCallBtn( activityPhoneCallTag, me.clientId );
 
                 // 5. clickable rerender setup
-                me.setUpReRenderByClick( activityRerenderTag );
+                //me.setUpReRenderByClick( activityRerenderTag );
 
                 // Set up "editPaylayLoadBtn"
-                me.setUpEditPayloadLoadBtn( activityEditPaylayLoadBtnTag, activityJson );
+                //me.setUpEditPayloadLoadBtn( activityEditPaylayLoadBtnTag, clientJson );
             }
             catch( errMsg )
             {
-                console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+                console.customLog( 'Error on ClientCard.render, errMsg: ' + errMsg );
             }
         }
     };
 
     // -----------------------------------------------------
 
-    me.getActivityCardDivTag = function()
+    me.getClientCardDivTag = function()
     {
         if ( me.options.parentTag_Override )
         {
-            return me.options.parentTag_Override.find( '.activity[itemid="' + me.activityId + '"]' );
+            return me.options.parentTag_Override.find( '.activity[itemid="' + me.clientId + '"]' );
         }
         else
         {
-            return $( '.activity[itemid="' + me.activityId + '"]' );
+            return $( '.activity[itemid="' + me.clientId + '"]' );
         }
     };
 
 
-    me.getSyncButtonDivTag = function( activityId )
+    me.getSyncButtonDivTag = function( clientId )
     {
-        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
+        var activityCardTags = ( clientId ) ? $( '.activity[itemid="' + clientId + '"]' ) : me.getClientCardDivTag();
 
         return activityCardTags.find( '.activityStatusIcon' );
     };
 
     // -----------------------------------------------------
 
-    me.activityIconClick_displayInfo = function( activityIconTag, activityJson )
+    me.activityIconClick_displayInfo = function( activityIconTag, clientJson )
     {
         activityIconTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();  // Stops calling parent tags event calls..
-            console.log( activityJson );
+            console.log( clientJson );
         });
     };
 
-    me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, activityId )
+    me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, clientId )
     {
         activityContentTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();
-            me.showFullPreview( activityId, activityContainerTag );            
+            me.showFullPreview( clientId, activityContainerTag );            
         });
     };
 
     
-    me.setupSyncBtn = function( activityCardDivTag, activityJson, detailViewCase )
+    me.setupSyncBtn = function( clientCardDivTag, clientJson, detailViewCase )
     {
-        var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
-        var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
-        var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+        var divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' );
+        var divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' );
+        var statusVal = ( clientJson.processing ) ? clientJson.processing.status: '';
 
         // if 'detailView' mode, the bottom message should not show..
         if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
 
-        me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
+        me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, clientJson );
 
-        me.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityJson.id ); //me.activityId );   
+        me.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, clientJson.id ); //me.clientId );   
     };
 
 
-    me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
+    me.setSyncIconClickEvent = function( divSyncIconTag, clientCardDivTag, clientId )
     {
         divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
         {
-            // This could be called again after activityJson/status is changed, thus, get everything again from activityId
+            // This could be called again after clientJson/status is changed, thus, get everything again from clientId
             e.stopPropagation();  // Stops calling parent tags event calls..
 
-            var activityJson = ActivityDataManager.getActivityById( activityId );
-            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+            var clientJson = ActivityDataManager.getActivityById( clientId );
+            var statusVal = ( clientJson.processing ) ? clientJson.processing.status: '';
             
             // NOTE:
             //  - If status is not syncable one, display bottom message
@@ -153,7 +154,7 @@ function ClientCard( activityId, cwsRenderObj, options )
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
             {
                 // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
-                ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+                ActivityDataManager.checkActivityCoolDown( clientId, function( timeRemainMs )
                 {         
                     // Display Left Msg <-- Do not need if?                          
                     var leftSec = Util.getSecFromMiliSec( timeRemainMs );
@@ -163,7 +164,7 @@ function ClientCard( activityId, cwsRenderObj, options )
                 }, function() 
                 {
                     // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
+                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( clientId );
                     else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
                 });
             }  
@@ -172,14 +173,14 @@ function ClientCard( activityId, cwsRenderObj, options )
                 if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
                 {
                     // Display the popup
-                    me.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
+                    me.bottomMsgShow( statusVal, clientJson, clientCardDivTag );
 
                     // NOTE: STATUS CHANGED!!!!
                     // If submitted with msg one, mark it as 'read' and rerender the activity Div.
                     if ( statusVal === Constants.status_submit_wMsg )        
                     {
                         // TODO: Should create a history...
-                        ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
+                        ActivityDataManager.activityUpdate_Status( clientId, Constants.status_submit_wMsgRead );                        
                     }
                 }
             }
@@ -187,9 +188,9 @@ function ClientCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
+    me.setupPhoneCallBtn = function( divPhoneCallTag, clientId )
     {        
-        var clientObj = ClientDataManager.getClientByActivityId( activityId );
+        var clientObj = ClientDataManager.getClientByActivityId( clientId );
 
         divPhoneCallTag.empty();
 
@@ -288,15 +289,15 @@ function ClientCard( activityId, cwsRenderObj, options )
     
 
     // Wrapper to call displayActivitySyncStatus with fewer parameters
-    me.displayActivitySyncStatus_Wrapper = function( activityJson, activityCardDivTag )
+    me.displayActivitySyncStatus_Wrapper = function( clientJson, clientCardDivTag )
     {
-        //var activityCardDivTag = me.getActivityCardDivTag();
-        if ( activityCardDivTag && activityCardDivTag.length > 0 )
+        //var clientCardDivTag = me.getClientCardDivTag();
+        if ( clientCardDivTag && clientCardDivTag.length > 0 )
         {
-            var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
-            var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
+            var divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' );
+            var divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' );
             
-            var statusVal = ( activityJson && activityJson.processing ) ? activityJson.processing.status: '';
+            var statusVal = ( clientJson && clientJson.processing ) ? clientJson.processing.status: '';
     
             me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag ); 
         }    
@@ -313,20 +314,20 @@ function ClientCard( activityId, cwsRenderObj, options )
     };
 
     
-    me.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag )
+    me.bottomMsgShow = function( statusVal, clientJson, clientCardDivTag )
     {
-        // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
+        // If 'clientCardDivTag ref is not workign with fresh data, we might want to get it by clientId..
         MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
         {
-            me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
-            me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal );
+            me.syncResultMsg_header( syncInfoAreaTag, clientCardDivTag );
+            me.syncResultMsg_content( syncInfoAreaTag, clientCardDivTag, clientJson, statusVal );
         });
     };
 
-    me.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
+    me.syncResultMsg_header = function( syncInfoAreaTag, clientCardDivTag )
     {        
         var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
-        var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
+        var statusLabel = clientCardDivTag.find( 'div.activityStatusText' ).text();
 
         var syncMsg_HeaderPartTag = $( Templates.syncMsg_Header );
         syncMsg_HeaderPartTag.find( '.msgHeaderLabel' ).text = statusLabel;
@@ -335,22 +336,22 @@ function ClientCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal )
+    me.syncResultMsg_content = function( syncInfoAreaTag, clientCardDivTag, clientJson, statusVal )
     {
         var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
         divBottomTag.empty();
 
-        // 1. ActivityCard Info Add - From Activity Card Tag  
-        divBottomTag.append( $( activityCardDivTag.parent().find( '[itemid=' + activityJson.id + ']' )[ 0 ].outerHTML ) ); // << was activityJson.activityId
+        // 1. ClientCard Info Add - From Activity Card Tag  
+        divBottomTag.append( $( clientCardDivTag.parent().find( '[itemid=' + clientJson.id + ']' )[ 0 ].outerHTML ) ); // << was clientJson.clientId
 
         // 2. Add 'processing' sync message.. - last one?
         Util.tryCatchContinue( function() 
         {
-            var historyList = activityJson.processing.history;
+            var historyList = clientJson.processing.history;
 
             if ( historyList.length > 0 )
             {
-                //var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
+                //var historyList_Sorted = Util.sortByKey_Reverse( clientJson.processing.history, "dateTime" );
                 var latestItem = historyList[ historyList.length - 1];    
                 var msgSectionTag = $( Templates.msgSection );
     
@@ -391,26 +392,51 @@ function ClientCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setActivityContentDisplay = function( divActivityContentTag, activity )
+    me.setClientContentDisplay = function( divActivityContentTag, client )
     {
         try
         {
             var appendContent = '';
 
-            var activitySettings = ConfigManager.getActivityTypeConfig( activity );
+            //var activitySettings = ConfigManager.getActivityTypeConfig( activity );
+
+            /*
+            {  
+                "name":"redeemVoucher",
+                "term":"",
+                "label":"redeemVoucher",
+                "icon":{  
+                   "path":"images/act_col.svg",
+                   "colors":{  
+                      "background":"#6FCF97",
+                      "foreground":"#4F4F4F"
+                   }
+                },
+                "displaySettings": [
+                   "INFO.activity.type + ', voucherCode: ' + INFO.client.clientDetails.voucherCode"
+                ],
+                "previewData":[ "age phoneNumber", "voucherCode" ]
+            }
+            */
 
             // Choose to use generic display (Base/Settings) or activity display ones (if available).
-            var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
-            var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+            //var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
+            //var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+
             
+            var displayBase = ConfigManager.getClientDisplayBase();
+            var displaySettings = ConfigManager.getClientDisplaySettings();
+
             divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
         
-            InfoDataManager.setINFOdata( 'activity', activity );
-            InfoDataManager.setINFOclientByActivity( activity );
-    
+            InfoDataManager.setINFOdata( 'client', client );
+
+            
             // Display 1st line - as date
-            var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay, displayBase' );
-            if ( displayBaseContent && displayBaseContent.length && displayBaseContent.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayBaseContent ) );
+            var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ClientCard.setActivityContentDisplay, displayBase' );
+            if ( displayBaseContent 
+                && displayBaseContent.length 
+                && displayBaseContent.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayBaseContent ) );
 
 
             // Display 2nd lines and more
@@ -424,9 +450,11 @@ function ClientCard( activityId, cwsRenderObj, options )
 
                     if ( dispSettingEvalStr )
                     {
-                        var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
+                        var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ClientCard.setActivityContentDisplay' );
 
-                        if ( displayEvalResult && displayEvalResult.length && displayEvalResult.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
+                        if ( displayEvalResult 
+                            && displayEvalResult.length 
+                            && displayEvalResult.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
                     }
                 }
             }
@@ -435,16 +463,17 @@ function ClientCard( activityId, cwsRenderObj, options )
         }
         catch ( errMsg )
         {
-            console.customLog( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
+            console.customLog( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
         }
     };
 
-    me.reRenderActivityDiv = function()
+
+    me.reRenderClientDiv = function()
     {
-        // There are multiple places presenting same activityId info.
+        // There are multiple places presenting same clientId info.
         // We can find them all and reRender their info..
-        var activityCardTags = $( '.activity[itemid="' + me.activityId + '"]' );
-        var reRenderClickDivTags = activityCardTags.find( 'div.activityRerender' );   
+        var clientCardTags = $( '.activity[itemid="' + me.clientId + '"]' );
+        var reRenderClickDivTags = clientCardTags.find( 'div.activityRerender' );   
         
         reRenderClickDivTags.click();
     }
@@ -452,46 +481,36 @@ function ClientCard( activityId, cwsRenderObj, options )
     // -------------------------------
     // --- Display Icon/Content related..
     
-    me.syncUpStatusDisplay = function( activityCardDivTag, activityJson )
+    me.syncUpStatusDisplay = function( clientCardDivTag, clientJson )
     {
         try
         {
             // 1. Does it find hte matching status?
-            var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
-            if ( activitySyncUpStatusConfig ) activityCardDivTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
+            var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( clientJson );
+            if ( activitySyncUpStatusConfig ) clientCardDivTag.find( '.listItem_statusOption' ).html( activitySyncUpStatusConfig.label );
 
-            me.setActivitySyncUpStatus( activityCardDivTag, activityJson.processing );
+            me.setActivitySyncUpStatus( clientCardDivTag, clientJson.processing );
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
+            console.customLog( 'Error on ClientCard.syncUpStatusDisplay, errMsg: ' + errMsg );
         }        
     };
 
 
-    me.activityTypeDisplay = function( activityTypeIconTag, activityJson )
+    me.activityTypeDisplay = function( activityTypeIconTag, clientJson )
     {
         try
         {
-            var activityTypeConfig = ConfigManager.getActivityTypeConfig( activityJson );
+            //var activityTypeConfig = ConfigManager.getActivityTypeConfig( clientJson );
     
             // SyncUp icon also gets displayed right below ActivityType (as part of activity type icon..)
-            var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( activityJson );
+            //var activitySyncUpStatusConfig = ConfigManager.getActivitySyncUpStatusConfig( clientJson );
 
-            // TODO: Bring this method up from 'formUtil' to 'activityCard'?
-            // update activityType Icon (opacity of SUBMIT status = 100%, opacity of permanent FAIL = 100%, else 40%)
-
-            FormUtil.appendActivityTypeIcon( activityTypeIconTag
-                , activityTypeConfig
-                , activitySyncUpStatusConfig
-                , undefined
-                , undefined
-                , activityJson );
-                
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
+            console.customLog( 'Error on ClientCard.activityTypeDisplay, errMsg: ' + errMsg );
         }        
     };                
 
@@ -547,11 +566,11 @@ function ClientCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setActivitySyncUpStatus = function( activityCardDivTag, activityProcessing ) 
+    me.setActivitySyncUpStatus = function( clientCardDivTag, activityProcessing ) 
     {
         try
         {
-            var imgSyncIconTag = activityCardDivTag.find( 'small.syncIcon img' );
+            var imgSyncIconTag = clientCardDivTag.find( 'small.syncIcon img' );
 
             if ( activityProcessing.status === Constants.status_queued )
             {
@@ -567,7 +586,7 @@ function ClientCard( activityId, cwsRenderObj, options )
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
+            console.customLog( 'Error on ClientCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
         }
     };
 
@@ -575,7 +594,7 @@ function ClientCard( activityId, cwsRenderObj, options )
     me.highlightActivityDiv = function( bHighlight )
     {
         // If the activityTag is found on the list, highlight it during SyncAll processing.
-        var activityDivTag = $( '.activity[itemid="' + me.activityId + '"]' );
+        var activityDivTag = $( '.activity[itemid="' + me.clientId + '"]' );
 
         if ( activityDivTag.length > 0 )
         {
@@ -590,28 +609,28 @@ function ClientCard( activityId, cwsRenderObj, options )
     // Perform Submit Operation..
     me.performSyncUp = function( afterDoneCall )
     {
-        var activityJson_Orig;
-        var activityId = me.activityId;
-        var syncIconTag = me.getSyncButtonDivTag( activityId );
-        //syncIconTag.attr( 'tmpactid', me.activityId ); // Temp debugging id add
+        var clientJson_Orig;
+        var clientId = me.clientId;
+        var syncIconTag = me.getSyncButtonDivTag( clientId );
+        //syncIconTag.attr( 'tmpactid', me.clientId ); // Temp debugging id add
 
         try
         {
-            activityJson_Orig = ActivityDataManager.getActivityById( activityId );
+            clientJson_Orig = ActivityDataManager.getActivityById( clientId );
 
-            if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
-            if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
+            if ( !clientJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
+            if ( !clientJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
 
-            var mockResponseJson = ConfigManager.getMockResponseJson( activityJson_Orig.processing.useMockResponse );
+            var mockResponseJson = ConfigManager.getMockResponseJson( clientJson_Orig.processing.useMockResponse );
 
 
             // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
             //  'displayActivitySyncStatus_Wrapper()' gets used to refresh status only. 'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
             //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
-            activityJson_Orig.processing.status = Constants.status_processing;
-            activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
+            clientJson_Orig.processing.status = Constants.status_processing;
+            clientJson_Orig.processing.syncUpCount = Util.getNumber( clientJson_Orig.processing.syncUpCount ) + 1;
 
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
+            me.displayActivitySyncStatus_Wrapper( clientJson_Orig, me.getClientCardDivTag() );
 
             try
             {
@@ -620,17 +639,17 @@ function ClientCard( activityId, cwsRenderObj, options )
                 {
                     WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
                     {
-                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
+                        me.syncUpWsCall_ResultHandle( syncIconTag, clientJson_Orig, success, responseJson, afterDoneCall );
                     });
                 }
                 else
                 {
-                    var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
+                    var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( clientJson_Orig );
 
                     // NOTE: We need to add app timeout, from 'request'... and throw error...
-                    WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
+                    WsCallManager.wsActionCall( clientJson_Orig.processing.url, payload, undefined, function( success, responseJson )
                     {
-                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
+                        me.syncUpWsCall_ResultHandle( syncIconTag, clientJson_Orig, success, responseJson, afterDoneCall );
                     });       
                 }
             }
@@ -646,10 +665,10 @@ function ClientCard( activityId, cwsRenderObj, options )
 
             // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
             var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
-            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+            ActivityDataManager.insertToProcessing( clientJson_Orig, processingInfo );
             ClientDataManager.saveCurrent_ClientsStore();
 
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
+            me.displayActivitySyncStatus_Wrapper( clientJson_Orig, me.getClientCardDivTag() );
 
             afterDoneCall( false, errMsg );
         }
@@ -659,26 +678,26 @@ function ClientCard( activityId, cwsRenderObj, options )
     // -- CoolDown 
     me.syncUpCoolDownTime_CheckNProgressSet = function( syncIconDivTag )
     {
-        var activityId = me.activityId;
+        var clientId = me.clientId;
 
         // Unwrap previous one 1st..
         me.clearCoolDownWrap( syncIconDivTag );
 
-        ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs ) 
+        ActivityDataManager.checkActivityCoolDown( clientId, function( timeRemainMs ) 
         {            
-            //var syncIconTag = me.getSyncButtonDivTag( activityId );
+            //var syncIconTag = me.getSyncButtonDivTag( clientId );
             if ( syncIconDivTag.length > 0 && timeRemainMs > 0 )
             {
                 // New one can be called here..
-                me.syncUpCoolDownTime_disableUI2( activityId, syncIconDivTag, timeRemainMs );
-                // me.syncUpCoolDownTime_disableUI( activityId, syncIconDivTag, timeRemainMs );
+                me.syncUpCoolDownTime_disableUI2( clientId, syncIconDivTag, timeRemainMs );
+                // me.syncUpCoolDownTime_disableUI( clientId, syncIconDivTag, timeRemainMs );
             }
         });
     };
 
-    me.syncUpCoolDownTime_disableUI = function( activityId, syncIconDivTag, timeRemainMs )
+    me.syncUpCoolDownTime_disableUI = function( clientId, syncIconDivTag, timeRemainMs )
     {
-        ActivityDataManager.clearSyncUpCoolDown_TimeOutId( activityId );
+        ActivityDataManager.clearSyncUpCoolDown_TimeOutId( clientId );
 
         syncIconDivTag.addClass( 'syncUpCoolDown' );
 
@@ -688,11 +707,11 @@ function ClientCard( activityId, cwsRenderObj, options )
             syncIconDivTag.removeClass( 'syncUpCoolDown' );
         }, timeRemainMs );
 
-        ActivityDataManager.setSyncUpCoolDown_TimeOutId( activityId, timeOutId );
+        ActivityDataManager.setSyncUpCoolDown_TimeOutId( clientId, timeOutId );
     };
 
 
-    me.syncUpCoolDownTime_disableUI2 = function( activityId, syncIconDivTag, timeRemainMs )
+    me.syncUpCoolDownTime_disableUI2 = function( clientId, syncIconDivTag, timeRemainMs )
     {
         // Set CoolDown UI (Tags) & related valriable for 'interval' to use.
 
@@ -761,37 +780,37 @@ function ClientCard( activityId, cwsRenderObj, options )
 
     // ----------------------------------------------
 
-    me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
+    me.syncUpWsCall_ResultHandle = function( syncIconTag, clientJson_Orig, success, responseJson, afterDoneCall )
     {        
-        var activityId = me.activityId;
+        var clientId = me.clientId;
         // Stop the Sync Icon rotation
         FormUtil.rotateTag( syncIconTag, false );
 
-        // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
+        // NOTE: 'clientJson_Orig' is used for failed case only.  If success, we create new activity
 
         // Based on response(success/fail), perform app/activity/client data change
-        me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
+        me.syncUpResponseHandle( clientJson_Orig, success, responseJson, function( success, errMsg ) 
         {
             // Updates UI & perform any followUp actions - 'responseCaseAction'
 
             // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
-            var newActivityJson = ActivityDataManager.getActivityById( activityId );
+            var newActivityJson = ActivityDataManager.getActivityById( clientId );
             // If 'syncUpResponse' changed status, make the UI applicable..
-            //var newActivityJson = ActivityDataManager.getActivityById( activityId );
+            //var newActivityJson = ActivityDataManager.getActivityById( clientId );
 
             if ( newActivityJson )
             {
-                me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+                me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getClientCardDivTag() );
 
                 // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
                 if ( responseJson && responseJson.report ) 
                 {
-                    ActivityDataManager.processResponseCaseAction( responseJson.report, activityId );
+                    ActivityDataManager.processResponseCaseAction( responseJson.report, clientId );
                 }    
             }
             else
             {
-                throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
+                throw 'FAILED to handle syncUp response, clientId lost: ' + clientId;
             }
 
             afterDoneCall( success );
@@ -800,10 +819,10 @@ function ClientCard( activityId, cwsRenderObj, options )
 
     // =============================================
 
-    me.syncUpResponseHandle = function( activityJson_Orig, success, responseJson, callBack )
+    me.syncUpResponseHandle = function( clientJson_Orig, success, responseJson, callBack )
     {
         var operationSuccess = false;
-        var activityId = me.activityId;
+        var clientId = me.clientId;
 
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
@@ -811,12 +830,12 @@ function ClientCard( activityId, cwsRenderObj, options )
             var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
 
             // #1. Check if current activity Id exists in 'result.client' activities..
-            if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )
+            if ( clientJson.activities && Util.getFromList( clientJson.activities, clientId, "id" ) )
             {
                 operationSuccess = true;
 
                 // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
-                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
+                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', clientJson_Orig.processing );
                 ClientDataManager.setActivityDateLocal_client( clientJson );
 
 
@@ -824,7 +843,7 @@ function ClientCard( activityId, cwsRenderObj, options )
                 if ( processingInfo.fixActivityCase )
                 {
                     delete processingInfo.fixActivityCase;
-                    me.deleteFixActivityRecord( activityId );
+                    me.deleteFixActivityRecord( clientId );
                 }
 
                 // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
@@ -834,7 +853,7 @@ function ClientCard( activityId, cwsRenderObj, options )
                 //else throw "ERROR, Downloaded activity does not contain 'id'.";
 
                 // Removal of existing activity/client happends within 'mergeDownloadClients()'
-                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
+                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': clientId }, processingInfo, function() 
                 {
                     // 'mergeDownload' does saving if there were changes..
                     ClientDataManager.saveCurrent_ClientsStore();
@@ -844,16 +863,16 @@ function ClientCard( activityId, cwsRenderObj, options )
             }
             else
             {
-                var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
+                var errMsg = 'No matching activity with id, ' + clientId + ', found on result.client.';
                 var errStatusCode = 400;
     
                 // 'syncedUp' processing data                
                 var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
-                ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+                ActivityDataManager.insertToProcessing( clientJson_Orig, processingInfo );
 
                 ClientDataManager.saveCurrent_ClientsStore();                                      
 
-                // Add activityJson processing
+                // Add clientJson processing
                 if ( callBack ) callBack( operationSuccess, errMsg );
             }
             
@@ -901,31 +920,31 @@ function ClientCard( activityId, cwsRenderObj, options )
 
             // 'syncedUp' processing data                
             var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
-            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+            ActivityDataManager.insertToProcessing( clientJson_Orig, processingInfo );
 
             ClientDataManager.saveCurrent_ClientsStore();                                      
 
-            // Add activityJson processing
+            // Add clientJson processing
             if ( callBack ) callBack( operationSuccess, errMsg );
         } 
     };
 
 
-    me.deleteFixActivityRecord = function( activityId )
+    me.deleteFixActivityRecord = function( clientId )
 	{
         try
         {
             //if ( fixedActivityList && fixedActivityList.length > 0 )
-            var payloadJson = { 'find': { 'activityId': activityId } }; //{ '$in': fixedActivityList } } };
+            var payloadJson = { 'find': { 'clientId': clientId } }; //{ '$in': fixedActivityList } } };
 
             WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
             {
-                console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
+                console.customLog( 'Deleted fixActivityRecord, clientId ' + clientId );
             });
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR during ActivityCard.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
+            console.customLog( 'ERROR during ClientCard.deleteFixActivityRecord(), clientId: ' + clientId + ', errMsg: ' + errMsg );
         }
 	};
 
@@ -944,68 +963,15 @@ function ClientCard( activityId, cwsRenderObj, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR during ActivityCard.cleanUpErrJson, errMsg: ' + errMsg );
+            console.customLog( 'ERROR during ClientCard.cleanUpErrJson, errMsg: ' + errMsg );
         }        
     };
 
-    // remove this activity from list  (me.activityJson.id ) <-- from common client 
+    // remove this activity from list  (me.clientJson.id ) <-- from common client 
     // =============================================
 	// === Full Detail Popup Related METHODS ========================
 
-    me.showFullPreview = function( activityId, activityContainerTag )
-    {
-        if ( activityId ) 
-        {
-            // initialize
-            var sheetFull = $( '#fullScreenPreview' );
-
-            // populate template
-            sheetFull.html( $( Templates.activityCardFullScreen ) );
-
-            // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
-            if ( DevHelper.devMode )
-            {
-                me.setUpActivityDetailTabDev( sheetFull, activityId );
-            } 
-
-            // create tab click events
-            FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
-        
-            // ADD TEST/DUMMY VALUE
-            sheetFull.find( '.activity' ).attr( 'itemid', activityId )
-            
-
-            // Header content set
-            var actCard = new ClientCard( activityId, me.cwsRenderObj
-                , { 'parentTag_Override': sheetFull, 'disableClicks': true } );
-            actCard.render();
-
-            // set tabs contents
-            me.setFullPreviewTabContent( activityId, sheetFull );
-        
-            // set other events
-            var cardCloseTag = sheetFull.find( 'img.btnBack' );
-        
-            cardCloseTag.off( 'click' ).click( function(){ 
-                sheetFull.empty();
-                sheetFull.fadeOut();
-                //$( '#pageDiv' ).show();
-            });
-        
-        
-            // render
-            sheetFull.fadeIn();
-
-// NEW: PREVIEW STYLE CHANGES
-            sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
-        
-            //$( '#pageDiv' ).hide();
-
-            TranslationManager.translatePage();            
-        }
-    };
-    
-    me.setUpActivityDetailTabDev = function( sheetFullTag, activityId )
+    me.setUpActivityDetailTabDev = function( sheetFullTag, clientId )
     {
         sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
         sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
@@ -1017,65 +983,17 @@ function ClientCard( activityId, cwsRenderObj, options )
         {
             var statusVal = $( this ).val();
 
-            ActivityDataManager.activityUpdate_Status( activityId, statusVal, function() 
+            ActivityDataManager.activityUpdate_Status( clientId, statusVal, function() 
             {
                 var msg = "With 'DEV' mode, activity status has been manually changed to '" + statusVal + "'";
 
                 statusSelResultTag.text( msg );
-                ActivityDataManager.activityUpdate_History( activityId, statusVal, msg, 0 );                         
+                ActivityDataManager.activityUpdate_History( clientId, statusVal, msg, 0 );                         
             });
         });
     };
 
 
-    me.setFullPreviewTabContent = function( activityId, sheetFull )
-    {
-        var clientObj = ClientDataManager.getClientByActivityId( activityId );
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-    
-        var arrDetails = [];
-    
-        // 1 clientDetails properties = key
-        for ( var key in clientObj.clientDetails ) 
-        {
-            arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientObj.clientDetails[ key ] ) } );
-        }
-
-        var clientDetailsTabTag = $( '[tabButtonId=tab_previewDetails]' );
-        var titleTag = $( '<label term="activityDetail_details_title">clientDetails:</label>' );
-
-        clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //activityListPreviewTable
-    
-        // 2. payload Preview
-        var jv_payload = new JSONViewer();
-        $( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
-        jv_payload.showJSON( activityJson );
-    
-
-        // 3. sync History
-        var syncHistoryTag = $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
-        syncHistoryTag.find( '.bt_td_head' ).filter( function( i, tag ) { return ( $( tag ).html() === 'responseCode' ); } ).html( 'response code' );
-        
-        // Set event for "Remove" button for "Pending" client
-        var activity = ActivityDataManager.getActivityById( activityId );
-        var removeActivityBtn = sheetFull.find("#removeActivity");
-        if (activity.processing.status == Constants.status_queued || activity.processing.status == Constants.status_failed )
-        {
-            removeActivityBtn.click( function()
-            {    
-                var result = confirm("Are you sure you want to delete this activity?");
-                if( result )
-                {                    
-                    me.removeActivityNCard( activityId, sheetFull.find( 'img.btnBack' ) );
-                }               
-            });
-        }
-        else
-        {
-            removeActivityBtn.remove();
-        }
-    };    
-    
     me.getFieldOption_LookupValue = function( key, val )
     {
         var fieldOptions = me.getFieldOptions( key );
@@ -1131,16 +1049,16 @@ function ClientCard( activityId, cwsRenderObj, options )
         return matchingOptions;
     };
 
-    me.removeActivityNCard = function( activityId, btnBackTag )
+    me.removeActivityNCard = function( clientId, btnBackTag )
     {
-        ActivityDataManager.removeTempClient_Activity( activityId );
+        ActivityDataManager.removeTempClient_Activity( clientId );
 
-        //var client = ClientDataManager.getClientByActivityId( activityId );
+        //var client = ClientDataManager.getClientByActivityId( clientId );
         //ClientDataManager.removeClient( client );
 
         ClientDataManager.saveCurrent_ClientsStore( function()
         {
-            $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
+            $( '#pageDiv' ).find("[itemid='" + clientId + "']").remove();
             btnBackTag.click();
         });
     };
@@ -1148,97 +1066,15 @@ function ClientCard( activityId, cwsRenderObj, options )
     // =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
 
-    me.setUpEditPayloadLoadBtn = function( activityEditPaylayLoadBtnTag, activityJson )
-    {
-        try
-        {
-            if( activityJson )
-            {
-                var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-                var editReadyStatus = ( statusVal === Constants.status_error );  // SyncManagerNew.isSyncReadyStatus( statusVal ) ||
-        
-                //if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
-                if ( editReadyStatus && activityJson.processing.form )
-                {
-                    activityEditPaylayLoadBtnTag.show();
-                    var editForm = activityJson.processing.form;
-        
-                    activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
-                    {
-                        var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
-        
-                        if( blockJson )
-                        {
-                            var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
-                            var payloadTag = activityCardDivTag.find(".payloadData");                    
-                            var editFormTag = activityCardDivTag.find(".editForm");                    
-                            
-                            activityEditPaylayLoadBtnTag.hide();
-                            payloadTag.hide();
-                            editFormTag.show();
-
-                            var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
-
-                            var newBlockObj = new Block( me.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
-                            newBlockObj.render( 'blockList' );
-
-                            if ( activityJson )
-                            {
-                                // Populate data in the form
-                                var formTag = $("[blockId='" + editForm.blockId + "']");
-
-                                // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
-                                var data = editForm.data;
-
-                                if ( data )
-                                {
-                                    for( var i in data )
-                                    {
-                                        var fieldName = data[i].name;
-                                        var value = data[i].value;
-                                        var displayValue = data[i].displayValue;
-            
-                                        var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
-                                        FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
-                                        FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
-            
-                                        FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
-                                        divFieldTag.find(".dataValue").change();
-                                    }    
-                                }
-                            }
-                            // else
-                            // {
-                            //     FormUtil.block_payloadConfig = ''; // ??
-                            // }
-
-                            formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
-                        }
-                        else
-                        {
-                            alert("Cannot find block with id '" + editForm.blockId + "'");
-                        }
-                        
-                    });
-                }
-                else activityEditPaylayLoadBtnTag.hide();    
-            }
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg );
-        }
-    };
-          
     // =============================================
 	// === Other Supporting METHODS ========================
 
-    // Update ActivityCard UI based on current activityItem data
-    me.updateUI = function( divListItemTag, activityJson )
+    // Update ClientCard UI based on current activityItem data
+    me.updateUI = function( divListItemTag, clientJson )
     {
         me.updateItem_UI_Button( divListItemTag.find( 'small.syncIcon img' ) );
 
-        // PUT: Any other changes reflected on the ActivityCard - by submit..
+        // PUT: Any other changes reflected on the ClientCard - by submit..
     };
 
 
