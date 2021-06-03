@@ -566,7 +566,6 @@ function DataList3( cwsRenderObj, blockObj )
         }
 
         return list;
-    }
-
+    };
 
 }

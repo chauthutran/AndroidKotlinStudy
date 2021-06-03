@@ -14,10 +14,6 @@ function Login( cwsRenderObj )
 
 	me.loginFormDivTag = $( '#loginFormDiv' );
 	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
-	//me.navTitleTextTag = $( '.Nav__Title' );
-	//me.pageTitleDivTab = $( 'div.logo-desc-all' );
-	//me.scrimTag = $('.scrim');
-	//me.sheetBottomTag = $('.sheet_bottom');
 
 	me.loginBtnTag = $( '.loginBtn' );
 	me.passRealTag = $( '#passReal' );
@@ -181,8 +177,7 @@ function Login( cwsRenderObj )
 	{
 		if ( !me.loginAppUpdateCheck )
 		{
-			console.log( 'checkAppUpdate_InLoginOnce --> SwManager.checkNewAppFile_OnlyOnline()' );
-
+			//console.log( 'checkAppUpdate_InLoginOnce --> SwManager.checkNewAppFile_OnlyOnline()' );
 			SwManager.checkNewAppFile_OnlyOnline();
 
 			me.loginAppUpdateCheck = true;

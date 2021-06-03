@@ -137,6 +137,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         // an event handler fired whenever a controllerchange event occurs 
         //  — when the document's associated ServiceWorkerRegistration acquires a new active worker.
 
+        console.log( 'serviceWork EVENT - controllerchange called' );
 
         // The known WFA App triggered App Reloading Process Flag..
 	    if ( AppUtil.appReloading )
@@ -189,11 +190,32 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
-
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
 {
+    console.log( 'SwManager.checkNewAppFile_OnlyOnline called' );
+
+    SwManager.newAppFileExists_EventCallBack = runFunction;
+    SwManager.swUpdateCase = false;
+
+    // Trigger the sw change/update check event..
+    if ( SwManager.swRegObj ) 
+    {        
+        console.log( '** swRegObj.update requested - with swUpdateCase = true' );
+
+        SwManager.swUpdateCase = true;
+        SwManager.swRegObj.update();
+    }
+}
+
+
+SwManager.checkNewAppFile_OnlyOnline2 = function( runFunction )
+{
+    console.log( 'SwManager.checkNewAppFile_OnlyOnline2 called' );
+
     if ( ConnManagerNew.isAppMode_Online() ) 
     {
+        console.log( 'AppMode_Online true' );
+
         // No need to call this, but just to make sure..
         SwManager.waitNewAppFileCheckDuringOffline = false;
 
@@ -202,23 +224,31 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
         // Trigger the sw change/update check event..
         if ( SwManager.swRegObj ) 
         {
+            console.log( '** swRegObj.update requested - with swUpdateCase = true' );
+
             SwManager.swUpdateCase = true;
             SwManager.swRegObj.update();
         }        
     }
     else 
     {
+        console.log( 'AppMode_Offline' ); // <-- ISSUE: GETS called when app starts...  Why Offline?
+
         if ( SwManager.waitNewAppFileCheckDuringOffline )
         {
             console.log( 'Already In-Wait NewAppFileCheck - when become online mode' );
         }
         else 
         {
+            console.log( 'Adding addToRunSwitchToOnlineList' );
+
             SwManager.waitNewAppFileCheckDuringOffline = true;
 
             // If not in AppMode_Online, schedule it to run as soon as it come online..
             ScheduleManager.addToRunSwitchToOnlineList( "appFileUpdateCheck", function() 
             { 
+                console.log( 'Switched to Online - calling checkNewAppFile_OnlyOnline()' );
+
                 SwManager.waitNewAppFileCheckDuringOffline = false;
                 SwManager.checkNewAppFile_OnlyOnline( runFunction ); 
             });    
