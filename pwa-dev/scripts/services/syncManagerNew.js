@@ -37,9 +37,6 @@ SyncManagerNew.syncAll_conflictShortDelayCall; //
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
 SyncManagerNew.subProgressBarId = '#divProgressInfo';
 
-// If blockListObj were created and referened..  We could use cwsRenderObj instead..
-SyncManagerNew.blockListObj;  // If
-
 SyncManagerNew.template_SyncMsgJson = { 
     "msgList": [], // { "msg": "", "datetime": "" }
     "summaryList": []  // { "msg": "" }

@@ -25,7 +25,8 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 	// TODO: Below reference might be obsolete
 	me.blockFormObj;
-	me.blockListObj;
+	//me.blockListObj;
+	me.activityListObj;
 	me.dataListObj;
 	me.blockButtonObj;
 	me.blockMsgObj;
@@ -65,11 +66,20 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
 			}
 
+			
+			//me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );
+			//me.blockListObj.render( me.blockTag, me.passedData ); //, me.options );
+
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
 			if ( me.blockDefJson.list === 'redeemList' || me.blockDefJson.list === 'activityList' )
 			{
-				me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );
-				me.blockListObj.render( me.blockTag, me.passedData ); //, me.options );
+				me.activityListObj = new ActivityList( me.cwsRenderObj, me, me.blockDefJson );
+				me.activityListObj.render( me.blockTag, me.passedData );				
+			}
+			else if ( me.blockDefJson.list === 'clientList' )
+			{
+				me.clientListObj = new ClientList( me.cwsRenderObj, me, me.blockDefJson );
+				me.clientListObj.render( me.blockTag, me.passedData );
 			}
 			else if ( me.blockDefJson.list === 'dataList' )
 			{
