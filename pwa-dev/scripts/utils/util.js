@@ -1659,9 +1659,24 @@ Util.getDateTimeStr = function()
 
 Util.formatDate = function( date, formatPattern )
 {
-	if ( !formatPattern ) formatPattern = Util.dateType1;
+	var outDateStr = '';
 
-	return $.format.date( date, formatPattern );
+	try
+	{
+		if ( date )
+		{
+			if ( !formatPattern ) formatPattern = Util.dateType1;
+
+			// '$.format.date' allows Javascript date object or string in various format.
+			outDateStr = $.format.date( date, formatPattern );		
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in Util.formatDate, errMsg: ' + errMsg );
+	}
+
+	return outDateStr;
 };
 
 Util.formatDateTime = function( dateObj, dateType )
@@ -1671,9 +1686,7 @@ Util.formatDateTime = function( dateObj, dateType )
 
 Util.formatDateTimeStr = function( dateStr, dateType )
 {
-	if ( !dateType ) dateType = Util.dateType1;
-
-	return $.format.date( dateStr, dateType );
+	return Util.formatDate( dateStr, dateType );
 };
 
 Util.timeCalculation = function( dtmNewer, dtmOlder )
