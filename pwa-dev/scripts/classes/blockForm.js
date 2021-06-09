@@ -1250,6 +1250,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var entryTag = divInputTag.find( "select,input" ); // < shouldn't his be .dataValue?
 		var regxRules = [];
+		var pickerDateRangeJson;
 
 		if( formItemJson.rules !== undefined )
 		{
@@ -1276,21 +1277,28 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 					regxRules.push( regxRuleJson );
 				}
+				else if ( ruleJson.dateRangeRule === 'usePickerDateRange' && formItemJson.dateRange )
+				{
+					pickerDateRangeJson = {};
 
+					pickerDateRangeJson.dateFrom = formItemJson.dateRange.from;
+					pickerDateRangeJson.dateTo = formItemJson.dateRange.to;
+
+					pickerDateRangeJson.msg = ruleJson.msg;
+					pickerDateRangeJson.term = ruleJson.term;
+				}
+
+				// all other custom attributes
 				if ( ruleJson.type )
 				{
-					// all other custom attributes
 					entryTag.attr( "type", ruleJson.type );
 				}
 			}
 
-			if ( regxRules.length > 0 )
-			{
-				entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
-			} 
+			if ( regxRules.length > 0 ) entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
+			if ( pickerDateRangeJson ) entryTag.attr( "pickerDateRange", encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
 		}
-
-	}
+	};
 
 	me.addDataTargets = function( divInputTag, formItemJson )
 	{

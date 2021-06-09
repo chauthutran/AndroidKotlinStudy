@@ -497,7 +497,7 @@ function Login( cwsRenderObj )
 		me.pageDivTag.hide();		
 		me.loginFormDivTag.show();
 
-		Menu.setInitialLogInMenu( me.cwsRenderObj );
+		Menu.setInitialLogInMenu();
 
 
 		// Reset vals and set focus
@@ -553,7 +553,8 @@ function Login( cwsRenderObj )
 
 
 		// ONLINE vs OFFLINE HANDLING
-		if ( ConnManagerNew.isAppMode_Offline() )
+		// Also, if replica login server is not available, use offline process to login.
+		if ( !ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline() )
 		{
 			me.loginOffline( userName, password, function( isSuccess, offlineUserData ) 
 			{
@@ -638,7 +639,7 @@ function Login( cwsRenderObj )
 		// Disabled due to error
 		//FormUtil.geolocationAllowed();
 
-		me.cwsRenderObj.renderDefaultTheme();
+		Menu.renderDefaultTheme();
 		MsgManager.initialSetup();
 
 		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );

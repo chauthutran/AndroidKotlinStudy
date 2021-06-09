@@ -6,8 +6,6 @@ function cwsRender()
 
 	// Tags
 	me.pageDivTag = $( '#pageDiv' );
-	me.navDrawerDivTag = $( '#navDrawerDiv' );
-	me.navDrawerShowIconTag = $( 'div.Nav__icon' );
 	me.pulsatingProgress = $( '#pulsatingDots' );
 
 	// service worker obj reference
@@ -53,6 +51,8 @@ function cwsRender()
 
 		me.setEvents_OnInit();
 
+		Menu.setUpMenu();
+
 		me.createSubClasses();
 	}
 
@@ -82,9 +82,6 @@ function cwsRender()
 
 	me.setEvents_OnInit = function()
 	{		
-		// Set Body vs Set Header..
-		me.setPageHeaderEvents();
-
 		me.setOtherEvents();
 	}
 
@@ -111,13 +108,6 @@ function cwsRender()
 		if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
 	};
 	*/
-	
-
-	me.setPageHeaderEvents = function()
-	{
-		me.setNavMenuIconEvents();		
-	};
-
 
 	me.setOtherEvents = function() 
 	{ 
@@ -149,27 +139,6 @@ function cwsRender()
 		}
 	};
 	
-
-	// -------------------------
-
-	me.setupMenuTagClick = function( menuTag )
-	{
-		menuTag.click( function() 
-		{
-			var menuLiTag = $( this );
-			var anchorTag = menuLiTag.find( 'a' ).first();
-
-			// scrim hide			
-			FormUtil.unblockPage();
-
-			var clicked_areaId = menuLiTag.attr( 'areaId' );
-
-			me.setAppTitle( clicked_areaId, anchorTag.text(), anchorTag.attr( 'term' ) ); //$( this ).attr( 'displayName' ) 
-			me.renderArea( clicked_areaId );
-
-			return false;
-		});
-	}
 
 	// =============================================
 
@@ -296,9 +265,9 @@ function cwsRender()
 		{
 			if ( areaList )
 			{
-				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
+				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu();
 	
-				me.populateMenuList( finalAreaList, function( startMenuTag )
+				Menu.populateMenuList( finalAreaList, function( startMenuTag )
 				{	
 					if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
 
@@ -320,25 +289,10 @@ function cwsRender()
 	
 	//var errActList = AppInfoManager.getNewErrorActivities();
 
-	me.refreshMenuItems = function()
-	{
-		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList ){
-
-			if ( areaList )
-			{
-				var finalAreaList = ( SessionManager.getLoginStatus() ) ? Menu.populateStandardMenuList( areaList ) : Menu.setInitialLogInMenu( me );
-	
-				me.populateMenuList( finalAreaList, function( startMenuTag ){
-					//if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
-				} );
-			}
-		} );
-	}
-
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
 	me.handleAppMode_Switch = function()
 	{
-		me.refreshMenuItems();
+		Menu.refreshMenuItems();
 
 		if ( $( 'div.fab' ) ) 
 		{
@@ -347,100 +301,6 @@ function cwsRender()
 	};
 
 	// ----------------------------------
-
-	
-	me.setNavMenuIconEvents = function()
-	{
-		me.navDrawerShowIconTag.click( function() {
-			FormUtil.menuDivShow( me.navDrawerDivTag, $( '.navigation__close' ),  FormUtil.getScrimTag() );
-		});
-	}
-
-
-	// TODO: THIS SHOULD BE MOVED TO MENU CLASS  <-- Populate Top Dynamic Menu Items..
-	me.populateMenuList = function( areaList, exeFunc )
-	{
-		var startMenuTag;
-
-		$( '#navDrawerDiv' ).empty();
-
-		// clear the list first
-		//me.navDrawerDivTag.find( 'div.menu-mobile-row' ).remove();
-
-		// TODO: GREG: THIS COULD BE shortened or placed in html page? James: dynamic menu items > not sure that's possible?
-		var navMenuHead = $( '<div class="navigation__header" />' );
-		var navMenuLogo = $( '<div class="navigation__logo" />' );
-		var navMenuUser = $( '<div class="navigation__user" />' );
-		var navMenuClose = $( '<div class="navigation__close" />' );
-
-
-		me.navDrawerDivTag.append ( navMenuHead );
-		navMenuHead.append ( navMenuLogo );
-		navMenuHead.append ( navMenuUser );
-		navMenuHead.append ( navMenuClose );
-		//navMenuHead.append ( $( '<div id="divNavDrawerSummaryData" class="" />' ) );
-
-		var navMenuItems = $( '<div class="navigation__items" />');
-		var navItemsUL = $( '<ul />');
-
-		navMenuItems.append( navItemsUL );
-
-		// Add the menu rows
-		if ( areaList )
-		{
-			for ( var i = 0; i < areaList.length; i++ )
-			{
-				var area = areaList[i];
-
-				if ( area && area.groupBefore === true )
-				{
-					var groupRow = $( '<hr>' );
-
-					navItemsUL.append( groupRow );
-				}
-
-				var menuLI = $( '<li areaId="' + area.id + '" />' ); // displayName="' + area.name + '"
-
-				menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
-				menuLI.append( $( '<a ' + FormUtil.getTermAttr( area ) + ' class="pointer" >' + area.name + '</a>' ) );
-
-				navItemsUL.append( menuLI );
-
-				me.setupMenuTagClick( menuLI );
-
-				if ( area.startArea ) startMenuTag = menuLI;
-
-				if ( area && area.groupAfter === true )
-				{
-					var groupRow = $( '<hr>' );
-
-					navItemsUL.append( groupRow );
-				}
-			}	
-		}
-
-		me.navDrawerDivTag.append( navMenuItems );
-
-		navMenuClose.on( 'click', function(){
-			//$( 'div.Nav__icon' ).click();
-			FormUtil.menuDivHide( me.navDrawerDivTag, FormUtil.getScrimTag() );
-		});
-
-		var menuUserName = $( '<div>' + SessionManager.sessionData.login_UserName + '</div>' );
-		//var menuUserRoles = $( '<div style="color: #F06D24;font-size: 10pt;">[' + ConfigManager.login_UserRoles + ']</div>' );
-
-		navMenuUser.append( menuUserName ); //, menuUserRoles
-
-		me.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
-
-		if ( exeFunc ) exeFunc( startMenuTag );
-	
-	}
-
-	me.hideMenuDiv = function() 
-	{
-		$( '.navigation__close' ).click();
-	}
 
 	// ------------------------------------
 	// PUT THIS ON swManager?
@@ -453,22 +313,6 @@ function cwsRender()
 			me.loginObj.regetDCDconfig();
 		}  
 	}
-
-
-	me.renderDefaultTheme = function ()
-	{
-		if ( ConfigManager.getConfigJson().settings 
-			&& ConfigManager.getConfigJson().settings.theme )
-		{
-			var defTheme = ( AppInfoManager.getUserInfo() && AppInfoManager.getUserInfo().theme ) ? AppInfoManager.getUserInfo().theme : "";
-
-			if ( defTheme ) $("body").removeClass().addClass( defTheme );
-		}
-		else
-		{
-			$("body").removeClass().addClass( 'theme-blue' );
-		}		
-	};
 
 	// --------------------------------------------------------
 	// ----------- Translate langTerm retrieval and do lang change -------------
@@ -537,7 +381,7 @@ function cwsRender()
 		FormUtil.unblockPage();
 
 		// hide the menu div if open
-		me.hideMenuDiv();
+		Menu.hideMenuDiv();
 	}
 
 	me.clearMenuClickStyles = function()
@@ -577,11 +421,11 @@ function cwsRender()
 		$( 'div.Nav__Title').html( '' );
 
 		me.clearMenuPlaceholders();
-		me.navDrawerDivTag.empty();
+		Menu.navDrawerDivTag.empty();
 
 		me.hideActiveSession_UIcontent();
 
-		me.renderDefaultTheme();
+		Menu.renderDefaultTheme();
 		me.loginObj.openForm();
 		
 		// me.loginBottomButtonsVisible( true );
@@ -627,7 +471,7 @@ function cwsRender()
 			$('#divMsgAreaBottomScrim').hide();
 		}
 
-		me.hideMenuDiv();
+		Menu.hideMenuDiv();
 
 		// hide control Popups
 

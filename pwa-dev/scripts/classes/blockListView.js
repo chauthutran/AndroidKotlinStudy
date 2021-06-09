@@ -83,6 +83,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     me.sortListButtonTag; // sortList_Tagbutton
     me.sortListDivTag; //     me.sortListUlTag; // sortList_TagUL
 
+    me.sortList_setNoHide = false;
     //<div class="Nav2" style="display:none;"></div>
 
     me.containerTagTemplate = `
@@ -611,7 +612,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
 
     me.setSortOtherEvents = function( sortListButtonTag )
     {
-        $(".Nav2__icon").click(function () {
+        $( ".Nav2__icon" ).click(function ( e ) {
 
             if ( me.usedGroupBy( me.groupByData ) )
             {
@@ -621,34 +622,36 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
             }
             else
             {
-                me.toggleDisplay_SortList( $( '.Menus_display' ) );
+                me.showSortList();
+
+                e.stopPropagation();
+
+                $('body').off( 'click' ).on('click', function () {
+                    me.hideSortList();
+                });
             }
         });
     };
 
-    
-    me.toggleDisplay_SortList = function( sortListTag )
+    me.showSortList = function()
     {
-        if ( sortListTag.is(':visible') ) {
-            sortListTag.css('display', 'none');
-            $('.fab-wrapper').show();
-            $('.Nav2__icon').css('transform', 'rotate(0deg)');
-        } else {
-            sortListTag.css('display', 'table-row');
-            $('.fab-wrapper').css('display', 'none');
-            $('.Nav2__icon').css('transform', 'rotate(180deg)');
-        }    
+        $( '.Menus_display' ).css('display', 'table-row');
+        $('.Nav2__icon').css('transform', 'rotate(180deg)');    
     };
 
+    me.hideSortList = function()
+    {
+        $('body').off( 'click' );
+        $( '.Menus_display' ).css('display', 'none');
+        $('.Nav2__icon').css('transform', 'rotate(0deg)');
+    };
 
     me.setSortDivTagClickEvent = function( divTag, sortDefs )
     {
-        // NOTE: Below is not firing!!!
-
         divTag.click( function()
         {            
             // Hide the sort list popup menu
-            me.toggleDisplay_SortList( $( '.Menus_display' ) );
+            me.hideSortList();
 
             var sortId = $( this ).attr( 'sortid' );
 

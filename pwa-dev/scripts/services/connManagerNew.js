@@ -33,6 +33,10 @@ ConnManagerNew.efficiency = {
 
 ConnManagerNew.switchPrompt_reservedMsgID;
 
+// Changed by 'Availability' call - methods in WsCallManager.
+ConnManagerNew.REPLICA_Available = true;
+ConnManagerNew.POEDITOR_Available = true;
+
 // ====================================================
 // ===============================
 

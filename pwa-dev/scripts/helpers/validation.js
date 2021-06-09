@@ -2,8 +2,8 @@
 function Validation() {};
 
 Validation._DisableValidation = false;
-Validation.COLOR_WARNING = "#f19c9c";
-
+Validation.COLOR_WARNING = '#f19c9c';
+Validation.DATE_FORMAT = 'YYYY-MM-DD';
 
 Validation.disableValidation = function( execFunc )
 {
@@ -65,6 +65,9 @@ Validation.checkValidations = function( tag )
             Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
             Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
             Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+
+            Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
+            Validation.performValidationCheck( tag, 'pickerDateRange', divErrorMsgTargetTag );
             Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
         }
 
@@ -87,6 +90,8 @@ Validation.performValidationCheck = function( tag, type, divTag )
     // If the validation attribute is present in the tag and not empty string or set to false
     if ( validationAttr && validationAttr !== 'false' )
     {
+        var prev_valid = ( tag.attr( 'valid' ) === 'true' );
+
         if ( type == 'mandatory' ) valid = Validation.checkRequiredValue( tag, divTag, type );
         else if ( type == 'minlength' ) valid = Validation.checkValueLen( tag, divTag, 'min', Number( validationAttr ) );
         else if ( type == 'maxlength' ) valid = Validation.checkValueLen( tag, divTag, 'max', Number( validationAttr ) );
@@ -95,6 +100,9 @@ Validation.performValidationCheck = function( tag, type, divTag )
         else if ( type == 'isNumber' ) valid = Validation.checkNumberOnly( tag, divTag, type );
         else if ( type == 'isDate' ) valid = Validation.checkValidDate( tag, divTag, type );
         else if ( type == 'phoneNumber' ) valid = Validation.checkPhoneNumberValue( tag, divTag, type );
+
+        else if ( type == 'dateRange' ) valid = Validation.checkDateRange( tag, divTag, type, validationAttr, prev_valid );
+        else if ( type == 'pickerDateRange' ) valid = Validation.checkValue_pickerDateRange( tag, divTag, type, prev_valid );
         else if ( type == 'patterns' ) valid = Validation.checkValue_RegxRules( tag, divTag, type );
 
         if ( !valid ) tag.attr( 'valid', false );
@@ -214,40 +222,31 @@ Validation.checkNumberOnly = function( inputTag, divTag, type )
     return valid;		
 };
 
+
+// Check with 'YYYY-MM-DD' format (starting..)
 Validation.checkValidDate = function( inputTag, divTag, type )
 {
     var valid = true;
     var value = inputTag.val();
-    var dateFormat = inputTag.attr( 'placeholder' );
-    //var reg = new RegExp( /^\d+$/ );
-    
-    if ( dateFormat && dateFormat.length )
-    {
-        var dtm = new Date( value );
 
-        if (Object.prototype.toString.call( dtm ) === "[object Date]") 
+    try
+    {
+        valid = moment( value, Validation.DATE_FORMAT, true ).isValid();
+
+        if ( !valid )
         {
-            // it is a date
-            if ( isNaN( dtm.getTime() ) ) 
-            {
-                // date is not valid  // d.valueOf() could also work
-                var message = Validation.getMessage( type, 'Please enter valid date' );
-                divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
-                valid = false;
-            } 
-            //else {}  // date is valid
-        } 
-        else 
-        {
-            // not a date
             var message = Validation.getMessage( type, 'Please enter valid date' );
             divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
-            valid = false;
-        }
+        }    
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in Validation.checkValidDate(), errMsg: ' + errMsg );
     }
 
     return valid;	
 };
+
 
 Validation.checkPhoneNumberValue = function( inputTag, divTag, type )
 {
@@ -270,6 +269,99 @@ Validation.checkPhoneNumberValue = function( inputTag, divTag, type )
     
     return valid;
 };
+
+
+// Create a method to handle the 'dateRange' rule value '2020-01-01 ~ 2021-11-15'
+Validation.checkDateRange = function( inputTag, divTag, type, attrVal, prev_valid )
+{
+    var valid = true;
+    var value = inputTag.val();
+    var valueDate;
+
+    try
+    {
+        // If previous check were not valid, do not check for this DateRange.  Not valid dates should not check dateRange.
+        if ( prev_valid )
+        {
+            if ( value ) valueDate = new Date( value );
+            attrVal = Util.trim( attrVal );
+    
+            if ( valueDate && attrVal )
+            {
+                // get From Date
+                var dateFromStr = '';
+                var dateToStr = '';
+                var dateFrom;
+                var dateTo;
+                var attrValArr = attrVal.split( "~" );
+    
+                if ( attrValArr.length >= 1 ) dateFromStr = Util.trim( attrValArr[0] );
+                if ( attrValArr.length >= 2 ) dateToStr = Util.trim( attrValArr[1] );
+    
+                if ( dateFromStr ) dateFrom = new Date( dateFromStr );
+                if ( dateToStr ) dateTo = new Date( dateToStr );
+                
+                // Finally, check the date against dateFrom/To.
+                if ( dateFrom && valueDate < dateFrom ) valid = false;
+                if ( dateTo && valueDate > dateTo ) valid = false;
+    
+                if ( !valid )
+                {
+                    var message = Validation.getMessage( type, 'Please enter valid date range: ' + attrVal );
+                    divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
+                }    
+            }
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in Validation.checkDateRange(), errMsg: ' + errMsg );
+    }
+    
+    return valid;		
+};
+
+
+Validation.checkValue_pickerDateRange = function( inputTag, divTag, type, prev_valid )
+{
+    var valid = true;
+    var value = inputTag.val();
+    var valueDate;
+
+    try
+    {
+        if ( prev_valid )
+        {
+            if ( value ) valueDate = new Date( value );    
+
+            var pickerDateRangeStr = decodeURI( inputTag.attr( "pickerDateRange" ) );
+
+            if ( pickerDateRangeStr && valueDate ) 
+            {
+                var dRangeJson = JSON.parse( pickerDateRangeStr );                
+                var dateFrom;
+                var dateTo;
+
+                if ( dRangeJson.dateFrom ) dateFrom = FormUtil.getCustomDate( dRangeJson.dateFrom );
+                if ( dRangeJson.dateTo ) dateTo = FormUtil.getCustomDate( dRangeJson.dateTo );
+                
+                // Finally, check the date against dateFrom/To.
+                if ( dateFrom && valueDate < dateFrom ) valid = false;
+                if ( dateTo && valueDate > dateTo ) valid = false;
+
+                // If not valid, display error msg.
+                if ( !valid ) divTag.append( Validation.getErrorSpanTag( dRangeJson.msg, dRangeJson.term ) );
+            }            
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in Validation.checkValue_pickerDateRange(), errMsg: ' + errMsg );
+    }
+
+    return valid;
+};
+
 
 Validation.checkValue_RegxRules = function( inputTag, divTag, type )
 {

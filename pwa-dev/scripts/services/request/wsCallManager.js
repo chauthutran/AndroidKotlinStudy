@@ -234,6 +234,10 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
                         && returnJson.LEGACY && returnJson.LEGACY.isAvailable );
                     //console.log( bCheck + ' - availability dhis2' );
                 }
+
+                // REPLICA/POEDITOR availability record
+                ConnManagerNew.REPLICA_Available = ( returnJson.REPLICA && returnJson.REPLICA.isAvailable );
+                ConnManagerNew.POEDITOR_Available = ( returnJson.POEDITOR && returnJson.POEDITOR.isAvailable );                
             }
         }
         catch( errMsg )

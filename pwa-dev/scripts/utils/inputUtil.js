@@ -33,7 +33,7 @@ function inputMonitor( cwsRenderObj )
 
     // Swipe Up / Down / Left / Right
     var initialX = null;
-    var initialY = null;
+    //var initialY = null;
 
     var navDrawerVisibleOnStart = false;
     var navDrawerVisibleOnMove = false;
@@ -43,13 +43,13 @@ function inputMonitor( cwsRenderObj )
     var loggedIn = false;
 
     var trackX = 0; //early dev var (to be updated for improved tracking-distance accuracy: right now variables is messy)
-    var trackY = 0;
+    //var trackY = 0;
 
     var currentX = null;
-    var currentY = null;
+    //var currentY = null;
 
     var diffX = null;
-    var diffY = null;
+    //var diffY = null;
 
     var dragXoffsetLimit = 0;
     var touchStartTargetTag;
@@ -93,7 +93,11 @@ function inputMonitor( cwsRenderObj )
     function touchMove(e) 
     {
 
-        if ( !loggedIn || (initialX === null ) || (initialY === null) || ( e.touches[0].clientX == null) )
+        if ( !loggedIn 
+            || Menu.menuOpen_Click_Started
+            || (initialX === null ) 
+            //|| (initialY === null) 
+            || ( e.touches[0].clientX == null) )
         {
             return;
         }
@@ -140,7 +144,7 @@ function inputMonitor( cwsRenderObj )
         
 
         initialX = null;
-        initialY = null;
+        //initialY = null;
 
         trackX = 0;
         trackY = 0;
@@ -150,7 +154,7 @@ function inputMonitor( cwsRenderObj )
     me.initialiseTouchDefaults = function( e )
     {
         initialX = e.touches[0].clientX;
-        initialY = e.touches[0].clientY;
+        //initialY = e.touches[0].clientY;
 
         touchStartTargetTag = undefined; 
         touchStartParentTag = undefined;
@@ -237,7 +241,7 @@ function inputMonitor( cwsRenderObj )
         touchStartParentTag = $( touchStartTargetTag ).parent();
         listItemFillerBlock = $( '<a id="filler_' + touchStartTargetTag.attr( 'itemid' ) + '" class="expandable" style="z-Index: 0;" />' );
 
-        $( listItemFillerBlock ).css( 'height', $( touchStartTargetTag ).innerHeight() );
+       // $( listItemFillerBlock ).css( 'height', $( touchStartTargetTag ).innerHeight() );
         $( listItemFillerBlock ).css( 'background-color', 'rgba(0, 0, 0, 0)' );
         $( listItemFillerBlock ).css( 'zIndex', ( $( touchStartTargetTag ).css( 'zIndex' ) -1 ) );
 
@@ -287,7 +291,7 @@ function inputMonitor( cwsRenderObj )
     me.updatetouchMoveVars = function( e )
     {
         currentX = e.touches[0].clientX;
-        currentY = e.touches[0].clientY;
+        //currentY = e.touches[0].clientY;
 
         if ( currentX > initialX )
         {
@@ -298,10 +302,10 @@ function inputMonitor( cwsRenderObj )
             diffX = ( initialX - currentX ) * -1;
         }
         
-        diffY = initialY - currentY;
+        //diffY = initialY - currentY;
 
         trackX += diffX;
-        trackY += diffY;
+        //trackY += diffY;
 
         // for debugging
         //console.customLog( 'initialX: ' + initialX + ', currentX: ' + currentX + ', trackX: ' + trackX);
@@ -310,13 +314,13 @@ function inputMonitor( cwsRenderObj )
     function getSessionSummary()
     {
         var msg = 'initialX = ' + parseFloat(initialX).toFixed(0) + 
-                ' initialY = '+ parseFloat(initialY).toFixed(0) + 
+                //' initialY = '+ parseFloat(initialY).toFixed(0) + 
                 ' currentX = ' + parseFloat(currentX).toFixed(0) + 
-                ' currentY = ' + parseFloat(currentY).toFixed(0) + 
+                //' currentY = ' + parseFloat(currentY).toFixed(0) + 
                 ' diffX = ' + parseFloat(diffX).toFixed(0) + 
-                ' diffY = ' + parseFloat(diffY).toFixed(0) + 
+                //' diffY = ' + parseFloat(diffY).toFixed(0) + 
                 ' trackX = ' + parseFloat(trackX).toFixed(0) +
-                ' trackY = ' + parseFloat(trackY).toFixed(0) + 
+                //' trackY = ' + parseFloat(trackY).toFixed(0) + 
                 ' navDrawerVisibleOnStart: ' + navDrawerVisibleOnStart + 
                 ' navDrawerVisibleOnMove: ' + navDrawerVisibleOnMove + 
                 ' navDrawerLeft: ' + $( '#navDrawerDiv' ).css( 'left' ) + 
@@ -497,7 +501,10 @@ function inputMonitor( cwsRenderObj )
             $( '#navDrawerDiv' ).addClass( 'transitionSmooth' );
         } 
 
-        if ( !loggedIn || ( Math.abs(trackX) <= 2) || ( !navDrawerVisibleOnStart && !navDrawerVisibleOnMove ) )
+        if ( !loggedIn 
+            || Menu.menuOpen_Click_Started
+            || ( Math.abs(trackX) <= 2) 
+            || ( !navDrawerVisibleOnStart && !navDrawerVisibleOnMove ) )
         {
             trackX = 0;
             return;
