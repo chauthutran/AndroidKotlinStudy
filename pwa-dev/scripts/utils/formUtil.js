@@ -576,34 +576,6 @@ FormUtil.setClickSwitchEvent = function( clickBtnTag, showDivTag, openCloseClass
 }
 
 
-FormUtil.menuDivShow = function( showDivTag, closeBtnTag, scrimTag )
-{
-	showDivTag.show();
-
-	showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
-	showDivTag.css( 'left', '0px' );
-
-
-	scrimTag.show();
-	scrimTag.off( 'click' ).click( function( event )
-	{
-		event.preventDefault();
-		closeBtnTag.click();
-	});
-};
-
-
-FormUtil.menuDivHide = function( showDivTag, scrimTag )
-{
-	showDivTag.css( 'left', '-' + FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
-	showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
-
-	setTimeout( function() { showDivTag.hide(); }, 500 );
-
-	scrimTag.hide();
-};
-
-
 FormUtil.setStackOrderHigherThan = function( targetTag, higherThanTag )
 {	//test code added by Greg
 	var newZidx = parseInt( $( higherThanTag ).css('zIndex') ) + 1;
