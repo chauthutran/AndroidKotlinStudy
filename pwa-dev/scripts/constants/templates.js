@@ -219,12 +219,8 @@ Templates.template_trActivityTag = `<tr class="activity">
 
 /* ACTIVITY CARD (BLOCKLIST) << END */
 
-
-
 /* ACTIVITY CARD FULL SCREEN PREVIEW >> START */
-
 Templates.activityCardFullScreen = `
-
 <div class="wapper_card">
   <div class="sheet-title c_900">
     <img src='images/arrow_back.svg' class='btnBack'>
@@ -375,26 +371,21 @@ Templates.activityCardFullScreen = `
       </div>
     </div>
   </div>
-</div>
-`;
+</div>`;
 /* ACTIVITY CARD FULL SCREEN PREVIEW << END */
 
 
 /* STATISTICS >> START */
-
 Templates.title_section = `<div class="title_section">
   <div class="title_section__icon" />
   <div class="title_section__title">Title of Table</div>
 </div>`;
 
 Templates.text_section = `<div class="section_description"/>`;
-
 /* STATISTICS << END */
 
 
-
 /* SVG ITEMS >> START */
-
 Templates.svg_Table = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 10.02H15V21H10V10.02ZM17 21H20C21.1 21 22 20.1 22 19V10H17V21ZM20 3H5C3.9 3 3 3.9 3 5V8H22V5C22 3.9 21.1 3 20 3ZM3 19C3 20.1 3.9 21 5 21H8V10H3V19Z" fill="#333" fill-opacity="0.87"></path>
 </svg>`;
@@ -426,183 +417,179 @@ Templates.svg_Chart_Line = `<svg width="24" height="24" viewBox="0 0 24 24" fill
 /* SVG ITEMS << END */
 
 
-
 /* ONLINE/OFFLINE SWITCHING PROMPT >> START */
-
-
 Templates.ConnManagerNew_Dialog_notSupportedMode = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title">you need to start :-(</label></div>
+  <div class="dialog__title"><label class="title">you need to start :-(</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img" style="background-image: url('images/start_again.svg')"></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img" style="background-image: url('images/start_again.svg')"></div>
+  </div>
 
-<div class="prompt dialog__text">
-This functionality is not supported under current networkMode - you need to restart the process
-</div>
+  <div class="prompt dialog__text">
+  This functionality is not supported under current networkMode - you need to restart the process
+  </div>
 
-<div class="dialog__action">
-  <div id="dialog_act1" class="button-text primary c_500">
-    <div class="button__container">
-      <div class="runAction button-label">Go to activity list</div>
+  <div class="dialog__action">
+    <div id="dialog_act1" class="button-text primary c_500">
+      <div class="button__container">
+        <div class="runAction button-label">Go to activity list</div>
+      </div>
     </div>
   </div>
-</div>
 
 </dialog>`;
+
 
 Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title">blah blah blah :-)</label></div>
+  <div class="dialog__title"><label class="title">blah blah blah :-)</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img" ></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img" ></div>
+  </div>
 
-<div class="prompt dialog__text"></div>
+  <div class="prompt dialog__text"></div>
 
-<div class="networkSwitchOpts">
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="10" id="waitingTimeOpt_10s">
-    <label for="waitingTimeOpt_10s" term="networkSwitch_tryConnect_10sec">Try to connect in 10sec</label>
-  </div>
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60s">
-    <label for="waitingTimeOpt_60s" term="networkSwitch_tryConnect_60sec">Try to connect in 60sec</label>
-  </div>
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" CHECKED value="180" id="waitingTimeOpt_30m">
-    <label for="waitingTimeOpt_30m" term="networkSwitch_tryConnect_30min">Try to connect in 30min</label>
-  </div>
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="360" id="waitingTimeOpt_1h">
-    <label for="waitingTimeOpt_1h" term="networkSwitch_tryConnect_1hr">Try to connect in 1hr</label>
-  </div>
-  <div class="networkSwitchOpt radio-group">
-    <input type="radio" name="switch_waitingTimeOpt" value="1440" id="waitingTimeOpt_4h">
-    <label for="waitingTimeOpt_4h" term="networkSwitch_tryConnect_4hr">Try to connect in 4hr</label>
-  </div>
-</div>
-
-<div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
-    <div class="button__container">
-      <div class="cancel button-label">CANCEL</div>
+  <div class="networkSwitchOpts">
+    <div class="networkSwitchOpt radio-group">
+      <input type="radio" name="switch_waitingTimeOpt" value="10" id="waitingTimeOpt_10s">
+      <label for="waitingTimeOpt_10s" term="networkSwitch_tryConnect_10sec">Try to connect in 10sec</label>
+    </div>
+    <div class="networkSwitchOpt radio-group">
+      <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60s">
+      <label for="waitingTimeOpt_60s" term="networkSwitch_tryConnect_60sec">Try to connect in 60sec</label>
+    </div>
+    <div class="networkSwitchOpt radio-group">
+      <input type="radio" name="switch_waitingTimeOpt" CHECKED value="180" id="waitingTimeOpt_30m">
+      <label for="waitingTimeOpt_30m" term="networkSwitch_tryConnect_30min">Try to connect in 30min</label>
+    </div>
+    <div class="networkSwitchOpt radio-group">
+      <input type="radio" name="switch_waitingTimeOpt" value="360" id="waitingTimeOpt_1h">
+      <label for="waitingTimeOpt_1h" term="networkSwitch_tryConnect_1hr">Try to connect in 1hr</label>
+    </div>
+    <div class="networkSwitchOpt radio-group">
+      <input type="radio" name="switch_waitingTimeOpt" value="1440" id="waitingTimeOpt_4h">
+      <label for="waitingTimeOpt_4h" term="networkSwitch_tryConnect_4hr">Try to connect in 4hr</label>
     </div>
   </div>
-  <div id="dialog_act1" class="button-text primary c_500">
-    <div class="button__container">
-      <div class="runAction button-label">ACCEPT</div>
+
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="cancel button-label">CANCEL</div>
+      </div>
+    </div>
+    <div id="dialog_act1" class="button-text primary c_500">
+      <div class="button__container">
+        <div class="runAction button-label">ACCEPT</div>
+      </div>
     </div>
   </div>
-</div>
 
-</dialog>
+</dialog>`;
 
-`;
 
 Templates.ConnManagerNew_Dialog_Manual_goOnline = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title">blah blah blah :-)</label></div>
+  <div class="dialog__title"><label class="title">blah blah blah :-)</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img" ></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img" ></div>
+  </div>
 
-<div class="prompt dialog__text"></div>
+  <div class="prompt dialog__text"></div>
 
-<div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
-    <div class="button__container">
-      <div class="cancel button-label">CANCEL</div>
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="cancel button-label">CANCEL</div>
+      </div>
+    </div>
+    <div id="dialog_act1" class="button-text primary c_500">
+      <div class="button__container">
+        <div class="runAction button-label">ACCEPT</div>
+      </div>
     </div>
   </div>
-  <div id="dialog_act1" class="button-text primary c_500">
-    <div class="button__container">
-      <div class="runAction button-label">ACCEPT</div>
-    </div>
-  </div>
-</div>
 
-</dialog>
-`;
+</dialog>`;
+
 
 Templates.ConnManagerNew_Dialog_NoInternet = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title" term="">No internet :~(</label></div>
+  <div class="dialog__title"><label class="title" term="">No internet :~(</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img" ></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img" ></div>
+  </div>
 
-<div class="prompt dialog__text" term="">
-Oops - it looks like you no longer have access to the internet. Ensure that you are in an area with network cover, and that you have data active on your mobile plan. Alternatively you can go offline and continue working. The app will try to reconnect in 10m.
-</div>
+  <div class="prompt dialog__text" term="">
+  Oops - it looks like you no longer have access to the internet. Ensure that you are in an area with network cover, and that you have data active on your mobile plan. Alternatively you can go offline and continue working. The app will try to reconnect in 10m.
+  </div>
 
-<div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
-    <div class="button__container">
-      <div class="cancel button-label">WAIT</div>
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="cancel button-label">WAIT</div>
+      </div>
     </div>
   </div>
-</div>
 
-</dialog>
-`;
+</dialog>`;
+
 
 Templates.ConnManagerNew_Dialog_ServerUnavailable = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title">blah blah blah :-<</label></div>
+  <div class="dialog__title"><label class="title">blah blah blah :-<</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img" ></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img" ></div>
+  </div>
 
-<div class="prompt dialog__text"></div>
+  <div class="prompt dialog__text"></div>
 
-<div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
-    <div class="button__container">
-      <div class="cancel button-label">WAIT</div>
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="cancel button-label">WAIT</div>
+      </div>
     </div>
   </div>
-</div>
 
-</dialog>
-`;
+</dialog>`;
+
 
 Templates.ConnManagerNew_Dialog_SwitchMode_NoOpts = `
 <dialog id="dialog_confirmation_mac" style="display: block;">
 
-<div class="dialog__title"><label class="title">No internet :-(</label></div>
+  <div class="dialog__title"><label class="title">No internet :-(</label></div>
 
-<div class="dialog__status">
-  <div class="icon dialog__status-img"></div>
-</div>
+  <div class="dialog__status">
+    <div class="icon dialog__status-img"></div>
+  </div>
 
-<div class="prompt dialog__text"></div>
+  <div class="prompt dialog__text"></div>
 
-<div class="dialog__action">
-  <div id="dialog_act2" class="button-text warning">
-    <div class="button__container">
-      <div class="cancel button-label">Wait</div>
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="cancel button-label">Wait</div>
+      </div>
+    </div>
+    <div id="dialog_act1" class="button-text primary c_500">
+      <div class="button__container">
+        <div class="runAction button-label">Go offline</div>
+      </div>
     </div>
   </div>
-  <div id="dialog_act1" class="button-text primary c_500">
-    <div class="button__container">
-      <div class="runAction button-label">Go offline</div>
-    </div>
-  </div>
-</div>
 
 </dialog>`;
-
 
 
 Templates.ConnManagerNew_Dialog_prompt_online = `Oops - it looks like you no longer have access to the internet. Ensure that you are in
@@ -629,126 +616,121 @@ Templates.ConnManagerNew_Dialog_prompt_switchOnline_Unavailable = `<span term="n
 
 
 Templates.buttonsTemplate  = `<div class="button">
-                                  <div class="button__container">
-                                  <div class="button-label">Action 1</div>
-                                </div>
-                              </div>
-                              `;
+    <div class="button__container">
+    <div class="button-label">Action 1</div>
+  </div>
+</div>`;
 
 
 Templates.template_bottomSheet = `
-      <div class="" style="display: block;">
-        <div class="sbtt-btn__header">
-          <div class="sbtt-btn__header_title">Containing four buttons</div>
-        </div>
-        <div class="cta_buttons">
-          <div class="button primary c_500">
-            <div class="button__container">
-              <div class="button-label">Action 1</div>
-            </div>
-          </div>
-          <div class="button primary c_500">
-            <div class="button__container">
-              <div class="button-label">Action 2</div>
-            </div>
-          </div>
-          <div class="button primary c_500">
-            <div class="button__container">
-              <div class="button-label">Action 3</div>
-            </div>
-          </div>
-          <div class="button primary c_500">
-            <div class="button__container">
-              <div class="button-label">Action 4</div>
-            </div>
-          </div>
-        </div>
-      </div> `;  
+<div class="" style="display: block;">
+  <div class="sbtt-btn__header">
+    <div class="sbtt-btn__header_title">Containing four buttons</div>
+  </div>
+  <div class="cta_buttons">
+    <div class="button primary c_500">
+      <div class="button__container">
+        <div class="button-label">Action 1</div>
+      </div>
+    </div>
+    <div class="button primary c_500">
+      <div class="button__container">
+        <div class="button-label">Action 2</div>
+      </div>
+    </div>
+    <div class="button primary c_500">
+      <div class="button__container">
+        <div class="button-label">Action 3</div>
+      </div>
+    </div>
+    <div class="button primary c_500">
+      <div class="button__container">
+        <div class="button-label">Action 4</div>
+      </div>
+    </div>
+  </div>
+</div> `;  
 
 
 /* lOGIN/CHANGE USER << END */
 Templates.buttonsTemplate2  = `<div class="button-text ">
-                                <div class="button__container">
-                                  <div class="button-label">Wait</div>
-                                </div>
-                              </div>`
-
+  <div class="button__container">
+    <div class="button-label">Wait</div>
+  </div>
+</div>`;
 
 Templates.template_dialog = `
-                <dialog id="dialog_confirmation" style="display: block;">
-                  <div class="dialog__title"><label>dialog title</label></div>
-                  <div class="dialog__text">dialog message</div>
-                  <div class="dialog__action">
-                    <div id="dialog_act2" class="button-text warning">
-                      <div class="button__container">
-                        <div class="button-label">Action 2</div>
-                      </div>
-                    </div>
-                    <div id="dialog_act1" class="button-text primary c_500">
-                      <div class="button__container">
-                        <div class="button-label">Action 1</div>
-                      </div>
-                    </div>
-                  </div>
-                </dialog>
-                    `;  
-
-
+<dialog id="dialog_confirmation" style="display: block;">
+  <div class="dialog__title"><label>dialog title</label></div>
+  <div class="dialog__text">dialog message</div>
+  <div class="dialog__action">
+    <div id="dialog_act2" class="button-text warning">
+      <div class="button__container">
+        <div class="button-label">Action 2</div>
+      </div>
+    </div>
+    <div id="dialog_act1" class="button-text primary c_500">
+      <div class="button__container">
+        <div class="button-label">Action 1</div>
+      </div>
+    </div>
+  </div>
+</dialog>`;  
 
 // -------------- Advanced LOGIN ------- //
 
 Templates.Advance_Login_Buttons = `
-  <div class="sheet_bottom-btn3" style="display: block;">
-    <div class="sbtt-btn__header">
-      <div class="sbtt-btn__header_title" term="login_advancedOptions">Advanced options</div>
-    </div>
-    <div class="cta_buttons">
-      <div class="button c_500 changeUserBtn">
-        <div class="button__container">
-          <div class="button-label" term="login_changeUser">Change user</div>
-        </div>
-      </div>
-    </div>
-  </div> `;
-
-
-  Templates.Change_User_Form = `
-   <dialog id="dialog_confirmation" style="display: block;">
-    <div class="dialog__title">
-      <label term="login_confirmDialogTitle">Confirmation dialog</label>
-    </div>
-    <div class="dialog__text" term="login_changeUserMsg">
-        Changing user will delete all data for the user, including any data not syncronized. 
-        Are you sure that you want to delete the data for user and allow new user login ?
-    </div>
-    <div class="dialog__action"><div class="button-text warning" id="accept">
+<div class="sheet_bottom-btn3" style="display: block;">
+  <div class="sbtt-btn__header">
+    <div class="sbtt-btn__header_title" term="login_advancedOptions">Advanced options</div>
+  </div>
+  <div class="cta_buttons">
+    <div class="button c_500 changeUserBtn">
       <div class="button__container">
-        <div class="button-label" term="common_accept">Accept</div>
+        <div class="button-label" term="login_changeUser">Change user</div>
       </div>
     </div>
-    <div class="button-text primary c_500" id="cancel">
-      <div class="button__container">
-        <div class="button-label" term="common_cancel">Cancel</div>
-      </div>
-    </div>
-   </dialog>`;
+  </div>
+</div> `;
 
-    Templates.settings_app_data_configuration = `
-     <dialog id="dialog_confirmation" style="display: block;">
-       <div class="dialog__title">
-        <label term="settingPage_resetDialogTitle">Reset app data & configuration</label>
-       </div>
-       <div class="dialog__text" term="settingPage_appDataDeleteConfirmMsg">
-          Your configuration and App data stored in the device will be deleted. Are you sure?
-       </div>
-       <div class="dialog__action"><div class="button-text warning">
-          <div class="button__container">
-            <div class="button-label divResetApp_Accept" term="common_accept">ACCEPT</div>
-          </div>
-       </div>
-       <div class="button-text primary c_500">
-          <div class="button__container">
-            <div class="button-label divResetApp_Cancel" term="common_cancel">DECLINE</div>
-          </div>
-       </div>
-     </dialog>`;
+
+Templates.Change_User_Form = `
+<dialog id="dialog_confirmation" style="display: block;">
+<div class="dialog__title">
+  <label term="login_confirmDialogTitle">Confirmation dialog</label>
+</div>
+<div class="dialog__text" term="login_changeUserMsg">
+    Changing user will delete all data for the user, including any data not syncronized. 
+    Are you sure that you want to delete the data for user and allow new user login ?
+</div>
+<div class="dialog__action"><div class="button-text warning" id="accept">
+  <div class="button__container">
+    <div class="button-label" term="common_accept">Accept</div>
+  </div>
+</div>
+<div class="button-text primary c_500" id="cancel">
+  <div class="button__container">
+    <div class="button-label" term="common_cancel">Cancel</div>
+  </div>
+</div>
+</dialog>`;
+
+Templates.settings_app_data_configuration = `
+<dialog id="dialog_confirmation" style="display: block;">
+  <div class="dialog__title">
+  <label term="settingPage_resetDialogTitle">Reset app data & configuration</label>
+  </div>
+  <div class="dialog__text" term="settingPage_appDataDeleteConfirmMsg">
+    Your configuration and App data stored in the device will be deleted. Are you sure?
+  </div>
+  <div class="dialog__action"><div class="button-text warning">
+    <div class="button__container">
+      <div class="button-label divResetApp_Accept" term="common_accept">ACCEPT</div>
+    </div>
+  </div>
+  <div class="button-text primary c_500">
+    <div class="button__container">
+      <div class="button-label divResetApp_Cancel" term="common_cancel">DECLINE</div>
+    </div>
+  </div>
+</dialog>`;

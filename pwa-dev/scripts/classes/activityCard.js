@@ -949,15 +949,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
     // remove this activity from list  (me.activityJson.id ) <-- from common client 
+
     // =============================================
-	// === Full Detail Popup Related METHODS ========================
+
+    // === Full Detail Popup Related METHODS ========================
 
     me.showFullPreview = function( activityId, activityContainerTag )
     {
         if ( activityId ) 
         {
             // initialize
-            var sheetFull = $( '#fullScreenPreview' );
+            var sheetFull = $( '#activityDetail_FullScreen' );
 
             // populate template
             sheetFull.html( $( Templates.activityCardFullScreen ) );
@@ -996,7 +998,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             // render
             sheetFull.fadeIn();
 
-// NEW: PREVIEW STYLE CHANGES
+            // NEW: PREVIEW STYLE CHANGES
             sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
         
             //$( '#pageDiv' ).hide();
@@ -1028,7 +1030,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
-    me.setFullPreviewTabContent = function( activityId, sheetFull )
+    me.setFullPreviewTabContent = function( activityId, sheetFullTag )
     {
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
         var activityJson = ActivityDataManager.getActivityById( activityId );
@@ -1041,14 +1043,14 @@ function ActivityCard( activityId, cwsRenderObj, options )
             arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientObj.clientDetails[ key ] ) } );
         }
 
-        var clientDetailsTabTag = $( '[tabButtonId=tab_previewDetails]' );
+        var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_previewDetails]' );
         var titleTag = $( '<label term="activityDetail_details_title">clientDetails:</label>' );
 
         clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //activityListPreviewTable
     
         // 2. payload Preview
         var jv_payload = new JSONViewer();
-        $( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
+        sheetFullTag.find( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
         jv_payload.showJSON( activityJson );
     
 
@@ -1058,7 +1060,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         
         // Set event for "Remove" button for "Pending" client
         var activity = ActivityDataManager.getActivityById( activityId );
-        var removeActivityBtn = sheetFull.find("#removeActivity");
+        var removeActivityBtn = sheetFullTag.find("#removeActivity");
         if (activity.processing.status == Constants.status_queued || activity.processing.status == Constants.status_failed )
         {
             removeActivityBtn.click( function()
@@ -1066,7 +1068,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 var result = confirm("Are you sure you want to delete this activity?");
                 if( result )
                 {                    
-                    me.removeActivityNCard( activityId, sheetFull.find( 'img.btnBack' ) );
+                    me.removeActivityNCard( activityId, sheetFullTag.find( 'img.btnBack' ) );
                 }               
             });
         }
@@ -1263,5 +1265,29 @@ function ActivityCard( activityId, cwsRenderObj, options )
         
     me.initialize();
 
-}
+};
 
+
+function ActivityCardTemplate() {};
+
+//me.template_divActivityTag = `<div class="activity card">
+
+ActivityCardTemplate.cardDivTag = `<div class="activity card">
+
+<div class="activityContainer card__container">
+
+    <card__support_visuals class="activityIcon card__support_visuals" />
+
+    <card__content class="activityContent card__content" />
+
+    <card__cta class="activityStatus card__cta">
+        <div class="activityStatusText card__cta_status"></div>
+        <div class="activityPhone card__cta_one"></div>
+        <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
+    </card__cta>
+
+    <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+
+</div>
+
+</div>`;

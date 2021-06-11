@@ -790,7 +790,7 @@ img.rotateImg {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 } 
-#fullScreenPreview > .wapper_card > .card > .tab_fs__container > .tab_fs__container-content {
+.detailFullScreen > .wapper_card > .card > .tab_fs__container > .tab_fs__container-content {
   height: calc(100vh - 200px);
   overflow: auto !important;
   padding: 3px;

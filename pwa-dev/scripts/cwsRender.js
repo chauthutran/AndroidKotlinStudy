@@ -459,10 +459,10 @@ function cwsRender()
 		{
 			$('#pageDiv').hide();
 		}
-		if ( $( '#fullScreenPreview' ).is(':visible') ) 
+		if ( $( '#activityDetail_FullScreen' ).is(':visible') ) 
 		{
-			$('#fullScreenPreview').empty();
-			$('#fullScreenPreview').hide();
+			$('#activityDetail_FullScreen').empty();
+			$('#activityDetail_FullScreen').hide();
 			$('#pageDiv').hide();
 		}
 		if ( $( '#divMsgAreaBottom' ).is(':visible') ) 

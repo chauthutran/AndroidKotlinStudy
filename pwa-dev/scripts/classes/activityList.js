@@ -44,26 +44,6 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         font-style: italic;
         opacity: 0.2; display:none;"></div>`;
 
-    me.template_divActivityTag = `<div class="activity card">
-
-        <div class="activityContainer card__container">
-
-            <card__support_visuals class="activityIcon card__support_visuals" />
-
-            <card__content class="activityContent card__content" />
-
-            <card__cta class="activityStatus card__cta">
-                <div class="activityStatusText card__cta_status"></div>
-                <div class="activityPhone card__cta_one"></div>
-                <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
-            </card__cta>
-
-            <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
-
-        </div>
-
-    </div>`;
-
     me.template_divActivityEmptyTag = `<div class="activity emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
     </div>`;
@@ -401,7 +381,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
     {
-        var activityCardTrTag = $( me.template_divActivityTag );
+        var activityCardTrTag = $( ActivityCardTemplate.cardDivTag );
 
         activityCardTrTag.attr( 'itemId', activityJson.id );
 
