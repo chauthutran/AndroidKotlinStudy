@@ -26,7 +26,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     
     me.blockListDiv_marginBottom = '30px'; // To Lift the list, avoid collpase with Fav.
 
-    me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 activityCard
+    me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 clientCard
     me.pagingData.currPosition = 0;
 
     // -------- Tags --------------------------
@@ -44,27 +44,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         font-style: italic;
         opacity: 0.2; display:none;"></div>`;
 
-    me.template_divClientTag = `<div class="activity card">
-
-        <div class="activityContainer card__container">
-
-            <card__support_visuals class="activityIcon card__support_visuals" />
-
-            <card__content class="activityContent card__content" />
-
-            <card__cta class="activityStatus card__cta">
-                <div class="activityStatusText card__cta_status"></div>
-                <div class="activityPhone card__cta_one"></div>
-                <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
-            </card__cta>
-
-            <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
-
-        </div>
-
-    </div>`;
-
-    me.template_divClientEmptyTag = `<div class="activity emptyList">
+    me.template_divClientDetailEmptyTag = `<div class="client emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
     </div>`;
 
@@ -121,7 +101,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             me.clientList = newClientList;  // NOTE: We expect this list already 'cloned'...
             me.viewGroupByData = groupByData;
 
-            me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
+            me.clearExistingList( me.listTableTbodyTag ); // remove li.clientItemCard..
             me.pagingDataReset( me.pagingData );
 
             // TEMP
@@ -227,7 +207,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     me.clearExistingList = function( listTableTbodyTag )
     {
-        listTableTbodyTag.find( 'div.activity' ).remove();
+        listTableTbodyTag.find( 'div.client' ).remove();
         listTableTbodyTag.find( 'div.blockListGroupBy' ).remove();
     };
 
@@ -246,7 +226,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             // If already have added emtpyList, no need to add emptyList
             if ( me.listTableTbodyTag.find( 'div.emptyList' ).length === 0 )
             {
-                me.listTableTbodyTag.append( $( me.template_divClientEmptyTag ) );
+                me.listTableTbodyTag.append( $( me.template_divClientDetailEmptyTag ) );
             }
 
             //if ( scrollEndFunc ) scrollEndFunc();
@@ -401,17 +381,13 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     me.createClientCard = function( clientJson, listTableTbodyTag, viewGroupByData )
     {
-        var clientCardTrTag = $( me.template_divClientTag );
-
-        clientCardTrTag.attr( 'itemId', clientJson._id );
-
         var groupAttrVal = me.setGroupDiv( clientJson, viewGroupByData, listTableTbodyTag );
 
-        clientCardTrTag.attr( 'group', groupAttrVal );
+        var clientCard = new ClientCard( clientJson._id );
 
-        listTableTbodyTag.append( clientCardTrTag );     
+        listTableTbodyTag.append ( clientCard.generateCardTrTag( groupAttrVal ) );
 
-        return new ClientCard( clientJson._id, me.cwsRenderObj );
+        return clientCard;
     };
 
 
@@ -433,7 +409,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
                 if ( groupJson.id !== undefined )
                 {        
                     // get previous client groupBy
-                    var lastClientTrTag = listTableTbodyTag.find( 'div.activity' ).last();
+                    var lastClientTrTag = listTableTbodyTag.find( 'div.client' ).last();
 
                     if ( lastClientTrTag && lastClientTrTag.length === 1 )
                     {
@@ -502,19 +478,19 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
                 var opened = trTag.hasClass( 'opened' );
                 var groupId = trTag.attr( 'group' );
                 
-                var activityTrTags = tableTag.find( 'div.activity[group="' + groupId + '"]' );
+                var clientTrTags = tableTag.find( 'div.client[group="' + groupId + '"]' );
         
                 // Toggle 'opened' status..
                 if ( opened )
                 {
                     // hide it
                     trTag.removeClass( 'opened' );
-                    activityTrTags.hide();
+                    clientTrTags.hide();
                 } 
                 else 
                 {
                     trTag.addClass( 'opened' );
-                    activityTrTags.show( 'fast' );
+                    clientTrTags.show( 'fast' );
                 }
             }
             catch( errMsg )
