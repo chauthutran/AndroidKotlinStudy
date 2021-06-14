@@ -790,10 +790,11 @@ img.rotateImg {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 } 
-.detailFullScreen > .wapper_card > .card > .tab_fs__container > .tab_fs__container-content {
-  height: calc(100vh - 200px);
+
+.tab_fs__container-content {
+  height: calc(100vh - 200px) !important;
   overflow: auto !important;
-  padding: 3px;
+  padding: 3px !important;
 }
 
 /* ### FORM LAYOUT  ### */
