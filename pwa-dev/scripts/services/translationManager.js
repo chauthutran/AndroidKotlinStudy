@@ -219,18 +219,40 @@ TranslationManager.translatePage = function( sectionTag )
 
 
 // Translate single text by current LangTerms.
-TranslationManager.translateText = function( defaultText, termName )
+TranslationManager.translateText = function( defaultText, termName, overrideLangCode )
 {
-	if ( termName 
-		&& TranslationManager.currentLangTerms 
-		&& TranslationManager.currentLangTerms[ termName ] ) return TranslationManager.currentLangTerms[ termName ];
-	else return defaultText;
-}
+	var transText = defaultText;
+
+	if ( termName )
+	{
+		var langTerms = TranslationManager.currentLangTerms;
+	
+		// Override the Language
+		if ( overrideLangCode ) 
+		{
+			try
+			{	
+				var returnLangTerms = TranslationManager.pullOut_LangTerms( TranslationManager.allLangTerms, overrideLangCode );
+				if ( returnLangTerms ) langTerms = returnLangTerms;	
+			}
+			catch( errMsg )	
+			{
+				console.log( 'ERROR in TranslationManager.translateText() with overrideLangCode, ' + overrideLangCode + ', errMsg: ' + errMsg );
+			}
+		}
+
+		if ( langTerms )
+		{
+			transText = langTerms[ termName ];
+		}
+	}
+
+	return transText;
+};
 
 
 // ==================================================
 // === Used Methods ======
-
 
 // -------------------------------------------
 

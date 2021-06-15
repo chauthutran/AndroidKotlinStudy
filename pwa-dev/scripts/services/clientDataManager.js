@@ -240,10 +240,16 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                             }
                             else
                             {
-                                // Update clientDetail from dwClient
+                                // Update clientDetail from dwClient - other than activities merge?
+                                // For activities, shouldn't we simply add them all?  Except the existing on local ones overwriting.
                                 appClient.clientDetails = dwClient.clientDetails;
                                 appClient.clientConsent = dwClient.clientConsent;
                                 appClient.date = dwClient.date;
+
+
+                                // TODO: All Others?
+
+                                // TODO: Or just relationships..
                             }
 
                             Util.appendArray( mergedActivities, addedActivities );
