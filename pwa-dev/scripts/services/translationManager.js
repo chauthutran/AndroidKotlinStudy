@@ -241,7 +241,7 @@ TranslationManager.translateText = function( defaultText, termName, overrideLang
 			}
 		}
 
-		if ( langTerms )
+		if ( langTerms && langTerms[ termName ] )
 		{
 			transText = langTerms[ termName ];
 		}
