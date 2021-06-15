@@ -791,7 +791,7 @@ img.rotateImg {
   -moz-box-sizing: border-box;
 } 
 
-.tab_fs__container-content {
+.sheet_full-fs .tab_fs__container-content {
   height: calc(100vh - 200px) !important;
   overflow: auto !important;
   padding: 3px !important;
