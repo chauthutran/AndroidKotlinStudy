@@ -133,7 +133,8 @@ function cwsRender()
 		if ( clicked_areaId !== 'statisticsPage' 
 			&& clicked_areaId !== 'settingsPage' 
 			&& clicked_areaId !== 'aboutPage' 
-			&& clicked_areaId !== 'jobAids' )  // [JOB_AID]
+			&& clicked_areaId !== 'jobAids'  // [JOB_AID]
+            && clicked_areaId !== 'hnqis_rdqaPage' )
 		{
 			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 		}
@@ -186,6 +187,7 @@ function cwsRender()
 
         // [JOB_AID]
 		if ( areaId !== 'jobAids' 
+             && areaId !== 'hnqis_rdqaPage'
              && areaId !== 'statisticsPage' 
              && areaId !== 'settingsPage' 
              && areaId !== 'aboutPage' )
@@ -210,6 +212,10 @@ function cwsRender()
 		{ 
             $( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
             $( '#divJobAid' ).show();
+		}
+		else if ( areaId === 'hnqis_rdqaPage' )
+		{
+			
 		}
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
@@ -474,26 +480,10 @@ function cwsRender()
 		Menu.hideMenuDiv();
 
 		// hide control Popups
-
-		if ( $( '#dialog_searchOptions' ).is(':visible') ) 
-		{
-			$( '#dialog_searchOptions' ).remove();
-		}
-
-		if ( $( '#mddtp-picker__date' ).is(':visible') ) 
-		{
-			$( '#mddtp-picker__date' ).hide();
-		}
-
-		if ( $( '.inputFieldYear' ).is(':visible') ) 
-		{
-			$( '.inputFieldYear' ).hide();
-		}
-
-		if ( $( '.scrim' ).is(':visible') )
-		{
-			$('.scrim').hide();
-		}
+		if ( $( '#dialog_searchOptions' ).is(':visible') ) $( '#dialog_searchOptions' ).remove();
+		if ( $( '#mddtp-picker__date' ).is(':visible') ) $( '#mddtp-picker__date' ).hide();
+		if ( $( '.inputFieldYear' ).is(':visible') ) $( '.inputFieldYear' ).hide();
+		if ( $( '.scrim' ).is(':visible') ) $('.scrim').hide();
 
 		// hide navBar items
 		$( '.Nav1' ).hide();
@@ -515,7 +505,6 @@ function cwsRender()
 	{
 	};
 
-	
     me.favIcons_Update = function()
     {
 		if ( $( 'div.fab' ).hasClass( 'w_button' ) ) 
@@ -526,12 +515,6 @@ function cwsRender()
 
 		me.favIconsObj = new favIcons( me );
 		me.favIconsObj.render();
-	};
-
-	
-    me.setFloatingListMenuIconEvents = function( iconTag, SubIconListTag )
-	{
-        FormUtil.setClickSwitchEvent( iconTag, SubIconListTag, [ 'on', 'off' ] );
 	};
 
 	// ======================================

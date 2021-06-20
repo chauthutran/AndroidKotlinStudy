@@ -1193,11 +1193,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		me.addStylesForField( divInputFieldTag, formItemJson );
 	};
 
-
-
 	// ===================================================================
-
-
 
 	me.setFieldTagVisibility = function( formItemJson, divInputFieldTag, passedData )
 	{		
@@ -1209,23 +1205,65 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			//entryTag.attr( 'display', 'hiddenVal' );
 		}
 
-		if ( passedData !== undefined 
-			&& passedData.hideCase !== undefined 
-			&& formItemJson.hideCase !== undefined
-			&& formItemJson.hideCase.indexOf( passedData.hideCase ) >= 0 )
+		if ( passedData )
 		{
-			divInputFieldTag.hide(); //divInputFieldTag.find("input,select").remove();
-		}
-
-		if ( passedData !== undefined 
-			&& passedData.showCase !== undefined 
-			&& formItemJson.showCase !== undefined
-			&& formItemJson.showCase.indexOf( passedData.showCase ) >= 0 )
-		{
-			divInputFieldTag.show();
-		}
+			if ( me.checkShowHideCases( passedData.hideCase, formItemJson.hideCase ) ) divInputFieldTag.hide();
+			if ( me.checkShowHideCases( passedData.showCase, formItemJson.showCase ) ) divInputFieldTag.show();
+		}	
 	};
 
+
+	me.checkShowHideCases = function( sourceCase, targetCases )
+	{
+		var caseMatched = false;
+
+		try
+		{
+			if ( sourceCase && targetCases )
+			{
+				var expandedCases = me.showHideCases_DefExpand( targetCases );
+
+				if ( Util.isTypeArray( expandedCases ) )
+				{
+					caseMatched = ( expandedCases.indexOf( sourceCase ) >= 0 );
+				}
+				else if ( Util.isTypeString( expandedCases ) )
+				{
+					caseMatched = ( sourceCase === expandedCases );
+				}
+			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'blockForm.checkShowHideCases(), errMsg: ' + errMsg );
+		}
+
+		return caseMatched;
+	};
+
+
+	me.showHideCases_DefExpand = function( caseObj )
+	{
+		var caseList = [];
+
+		try
+		{
+			var lv1_caseList = FormUtil.getObjFromDefinition( caseObj, ConfigManager.getConfigJson().definitionShowHideCases );
+
+			lv1_caseList.forEach( innerCase => 
+			{
+				var caseName = FormUtil.getObjFromDefinition( innerCase, ConfigManager.getConfigJson().definitionShowHideCases );
+				if ( caseName ) caseList.push( caseName );
+			});
+		}
+		catch( errMsg )
+		{
+			console.log( 'blockForm.showHideCases_DefExpand(), errMsg: ' + errMsg );
+		}
+
+		return caseList;
+	};
+	
 
 	me.addStylesForField = function( divInputTag, formItemJson )
 	{
@@ -1346,25 +1384,27 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
 	{
 		var tagVal = FormUtil.getTagVal( tag, 'removeDBQuote' );
-
+		
 		InfoDataManager.setINFOdata( 'thisTag', tag );
 		InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
 		InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
 		InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
 
-		if ( tagVal )
+		// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
+		//if ( tagVal !== undefined && tagVal !== '' ) {
+		if ( tag.is( ':visible' ) && formItemJson.evalActions )
 		{
-			if ( formItemJson.evalActions )
+			formItemJson.evalActions.forEach( evalAction => 
 			{
-				formItemJson.evalActions.forEach( evalActionJson => {
+				var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
 
-					me.performEvalAction( evalActionJson, tagVal, formDivSecTag, formFull_IdList );
-				});
-			}	
-		}
+				me.performEvalAction( evalActionJson, tag, tagVal, formDivSecTag, formFull_IdList );
+			});
+		}	
+		//}
 	}
 
-	me.performEvalAction = function( evalAction, tagVal, formDivSecTag, formFull_IdList )
+	me.performEvalAction = function( evalAction, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
 		if ( evalAction )
 		{
@@ -1373,7 +1413,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// if condition exists, check to run the conditional case or inverse one..
 			if ( evalAction.condition !== undefined )
 			{
-				if ( me.checkCondition( evalAction.condition, tagVal, formDivSecTag, formFull_IdList ) )
+				if ( me.checkCondition( evalAction.condition, tag, tagVal, formDivSecTag, formFull_IdList ) )
 				{
 					me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
 					me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
@@ -1393,15 +1433,38 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			if ( evalAction.condition === undefined || conditionPass )
 			{
 				// If no condition, simply run the eval..				
-				if ( evalAction.runEval ) Util.evalTryCatch( evalAction.runEval, InfoDataManager.getINFO(), 'blockForm.performEvalAction' );
+				if ( evalAction.runEval ) {
+					Util.evalTryCatch( evalAction.runEval, InfoDataManager.getINFO(), 'blockForm.performEvalAction, runEval' );
+				}
 			}
 		}
-	}
+	};
 
-	me.checkCondition = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
+
+	//var finalVal = ''; var v_ng = 'Negativo'; var v_ps = 'Positivo'; var v_it = 'Indeterminado'; var rst1 = form.find( '[name=resultsTestOne]').val(); var rst2 = form.find( '[name=resultsTestTwo]').val(); if ( rst1 && rst2 ) { if( rst1 === v_ng ) { finalVal = v_ng; } else if ( rst1 === v_ps && rst2 === v_ng ) { finalVal = v_it; } else if ( rst1 === v_ps && rst2 === v_ps ) { finalVal = v_ps; } }; finalVal;
+
+	/*
+	var finalVal = '';
+	var v_ng = 'Negativo';
+	var v_ps = 'Positivo';
+	var v_it = 'Indeterminado';
+	var rst1 = form.find( '[name=resultsTestOne]').val();
+	var rst2 = form.find( '[name=resultsTestTwo]').val();
+	if ( rst1 && rst2 )
+	{
+		if( rst1 === v_ng ) { finalVal = v_ng; }
+		else if ( rst1 === v_ps && rst2 === v_ng ) { finalVal = v_it; }
+		else if ( rst1 === v_ps && rst2 === v_ps ) { finalVal = v_ps; }	
+	}
+	finalVal;
+	*/
+	
+	me.checkCondition = function( evalCondition, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
 		var result = false;
-		var INFO = { 'userRole': ConfigManager.login_UserRoles };
+
+		// NOTE: TEMP IMPLEMENTATION - REPLACE WITH BETTER SOLUTION
+		INFO.userRole = ConfigManager.login_UserRoles;
 
 		if ( evalCondition )
 		{
@@ -1411,6 +1474,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
 
+				// NOTE: We could move this to Util.evalTryCatch
+				// if we run the optional exposore..  <-- form, tag, tagVal  <-- within the method..  or callback?
 				result = eval( afterCondStr );	
 			}
 			catch(ex) 

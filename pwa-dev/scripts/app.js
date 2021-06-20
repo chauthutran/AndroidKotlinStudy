@@ -42,6 +42,7 @@ function app()
     if ( location.href.indexOf( 'pwa-dev' ) >= 0 )
     {
       Menu.jobAids = true;
+      // Menu.hnqisRdqa = true;
       $( '.jobAidFiling' ).show();
     }
 

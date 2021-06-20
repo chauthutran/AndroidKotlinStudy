@@ -270,6 +270,8 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
 
 	try
 	{
+		inputVal = Util.getEvalStr( inputVal );
+
 		if ( inputVal )
 		{
 			returnVal = eval( inputVal );
@@ -295,6 +297,24 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
 	}
 
 	return returnVal;
+};
+
+
+Util.getEvalStr = function( evalObj )
+{
+	var evalStr = '';
+
+	try
+	{
+		if ( Util.isTypeString( evalObj ) ) evalStr = evalObj;
+		else if ( Util.isTypeArray( evalObj ) ) evalStr = evalObj.join( '\r\n' );
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in blockForm.getEvalStr, errMsg: ' + errMsg );
+	}
+
+	return evalStr;
 };
 
 

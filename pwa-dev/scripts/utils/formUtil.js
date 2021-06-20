@@ -187,14 +187,14 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 
 	try
 	{
-		if ( def && definitions )
+		if ( Util.isTypeString( def ) )
 		{
-			if ( typeof def === 'string' )
+			if ( definitions && definitions[ def ] )
 			{
 				// get object from definition
 				objJson = definitions[ def ];
-			}
-		}	
+			}		
+		}
 	}
 	catch ( errMsg )
 	{
@@ -571,6 +571,41 @@ FormUtil.setClickSwitchEvent = function( clickBtnTag, showDivTag, openCloseClass
 				if ( showDivTag ) FormUtil.setStackOrder( showDivTag, 'div.scrim' );
 			}
 
+		} 
+	});	
+}
+
+
+// NOTE: NEW IMPLEMENTATION
+FormUtil.setClickSwitchEvent2 = function( clickBtnTag, targetDivTag, openCloseClass )
+{
+	// In menu show case, 'clickBtnTag' is the menu icon for showing menu div.
+	//		- 'showDivTag' is the menu div that gets shown.
+	clickBtnTag.off( 'click' ).on('click', function( event )
+	{
+		event.preventDefault();
+
+		var thisTag = $( this );
+
+		var className_Open = openCloseClass[0];
+		var className_Close = openCloseClass[1];
+		
+		// ALREADY OPEN 
+		if ( thisTag.hasClass( className_Open ) )
+		{
+			// Switch icon class
+			thisTag.removeClass( className_Open );
+			thisTag.addClass( className_Close );
+
+			if ( targetDivTag ) targetDivTag.hide();
+		}
+		else 
+		{
+			// Switch icon class
+			thisTag.removeClass( className_Close );
+			thisTag.addClass( className_Open );
+
+			if ( targetDivTag ) targetDivTag.show();
 		} 
 	});	
 }
