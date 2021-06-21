@@ -246,10 +246,11 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                                 appClient.clientConsent = dwClient.clientConsent;
                                 appClient.date = dwClient.date;
 
+                                appClient.relationships = dwClient.relationships;
+
+                                Util.copyProperties( dwClient, appClient, { 'exceptions': { 'activities': true, '_id': true } } );
 
                                 // TODO: All Others?
-
-                                // TODO: Or just relationships..
                             }
 
                             Util.appendArray( mergedActivities, addedActivities );

@@ -1337,11 +1337,21 @@ Util.setUrlParam = function( url, paramKey, paramVal )
 
 // --------------------------------------------
 
-Util.copyProperties = function( source, dest )
+Util.copyProperties = function( source, dest, option )
 {
-	for ( var key in source )
+	try
 	{
-		dest[ key ] = source[ key ];
+		var exceptions = ( option && option.exceptions && Util.isTypeObj( option.exceptions ) ) ? option.exceptions : {};
+
+		for ( var key in source )
+		{
+			if ( exceptions[ key ] ) {}
+			else dest[ key ] = source[ key ];
+		}	
+	}
+	catch( errMsg ) 
+	{
+		console.log( 'ERROR in Util.copyProperties, errMsg: ' + errMsg );
 	}
 };
 
