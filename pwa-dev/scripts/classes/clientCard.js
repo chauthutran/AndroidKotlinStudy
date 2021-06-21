@@ -452,14 +452,42 @@ function ClientCard( clientId, options )
         // #2. payload Preview
 
         // LIST ACTIVITIES... <-- LIST
-        var listTableTbodyTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' ).find( '.list' );
-        
+        var listTableTbodyTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' ).find( '.list' );        
         me.populateActivityCardList( clientJson.activities, listTableTbodyTag );
 
         // #3. relationship?
+        var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
+        // Populate relationship..
+        me.populateRelationshipList( clientJson, relationshipTabTag );
     };    
 
     // ----------------------------------------------
+
+    me.populateRelationshipList = function( clientJson, relationshipTabTag )
+    {
+        var listTag = $( '<div class="list"></div>' );
+
+        if ( clientJson.relationships )
+        {
+            clientJson.relationships.forEach( relObj => 
+            {
+                var relDivTag = $( '<div class="divRelationship"></div>' );
+                var clientIdTag = $( '<div class="divRelClientId"></div>' );
+                var typeTag = $( '<div class="divRelType"></div>' );
+
+                clientIdTag.append( '<span>ID: ' + relObj.clientId + '</span>' );
+                typeTag.append( '<span>TYPE: ' + relObj.type + '</span>' );
+
+                relDivTag.append( clientIdTag );
+                relDivTag.append( typeTag );
+                
+                listTag.append( relDivTag );
+            });
+        }
+
+        relationshipTabTag.append( listTag );
+    };
+
 
     // TODO: THIS SHOULD BE MOVED TO 'Option' statis class.. part..
     me.getFieldOption_LookupValue = function( key, val )

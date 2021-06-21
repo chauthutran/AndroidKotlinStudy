@@ -1342,10 +1342,13 @@ Util.copyProperties = function( source, dest, option )
 	try
 	{
 		var exceptions = ( option && option.exceptions && Util.isTypeObj( option.exceptions ) ) ? option.exceptions : {};
+		var consoleLog = ( option && option.consoleLog ) ? option.consoleLog: false;
 
 		for ( var key in source )
 		{
-			if ( exceptions[ key ] ) {}
+			if ( consoleLog ) console.log( 'key: ' + key );
+
+			if ( exceptions[ key ] ) { console.log( 'exceptioned' ); }
 			else dest[ key ] = source[ key ];
 		}	
 	}

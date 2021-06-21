@@ -242,13 +242,12 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                             {
                                 // Update clientDetail from dwClient - other than activities merge?
                                 // For activities, shouldn't we simply add them all?  Except the existing on local ones overwriting.
-                                appClient.clientDetails = dwClient.clientDetails;
-                                appClient.clientConsent = dwClient.clientConsent;
-                                appClient.date = dwClient.date;
+                                //appClient.clientDetails = dwClient.clientDetails;
+                                //appClient.clientConsent = dwClient.clientConsent;
+                                //appClient.date = dwClient.date;
+                                //appClient.relationships = dwClient.relationships;
 
-                                appClient.relationships = dwClient.relationships;
-
-                                Util.copyProperties( dwClient, appClient, { 'exceptions': { 'activities': true, '_id': true } } );
+                                Util.copyProperties( dwClient, appClient, { 'exceptions': { 'activities': true, '_id': true }, 'consoleLog': true } );
 
                                 // TODO: All Others?
                             }
