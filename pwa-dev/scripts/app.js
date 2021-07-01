@@ -19,6 +19,7 @@
 function App() {};
 
 App.appInstallBtnTag;
+App.ver14 = false;
 
 // -------------------------------
 
@@ -31,6 +32,7 @@ App.run = function()
   // Handle modes by url pattern or parameters
   // Show footer for DEBUG mode
   if ( Util.getParameterByName( "mode" ) === "debug" ) DebugLog.start();
+  if ( Util.getParameterByName( "ver" ) === "1.4" ) App.ver14 = true;
 
   // 'pwa-dev' only enabling
   if ( location.href.indexOf( 'pwa-dev' ) >= 0 )
@@ -195,7 +197,7 @@ App.catchErrorInCustomLog = function( e )
 
 App.setUpAppInstallNotReadyMsg = function()
 {  
-  appInstallBtnTag.off( 'click' ).click( function() 
+  App.appInstallBtnTag.off( 'click' ).click( function() 
   {
     MsgManager.msgAreaShow( 'App is already installed in this device.' );
   });  
@@ -205,15 +207,15 @@ App.setUpAppInstallNotReadyMsg = function()
 App.beforeinstallprompt = function( e )
 {
   // appInstallTag.show();  - not needed since we made it always visible
-  appInstallBtnTag.css( 'background-color', 'tomato' );
+  App.appInstallBtnTag.css( 'background-color', 'tomato' );
 
   var deferredPrompt = e;
 
-  appInstallBtnTag.off( 'click' ).click( function() 
+  App.appInstallBtnTag.off( 'click' ).click( function() 
   {
     deferredPrompt.prompt();
 
-    appInstallBtnTag.hide();
+    App.appInstallBtnTag.hide();
 
     // Wait for the user to respond to the prompt
     deferredPrompt.userChoice.then( ( choiceResult ) => 
