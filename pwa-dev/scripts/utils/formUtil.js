@@ -1020,7 +1020,8 @@ FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent
 	{
 		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
 		var pattern = Util.getParameterInside( val, '{}' );
-		tagTarget.val( FormUtil.tryEval( form, pattern ) );
+		var valEval = FormUtil.tryEval( form, pattern );
+		if ( valEval ) tagTarget.val( valEval );
 	}
 	else
 	{
@@ -1083,15 +1084,18 @@ FormUtil.getManifest = function()
 
 FormUtil.tryEval = function( form, evalTry )
 {	
+	var returnVal;
+
 	// do not remove parameter [form] < required for scope search, e.g. "eval{ form.find( 'name=commonRepeatingFieldNameFoundOnOtherTab]' ).val() }"
 	try {
-		return eval( evalTry )
+		returnVal = eval( evalTry );
 	}
 	catch( errMsg )
 	{
 		console.customLog( 'Error on FormUtil.tryEval, errMsg: ' + errMsg + ' ==> ON: ' + evalTry );
-		return null; //'error: ' + evalTry; << returning null because this function is only used for calculated values in blockForm
 	}
+
+	return returnVal;
 }
 
 FormUtil.trackPayload = function( payloadName, jsonData, optClear, actDefName )

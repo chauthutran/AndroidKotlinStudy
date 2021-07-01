@@ -49,7 +49,7 @@ function Login( cwsRenderObj )
 	me.render = function()
 	{	
 		// In test version with special url param, do not hide login buttons
-		me.testVersion_LoginBtn_NotHide( window.location.href, 'test', 'Y' );
+		me.testVersion_LoginBtn_NotHide( 'test', 'Y' );
 
 		me.appVersionInfoDisplay();
 
@@ -379,11 +379,11 @@ function Login( cwsRenderObj )
 	
 	// ============================================
 
-	me.testVersion_LoginBtn_NotHide = function( url, paramName, paramVal )
+	me.testVersion_LoginBtn_NotHide = function( paramName, paramVal )
 	{
 		Util.tryCatchContinue( function() 
 		{
-			me.loginBtn_NotHideFlag = ( Util.getURLParameterByName( url, paramName ) === paramVal );			
+			me.loginBtn_NotHideFlag = ( Util.getParameterByName( paramName ) === paramVal );			
 		}, 'Login.testVersion_LoginBtn_NotHide' );
 	};
 

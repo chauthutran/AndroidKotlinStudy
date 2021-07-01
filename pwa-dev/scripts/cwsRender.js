@@ -93,21 +93,11 @@ function cwsRender()
 		//me.myDetails = new myDetails( me );
 		me.statisticsObj = new Statistics( me );
 		//me.favIconsObj = new favIcons( me );
-	}
-
+	};
 	// =============================================
-
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
-
-	/*
-	me.updateFromSession = function()
-	{
-		var data = AppInfoManager.getNetworkSync();
-		if ( data ) me.storage_offline_SyncExecutionTimerInterval = data;
-	};
-	*/
 
 	me.setOtherEvents = function() 
 	{ 
@@ -139,19 +129,14 @@ function cwsRender()
 			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 		}
 	};
-	
-
 	// =============================================
-
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-
 	me.resetVisibility_ViewListDiv = function()
 	{
 		$( '#activityListViewNav' ).hide();
 	};
-
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
@@ -310,8 +295,6 @@ function cwsRender()
 
 	// ------------------------------------
 	// PUT THIS ON swManager?
-
-
 	me.reGetDCDconfig = function()
 	{
 		if ( me.loginObj !== undefined )

@@ -65,7 +65,6 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
 				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
 			}
-
 			
 			//me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );
 			//me.blockListObj.render( me.blockTag, me.passedData ); //, me.options );

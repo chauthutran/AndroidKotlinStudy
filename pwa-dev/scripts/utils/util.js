@@ -1290,6 +1290,19 @@ Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 // List / Array Related
 // ----------------------------------
 
+
+/*
+Util.getParameterByName = function( name ) 
+{
+	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
+*/
+
+
+/*
 Util.getURLParameterByName = function( url, name )
 {
 	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -1297,20 +1310,40 @@ Util.getURLParameterByName = function( url, name )
 		results = regex.exec(url);
 	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
+*/
 
-Util.getURLParameterByVariables = function( url, name )
+// ------------------------------------------------------------------------------------------------------
+// For URL
+
+Util.getParameterByName = function( name, url ) 
 {
-	var result = [];
-	var idx = 0;
-	var pairs = url.split("&");
-	for( var i=0; i< pairs.length; i++ ){
-		var pair = pairs[i].split("=");
-		if( pair[0] == name ){
-			result[idx] = pair[1];
-			idx++;
-		}
+    if (!url) url = window.location.href;
+ 
+	name = name.replace(/[\[\]]/g, "\\$&");
+
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    var results = regex.exec(url);
+
+    if (!results) return '';
+
+    if (!results[2]) return '';
+
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
+
+Util.getParameterInside = function( value, openClose )
+{
+	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
+	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
+	{
+		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
+		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
 	}
-	return result;
+	else
+	{
+		return '';
+	}
 };
 
 
@@ -1842,28 +1875,6 @@ Util.generateTimedUid = function()
 	return ( new Date().getTime() ).toString( 36 );
 }
 
-Util.getParameterByName = function( name ) 
-{
-	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(location.search);
-	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
-
-Util.getParameterInside = function( value, openClose )
-{
-	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
-	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
-	{
-		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
-		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
-	}
-	else
-	{
-		return '';
-	}
-};
-
 
 Util.generateRandomNumberRange = function(min_value , max_value) 
 {
@@ -2136,23 +2147,3 @@ Util.getSecFromMiliSec = function( miliSec )
 
 	return sec;
 };
-
-
-
-// ------------------------------------------------------------------------------------------------------
-// For URL
-
-Util.getParameterByName = function( name, url ) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-
-    if (!results) return null;
-
-    if (!results[2]) return '';
-
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-};
-
