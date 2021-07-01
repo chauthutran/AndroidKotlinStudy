@@ -760,7 +760,9 @@ img.rotateImg {
   padding: 0 0 0 4px;
   font-size: calc(12px + 0.2vw);
 }
-
+.groupByFieldName span {
+  font-weight: 600;
+}
 
 .imggroupByExpanded
 {

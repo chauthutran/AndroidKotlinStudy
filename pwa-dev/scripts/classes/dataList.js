@@ -1,8 +1,5 @@
 // -------------------------------------------
 // -- DataList Class/Methods
-
-//const Util = require("../utils/util");
-
 // -- (Web Service) Returned data list rendering as list..
 function DataList( cwsRenderObj, blockObj ) 
 {
@@ -14,18 +11,10 @@ function DataList( cwsRenderObj, blockObj )
 
     me.jsonListData;
 
-	me.debugMode = false;
-	// TODO: NEED TO IMPLEMENT
-	// =============================================
-	// === TEMPLATE METHODS ========================
-
-	// -----------------------------
-	// ---- Methods ----------------
-
-	me.initialize = function() // jsonListData, blockJson ) 
+    me.debugMode = false;
+    
+	me.initialize = function() 
     {
-        //me.jsonListData = jsonListData;
-        //me.blockJson = blockJson;
     }
 
 	// -----------------------------------
@@ -33,557 +22,441 @@ function DataList( cwsRenderObj, blockObj )
     me.render = function( blockJson, newBlockTag, jsonListData )
 	{
         me.blockJson = blockJson;
-        me.jsonListData = jsonListData;
-                
-		if ( blockJson && blockJson.list === 'dataList' && jsonListData )
+        var dataList = jsonListData.displayData;
+        // NOTE 1. 'dataList' is 2 dimentional data.  1D: Client.  2D: Attributes (id/val) in client.
+        //  [
+        //     [ 'displayName': 'clientId', 'id': 'clientId', 'value': '---'  ]
+        //     [ 'displayName': 'CORE - Age', 'id': 'age', 'value': '---'  ]
+        //     [ 'displayName': 'Status', 'id': 'statusClient', 'value': '---'  ]  <-- This is generated attribute by 'Action' expression
+        //  ]
+        
+        // NOTE 1.X
+        // actionExpression generating new attribute example  MZ
+        //"act_eval_checkClient": {
+        //    "actionType": "evaluation",
+        //    "expression": "'$${KRdnyGwNZyW}' === 'ISS' ? 'v_iss' : '$${clientId}'.length !== 0 ? 'c_reg' : 'c_non'",
+        //    "attribute": { "id": "statusClient" }
+
+
+		if ( blockJson && blockJson.list === 'dataList' && dataList )
         {
-            // jsonListData = search result array returned by web service.
-            me.renderDataList( jsonListData.displayData, blockJson.displayResult, newBlockTag, blockJson );	
+            if ( dataList.length === 0 ) me.renderAsEmptyList( newBlockTag );
+            else me.renderListByGroup( dataList, blockJson, newBlockTag );
         }
 
         TranslationManager.translatePage();
-	}
+	};
 
-    me.renderDataList = function( jsonList, itemDisplayAttrList, blockTag, blockJson )
+
+    // -----------------------------------------------------
+
+    me.renderAsEmptyList = function( newBlockTag )
     {
-        if ( jsonList === undefined || jsonList.length == 0 )
-        {
-            // Emmpty case
-            var divTag = $( '<div class="emptyListDiv" ></div>' );
-            var aTag = $( '<a term="">List is empty.</a>' ); // MISSING TRANSLATION
+        // Emmpty case
+        var divTag = $( '<div class="emptyListDiv" ></div>' );
+        var aTag = $( '<a term="">List is empty.</a>' ); // MISSING TRANSLATION
 
-            divTag.append( aTag );
-            blockTag.append( divTag );
-        }
-        else
-        {
-
-            var dataJson = jsonList;
-            var searchPostPayload = FormUtil.getLastPayload( 'sent' );
-            var divFormContainerTag = $( '<div class="formDivSec">' ); // GREG: find existing class "formDivSec"
-            blockTag.append( divFormContainerTag );
-
-            var dvgrpBySearchContainer = $( '<div class="groupBySearchContainer" />' );
-            var dvgrpBySearchSummary = $( '<div class="groupBySearchResults" />' );
-            dvgrpBySearchSummary.html( '<strong>' + jsonList.length + '</strong> ' + '<label term="dataListSearch_resultFor">results for</label>' + ' ' + FormUtil.jsonReadFormat( searchPostPayload ) );
-            divFormContainerTag.append( dvgrpBySearchContainer );
-            dvgrpBySearchContainer.append( dvgrpBySearchSummary );
-
-            
-            if ( blockJson.groupBy )
-            {
-                me.renderGroupByBlocks( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList );
-            }
-            else
-            {
-                me.renderSearchResultBlocks( divFormContainerTag, itemDisplayAttrList, undefined, undefined, jsonList, blockJson )
-            }
-        }
-    }
-
-
-    me.renderGroupByBlocks = function( dvgrpBySearchContainer, blockJson, dataJson, itemDisplayAttrList )
-    {
-        for( var g = 0; g < blockJson.groupBy.length; g++ )
-        {
-            var bGroupByObj = blockJson.groupBy[g];
-
-            var lookup = {};
-            var uniqValues = [];
-            var fldGroupByID, fldGroupByObj, fldGroupByButtons;
-            var complexGroupBy = false;
-
-            if ( typeof bGroupByObj === "object" ) 
-            {
-                var keys = Object.keys( bGroupByObj );
-                fldGroupByObj = bGroupByObj;
-                fldGroupByID = keys[ 0 ];   // ex. 'statusVoucher'
-                complexGroupBy = true;
-                fldGroupByButtons = fldGroupByObj[ fldGroupByID ].buttons;
-            }
-            else throw "not supported groupBy type.";
-
-
-            // iterate + tally unique values
-            // 'dataJson' is 2 dimentional array with objects paired with 'id' / 'value'..
-            // 'statusVoucher, v_iss', 'statusVoucher, v_iss', 'statusVoucher, v_rdx'
-            // 'v_iss: 2', 'v_rdx: 1'
-            for( var i = 0; i < dataJson.length; i++ )
-            {
-                for( var p = 0; p < dataJson[ i ].length; p++ )
-                {
-                    if ( dataJson[ i ][ p ].id == fldGroupByID )
-                    {
-                        var unqVal = dataJson[ i ][ p ].value;
-                        if (! uniqValues.includes( unqVal ) ) 
-                        {
-                            lookup[unqVal] = 1;
-                            uniqValues.push( unqVal );
-                        }
-                        else
-                        {
-                            lookup[unqVal] += 1;
-                        }
-                    }
-                }
-            }
-
-            uniqValues.sort();
-
-            // store tally of unique values
-            var grpByArr = me.createGroupBySummaryArray( blockJson, lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
-
-            // If there is no result, do not do this. But, if there is result
-            if ( uniqValues.length )
-            {
-                // build layout
-                // 'statusVoucher' translation is placed in 'definiotoinField' <-- resolvedefinitionFieldObj
-                var fieldObj = me.resolvedefinitionFieldObj( { "id": fldGroupByID, "name": fldGroupByID } );
-                var dvgrpByFieldHeader = $( '<div class="groupByFieldHeader" />' );
-                dvgrpByFieldHeader.append( $( '<div class=""> <table style="width:100%" ><tr><td class="imggroupByFldHeader" ><div id="imggroupByFldHeader_' + g + '" class="imggroupByExpanded" /> </td> <td> <span class="groupByHeaderValue" term="' + ( fieldObj.term.length ? fieldObj.term : fieldObj.name ) + '">' +me.resolvedefinitionField( fieldObj ) + '</span></td></tr></table> </div>' ) );
-                dvgrpBySearchContainer.append( dvgrpByFieldHeader );
-
-                // 'g' is groupBy index/count..
-                var dvgrpByFieldBlock = $( '<div id="groupByFieldBlock_' + g + '" class="groupByFieldBlock">' );
-                dvgrpBySearchContainer.append( dvgrpByFieldBlock );
-
-                for( var r = 0; r < grpByArr.length; r++ )
-                {
-                    var groupByObj = grpByArr[r];
-
-                    if (me.debugMode) console.customLog(fldGroupByID, groupByObj.value );
-
-                    // value = 'c_reg' - get the translation term from optionDefinition list..
-                    var fieldOptObj = me.resolvedefinitionOptionObj( groupByObj.value );
-                    var tblGrpBy = $( '<table id="groupByFieldBlock_' + g + '_' + r + '" class="groupByFieldResultTable" />' );
-                    var trGrpBy = $( '<tr />' );
-                    var tdGrpBy = $( '<td colspan=2 />' );                    
-                    var dvGrpByTitle = $( '<div class="groupByField" />' );
-                    var dvContents = $( '<div class=""> <table style="width:100%" ><tr><td class="groupByImgTd" ><div class="imgGrpByIcon ' 
-                                        + ( groupByObj.opened != undefined ? ( groupByObj.opened == "true" ? 'imggroupByExpanded' : 'imggroupByCollapsed' ) : 'imggroupByCollapsed' ) 
-                                        + '" /> </td> <td class="groupByFieldName"> <span term="' + fieldOptObj.term + '">' + me.resolvedefinitionOptionValue( groupByObj.value )
-                                        + '</span>: <strong class="">' + groupByObj.count + '</strong></td></tr></table> </div>' );
-                    var dvIcon = dvContents.find( '.imgGrpByIcon' );
-
-                    dvGrpByTitle.append( dvContents )
-                    dvGrpByTitle.attr( 'title', groupByObj.value );
-
-                    var dvGrpByRows = $( '<div id="groupResults_' + g + '_' + r + '" class="groupByResultBlock" style="' 
-                        + ( groupByObj.opened != undefined ? ( groupByObj.opened == "true" ? '' : 'display:none;' ) : 'display:none;' ) + '" />' );
-
-                    dvgrpByFieldBlock.append( tblGrpBy );
-                    tblGrpBy.append( trGrpBy );
-                    trGrpBy.append( tdGrpBy );
-                    tdGrpBy.append( dvGrpByTitle );
-                    dvGrpByTitle.append( dvGrpByRows );
-
-                    me.renderSearchResultBlocks( dvGrpByRows, itemDisplayAttrList, fldGroupByID, groupByObj.value, dataJson, blockJson, groupByObj.buttons )
-
-                    FormUtil.setClickSwitchEvent( dvIcon, dvGrpByRows, [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
-
-                }
-
-                FormUtil.setClickSwitchEvent( $( "#imggroupByFldHeader_" + g ),  $( "#groupByFieldBlock_" + g), [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
-
-            }
-
-        }
+        divTag.append( aTag );
+        newBlockTag.append( divTag );
     };
 
-    me.createGroupBySummaryArray = function( blockJson, lookup, fldGroupByButtons, complexGroupBy, fldGroupByObj, fldGroupByID )
+
+    me.renderListByGroup = function( dataList, blockJson, newBlockTag )
     {
-        var retGrpByArr = [];
+        // 1. Create Search Result div tag
+        var divFormContainerTag = me.createSearchResultDivTag( dataList );
+        newBlockTag.append( divFormContainerTag );
 
-        for (val in lookup) {
-            var count = lookup[ val ];
-            retGrpByArr.push({ "value": val, "count": count, "order": count, "opened": false, "buttons": fldGroupByButtons });
+        // 2. Create and Populate data list by groupIds and group values
+        // 2.1 Modify data into groups 
+        var dataListByGroups = me.groupDataList( blockJson.groupBy, dataList );
+        var groupIdList = Object.keys( dataListByGroups );
+        // NOTE 2. 'blockJson.group' is group metadata (definition).  Could be multiple groups definitions.
+        //          'groupId' ('statusClient') is the attribute Id.  It looks for clients that has this attribute Id.
+        // 'statusClient': { 'opened': true, ... 'values': [  'v_iss': { ---- button: --- }] }
+        //      --> 'v_iss' is the matchign value.  Get only clients that has this attribute value ('v_iss') for groupId.
+
+        // 'statusClient': {
+        //   'c_reg': [ [-- client attr arr -- ], [-- client attr arr -- ] ]
+        //   'v_iss': [ [-- client attr arr -- ], [-- client attr arr -- ] ]
+        
+
+        // 2.2 Render data by group
+        groupIdList.forEach( groupId => 
+        {
+            // Ex. groupId = 'statusClient'
+            var groupDataList = dataListByGroups[groupId];
+            var groupValueList = Object.keys( groupDataList );
+            var groupByFieldBlockTag = me.createGroupByFieldItemRow( groupId );
+ 
+            divFormContainerTag.append( groupByFieldBlockTag );
+
+            var divGroupByFieldContentTag = groupByFieldBlockTag.find( '.divGroupByFieldContent' );
+             
+            groupValueList.forEach( groupValue => 
+            {
+                // Ex. groupValue = 'c_reg'
+                var clientsInVal = groupDataList[groupValue];
+
+                if( clientsInVal.length > 0 )
+                {
+                    // clientsInVal - list of clients that has matching id (groupId) and val (groupVal)
+                    var valDef =  me.getValueDef( blockJson.groupBy, groupId, groupValue );
+
+                    // 'valDef' is definition of the matching value - what to display:  Ex. 'v_iss': { -- valDef -- }
+                    //   'values': [  'v_iss': { ---- button: --- }  ] }
+                    var dataListbByGroupTag = me.renderDataList_ByValDef( blockJson.displayResult, blockJson, clientsInVal, groupValue, valDef, groupId );
+                    divGroupByFieldContentTag.append( dataListbByGroupTag );
+                }                    
+            }); 
+        });
+    };
+
+
+    // Group data list by groups if any
+    // Result : { "<groupId>" : { "<groupValue>" : [ /* Data List */ ] } }
+    me.groupDataList = function( groupDataList, dataList )
+    {
+        var listByGroups = {};
+
+        for( var i in groupDataList )
+        {
+            var groupData = groupDataList[i];
+            var groupId = Object.keys( groupData )[0];
+            var groupValueList = groupData[groupId].values;
+
+            for( var j=0; j<groupValueList.length; j++ )
+            {
+                var groupValueData = groupValueList[j];
+                var groupValueName = Object.keys(groupValueData)[0];
+
+                var dataListByGroupValue = me.findDataListByGroupValue( dataList, groupValueName );
+                if( dataListByGroupValue.length > 0 )
+                {
+                    if( listByGroups[groupId] == undefined )
+                    {
+                        listByGroups[groupId] = {};
+                    }
+                    
+                    listByGroups[groupId][groupValueName] = dataListByGroupValue;
+                }
+            }
         }
 
-        // create 'retGrpByArr' with 'val' and their 'count' with other prop - to be populated later.
+        return listByGroups;
+    };
 
-        if ( complexGroupBy ) // always true - obj type groupby.
-        {
-            if ( fldGroupByObj[ fldGroupByID ].values )
+    /**
+     * Get group configuration by Group Id
+     * [
             {
-                // go through arrays of 'values' and process them..
-                for( var v = 0; v < fldGroupByObj[ fldGroupByID ].values.length; v++ )
-                {
-                    var keyValObj = fldGroupByObj[ fldGroupByID ].values[ v ];
-                    var keyVal = Object.keys( keyValObj )[ 0 ];
-
-                    for( var r = 0; r < retGrpByArr.length; r++ )
-                    {
-                        if ( retGrpByArr[ r ].value == keyVal )
+                "<groupId_1>": {
+                    "values": [
                         {
-                            if ( keyValObj[ keyVal ].buttons )
-                            {
-                                retGrpByArr[ r ].buttons = keyValObj[ keyVal ].buttons;
+                            "<groupId_1_value_1>": {
+                                "buttons": ["btnImg_selectClient_smsReminder_Ipc"],
+                                "icon": {
+                                    "path": "images/open.svg",
+                                    "width": "56px",
+                                    "height": "56px"
+                                },
+                                "opened": "true",
+                                "0.Info": "active/issued",
+                                "order": "1"
                             }
-                            else
-                            {
-                                retGrpByArr[ r ].buttons = blockJson.itemButtons;
-                            }
-                            if ( keyValObj[ keyVal ].opened != undefined )
-                            {
-                                retGrpByArr[ r ].opened = keyValObj[ keyVal ].opened;
-                            }
-                            if ( keyValObj[ keyVal ].order != undefined )
-                            {
-                                retGrpByArr[ r ].order = keyValObj[ keyVal ].order;
-                            }
-                        }
-                    }
-
+                        },
+                        {    "<groupId_1_value_2>": { .. } }
+                    ],
+                    "term": ""
                 }
+                ,"<groupId_2>": { }
+    */
+    me.getValueDef = function( groupDefList, searchGroupId, searchGroupValue )
+    {
+        var foundValDef;
 
-            }
-            else
-            {
-                if ( fldGroupByObj[ fldGroupByID ].buttons )
-                {
-                    for( var r = 0; r < retGrpByArr.length; r++ )
-                    {
-                        retGrpByArr[ r ].buttons = fldGroupByObj[ fldGroupByID ].buttons;
-                        retGrpByArr[ r ].opened = true;
-                        retGrpByArr[ r ].order = r;
-                    }
-                }
-            }
-
-        }
-
-        if ( me.debugMode ) console.customLog( retGrpByArr );
-
-        retGrpByArr.sort(function(a, b)
+        groupDefList.forEach( groupDef => 
         {
-            if (a.order < b.order) { return -1; }
-            if (b.order < a.order) return 1;
-            else return 0;
+            if ( groupDef[searchGroupId] )
+            {
+                var matchingGroupDef = groupDef[searchGroupId];
+                var valuesDef = matchingGroupDef.values;
+
+                valuesDef.forEach( valDef => 
+                {
+                    if ( valDef[searchGroupValue] )
+                    {
+                        foundValDef = valDef[searchGroupValue];
+                        foundValDef.nameConfig = me.getGroupValueTranslationInfo( searchGroupValue );
+                    }
+                })
+            }
         });
 
-        return retGrpByArr;
+        return foundValDef;
+    };
 
-    }
-
-    // TODO: NOT USED ANYMORE?
-    me.actionExpressionEvaluate = function( jsonList, actionTypeObj )
+    me.getGroupValueTranslationInfo = function( groupValue )
     {
-        for( var a = 0; a < actionTypeObj.length; a++ )
+        var dcd = ConfigManager.getConfigJson();
+        var ret = { id: '', name: groupValue, term: ''};
+
+        if ( dcd && dcd.definitionOptions )
         {
-            var expString = actionTypeObj[ a ].expression;
-
-            for( var i = 0; i < jsonList.length; i++ )
+            for (var optObj in dcd.definitionOptions) 
             {
-                var myCondTest = expString.replace( new RegExp( '[$${]', 'g'), '' ).replace( new RegExp( '}', 'g'), '' );
-    
-                for( var p = 0; p < jsonList[ i ].length; p++ )
+                var defOptGroup = dcd.definitionOptions[ optObj ];
+
+                for( var p = 0; p < defOptGroup.length; p++ )
                 {
-                    var regFind = new RegExp(jsonList[ i ][ p ].id, 'g');
-                    myCondTest = myCondTest.replace(  regFind, jsonList[ i ][ p ].value );
-                }
-    
-                var result =  eval( myCondTest );
-
-                if ( actionTypeObj[ a ].attribute )
-                {
-                    jsonList[ i ].push ( { "displayName": actionTypeObj[ a ].attribute.displayName, "id": actionTypeObj[ a ].attribute.id, "value": result } );
-                }
-                else
-                {
-                    jsonList[ i ].push ( { "displayName": "evaluation_" + a, "id": "evaluation_" + a, "value": result } );
-                }
-    
-            }
-        }
-
-        return jsonList;
-    }
-
-    me.renderSearchResultBlocks = function( divFormContainerTag, itemDisplayAttrList, fieldId, lookupVal, jsonList, blockJson, itemButtons )
-    {
-        var searchPostPayload = FormUtil.getLastPayload();
-        var newjsonList = [];
-
-        if ( me.debugMode ) console.customLog( itemButtons );
-
-        for( var i = 0; i < jsonList.length; i++ )
-        {
-            if ( fieldId && lookupVal )
-            { 
-                var itemAttrDataFiltered = ( jsonList[i] ).filter(a=>a.id==fieldId&&a.value==lookupVal);
-                if ( itemAttrDataFiltered.length ) newjsonList.push ( jsonList[i] );
-            }
-            else
-            {
-                newjsonList.push ( jsonList[i] );
-            }
-        }
-
-        for( var r = 0; r < newjsonList.length; r++ )
-        {
-            try
-            {
-                if (r > 0) {
-                    var divSpacerTag = $('<div class="searchResultTableSpacer" />');
-                    divFormContainerTag.append(divSpacerTag);
-                }
-
-                var itemAttrDataList = newjsonList[r];
-                var objResult = me.blockDataValidResultArray(itemDisplayAttrList, itemAttrDataList);
-                var validResultData = objResult.length;
-                var tblObjTag = $('<table class="searchResultTable" id="searchResult_' + r + '">');
-                var groupByValueObj = me.resolveGroupByValueObj( blockJson, fieldId, lookupVal );
-
-                divFormContainerTag.append(tblObjTag);
-
-                if (blockJson.displayHeader) {
-
-                    var tritemHeaderTag = $('<tr>');
-                    var tditemHeaderTag = $('<td class="groupByResultHeader">');
-
-                    tblObjTag.append(tritemHeaderTag);
-                    tritemHeaderTag.append(tditemHeaderTag);
-
-                    var imginfoTag = $('<img src="images/about.svg" class="imgSearchResultAbout" >');
-                    var lblSpacer = $('<span>&nbsp;&nbsp;</span>');
-                    var labelTag = $('<span class="groupByHeaderField">' + me.resolvedefinitionField({ "id": blockJson.displayHeader[0], "name": blockJson.displayHeader[0] }) + '</span> : <span class="groupByHeaderValue" >' + FormUtil.lookupJsonArr(itemAttrDataList, 'id', 'value', blockJson.displayHeader[0]) + '</span>');
-
-                    tditemHeaderTag.append(imginfoTag);
-                    tditemHeaderTag.append(lblSpacer);
-                    tditemHeaderTag.append(labelTag);
-
-                }
-
-                var trTopObjTag = $('<tr class="itemBlock">');
-                var tdLeftIconTag = $('<td rowspan=2 class="resultsImgContainer">');
-                var tdIconTag;
-                var tdRecordDataTag = $('<td class="" style="padding-left:16px;">');
-
-                if ( groupByValueObj.icon && groupByValueObj.icon.path )
-                {
-                    tdIconTag = $('<img src="' + groupByValueObj.icon.path + '" class="imgSearchResultUser" style="width:56px;" >');
-                }
-                else
-                {
-                    tdIconTag = $('<img src="images/user.svg" class="imgSearchResultUser" style="width:56px" >');
-                }
-
-                tblObjTag.append(trTopObjTag);
-                trTopObjTag.append(tdLeftIconTag);
-                tdLeftIconTag.append(tdIconTag);
-                trTopObjTag.append(tdRecordDataTag);
-
-                if (!validResultData) {
-                    var divAttrTag = $('<div class="" />');
-                    var labelTag = $('<label class="titleLabel" />');
-                    var valueTag = $('<span class="">');
-
-                    tdRecordDataTag.append(divAttrTag);
-                    divAttrTag.append(labelTag);
-                    divAttrTag.append(valueTag);
-
-                    labelTag.html('dcd Config issue');
-                    valueTag.html('no valid IDs for "displayResult":[]');
-                }
-                else {
-
-                    var condObj;
-
-                    for (var i = 0; i < newjsonList.length; i++) {
-                        for (var p = 0; p < newjsonList[i].length; p++) {
-                            if (newjsonList[i][p].id == 'condition') {
-                                condObj = newjsonList[i][p];
-                            }
-                        }
-                    }
-
-                    for (var o = 0; o < objResult.length; o++) {
-                        var fieldObj = me.resolvedefinitionFieldObj({ id: objResult[o].id, defaultName: '' });
-                        var divAttrTag = $('<div class="" />');
-                        var labelTag = $('<label class="titleLabel" />');
-                        var valueTag = $('<span fieldId="' + objResult[o].id + '" class="">');
-
-                        tdRecordDataTag.append(divAttrTag);
-                        divAttrTag.append(labelTag);
-                        divAttrTag.append(valueTag);
-
-                        if (fieldObj.term && fieldObj.term.length) labelTag.attr("term", fieldObj.term);
-
-                        labelTag.html(me.resolvedefinitionField(objResult[o]));
-                        valueTag.html(': ' + me.resolvedefinitionOptionValue(objResult[o].value));
-
-                        if (objResult[o].id == '') //added from search criteria
-                        {
-                            //labelTag.css('font-weight',"600");
-                            valueTag.css('color', '#909090');
-                        }
-
-                    };
-
-                    var tdRightobjTag = $('<td class="searchResultGroupByButtons" info="' + r + '" ></td>');
-                    trTopObjTag.append(tdRightobjTag);
-
-                    me.renderHiddenKeys(blockJson.keyList, itemAttrDataList, tdRightobjTag); // replace `blockJson.keyList` with `[ "clientId" ]` to remove dependency on dcdConfig use of `keyList` array 
-
-                    if (itemButtons != undefined) {
-                        me.renderButtons(tdRightobjTag, itemButtons, itemAttrDataList);
-                    }
-                    else {
-                        // Readjust json for passing
-                        var passedData = Util.getJsonDeepCopy(me.jsonListData);
-                        passedData.displayData = itemAttrDataList;
-                        passedData.resultData = {};
-
-                        // BUTTON LIST
-                        var buttonDefList = [];
-                        if (blockJson.itemButtons) buttonDefList = blockJson.itemButtons;
-                        else if (blockJson.buttons) buttonDefList = blockJson.buttons;
-
-                        me.renderButtons(tdRightobjTag, buttonDefList, passedData);
+                    if ( defOptGroup[p].value == groupValue )
+                    {
+                        ret = defOptGroup[p];
                     }
                 }
             }
-            catch( errMsg )
-            {
-                console.customLog( 'ERROR in renderSearchResultBlocks, errMsg: ' + errMsg );
-            }
         }
+
+        return ret;
+    };
+    
+    // ===================================================================================
+    // Create Search result div tags
+
+    // Create Search result DIV
+    me.createSearchResultDivTag = function( jsonList )
+    {
+        var divFormContainerTag = $( '<div class="formDivSec"/>' );
+        var summaryTag = me.createSearchResultSummaryTag( jsonList ); // Create Search Result Summary
+
+        divFormContainerTag.append( summaryTag );
+        return divFormContainerTag;
+    };
+
+    // Create Search Result Summary
+    me.createSearchResultSummaryTag = function( jsonList )
+    {
+        var summaryTag = $("<div class='groupBySearchResults'>");
+        //summaryTag.append("<strong><span class='groupByHeaderValue' term='datalist_groupBy_circByVoucherStatus'>Circumcision by Voucher Status</span></strong>:");
+        summaryTag.append("<strong> " + jsonList.length + " </strong>");
+        summaryTag.append("<label term='dataListSearch_resultFor'>results</label>");
+        
+        return summaryTag;
+    };
+
+  
+    // ================================================================================================================================================
+   
+    /** 
+     * 
+     * GroupData :
+        {
+            "buttons": ["btnImg_selectClient_smsReminder_Ipc"],
+            "icon": {
+                "path": "images/open.svg",
+                "width": "56px",
+                "height": "56px"
+            },
+            "opened": "true",
+            "0.Info": "active/issued",
+            "order": "1"
+        } 
+    **/
+
+    me.renderDataList_ByValDef = function( displayedAttributeList, blockJson, dataList, groupValue, groupDataConfig )
+    {
+        var groupDivTag = $("<div groupVal='" + groupValue + "' class='divGroupByValue'/>");
+
+        var divGroupByTitleTag = me.getGroupByTitleTag_WtToggle();
+        divGroupByTitleTag.find( '.groupByFieldName' ).append(  "<span term='" + Util.getStr( groupDataConfig.nameConfig.term ) + "'>" 
+            + Util.getStr( me.getNameOfGroupValue( groupValue ) )
+            + "</span>: <strong class=''>" + dataList.length + "</strong>" );
+
+        groupDivTag.append( divGroupByTitleTag );
+
+        // Create table for data list
+        groupDivTag.append("<table class='searchResultTable'><tbody></tbody></table>" );
+
+        var tbody = groupDivTag.find("tbody");
+        for( var i in dataList )
+        {
+            var rowTag = me.createDataItemTableRow( displayedAttributeList, blockJson, groupDataConfig, dataList[i] );
+            tbody.append( rowTag );
+        }
+
+        me.setupEvents_GroupByHeader( groupDivTag.find( '.imgGrpByIcon' ), groupDivTag.find( '.searchResultTable' ) );
+
+        return groupDivTag;
+    };
+
+    
+    me.setupEvents_GroupByHeader = function( expendIconTag, contentTag )
+    {
+        FormUtil.setClickSwitchEvent2( expendIconTag, contentTag, [ 'imggroupByExpanded', 'imggroupByCollapsed' ] );
+    };
+
+   
+    me.createGroupByFieldItemRow = function( groupId )
+    {
+        var groupByDef = me.resolveDefinitionFieldItem( { 'id': groupId, 'defaultName': groupId } );
+
+        var groupByFieldDiv = $( "<div class='divGroupByField' groupId='" + groupId + "' style='margin: 4px 0 10px 0;'></div>" );
+
+        var divGroupByTitleTag = me.getGroupByTitleTag_WtToggle();
+        divGroupByTitleTag.find( '.groupByFieldName' ).append( "<span term='" + Util.getStr( groupByDef.term ) + "'>" + + Util.getStr( groupByDef.name ) + "</span>" );
+
+        groupByFieldDiv.append( divGroupByTitleTag );
+
+        groupByFieldDiv.append( "<div class='divGroupByFieldContent' style='margin: 8px 0 0 20px;'></div>");
+
+        me.setupEvents_GroupByHeader( groupByFieldDiv.find( '.imgGrpByIcon' ), groupByFieldDiv.find( '.divGroupByFieldContent' ) );
+
+        return groupByFieldDiv;
     }
 
 
-    me.blockDataValidResultArray = function( itemDisplayAttrList, searchResults )
+    me.getGroupByTitleTag_WtToggle = function()
     {
-        // ONLY return array pairs where payload contains expected UID fields
-        var validResults = [];
+        var divTag = $( '<div class="divGroupByTitle"></div>' );
 
-        // If 'displayResult' is not on definition, send all. 
-        if ( !itemDisplayAttrList || itemDisplayAttrList.length === 0 ) 
-        {
-            validResults = searchResults;
-        }
-        else
-        {
-            for( var a = 0; a < itemDisplayAttrList.length; a++ )
-            {
-                var idStr = itemDisplayAttrList[a];
-    
-                var itemData = Util.getFromList( searchResults, idStr, "id" );
+        divTag.append( "<div class='imgGrpByIcon imggroupByExpanded' style='display: inline-block; vertical-align: top;'></div>" );
+        divTag.append( "<div class='groupByFieldName' style='display: inline-block; vertical-align: text-bottom;'></div>");
 
-                if ( itemData && itemData.value )
-                {   
-                    validResults.push ( { 'id': itemData.id, 'name': itemData.displayName, 'value': itemData.value } );
-                }    
-            }
-        }
-
-        return validResults;
+        return divTag;
     };
 
 
-    me.renderHiddenKeys = function( keyList, itemAttrDataList, divItemTag )
+    me.createDataItemTableRow = function( displayedAttributeList, blockJson, groupConfig, dataItem )
     {
-        if ( keyList )
+        var rowTag = $("<tr class='itemBlock'></tr>");
+
+        // Add icon column
+        var iconColTag = $("<td class='resultsImgContainer'></td>");
+        var imgTag = $('<img class="imgSearchResultUser" style="width:56px">');
+
+        if ( groupConfig.icon && groupConfig.icon.path )
         {
-            for( var i = 0; i < keyList.length; i++ )
+            imgTag.attr("src", groupConfig.icon.path );
+        }
+        else
+        {
+            imgTag.attr("src", "images/user.svg" );
+        }
+
+        iconColTag.append( imgTag );
+        rowTag.append( iconColTag );
+
+
+        // Add data item information column
+        var dataColTag = $("<td style='padding-left:16px;'></td>");
+        rowTag.append( dataColTag );
+
+        var dataLineCount = 0;
+
+        for ( var i in displayedAttributeList )
+        {
+            var attrItem = displayedAttributeList[i];
+
+            for ( var j in dataItem )
             {
-                var keyId = keyList[i];
-                var itemData = Util.getFromList( itemAttrDataList, keyId, "id" );
-
-                if ( itemData )
+                var data = dataItem[j];
+                if( data.id == attrItem && data.value != "" )
                 {
-                    var containerDivTag = $( '<div></div>' );
-                    divItemTag.append( containerDivTag );
+                    var fieldObj = me.resolveDefinitionFieldItem({ id: data.id, defaultName: '' });
+                    var divTag = $("<div class='divItemBlockLine'></div>");
 
-                    itemData.defaultValue = itemData.value;
-                    itemData.display = 'hiddenVal';
+                    divTag.append("<label class='titleLabel' term='" + fieldObj.term + "'>" + me.getNameOfDataItemField( data ) + "</label>" );
+                    divTag.append("<span fieldid='" + data.id + "'>: " + data.value + "</span></div>");
                     
-                    FormUtil.renderInputTag( itemData, containerDivTag );    
+                    dataColTag.append( divTag );
+
+                    if ( dataLineCount === 0 ) divTag.css( 'margin-top', '8px' );
+
+                    dataLineCount++;
                 }
-            }
+            }            
         }
-    }
+       
 
-    me.renderItemAttrs = function ( displayAttrList, itemAttrDataList, divItemTag )
-    {        
-        for( var i = 0; i < displayAttrList.length; i++ )
+        // Add Buttons 
+        var buttonsColTag = $("<td class='searchResultGroupByButtons'>");
+        rowTag.append( buttonsColTag );
+
+        var hidenValuesTag = me.renderHiddenValuesTag( blockJson.keyList, dataItem ); // replace `blockJson.keyList` with `[ "clientId" ]` to remove dependency on dcdConfig use of `keyList` array 
+        buttonsColTag.append( hidenValuesTag );
+        
+        if ( groupConfig.buttons != undefined) 
         {
-            var attrId = displayAttrList[i];
-            var attrData = Util.getFromList( itemAttrDataList, attrId, "id" );
-
-            if ( attrData ) me.renderDataValueTag( attrData, divItemTag );
+            me.renderButtons(buttonsColTag, groupConfig.buttons, dataItem);
         }
-    }
+        else 
+        {
+            // Readjust json for passing
+            var passedData = Util.getJsonDeepCopy( dataItem );
+            passedData.displayData = dataItem;
+            passedData.resultData = {};
 
-    me.renderButtons = function( divItemTag, itemButtons, passedData )
+            // BUTTON LIST
+            var buttonDefList = [];
+            if (blockJson.itemButtons) buttonDefList = blockJson.itemButtons;
+            else if (blockJson.buttons) buttonDefList = blockJson.buttons;
+
+            me.renderButtons( buttonsColTag, buttonDefList, passedData);
+        }
+
+        return rowTag;
+    };
+
+
+    me.renderButtons = function( divItemTag, itemButtons, dataItem )
     {
         if ( itemButtons )
         {
             var newItemBtn = new BlockButton(  me.cwsRenderObj, me.blockObj );
 
-            newItemBtn.render( itemButtons, divItemTag, passedData );
+            newItemBtn.render( itemButtons, divItemTag, dataItem );
         } 
     }
+    
 
-    me.renderDataValueTag = function( attrData, divItemTag )
-    {    
-        // Set Text..
-        var spanDivTag = $( '<div class="searchResultDisplayValue" >' + attrData.displayName + ": <b>" + attrData.value + '</b></div>' );
-        divItemTag.append( spanDivTag );
-    }
-
-    me.convertData = function( jsonList, idx )
+    me.renderHiddenValuesTag = function( hiddenIdList, dataItem )
     {
-        var converted = {};
-        converted.resultData = JSON.parse( JSON.stringify( jsonList.resultData ) );
-        converted.displayData = JSON.parse( JSON.stringify( jsonList.displayData[idx] ) );
-        return converted;
-    }
-
-    me.resolvedefinitionField = function( objFieldData )
-    {
-        var dcd = ConfigManager.getConfigJson();
-        var retName = '';
-
-        if ( dcd && dcd.definitionFields )
+        var divTag = $("<div></div>");
+        if ( hiddenIdList )
         {
-            try
+            for( var i=0; i<hiddenIdList.length; i++ )
             {
-                for( var i = 0; i < dcd.definitionFields.length; i++ )
+                var hiddenId = hiddenIdList[i];
+                var foundData = Util.getFromList( dataItem, hiddenId, "id" );
+
+                if ( foundData )
                 {
-                    if ( objFieldData.id === dcd.definitionFields[ i ].id )
-                    {
-                        if ( ( dcd.definitionFields[ i ].term ).toString().length )
-                        {
-                            retName = TranslationManager.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
-                        }
-                        else
-                        {
-                            retName = dcd.definitionFields[ i ].defaultName;
-                        }
-                    }
-                }    
+                    divTag.append("<input type='hidden' name='" + hiddenId + "' value='" + foundData.value + "' display='hiddenVal' >");
+                }
             }
-            catch ( errMsg ) {  }
+        }
 
-            if ( retName.length == 0 )
-            {
-                return ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
-            }
-            else
-            {
-                return retName;
-            }
-        }
-        else
-        {
-            return ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
-        }
+        return divTag;
     }
 
-    me.resolvedefinitionFieldObj = function( objFieldData )
+    
+    me.getNameOfGroupValue = function( groupValue )
+    {
+        var name = me.getGroupValueTranslationInfo( groupValue ).defaultName;
+		return ( name == undefined ) ? groupValue : name;
+    }
+
+
+    me.getNameOfDataItemField = function( objFieldData )
+    {
+        return me.resolveDefinitionFieldItem( objFieldData ).name;
+    }
+
+
+    me.resolveDefinitionFieldItem = function( objFieldData )
     {
         var dcd = ConfigManager.getConfigJson();
-        var retField = { id: '', name: '', term: ''};
+        var retField = { id: objFieldData.id, name: '', term: ''};
 
         if ( dcd && dcd.definitionFields )
         {
@@ -596,7 +469,7 @@ function DataList( cwsRenderObj, blockObj )
                         retField.id = objFieldData.id;
                         retField.name = dcd.definitionFields[ i ].defaultName;
 
-                        if ( ( dcd.definitionFields[ i ].term ).toString().length )
+                        if ( dcd.definitionFields[ i ].term && dcd.definitionFields[ i ].term != "" )
                         {
                             retField.name = TranslationManager.translateText( dcd.definitionFields[ i ].defaultName, dcd.definitionFields[ i ].term )
                             retField.term = dcd.definitionFields[ i ].term;
@@ -606,118 +479,40 @@ function DataList( cwsRenderObj, blockObj )
             }
             catch ( errMsg ) {  }
 
-            if ( retField.id.length == 0 )
+            if ( retField.id != "" )
             {
                 retField.id = objFieldData.id;
                 retField.name = objFieldData.name;
             }
-
+           
             return retField;
-
         }
         else
         {
-            return ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
+
+            var name = ( objFieldData.name ) ? objFieldData.name : objFieldData.id;
+            objFieldData.name = name;
+            return objFieldData;
         }
-    }
+    };
 
-    me.resolvedefinitionOptionObj = function( val )
+    // ======================================================================================================
+    // Supportive methods
+
+    me.findDataListByGroupValue = function( dataList, groupId )
     {
-        var dcd = ConfigManager.getConfigJson();
-        var ret = { id: '', name: val, term: ''};
-
-        if ( dcd && dcd.definitionOptions )
+        var list = [];
+        for( var i in dataList )
         {
-            for (var optObj in dcd.definitionOptions) 
+            var data = dataList[i];
+            var found = Util.getFromList( data, groupId, "value" );
+            if( found )
             {
-                var defOptGroup = dcd.definitionOptions[ optObj ];
-
-                for( var p = 0; p < defOptGroup.length; p++ )
-                {
-                    if ( defOptGroup[p].value == val )
-                    {
-                        ret = defOptGroup[p]
-                    }
-                }
+                list.push( data );
             }
         }
 
-        return ret;
-
-    }
-
-    me.resolvedefinitionOptionValue = function( val )
-    {
-        var dcd = ConfigManager.getConfigJson();
-        var ret = val;
-
-        if ( dcd && dcd.definitionOptions )
-        {
-            for (var optObj in dcd.definitionOptions) 
-            {
-                var defOptGroup = dcd.definitionOptions[ optObj ];
-
-                for( var p = 0; p < defOptGroup.length; p++ )
-                {
-                    if ( defOptGroup[p].value == val )
-                    {
-                        ret = defOptGroup[p].defaultName
-                    }
-                }
-            }
-        }
-
-        return ret;
-
-    }
-
-    me.resolveGroupByValueObj = function( blockJson, fieldId, lookupVal )
-    {
-        var ret = {};
-
-        if ( fieldId && lookupVal && blockJson.groupBy )
-        {
-            for( var g = 0; g < blockJson.groupBy.length; g++ )
-            {
-                var groupByItm = blockJson.groupBy[ g ];
-
-                for ( var grpField in groupByItm ) 
-                {
-
-                    if ( grpField === fieldId )
-                    {
-                        var grpByObj = groupByItm[ grpField ];
-
-                        if ( ! grpByObj.values || grpByObj.values.length === 0 )
-                        {
-                            ret = grpByObj;
-                        }
-                        else
-                        {
-                            for( var p = 0; p < grpByObj.values.length; p++ )
-                            {
-                                var groupByVal = grpByObj.values[ p ];
-
-                                for ( var fldVal in groupByVal ) 
-                                {
-                                    if ( fldVal === lookupVal )
-                                    {
-                                        ret = groupByVal[ fldVal ];
-                                    }
-                                }
-                            }
-                        }
-
-
-                    }
-                }
-  
-            }
-        }
-
-        return ret;
-    }
-
-	// -------------------------------
+        return list;
+    };
 
 }
