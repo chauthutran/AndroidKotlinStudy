@@ -8,7 +8,8 @@
 function InfoDataManager() {}
 
 InfoDataManager.INFO = {};
-
+// GLOBAL VARIABLE?  Set it on someplace common global class?
+var INFO = InfoDataManager.INFO;
 InfoDataManager.NAME_activity = 'activity';
 InfoDataManager.NAME_client = 'client';
 
@@ -140,9 +141,3 @@ InfoDataManager.createObj_ActivityClient = function( activity )
 
 	return { 'activity': activity, 'client': client };
 };
-
-
-// ========================================
-// ==== New for ClientList?
-
-

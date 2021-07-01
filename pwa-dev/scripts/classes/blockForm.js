@@ -19,7 +19,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.formJsonArr;
 	me.formJsonConfig = {};
 	me.formDivSecTag;
-	me._childTargetActionDelay = 400;
+	me._childTargetActionDelay = 300; // TODO: TEST FOR LESS?  200?
 	me._groupNoneId = 'zzzGroupNone';
 
 	// =============================================
@@ -297,9 +297,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		Util.decodeURI_ItemList( optionList, "defaultName" );
 
 		// Populate options
-		var entryTag = $( '<select name="' + formItemJson.id + '" uid="' + formItemJson.uid 
-					+ '" dataGroup="' + formItemJson.dataGroup 
-					+ '" class="dataValue displayValue" />' );
+		var entryTag = $( '<select name="' + formItemJson.id + '" uid="' + formItemJson.uid + '"'
+					+ ' options="' + formItemJson.options + '"'
+					+ ' dataGroup="' + formItemJson.dataGroup + '"'
+					+ ' class="dataValue displayValue" />' );
  		Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
 		// When changed/selected, the focus is removed(blured), so that arrow image is switched (defined in css, focus)
@@ -1173,6 +1174,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				var thisTag = $( this );
 
+				// NOTE: TODO: WHAT ABOUT THE RADIO BUTTON?
 				if ( thisTag.attr( 'type' ) === 'checkbox' )
 				{
 					setTimeout( function() {
@@ -1253,7 +1255,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			lv1_caseList.forEach( innerCase => 
 			{
 				var caseName = FormUtil.getObjFromDefinition( innerCase, ConfigManager.getConfigJson().definitionShowHideCases );
-				if ( caseName ) caseList.push( caseName );
+
+				if ( caseName ) 
+				{
+					if ( Util.isTypeString( caseName ) ) caseList.push( caseName );
+					else if ( Util.isTypeArray( caseName ) ) caseList = caseList.concat( caseName );
+				}
 			});
 		}
 		catch( errMsg )
@@ -1301,9 +1308,22 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					entryTag.attr( ruleJson.name, ruleJson.value );
 
-					if( ruleJson.name === "mandatory" && ruleJson.value === "true" )
+					if ( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 					{
 						divInputTag.find( 'label' ).first().closest("div").append( $( "<span>*</span>" ) );
+					}
+
+					var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
+
+					// readonly & disabled css
+					if ( ruleJson.name === 'disabled' )
+					{
+						divInputTag.closest( 'div.fieldBlock' ).addClass( 'divInputReadOnly' ); // background-color #eee
+						if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
+					}
+					else if ( ruleJson.name === 'readonly' )
+					{
+						if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
 					}
 				}	
 				else if ( ruleJson.pattern )
@@ -1377,39 +1397,79 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	}
 
+	// ----------------------------------------------------
+
+	// SHOULD BE MOVED?  
+	// NOTE: For 'checkbox' type, tag is always hidden.  Need to look at 
+
+	me.isEntryTagVisible = function( tag )
+	{
+		var isVisible = false;
+
+		if ( tag.attr( 'type' ) === 'checkbox' ||  tag.attr( 'type' ) === 'radio' )
+		{
+			var tagId = tag.attr( 'id' );
+			var labelTag = tag.siblings( 'label[for="' + tagId + '"]' );
+			isVisible = labelTag.is( ':visible' );
+		}
+		else
+		{
+			isVisible = tag.is( ':visible' );
+		}
+
+		return isVisible;
+	};
 
 	// ----------------------------------------------------
 	// ---- EVAL Actions Related --------------------------
 
 	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
 	{
-		var tagVal = FormUtil.getTagVal( tag, 'removeDBQuote' );
-		
-		InfoDataManager.setINFOdata( 'thisTag', tag );
-		InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
-		InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
-		InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
-
-		// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
-		//if ( tagVal !== undefined && tagVal !== '' ) {
-		if ( tag.is( ':visible' ) && formItemJson.evalActions )
+		try
 		{
-			formItemJson.evalActions.forEach( evalAction => 
+			var tagVal = FormUtil.getTagVal( tag, 'removeDBQuote' );
+		
+			// PREVIOUS ONES:
+			// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
+			//if ( tagVal !== undefined && tagVal !== '' )
+			//if ( me.isEntryTagVisible( tag ) && formItemJson.evalActions )
+			// Some Greg code for 'null' issue <-- Need to handle this!!
+			if ( tag && tagVal !== undefined && tagVal !== '' && tagVal !== null && formItemJson && formItemJson.evalActions )
 			{
-				var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
+				// Proper INFO variable references
+				InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
+				InfoDataManager.setINFOdata( 'tag', tag );
+				InfoDataManager.setINFOdata( 'tagVisible', tag.parent().is( ':visible' ) );
+				InfoDataManager.setINFOdata( 'tagVal', tagVal );
 
-				me.performEvalAction( evalActionJson, tag, tagVal, formDivSecTag, formFull_IdList );
-			});
-		}	
-		//}
-	}
+				// Old ones - to be obsolete later?
+				InfoDataManager.setINFOdata( 'thisTag', tag ); // Obsolete?  use 'tag' instead?
+				InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
+				InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
+				InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
+
+				
+				formItemJson.evalActions.forEach( evalAction => 
+				{
+					var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
+	
+					me.performEvalAction( evalActionJson, tag, tagVal, formDivSecTag, formFull_IdList );
+				});
+			}	
+			//}
+		}
+		catch( errMsg ) 
+		{
+			console.log( 'ERROR in BlockForm.performEvalActions(), errMsg: ' + errMsg );
+		}
+	};
 
 	me.performEvalAction = function( evalAction, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
 		if ( evalAction )
 		{
 			var conditionPass = false;
-
+			
 			// if condition exists, check to run the conditional case or inverse one..
 			if ( evalAction.condition !== undefined )
 			{
@@ -1432,6 +1492,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// If condition does not exists OR condition has passed, run more related things..
 			if ( evalAction.condition === undefined || conditionPass )
 			{
+				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
+
 				// If no condition, simply run the eval..				
 				if ( evalAction.runEval ) {
 					Util.evalTryCatch( evalAction.runEval, InfoDataManager.getINFO(), 'blockForm.performEvalAction, runEval' );
@@ -1441,48 +1503,155 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	//var finalVal = ''; var v_ng = 'Negativo'; var v_ps = 'Positivo'; var v_it = 'Indeterminado'; var rst1 = form.find( '[name=resultsTestOne]').val(); var rst2 = form.find( '[name=resultsTestTwo]').val(); if ( rst1 && rst2 ) { if( rst1 === v_ng ) { finalVal = v_ng; } else if ( rst1 === v_ps && rst2 === v_ng ) { finalVal = v_it; } else if ( rst1 === v_ps && rst2 === v_ps ) { finalVal = v_ps; } }; finalVal;
+	// ------------------------------------------
+	// --- EvalActions OptionsChange Related ----
 
-	/*
-	var finalVal = '';
-	var v_ng = 'Negativo';
-	var v_ps = 'Positivo';
-	var v_it = 'Indeterminado';
-	var rst1 = form.find( '[name=resultsTestOne]').val();
-	var rst2 = form.find( '[name=resultsTestTwo]').val();
-	if ( rst1 && rst2 )
+	me.evalActions_optionsChange = function( optionsChange, formDivSecTag )
 	{
-		if( rst1 === v_ng ) { finalVal = v_ng; }
-		else if ( rst1 === v_ps && rst2 === v_ng ) { finalVal = v_it; }
-		else if ( rst1 === v_ps && rst2 === v_ps ) { finalVal = v_ps; }	
-	}
-	finalVal;
-	*/
+		// From the list of id, get the tag's option reference?
+		// and repopulate it..
+		optionsChange.forEach( tagId => 
+		{
+			me.selectTagOptionsRelist( tagId, formDivSecTag );
+		});
+	};
+
+	me.selectTagOptionsRelist = function( tagId, formTag )
+	{
+		// 'formDivSecTag' is almost same as 'form' tag, thus, renamed here.  
+		//   'form' tag is right below 'formDivSecTag' always.
+		var entryTag = formTag.find( 'select[name="' + tagId + '"]' );
+
+		if ( entryTag.length > 0 )
+		{
+			var options = entryTag.attr( 'options' );
+			
+			if ( options )
+			{
+				// Get and resolve options
+				var optionList = FormUtil.getObjFromDefinition( options, ConfigManager.getConfigJson().definitionOptions );
+
+				if ( optionList && Util.isTypeArray( optionList ) )
+				{
+					// TODO: Filter 'optionList' by 
+					// limitCases arry filter...
+					var optionListNew = me.filterOptionsByLimitCases( optionList, formTag );
+
+					Util.decodeURI_ItemList( optionListNew, "defaultName" );  // <-- why this?  
+		
+					Util.populateSelect_newOption( entryTag, optionListNew, { "name": "defaultName", "val": "value" } );
+				}	
+			}
+		}
+	};
+
+	me.filterOptionsByLimitCases = function( optionList, formTag )
+	{
+		var newOptionList = [];
+
+		optionList.forEach( optionObj => 
+		{
+			try
+			{
+				// If 'limitCases' exists on the option def, 
+				//  Check to see if any of the cases passes to allow showing of this option.
+				// Example: { "defaultName": "Your Future", "value": "YF", "term": "option_tools_YF", "limitCases": [ "def_sesGS_refDD", "def_sesID_refDD_genM", ... ] },
+				// 			<-- In "options_tools"
+				if ( optionObj.limitCases )	
+				{
+					var showOptionCase = false;
+	
+					for ( var i = 0; i < optionObj.limitCases.length; i++ )
+					{
+						var limitCase = optionObj.limitCases[i];
+						var defLimitCase = FormUtil.getObjFromDefinition( limitCase, ConfigManager.getConfigJson().definitionOptionLimitCases );
+	
+						var passLimitCase = me.checkOptionLimitCaseValues( defLimitCase, formTag );
+	
+						if ( passLimitCase ) 
+						{
+							showOptionCase = true;
+							break;
+						}
+					}
+	
+					if ( showOptionCase ) newOptionList.push( optionObj );
+				}
+				else 
+				{
+					newOptionList.push( optionObj );
+				}
+			}
+			catch ( errMsg )
+			{
+				console.log( 'ERROR in BlockForm.filterOptionsByLimitCases(), errMsg: ' + errMsg );
+			}
+		});
+
+		return newOptionList;
+	};
+
+	me.checkOptionLimitCaseValues = function( defLimitCase, formTag )
+	{
+		// for each property name, match the value..  If all values match, it passes..
+		// Ex. "def_sesGS_refDD": { "sessionType": [ "GS" ], "referralChannel": [ "DD" ] }  <-- In "definitionOptionLimitCases"
+		var passCase = true;
+
+		for ( var propName in defLimitCase ) 
+		{
+			var valueArr = defLimitCase[ propName ];
+
+			// Get actual value in the tag..
+			//var targetTag = formTag.find( '[name="' + propName + '"]' );
+			var targetTag = me.getMatchingInputTag( formTag, propName );
+			
+			if ( targetTag.length > 0 )
+			{
+				var tagVal = FormUtil.getTagVal( targetTag );
+
+				if ( valueArr.indexOf( tagVal ) === -1 )
+				{
+					passCase = false;
+					break;
+				} 
+			}
+		}
+
+		return passCase;
+	};
+
+
+	// -------------------------------------
 	
 	me.checkCondition = function( evalCondition, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
 		var result = false;
 
-		// NOTE: TEMP IMPLEMENTATION - REPLACE WITH BETTER SOLUTION
+		// NOTE: TEMP IMPLEMENTATION - REPLACE WITH BETTER SOLUTION LATER..
 		INFO.userRole = ConfigManager.login_UserRoles;
 
-		if ( evalCondition )
+		try
 		{
-			try
+			// Handle array into string joining
+			evalCondition = Util.getEvalStr( evalCondition );
+
+			if ( evalCondition )
 			{
 				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
 				var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
+				var tagVisible = tag.parent().is( ':visible' );
+				// tag, tagVal is also available within eval - vis parameter
 
 				// NOTE: We could move this to Util.evalTryCatch
 				// if we run the optional exposore..  <-- form, tag, tagVal  <-- within the method..  or callback?
 				result = eval( afterCondStr );	
 			}
-			catch(ex) 
-			{
-				console.customLog( 'Failed during condition eval: ' );
-				console.customLog( ex );
-			}
+		}
+		catch(ex) 
+		{
+			console.customLog( 'Failed during condition eval: ' );
+			console.customLog( ex );
 		}
 
 		return result;
@@ -1491,18 +1660,25 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	
 	me.conditionVarIdToVal = function( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 	{
-		// Replace 'this' first.
-		evalCondition = Util.replaceAll( evalCondition, '$$(this)', tagVal );
-
-		// Replace other tag val cases.
-		for ( var i = 0; i < formFull_IdList.length; i++ )
+		try
 		{
-			var idStr = formFull_IdList[i];
-			var matchKeyStr = '$$(' + idStr + ')';
+			// Replace 'this' first.
+			evalCondition = Util.replaceAll( evalCondition, '$$(this)', tagVal );
 
-			var tag = me.getMatchingInputTag( formDivSecTag, idStr );
+			// Replace other tag val cases.
+			for ( var i = 0; i < formFull_IdList.length; i++ )
+			{
+				var idStr = formFull_IdList[i];
+				var matchKeyStr = '$$(' + idStr + ')';
 
-			evalCondition = Util.replaceAll( evalCondition, matchKeyStr, tag.val() );
+				var tag = me.getMatchingInputTag( formDivSecTag, idStr );
+
+				evalCondition = Util.replaceAll( evalCondition, matchKeyStr, tag.val() );
+			}
+		}
+		catch ( errMsg )
+		{
+			console.log( 'ERROR in BlockForm.conditionVarIdToVal(), errMsg: ' + errMsg );
 		}
 
 		return evalCondition;
@@ -1553,6 +1729,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 					//console.customLog( 'show by condition: id/name: ' + idStr );
 
+					// CASE: 
+					// When a parent tag changes values, it runs the 'evalActions'
+					// But, if a value is set on children ones ('show:[--]') (previously or by pass value popoulation)
+					// That child's evalAction 'show'/'hide' should also be performed since data is selected/inputted.
+					// Below 'performChildTagEvalActions' do that.
+
 					// target inputs subsequent show/hide
 					// Due to parent tag initializing show hide of same target
 					// Perform this a bit after time delay
@@ -1561,6 +1743,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				else 
 				{
 					targetInputDivTag.hide();
+					me.performChildTagEvalActions( idStr, targetInputTag, formDivSecTag, formFull_IdList );
 				}  
 			}
 		}

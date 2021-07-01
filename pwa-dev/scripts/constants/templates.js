@@ -68,7 +68,7 @@ Templates.inputFieldYear = `
     <div class="modalSymbol">
       <div class="dialog__title">
         <input type="text" class="searchSymbol">
-        <span class="closeSearchSymbol">ï¿½</span>
+        <span class="closeSearchSymbol">ï¿?/span>
       </div>
       <div class="container--optionsSymbol checkbox">
         <ul class="optionsSymbol">

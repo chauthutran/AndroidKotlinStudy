@@ -492,6 +492,7 @@ function Action( cwsRenderObj, blockObj )
 
 		//var INFOmethod = actionExpObj.expressionNew || actionExpObj.expression.indexOf( 'INFO.' ) >= 0; /* old method does inline value replacement */
 
+		// 'expressionNew' is used in 'test' 'dc_pwa@CI@vT.json' & 'ZW2'
 		if ( actionExpObj.expressionNew ) me.runNewEvaluateExpression( actionExpObj, jsonList );
 		else
 		{

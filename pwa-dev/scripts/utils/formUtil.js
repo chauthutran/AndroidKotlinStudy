@@ -1061,7 +1061,7 @@ FormUtil.getTagVal = function( tag, option )
 		}
 		else
 		{
-			val = tag.val();
+			val = Util.trim( tag.val() ); // Trim the white space front/back of input value
 			//if ( val && option === 'removeDBQuote' ) val = val.replace(/"/g, '' );
 		}
 	}

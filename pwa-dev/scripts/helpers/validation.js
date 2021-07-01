@@ -69,18 +69,31 @@ Validation.checkValidations = function( tag )
             Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
             Validation.performValidationCheck( tag, 'pickerDateRange', divErrorMsgTargetTag );
             Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+
+            // Default Universal checks..
+            Validation.performValidationCheck( tag, 'doubleQuote', divErrorMsgTargetTag, true );
         }
 
         // If not valid, set the background color.
         valid = ( tag.attr( 'valid' ) == 'true' );
-        divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : Validation.COLOR_WARNING );
+
+        if ( valid )
+        {
+            divFieldBlockTag.css( 'background-color', '' );
+        }
+        else
+        {
+            divFieldBlockTag.css( 'background-color', Validation.COLOR_WARNING );
+        }
+        // Previously - divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : Validation.COLOR_WARNING );
+        // .divInputReadOnly {
     }
 
     return valid;
 };
 
 
-Validation.performValidationCheck = function( tag, type, divTag )
+Validation.performValidationCheck = function( tag, type, divTag, alwaysRun )
 {
     // check the type of validation (if exists in the tag attribute)
     // , and if not valid, set the tag as '"valid"=false' in the attribute
@@ -88,7 +101,7 @@ Validation.performValidationCheck = function( tag, type, divTag )
     var validationAttr = tag.attr( type );
 
     // If the validation attribute is present in the tag and not empty string or set to false
-    if ( validationAttr && validationAttr !== 'false' )
+    if ( ( validationAttr && validationAttr !== 'false' ) || alwaysRun )
     {
         var prev_valid = ( tag.attr( 'valid' ) === 'true' );
 
@@ -104,6 +117,8 @@ Validation.performValidationCheck = function( tag, type, divTag )
         else if ( type == 'dateRange' ) valid = Validation.checkDateRange( tag, divTag, type, validationAttr, prev_valid );
         else if ( type == 'pickerDateRange' ) valid = Validation.checkValue_pickerDateRange( tag, divTag, type, prev_valid );
         else if ( type == 'patterns' ) valid = Validation.checkValue_RegxRules( tag, divTag, type );
+
+        else if ( type == 'doubleQuote' ) valid = Validation.checkValue_DoubleQuote( tag, divTag, type );
 
         if ( !valid ) tag.attr( 'valid', false );
     }
@@ -400,6 +415,23 @@ Validation.checkValue_RegxRules = function( inputTag, divTag, type )
 
     return valid;
 }
+
+
+Validation.checkValue_DoubleQuote = function( inputTag, divTag, type )
+{
+    var valid = true;
+    var value = inputTag.val();
+
+    if ( value && value.indexOf( '"' ) >= 0 )
+    {
+        var message = Validation.getMessage( type, 'Please do not enter double quote in value' );
+        divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
+        
+        valid = false;
+    }
+    
+    return valid;		
+};
 
 
 Validation.phoneNumberValidation = function( phoneVal )

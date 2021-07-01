@@ -270,6 +270,7 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
 
 	try
 	{
+		// Handle array into string joining
 		inputVal = Util.getEvalStr( inputVal );
 
 		if ( inputVal )
@@ -971,7 +972,8 @@ Util.searchByName = function( array, propertyName, value )
 
 Util.trim = function( input )
 {
-	return input.replace( /^\s+|\s+$/gm, '' );
+	if ( Util.isTypeString( input ) ) return input.replace( /^\s+|\s+$/gm, '' );
+	else return input;
 };
 
 Util.trimTags = function( tags )
