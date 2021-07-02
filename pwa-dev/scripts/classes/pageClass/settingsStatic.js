@@ -90,6 +90,7 @@ SettingsStatic.showMsg = function( returnMsg, errCase )
     }
     catch( errMsg )
     {
+        console.customLog( returnMsg );
         console.customLog( 'ERROR in SettingsStatic.showMsg, errMsg: ' + errMsg );
     }
 };

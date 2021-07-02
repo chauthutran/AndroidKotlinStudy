@@ -378,6 +378,7 @@ DevHelper.fixOpt_0429_coord = function()
     return DevHelper.fixOpt_Common( fixOptName, searchFailMsg );
 };
 
+
 DevHelper.fixOpt_Common = function( fixOptName, searchFailMsg )
 {
     var statusFailed = Constants.status_failed;
