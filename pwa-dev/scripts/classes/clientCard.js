@@ -438,15 +438,44 @@ function ClientCard( clientId, options )
         var arrDetails = [];
     
         // #1 clientDetails properties = key
-        for ( var key in clientJson.clientDetails ) 
-        {
-            arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientJson.clientDetails[ key ] ) } );
-        }
+        //for ( var key in clientJson.clientDetails ) 
+        //{
+        //    arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientJson.clientDetails[ key ] ) } );
+        //}
+        
+        var passedData = {
+            "displayData": [
+                { id: "clientId", value: clientJson._id },
+                { id: "firstName", value: clientJson.clientDetails.firstName }            
+            ]
+        };
+        //{displayName: "clientId", id: "clientId", value: "DQSkqOyVj3r", entity: "c"}
+        //1: {displayName: "CwS - STD - #Last name", id: "RsvOTmR2DjO", value: "Chang", entity: "c"}
 
+        
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
         var titleTag = $( '<label term="clientDetail_details_title">clientDetails:</label>' );
 
-        clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //clientListPreviewTable
+        // Get client Profile Block defition from config.
+        var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
+
+        if ( clientProfileBlockId ) 
+        {        
+			//var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
+            var clientProfileBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks[ clientProfileBlockId ];
+
+            if ( clientProfileBlock_DefJson )
+            {            
+                /// var startBlockObj = new Block( me, , selectedArea.startBlockName, me.pageDivTag );
+            
+                // blockPassingData <-- rearrange clientJson.clientDetails
+
+                var clientProfileBlock = new Block( SessionManager.cwsRenderObj, clientProfileBlock_DefJson, clientProfileBlockId, clientDetailsTabTag, passedData );
+                clientProfileBlock.render();    
+            }
+        }
+
+        //clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //clientListPreviewTable
     
 
         // #2. payload Preview
