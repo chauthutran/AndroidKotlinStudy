@@ -267,8 +267,8 @@ function DataList( cwsRenderObj, blockObj )
     {
         var groupDivTag = $("<div groupVal='" + groupValue + "' class='divGroupByValue'/>");
 
-        var divGroupByTitleTag = me.getGroupByTitleTag_WtToggle();
-        divGroupByTitleTag.find( '.groupByFieldName' ).append(  "<span term='" + Util.getStr( groupDataConfig.nameConfig.term ) + "'>" 
+        var divGroupByTitleTag = me.getGroupByValueTag_WtToggle();
+        divGroupByTitleTag.find( '.groupByFieldValue' ).append(  "<span term='" + Util.getStr( groupDataConfig.nameConfig.term ) + "'>" 
             + Util.getStr( me.getNameOfGroupValue( groupValue ) )
             + "</span>: <strong class=''>" + dataList.length + "</strong>" );
 
@@ -325,6 +325,15 @@ function DataList( cwsRenderObj, blockObj )
         return divTag;
     };
 
+    me.getGroupByValueTag_WtToggle = function()
+    {
+        var divTag = $( '<div class="divGroupByValueTitle"></div>' );
+
+        divTag.append( "<div class='imgGrpByIcon imggroupByExpanded' style='display: inline-block; vertical-align: top;'></div>" );
+        divTag.append( "<div class='groupByFieldValue' style='display: inline-block; vertical-align: text-bottom;'></div>");
+
+        return divTag;
+    };
 
     me.createDataItemTableRow = function( displayedAttributeList, blockJson, groupConfig, dataItem )
     {
