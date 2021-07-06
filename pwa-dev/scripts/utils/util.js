@@ -1700,10 +1700,14 @@ Util.dateStr = function( formatType, inputDate )
 	var date = ( inputDate ) ? inputDate: new Date();
 	var formatPattern = Util.dateType1;
 
-	if ( formatType === 'D' || formatType === 'DATE' ) formatPattern = Util.dateType_DATE;
-	if ( formatType === 'DT' || formatType === 'DATETIME' ) formatPattern = Util.dateType_DATETIME;
-
-	return $.format.date( date, formatPattern );
+	if ( formatType )
+	{
+		if ( formatType === 'D' || formatType === 'DATE' ) formatPattern = Util.dateType_DATE;
+		else if ( formatType === 'DT' || formatType === 'DATETIME' ) formatPattern = Util.dateType_DATETIME;
+		else formatPattern = formatType;
+	}
+	
+	return Util.formatDate( date, formatPattern );
 };
 
 
@@ -1725,6 +1729,7 @@ Util.getDateTimeStr = function()
 // ===============================================
 
 
+// Main Eventual date format method others calls at the end.
 Util.formatDate = function( date, formatPattern )
 {
 	var outDateStr = '';

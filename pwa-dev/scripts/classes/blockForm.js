@@ -581,8 +581,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		optionInputTag.attr( 'value', optionConfig.value ); // Use to fill the selected option value to input.dataValue
 		optionInputTag.prop( "checked", isChecked );
 
+		var labelTermId;
+		if ( optionConfig.poTerm ) labelTermId = optionConfig.poTerm;
+		else if ( optionConfig.term ) labelTermId = optionConfig.term;
+
 		var labelTag = optionDivTag.find( 'label' );
-		var labelTerm = TranslationManager.translateText( optionConfig.defaultName, optionConfig.poTerm );
+		var labelTerm = TranslationManager.translateText( optionConfig.defaultName, labelTermId );
 		labelTag.attr( 'for', 'opt_' + targetId + '_' + optionConfig.value );
 		labelTag.text( labelTerm );
 

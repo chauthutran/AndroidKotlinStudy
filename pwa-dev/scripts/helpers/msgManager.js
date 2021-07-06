@@ -348,13 +348,13 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, titleTag, call
         var btnRow = $( '<div style="height:90px;text-align:center;margin-top:30px;" />' );
         var btnConfirm = $( `<div class="button primary button-full_width">
                                 <div class="button__container">
-                                    <div class="button-label">Confirm</div>
+                                    <div class="button-label" term="payloadPreview_btnConfirm">Confirm</div>
                                 </div>
                             </div>` );
         
         var btnDecline = $( `<div class="button alert button-full_width">
                                 <div class="button__container">
-                                    <div class="button-label">Cancel</div>
+                                    <div class="button-label" term="payloadPreview_btnCancel">Cancel</div>
                                 </div>
                             </div>` );
 
