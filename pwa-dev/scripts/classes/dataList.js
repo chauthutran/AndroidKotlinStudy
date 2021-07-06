@@ -367,14 +367,14 @@ function DataList( cwsRenderObj, blockObj )
 
                     divTag.append("<label class='titleLabel' term='" + fieldObj.term + "'>" + me.getNameOfDataItemField( data ) + "</label>" );
                     divTag.append("<span fieldid='" + data.id + "'>: " + data.value + "</span></div>");
-                    
+
                     dataColTag.append( divTag );
 
                     if ( dataLineCount === 0 ) divTag.css( 'margin-top', '8px' );
 
                     dataLineCount++;
                 }
-            }            
+            }
         }
        
 
@@ -449,7 +449,9 @@ function DataList( cwsRenderObj, blockObj )
 
     me.getNameOfDataItemField = function( objFieldData )
     {
-        return me.resolveDefinitionFieldItem( objFieldData ).name;
+        var ObjData = me.resolveDefinitionFieldItem( objFieldData );
+        if ( ObjData.name !== undefined ) return ObjData.name;
+        else if ( ObjData.id !== undefined ) return ObjData.id;
     }
 
 
