@@ -267,8 +267,8 @@ function DataList( cwsRenderObj, blockObj )
     {
         var groupDivTag = $("<div groupVal='" + groupValue + "' class='divGroupByValue'/>");
 
-        var divGroupByTitleTag = me.getGroupByTitleTag_WtToggle();
-        divGroupByTitleTag.find( '.groupByFieldName' ).append(  "<span term='" + Util.getStr( groupDataConfig.nameConfig.term ) + "'>" 
+        var divGroupByTitleTag = me.getGroupByValueTag_WtToggle();
+        divGroupByTitleTag.find( '.groupByFieldValue' ).append(  "<span term='" + Util.getStr( groupDataConfig.nameConfig.term ) + "'>" 
             + Util.getStr( me.getNameOfGroupValue( groupValue ) )
             + "</span>: <strong class=''>" + dataList.length + "</strong>" );
 
@@ -325,6 +325,15 @@ function DataList( cwsRenderObj, blockObj )
         return divTag;
     };
 
+    me.getGroupByValueTag_WtToggle = function()
+    {
+        var divTag = $( '<div class="divGroupByValueTitle"></div>' );
+
+        divTag.append( "<div class='imgGrpByIcon imggroupByExpanded' style='display: inline-block; vertical-align: top;'></div>" );
+        divTag.append( "<div class='groupByFieldValue' style='display: inline-block; vertical-align: text-bottom;'></div>");
+
+        return divTag;
+    };
 
     me.createDataItemTableRow = function( displayedAttributeList, blockJson, groupConfig, dataItem )
     {
@@ -367,14 +376,14 @@ function DataList( cwsRenderObj, blockObj )
 
                     divTag.append("<label class='titleLabel' term='" + fieldObj.term + "'>" + me.getNameOfDataItemField( data ) + "</label>" );
                     divTag.append("<span fieldid='" + data.id + "'>: " + data.value + "</span></div>");
-                    
+
                     dataColTag.append( divTag );
 
                     if ( dataLineCount === 0 ) divTag.css( 'margin-top', '8px' );
 
                     dataLineCount++;
                 }
-            }            
+            }
         }
        
 
@@ -437,20 +446,21 @@ function DataList( cwsRenderObj, blockObj )
         }
 
         return divTag;
-    }
+    };
 
     
     me.getNameOfGroupValue = function( groupValue )
     {
         var name = me.getGroupValueTranslationInfo( groupValue ).defaultName;
 		return ( name == undefined ) ? groupValue : name;
-    }
+    };
 
 
     me.getNameOfDataItemField = function( objFieldData )
     {
-        return me.resolveDefinitionFieldItem( objFieldData ).name;
-    }
+        //var ObjData = me.resolveDefinitionFieldItem( objFieldData );
+        return ( objFieldData.displayName ) ? objFieldData.displayName : objFieldData.id;
+    };
 
 
     me.resolveDefinitionFieldItem = function( objFieldData )
