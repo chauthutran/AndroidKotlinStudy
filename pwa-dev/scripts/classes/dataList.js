@@ -446,22 +446,21 @@ function DataList( cwsRenderObj, blockObj )
         }
 
         return divTag;
-    }
+    };
 
     
     me.getNameOfGroupValue = function( groupValue )
     {
         var name = me.getGroupValueTranslationInfo( groupValue ).defaultName;
 		return ( name == undefined ) ? groupValue : name;
-    }
+    };
 
 
     me.getNameOfDataItemField = function( objFieldData )
     {
-        var ObjData = me.resolveDefinitionFieldItem( objFieldData );
-        if ( ObjData.name !== undefined ) return ObjData.name;
-        else if ( ObjData.id !== undefined ) return ObjData.id;
-    }
+        //var ObjData = me.resolveDefinitionFieldItem( objFieldData );
+        return ( objFieldData.displayName ) ? objFieldData.displayName : objFieldData.id;
+    };
 
 
     me.resolveDefinitionFieldItem = function( objFieldData )

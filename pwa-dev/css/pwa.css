@@ -757,14 +757,15 @@ img.rotateImg {
 .groupByFieldName, .groupByFieldValue
 {
   color: #50555a;
-  padding: 0 0 0 4px;
-  font-size: calc(12px + 0.2vw);
+  padding: 3px 0 0 4px;
 }
 .groupByFieldName span {
   font-weight: 600;
+  font-size: calc(12px + 0.4vw);
 }
 .groupByFieldValue span {
   font-weight: 400;
+  font-size: calc(12px + 0.2vw);
 }
 
 .imggroupByExpanded
