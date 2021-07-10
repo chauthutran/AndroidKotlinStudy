@@ -458,7 +458,7 @@ SyncManagerNew.SyncMsg_Reset = function()
 // Gets called by 'SyncMsg_Reset' & if this is empty.. (by 'SyncMsg_Get')
 SyncManagerNew.SyncMsg_SetAsNew = function()
 {
-    SyncManagerNew.syncMsgJson = Util.getJsonDeepCopy( SyncManagerNew.template_SyncMsgJson );
+    SyncManagerNew.syncMsgJson = Util.cloneJson( SyncManagerNew.template_SyncMsgJson );
 };
 
 SyncManagerNew.SyncMsg_Get = function()

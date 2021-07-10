@@ -352,7 +352,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
 
         // CONVERT 'searchValues'/'captureValues' structure ==> 'captureValues.processing': { 'searchValues' }
-        activityJson = payload.captureValues; // Util.getJsonDeepCopy( payload.captureValues );
+        activityJson = payload.captureValues; // Util.cloneJson( payload.captureValues );
         // FAILED TO GENERATE - ERROR MESSAGE..
         if ( !activityJson ) throw 'payload captureValues not exists!';
         
@@ -454,7 +454,7 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
     else
     {
         // 'activity' are not in 'search/capture' structure.  Change it to that structure.
-        var activityJson_Copy = Util.getJsonDeepCopy( activityJson );
+        var activityJson_Copy = Util.cloneJson( activityJson );
         delete activityJson_Copy.processing;
         
         payloadJson.payload = {
@@ -517,7 +517,7 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
 
     if ( prev_ProcessingInfo )
     {
-        processingInfo = Util.getJsonDeepCopy( prev_ProcessingInfo );
+        processingInfo = Util.cloneJson( prev_ProcessingInfo );
         delete processingInfo.form;
     }
     else
@@ -552,12 +552,12 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
         {
             // Update the 'processing' data with 'status' & 'history'
             activity.processing.status = newProcessingInfo.status;
-            Util.appendArray( activity.processing.history, Util.getJsonDeepCopy( newProcessingInfo.history ) );
+            Util.appendArray( activity.processing.history, Util.cloneJson( newProcessingInfo.history ) );
         }
         else
         {
             // Create New 'processing' data.
-            activity.processing = Util.getJsonDeepCopy( newProcessingInfo );
+            activity.processing = Util.cloneJson( newProcessingInfo );
 
             // update the 'created' as mongoDB one if exists..            
             if ( activity.date ) ActivityDataManager.updateProcessing_CreatedDate( activity );

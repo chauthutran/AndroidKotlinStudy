@@ -58,18 +58,20 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
         {
             ConfigManager.configJson_Original = configJson; 
     
-            ConfigManager.configJson = Util.getJsonDeepCopy( ConfigManager.configJson_Original );
+            ConfigManager.configJson = Util.cloneJson( ConfigManager.configJson_Original );
         
             ConfigManager.applyDefaults( ConfigManager.configJson, ConfigManager.defaultJsonList );
 
             ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles( ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData, userRolesOverrides );
 
+            // If 'sourceType_userRole' exists, override 'sourceType' by userRole
+            ConfigManager.setSourceType_ByUserRole( ConfigManager.configJson, ConfigManager.login_UserRoles );
+
             // Filter some list in config by 'sourceType' / 'userRole'
             ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
             ConfigManager.applyFilter_UserRole( ConfigManager.configJson
-                , [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
-                // 'definitionActivityListViews'
-
+                , [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ]
+                , ConfigManager.login_UserRoles );
 
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
         }
@@ -80,6 +82,31 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
     }
 };
 
+
+// ----------------------------------------------------
+
+ConfigManager.setSourceType_ByUserRole = function( configJson, login_UserRoles )
+{
+    var itemList = configJson.souceType_UserRole;
+
+    if ( itemList && login_UserRoles )
+    {
+        // Ex. "sourceType_UserRole": [ { "type": "dhis2", "userRoles": ["dhis2"] }, { "type": "mongo", "userRoles": ["mongo"] } ],
+        if ( Util.isTypeArray( itemList ) && itemList.length > 0 && login_UserRoles.length > 0 )
+        {
+            var filteredList = ConfigManager.filterListByUserRoles( itemList, false, login_UserRoles );
+            
+            if ( filteredList.length > 0 )
+            {
+                var lastListType = filteredList[ filteredList.length - 1 ].type;
+                if ( lastListType ) {
+                    configJson.sourceType = lastListType;
+                    console.log( 'sourceType set by userRole.  sourceType: ' + lastListType );
+                }
+            }
+        }
+    }
+};
 
 ConfigManager.applyFilter_SourceType = function( configJson )
 {
@@ -95,11 +122,11 @@ ConfigManager.applyFilter_SourceType = function( configJson )
 };
 
 // Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
-ConfigManager.applyFilter_UserRole = function( configJson, arrList, objList )
+ConfigManager.applyFilter_UserRole = function( configJson, arrList, loginUserRoles )
 {
     try
     {
-        if ( arrList )
+        if ( arrList && loginUserRoles )
         {
             arrList.forEach( defName => 
             { 
@@ -114,7 +141,7 @@ ConfigManager.applyFilter_UserRole = function( configJson, arrList, objList )
                     if ( Util.isTypeArray( defList ) )
                     {
                         // Type1. list: [ { .. userRoles[ ipc ] }, {} ]
-                        ConfigManager.filterListByUserRoles( defList, true );
+                        ConfigManager.filterListByUserRoles( defList, true, loginUserRoles );
                     }
                     else if ( Util.isTypeObject( defList ) )
                     {
@@ -125,12 +152,12 @@ ConfigManager.applyFilter_UserRole = function( configJson, arrList, objList )
                             if ( Util.isTypeArray( itemObj ) )
                             {
                                 // Type2. obj: { item: [ { .. userRoles[ ipc ] }, {} ], [...], .. }
-                                ConfigManager.filterListByUserRoles( itemObj, true );
+                                ConfigManager.filterListByUserRoles( itemObj, true, loginUserRoles );
                             }
                             else if ( Util.isTypeObject( itemObj ) )
                             {
                                 // Type3. obj: { { .. userRoles[ ipc ] }, {} }
-                                defList[key] = ConfigManager.filterObjsByUserRoles( itemObj );
+                                defList[key] = ConfigManager.filterObjsByUserRoles( itemObj, loginUserRoles );
                             }
                         });
                     }
@@ -175,7 +202,7 @@ ConfigManager.getAreaListByStatus = function( bOnline, callBack )
     var configJson = ConfigManager.getConfigJson();
     var areaList = ( bOnline ) ? configJson.areas.online : configJson.areas.offline;
 
-    if ( callBack ) callBack( Util.getJsonDeepCopy( areaList ) );
+    if ( callBack ) callBack( Util.cloneJson( areaList ) );
 };
 
 // Use this to define the login_userRoles array list.
@@ -441,7 +468,7 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
 
         if ( syncDownList )
         {
-            // 1. filter by 'sourceType'..
+            // 1. filter by 'sourceType'.. if list has sourceType
             if ( configJson.sourceType )
             {
                 var syncDownList_New = [];
@@ -502,7 +529,7 @@ ConfigManager.getSyncDownSearchBodyEvaluated = function()
 
     if ( searchBodyEval )
     {
-        searchBodyJson = Util.getJsonDeepCopy( searchBodyEval );
+        searchBodyJson = Util.cloneJson( searchBodyEval );
 
         Util.traverseEval( searchBodyJson, InfoDataManager.getINFO(), 0, 50 );
     }
@@ -697,9 +724,8 @@ ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
 };
 
 
-ConfigManager.filterListByUserRoles = function( itemList, bChangeToList )
+ConfigManager.filterListByUserRoles = function( itemList, bChangeToList, loginUserRoles )
 {
-    var loginUserRoles = ConfigManager.login_UserRoles;
     var outList = [];
 
     if ( Util.isTypeArray( itemList ) )
@@ -709,17 +735,20 @@ ConfigManager.filterListByUserRoles = function( itemList, bChangeToList )
             // If userRoles exists in item def, filter against loginUserRoles
             if ( item.userRoles ) 
             {
-                var itemAdded = false;
-                item.userRoles.forEach( roleId => 
+                if ( Util.isTypeArray( item.userRoles ) )
                 {
-                    if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
-                    { 
-                        itemAdded = true; // User instead of 'break'
-                        outList.push( item ); 
-                    }
-                });            
+                    var itemAdded = false;
+                    item.userRoles.forEach( roleId => 
+                    {
+                        if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
+                        { 
+                            itemAdded = true; // User instead of 'break'
+                            outList.push( item ); 
+                        }
+                    });
+                }
             }
-            else outList.push( item );
+            else outList.push( item );  // If itemObj does not have 'userRoles' property, do not filter it!!
         });
 
         // Optional - Change the original list (while keeping the reference)
@@ -730,9 +759,8 @@ ConfigManager.filterListByUserRoles = function( itemList, bChangeToList )
 };
 
 
-ConfigManager.filterObjsByUserRoles = function( itemObj )
+ConfigManager.filterObjsByUserRoles = function( itemObj, loginUserRoles )
 {
-    var loginUserRoles = ConfigManager.login_UserRoles;
     var newItemObj = {};
 
     if ( Util.isTypeObject( itemObj ) )
@@ -779,17 +807,17 @@ ConfigManager.applyDefault_syncRelated = function( configJson, defaultSync )
 {
     if ( defaultSync )
     {
-        var mergeDest_Sync = Util.getJsonDeepCopy( defaultSync );
-        Util.mergeDeep( mergeDest_Sync, Util.getJsonDeepCopy( configJson.settings.sync ), { 'arrOverwrite': true } );
+        var mergeDest_Sync = Util.cloneJson( defaultSync );
+        Util.mergeDeep( mergeDest_Sync, Util.cloneJson( configJson.settings.sync ), { 'arrOverwrite': true } );
         // merge array, 'syncDown' - if 'syncDown' exists, simply overwrite the default?
 
-        configJson.settings.sync = Util.getJsonDeepCopy( mergeDest_Sync );
+        configJson.settings.sync = Util.cloneJson( mergeDest_Sync );
 
         /*
         if ( defaultSync.networkSync && !configJson.settings.sync.networkSync ) configJson.settings.sync.networkSync = defaultSync.networkSync;
-        if ( defaultSync.syncUp && !configJson.settings.sync.syncUp ) configJson.settings.sync.syncUp = Util.getJsonDeepCopy( defaultSync.syncUp );
-        if ( defaultSync.syncDown && !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.getJsonDeepCopy( defaultSync.syncDown );
-        if ( defaultSync.syncAll && !configJson.settings.sync.syncAll ) configJson.settings.sync.syncAll = Util.getJsonDeepCopy( defaultSync.syncAll );    
+        if ( defaultSync.syncUp && !configJson.settings.sync.syncUp ) configJson.settings.sync.syncUp = Util.cloneJson( defaultSync.syncUp );
+        if ( defaultSync.syncDown && !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.cloneJson( defaultSync.syncDown );
+        if ( defaultSync.syncAll && !configJson.settings.sync.syncAll ) configJson.settings.sync.syncAll = Util.cloneJson( defaultSync.syncAll );    
         */
     }
 };
@@ -798,7 +826,7 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
 {
    if ( favListJson )
    {
-      if ( !configJson.favList ) configJson.favList = Util.getJsonDeepCopy( favListJson );
+      if ( !configJson.favList ) configJson.favList = Util.cloneJson( favListJson );
    }
 };
 

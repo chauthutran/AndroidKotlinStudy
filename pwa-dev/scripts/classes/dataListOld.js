@@ -430,7 +430,7 @@ function DataList( cwsRenderObj, blockObj )
                     }
                     else {
                         // Readjust json for passing
-                        var passedData = Util.getJsonDeepCopy(me.jsonListData);
+                        var passedData = Util.cloneJson(me.jsonListData);
                         passedData.displayData = itemAttrDataList;
                         passedData.resultData = {};
 

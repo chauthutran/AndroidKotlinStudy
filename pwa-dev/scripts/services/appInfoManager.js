@@ -172,16 +172,16 @@ AppInfoManager.loadAppInfo = function()
 
     if ( !appInfo )
     {
-        appInfo = Util.getJsonDeepCopy( AppInfoManager.template );
+        appInfo = Util.cloneJson( AppInfoManager.template );
     }
     else
     {
         // On Local Storage data, check the missing data.
         // Set minial structure - 'translation' and 'sync' shell should always exists..
-        if ( !appInfo.translation ) appInfo.translation = Util.getJsonDeepCopy( AppInfoManager.template.translation );
-        if ( !appInfo.sync ) appInfo.sync = Util.getJsonDeepCopy( AppInfoManager.template.sync );
-        if ( !appInfo.logInOut ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.template.logInOut );
-        if ( !appInfo.userInfo ) appInfo.logInOut = Util.getJsonDeepCopy( AppInfoManager.template.userInfo );
+        if ( !appInfo.translation ) appInfo.translation = Util.cloneJson( AppInfoManager.template.translation );
+        if ( !appInfo.sync ) appInfo.sync = Util.cloneJson( AppInfoManager.template.sync );
+        if ( !appInfo.logInOut ) appInfo.logInOut = Util.cloneJson( AppInfoManager.template.logInOut );
+        if ( !appInfo.userInfo ) appInfo.logInOut = Util.cloneJson( AppInfoManager.template.userInfo );
     }
 
     return appInfo;
@@ -355,7 +355,7 @@ AppInfoManager.createUpdateUserInfo = function( userName )
     
     // UNDERSTAND ABOUT 'userName' saving & use, but... what about lastUpdated, etc?
     // All others should move some place else?
-    if ( !userInfo ) userInfo = Util.getJsonDeepCopy( AppInfoManager.template.userInfo );
+    if ( !userInfo ) userInfo = Util.cloneJson( AppInfoManager.template.userInfo );
         
     userInfo.user = userName;
     

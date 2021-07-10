@@ -7,7 +7,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
     me.cwsRenderObj = cwsRenderObj;
 
 	me.blockType = ( blockDefJson ) ? blockDefJson.blockType : undefined;
-	me.blockDefJson =  Util.getJsonDeepCopy( blockDefJson );  // Make a deep copy so that changes to blockDefJson does not affect original config
+	me.blockDefJson =  Util.cloneJson( blockDefJson );  // Make a deep copy so that changes to blockDefJson does not affect original config
 	me.blockId = blockId;	// TODO: Should be 'blockName' but since used in config as 'blockId', need to replace together..
 	// TODO: CHANGE ABOVE 'blockId' with Greg
 

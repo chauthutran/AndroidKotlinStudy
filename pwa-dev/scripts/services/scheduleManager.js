@@ -295,7 +295,7 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 	// Only if not already in list, create and run it..
 	if ( syncActionJson && !activityActionJson )
 	{
-		var newActivityActionJson = Util.getJsonDeepCopy( syncActionJson );
+		var newActivityActionJson = Util.cloneJson( syncActionJson );
 		newActivityActionJson.activityId = activityId;
 		newActivityActionJson.tryCount = 0;
 		newActivityActionJson.syncIntervalTimeMs = Util.getTimeMs( syncActionJson.syncInterval, ScheduleManager.syncUpResponseAction_DefaultIntervalTime );
@@ -362,7 +362,7 @@ ScheduleManager.syncUpResponseAction_ScheduleFinish = function( activityActionJs
 		clearInterval( activityActionJson.intervalRef );
 		
 		// 2. add to history one (make a copy)
-		ScheduleManager.syncUpResponseActionList_History.push( Util.getJsonDeepCopy( activityActionJson ) );	
+		ScheduleManager.syncUpResponseActionList_History.push( Util.cloneJson( activityActionJson ) );	
 		
 		// 3. remove the item
 		delete ScheduleManager.syncUpResponseActionList[ activityId ];	

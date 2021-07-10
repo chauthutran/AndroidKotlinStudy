@@ -112,7 +112,7 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 {
 	try
 	{
-		var newSaveObj = Util.getJsonDeepCopy( loginData );
+		var newSaveObj = Util.cloneJson( loginData );
 
 		var dtmNow = ( new Date() ).toISOString();
 		

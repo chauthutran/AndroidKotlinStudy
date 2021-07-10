@@ -229,7 +229,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
                         if ( clientDateCheckPass )
                         {
                             // Get activities in dwClient that does not exists...
-                            var addedActivities = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.getJsonDeepCopy( processingInfo ), downloadedData );
+                            var addedActivities = ActivityDataManager.mergeDownloadedActivities( dwClient.activities, appClient.activities, appClient, Util.cloneJson( processingInfo ), downloadedData );
 
                             if ( case_dhis2RedeemMerge )
                             {
@@ -327,7 +327,7 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, pr
 ClientDataManager.createActivityPayloadClient = function( activity )
 {
     // Call it from template?
-    var acitivityPayloadClient = Util.getJsonDeepCopy( ClientDataManager.template_Client );
+    var acitivityPayloadClient = Util.cloneJson( ClientDataManager.template_Client );
 
     acitivityPayloadClient._id = ClientDataManager.tempClientNamePre + activity.id;
     acitivityPayloadClient.clientDetails = ActivityDataManager.getData_FromTrans( activity, "clientDetails" );

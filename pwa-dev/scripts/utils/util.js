@@ -206,7 +206,12 @@ Util.getNumber = function( n )
 // ----------------------------------
 
 // ----------------------------------
-// JSON Deep Copy Related
+// JSON Copy Related
+
+Util.cloneJson = function( jsonObj )
+{
+	return Util.getJsonDeepCopy( jsonObj );
+};
 
 // Handles both object and array
 Util.getJsonDeepCopy = function( jsonObj )
@@ -227,12 +232,39 @@ Util.getJsonDeepCopy = function( jsonObj )
 	return newJsonObj;
 };
 
-Util.cloneJson = function( jsonObj )
+
+Util.copyProperties = function( source, dest )
 {
-	return Util.getJsonDeepCopy( jsonObj );
+	for ( var key in source )
+	{
+		dest[ key ] = source[ key ];
+	}
 };
-// JSON Deep Copy Related
-// ----------------------------------
+
+/*
+Util.cloneArray = function( dataArray, callBack ) 
+{
+	if ( Util.isTypeArray( dataArray ) ) 
+	{
+		try {
+			var retArr = []; //[...dataArray]
+
+			for (i = 0; i < dataArray.length; i++) {
+				retArr.push(dataArray[i]);
+			}
+
+			if (callBack) callBack(retArr)
+			else return retArr;
+		} catch (errMsg) {
+			console.log('ERROR in Util.cloneArray(): ' + errMsg);
+			callBack();
+		}
+	} else {
+		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
+	}
+
+};
+*/
 
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods
@@ -563,7 +595,7 @@ Util.jsonKeyReplace = function( obj, key, keyListSet )
 
 		// get the value/object set from 'key' before deleting the key.
 		obj[ keyNew ] = origVal;
-		//( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.getJsonDeepCopy( origVal ) : origVal;
+		//( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.cloneJson( origVal ) : origVal;
 
 		delete obj[ key ];
 	}
@@ -782,7 +814,7 @@ Util.dotNotation = function ( dest, obj, parentObjName )
 
 Util.getPathObj = function( obj, pathArr )
 {
-    var tempObj = Util.getJsonDeepCopy( obj );
+    var tempObj = Util.cloneJson( obj );
 
     for ( var i = 0; i < pathArr.length; i++ )
     {
@@ -1372,35 +1404,12 @@ Util.setUrlParam = function( url, paramKey, paramVal )
 
 // --------------------------------------------
 
-Util.copyProperties = function( source, dest, option )
-{
-	try
-	{
-		var exceptions = ( option && option.exceptions && Util.isTypeObject( option.exceptions ) ) ? option.exceptions : {};
-		var consoleLog = ( option && option.consoleLog ) ? option.consoleLog: false;
-
-		for ( var key in source )
-		{
-			if ( consoleLog ) console.log( 'key: ' + key );
-
-			if ( exceptions[ key ] ) { console.log( 'exceptioned' ); }
-			else dest[ key ] = source[ key ];
-		}	
-	}
-	catch( errMsg ) 
-	{
-		console.log( 'ERROR in Util.copyProperties, errMsg: ' + errMsg );
-	}
-};
-
 Util.getObjPropertyCount = function( list )
 {
 	var count = 0;
 
-	for ( var prop in list )
-	{
-		count++;
-	}
+	for ( var prop in list ) { count++; }
+	//var len = Object.keys(obj).length;
 
 	return count;
 };
@@ -2019,28 +2028,6 @@ Util.getDateSeparator = function (formatDate) {
 Util.numberWithCommas = function (x) {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
-
-Util.cloneArray = function (dataArray, callBack) {
-	if (Util.isTypeArray(dataArray)) {
-		try {
-			var retArr = []; //[...dataArray]
-
-			for (i = 0; i < dataArray.length; i++) {
-				retArr.push(dataArray[i]);
-			}
-
-			if (callBack) callBack(retArr)
-			else return retArr;
-		} catch (errMsg) {
-			console.log('ERROR in Util.cloneArray(): ' + errMsg);
-			callBack();
-		}
-	} else {
-		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
-	}
-
-};
 
 // -----------------------------------------------------------------
 

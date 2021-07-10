@@ -866,7 +866,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var arrNoGroup = [];
 
 		// 1. copy the array..
-		var newArr = Util.getJsonDeepCopy( formJsonArr );
+		var newArr = Util.cloneJson( formJsonArr );
 
 		// 2. loop each form control and create formGroup...  even none ones...
 		newArr.forEach( frmCtrl => 

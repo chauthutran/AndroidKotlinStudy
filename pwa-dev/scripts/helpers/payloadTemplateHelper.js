@@ -55,7 +55,7 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
             {
                 var payloadJson = payloadTemplateDefs[ payloadTemplate ];
 
-                if ( payloadJson ) payloadList.push( Util.getJsonDeepCopy( payloadJson ) );
+                if ( payloadJson ) payloadList.push( Util.cloneJson( payloadJson ) );
             }
             else if ( typeof( payloadTemplate ) === "object" ) 
             {
@@ -65,7 +65,7 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
 
                     var payloadJson = payloadTemplateDefs[ payloadTemplateTemp ];
 
-                    if ( payloadJson ) payloadList.push( Util.getJsonDeepCopy( payloadJson ) );
+                    if ( payloadJson ) payloadList.push( Util.cloneJson( payloadJson ) );
                 }
             }
         }

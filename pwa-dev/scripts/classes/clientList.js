@@ -126,7 +126,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         if ( me.hasView ) me.clientListViewObj.viewSelect_1st(); 
         else 
         {
-            var newClientList = Util.cloneArray( ClientDataManager.getClientList() );
+            var newClientList = Util.cloneJson( ClientDataManager.getClientList() );
 
             me.reRenderWithList( newClientList, me.viewGroupByData, callBack );    
         }
@@ -146,7 +146,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
-        me.clientList = Util.cloneArray( ClientDataManager.getClientList() );
+        me.clientList = Util.cloneJson( ClientDataManager.getClientList() );
         //me.blockJson = blockJson;
         
         me.hasView = ( blockJson.clientListViews && blockJson.clientListViews.length > 0 );

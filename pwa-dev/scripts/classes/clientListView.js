@@ -116,7 +116,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     {
         me.mainList = ClientDataManager.getClientList();
         me.viewsDefinitionList = ConfigManager.getConfigJson().definitionClientListViews; // full complete view def list    
-        me.groupByDefinitionList = ( ConfigManager.getConfigJson().definitionGroupBy ) ? Util.getJsonDeepCopy( ConfigManager.getConfigJson().definitionGroupBy ) : {}; // full complete view def list
+        me.groupByDefinitionList = ( ConfigManager.getConfigJson().definitionGroupBy ) ? Util.cloneJson( ConfigManager.getConfigJson().definitionGroupBy ) : {}; // full complete view def list
 
         // Set Filter View name list and those view's definition info.
         //me.viewListNames = me.blockListObj.blockObj.blockJson.viewListNames;  // These are just named list..  We need proper def again..
@@ -336,7 +336,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
                         
                         if ( Util.evalTryCatch( groupDef.eval, InfoDataManager.getINFO(), 'clientListView.getGroupId_FromViewDef() Groups' ) === true )
                         {
-                            groupMatched = Util.getJsonDeepCopy( groupDef );
+                            groupMatched = Util.cloneJson( groupDef );
                             break;                        
                         }
                     }

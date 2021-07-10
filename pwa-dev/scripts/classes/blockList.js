@@ -205,7 +205,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         if ( me.hasView ) me.BlockListViewObj.viewSelect_1st(); 
         else 
         {
-            var newActivityList = Util.cloneArray( ActivityDataManager.getActivityList() );
+            var newActivityList = Util.cloneJson( ActivityDataManager.getActivityList() );
 
             me.reRenderWithList( newActivityList, me.viewGroupByData, callBack );    
         }
@@ -225,7 +225,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
     me.setUpInitialData = function( cwsRenderObj, blockJson )
     {
-        me.activityList = Util.cloneArray( ActivityDataManager.getActivityList() );
+        me.activityList = Util.cloneJson( ActivityDataManager.getActivityList() );
         //me.blockJson = blockJson;
         
         me.hasView = ( blockJson.activityListViews && blockJson.activityListViews.length > 0 );
