@@ -87,7 +87,7 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
 
 ConfigManager.setSourceType_ByUserRole = function( configJson, login_UserRoles )
 {
-    var itemList = configJson.souceType_UserRole;
+    var itemList = configJson.sourceType_UserRole;
 
     if ( itemList && login_UserRoles )
     {
