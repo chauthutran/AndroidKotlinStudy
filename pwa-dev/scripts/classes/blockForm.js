@@ -36,7 +36,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
 	me.render = function( formDef, blockTag, passedData )
 	{
-		var formJsonArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );
+		var formJsonArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );		
+		formJsonArr = ConfigManager.filterList_ByCountryFilter( formJsonArr );
 
 		var formGrps = ConfigManager.getConfigJson().definitionFormGroups;
 
@@ -1470,7 +1471,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.performEvalAction = function( evalAction, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
-		if ( evalAction )
+		if ( evalAction && ConfigManager.checkByCountryFilter( evalAction.countryFilter ) )
 		{
 			var conditionPass = false;
 			

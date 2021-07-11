@@ -108,6 +108,8 @@ ConfigManager.setSourceType_ByUserRole = function( configJson, login_UserRoles )
     }
 };
 
+// ----------------------------------------------------
+
 ConfigManager.applyFilter_SourceType = function( configJson )
 {
     try
@@ -254,6 +256,58 @@ ConfigManager.getAllAreaList = function()
 ConfigManager.isSourceTypeDhis2 = function()
 {
     return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Dhis2 );
+};
+
+// ----------------------------------------
+
+
+ConfigManager.filterList_ByCountryFilter = function( list )
+{
+    var filteredList = [];
+
+    try
+    {
+        if ( list && Util.isTypeArray( list ) )
+        {
+            list.forEach( item => 
+            {
+                if ( ConfigManager.checkByCountryFilter( item.countryFilter ) ) filteredList.push( item );
+            });
+        }
+    }
+    catch ( errMsg ) { console.log( 'ERROR in ConfigManager.filterList_ByCountryFilter, errMsg: ' + errMsg ); }
+
+    return filteredList;
+};
+
+
+ConfigManager.checkByCountryFilter = function( countryFilterArr )
+{
+    var bPass = false;
+
+    try
+    {
+        if ( !countryFilterArr ) bPass = true;
+        else
+        {
+            if ( Util.isTypeArray( countryFilterArr ) )
+            {
+                for ( var i = 0; i < countryFilterArr.length; i++ )
+                {
+                    var countryCode = countryFilterArr[i];
+    
+                    if ( SessionManager.checkLoginCountryOuCode( countryCode ) )
+                    {
+                        bPass = true;
+                        break;
+                    }
+                }
+            }
+        }    
+    }
+    catch ( errMsg ) { console.log( 'ERROR in ConfigManager.checkByCountryFilter, errMsg: ' + errMsg ); }
+
+    return bPass;
 };
 
 // ----------------------------------------

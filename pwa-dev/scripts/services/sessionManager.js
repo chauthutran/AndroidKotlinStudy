@@ -106,6 +106,35 @@ SessionManager.setLoginStatus = function( bLoggedIn )
 };
 
 // --------------------------------------------------
+// ----- Country Ou Code Check
+
+SessionManager.getLoginCountryOuCode = function()
+{
+	var ouCode = '';
+
+	try
+	{
+		ouCode = SessionManager.sessionData.orgUnitData.countryOuCode;
+	}
+	catch( errMsg ) { console.log( 'ERROR in SessionManager.getLoginCountryOuCode, errMsg: ' + errMsg ); }
+
+	return ouCode;
+};
+
+SessionManager.checkLoginCountryOuCode = function( ouCode )
+{
+	// CountryOuCode <-- 'TZ', 'T_TZ'  <-- Create method for country ou comparison..
+	var loginCountryOuCode = SessionManager.getLoginCountryOuCode();
+
+	// Disregard 'T_' in comparison
+	ouCode = ouCode.replace( 'T_', '' );
+	loginCountryOuCode = loginCountryOuCode.replace( 'T_', '' );
+
+	return ( ouCode === loginCountryOuCode );
+};
+
+
+// --------------------------------------------------
 
 // -- Called after login --> to update the 'User' session data in localStorage.
 SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
