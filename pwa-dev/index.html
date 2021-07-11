@@ -64,10 +64,13 @@
   <script type="text/javascript" src="scripts/libraries/maska.js"></script>
   <script type="text/javascript" src="scripts/libraries/localforage.min.js"></script>
   <script type="text/javascript" src="scripts/libraries/json-viewer.js"></script>
-  <!--script type="text/javascript" src="scripts/libraries/crossfilter.min.js" async></script-->
   <!--script type="text/javascript" src="scripts/libraries/d3.min.js"></script-->
   <script type="text/javascript" src="scripts/libraries/tabulate.js"></script>
-  <!--script type="text/javascript" src="scripts/libraries/console.js"></script-->
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-188996456-4"></script>
+  <!-- gTag declared in GAnalytics Class  -->
 
   <!-- Google Analytics -->
   <!--script>
@@ -89,9 +92,6 @@
   <link rel="stylesheet" type="text/css" href="css/pwa.css">
   <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
   <link rel="stylesheet" type="text/css" href="css/json-viewer.css">
-
-
-  <!--link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'-->
 
 </head>
 
@@ -580,6 +580,9 @@
   
 
   <!-- App Files -->
+      <script type="text/javascript" src="scripts/utils/gAnalytics.js"></script>
+
+
   <script type="text/javascript" src="scripts/constants/constants.js"></script>
   <script type="text/javascript" src="scripts/constants/templates.js"></script>
   <script type="text/javascript" src="scripts/constants/configs.js"></script>
@@ -661,6 +664,11 @@
 
 <script>
     App.run();
+
+    GAnalytics.declareGTAG();
+    GAnalytics.setBrowserInfo();
+
+    if ( GAnalytics.BrowserInfo ) GAnalytics.setCustomDimensions( "cd1", "Browser: " + GAnalytics.BrowserInfo.name + " Version: " + GAnalytics.BrowserInfo.version );
 </script>
 
 </html>

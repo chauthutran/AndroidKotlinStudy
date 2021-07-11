@@ -587,6 +587,12 @@ function Login( cwsRenderObj )
 	
 	me.loginSuccessProcess = function( userName, loginData ) 
 	{	
+		// NOTE: Google Analytics Implementation!!
+        GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
+        //GAnalytics.setEvent("LoginOffline", "Notification", "No Offline UserData Available");
+
+
+
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();
 		AppInfoManager.clearLoginCurrentKeys();
