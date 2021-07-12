@@ -1546,8 +1546,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		
 					Util.populateSelect_newOption( entryTag, optionListNew, { "name": "defaultName", "val": "value" } );
 				}	
+
+				// Translate Page after the rendering..
+				TranslationManager.translatePage();
 			}
-		}
+		}		
 	};
 
 	me.filterOptionsByLimitCases = function( optionList, formTag )
