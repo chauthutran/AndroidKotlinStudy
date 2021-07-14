@@ -5,6 +5,8 @@ function ActivityUtil() {}
 
 ActivityUtil.activityList = [];
 
+ActivityUtil.test = 1;
+
 // ==== Methods ======================
 
 // NOTE: How is this used?  Isn't this obsolete?
