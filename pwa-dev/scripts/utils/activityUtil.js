@@ -7,6 +7,7 @@ ActivityUtil.activityList = [];
 
 ActivityUtil.test = 2;
 ActivityUtil.testVer = 3;
+ActivityUtil.testVer3 = 4;
 
 // ==== Methods ======================
 
