@@ -5,7 +5,8 @@ function ActivityUtil() {}
 
 ActivityUtil.activityList = [];
 
-ActivityUtil.test = 1;
+ActivityUtil.test = 2;
+ActivityUtil.testVer = 3;
 
 // ==== Methods ======================
 
