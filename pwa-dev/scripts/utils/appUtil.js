@@ -7,9 +7,6 @@ function AppUtil() {}
 // Set this before refreshing, thus, sw state event not display the update message.
 AppUtil.appReloading = false;  
 
-AppUtil.bTest1 = false;  
-
-
 // ==== Methods ======================
 
 AppUtil.appReloadWtMsg = function( optionalMsg )
