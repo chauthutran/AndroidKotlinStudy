@@ -336,7 +336,8 @@ function Action( cwsRenderObj, blockObj )
 
 							var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
 
-							var dupVoucherActivityPass = me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId );
+              // NOTE: If 'voucherCodeReuse' is true (allowed - TZ case), do not need to check for duplicate voucher activity type.
+							var dupVoucherActivityPass = ( ConfigManager.getVoucherCodeReuse() || me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId ) );
 							
 							if ( dupVoucherActivityPass )
 							{

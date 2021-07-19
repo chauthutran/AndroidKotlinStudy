@@ -312,6 +312,12 @@ ConfigManager.checkByCountryFilter = function( countryFilterArr )
 
 // ----------------------------------------
 
+ConfigManager.getVoucherCodeReuse = function()
+{
+    return ( ConfigManager.getConfigJson().voucherCodeReuse === true );
+};
+
+
 ConfigManager.getSettingPaging = function()
 {
     var pagingSetting = ConfigManager.default_SettingPaging
@@ -847,6 +853,8 @@ ConfigManager.filterObjsByUserRoles = function( itemObj, loginUserRoles )
 
 ConfigManager.applyDefaults = function( configJson, defaults )
 {
+    if ( configJson.voucherCodeReuse === undefined ) configJson.voucherCodeReuse = defaults.voucherCodeReuse;
+
     if ( !configJson.settings ) configJson.settings = {};
     if ( !configJson.settings.sync ) configJson.settings.sync = {};
 
@@ -930,6 +938,8 @@ ConfigManager.defaultActivityType = {
 
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = {
+
+  "voucherCodeReuse": false,
 
    "sync": {
         "networkSync": "3600000",
