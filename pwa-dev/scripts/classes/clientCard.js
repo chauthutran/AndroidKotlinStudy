@@ -69,6 +69,11 @@ function ClientCard( clientId, options )
 
                 // Set up "editPaylayLoadBtn"
                 //me.setUpEditActivitiesLoadBtn( clientEditPaylayLoadBtnTag, clientJson );
+
+
+                // ----------------------------------------------------------------------------------------
+                // Set up Add new relationship
+
             }
             catch( errMsg )
             {
@@ -291,7 +296,6 @@ function ClientCard( clientId, options )
     {
         try
         {
-            //<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:v="https://vecta.io/nano" viewBox="0 0 6.35 6.35" colors.background="#b2df8a" colors.foreground="#4F4F4F" style="opacity: 1;" width="100%" height="100%"><g xmlns="http://www.w3.org/2000/svg" transform="matrix(.333365 0 0 .333092 -2.211667 -97.578864)"><ellipse ry="7.943" rx="7.937" cy="302.481" cx="16.158" fill="#b2df8a" fill-rule="evenodd"></ellipse><g fill="#4F4F4F"><path d="M20.426 304.27a.15.15 0 0 0-.149.15v1.806a.88.88 0 0 1-.876.877h-6.236a.88.88 0 0 1-.876-.877V301.6a.15.15 0 0 0-.149-.15.15.15 0 0 0-.149.15v4.617c0 .648.527 1.176 1.175 1.176H19.4c.648 0 1.175-.528 1.175-1.176v-1.806a.15.15 0 0 0-.149-.15z"></path><path d="M19.4 297.196h-6.236c-.648 0-1.175.528-1.175 1.176v2.64a.15.15 0 0 0 .149.15.15.15 0 0 0 .149-.15v-2.64a.88.88 0 0 1 .876-.877H19.4a.88.88 0 0 1 .876.877v5.45a.15.15 0 0 0 .149.15.15.15 0 0 0 .149-.15v-5.45c0-.648-.527-1.176-1.175-1.176z"></path><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#B"></use><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#B" x="3.904"></use><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#B" y="2.672"></use><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#B" x="3.904" y="2.672"></use><path d="M14.33 304.283a1.09 1.09 0 0 0-1.086 1.087 1.09 1.09 0 0 0 1.086 1.087 1.09 1.09 0 0 0 1.086-1.087 1.09 1.09 0 0 0-1.086-1.087zm-.787 1.087a.79.79 0 0 1 .787-.787.78.78 0 0 1 .44.135L13.68 305.8c-.085-.126-.135-.278-.135-.44zm.787.787a.78.78 0 0 1-.44-.135l1.092-1.093c.085.126.135.278.135.44a.79.79 0 0 1-.787.788z"></path><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#B" x="3.904" y="5.343"></use><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#C"></use><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#C" x="2.672"></use><path d="M16.7 298.235a.15.15 0 0 0-.211.014c-.053.06-.132.095-.217.095s-.165-.035-.217-.095a.15.15 0 0 0-.211-.014.15.15 0 0 0-.014.211c.11.125.27.197.442.197s.333-.072.442-.197a.15.15 0 0 0-.014-.211z"></path></g></g><defs xmlns="http://www.w3.org/2000/svg"><path id="B" d="M14.33 298.94a1.09 1.09 0 0 0-1.086 1.087 1.09 1.09 0 0 0 1.086 1.087 1.09 1.09 0 0 0 1.086-1.087 1.09 1.09 0 0 0-1.086-1.087zm-.787 1.087a.79.79 0 0 1 .787-.787.78.78 0 0 1 .44.135l-1.092 1.093c-.085-.126-.135-.278-.135-.44zm.787.787a.78.78 0 0 1-.44-.135l1.092-1.093c.085.126.135.278.135.44a.79.79 0 0 1-.787.788z"></path><path id="C" d="M14.946 297.973a.15.15 0 0 0-.149.15v.242a.15.15 0 0 0 .149.15.15.15 0 0 0 .149-.15v-.242a.15.15 0 0 0-.149-.15z"></path></defs></svg>
             var iconName = ClientCardTemplate.cardIconTag.replace( '{NAME}', me.getNameSimbol( clientJson ) );
 
             var svgIconTag = $( iconName );
@@ -438,45 +442,34 @@ function ClientCard( clientId, options )
         var arrDetails = [];
     
         // #1 clientDetails properties = key
-        //for ( var key in clientJson.clientDetails ) 
-        //{
-        //    arrDetails.push( { 'name': key, 'value': me.getFieldOption_LookupValue( key, clientJson.clientDetails[ key ] ) } );
-        //}
         
         var passedData = {
             "displayData": [
-                { id: "clientId", value: clientJson._id },
-                { id: "firstName", value: clientJson.clientDetails.firstName }            
-            ]
+                { id: "id", value: clientJson._id }
+            ],
+            "resultData": []
         };
-        //{displayName: "clientId", id: "clientId", value: "DQSkqOyVj3r", entity: "c"}
-        //1: {displayName: "CwS - STD - #Last name", id: "RsvOTmR2DjO", value: "Chang", entity: "c"}
 
-        
+        for( var id in clientJson.clientDetails )
+        {
+            passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
+        }
+
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
-        var titleTag = $( '<label term="clientDetail_details_title">clientDetails:</label>' );
 
         // Get client Profile Block defition from config.
         var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
 
         if ( clientProfileBlockId ) 
         {        
-			//var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
-            var clientProfileBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks[ clientProfileBlockId ];
+			var clientProfileBlock_DefJson = FormUtil.getObjFromDefinition( clientProfileBlockId, ConfigManager.getConfigJson().definitionBlocks );
 
             if ( clientProfileBlock_DefJson )
             {            
-                /// var startBlockObj = new Block( me, , selectedArea.startBlockName, me.pageDivTag );
-            
-                // blockPassingData <-- rearrange clientJson.clientDetails
-
                 var clientProfileBlock = new Block( SessionManager.cwsRenderObj, clientProfileBlock_DefJson, clientProfileBlockId, clientDetailsTabTag, passedData );
                 clientProfileBlock.render();    
             }
         }
-
-        //clientDetailsTabTag.html( FormUtil.displayData_Array( titleTag, arrDetails, 'clientDetail' ) ); //clientListPreviewTable
-    
 
         // #2. payload Preview
 
@@ -486,92 +479,43 @@ function ClientCard( clientId, options )
 
         // #3. relationship?
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
+        
         // Populate relationship..
-        me.populateRelationshipList( clientJson, relationshipTabTag );
+        me.renderRelationshipList( clientJson, relationshipTabTag );
     };    
 
     // ----------------------------------------------
 
-    me.populateRelationshipList = function( clientJson, relationshipTabTag )
+    me.renderRelationshipList = function( clientJson, relationshipTabTag )
     {
-        var listTag = $( '<div class="list"></div>' );
+        // var listTag = $( '<div class="list"></div>' );
 
-        if ( clientJson.relationships )
-        {
-            clientJson.relationships.forEach( relObj => 
-            {
-                var relDivTag = $( '<div class="divRelationship"></div>' );
-                var clientIdTag = $( '<div class="divRelClientId"></div>' );
-                var typeTag = $( '<div class="divRelType"></div>' );
+        // if ( clientJson.relationships )
+        // {
+        //     clientJson.relationships.forEach( relObj => 
+        //     {
 
-                clientIdTag.append( '<span>ID: ' + relObj.clientId + '</span>' );
-                typeTag.append( '<span>TYPE: ' + relObj.type + '</span>' );
-
-                relDivTag.append( clientIdTag );
-                relDivTag.append( typeTag );
+        //         var relationshipClientJson = ClientDataManager.getClientById( relObj.clientId );
                 
-                listTag.append( relDivTag );
-            });
-        }
+        //         var clientCardTrTag = $( ClientCardTemplate.relationshipCardDivTag );
+        //         clientCardTrTag.attr( 'itemId', relationshipClientJson._id );
+        //         // Add Icon
+        //         me.clientIconDisplay( clientCardTrTag.find(".clientIcon"), relationshipClientJson );
+        //         // Add FullName
+        //         var fullName = relationshipClientJson.clientDetails.firstName + relationshipClientJson.clientDetails.lastName;
+        //         clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
+        //         // Add relationship type
+        //         clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( relObj.type ) );
 
-        relationshipTabTag.append( listTag );
-    };
+        //         listTag.append( clientCardTrTag );
 
+        //     });
+        // }
 
-    // TODO: THIS SHOULD BE MOVED TO 'Option' statis class.. part..
-    me.getFieldOption_LookupValue = function( key, val )
-    {
-        var fieldOptions = me.getFieldOptions( key );
-        var retValue = val;
+        // relationshipTabTag.append( listTag );
 
-        // If the field is in 'definitionFields' & the field def has 'options' name, get the option val.
-        try
-        {
-            if ( fieldOptions )
-            {
-                var matchingOption = Util.getFromList( fieldOptions, val, "value" );
-    
-                if ( matchingOption )
-                {
-                    retValue = ( matchingOption.term ) ? TranslationManager.translateText( matchingOption.defaultName, matchingOption.term ) : matchingOption.defaultName;
-                }
-            }    
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in AcitivityCard.getFieldOptionLookupValue, errMsg: ' + errMsg );
-        }
-
-        //console.log( key + ': ' + retValue + ' (' + val + ')' );
-        return retValue;
-    };
-
-    me.getFieldOptions = function( fieldId )
-    {
-        var defFields = ConfigManager.getConfigJson().definitionFields;
-        var defOptions = ConfigManager.getConfigJson().definitionOptions;
-
-        var matchingOptions;
-        var optionsName;
-
-        // 1. Check if the field is defined in definitionFields & has 'options' field for optionsName used.
-        if ( defFields )
-        {
-			var matchField = Util.getFromList( defFields, fieldId, "id" );
-
-            if ( matchField && matchField.options )
-            {
-               optionsName =  matchField.options;
-            }
-        }
-
-        // 2. Get options by name.
-        if ( optionsName && defOptions )
-        {
-            matchingOptions = defOptions[ optionsName ];
-        }
-
-        return matchingOptions;
+        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
+        relationshipTabTag.append( relationshipListObj.getListTag() );
     };
 
     // =============================================
@@ -645,6 +589,23 @@ ClientCardTemplate.cardDivTag = `<div class="client card">
     </div>
 
 </div>`;
+
+
+ClientCardTemplate.relationshipCardDivTag = `<div class="clientContainer card__container">
+
+    <card__support_visuals class="clientIcon card__support_visuals" />
+
+    <card__content class="clientContent card__content" style="color: #444; cursor: pointer;" title="Click for detail" />
+
+    <card__cta class="clientStatus card__cta">
+        <div class="editRelationship card__cta_one" style="cursor: pointer;"><img src="images/payload_24.png"></div>
+        <div class="deleteRelationship card__cta_two" style="cursor:pointer;"><img src="images/hide.png"></div>
+    </card__cta>
+
+<div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
+
+</div>`
+
 
 ClientCardTemplate.cardIconTag = `<svg xlink="http://www.w3.org/1999/xlink" width="50" height="50">
     <g id="UrTavla">
