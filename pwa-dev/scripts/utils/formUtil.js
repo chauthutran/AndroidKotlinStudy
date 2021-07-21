@@ -1021,7 +1021,7 @@ FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent
 		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
 		var pattern = Util.getParameterInside( val, '{}' );
 		var valEval = FormUtil.tryEval( form, pattern );
-		if ( valEval ) tagTarget.val( valEval );
+		if ( valEval !== undefined ) tagTarget.val( valEval );
 	}
 	else
 	{
