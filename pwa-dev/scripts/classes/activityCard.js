@@ -597,6 +597,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
         try
         {
+
+            // gAnalytics Event
+            GAnalytics.setEvent( 'SyncRun', activityId, 'activity', 1 );
+            //GAnalytics.setEvent = function(category, action, label, value = null) 
+
             activityJson_Orig = ActivityDataManager.getActivityById( activityId );
 
             if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';

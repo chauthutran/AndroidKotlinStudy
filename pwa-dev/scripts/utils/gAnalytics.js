@@ -1,5 +1,8 @@
 function GAnalytics() {}
 
+GAnalytics.PAGE_LOGIN = 'login';
+
+
 GAnalytics.GTAG;
 GAnalytics.BrowserInfo;
 
@@ -60,6 +63,25 @@ GAnalytics.setEvent = function(category, action, label, value = null)
         'value': value
     });
 };
+
+
+GAnalytics.setPage = function( pageName ) 
+{
+  GAnalytics.GTAG( 'set', 'page', '/' + pageName );
+};
+
+GAnalytics.sendPageView = function() 
+{
+  GAnalytics.GTAG( 'send', 'pageview' );
+};
+
+GAnalytics.setSendPageView = function( pageName ) 
+{
+  GAnalytics.setPage( pageName );
+  GAnalytics.sendPageView();
+};
+
+// -------------------------------
 
 GAnalytics.setCustomDimensions = function(dimensionIndex, dimensionValue) 
 {

@@ -47,7 +47,9 @@ function Login( cwsRenderObj )
 	}
 
 	me.render = function()
-	{	
+	{	    
+    GAnalytics.setSendPageView( GAnalytics.PAGE_LOGIN );
+
 		// In test version with special url param, do not hide login buttons
 		me.testVersion_LoginBtn_NotHide( 'test', 'Y' );
 
@@ -587,11 +589,9 @@ function Login( cwsRenderObj )
 	
 	me.loginSuccessProcess = function( userName, loginData ) 
 	{	
-		// NOTE: Google Analytics Implementation!!
-        GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
-        //GAnalytics.setEvent("LoginOffline", "Notification", "No Offline UserData Available");
-
-
+		// gAnalytics Event
+    GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
+    //GAnalytics.setEvent = function(category, action, label, value = null) 
 
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();

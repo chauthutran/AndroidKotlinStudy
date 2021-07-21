@@ -58,6 +58,10 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 
 		if ( me.blockDefJson )
 		{					
+      // gAnalytics Event
+      GAnalytics.setEvent( 'BlockOpen', me.blockId, me.blockType, 1 );
+      //GAnalytics.setEvent = function(category, action, label, value = null) 
+
 			// Render Form
 			if ( me.blockDefJson.form ) 
 			{

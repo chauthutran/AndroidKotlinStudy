@@ -185,7 +185,13 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
 
         activityCardObj.highlightActivityDiv( true );
 
-        activityCardObj.performSyncUp( function( success, errMsg ) {
+        activityCardObj.performSyncUp( function( success, errMsg ) 
+        {
+            // gAnalytics Event
+            GAnalytics.setEvent( 'SyncEnded', activityId, success, 1 );
+            //GAnalytics.setEvent = function(category, action, label, value = null) 
+            // ?? might need to change parameters on how to count success vs failure..
+            
 
             SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 

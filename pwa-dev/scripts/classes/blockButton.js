@@ -250,6 +250,10 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
+          // gAnalytics Event
+          GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
+          //GAnalytics.setEvent = function(category, action, label, value = null) 
+
 					// Clear All Previous Msgs..
 					MsgManager.msgAreaClearAll();
 
@@ -294,10 +298,15 @@ function BlockButton( cwsRenderObj, blockObj )
 					}			
 				});
 			}
+      // 'onClickItem' --> dataList (search result list) button click.  Usually opens up new block to display info related to search result
 			else if( btnJson.onClickItem )
 			{
 				btnTag.click( function() 
 				{
+          // gAnalytics Event
+          GAnalytics.setEvent( 'ButtonClick', btnId, 'dataListButton', 1 );
+          //GAnalytics.setEvent = function(category, action, label, value = null) 
+
 					// Clear All Previous Msgs..
 					MsgManager.msgAreaClearAll();
 
