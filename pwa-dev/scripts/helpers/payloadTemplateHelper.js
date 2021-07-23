@@ -82,6 +82,9 @@ PayloadTemplateHelper.getINFO_Copy_wtPayloadSet = function( dateTimeObj, formsJs
 {
     var INFO = Util.cloneJson( InfoDataManager.getINFO() );   
 
+    // client, clientId
+    if ( blockInfo.clientId ) INFO.clientId = blockInfo.clientId;
+
     var payload = {};
 
     payload.date = dateTimeObj;

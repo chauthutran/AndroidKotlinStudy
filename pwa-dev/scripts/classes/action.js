@@ -251,6 +251,33 @@ function Action( cwsRenderObj, blockObj )
 	
 					afterActionFunc( true );
 				}
+				else if ( clickActionJson.actionType === "reloadClientTag" )
+				{
+					var clientCardTag = blockDivTag.closest( '.client[itemid]' );
+
+					if ( clientCardTag.length > 0 ) 
+					{
+						console.log( 'Rerender tried' );
+						clientCardTag.find( 'div.clientRerender' ).click();
+					}
+	
+					afterActionFunc( true );
+				}
+				else if ( clickActionJson.actionType === "reloadActivityTag" )
+				{
+					var activityCardTag = blockDivTag.closest( '.activity[itemid]' );
+
+					if ( activityCardTag.length > 0 ) activityCardTag.find( 'div.activityRerender' ).click();	
+					afterActionFunc( true );
+				}
+				else if ( clickActionJson.actionType === "activitySyncRun" )
+				{
+					var clientCardTag = blockDivTag.closest( 'div.card[itemid]' );
+
+					if ( clientCardTag.length > 0 ) clientCardTag.find( 'div.activitySyncRun' ).click();
+
+					afterActionFunc( true );
+				}
 				else if ( clickActionJson.actionType === "processWSResult" ) 
 				{
 					var statusActionsCalled = false;
@@ -331,12 +358,21 @@ function Action( cwsRenderObj, blockObj )
 						//var currBlockId = blockDivTag.attr( 'blockId' );
 						if ( passed )
 						{
+
+							// NEW, TEMP
+							if ( clickActionJson.underClient )
+							{
+								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
+								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );
+							}
+
+
 							// Generete payload - by template or other structure/format from 'forms'
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 							var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
 
-              // NOTE: If 'voucherCodeReuse' is true (allowed - TZ case), do not need to check for duplicate voucher activity type.
+              				// NOTE: If 'voucherCodeReuse' is true (allowed - TZ case), do not need to check for duplicate voucher activity type.
 							var dupVoucherActivityPass = ( ConfigManager.getVoucherCodeReuse() || me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId ) );
 							
 							if ( dupVoucherActivityPass )

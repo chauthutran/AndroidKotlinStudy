@@ -157,7 +157,7 @@ FormUtil.showErrActivityMsg = function( errActList )
 			{
 				errActList.forEach( errActId => 
 				{
-					$( '.activity[itemid="' + errActId + '"]' ).css( 'background-color', '#fff4f4' );
+					$( 'div.card[itemid="' + errActId + '"]' ).css( 'background-color', '#fff4f4' );
 				});
 			}, 500 );
         }
@@ -307,6 +307,26 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 
 	return newJsonArr;
 }
+
+
+FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, passedData )
+{
+	var blockObj;
+
+	if ( blockId ) 
+	{        
+		var blockDefJson = FormUtil.getObjFromDefinition( blockId, ConfigManager.getConfigJson().definitionBlocks );
+
+		if ( blockDefJson )
+		{            
+			blockObj = new Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData );
+			blockObj.render();    
+		}
+	}
+
+	return blockObj;
+};
+
 
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------

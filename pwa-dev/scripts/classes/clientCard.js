@@ -65,7 +65,7 @@ function ClientCard( clientId, options )
                 me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
 
                 // 5. clickable rerender setup
-                //me.setUpReRenderByClick( clientRerenderTag );
+                me.setUpReRenderByClick( clientRerenderTag );
 
                 // Set up "editPaylayLoadBtn"
                 //me.setUpEditActivitiesLoadBtn( clientEditPaylayLoadBtnTag, clientJson );
@@ -94,8 +94,61 @@ function ClientCard( clientId, options )
 
         me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
-        //me.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, activityJson.id ); //me.activityId );   
+        me.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, activityJson.id ); //me.activityId );   
     };
+
+
+    
+    me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
+    {
+        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
+        {
+            // This could be called again after activityJson/status is changed, thus, get everything again from activityId
+            e.stopPropagation();  // Stops calling parent tags event calls..
+
+            var activityJson = ActivityDataManager.getActivityById( activityId );
+            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+            
+            // NOTE:
+            //  - If status is not syncable one, display bottom message
+            //  - If offline, display the message about it.
+            if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
+            {
+                // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
+                ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+                {         
+                    // Display Left Msg <-- Do not need if?                          
+                    var leftSec = Util.getSecFromMiliSec( timeRemainMs );
+                    var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
+                    MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
+
+                }, function() 
+                {
+                    // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
+                    else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
+                });
+            }  
+            else 
+            {
+                if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
+                {
+                    // Display the popup
+                    SyncManagerNew.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
+
+                    // NOTE: STATUS CHANGED!!!!
+                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
+                    if ( statusVal === Constants.status_submit_wMsg )        
+                    {
+                        // TODO: Should create a history...
+                        ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
+                    }
+                }
+            }
+        });  
+    };
+
+
 
 
     me.getLastActivity = function( clientJson )
@@ -341,6 +394,25 @@ function ClientCard( clientId, options )
         }
     };
 
+    // ------------------------------------------
+
+    me.setUpReRenderByClick = function( clientRerenderTag )
+    {
+        clientRerenderTag.off( 'click' ).click( function( e ) {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+            me.render();
+        } );    
+    };
+
+    me.reRenderClientDiv = function()
+    {
+        // There are multiple places presenting same activityId info.
+        // We can find them all and reRender their info..
+        var clientCardTags = $( '.client[itemid="' + me.clientId + '"]' );
+        var reRenderClickDivTags = clientCardTags.find( 'div.clientRerender' );   
+        
+        reRenderClickDivTags.click();
+    }
 
     // ----------------------------
 
@@ -405,7 +477,6 @@ function ClientCard( clientId, options )
         
             // ADD TEST/DUMMY VALUE
             sheetFull.find( '.client' ).attr( 'itemid', clientId )
-            
 
             // Header content set
             var itemCard = new ClientCard( clientId,
@@ -459,17 +530,8 @@ function ClientCard( clientId, options )
 
         // Get client Profile Block defition from config.
         var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
+        FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
 
-        if ( clientProfileBlockId ) 
-        {        
-			var clientProfileBlock_DefJson = FormUtil.getObjFromDefinition( clientProfileBlockId, ConfigManager.getConfigJson().definitionBlocks );
-
-            if ( clientProfileBlock_DefJson )
-            {            
-                var clientProfileBlock = new Block( SessionManager.cwsRenderObj, clientProfileBlock_DefJson, clientProfileBlockId, clientDetailsTabTag, passedData );
-                clientProfileBlock.render();    
-            }
-        }
 
         // #2. payload Preview
 
@@ -480,9 +542,16 @@ function ClientCard( clientId, options )
         // #3. relationship?
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
         
+        // Remove previously loaded div blocks - clear out.
+        sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() {
+            relationshipTabTag.find( 'div.block' ).remove();
+        });
+
+
         // Populate relationship..
         me.renderRelationshipList( clientJson, relationshipTabTag );
     };    
+
 
     // ----------------------------------------------
 
@@ -602,7 +671,7 @@ ClientCardTemplate.relationshipCardDivTag = `<div class="clientContainer card__c
         <div class="deleteRelationship card__cta_two" style="cursor:pointer;"><img src="images/hide.png"></div>
     </card__cta>
 
-<div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
+    <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
 
 </div>`
 
@@ -632,6 +701,7 @@ ClientCardTemplate.cardFullScreen = `<div class="wapper_card">
             <div class="clientPhone card__cta_one"></div>
             <div class="activityStatusIcon card__cta_two"></div>
         </card__cta>
+        <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
     </div>
 
     <div class="tab_fs">

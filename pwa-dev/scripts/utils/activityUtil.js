@@ -142,6 +142,13 @@ ActivityUtil.getBlockInfo_Attr = function( blockDivTag )
 		{
 			blockInfo.activityType = activityType;
 		}
+
+		// If clientCard exists above the block, get the clientId (we can even add entire clientJson if needed later)
+		var clientCardTag = blockDivTag.closest( '.client[itemid]' );
+		if ( clientCardTag.length > 0 )
+		{
+			blockInfo.clientId = clientCardTag.attr( 'itemid' );
+		}		
 	}
 
 	return blockInfo;

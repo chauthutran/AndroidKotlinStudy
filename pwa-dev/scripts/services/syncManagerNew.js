@@ -622,5 +622,88 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
     });  
 };
 
+
+// ----------------------------------------------
+// Msg Related...
+
+
+SyncManagerNew.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag )
+{
+    // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
+    MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
+    {
+        SyncManagerNew.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
+        SyncManagerNew.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal );
+    });
+};
+
+SyncManagerNew.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
+{        
+    var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
+    var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
+
+    var syncMsg_HeaderPartTag = $( Templates.syncMsg_Header );
+    syncMsg_HeaderPartTag.find( '.msgHeaderLabel' ).text = statusLabel;
+
+    divHeaderTag.html( syncMsg_HeaderPartTag );
+};
+
+
+SyncManagerNew.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal )
+{
+    var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
+    divBottomTag.empty();
+
+    // 1. ActivityCard Info Add - From Activity Card Tag  
+    divBottomTag.append( $( activityCardDivTag[ 0 ].outerHTML ) ); // << was activityJson.activityId
+
+    // 2. Add 'processing' sync message.. - last one?
+    Util.tryCatchContinue( function() 
+    {
+        var historyList = activityJson.processing.history;
+
+        if ( historyList.length > 0 )
+        {
+            //var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
+            var latestItem = historyList[ historyList.length - 1];    
+            var msgSectionTag = $( Templates.msgSection );
+
+            msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
+
+            var formattedMsg = SyncManagerNew.getMsgFormatted( latestItem.msg, statusVal );
+            msgSectionTag.find( 'div.msgSectionLog' ).text( formattedMsg );
+
+            divBottomTag.append( msgSectionTag );
+        }        
+    }, "syncResultMsg_content, activity processing history lookup" );
+};
+
+
+SyncManagerNew.getMsgFormatted = function( msg, statusVal )
+{
+    var formattedMsg = '';
+
+    if ( msg )
+    {
+        if ( statusVal === Constants.status_error || statusVal === Constants.status_failed ) 
+        {
+            if ( msg.indexOf( 'Value is not valid' ) >= 0 ) formattedMsg = 'One of the field has not acceptable value.';
+            else if ( msg.indexOf( 'not a valid' ) >= 0 ) formattedMsg = 'One of the field has wrong Dhis2 Uid in the country setting.';
+            else if ( msg.indexOf( 'Voucher not in Issue status' ) >= 0 ) formattedMsg = 'The voucher is not in issue status.';
+            else if ( msg.indexOf( 'Repeat Fail Marked as ERROR' ) >= 0 ) formattedMsg = 'Marked as error status due to more than 10 failure in sync attempts.';
+            else if ( msg.indexOf( 'Multiple vouchers with the code exists' ) >= 0 ) formattedMsg = 'Found multiple vouchers with the voucherCode.';
+            else
+            {
+                if ( msg.length > 140 ) formattedMsg = msg.substr( 0, 70 ) + '....' + msg.substr( msg.length - 71, 70 );
+                else formattedMsg = msg;
+            }
+        }   
+        else formattedMsg = Util.getStr( msg, 200 );
+    }
+
+    return formattedMsg;
+};
+
+
 // ===================================================
 // === OTHERS Methods =============

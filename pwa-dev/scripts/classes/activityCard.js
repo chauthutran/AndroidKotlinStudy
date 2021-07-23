@@ -96,7 +96,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.getSyncButtonDivTag = function( activityId )
     {
-        var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
+        // TEMP, TODO, NOTE, get all types of tags..
+        //var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
+        var activityCardTags = ( activityId ) ? $( 'div.card[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
 
         return activityCardTags.find( '.activityStatusIcon' );
     };
@@ -137,6 +139,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
 
+    // For call backs, we can have a method that gets called?
     me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
     {
         divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
@@ -172,7 +175,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
                 {
                     // Display the popup
-                    me.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
+                    SyncManagerNew.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
 
                     // NOTE: STATUS CHANGED!!!!
                     // If submitted with msg one, mark it as 'read' and rerender the activity Div.
@@ -312,84 +315,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
         } );    
     };
 
-    
-    me.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag )
-    {
-        // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
-        MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
-        {
-            me.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
-            me.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal );
-        });
-    };
-
-    me.syncResultMsg_header = function( syncInfoAreaTag, activityCardDivTag )
-    {        
-        var divHeaderTag = syncInfoAreaTag.find( 'div.msgHeader' );
-        var statusLabel = activityCardDivTag.find( 'div.activityStatusText' ).text();
-
-        var syncMsg_HeaderPartTag = $( Templates.syncMsg_Header );
-        syncMsg_HeaderPartTag.find( '.msgHeaderLabel' ).text = statusLabel;
-
-        divHeaderTag.html( syncMsg_HeaderPartTag );
-    };
-
-
-    me.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal )
-    {
-        var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
-        divBottomTag.empty();
-
-        // 1. ActivityCard Info Add - From Activity Card Tag  
-        divBottomTag.append( $( activityCardDivTag.parent().find( '[itemid=' + activityJson.id + ']' )[ 0 ].outerHTML ) ); // << was activityJson.activityId
-
-        // 2. Add 'processing' sync message.. - last one?
-        Util.tryCatchContinue( function() 
-        {
-            var historyList = activityJson.processing.history;
-
-            if ( historyList.length > 0 )
-            {
-                //var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
-                var latestItem = historyList[ historyList.length - 1];    
-                var msgSectionTag = $( Templates.msgSection );
-    
-                msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
-
-                var formattedMsg = me.getMsgFormatted( latestItem.msg, statusVal );
-                msgSectionTag.find( 'div.msgSectionLog' ).text( formattedMsg );
-    
-                divBottomTag.append( msgSectionTag );
-            }        
-        }, "syncResultMsg_content, activity processing history lookup" );
-    };
-
-
-    me.getMsgFormatted = function( msg, statusVal )
-    {
-        var formattedMsg = '';
-
-        if ( msg )
-        {
-            if ( statusVal === Constants.status_error || statusVal === Constants.status_failed ) 
-            {
-                if ( msg.indexOf( 'Value is not valid' ) >= 0 ) formattedMsg = 'One of the field has not acceptable value.';
-                else if ( msg.indexOf( 'not a valid' ) >= 0 ) formattedMsg = 'One of the field has wrong Dhis2 Uid in the country setting.';
-                else if ( msg.indexOf( 'Voucher not in Issue status' ) >= 0 ) formattedMsg = 'The voucher is not in issue status.';
-                else if ( msg.indexOf( 'Repeat Fail Marked as ERROR' ) >= 0 ) formattedMsg = 'Marked as error status due to more than 10 failure in sync attempts.';
-                else if ( msg.indexOf( 'Multiple vouchers with the code exists' ) >= 0 ) formattedMsg = 'Found multiple vouchers with the voucherCode.';
-                else
-                {
-                    if ( msg.length > 140 ) formattedMsg = msg.substr( 0, 70 ) + '....' + msg.substr( msg.length - 71, 70 );
-                    else formattedMsg = msg;
-                }
-            }   
-            else formattedMsg = Util.getStr( msg, 200 );
-        }
-
-        return formattedMsg;
-    };
-
 
     me.setActivityContentDisplay = function( divActivityContentTag, activity )
     {
@@ -443,7 +368,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
-        var activityCardTags = $( '.activity[itemid="' + me.activityId + '"]' );
+        var activityCardTags = $( 'div.card[itemid="' + me.activityId + '"]' );
         var reRenderClickDivTags = activityCardTags.find( 'div.activityRerender' );   
         
         reRenderClickDivTags.click();
@@ -813,6 +738,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
+
+
+
             var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
 
             // #1. Check if current activity Id exists in 'result.client' activities..
@@ -822,15 +750,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
                 var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
-                ClientDataManager.setActivityDateLocal_client( clientJson );
 
-
+                // [NOTE: STILL USED?]
                 // If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
                 if ( processingInfo.fixActivityCase )
                 {
                     delete processingInfo.fixActivityCase;
                     me.deleteFixActivityRecord( activityId );
                 }
+
+                
+                ClientDataManager.setActivityDateLocal_client( clientJson );
 
                 // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
                 // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
@@ -841,7 +771,19 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 // Removal of existing activity/client happends within 'mergeDownloadClients()'
                 ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
                 {
-                    // 'mergeDownload' does saving if there were changes..
+                    // relationship target clients update sync..
+                    var otherClients = responseJson.result.otherClients;
+                    if ( otherClients )
+                    {
+                        ClientDataManager.setActivityDateLocal_clientList( otherClients );
+
+                        ClientDataManager.mergeDownloadedClients( { 'clients': otherClients, 'case': 'syncUpActivity' }, undefined, function() 
+                        {
+                            console.log( 'merged sync otherClients' );
+                        });
+                    }
+
+                    // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
                     ClientDataManager.saveCurrent_ClientsStore();
 
                     if ( callBack ) callBack( operationSuccess );

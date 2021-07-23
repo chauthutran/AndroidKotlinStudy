@@ -413,8 +413,15 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
     {
         var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
-        var activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
-    
+        // NEW, TEMP
+        var activityPayloadClient;
+        if ( actionDefJson.underClient && actionDefJson.clientId )
+        {
+            activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
+        }
+        else activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
+        
+
         ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient, { 'addToTop': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( function() {
@@ -546,7 +553,7 @@ ActivityDataManager.createProcessingInfo_Other = function( statusStr, responseCo
 
 ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
 {
-    if ( activity )
+    if ( activity && newProcessingInfo )
     {
         if ( activity.processing ) 
         {

@@ -52,17 +52,19 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     {
         // Render [Add] button
         me.addRelationshipBtnTag = $( Templates.favButtonContainer );
+        
         // Set Click event 
-        me.addRelationshipBtnTag.click( function(){
-            var searchClientRelationshipBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks.blockSearchClientRelationship;
-            if ( searchClientRelationshipBlock_DefJson )
-            {  
-                var passedData = {};
-                var searchClientRelationshipBlock = new Block( SessionManager.cwsRenderObj, searchClientRelationshipBlock_DefJson, "blockSearchClientRelationship", relationshipTabTag, passedData );
-                searchClientRelationshipBlock.render();    
-            }
-        });
+        me.addRelationshipBtnTag.click( function()
+        {
+            // clear existing data on this tab content
+            relationshipTabTag.find( 'div.block' ).remove();
+            relationshipTabTag.find( 'div.list' ).remove();
 
+            var clientRelSearchBlock = ConfigManager.getConfigJson().settings.clientRelSearchBlock;
+            FormUtil.renderBlockByBlockId( clientRelSearchBlock, SessionManager.cwsRenderObj, relationshipTabTag );
+        
+            //var searchClientRelationshipBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks.blockSearchClientRelationship;
+        });
         
         listTag.append( me.addRelationshipBtnTag );
     }
