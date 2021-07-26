@@ -85,11 +85,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         if ( me.options.parentTag_Override )
         {
-            return me.options.parentTag_Override.find( '.activity[itemid="' + me.activityId + '"]' );
+            return me.options.parentTag_Override.find( 'div.card[itemid="' + me.activityId + '"]' );
         }
         else
         {
-            return $( '.activity[itemid="' + me.activityId + '"]' );
+            return $( 'div.card[itemid="' + me.activityId + '"]' );
         }
     };
 
@@ -97,7 +97,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.getSyncButtonDivTag = function( activityId )
     {
         // TEMP, TODO, NOTE, get all types of tags..
-        //var activityCardTags = ( activityId ) ? $( '.activity[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
+        //var activityCardTags = ( activityId ) ? $( 'div.card[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
         var activityCardTags = ( activityId ) ? $( 'div.card[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
 
         return activityCardTags.find( '.activityStatusIcon' );
@@ -500,7 +500,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     me.highlightActivityDiv = function( bHighlight )
     {
         // If the activityTag is found on the list, highlight it during SyncAll processing.
-        var activityDivTag = $( '.activity[itemid="' + me.activityId + '"]' );
+        var activityDivTag = $( 'div.card[itemid="' + me.activityId + '"]' );
 
         if ( activityDivTag.length > 0 )
         {
