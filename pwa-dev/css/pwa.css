@@ -23,6 +23,10 @@
 /* .mddtp-picker .mddtp-picker__header { background-color: #93bcff !important; } */
 /* ------------ */
 
+.btnBack {
+  cursor: pointer;
+}
+
 .emptyList {
   padding: 20px;
   font-style: italic;

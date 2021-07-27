@@ -6,16 +6,14 @@
 //          - There will be cases where activity items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ActivityCard( activityId, cwsRenderObj, options )
+function ActivityCard( activityId, options )
 {
 	var me = this;
 
     me.activityId = activityId;
-    me.cwsRenderObj = cwsRenderObj;
     me.options = ( options ) ? options : {};
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
-    me.coolDownMoveRate = 300; // 100 would move 10 times per sec..
 
     // -----------------------------------
 
@@ -36,7 +34,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
         if ( activityCardDivTag.length > 0 )
         {
             var activityJson = ActivityDataManager.getActivityById( me.activityId );
-            var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
+            var detailViewCase = ( me.options.detailViewCase ) ? true: false;  // Used for detailed view popup - which reuses 'render' method.
 
             try
             {
@@ -51,17 +49,17 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                 // 1. activityType (Icon) display (LEFT SIDE)
                 me.activityTypeDisplay( activityTypeIconTag, activityJson );
-                if ( clickEnable ) me.activityIconClick_displayInfo( activityTypeIconTag, activityJson );
+                me.activityIconClick_displayInfo( activityTypeIconTag, activityJson );
 
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityContentTag, activityJson );
-                if ( clickEnable ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
+                if ( !detailViewCase ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardDivTag, activityJson, !clickEnable );  // clickEnable - not checked for SyncBtn/Icon
+                me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -83,25 +81,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
     me.getActivityCardDivTag = function()
     {
-        if ( me.options.parentTag_Override )
-        {
-            return me.options.parentTag_Override.find( 'div.card[itemid="' + me.activityId + '"]' );
-        }
-        else
-        {
-            return $( 'div.card[itemid="' + me.activityId + '"]' );
-        }
+        //if ( me.options.parentTag_Override )
+        //    return me.options.parentTag_Override.find( 'div.card[itemid="' + me.activityId + '"]' );
+            
+        return $( 'div.card[itemid="' + me.activityId + '"]' );
     };
 
-
-    me.getSyncButtonDivTag = function( activityId )
-    {
-        // TEMP, TODO, NOTE, get all types of tags..
-        //var activityCardTags = ( activityId ) ? $( 'div.card[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
-        var activityCardTags = ( activityId ) ? $( 'div.card[itemid="' + activityId + '"]' ) : me.getActivityCardDivTag();
-
-        return activityCardTags.find( '.activityStatusIcon' );
-    };
 
     // -----------------------------------------------------
 
@@ -124,69 +109,19 @@ function ActivityCard( activityId, cwsRenderObj, options )
     };
 
     
-    me.setupSyncBtn = function( activityCardDivTag, activityJson, detailViewCase )
+    me.setupSyncBtn = function( activityCardDivTag, activityId, detailViewCase )
     {
-        var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
-        var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
-        var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+        var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' ).attr( 'activityId', activityId );
+        var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' ).attr( 'activityId', activityId );
 
         // if 'detailView' mode, the bottom message should not show..
         if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
 
-        me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
 
-        me.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityJson.id ); //me.activityId );   
-    };
-
-
-    // For call backs, we can have a method that gets called?
-    me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
-    {
-        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
-        {
-            // This could be called again after activityJson/status is changed, thus, get everything again from activityId
-            e.stopPropagation();  // Stops calling parent tags event calls..
-
-            var activityJson = ActivityDataManager.getActivityById( activityId );
-            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-            
-            // NOTE:
-            //  - If status is not syncable one, display bottom message
-            //  - If offline, display the message about it.
-            if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
-            {
-                // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
-                ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
-                {         
-                    // Display Left Msg <-- Do not need if?                          
-                    var leftSec = Util.getSecFromMiliSec( timeRemainMs );
-                    var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
-                    MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
-
-                }, function() 
-                {
-                    // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
-                    else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
-                });
-            }  
-            else 
-            {
-                if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
-                {
-                    // Display the popup
-                    SyncManagerNew.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
-
-                    // NOTE: STATUS CHANGED!!!!
-                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
-                    if ( statusVal === Constants.status_submit_wMsg )        
-                    {
-                        // TODO: Should create a history...
-                        ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
-                    }
-                }
-            }
-        });  
+        // NOTE: This is setting for this tag only, so might not need to set for others??
+        ActivitySyncUtil.displayActivitySyncStatus( activityId );
+ 
+        ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityId );
     };
 
 
@@ -222,87 +157,6 @@ function ActivityCard( activityId, cwsRenderObj, options )
                 divPhoneCallTag.show();    
             }
         }
-    };
-
-
-    me.displayActivitySyncStatus = function( statusVal, divSyncStatusTextTag, divSyncIconTag )
-    {
-        // reset..
-        divSyncIconTag.empty();
-        divSyncStatusTextTag.empty();
-
-        var imgIcon = $( '<img>' );
-
-        if ( statusVal === Constants.status_submit )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
-            imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
-        }
-        else if ( statusVal === Constants.status_submit_wMsg )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg*' );
-            imgIcon.attr( 'src', 'images/sync_msd.svg' ); 
-        }
-        else if ( statusVal === Constants.status_submit_wMsgRead )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
-            imgIcon.attr( 'src', 'images/sync_msdr.svg' );
-        }
-        else if ( statusVal === Constants.status_downloaded )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' ).attr( 'term', 'activitycard_status_downloaded' );
-            imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
-        }
-        else if ( statusVal === Constants.status_queued )
-        {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
-            imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
-        }
-        else if ( statusVal === Constants.status_processing )
-        {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
-            imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
-
-            // NOTE: We are rotating if in 'processing' status!!!
-            FormUtil.rotateTag( divSyncIconTag, true );
-        }        
-        else if ( statusVal === Constants.status_failed )
-        {
-            // Not closed status, yet
-            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' ).attr( 'term', 'activitycard_status_failed' );
-            imgIcon.attr( 'src', 'images/sync-postponed_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
-        }
-        else if ( statusVal === Constants.status_error )
-        {
-            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Error' );
-            imgIcon.attr( 'src', 'images/sync-error_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
-        }
-
-        divSyncIconTag.append( imgIcon );
-
-
-        // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
-        if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) me.syncUpCoolDownTime_CheckNProgressSet( divSyncIconTag );
-    };
-    
-
-    // Wrapper to call displayActivitySyncStatus with fewer parameters
-    me.displayActivitySyncStatus_Wrapper = function( activityJson, activityCardDivTag )
-    {
-        //var activityCardDivTag = me.getActivityCardDivTag();
-        if ( activityCardDivTag && activityCardDivTag.length > 0 )
-        {
-            var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' );
-            var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' );
-            
-            var statusVal = ( activityJson && activityJson.processing ) ? activityJson.processing.status: '';
-    
-            me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag ); 
-        }    
     };
 
     // ------------------------------------------
@@ -517,8 +371,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
     {
         var activityJson_Orig;
         var activityId = me.activityId;
-        var syncIconTag = me.getSyncButtonDivTag( activityId );
-        //syncIconTag.attr( 'tmpactid', me.activityId ); // Temp debugging id add
+        var syncIconTag = ActivitySyncUtil.getSyncButtonDivTag( activityId );
 
         try
         {
@@ -536,12 +389,12 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
 
             // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
-            //  'displayActivitySyncStatus_Wrapper()' gets used to refresh status only. 'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
+            //  'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
             //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
             activityJson_Orig.processing.status = Constants.status_processing;
             activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
 
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
 
             try
             {
@@ -579,115 +432,11 @@ function ActivityCard( activityId, cwsRenderObj, options )
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
             ClientDataManager.saveCurrent_ClientsStore();
 
-            me.displayActivitySyncStatus_Wrapper( activityJson_Orig, me.getActivityCardDivTag() );
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
 
             afterDoneCall( false, errMsg );
         }
     };
-
-    // ----------------------------------------------
-    // -- CoolDown 
-    me.syncUpCoolDownTime_CheckNProgressSet = function( syncIconDivTag )
-    {
-        var activityId = me.activityId;
-
-        // Unwrap previous one 1st..
-        me.clearCoolDownWrap( syncIconDivTag );
-
-        ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs ) 
-        {            
-            //var syncIconTag = me.getSyncButtonDivTag( activityId );
-            if ( syncIconDivTag.length > 0 && timeRemainMs > 0 )
-            {
-                // New one can be called here..
-                me.syncUpCoolDownTime_disableUI2( activityId, syncIconDivTag, timeRemainMs );
-                // me.syncUpCoolDownTime_disableUI( activityId, syncIconDivTag, timeRemainMs );
-            }
-        });
-    };
-
-    me.syncUpCoolDownTime_disableUI = function( activityId, syncIconDivTag, timeRemainMs )
-    {
-        ActivityDataManager.clearSyncUpCoolDown_TimeOutId( activityId );
-
-        syncIconDivTag.addClass( 'syncUpCoolDown' );
-
-        var timeOutId = setTimeout( function() {
-
-            // TODO: This sometimes does not work - if the tag is re-rendered..  <-- get class instead..
-            syncIconDivTag.removeClass( 'syncUpCoolDown' );
-        }, timeRemainMs );
-
-        ActivityDataManager.setSyncUpCoolDown_TimeOutId( activityId, timeOutId );
-    };
-
-
-    me.syncUpCoolDownTime_disableUI2 = function( activityId, syncIconDivTag, timeRemainMs )
-    {
-        // Set CoolDown UI (Tags) & related valriable for 'interval' to use.
-
-        syncIconDivTag.addClass( 'syncUpCoolDown' );
-        var imgTag = syncIconDivTag.find( 'img' );
-        imgTag.wrap( '<div class="myBar" style="position: absolute; background-color: lightGray;"></div>' );
-
-        var myBarTag = syncIconDivTag.find( '.myBar' );        
-        var fullWidthSize = syncIconDivTag.width();
-        var coolDownTime = ConfigManager.coolDownTime;
-        
-        myBarTag.width( me.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
-
-
-        // Interval..
-        var intervalId = setInterval( function() 
-        {
-            var myBarTag = syncIconDivTag.find( '.myBar' );
-
-            if ( myBarTag.length === 0 ) 
-            {
-                clearInterval( intervalId );
-                syncIconDivTag.removeClass( 'syncUpCoolDown' );
-            } 
-            else
-            {
-                timeRemainMs -= me.coolDownMoveRate;
-                
-                if ( timeRemainMs <= 0 ) // or check perc..
-                {
-                    clearInterval( intervalId );
-                    me.clearCoolDownWrap( syncIconDivTag ); // imgTag.unwrap();
-                }
-                else 
-                {
-                    myBarTag.width( me.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
-                }
-            }
-
-        }, me.coolDownMoveRate );  // update refresh rate
-    };
-
-
-    // NOTE: Use Div width changes by time..
-    // http://ww2.cs.fsu.edu/~faizian/cgs3066/resources/Lecture12-Animating%20Elements%20in%20Javascript.pdf
-    me.clearCoolDownWrap = function( syncIconDivTag ) // pass id instead?  
-    {
-        if ( syncIconDivTag.length > 0 )
-        {
-            syncIconDivTag.removeClass( 'syncUpCoolDown' );
-
-            var imgTag = syncIconDivTag.find( 'img' );
-            if ( imgTag.length > 0 && imgTag.parent( '.myBar' ).length > 0 ) imgTag.unwrap();
-        }
-    };
-
-
-    me.getPercentageWidth = function( timeRemainMs, coolDownTime, fullWidthSize )
-    {
-        var perc = ( timeRemainMs / coolDownTime );
-        var width = ( fullWidthSize * perc ).toFixed( 1 );
-        //console.log( 'width: ' + width + ', timeRemainMs: ' + timeRemainMs );
-        return width;
-    };
-
 
     // ----------------------------------------------
 
@@ -711,7 +460,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
             if ( newActivityJson )
             {
-                me.displayActivitySyncStatus_Wrapper( newActivityJson, me.getActivityCardDivTag() );
+                ActivitySyncUtil.displayActivitySyncStatus( activityId );
 
                 // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
                 if ( responseJson && responseJson.report ) 
@@ -909,7 +658,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
             var sheetFull = $( '#activityDetail_FullScreen' );
 
             // populate template
-            sheetFull.html( $( Templates.activityCardFullScreen ) );
+            sheetFull.html( $( ActivityCardTemplate.activityCardFullScreen ) );
 
             // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
             if ( DevHelper.devMode )
@@ -925,8 +674,9 @@ function ActivityCard( activityId, cwsRenderObj, options )
             
 
             // Header content set
-            var actCard = new ActivityCard( activityId, me.cwsRenderObj
-                , { 'parentTag_Override': sheetFull, 'disableClicks': true } );
+            var actCard = new ActivityCard( activityId, {'detailViewCase': true }
+                //, { 'parentTag_Override': sheetFull, 'disableClicks': true } 
+            );
             actCard.render();
 
             // set tabs contents
@@ -1128,7 +878,7 @@ function ActivityCard( activityId, cwsRenderObj, options )
 
                             var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
 
-                            var newBlockObj = new Block( me.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
+                            var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
                             newBlockObj.render( 'blockList' );
 
                             if ( activityJson )
@@ -1221,20 +971,174 @@ function ActivityCardTemplate() {};
 
 ActivityCardTemplate.cardDivTag = `<div class="activity card">
 
-<div class="activityContainer card__container">
+    <div class="activityContainer card__container">
 
-    <card__support_visuals class="activityIcon card__support_visuals" />
+        <card__support_visuals class="activityIcon card__support_visuals" />
 
-    <card__content class="activityContent card__content" />
+        <card__content class="activityContent card__content" />
 
-    <card__cta class="activityStatus card__cta">
-        <div class="activityStatusText card__cta_status"></div>
-        <div class="activityPhone card__cta_one"></div>
-        <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
-    </card__cta>
+        <card__cta class="activityStatus card__cta">
+            <div class="activityStatusText card__cta_status"></div>
+            <div class="activityPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
+        </card__cta>
 
-    <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+        <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
 
-</div>
+    </div>
 
+</div>`;
+
+
+ActivityCardTemplate.activityCardFullScreen = `
+<div class="wapper_card">
+  <div class="sheet-title c_900">
+    <img src='images/arrow_back.svg' class='btnBack'>
+    <span>Details</span>
+  </div>
+  <div class="card _tab activity">
+    <div class="card__container">
+      <card__support_visuals class="activityIcon card__support_visuals" />
+      <card__content class="activityContent card__content" />
+      <card__cta class="activityStatus card__cta">
+        <div class="activityStatusText card__cta_status" />
+        <div class="activityPhone card__cta_one" style="cursor: pointer;"></div>
+        <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
+      </card__cta>
+    </div>
+
+    <div class="tab_fs">
+
+      <div class="button warning button-full_width" id="removeActivity"
+        style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+        <div class="button__container">
+          <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>
+        </div>
+      </div>
+
+      <ul class="tab_fs__head" style="background-color: #fff;">
+
+        <li class="primary active" rel="tab_previewDetails">
+          <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+          <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
+
+          <ul class="2ndary" style="display: none; z-index: 1;">
+
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+            </li>
+  
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
+            </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
+            </li>    
+
+          </ul>
+        </li>
+
+        <li class="primary" rel="tab_previewPayload">
+          <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+          <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+
+          <ul class="2ndary" style="display: none; z-index: 1;">
+
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
+            </li>
+  
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
+            </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
+            </li>    
+
+          </ul>
+        </li>
+
+        <li class="primary" rel="tab_previewSync">
+          <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+          <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
+          <ul class="2ndary" style="display: none; z-index: 1;">
+
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
+            </li>
+
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+            </li>
+
+            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+              <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
+            </li>            
+
+          </ul>
+        </li>
+
+        <li class="primary tab_optionalDev" rel="tab_optionalDev" style="display: none;">
+          <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+          <span term="activityDetail_tab_dev" rel="tab_optionalDev">Dev</span>
+
+          <ul class="2ndary" style="display: none; z-index: 1;">
+
+            <li class="2ndary" style="display:none" rel="tab_previewDetails">
+              <div class="tab_fs__head-icon i-details_24" rel="tab_previewDetails"></div>
+              <span term="activityDetail_tab_details" rel="tab_previewDetails">Details</span>
+            </li>
+
+            <li class="2ndary" style="display:none" rel="tab_previewPayload">
+              <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+              <span term="activityDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+            </li>
+  
+            <li class="2ndary" style="display:none" rel="tab_previewSync">
+              <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_previewSync"></div>
+              <span term="activityDetail_tab_sync" rel="tab_previewSync">Sync</span>
+            </li>
+
+          </ul>
+        </li>
+
+      </ul>
+      <div class="tab_fs__head-icon_exp"></div>
+    </div>
+
+    <div class="tab_fs__container">
+      <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
+        blockid="tab_previewDetails" />
+      <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
+        <button id="editPaylayLoadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
+        <div class="payloadData"></div>
+        <div class="editForm" style="display: none;"></div>
+      </div>
+      <div class="tab_fs__container-content" tabButtonId="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
+      <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
+        <div>Status Change: 
+          <select class="devActivityStatusSel" style="border: solid 1px #ccc; width: 120px;">
+            <option value="">Select One</option>
+            <option value="queued">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="submit">Synced</option>
+            <option value="failed">Failed</option>
+            <option value="error">Error</option>
+          </select>
+          <span class="devActivityStatusResult"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>`;

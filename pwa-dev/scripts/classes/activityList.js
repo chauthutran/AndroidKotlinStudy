@@ -381,17 +381,17 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
     {
-        var activityCardTrTag = $( ActivityCardTemplate.cardDivTag );
+        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
 
-        activityCardTrTag.attr( 'itemId', activityJson.id );
+        divActivityCardTag.attr( 'itemId', activityJson.id );
 
         var groupAttrVal = me.setGroupDiv( activityJson, viewGroupByData, listTableTbodyTag );
 
-        activityCardTrTag.attr( 'group', groupAttrVal );
+        divActivityCardTag.attr( 'group', groupAttrVal );
 
-        listTableTbodyTag.append( activityCardTrTag );     
+        listTableTbodyTag.append( divActivityCardTag );     
 
-        return new ActivityCard( activityJson.id, me.cwsRenderObj );
+        return new ActivityCard( activityJson.id );
     };
 
 

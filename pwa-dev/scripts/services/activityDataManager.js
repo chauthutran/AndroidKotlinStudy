@@ -600,38 +600,6 @@ ActivityDataManager.updateProcessing_CreatedDate = function( activity )
     }
 };
 
-
-/*
-ActivityDataManager.activityUpdate_Status_WtHistory = function( activityId, status, activityCard, msg, httpResponseCode, returnFunc )
-{
-    if ( status )
-    {
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-
-        if ( activityJson && activityJson.processing )
-        {
-            var oldStatus = activityJson.processing.status;         
-
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( status, httpResponseCode, msg );
-            ActivityDataManager.insertToProcessing( activityJson, processingInfo );	
-    
-            // Need to save storage afterwards..
-            ClientDataManager.saveCurrent_ClientsStore( function() 
-            {
-                if ( oldStatus !== status )
-                {
-                    if ( !activityCard ) activityCard = new ActivityCard( activityId, SessionManager.cwsRenderObj );
-                    // Update ActivityCard is visible..                        
-                    activityCard.displayActivitySyncStatus_Wrapper( activityJson, activityCard.getActivityCardDivTag() );
-                }
-
-                if ( returnFunc ) returnFunc();
-            });
-        }    
-    }
-};
-*/
-
 // --------------------------------------------
 // --- Other Methods
 
@@ -861,9 +829,7 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status, return
             ClientDataManager.saveCurrent_ClientsStore( function() 
             {
                 // update ActivityCard is visible..
-                var activityCardObj = new ActivityCard( activityJson.id, SessionManager.cwsRenderObj );
-                activityCardObj.displayActivitySyncStatus_Wrapper( activityJson, activityCardObj.getActivityCardDivTag() );
-                //activityCardObj.reRenderActivityDiv();
+                ActivitySyncUtil.displayActivitySyncStatus( activityId );
 
                 if ( returnFunc ) returnFunc();
             });

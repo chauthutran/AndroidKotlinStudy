@@ -181,7 +181,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
     // NOTE: Need try/catch here?
     if ( syncReadyJson.ready )
     {
-        var activityCardObj = new ActivityCard( activityId, SessionManager.cwsRenderObj );
+        var activityCardObj = new ActivityCard( activityId );
 
         activityCardObj.highlightActivityDiv( true );
 

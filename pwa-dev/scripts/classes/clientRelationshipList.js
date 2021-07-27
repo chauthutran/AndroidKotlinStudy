@@ -71,17 +71,17 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
     me.renderRelationshipCard = function( clientJson )
     {       
-        var clientCardTrTag = $( ClientCardTemplate.relationshipCardDivTag );
-        clientCardTrTag.attr( 'itemId', clientJson._id );
+        var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
+        divClientCardTag.attr( 'itemId', clientJson._id );
         // Add Icon
-        me.clientIconDisplay( clientCardTrTag.find(".clientIcon"), clientJson );
+        me.clientIconDisplay( divClientCardTag.find(".clientIcon"), clientJson );
         // Add FullName
         var fullName = me.getClientFullName( clientJson );
-        clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
+        divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
         // Add relationship type
-        clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( clientJson.relType ) );
+        divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( clientJson.relType ) );
 
-        return clientCardTrTag;
+        return divClientCardTag;
     }
 
     // ----------------------------------------------------------------------------------------

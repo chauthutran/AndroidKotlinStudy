@@ -15,7 +15,6 @@ function ClientCard( clientId, options )
     me.options = ( options ) ? options : {};
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
-    me.coolDownMoveRate = 300; // 100 would move 10 times per sec..
 
 	// =============================================
 	// === Initialize Related ========================
@@ -32,7 +31,7 @@ function ClientCard( clientId, options )
         if ( clientCardDivTag.length > 0 )
         {
             var clientJson = ClientDataManager.getClientById( me.clientId );
-            var clickEnable = ( me.options.disableClicks ) ? false: true;  // Used for detailed view popup - which reuses 'render' method.
+            var detailViewCase = ( me.options.detailViewCase ) ? true: false;  // Used for detailed view popup - which reuses 'render' method.
 
             try
             {
@@ -42,7 +41,7 @@ function ClientCard( clientId, options )
                 var clientRerenderTag = clientCardDivTag.find( '.clientRerender' );
                 var clientPhoneCallTag = clientCardDivTag.find( '.clientPhone' );
 
-                var clientEditPaylayLoadBtnTag = clientCardDivTag.find( '#editPaylayLoadBtn' );
+                //var clientEditPaylayLoadBtnTag = clientCardDivTag.find( '#editPaylayLoadBtn' );
 
                 var lastActivityJson = me.getLastActivity( clientJson );
 
@@ -54,12 +53,12 @@ function ClientCard( clientId, options )
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setClientContentDisplay( clientContentTag, clientJson );
-                if ( clickEnable ) me.clientContentClick_FullView( clientContentTag, clientContainerTag, clientJson );
+                if ( !detailViewCase ) me.clientContentClick_FullView( clientContentTag, clientContainerTag, clientJson );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for clientSubmit.., icon/text populate..
-                me.setupSyncBtn( clientCardDivTag, lastActivityJson, !clickEnable );  // clickEnable - not checked for SyncBtn/Icon
+                if ( lastActivityJson ) me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
@@ -82,75 +81,28 @@ function ClientCard( clientId, options )
         }
     };
 
-    
-    me.setupSyncBtn = function( clientCardDivTag, activityJson, detailViewCase )
+
+    me.setupSyncBtn = function( clientCardDivTag, activityId, detailViewCase )
     {
-        var divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' );
-        var divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' );
-        var statusVal = ( activityJson.processing ) ? activityJson.processing.status : '';
-
-        // if 'detailView' mode, the bottom message should not show..
-        if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
-
-        me.displayActivitySyncStatus( statusVal, divSyncStatusTextTag, divSyncIconTag, activityJson );
-
-        me.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, activityJson.id ); //me.activityId );   
-    };
-
-
-    
-    me.setSyncIconClickEvent = function( divSyncIconTag, activityCardDivTag, activityId )
-    {
-        divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
+        try
         {
-            // This could be called again after activityJson/status is changed, thus, get everything again from activityId
-            e.stopPropagation();  // Stops calling parent tags event calls..
-
-            var activityJson = ActivityDataManager.getActivityById( activityId );
-            var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-            
-            // NOTE:
-            //  - If status is not syncable one, display bottom message
-            //  - If offline, display the message about it.
-            if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
-            {
-                // If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
-                ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
-                {         
-                    // Display Left Msg <-- Do not need if?                          
-                    var leftSec = Util.getSecFromMiliSec( timeRemainMs );
-                    var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
-                    MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
-
-                }, function() 
-                {
-                    // Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-                    if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
-                    else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
-                });
-            }  
-            else 
-            {
-                if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
-                {
-                    // Display the popup
-                    SyncManagerNew.bottomMsgShow( statusVal, activityJson, activityCardDivTag );
-
-                    // NOTE: STATUS CHANGED!!!!
-                    // If submitted with msg one, mark it as 'read' and rerender the activity Div.
-                    if ( statusVal === Constants.status_submit_wMsg )        
-                    {
-                        // TODO: Should create a history...
-                        ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
-                    }
-                }
-            }
-        });  
+            var divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' ).attr( 'activityId', activityId );
+            var divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' ).attr( 'activityId', activityId );
+    
+            // if 'detailView' mode, the bottom message should not show..
+            if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
+    
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
+    
+            ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, activityId );
+        }
+        catch ( errMsg )
+        {
+            console.log( 'ERROR in ClientCard.setupSyncBtn, ' + errMsg );
+        }
     };
 
-
-
-
+    
     me.getLastActivity = function( clientJson )
     {
         var lastActivityJson;
@@ -171,106 +123,30 @@ function ClientCard( clientId, options )
         return lastActivityJson;
     };
 
-    
-
-    me.displayActivitySyncStatus = function( statusVal, divSyncStatusTextTag, divSyncIconTag )
-    {
-        // reset..
-        divSyncIconTag.empty();
-        divSyncStatusTextTag.empty();
-
-        var imgIcon = $( '<img>' );
-
-        if ( statusVal === Constants.status_submit )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
-            imgIcon.attr( 'src', 'images/sync.svg' );
-        }
-        else if ( statusVal === Constants.status_submit_wMsg )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg*' );
-            imgIcon.attr( 'src', 'images/sync_msd.svg' ); 
-        }
-        else if ( statusVal === Constants.status_submit_wMsgRead )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
-            imgIcon.attr( 'src', 'images/sync_msdr.svg' );
-        }
-        else if ( statusVal === Constants.status_downloaded )        
-        {
-            // already sync..
-            divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' ).attr( 'term', 'activitycard_status_downloaded' );
-            imgIcon.attr( 'src', 'images/sync.svg' );
-        }
-        else if ( statusVal === Constants.status_queued )
-        {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
-            imgIcon.attr( 'src', 'images/sync-pending_36.svg' );
-        }
-        else if ( statusVal === Constants.status_processing )
-        {
-            divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
-            imgIcon.attr( 'src', 'images/sync-pending_36.svg' );
-
-            // NOTE: We are rotating if in 'processing' status!!!
-            FormUtil.rotateTag( divSyncIconTag, true );
-        }        
-        else if ( statusVal === Constants.status_failed )
-        {
-            // Not closed status, yet
-            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' ).attr( 'term', 'activitycard_status_failed' );
-            imgIcon.attr( 'src', 'images/sync-postponed_36.svg' );
-        }
-        else if ( statusVal === Constants.status_error )
-        {
-            divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Error' );
-            imgIcon.attr( 'src', 'images/sync-error_36.svg' );
-        }
-
-        divSyncIconTag.append( imgIcon );
-
-        // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
-        //if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) me.syncUpCoolDownTime_CheckNProgressSet( divSyncIconTag );
-    };
-    
 
     // ---------------------------------------
 
     me.generateCardTrTag = function( groupAttrVal )
     {        
-        var clientCardTrTag = $( ClientCardTemplate.cardDivTag );
+        var divClientCardTag = $( ClientCardTemplate.cardDivTag );
 
-        clientCardTrTag.attr( 'itemId', me.clientId );
+        divClientCardTag.attr( 'itemId', me.clientId );
 
-        clientCardTrTag.attr( 'group', groupAttrVal );
+        divClientCardTag.attr( 'group', groupAttrVal );
 
-        return clientCardTrTag;
+        return divClientCardTag;
     };
 
     // -----------------------------------------------------
 
     me.getClientCardDivTag = function()
     {
-        if ( me.options.parentTag_Override )
-        {
-            return me.options.parentTag_Override.find( '.client[itemid="' + me.clientId + '"]' );
-        }
-        else
-        {
-            return $( '.client[itemid="' + me.clientId + '"]' );
-        }
+        //if ( me.options.parentTag_Override )
+        //    return me.options.parentTag_Override.find( '.client[itemid="' + me.clientId + '"]' );
+            
+        return $( 'div.card[itemid="' + me.clientId + '"]' );
     };
 
-
-    me.getSyncButtonDivTag = function( clientId )
-    {
-        var clientCardTags = ( clientId ) ? $( '.client[itemid="' + clientId + '"]' ) : me.getClientCardDivTag();
-
-        return clientCardTags.find( '.activityStatusIcon' );
-    };
 
     // -----------------------------------------------------
 
@@ -408,7 +284,7 @@ function ClientCard( clientId, options )
     {
         // There are multiple places presenting same activityId info.
         // We can find them all and reRender their info..
-        var clientCardTags = $( '.client[itemid="' + me.clientId + '"]' );
+        var clientCardTags = $( 'div.card[itemid="' + me.clientId + '"]' );
         var reRenderClickDivTags = clientCardTags.find( 'div.clientRerender' );   
         
         reRenderClickDivTags.click();
@@ -447,7 +323,7 @@ function ClientCard( clientId, options )
     me.highlightClientDiv = function( bHighlight )
     {
         // If the clientTag is found on the list, highlight it during SyncAll processing.
-        var clientDivTag = $( '.client[itemid="' + me.clientId + '"]' );
+        var clientDivTag = $( 'div.card[itemid="' + me.clientId + '"]' );
 
         if ( clientDivTag.length > 0 )
         {
@@ -479,8 +355,8 @@ function ClientCard( clientId, options )
             sheetFull.find( '.client' ).attr( 'itemid', clientId )
 
             // Header content set
-            var itemCard = new ClientCard( clientId,
-                { 'parentTag_Override': sheetFull, 'disableClicks': true } 
+            var itemCard = new ClientCard( clientId, {'detailViewCase': true }
+                // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
             );
             itemCard.render();
 
@@ -566,17 +442,17 @@ function ClientCard( clientId, options )
 
         //         var relationshipClientJson = ClientDataManager.getClientById( relObj.clientId );
                 
-        //         var clientCardTrTag = $( ClientCardTemplate.relationshipCardDivTag );
-        //         clientCardTrTag.attr( 'itemId', relationshipClientJson._id );
+        //         var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
+        //         divClientCardTag.attr( 'itemId', relationshipClientJson._id );
         //         // Add Icon
-        //         me.clientIconDisplay( clientCardTrTag.find(".clientIcon"), relationshipClientJson );
+        //         me.clientIconDisplay( divClientCardTag.find(".clientIcon"), relationshipClientJson );
         //         // Add FullName
         //         var fullName = relationshipClientJson.clientDetails.firstName + relationshipClientJson.clientDetails.lastName;
-        //         clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
+        //         divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
         //         // Add relationship type
-        //         clientCardTrTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( relObj.type ) );
+        //         divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( relObj.type ) );
 
-        //         listTag.append( clientCardTrTag );
+        //         listTag.append( divClientCardTag );
 
         //     });
         // }
@@ -616,12 +492,12 @@ function ClientCard( clientId, options )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag )
     {
-        var activityCardTrTag = $( ActivityCardTemplate.cardDivTag );
+        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
 
-        activityCardTrTag.attr( 'itemId', activityJson.id );
-        //activityCardTrTag.attr( 'group', groupAttrVal );
+        divActivityCardTag.attr( 'itemId', activityJson.id );
+        //divActivityCardTag.attr( 'group', groupAttrVal );
 
-        listTableTbodyTag.append( activityCardTrTag );
+        listTableTbodyTag.append( divActivityCardTag );
 
         return new ActivityCard( activityJson.id );
     };
@@ -647,7 +523,7 @@ ClientCardTemplate.cardDivTag = `<div class="client card">
 
         <card__content class="clientContent card__content" style="color: #444; cursor: pointer;" title="Click for detail" />
 
-        <card__cta class="clientStatus card__cta">
+        <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
             <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
             <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
@@ -666,7 +542,7 @@ ClientCardTemplate.relationshipCardDivTag = `<div class="clientContainer card__c
 
     <card__content class="clientContent card__content" style="color: #444; cursor: pointer;" title="Click for detail" />
 
-    <card__cta class="clientStatus card__cta">
+    <card__cta class="activityStatus card__cta">
         <div class="editRelationship card__cta_one" style="cursor: pointer;"><img src="images/payload_24.png"></div>
         <div class="deleteRelationship card__cta_two" style="cursor:pointer;"><img src="images/hide.png"></div>
     </card__cta>
@@ -696,10 +572,10 @@ ClientCardTemplate.cardFullScreen = `<div class="wapper_card">
     <div class="card__container">
         <card__support_visuals class="clientIcon card__support_visuals" />
         <card__content class="clientContent card__content" />
-        <card__cta class="clientStatus card__cta">
+        <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status" />
-            <div class="clientPhone card__cta_one"></div>
-            <div class="activityStatusIcon card__cta_two"></div>
+            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
         </card__cta>
         <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
     </div>
