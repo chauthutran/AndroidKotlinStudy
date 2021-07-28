@@ -390,13 +390,15 @@ function ClientCard( clientId, options )
             passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
         }
 
+        // TODO: We can also use simpler version of data 'results.clientId', results
+
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
 
         // Get client Profile Block defition from config.
         var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
         FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
 
-
+        
         // #2. payload Preview
 
         // LIST ACTIVITIES... <-- LIST

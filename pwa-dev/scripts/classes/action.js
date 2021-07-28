@@ -199,7 +199,12 @@ function Action( cwsRenderObj, blockObj )
 					if ( blockJson )
 					{
 						// 'blockPassingData' exists is called from 'processWSResult' actions
-						if ( blockPassingData === undefined ) blockPassingData = {}; // passing data to block
+						if ( blockPassingData === undefined ) 
+						{
+							if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
+							else blockPassingData = {}; 
+						}
+						
 						blockPassingData.showCase = clickActionJson.showCase;
 						blockPassingData.hideCase = clickActionJson.hideCase;
 
