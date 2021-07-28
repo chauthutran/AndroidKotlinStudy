@@ -589,6 +589,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var labelTag = optionDivTag.find( 'label' );
 		var labelTerm = TranslationManager.translateText( optionConfig.defaultName, labelTermId );
 		labelTag.attr( 'for', 'opt_' + targetId + '_' + optionConfig.value );
+		labelTag.attr( 'term', labelTermId );
 		labelTag.text( labelTerm );
 
 		// Set DEFAULT display value if any
