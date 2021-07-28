@@ -682,24 +682,10 @@ function ActivityCard( activityId, options )
             // set tabs contents
             me.setFullPreviewTabContent( activityId, sheetFull );
         
-            // set other events
-            var cardCloseTag = sheetFull.find( 'img.btnBack' );
-        
-            cardCloseTag.off( 'click' ).click( function(){ 
-                sheetFull.empty();
-                sheetFull.fadeOut();
-                //$( '#pageDiv' ).show();
-            });
-        
-        
-            // render
-            sheetFull.fadeIn();
 
-            // NEW: PREVIEW STYLE CHANGES
-            sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
-        
-            //$( '#pageDiv' ).hide();
+            FormUtil.sheetFullSetup_Show( sheetFull );
 
+            
             TranslationManager.translatePage();            
         }
     };

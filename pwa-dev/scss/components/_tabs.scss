@@ -196,6 +196,26 @@ $active-tab :$color-p;
 
         }
 
+        @at-root .formField {
+
+            @include p-device(240) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include l-device(320) {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            @include rwd-min(558) {
+                width: calc(50% - 8px);
+                margin: 0 4px 8px 4px!important;
+
+            }
+
+        }
+
         .section{
             @include p-device(240) {
                 width: 100%;

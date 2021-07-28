@@ -34,7 +34,7 @@ ConfigManager.coolDownTime = '90000'; // 90 seconds - default.  Could be updated
 ConfigManager.staticData = { 
     soundEffects: false //Util.isMobi()
     , autoComplete: true
-    , logoutDelay: 60 
+    , logoutDelay: 30 // WAS 60 min, change to 30
 };
 
 ConfigManager.default_SettingPaging = { 

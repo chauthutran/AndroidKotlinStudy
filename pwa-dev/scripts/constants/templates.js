@@ -578,3 +578,15 @@ Templates.settings_app_data_configuration = `
     </div>
   </div>
 </dialog>`;
+
+Templates.sheetFullL2Frame = `
+<div class="wapper_card">
+  <div class="sheet-title c_900" style="width: 100%;">
+    <img src="images/arrow_back.svg" class="btnBack">
+    <span term="term_newClient">New Client</span>
+  </div>
+  <div class="card contentBody"
+    style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px); width: calc(100vw - 16px);">
+  </div>
+</div>
+`;

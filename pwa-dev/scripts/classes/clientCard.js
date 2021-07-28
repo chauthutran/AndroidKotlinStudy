@@ -363,20 +363,8 @@ function ClientCard( clientId, options )
             // set tabs contents
             me.setFullPreviewTabContent( clientJson, sheetFull );
         
-            // set other events
-            var cardCloseTag = sheetFull.find( 'img.btnBack' );
-        
-            cardCloseTag.off( 'click' ).click( function(){ 
-                sheetFull.empty();
-                sheetFull.fadeOut();
-                //$( '#pageDiv' ).show();
-            });
-                
-            // render
-            sheetFull.fadeIn();
 
-            // NEW: PREVIEW STYLE CHANGES
-            sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );
+            FormUtil.sheetFullSetup_Show( sheetFull );
 
             TranslationManager.translatePage();            
         }
@@ -417,51 +405,18 @@ function ClientCard( clientId, options )
 
         // #3. relationship?
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
-        
+
+        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
+
         // Remove previously loaded div blocks - clear out.
         sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() {
-            relationshipTabTag.find( 'div.block' ).remove();
+            relationshipListObj.render();
         });
 
-
-        // Populate relationship..
-        me.renderRelationshipList( clientJson, relationshipTabTag );
     };    
 
 
     // ----------------------------------------------
-
-    me.renderRelationshipList = function( clientJson, relationshipTabTag )
-    {
-        // var listTag = $( '<div class="list"></div>' );
-
-        // if ( clientJson.relationships )
-        // {
-        //     clientJson.relationships.forEach( relObj => 
-        //     {
-
-        //         var relationshipClientJson = ClientDataManager.getClientById( relObj.clientId );
-                
-        //         var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
-        //         divClientCardTag.attr( 'itemId', relationshipClientJson._id );
-        //         // Add Icon
-        //         me.clientIconDisplay( divClientCardTag.find(".clientIcon"), relationshipClientJson );
-        //         // Add FullName
-        //         var fullName = relationshipClientJson.clientDetails.firstName + relationshipClientJson.clientDetails.lastName;
-        //         divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
-        //         // Add relationship type
-        //         divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( relObj.type ) );
-
-        //         listTag.append( divClientCardTag );
-
-        //     });
-        // }
-
-        // relationshipTabTag.append( listTag );
-
-        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
-        relationshipTabTag.append( relationshipListObj.getListTag() );
-    };
 
     // =============================================
 
@@ -469,6 +424,7 @@ function ClientCard( clientId, options )
     {
         if ( activityList.length === 0 ) 
         {
+            
         }
         else
         {
@@ -586,7 +542,7 @@ ClientCardTemplate.cardFullScreen = `<div class="wapper_card">
 
             <li class="primary active" rel="tab_clientDetails">
                 <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 
                 <ul class="2ndary" style="display: none; z-index: 1;">
 

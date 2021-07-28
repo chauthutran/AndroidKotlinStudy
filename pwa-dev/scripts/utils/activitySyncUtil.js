@@ -34,8 +34,7 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 			}, function() 
 			{
 				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-				if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId );
-				else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
+				ActivitySyncUtil.syncUpActivity_IfOnline( activityId );
 			});
 		}  
 		else 
@@ -55,6 +54,14 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 			}
 		}
 	});  
+};
+
+
+ActivitySyncUtil.syncUpActivity_IfOnline = function( activityId, returnFunc )
+{
+	// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+	if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId, undefined, returnFunc );
+	else MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
 };
 
 

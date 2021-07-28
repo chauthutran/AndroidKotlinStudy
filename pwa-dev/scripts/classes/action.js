@@ -36,9 +36,12 @@ function Action( cwsRenderObj, blockObj )
 		{
 			me.btnClickMarked( btnTag );
 
-			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
-			
+			var loadingTag = FormUtil.generateLoadingTag( btnTag );
+
+			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) 
+			{
 				me.clearBtn_ClickedMark( btnTag );
+				WsCallManager.loadingTagClear( loadingTag );
 			} );	
 		}
 		else
@@ -167,8 +170,30 @@ function Action( cwsRenderObj, blockObj )
 	
 					afterActionFunc( true );
 				}
+				else if ( clickActionJson.actionType === "openSheetFullL2" )
+				{		
+					var sheetFullL2Tag = $( '#sheetFullL2' );
+					sheetFullL2Tag.html( Templates.sheetFullL2Frame );	
+					FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
+
+					me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
+				}
+				else if ( clickActionJson.actionType === "closeSheetFullL2" )
+				{				
+					$( '#sheetFullL2' ).find( 'img.btnBack' ).click();
+				}
 				else if ( clickActionJson.actionType === "openBlock" )
 				{
+					// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
+					if ( clickActionJson.openInSheetFullL2 )
+					{
+						var sheetFullL2Tag = $( '#sheetFullL2' );
+						sheetFullL2Tag.html( Templates.sheetFullL2Frame );	
+						FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
+
+						me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
+					}
+
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 					if ( blockJson )
@@ -223,34 +248,34 @@ function Action( cwsRenderObj, blockObj )
 	
 					afterActionFunc( true );
 				}
-				else if ( clickActionJson.actionType === "alertMsg" )
+				else if ( clickActionJson.actionType === "alertMsg" || clickActionJson.actionType === "topNotifyMsg" )
 				{
-					if ( clickActionJson.messageClass )
-					{
-						MsgManager.notificationMessage ( clickActionJson.message, clickActionJson.messageClass, undefined, '', 'right', 'top' );
-					}
-					else
-					{
-						MsgManager.notificationMessage ( clickActionJson.message, 'notifDark', undefined, '', 'right', 'top' );
-					}
+					var msgTransl = TranslationManager.translateText( clickActionJson.message, clickActionJson.term );
+					var clsName = ( clickActionJson.messageClass ) ? clickActionJson.messageClass: 'notifDark';
+
+					MsgManager.notificationMessage ( msgTransl, clsName, undefined, '', 'right', 'top' );
 	
 					afterActionFunc( true );
 				}
-				else if ( clickActionJson.actionType === "topNotifyMsg" )
+				else if ( clickActionJson.actionType === "evalAction" )
 				{
-					if ( clickActionJson.messageClass )
+					if ( clickActionJson.eval )
 					{
-						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), clickActionJson.messageClass, undefined, '', 'right', 'top' );
+						try { eval( clickActionJson.eval ); }	// We can even modify 'passData' by this..  or do timeout..
+						catch( errMsg ) { console.log( 'Action.evalAction ERROR, ' + errMsg ); }
+						
+						// If the eval has 'afterActionFunc', let it control the call.						
+						if ( clickActionJson.eval.indexOf( 'afterActionFunc' ) === -1 ) afterActionFunc( true ); 
 					}
 					else
 					{
-						MsgManager.notificationMessage ( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ), 'notifDark', undefined, '', 'right', 'top' );
-					}
-					// If term exists, translate it before displaying
-					//MsgManager.msgAreaShow( TranslationManager.translateText( clickActionJson.message, clickActionJson.term ) );
-	
-					afterActionFunc( true );
-				}
+						afterActionFunc( true ); 
+					}	
+
+					// Examples:
+					//		- Run block or buttons..
+					//		- Also, can use 'dataPass' to exchange data.
+				}				
 				else if ( clickActionJson.actionType === "reloadClientTag" )
 				{
 					var clientCardTag = blockDivTag.closest( '.client[itemid]' );
@@ -270,13 +295,30 @@ function Action( cwsRenderObj, blockObj )
 					if ( activityCardTag.length > 0 ) activityCardTag.find( 'div.activityRerender' ).click();	
 					afterActionFunc( true );
 				}
-				else if ( clickActionJson.actionType === "activitySyncRun" )
+				else if ( clickActionJson.actionType === "activitySyncBtnClick" )
 				{
 					var clientCardTag = blockDivTag.closest( 'div.card[itemid]' );
 
 					if ( clientCardTag.length > 0 ) clientCardTag.find( 'div.activitySyncRun' ).click();
 
 					afterActionFunc( true );
+				}
+				else if ( clickActionJson.actionType === "syncActivityById" )
+				{
+					if ( dataPass.activityJson )
+					{						
+						ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id, function( syncReadyJson, success ) 
+						{
+							console.log( 'queuedActivitySync' );
+							console.log( syncReadyJson );
+							console.log( success );
+							afterActionFunc( true );
+
+							// alert case?
+						});
+					}
+
+					// NOTE: TODO: HOW TO make a call back always?
 				}
 				else if ( clickActionJson.actionType === "processWSResult" ) 
 				{
@@ -337,19 +379,24 @@ function Action( cwsRenderObj, blockObj )
 				else if ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert !== "true" )
 				{
 					// NOTE: Most Case - 'Search'
+					dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
+					dataPass.activityJson = undefined;
 
 					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );
 					
-					var formsJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
+					var payloadJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
 
 					// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
-					me.submitToWs( actionUrl, formsJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+					me.submitToWs( actionUrl, payloadJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
 
 						afterActionFunc( bResult, optionJson );
 					} );
 				}
 				else if ( clickActionJson.actionType === "queueActivity" || ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert === "true" ) )
 				{
+					dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
+					dataPass.activityJson = undefined;
+
 					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
 					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
 
@@ -358,8 +405,7 @@ function Action( cwsRenderObj, blockObj )
 						//var currBlockId = blockDivTag.attr( 'blockId' );
 						if ( passed )
 						{
-
-							// NEW, TEMP
+							// NEW - Create Activity under existing Client json rather than new client.
 							if ( clickActionJson.underClient )
 							{
 								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
@@ -383,6 +429,7 @@ function Action( cwsRenderObj, blockObj )
 									AppInfoManager.addToActivityHistory( activityJson );
 
 									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+									dataPass.activityJson = activityJson;
 			
 									if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
 
@@ -468,16 +515,16 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 
-	me.submitToWs = function( actionUrl, formsJson, actionDefJson, btnTag, dataPass, returnFunc )
+	me.submitToWs = function( actionUrl, payloadJson, actionDefJson, btnTag, dataPass, returnFunc )
 	{
 		// NOTE: USED FOR IMMEDIATE SEND TO WS (Ex. Search by voucher/phone/detail case..)
 
 		if ( actionUrl )
 		{					
 			// Loading Tag part..
-			var loadingTag = FormUtil.generateLoadingTag( btnTag );
+			// var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			WsCallManager.wsActionCall( actionUrl, formsJson, loadingTag, function( success, redeemReturnJson ) {
+			WsCallManager.wsActionCall( actionUrl, payloadJson, undefined, function( success, redeemReturnJson ) {
 
 				if ( !redeemReturnJson ) redeemReturnJson = {};
 
@@ -491,7 +538,7 @@ function Action( cwsRenderObj, blockObj )
 					// Change voucherCodes ==> voucherCode string list..  (should also include the status? --> I think so..)
 					// Should have more complicated voucher search..
 					// Should be only done for voucher search.. by Provider...
-					if ( actionDefJson.searchType === 'voucherSearch' ) me.handleMultipleVouchersSplit(redeemReturnJson, formsJson );
+					if ( actionDefJson.searchType === 'voucherSearch' ) me.handleMultipleVouchersSplit(redeemReturnJson, payloadJson );
 					
 					dataPass.prevWsReplyData = redeemReturnJson;
 				}
@@ -760,7 +807,7 @@ function Action( cwsRenderObj, blockObj )
 
 	// -------------------------------------------------------
 
-	me.handleMultipleVouchersSplit = function( responseJson, formsJson )
+	me.handleMultipleVouchersSplit = function( responseJson, payloadJson )
 	{
 		try
 		{
@@ -774,12 +821,12 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var bDataSplited = false;
 
-					if (formsJson.voucherCode) clientAttr.push({ 'id': 'voucherCode', 'value': formsJson.voucherCode });
-					else if (formsJson.searchFields && formsJson.searchFields.voucherCode) 
+					if (payloadJson.voucherCode) clientAttr.push({ 'id': 'voucherCode', 'value': payloadJson.voucherCode });
+					else if (payloadJson.searchFields && payloadJson.searchFields.voucherCode) 
 					{
 						// If the search is by voucherCode, simply add 'voucherCode' data in search result..
 						//searchFields: { voucherCode: "987654321" }
-						clientAttr.push({ 'id': 'voucherCode', 'value': formsJson.searchFields.voucherCode });
+						clientAttr.push({ 'id': 'voucherCode', 'value': payloadJson.searchFields.voucherCode });
 					}										
 					else
 					{

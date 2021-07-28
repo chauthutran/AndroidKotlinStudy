@@ -13,24 +13,34 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     me.listTag;
     me.addRelationshipBtnTag;
 
-
-
     // ----------------------------------------------------------------------------------------
     // Init method
 
     me.initialize = function() 
     {
-        me.listTag = $( '<div class="list"></div>' );
-        var list = me.getRelationshipClientList( me.clientJson );
-
-        me.renderRelationshipList( me.listTag, list );
-        me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
     }
 
     me.getListTag = function()
     {
         return me.listTag;
     }
+
+    me.render = function()
+    {
+        // Reset things..  maybe simply clear it out?  
+        me.relationshipTabTag.html( '' );
+        //me.relationshipTabTag.find( 'div.block' ).remove();
+        //me.listTag.remove();
+
+        me.listTag = $( '<div class="list"></div>' );
+        me.relationshipTabTag.append( me.listTag );
+        
+        var list = me.getRelationshipClientList( me.clientJson );
+
+        me.renderRelationshipList( me.listTag, list );
+        me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
+
+    };
 
     // ----------------------------------------------------------------------------------------
     // Render methods

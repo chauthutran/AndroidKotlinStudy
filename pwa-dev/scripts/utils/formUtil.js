@@ -133,6 +133,25 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
+FormUtil.sheetFullSetup_Show = function( sheetFull )
+{
+	// set other events
+	var cardCloseTag = sheetFull.find( 'img.btnBack' );
+
+	cardCloseTag.off( 'click' ).click( function()
+	{ 
+		sheetFull.empty();
+		sheetFull.fadeOut();
+	});
+
+	// render
+	sheetFull.fadeIn();
+
+	// NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
+	sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );	
+};
+
+
 FormUtil.showErrActivityMsg = function( errActList )
 {
 	var errCount = errActList.length;

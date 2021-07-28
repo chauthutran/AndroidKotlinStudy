@@ -250,9 +250,9 @@ function BlockButton( cwsRenderObj, blockObj )
 			{
 				btnTag.click( function() 
 				{
-          // gAnalytics Event
-          GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
-          //GAnalytics.setEvent = function(category, action, label, value = null) 
+					// gAnalytics Event
+					GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
+					//GAnalytics.setEvent = function(category, action, label, value = null) 
 
 					// Clear All Previous Msgs..
 					MsgManager.msgAreaClearAll();
@@ -282,7 +282,9 @@ function BlockButton( cwsRenderObj, blockObj )
 							var formDivSecTag = blockDivTag.find( '.formDivSec' );
 	
 							// NOTE: TRAN VALIDATION
-							if( Validation.checkFormEntryTagsData( formDivSecTag, 'showMsg' ) )
+							var validationPass = ( btnJson.bypassValidation || Validation.checkFormEntryTagsData( formDivSecTag, 'showMsg' ) );
+
+							if ( validationPass )
 							{				
 								// TODO: ACTIVITY ADDING - Placed Activity Addition here - since we do not know which block is used vs displayed
 								//	Until the button within block is used.. (We should limit to certain type of button to do this, actually.)
@@ -298,14 +300,14 @@ function BlockButton( cwsRenderObj, blockObj )
 					}			
 				});
 			}
-      // 'onClickItem' --> dataList (search result list) button click.  Usually opens up new block to display info related to search result
+		    // 'onClickItem' --> dataList (search result list) button click.  Usually opens up new block to display info related to search result
 			else if( btnJson.onClickItem )
 			{
 				btnTag.click( function() 
 				{
-          // gAnalytics Event
-          GAnalytics.setEvent( 'ButtonClick', btnId, 'dataListButton', 1 );
-          //GAnalytics.setEvent = function(category, action, label, value = null) 
+					// gAnalytics Event
+					GAnalytics.setEvent( 'ButtonClick', btnId, 'dataListButton', 1 );
+					//GAnalytics.setEvent = function(category, action, label, value = null) 
 
 					// Clear All Previous Msgs..
 					MsgManager.msgAreaClearAll();
