@@ -22,9 +22,9 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     {
         var defPayloadTemplates = ConfigManager.getConfigJson().definitionPayloadTemplates;
         var payloadList = PayloadTemplateHelper.getPayloadListFromTemplate( payloadTemplate, defPayloadTemplates );
-        var INFO_Copy = PayloadTemplateHelper.getINFO_Copy_wtPayloadSet( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var );
+        var INFO = PayloadTemplateHelper.getINFO_wtPayloadSet( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var );
 
-        PayloadTemplateHelper.evalPayloads( payloadList, INFO_Copy, defPayloadTemplates );
+        PayloadTemplateHelper.evalPayloads( payloadList, INFO, defPayloadTemplates );
         
         finalPayload = PayloadTemplateHelper.combinePayloads( payloadList );
     }
@@ -78,9 +78,9 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
     return payloadList;
 };
 
-PayloadTemplateHelper.getINFO_Copy_wtPayloadSet = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var )
+PayloadTemplateHelper.getINFO_wtPayloadSet = function( dateTimeObj, formsJson, formsJsonGroup, blockInfo, INFO_Var )
 {
-    var INFO = Util.cloneJson( InfoDataManager.getINFO() );   
+    var INFO = InfoDataManager.getINFO();   
 
     // client, clientId
     if ( blockInfo.clientId ) INFO.clientId = blockInfo.clientId;
@@ -95,7 +95,7 @@ PayloadTemplateHelper.getINFO_Copy_wtPayloadSet = function( dateTimeObj, formsJs
 
     INFO.payload = payload;
 
-    // NEW - add 'INFO_Var'
+    // NEW - add 'INFO_Var'  -- but this will accumulate..  Might not that be good?
     if ( INFO_Var ) Util.mergeJson( INFO, INFO_Var );
 
     return INFO;

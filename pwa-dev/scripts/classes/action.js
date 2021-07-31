@@ -85,7 +85,14 @@ function Action( cwsRenderObj, blockObj )
 			{			
 				if ( bResult )
 				{
-					actionIndex++;
+					if ( dataPass.nextActions ) 
+					{
+						actions = Util.cloneJson( dataPass.nextActions ); // It is OK to replace original 'actions' array?
+						actionIndex = 0;
+						dataPass.nextActions = undefined;
+					}
+					else { actionIndex++; }
+
 					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );				
 				}
 				else
@@ -116,13 +123,32 @@ function Action( cwsRenderObj, blockObj )
 			
 			if ( clickActionJson )
 			{
-				if ( clickActionJson.actionType === "evaluation" )
+				if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
 				{
 					//console.customLog( blockPassingData.displayData );
 					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
 					//console.customLog( blockPassingData.displayData );
 	
 					afterActionFunc( true );
+				}
+				else if ( clickActionJson.actionType === "evalAction" ) // New Eval - Javascript plain Eval
+				{
+					if ( clickActionJson.eval )
+					{
+						try { eval( Util.getEvalStr( clickActionJson.eval ) ); }	// We can even modify 'passData' by this..  or do timeout..
+						catch( errMsg ) { console.log( 'Action.evalAction ERROR, ' + errMsg ); }
+						
+						// If the eval has 'afterActionFunc', let it control the call.						
+						if ( clickActionJson.eval.indexOf( 'afterActionFunc' ) === -1 ) afterActionFunc( true ); 
+					}
+					else
+					{
+						afterActionFunc( true ); 
+					}	
+
+					// Examples:
+					//		- Run block or buttons..
+					//		- Also, can use 'dataPass' to exchange data.
 				}
 				else if ( clickActionJson.actionType === "clearOtherBlocks" )
 				{
@@ -261,26 +287,7 @@ function Action( cwsRenderObj, blockObj )
 					MsgManager.notificationMessage ( msgTransl, clsName, undefined, '', 'right', 'top' );
 	
 					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "evalAction" )
-				{
-					if ( clickActionJson.eval )
-					{
-						try { eval( clickActionJson.eval ); }	// We can even modify 'passData' by this..  or do timeout..
-						catch( errMsg ) { console.log( 'Action.evalAction ERROR, ' + errMsg ); }
-						
-						// If the eval has 'afterActionFunc', let it control the call.						
-						if ( clickActionJson.eval.indexOf( 'afterActionFunc' ) === -1 ) afterActionFunc( true ); 
-					}
-					else
-					{
-						afterActionFunc( true ); 
-					}	
-
-					// Examples:
-					//		- Run block or buttons..
-					//		- Also, can use 'dataPass' to exchange data.
-				}				
+				}			
 				else if ( clickActionJson.actionType === "reloadClientTag" )
 				{
 					var clientCardTag = blockDivTag.closest( '.client[itemid]' );

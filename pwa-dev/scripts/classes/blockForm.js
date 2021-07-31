@@ -1783,20 +1783,21 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		if ( passedData )
 		{
+			// NOTE: 'resultData', 'dispalyData' normally happenes from DHIS2 search result
 			if ( passedData.resultData ) // if data is in 'resultData' & 'simpleData/displayData' format.
 			{
-				// TODO: On WebService side, we should simply create
-				//   a list that holds 'id' and 'value' for population...
-				//	regardless of type 'tei attribute val', 'dataElement value'
+				me.populateFormData_Common(formDivSecTag, passedData.resultData); // 'clientId', 'voucherId', 'walkIn--' data
 
-				me.populateFormData_Common(formDivSecTag, passedData.resultData);
+				// Simpler data population - from clientJson (that has 'clientDetails' in it)
+				if ( passedData.simpleData ) me.populateFormData_ObjByName( formDivSecTag, passedData.simpleData.clientDetails );
 
-				// Simpler data population
-				if (passedData.simpleData) me.populateFormData_ObjByName(formDivSecTag, passedData.simpleData);
-
-				// (Preivously only used for Dhis2 attribute data population) <-- we are assuming this is single list... (could be 2 dimensional array)
-				// 
+				// Dhis2 Search result styel data - 'displayData' - we are assuming this is single list... (could be 2 dimensional array)
 				if (passedData.displayData) me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.displayData);
+			}
+			else if ( passedData.formsJson )  // NEW - easy way to pass value to form --> formsJson.clientId = '----';
+			{
+				// We can even to 'passData.formsJson = INFO.payload.formsJson;' in 'evalAction' to pass everything.
+				me.populateFormData_ObjByName( formDivSecTag, passedData.formsJson );
 			}
 			else if ( Util.isTypeArray( passedData ) )
 			{
@@ -1832,10 +1833,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		try 
 		{
-			if ( jsonData && jsonData.clientDetails )
+			if ( jsonData )
 			{
-				var clientDetails = jsonData.clientDetails;
-
 				// Need to confirm with Tran/Greg with getting right input control
 				var inputTags = formDivSecTag.find( 'input,select' ).filter('.dataValue');
 
@@ -1850,12 +1849,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		
 						if ( nameStr )
 						{
-							var data = clientDetails[ nameStr ];
+							var data = jsonData[ nameStr ];
 
 							if ( data && Util.isTypeString( data ) )
 							{
 								FormUtil.setTagVal( inputTag, data, function() 
 								{
+									// Trigger change, so that visibility of dependencies can be set? <-- evalActions
 									inputTag.change();
 								});	
 							}
