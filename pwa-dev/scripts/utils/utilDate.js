@@ -291,3 +291,11 @@ UtilDate.getSecFromMiliSec = function( miliSec )
 
 	return sec;
 };
+
+
+UtilDate.getDaysSince = function( fromDtStr )
+{
+	var timeMs = Util.getTimePassedMs( fromDtStr );
+
+	return Math.floor( timeMs / Util.MS_DAY );
+}

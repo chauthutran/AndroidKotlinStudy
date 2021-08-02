@@ -151,8 +151,8 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 			&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
 	
 		newSaveObj.mySession = { 
-			createdDate: dtmNow // Not Used For Now
-			,lastUpdated: dtmNow // Not Used For Now
+			createdDate: dtmNow // Last online login
+			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
 			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
 			,theme: themeStr 
 			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
@@ -168,16 +168,46 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 };
 
 // -- Called after offline login --> updates just datetime..
-SessionManager.updateUserSessionToStorage = function( loginData, userName )
+// SessionManager.updateUserSessionToStorage = function( loginData, userName )
+// {
+// 	var dtmNow = ( new Date() ).toISOString();
+
+// 	// if session data exists, update the lastUpdated date else create new session data
+// 	if ( loginData.mySession ) 
+// 	{
+// 		loginData.mySession.lastUpdated = dtmNow;
+
+// 		LocalStgMng.saveJsonData( userName, loginData );
+// 	}
+// };
+
+
+SessionManager.check_warnLastConfigCheck = function( mySession, configUpdate )
 {
-	var dtmNow = ( new Date() ).toISOString();
-
-	// if session data exists, update the lastUpdated date else create new session data
-	if ( loginData.mySession ) 
+	try
 	{
-		loginData.mySession.lastUpdated = dtmNow;
+		if ( mySession && mySession.createdDate && configUpdate.lastTimeCheckedWarning_days !== undefined )
+		{
+			var warningDays = Number( configUpdate.lastTimeCheckedWarning_days );
+			if ( warningDays > 0 )
+			{				
+				var daysSince = UtilDate.getDaysSince( mySession.createdDate );
 
-		LocalStgMng.saveJsonData( userName, loginData );
+				if ( daysSince >= warningDays )
+				{
+					var warningMsg = ( configUpdate.warningMsg ) ? configUpdate.warningMsg : "WARNING: Last online login were " + warningDays + " days old!!";
+					var msgSpanTag = $( '<span term="' + configUpdate.warningMsgTerm + '"></span>' );
+					msgSpanTag.text( warningMsg );
+
+					//MsgManager.msgAreaShow( msgSpanTag, 'ERROR' );
+					FormMsgManager.showFormMsg( msgSpanTag );  // Shoud display in center!!!
+				}
+			}
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in SessionManager.check_warnLastConfigCheck, ' + errMsg );
 	}
 };
 

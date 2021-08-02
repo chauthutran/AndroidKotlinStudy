@@ -90,3 +90,68 @@ FormMsgManager.appUnblock = function()
     FormMsgManager.block( false );
 };
 
+
+// -------------------------------------------
+
+FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
+{
+    var divMainTag = $( '<div></div>' );
+    var msgDivTag = $( '<div></div>' ).append( msgSpanTag );
+    var btnDivTag = $( '<div style="margin-top: 10px;"><button class="cbutton">OK</button></div>' );
+
+    btnDivTag.click( function() 
+    {				
+        FormMsgManager.appUnblock();        
+		if ( btnClickFunc ) btnClickFunc( optionJson );
+    });
+
+    divMainTag.append( msgDivTag );
+    divMainTag.append( btnDivTag );
+
+
+    // Main FormMsg Setup/Show
+    FormMsgManager.appBlockTemplate( divMainTag );
+
+
+    // Modify FormMsg width
+    var blockMsgTag = $( '.blockMsg' );
+    if ( blockMsgTag.length > 0 )
+    {
+        blockMsgTag.css( 'margin', '-50px 0px 0px -50px' );
+        blockMsgTag.css( 'width', '100px' );    
+    }
+};
+
+
+FormMsgManager.showErrActivityMsg = function( errActList )
+{
+    try
+    {
+        var msgSpanTag = $( '<span style="font-weight: bold;">' + errActList.length + ' New Errored Activities Found.</span>' );
+
+        FormMsgManager.showFormMsg( msgSpanTag, { 'errActList': errActList }, function( optionJson ) 
+        {	
+            var viewListTag = $( '.selViewsListSelector' );
+            if ( viewListTag.is(':visible') )
+            {
+                viewListTag.val( 'showErrored' ).change();
+    
+                AppInfoManager.clearNewErrorActivities();
+            
+                setTimeout( function() 
+                {
+                    optionJson.errActList.forEach( errActId => 
+                    {
+                        $( 'div.card[itemid="' + errActId + '"]' ).css( 'background-color', '#fff4f4' );
+                    });
+                }, 500 );
+            }
+        });    
+    }
+    catch( errMsg ) 
+    {
+        console.log( 'ERROR in FormMsgManager.showErrActivityMsg, ' + errMsg );
+    }
+};
+
+

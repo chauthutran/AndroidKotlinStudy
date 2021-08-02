@@ -558,7 +558,7 @@ ConfigManager.getSettingNetworkSync = function()
     try
     {
         var schedulerTime = ConfigManager.getConfigJson().settings.sync.syncUp.schedulerTime;
-		networkSync = Util.getTimeMs( schedulerTime, networkSync );
+		networkSync = UtilDate.getTimeMs( schedulerTime, networkSync );
     }
     catch ( errMsg )
     {
@@ -620,7 +620,7 @@ ConfigManager.getSyncUpCoolDownTime = function()
     try
     {
         var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncUp.coolDownTime;
-		coolDownTime = Util.getTimeMs( coolDownTimeStr, coolDownTime );
+		coolDownTime = UtilDate.getTimeMs( coolDownTimeStr, coolDownTime );
     }
     catch ( errMsg )
     {
@@ -678,14 +678,15 @@ ConfigManager.getDefinitionFieldById = function( fieldId )
 
 ConfigManager.getAppUpdateSetting = function()
 {    
+    // If not logged in, 'settings' is undefined.
     var settings = ConfigManager.getConfigJson().settings;
-    return ( settings.appUpdate ) ? settings.appUpdate: {};
+    return ( settings && settings.appUpdate ) ? settings.appUpdate: {};
 };
 
 ConfigManager.getConfigUpdateSetting = function()
 {
     var settings = ConfigManager.getConfigJson().settings;
-    return ( settings.configUpdate ) ? settings.configUpdate: {};
+    return ( settings && settings.configUpdate ) ? settings.configUpdate: {};
 };
 
 // ---------------------------------------------

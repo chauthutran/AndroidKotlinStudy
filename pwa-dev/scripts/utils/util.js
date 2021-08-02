@@ -4,6 +4,7 @@
 
 function Util() {}
 
+Util.MS_DAY = 86400000;
 Util.MS_HR = 3600000;
 Util.MS_MIN = 60000;
 Util.MS_SEC = 1000;
@@ -2031,83 +2032,6 @@ Util.numberWithCommas = function (x) {
 
 // -----------------------------------------------------------------
 
-Util.getTimeMs = function( input, defaultMs ) 
-{
-	var outputMs = defaultMs;
-
-	if ( input )
-	{
-		if ( Util.isTypeString( input ) ) 
-		{
-			outputMs = Util.getTimeMsStr( input );
-		}
-		else if ( Util.isTypeObject( input ) )
-		{
-			if ( input.time !== undefined && input.unit )
-			{
-				var timeNum = Util.getNum( input.time );
-
-				if ( input.unit === "second" ) outputMs = timeNum * Util.MS_SEC;
-				else if ( input.unit === "minute" ) outputMs = timeNum * Util.MS_MIN;
-				else if ( input.unit === "hour" ) outputMs = timeNum * Util.MS_HR;
-			}    
-		}
-	} 
-
-	return outputMs;
-};
-
-// '00:00:00' time format
-Util.getTimeMsStr = function( input )
-{
-	var timeMs = 0;
-	var timeStrArr = input.split( ':' );
-
-	var hr = 0;
-	var min = 0;
-	var sec = 0;
-
-	// Hour exists..
-	if ( timeStrArr.length >= 3 )
-	{
-		hr = Util.getNum( timeStrArr[0] );
-		min = Util.getNum( timeStrArr[1] );
-		sec = Util.getNum( timeStrArr[2] );
-	} 
-	else if ( timeStrArr.length == 2 )
-	{
-		// Minuts exists..
-		min = Util.getNum( timeStrArr[0] );
-		sec = Util.getNum( timeStrArr[1] );
-	} 
-	else if ( timeStrArr.length == 1 )
-	{
-		sec = Util.getNum( timeStrArr[0] );
-	} 
-
-	timeMs += hr * Util.MS_HR;
-	timeMs += min * Util.MS_MIN;
-	timeMs += sec * Util.MS_SEC;
-
-	return timeMs;
-};
-
-
-Util.getTimeFromMs = function( inputMsTime, toTimeName, optionalStr ) 
-{	
-	var outputVal = 0;
-	var msTimeNum = Util.getNum( inputMsTime );
-
-	Util.tryCatchContinue( function() 
-	{
-		if ( toTimeName === "second" ) outputVal = Math.round( msTimeNum / Util.MS_SEC );
-		else if ( toTimeName === "minute" ) outputVal = Math.round( timeNum / Util.MS_MIN );
-		else if ( toTimeName === "hour" ) outputVal = Math.round( timeNum / Util.MS_HR );	
-	}, 'Util.getTimeFromMs' );
-
-	return ( optionalStr ) ? outputVal + optionalStr : outputVal;
-};
-
 // -----------------------------------------------------------------
 
 Util.stylesStrAppy = function( stylesStr, tag ) 
@@ -2122,20 +2046,4 @@ Util.stylesStrAppy = function( stylesStr, tag )
 	{
 		console.log( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
 	}
-};
-
-
-Util.getSecFromMiliSec = function( miliSec ) 
-{
-	sec = 0;
-
-	try {
-		if ( miliSec ) sec = Math.round( miliSec / Util.MS_SEC );
-	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.getSecFromMiliSec, errMsg: ' + errMsg );
-	}
-
-	return sec;
 };

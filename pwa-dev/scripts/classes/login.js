@@ -690,8 +690,10 @@ function Login( cwsRenderObj )
 				if ( SessionManager.checkLoginData( offlineUserData ) )
 				{
 					// Update current user login information ( lastUpdated, stayLoggedIn )
-					SessionManager.updateUserSessionToStorage( offlineUserData, userName );
+					//SessionManager.updateUserSessionToStorage( offlineUserData, userName );
 					SessionManager.loadDataInSession( userName, password, offlineUserData );
+
+					SessionManager.check_warnLastConfigCheck( offlineUserData.mySession, ConfigManager.getConfigUpdateSetting() );
 
 					isSuccess = true;
 				}

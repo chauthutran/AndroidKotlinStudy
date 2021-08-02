@@ -131,16 +131,18 @@ ScheduleManager.schedule_networkCurrentRecheck = function( NotRunRightAway )
 
 ScheduleManager.runWhenSwitchedToOnline = function()
 {
+	// NEW: if 'forceUpdateWhenOnline', perform app Update.	
+	var forceUpdateWhenOnline = ConfigManager.getAppUpdateSetting().forceUpdateWhenOnline;
+	if ( forceUpdateWhenOnline ) SwManager.checkNewAppFile_OnlyOnline( function() { console.log( 'forceUpdateWhenOnline appUpdate run!' ); }); 
+
+	// Other custom scheduling tasks
 	Object.keys( ScheduleManager.runSwitchToOnlineList ).forEach( requestId => 
 	{
-		try
-		{
+		try {
 			ScheduleManager.runSwitchToOnlineList[ requestId ];
-
 			delete ScheduleManager.runSwitchToOnlineList[ requestId ];
 		}
-		catch( errMsg )
-		{
+		catch( errMsg ) {
 			console.customLog( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
 		}
 	});            
@@ -298,7 +300,7 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 		var newActivityActionJson = Util.cloneJson( syncActionJson );
 		newActivityActionJson.activityId = activityId;
 		newActivityActionJson.tryCount = 0;
-		newActivityActionJson.syncIntervalTimeMs = Util.getTimeMs( syncActionJson.syncInterval, ScheduleManager.syncUpResponseAction_DefaultIntervalTime );
+		newActivityActionJson.syncIntervalTimeMs = UtilDate.getTimeMs( syncActionJson.syncInterval, ScheduleManager.syncUpResponseAction_DefaultIntervalTime );
 
 		ScheduleManager.syncUpResponseActionList[ activityId ] = newActivityActionJson;
 

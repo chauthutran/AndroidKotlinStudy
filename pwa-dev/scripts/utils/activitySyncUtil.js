@@ -27,7 +27,7 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 			ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
 			{         
 				// Display Left Msg <-- Do not need if?                          
-				var leftSec = Util.getSecFromMiliSec( timeRemainMs );
+				var leftSec = UtilDate.getSecFromMiliSec( timeRemainMs );
 				var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
 				MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
 

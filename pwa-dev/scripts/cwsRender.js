@@ -269,7 +269,7 @@ function cwsRender()
 					// TODO: CHECK New errored list..
 					me.checkErrActivityList( function( errActList ) 
 					{						
-						FormUtil.showErrActivityMsg( errActList );
+						FormMsgManager.showErrActivityMsg( errActList );
 					});
 				});
 			}

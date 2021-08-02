@@ -445,7 +445,7 @@ WsCallManager.mockRequestCall = function( mockResponseJson, loadingTag, returnFu
     {
         if ( mockResponseJson )
         {
-            var delayTimeMs = Util.getTimeMs( mockResponseJson.delayTime, WsCallManager.mockDelayTimeMS );
+            var delayTimeMs = UtilDate.getTimeMs( mockResponseJson.delayTime, WsCallManager.mockDelayTimeMS );
     
             setTimeout( function() 
             {

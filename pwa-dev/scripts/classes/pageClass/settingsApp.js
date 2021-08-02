@@ -332,7 +332,7 @@ function settingsApp( cwsRender )
         if ( !Util.checkItemOnSelect( listTag, syncTimer ) )
         {
             // If the value passed in is not in the list, add to the list...
-            var optionName = Util.getTimeFromMs( syncTimer, 'minute', ' mins' );
+            var optionName = UtilDate.getTimeFromMs( syncTimer, 'minute', ' mins' );
             Util.appendOnSelect( listTag, [ { 'id': syncTimer, 'name': optionName } ] );
         }
 

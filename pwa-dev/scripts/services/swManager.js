@@ -101,14 +101,10 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        //if ( SwManager.debugMode) console.log( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
-
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
         {
             SwManager.registrationUpdates = true;
-
-            //if ( SwManager.debugMode) console.log( SwManager.installStateProgress[ SwManager.swInstallObj.state ] + ' {' + Math.round( eval( SwManager.installStateProgress[ SwManager.swInstallObj.state ] ) * 100 ) + '%}' );
 
             switch ( SwManager.swInstallObj.state ) 
             {
@@ -150,7 +146,6 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         {
             console.log( 'swUpdateCase in SwManager.controllerchanged' );
 
-
             // NOTE: Thus, this gets called whenever there is a page reload.
             // --> ONLY display the message or run this if we called for reload or app Check...
             if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.showNewAppAvailable( true );
@@ -163,8 +158,10 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             AppInfoManager.clearLoginCurrentKeys();
 
             
+            var allowUpdateAfterLogin = ConfigManager.getAppUpdateSetting().allowUpdateAfterLogin;
+
             // For Already logged in, simply delay it --> which the logOut will perform the update.
-            if ( SessionManager.getLoginStatus() )
+            if ( SessionManager.getLoginStatus() && !allowUpdateAfterLogin )
             {
                 console.log( 'LoggedIn, thus, delayed the reload.' );
                 // Set for delayed app reload if already logged in.
@@ -202,8 +199,10 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
     {        
         console.log( '** swRegObj.update requested - with swUpdateCase = true' );
 
+        // TODO: Mark dateTime on this try - as last dateTime..  But maybe this is not needed since we have online login check + other flags..
+
         SwManager.swUpdateCase = true;
-        SwManager.swRegObj.update();
+        SwManager.swRegObj.update();        
     }
 }
 
