@@ -502,17 +502,6 @@ ActivityDataManager.getHistoryData = function( history )
 };
 
 
-
-Util.getUTCDateTimeStr = function( dateObj, optionStr )
-{
-	if ( !dateObj ) dateObj = new Date();
-
-	var dtStr = dateObj.toISOString();
-	if ( optionStr === 'noZ' ) dtStr = dtStr.replace( 'Z', '' );
-
-	return dtStr;
-};
-
 // ----------------------------------------------
 // --- Create Activity Processing Info Related
 
@@ -683,8 +672,20 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     {
         if ( activityJson.date && activityJson.date.capturedUTC )
         {
-            var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
-            if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );
+            if ( ConfigManager.getConfigJson().sourceAsLocalTime )
+            {
+                var localDateTime = activityJson.date.capturedUTC;
+                if ( localDateTime ) 
+                {
+                    activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
+                    activityJson.date.capturedUTC = Util.getUTCDateTimeStr( new Date( localDateTime ), 'noZ' );
+                }
+            } 
+            else
+            {
+                var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
+                if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
+            }
         }
     }
     catch ( errMsg )

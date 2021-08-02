@@ -675,6 +675,19 @@ ConfigManager.getDefinitionFieldById = function( fieldId )
     return fieldJson;
 };
 
+
+ConfigManager.getAppUpdateSetting = function()
+{    
+    var settings = ConfigManager.getConfigJson().settings;
+    return ( settings.appUpdate ) ? settings.appUpdate: {};
+};
+
+ConfigManager.getConfigUpdateSetting = function()
+{
+    var settings = ConfigManager.getConfigJson().settings;
+    return ( settings.configUpdate ) ? settings.configUpdate: {};
+};
+
 // ---------------------------------------------
 // ---- Statistic Related --------------------
 
