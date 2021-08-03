@@ -21,8 +21,6 @@ function App() {};
 App.appInstallBtnTag;
 App.ver14 = false;
 
-App.testVar = 5;
-
 // -------------------------------
 
 App.run = function()
