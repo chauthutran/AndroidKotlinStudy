@@ -131,9 +131,17 @@ ScheduleManager.schedule_networkCurrentRecheck = function( NotRunRightAway )
 
 ScheduleManager.runWhenSwitchedToOnline = function()
 {
-	// NEW: if 'forceUpdateWhenOnline', perform app Update.	
-	var forceUpdateWhenOnline = ConfigManager.getAppUpdateSetting().forceUpdateWhenOnline;
-	if ( forceUpdateWhenOnline ) SwManager.checkNewAppFile_OnlyOnline( function() { console.log( 'forceUpdateWhenOnline appUpdate run!' ); }); 
+	// NEW: if 'backgroundUpdateWhenOnline', perform app Update.	
+	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
+	{	
+		SwManager.checkNewAppFile_OnlyOnline( function() 
+		{ 
+			MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); 
+		}
+		, { 'delayReload': true } 
+		); 	
+	}
+
 
 	// Other custom scheduling tasks
 	Object.keys( ScheduleManager.runSwitchToOnlineList ).forEach( requestId => 

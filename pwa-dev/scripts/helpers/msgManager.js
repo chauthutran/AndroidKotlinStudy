@@ -56,14 +56,14 @@ MsgManager.initialSetup = function()
 };
 
 
-MsgManager.msgAreaShow = function( msg, type, optClasses )
+MsgManager.msgAreaShow = function( msg, type, optClasses, hideTimeMs )
 {
     var msgTag;
 
     try
     {
         var colorClass = ( type === 'ERROR' ) ? 'notifRed' : 'notifDark';
-        msgTag = MsgManager.notificationMessage( msg, colorClass, undefined, '', 'right', 'top' );
+        msgTag = MsgManager.notificationMessage( msg, colorClass, undefined, '', 'right', 'top', hideTimeMs );
         if ( optClasses ) msgTag.addClass( optClasses ); // Use 'persistSwitch' - for persisting between block button click/area close.    
     }
     catch ( errMsg )
@@ -98,10 +98,11 @@ MsgManager.msgAreaClear_Alt = function( speed )
     }
 }
 
-MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, delayHide, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
+MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
 {
     var unqID = Util.generateRandomId();
 
+    // TODO: Plan to remove this - used for geoLocation msg - to display only once ever?
     if ( ReserveMsgID != undefined )
     {
         if ( MsgManager.reservedIDs.length > 0 && MsgManager.reservedIDs.indexOf( ReserveMsgID ) >= 0 )  return false;
@@ -112,7 +113,6 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
         }
     }   
 
-    var delayTimer;
     var screenWidth = document.body.clientWidth;
     var screenHeight = document.body.clientHeight;
     var offsetPosition = ( disableAutoWidth != undefined ? ( disableAutoWidth ? '4%' : ( screenWidth < 480 ? '0' : '4%' ) ) : ( screenWidth < 480 ? '0' : '4%' ) );
@@ -121,6 +121,8 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     // cssClasses <-- We could accept it as a single string class name or array of class names and apply properly..
 
     var class_RoundType = ( disableAutoWidth != undefined && disableAutoWidth ) ? 'rounded' : ( ( screenWidth < 480 ) ? '' : 'rounded' );
+
+    // THE MAIN TAG - 'notiDiv'
     var notifDiv = $( '<div id="notif_' + unqID + '" class="notifMsg" ' + optStyle + '>' ); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
     notifDiv.addClass( [ 'notifBase', cssClasses, class_RoundType ] );
 
@@ -167,7 +169,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
     }
 
 
-    if ( disableClose == undefined || disableClose === false )
+    if ( !disableClose )
     {
         var tdClose = $( '<td style="width:24px;">' );
         var notifClose = $( '<img class="round" src="images/close_white.svg" style="border-radius:12px;" >' );
@@ -179,7 +181,6 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
             if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
 
             $( '#notif_' + unqID ).remove();
-
         });
 
         trBody.append ( tdClose );
@@ -188,10 +189,35 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 
 
     // If 'delayHide' is intentionally set ( with some number or '0' for not hide ), set to 'delayTimer..
-    if ( delayHide != undefined || delayHide == 0 ) delayTimer = delayHide;
-    else delayTimer = MsgManager._autoHideDelay;
+    if ( !hideTimeMs ) hideTimeMs = MsgManager._autoHideDelay;  // 10 sec..
 
 
+    if ( hideTimeMs > 0 )
+    {
+        setTimeout( function() {
+
+            if ( $( '#notif_' + unqID ).is(':visible') )
+            {
+              $( '#notif_' + unqID ).fadeOut( 750 );
+
+                setTimeout( function() {
+                    
+                    if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
+                    else $( '#notif_' + unqID ).remove();
+                }, Util.MS_SEC );
+            }
+
+          }, hideTimeMs );
+    }
+
+
+    TranslationManager.translatePage( notifDiv );
+
+    return notifDiv;
+};
+
+
+    /*
     if ( actionButton && autoClick )
     {
         var stepCount = 100;
@@ -207,7 +233,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
         
         $( dvTmr ).attr( 'hot', 0 );
 
-        /* calculate+set smooth transition for progress expansion */
+        // calculate+set smooth transition for progress expansion
         $( dvTmr ).css( '-webkit-transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
         $( dvTmr ).css( 'transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
 
@@ -264,45 +290,7 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 
         }, (delayTimer / stepCount) );
     }
-
-
-    if ( delayTimer > 0 )
-    {
-        setTimeout( function() {
-
-            if ( $( '#notif_' + unqID ).is(':visible') )
-            {
-              $( '#notif_' + unqID ).fadeOut( 750 );
-
-                setTimeout( function() {
-                    
-                    if ( ReserveMsgID != undefined ) MsgManager.clearReservedMessage( ReserveMsgID );
-                    else $( '#notif_' + unqID ).remove();
-                }, Util.MS_SEC );
-            }
-
-          }, delayTimer );
-    }
-
-    if ( MsgManager.debugMode ) console.customLog( 'created messageNotification' );
-
-    //if ( FormUtil.PWAlaunchFrom() == "homeScreen" )
-    if ( ReserveMsgID & ReserveMsgID != 'geolocation' )
-    {
-        if ( actionButton && autoClick )
-        {
-            //playSound("notify");
-        }
-        else
-        {
-            //playSound("ping");
-        }
-    }
-
-    if ( bodyMessage.indexOf( 'term=' ) >=0 ) TranslationManager.translatePage( tdMessage );
-
-    return notifDiv;
-};
+    */
 
 
 MsgManager.clearReservedMessage = function( reservedID )

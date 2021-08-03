@@ -248,12 +248,12 @@ function cwsRender()
 
 	// --------------------------------------
 	// -- START POINT (FROM LOGIN) METHODS
-	me.startWithConfigLoad = function()
+	me.startWithConfigLoad = function( runAfterFunc )
 	{
-		me.startBlockExecute();
+		me.startBlockExecute( runAfterFunc );
 	};
 
-	me.startBlockExecute = function( initializationInstructions )
+	me.startBlockExecute = function( runAfterFunc ) //initializationInstructions )
 	{
 		//initializationInstructions: taken from URL querystring:parameters, e.g. &activityid:123456&voucherid:12345678FC&Name:Rodoflo&ServiceRequired:FP&UID:romefa70
 		ConfigManager.getAreaListByStatus( ConnManagerNew.isAppMode_Online(), function( areaList )
@@ -266,11 +266,14 @@ function cwsRender()
 				{	
 					if ( startMenuTag && SessionManager.getLoginStatus() ) startMenuTag.click();
 
-					// TODO: CHECK New errored list..
+					// SHOW Error activity list msg ( New errored list count )
 					me.checkErrActivityList( function( errActList ) 
 					{						
 						FormMsgManager.showErrActivityMsg( errActList );
 					});
+
+					// If there is a function to run after 'startBlockExecute', run it here.
+					if ( runAfterFunc ) runAfterFunc();
 				});
 			}
 		});

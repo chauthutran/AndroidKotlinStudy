@@ -562,7 +562,11 @@ function Login( cwsRenderObj )
 			{
 				SessionManager.Status_LogIn_InProcess = false;
 
-				if ( isSuccess ) me.loginSuccessProcess( userName, offlineUserData );
+				if ( isSuccess ) me.loginSuccessProcess( userName, offlineUserData, function() 
+				{
+					// After StartUp Fun - This should be displayed after loading..
+					SessionManager.check_warnLastConfigCheck( ConfigManager.getConfigUpdateSetting() );
+				});
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
 			});
@@ -587,11 +591,11 @@ function Login( cwsRenderObj )
 	};
 
 	
-	me.loginSuccessProcess = function( userName, loginData ) 
+	me.loginSuccessProcess = function( userName, loginData, runAfterFunc ) 
 	{	
 		// gAnalytics Event
-    GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
-    //GAnalytics.setEvent = function(category, action, label, value = null) 
+		GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
+		//GAnalytics.setEvent = function(category, action, label, value = null) 
 
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();
@@ -612,7 +616,7 @@ function Login( cwsRenderObj )
 				FormMsgManager.appUnblock();
 
 				// call CWS start with this config data..
-				me.cwsRenderObj.startWithConfigLoad( loginData.dcdConfig );
+				me.cwsRenderObj.startWithConfigLoad( runAfterFunc );
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
 				// For availableType 'v2' only.
@@ -692,8 +696,6 @@ function Login( cwsRenderObj )
 					// Update current user login information ( lastUpdated, stayLoggedIn )
 					//SessionManager.updateUserSessionToStorage( offlineUserData, userName );
 					SessionManager.loadDataInSession( userName, password, offlineUserData );
-
-					SessionManager.check_warnLastConfigCheck( offlineUserData.mySession, ConfigManager.getConfigUpdateSetting() );
 
 					isSuccess = true;
 				}

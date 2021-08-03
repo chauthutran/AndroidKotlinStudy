@@ -151,19 +151,19 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.showNewAppAvailable( true );
             if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
             // 'About page' app update uses above '_EventCallBack'
-
+            var delayReload = ( SwManager.swUpdateOption && SwManager.swUpdateOption.delayReload ); 
             
             // Reset this value
             AppInfoManager.clearAutoLogin();
             AppInfoManager.clearLoginCurrentKeys();
 
             
-            var allowUpdateAfterLogin = ConfigManager.getAppUpdateSetting().allowUpdateAfterLogin;
+            var allowAppReload_AfterLogin = ConfigManager.getAppUpdateSetting().allowAppReload_AfterLogin;
 
             // For Already logged in, simply delay it --> which the logOut will perform the update.
-            if ( SessionManager.getLoginStatus() && !allowUpdateAfterLogin )
+            if ( delayReload || ( SessionManager.getLoginStatus() && !allowAppReload_AfterLogin ) )
             {
-                console.log( 'LoggedIn, thus, delayed the reload.' );
+                console.log( 'App reload after update delayed.' );
                 // Set for delayed app reload if already logged in.
                 e.preventDefault();
                 return false;
@@ -187,12 +187,13 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
-SwManager.checkNewAppFile_OnlyOnline = function( runFunction )
+SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
 {
     console.log( 'SwManager.checkNewAppFile_OnlyOnline called' );
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
     SwManager.swUpdateCase = false;
+    SwManager.swUpdateOption = option;
 
     // Trigger the sw change/update check event..
     if ( SwManager.swRegObj ) 

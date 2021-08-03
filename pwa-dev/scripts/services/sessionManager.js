@@ -150,6 +150,8 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 			&& loginData.dcdConfig.settings 
 			&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
 	
+
+		// NOTE: ...
 		newSaveObj.mySession = { 
 			createdDate: dtmNow // Last online login
 			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
@@ -167,6 +169,21 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 
 };
 
+
+SessionManager.getMySessionOnLocalStorage = function( userName )
+{
+	var userLoginLocalData = SessionManager.getLoginDataFromStorage( userName );
+
+	return ( userLoginLocalData ) ? userLoginLocalData.mySession: undefined;
+};
+
+SessionManager.getMySessionCreatedDate = function( userName )
+{
+	var mySession = SessionManager.getMySessionOnLocalStorage( userName );
+
+	return ( mySession ) ? mySession.createdDate: undefined;
+};
+
 // -- Called after offline login --> updates just datetime..
 // SessionManager.updateUserSessionToStorage = function( loginData, userName )
 // {
@@ -182,16 +199,18 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 // };
 
 
-SessionManager.check_warnLastConfigCheck = function( mySession, configUpdate )
+SessionManager.check_warnLastConfigCheck = function( configUpdate )
 {
 	try
 	{
-		if ( mySession && mySession.createdDate && configUpdate.lastTimeCheckedWarning_days !== undefined )
+		var lastSessionCreatedDate = SessionManager.getMySessionCreatedDate( SessionManager.sessionData.login_UserName );
+
+		if ( lastSessionCreatedDate && configUpdate.lastTimeCheckedWarning_days !== undefined )
 		{
 			var warningDays = Number( configUpdate.lastTimeCheckedWarning_days );
 			if ( warningDays > 0 )
 			{				
-				var daysSince = UtilDate.getDaysSince( mySession.createdDate );
+				var daysSince = UtilDate.getDaysSince( lastSessionCreatedDate );
 
 				if ( daysSince >= warningDays )
 				{

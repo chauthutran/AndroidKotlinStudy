@@ -308,7 +308,7 @@ ConnManagerNew.cloudConnStatusClickSetup = function( divNetworkStatusTag )
 				var bIsConnected = ConnManagerNew.updateNetworkConnStatus();
 				if ( bIsConnected )
 				{
-					var sec = Util.getSecFromMiliSec( ConnManagerNew.networkConnStableCheckTime );
+					var sec = UtilDate.getSecFromMiliSec( ConnManagerNew.networkConnStableCheckTime );
 					MsgManager.msgAreaShow( notManualCaseStr + ' Network connection exists.  Retry for ' + sec + 's stable network check.' );
 				}
 				else
