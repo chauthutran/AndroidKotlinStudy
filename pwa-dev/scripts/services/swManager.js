@@ -132,20 +132,17 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         // The oncontrollerchange property of the ServiceWorkerContainer interface is 
         // an event handler fired whenever a controllerchange event occurs 
         //  — when the document's associated ServiceWorkerRegistration acquires a new active worker.
-
-        console.log( 'serviceWork EVENT - controllerchange called' );
+        console.log( 'swUpdate - controllerchange DETECTED' );
 
         // The known WFA App triggered App Reloading Process Flag..
 	    if ( AppUtil.appReloading )
         {
             // In app reload/refresh, this also gets called since new service worker gets to start.
-            console.log( 'app intentional Reloading in SwManager.controllerchanged' );
+            console.log( 'App Intentional Reloading.. skip manual reload.' );
         }
         // Service Worker update check requested case.
         else if ( SwManager.swUpdateCase )
         {
-            console.log( 'swUpdateCase in SwManager.controllerchanged' );
-
             // NOTE: Thus, this gets called whenever there is a page reload.
             // --> ONLY display the message or run this if we called for reload or app Check...
             if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.showNewAppAvailable( true );
@@ -163,23 +160,18 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             // For Already logged in, simply delay it --> which the logOut will perform the update.
             if ( delayReload || ( SessionManager.getLoginStatus() && !allowAppReload_AfterLogin ) )
             {
-                console.log( 'App reload after update delayed.' );
-                // Set for delayed app reload if already logged in.
+                console.log( 'App Reload Delayed (After Update).' );
                 e.preventDefault();
                 return false;
             }
             else
             {
-                // If Not logged in
-                // [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                                
+                // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.                                
+                // If app update happens before login, save the username keys + pins..
                 if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
                 else AppInfoManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
-
-                // If app update happens before login, save the username keys + pins..
-
-                // Not logged in, yet (In login page).  Not in progress of login..
-                AppUtil.appReloadWtMsg( 'App Update Found - Reloading!' );
+ 
+                AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
             }   
         }
     })
@@ -189,7 +181,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
 {
-    console.log( 'SwManager.checkNewAppFile_OnlyOnline called' );
+    //console.log( 'SwManager.checkNewAppFile_OnlyOnline called' );
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
     SwManager.swUpdateCase = false;
@@ -198,7 +190,7 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
     // Trigger the sw change/update check event..
     if ( SwManager.swRegObj ) 
     {        
-        console.log( '** swRegObj.update requested - with swUpdateCase = true' );
+        console.log( 'SwRegObj.update requested..' );
 
         // TODO: Mark dateTime on this try - as last dateTime..  But maybe this is not needed since we have online login check + other flags..
 
