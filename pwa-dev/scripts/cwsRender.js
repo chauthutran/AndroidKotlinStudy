@@ -170,11 +170,11 @@ function cwsRender()
 		// On each area render, clear out the pageDiv content (which represent area div)..
 		//me.pageDivTag.empty();
 
-    // gAnalytics Page Hit
-    GAnalytics.setSendPageView( areaId );
+		// gAnalytics Page Hit
+		GAnalytics.setSendPageView( areaId );
+		GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
 
-
-    // [JOB_AID]
+		// [JOB_AID]
 		if ( areaId !== 'jobAids' 
              && areaId !== 'hnqis_rdqaPage'
              && areaId !== 'statisticsPage' 

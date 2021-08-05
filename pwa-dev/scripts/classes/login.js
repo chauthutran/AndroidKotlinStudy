@@ -48,7 +48,8 @@ function Login( cwsRenderObj )
 
 	me.render = function()
 	{	    
-    GAnalytics.setSendPageView( GAnalytics.PAGE_LOGIN );
+    	GAnalytics.setSendPageView( GAnalytics.PAGE_LOGIN );
+		GAnalytics.setEvent( 'LoginOpen', GAnalytics.PAGE_LOGIN, 'login displayed', 1 );
 
 		// In test version with special url param, do not hide login buttons
 		me.testVersion_LoginBtn_NotHide( 'test', 'Y' );
