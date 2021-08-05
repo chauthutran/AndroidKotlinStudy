@@ -46,7 +46,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			console.log( 'Btn already clicked/in process' );
+			MsgManager.msgAreaShow( 'Btn already clicked/in process', 'ERROR' );			
 		}
 	};
 
@@ -67,7 +67,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		else
 		{
-			console.log( 'Btn already clicked/in process' );
+			MsgManager.msgAreaShow( 'Btn already clicked/in process', 'ERROR' );			
 		}
 	}
 
@@ -97,8 +97,14 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					console.customLog( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );
-					if ( moreInfoJson ) console.customLog( moreInfoJson );
+					console.customLog( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );					
+					
+					if ( moreInfoJson ) 
+					{
+						console.customLog( moreInfoJson );
+						if ( moreInfoJson.errMsg ) MsgManager.msgAreaShow( moreInfoJson.errMsg, 'ERROR' );
+					} 
+					
 					endOfActionsFunc( dataPass, "Failed" );
 				}
 			});
@@ -118,16 +124,17 @@ function Action( cwsRenderObj, blockObj )
 
 			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
-			// ACTIVITY ADDING
-			var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );
-			
-			if ( clickActionJson )
-			{
+			if ( !clickActionJson ) afterActionFunc( false, { 'errMsg': 'Action definition undefined' } );				
+			else if ( Util.isTypeString( clickActionJson ) ) afterActionFunc( false, { 'errMsg': 'Bad action definition name: ' + actionDef } );
+			else 
+			{				
+
+				// ACTIVITY ADDING
+				var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );				
+
 				if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
 				{
-					//console.customLog( blockPassingData.displayData );
 					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
-					//console.customLog( blockPassingData.displayData );
 	
 					afterActionFunc( true );
 				}
@@ -145,10 +152,7 @@ function Action( cwsRenderObj, blockObj )
 					{
 						afterActionFunc( true ); 
 					}	
-
-					// Examples:
-					//		- Run block or buttons..
-					//		- Also, can use 'dataPass' to exchange data.
+					// Examples: - Run block or buttons.. - Also, can use 'dataPass' to exchange data.
 				}
 				else if ( clickActionJson.actionType === "clearOtherBlocks" )
 				{
@@ -225,7 +229,12 @@ function Action( cwsRenderObj, blockObj )
 					if ( blockJson )
 					{
 						// 'blockPassingData' exists is called from 'processWSResult' actions
-						if ( blockPassingData === undefined ) 
+						if ( dataPass.formsJson )
+						{
+							blockPassingData = {};
+							blockPassingData.formsJson = dataPass.formsJson;
+						}
+						else if ( blockPassingData === undefined ) 
 						{
 							if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
 							else blockPassingData = {}; 
@@ -450,9 +459,9 @@ function Action( cwsRenderObj, blockObj )
 							}
 							else
 							{
-								MsgManager.msgAreaShow( 'Same voucherCode operation already exists.', 'ERROR' );
+								//MsgManager.msgAreaShow( 'ERROR: Existing Activity with same voucherCode & transType exists!', 'ERROR' );
 								// MsgManager.msgAreaShow( 'Same type of voucher activity already exists.', 'ERROR' );
-								afterActionFunc( false, { 'type': 'dupVoucherAction', 'msg': 'Duplicate voucher action detected' } );								
+								afterActionFunc( false, { 'errMsg': 'ERROR: Existing Activity with same voucherCode & transType exists!' } );
 							}	
 						}
 						else
@@ -463,11 +472,17 @@ function Action( cwsRenderObj, blockObj )
 						}
 					});								
 				}
+				else
+				{
+					console.log( clickActionJson );
+					afterActionFunc( false, { 'errMsg': 'Unhandled action, actionType: ' + clickActionJson.actionType } );
+				}
 			}
 		}
 		catch ( errMsg )
 		{
-			afterActionFunc( false, { 'type': 'actionException', 'msg': errMsg } );
+			console.log( clickActionJson );
+			afterActionFunc( false, { 'errMsg': 'Action Error: ' + errMsg } );
 		}
 	};
 
