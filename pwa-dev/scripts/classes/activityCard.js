@@ -54,7 +54,7 @@ function ActivityCard( activityId, options )
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setActivityContentDisplay( activityContentTag, activityJson );
-                if ( !detailViewCase ) me.activityContentClick_FullView( activityContentTag, activityContainerTag, activityJson.id );
+                if ( !detailViewCase ) me.activityContentClick_FullView( activityContentTag, activityJson.id );
 
 
                 // 3. 'SyncUp' Button Related
@@ -99,12 +99,12 @@ function ActivityCard( activityId, options )
         });
     };
 
-    me.activityContentClick_FullView = function( activityContentTag, activityContainerTag, activityId )
+    me.activityContentClick_FullView = function( activityContentTag, activityId )
     {
         activityContentTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();
-            me.showFullPreview( activityId, activityContainerTag );            
+            me.showFullPreview( activityId );            
         });
     };
 
@@ -487,9 +487,6 @@ function ActivityCard( activityId, options )
         // 1. Check success
         if ( success && responseJson && responseJson.result && responseJson.result.client )
         {
-
-
-
             var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
 
             // #1. Check if current activity Id exists in 'result.client' activities..
@@ -650,8 +647,10 @@ function ActivityCard( activityId, options )
 
     // === Full Detail Popup Related METHODS ========================
 
-    me.showFullPreview = function( activityId, activityContainerTag )
+    me.showFullPreview = function( activityId )
     {
+        console.log( 'activity showFullPreview..' );
+
         if ( activityId ) 
         {
             // initialize
@@ -672,6 +671,12 @@ function ActivityCard( activityId, options )
             // ADD TEST/DUMMY VALUE
             sheetFull.find( '.activity' ).attr( 'itemid', activityId )
             
+
+            // ReRender
+            sheetFull.find( '.activityDetailRerender' ).off( 'click' ).click( function() {
+                me.showFullPreview( activityId );
+            });
+                        
 
             // Header content set
             var actCard = new ActivityCard( activityId, {'detailViewCase': true }
@@ -983,6 +988,7 @@ ActivityCardTemplate.activityCardFullScreen = `
     <span>Details</span>
   </div>
   <div class="card _tab activity">
+    <div class="activityDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
     <div class="card__container">
       <card__support_visuals class="activityIcon card__support_visuals" />
       <card__content class="activityContent card__content" />

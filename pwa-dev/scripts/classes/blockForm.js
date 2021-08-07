@@ -1433,7 +1433,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		try
 		{
-			var tagVal = FormUtil.getTagVal( tag, 'removeDBQuote' );
+			var tagVal = FormUtil.getTagVal( tag );
 		
 			// PREVIOUS ONES:
 			// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
@@ -1473,37 +1473,33 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.performEvalAction = function( evalAction, tag, tagVal, formDivSecTag, formFull_IdList )
 	{
 		if ( evalAction && ConfigManager.checkByCountryFilter( evalAction.countryFilter ) )
-		{
-			var conditionPass = false;
-			
-			// if condition exists, check to run the conditional case or inverse one..
-			if ( evalAction.condition !== undefined )
+		{			
+			// If condition does not exist, it is considered as pass/true.
+			// If it exists, check eval to see if condition evaluates as true.
+			if ( evalAction.condition === undefined || me.checkCondition( evalAction.condition, tag, tagVal, formDivSecTag, formFull_IdList ) )
 			{
-				if ( me.checkCondition( evalAction.condition, tag, tagVal, formDivSecTag, formFull_IdList ) )
-				{
-					me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
-					me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
-					me.performCondiAction( evalAction.actions, formDivSecTag, false );
+				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );
+				me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, false );
+				me.performCondiAction( evalAction.actions, formDivSecTag, false );
 
-					conditionPass = true;
+				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
+				if ( evalAction.runEval ) 
+				{
+					try {
+						inputVal = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
+						if ( inputVal ) returnVal = eval( inputVal );				
+					} catch( errMsg ) { console.log( 'BlockForm.performEvalAction, runEval err: ' + errMsg ); }
 				}
-				else if ( evalAction.conditionInverse !== undefined )
+			}
+			else
+			{
+				// If not true condition, run 'conditionInverse' (if it exists)
+				if ( evalAction.conditionInverse !== undefined )
 				{
 					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, false );
 					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, true );
 					if ( evalAction.conditionInverse.indexOf( "actions" ) >= 0 ) me.performCondiAction( evalAction.actions, formDivSecTag, true );
-				}	
-			} 
-
-			// If condition does not exists OR condition has passed, run more related things..
-			if ( evalAction.condition === undefined || conditionPass )
-			{
-				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
-
-				// If no condition, simply run the eval..				
-				if ( evalAction.runEval ) {
-					Util.evalTryCatch( evalAction.runEval, InfoDataManager.getINFO(), 'blockForm.performEvalAction, runEval' );
-				}
+				}		
 			}
 		}
 	};
@@ -1732,21 +1728,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var targetInputTag = me.getMatchingInputTag( formDivSecTag, idStr );
 				var targetInputDivTag = targetInputTag.closest( 'div.fieldBlock');
 
+				// NOTE: after show/hide of a field, also run 'evalActions' of that field to trigger dependency show/hide.
 				if ( visible ) 
 				{
 					targetInputDivTag.show( 'fast' );
-
-					//console.customLog( 'show by condition: id/name: ' + idStr );
-
-					// CASE: 
-					// When a parent tag changes values, it runs the 'evalActions'
-					// But, if a value is set on children ones ('show:[--]') (previously or by pass value popoulation)
-					// That child's evalAction 'show'/'hide' should also be performed since data is selected/inputted.
-					// Below 'performChildTagEvalActions' do that.
-
-					// target inputs subsequent show/hide
-					// Due to parent tag initializing show hide of same target
-					// Perform this a bit after time delay
 					me.performChildTagEvalActions( idStr, targetInputTag, formDivSecTag, formFull_IdList );
 				}
 				else 

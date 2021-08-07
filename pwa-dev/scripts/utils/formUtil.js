@@ -149,6 +149,10 @@ FormUtil.sheetFullSetup_Show = function( sheetFull )
 
 	// NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
 	sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );	
+
+	// Hide other same type sheetFull div..
+	var tagIdName = sheetFull.attr( 'id' );
+    $( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
 };
 
 
@@ -1841,7 +1845,7 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 
 		if ( getVal )
 		{
-			var val = FormUtil.getTagVal( inputTag, 'removeDBQuote' );
+			var val = FormUtil.getTagVal( inputTag );
 
 			inputsJson[ nameVal ] = val;
 		}

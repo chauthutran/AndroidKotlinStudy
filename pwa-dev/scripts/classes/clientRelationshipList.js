@@ -20,10 +20,14 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     {
     }
 
+    // ----------------------------------------------------------------------------------------
+
     me.getListTag = function()
     {
         return me.listTag;
     }
+
+    // ----------------------------------------------------------------------------------------
 
     me.render = function()
     {
@@ -83,13 +87,23 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     {       
         var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
         divClientCardTag.attr( 'itemId', clientJson._id );
+        
         // Add Icon
-        me.clientIconDisplay( divClientCardTag.find(".clientIcon"), clientJson );
+        me.clientIconDisplay( divClientCardTag.find( ".clientIcon" ), clientJson );
+        
         // Add FullName
         var fullName = me.getClientFullName( clientJson );
-        divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );
-        // Add relationship type
-        divClientCardTag.find(".clientContent").append( $( ClientCardTemplate.cardContentDivTag ).html( clientJson.relType ) );
+        var divClientContentTag = divClientCardTag.find( ".clientContent" );        
+        divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );        
+        divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( clientJson.relType ) );
+
+        divClientContentTag.click( function( e ) 
+        {
+            e.stopPropagation();
+
+            var clientCardDetail = new ClientCardDetail( clientJson._id );
+            clientCardDetail.render();
+        });
 
         return divClientCardTag;
     }

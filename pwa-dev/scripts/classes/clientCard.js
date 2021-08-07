@@ -53,7 +53,7 @@ function ClientCard( clientId, options )
 
                 // 2. previewText/main body display (MIDDLE)
                 me.setClientContentDisplay( clientContentTag, clientJson );
-                if ( !detailViewCase ) me.clientContentClick_FullView( clientContentTag, clientContainerTag, clientJson );
+                if ( !detailViewCase ) me.clientContentClick_FullView( clientContentTag, me.clientId );
 
 
                 // 3. 'SyncUp' Button Related
@@ -159,12 +159,14 @@ function ClientCard( clientId, options )
         });
     };
 
-    me.clientContentClick_FullView = function( clientContentTag, clientContainerTag, clientJson )
+    me.clientContentClick_FullView = function( clientContentTag, clientId )
     {
         clientContentTag.off( 'click' ).click( function( e ) 
         {
             e.stopPropagation();
-            me.showFullPreview( clientJson, clientContainerTag );            
+
+            var clientCardDetail = new ClientCardDetail( clientId );
+            clientCardDetail.render();
         });
     };
 
@@ -334,133 +336,6 @@ function ClientCard( clientId, options )
 
     // -------------------------------
 
-    // === Full Detail Popup Related METHODS ========================
-
-    me.showFullPreview = function( clientJson, clientContainerTag )
-    {
-        if ( clientJson ) 
-        {
-            var clientId = clientJson._id;
-
-            // initialize
-            var sheetFull = $( '#clientDetail_FullScreen' );
-
-            // populate template
-            sheetFull.html( $( ClientCardTemplate.cardFullScreen ) );
-
-            // create tab click events
-            FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
-        
-            // ADD TEST/DUMMY VALUE
-            sheetFull.find( '.client' ).attr( 'itemid', clientId )
-
-            // Header content set
-            var itemCard = new ClientCard( clientId, {'detailViewCase': true }
-                // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
-            );
-            itemCard.render();
-
-            // set tabs contents
-            me.setFullPreviewTabContent( clientJson, sheetFull );
-        
-
-            FormUtil.sheetFullSetup_Show( sheetFull );
-
-            TranslationManager.translatePage();            
-        }
-    };
-
-    me.setFullPreviewTabContent = function( clientJson, sheetFullTag )
-    {
-        //var clientJson = ActivityDataManager.getActivityById( clientId );
-    
-        var arrDetails = [];
-    
-        // #1 clientDetails properties = key
-        
-        var passedData = {
-            "displayData": [
-                { id: "id", value: clientJson._id }
-            ],
-            "resultData": []
-        };
-
-        for( var id in clientJson.clientDetails )
-        {
-            passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
-        }
-
-        // TODO: We can also use simpler version of data 'results.clientId', results
-
-        var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
-
-        // Get client Profile Block defition from config.
-        var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
-        FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
-
-        
-        // #2. payload Preview
-
-        // LIST ACTIVITIES... <-- LIST
-        var listTableTbodyTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' ).find( '.list' );        
-        me.populateActivityCardList( clientJson.activities, listTableTbodyTag );
-
-        // #3. relationship?
-        var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
-
-        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
-
-        // Remove previously loaded div blocks - clear out.
-        sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() {
-            relationshipListObj.render();
-        });
-
-    };    
-
-
-    // ----------------------------------------------
-
-    // =============================================
-
-    me.populateActivityCardList = function( activityList, listTableTbodyTag )
-    {
-        if ( activityList.length === 0 ) 
-        {
-            
-        }
-        else
-        {
-            //var listBottomDivTag = $( '.listBottom' );
-
-            for( var i = 0; i < activityList.length; i++ )
-            {
-                var activityJson = activityList[i];
-
-                var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-
-                activityCardObj.render();
-            }    
-
-            //listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
-
-            TranslationManager.translatePage();
-            //if ( scrollEndFunc ) scrollEndFunc();
-        }
-    };
-
-    me.createActivityCard = function( activityJson, listTableTbodyTag )
-    {
-        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
-
-        divActivityCardTag.attr( 'itemId', activityJson.id );
-        //divActivityCardTag.attr( 'group', groupAttrVal );
-
-        listTableTbodyTag.append( divActivityCardTag );
-
-        return new ActivityCard( activityJson.id );
-    };
-
-
     // =============================================
     // === Run initialize - when instantiating this class  ========================
         
@@ -527,6 +402,7 @@ ClientCardTemplate.cardFullScreen = `<div class="wapper_card">
 </div>
 
 <div class="card _tab client">
+    <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
     <div class="card__container">
         <card__support_visuals class="clientIcon card__support_visuals" />
         <card__content class="clientContent card__content" />

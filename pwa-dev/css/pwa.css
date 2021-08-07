@@ -15,13 +15,17 @@
 }
 
 /* MD DatePicker Related Adjustment  */
-/* font-family: Roboto, Helvetica, Arial, sans-serif!important */
-/*.mddtp-button, .mddtp-picker { font-family: auto !important; }
-.mddtp-picker .mddtp-picker__header .mddtp-picker__title { font-family: auto !important; }*/
 .mddtp-picker__action { margin-top: -30px !important; }
 .mddtp-button { position: relative; z-index: 1000; }
-/* .mddtp-picker .mddtp-picker__header { background-color: #93bcff !important; } */
-/* ------------ */
+
+
+.card__content {
+  cursor: pointer;
+}
+
+/*.card__content:hover {
+  box-shadow: 0 0 5px #aae6f7;
+}*/
 
 .btnBack {
   cursor: pointer;
@@ -234,12 +238,14 @@ input.loginUserPinNumeric
   width:0px !important;
   outline: none !important;
 }
+
 input.loginUserPinNumeric:focus
 {
   border-left:0px solid #fff !important;
   border-right:1px solid #333 !important;
   animation: blink-input-focus 1000ms infinite ;
 }
+
 @-webkit-keyframes blink-input-focus {
   0% {
     opacity: 1;

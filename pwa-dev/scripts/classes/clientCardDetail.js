@@ -1,214 +1,143 @@
 // -------------------------------------------
 // -- ClientCardDetail Class/Methods
-// 
-//      - When clicking on the clientCard body
-//          - Create this class (new) and call 'render' of the instance.
-//
-//      ** This could be static class.  Since always run as
 
-function ClientCardDetail( _clientJsonFormTag, _clientJson, _cwsRenderObj, _blockObj )
+function ClientCardDetail( clientId )
 {
 	var me = this;
 
-    me.clientJsonFormTag = _clientJsonFormTag;
-    me.clientJson = _clientJson;
-    me.cwsRenderObj = _cwsRenderObj;
-    me.blockObj = _blockObj;
-
-    // me.clientJsonFormTag = $( '<div class="tab_fs__container" />');
-
+    me.clientId = clientId;
+    
 	// ===============================================
 	// === Initialize Related ========================
 
-    me.initialize = function() 
-    { 
-        // Setup event here?  or on Render?
+    me.initialize = function() { };
 
-        me.render( me.clientJsonFormTag, me.clientJson );
+    // ----------------------------------
+
+    me.render = function()
+    {
+        // initialize
+        var sheetFull = $( '#clientDetail_FullScreen' );
+
+        // populate template
+        sheetFull.html( ClientCardDetail.cardFullScreen );
+
+        // create tab click events
+        FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
+    
+        // ADD TEST/DUMMY VALUE
+        sheetFull.find( '.client' ).attr( 'itemid', me.clientId )
+
+        // ReRender
+        sheetFull.find( '.clientDetailRerender' ).off( 'click' ).click( function() {
+            me.render();
+        });
+
+
+        // Header content set  <--- This looks for all with $( 'div.card[itemid="' + me.clientId + '"]' );
+        //      - this catches not only generated full sheet html card part.
+        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true }
+            // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
+        );
+        itemCard.render();
+
+
+        // set tabs contents
+        me.setFullPreviewTabContent( me.clientId , sheetFull );
+    
+        FormUtil.sheetFullSetup_Show( sheetFull );
+
+        TranslationManager.translatePage();    
     };
-
 
     // ----------------------------------------------------
 
-    me.render = function( clientJsonFormTag, clientJson )
-    {  
-        try
-        {
-            me.renderForm( clientJsonFormTag, clientJson );
-            me.renderButtons( clientJsonFormTag );
-
-            me.disableForm( clientJsonFormTag, true );
-
-            me.setup_Events( clientJsonFormTag );
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'Error on ClientCardDetails.render, errMsg: ' + errMsg );
-        }
-
-    };
-
-
-    me.renderForm = function( clientJsonFormTag, clientJson )
+    me.setFullPreviewTabContent = function( clientId, sheetFullTag )
     {
-        var formTag = $("<form></form>");
-
-        // Create id field
-        var fieldTag = $(Templates.inputFieldStandard);
-        fieldTag.find(".displayName").html( "id" );
-        fieldTag.find(".field__left").append( "<input readonly='readonly' disabled value='" + clientJson._id + "' name='id' class='dataValue displayValue'>" );
-        formTag.append( fieldTag );
-
-
-        // Create details fields
-        var clientDetails = clientJson.clientDetails;
-        for ( var key in clientDetails ) 
-        {
-            var fieldName = key;
-            var fieldValue = me.getFieldOption_LookupValue( key, clientDetails[ key ] );
-        
-            // Create field
-            var fieldTag = $(Templates.inputFieldStandard);
-            fieldTag.find(".displayName").html( fieldName );
-            fieldTag.find(".field__left").append( "<input value='" + Util.getJsonStr( fieldValue ) + "' name='" + fieldName + "' class='dataValue displayValue'>" );
+        var clientJson = ClientDataManager.getClientById( clientId );;
     
-            formTag.append( fieldTag );
+        var arrDetails = [];
+    
+        // #1 clientDetails properties = key
+        
+        var passedData = {
+            "displayData": [
+                { id: "id", value: clientJson._id }
+            ],
+            "resultData": []
+        };
 
-            if( ClientCardDetail.NOT_ALLOW_EDIT_FIELDS.indexOf( fieldName ) >= 0 )
-            {
-                fieldTag.hide();
-            }
+        for( var id in clientJson.clientDetails )
+        {
+            passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
         }
 
-        clientJsonFormTag.append( formTag );
-    }
+        // TODO: We can also use simpler version of data 'results.clientId', results
 
-    me.renderButtons = function( clientJsonFormTag )
-    {
-        var buttonsTag = $("<div class='button primary button-full_width textButton'>");
+        var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
 
-        // Edit button
-        buttonsTag.append("<div class='button__container' id='editBtn'><div class='button-label'>Edit</div></div>");
-        // Save button
-        buttonsTag.append("<div class='button__container' id='saveBtn'><div class='button-label'>Save</div></div>");
+        // Get client Profile Block defition from config.
+        var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
+        FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
 
         
-        clientJsonFormTag.append( buttonsTag );
-    }
+        // #2. payload Preview
 
+        // LIST ACTIVITIES... <-- LIST
+        var listTableTbodyTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' ).find( '.list' );        
+        me.populateActivityCardList( clientJson.activities, listTableTbodyTag );
 
-    me.setup_Events = function( clientJsonFormTag )
+        // #3. relationship?
+        var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
+
+        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
+
+        // Remove previously loaded div blocks - clear out.
+        sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() {
+            relationshipListObj.render();
+        });
+
+    };    
+
+    // =============================================
+
+    me.populateActivityCardList = function( activityList, listTableTbodyTag )
     {
-        clientJsonFormTag.find("#editBtn").click( function(){
-            me.disableForm( me.clientJsonFormTag, false );
-        });
-
-        clientJsonFormTag.find("#saveBtn").click( function(){
-            // TODO : Generate json and add to activity list of this client
-            var actionObj = new Action( me.cwsRenderObj, me.blockObj );
-
-            var actionDef = ConfigManager.getConfigJson().definitionActions["action_ws_clientUpdate"];
-            var blockDivTag = $("[blockid='tab_clientDetails']");
-            var formDivSecTag = $("[blockid='tab_clientDetails']");
-            var btnTag = $(this);
-            var dataPass = {};
-            var blockPassingData = { "hideCase": undefined, "showCase": undefined };
-            actionObj.actionPerform( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function(){
-
-                // Disable form after saving
-                me.disableForm( me.clientJsonFormTag, true );
-
-                alert( "Edit successfully !");
-            } );
-
-        });
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------------
-    // Supportive methods
-
-    me.disableForm = function( clientJsonFormTag, isDisable )
-    {
-        // INPUTs in Form
-        clientJsonFormTag.find("form").find("input,select,textarea").each( function(){
-            Util.disableTag( $(this), isDisable );
-        });
-        
-        // Buttons
-        var editBtnTag = clientJsonFormTag.find("#editBtn");
-        var saveBtnTag =  clientJsonFormTag.find("#saveBtn");
-        if( isDisable )
+        if ( activityList.length === 0 ) 
         {
-            editBtnTag.show();
-            saveBtnTag.hide();
+            
         }
         else
         {
-            editBtnTag.hide();
-            saveBtnTag.show();
-        }
-        
-    }
+            //var listBottomDivTag = $( '.listBottom' );
 
-    
-    // TODO: THIS SHOULD BE MOVED TO 'Option' statis class.. part..
-    me.getFieldOption_LookupValue = function( key, val )
-    {
-        var fieldOptions = me.getFieldOptions( key );
-        var retValue = val;
-
-        // If the field is in 'definitionFields' & the field def has 'options' name, get the option val.
-        try
-        {
-            if ( fieldOptions )
+            for( var i = 0; i < activityList.length; i++ )
             {
-                var matchingOption = Util.getFromList( fieldOptions, val, "value" );
-    
-                if ( matchingOption )
-                {
-                    retValue = ( matchingOption.term ) ? TranslationManager.translateText( matchingOption.defaultName, matchingOption.term ) : matchingOption.defaultName;
-                }
+                var activityJson = activityList[i];
+
+                var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
+
+                activityCardObj.render();
             }    
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in ClientCardDetails.getFieldOption_LookupValue, errMsg: ' + errMsg );
-        }
 
-        return retValue;
+            //listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
+
+            TranslationManager.translatePage();
+            //if ( scrollEndFunc ) scrollEndFunc();
+        }
     };
 
-    me.getFieldOptions = function( fieldId )
+    me.createActivityCard = function( activityJson, listTableTbodyTag )
     {
-        var defFields = ConfigManager.getConfigJson().definitionFields;
-        var defOptions = ConfigManager.getConfigJson().definitionOptions;
+        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
 
-        var matchingOptions;
-        var optionsName;
+        divActivityCardTag.attr( 'itemId', activityJson.id );
+        //divActivityCardTag.attr( 'group', groupAttrVal );
 
-        // 1. Check if the field is defined in definitionFields & has 'options' field for optionsName used.
-        if ( defFields )
-        {
-            var matchField = Util.getFromList( defFields, fieldId, "id" );
+        listTableTbodyTag.append( divActivityCardTag );
 
-            if ( matchField && matchField.options )
-            {
-                optionsName =  matchField.options;
-            }
-        }
-
-        // 2. Get options by name.
-        if ( optionsName && defOptions )
-        {
-            matchingOptions = defOptions[ optionsName ];
-        }
-
-        return matchingOptions;
+        return new ActivityCard( activityJson.id );
     };
-
-   
-    
-    // -----------------------------------------------------
 
 
     // =============================================
@@ -218,4 +147,109 @@ function ClientCardDetail( _clientJsonFormTag, _clientJson, _cwsRenderObj, _bloc
 
 }
 
-ClientCardDetail.NOT_ALLOW_EDIT_FIELDS = [ "country", "activeUsers", "countryType", "voucherCodes", "creditedUsers", "voucherCode", "clientId" ];
+
+ClientCardDetail.cardFullScreen = `<div class="wapper_card">
+
+<div class="sheet-title c_900">
+    <img src='images/arrow_back.svg' class='btnBack'>
+    <span>Details</span>
+</div>
+
+<div class="card _tab client">
+    <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
+    <div class="card__container">
+        <card__support_visuals class="clientIcon card__support_visuals" />
+        <card__content class="clientContent card__content" />
+        <card__cta class="activityStatus card__cta">
+            <div class="activityStatusText card__cta_status" />
+            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
+        </card__cta>
+        <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
+    </div>
+
+    <div class="tab_fs">
+
+        <ul class="tab_fs__head" style="background-color: #fff;">
+
+            <li class="primary active" rel="tab_clientDetails">
+                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+
+                <ul class="2ndary" style="display: none; z-index: 1;">
+
+                    <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
+                    </li>  
+
+                    <li class="2ndary" style="display:none" rel="tab_relationships">
+                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                    </li>
+      
+                </ul>
+            </li>
+
+            <li class="primary" rel="tab_clientActivities">
+                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+
+                <ul class="2ndary" style="display: none; z-index: 1;">
+
+                    <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                    </li>
+
+                    <li class="2ndary" style="display:none" rel="tab_relationships">
+                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                    </li>
+                      
+                </ul>
+            </li>
+            
+            <li class="primary" rel="tab_relationships">
+                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                <ul class="2ndary" style="display: none; z-index: 1;">
+
+                    <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                    </li>
+
+                    <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul>
+        <div class="tab_fs__head-icon_exp"></div>
+    </div>
+
+    <div class="tab_fs__container">
+
+        <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
+            blockid="tab_clientDetails" />
+
+        <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;">
+            <div class="list"></div>
+        </div>
+
+        <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+
+    </div>
+
+</div>
+</div>`;
+
+
+
+
+//function ClientCardDetail( _clientJsonFormTag, _clientJson, _cwsRenderObj, _blockObj ) { ..... }
+//ClientCardDetail.NOT_ALLOW_EDIT_FIELDS = [ "country", "activeUsers", "countryType", "voucherCodes", "creditedUsers", "voucherCode", "clientId" ];

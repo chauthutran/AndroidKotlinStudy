@@ -113,8 +113,8 @@ ActivityUtil.generateFormsJsonData_ByForm = function( formDivSecTag )
 		var displayValueFieldTag = inputFieldTag.parent().find(".displayValue");
 		formsJson.push({ 
 			"name": inputFieldTag.attr("name"), 
-			"value": FormUtil.getTagVal( inputFieldTag, 'removeDBQuote' ),
-			"displayValue": FormUtil.getTagVal( displayValueFieldTag, 'removeDBQuote' )
+			"value": FormUtil.getTagVal( inputFieldTag ),
+			"displayValue": FormUtil.getTagVal( displayValueFieldTag )
 		});
 	});
 
@@ -203,7 +203,7 @@ ActivityUtil.generateInputJson = function( formDivSecTag, listFilter, formsJsonG
 			// Check if 'filteredList' exists.  If exists, we need to limit by nameVal that is in the filteredList only.
 			if ( !listFilter || listFilter.indexOf( nameVal ) >= 0 )
 			{
-				var val = FormUtil.getTagVal( inputTag, 'removeDBQuote' );
+				var val = FormUtil.getTagVal( inputTag );
 				if ( val === null || val === undefined ) val = '';
 	
 				if ( formsJsonGroup )
@@ -236,7 +236,7 @@ ActivityUtil.generateInputJson_ForPreview = function( formDivSecTag )
 
 		if ( inputTag.is( ':visible' ) )
 		{
-			var val = FormUtil.getTagVal( inputTag, 'removeDBQuote' );
+			var val = FormUtil.getTagVal( inputTag );
 
 			inputsJson[ nameVal ] = val;
 		}
@@ -317,7 +317,7 @@ ActivityUtil.generateInputTargetPayloadJson = function( formDivSecTag, getValLis
 
 			if ( attrDataTargets )
 			{
-				var val = FormUtil.getTagVal( inputTag, 'removeDBQuote' );
+				var val = FormUtil.getTagVal( inputTag );
 
 				if ( val != null && val != '' )
 				{
@@ -594,7 +594,7 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 
 ActivityUtil.getTagText = function( entryTag )
 {
-	var displayValue = FormUtil.getTagVal( entryTag, 'removeDBQuote' );
+	var displayValue = FormUtil.getTagVal( entryTag );
 
 	if( entryTag.prop("nodeName") == "SELECT" )
 	{
@@ -607,12 +607,12 @@ ActivityUtil.getTagText = function( entryTag )
 
 		if( displayValueTag.length == 1 )
 		{
-			displayValue = FormUtil.getTagVal( displayValueTag, 'removeDBQuote' )
+			displayValue = FormUtil.getTagVal( displayValueTag )
 		}
 		else // if( entryTag.attr("type") == "checkbox" || entryTag.attr("type") == "radio" ) 
 		{
 			var dataValueTag = fieldBlockTag.find(".dataValue");
-			var selectedValues = FormUtil.getTagVal( dataValueTag, 'removeDBQuote' ).split(",");
+			var selectedValues = FormUtil.getTagVal( dataValueTag ).split(",");
 			
 			// only run this concatenation IF multiple display values are found + no 'dataValue' is already loaded with data
 			// GREG: not sure if this is still relevant, as `id='opt_" + selectedValues[i] + "` has changed to include random ID < review with James (2020-10-12)
