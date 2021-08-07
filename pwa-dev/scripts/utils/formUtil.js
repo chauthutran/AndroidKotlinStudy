@@ -133,19 +133,23 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
-FormUtil.sheetFullSetup_Show = function( sheetFull )
+FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore )
 {
 	// set other events
-	var cardCloseTag = sheetFull.find( 'img.btnBack' );
+	var btnBackTag = sheetFull.find( 'img.btnBack' );
 
-	cardCloseTag.off( 'click' ).click( function()
+	btnBackTag.off( 'click' ).click( function()
 	{ 
 		sheetFull.empty();
-		sheetFull.fadeOut();
-	});
+		sheetFull.hide();
 
-	// render
-	sheetFull.fadeIn();
+		FormUtil.sheetFull_openPreviousOne( itemType, itemId );
+	});
+	
+	// Add to the sheetFullOpenHistory
+	if ( !isRestore ) SessionManager.sheetFullOpenHistory.push( { 'type': itemType, 'id': itemId } );
+
+	sheetFull.show();
 
 	// NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
 	sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );	
@@ -153,6 +157,41 @@ FormUtil.sheetFullSetup_Show = function( sheetFull )
 	// Hide other same type sheetFull div..
 	var tagIdName = sheetFull.attr( 'id' );
     $( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
+};
+
+
+FormUtil.sheetFull_openPreviousOne = function( itemType, itemId )
+{
+	var prevItem;
+
+	var listLength = SessionManager.sheetFullOpenHistory.length;
+	
+	// lastItem in history could be same as current one since we push as we show..
+	// Remove/pop items as long as they have same id.  when you encounter diff id, use it.
+	for( var i = 0; i < listLength; i++ )
+	{
+		var popedItem = SessionManager.sheetFullOpenHistory.pop();
+		
+		if ( popedItem.id !== itemId )
+		{
+			prevItem = popedItem;
+			break;
+		}
+	}
+	
+	if ( prevItem )
+	{
+		if ( prevItem.type === 'activityCardDetail' )
+		{
+			var activityCardDetail = new ActivityCardDetail( prevItem.id, true ); // true - isRestore
+			activityCardDetail.render();	
+		}
+		else if ( prevItem.type === 'clientCardDetail' )
+		{
+			var clientCardDetail = new ClientCardDetail( prevItem.id, true ); // true - isRestore
+			clientCardDetail.render();	
+		}
+	}
 };
 
 

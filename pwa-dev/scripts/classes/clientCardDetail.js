@@ -1,12 +1,13 @@
 // -------------------------------------------
 // -- ClientCardDetail Class/Methods
 
-function ClientCardDetail( clientId )
+function ClientCardDetail( clientId, isRestore )
 {
 	var me = this;
 
     me.clientId = clientId;
-    
+    me.isRestore = isRestore
+
 	// ===============================================
 	// === Initialize Related ========================
 
@@ -36,17 +37,17 @@ function ClientCardDetail( clientId )
 
         // Header content set  <--- This looks for all with $( 'div.card[itemid="' + me.clientId + '"]' );
         //      - this catches not only generated full sheet html card part.
-        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true }
-            // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
-        );
+        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } ); // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
         itemCard.render();
 
 
         // set tabs contents
-        me.setFullPreviewTabContent( me.clientId , sheetFull );
+        me.setFullPreviewTabContent( me.clientId, sheetFull );
     
-        FormUtil.sheetFullSetup_Show( sheetFull );
 
+        FormUtil.sheetFullSetup_Show( sheetFull, 'clientCardDetail', me.clientId, me.isRestore );
+
+        
         TranslationManager.translatePage();    
     };
 
