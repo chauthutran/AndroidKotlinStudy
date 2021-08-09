@@ -1486,6 +1486,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				if ( evalAction.runEval ) 
 				{
 					try {
+						var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
+						var tagVisible = tag.parent().is( ':visible' );  // TODO: Should be more specific with class name
+		
 						inputVal = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
 						if ( inputVal ) returnVal = eval( inputVal );				
 					} catch( errMsg ) { console.log( 'BlockForm.performEvalAction, runEval err: ' + errMsg ); }
