@@ -123,6 +123,8 @@ FormUtil.getFormCtrlDisplayValue = function( inputDataValueTag )
 FormUtil.setFormCtrlDataValue = function( inputDataValueTag, value )
 {
 	inputDataValueTag.val( value );
+	// If it has any value, mark it and perform change();
+	if ( value === false || value ) inputDataValueTag.change();
 };
 
 FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
