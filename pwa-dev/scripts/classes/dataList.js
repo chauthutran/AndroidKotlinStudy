@@ -362,30 +362,31 @@ function DataList( cwsRenderObj, blockObj )
 
         var dataLineCount = 0;
 
-        for ( var i in displayedAttributeList )
+        displayedAttributeList.forEach( attrId => 
         {
-            var attrItem = displayedAttributeList[i];
-
-            for ( var j in dataItem )
+            for ( var z = 0; z < dataItem.length; z++ )
             {
-                var data = dataItem[j];
-                if( data.id == attrItem && data.value != "" )
+                var data = dataItem[z];
+
+                if ( data.id === attrId && data.value != "" )
                 {
                     var fieldObj = me.resolveDefinitionFieldItem({ id: data.id, defaultName: '' });
                     var divTag = $("<div class='divItemBlockLine'></div>");
-
+    
                     divTag.append("<label class='titleLabel' term='" + fieldObj.term + "'>" + me.getNameOfDataItemField( data ) + "</label>" );
                     divTag.append("<span fieldid='" + data.id + "'>: " + data.value + "</span></div>");
-
+    
                     dataColTag.append( divTag );
-
+    
                     if ( dataLineCount === 0 ) divTag.css( 'margin-top', '8px' );
-
+    
                     dataLineCount++;
+    
+                    break;
                 }
             }
-        }
-       
+        });
+
 
         // Add Buttons 
         var buttonsColTag = $("<td class='searchResultGroupByButtons'>");
