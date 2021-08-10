@@ -948,15 +948,44 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return Util.getFromList( formJsonArr, id, "id" );
 	}
 
+	// Filter the rules by 'countryFilter' if exists.
+	me.getFormControlRules = function ( formItemJson )
+	{
+		var rules = [];
+
+		try
+		{
+			if ( formItemJson.rules )
+			{
+				formItemJson.rules.forEach( rule => 
+				{
+					if ( ConfigManager.checkByCountryFilter( rule.countryFilter ) )
+					{
+						rules.push( rule );
+					}
+				});
+			}	
+		}
+		catch( errMsg ) { console.log( 'ERROR in BlockForm.getFormControlRoles, ' + errMsg ); }
+
+		return rules;
+	};
+
+
 	me.getFormControlRule = function ( formItemJson, attr )
 	{
-		var objAttr = formItemJson.rules.filter(obj=>obj.name===attr)[0] 
-		return(
-			objAttr
-			?	objAttr.value
-			:	''
-		)	
-	}
+		var matchRuleValue = ''; // Should be undefined, but existing implementation was set to emtpy string.
+		
+		var rules = me.getFormControlRules( formItemJson );
+
+		if ( attr )
+		{
+			var rule = Util.getFromList( rules, attr, 'name' );
+			if ( rule && rule.value ) matchRuleValue = rule.value;
+		}
+
+		return matchRuleValue;
+	};
 
 	
 	me.setFormItemJson_DefaultValue_PayloadConfigSelection = function( formItemJson, payloadConfigSelection )
@@ -1303,67 +1332,68 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var regxRules = [];
 		var pickerDateRangeJson;
 
-		if( formItemJson.rules !== undefined )
+		var rulesList = me.getFormControlRules( formItemJson );	
+
+		rulesList.forEach( ruleDef => 
 		{
-			for ( var i = 0; i < formItemJson.rules.length; i++ )
+			var ruleJson = FormUtil.getObjFromDefinition( ruleDef, ConfigManager.getConfigJson().definitionRules );
+
+			if ( ruleJson.name )
 			{
-				var ruleDef = formItemJson.rules[i];  // could be string name of def or rule object itself.
-				var ruleJson = FormUtil.getObjFromDefinition( ruleDef, ConfigManager.getConfigJson().definitionRules );
+				entryTag.attr( ruleJson.name, ruleJson.value );
 
-				if ( ruleJson.name )
+				if ( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 				{
-					entryTag.attr( ruleJson.name, ruleJson.value );
-
-					if ( ruleJson.name === "mandatory" && ruleJson.value === "true" )
-					{
-						divInputTag.find( 'label' ).first().closest("div").append( $( "<span>*</span>" ) );
-					}
-
-					var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
-
-					// readonly & disabled css
-					if ( ruleJson.name === 'disabled' )
-					{
-						divInputTag.closest( 'div.fieldBlock' ).addClass( 'divInputReadOnly' ); // background-color #eee
-						if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
-					}
-					else if ( ruleJson.name === 'readonly' )
-					{
-						if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
-					}
-				}	
-				else if ( ruleJson.pattern )
-				{
-					var regxRuleJson = {};
-					regxRuleJson.pattern = ruleJson.pattern;
-					regxRuleJson.msg = ruleJson.msg;
-					regxRuleJson.term = ruleJson.term;
-
-					regxRules.push( regxRuleJson );
-				}
-				else if ( ruleJson.dateRangeRule === 'usePickerDateRange' && formItemJson.dateRange )
-				{
-					pickerDateRangeJson = {};
-
-					pickerDateRangeJson.dateFrom = formItemJson.dateRange.from;
-					pickerDateRangeJson.dateTo = formItemJson.dateRange.to;
-
-					pickerDateRangeJson.msg = ruleJson.msg;
-					pickerDateRangeJson.term = ruleJson.term;
+					divInputTag.find( 'label' ).first().closest("div").append( $( "<span>*</span>" ) );
 				}
 
-				// all other custom attributes
-				if ( ruleJson.type )
+				var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
+
+				// readonly & disabled css
+				if ( ruleJson.name === 'disabled' )
 				{
-					entryTag.attr( "type", ruleJson.type );
+					divInputTag.closest( 'div.fieldBlock' ).addClass( 'divInputReadOnly' ); // background-color #eee
+					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
 				}
+				else if ( ruleJson.name === 'readonly' )
+				{
+					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
+				}
+			}	
+			else if ( ruleJson.pattern )
+			{
+				var regxRuleJson = {};
+				regxRuleJson.pattern = ruleJson.pattern;
+				regxRuleJson.msg = ruleJson.msg;
+				regxRuleJson.term = ruleJson.term;
+
+				regxRules.push( regxRuleJson );
+			}
+			else if ( ruleJson.dateRangeRule === 'usePickerDateRange' && formItemJson.dateRange )
+			{
+				pickerDateRangeJson = {};
+
+				pickerDateRangeJson.dateFrom = formItemJson.dateRange.from;
+				pickerDateRangeJson.dateTo = formItemJson.dateRange.to;
+
+				pickerDateRangeJson.msg = ruleJson.msg;
+				pickerDateRangeJson.term = ruleJson.term;
 			}
 
-			if ( regxRules.length > 0 ) entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
-			if ( pickerDateRangeJson ) entryTag.attr( "pickerDateRange", encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
-		}
+			// all other custom attributes
+			if ( ruleJson.type )
+			{
+				entryTag.attr( "type", ruleJson.type );
+			}
+
+		});
+
+		if ( regxRules.length > 0 ) entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
+		if ( pickerDateRangeJson ) entryTag.attr( "pickerDateRange", encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+
 	};
 
+	
 	me.addDataTargets = function( divInputTag, formItemJson )
 	{
 		var entryTag = divInputTag.find( '.dataValue' ); //  ( 'select,input' )
