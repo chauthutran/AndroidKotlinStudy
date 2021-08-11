@@ -580,7 +580,7 @@ Templates.settings_app_data_configuration = `
 </dialog>`;
 
 Templates.sheetFullL2Frame = `
-<div class="sheet_full-fs detailFullScreen">
+<div class="sheet_full-fs detailFullScreen sheetFullL2Frame">
   <div class="wapper_card">
     <div class="sheet-title c_900" style="width: 100%;">
       <img src="images/arrow_back.svg" class="btnBack">

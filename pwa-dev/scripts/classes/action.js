@@ -210,7 +210,7 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "closeSheetFullL2" )
 				{				
-					$( '#sheetFullL2' ).find( 'img.btnBack' ).click();
+					$( 'div.sheetFullL2Frame' ).find( 'img.btnBack' ).click();
 				}
 				else if ( clickActionJson.actionType === "openBlock" )
 				{
