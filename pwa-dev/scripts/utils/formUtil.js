@@ -135,6 +135,22 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
+FormUtil.getNextZIndex_cardFullScreen = function()
+{
+	var zIndex_Next = 1600;
+
+	$( 'div.detailFullScreen' ).each( function( index ) {
+		try {
+			var currZIndx = Number( $( this ).css( 'z-index' ) );
+			if ( currZIndx && currZIndx > zIndex_Next ) zIndex_Next = currZIndx;	
+		}
+		catch ( errMsg ) { console.log( 'ERROR in FormUtil.getNextZIndex_cardFullScreen, ' + errMsg ); }
+	});
+
+	return zIndex_Next + 1;
+};
+
+
 FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore )
 {
 	// set other events
@@ -142,23 +158,29 @@ FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore 
 
 	btnBackTag.off( 'click' ).click( function()
 	{ 
-		sheetFull.empty();
-		sheetFull.hide();
+		sheetFull.remove();
 
-		FormUtil.sheetFull_openPreviousOne( itemType, itemId );
+		//sheetFull.empty();
+		//sheetFull.hide();
+
+		//FormUtil.sheetFull_openPreviousOne( itemType, itemId );
 	});
 	
 	// Add to the sheetFullOpenHistory
-	if ( !isRestore ) SessionManager.sheetFullOpenHistory.push( { 'type': itemType, 'id': itemId } );
+	//if ( !isRestore ) SessionManager.sheetFullOpenHistory.push( { 'type': itemType, 'id': itemId } );
 
-	sheetFull.show();
+	var newZIndex = FormUtil.getNextZIndex_cardFullScreen();
+	sheetFull.css( 'z-index', newZIndex );
+	console.log( 'newZIndex: ' + newZIndex );
 
 	// NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
 	sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );	
 
+	sheetFull.show();
+	
 	// Hide other same type sheetFull div..
-	var tagIdName = sheetFull.attr( 'id' );
-    $( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
+	//var tagIdName = sheetFull.attr( 'id' );
+    //$( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
 };
 
 

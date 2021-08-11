@@ -73,6 +73,22 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			});
 			
 
+			// NEW: block viewMode - Temporary?
+			var blockDefOption = me.blockObj.blockDefJson.option;
+			if ( blockDefOption )
+			{
+				if ( blockDefOption.formDisplay === 'viewMode' )
+				{
+					var fieldTags = blockTag.find( 'div.fieldBlock' );
+					fieldTags.css( 'border', 'none' );
+					fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+					fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
+					fieldTags.find( 'button.dateButton' ).remove();
+					fieldTags.find( 'span.spanMandatory' ).remove();
+				}
+			}
+
+
 			// Translate Page after the rendering..
 			TranslationManager.translatePage();
 
@@ -1344,7 +1360,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				if ( ruleJson.name === "mandatory" && ruleJson.value === "true" )
 				{
-					divInputTag.find( 'label' ).first().closest("div").append( $( "<span>*</span>" ) );
+					divInputTag.find( 'label' ).first().closest("div").append( $( "<span class='spanMandatory'>*</span>" ) );
 				}
 
 				var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );

@@ -34,7 +34,8 @@ SessionManager.Status_LogIn_InProcess = false;
 // TODO: SHOULD BE MOVED --> GlobalVar..?   AppRef?
 SessionManager.cwsRenderObj;  // Login Flag is kept in here, sessionManager.
 
-SessionManager.sheetFullOpenHistory = []; // Keep history of sheetFull open, for restoring last one
+//SessionManager.sheetFullOpenHistory = []; // Keep history of sheetFull open, for restoring last one
+SessionManager.cardFullScreen_NextZIndex = 1600;  // Next z-index for 'cardFullScreen', which will be incremented
 
 // ---------------------------------------
 
@@ -56,7 +57,8 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 	// TODO: Need to set 'configManager'
 	ConfigManager.setConfigJson( loginData.dcdConfig );
 
-	SessionManager.sheetFullOpenHistory = [];  // Reset sheetFullOpen history on login, since this gets called on successful login
+	//SessionManager.sheetFullOpenHistory = [];  // Reset sheetFullOpen history on login, since this gets called on successful login
+	SessionManager.cardFullScreen_NextZIndex = 1600;
 };
 
 

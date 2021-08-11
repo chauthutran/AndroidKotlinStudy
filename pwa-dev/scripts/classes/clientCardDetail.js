@@ -17,35 +17,33 @@ function ClientCardDetail( clientId, isRestore )
 
     me.render = function()
     {
-        // initialize
-        var sheetFull = $( '#clientDetail_FullScreen' );
-
-        // populate template
-        sheetFull.html( ClientCardDetail.cardFullScreen );
-
+        // initialize / populate template
+        var cardSheetFullTag = $( ClientCardDetail.cardFullScreen );
+        $( 'body' ).append( cardSheetFullTag );
+        
         // create tab click events
-        FormUtil.setUpEntryTabClick( sheetFull.find( '.tab_fs' ) ); 
+        FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
     
         // ADD TEST/DUMMY VALUE
-        sheetFull.find( '.client' ).attr( 'itemid', me.clientId )
+        cardSheetFullTag.find( '.client' ).attr( 'itemid', me.clientId )
 
         // ReRender
-        sheetFull.find( '.clientDetailRerender' ).off( 'click' ).click( function() {
+        cardSheetFullTag.find( '.clientDetailRerender' ).off( 'click' ).click( function() {
             me.render();
         });
 
 
         // Header content set  <--- This looks for all with $( 'div.card[itemid="' + me.clientId + '"]' );
         //      - this catches not only generated full sheet html card part.
-        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } ); // { 'parentTag_Override': sheetFull, 'disableClicks': true } 
+        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } ); // { 'parentTag_Override': cardSheetFullTag, 'disableClicks': true } 
         itemCard.render();
 
 
         // set tabs contents
-        me.setFullPreviewTabContent( me.clientId, sheetFull );
+        me.setFullPreviewTabContent( me.clientId, cardSheetFullTag );
     
 
-        FormUtil.sheetFullSetup_Show( sheetFull, 'clientCardDetail', me.clientId, me.isRestore );
+        FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'clientCardDetail', me.clientId, me.isRestore );
 
         
         TranslationManager.translatePage();    
@@ -149,108 +147,108 @@ function ClientCardDetail( clientId, isRestore )
 }
 
 
-ClientCardDetail.cardFullScreen = `<div class="wapper_card">
+ClientCardDetail.cardFullScreen = `
+<div class="sheet_full-fs detailFullScreen">
+    <div class="wapper_card">
 
-<div class="sheet-title c_900">
-    <img src='images/arrow_back.svg' class='btnBack'>
-    <span>Details</span>
-</div>
-
-<div class="card _tab client">
-    <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
-    <div class="card__container">
-        <card__support_visuals class="clientIcon card__support_visuals" />
-        <card__content class="clientContent card__content" />
-        <card__cta class="activityStatus card__cta">
-            <div class="activityStatusText card__cta_status" />
-            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
-            <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
-        </card__cta>
-        <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
-    </div>
-
-    <div class="tab_fs">
-
-        <ul class="tab_fs__head" style="background-color: #fff;">
-
-            <li class="primary active" rel="tab_clientDetails">
-                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
-
-                <ul class="2ndary" style="display: none; z-index: 1;">
-
-                    <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
-                    </li>  
-
-                    <li class="2ndary" style="display:none" rel="tab_relationships">
-                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                    </li>
-      
-                </ul>
-            </li>
-
-            <li class="primary" rel="tab_clientActivities">
-                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-
-                <ul class="2ndary" style="display: none; z-index: 1;">
-
-                    <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
-                    </li>
-
-                    <li class="2ndary" style="display:none" rel="tab_relationships">
-                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                    </li>
-                      
-                </ul>
-            </li>
-            
-            <li class="primary" rel="tab_relationships">
-                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                <ul class="2ndary" style="display: none; z-index: 1;">
-
-                    <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
-                    </li>
-
-                    <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-                    </li>
-
-                </ul>
-            </li>
-
-        </ul>
-        <div class="tab_fs__head-icon_exp"></div>
-    </div>
-
-    <div class="tab_fs__container">
-
-        <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
-            blockid="tab_clientDetails" />
-
-        <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;">
-            <div class="list"></div>
+        <div class="sheet-title c_900">
+            <img src='images/arrow_back.svg' class='btnBack'>
+            <span>Details</span>
         </div>
 
-        <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+        <div class="card _tab client">
+            <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
+            <div class="card__container">
+                <card__support_visuals class="clientIcon card__support_visuals" />
+                <card__content class="clientContent card__content" />
+                <card__cta class="activityStatus card__cta">
+                    <div class="activityStatusText card__cta_status" />
+                    <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
+                    <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
+                </card__cta>
+                <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
+            </div>
 
+            <div class="tab_fs">
+
+                <ul class="tab_fs__head" style="background-color: #fff;">
+
+                    <li class="primary active" rel="tab_clientDetails">
+                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                        <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+
+                        <ul class="2ndary" style="display: none; z-index: 1;">
+
+                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
+                            </li>  
+
+                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+            
+                        </ul>
+                    </li>
+
+                    <li class="primary" rel="tab_clientActivities">
+                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+
+                        <ul class="2ndary" style="display: none; z-index: 1;">
+
+                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    
+                    <li class="primary" rel="tab_relationships">
+                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                        <ul class="2ndary" style="display: none; z-index: 1;">
+
+                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                </ul>
+                <div class="tab_fs__head-icon_exp"></div>
+            </div>
+
+            <div class="tab_fs__container">
+
+                <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
+                    blockid="tab_clientDetails" />
+
+                <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;">
+                    <div class="list"></div>
+                </div>
+
+                <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+
+            </div>
+
+        </div>
     </div>
-
-</div>
 </div>`;
-
-
-
 
 //function ClientCardDetail( _clientJsonFormTag, _clientJson, _cwsRenderObj, _blockObj ) { ..... }
 //ClientCardDetail.NOT_ALLOW_EDIT_FIELDS = [ "country", "activeUsers", "countryType", "voucherCodes", "creditedUsers", "voucherCode", "clientId" ];
