@@ -20,7 +20,7 @@ function ClientCardDetail( clientId, isRestore )
         // initialize / populate template
         var cardSheetFullTag = $( ClientCardDetail.cardFullScreen );
         $( 'body' ).append( cardSheetFullTag );
-        
+
         // create tab click events
         FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
     
@@ -108,15 +108,17 @@ function ClientCardDetail( clientId, isRestore )
         }
         else
         {
-            //var listBottomDivTag = $( '.listBottom' );
-
-            for( var i = 0; i < activityList.length; i++ )
+            for( var i = activityList.length - 1; i >= 0; i-- )
             {
                 var activityJson = activityList[i];
 
-                var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
+                try
+                {
+                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
 
-                activityCardObj.render();
+                    activityCardObj.render();    
+                }
+                catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
             }    
 
             //listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );

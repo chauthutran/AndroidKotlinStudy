@@ -202,8 +202,8 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "openSheetFullL2" )
 				{		
-					var sheetFullL2Tag = $( '#sheetFullL2' );
-					sheetFullL2Tag.html( Templates.sheetFullL2Frame );	
+					var sheetFullL2Tag = $( Templates.sheetFullL2Frame );	
+					$( 'body' ).append( sheetFullL2Tag );
 					FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
 
 					me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
@@ -217,8 +217,8 @@ function Action( cwsRenderObj, blockObj )
 					// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
 					if ( clickActionJson.openInSheetFullL2 )
 					{
-						var sheetFullL2Tag = $( '#sheetFullL2' );
-						sheetFullL2Tag.html( Templates.sheetFullL2Frame );	
+						var sheetFullL2Tag = $( Templates.sheetFullL2Frame );	
+						$( 'body' ).append( sheetFullL2Tag );
 						FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
 
 						me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
@@ -894,3 +894,4 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 }
+
