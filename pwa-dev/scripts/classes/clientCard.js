@@ -173,45 +173,13 @@ function ClientCard( clientId, options )
     me.setClientContentDisplay = function( divClientContentTag, client )
     {
         try
-        {
-            var appendContent = '';
-            
+        {            
             var displayBase = ConfigManager.getClientDisplayBase();
             var displaySettings = ConfigManager.getClientDisplaySettings();
-
-            divClientContentTag.find( 'div.clientContentDisplay' ).remove();
         
             InfoDataManager.setINFOdata( 'client', client );
 
-            
-            // Display 1st line - as date
-            var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ClientCard.setClientContentDisplay, displayBase' );
-            if ( displayBaseContent 
-                && displayBaseContent.length 
-                && displayBaseContent.trim().length ) divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( displayBaseContent ) );
-
-
-            // Display 2nd lines and more
-            if ( displaySettings )
-            {            
-                // If custom config display, remove 
-                for( var i = 0; i < displaySettings.length; i++ )
-                {
-                    // Need 'client', 'clientTrans'
-                    var dispSettingEvalStr = displaySettings[ i ].trim();
-
-                    if ( dispSettingEvalStr )
-                    {
-                        var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ClientCard.setClientContentDisplay' );
-
-                        if ( displayEvalResult 
-                            && displayEvalResult.length 
-                            && displayEvalResult.trim().length ) divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( displayEvalResult ) );
-                    }
-                }
-            }
-    
-            //divClientContentTag.append( $( me.template_ClientContentDateTag ).html( appendContent ) );
+            FormUtil.setCardContentDisplay( divClientContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
         }
         catch ( errMsg )
         {
@@ -345,8 +313,6 @@ function ClientCard( clientId, options )
 
 
 function ClientCardTemplate() {};
-
-ClientCardTemplate.cardContentDivTag = `<div class="clientContentDisplay card__row"></div>`;
 
 ClientCardTemplate.cardDivTag = `<div class="client card">
 

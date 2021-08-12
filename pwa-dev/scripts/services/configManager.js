@@ -22,8 +22,11 @@ ConfigManager.configJson_Original = {};  // Downloaded country PWA config origin
 //ConfigManager.configSetting = {}; // Not Yet coded for it.
 ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
 
-ConfigManager.defaultClientDisplayBase = `Util.formatDate( INFO.client.date.createdOnMdbUTC, 'MMM dd, yyyy - HH:mm' );`;
+ConfigManager.defaultClientDisplayBase = `'<b>' + INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName + ' - ' + INFO.client.clientDetails.age + '</b>'`;
 ConfigManager.defaultClientDisplaySettings = `'<i>' + INFO.client._id + '</i>'`;
+
+ConfigManager.defaultClientRelDisplayBase = `'<b>' + INFO.relationship.client.clientDetails.firstName + ' ' + INFO.relationship.client.clientDetails.lastName + ' - ' + INFO.relationship.client.clientDetails.age + '</b>'`;
+ConfigManager.defaultClientRelDisplaySettings = `INFO.relationship.type + ', ' + Util.formatDate( INFO.relationship.date, 'MMM dd, yyyy - HH:mm' )`;
 
 ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
 ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
@@ -356,9 +359,6 @@ ConfigManager.getActivityDisplaySettings = function()
       ConfigManager.defaultActivityDisplaySettings 
     ];
 
-    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
-    // "'<b><i>' + activityItem.created + '</i></b>'"
-
     try
     {
         if ( configJson.settings 
@@ -372,7 +372,6 @@ ConfigManager.getActivityDisplaySettings = function()
     {
         console.customLog( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
     }
-
 
     return displaySettings;
 };
@@ -435,9 +434,6 @@ ConfigManager.getClientDisplaySettings = function()
       ConfigManager.defaultClientDisplaySettings 
     ];
 
-    // `'<b><i>' + INFO.processing.created + '</i></b>'`;
-    // "'<b><i>' + activityItem.created + '</i></b>'"
-
     try
     {
         if ( configJson.settings 
@@ -450,6 +446,54 @@ ConfigManager.getClientDisplaySettings = function()
     catch ( errMsg )
     {
         console.customLog( 'Error in ConfigManager.getClientDisplaySettings, errMsg: ' + errMsg );
+    }
+
+    return displaySettings;
+};
+
+
+ConfigManager.getClientRelDisplayBase = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+    var displayBase = ConfigManager.defaultClientRelDisplayBase;
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.clientRelCardDef
+            && configJson.settings.clientRelCardDef.displayBase )
+        {
+            displayBase = configJson.settings.clientRelCardDef.displayBase;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getClientRelDisplayBase, errMsg: ' + errMsg );
+    }
+
+    return displayBase;
+};
+
+
+ConfigManager.getClientRelDisplaySettings = function()
+{
+    var configJson = ConfigManager.getConfigJson();
+    var displaySettings = [  
+      ConfigManager.defaultClientRelDisplaySettings 
+    ];
+
+    try
+    {
+        if ( configJson.settings 
+            && configJson.settings.clientRelCardDef
+            && configJson.settings.clientRelCardDef.displaySettings )
+        {
+            displaySettings = configJson.settings.clientRelCardDef.displaySettings;
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error in ConfigManager.getClientRelDisplaySettings, errMsg: ' + errMsg );
     }
 
     return displaySettings;

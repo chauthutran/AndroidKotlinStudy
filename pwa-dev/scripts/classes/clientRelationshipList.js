@@ -38,29 +38,30 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
         me.listTag = $( '<div class="list"></div>' );
         me.relationshipTabTag.append( me.listTag );
-        
-        var list = me.getRelationshipClientList( me.clientJson );
 
-        me.renderRelationshipList( me.listTag, list );
+        me.renderRelationshipList( me.listTag, me.clientJson.relationships );
+
         me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
-
     };
 
     // ----------------------------------------------------------------------------------------
     // Render methods
 
-    me.renderRelationshipList = function( listTag, list )
+    me.renderRelationshipList = function( listTag, relationships )
     {
         // Render list of client relationship
-        for( var i=0; i<list.length; i++ )
+        if ( relationships )
         {
-            var cardTag = me.renderRelationshipCard( list[i] );
-            me.setUp_Events( cardTag );
-
-            listTag.append( cardTag );
+            relationships.forEach( rel => 
+            {
+                var cardTag = me.renderRelationshipCard( rel );
+                me.setUp_Events( cardTag );
+    
+                listTag.append( cardTag );    
+            });
         }
+    };
 
-    }
 
     me.renderAddRelationshipBtn = function( listTag, relationshipTabTag )
     {
@@ -81,33 +82,59 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
         });
         
         listTag.append( me.addRelationshipBtnTag );
-    }
+    };
 
-    me.renderRelationshipCard = function( clientJson )
+
+    me.renderRelationshipCard = function( relationship )
     {       
+        var relClientJson = ClientDataManager.getClientById( relationship.clientId );
+
         var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
-        divClientCardTag.attr( 'itemId', clientJson._id );
+        divClientCardTag.attr( 'itemId', relationship.clientId );
+
         
         // Add Icon
-        me.clientIconDisplay( divClientCardTag.find( ".clientIcon" ), clientJson );
-        
-        // Add FullName
-        var fullName = me.getClientFullName( clientJson );
-        var divClientContentTag = divClientCardTag.find( ".clientContent" );        
-        divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( "<b>" + fullName + "</b>" ) );        
-        divClientContentTag.append( $( ClientCardTemplate.cardContentDivTag ).html( clientJson.relType ) );
+        me.clientIconDisplay( divClientCardTag.find( ".clientIcon" ), relClientJson );
+
+
+        // Set Content
+        var divClientContentTag = divClientCardTag.find( ".clientContent" );     
+        me.setRelContentDisplay( divClientContentTag, relationship, relClientJson );
+
 
         divClientContentTag.click( function( e ) 
         {
             e.stopPropagation();
 
-            var clientCardDetail = new ClientCardDetail( clientJson._id );
+            var clientCardDetail = new ClientCardDetail( relClientJson._id );
             clientCardDetail.render();
         });
 
         return divClientCardTag;
-    }
+    };
 
+
+    me.setRelContentDisplay = function( divContentTag, relationship, relClientJson )
+    {
+        try
+        {            
+            var displayBase = ConfigManager.getClientRelDisplayBase();
+            var displaySettings = ConfigManager.getClientRelDisplaySettings();
+            
+            var relationshipCopy = Util.cloneJson( relationship );
+            relationshipCopy.client = relClientJson;
+
+            InfoDataManager.setINFOdata( 'relationship', relationshipCopy );
+
+            FormUtil.setCardContentDisplay( divContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
+        }
+        catch ( errMsg )
+        {
+            console.customLog( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
+        }
+    };
+
+    
     // ----------------------------------------------------------------------------------------
     // Setup Edit / Delete a relationship events
 
@@ -170,22 +197,6 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     // ----------------------------------------------------------------------------------------
     // Supportive methods
 
-    me.getRelationshipClientList = function( clientJson )
-    {
-        var list = [];
-        if( clientJson.relationships != undefined )
-        {
-            for( var i=0;i<clientJson.relationships.length; i++ )
-            {
-                var relObj = clientJson.relationships[i];
-                var relationshipClientJson = ClientDataManager.getClientById( relObj.clientId );
-                relationshipClientJson.relType = relObj.type;
-                list.push( relationshipClientJson );
-            };
-        }
-
-        return list;
-    }
     
     me.clientIconDisplay = function( clientIconTag, clientJson )
     {

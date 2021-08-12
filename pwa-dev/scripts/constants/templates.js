@@ -4,6 +4,7 @@ function Templates() {};
 // -------------------------------------
 // ----- HTML Templates --------
 
+Templates.cardContentDivTag = `<div class="cardContentDisplay card__row"></div>`;
 
 // Templates.inputFieldHidden = `<input type='hidden' class='hiddenData' >`;
 Templates.inputFieldHidden = `<input type='hidden' >`;

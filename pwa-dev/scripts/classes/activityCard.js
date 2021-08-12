@@ -17,7 +17,7 @@ function ActivityCard( activityId, options )
 
     // -----------------------------------
 
-    me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
+    // me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -176,43 +176,16 @@ function ActivityCard( activityId, options )
     {
         try
         {
-            var appendContent = '';
-
             var activitySettings = ConfigManager.getActivityTypeConfig( activity );
 
             // Choose to use generic display (Base/Settings) or activity display ones (if available).
             var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
             var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-            
-            divActivityContentTag.find( 'div.activityContentDisplay' ).remove();
-        
+                    
             InfoDataManager.setINFOdata( 'activity', activity );
             InfoDataManager.setINFOclientByActivity( activity );
     
-            // Display 1st line - as date
-            var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay, displayBase' );
-            if ( displayBaseContent && displayBaseContent.length && displayBaseContent.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayBaseContent ) );
-
-
-            // Display 2nd lines and more
-            if ( displaySettings )
-            {            
-                // If custom config display, remove 
-                for( var i = 0; i < displaySettings.length; i++ )
-                {
-                    // Need 'activity', 'activityTrans'
-                    var dispSettingEvalStr = displaySettings[ i ].trim();
-
-                    if ( dispSettingEvalStr )
-                    {
-                        var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'ActivityCard.setActivityContentDisplay' );
-
-                        if ( displayEvalResult && displayEvalResult.length && displayEvalResult.trim().length ) divActivityContentTag.append( $( me.template_ActivityContentTextTag ).html( displayEvalResult ) );
-                    }
-                }
-            }
-    
-            //divActivityContentTag.append( $( me.template_ActivityContentDateTag ).html( appendContent ) );
+            FormUtil.setCardContentDisplay( divActivityContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
         }
         catch ( errMsg )
         {
@@ -220,6 +193,7 @@ function ActivityCard( activityId, options )
         }
     };
 
+    
     me.reRenderActivityDiv = function()
     {
         // There are multiple places presenting same activityId info.

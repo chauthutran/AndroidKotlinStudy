@@ -135,6 +135,63 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
+
+// var displayBase = ConfigManager.getClientDisplayBase();
+// var displaySettings = ConfigManager.getClientDisplaySettings();
+
+// divClientContentTag.find( 'div.clientContentDisplay' ).remove();
+
+// InfoDataManager.setINFOdata( 'client', client );
+
+// ClientCardTemplate.cardContentDivTag
+
+FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySettings, cardContentTemplate )
+{
+	try
+	{
+		var appendContent = '';
+		
+		divContentTag.find( 'div.cardContentDisplay' ).remove();
+
+
+		// Display 1st line
+		var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'FormUtil.setCardContentDisplay, displayBase' );
+
+		if ( displayBaseContent && displayBaseContent.length && displayBaseContent.trim().length ) 
+		{
+			divContentTag.append( $( cardContentTemplate ).html( displayBaseContent ) );
+		}
+		
+		// Display 2nd lines and more
+		if ( displaySettings )
+		{            
+			// If custom config display, remove 
+			for( var i = 0; i < displaySettings.length; i++ )
+			{
+				var dispSettingEvalStr = displaySettings[ i ].trim();
+
+				if ( dispSettingEvalStr )
+				{
+					var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'FormUtil.setCardContentDisplay, displaySettings' );
+
+					if ( displayEvalResult && displayEvalResult.length && displayEvalResult.trim().length ) 
+					{
+						divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
+					}
+				}
+			}
+		}
+
+		//divContentTag.append( $( me.template_ClientContentDateTag ).html( appendContent ) );
+	}
+	catch ( errMsg )
+	{
+		console.customLog( 'ERROR in FormUtil.setCardContentDisplay, errMsg: ' + errMsg );
+	}
+};
+
+// ==============================================
+
 FormUtil.getNextZIndex_cardFullScreen = function()
 {
 	var zIndex_Next = 1600;
