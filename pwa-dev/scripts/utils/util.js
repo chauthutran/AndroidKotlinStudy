@@ -252,9 +252,7 @@ Util.copyProperties = function( source, dest, option )
 		for ( var key in source )
 		{
 			if ( consoleLog ) console.log( 'key: ' + key );
-
-			if ( exceptions[ key ] ) { console.log( 'exceptioned' ); }
-			else dest[ key ] = source[ key ];
+			if ( !exceptions[ key ] ) dest[ key ] = source[ key ];
 		}	
 	}
 	catch( errMsg ) 

@@ -1,8 +1,8 @@
 //	TODO: ?: Rename to 'LSAppInfoManager'?
 function AppInfoManager() {}
 
-AppInfoManager.ActivityHistoryMaxLength = 20;// 100;
-AppInfoManager.CustomLogHistoryMaxLength = 20; //100;
+AppInfoManager.ActivityHistoryMaxLength = 100;
+AppInfoManager.CustomLogHistoryMaxLength = 100;
 AppInfoManager.FixOperationMaxLength = 30;
 
 // ---------------------------
