@@ -1,8 +1,8 @@
 //	TODO: ?: Rename to 'LSAppInfoManager'?
 function AppInfoManager() {}
 
-AppInfoManager.ActivityHistoryMaxLength = 100;
-AppInfoManager.CustomLogHistoryMaxLength = 100;
+AppInfoManager.ActivityHistoryMaxLength = 20;// 100;
+AppInfoManager.CustomLogHistoryMaxLength = 20; //100;
 AppInfoManager.FixOperationMaxLength = 30;
 
 // ---------------------------
@@ -261,8 +261,9 @@ AppInfoManager.addToActivityHistory = function( activityJson )
     if ( activityJson ) 
     {
         var activityJsonCopy = Util.cloneJson( activityJson );
+
         // Remove processing.form
-        if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processing.form;
+        //if ( activityJsonCopy.processing && activityJsonCopy.processing.form ) delete activityJsonCopy.processing.form;
 
         AppInfoManager.addHistory_CMN( activityJsonCopy
             , AppInfoManager.KEY_ACTIVITY_HISTORY

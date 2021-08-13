@@ -466,7 +466,8 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         
         payloadJson.payload = {
             'searchValues': activityJson.processing.searchValues,
-            'captureValues': activityJson_Copy
+            'captureValues': activityJson_Copy,
+            'form': activityJson.processing.form  // New - send 'form' as well.
         };
     }
 
@@ -514,7 +515,7 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
     if ( prev_ProcessingInfo )
     {
         processingInfo = Util.cloneJson( prev_ProcessingInfo );
-        delete processingInfo.form;
+        // delete processingInfo.form;  // Changed to keep the 'form'
     }
     else
     {

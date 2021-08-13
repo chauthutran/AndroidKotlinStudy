@@ -15,7 +15,7 @@ function settingsApp( cwsRender )
     me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
-    me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
+    //me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
     me.settingsInfo_autoCompleteInput = $( '#autoCompleteInput' );
 
     me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
