@@ -234,11 +234,32 @@ Util.getJsonDeepCopy = function( jsonObj )
 };
 
 
-Util.copyProperties = function( source, dest )
+// Util.copyProperties = function( source, dest )
+// {
+// 	for ( var key in source )
+// 	{
+// 		dest[ key ] = source[ key ];
+// 	}
+// };
+
+Util.copyProperties = function( source, dest, option )
 {
-	for ( var key in source )
+	try
 	{
-		dest[ key ] = source[ key ];
+		var exceptions = ( option && option.exceptions && Util.isTypeObject( option.exceptions ) ) ? option.exceptions : {};
+		var consoleLog = ( option && option.consoleLog ) ? option.consoleLog: false;
+
+		for ( var key in source )
+		{
+			if ( consoleLog ) console.log( 'key: ' + key );
+
+			if ( exceptions[ key ] ) { console.log( 'exceptioned' ); }
+			else dest[ key ] = source[ key ];
+		}	
+	}
+	catch( errMsg ) 
+	{
+		console.log( 'ERROR in Util.copyProperties, errMsg: ' + errMsg );
 	}
 };
 
