@@ -390,6 +390,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // Form Information
         activityJson.processing.form = { 
             'blockId': blockId
+            ,'activityId': activityJson.id
             ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
             ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
             ,'data': ActivityUtil.generateFormsJsonData_ByForm( $("[blockId='" + blockId + "']" ) ) 
@@ -467,7 +468,7 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         payloadJson.payload = {
             'searchValues': activityJson.processing.searchValues,
             'captureValues': activityJson_Copy,
-            'form': activityJson.processing.form  // New - send 'form' as well.
+            'userFormData': activityJson.processing.form  // New - send 'form' as well.
         };
     }
 
