@@ -633,3 +633,22 @@ Util2.epoch = function( pattern, callBack )
 	});
 };
 
+
+Util2.countClientReached = function()
+{
+	var clients = ClientDataManager.getClientList();
+
+};
+
+
+Util2.countClientwTphone = function()
+{
+
+};
+
+
+
+Util2.countClientwTphoneUsed = function()
+{
+
+};

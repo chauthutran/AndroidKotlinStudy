@@ -407,6 +407,10 @@ function Action( cwsRenderObj, blockObj )
 					
 					var payloadJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
 
+					// TODO: Simply save blockId, payloadJson..
+					SessionManager.saveBlockPayload( blockId, payloadJson );
+
+
 					// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
 					me.submitToWs( actionUrl, payloadJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
 
@@ -436,6 +440,10 @@ function Action( cwsRenderObj, blockObj )
 
 							// Generete payload - by template or other structure/format from 'forms'
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+
+							// TODO: Simply save blockId, payloadJson..
+							SessionManager.saveBlockPayload( blockId, formsJsonActivityPayload );
+
 
 							var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
 

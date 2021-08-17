@@ -242,6 +242,8 @@ function favIcons( cwsRender )
         return $( svgObject )[ 0 ].outerHTML;
     }
 
+
+    // TODO: This renderNewAreaBlock should have areaId as well...
     me.setFavIconClickTarget = function( favObjTag, favItem )
     {
         favObjTag.off( 'click' );
@@ -253,7 +255,7 @@ function favIcons( cwsRender )
                 if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
 
                 me.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
-                me.cwsRenderObj.renderNewAreaBlock( favItem.target.blockId, favItem.target.options );
+                me.cwsRenderObj.renderNewAreaBlock( favItem.target.blockId, favItem.target.options, favItem.name );
             }
         });
     }

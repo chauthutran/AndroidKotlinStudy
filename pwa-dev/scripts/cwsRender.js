@@ -165,14 +165,12 @@ function cwsRender()
 		// Clear All Previous Msgs..
 		MsgManager.msgAreaClearAll();
 
-		// NOTE: TODO: BELOW LOGIC NEEDS TO BE RE-ORGANIZED..  -- SWITCHING SHOULD HAPPEN WITH CLEARING OUT OTHER PARTS..
-
-		// On each area render, clear out the pageDiv content (which represent area div)..
-		//me.pageDivTag.empty();
-
 		// gAnalytics Page Hit
 		GAnalytics.setSendPageView( areaId );
 		GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
+
+		// Clear blockPayload remember data.
+		SessionManager.clearBlockPayload();
 
 		// [JOB_AID]
 		if ( areaId !== 'jobAids' 
@@ -185,13 +183,9 @@ function cwsRender()
 			me.resetVisibility_ViewListDiv();
 		}
 
-		// TODO: REVIEW IF WE NEED THIS PART..
-		//FormUtil.gAnalyticsEventAction( function( analyticsEvent ) {
 
 		me.hideAreaRelatedParts();
 
-		// added by Greg (2019-02-18) > test track googleAnalytics
-		//ga('send', { 'hitType': 'event', 'eventCategory': 'menuClick:' + areaId, 'eventAction': analyticsEvent, 'eventLabel': FormUtil.gAnalyticsEventLabel() });
 
 		if ( areaId === 'logOut' ) me.logOutProcess();
 		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
@@ -209,8 +203,6 @@ function cwsRender()
 		else if ( areaId === 'aboutPage') me.aboutApp.render();
 		else
 		{
-			//me.clearMenuClickStyles();
-
 			me.areaList = ConfigManager.getAllAreaList();
 
 			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
@@ -229,15 +221,22 @@ function cwsRender()
 				// Change start area mark based on last user info.. //me.trackUserLocation( selectedArea );
 			}
 		}
-		//});
 	};
 
 
-	// Area is always an entry location, right?
-	me.renderNewAreaBlock = function( blockName, options )
+	// Used by FavIconClick..  - this also switches area?
+	// This is similar to calling 'renderArea()', which we might need to combine..
+	me.renderNewAreaBlock = function( blockName, options, favName )
 	{
+		favName = ( favName ) ? favName : '';
+		GAnalytics.setEvent( 'FavOpen', Util.getStr( favName ), 'fav clicked', 1 );
+
+		// Clear blockPayload remember data.
+		SessionManager.clearBlockPayload();
+
+		//ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+				
 		// On each area render, clear out the pageDiv content (which represent area div)..
-		// if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();  // <-- Need this?
 		me.pageDivTag.empty();
 
 		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
@@ -246,6 +245,7 @@ function cwsRender()
 		return blockObj;
 	};
 
+	
 	// --------------------------------------
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function( runAfterFunc )

@@ -34,6 +34,8 @@ SessionManager.Status_LogIn_InProcess = false;
 // TODO: SHOULD BE MOVED --> GlobalVar..?   AppRef?
 SessionManager.cwsRenderObj;  // Login Flag is kept in here, sessionManager.
 
+SessionManager.blockPayload = {};  // Save block payload - search only for now?
+
 // ---------------------------------------
 
 // Only used in Login..
@@ -261,4 +263,28 @@ SessionManager.getOfflineUserPin = function( offlineUserData )
 	}
 
 	return pin;
+};
+
+
+// -----------------------------
+
+// In 'newBlock' button onclick action sequence, we can pass this...  <-- with eval Action..
+SessionManager.getBlockPayload = function( blockId )
+{    
+	return SessionManager.blockPayload[ blockId ];
+};
+
+
+SessionManager.saveBlockPayload = function( blockId, payloadJson )
+{    
+	if ( blockId && payloadJson ) 
+	{
+		SessionManager.blockPayload[ blockId ] = payloadJson;
+	}
+};
+
+// Clear this on - login, area start( this should be enough..), tab click?
+SessionManager.clearBlockPayload = function()
+{    
+	SessionManager.blockPayload = {};
 };
