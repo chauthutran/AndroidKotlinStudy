@@ -133,10 +133,7 @@ function cwsRender()
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
-	me.resetVisibility_ViewListDiv = function()
-	{
-		$( '#activityListViewNav' ).hide();
-	};
+
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
 	me.loadActivityListData_AfterLogin = function( callBack )
@@ -172,15 +169,16 @@ function cwsRender()
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
 
+
 		// [JOB_AID]
 		if ( areaId !== 'jobAids' 
-             && areaId !== 'hnqis_rdqaPage'
-             && areaId !== 'statisticsPage' 
-             && areaId !== 'settingsPage' 
-             && areaId !== 'aboutPage' )
+             && areaId !== 'hnqis_rdqaPage' )
+            // && areaId !== 'statisticsPage' 
+            // && areaId !== 'settingsPage' 
+            // && areaId !== 'aboutPage' )
 		{
 			me.pageDivTag.empty();
-			me.resetVisibility_ViewListDiv();
+			$( '#activityListViewNav' ).hide();
 		}
 
 
@@ -238,7 +236,9 @@ function cwsRender()
 				
 		// On each area render, clear out the pageDiv content (which represent area div)..
 		me.pageDivTag.empty();
+		$( '#activityListViewNav' ).hide();		
 
+		
 		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
 		blockObj.render();
 

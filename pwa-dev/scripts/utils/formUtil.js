@@ -240,7 +240,7 @@ FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore 
     //$( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
 };
 
-
+// OBSOLETE - NOT BEING USED ANYMORE..
 FormUtil.sheetFull_openPreviousOne = function( itemType, itemId )
 {
 	var prevItem;
