@@ -44,7 +44,11 @@ function ClientCardDetail( clientId, isRestore )
     
 
         FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'clientCardDetail', me.clientId, me.isRestore );
-
+        cardSheetFullTag.find( 'img.btnBack' ).off( 'click' ).click( function()
+            { 
+               cardSheetFullTag.remove();
+               $("#activityListViewNav").show();
+            });
         
         TranslationManager.translatePage();    
     };
