@@ -393,7 +393,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
             ,'activityId': activityJson.id
             ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
             ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
-            ,'data': ActivityUtil.generateFormsJsonData_ByForm( $("[blockId='" + blockId + "']" ) ) 
+            ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
         };
     }
 

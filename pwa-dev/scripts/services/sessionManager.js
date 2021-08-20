@@ -34,7 +34,8 @@ SessionManager.Status_LogIn_InProcess = false;
 // TODO: SHOULD BE MOVED --> GlobalVar..?   AppRef?
 SessionManager.cwsRenderObj;  // Login Flag is kept in here, sessionManager.
 
-SessionManager.blockPayload = {};  // Save block payload - search only for now?
+SessionManager.WSblockFormsJson = {};  // Save block payload - search only for now?
+SessionManager.WSblockFormsJsonArr = [];  // Save block payload - search only for now?
 
 // ---------------------------------------
 
@@ -269,22 +270,41 @@ SessionManager.getOfflineUserPin = function( offlineUserData )
 // -----------------------------
 
 // In 'newBlock' button onclick action sequence, we can pass this...  <-- with eval Action..
-SessionManager.getBlockPayload = function( blockId )
+SessionManager.getWSBlockFormsJson = function( blockId )
 {    
-	return SessionManager.blockPayload[ blockId ];
+	return SessionManager.WSblockFormsJson[ blockId ];
 };
 
-
-SessionManager.saveBlockPayload = function( blockId, payloadJson )
+SessionManager.getWSBlockFormsJsonLastOnes = function( backCount, optAddBlockId )
 {    
-	if ( blockId && payloadJson ) 
+	var formsJson;
+
+	backCount = ( backCount ) ? backCount : 1;  // default is '1' which is very last one.
+
+	if ( backCount <= SessionManager.WSblockFormsJsonArr.length ) 
 	{
-		SessionManager.blockPayload[ blockId ] = payloadJson;
+		var idx = SessionManager.WSblockFormsJsonArr.length - backCount;
+		var blockId = SessionManager.WSblockFormsJsonArr[ idx ];
+		formsJson = SessionManager.getWSBlockFormsJson( blockId );
+
+		if ( optAddBlockId && formsJson ) formsJson.blockId = blockId;
+	}
+
+	return ( formsJson ) ? formsJson : undefined;
+};
+
+SessionManager.saveWSBlockFormsJson = function( blockId, formsJson )
+{    
+	if ( blockId && formsJson ) 
+	{
+		SessionManager.WSblockFormsJson[ blockId ] = formsJson;
+		SessionManager.WSblockFormsJsonArr.push( blockId );
 	}
 };
 
 // Clear this on - login, area start( this should be enough..), tab click?
-SessionManager.clearBlockPayload = function()
+SessionManager.clearWSBlockFormsJson = function()
 {    
-	SessionManager.blockPayload = {};
+	SessionManager.WSblockFormsJson = {};
+	SessionManager.WSblockFormsJsonArr = [];
 };

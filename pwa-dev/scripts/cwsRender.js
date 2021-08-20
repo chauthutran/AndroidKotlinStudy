@@ -170,7 +170,7 @@ function cwsRender()
 		GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
 
 		// Clear blockPayload remember data.
-		SessionManager.clearBlockPayload();
+		SessionManager.clearWSBlockFormsJson();
 
 		// [JOB_AID]
 		if ( areaId !== 'jobAids' 
@@ -232,7 +232,7 @@ function cwsRender()
 		GAnalytics.setEvent( 'FavOpen', Util.getStr( favName ), 'fav clicked', 1 );
 
 		// Clear blockPayload remember data.
-		SessionManager.clearBlockPayload();
+		SessionManager.clearWSBlockFormsJson();
 
 		//ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
 				
@@ -245,7 +245,7 @@ function cwsRender()
 		return blockObj;
 	};
 
-	
+
 	// --------------------------------------
 	// -- START POINT (FROM LOGIN) METHODS
 	me.startWithConfigLoad = function( runAfterFunc )

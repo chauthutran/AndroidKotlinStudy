@@ -103,7 +103,7 @@ ActivityUtil.generateFormsJsonData_ByType = function( payloadDefJson, actionDefJ
 
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
-ActivityUtil.generateFormsJsonData_ByForm = function( formDivSecTag )
+ActivityUtil.generateFormsJsonArr = function( formDivSecTag )
 {
 	var formsJson = [];
 
@@ -121,6 +121,21 @@ ActivityUtil.generateFormsJsonData_ByForm = function( formDivSecTag )
 	return formsJson;
 };
 
+
+ActivityUtil.generateFormsJson = function( formDivSecTag )
+{
+	var formsJson = {};
+
+	formDivSecTag.find( '.dataValue' ).each( function()
+	{		
+		var inputFieldTag = $(this);
+		var nameId = inputFieldTag.attr("name");
+		
+		formsJson[ nameId ] = FormUtil.getTagVal( inputFieldTag );
+	});
+
+	return formsJson;
+};
 
 ActivityUtil.mergeFormsJson_ActionDef = function( formsJson, actionDefJson )
 {
