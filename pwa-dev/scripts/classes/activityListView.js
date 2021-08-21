@@ -74,8 +74,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
 
     me.initialize = function()
     {
-        me.nav2Tag = $( '#activityListViewNav' ).show();
-        //$( '#pageDiv' ).css( 'height', 'calc(100% - 106px)' );
+        me.nav2Tag = $( '.Nav2' ).show();
 
         me.setUpInitialData();
     };

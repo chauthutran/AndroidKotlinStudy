@@ -414,7 +414,7 @@ function settingsApp( cwsRender )
                                     var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
             
                                     $( btnRefresh ).click ( () => {
-                                        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                                        SessionManager.cwsRenderObj.renderArea1st();
                                     });
                 
                                     MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );    
@@ -565,7 +565,7 @@ function settingsApp( cwsRender )
                             ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
                             {
                                 console.customLog( 'LoadData clients merged' );
-                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                                SessionManager.cwsRenderObj.renderArea1st();
                             });    
                         }
 

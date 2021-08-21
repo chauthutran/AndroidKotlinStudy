@@ -7,7 +7,6 @@ function Action( cwsRenderObj, blockObj )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	
-	//me.pageDivTag = cwsRenderObj.pageDivTag; // NOTE: Should not be used!!!  Replace with me.btnTargetParentTag 
 	me.btnTargetParentTag;  // button rendering div's parent tag..  <-- if tab button, target is tab content
 
 	me.className_btnClickInProcess = 'btnClickInProcess';

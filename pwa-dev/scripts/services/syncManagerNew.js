@@ -602,7 +602,7 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
                             var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
         
                             $( btnRefresh ).click ( () => {
-                                SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+                                SessionManager.cwsRenderObj.renderArea1st();
                             });
         
                             MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );

@@ -256,6 +256,19 @@ ConfigManager.getAllAreaList = function()
 };
 
 
+ConfigManager.getArea1st = function()
+{
+    var areaList = ConfigManager.getAllAreaList();
+    return ( areaList.length > 0 ) ? areaList[0] : undefined;
+};
+
+ConfigManager.getArea1st_Id = function()
+{
+    var area1st = ConfigManager.getArea1st();
+    return ( area1st ) ? area1st.id : '';
+};
+
+
 ConfigManager.isSourceTypeDhis2 = function()
 {
     return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Dhis2 );

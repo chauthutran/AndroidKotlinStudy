@@ -6,14 +6,11 @@
 //		- clear on render..
 // 
 // -------------------------------------------- 
-function Login( cwsRenderObj )
+function Login()
 {
     var me = this;
 
-    me.cwsRenderObj = cwsRenderObj;
-
 	me.loginFormDivTag = $( '#loginFormDiv' );
-	me.pageDivTag = $( '#pageDiv' );	// Get it from cwsRender object?
 
 	me.loginBtnTag = $( '.loginBtn' );
 	me.passRealTag = $( '#passReal' );
@@ -23,7 +20,7 @@ function Login( cwsRenderObj )
 	me.advanceOptionLoginBtnTag = $( '#advanceOptionLoginBtn' );
 
 	me.loginPinClearTag = $( '#loginPinClear' );
-	me.loginFieldTag = $( '#loginField' );
+	//me.loginFieldTag = $( '#loginField' );
 
 	// ------------
 
@@ -476,32 +473,20 @@ function Login( cwsRenderObj )
 		}
 	};
 	
-
-
-	// // ---- Localhost Stage related..
-	//AppInfoManager.getLocalStageName = function() 
-
-	//AppInfoManager.setLocalStageName = function( stageName ) 
-
-
 	// -----------------------------------
 
-	
 	me.openForm = function()
 	{
 		// Reset various login related flags - the 1st touch/focus flag..
 		me.loginPage1stTouchFlag = false;
 		me.loginAppUpdateCheck = false;
+		
+
+		SessionManager.cwsRenderObj.hidePageDiv();
 
 
-		// Hide non login related tags..
-		$( '.Nav1' ).hide();
-
-		me.pageDivTag.hide();		
 		me.loginFormDivTag.show();
-
 		Menu.setInitialLogInMenu();
-
 
 		// Reset vals and set focus
 		me.clearResetPasswords();
@@ -517,19 +502,31 @@ function Login( cwsRenderObj )
 
 		me.loginBottomButtonsVisible( true );
 	};
-
-
+	
+	
 	me.closeForm = function()
 	{
-		// '.Nav1' show should be moved to cwsRender.startWithConfigLoad
-		$( '.Nav1' ).css( 'display', 'flex' );			
-		//me.pageTitleDivTab.hide(); 
+		var loginUserNameH4Tag = $( '#loginUserNameH4' );
 
+		// Div (Input) part of Login UserName
+		$( '#loginField' ).hide();
+
+		
 		me.loginFormDivTag.hide();
-		me.pageDivTag.show( 'fast' );
+		
+		// input parts..  Below will be hidden, though...
+		//$( 'input.loginUserName' ).val( lastSession.user );	
+		$( 'input.loginUserName' ).attr( 'readonly',true );
 
-		me.loginFieldTag.show();		
+		// Display login name as Big text part - if we already have user..
+		loginUserNameH4Tag.text( me.loginUserNameTag.val() ).show();
+		
+
+		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
+
+		FormUtil.hideProgressBar();
 	};
+
 
 	me.clearResetPasswords = function()
 	{
@@ -610,14 +607,14 @@ function Login( cwsRenderObj )
 			FormMsgManager.appBlockTemplate( 'loginAfterLoad' );
 
 			// Load Activities
-			me.cwsRenderObj.loadActivityListData_AfterLogin( function() 
+			SessionManager.cwsRenderObj.loadActivityListData_AfterLogin( function() 
 			{
 				me.loginAfterProcess( userName );
 				
 				FormMsgManager.appUnblock();
 
 				// call CWS start with this config data..
-				me.cwsRenderObj.startWithConfigLoad( runAfterFunc );
+				SessionManager.cwsRenderObj.startWithConfigLoad( runAfterFunc );
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
 				// For availableType 'v2' only.
@@ -643,19 +640,20 @@ function Login( cwsRenderObj )
 		// menu area user name show
 		$( 'div.navigation__user' ).html( userName );
 
-
-		// 2. UI Related Process
-		me.closeForm();
-
 		// Disabled due to error
 		//FormUtil.geolocationAllowed();
 
 		Menu.renderDefaultTheme();
 		MsgManager.initialSetup();
 
-		ScheduleManager.runSchedules_AfterLogin( me.cwsRenderObj );
+		// 2. UI Related Process
+		me.closeForm();
 
-		me.loginAfter_LoginPageUIUpdate();
+		SessionManager.cwsRenderObj.showPageDiv();
+
+
+		ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );
+		//me.loginAfter_LoginPageUIUpdate();
 	};
 
 	// ----------------------------------------------
@@ -819,27 +817,6 @@ function Login( cwsRenderObj )
 		var userPin = SessionManager.sessionData.login_Password;
 
 		me.processLogin( userName, userPin, location.origin, $( this ) );
-	};
-
-
-	me.loginAfter_LoginPageUIUpdate = function()
-	{
-		var loginUserNameH4Tag = $( '#loginUserNameH4' );
-
-		// Div (Input) part of Login UserName
-		$( '#loginField' ).hide();
-
-		// input parts..  Below will be hidden, though...
-		//$( 'input.loginUserName' ).val( lastSession.user );	
-		$( 'input.loginUserName' ).attr( 'readonly',true );
-
-		// Display login name as Big text part - if we already have user..
-		loginUserNameH4Tag.text( me.loginUserNameTag.val() ).show();
-		
-
-		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
-
-		FormUtil.hideProgressBar();
 	};
 
 	// --------------------------------------

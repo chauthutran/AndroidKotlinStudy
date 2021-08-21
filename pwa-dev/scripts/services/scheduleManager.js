@@ -247,7 +247,7 @@ ScheduleManager.syncDownRun_Online_Login = function()
 						var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
 
 						btnRefreshTag.off( 'click' ).click ( () => {
-							SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+							SessionManager.cwsRenderObj.renderArea1st();
 						});
 	
 						MsgManager.notificationMessage( 'SyncDown data found', 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );

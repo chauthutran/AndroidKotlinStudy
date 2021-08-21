@@ -26,7 +26,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     
     me.blockListDiv_marginBottom = '30px'; // To Lift the list, avoid collpase with Fav.
 
-    me.pagingData = ConfigManager.getSettingPaging(); // 'pagingSize': ( $( '#pageDiv' ).height() / 90 ) --> 90 = standard height for 1 clientCard
+    me.pagingData = ConfigManager.getSettingPaging();
     me.pagingData.currPosition = 0;
 
     // -------- Tags --------------------------

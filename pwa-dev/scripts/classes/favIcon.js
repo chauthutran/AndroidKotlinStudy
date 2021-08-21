@@ -5,8 +5,8 @@ function favIcons( cwsRender )
     var me = this;
 
     me.cwsRenderObj = cwsRender;
-    me.favIconsTag = $( '#pageDiv' ).find( 'div.fab-wrapper' ); 
-    me.favButtonTag = $( '#pageDiv' ).find( 'div.fab' );
+    me.favIconsTag = $( 'div.fab-wrapper' ); 
+    me.favButtonTag = $( 'div.fab' );
     me.incr = 0;
 
 
@@ -30,19 +30,9 @@ function favIcons( cwsRender )
     me.initialize_UI = function()
     {
         // clear existing favIcons
-        $( '#pageDiv' ).find( 'div.fab__child-section' ).remove();
+        $( 'div.fab__child-section' ).remove();
     }
 
-
-    //me.getFavIconsByAreaRole = function( favData )
-    //{
-    //    var areaItems = ( ConnManagerNew.isAppMode_Online() ) ? favData.online : favData.offline;
-    //    //var areaFavItems = ConfigManager.filterListByUserRoles( areaItems );
-
-    //    Util.sortByKey( areaItems, 'id');
-
-    //    return areaItems;    
-    //};
 
 	me.createRecursiveFavIcons = function( favList, favItm, bAppend, callBack )
 	{
@@ -285,52 +275,7 @@ function favIcons( cwsRender )
 
     }
 
-    /*
-    me.storeFavIcon = function( svgObjectCode, iconID, iconName, callBack )
-    {
-
-        var favIconObj = AppInfoManager.getFavIcons();
-
-        if ( favIconObj === undefined )
-        {
-           favIconObj = [];
-        }
-
-
-        favIconObj.push ( { id: iconID, name: iconName, svg: encodeURI( svgObjectCode ) } );
-
-        AppInfoManager.updateFavIcons( favIconObj );
-
-        if ( callBack ) callBack();
-
-    }
-    */
-
-    /*
-    me.fetchFavIcon = function( iconID )
-    {
-        var favIconObj = AppInfoManager.getFavIcons();
-        if ( favIconObj != undefined )
-        {
-            for ( var i = 0; i < favIconObj.length; i++ )
-            {
-                var favItm = ( favIconObj[ i ] );
-
-                if ( favItm.id == iconID )
-                {
-                    return $( decodeURI( favItm.svg ) );
-                }
-            }
-
-        }
-    }
-    */
-
-    // empty existing container - force a recreate of SVG content
-    // added temporarily (ideally should only be done once login)
-    //AppInfoManager.removeFavIcons();
-
-	// ------------------------------------
+    // ------------------------------------
 
 	me.initialize();
 }

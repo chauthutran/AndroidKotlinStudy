@@ -7,13 +7,12 @@ function cwsRender()
 	// Tags
 	me.pageDivTag = $( '#pageDiv' );
 	me.pulsatingProgress = $( '#pulsatingDots' );
+	me.Nav1Tag = $( '.Nav1' );
+	me.Nav2Tag = $( '.Nav2' );
 
-	// service worker obj reference
-	//me.SwManager;  // set on 'app.js' initialize process
-
+	
 	// global variables
 	//me.configJson;
-	me.areaList = [];
 	me.manifest;
 	me.favIconsObj;
 	me.aboutApp;
@@ -156,69 +155,66 @@ function cwsRender()
 		});
 	};
 
+	me.renderArea1st = function() 
+	{
+		var areaList = ConfigManager.getAllAreaList();
+
+		if ( areaList.length > 0 ) me.renderArea( areaList[0].id );
+		else console.log( 'ERROR in CwsRender.renderArea1st, areaList is empty.' );
+	};
 
 	me.renderArea = function( areaId )
 	{
 		// Clear All Previous Msgs..
 		MsgManager.msgAreaClearAll();
 
-		// gAnalytics Page Hit
-		GAnalytics.setSendPageView( areaId );
-		GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
-
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
 
-
-		// [JOB_AID]
-		if ( areaId !== 'jobAids' 
-             && areaId !== 'hnqis_rdqaPage' )
-            // && areaId !== 'statisticsPage' 
-            // && areaId !== 'settingsPage' 
-            // && areaId !== 'aboutPage' )
-		{
-			me.pageDivTag.empty();
-			$( '#activityListViewNav' ).hide();
-		}
-
-
+		// [JOB_AID]  // && areaId !== 'statisticsPage', 'settingsPage, 'aboutPage' )
+		if ( areaId !== 'jobAids' && areaId !== 'hnqis_rdqaPage' ) me.resetPageDivContent();
 		me.hideAreaRelatedParts();
 
 
-		if ( areaId === 'logOut' ) me.logOutProcess();
-		else if ( areaId === 'statisticsPage') me.statisticsObj.render();
-		else if ( areaId === 'settingsPage') me.settingsApp.render();
-        // [JOB_AID]
-		else if ( areaId === 'jobAids') 
-		{ 
-            $( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
-            $( '#divJobAid' ).show();
-		}
-		else if ( areaId === 'hnqis_rdqaPage' )
+		if ( areaId )
 		{
-			
-		}
-		else if ( areaId === 'aboutPage') me.aboutApp.render();
-		else
-		{
-			me.areaList = ConfigManager.getAllAreaList();
+			// gAnalytics Page Hit
+			GAnalytics.setSendPageView( areaId );
+			GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
 
-			var selectedArea = Util.getFromList( me.areaList, areaId, "id" );
-
-			// TODO: ACTIVITY ADDING
-			ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
-
-			// if menu is clicked, reload the block refresh?
-			if ( selectedArea && selectedArea.startBlockName )
+			if ( areaId === 'logOut' ) me.logOutProcess();
+			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+			else if ( areaId === 'settingsPage') me.settingsApp.render();
+			// [JOB_AID]
+			else if ( areaId === 'jobAids') 
+			{ 
+				$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
+				$( '#divJobAid' ).show();
+			}
+			else if ( areaId === 'hnqis_rdqaPage' )
 			{
-				if ( ! me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
+				
+			}
+			else if ( areaId === 'aboutPage') me.aboutApp.render();
+			else
+			{
+				if ( !me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
 
-				var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
-				startBlockObj.render();  // should been done/rendered automatically?
+				var selectedArea = Util.getFromList( ConfigManager.getAllAreaList(), areaId, "id" );
 
-				// Change start area mark based on last user info.. //me.trackUserLocation( selectedArea );
+				// TODO: ACTIVITY ADDING
+				ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
+
+				// if menu is clicked, reload the block refresh?
+				if ( selectedArea && selectedArea.startBlockName )
+				{
+					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
+					startBlockObj.render();  // should been done/rendered automatically?
+				}
 			}
 		}
+		else console.log( 'ERROR - areaId on CwsRender.renderArea is emtpy' );
+
 	};
 
 
@@ -231,14 +227,10 @@ function cwsRender()
 
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
-
-		//ActivityUtil.addAsActivity( 'area', selectedArea, areaId );
-				
+		//ActivityUtil.addAsActivity( 'area', selectedArea, areaId )				
 		// On each area render, clear out the pageDiv content (which represent area div)..
-		me.pageDivTag.empty();
-		$( '#activityListViewNav' ).hide();		
-
-		
+		me.resetPageDivContent();
+				
 		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
 		blockObj.render();
 
@@ -402,29 +394,24 @@ function cwsRender()
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
-		me.closeLoginUI();
+		me.logOutUI();
 
 		SwManager.checkNewAppFile_OnlyOnline();
-
-		// On LogOut, update the delayed appUpdate..
 		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline, this seems to be working?
 	}
 
-	me.closeLoginUI = function()
+	me.logOutUI = function()
 	{
-		//me.loginObj.spanOuNameTag.text( '' );
-		//me.loginObj.spanOuNameTag.hide();
 		$( 'div.Nav__Title').html( '' );
 
 		me.clearMenuPlaceholders();
 		Menu.navDrawerDivTag.empty();
 
+		//  Do we need to do this?
 		me.hideActiveSession_UIcontent();
 
 		Menu.renderDefaultTheme();
 		me.loginObj.openForm();
-		
-		// me.loginBottomButtonsVisible( true );
 	};
 
 
@@ -435,32 +422,14 @@ function cwsRender()
 		$( '.subMenu_PageDiv' ).hide();
 
 		// hide UI Areas
-		if ( $( 'div.aboutListDiv' ).is(':visible') )
-		{
-			me.aboutApp.hideAboutPage();
-		}
-		if ( me.statisticsObj.statisticsFormDiv.is(':visible') ) 
-		{
-			me.statisticsObj.hideStatsPage();
-		}
-		if ( $( 'div.settingsListDiv' ).is(':visible') ) 
-		{
-			me.settingsApp.hideSettingsPage();
-		}
-		//if ( $( 'div.detailsListDiv' ).is(':visible') ) 
-		//{
-		//	me.myDetails.hidemyDetailsPage();
-		//}
-		if ( $( '#pageDiv' ).is(':visible') ) 
-		{
-			$('#pageDiv').hide();
-		}
-		if ( $( '#activityDetail_FullScreen' ).is(':visible') ) 
-		{
-			$('#activityDetail_FullScreen').empty();
-			$('#activityDetail_FullScreen').hide();
-			$('#pageDiv').hide();
-		}
+		if ( $( 'div.aboutListDiv' ).is(':visible') ) me.aboutApp.hideAboutPage();
+
+		if ( me.statisticsObj.statisticsFormDiv.is(':visible') ) me.statisticsObj.hideStatsPage();
+
+		if ( $( 'div.settingsListDiv' ).is(':visible') ) me.settingsApp.hideSettingsPage();
+
+		if ( me.pageDivTag.is(':visible') ) me.pageDivTag.hide();
+
 		if ( $( '#divMsgAreaBottom' ).is(':visible') ) 
 		{
 			$('#divMsgAreaBottom').hide();
@@ -476,23 +445,16 @@ function cwsRender()
 		if ( $( '.scrim' ).is(':visible') ) $('.scrim').hide();
 
 		// hide navBar items
-		$( '.Nav1' ).hide();
-		$( '#activityListViewNav' ).hide();  // $( '.Nav2' ).hide();
+		me.Nav1Tag.hide();
+		me.Nav2Tag.hide();
+	};
 
-	}
 
 	me.clearMenuPlaceholders = function()
 	{
 		$( 'div.navigation__user' ).html( '' );
 		$( 'div.Nav__Title' ).html( '' );
 		//$( '#divNavDrawerSummaryData' ).html( '' );
-	}
-
-	// TRAN TODO : Discuss with James and will try to remove this method and disabled the code method
-	// TODO: GREG: CREATE 'SESSION' CLASS TO PUT THESE...
-	// USED?  Put in back file?
-	me.trackUserLocation = function( clicked_area )
-	{
 	};
 
     me.favIcons_Update = function()
@@ -508,6 +470,28 @@ function cwsRender()
 	};
 
 	// ======================================
+
+	me.hidePageDiv = function()
+	{
+		// Hide non login related tags..
+		me.Nav1Tag.hide();
+		me.pageDivTag.hide();		
+	};
+	
+	me.showPageDiv = function()
+	{
+		me.pageDivTag.show( 'fast' );
+		me.Nav1Tag.css( 'display', 'flex' );			
+	};
+
+	me.resetPageDivContent = function()
+	{
+		// On each area render, clear out the pageDiv content (which represent area div)..
+		me.pageDivTag.empty();
+		me.Nav2Tag.hide();		
+	};	
+
+	// ----------------------------------
 
 	me.newSWrefreshNotification = function()
 	{

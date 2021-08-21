@@ -168,7 +168,7 @@ DevHelper.removeSampleData = function()
     ClientDataManager.removeSampleData( function( removedCount ) 
     {
         console.log( 'DevHelper.removeSampleData Done and saved to IndexedDB.  Removed Count: ' + removedCount );
-        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+        SessionManager.cwsRenderObj.renderArea1st();
     });
 };
 
@@ -177,7 +177,7 @@ DevHelper.loadSampleData = function( icount )
 {
     ClientDataManager.loadSampleData( icount, DevHelper.sampleDataTemplate, function() {
         console.log( 'DevHelper.loadSampleData Done and saved to IndexedDB' );
-        SessionManager.cwsRenderObj.renderArea( SessionManager.cwsRenderObj.areaList[ 0 ].id );
+        SessionManager.cwsRenderObj.renderArea1st();
     });
 };
 
