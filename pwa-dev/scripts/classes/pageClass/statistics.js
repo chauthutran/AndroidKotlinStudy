@@ -1,11 +1,11 @@
 // -------------------------------------------
 // -- localStatistics Class/Methods
 
-function Statistics( cwsRender )
+function Statistics( cwsRenderObj )
 {
     var me = this;
 
-    me.cwsRenderObj = cwsRender;
+    me.cwsRenderObj = cwsRenderObj;
 
     me.statisticsFormDiv = $( '#statisticsFormDiv' );
 
@@ -41,6 +41,8 @@ function Statistics( cwsRender )
 
     me.render = function()
     {
+        $( '#statsNav2' ).show(); // Stats Nav2       
+
         me.initialize_UI();
 
         me.loadPeriodOptions( me.statsPeriodSelector, StatisticsUtil.periodSelectorOptions, 'reset' );

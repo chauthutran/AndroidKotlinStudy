@@ -9,7 +9,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     me.cwsRenderObj = cwsRenderObj;
     me.clientListObj = clientList;
     //me.blockList_UL_Tag = blockList_UL_Tag;
-    me.nav2Tag;
+    me.nav2Tag = cwsRenderObj.Nav2Tag;
     me.viewListNames = viewListNames;
 
     me.mainList;
@@ -74,8 +74,6 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.initialize = function()
     {
-        me.nav2Tag = $( '.Nav2' ).show();
-
         me.setUpInitialData();
     };
     
@@ -83,6 +81,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.render = function()
     {
+        me.nav2Tag.show();
+
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( me.nav2Tag );        
         me.setClassContainerTag( me.nav2Tag, me.containerTagTemplate );
@@ -566,7 +566,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.setSortOtherEvents = function( sortListButtonTag )
     {
-        $( ".Nav2__icon" ).click(function ( e ) {
+        me.sortListButtonTag.click(function ( e ) {
 
             if ( me.usedGroupBy( me.groupByData ) )
             {
@@ -589,15 +589,15 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.showSortList = function()
     {
-        $( '.Menus_display' ).css('display', 'table-row');
-        $('.Nav2__icon').css('transform', 'rotate(180deg)');    
+        me.sortListDivTag.css('display', 'table-row');
+        me.sortListButtonTag.css('transform', 'rotate(180deg)');    
     };
 
     me.hideSortList = function()
     {
         $('body').off( 'click' );
-        $( '.Menus_display' ).css('display', 'none');
-        $('.Nav2__icon').css('transform', 'rotate(0deg)');
+        me.sortListDivTag.css('display', 'none');
+        me.sortListButtonTag.css('transform', 'rotate(0deg)');
     };
 
     me.setSortDivTagClickEvent = function( divTag, sortDefs )

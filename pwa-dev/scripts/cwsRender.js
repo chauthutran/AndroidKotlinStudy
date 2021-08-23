@@ -7,8 +7,8 @@ function cwsRender()
 	// Tags
 	me.pageDivTag = $( '#pageDiv' );
 	me.pulsatingProgress = $( '#pulsatingDots' );
-	me.Nav1Tag = $( '.Nav1' );
-	me.Nav2Tag = $( '.Nav2' );
+	me.Nav1Tag = $( '#Nav1' );
+	me.Nav2Tag = $( '#Nav2' );
 
 	
 	// global variables
@@ -171,8 +171,14 @@ function cwsRender()
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
 
-		// [JOB_AID]  // && areaId !== 'statisticsPage', 'settingsPage, 'aboutPage' )
-		if ( areaId !== 'jobAids' && areaId !== 'hnqis_rdqaPage' ) me.resetPageDivContent();
+		// Dynamic area(render/listing) has pageDivTag/Nav2 show, so we can hide them.
+		//  Others does not, since they are the overlay of existing ones..
+		if ( [ 'aboutPage'
+			, 'settingsPage'
+			, 'statisticsPage'
+			, 'jobAids'
+			, 'hnqis_rdqaPage' ].indexOf( areaId ) < 0 ) me.resetPageDivContent();
+
 		me.hideAreaRelatedParts();
 
 
@@ -261,7 +267,7 @@ function cwsRender()
 					// SHOW Error activity list msg ( New errored list count )
 					me.checkErrActivityList( function( errActList ) 
 					{						
-						FormMsgManager.showErrActivityMsg( errActList );
+						FormMsgManager.showErrActivityMsg( me.Nav2Tag, errActList );
 					});
 
 					// If there is a function to run after 'startBlockExecute', run it here.

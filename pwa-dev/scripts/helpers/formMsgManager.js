@@ -122,8 +122,8 @@ FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
     }
 };
 
-
-FormMsgManager.showErrActivityMsg = function( errActList )
+// NOTE: NOT THAT TABLE --> Rely on assumption that activity list is 1st page & nav2 is activity nav2 & populated..
+FormMsgManager.showErrActivityMsg = function( Nav2Tag, errActList )
 {
     try
     {
@@ -131,7 +131,8 @@ FormMsgManager.showErrActivityMsg = function( errActList )
 
         FormMsgManager.showFormMsg( msgSpanTag, { 'errActList': errActList }, function( optionJson ) 
         {	
-            var viewListTag = $( '.selViewsListSelector' );
+            var viewListTag = Nav2Tag.find( 'select.selViewsListSelector' );
+
             if ( viewListTag.is(':visible') )
             {
                 viewListTag.val( 'showErrored' ).change();

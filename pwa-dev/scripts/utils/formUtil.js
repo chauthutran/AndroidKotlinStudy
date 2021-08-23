@@ -652,7 +652,7 @@ FormUtil.setClickSwitchEvent = function( clickBtnTag, showDivTag, openCloseClass
 			if ( thisTag.hasClass( 'Nav__icon' ) )
 			{
 				//showDivTag.css('zIndex', FormUtil.screenMaxZindex() + 1 );
-				showDivTag.css('zIndex', parseInt( $( '.Nav1').css('zIndex') ) + 1 );
+				showDivTag.css('zIndex', parseInt( $( '#Nav1').css('zIndex') ) + 1 );
 				showDivTag.show();
 				showDivTag.css( 'width', FormUtil.navDrawerWidthLimit( document.body.clientWidth ) + 'px' );
 				showDivTag.css( 'left', '0px' );
