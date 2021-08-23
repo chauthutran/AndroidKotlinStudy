@@ -185,7 +185,7 @@ function cwsRender()
 		if ( areaId )
 		{
 			// gAnalytics Page Hit
-			GAnalytics.setSendPageView( areaId );
+			GAnalytics.setSendPageView( '/' + areaId );
 			GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
 
 			if ( areaId === 'logOut' ) me.logOutProcess();

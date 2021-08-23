@@ -23,20 +23,6 @@ generateSW({
         cacheName: 'googleFonts'
       }
     }
-    //,{
-    // urlPattern: /^(?!http.*).*\.(?:js|html|css|svg|jpg|png|gif|mp3|wav)$/,      
-    //  handler: 'CacheFirst',
-    //  options: {
-    //    cacheName: 'appShell'
-    //  }
-    //}
-    //,{
-    //  urlPattern: /^http:\/\/localhost.*/,
-    //  handler: 'CacheFirst',
-    //  options: {
-    //    cacheName: 'jobTest'
-    //  }
-    //}    
     ,{
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',

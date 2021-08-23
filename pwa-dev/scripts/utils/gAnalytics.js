@@ -2,9 +2,12 @@ function GAnalytics() {}
 
 GAnalytics.PAGE_LOGIN = 'login';
 
-
 GAnalytics.GTAG;
 GAnalytics.BrowserInfo;
+
+GAnalytics.offlineCache = [];
+
+// -------------------------------------
 
 GAnalytics.declareGTAG = function()
 {
@@ -54,31 +57,62 @@ GAnalytics.setBrowserInfo = function()
 };
 
 
-GAnalytics.setEvent = function(category, action, label, value = null) 
+GAnalytics.setEvent = function( category, action, label, value = null) 
 {
-    GAnalytics.GTAG('event', action, 
+    // If offline, cache it.. <-- 
+    if ( ConnManagerNew.isAppMode_Online() && ConnManagerNew.isNetworkCurrent_Online() )
     {
-        'event_category': category,
-        'event_label': label,
-        'value': value
-    });
-};
-
-
-GAnalytics.setPage = function( pageName ) 
-{
-  GAnalytics.GTAG( 'set', 'page', '/' + pageName );
-};
-
-GAnalytics.sendPageView = function() 
-{
-  GAnalytics.GTAG( 'send', 'pageview' );
+        GAnalytics.GTAG( 'event', action, 
+        {
+            'event_category': category,
+            'event_label': label,
+            'value': value
+        });    
+    }
+    else
+    {
+        var offlineGA = { type: 'event'
+            , category: category
+            , action: action
+            , label: label
+            , value: value };
+        GAnalytics.offlineCache.push( offlineGA );
+    }
 };
 
 GAnalytics.setSendPageView = function( pageName ) 
 {
-  GAnalytics.setPage( pageName );
-  GAnalytics.sendPageView();
+    if ( ConnManagerNew.isAppMode_Online() && ConnManagerNew.isNetworkCurrent_Online() )
+    {
+        GAnalytics.GTAG( 'event', 'page_view', {
+    //        page_title: '<Page Title>',
+    //        page_location: '<Page Location>',
+            page_path: pageName
+    //        send_to: '<GA_MEASUREMENT_ID>'        
+        } );
+    }
+    else
+    {
+        var offlineGA = { type: 'page_view'
+            , page_path: pageName };
+        GAnalytics.offlineCache.push( offlineGA );
+    }
+};
+
+
+GAnalytics.offlineCacheSend = function() 
+{
+    if ( GAnalytics.offlineCache.length > 0 )
+    {
+        // Get copy of 'offlineCache' list and run for each item.
+        var sendList = Util.cloneJson( GAnalytics.offlineCache );
+        GAnalytics.offlineCache = [];
+
+        sendList.forEach( offlineGA => {
+            if ( offlineGA.type === 'page_view' ) GAnalytics.setSendPageView( offlineGA.page_path ); 
+            else if ( offlineGA.type === 'event' ) GAnalytics.setEvent( offlineGA.category, offlineGA.action, offlineGA.label, offlineGA.value );     
+        });
+    }
 };
 
 // -------------------------------

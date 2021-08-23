@@ -153,7 +153,15 @@ ScheduleManager.runWhenSwitchedToOnline = function()
 		catch( errMsg ) {
 			console.customLog( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
 		}
-	});            
+	});    
+	
+	
+	// Rather than using 'addToRunSwitchToOnlineList' <-- Which is dynamically added to schedule
+	// Add manual/Set/Fixed ones below for calling when coming online
+
+	// Send Google Anlytics Offline cached ones.
+	GAnalytics.offlineCacheSend();
+	
 };
 
 

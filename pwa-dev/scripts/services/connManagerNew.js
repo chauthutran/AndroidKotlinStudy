@@ -241,6 +241,18 @@ ConnManagerNew.isAppMode_Offline = function()
 	return !ConnManagerNew.isAppMode_Online();
 };
 
+
+ConnManagerNew.isNetworkCurrent_Online = function()
+{
+    return ConnManagerNew.statusInfo.networkConn.online_Current;
+};
+
+ConnManagerNew.isNetworkCurrent_Offline = function()
+{
+    return !ConnManagerNew.isNetworkCurrent_Online();
+};
+
+
 ConnManagerNew.isStrONLINE = function( appModeStr )
 {
 	return ( appModeStr === ConnManagerNew.ONLINE );
