@@ -674,7 +674,10 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     {
         if ( activityJson.date && activityJson.date.capturedUTC )
         {
-            if ( ConfigManager.getConfigJson().sourceAsLocalTime )
+            if ( ConfigManager.isSourceTypeDhis2()
+                    && ( ConfigManager.getConfigJson().sourceAsLocalTime 
+                    || ConfigManager.getConfigJson().dhis2UseLocalTime )
+                )
             {
                 var localDateTime = activityJson.date.capturedUTC;
                 if ( localDateTime ) 
