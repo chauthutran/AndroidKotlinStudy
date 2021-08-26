@@ -96,7 +96,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			Validation.disableValidation( function() 
 			{
 				me.populateFormData( passedData, formTag );
-				me.evalFormGroupDisplayStatus( formTag );
+				me.formGroupTitleDisplaySet( formTag );
 	
 				// NOTE: TRAN VALIDATION
 				Validation.setUp_Events( formTag );
@@ -159,11 +159,18 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return groupDivTag;
 	};
 
-
-	me.evalFormGroupDisplayStatus = function( formDivSecTag )
+	me.formGroupTitleDisplaySet = function( formDivSecTag )
 	{
-		var dvGroups = formDivSecTag.find( 'div.formGroupSection' );
+		formDivSecTag.find( 'div.formGroupSection' ).each( function() {
+			var formGroupSectionTag = $( this );
 
+			if ( formGroupSectionTag.find( 'div.fieldBlock :hidden' ).length > 0 ) 
+			{
+				formGroupSectionTag.find( '> div.section' ).hide();
+			}
+		} );
+
+		/*
 		for( var i = 0; i < dvGroups.length; i++ )
 		{
 			var inpCtls  = $( dvGroups[ i ] ).find("div.fieldBlock");
@@ -176,11 +183,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					sumDisplay += 1;
 				}
 			}
+
 			if ( sumDisplay == 0 )
 			{
 				$( dvGroups[ i ] ).css( 'display', 'none' );
 			}
-		}
+		}*/
 	};
 
 
@@ -1781,6 +1789,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				if ( visible ) 
 				{
 					targetInputDivTag.show( 'fast' );
+					targetInputDivTag.closest( 'div.formGroupSection' ).find( '> div.section' ).show();
 					me.performChildTagEvalActions( idStr, targetInputTag, formDivSecTag, formFull_IdList );
 				}
 				else 
