@@ -174,31 +174,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		formDivSecTag.find( 'div.formGroupSection' ).each( function() {
 			var formGroupSectionTag = $( this );
 
-			if ( formGroupSectionTag.find( 'div.fieldBlock :hidden' ).length > 0 ) 
+			if ( formGroupSectionTag.find( 'div.fieldBlock :visible' ).length === 0 ) 
 			{
 				formGroupSectionTag.find( '> div.section' ).hide();
 			}
 		} );
-
-		/*
-		for( var i = 0; i < dvGroups.length; i++ )
-		{
-			var inpCtls  = $( dvGroups[ i ] ).find("div.fieldBlock");
-			var sumDisplay = 0;
-
-			for( var c = 0; c < inpCtls.length; c++ )
-			{
-				if ( $( inpCtls[ c ]).css( 'display' ) != 'none' )
-				{
-					sumDisplay += 1;
-				}
-			}
-
-			if ( sumDisplay == 0 )
-			{
-				$( dvGroups[ i ] ).css( 'display', 'none' );
-			}
-		}*/
 	};
 
 
