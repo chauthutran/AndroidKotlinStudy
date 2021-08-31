@@ -404,7 +404,7 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 }
 
 
-FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, passedData )
+FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, passedData, options, actionJson, renderType )
 {
 	var blockObj;
 
@@ -414,13 +414,72 @@ FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, pass
 
 		if ( blockDefJson )
 		{            
-			blockObj = new Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData );
-			blockObj.render();    
+			blockObj = new Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, options, actionJson );
+			blockObj.render( renderType );    
 		}
 	}
 
+	//FormUtil.renderExtraBlockByBlockIdIfAny( passedData, blockDefJson, parentTag );
+
 	return blockObj;
 };
+
+
+FormUtil.renderExtraBlockByBlockIdIfAny = function( passedData, blockJson, formTag )
+{
+	if( passedData!= undefined )
+	{
+		var displayData = passedData.displayData;
+		var jsonData = [];
+		for( var  i in displayData )
+		{
+			var data = displayData[i];
+			jsonData[data.id] = data.value;
+		}
+
+		// For Extra fields - In case there are some data in jsonData missing in the block, Render fields with key + value
+		var extraSectionTag = $("<div class='formGroupSection' name='Extra:'></div>");
+		var hasExtraFields = false;
+		for ( var key in jsonData ) 
+		{
+			var fieldTagInBlock = formTag.find("[name='" + key + "']");
+			if( fieldTagInBlock.length == 0 ) // The field with name "key" doesn't exit
+			{
+				// Populate "Other" header for "Client details" section
+				if( !hasExtraFields )
+				{
+					var headerTag = $("<div class='section'><label term=''>Extra</label>:</div>");
+					extraSectionTag.append( headerTag );
+					hasExtraFields = true;
+				}
+
+				// Render field
+				var value = Util.getJsonStr( FormUtil.getFieldOption_LookupValue( key, jsonData[ key ] ) );
+				var inforTag = $( ActivityCardDetail.clientInfoTag );
+				inforTag.find(".fieldName").html( key );
+				inforTag.find(".fieldValue").append( "<input name='" + key + "' value='" + value + "'>" );
+
+				extraSectionTag.append( inforTag );
+			}
+		}
+
+		if( hasExtraFields )
+		{
+			formTag.find("form").append( extraSectionTag );
+
+			var blockDefOption = blockJson.option;
+			if ( blockDefOption && blockDefOption.formDisplay === 'viewMode')
+			{
+				var fieldTags = extraSectionTag.find( 'div.fieldBlock' );
+				fieldTags.css( 'border', 'none' );
+				fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+				fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
+				fieldTags.find( 'button.dateButton' ).remove();
+				fieldTags.find( 'span.spanMandatory' ).remove();
+			}
+		}
+	}
+}
 
 
 // -----------------------------
@@ -2184,75 +2243,180 @@ FormUtil.loaderRing = function()
 	//return '<div class="loadingImg" style=""><img src="images/loading_small.svg"></div>';
 };
 
-// ---------------------------------------------
 
-// Util2.arrayPreviewRecord = function( title, arr )
+// --------------------------------------------------------------------------------------
+/// For preview details data
 
-FormUtil.displayData_Array = function( titleTag, arr, caseName )
+FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE = `<div style="display: table-row;" >
+		<div style="display: table-cell;" class='fieldName name'></div>
+		<div style="display: table-cell;" class='fieldValue value'></div>
+	</div>`;
+
+FormUtil.renderPreviewDataForm = function( jsonData, tabTag )
 {
-	var ret = $( '<table />');
-
-	if ( arr )
+	if( App.displayActivityDetailsMode == 0 ) // Old style
 	{
-		if ( titleTag )
+	  var detailsTag = FormUtil.previewData_Standard( jsonData );
+	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
+	  tabTag.append( detailsTag );
+	}
+	else if( App.displayActivityDetailsMode == 1 ) // New style without block
+	{
+	  var detailsTag = FormUtil.previewData_Standard( jsonData, ActivityCardDetail.clientInfoTag, $("<div style='width:100%; display:flex; flex-wrap:wrap;'/>") );
+	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
+	  tabTag.append( detailsTag );
+	}
+	else if( App.displayActivityDetailsMode == 2 ) // With block defined
+	{ 
+		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination( jsonData );
+		tabTag.append( detailsTag );
+	}
+
+}
+
+FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
+{
+	if( formTag == undefined && templateFieldTag == undefined ) 
+	{
+		formTag = $( '<div style="display: table;" />');
+		templateFieldTag = FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE;
+	}
+
+	if ( jsonData )
+	{
+		for ( var fieldName in jsonData ) 
 		{
-			var tr = $('<tr />');
-			var td = $('<td colspan=2 />');
-			var dv = $( '<div class="section" />');
-			//var lbl = $( '<label />');
+			var value = jsonData[ fieldName ];
 
-			//lbl.html( title );
-
-			dv.append( titleTag );
-			td.append( dv );
-			tr.append( td );
-
-			ret.append( tr );
-		}
-	
-		for ( var i = 0; i < arr.length; i++ )
-		{
-			var tr = $('<tr />');
-			ret.append( tr );
-
-			if ( arr[ i ].type && arr[ i ].type == 'SECTION' ) // Display GROUP names
+			if( fieldName.indexOf("--SECTION") == 0 )
 			{
-				var td = $('<td colspan=2 />');
-				var dv = $( '<div class="section" />');
-				var lbl = $( '<label />');
-
-				lbl.html( arr[ i ].name );
-
-				dv.append( lbl );
-				td.append( dv );
-				tr.append( td );
+				formTag.append('<div class="section"><label>' + value + '</label></div>' );
 			}
 			else
 			{
-				var arrName = arr[ i ].name;
-				var fieldJson = ConfigManager.getDefinitionFieldById( arrName );
-				var showField = ( fieldJson && fieldJson.hidden === true ) ? false : true;
-				
-				if ( showField )
+				value = FormUtil.getFieldOption_LookupValue( fieldName, value ); 
+				if( !App.displayActivityDetailsWithDataOnly || ( App.displayActivityDetailsWithDataOnly && value != "" ) )
 				{
-					var arrNameTdTag = $( '<td class="name"/>' ).html( arrName );
-
-					if ( caseName === 'clientDetail' ) FormUtil.populateFieldTerms( arrName, arrNameTdTag );
-	
-					tr.append( arrNameTdTag );
-	
-					tr.append( $( '<td class="value" />').html( Util.getJsonStr( arr[ i ].value ) ) );
+					var valueTag = FormUtil.createValueTag( fieldName, value, templateFieldTag );
+					if( valueTag != undefined )
+					{
+						formTag.append( valueTag );
+					}
 				}
-
 			}
+			
 		}
 	
-		ret.append(  $( '<tr />') ); // Add an empty row in the end of table
-		tr.append( $( '<td colspan=2 />').html( '&nbsp;' ) );
-
 	}
 
-	return ret;
+	formTag.find(".fieldBlock").css("border", "none");
+	
+	return $("<div style='width:100%'></div>").append( formTag );
+};
+
+FormUtil.renderPreviewDataForm_WithBlockDefination = function( jsonData )
+{
+	var formTag = $("<div style='width:100%'></div>");
+
+	// Generate "passedData"
+	var passedData = { "displayData": [], "resultData": [] };
+	for( var id in jsonData )
+	{
+		passedData.displayData.push( {"id": id, "value": jsonData[id] } );
+	}
+	
+	// Render data by using Block defination
+	var clientProfileBlockId = ConfigManager.getConfigJson().settings[App.clientProfileBlockId];
+	FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, formTag, passedData );
+	
+	// Remove Edit button or any buttons if any
+	formTag.find("[btnid]").remove();
+
+  	// Remove empty fields if needed
+  	if( App.displayActivityDetailsWithDataOnly )
+  	{
+		for ( var key in jsonData ) 
+		{
+			var value = jsonData[ key ];
+			if( value == "" )
+			{
+				formTag.find("[name='" + key +"']").closest(".fieldBlock").remove();
+			}
+		}
+  	}
+
+	return formTag;
+}
+
+FormUtil.createValueTag = function( fieldName, value, templateFieldTag )
+{
+	var fieldJson = ConfigManager.getDefinitionFieldById( fieldName );
+	var showField = ( fieldJson && fieldJson.hidden === true ) ? false : true;
+	if ( showField )
+	{
+		var valueTag = $(templateFieldTag);
+		valueTag.find(".fieldName").html( fieldName );
+		valueTag.find(".fieldValue").html( Util.getJsonStr( value ) );
+
+		return valueTag;
+	}
+
+	return;
+}
+
+FormUtil.getFieldOptions = function( fieldId )
+{
+	var defFields = ConfigManager.getConfigJson().definitionFields;
+	var defOptions = ConfigManager.getConfigJson().definitionOptions;
+
+	var matchingOptions;
+	var optionsName;
+
+	// 1. Check if the field is defined in definitionFields & has 'options' field for optionsName used.
+	if ( defFields )
+	{
+		var matchField = Util.getFromList( defFields, fieldId, "id" );
+
+		if ( matchField && matchField.options )
+		{
+		   optionsName =  matchField.options;
+		}
+	}
+
+	// 2. Get options by name.
+	if ( optionsName && defOptions )
+	{
+		matchingOptions = defOptions[ optionsName ];
+	}
+
+	return matchingOptions;
+};
+
+
+FormUtil.getFieldOption_LookupValue = function( key, val )
+{
+	var fieldOptions = FormUtil.getFieldOptions( key );
+	var retValue = val;
+
+	// If the field is in 'definitionFields' & the field def has 'options' name, get the option val.
+	try
+	{
+		if ( fieldOptions )
+		{
+			var matchingOption = Util.getFromList( fieldOptions, val, "value" );
+
+			if ( matchingOption )
+			{
+				retValue = ( matchingOption.term ) ? TranslationManager.translateText( matchingOption.defaultName, matchingOption.term ) : matchingOption.defaultName;
+			}
+		}    
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'ERROR in AcitivityCard.getFieldOptionLookupValue, errMsg: ' + errMsg );
+	}
+
+	return retValue;
 };
 
 

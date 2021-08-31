@@ -72,9 +72,8 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
 
             // Filter some list in config by 'sourceType' / 'userRole'
             ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
-            ConfigManager.applyFilter_UserRole( ConfigManager.configJson
-                , [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ]
-                , ConfigManager.login_UserRoles );
+            ConfigManager.applyFilter_UserRole( ConfigManager.configJson, ConfigManager.login_UserRoles
+                ,[ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
 
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
         }
@@ -97,11 +96,12 @@ ConfigManager.setSourceType_ByUserRole = function( configJson, login_UserRoles )
         // Ex. "sourceType_UserRole": [ { "type": "dhis2", "userRoles": ["dhis2"] }, { "type": "mongo", "userRoles": ["mongo"] } ],
         if ( Util.isTypeArray( itemList ) && itemList.length > 0 && login_UserRoles.length > 0 )
         {
-            var filteredList = ConfigManager.filterListByUserRoles( itemList, false, login_UserRoles );
+            ConfigManager.filterListItems_ByUserRoles( itemList, login_UserRoles );
             
-            if ( filteredList.length > 0 )
+            if ( itemList.length > 0 )
             {
-                var lastListType = filteredList[ filteredList.length - 1 ].type;
+                var lastListType = itemList[0].type;
+
                 if ( lastListType ) {
                     configJson.sourceType = lastListType;
                     console.log( 'sourceType set by userRole.  sourceType: ' + lastListType );
@@ -127,12 +127,128 @@ ConfigManager.applyFilter_SourceType = function( configJson )
 };
 
 // Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
+ConfigManager.applyFilter_UserRole = function( configJson, loginUserRoles, itemList )
+{
+    try
+    {
+        if ( loginUserRoles )
+        {
+            // Limited/Selected Target Case - only look at selected elements on 'configJson' and remove where 'userRoles' exists if match is not found. 
+            if ( itemList )
+            {
+                itemList.forEach( itemName => 
+                { 
+                    try
+                    {
+                        var itemJson;
+                        if ( itemName === 'settings.sync.syncDown' ) itemJson = configJson.settings.sync.syncDown;
+                        else itemJson = configJson[ itemName ];
+                        
+                        ConfigManager.traverseFind_Filter( itemJson, loginUserRoles, 0, 10 );
+                    }
+                    catch( errMsg )
+                    {
+                        console.log( 'ERROR in ConfigManager.applyFilter_UserRole, ' + itemName + ' errMsg: ' + errMsg );
+                    }  
+                });
+            }
+            else
+            {
+                // Traverse for all elements on config and look for 'userRoles' on them.
+                console.log( 'ConfigManager.applyFilter_UserRole checking for all leaf' );
+                ConfigManager.traverseFind_Filter( configJson, loginUserRoles, 0, 20 );
+            }
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ConfigManager.applyFilter_UserRole, errMsg: ' + errMsg );
+    }   
+};
+
+
+ConfigManager.traverseFind_Filter = function( obj, inputUserRoles, iDepth, limit )
+{
+	if ( iDepth === limit )
+	{
+		throw 'Error in ConfigManager.traverseFind_Filter, Traverse depth limit has reached: ' + iDepth;
+	}
+	else if ( obj )
+	{
+		Object.keys( obj ).forEach( key => 
+		{
+			var prop = obj[key];
+	
+			if ( Util.isTypeArray( prop ) )
+			{
+				var iDepthArr = iDepth + 1;
+
+                for ( var i = prop.length - 1; i >= 0;  i-- )
+                {
+                    var arrItem = prop[i];
+        
+					if ( Util.isTypeObject( arrItem ) )
+                    {
+                        if ( arrItem.userRoles )
+                        {
+                            // If userRoles does not match, delete the object.  If matches, continue to lower levels.
+                            if ( !ConfigManager.matchUserRoles( arrItem.userRoles, inputUserRoles ) ) {
+                                //console.log( 'REMOVED - ' + JSON.stringify( arrItem ) );
+                                prop.splice( i, 1 );
+                            }
+                            else ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                        }
+                        else ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                    }
+                    else if ( Util.isTypeArray( arrItem ) ) ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                }
+			}
+			else if ( Util.isTypeObject( prop ) )
+			{
+                if ( prop.userRoles )
+                {
+                    // If userRoles does not match, delete the object.  If matches, continue to lower levels.
+                    if ( !ConfigManager.matchUserRoles( prop.userRoles, inputUserRoles ) ) {
+                        //console.log( 'REMOVED - ' + JSON.stringify( prop ) );
+                        delete obj[key];
+                    }
+                    else ConfigManager.traverseFind_Filter( prop, inputUserRoles, iDepth + 1, limit );
+                }
+                else ConfigManager.traverseFind_Filter( prop, inputUserRoles, iDepth + 1, limit );
+			}
+			// else if ( Util.isTypeString( prop ) ) {	}  // end of the search node
+		});
+	}
+};	
+
+ConfigManager.matchUserRoles = function( itemUserRoles, inputUserRoles )
+{
+    var isMatch = false;
+
+    for ( var i = 0; i < itemUserRoles.length; i++ )
+    {
+        var itemUserRole = itemUserRoles[i];
+
+        if ( inputUserRoles.indexOf( itemUserRole ) >= 0 ) 
+        {
+            isMatch = true;
+            break;
+        }
+    }
+
+    return isMatch;
+};
+
+
+/*
+// Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
 ConfigManager.applyFilter_UserRole = function( configJson, arrList, loginUserRoles )
 {
     try
     {
         if ( arrList && loginUserRoles )
         {
+            // [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ]
             arrList.forEach( defName => 
             { 
                 try
@@ -142,27 +258,54 @@ ConfigManager.applyFilter_UserRole = function( configJson, arrList, loginUserRol
                     if ( defName === 'settings.sync.syncDown' ) defList = configJson.settings.sync.syncDown;
                     else defList = configJson[ defName ];
 
+                    // NOTE, could be more dynamic - Find the 'userRole[]' list (array or object) in deep level and adjust the list or object based on that..
+                    // 'defName' is like 'favList', 'areas', 'definitionOptions', etc..
+
                     // If Object, look for arrayList in one level below..
-                    if ( Util.isTypeArray( defList ) )
+                    if ( Util.isTypeArray( defList ) && ConfigManager.hasUserRole_inArraySubItem( defList ) )
                     {
+                        // 'syncDown' CASE
                         // Type1. list: [ { .. userRoles[ ipc ] }, {} ]
-                        ConfigManager.filterListByUserRoles( defList, true, loginUserRoles );
+                        ConfigManager.filterListItems_ByUserRoles( defList, loginUserRoles );
                     }
                     else if ( Util.isTypeObject( defList ) )
                     {
+                        // 'favList', areas', definitionOptions' CASE
                         Object.keys( defList ).forEach( key => 
                         {
+                            // 'key' = 'online' / 'offline' (in areas case)
                             var itemObj = defList[key];
 
-                            if ( Util.isTypeArray( itemObj ) )
+                            if ( Util.isTypeArray( itemObj ) && ConfigManager.hasUserRole_inArraySubItem( itemObj ) )
                             {
+                                // 'areas.online', 'areas.offline', etc..  most of the cases..
                                 // Type2. obj: { item: [ { .. userRoles[ ipc ] }, {} ], [...], .. }
-                                ConfigManager.filterListByUserRoles( itemObj, true, loginUserRoles );
+                                ConfigManager.filterListItems_ByUserRoles( itemObj, loginUserRoles );
                             }
                             else if ( Util.isTypeObject( itemObj ) )
                             {
-                                // Type3. obj: { { .. userRoles[ ipc ] }, {} }
-                                defList[key] = ConfigManager.filterObjsByUserRoles( itemObj, loginUserRoles );
+                                // If 'favList.activityListFav' itself has userRoles
+                                if ( itemObj.userRoles )
+                                {
+                                    if ( ConfigManager.notMatch_UserRole( itemObj, loginUserRoles ) )
+                                    {
+                                        delete defList[key];
+                                    }
+                                }
+                                else if ( ConfigManager.hasUserRole_InSubItem( itemObj ) ) 
+                                {
+                                    // Type3. obj: { { .. userRoles[ ipc ] }, {} }  <-- not used..
+                                    ConfigManager.filterSubObjsByUserRoles( itemObj, loginUserRoles );
+                                }
+                                // if 'TYPE' is 'favList', it could be obj > array.. that has 'userRoles'
+                                // 'favList.activityListFav' --> 'online'/'offline'
+                                else if ( ConfigManager.hasUserRole_InSubItem_SubArray( itemObj ) )
+                                {
+                                    Object.keys( itemObj ).forEach( itemKey => 
+                                    {
+                                        ConfigManager.filterListItems_ByUserRoles( itemObj[ itemKey ], loginUserRoles );
+                                    });
+                                }
                             }
                         });
                     }
@@ -179,6 +322,154 @@ ConfigManager.applyFilter_UserRole = function( configJson, arrList, loginUserRol
         console.customLog( 'ERROR in ConfigManager.applyFilter_UserRole, errMsg: ' + errMsg );
     }   
 };
+*/
+
+// ----------------------------------------------------
+// === UserRoles Filter/Check Related Methods
+
+ConfigManager.hasUserRole_InSubItem_SubArray = function( itemObj )
+{
+    var hasUserRole = false;
+    // is the child type the object?
+
+    // 'areas.activityListFav' -> 'online'
+    for ( var key in itemObj )
+    {
+        var subItemObj = itemObj[ key ];
+
+        // does 'online' array's item object has 'UserRole'?
+        if ( Util.isTypeArray( subItemObj ) && ConfigManager.hasUserRole_inArraySubItem( subItemObj ) )
+        {
+            hasUserRole = true;
+            break;            
+        }
+    }
+
+    return hasUserRole;
+};
+
+
+ConfigManager.hasUserRole_inArraySubItem = function( itemObj )
+{
+    var hasUserRole = false;
+
+    if ( itemObj && Util.isTypeArray( itemObj ) )
+    {
+        for ( var i = itemObj.length - 1; i >= 0;  i-- )
+        {
+            var subItem = itemObj[i];
+
+            // If userRoles exists in item def, filter against loginUserRoles
+            if ( subItem.userRoles )
+            {
+                hasUserRole = true;
+                break;
+            }
+        }
+    }                
+               
+    return hasUserRole;
+};
+
+
+ConfigManager.hasUserRole_inSubItem = function( itemObj )
+{
+    var hasUserRole = false;
+
+    if ( itemObj && Util.isTypeObject( itemObj ) )
+    {        
+        for ( var i = 0; i < itemObj.length; i++ )
+        {
+            var subItem = itemObj[i];
+
+            if ( subItem.userRoles )
+            {
+                hasUserRole = true;
+                break;
+            }
+        }
+    }                
+               
+    return hasUserRole;
+};
+
+
+// -----------------------------------------------------
+// ---- Filter / check for UserRoles
+
+
+ConfigManager.filterListItems_ByUserRoles = function( itemList, loginUserRoles )
+{
+    if ( itemList && Util.isTypeArray( itemList ) )   // Do not need to check again..
+    {
+        for ( var i = itemList.length - 1; i >= 0;  i-- )
+        {
+            var item = itemList[i];
+
+            // If userRoles exists in item def, filter against loginUserRoles
+            if ( item.userRoles && Util.isTypeArray( item.userRoles ) )
+            {
+                var roleMatch = false;
+                
+                item.userRoles.forEach( roleId => 
+                {
+                    if ( !roleMatch && loginUserRoles.indexOf( roleId ) >= 0 ) roleMatch = true;
+                });
+
+                // If the userRoles does not match, delete this object from list/array
+                if ( !roleMatch ) itemList.splice( i, 1 );
+            }
+        }
+    }    
+};
+
+
+ConfigManager.filterSubObjsByUserRoles = function( itemObj, loginUserRoles )
+{
+    // DEBUG
+    //alert( 'ConfigManager.filterSubObjsByUserRoles CASE!!' );
+    //console.log( itemObj );
+
+    if ( Util.isTypeObject( itemObj ) )
+    {
+        for ( var key in itemObj )
+        {
+            var subItem = itemObj[ key ];
+
+            if ( ConfigManager.notMatch_UserRole( subItem, loginUserRoles ) )
+            {
+                delete itemObj[ key ];
+            }
+        }
+    }
+};
+
+
+ConfigManager.notMatch_UserRole = function( item, loginUserRoles )
+{
+    var notMatch = true;
+    var itemUserRoles = item.userRoles;
+
+    // if 'userRoles' does not exists, it is always not match case.
+    if ( itemUserRoles )
+    {
+        for ( var i = 0; i < itemUserRoles.length; i++ )
+        {
+            var roleId = itemUserRoles[ i ];
+            if ( loginUserRoles.indexOf( roleId ) >= 0 ) 
+            {
+                // if match is found, set 'notMatch' false.
+                notMatch = false;
+                break;
+            }
+        }
+    }
+
+    return notMatch;
+};
+
+
+
 
 // ---------------------------------
 // --- reset / clear configJson
@@ -255,6 +546,10 @@ ConfigManager.getAllAreaList = function()
     return combinedAreaList.concat( ConfigManager.configJson.areas.online, ConfigManager.configJson.areas.offline );
 };
 
+ConfigManager.getAreas = function()
+{
+    return ConfigManager.configJson.areas;
+};
 
 ConfigManager.getArea1st = function()
 {
@@ -822,7 +1117,7 @@ ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
     {
         var roleId = configRoleIds[p];
         
-        if ( login_UserRoles.indexOf( roleId ) < 0 ) //!ConfigManager.checkRoleIdInUserRoles( roleId, login_UserRoles ) )
+        if ( login_UserRoles.indexOf( roleId ) < 0 )
         {
             hasAllConfigRoles = false;
             break;
@@ -830,93 +1125,6 @@ ConfigManager.hasAllRoles = function( configRoleIds, login_UserRoles )
     }
 
     return hasAllConfigRoles;
-};
-
-
-// NOT USED:
-//  userRoles are object array...  
-ConfigManager.checkRoleIdInUserRoles = function( roleId, login_UserRoles )
-{
-    var inList = false;
-
-    for ( var p = 0; p < login_UserRoles.length; p++ )
-    {
-        var userRoleDef = login_UserRoles[p];
-
-        //if ( userRoleDef.id === roleId )
-        if ( userRoleDef === roleId )
-        {
-            inList = true;
-            break;
-        }
-    }
-
-    return inList;
-};
-
-
-ConfigManager.filterListByUserRoles = function( itemList, bChangeToList, loginUserRoles )
-{
-    var outList = [];
-
-    if ( Util.isTypeArray( itemList ) )
-    {
-        itemList.forEach( item => 
-        {
-            // If userRoles exists in item def, filter against loginUserRoles
-            if ( item.userRoles ) 
-            {
-                if ( Util.isTypeArray( item.userRoles ) )
-                {
-                    var itemAdded = false;
-                    item.userRoles.forEach( roleId => 
-                    {
-                        if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
-                        { 
-                            itemAdded = true; // User instead of 'break'
-                            outList.push( item ); 
-                        }
-                    });
-                }
-            }
-            else outList.push( item );  // If itemObj does not have 'userRoles' property, do not filter it!!
-        });
-
-        // Optional - Change the original list (while keeping the reference)
-        if ( bChangeToList ) Util.arrayReplaceData( itemList, outList );
-    }
-    
-    return outList;    
-};
-
-
-ConfigManager.filterObjsByUserRoles = function( itemObj, loginUserRoles )
-{
-    var newItemObj = {};
-
-    if ( Util.isTypeObject( itemObj ) )
-    {
-        for ( var key in itemObj )
-        {
-            var keyItem = itemObj[ key ];
-
-            if ( keyItem.userRoles ) 
-            {
-                var itemAdded = false;
-                item.userRoles.forEach( roleId => 
-                {
-                    if ( !itemAdded && loginUserRoles.indexOf( roleId ) >= 0 ) 
-                    { 
-                        itemAdded = true; // User instead of 'break'
-                        newItemObj.key = keyItem;
-                    }
-                });            
-            }
-            else newItemObj.key = keyItem;
-        }
-    }
-
-    return newItemObj;    
 };
 
 // ------------------------------------------------------

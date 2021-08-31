@@ -73,22 +73,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			});
 			
 
-			// NEW: block viewMode - Temporary?
-			var blockDefOption = me.blockObj.blockDefJson.option;
-			if ( blockDefOption )
-			{
-				if ( blockDefOption.formDisplay === 'viewMode' )
-				{
-					var fieldTags = blockTag.find( 'div.fieldBlock' );
-					fieldTags.css( 'border', 'none' );
-					fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
-					fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
-					fieldTags.find( 'button.dateButton' ).remove();
-					fieldTags.find( 'span.spanMandatory' ).remove();
-				}
-			}
-
-
 			// Translate Page after the rendering..
 			TranslationManager.translatePage();
 
@@ -109,9 +93,35 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	
 				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
 				formDivSecTag.find('.dataValue:not(:empty)').change(); // * BUG > only highlights SELECT controls (ignores inputs): https://stackoverflow.com/questions/8639282/notempty-css-selector-is-not-working
+
+
+				// View Only Mode
+				me.setForm_ViewOnlyMode( me.blockObj, blockTag );
 			});
 		}
-	}
+	};
+
+
+	me.setForm_ViewOnlyMode = function( blockObj, blockTag )
+	{
+		// NEW: block viewMode - Temporary?
+		var blockDefOption = blockObj.blockDefJson.option;
+		if ( blockDefOption )
+		{
+			if ( blockDefOption.formDisplay === 'viewMode' )
+			{
+				var fieldTags = blockTag.find( 'div.fieldBlock' );
+				fieldTags.css( 'border', 'none' );
+				fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+				fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
+				fieldTags.find( 'button.dateButton' ).remove();
+				fieldTags.find( 'span.spanMandatory' ).remove();
+
+				fieldTags.filter( '[display=none]' ).show();
+			}
+		}
+	};
+
 
 	me.createGroupDivTag = function( formFieldGroup, groupsCreated, formTag )
 	{
@@ -1262,7 +1272,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
 		{
 			divInputFieldTag.hide();
-			divInputFieldTag.attr( 'display', 'hiddenVal' );
+			divInputFieldTag.attr( 'display', formItemJson.display );
 			//entryTag.attr( 'display', 'hiddenVal' );
 		}
 
@@ -1377,10 +1387,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				if ( ruleJson.name === 'disabled' )
 				{
 					divInputTag.closest( 'div.fieldBlock' ).addClass( 'divInputReadOnly' ); // background-color #eee
+					divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
 					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
 				}
-				else if ( ruleJson.name === 'readonly' )
+				else if ( ruleJson.name === 'readonly' && ( ruleJson.startDt === undefined || ( ruleJson.startDt !== undefined && !eval( ruleJson.startDt ) ) ) )
 				{
+					divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
 					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
 				}
 			}	

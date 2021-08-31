@@ -170,26 +170,6 @@ Templates.msgAreaBottom2 = `<div class="sheet_bottom-fs" style="display: none;">
 </div>`;
 
 
-/* FAV BUTTONS >> START */
-
-Templates.favButtonContainer = `<div class="fab-wrapper">
-    <div class="fab__section">
-        <div class="fab c_600" style="transform: rotate(0deg);">
-            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M35 27H29V21H27V27H21V29H27V35H29V29H35V27V27Z" class="c_600"></path>
-            </svg>
-        </div>
-    </div>
-</div> `;
-
-Templates.favButtonRowItem = `<div class="fab__child-section" style="display: none;">
-    <div class="fab__child c_200 svgIcon" />
-    <div class="fab__child-text" />
-</div>`;
-
-/* FAV BUTTONS << END */
-
-
 /* ACTIVITY CARD (BLOCKLIST) >> START */
 
 Templates.template_trActivityTag = `<tr class="activity">

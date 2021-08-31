@@ -21,6 +21,14 @@ function App() {};
 App.appInstallBtnTag;
 App.ver14 = false;
 
+
+// 0 : Standard
+// 1 : new style without block
+// 2 : with Block
+App.displayActivityDetailsMode = 0;
+App.displayActivityDetailsWithDataOnly = false;
+App.clientProfileBlockId = "clientProfileBlock";
+
 // -------------------------------
 
 App.run = function()
@@ -34,13 +42,7 @@ App.run = function()
   if ( Util.getParameterByName( "mode" ) === "debug" ) DebugLog.start();
   if ( Util.getParameterByName( "ver" ) === "1.4" ) App.ver14 = true;
 
-  // 'pwa-dev' only enabling
-  if ( location.href.indexOf( 'pwa-dev' ) >= 0 )
-  {
-    Menu.jobAids = true;
-    // Menu.hnqisRdqa = true;
-    $( '.jobAidFiling' ).show();
-  }
+  // 'pwa-dev' only enabling  //if ( location.href.indexOf( 'pwa-dev' ) >= 0 ) { }
   // --------------------------
 
   // Default Behavior Modify

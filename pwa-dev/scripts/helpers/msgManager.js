@@ -351,8 +351,8 @@ MsgManager.confirmPayloadPreview = function( parentTag, jsonData, titleTag, call
 
         notifDiv.append( prevRow )
         notifDiv.append( btnRow );
-
-        prevRow.append( FormUtil.displayData_Array( titleTag, jsonData ) );
+        prevRow.append( titleTag );
+        FormUtil.renderPreviewDataForm( jsonData, prevRow );
         //prevRow.find( 'table' ).css( 'max-width', prevRow.css( 'width' ) );
 
         btnRow.append( btnConfirm )

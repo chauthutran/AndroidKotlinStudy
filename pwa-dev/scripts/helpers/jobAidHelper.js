@@ -57,7 +57,7 @@ JobAidHelper.msgHandle = function( data )
     if ( data.dataJson )
     {
       // open area & block with data populate..
-      SessionManager.cwsRenderObj.renderNewAreaBlock( 'blk_c-on_pth-FPL-S_PRO_tabsContainer' );
+      SessionManager.cwsRenderObj.renderFavItemBlock( 'blk_c-on_pth-FPL-S_PRO_tabsContainer' );
 
       // Click on 1st/Last-Recorded tab.
         setTimeout( function() 

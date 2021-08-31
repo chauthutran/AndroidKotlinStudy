@@ -89,9 +89,7 @@ function cwsRender()
 		me.loginObj = new Login( me );
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
-		//me.myDetails = new myDetails( me );
 		me.statisticsObj = new Statistics( me );
-		//me.favIconsObj = new favIcons( me );
 	};
 	// =============================================
 
@@ -214,8 +212,10 @@ function cwsRender()
 				// if menu is clicked, reload the block refresh?
 				if ( selectedArea && selectedArea.startBlockName )
 				{
-					var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
-					startBlockObj.render();  // should been done/rendered automatically?
+					// var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
+					// startBlockObj.render();  // should been done/rendered automatically?
+
+					FormUtil.renderBlockByBlockId( selectedArea.startBlockName, me, me.pageDivTag );
 				}
 			}
 		}
@@ -226,19 +226,27 @@ function cwsRender()
 
 	// Used by FavIconClick..  - this also switches area?
 	// This is similar to calling 'renderArea()', which we might need to combine..
-	me.renderNewAreaBlock = function( blockName, options, favName )
+	me.renderFavItemBlock = function( blockName, options, parentDiv, favItem )
 	{
-		favName = ( favName ) ? favName : '';
-		GAnalytics.setEvent( 'FavOpen', Util.getStr( favName ), 'fav clicked', 1 );
+		favItem = ( favItem ) ? favItem: {};
+		//favItem.name, favItem.term
+
+		parentDiv = ( parentDiv ) ? parentDiv: me.pageDivTag;
+		GAnalytics.setEvent( 'FavOpen', Util.getStr( favItem.name ), 'fav clicked', 1 );
 
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
-		//ActivityUtil.addAsActivity( 'area', selectedArea, areaId )				
-		// On each area render, clear out the pageDiv content (which represent area div)..
-		me.resetPageDivContent();
-				
-		var blockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ blockName ], blockName, me.pageDivTag, undefined, options );
-		blockObj.render();
+
+
+		// If 'fullScreen' cases (compare to some div)
+		if ( parentDiv === me.pageDivTag )
+		{
+			// On each area render, clear out the pageDiv content (which represent area div)..
+			me.resetPageDivContent();
+			me.setAppTitle( undefined, favItem.name, favItem.term );
+		}
+
+		var blockObj = FormUtil.renderBlockByBlockId( blockName, me, parentDiv, undefined, options );
 
 		return blockObj;
 	};
@@ -286,14 +294,13 @@ function cwsRender()
 	//var errActList = AppInfoManager.getNewErrorActivities();
 
 	// Call 'startBlockExecute' again with in memory 'configJson' - Called from 'ConnectionManagerNew'
-	me.handleAppMode_Switch = function()
+	me.appModeSwitch_UIChanges = function()
 	{
+		// Menu relist based on online/offline
 		Menu.refreshMenuItems();
 
-		if ( $( 'div.fab' ) ) 
-		{
-			me.favIcons_Update();
-		}
+		// If fav is currently shown on current div.. (How to tell?)
+		$( 'div.favReRender' ).click();
 	};
 
 	// ----------------------------------
@@ -463,7 +470,9 @@ function cwsRender()
 		//$( '#divNavDrawerSummaryData' ).html( '' );
 	};
 
-    me.favIcons_Update = function()
+
+	/*
+    me.favIconsRender = function( favType, parentDiv )
     {
 		if ( $( 'div.fab' ).hasClass( 'w_button' ) ) 
 		{
@@ -471,9 +480,10 @@ function cwsRender()
 			$( 'div.fab' ).off( 'click' );
 		}
 
-		me.favIconsObj = new favIcons( me );
-		me.favIconsObj.render();
+		me.favIconsObj = new FavIcons( me );
+		me.favIconsObj.render( favType, parentDiv );
 	};
+	*/
 
 	// ======================================
 

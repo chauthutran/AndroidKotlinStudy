@@ -155,9 +155,11 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
-        // Other Initial Render Setups - syncDown setup, favIcons, etc..
-        me.otherInitialRenderSetup();
-
+        // Other Initial Render Setups - syncDown setup, FavIcons, etc..
+        var favIconsObj = new FavIcons( 'activityListFav', blockTag, me.cwsRenderObj.pageDivTag );
+        favIconsObj.render();
+        
+        
         // Set class level tags
         me.setClassVariableTags( blockTag );
 
@@ -246,16 +248,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
         var listBottomDivTag = $( me.template_listBottomDivTag );
         blockTag.append( listBottomDivTag );
 
-        var listFavButtonTag = $( Templates.favButtonContainer ); // Copy from list html template located in index.html
-        blockTag.append( listFavButtonTag );
-
         return listTableTag; //listTableTag.find( 'tbody' );
-    };
-
-
-    me.otherInitialRenderSetup = function()
-    {
-        me.cwsRenderObj.favIcons_Update();
     };
 
 

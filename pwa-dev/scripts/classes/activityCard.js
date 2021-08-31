@@ -657,8 +657,9 @@ function ActivityCard( activityId, options )
 
                             var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
 
-                            var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
-                            newBlockObj.render( 'blockList' );
+                            // var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
+                            // newBlockObj.render( 'blockList' );
+                            FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList' );
 
                             if ( activityJson )
                             {

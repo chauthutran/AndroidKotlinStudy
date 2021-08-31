@@ -4,8 +4,8 @@
 function Menu() {}
 
 Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStage		// Need to be dynamically retrieved
-Menu.jobAids = false;
-Menu.hnqisRdqa = false;
+//Menu.jobAids = false;
+//Menu.hnqisRdqa = false;
 
 // [JOB_AID]
 Menu.menuJson_JobAids = { id: "jobAids", name: "Job Aids", term: "menu_jobAids", icon: "settings", groupBefore: true, groupAfter: false };
@@ -34,10 +34,14 @@ Menu.setInitialLogInMenu = function()
 
 Menu.populateStandardMenuList = function( menuItems )
 {
-    // [JOB_AID]
-    if ( Menu.jobAids ) menuItems.push ( Menu.menuJson_JobAids );
-    if ( Menu.hnqisRdqa ) menuItems.push ( Menu.menuJson_HNQIS_RDQA );
+    // [JOB_AID] / HnqisRdqa
+    if ( ConfigManager.getAreas().jobAids ) {
+        menuItems.push( Menu.menuJson_JobAids );        
+        $( '.jobAidFiling' ).show();
+    }
+    if ( ConfigManager.getAreas().hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );
 
+    
     menuItems.push ( Menu.menuJson_Statistics );    
     menuItems.push ( Menu.menuJson_Settings );
     menuItems.push ( Menu.menuJson_About );        
@@ -84,6 +88,7 @@ Menu.setupMenuTagClick = function( menuTag )
 
         var clicked_areaId = menuLiTag.attr( 'areaId' );
 
+        // TODO: RenderFullScreen <---
         SessionManager.cwsRenderObj.setAppTitle( clicked_areaId, anchorTag.text(), anchorTag.attr( 'term' ) ); //$( this ).attr( 'displayName' ) 
         SessionManager.cwsRenderObj.renderArea( clicked_areaId );
 

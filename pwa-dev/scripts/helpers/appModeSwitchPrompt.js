@@ -29,13 +29,7 @@ AppModeSwitchPrompt.showInvalidNetworkMode_Dialog = function ( appMode, cwsRende
     btnAction.html( btnActionText.toUpperCase() );
 
     btnAction.click(function () {
-
         AppModeSwitchPrompt.hideDialog();
-
-        // >> Decide on appropriate way forward:
-        //ConnManagerObj._cwsRenderObj.handleAppMode_Switch();
-        //ConnManagerObj._cwsRenderObj.startBlockExecute();
-
     });
 
 

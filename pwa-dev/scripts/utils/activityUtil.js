@@ -562,10 +562,10 @@ ActivityUtil.previewActivityJson = function( inputsJson, callBack )
 };
 
 
-ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
+ActivityUtil.generateInputPreviewJson = function( formDivSecTag )
 {
 	// Input Tag values
-	var retDataArray = [];
+	var retDataArray = {};
 	
 	var tags = formDivSecTag.find( '.dataValue, .section' ); // Get fields and GROUP names
 
@@ -576,31 +576,23 @@ ActivityUtil.generateInputPreviewJson = function( formDivSecTag, getValList )
 
 		if ( displayed )
 		{
-			var labelTag, name, type, value;
 
 			if( tag.hasClass("section") )
 			{
-				labelTag = tag.find("label");
-				name = labelTag.html();
-				type = "SECTION";
-				value = labelTag.html();
+				var name = "--SECTION" + tag.index();
+				var value = tag.find("label").html();
+
+				retDataArray[name] = value;
 			}
 			else
 			{
-				labelTag = $( tag[ 0 ] ).closest("div.fieldBlock").find("label");
-				name = ( labelTag ) ? labelTag.html() : tag[ 0 ].name;
-				type = tag.prop("nodeName");
-				value = ActivityUtil.getTagText( tag );
+				var labelTag = $( tag[ 0 ] ).closest("div.fieldBlock").find("label");
+				var name = ( labelTag ) ? labelTag.html() : tag[ 0 ].name;
+				var value = ActivityUtil.getTagText( tag );
+				
+				retDataArray[name] = value;
 			}
 			
-			var inputsJson = { name: name, type: type, value: value };
-
-			if ( inputsJson )
-			{
-				retDataArray.push( inputsJson );
-			}
-
-			inputsJson = undefined;
 		}
 	});		
 

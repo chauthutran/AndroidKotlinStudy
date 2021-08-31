@@ -215,7 +215,7 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
-		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.handleAppMode_Switch();	
+		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.appModeSwitch_UIChanges();	
 		
 		// **When Switching From Offline -> Online, perform the runOnceOnline things..
 		if ( ConnManagerNew.isAppMode_Online() ) ScheduleManager.runWhenSwitchedToOnline();

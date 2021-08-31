@@ -41,7 +41,10 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
         me.renderRelationshipList( me.listTag, me.clientJson.relationships );
 
-        me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
+        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag );
+        favIconsObj.render();
+
+        //me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
     };
 
     // ----------------------------------------------------------------------------------------
@@ -66,7 +69,7 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
     me.renderAddRelationshipBtn = function( listTag, relationshipTabTag )
     {
         // Render [Add] button
-        me.addRelationshipBtnTag = $( Templates.favButtonContainer );
+        me.addRelationshipBtnTag = $( FavIcons.favButtonContainer );
         
         // Set Click event 
         me.addRelationshipBtnTag.click( function()

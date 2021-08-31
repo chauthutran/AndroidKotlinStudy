@@ -44,6 +44,11 @@ function ClientCardDetail( clientId, isRestore )
     
 
         FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'clientCardDetail', me.clientId, me.isRestore );
+        cardSheetFullTag.find( 'img.btnBack' ).off( 'click' ).click( function()
+            { 
+               cardSheetFullTag.remove();
+               $("#activityListViewNav").show();
+            });
         
             
         TranslationManager.translatePage();    
@@ -55,10 +60,8 @@ function ClientCardDetail( clientId, isRestore )
     {
         var clientJson = ClientDataManager.getClientById( clientId );;
     
-        var arrDetails = [];
     
-        // #1 clientDetails properties = key
-        
+        // #1 clientDetails properties = key        
         var passedData = {
             "displayData": [
                 { id: "id", value: clientJson._id }
@@ -76,15 +79,38 @@ function ClientCardDetail( clientId, isRestore )
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
 
         // Get client Profile Block defition from config.
-        var clientProfileBlockId = ConfigManager.getConfigJson().settings.clientProfileBlock;
-        FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
+        var clientProfileBlockId = ConfigManager.getConfigJson().settings[App.clientProfileBlockId];
 
+
+        sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
+        {
+            clientDetailsTabTag.html( '' );
+            FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
+            clientDetailsTabTag.find( 'div.block' ).css( 'width', '98% !important' );
+        });
         
+
         // #2. payload Preview
 
         // LIST ACTIVITIES... <-- LIST
-        var listTableTbodyTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' ).find( '.list' );        
-        me.populateActivityCardList( clientJson.activities, listTableTbodyTag );
+        var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
+
+        // Remove previously loaded div blocks - clear out.
+        sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
+        {
+            activityTabBodyDivTag.html( '' ).append( '<div blockId="activityList" /><div blockId="addForm" />' );
+            var activityListBlockTag = activityTabBodyDivTag.find( '[blockId="activityList"]' );
+
+            me.renderActivityList( activityListBlockTag, clientJson );
+
+            var favIconsObj = new FavIcons( 'clientActivityFav', activityListBlockTag, activityTabBodyDivTag, function( parentTag ) {
+                // clear the list?
+                parentTag.html( '' ); //activityListBlockTag.html( '' );
+            });
+            favIconsObj.render();
+    
+        });
+
 
         // #3. relationship?
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
@@ -92,11 +118,54 @@ function ClientCardDetail( clientId, isRestore )
         var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
 
         // Remove previously loaded div blocks - clear out.
-        sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() {
+        sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() 
+        {
             relationshipListObj.render();
+
+            //SessionManager.cwsRenderObj.favIconsRender( 'clientRelFav' );
         });
 
+
+        // -----------------------------------------
+        // Default click 'Client'
+        sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click();
+
     };    
+
+    me.renderActivityList = function( activityListBlockTag, clientJson )
+    {
+        me.populateActivityCardList( clientJson.activities, activityListBlockTag );
+        activityListBlockTag.show();
+    }
+
+    
+    me.setFullPreviewTabContent_Events = function( sheetFullTag, clientJson )
+    {
+        var activityTabTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
+
+        activityTabTag.find(".fab-wrapper").click( function(){
+        
+            // clear existing data on this tab content
+            sheetFullTag.find("[blockId='activityList']").hide();
+
+            // #1 clientDetails properties = key
+            var passedData = {
+                "displayData": [
+                    { id: "id", value: clientJson._id }
+                ],
+                "resultData": []
+            };
+            for( var id in clientJson.clientDetails )
+            {
+                passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
+            }
+
+            // Get client Profile Block defition from config.
+            var clientProfileBlockId = ConfigManager.getConfigJson().settings.issueVoucherBlock;
+            FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, sheetFullTag.find("[blockId='addForm']"), passedData );
+
+        });
+    }   
 
     // =============================================
 
@@ -240,9 +309,7 @@ ClientCardDetail.cardFullScreen = `
                 <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
                     blockid="tab_clientDetails" />
 
-                <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;">
-                    <div class="list"></div>
-                </div>
+                <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
                 <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
 

@@ -233,15 +233,6 @@ Util.getJsonDeepCopy = function( jsonObj )
 	return newJsonObj;
 };
 
-
-// Util.copyProperties = function( source, dest )
-// {
-// 	for ( var key in source )
-// 	{
-// 		dest[ key ] = source[ key ];
-// 	}
-// };
-
 Util.copyProperties = function( source, dest, option )
 {
 	try
@@ -261,30 +252,6 @@ Util.copyProperties = function( source, dest, option )
 	}
 };
 
-/*
-Util.cloneArray = function( dataArray, callBack ) 
-{
-	if ( Util.isTypeArray( dataArray ) ) 
-	{
-		try {
-			var retArr = []; //[...dataArray]
-
-			for (i = 0; i < dataArray.length; i++) {
-				retArr.push(dataArray[i]);
-			}
-
-			if (callBack) callBack(retArr)
-			else return retArr;
-		} catch (errMsg) {
-			console.log('ERROR in Util.cloneArray(): ' + errMsg);
-			callBack();
-		}
-	} else {
-		console.log('ERROR in Util.cloneArray(): ~ object is not array ');
-	}
-
-};
-*/
 
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods

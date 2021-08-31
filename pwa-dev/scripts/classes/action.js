@@ -246,9 +246,11 @@ function Action( cwsRenderObj, blockObj )
 						// set the target div tag as tab content rather than block parent tag..
 						//var targetDivTag = ( me.blockObj.blockType === 'mainTab' ) ? '': me.blockObj.parentTag;
 
-						// REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
-						var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
-						newBlockObj.render();
+						// // REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
+						// var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
+						// newBlockObj.render();
+
+						FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
 					}
 	
 					afterActionFunc( true );
@@ -430,7 +432,7 @@ function Action( cwsRenderObj, blockObj )
 						if ( passed )
 						{
 							// NEW - Create Activity under existing Client json rather than new client.
-							if ( clickActionJson.underClient )
+							if ( clickActionJson.underClient || clickActionJson.useCurrentClientId )
 							{
 								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
 								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );
