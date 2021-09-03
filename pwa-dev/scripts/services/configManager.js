@@ -659,26 +659,35 @@ ConfigManager.getSettingsTermId = function( termName )
 };
 
 
-ConfigManager.getActivityDisplaySettings = function()
+ConfigManager.getSettingsActivityDef = function()
 {
     var configJson = ConfigManager.getConfigJson();
 
+    var activityDef = {};
+
+    // could be named 'redeemDefs' or 'activityDef'
+    if ( configJson.settings )
+    {
+        if ( configJson.settings.activityDef ) activityDef = configJson.settings.activityDef;
+        else if ( configJson.settings.redeemDefs ) activityDef = configJson.settings.redeemDefs;
+    }
+
+    return activityDef;
+};
+
+
+
+ConfigManager.getActivityDisplaySettings = function()
+{
     var displaySettings = [  
       ConfigManager.defaultActivityDisplaySettings 
     ];
 
-    try
+    var activityDef = ConfigManager.getSettingsActivityDef();
+
+    if ( activityDef.displaySettings )
     {
-        if ( configJson.settings 
-            && configJson.settings.redeemDefs
-            && configJson.settings.redeemDefs.displaySettings )
-        {
-            displaySettings = configJson.settings.redeemDefs.displaySettings;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getActivityDisplaySettings, errMsg: ' + errMsg );
+        displaySettings = activityDef.displaySettings;
     }
 
     return displaySettings;
@@ -687,22 +696,13 @@ ConfigManager.getActivityDisplaySettings = function()
 
 ConfigManager.getActivityDisplayBase = function()
 {
-    var configJson = ConfigManager.getConfigJson();
-
     var displayBase = ConfigManager.defaultActivityDisplayBase;
 
-    try
+    var activityDef = ConfigManager.getSettingsActivityDef();
+
+    if ( activityDef.displayBase )
     {
-        if ( configJson.settings 
-            && configJson.settings.redeemDefs
-            && configJson.settings.redeemDefs.displayBase )
-        {
-            displayBase = configJson.settings.redeemDefs.displayBase;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getActivityDisplayBase, errMsg: ' + errMsg );
+        displayBase = activityDef.displayBase;
     }
 
     return displayBase;
@@ -710,24 +710,32 @@ ConfigManager.getActivityDisplayBase = function()
 
 // ---------------------------------------------
 
-ConfigManager.getClientDisplayBase = function()
+ConfigManager.getSettingsClientDef = function()
 {
     var configJson = ConfigManager.getConfigJson();
 
+    var clientDef = {};
+
+    // ClientDef could be settings itself or within 'clientDef'
+    if ( configJson.settings )
+    {
+        if ( configJson.settings.clientDef ) clientDef = configJson.settings.clientDef;
+        else clientDef = configJson.settings;
+    }
+
+    return clientDef;
+};
+
+
+ConfigManager.getClientDisplayBase = function()
+{
     var displayBase = ConfigManager.defaultClientDisplayBase;
 
-    try
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientCardDef && clientDef.clientCardDef.displayBase )
     {
-        if ( configJson.settings 
-            && configJson.settings.clientCardDef
-            && configJson.settings.clientCardDef.displayBase )
-        {
-            displayBase = configJson.settings.clientCardDef.displayBase;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getClientDisplayBase, errMsg: ' + errMsg );
+        displayBase = clientDef.clientCardDef.displayBase;
     }
 
     return displayBase;
@@ -736,24 +744,15 @@ ConfigManager.getClientDisplayBase = function()
 
 ConfigManager.getClientDisplaySettings = function()
 {
-    var configJson = ConfigManager.getConfigJson();
-
     var displaySettings = [  
       ConfigManager.defaultClientDisplaySettings 
     ];
 
-    try
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientCardDef && clientDef.clientCardDef.displaySettings )
     {
-        if ( configJson.settings 
-            && configJson.settings.clientCardDef
-            && configJson.settings.clientCardDef.displaySettings )
-        {
-            displaySettings = configJson.settings.clientCardDef.displaySettings;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getClientDisplaySettings, errMsg: ' + errMsg );
+        displaySettings = clientDef.clientCardDef.displaySettings;
     }
 
     return displaySettings;
@@ -762,21 +761,13 @@ ConfigManager.getClientDisplaySettings = function()
 
 ConfigManager.getClientRelDisplayBase = function()
 {
-    var configJson = ConfigManager.getConfigJson();
     var displayBase = ConfigManager.defaultClientRelDisplayBase;
 
-    try
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientRelCardDef && clientDef.clientRelCardDef.displayBase )
     {
-        if ( configJson.settings 
-            && configJson.settings.clientRelCardDef
-            && configJson.settings.clientRelCardDef.displayBase )
-        {
-            displayBase = configJson.settings.clientRelCardDef.displayBase;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getClientRelDisplayBase, errMsg: ' + errMsg );
+        displayBase = clientDef.clientRelCardDef.displayBase;
     }
 
     return displayBase;
@@ -785,23 +776,15 @@ ConfigManager.getClientRelDisplayBase = function()
 
 ConfigManager.getClientRelDisplaySettings = function()
 {
-    var configJson = ConfigManager.getConfigJson();
     var displaySettings = [  
       ConfigManager.defaultClientRelDisplaySettings 
     ];
 
-    try
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientRelCardDef && clientDef.clientRelCardDef.displaySettings )
     {
-        if ( configJson.settings 
-            && configJson.settings.clientRelCardDef
-            && configJson.settings.clientRelCardDef.displaySettings )
-        {
-            displaySettings = configJson.settings.clientRelCardDef.displaySettings;
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error in ConfigManager.getClientRelDisplaySettings, errMsg: ' + errMsg );
+        displaySettings = clientDef.clientRelCardDef.displaySettings;
     }
 
     return displaySettings;
@@ -812,34 +795,12 @@ ConfigManager.getClientRelDisplaySettings = function()
 ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 {
     var activityStatusConfig;
-    var configJson = ConfigManager.getConfigJson();
 
 	try
 	{        
         if ( activityJson.processing )
         {
-            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
-        }
-	}
-	catch ( errMsg )
-	{
-		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
-    }
-    
-    return activityStatusConfig;
-};
-
-
-ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
-{
-    var activityStatusConfig;
-    var configJson = ConfigManager.getConfigJson();
-
-	try
-	{        
-        if ( activityJson.processing )
-        {
-            activityStatusConfig = Util.getFromList( configJson.settings.redeemDefs.statusOptions, activityJson.processing.status, 'name' );
+            activityStatusConfig = Util.getFromList( ConfigManager.getSettingsActivityDef().statusOptions, activityJson.processing.status, 'name' );
         }
 	}
 	catch ( errMsg )
@@ -854,18 +815,16 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 ConfigManager.getActivityTypeConfig = function( activityJson )
 {
 	var activityTypeConfig;
-    var configJson = ConfigManager.getConfigJson();
 
     try
 	{
-        activityTypeConfig = Util.getFromList( configJson.settings.redeemDefs.activityTypes, activityJson.type, 'name' );
+        activityTypeConfig = Util.getFromList( ConfigManager.getSettingsActivityDef().activityTypes, activityJson.type, 'name' );
 	}
 	catch ( errMsg )
 	{
 		console.customLog( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
 
-    //console.customLog( activityJson.type, activityTypeConfig );
     if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
 
     return activityTypeConfig;

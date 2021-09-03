@@ -1121,12 +1121,35 @@ Util.RemoveFromArray = function( list, propertyName, value )
 };
 
 
+/*
 Util.RemoveFromArrayAll = function( list, propertyName, value )
 {
 	list.forEach( function(item, index, object) {
 		var prop = item[propertyName];
 		if ( prop && prop === value ) object.splice(index, 1);
 	});
+};
+*/
+
+// Need to test above and this one..
+Util.RemoveFromArrayAll = function( list, propertyName, value )
+{
+	try
+	{
+		if ( list )
+		{
+			for ( var i = list.length - 1; i >= 0;  i-- )
+			{
+				var arrItem = list[i];
+	
+				if ( arrItem[propertyName] === value )
+				{
+					list.splice( i, 1 );
+				}
+			}
+		}
+	}
+	catch ( errMsg ) { console.log( 'ERROR in Util.RemoveFromArrayAll, ' + errMsg ); }
 };
 
 

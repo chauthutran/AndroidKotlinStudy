@@ -1531,7 +1531,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 			$.get( activityType.icon.path, function(data) {
 	
 				var svgObject = ( $(data)[0].documentElement );
-				var svgStyle = ( iconStyleOverride ? iconStyleOverride : ConfigManager.getConfigJson().settings.redeemDefs.activityIconSize );
+				var svgStyle = ( iconStyleOverride ? iconStyleOverride : ConfigManager.getSettingsActivityDef().activityIconSize );
 	
 				if ( activityType.icon.colors )
 				{
@@ -1569,7 +1569,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 				$( iconObj ).empty();
 				$( iconObj ).append( svgObject );
 	
-				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && svgStyle && $(iconObj).html() )
+				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getSettingsActivityDef() && svgStyle && $(iconObj).html() )
 				{
 					$( svgObject ).attr( 'width', '100%' ); //( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width )
 					$( svgObject ).attr( 'height', '100%' ); //( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height )
@@ -1622,13 +1622,12 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 					$( targetObj ).empty();
 					$( targetObj ).append( svgObject );
 
-					if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings.redeemDefs && ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize )
+					var activityDef = ConfigManager.getSettingsActivityDef();
+
+					if ( activityDef.statusIconSize )
 					{
-						$( svgObject ).attr( 'width', ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width );
-						$( svgObject ).attr( 'height', ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height );
-		
-						//$( targetObj ).html( $(targetObj).html().replace(/{WIDTH}/g, ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.width ) );
-						//$( targetObj ).html( $(targetObj).html().replace(/{HEIGHT}/g, ConfigManager.getConfigJson().settings.redeemDefs.statusIconSize.height ) );
+						$( svgObject ).attr( 'width', activityDef.statusIconSize.width );
+						$( svgObject ).attr( 'height', activityDef.statusIconSize.height );		
 					}
 	
 				});
@@ -1706,7 +1705,7 @@ FormUtil.getStatusOpt = function( itemData )
 {
 	try
 	{
-		var opts = ConfigManager.getConfigJson().settings.redeemDefs.statusOptions;
+		var opts = ConfigManager.getSettingsActivityDef().statusOptions;
 
 		for ( var i=0; i< opts.length; i++ )
 		{
@@ -2197,8 +2196,7 @@ FormUtil.getActivityTypes = function()
 
 	if ( userInfo )
 	{
-		// var itms = JSON.parse( localStorage.getItem( userInfo.user ) ).dcdConfig.settings.redeemDefs.activityTypes;
-		var itms = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
+		var itms = ConfigManager.getSettingsActivityDef().activityTypes;
 
 		if ( itms && itms.length )
 		{
@@ -2219,7 +2217,7 @@ FormUtil.getActivityTypeByRef = function( field, val )
 	// get different 'Areas' or Activity-Types
 	// var sessData = localStorage.getItem(Constants.storageName_session);
 
-	var itms = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes;
+	var itms = ConfigManager.getSettingsActivityDef().activityTypes;
 
 	if ( itms && itms.length )
 	{
@@ -2326,7 +2324,7 @@ FormUtil.renderPreviewDataForm_WithBlockDefination = function( jsonData )
 	}
 	
 	// Render data by using Block defination
-	var clientProfileBlockId = ConfigManager.getConfigJson().settings[App.clientProfileBlockId];
+	var clientProfileBlockId = ConfigManager.getSettingsClientDef()[App.clientProfileBlockId];
 	FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, formTag, passedData );
 	
 	// Remove Edit button or any buttons if any

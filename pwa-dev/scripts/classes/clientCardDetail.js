@@ -17,6 +17,10 @@ function ClientCardDetail( clientId, isRestore )
 
     me.render = function()
     {
+        INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places..
+        // Or INFO.getINFOJson();
+
+
         // initialize / populate template
         var cardSheetFullTag = $( ClientCardDetail.cardFullScreen );
         $( 'body' ).append( cardSheetFullTag );
@@ -58,7 +62,7 @@ function ClientCardDetail( clientId, isRestore )
 
     me.setFullPreviewTabContent = function( clientId, sheetFullTag )
     {
-        var clientJson = ClientDataManager.getClientById( clientId );;
+        var clientJson = ClientDataManager.getClientById( clientId );
     
     
         // #1 clientDetails properties = key        
@@ -79,7 +83,7 @@ function ClientCardDetail( clientId, isRestore )
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
 
         // Get client Profile Block defition from config.
-        var clientProfileBlockId = ConfigManager.getConfigJson().settings[App.clientProfileBlockId];
+        var clientProfileBlockId = ConfigManager.getSettingsClientDef()[ App.clientProfileBlockId ];
 
 
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
@@ -161,7 +165,7 @@ function ClientCardDetail( clientId, isRestore )
             }
 
             // Get client Profile Block defition from config.
-            var clientProfileBlockId = ConfigManager.getConfigJson().settings.issueVoucherBlock;
+            var clientProfileBlockId = ConfigManager.getSettingsClientDef().issueVoucherBlock;
             FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, sheetFullTag.find("[blockId='addForm']"), passedData );
 
         });

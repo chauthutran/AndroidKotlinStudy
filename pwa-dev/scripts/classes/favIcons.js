@@ -20,6 +20,11 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
 
     me.favListByType;
 
+
+    // ========================================
+
+    // TODO: ORGANIZE THE METHODS..
+
     // ========================================
 
     me.initialize = function() 
@@ -105,7 +110,16 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
             me.closeFavMainButton();
 
             // 2. Get favListArr from online status
-            var favListArr = ( ConnManagerNew.isAppMode_Online() ) ? me.favListByType.online : me.favListByType.offline;
+            var favListArr;
+            if ( ConnManagerNew.isAppMode_Online() )
+            {
+                favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
+            }
+            else
+            {
+                favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
+            } 
+            
 
             // 3. favItems populate
             me.populateFavItems( favListArr, me.favIconsTag );
@@ -120,6 +134,154 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
     };
 
     // ---------------------------------------
+
+
+    me.filterFavListByEvalActions = function( refFavListArr, evalActions )
+    {
+        var filteredFavListArr = [];
+        var favIdsObj = {};  // Unique Fav Id List Store.
+
+        if ( refFavListArr )
+        {
+            if ( evalActions )
+            {
+                // Proper INFO variable references
+                //InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
+                //InfoDataManager.setINFOdata( 'tag', tag );
+
+                // Current Client?  LastActivity,  Translations, transDataValues
+
+                // INFO.client  // <-- Should be set when we click on clientDetail.
+                // INFO.activity // <-- Should be set when we click on activity & set client as well.
+                var INFO = InfoDataManager.getINFO();
+                INFO.allTransactions = [];
+                INFO.allTransDataValues = {};
+                INFO.lastActivity = {};
+
+                if ( INFO.client )
+                {
+                    INFO.client.activities.forEach( activity => 
+                    {
+                        INFO.lastActivity = activity;
+
+                        activity.transactions.forEach( trans => 
+                        {
+                            INFO.allTransactions.push( trans );
+
+                            if ( trans.dataValues )
+                            {
+                                Util.mergeJson( INFO.allTransDataValues, trans.dataValues );
+                            }
+                        });
+                    });
+                }
+
+
+                // 1. Get FavId array to 'favIdsObj'
+                evalActions.forEach( evalAction => 
+                {
+                    var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
+
+                    me.performEvalAction( evalActionJson, favIdsObj, INFO );
+                }); 
+
+
+                // 2. Add the actual fav object from id, FOLLOW THE original list order..  
+                refFavListArr.forEach( favItem => 
+                {
+                    if ( favItem.id && favIdsObj[ favItem.id ] === true )
+                    {
+                        filteredFavListArr.push( favItem );
+                    }
+                });
+            }
+            else
+            {
+                filteredFavListArr = refFavListArr;
+            }	
+        }
+
+        return filteredFavListArr;
+    };
+
+	me.performEvalAction = function( evalAction, favIdsObj, INFO )
+	{
+		if ( evalAction && ConfigManager.checkByCountryFilter( evalAction.countryFilter ) )
+		{			
+			// If condition does not exist, it is considered as pass/true.
+			// If it exists, check eval to see if condition evaluates as true.
+			if ( evalAction.condition === undefined || me.checkCondition( evalAction.condition, INFO ) === true )
+			{
+                // MORE LIKE me.performAdd/Remove..
+				me.performCondiShowHide( evalAction.shows, favIdsObj, true );
+				me.performCondiShowHide( evalAction.hides, favIdsObj, false );
+				//me.performCondiAction( evalAction.actions, false );
+
+				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
+				if ( evalAction.runEval ) 
+				{
+					try {		
+						inputVal = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
+						if ( inputVal ) returnVal = eval( inputVal );				
+					} catch( errMsg ) { console.log( 'FavIcons.performEvalAction, runEval err: ' + errMsg ); }
+				}
+			}
+			else
+			{
+				// If not true condition, run 'conditionInverse' (if it exists)
+				if ( evalAction.conditionInverse !== undefined )
+				{
+					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, favIdsObj, false );
+					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, favIdsObj, true );
+				}		
+			}            
+		}
+	};
+
+	me.checkCondition = function( evalCondition, INFO )
+	{
+		var result = false;
+
+		try
+		{
+			// Handle array into string joining
+			evalCondition = Util.getEvalStr( evalCondition );
+
+			if ( evalCondition )
+			{
+				result = eval( evalCondition );	
+			}
+		}
+		catch( errMsg ) 
+		{
+			console.customLog( 'ERROR in BlockForm.checkCondition, ' + errMsg );
+		}
+
+		return result;
+	};
+
+
+	me.performCondiShowHide = function( idList, favIdsObj, visible )
+	{
+        try
+        {
+            if ( idList )
+            {
+                for ( var i = 0; i < idList.length; i++ )
+                {
+                    var idStr = idList[i];
+
+                    if ( visible ) favIdsObj[ idStr ] = true;
+                    else delete favIdsObj[ idStr ];
+                }
+            }    
+        }
+        catch ( errMsg ) { console.log( 'ERROR in FavIcons.performCondiShowHide, ' + errMsg ); }
+	};
+
+
+    // ---------------------------------------
+
 
     me.clearExistingFavItems = function( favIconsTag )
     {
@@ -254,7 +416,7 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
         {
             if ( activityType )
             {
-                var itemList = ConfigManager.getConfigJson().settings.redeemDefs.activityTypes; 
+                var itemList = ConfigManager.getSettingsActivityDef().activityTypes; 
                 
                 var styleInfo = Util.getFromList( itemList, activityType, prop );
 

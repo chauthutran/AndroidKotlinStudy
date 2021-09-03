@@ -1682,7 +1682,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var result = false;
 
 		// NOTE: TEMP IMPLEMENTATION - REPLACE WITH BETTER SOLUTION LATER..
-		INFO.userRole = ConfigManager.login_UserRoles;
+		// <-- Do this globally <-- Right 
+		//INFO.userRole = ConfigManager.login_UserRoles;
 
 		try
 		{
@@ -1691,6 +1692,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			if ( evalCondition )
 			{
+				// NOTE: Old way..  Is here for supporting old config.
 				var afterCondStr = me.conditionVarIdToVal( evalCondition, tagVal, formDivSecTag, formFull_IdList )
 
 				var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
@@ -1702,10 +1704,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				result = eval( afterCondStr );	
 			}
 		}
-		catch(ex) 
+		catch( errMsg ) 
 		{
-			console.customLog( 'Failed during condition eval: ' );
-			console.customLog( ex );
+			console.customLog( 'ERROR in BlockForm.checkCondition, ' + errMsg );
 		}
 
 		return result;

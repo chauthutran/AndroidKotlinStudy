@@ -19,8 +19,10 @@ function ActivityCardDetail( activityId, isRestore )
     {
         console.log( 'activity showFullPreview..' );
 
-        if ( activityId ) 
+        if ( me.activityId ) 
         {
+            INFO.activity = ActivityDataManager.getActivityById( me.activityId );
+
             // initialize, populate template
             var cardSheetFullTag = $( ActivityCardDetail.cardFullScreen );
             $( 'body' ).append( cardSheetFullTag );
@@ -28,33 +30,33 @@ function ActivityCardDetail( activityId, isRestore )
             // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
             if ( DevHelper.devMode )
             {
-                me.setUpActivityDetailTabDev( cardSheetFullTag, activityId );
+                me.setUpActivityDetailTabDev( cardSheetFullTag, me.activityId );
             } 
 
             // create tab click events
             FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
         
             // ADD TEST/DUMMY VALUE
-            cardSheetFullTag.find( '.activity' ).attr( 'itemid', activityId )
+            cardSheetFullTag.find( '.activity' ).attr( 'itemid', me.activityId )
             
 
             // ReRender
             cardSheetFullTag.find( '.activityDetailRerender' ).off( 'click' ).click( function() {
-                me.showFullPreview( activityId );
+                me.showFullPreview( me.activityId );
             });
                         
 
             // Header content set
-            var actCard = new ActivityCard( activityId, {'detailViewCase': true }
+            var actCard = new ActivityCard( me.activityId, {'detailViewCase': true }
                 //, { 'parentTag_Override': cardSheetFullTag, 'disableClicks': true } 
             );
             actCard.render();
 
             // set tabs contents
-            me.setFullPreviewTabContent( activityId, cardSheetFullTag );
+            me.setFullPreviewTabContent( me.activityId, cardSheetFullTag );
         
 
-            FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'activityCardDetail', activityId, me.isRestore );
+            FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'activityCardDetail', me.activityId, me.isRestore );
 
             
             TranslationManager.translatePage();            

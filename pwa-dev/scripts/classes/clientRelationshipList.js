@@ -78,7 +78,7 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
             relationshipTabTag.find( 'div.block' ).remove();
             relationshipTabTag.find( 'div.list' ).remove();
 
-            var clientRelSearchBlock = ConfigManager.getConfigJson().settings.clientRelSearchBlock;
+            var clientRelSearchBlock = ConfigManager.getSettingsClientDef().clientRelSearchBlock;
             FormUtil.renderBlockByBlockId( clientRelSearchBlock, SessionManager.cwsRenderObj, relationshipTabTag );
         
             //var searchClientRelationshipBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks.blockSearchClientRelationship;

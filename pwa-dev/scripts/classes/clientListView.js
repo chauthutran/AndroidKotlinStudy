@@ -252,15 +252,18 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
+            var dataFilterEval = Util.getEvalStr( viewDef.dataFilterEval );  // Handle array into string joining
+
             mainList.forEach( client => 
             {
                 InfoDataManager.setINFOdata( 'client', client );
                 
-                if ( Util.evalTryCatch( viewDef.dataFilterEval, InfoDataManager.getINFO(), 'clientListView.viewFilterData()' ) === true )
-                {
-                    // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
-                    filteredData.push( client );
-                }    
+                try {		
+                    var returnVal = false;
+                    inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
+                    if ( inputVal ) returnVal = eval( inputVal );
+                    if ( returnVal === true ) filteredData.push( client );
+                } catch( errMsg ) { console.log( 'ClilentListView.viewFilterData, ' + errMsg ); }
             });                
         }
 

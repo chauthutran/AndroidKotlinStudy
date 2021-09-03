@@ -252,16 +252,19 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
+            var dataFilterEval = Util.getEvalStr( viewDef.dataFilterEval );  // Handle array into string joining
+            
             mainList.forEach( activity => 
             {
                 InfoDataManager.setINFOdata( 'activity', activity );
                 InfoDataManager.setINFOclientByActivity( activity );
                 
-                if ( Util.evalTryCatch( viewDef.dataFilterEval, InfoDataManager.getINFO(), 'activityListView.viewFilterData()' ) === true )
-                {
-                    // If the 'activity' in mainList meets the 'query' expression, add as 'viewFilteredData' list.
-                    filteredData.push( activity );
-                }    
+                try {		
+                    var returnVal = false;
+                    inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
+                    if ( inputVal ) returnVal = eval( inputVal );
+                    if ( returnVal === true ) filteredData.push( activity );
+                } catch( errMsg ) { console.log( 'ActivityListView.viewFilterData, ' + errMsg ); }
             });                
         }
 
