@@ -28,5 +28,5 @@ Constants.focusRelegator_MaxOpacity = 0.35;
 
 // ------------------------------------
 // -- Translation Terms
-Constants.term_LoginFailMsg = '';
-Constants.term_LoginBlackListingMsg = '';
+Constants.term_LoginFailMsg = 'msg_loginFailed';
+Constants.term_LoginBlackListingMsg = 'msg_blackListingBlock';

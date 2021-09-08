@@ -35,7 +35,7 @@ function Login()
 	me.loginAppUpdateCheck = false;
 
 	// -------------
-	me.ERR_MSG_blackListing = '> Country is blackListed on current stage.';
+	me.ERR_MSG_blackListing = '> <span term="' + Constants.term_LoginBlackListingMsg + '">Country is blackListed on current stage.</span>';
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -687,7 +687,7 @@ function Login()
 			if ( offlineUserData.blackListing )
 			{			
 				// Translation term need to be added - from config?	
-				MsgManager.msgAreaShow( 'Login Failed ' + me.ERR_MSG_blackListing, 'ERROR' );
+				MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing, 'ERROR' );
 			}
 			else
 			{
@@ -708,14 +708,14 @@ function Login()
 				else
 				{
 					// MISSING TRANSLATION
-					MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+					MsgManager.notificationMessage( me.getLoginFailedMsgSpan() + ' > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
 				}
 			}
 		}
 		else
 		{
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
+			MsgManager.notificationMessage( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
 		}
 
 		if ( returnFunc ) returnFunc( isSuccess, offlineUserData );
@@ -764,7 +764,7 @@ function Login()
 
 
 			// MISSING TRANSLATION
-			MsgManager.msgAreaShow( 'Login Failed ' + errDetail, 'ERROR' );	
+			MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + errDetail, 'ERROR' );	
 
 			resultSuccess = false;
 		}
@@ -847,6 +847,10 @@ function Login()
 
 	// --------------------------------------
 	
+	me.getLoginFailedMsgSpan = function()
+	{
+		return '<span term="' + Constants.term_LoginFailMsg + '">Login Failed</span>';
+	};
 
 	// --------------------------------------
 
