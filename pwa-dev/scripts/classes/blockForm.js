@@ -56,19 +56,21 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			me.formDivSecTag = formDivSecTag;
 
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
-			var formFieldGroups = me.getFormGroupingJson( formJsonArr, formGrps );
+			//   Organizing new data with group info seems to be creatinng a lot of issues..  Bad idea.. 
+			var fieldDataNew_wtGrp = me.setNewFormData_wtGroupInfo( formJsonArr, formGrps );
 			var groupsCreated = [];
 			
-			formFieldGroups.forEach( formGroup => 
+			fieldDataNew_wtGrp.forEach( fieldData => 
 			{
-				var groupDivTag = me.createGroupDivTag( formGroup, groupsCreated, formTag );
-				var formItemJson = formGroup.item;
+				var groupDivTag = me.getGroupTag( fieldData, groupsCreated, formTag );  // create group tag if not exists..
+				var formItemJson = fieldData.item;
 
-				me.formJsonConfig[ formItemJson.id ] = formItemJson;
+				me.formJsonConfig[ formItemJson.id ] = formItemJson;  // Question: Why do this?
 
 				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr, autoComplete );
-				groupDivTag.append( inputFieldTag );
+				if ( inputFieldTag ) groupDivTag.append( inputFieldTag );
 
+				// TODO: Why do we append it again?  Does not make sense...  Change the code..
 				formTag.append( groupDivTag );
 			});
 			
@@ -123,7 +125,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	me.createGroupDivTag = function( formFieldGroup, groupsCreated, formTag )
+	me.getGroupTag = function( formFieldGroup, groupsCreated, formTag )
 	{
 		var groupDivTag = formTag;
 
@@ -190,72 +192,86 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var controlType = formItemJson.controlType;
 		var divInputFieldTag;
 		
-		if ( controlType == "INT" || controlType == "SHORT_TEXT" )
+		try
 		{
-			divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
-		}
-		else if ( controlType == "DROPDOWN_LIST" )
-		{
-			divInputFieldTag = me.createDropDownEntryTag( formItemJson );
-		}
-		else if ( controlType == "LABEL" )
-		{
-			divInputFieldTag = me.createLabelFieldTag( formItemJson );
-		}
-		else if( controlType == "IMAGE" )
-		{
-			divInputFieldTag = me.createImageTag( formItemJson );
-		}
-		else if( controlType == "YEAR" ) 
-		{
-			divInputFieldTag = me.createYearFieldTag( formItemJson, autoComplete );
-		}
-		else if( controlType == "DATE" ) 
-		{
-			divInputFieldTag = me.createDateFieldTag( formItemJson );
-		}
-		else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
-		{
-			divInputFieldTag = me.createRadioDialogFieldTag( formItemJson );
-		}
-		else if( controlType == "RADIO" )
-		{
-			divInputFieldTag = me.createRadioFieldTag( formItemJson );
-		}
-		else if( controlType == "CHECKBOX" )
-		{
-			divInputFieldTag = me.createCheckboxFieldTag( formItemJson );
-		}
-		else if( controlType == "MULTI_CHECKBOX" ) // "CHECKBOX_DIALOG"
-		{
-			divInputFieldTag = me.createCheckBoxDialogFieldTag( formItemJson );
-		}
-		
-		
-		var entryTag = divInputFieldTag.find( '.dataValue' );
-
-		if ( divInputFieldTag !== undefined && entryTag.length > 0 ) // LABEL don't have "dataValue" clazz
-		{
-			if ( formItemJson.scanQR != undefined && formItemJson.scanQR )
+			if ( controlType == "INT" || controlType == "SHORT_TEXT" )
 			{
-				me.createScanQR( divInputFieldTag, entryTag );
+				divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
 			}
-
-			// Set defaultValue if any
-			FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
-
-			// For payloadConfigSelection, save the selection inside of the config for easier choosing..
-			me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
-
-			// Setup events and visibility and rules
-			var formFull_IdList = me.getIdList_FormJson( formJsonArr );
-			
-			// Set change event and rules on input tags
-			me.setEventsAndRules( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList );
-
-
-			// Set InputFieldTag visibility based on: config setting - display 'hiddenVal/none', or hide/show case
-			me.setFieldTagVisibility( formItemJson, divInputFieldTag, passedData );  // This method might have to move outside of if case - if not related to 'entry.length'
+			else if ( controlType == "DROPDOWN_LIST" )
+			{
+				divInputFieldTag = me.createDropDownEntryTag( formItemJson );
+			}
+			else if ( controlType == "LABEL" )
+			{
+				divInputFieldTag = me.createLabelFieldTag( formItemJson );
+			}
+			else if( controlType == "IMAGE" )
+			{
+				divInputFieldTag = me.createImageTag( formItemJson );
+			}
+			else if( controlType == "YEAR" ) 
+			{
+				divInputFieldTag = me.createYearFieldTag( formItemJson, autoComplete );
+			}
+			else if( controlType == "DATE" ) 
+			{
+				divInputFieldTag = me.createDateFieldTag( formItemJson );
+			}
+			else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
+			{
+				divInputFieldTag = me.createRadioDialogFieldTag( formItemJson );
+			}
+			else if( controlType == "RADIO" )
+			{
+				divInputFieldTag = me.createRadioFieldTag( formItemJson );
+			}
+			else if( controlType == "CHECKBOX" )
+			{
+				divInputFieldTag = me.createCheckboxFieldTag( formItemJson );
+			}
+			else if( controlType == "MULTI_CHECKBOX" ) // "CHECKBOX_DIALOG"
+			{
+				divInputFieldTag = me.createCheckBoxDialogFieldTag( formItemJson );
+			}
+			else
+			{
+				divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
+				MsgManager.msgAreaShow( 'field "' + formItemJson.id + '" config controlType not proper.', 'ERROR' );	
+			}
+	
+			if ( divInputFieldTag )
+			{
+				var entryTag = divInputFieldTag.find( '.dataValue' );
+	
+				if ( divInputFieldTag !== undefined && entryTag.length > 0 ) // LABEL don't have "dataValue" clazz
+				{
+					if ( formItemJson.scanQR != undefined && formItemJson.scanQR )
+					{
+						me.createScanQR( divInputFieldTag, entryTag );
+					}
+		
+					// Set defaultValue if any
+					FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+		
+					// For payloadConfigSelection, save the selection inside of the config for easier choosing..
+					me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
+		
+					// Setup events and visibility and rules
+					var formFull_IdList = me.getIdList_FormJson( formJsonArr );
+					
+					// Set change event and rules on input tags
+					me.setEventsAndRules( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList );
+		
+		
+					// Set InputFieldTag visibility based on: config setting - display 'hiddenVal/none', or hide/show case
+					me.setFieldTagVisibility( formItemJson, divInputFieldTag, passedData );  // This method might have to move outside of if case - if not related to 'entry.length'
+				}	
+			}
+		}
+		catch ( errMsg )
+		{
+			MsgManager.msgAreaShow( 'field "' + formItemJson.id + '" failed to create tag.', 'ERROR' );	
 		}
 
 		return divInputFieldTag;
@@ -873,7 +889,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return idList;
 	}
 
-	me.getFormGroupingJson = function( formJsonArr, frmGroupJson )
+	me.setNewFormData_wtGroupInfo = function( formJsonArr, frmGroupJson )
 	{
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that

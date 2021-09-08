@@ -44,52 +44,74 @@ Validation.checkValidations = function( tag )
 {	
     var valid = true;
 
-    // TODO: Make 'skipValidation' a static/constant variable somewhere..
-    //if ( tag.attr( 'skipValidation' ) !== 'true' )
     if ( !Validation._DisableValidation )
     {
-        // Validation Initial Setting Clear
-        tag.attr( 'valid', 'true' );
-
-        var divFieldBlockTag = tag.closest( '.fieldBlock' );
-        var divErrorMsgTargetTag = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
-
-        divFieldBlockTag.find( "div.errorMsg" ).remove();
-
-        if ( divFieldBlockTag.is( ':visible' ) ) 
-        {
-            Validation.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
-
-            Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'pickerDateRange', divErrorMsgTargetTag );
-            Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
-
-            // Default Universal checks..
-            Validation.performValidationCheck( tag, 'doubleQuote', divErrorMsgTargetTag, true );
-        }
-
-        // If not valid, set the background color.
-        valid = ( tag.attr( 'valid' ) == 'true' );
-
-        if ( valid )
-        {
-            divFieldBlockTag.css( 'background-color', '' );
-        }
+        // If 'forceValid' false case, skip the validation and set it as false..
+        var forceValid = tag.attr( 'forceValid' );
+        if ( forceValid === 'false' ) valid = false;
         else
         {
-            divFieldBlockTag.css( 'background-color', Validation.COLOR_WARNING );
+            // Validation Initial Setting Clear
+            tag.attr( 'valid', 'true' );
+
+            var divFieldBlockTag = tag.closest( '.fieldBlock' );
+            var divErrorMsgTargetTag = ( divFieldBlockTag.find( '.listWrapper' ).length > 0 ) ? divFieldBlockTag.find( '.listWrapper' ) : tag.parent();
+
+            divFieldBlockTag.find( "div.errorMsg" ).remove();
+
+            if ( divFieldBlockTag.is( ':visible' ) ) 
+            {
+                Validation.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+
+                Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'pickerDateRange', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+
+                // Default Universal checks..
+                Validation.performValidationCheck( tag, 'doubleQuote', divErrorMsgTargetTag, true );
+            }
+
+            // If not valid, set the background color.
+            valid = ( tag.attr( 'valid' ) == 'true' );
+
+            if ( valid )
+            {
+                divFieldBlockTag.css( 'background-color', '' );
+            }
+            else
+            {
+                divFieldBlockTag.css( 'background-color', Validation.COLOR_WARNING );
+            }            
         }
-        // Previously - divFieldBlockTag.css( 'background-color', ( valid ) ? 'transparent' : Validation.COLOR_WARNING );
-        // .divInputReadOnly {
     }
 
     return valid;
+};
+
+
+// Force the tag validation - UseCase: call from countryConfig eval forcing invalid
+Validation.setTagValidation = function( tag, valid )
+{	
+    var divFieldBlockTag = tag.closest( '.fieldBlock' );
+
+    if ( valid )
+    {
+        tag.attr( 'valid', 'true' );
+        tag.attr( 'forceValid', 'true' );
+        divFieldBlockTag.css( 'background-color', '' );
+    }
+    else
+    {
+        tag.attr( 'valid', 'false' );
+        tag.attr( 'forceValid', 'false' );
+        divFieldBlockTag.css( 'background-color', Validation.COLOR_WARNING );
+    }
 };
 
 
@@ -125,6 +147,7 @@ Validation.performValidationCheck = function( tag, type, divTag, alwaysRun )
 };
 
 
+// Called by Button click - for checking all fields valication on the form 
 Validation.checkFormEntryTagsData = function( formTag, optionStr )
 {	
     var allValid = true;
@@ -133,7 +156,7 @@ Validation.checkFormEntryTagsData = function( formTag, optionStr )
     //formTag.find( "input,select,checkbox,textarea" ).each( function() {
     formTag.find( ".dataValue" ).each( function() 
     {
-        if ( !Validation.checkValidations( $(this) ) ) allValid = false;
+        if ( !Validation.checkValidations( $( this ) ) ) allValid = false;
     });
 
 

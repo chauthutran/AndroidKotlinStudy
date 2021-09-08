@@ -529,7 +529,7 @@ function ActivityCard( activityId, options )
         }
         else
         {
-            var errMsg = 'Error Msg: ';
+            var errMsg = 'Error: ';
             var errStatusCode = 400;
             var newStatus = Constants.status_failed;
 
@@ -547,6 +547,10 @@ function ActivityCard( activityId, options )
                     else if ( responseJson.errMsg ) 
                     {
                         errMsg += ' [errMsg]: ' + responseJson.errMsg;
+                    }
+                    else if ( responseJson.errorMsg ) 
+                    {
+                        errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
                     }
                     else if ( responseJson.report )
                     {

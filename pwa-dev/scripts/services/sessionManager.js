@@ -241,7 +241,7 @@ SessionManager.getLoginDataFromStorage = function( userName )
 };
 
 
-SessionManager.saveLoginDataFromStorage = function( userName, loginData )
+SessionManager.saveLoginDataToStorage = function( userName, loginData )
 {
 	LocalStgMng.saveJsonData( userName, loginData );
 };

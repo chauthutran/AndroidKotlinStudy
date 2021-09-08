@@ -335,6 +335,9 @@ WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc
 	{
         WsCallManager.loadingTagClear( loadingTag );
 
+        // NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
+        if ( !success && returnJson && returnJson.blackListing ) WsCallManager.markBlackListing_Local( returnJson, SessionManager.sessionData.login_UserName );
+
 		if ( returnFunc ) returnFunc( success, returnJson );
 	});
 };
@@ -529,3 +532,20 @@ WsCallManager.requestDWS_DELETE = function( endPoint, payloadJson, loadingTag, r
     });	
 };
 
+
+// -----------------------  Minor Other Methods...
+
+WsCallManager.markBlackListing_Local = function( returnJson, userName )
+{
+    // NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
+    if ( returnJson && returnJson.blackListing )
+    {            
+        // SessionManager.sessionData.login_UserName
+        var userDataStorage = SessionManager.getLoginDataFromStorage( userName );
+        if ( userDataStorage )
+        {
+            userDataStorage.blackListing  = returnJson.blackListing;
+            SessionManager.saveLoginDataFromStorage( userName, userDataStorage );    
+        }
+    }
+};

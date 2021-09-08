@@ -34,6 +34,8 @@ function Login()
 	
 	me.loginAppUpdateCheck = false;
 
+	// -------------
+	me.ERR_MSG_blackListing = '> Country is blackListed on current stage.';
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
@@ -656,7 +658,7 @@ function Login()
 	{
 		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 		{			
-			me.checkLoginData_wthErrMsg( success, loginData, function( resultSuccess ) 
+			me.checkLoginData_wthErrMsg( success, userName, loginData, function( resultSuccess ) 
 			{
 				if ( resultSuccess )
 				{
@@ -682,24 +684,32 @@ function Login()
 
 		if ( offlineUserData )
 		{
-			if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
-			{					
-				if ( SessionManager.checkLoginData( offlineUserData ) )
-				{
-					// Update current user login information ( lastUpdated, stayLoggedIn )
-					//SessionManager.updateUserSessionToStorage( offlineUserData, userName );
-					SessionManager.loadDataInSession( userName, password, offlineUserData );
-
-					isSuccess = true;
-
-					// TEST, DEBUG - TO BE REMOVED AFTERWARDS
-					GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
-				}
+			if ( offlineUserData.blackListing )
+			{			
+				// Translation term need to be added - from config?	
+				MsgManager.msgAreaShow( 'Login Failed ' + me.ERR_MSG_blackListing, 'ERROR' );
 			}
 			else
 			{
-				// MISSING TRANSLATION
-				MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+				if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
+				{					
+					if ( SessionManager.checkLoginData( offlineUserData ) )
+					{
+						// Update current user login information ( lastUpdated, stayLoggedIn )
+						//SessionManager.updateUserSessionToStorage( offlineUserData, userName );
+						SessionManager.loadDataInSession( userName, password, offlineUserData );
+	
+						isSuccess = true;
+	
+						// TEST, DEBUG - TO BE REMOVED AFTERWARDS
+						GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
+					}
+				}
+				else
+				{
+					// MISSING TRANSLATION
+					MsgManager.notificationMessage ( 'Login Failed > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+				}
 			}
 		}
 		else
@@ -714,7 +724,7 @@ function Login()
 	// ----------------------------
 
 
-	me.checkLoginData_wthErrMsg = function ( success, loginData, callBack )
+	me.checkLoginData_wthErrMsg = function ( success, userName, loginData, callBack )
 	{
 		var resultSuccess = false;
 
@@ -742,10 +752,19 @@ function Login()
 		}
 		else
 		{
-			var errDetail = ( loginData && loginData.returnCode === 502 ) ? " - Server not available" : "";
+			var errDetail = '';
+
+			// NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
+			if ( loginData && loginData.blackListing ) 
+			{
+				WsCallManager.markBlackListing_Local( loginData, userName );
+				errDetail =  me.ERR_MSG_blackListing;
+			}
+			else if ( loginData && loginData.returnCode === 502 ) errDetail = ' - Server not available';
+
 
 			// MISSING TRANSLATION
-			MsgManager.notificationMessage ( 'Login Failed' + errDetail, 'notifRed', undefined, '', 'right', 'top' );
+			MsgManager.msgAreaShow( 'Login Failed ' + errDetail, 'ERROR' );	
 
 			resultSuccess = false;
 		}

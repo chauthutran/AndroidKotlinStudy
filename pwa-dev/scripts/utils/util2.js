@@ -140,7 +140,7 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 {
 	var jsonUserData = SessionManager.getLoginDataFromStorage( SessionManager.sessionData.login_UserName );
 
-	var jsonStorageData = jsonUserData[ 'mySession' ] [ 'seqIncr' ];
+	var jsonStorageData = jsonUserData.mySession.seqIncr;
 	var ret;
 
 	if ( jsonStorageData == undefined ) 
@@ -180,11 +180,11 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 				}
 
 				jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
-				jsonUserData[ 'mySession' ] [ 'seqIncr' ] = jsonStorageData;
+				jsonUserData.mySession.seqIncr = jsonStorageData;
 
 				if ( commitSEQIncr != undefined && commitSEQIncr == true )
 				{
-					SessionManager.saveLoginDataFromStorage( SessionManager.sessionData.login_UserName, jsonUserData );
+					SessionManager.saveLoginDataToStorage( SessionManager.sessionData.login_UserName, jsonUserData );
 				}
 
 				return Util2.paddNumeric( ret, arrParm[1] );
