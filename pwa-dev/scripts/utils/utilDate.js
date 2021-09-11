@@ -295,7 +295,17 @@ UtilDate.getSecFromMiliSec = function( miliSec )
 
 UtilDate.getDaysSince = function( fromDtStr )
 {
-	var timeMs = Util.getTimePassedMs( fromDtStr );
+	var days = 0;
 
-	return Math.floor( timeMs / Util.MS_DAY );
+	if ( fromDtStr )
+	{
+		try {
+			var timeMs = UtilDate.getTimePassedMs( fromDtStr );
+
+			days = Math.floor( timeMs / Util.MS_DAY );	
+		}
+		catch ( errMsg ) { console.log( 'ERROR in UtilDate.getDaysSince, intput: ' + fromDtStr + ', ' + errMsg ); }
+	}
+
+	return days;
 }

@@ -25,8 +25,14 @@ Constants.storage_offline_ItemAgeLimit = ( 92 * 24 ); //92 days
 Constants.lsFlag_dataMoved_redeemListIDB = "dataMoved_redeemListIDB";
 Constants.focusRelegator_MaxOpacity = 0.35;
 
-
 // ------------------------------------
 // -- Translation Terms
 Constants.term_LoginFailMsg = 'msg_loginFailed';
 Constants.term_LoginBlackListingMsg = 'msg_blackListingBlock';
+
+
+// ------------------------------------
+// -- Job Aids Demo Related
+
+Constants.jobAides_AreaBlockId = 'blk_c-on_pth-FPL-S_PRO_tabsContainer';  // ET has this.
+Constants.jobAides_tabTargetBlockId = 'btn_c-on_pth-FPL-S_PRO_tabSearchByUser';

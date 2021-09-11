@@ -1388,7 +1388,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				}
 				else if ( ruleJson.name === 'readonly' && ( ruleJson.startDt === undefined || ( ruleJson.startDt !== undefined && !eval( ruleJson.startDt ) ) ) )
 				{
-					divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
+					// In Calendar case, allow the button click!!
+					divInputTag.closest( 'div.fieldBlock' ).find("input,select").attr("disabled", "disabled");
+					//divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
 					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
 				}
 			}	

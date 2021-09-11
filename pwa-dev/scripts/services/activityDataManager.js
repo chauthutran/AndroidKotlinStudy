@@ -956,3 +956,69 @@ ActivityDataManager.processResponseCaseAction = function( reportJson, activityId
         ScheduleManager.syncUpResponseActionListInsert( caseActionJson.syncAction, activityId );
     }
 };
+
+// ------------------------------------
+//   ResponseCaseAction Related 
+
+ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode )
+{
+    var voucherData = { voucherCode: voucherCode, createdDateStr: '', activities: [], transList: [] };  // voucher Activties
+
+    if ( voucherCode && activities && Util.isTypeArray( activities ) )
+    {
+        // use 'capturedLoc'? (or 'capturedUTC'?) as main date to compare 
+        activities.forEach( activity => 
+        {
+            if ( activity.transactions && Util.isTypeArray( activity.transactions ) )
+            {
+                activity.transactions.forEach( trans => 
+                {
+                    try
+                    {
+                        if ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
+                        {
+                            if ( trans.type === 'v_iss' && activity.date ) voucherData.createdDateStr = activity.date.capturedLoc;   
+                            voucherData.activities.push( activity );
+                        }    
+                    }
+                    catch ( errMsg ) { console.log( 'ERROR in ActivityDataManager.getVoucherActivitiesData.trans, voucherCode: ' + voucherCode + ', ' + errMsg ); }
+                });
+            }
+        });
+
+        // Sort by 'captureUTC' date
+        if ( voucherData.activities.length > 1 )
+        {
+            try
+            {
+                voucherData.activities.sort( function(a, b) { 
+                        return ( a.date.capturedLoc >= b.date.capturedLoc ) ? 1: -1; 
+                    } 
+                );
+            }
+            catch ( errMsg ) { console.log( 'ERROR in ActivityDataManager.getVoucherActivitiesData.sort, voucherCode: ' + voucherCode + ', ' + errMsg ); }
+        }
+
+        // Get transactions of the activity and put it ..
+        voucherData.activities.forEach( activity => {
+            activity.transactions.forEach( trans => voucherData.transList.push( trans ) );
+        });
+    }
+
+    return voucherData;
+};
+
+
+ActivityDataManager.getLastTransDataValue = function( voucherData, transDVProp )
+{
+    var value;
+
+    voucherData.transList.forEach( trans => 
+    {
+        var dvJson = trans.dataValues;
+
+        if ( dvJson && dvJson[transDVProp] ) value = dvJson[transDVProp];
+    });    
+
+    return value;
+};

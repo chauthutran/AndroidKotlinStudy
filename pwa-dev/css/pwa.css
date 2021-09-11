@@ -824,7 +824,7 @@ img.rotateImg {
 } 
 
 .sheet_full-fs .tab_fs__container-content {
-  height: calc(100vh - 200px) !important;
+  height: calc(100vh - 180px) !important;
   overflow: auto !important;
   padding: 3px !important;
 }

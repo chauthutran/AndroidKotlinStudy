@@ -35,11 +35,11 @@ Menu.setInitialLogInMenu = function()
 Menu.populateStandardMenuList = function( menuItems )
 {
     // [JOB_AID] / HnqisRdqa
-    if ( ConfigManager.getAreas().jobAids ) {
+    if ( ConfigManager.getAreas().options.jobAids ) {
         menuItems.push( Menu.menuJson_JobAids );        
         $( '.jobAidFiling' ).show();
     }
-    if ( ConfigManager.getAreas().hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );
+    if ( ConfigManager.getAreas().options.hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );
 
     
     menuItems.push ( Menu.menuJson_Statistics );    

@@ -308,10 +308,10 @@ ClientCardDetail.cardFullScreen = `
                 <div class="tab_fs__head-icon_exp"></div>
             </div>
 
-            <div class="tab_fs__container">
+            <div class="tab_fs__container" style="padding: 0px !important;">
 
                 <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
-                    blockid="tab_clientDetails" />
+                    blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
 
                 <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 

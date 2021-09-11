@@ -531,4 +531,102 @@ ClientDataManager.setActivityDateLocal_clientsAll = function()
     ClientDataManager.setActivityDateLocal_clientList( ClientDataManager.getClientList() );
 };
 
+
 // ----------------------------------------
+
+
+ClientDataManager.getLastVoucherData = function( client )
+{
+    var lastVoucherData;
+    
+    var voucherDataList = ClientDataManager.getVoucherDataList( client );
+
+    if ( voucherDataList.length > 0 )
+    {
+        lastVoucherData = voucherDataList[ voucherDataList.length - 1 ];
+    }
+
+    return lastVoucherData;
+};
+
+
+ClientDataManager.getVoucherDataList = function( client )
+{
+    var voucherDataList = [];
+    
+    if ( client && client.clientDetails )
+    {
+        var voucherCodes = [];
+        var clientDetails = client.clientDetails;
+
+        if ( clientDetails.voucherCodes && Util.isTypeArray( clientDetails.voucherCodes ) ) voucherCodes = clientDetails.voucherCodes;
+        else if ( clientDetails.voucherCode && Util.isTypeArray( clientDetails.voucherCode ) ) voucherCodes = clientDetails.voucherCode;
+        else if ( clientDetails.voucherCode && Util.isTypeString( clientDetails.voucherCode ) ) voucherCodes.push( clientDetails.voucherCode );
+    
+        if ( voucherCodes.length > 0 )
+        {
+            // 1. Organize data by voucherCode ->  { voucherCode, createdDateStr, activities([]) }
+            voucherCodes.forEach( voucherCode => 
+            {
+                voucherDataList.push( ActivityDataManager.getVoucherActivitiesData( client.activities, voucherCode ) );
+            });
+
+            // 2. Sort by 'createdDateStr' in ascending order
+            voucherDataList.sort( function(a, b) { 
+                    return ( a.createdDateStr >= b.createdDateStr ) ? 1: -1; 
+                } 
+            );
+        }
+    }
+
+    return voucherDataList;
+};
+
+/*
+ClientDataManager.getVoucherNotUsed = function( voucherDataList )
+{
+    var voucherNotUsed = [];
+
+    voucherNotUsed = voucherDataList.filter( voucherData => 
+    {
+        var usedTrans = voucherData.transList.filter( trans => trans.type && trans.type.indexOf( 'v_rdx' ) === 0 );
+
+        return ( usedTrans.length === 0 );
+    });
+
+    return voucherDataList;
+};
+*/
+
+ClientDataManager.isVoucherNotUsed = function( voucherData )
+{
+    var usedTrans = voucherData.transList.filter( trans => trans.type && trans.type.indexOf( 'v_rdx' ) === 0 );
+    return ( usedTrans.length === 0 );
+};
+
+/*
+
+var showCondition = false;
+
+// var voucherDataList = ClientDataManager.getVoucherDataList( INFO.client );
+//var voucherNotUsed = ClientDataManager.getVoucherNotUsed( INFO.client );
+var lastVoucherData = ClientDataManager.getLastVoucherData( INFO.client );
+
+if ( lastVoucherData )
+{
+    var usedTrans = lastVoucherData.transList.filter( trans => trans.type && trans.type.indexOf( 'v_rdx' ) === 0 );
+    var bNotUsed = ( usedTrans.length === 0 );
+
+    if ( bNotUsed ) 
+    {
+        var labVisitDate = ActivityDataManager.getLastTransDataValue( lastVoucherData.transList, 'labVisitDate' );
+
+        if ( labVisitDate ) {
+            var daysSince = UtilDate.getDaysSince( labVisitDate );       
+            if ( daysSince >= 0 && daysSince < 30 ) showCondition = true;
+        }        
+    }
+}
+
+showCondition;
+*/
