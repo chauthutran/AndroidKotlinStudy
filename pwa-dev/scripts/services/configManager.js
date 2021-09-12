@@ -1100,6 +1100,8 @@ ConfigManager.applyDefaults = function( configJson, defaults )
 
     // Other defaults could be placed here..
     ConfigManager.applyDefault_favList( configJson, defaults.favList );
+
+    ConfigManager.applyDefault_clientDetailTab( configJson, defaults.activityDef );
 };
 
 
@@ -1130,6 +1132,16 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
    }
 };
 
+ConfigManager.applyDefault_clientDetailTab( configJson, activityDefJson );
+{
+    if ( activityDefJson && activityDefJson.clientDetailTab )
+    {
+        // if 'formDef'
+        var activityDef = ConfigManager.getSettingsActivityDef();
+
+        if ( activityDef && !activityDef.clientDetailTab ) activityDef.clientDetailTab = Util.cloneJson( activityDefJson.clientDetailTab );
+    }
+};
 
 // ------------------------------------------------------
 // -- UidMapping after download..
@@ -1175,98 +1187,61 @@ ConfigManager.defaultActivityType = {
 ///"mergeCompare": { "dateCompareField": [ "updated" ] },
 
 // ----- If not on download config, place below default to 'config' json.
-ConfigManager.defaultJsonList = {
-
-  "voucherCodeReuse": false,
-
-   "sync": {
-        "networkSync": "3600000",
-
-        "syncUp": {
-            "syncUpAttemptLimit": {
-                "maxAttempts": 10,
-                "maxAction": {
-                    "status": "error",
-                    "msg": "Reached the max sync attempt."
-                }
-            },
-            "coolDownTime": "00:01:30",
-            "schedulerTime": "01:00:00"            
-        },
-        "syncDown": [{
-            "userRoles": [],
-            "enable": true,
-            "sourceType": "mongo",
-            "url": "/PWA.syncDown",
-            "searchBodyEval": {
-                "find": {
-                    "clientDetails.users": "INFO.login_UserName",
-                    "date.updatedOnMdbUTC": { "$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );" }
-                }
-            }
-        }]
-    },    
-
-
-   "favList": {
-
-    "online": [{
-            "id": "1",
-            "name": "All Contact",
-            "term": "menu_list",
-            "img": "images/act_arrows.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "#fff",
-                        "foreground": "#4F4F4F"
-                    }
-                }
-            },
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList"
-            }
+ConfigManager.defaultJsonList = 
+{
+    "voucherCodeReuse": false,
+    "sync": {
+      "networkSync": "3600000",
+      "syncUp": {
+        "syncUpAttemptLimit": {"maxAttempts": 10, "maxAction": {"status": "error", "msg": "Reached the max sync attempt."}},
+        "coolDownTime": "00:01:30",
+        "schedulerTime": "01:00:00"
+      },
+      "syncDown": [
+        {
+          "userRoles": [],
+          "enable": true,
+          "sourceType": "mongo",
+          "url": "/PWA.syncDown",
+          "searchBodyEval": {
+            "find": {"clientDetails.users": "INFO.login_UserName", "date.updatedOnMdbUTC": {"$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );"}}
+          }
+        }
+      ]
+    },
+    "favList": {
+      "online": [
+        {
+          "id": "1", "name": "All Contact", "term": "menu_list", "img": "images/act_arrows.svg",
+          "style": {"icon": {"colors": {"background": "#fff", "foreground": "#4F4F4F"}}},
+          "target": {"actionType": "openBlock", "blockId": "blockRedeemList"}
         },
         {
-            "id": "2",
-            "name": "Entry Online only",
-            "term": "menu_entry",
-            "img": "images/act_col.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#B06068"
-                    }
-                }
-            },
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockDefaultOptionsOnline"
-            }
+          "id": "2", "name": "Entry Online only", "term": "menu_entry", "img": "images/act_col.svg",
+          "style": {"icon": {"colors": {"background": "none", "foreground": "#B06068"}}},
+          "target": {"actionType": "openBlock", "blockId": "blockDefaultOptionsOnline"}
         }
-    ],
-    "offline": [{
-            "id": "1",
-            "name": "All Contact",
-            "term": "menu_list",
-            "img": "images/act_arrows.svg",
-            "style": {
-                "icon": {
-                    "colors": {
-                        "background": "none",
-                        "foreground": "#4F4F4F"
-                    }
-                }
-            },
-            "target": {
-                "actionType": "openBlock",
-                "blockId": "blockRedeemList"
-            }
+      ],
+      "offline": [
+        {
+          "id": "1", "name": "All Contact", "term": "menu_list", "img": "images/act_arrows.svg",
+          "style": {"icon": {"colors": {"background": "none", "foreground": "#4F4F4F"}}},
+          "target": {"actionType": "openBlock", "blockId": "blockRedeemList"}
         }
-    ]
-    }  
+      ]
+    },
+    "activityDef": {
+      "clientDetailTab": { 
+        "formDef": [
+            { "defaultName": "First Name", "id": "firstName", "term": "form_std_firstName_label" },
+            { "defaultName": "Last Name", "id": "lastName", "term": "form_std_lastName_label" },
+            { "defaultName": "Age", "id": "age", "term": "form_std_age_label" },
+            { "defaultName": "Gender", "id": "gender", "term": "form_std_gender_label" },
+            { "defaultName": "Phone Ownership", "id": "ownershipOfPhone", "term": "form_std_ownershipOfPhone_label" },
+            { "defaultName": "Phone Number", "id": "phoneNumber", "term": "form_std_phoneNumberSMSVoice_label" }
+        ]
+      }
+    }
 };
 
 // ==================================================
