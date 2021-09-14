@@ -64,8 +64,8 @@ function ClientCardDetail( clientId, isRestore )
     {
         var clientJson = ClientDataManager.getClientById( clientId );
     
-    
         // #1 clientDetails properties = key        
+
         var passedData = {
             "displayData": [
                 { id: "id", value: clientJson._id }
@@ -73,18 +73,13 @@ function ClientCardDetail( clientId, isRestore )
             "resultData": []
         };
 
-        for( var id in clientJson.clientDetails )
+        for ( var id in clientJson.clientDetails )
         {
             passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
         }
 
-        // TODO: We can also use simpler version of data 'results.clientId', results
-
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
-
-        // Get client Profile Block defition from config.
-        var clientProfileBlockId = ConfigManager.getSettingsClientDef()[ App.clientProfileBlockId ];
-
+        var clientProfileBlockId = ConfigManager.getSettingsClientDef()[ App.clientProfileBlockId ]; // Get client Profile Block defition from config.
 
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
         {
@@ -95,11 +90,7 @@ function ClientCardDetail( clientId, isRestore )
         
 
         // #2. payload Preview
-
-        // LIST ACTIVITIES... <-- LIST
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
-
-        // Remove previously loaded div blocks - clear out.
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
             activityTabBodyDivTag.html( '' ).append( '<div blockId="activityList" /><div blockId="addForm" />' );
@@ -116,18 +107,65 @@ function ClientCardDetail( clientId, isRestore )
         });
 
 
-        // #3. relationship?
+        // #3. Relationship
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
-
         var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
-
-        // Remove previously loaded div blocks - clear out.
         sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() 
         {
             relationshipListObj.render();
-
-            //SessionManager.cwsRenderObj.favIconsRender( 'clientRelFav' );
         });
+
+
+        // #4. Dev (Optional)
+        if ( DevHelper.devMode )
+        {
+            sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
+            sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
+
+            var devTabTag = sheetFullTag.find( '[tabButtonId=tab_optionalDev]' );    
+            sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click( function() 
+            {
+                var clientJson = ClientDataManager.getClientById( clientId );
+                
+                // get clientJson
+                var taClientJsonTag = devTabTag.find( '.taClientJson' ).val( JSON.stringify( clientJson, undefined, 4 ) );
+                var spClientJsonResultTag = devTabTag.find( '.spClientJsonResult' ).text( '' );
+
+                devTabTag.find( '.btnAddActivityTemplate' ).off( 'click' ).click( function() 
+                {
+                    // Add
+                    me.addTempActivity( clientId );
+
+                    // Refresh this tab content by clicking the tab.
+                    sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
+
+                    // Update the message?
+                    devTabTag.find( '.spClientJsonResult' ).text( 'Added Template Activity Json' );
+                });
+
+
+                devTabTag.find( '.btnSave' ).off( 'click' ).click( function() {
+
+                    try
+                    {
+                        var clientJsonNew = JSON.parse( taClientJsonTag.val() );
+
+                        // save with client Id
+                        ClientDataManager.updateClient( clientId, clientJsonNew );
+
+                        // Refresh this tab content by clicking the tab.
+                        sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
+
+                        // Update the message?
+                        devTabTag.find( '.spClientJsonResult' ).text( 'Updated Client Json' );
+                    }
+                    catch( errMsg )
+                    {
+                        alert( 'FAILED to update client data.' );
+                    }
+                });
+            });    
+        } 
 
 
         // -----------------------------------------
@@ -135,6 +173,30 @@ function ClientCardDetail( clientId, isRestore )
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click();
 
     };    
+
+
+    me.addTempActivity = function( clientId )
+    {
+        var newTempActivity = Util.cloneJson( ClientCardDetail.activityTemplateJson );
+
+        // SessionManager.sessionData.login_UserName;  // INFO.login_UserName
+
+        var newPayloadDate = new Date();
+        newTempActivity.date.capturedLoc = Util.formatDate( newPayloadDate.toUTCString() );
+        newTempActivity.date.capturedUTC = Util.formatDate( newPayloadDate.toString() );
+        newTempActivity.date.createdOnDeviceUTC = newTempActivity.date.capturedLoc;
+        
+        newTempActivity.activeUser = SessionManager.sessionData.login_UserName;
+        newTempActivity.id = SessionManager.sessionData.login_UserName + '_' + Util.formatDate( newPayloadDate.toUTCString(), 'yyyyMMdd_HHmmss' ) + newPayloadDate.getMilliseconds();;
+        
+
+        var clientJson = ClientDataManager.getClientById( clientId );
+        clientJson.activities.push( newTempActivity );
+        
+        // save with client Id
+        ClientDataManager.updateClient( clientId, clientJson );    
+    };
+
 
     me.renderActivityList = function( activityListBlockTag, clientJson )
     {
@@ -159,6 +221,7 @@ function ClientCardDetail( clientId, isRestore )
                 ],
                 "resultData": []
             };
+
             for( var id in clientJson.clientDetails )
             {
                 passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
@@ -219,7 +282,28 @@ function ClientCardDetail( clientId, isRestore )
         
     me.initialize();
 
-}
+};
+
+
+ClientCardDetail.activityTemplateJson = 
+{
+    "date": {
+        "capturedUTC": "",
+        "capturedLoc": "",
+    },
+    "activeUser": "",
+    "location": {},
+    "id": "",
+    "type": "",
+    "transactions": [
+        {
+            "dataValues": {
+            },
+            "type": "s_info"
+        }
+    ]
+};
+
 
 
 ClientCardDetail.cardFullScreen = `
@@ -263,7 +347,12 @@ ClientCardDetail.cardFullScreen = `
                                 <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
-            
+
+                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
+                            </li>
+
                         </ul>
                     </li>
 
@@ -281,6 +370,11 @@ ClientCardDetail.cardFullScreen = `
                             <li class="2ndary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
                             </li>
                             
                         </ul>
@@ -301,6 +395,35 @@ ClientCardDetail.cardFullScreen = `
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
+                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    
+                    <li class="primary" rel="tab_optionalDev" style="display: none;">
+                        <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                        <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+                        <ul class="2ndary" style="display: none; z-index: 1;">
+
+                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+
                         </ul>
                     </li>
 
@@ -316,6 +439,20 @@ ClientCardDetail.cardFullScreen = `
                 <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
                 <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+
+                <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
+                    <div>
+                        <span>Client Json:</span>
+                        <div> 
+                            <button class="btnAddActivityTemplate">Add Activity Template</button> 
+                            <button class="btnSave">Save</button> 
+                        </div>
+                        <div> <span class="spClientJsonResult"></span> </div>
+                        <div>
+                            <textarea class="taClientJson" cols=100 rows=30 style="width: 98%; font-size: smaller;"></textarea>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 

@@ -1132,7 +1132,7 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
    }
 };
 
-ConfigManager.applyDefault_clientDetailTab( configJson, activityDefJson );
+ConfigManager.applyDefault_clientDetailTab = function( configJson, activityDefJson )
 {
     if ( activityDefJson && activityDefJson.clientDetailTab )
     {

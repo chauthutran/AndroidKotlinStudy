@@ -90,7 +90,7 @@ ClientDataManager.insertClients = function( clients )
         var client = clients[ i ];
         list.unshift( client );         
         ClientDataManager.addClientIndex( client );
-        ActivityDataManager.addToActivityList_NIndexes( client );
+        ActivityDataManager.updateActivityListIdx( client );
     }
     // NOTE: Not automatically saved. Manually call 'save' after insert.
 };
@@ -132,6 +132,22 @@ ClientDataManager.removeClientsAll = function()
     {
         console.customLog( 'Error in ClientDataManager.removeAllClient, errMsg: ' + errMsg );
     } 
+};
+
+
+// --------------------------------------------
+
+ClientDataManager.updateClient = function( clientId, clientJson )
+{
+    var existingClientJson = ClientDataManager.getClientById( clientId );
+
+    // When updating clientJson, we do not want to lose reference by recreating new json.
+    // Simply clear out the existing json content and update with clientJson..
+    Util.overwriteJsonContent( existingClientJson, clientJson );
+    
+    ActivityDataManager.updateActivityListIdx( existingClientJson );
+
+    ClientDataManager.saveCurrent_ClientsStore();
 };
 
 
@@ -582,21 +598,6 @@ ClientDataManager.getVoucherDataList = function( client )
     return voucherDataList;
 };
 
-/*
-ClientDataManager.getVoucherNotUsed = function( voucherDataList )
-{
-    var voucherNotUsed = [];
-
-    voucherNotUsed = voucherDataList.filter( voucherData => 
-    {
-        var usedTrans = voucherData.transList.filter( trans => trans.type && trans.type.indexOf( 'v_rdx' ) === 0 );
-
-        return ( usedTrans.length === 0 );
-    });
-
-    return voucherDataList;
-};
-*/
 
 ClientDataManager.isVoucherNotUsed = function( voucherData )
 {

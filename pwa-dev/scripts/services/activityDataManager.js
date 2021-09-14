@@ -124,25 +124,16 @@ ActivityDataManager.removeTempClient_Activity = function( activityId )
     // MORE: All the new activities are created with temporary client, not existing client..
 
     try
-    {
-        // 1. Remove from activityList Index (We will add back, though)
-        Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
-        
-        // 2. remove from activityClientMap (temporary client, likely), 3. remove from client activities
-        if ( ActivityDataManager._activityToClient[ activityId ] )
+    {       
+        var client = ActivityDataManager._activityToClient[ activityId ];  // client = ClientDataManager.getClientByActivityId( activityId );
+
+        if ( client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
         {
-            var client = ActivityDataManager._activityToClient[ activityId ];
+            // If Temporary Client holds the activty, remove all the reference(idx) and remove client
+            ActivityDataManager.removeActivityById( activityId );
 
-            delete ActivityDataManager._activityToClient[ activityId ];
-
-            Util.RemoveFromArray( client.activities, "id", activityId );
-
-            if ( client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
-            {
-                // Delete 'client' that was created for the activity payload..
-                ClientDataManager.removeClient( client );
-            }
-        }    
+            ClientDataManager.removeClient( client );
+        }
     }
     catch ( errMsg )
     {
@@ -192,12 +183,12 @@ ActivityDataManager.regenActivityList_NIndexes = function()
     {        
         var client = clientList[i];
 
-        ActivityDataManager.addToActivityList_NIndexes( client );
+        ActivityDataManager.updateActivityListIdx( client );
     }
 };
 
 
-ActivityDataManager.addToActivityList_NIndexes = function( client )
+ActivityDataManager.updateActivityListIdx = function( client )
 {
     if ( client.activities ) 
     {
@@ -207,7 +198,10 @@ ActivityDataManager.addToActivityList_NIndexes = function( client )
 
             if ( activity.id ) 
             {
+                // If temp case and exists in other client (tempClient case),
+                // remove it?
                 ActivityDataManager.cleanUp_SyncUp_TempClient( activity.id );
+
                 ActivityDataManager.updateActivityIdx( activity.id, activity, client );
             }
         }
@@ -225,6 +219,8 @@ ActivityDataManager.cleanUp_SyncUp_TempClient = function( activityId )
 //ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client, option )
 ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
 {
+    // NOTE: Not deleting same 'activityId' activityJson from '_activityList'
+
     if ( option && option.addToTop ) 
     {
         ActivityDataManager._activityList.unshift( activity );
@@ -1009,11 +1005,11 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
 };
 
 
-ActivityDataManager.getLastTransDataValue = function( voucherData, transDVProp )
+ActivityDataManager.getLastTransDataValue = function( transList, transDVProp )
 {
     var value;
 
-    voucherData.transList.forEach( trans => 
+    transList.forEach( trans => 
     {
         var dvJson = trans.dataValues;
 
