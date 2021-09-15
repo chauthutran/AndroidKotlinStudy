@@ -146,7 +146,7 @@ function ActivityCardDetail( activityId, isRestore )
     
     me.removeActivityNCard = function( activityId, btnBackTag )
     {
-        ActivityDataManager.removeTempClient_Activity( activityId );
+        ActivityDataManager.removeActivity_NTempClient( activityId );
 
         //var client = ClientDataManager.getClientByActivityId( activityId );
         //ClientDataManager.removeClient( client );

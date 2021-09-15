@@ -171,20 +171,14 @@ function ClientCardDetail( clientId, isRestore )
                         actionJson.payloadJson = JSON.parse( taClientActivityNewTag.val() );
 
                         me.actionObj.handleClickActions( undefined, [ actionJson ] );
+
+                        //spClientActivityNewResultTag( '' );
                     }
                     catch( errMsg )
                     {
                         alert( 'FAILED to create client activity.' );
                     }
-
-                    // Refresh this tab content by clicking the tab.
-                    //sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
-
-                    // Update the message?
-                    //devTabTag.find( '.spClientJsonResult' ).text( 'Added Template Activity Json' );
                 });
-
-
             });    
         } 
 
@@ -229,9 +223,9 @@ function ClientCardDetail( clientId, isRestore )
 
         var newPayloadDate = new Date();
         var dateJson = capJson.date;
-        dateJson.capturedLoc = Util.formatDate( newPayloadDate.toUTCString() );
-        dateJson.capturedUTC = Util.formatDate( newPayloadDate.toString() );
-        dateJson.createdOnDeviceUTC = dateJson.capturedLoc;
+        dateJson.capturedLoc = Util.formatDate( newPayloadDate.toString() );
+        dateJson.capturedUTC = Util.formatDate( newPayloadDate.toUTCString() );
+        dateJson.createdOnDeviceUTC = dateJson.capturedUTC;
         
         capJson.activeUser = SessionManager.sessionData.login_UserName;
         capJson.id = SessionManager.sessionData.login_UserName + '_' + Util.formatDate( newPayloadDate.toUTCString(), 'yyyyMMdd_HHmmss' ) + newPayloadDate.getMilliseconds();;

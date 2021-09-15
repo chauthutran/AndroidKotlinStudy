@@ -115,29 +115,29 @@ ActivityDataManager.removeActivityById = function( activityId )
 };
 
 
-ActivityDataManager.removeTempClient_Activity = function( activityId )
+ActivityDataManager.removeActivity_NTempClient = function( activityId )
 {
-    // NOTE: Removing temp client (temp) & activity (before sync)
-    // In synced up new activity indexing, if same activityId exists, we like to remove the client & all the indexing related to that clinet/activity
-    // New activity and existing activity (before sync) has same activityId, but different. 
-    // And before sync one should be deleted as well as the temporary client that holds the activity
-    // MORE: All the new activities are created with temporary client, not existing client..
-
+    // NOTE: 2 Cases:
+    //  Case 1 - activity in existing client. remove activity.
+    //  Case 2 - activity in temp client - remove activity & client.
+    
     try
-    {       
-        var client = ActivityDataManager._activityToClient[ activityId ];  // client = ClientDataManager.getClientByActivityId( activityId );
+    {      
+        // Get client Obj from reference before deleting activity    
+        var client = ClientDataManager.getClientByActivityId( activityId );
 
+        // Remove the activity (ref, activity in list, activity in client)
+        ActivityDataManager.removeActivityById( activityId );
+
+        // Temporary Client case <-- delete client & activity in it.
         if ( client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
         {
-            // If Temporary Client holds the activty, remove all the reference(idx) and remove client
-            ActivityDataManager.removeActivityById( activityId );
-
             ClientDataManager.removeClient( client );
         }
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.removeTempClient_Activity, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.removeActivity_NTempClient, errMsg: ' + errMsg );
     }
 };
 
@@ -159,7 +159,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
 
         if ( activity.id ) 
         {
-            ActivityDataManager.cleanUp_SyncUp_TempClient( activity.id );
+            ActivityDataManager.removeExistingActivity_NTempClient( activity.id );
             ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
         }
         //else throw "ERROR, Downloaded activity does not contain 'id'.";
@@ -198,10 +198,7 @@ ActivityDataManager.updateActivityListIdx = function( client )
 
             if ( activity.id ) 
             {
-                // If temp case and exists in other client (tempClient case),
-                // remove it?
-                ActivityDataManager.cleanUp_SyncUp_TempClient( activity.id );
-
+                ActivityDataManager.removeExistingActivity_NTempClient( activity.id );
                 ActivityDataManager.updateActivityIdx( activity.id, activity, client );
             }
         }
@@ -209,18 +206,17 @@ ActivityDataManager.updateActivityListIdx = function( client )
 };
 
 
-ActivityDataManager.cleanUp_SyncUp_TempClient = function( activityId )
+ActivityDataManager.removeExistingActivity_NTempClient = function( activityId )
 {
     // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
     var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
-    if ( existingActivity ) ActivityDataManager.removeTempClient_Activity( activityId );
+    if ( existingActivity ) ActivityDataManager.removeActivity_NTempClient( activityId );
 };
 
-//ActivityDataManager.updateActivityList_NIndexes_wtTempClientDelete = function( activity, client, option )
+
 ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
 {
     // NOTE: Not deleting same 'activityId' activityJson from '_activityList'
-
     if ( option && option.addToTop ) 
     {
         ActivityDataManager._activityList.unshift( activity );

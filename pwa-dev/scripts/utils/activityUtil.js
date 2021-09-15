@@ -494,39 +494,39 @@ ActivityUtil.recursiveJSONfill = function( targetDef, dataTargetHierarchy, itm, 
 
 ActivityUtil.handlePayloadPreview = function( previewPrompt, formDivSecTag, btnTag, callBack )
 {
-	var dataPass = ActivityUtil.generateInputPreviewJson( formDivSecTag );
-
 	// formDefinition, 
     if ( previewPrompt === "true" )
     {
-        //var dataPass = FormUtil.generateInputTargetPayloadJson( formDivSecTag );	
+		try
+		{
+			var dataPass = ActivityUtil.generateInputPreviewJson( formDivSecTag );
 
-        // TODO: Do we have to hide the formDiv Tag?
-		formDivSecTag.hide();
-		btnTag.hide();
-
-		var titleTag = $( '<label term="payloadPreview_title">Please check before confirm</label>' )
-        MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, titleTag, function( confirmed ){
-
-			formDivSecTag.show();
-			btnTag.show();
-
-            if ( confirmed )
-            {
-                if ( callBack ) callBack( true, dataPass );
-            }
-            else
-            {
-                // TODO: THIS IS NO GOOD.. REMOVE THIS?
-				//if ( btnTag ) me.clearBtn_ClickedMark( btnTag );
-				if ( callBack ) callBack( false );				
-            }
-
-        });
+			// TODO: Do we have to hide the formDiv Tag?
+			formDivSecTag.hide();
+			btnTag.hide();
+	
+			var titleTag = $( '<label term="payloadPreview_title">Please check before confirm</label>' )
+			MsgManager.confirmPayloadPreview ( formDivSecTag.parent(), dataPass, titleTag, function( confirmed )
+			{
+				formDivSecTag.show();
+				btnTag.show();
+	
+				if ( confirmed ) {
+					if ( callBack ) callBack( true );
+				}
+				else {
+					if ( callBack ) callBack( false );				
+				}
+	
+			});	
+		}
+		catch ( errMsg )
+		{
+			throw "Failed during preview create: " + errMsg;
+		}
     }
-    else
-    {
-        if ( callBack ) callBack( true, dataPass );
+    else {
+        if ( callBack ) callBack( true );
     }
 };
 
