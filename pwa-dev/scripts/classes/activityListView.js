@@ -9,8 +9,9 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
     me.cwsRenderObj = cwsRenderObj;
     me.activityListObj = activityList;
     //me.blockList_UL_Tag = blockList_UL_Tag;
-    me.nav2Tag = cwsRenderObj.Nav2Tag;
     me.viewListNames = viewListNames;
+
+    me.nav2Tag = me.cwsRenderObj.Nav2Tag;
 
     me.mainList;
     me.viewsDefinitionList; // = ConfigManager.getConfigJson().definitionActivityListViews; // full complete view def list
@@ -82,7 +83,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
     me.render = function()
     {
         me.nav2Tag.show();
-
+        
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( me.nav2Tag );        
         me.setClassContainerTag( me.nav2Tag, me.containerTagTemplate );

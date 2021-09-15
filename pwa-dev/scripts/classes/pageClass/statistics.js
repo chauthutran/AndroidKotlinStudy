@@ -78,10 +78,9 @@ function Statistics( cwsRenderObj )
     {
         $( window ).scrollTop(0);
 
+        // BELOW SHOULD BE PLACED ON 'init'?
         me.statsContentPageTag = me.statisticsFormDiv.find( ".statsContentPage" );
-
         me.statsPeriodSelector = me.statisticsFormDiv.find( '.stats_select_period' ).addClass( 'disabled' );        
-
         me.inputCustomPeriod_StartTag = me.statisticsFormDiv.find( '.inputCustomPeriod_Start' );
         me.inputCustomPeriod_EndTag = me.statisticsFormDiv.find( '.inputCustomPeriod_End' );   
         me.customStartPeriodBtnTag = me.statisticsFormDiv.find( '.customStartPeriodBtn' );
@@ -91,32 +90,17 @@ function Statistics( cwsRenderObj )
     
 	me.setEvents_OnRender = function()
 	{	
-        me.statsPeriodSelector.off( 'change' ).change( function() {
-
-            // Wipe the conent blank - if there is period selection change event..
-            //me.statsContentPageTag.empty();  <-- we can not emtpy it... Need HTML tags..
-            var loadingImg_statisticTag = me.statisticsFormDiv.find( '.loadingImg_statistic' ).show();
-
-            setTimeout( function() {
-
-                loadingImg_statisticTag.hide();
-                //console.customLog( 'Period Selector Changed' );
-            
-                me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {        
-    
-                    renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
-
-                    TranslationManager.translatePage();
-                });
-    
-            }, 700 );
-
+        me.statsPeriodSelector.off( 'change' ).change( function() 
+        {
+            me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) 
+            {
+                me.renderWtLoading_byPeriod( startPeriod, endPeriod );
+            });    
         });
 
-
-        me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).off( 'click' ).click( function() {
-
-            renderAllStats( me._clientList_Clone, me.inputCustomPeriod_StartTag.val(), me.inputCustomPeriod_EndTag.val() );
+        me.statisticsFormDiv.find( '.btnCustomPeriodRun' ).off( 'click' ).click( function() 
+        {
+            me.renderWtLoading_byPeriod( me.inputCustomPeriod_StartTag.val(), me.inputCustomPeriod_EndTag.val() );
         });
 
 
@@ -137,6 +121,8 @@ function Statistics( cwsRenderObj )
 
     };
 
+
+    // =================================================
 
     me.applyPeriodSelection = function( statsPeriodSelector, callBack )
     {
@@ -196,6 +182,22 @@ function Statistics( cwsRenderObj )
                 callBack( opt_startPeriod, opt_endPeriod );
             }
         }
+    };
+
+
+    me.renderWtLoading_byPeriod = function( startPeriod, endPeriod )
+    {
+        var loadingImg_statisticTag = me.statisticsFormDiv.find( '.loadingImg_statistic' ).show();
+
+        setTimeout( function() 
+        {
+            loadingImg_statisticTag.hide();
+            
+            renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+
+            TranslationManager.translatePage();
+
+        }, 700 );
     };
 
 
@@ -346,7 +348,7 @@ function Statistics( cwsRenderObj )
     {
         if ( tag )
         {
-            if ( clearOptions === 'reset' ) tag.find( 'option[type="loaded"]' ).remove();
+            if ( clearOptions === 'reset' ) tag.find( 'option' ).remove();
 
             if ( optionsObj )
             {
@@ -465,7 +467,7 @@ StatisticsUtil.periodSelectorOptions = {
     "thisMonth": {
         "name": "this Month",
         "term": "stats_period_thisMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 2 ) );",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
         "enabled": "true",
         "note": "month range is from 2nd of month to 1st of next month?"
@@ -473,14 +475,14 @@ StatisticsUtil.periodSelectorOptions = {
     "lastMonth": {
         "name": "last Month",
         "term": "stats_period_lastMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 2 ) );",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 1 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
         "enabled": "true"
     },
     "thisYear": {
         "name": "this Year",
         "term": "stats_period_thisYear",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 2 ) );",
+        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 1 ) );",
         "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
         "enabled": "true"
     },
