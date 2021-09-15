@@ -790,6 +790,20 @@ ConfigManager.getClientRelDisplaySettings = function()
     return displaySettings;
 };
 
+ConfigManager.getActionQueueActivity = function()
+{
+    var actionJson;
+
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.action_queueActivity_Template )
+    {
+        actionJson = clientDef.action_queueActivity_Template;
+    }
+
+    return actionJson;
+};
+
 // ---------------------------------------------
 
 ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
@@ -1102,6 +1116,8 @@ ConfigManager.applyDefaults = function( configJson, defaults )
     ConfigManager.applyDefault_favList( configJson, defaults.favList );
 
     ConfigManager.applyDefault_clientDetailTab( configJson, defaults.activityDef );
+
+    ConfigManager.applyDefault_actionQueueActivity( configJson, defaults.action_queueActivity_Template );
 };
 
 
@@ -1140,6 +1156,16 @@ ConfigManager.applyDefault_clientDetailTab = function( configJson, activityDefJs
         var activityDef = ConfigManager.getSettingsActivityDef();
 
         if ( activityDef && !activityDef.clientDetailTab ) activityDef.clientDetailTab = Util.cloneJson( activityDefJson.clientDetailTab );
+    }
+};
+
+ConfigManager.applyDefault_actionQueueActivity = function( configJson, action_queueActivity_Template )
+{
+    if ( action_queueActivity_Template )
+    {
+        var clientDef = ConfigManager.getSettingsClientDef();
+
+        if ( clientDef && !clientDef.action_queueActivity_Template ) clientDef.action_queueActivity_Template = Util.cloneJson( action_queueActivity_Template );
     }
 };
 
@@ -1190,6 +1216,9 @@ ConfigManager.defaultActivityType = {
 ConfigManager.defaultJsonList = 
 {
     "voucherCodeReuse": false,
+
+    "action_queueActivity_Template": { "actionType": "queueActivity", "url": "/PWA.mongo_capture", "underClient": true },
+
     "sync": {
       "networkSync": "3600000",
       "syncUp": {
@@ -1197,6 +1226,7 @@ ConfigManager.defaultJsonList =
         "coolDownTime": "00:01:30",
         "schedulerTime": "01:00:00"
       },
+
       "syncDown": [
         {
           "userRoles": [],
@@ -1209,6 +1239,7 @@ ConfigManager.defaultJsonList =
         }
       ]
     },
+
     "favList": {
       "online": [
         {
@@ -1230,6 +1261,7 @@ ConfigManager.defaultJsonList =
         }
       ]
     },
+
     "activityDef": {
       "clientDetailTab": { 
         "formDef": [

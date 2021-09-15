@@ -55,6 +55,11 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 			payload = ActivityUtil.generateFormsJsonData_ByType( activityPayload.payload, actionDefJson, formDivSecTag );  
 		}
 	}
+	else if ( actionDefJson.payloadJson )
+	{
+		// New Dev mode in client details, adding activity payload json mamually
+		payload = actionDefJson.payloadJson;
+	}
 	else
 	{
 		// no structure base ones..
@@ -126,13 +131,16 @@ ActivityUtil.generateFormsJson = function( formDivSecTag )
 {
 	var formsJson = {};
 
-	formDivSecTag.find( '.dataValue' ).each( function()
-	{		
-		var inputFieldTag = $(this);
-		var nameId = inputFieldTag.attr("name");
-		
-		formsJson[ nameId ] = FormUtil.getTagVal( inputFieldTag );
-	});
+	if ( formDivSecTag )
+	{
+		formDivSecTag.find( '.dataValue' ).each( function()
+		{		
+			var inputFieldTag = $(this);
+			var nameId = inputFieldTag.attr("name");
+			
+			formsJson[ nameId ] = FormUtil.getTagVal( inputFieldTag );
+		});	
+	}
 
 	return formsJson;
 };

@@ -34,6 +34,8 @@ App.clientProfileBlockId = "clientProfileBlock";
 App.run = function()
 {
 
+  alert( 'test 1' );
+  
   App.appInstallBtnTag = $( '.appInstall' );
 
   // --------------------------

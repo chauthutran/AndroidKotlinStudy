@@ -141,11 +141,14 @@ ClientDataManager.updateClient = function( clientId, clientJson )
 {
     var existingClientJson = ClientDataManager.getClientById( clientId );
 
-    // When updating clientJson, we do not want to lose reference by recreating new json.
-    // Simply clear out the existing json content and update with clientJson..
-    Util.overwriteJsonContent( existingClientJson, clientJson );
-    
-    ActivityDataManager.updateActivityListIdx( existingClientJson );
+    if ( existingClientJson !== clientJson )
+    {
+        // When updating clientJson, we do not want to lose reference by recreating new json.
+        // Simply clear out the existing json content and update with clientJson..
+        Util.overwriteJsonContent( existingClientJson, clientJson );
+        
+        ActivityDataManager.updateActivityListIdx( existingClientJson );
+    }
 
     ClientDataManager.saveCurrent_ClientsStore();
 };

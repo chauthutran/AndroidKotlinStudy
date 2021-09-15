@@ -6,12 +6,16 @@ function ClientCardDetail( clientId, isRestore )
 	var me = this;
 
     me.clientId = clientId;
-    me.isRestore = isRestore
+    me.isRestore = isRestore;
+    me.actionObj;
 
 	// ===============================================
 	// === Initialize Related ========================
 
-    me.initialize = function() { };
+    me.initialize = function() 
+    { 
+        me.actionObj = new Action( SessionManager.cwsRenderObj, {} );
+    };
 
     // ----------------------------------
 
@@ -131,21 +135,8 @@ function ClientCardDetail( clientId, isRestore )
                 var taClientJsonTag = devTabTag.find( '.taClientJson' ).val( JSON.stringify( clientJson, undefined, 4 ) );
                 var spClientJsonResultTag = devTabTag.find( '.spClientJsonResult' ).text( '' );
 
-                devTabTag.find( '.btnAddActivityTemplate' ).off( 'click' ).click( function() 
+                devTabTag.find( '.btnSave' ).off( 'click' ).click( function() 
                 {
-                    // Add
-                    me.addTempActivity( clientId );
-
-                    // Refresh this tab content by clicking the tab.
-                    sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
-
-                    // Update the message?
-                    devTabTag.find( '.spClientJsonResult' ).text( 'Added Template Activity Json' );
-                });
-
-
-                devTabTag.find( '.btnSave' ).off( 'click' ).click( function() {
-
                     try
                     {
                         var clientJsonNew = JSON.parse( taClientJsonTag.val() );
@@ -164,6 +155,36 @@ function ClientCardDetail( clientId, isRestore )
                         alert( 'FAILED to update client data.' );
                     }
                 });
+
+
+                var newActivityTemplateJson = me.getTempActivityRequestJson( clientId );
+
+                var taClientActivityNewTag = devTabTag.find( '.taClientActivityNew' ).val( JSON.stringify( newActivityTemplateJson, undefined, 4 ) );
+                var spClientActivityNewResultTag = devTabTag.find( '.spClientActivityNewResult' ).text( '' );
+
+                devTabTag.find( '.btnClientActivityCreate' ).off( 'click' ).click( function() 
+                {
+                    try
+                    {
+                        var actionJson = ConfigManager.getActionQueueActivity();
+                        actionJson.clientId = clientId;
+                        actionJson.payloadJson = JSON.parse( taClientActivityNewTag.val() );
+
+                        me.actionObj.handleClickActions( undefined, [ actionJson ] );
+                    }
+                    catch( errMsg )
+                    {
+                        alert( 'FAILED to create client activity.' );
+                    }
+
+                    // Refresh this tab content by clicking the tab.
+                    //sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
+
+                    // Update the message?
+                    //devTabTag.find( '.spClientJsonResult' ).text( 'Added Template Activity Json' );
+                });
+
+
             });    
         } 
 
@@ -195,6 +216,27 @@ function ClientCardDetail( clientId, isRestore )
         
         // save with client Id
         ClientDataManager.updateClient( clientId, clientJson );    
+    };
+
+
+    me.getTempActivityRequestJson = function( clientId )
+    {
+        var newTempActivity = Util.cloneJson( ClientCardDetail.activityTemplateJson );
+        var capJson = newTempActivity.captureValues;
+        var schJson = newTempActivity.searchValues;
+
+        schJson._id = clientId;
+
+        var newPayloadDate = new Date();
+        var dateJson = capJson.date;
+        dateJson.capturedLoc = Util.formatDate( newPayloadDate.toUTCString() );
+        dateJson.capturedUTC = Util.formatDate( newPayloadDate.toString() );
+        dateJson.createdOnDeviceUTC = dateJson.capturedLoc;
+        
+        capJson.activeUser = SessionManager.sessionData.login_UserName;
+        capJson.id = SessionManager.sessionData.login_UserName + '_' + Util.formatDate( newPayloadDate.toUTCString(), 'yyyyMMdd_HHmmss' ) + newPayloadDate.getMilliseconds();;
+
+        return newTempActivity;
     };
 
 
@@ -287,21 +329,17 @@ function ClientCardDetail( clientId, isRestore )
 
 ClientCardDetail.activityTemplateJson = 
 {
-    "date": {
-        "capturedUTC": "",
-        "capturedLoc": "",
-    },
-    "activeUser": "",
-    "location": {},
-    "id": "",
-    "type": "",
-    "transactions": [
-        {
-            "dataValues": {
-            },
-            "type": "s_info"
-        }
-    ]
+    "searchValues": { "_id": "" },
+    "captureValues": {
+        "date": { "capturedUTC": "", "capturedLoc": "", },
+        "id": "",
+        "activeUser": "",
+        "location": {},
+        "type": "",
+        "transactions": [
+            { "type": "s_info", "dataValues": { }, "clientDetails": { } }
+        ]
+    }
 };
 
 
@@ -442,16 +480,19 @@ ClientCardDetail.cardFullScreen = `
 
                 <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
                     <div>
-                        <span>Client Json:</span>
-                        <div> 
-                            <button class="btnAddActivityTemplate">Add Activity Template</button> 
-                            <button class="btnSave">Save</button> 
-                        </div>
-                        <div> <span class="spClientJsonResult"></span> </div>
+                        <div> <span style="font-size: small;">Temp Client Edit: </span> <button class="btnSave">Save</button> <span class="spClientJsonResult"></span> </div>
                         <div>
-                            <textarea class="taClientJson" cols=100 rows=30 style="width: 98%; font-size: smaller;"></textarea>
+                            <textarea class="taClientJson" rows=15 style="width: 98%; font-size: small;"></textarea>
                         </div>
                     </div>
+
+                    <div style="margin-top: 12px;">
+                        <div> <span style="font-size: small;">Client Activity Request: </span> <button class="btnClientActivityCreate">Create</button> <span class="spClientActivityNewResult"></span> </div>
+                        <div>
+                            <textarea class="taClientActivityNew" rows=15 style="width: 98%; font-size: small;"></textarea>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>

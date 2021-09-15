@@ -114,13 +114,6 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		if ( me.blockDefJson ) me.blockType = me.blockDefJson.blockType;
 	}
 
-	//me.createSubClasses = function()
-	//{
-		//me.actionObj = new Action( me.cwsRenderObj, me );
-	//}
-
-	//me.setEvents_OnInit = function() { }
-
 	// =============================================
 
 

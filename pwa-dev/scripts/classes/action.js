@@ -24,9 +24,9 @@ function Action( cwsRenderObj, blockObj )
 		me.btnTargetParentTag = btnTargetParentTag;
 
 		// if ( formDivSecTag.attr( 'data-fields') != undefined )
-		if ( me.blockObj.blockFormObj && blockObj.blockFormObj.formJsonArr )
+		if ( me.blockObj.blockFormObj && me.blockObj.blockFormObj.formJsonArr )
 		{
-			me.handleSequenceIncrCommits( formDivSecTag, blockObj.blockFormObj.formJsonArr );
+			me.handleSequenceIncrCommits( formDivSecTag, me.blockObj.blockFormObj.formJsonArr );
 		}
 
 		var dataPass = {};
@@ -119,7 +119,7 @@ function Action( cwsRenderObj, blockObj )
 		// TODO: all the blockDivTag related should be done by 'block' class method
 		try
 		{
-			var blockId = blockDivTag.attr("blockId");
+			var blockId = ( blockDivTag ) ? blockDivTag.attr( "blockId" ) : undefined;
 
 			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
@@ -432,12 +432,11 @@ function Action( cwsRenderObj, blockObj )
 						if ( passed )
 						{
 							// NEW - Create Activity under existing Client json rather than new client.
-							if ( clickActionJson.underClient || clickActionJson.useCurrentClientId )
+							if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
 							{
 								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
-								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );
+								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	
 							}
-
 
 							// Generete payload - by template or other structure/format from 'forms'
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
@@ -761,17 +760,17 @@ function Action( cwsRenderObj, blockObj )
 	
 	me.btnClickedAlready = function( btnTag )
 	{
-		return btnTag.hasClass( me.className_btnClickInProcess );
+		return ( btnTag && btnTag.hasClass( me.className_btnClickInProcess ) );
 	};
 
 	me.btnClickMarked = function( btnTag )
 	{
-		btnTag.addClass( me.className_btnClickInProcess );
+		if ( btnTag ) btnTag.addClass( me.className_btnClickInProcess );
 	};
 
 	me.clearBtn_ClickedMark = function( btnTag )
 	{
-		btnTag.removeClass( me.className_btnClickInProcess );
+		if ( btnTag ) btnTag.removeClass( me.className_btnClickInProcess );
 	};
 
 	// ========================================================

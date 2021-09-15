@@ -255,17 +255,20 @@ Util.copyProperties = function( source, dest, option )
 // Copy Content Json without overwriting the reference of original Json
 Util.overwriteJsonContent = function( origJson, newJson )
 {
-	// Clear content
-	for ( var key in origJson )
+	if ( origJson !== newJson )
 	{
-		delete origJson[key];
-	}	
+		// Clear content
+		for ( var key in origJson )
+		{
+			delete origJson[key];
+		}	
 
-	// Add the newJson prop
-	for ( var key in newJson )
-	{
-		origJson[ key ] = newJson[ key ];
-	}	
+		// Add the newJson prop
+		for ( var key in newJson )
+		{
+			origJson[ key ] = newJson[ key ];
+		}	
+	}
 };
 
 // ----------------------------------------------------

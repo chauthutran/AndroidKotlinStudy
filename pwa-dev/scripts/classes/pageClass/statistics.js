@@ -452,38 +452,38 @@ StatisticsUtil.periodSelectorOptions = {
     "thisWeek": {
         "name": "this Week",
         "term": "stats_period_thisWeek",
-        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) );",
-        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) + 6 );",
+        "from": "moment().startOf('week').format('YYYY-MM-DD');",
+        "to": "moment().endOf('week').format('YYYY-MM-DD');",
         "enabled": "true",
         "note": "week starts on Saturday?"
     },
     "lastWeek": {
         "name": "last Week",
         "term": "stats_period_lastWeek",
-        "from": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 7 );",
-        "to": "Util.dateAddStr( 'DATE', -( new Date().getDay() ) - 1 );",
+        "from": "moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');",
+        "to": "moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');",
         "enabled": "true"
     },
     "thisMonth": {
         "name": "this Month",
         "term": "stats_period_thisMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() + 1, 1 ) );",
+        "from": "moment().startOf('month').format('YYYY-MM-DD');",
+        "to": "moment().endOf('month').format('YYYY-MM-DD');",
         "enabled": "true",
         "note": "month range is from 2nd of month to 1st of next month?"
     },
     "lastMonth": {
         "name": "last Month",
         "term": "stats_period_lastMonth",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth() - 1, 1 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), new Date().getMonth(), 1 ) );",
+        "from": "moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');",
+        "to": "moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');",
         "enabled": "true"
     },
     "thisYear": {
         "name": "this Year",
         "term": "stats_period_thisYear",
-        "from": "Util.dateStr( 'DATE', new Date( new Date().getFullYear(), 0, 1 ) );",
-        "to": "Util.dateStr( 'DATE', new Date( new Date().getFullYear() + 1, 0, 1 ) );",
+        "from": "moment().startOf('year').format('YYYY-MM-DD');",
+        "to": "moment().endOf('year').format('YYYY-MM-DD');",
         "enabled": "true"
     },
     "customRange": {

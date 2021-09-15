@@ -384,13 +384,16 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // ===============================================================
         // TRAN NEW 2: SHOULD ADD TO processing!!!
         // Form Information
-        activityJson.processing.form = { 
-            'blockId': blockId
-            ,'activityId': activityJson.id
-            ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
-            ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
-            ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
-        };
+        if ( blockId )
+        {
+            activityJson.processing.form = { 
+                'blockId': blockId
+                ,'activityId': activityJson.id
+                ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
+                ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
+                ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
+            };    
+        }
     }
 
     return activityJson;
@@ -399,7 +402,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
 ActivityDataManager.getEditModeActivityId = function( blockId )
 {
-    return $("[blockId='" + blockId + "']").find( "#editModeActivityId" ).val();
+    return ( blockId ) ? $("[blockId='" + blockId + "']").find( "#editModeActivityId" ).val() : undefined;
 };
 
 

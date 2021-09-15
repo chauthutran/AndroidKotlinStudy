@@ -366,23 +366,26 @@ FormUtil.generateLoadingTag = function( btnTag )
 {
 	var loadingTag;
 
-	if ( btnTag.is( 'div' ) )
+	if ( btnTag )
 	{
-		if ( ! btnTag.hasClass( 'button-label' ) && btnTag.find( '.button-label' ) )
+		if ( btnTag.is( 'div' ) )
 		{
-			loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-			btnTag.find( '.button-label' ).append( loadingTag );	
+			if ( ! btnTag.hasClass( 'button-label' ) && btnTag.find( '.button-label' ) )
+			{
+				loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+				btnTag.find( '.button-label' ).append( loadingTag );	
+			}
+			else
+			{
+				loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+				btnTag.append( loadingTag );	
+			}
 		}
-		else
+		else if ( btnTag.is( 'button' ) )
 		{
-			loadingTag = $( '<div class="loadingImg" style="float: right; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-			btnTag.append( loadingTag );	
+			loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
+			btnTag.after( loadingTag );
 		}
-	}
-	else if ( btnTag.is( 'button' ) )
-	{
-		loadingTag = $( '<div class="loadingImg" style="display: inline-block; margin-left: 8px;"><img src="images/loading_small.svg"></div>' );
-		btnTag.after( loadingTag );
 	}
 
 	return loadingTag;
