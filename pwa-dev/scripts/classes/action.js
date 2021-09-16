@@ -20,7 +20,7 @@ function Action( cwsRenderObj, blockObj )
 
 	// Same level as 'render' in other type of class
 	me.handleClickActions = function( btnTag, btnOnClickActions, btnTargetParentTag, blockDivTag, formDivSecTag, blockPassingData )
-	{		
+	{
 		me.btnTargetParentTag = btnTargetParentTag;
 
 		// if ( formDivSecTag.attr( 'data-fields') != undefined )
@@ -47,6 +47,17 @@ function Action( cwsRenderObj, blockObj )
 		{
 			MsgManager.msgAreaShow( 'Btn already clicked/in process', 'ERROR' );			
 		}
+	};
+
+
+	me.handleClickActionsAlt = function( btnOnClickActions, callBack )
+	{
+		var dataPass = {};
+
+		me.handleActionsInSync( undefined, undefined, undefined, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) 
+		{
+			if ( callBack ) callBack( resultStr );  /// Success  /  Failed
+		});	
 	};
 
 

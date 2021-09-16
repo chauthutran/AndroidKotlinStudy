@@ -170,9 +170,9 @@ function ClientCardDetail( clientId, isRestore )
                         actionJson.clientId = clientId;
                         actionJson.payloadJson = JSON.parse( taClientActivityNewTag.val() );
 
-                        me.actionObj.handleClickActions( undefined, [ actionJson ] );
-
-                        //spClientActivityNewResultTag( '' );
+                        me.actionObj.handleClickActionsAlt( [ actionJson ], function( resultStr ) {
+                            spClientActivityNewResultTag.text( 'Create Performed.  Result: ' + resultStr );
+                        });
                     }
                     catch( errMsg )
                     {
