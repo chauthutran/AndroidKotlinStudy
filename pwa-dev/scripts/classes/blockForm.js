@@ -14,70 +14,60 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	me.actionJson = actionJson;
+	me.payloadConfigSelection = ( actionJson ) ? actionJson.payloadConfig : undefined;
 
-	me.payloadConfigSelection;
-	me.formJsonArr;
-	me.formJsonConfig = {};
-	me.formDivSecTag;
+	me.formDef_fieldsArr;   // formDef (from config) which is array of fields
+	me.fieldDefsJson = {};  // fieldDef (from config) by Id..
+
 	me._childTargetActionDelay = 300; // TODO: TEST FOR LESS?  200?
 	me._groupNoneId = 'zzzGroupNone';
 
 	// =============================================
 	// === TEMPLATE METHODS ========================
 	
-	me.initialize = function() 
-	{ 
-		// if 'actionJson' were passed (by clickAction), and if payloadConfig exists in action, set it.
-		if ( me.actionJson ) me.payloadConfigSelection = me.actionJson.payloadConfig;
-	}
+	me.initialize = function() {};
 
+	// -------------------
 
-	// TODO: render() should do - clear previous tags, and create tags newly.
+	// NOTE: render() should do - clear previous tags, and create tags newly.
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
 	me.render = function( formDef, blockTag, passedData )
 	{
-		var formJsonArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );		
-		formJsonArr = ConfigManager.filterList_ByCountryFilter( formJsonArr );
+		// 1. Set formDefinition variables (from Config)
+		var formDef_fieldsArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );		
+		formDef_fieldsArr = ConfigManager.filterList_ByCountryFilter( formDef_fieldsArr );
+		me.formDef_fieldsArr = formDef_fieldsArr;
 
-		var formGrps = ConfigManager.getConfigJson().definitionFormGroups;
 
-		me.formJsonArr = formJsonArr;
-
-		if ( formJsonArr !== undefined )
+		if ( formDef_fieldsArr !== undefined )
 		{
 			var formDivSecTag = $( '<div class="formDivSec"></div>' );
 			var autoComplete = ConfigManager.staticData.autoComplete;
 			var formTag = $( '<form autocomplete="' + autoComplete + '"></form>' );
 
 			formDivSecTag.append( formTag );
-
 			blockTag.append( formDivSecTag );
 
-			me.formDivSecTag = formDivSecTag;
 
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
 			//   Organizing new data with group info seems to be creatinng a lot of issues..  Bad idea.. 
-			var fieldDataNew_wtGrp = me.setNewFormData_wtGroupInfo( formJsonArr, formGrps );
+			var fieldDataNew_wtGrp = me.setNewFormData_wtGroupInfo( formDef_fieldsArr, ConfigManager.getConfigJson().definitionFormGroups );
 			var groupsCreated = [];
 			
 			fieldDataNew_wtGrp.forEach( fieldData => 
 			{
 				var groupDivTag = me.getGroupTag( fieldData, groupsCreated, formTag );  // create group tag if not exists..
-				var formItemJson = fieldData.item;
+				var fieldDef = fieldData.item;
 
-				me.formJsonConfig[ formItemJson.id ] = formItemJson;  // Question: Why do this?
+				me.fieldDefsJson[ fieldDef.id ] = fieldDef;  // Question: Why do this?
 
-				var inputFieldTag = me.createInputFieldTag( formItemJson, me.payloadConfigSelection, formTag, passedData, formJsonArr, autoComplete );
+				var inputFieldTag = me.createInputFieldTag( fieldDef, me.payloadConfigSelection, formTag, passedData, formDef_fieldsArr, autoComplete );
 				if ( inputFieldTag ) groupDivTag.append( inputFieldTag );
 
 				// TODO: Why do we append it again?  Does not make sense...  Change the code..
 				formTag.append( groupDivTag );
 			});
 			
-
-			// Translate Page after the rendering..
-			TranslationManager.translatePage();
-
 			
 			Validation.disableValidation( function() 
 			{
@@ -100,6 +90,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				// View Only Mode
 				me.setForm_ViewOnlyMode( me.blockObj, blockTag );
 			});
+
+
+			// Translate Page after the rendering..
+			TranslationManager.translatePage();
 		}
 	};
 
@@ -187,57 +181,57 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// =============================================
 	// Render INPUT fields
 
-	me.createInputFieldTag = function( formItemJson, payloadConfigSelection, formDivSecTag, passedData, formJsonArr, autoComplete )
+	me.createInputFieldTag = function( fieldDef, payloadConfigSelection, formDivSecTag, passedData, formDef_fieldsArr, autoComplete )
 	{		
-		var controlType = formItemJson.controlType;
+		var controlType = fieldDef.controlType;
 		var divInputFieldTag;
 		
 		try
 		{
 			if ( controlType == "INT" || controlType == "SHORT_TEXT" )
 			{
-				divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
+				divInputFieldTag = me.createStandardInputFieldTag( fieldDef, autoComplete );
 			}
 			else if ( controlType == "DROPDOWN_LIST" )
 			{
-				divInputFieldTag = me.createDropDownEntryTag( formItemJson );
+				divInputFieldTag = me.createDropDownEntryTag( fieldDef );
 			}
 			else if ( controlType == "LABEL" )
 			{
-				divInputFieldTag = me.createLabelFieldTag( formItemJson );
+				divInputFieldTag = me.createLabelFieldTag( fieldDef );
 			}
 			else if( controlType == "IMAGE" )
 			{
-				divInputFieldTag = me.createImageTag( formItemJson );
+				divInputFieldTag = me.createImageTag( fieldDef );
 			}
 			else if( controlType == "YEAR" ) 
 			{
-				divInputFieldTag = me.createYearFieldTag( formItemJson, autoComplete );
+				divInputFieldTag = me.createYearFieldTag( fieldDef, autoComplete );
 			}
 			else if( controlType == "DATE" ) 
 			{
-				divInputFieldTag = me.createDateFieldTag( formItemJson );
+				divInputFieldTag = me.createDateFieldTag( fieldDef, formDivSecTag );
 			}
 			else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
 			{
-				divInputFieldTag = me.createRadioDialogFieldTag( formItemJson );
+				divInputFieldTag = me.createRadioDialogFieldTag( fieldDef );
 			}
 			else if( controlType == "RADIO" )
 			{
-				divInputFieldTag = me.createRadioFieldTag( formItemJson );
+				divInputFieldTag = me.createRadioFieldTag( fieldDef );
 			}
 			else if( controlType == "CHECKBOX" )
 			{
-				divInputFieldTag = me.createCheckboxFieldTag( formItemJson );
+				divInputFieldTag = me.createCheckboxFieldTag( fieldDef );
 			}
 			else if( controlType == "MULTI_CHECKBOX" ) // "CHECKBOX_DIALOG"
 			{
-				divInputFieldTag = me.createCheckBoxDialogFieldTag( formItemJson );
+				divInputFieldTag = me.createCheckBoxDialogFieldTag( fieldDef );
 			}
 			else
 			{
-				divInputFieldTag = me.createStandardInputFieldTag( formItemJson, autoComplete );
-				MsgManager.msgAreaShow( 'field "' + formItemJson.id + '" config controlType not proper.', 'ERROR' );	
+				divInputFieldTag = me.createStandardInputFieldTag( fieldDef, autoComplete );
+				MsgManager.msgAreaShow( 'field "' + fieldDef.id + '" config controlType not proper.', 'ERROR' );	
 			}
 	
 			if ( divInputFieldTag )
@@ -246,32 +240,32 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	
 				if ( divInputFieldTag !== undefined && entryTag.length > 0 ) // LABEL don't have "dataValue" clazz
 				{
-					if ( formItemJson.scanQR != undefined && formItemJson.scanQR )
+					if ( fieldDef.scanQR != undefined && fieldDef.scanQR )
 					{
 						me.createScanQR( divInputFieldTag, entryTag );
 					}
 		
 					// Set defaultValue if any
-					FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+					FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
 		
 					// For payloadConfigSelection, save the selection inside of the config for easier choosing..
-					me.setFormItemJson_DefaultValue_PayloadConfigSelection( formItemJson, payloadConfigSelection );
+					me.setfieldDef_DefaultValue_PayloadConfigSelection( fieldDef, payloadConfigSelection );
 		
 					// Setup events and visibility and rules
-					var formFull_IdList = me.getIdList_FormJson( formJsonArr );
+					var formFull_IdList = me.getIdList_FormJson( formDef_fieldsArr );
 					
 					// Set change event and rules on input tags
-					me.setEventsAndRules( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList );
+					me.setEventsAndRules( fieldDef, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList );
 		
 		
 					// Set InputFieldTag visibility based on: config setting - display 'hiddenVal/none', or hide/show case
-					me.setFieldTagVisibility( formItemJson, divInputFieldTag, passedData );  // This method might have to move outside of if case - if not related to 'entry.length'
+					me.setFieldTagVisibility( fieldDef, divInputFieldTag, passedData );  // This method might have to move outside of if case - if not related to 'entry.length'
 				}	
 			}
 		}
 		catch ( errMsg )
 		{
-			MsgManager.msgAreaShow( 'field "' + formItemJson.id + '" failed to create tag.', 'ERROR' );	
+			MsgManager.msgAreaShow( 'field "' + fieldDef.id + '" failed to create tag.', 'ERROR' );	
 		}
 
 		return divInputFieldTag;
@@ -291,12 +285,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	}
 
-	me.createStandardInputFieldTag = function( formItemJson, autoComplete )
+	me.createStandardInputFieldTag = function( fieldDef, autoComplete )
 	{
-		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
-		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid 
-				+ '" dataGroup="' + formItemJson.dataGroup + '" type="text" autocomplete="' + autoComplete 
+		var entryTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid 
+				+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" autocomplete="' + autoComplete 
 				+ '" class="dataValue displayValue" />' );
 		
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
@@ -304,33 +298,33 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return divInputFieldTag;
 	}
 
-	me.createInputFieldTag_Standard = function( formItemJson )
+	me.createInputFieldTag_Standard = function( fieldDef )
 	{
 		// Create tag
 		var divInputFieldTag = $( Templates.inputFieldStandard );
 
 		// Label
-		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', fieldDef.term ).text( fieldDef.defaultName );
 		
 		return divInputFieldTag;
 	};
 
-	me.createDropDownEntryTag = function( formItemJson )
+	me.createDropDownEntryTag = function( fieldDef )
 	{
 		// Create tag
-		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
 		// Remove standard css class "field__left", add "field__selector" class
 		divInputFieldTag.find(".field__left").removeClass( 'field__left' ).addClass( 'field__selector' );
 
 		// Get and resolve options
-		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 		Util.decodeURI_ItemList( optionList, "defaultName" );
 
 		// Populate options
-		var entryTag = $( '<select name="' + formItemJson.id + '" uid="' + formItemJson.uid + '"'
-					+ ' options="' + formItemJson.options + '"'
-					+ ' dataGroup="' + formItemJson.dataGroup + '"'
+		var entryTag = $( '<select name="' + fieldDef.id + '" uid="' + fieldDef.uid + '"'
+					+ ' options="' + fieldDef.options + '"'
+					+ ' dataGroup="' + fieldDef.dataGroup + '"'
 					+ ' class="dataValue displayValue" />' );
  		Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
@@ -344,61 +338,61 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return divInputFieldTag;
 	}
 
-	me.createRadioDialogFieldTag = function( formItemJson )
+	me.createRadioDialogFieldTag = function( fieldDef )
 	{
 		var divInputFieldTag = $( Templates.inputFieldStandard );
-		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', fieldDef.term ).text( fieldDef.defaultName );
 
         // Greg1-radio [review]
 		var uniqueId = Util.generateRandomId( 8 );
 		divInputFieldTag.attr( 'uniqueID', uniqueId );
 
 		
-		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '"type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="hidden" class="dataValue" />' );
+		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" uid="displayValue_' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '"type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="hidden" class="dataValue" />' );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
 		showEntryForm.on( 'click', function(){
-			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'radio' );
+			me.createSearchOptions_Dialog( divInputFieldTag, fieldDef, 'radio' );
 		} );
 
 		// Set DEFAULT display value if any
-		me.setDefaultValue_DialogFieldTag( divInputFieldTag, formItemJson );
+		me.setDefaultValue_DialogFieldTag( divInputFieldTag, fieldDef );
 
 		return divInputFieldTag;
 	}
 	
 
-	me.createCheckBoxDialogFieldTag = function( formItemJson )
+	me.createCheckBoxDialogFieldTag = function( fieldDef )
 	{
 		var divInputFieldTag = $( Templates.inputFieldStandard ); //Templates.inputFieldCheckbox
 
-		divInputFieldTag.find( 'label.displayName' ).attr( 'term', formItemJson.term ).text( formItemJson.defaultName );
+		divInputFieldTag.find( 'label.displayName' ).attr( 'term', fieldDef.term ).text( fieldDef.defaultName );
 
-		var showEntryForm = $( '<input name="displayValue_' + formItemJson.id + '" uid="displayValue_' + formItemJson.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + formItemJson.id + '" id="' + formItemJson.id + '" dataGroup="' + formItemJson.dataGroup + '" uid="' + formItemJson.uid + '" type="hidden" class="dataValue" />' );
+		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" uid="displayValue_' + fieldDef.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + fieldDef.id + '" id="' + fieldDef.id + '" dataGroup="' + fieldDef.dataGroup + '" uid="' + fieldDef.uid + '" type="hidden" class="dataValue" />' );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
 		showEntryForm.on( 'click', function(){
-			me.createSearchOptions_Dialog( divInputFieldTag, formItemJson, 'checkbox' );
+			me.createSearchOptions_Dialog( divInputFieldTag, fieldDef, 'checkbox' );
 		} );
 
 		// Set DEFAULT display value if any
-		me.setDefaultValue_DialogFieldTag( divInputFieldTag, formItemJson );
+		me.setDefaultValue_DialogFieldTag( divInputFieldTag, fieldDef );
 
 		return divInputFieldTag;
 	}
 
-	me.setDefaultValue_DialogFieldTag = function( divInputFieldTag, formItemJson )
+	me.setDefaultValue_DialogFieldTag = function( divInputFieldTag, fieldDef )
 	{
-		if( formItemJson.defaultValue != undefined )
+		if( fieldDef.defaultValue != undefined )
 		{
-			var defaultValueList = formItemJson.defaultValue.split(",");
-			var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+			var defaultValueList = fieldDef.defaultValue.split(",");
+			var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 			var displayTag = divInputFieldTag.find(".displayValue");
 			var displayValues = [];
 			
@@ -418,28 +412,28 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 	
 
-	me.createLabelFieldTag = function( formItemJson )
+	me.createLabelFieldTag = function( fieldDef )
 	{
 		var divInputFieldTag = $( Templates.labelField );
 
-		divInputFieldTag.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
+		divInputFieldTag.html( fieldDef.defaultName ).attr( 'term', fieldDef.term );
 
 		return divInputFieldTag;
 	}
 
 	// TRAN : NEED TO UNDERSTAND HOW THIS FIELD EXPECT TO WORK
-	me.createImageTag = function( formItemJson )
+	me.createImageTag = function( fieldDef )
 	{
 		// Create tag
-		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
 		// Add input to display image if the image has payload
-		var inputTag = $( '<input name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="hidden" class="dataValue" />' );
+		var inputTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="hidden" class="dataValue" />' );
 		divInputFieldTag.find( 'div.field__left' ).append( inputTag );
 
 		// IMAGE
 		var imgDivTag = $( '<div class="imgQRInput"></div>' );
-		var imgDisplay = $( '<img name="' + formItemJson.id + '" style="' + formItemJson.imageSettings + '" src="" class="displayValue">' );
+		var imgDisplay = $( '<img name="' + fieldDef.id + '" style="' + fieldDef.imageSettings + '" src="" class="displayValue">' );
 		imgDivTag.append( imgDisplay );
 
 		divInputFieldTag.find( 'div.field__left' ).append( imgDivTag );
@@ -448,14 +442,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// NEED TO SEE HOW IT WORKS
-	me.createYearFieldTag = function( formItemJson, autoComplete )
+	me.createYearFieldTag = function( fieldDef, autoComplete )
 	{
-		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
 		var yearFieldTag = $( Templates.inputFieldYear );
 		divInputFieldTag.find(".field__left").append( yearFieldTag );
 
-		var yearRange = formItemJson.yearRange;
+		var yearRange = fieldDef.yearRange;
 		if( yearRange == undefined )
 		{
 			yearRange = { 'from': -100, 'to': 0 };
@@ -471,20 +465,20 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 
 
-		divInputFieldTag.find( 'input.dataValue' ).attr( 'name', formItemJson.id );
-		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', formItemJson.uid );
+		divInputFieldTag.find( 'input.dataValue' ).attr( 'name', fieldDef.id );
+		divInputFieldTag.find( 'input.dataValue' ).attr( 'uid', fieldDef.uid );
 		
 		// Set DEFAULT for display field if any
-		FormUtil.setTagVal( divInputFieldTag.find( 'input.displayValue' ), formItemJson.defaultValue );
+		FormUtil.setTagVal( divInputFieldTag.find( 'input.displayValue' ), fieldDef.defaultValue );
 		divInputFieldTag.find( 'input.displayValue' ).attr( 'autocomplete', autoComplete );
 
-		Util2.populate_year( yearFieldTag[0], data, TranslationManager.translateText( formItemJson.defaultName, formItemJson.term ) );
+		Util2.populate_year( yearFieldTag[0], data, TranslationManager.translateText( fieldDef.defaultName, fieldDef.term ) );
 
 		return divInputFieldTag;
 	}
 
 	// TRAN TODO : will organize later
-	me.createDateFieldTag = function( formItemJson )
+	me.createDateFieldTag = function( fieldDef, formDivSecTag )
 	{
 		wrapperDad = $('<div class="dateContainer"></div>');
 		wrapperInput = $('<div class="dateWrapper"></div>');
@@ -493,7 +487,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		button.append(icoCalendar);
 
-		var formatDate = me.getFormControlRule( formItemJson, "placeholder" );
+		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
 		var dtmSeparator = Util.getDateSeparator( formatDate );
 		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => 
 		{
@@ -507,12 +501,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}, [] ).join( dtmSeparator );
 
 		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
-		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask + '" name="' + formItemJson.id + '" uid="' + formItemJson.uid + '" dataGroup="' + formItemJson.dataGroup + '" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask + '" name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
 
-		FormUtil.setTagVal( entryTag, formItemJson.defaultValue );
+		FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
 
 
 		//function that call datepicker
@@ -523,45 +517,45 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
 		tagOfClick.click( function(e) {
-			//FormUtil.mdDateTimePicker( e, entryTag, formatDate, formItemJson.yearRange );
-			FormUtil.mdDateTimePicker_New( e, me.formDivSecTag.find( '[name=' + formItemJson.id + ']' ), formatDate, formItemJson );
+			//FormUtil.mdDateTimePicker( e, entryTag, formatDate, fieldDef.yearRange );
+			FormUtil.mdDateTimePicker_New( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
 		});
 
-		var divInputFieldTag = me.createInputFieldTag_Standard( formItemJson );
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 		divInputFieldTag.find(".field__left").append( wrapperDad );
 
 		return divInputFieldTag;
 	};
 	
 
-	me.createRadioFieldTag = function( formItemJson )
+	me.createRadioFieldTag = function( fieldDef )
 	{
 		var divInputFieldTag = $( Templates.inputFieldRadio );
 
 		var checkLabel = divInputFieldTag.find( '.displayName' );
-		checkLabel.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
+		checkLabel.html( fieldDef.defaultName ).attr( 'term', fieldDef.term );
 
 		// Create a hidden input tag to save selected option value
 		var hiddenTarget = $( Templates.inputFieldHidden );
 		hiddenTarget.addClass( "dataValue" );
-		hiddenTarget.attr( "name", formItemJson.id );
-		hiddenTarget.attr( "dataGroup", formItemJson.dataGroup );
+		hiddenTarget.attr( "name", fieldDef.id );
+		hiddenTarget.attr( "dataGroup", fieldDef.dataGroup );
 		divInputFieldTag.append( hiddenTarget );
 
 		// Create Option list
-		me.createRadioItemTags( divInputFieldTag, formItemJson, false );
+		me.createRadioItemTags( divInputFieldTag, fieldDef, false );
 
 		return divInputFieldTag;
 	};
 
-	me.createCheckboxFieldTag = function( formItemJson )
+	me.createCheckboxFieldTag = function( fieldDef )
 	{
 		var divInputFieldTag = $( Templates.inputFieldCheckbox );
 		var displayNameTag = divInputFieldTag.find( '.displayName' );
-		displayNameTag.html( formItemJson.defaultName ).attr( 'term', formItemJson.term );
+		displayNameTag.html( fieldDef.defaultName ).attr( 'term', fieldDef.term );
 
 		// Create Option list
-		me.createCheckboxItemTags( divInputFieldTag, formItemJson, false )
+		me.createCheckboxItemTags( divInputFieldTag, fieldDef, false )
 
 		return divInputFieldTag;
 	};
@@ -570,11 +564,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// === Supportive for INPUT fields =============
 
 	// For RADIO items
-	me.createRadioItemTags = function( divInputFieldTag, formItemJson, onDialog )
+	me.createRadioItemTags = function( divInputFieldTag, fieldDef, onDialog )
 	{		
 		var optionDivListTag = divInputFieldTag.find(".radiobutton-col");
-		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
-		var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
+		var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
+		var defaultValueList = ( fieldDef.defaultValue == undefined ) ? [] : fieldDef.defaultValue.split(",");
 		var displayTag = divInputFieldTag.find(".displayValue");
 		var uniqueId; // Greg1-radio [review]
 
@@ -592,7 +586,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{
 			var optionDivTag = $( Templates.inputFieldRadio_Item );
 
-			//me.setAttributesForInputItem( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+			//me.setAttributesForInputItem( displayTag, optionDivTag, fieldDef.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 			me.setAttributesForInputItem( displayTag, optionDivTag, uniqueId, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 			optionDivListTag.append( optionDivTag );
@@ -645,10 +639,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// For checkbox items
-	me.createCheckboxItemTags = function( divInputFieldTag, formItemJson, onDialog )
+	me.createCheckboxItemTags = function( divInputFieldTag, fieldDef, onDialog )
 	{
 		var optionDivListTag = divInputFieldTag.find(".checkbox-col");
-		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 		
 		// For TRUE/FALSE case without options defination
 		if ( optionList === undefined )
@@ -659,12 +653,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			divInputFieldTag.attr( 'uniqueID', uniqueId );
 
 			var optionInputTag = optionDivTag.find( 'input' );
-			optionInputTag.attr( 'id', "opt_" + uniqueId + '_' + formItemJson.id );
-			optionInputTag.attr( 'name', formItemJson.id );
-			optionInputTag.attr( 'dataGroup', formItemJson.dataGroup );
+			optionInputTag.attr( 'id', "opt_" + uniqueId + '_' + fieldDef.id );
+			optionInputTag.attr( 'name', fieldDef.id );
+			optionInputTag.attr( 'dataGroup', fieldDef.dataGroup );
 
 
-			optionDivTag.find("label").attr("for", "opt_" + uniqueId + '_' + formItemJson.id );
+			optionDivTag.find("label").attr("for", "opt_" + uniqueId + '_' + fieldDef.id );
 
 			optionDivListTag.append( optionDivTag ); 
 
@@ -675,18 +669,18 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// Create a hidden input tag to save selected option value
 			var hiddenTarget = $( Templates.inputFieldHidden );
 			hiddenTarget.addClass( 'dataValue' );
-			hiddenTarget.attr( 'name', formItemJson.id );
-			hiddenTarget.attr( 'dataGroup', formItemJson.dataGroup );
+			hiddenTarget.attr( 'name', fieldDef.id );
+			hiddenTarget.attr( 'dataGroup', fieldDef.dataGroup );
 			divInputFieldTag.append( hiddenTarget );
 
 			
-			var defaultValueList = ( formItemJson.defaultValue == undefined ) ? [] : formItemJson.defaultValue.split(",");
+			var defaultValueList = ( fieldDef.defaultValue == undefined ) ? [] : fieldDef.defaultValue.split(",");
 			var displayTag = divInputFieldTag.find(".displayValue");
 
 			for ( var i = 0; i < optionList.length; i++ )
 			{
 				var optionDivTag = $( Templates.inputFieldCheckbox_Item );
-				me.setAttributesForInputItem ( displayTag, optionDivTag, formItemJson.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
+				me.setAttributesForInputItem ( displayTag, optionDivTag, fieldDef.id, optionList[ i ], defaultValueList.includes( optionList[ i ].value ) );
 
 				optionDivListTag.append( optionDivTag );
 
@@ -722,7 +716,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// For RADIO/CHECKBOX dialog
-	me.createSearchOptions_Dialog = function( divInputFieldTag, formItemJson, type )
+	me.createSearchOptions_Dialog = function( divInputFieldTag, fieldDef, type )
 	{
 		var dialogForm = $( Templates.searchOptions_Dialog );
 		dialogForm.find(".dialog__text").addClass("checkbox"); 
@@ -731,14 +725,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		dialogForm.attr( 'uniqueID', divInputFieldTag.attr( 'uniqueID' ) );
 
 		var optsContainer = dialogForm.find( '.optsContainer' );
-		dialogForm.find( '.title' ).html( TranslationManager.translateText( formItemJson.defaultName, formItemJson.term ) );
+		dialogForm.find( '.title' ).html( TranslationManager.translateText( fieldDef.defaultName, fieldDef.term ) );
 
 		if( type == 'radio')
 		{
 			optsContainer.addClass("radiobutton-col");
 
 			// Create Item list
-			me.createRadioItemTags( dialogForm, formItemJson, true );
+			me.createRadioItemTags( dialogForm, fieldDef, true );
 		}
 		else
 		{
@@ -746,7 +740,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			optsContainer.addClass("checkbox__wrapper");
 
 			// Create Item list
-			me.createCheckboxItemTags( dialogForm, formItemJson, true  );
+			me.createCheckboxItemTags( dialogForm, fieldDef, true  );
 
 			// Set list of items as vertical
 			optsContainer.find(".horizontal").removeClass("horizontal");
@@ -755,7 +749,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		// Set checked items if any
 		var selectedValues = divInputFieldTag.find("input.dataValue").val();
-		selectedValues = ( selectedValues != "" ) ? selectedValues : formItemJson.defaultValue;
+		selectedValues = ( selectedValues != "" ) ? selectedValues : fieldDef.defaultValue;
 		if( selectedValues != undefined )
 		{
 			var selected = selectedValues.split(",");
@@ -845,7 +839,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			dialogForm.attr( 'constantHeight', dialogForm.height() );
 			dialogForm.attr( 'constantWidth', dialogForm.width() );
 		 }, 250 ) */
-	}
+	};
+
 
 	me.setupEvents_DialogSelectedItemTags = function( targetDivInputFieldTag, dialogTag, optionInputTag, type )
 	{
@@ -875,21 +870,21 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
-	me.getIdList_FormJson = function( formJsonArr )
+	me.getIdList_FormJson = function( formDef_fieldsArr )
 	{
 		var idList = [];
 
-		for( var i = 0; i < formJsonArr.length; i++ )
+		for( var i = 0; i < formDef_fieldsArr.length; i++ )
 		{
-			var formItemJson = formJsonArr[i];
+			var fieldDef = formDef_fieldsArr[i];
 
-			if ( formItemJson.id ) idList.push( formItemJson.id );
+			if ( fieldDef.id ) idList.push( fieldDef.id );
 		}
 
 		return idList;
 	}
 
-	me.setNewFormData_wtGroupInfo = function( formJsonArr, frmGroupJson )
+	me.setNewFormData_wtGroupInfo = function( formDef_fieldsArr, frmGroupJson )
 	{
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
@@ -898,7 +893,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var arrNoGroup = [];
 
 		// 1. copy the array..
-		var newArr = Util.cloneJson( formJsonArr );
+		var newArr = Util.cloneJson( formDef_fieldsArr );
 
 		// 2. loop each form control and create formGroup...  even none ones...
 		newArr.forEach( frmCtrl => 
@@ -973,21 +968,21 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return ArrFound;
 	}
 
-	me.getFormItemJson_FromId = function( formJsonArr, id )
+	me.getfieldDef_FromId = function( formDef_fieldsArr, id )
 	{
-		return Util.getFromList( formJsonArr, id, "id" );
+		return Util.getFromList( formDef_fieldsArr, id, "id" );
 	}
 
 	// Filter the rules by 'countryFilter' if exists.
-	me.getFormControlRules = function ( formItemJson )
+	me.getFormControlRules = function ( fieldDef )
 	{
 		var rules = [];
 
 		try
 		{
-			if ( formItemJson.rules )
+			if ( fieldDef.rules )
 			{
-				formItemJson.rules.forEach( rule => 
+				fieldDef.rules.forEach( rule => 
 				{
 					if ( ConfigManager.checkByCountryFilter( rule.countryFilter ) )
 					{
@@ -1002,11 +997,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	me.getFormControlRule = function ( formItemJson, attr )
+	me.getFormControlRule = function ( fieldDef, attr )
 	{
 		var matchRuleValue = ''; // Should be undefined, but existing implementation was set to emtpy string.
 		
-		var rules = me.getFormControlRules( formItemJson );
+		var rules = me.getFormControlRules( fieldDef );
 
 		if ( attr )
 		{
@@ -1018,20 +1013,20 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 	
-	me.setFormItemJson_DefaultValue_PayloadConfigSelection = function( formItemJson, payloadConfigSelection )
+	me.setfieldDef_DefaultValue_PayloadConfigSelection = function( fieldDef, payloadConfigSelection )
 	{
-		if ( formItemJson 
-			&& formItemJson.defaultValue 
-			&& formItemJson.defaultValue.payloadConfigEval )
+		if ( fieldDef 
+			&& fieldDef.defaultValue 
+			&& fieldDef.defaultValue.payloadConfigEval )
 		{
-			formItemJson.defaultValue.payloadConfigSelection = payloadConfigSelection;
+			fieldDef.defaultValue.payloadConfigSelection = payloadConfigSelection;
 		}
 	};
 
 
 	me.getEvalFormulas = function()
 	{
-		var jData = me.formJsonArr;
+		var jData = me.formDef_fieldsArr;
 		var pConf = me.payloadConfigSelection; //FormUtil.block_payloadConfig;
 		var retArr = [];
 
@@ -1089,6 +1084,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		//console.log( retArr );
 		return retArr;
 	};
+
 
 	me.getFieldsFromFormula = function( evalFormula, parentName )
 	{
@@ -1174,7 +1170,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// 3. only update those controls affected by currentControl value change
 
 		
-		//var jData = me.formJsonArr;
+		//var jData = me.formDef_fieldsArr;
 		var evalFunctionsToProcess = me.getEvalFormulas();
 		var affectedControls;
 
@@ -1205,7 +1201,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	me.setEventsAndRules = function( formItemJson, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
+	me.setEventsAndRules = function( fieldDef, entryTag, divInputFieldTag, formDivSecTag, formFull_IdList )
 	{
 		if ( entryTag )
 		{
@@ -1217,12 +1213,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					try
 					{
 						var blockTag = formDivSecTag.closest( 'div.block' )
-						var btnClick = formItemJson.onEnterKeyBtnClick;
+						var btnClick = fieldDef.onEnterKeyBtnClick;
 
 						if ( btnClick && blockTag ) 
 						{
 							if ( btnClick === true ) blockTag.find( 'div.button' ).first().click();
-							else blockTag.find( '[btnId="' + formItemJson.onEnterKeyBtnClick + '"]' ).click();
+							else blockTag.find( '[btnId="' + fieldDef.onEnterKeyBtnClick + '"]' ).click();
 						}
 					}
 					catch( errMsg )
@@ -1244,38 +1240,38 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					setTimeout( function() {
 						me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
-						me.performEvalActions( thisTag, formItemJson, formDivSecTag, formFull_IdList );		
+						me.performEvalActions( thisTag, fieldDef, formDivSecTag, formFull_IdList );		
 					}, 100 );
 				}
 				else
 				{
 					me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
-					me.performEvalActions( thisTag, formItemJson, formDivSecTag, formFull_IdList );		
+					me.performEvalActions( thisTag, fieldDef, formDivSecTag, formFull_IdList );		
 				}
 			});
 		}
 
-		me.addRuleForField( divInputFieldTag, formItemJson );
-		me.addDataTargets( divInputFieldTag, formItemJson ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
-		me.addStylesForField( divInputFieldTag, formItemJson );
+		me.addRuleForField( divInputFieldTag, fieldDef );
+		me.addDataTargets( divInputFieldTag, fieldDef ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
+		me.addStylesForField( divInputFieldTag, fieldDef );
 	};
 
 	// ===================================================================
 
-	me.setFieldTagVisibility = function( formItemJson, divInputFieldTag, passedData )
+	me.setFieldTagVisibility = function( fieldDef, divInputFieldTag, passedData )
 	{		
 		// Set Tag Visibility
-		if ( formItemJson.display === "hiddenVal" ||  formItemJson.display === "none" )
+		if ( fieldDef.display === "hiddenVal" ||  fieldDef.display === "none" )
 		{
 			divInputFieldTag.hide();
-			divInputFieldTag.attr( 'display', formItemJson.display );
+			divInputFieldTag.attr( 'display', fieldDef.display );
 			//entryTag.attr( 'display', 'hiddenVal' );
 		}
 
 		if ( passedData )
 		{
-			if ( me.checkShowHideCases( passedData.hideCase, formItemJson.hideCase ) ) divInputFieldTag.hide();
-			if ( me.checkShowHideCases( passedData.showCase, formItemJson.showCase ) ) divInputFieldTag.show();
+			if ( me.checkShowHideCases( passedData.hideCase, fieldDef.hideCase ) ) divInputFieldTag.hide();
+			if ( me.checkShowHideCases( passedData.showCase, fieldDef.showCase ) ) divInputFieldTag.show();
 		}	
 	};
 
@@ -1337,15 +1333,15 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 	
 
-	me.addStylesForField = function( divInputTag, formItemJson )
+	me.addStylesForField = function( divInputTag, fieldDef )
 	{
 		var entryTag = divInputTag.find( ".displayValue" ); //select,input
 
-		if( formItemJson.styles !== undefined )
+		if( fieldDef.styles !== undefined )
 		{
-			for ( var i = 0; i < formItemJson.styles.length; i++ )
+			for ( var i = 0; i < fieldDef.styles.length; i++ )
 			{
-				var styleDef = formItemJson.styles[i];
+				var styleDef = fieldDef.styles[i];
 				entryTag.css( styleDef.name, styleDef.value );
 
 				/*entryTag.each( function( index, element ){
@@ -1356,13 +1352,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	}
 
-	me.addRuleForField = function( divInputTag, formItemJson )
+	me.addRuleForField = function( divInputTag, fieldDef )
 	{
 		var entryTag = divInputTag.find( "select,input" ); // < shouldn't his be .dataValue?
 		var regxRules = [];
 		var pickerDateRangeJson;
 
-		var rulesList = me.getFormControlRules( formItemJson );	
+		var rulesList = me.getFormControlRules( fieldDef );	
 
 		rulesList.forEach( ruleDef => 
 		{
@@ -1403,12 +1399,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				regxRules.push( regxRuleJson );
 			}
-			else if ( ruleJson.dateRangeRule === 'usePickerDateRange' && formItemJson.dateRange )
+			else if ( ruleJson.dateRangeRule === 'usePickerDateRange' && fieldDef.dateRange )
 			{
 				pickerDateRangeJson = {};
 
-				pickerDateRangeJson.dateFrom = formItemJson.dateRange.from;
-				pickerDateRangeJson.dateTo = formItemJson.dateRange.to;
+				pickerDateRangeJson.dateFrom = fieldDef.dateRange.from;
+				pickerDateRangeJson.dateTo = fieldDef.dateRange.to;
 
 				pickerDateRangeJson.msg = ruleJson.msg;
 				pickerDateRangeJson.term = ruleJson.term;
@@ -1428,7 +1424,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 	
-	me.addDataTargets = function( divInputTag, formItemJson )
+	me.addDataTargets = function( divInputTag, fieldDef )
 	{
 		var entryTag = divInputTag.find( '.dataValue' ); //  ( 'select,input' )
 		var pConf = me.payloadConfigSelection;
@@ -1437,25 +1433,25 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		// 1. prioritize existing payloadConfig (if match found)
 		if ( pConf )
 		{
-			if ( formItemJson.payload && formItemJson.payload[ pConf ] && formItemJson.payload[ pConf ].dataTargets  )
+			if ( fieldDef.payload && fieldDef.payload[ pConf ] && fieldDef.payload[ pConf ].dataTargets  )
 			{
-				dataTargets = formItemJson.payload[ pConf ].dataTargets;
+				dataTargets = fieldDef.payload[ pConf ].dataTargets;
 			}
 		}
 
 		if ( ! dataTargets )
 		{
 			// 2. then prioritize 'default' payloadConfig (if present)
-			if ( formItemJson.payload && formItemJson.payload.default && formItemJson.payload.default.dataTargets )
+			if ( fieldDef.payload && fieldDef.payload.default && fieldDef.payload.default.dataTargets )
 			{
-				dataTargets = formItemJson.payload.default.dataTargets;
+				dataTargets = fieldDef.payload.default.dataTargets;
 			}
 			else
 			{
 				// 3. finally prioritize root calculatedValue/defaultValue (if present)
-				if( formItemJson.dataTargets )
+				if( fieldDef.dataTargets )
 				{
-					dataTargets = formItemJson.dataTargets;
+					dataTargets = fieldDef.dataTargets;
 				}
 			}
 		}
@@ -1493,7 +1489,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	// ----------------------------------------------------
 	// ---- EVAL Actions Related --------------------------
 
-	me.performEvalActions = function( tag, formItemJson, formDivSecTag, formFull_IdList )
+	me.performEvalActions = function( tag, fieldDef, formDivSecTag, formFull_IdList )
 	{
 		try
 		{
@@ -1502,9 +1498,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// PREVIOUS ONES:
 			// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
 			//if ( tagVal !== undefined && tagVal !== '' )
-			//if ( me.isEntryTagVisible( tag ) && formItemJson.evalActions )
+			//if ( me.isEntryTagVisible( tag ) && fieldDef.evalActions )
 			// Some Greg code for 'null' issue <-- Need to handle this!!
-			if ( tag && tagVal !== undefined && tagVal !== '' && tagVal !== null && formItemJson && formItemJson.evalActions )
+			if ( tag && tagVal !== undefined && tagVal !== '' && tagVal !== null && fieldDef && fieldDef.evalActions )
 			{
 				// Proper INFO variable references
 				InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
@@ -1519,7 +1515,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
 
 				
-				formItemJson.evalActions.forEach( evalAction => 
+				fieldDef.evalActions.forEach( evalAction => 
 				{
 					var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
 	
@@ -1816,8 +1812,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		setTimeout( function() 
 		{
-			var formItemJson = me.getFormItemJson_FromId( me.formJsonArr, idStr );
-			me.performEvalActions( targetInputTag, formItemJson, formDivSecTag, formFull_IdList );
+			var fieldDef = me.getfieldDef_FromId( me.formDef_fieldsArr, idStr );
+			me.performEvalActions( targetInputTag, fieldDef, formDivSecTag, formFull_IdList );
 		}, me._childTargetActionDelay );
 	};
 
@@ -1889,37 +1885,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{
 			if ( jsonData )
 			{
-				// Need to confirm with Tran/Greg with getting right input control
-				var inputTags = formDivSecTag.find( 'input,select' ).filter('.dataValue');
-
-				// Go through each input tags and use 'uid' to match the attribute for data population
-				inputTags.each( function( i ) 
-				{
-					var inputTag = $( this );
-
-					try
-					{
-						var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
-		
-						if ( nameStr )
-						{
-							var data = jsonData[ nameStr ];
-
-							if ( data && Util.isTypeString( data ) )
-							{
-								FormUtil.setTagVal( inputTag, data, function() 
-								{
-									// Trigger change, so that visibility of dependencies can be set? <-- evalActions
-									inputTag.change();
-								});	
-							}
-						}	
-					}
-					catch ( errMsg )
-					{
-						console.customLog( 'Error in inputTag blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
-					}
-				});
+				// 1. Go through each inputs under formDivSec and populate the matching data from 'attributes'
+				me.populateFieldsData( formDivSecTag, attributes );
 			}
 		}
 		catch ( errMsg )
@@ -1929,26 +1896,148 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	};
 
 
-	me.populateDisplayValueIfAny = function( divInputFieldTag, formItemJson )
+	// Populates data (downloaded from web) to form
+	me.populateFormData_ArrayDataByUid = function( formDivSecTag, attributes )
+	{
+		try 
+		{
+			// 1. If double array, get content array (subArray)
+			attributes = me.getContentArr( attributes );
+
+			// 2. If array, like 'voucherCodes'/'users', get the 1st val..	
+			attributes.forEach( attrJson => 
+			{
+				if ( Util.isTypeArray( attrJson.value ) ) attrJson.value = attrJson.value[0];
+			});
+
+			// 3. go through each inputs under formDivSec and populate the matching data from 'attributes'
+			me.populateFieldsData( formDivSecTag, attributes );
+		}
+		catch ( errMsg )
+		{
+			console.customLog( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+		}
+	};
+
+
+	// ============ NEWLY CHANGED METHODS  ===========================
+
+	// Not used - OBSOLETE
+	me.getFieldTagByNameUid = function( formDivSecTag, idStr )
+	{
+		// NOTE: I don't think 'uid' is being used anymore...
+		return formDivSecTag.find( 'input.dataValue, select.dataValue' ).filter( '[uid="' + idStr + '"], [name="' + idStr + '"]' );
+	};
+
+
+	// Set both 'dataValue' & 'displayValue' on field? - basic type, checkbox/radio, modal popup
+	//	Triggers .change() to make sure the fields display value are changed?
+	me.populateFieldData = function( inputTags, val )
+	{
+		try 
+		{				
+			if ( val !== undefined )
+			{
+				// In case there are multiple inputTag 
+				inputTags.each( function( i ) 
+				{
+					var inputTag = $( this );
+
+					// 1. Set the dataValue
+					FormUtil.setTagVal( inputTag, val, function() 
+					{
+						// 2. Do follow up operation after successful set.
+						//var fieldDef = me.fieldDefsJson[ inputTag.attr("name") ];
+						var fieldId = inputTag.attr("name");
+						var fieldDef = me.fieldDefsJson[ fieldId ];  // fieldDef does not have value..
+						
+						// The value to be set(passed) is in 'dataValue' tag under 'fieldBlock'
+						me.populateFieldDisplayValue( inputTag.closest("div.fieldBlock"), fieldDef );
+
+						// NOTE: we perform the .change so that the values get triggered to set proper display value?
+						inputTag.change();
+					});	
+				});
+			}
+		}
+		catch ( errMsg )
+		{
+			console.log( 'Error blockForm.populateFieldData, ' + errMsg );
+		}
+	};
+
+
+	me.populateFieldsData = function( formDivSecTag, dataJson )
+	{
+
+		// Need to confirm with Tran/Greg with getting right input control
+		var inputTags = formDivSecTag.find( 'input.dataValue, select.dataValue' );
+
+		// Go through each input tags and use 'uid' to match the attribute for data population
+		inputTags.each( function( i ) 
+		{
+			var inputTag = $( this );
+
+			try
+			{
+				var uidStr = inputTag.attr( 'uid' );
+				var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
+
+				var uidMatchVal = ( uidStr && uidStr !== 'undefined' ) ? me.getValFromList_Obj( dataJson, uidStr ) : undefined;
+				var nameMatchVal = ( nameStr ) ? me.getValFromList_Obj( dataJson, nameStr ) : undefined;	
+
+				if ( uidMatchVal ) me.populateFieldData( inputTag, uidMatchVal );
+				if ( nameMatchVal ) me.populateFieldData( inputTag, nameMatchVal );
+			}
+			catch ( errMsg )
+			{
+				console.log( 'Error blockForm.populateFieldsData, ' + errMsg );
+			}
+		});
+	};
+	
+	me.getValFromList_Obj = function( dataJson, idStr )
+	{
+		var matchVal;
+
+		if ( Util.isTypeArray( dataJson ) )
+		{
+			// [ { id: 'firstName', value: 'james' }, ...]
+			var matchItem = Util.getFromList( dataJson, idStr, 'id' );
+			if ( matchItem ) matchVal = matchItem.value;
+		}
+		else if ( Util.isTypeObject( dataJson ) )
+		{
+			// { firstName: 'james', ...}
+			matchVal = dataJson[ idStr ];
+		}
+
+		return matchVal;
+	}
+
+	// ====================================================
+
+	me.populateFieldDisplayValue = function( divInputFieldTag, fieldDef )
 	{
 		var dataValue = divInputFieldTag.find(".dataValue").val();
-		if( dataValue != "" )
+
+		if( dataValue != "" && fieldDef )
 		{	
-			var controlType = formItemJson.controlType;
+			var controlType = fieldDef.controlType;
 
 			if( controlType == "YEAR" )
 			{
 				divInputFieldTag.find(".displayValue").val( dataValue );
 			}
-			else if( formItemJson.options == undefined && controlType == "CHECKBOX" && dataValue == "true" )
+			else if( fieldDef.options == undefined && controlType == "CHECKBOX" && dataValue == "true" )
 			{
 				// For TRUE/FALSE case without options defination
 				divInputFieldTag.find("input.displayValue").prop( "checked", true );
 			}
-			else if( formItemJson.options != undefined )
+			else if( fieldDef.options != undefined )
 			{
 				var dataValueList = dataValue.split(",");
-				var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+				var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 				var displayValues = [];
 
 				for ( var i = 0; i < dataValueList.length; i++ )
@@ -1969,67 +2058,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				{
 					divInputFieldTag.find(".displayValue").val( displayValues.join(",") );
 				}
-			}
-			
-		}
-
-	}
-
-	// Populates data (downloaded from web) to form
-	me.populateFormData_ArrayDataByUid = function( formDivSecTag, attributes )
-	{
-		try 
-		{
-			// If double array, get content array (subArray)
-			attributes = me.getContentArr( attributes );
-
-			// NOTE: Since uid are placed in right hidden 'dataValue' class, we do not need to worry about
-			// finding the right tag..
-			var inputTags = formDivSecTag.find( 'input.dataValue,select.dataValue' );
-
-			// Go through each input tags and use 'uid' to match the attribute for data population
-			inputTags.each( function( i ) 
-			{
-				var inputTag = $( this );
-
-				try 
-				{
-					var uidStr = inputTag.attr( 'uid' );					
-					if ( uidStr == undefined ||  uidStr === "undefined" ) {
-						uidStr = inputTag.attr( 'name' ); // If uid='undefined', use 'name' value for data matching id.
-					}
-
-					if ( uidStr )
-					{
-						var attrJson = Util.getFromList( attributes, uidStr, "id" );
-						
-						if ( attrJson )
-						{
-							var val = attrJson.value;
-
-							if ( Util.isTypeArray( val ) ) val = val[0];  // if array, like 'voucherCde'/'users', get the 1st val..
-
-							FormUtil.setTagVal( inputTag, val, function() 
-							{
-								var formItemJson = me.formJsonConfig[inputTag.attr("name")];
-								me.populateDisplayValueIfAny( inputTag.closest("div.fieldBlock"), formItemJson );
-	
-								inputTag.change();
-							});	
-							//FormUtil.setFormCtrlDataValue( inputTag, attrJson.value );
-						}
-					}					
-				}
-				catch ( errMsg )
-				{
-					console.customLog( 'Error in inputTag blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
-				}
-
-			});
-		}
-		catch ( errMsg )
-		{
-			console.customLog( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+			}	
 		}
 	};
 
@@ -2102,14 +2131,14 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	}
 
 	// TRAN TODO 
-	me.createListOptions_Items = function( targetTag, formItemJson, type, addClass, targetInputTag, targetDisplayText )
+	me.createListOptions_Items = function( targetTag, fieldDef, type, addClass, targetInputTag, targetDisplayText )
 	{
-		var optionList = FormUtil.getObjFromDefinition( formItemJson.options, ConfigManager.getConfigJson().definitionOptions );
+		var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 		var hiddenTarget = $( Templates.inputFieldHidden );
 
 		targetTag.append( hiddenTarget );
 
-		hiddenTarget.attr( 'id', formItemJson.id );
+		hiddenTarget.attr( 'id', fieldDef.id );
 		hiddenTarget.addClass( 'dataValue' );
 		
 		if ( optionList === undefined )
@@ -2121,12 +2150,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				var inputTag = checkboxTag.find( 'input' );
 				inputTag.addClass( 'displayValue' );
-				inputTag.attr( 'id', 'option_' + formItemJson.id );
+				inputTag.attr( 'id', 'option_' + fieldDef.id );
 				inputTag.attr( 'single', 'true' );
-				inputTag.attr( 'updates', formItemJson.id );
+				inputTag.attr( 'updates', fieldDef.id );
 
 
-				checkboxTag.find( 'label' ).attr( 'for', 'option_' + formItemJson.id );
+				checkboxTag.find( 'label' ).attr( 'for', 'option_' + fieldDef.id );
 				// checkboxTag.find( 'label' ).html( '' );
 
 				me.createListOption_UpdateEvent( checkboxTag.find( 'input' ) , targetInputTag, targetDisplayText );
@@ -2157,10 +2186,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				newOpt.first( 'div' ).attr( 'searchText', labelTerm );
 
-				newOpt.find( 'input' ).attr( 'name', 'search_opt_' + formItemJson.id );
+				newOpt.find( 'input' ).attr( 'name', 'search_opt_' + fieldDef.id );
 				newOpt.find( 'input' ).attr( 'id', 'option_' + optItem.value );
 				newOpt.find( 'input' ).attr( 'value', optItem.value );
-				newOpt.find( 'input' ).attr( 'targetName', formItemJson.id );
+				newOpt.find( 'input' ).attr( 'targetName', fieldDef.id );
 				newOpt.find( 'input' ).attr( 'single', 'false' );
 				
 				newOpt.find( 'input' ).addClass( 'displayValue' );

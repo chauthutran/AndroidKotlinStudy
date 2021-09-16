@@ -1058,11 +1058,11 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 	//			- 'payloadConfigEval'  <-- object
 	//			- 'eval' <-- simple value eval
 
+	// Wrapp it with Try / Catch?  <--- parent methods might handle this on their own way?
+
 	if ( val )
 	{
-		var valType = typeof( val );
-
-		if ( valType === "object" ) 
+		if ( Util.isTypeObject( val ) ) 
 		{
 			// Object type json val set to inputTag
 			var valJson = val;
@@ -1086,15 +1086,15 @@ FormUtil.setTagVal = function( tag, val, returnFunc )
 		{
 			// Non-Object types value set to inputTag
 
-
 			// TODO: NEED TO FIND OUT WHY THIS WAS DISABLED --> PROBABLY WAS IN CONFLICT WITH SOME PARTS 
 			// [REMOVED] CheckBox SET  // RESTORED FOR EDIT FEATURE 
-			if ( FormUtil.checkTag_CheckBox( tag ) ) {
+			if ( FormUtil.checkTag_CheckBox( tag ) ) 
+			{
 				tag.prop( 'checked', ( val === 'true' || val === true ) ); 
 				tag.val( val );
 			}
 			// Special eval key type field - '{ ~~~ }' - HAS SOME DATA MANIPULATION FUNCTIONS PATTERN..
-			else if ( valType === "string" && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
+			else if ( Util.isTypeString( val ) && ( val.indexOf( '{' ) && val.indexOf( '}' ) ) )
 			{
 				FormUtil.evalReservedField( tag.closest( 'form' ), tag, val );
 			}
