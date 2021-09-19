@@ -115,7 +115,7 @@ ActivityDataManager.removeActivityById = function( activityId )
 };
 
 
-ActivityDataManager.removeActivity_NTempClient = function( activityId )
+ActivityDataManager.removeActivity_NTempClient = function( activityId, bRemoveActivityTempClient )
 {
     // NOTE: 2 Cases:
     //  Case 1 - activity in existing client. remove activity.
@@ -130,7 +130,7 @@ ActivityDataManager.removeActivity_NTempClient = function( activityId )
         ActivityDataManager.removeActivityById( activityId );
 
         // Temporary Client case <-- delete client & activity in it.
-        if ( client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
+        if ( bRemoveActivityTempClient && client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
         {
             ClientDataManager.removeClient( client );
         }
@@ -144,11 +144,6 @@ ActivityDataManager.removeActivity_NTempClient = function( activityId )
 // ---------------------------------------
 // --- Insert Activity
 
-ActivityDataManager.insertActivityToClient = function( activity, client, option )
-{
-    ActivityDataManager.insertActivitiesToClient( [ activity ], client, option );
-};
-
 ActivityDataManager.insertActivitiesToClient = function( activities, client, option )
 {
     for ( var i = 0; i < activities.length; i++ )
@@ -159,7 +154,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
 
         if ( activity.id ) 
         {
-            ActivityDataManager.removeExistingActivity_NTempClient( activity.id );
+            ActivityDataManager.removeExistingActivity_NTempClient( activity.id, ( option && option.bRemoveActivityTempClient ) );
             ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
         }
         //else throw "ERROR, Downloaded activity does not contain 'id'.";
@@ -188,7 +183,7 @@ ActivityDataManager.regenActivityList_NIndexes = function()
 };
 
 
-ActivityDataManager.updateActivityListIdx = function( client )
+ActivityDataManager.updateActivityListIdx = function( client, bRemoveActivityTempClient )
 {
     if ( client.activities ) 
     {
@@ -198,7 +193,7 @@ ActivityDataManager.updateActivityListIdx = function( client )
 
             if ( activity.id ) 
             {
-                ActivityDataManager.removeExistingActivity_NTempClient( activity.id );
+                ActivityDataManager.removeExistingActivity_NTempClient( activity.id, bRemoveActivityTempClient );
                 ActivityDataManager.updateActivityIdx( activity.id, activity, client );
             }
         }
@@ -206,11 +201,11 @@ ActivityDataManager.updateActivityListIdx = function( client )
 };
 
 
-ActivityDataManager.removeExistingActivity_NTempClient = function( activityId )
+ActivityDataManager.removeExistingActivity_NTempClient = function( activityId, bRemoveActivityTempClient )
 {
     // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
     var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
-    if ( existingActivity ) ActivityDataManager.removeActivity_NTempClient( activityId );
+    if ( existingActivity ) ActivityDataManager.removeActivity_NTempClient( activityId, bRemoveActivityTempClient );
 };
 
 
@@ -322,7 +317,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
     // if new list to push to appClientActivities exists, add to the list.
     if ( newActivities.length > 0 ) 
     {
-        ActivityDataManager.insertActivitiesToClient( newActivities, appClient );
+        ActivityDataManager.insertActivitiesToClient( newActivities, appClient, { 'bRemoveActivityTempClient': true } );
     }
 
     // Return the number of added ones.
@@ -416,9 +411,9 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
             activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
         }
         else activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
-        
 
-        ActivityDataManager.insertActivityToClient( activityJson, activityPayloadClient, { 'addToTop': true } );
+
+        ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( function() {
             if ( callBack ) callBack( activityJson );    

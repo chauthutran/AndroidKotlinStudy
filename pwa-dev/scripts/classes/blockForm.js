@@ -1836,18 +1836,20 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// NOTE: 'resultData', 'dispalyData' normally happenes from DHIS2 search result
 			if ( passedData.resultData ) // if data is in 'resultData' & 'simpleData/displayData' format.
 			{
-				me.populateFormData_Common(formDivSecTag, passedData.resultData); // 'clientId', 'voucherId', 'walkIn--' data
+				me.populateFormData_Common( formDivSecTag, passedData.resultData ); // 'clientId', 'voucherId', 'walkIn--' data
 
 				// Simpler data population - from clientJson (that has 'clientDetails' in it)
-				if ( passedData.simpleData ) me.populateFormData_ObjByName( formDivSecTag, passedData.simpleData.clientDetails );
+				if ( passedData.simpleData ) me.populateFieldsData( formDivSecTag, passedData.simpleData.clientDetails );
+				//me.populateFormData_ObjByName( -- - - -);
 
 				// Dhis2 Search result styel data - 'displayData' - we are assuming this is single list... (could be 2 dimensional array)
-				if (passedData.displayData) me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.displayData);
+				if ( passedData.displayData ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData.displayData );
 			}
 			else if ( passedData.formsJson )  // NEW - easy way to pass value to form --> formsJson.clientId = '----';
 			{
 				// We can even to 'passData.formsJson = INFO.payload.formsJson;' in 'evalAction' to pass everything.
-				me.populateFormData_ObjByName( formDivSecTag, passedData.formsJson );
+				me.populateFieldsData( formDivSecTag, passedData.formsJson );
+				//me.populateFormData_ObjByName( formDivSecTag, passedData.formsJson );
 			}
 			else if ( Util.isTypeArray( passedData ) )
 			{
@@ -1886,7 +1888,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			if ( jsonData )
 			{
 				// 1. Go through each inputs under formDivSec and populate the matching data from 'attributes'
-				me.populateFieldsData( formDivSecTag, attributes );
+				me.populateFieldsData( formDivSecTag, jsonData );
 			}
 		}
 		catch ( errMsg )
@@ -1969,31 +1971,33 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.populateFieldsData = function( formDivSecTag, dataJson )
 	{
-
-		// Need to confirm with Tran/Greg with getting right input control
-		var inputTags = formDivSecTag.find( 'input.dataValue, select.dataValue' );
-
-		// Go through each input tags and use 'uid' to match the attribute for data population
-		inputTags.each( function( i ) 
+		if ( dataJson )
 		{
-			var inputTag = $( this );
+			// Need to confirm with Tran/Greg with getting right input control
+			var inputTags = formDivSecTag.find( 'input.dataValue, select.dataValue' );
 
-			try
+			// Go through each input tags and use 'uid' to match the attribute for data population
+			inputTags.each( function( i ) 
 			{
-				var uidStr = inputTag.attr( 'uid' );
-				var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
+				var inputTag = $( this );
 
-				var uidMatchVal = ( uidStr && uidStr !== 'undefined' ) ? me.getValFromList_Obj( dataJson, uidStr ) : undefined;
-				var nameMatchVal = ( nameStr ) ? me.getValFromList_Obj( dataJson, nameStr ) : undefined;	
+				try
+				{
+					var uidStr = inputTag.attr( 'uid' );
+					var nameStr = me.removeGroupDotName( inputTag.attr( 'name' ) );
 
-				if ( uidMatchVal ) me.populateFieldData( inputTag, uidMatchVal );
-				if ( nameMatchVal ) me.populateFieldData( inputTag, nameMatchVal );
-			}
-			catch ( errMsg )
-			{
-				console.log( 'Error blockForm.populateFieldsData, ' + errMsg );
-			}
-		});
+					var uidMatchVal = ( uidStr && uidStr !== 'undefined' ) ? me.getValFromList_Obj( dataJson, uidStr ) : undefined;
+					var nameMatchVal = ( nameStr ) ? me.getValFromList_Obj( dataJson, nameStr ) : undefined;	
+
+					if ( uidMatchVal ) me.populateFieldData( inputTag, uidMatchVal );
+					if ( nameMatchVal ) me.populateFieldData( inputTag, nameMatchVal );
+				}
+				catch ( errMsg )
+				{
+					console.log( 'Error blockForm.populateFieldsData, ' + errMsg );
+				}
+			});
+		}
 	};
 	
 	me.getValFromList_Obj = function( dataJson, idStr )

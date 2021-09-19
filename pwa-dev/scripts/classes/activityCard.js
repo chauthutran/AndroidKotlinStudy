@@ -179,9 +179,21 @@ function ActivityCard( activityId, options )
             var activitySettings = ConfigManager.getActivityTypeConfig( activity );
 
             // Choose to use generic display (Base/Settings) or activity display ones (if available).
-            var displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
-            var displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+            var displayBase = '';
+            var displaySettings = [];
                     
+            if ( me.options.displaySetting === 'clientActivity' )
+            {
+                displayBase = ConfigManager.getClientActivityCardDefDisplayBase();
+                displaySettings = ConfigManager.getClientActivityCardDefDisplaySettings();
+            }
+            else 
+            {
+                displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
+                displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
+            }
+
+
             InfoDataManager.setINFOdata( 'activity', activity );
             InfoDataManager.setINFOclientByActivity( activity );
     

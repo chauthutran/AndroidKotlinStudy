@@ -136,6 +136,10 @@ SessionManager.checkLoginCountryOuCode = function( ouCode )
 	return ( ouCode === loginCountryOuCode );
 };
 
+SessionManager.isTestLoginCountry = function()
+{
+	return ( SessionManager.getLoginCountryOuCode().indexOf( 'T_' ) === 0 );
+};
 
 // --------------------------------------------------
 

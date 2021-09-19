@@ -93,18 +93,20 @@ function ClientCardDetail( clientId, isRestore )
         });
         
 
-        // #2. payload Preview
+        // #2. Client Activities
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
-            activityTabBodyDivTag.html( '' ).append( '<div blockId="activityList" /><div blockId="addForm" />' );
-            var activityListBlockTag = activityTabBodyDivTag.find( '[blockId="activityList"]' );
+            activityTabBodyDivTag.html( '' );
+            //.append( '<div blockId="activityList" /><div blockId="addForm" />' );
+            //var activityListBlockTag = activityTabBodyDivTag.find( '[blockId="activityList"]' );
 
-            me.renderActivityList( activityListBlockTag, clientJson );
+            me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
+            //me.renderActivityList( activityListBlockTag, clientJson );
 
-            var favIconsObj = new FavIcons( 'clientActivityFav', activityListBlockTag, activityTabBodyDivTag, function( parentTag ) {
+            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, function( blockTag, blockContianerTag ) {
                 // clear the list?
-                parentTag.html( '' ); //activityListBlockTag.html( '' );
+                blockTag.html( '' ); //activityListBlockTag.html( '' );
             });
             favIconsObj.render();
     
@@ -119,76 +121,106 @@ function ClientCardDetail( clientId, isRestore )
             relationshipListObj.render();
         });
 
-
-        // #4. Dev (Optional)
-        if ( DevHelper.devMode )
+        
+        if ( DevHelper.devMode && SessionManager.isTestLoginCountry() )
         {
+            // #4. Payload TreeView
+            sheetFullTag.find( 'li.primary[rel="tab_previewPayload"]' ).attr( 'style', '' );
+            sheetFullTag.find( 'li.2ndary[rel="tab_previewPayload"]' ).removeClass( 'tabHide' );
+
+            sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
+            {
+                var jv_payload = new JSONViewer();
+                sheetFullTag.find( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
+                jv_payload.showJSON( ClientDataManager.getClientById( clientId ), -1, 1 );
+            });
+            
+
+            // #5. Dev (Optional)
             sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
             sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
 
             var devTabTag = sheetFullTag.find( '[tabButtonId=tab_optionalDev]' );    
             sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click( function() 
             {
-                var clientJson = ClientDataManager.getClientById( clientId );
-                
-                // get clientJson
-                var taClientJsonTag = devTabTag.find( '.taClientJson' ).val( JSON.stringify( clientJson, undefined, 4 ) );
-                var spClientJsonResultTag = devTabTag.find( '.spClientJsonResult' ).text( '' );
+                // A. Client Activity Request Add
+                me.setUpClientActivityRequestAdd( clientId, devTabTag, sheetFullTag );
 
-                devTabTag.find( '.btnSave' ).off( 'click' ).click( function() 
-                {
-                    try
-                    {
-                        var clientJsonNew = JSON.parse( taClientJsonTag.val() );
-
-                        // save with client Id
-                        ClientDataManager.updateClient( clientId, clientJsonNew );
-
-                        // Refresh this tab content by clicking the tab.
-                        sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
-
-                        // Update the message?
-                        devTabTag.find( '.spClientJsonResult' ).text( 'Updated Client Json' );
-                    }
-                    catch( errMsg )
-                    {
-                        alert( 'FAILED to update client data.' );
-                    }
-                });
-
-
-                var newActivityTemplateJson = me.getTempActivityRequestJson( clientId );
-
-                var taClientActivityNewTag = devTabTag.find( '.taClientActivityNew' ).val( JSON.stringify( newActivityTemplateJson, undefined, 4 ) );
-                var spClientActivityNewResultTag = devTabTag.find( '.spClientActivityNewResult' ).text( '' );
-
-                devTabTag.find( '.btnClientActivityCreate' ).off( 'click' ).click( function() 
-                {
-                    try
-                    {
-                        var actionJson = ConfigManager.getActionQueueActivity();
-                        actionJson.clientId = clientId;
-                        actionJson.payloadJson = JSON.parse( taClientActivityNewTag.val() );
-
-                        me.actionObj.handleClickActionsAlt( [ actionJson ], function( resultStr ) {
-                            spClientActivityNewResultTag.text( 'Create Performed.  Result: ' + resultStr );
-                        });
-                    }
-                    catch( errMsg )
-                    {
-                        alert( 'FAILED to create client activity.' );
-                    }
-                });
+                // B. TextArea for get clientJson
+                me.setUpClientJsonEdit( clientId, devTabTag, sheetFullTag );
             });    
         } 
-
 
         // -----------------------------------------
         // Default click 'Client'
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click();
-
     };    
 
+    // ------------------------------
+
+    me.setUpClientActivityRequestAdd = function( clientId, devTabTag, sheetFullTag )
+    {
+        var newActivityTemplateJson = me.getTempActivityRequestJson( clientId );
+
+        var taClientActivityNewTag = devTabTag.find( '.taClientActivityNew' ).val( JSON.stringify( newActivityTemplateJson, undefined, 4 ) );
+        var spClientActivityNewResultTag = devTabTag.find( '.spClientActivityNewResult' ).text( '' );
+    
+        devTabTag.find( '.btnClientActivityCreate' ).off( 'click' ).click( function() 
+        {
+            try
+            {
+                var mainActionJson = ConfigManager.getActionQueueActivity();
+                mainActionJson.clientId = clientId;
+                mainActionJson.payloadJson = JSON.parse( taClientActivityNewTag.val() );  // 'payloadJson' is a special json
+    
+                var actionsList = [ mainActionJson,
+                    { "actionType": "reloadClientTag" },
+                    { "actionType": "topNotifyMsg", "message": "New activity queue added." },
+                    { "actionType": "evalAction", "eval": " $( 'li.primary[rel=tab_optionalDev]').click();" } ];
+    
+                me.actionObj.handleClickActionsAlt( actionsList, taClientActivityNewTag.closest( 'div' ), devTabTag, function( resultStr ) {
+                    //spClientActivityNewResultTag.text( 'Create Performed.  Result: ' + resultStr );
+                });
+            }
+            catch( errMsg )
+            {
+                alert( 'FAILED to create client activity.' );
+            }
+        });
+    };
+
+
+    me.setUpClientJsonEdit = function( clientId, devTabTag, sheetFullTag )
+    {
+        var clientJson = ClientDataManager.getClientById( clientId );
+
+        var taClientJsonTag = devTabTag.find( '.taClientJson' ).val( JSON.stringify( clientJson, undefined, 4 ) );
+        var spClientJsonResultTag = devTabTag.find( '.spClientJsonResult' ).text( '' );
+    
+        devTabTag.find( '.btnSave' ).off( 'click' ).click( function() 
+        {
+            try
+            {
+                var clientJsonNew = JSON.parse( taClientJsonTag.val() );
+    
+                // save with client Id
+                ClientDataManager.updateClient_wtActivityReload( clientId, clientJsonNew );
+    
+                // Refresh this tab content by clicking the tab.
+                sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click();
+    
+                // Update the message?
+                // devTabTag.find( '.spClientJsonResult' ).text( 'Updated Client Json' );
+                MsgManager.msgAreaShow( 'Client Edit Done!!' );
+            }
+            catch( errMsg )
+            {
+                alert( 'FAILED to update client data.' );
+            }
+        });
+    };
+
+    // ------------------------------
 
     me.addTempActivity = function( clientId )
     {
@@ -234,13 +266,15 @@ function ClientCardDetail( clientId, isRestore )
     };
 
 
+    /*
     me.renderActivityList = function( activityListBlockTag, clientJson )
     {
         me.populateActivityCardList( clientJson.activities, activityListBlockTag );
         activityListBlockTag.show();
     }
-
+    */
     
+    /*
     me.setFullPreviewTabContent_Events = function( sheetFullTag, clientJson )
     {
         var activityTabTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
@@ -269,6 +303,8 @@ function ClientCardDetail( clientId, isRestore )
 
         });
     }   
+    */
+
 
     // =============================================
 
@@ -309,7 +345,7 @@ function ClientCardDetail( clientId, isRestore )
 
         listTableTbodyTag.append( divActivityCardTag );
 
-        return new ActivityCard( activityJson.id );
+        return new ActivityCard( activityJson.id, { 'displaySetting': 'clientActivity' } );
     };
 
 
@@ -380,9 +416,14 @@ ClientCardDetail.cardFullScreen = `
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+                                <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+                            </li>
+                            
+                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
 
                         </ul>
@@ -396,7 +437,7 @@ ClientCardDetail.cardFullScreen = `
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_relationships">
@@ -404,9 +445,14 @@ ClientCardDetail.cardFullScreen = `
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+                                <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+                            </li>
+                            
+                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
                             
                         </ul>
@@ -419,7 +465,7 @@ ClientCardDetail.cardFullScreen = `
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
@@ -427,23 +473,27 @@ ClientCardDetail.cardFullScreen = `
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_optionalDev">
+                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+                                <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+                            </li>
+
+                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Def</span>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
 
                         </ul>
                     </li>
-
                     
-                    <li class="primary" rel="tab_optionalDev" style="display: none;">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-                        <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+                    <li class="primary" rel="tab_previewPayload" style="display: none;">
+                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+                        <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                                <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
+                                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
@@ -454,6 +504,39 @@ ClientCardDetail.cardFullScreen = `
                             <li class="2ndary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+
+                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                                <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+                            </li>
+
+                        </ul>
+                    </li>
+                    
+                    <li class="primary" rel="tab_optionalDev" style="display: none;">
+                        <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+                        <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+                        <ul class="2ndary" style="display: none; z-index: 1;">
+
+                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+                            </li>
+
+                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+                            </li>
+
+                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+                                <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                             </li>
 
                         </ul>
@@ -468,22 +551,27 @@ ClientCardDetail.cardFullScreen = `
                 <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
                     blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
 
-                <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
+                <div class="tab_fs__container-content tabCardList" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
                 <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
 
+                <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
+                    <div class="payloadData"></div>
+                </div>              
+
                 <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
-                    <div>
-                        <div> <span style="font-size: small;">Temp Client Edit: </span> <button class="btnSave">Save</button> <span class="spClientJsonResult"></span> </div>
+                    
+                    <div style="margin-top: 5px;">
+                        <div> <span style="font-size: small; font-weight: bold; color: #555;">New Activity Json Request: </span> <button class="btnClientActivityCreate">Create</button> <span class="spClientActivityNewResult"></span> </div>
                         <div>
-                            <textarea class="taClientJson" rows=15 style="width: 98%; font-size: small;"></textarea>
+                            <textarea class="taClientActivityNew" rows=15 style="width: 98%; font-size: small;"></textarea>
                         </div>
                     </div>
 
-                    <div style="margin-top: 12px;">
-                        <div> <span style="font-size: small;">Client Activity Request: </span> <button class="btnClientActivityCreate">Create</button> <span class="spClientActivityNewResult"></span> </div>
+                    <div style="margin-top: 8px;">
+                        <div> <span style="font-size: small; font-weight: bold; color: #555;">Client Edit [Local Only]: </span> <button class="btnSave">Save</button> <span class="spClientJsonResult"></span> </div>
                         <div>
-                            <textarea class="taClientActivityNew" rows=15 style="width: 98%; font-size: small;"></textarea>
+                            <textarea class="taClientJson" rows=20 style="width: 98%; font-size: small;"></textarea>
                         </div>
                     </div>
 

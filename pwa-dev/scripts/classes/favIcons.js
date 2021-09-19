@@ -1,25 +1,24 @@
 // -------------------------------------------
 // -- FavIconList Class/Methods
-function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeItemClickActionCall, afterItemClickActionCall )
+function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemClickActionCall, afterItemClickActionCall )
 {
     var me = this;
 
     // NEW 1: Take in param as paranetTag, favName
     me.favType = favType;
-    me.parentTag = parentTag;
-    me.favItemTargetBlockContainerTag = favItemTargetBlockContainerTag;
+    me.targetBlockTag = targetBlockTag;
+    me.targetBlockContainerTag = targetBlockContainerTag;
+
     me.beforeItemClickActionCall = beforeItemClickActionCall;
     me.afterItemClickActionCall = afterItemClickActionCall;
-    // ---------------
 
+    // ---------------
     me.favIconsTag;
     me.favMainButtonTag;
     me.favReRenderTag;
 
     // --------------
-
     me.favListByType;
-
 
     // ========================================
 
@@ -31,7 +30,7 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
     {
         // 1. Create FavIcons Tag 
         me.favIconsTag = $( FavIcons.favButtonContainer );
-        me.parentTag.append( me.favIconsTag );
+        me.targetBlockTag.append( me.favIconsTag );
         me.favReRenderTag = me.favIconsTag.find( 'div.favReRender' );
         me.favMainButtonTag = me.favIconsTag.find( 'div.fab' );
         
@@ -71,7 +70,6 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
         return me.favMainButtonTag.hasClass( 'w_button' );
     };
 
-
     me.closeFavMainButton = function()
     {
         if ( me.isFavMainButtonOpen() ) me.favMainButtonTag.click();
@@ -109,20 +107,16 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
             me.clearExistingFavItems( me.favIconsTag );
             me.closeFavMainButton();
 
+
             // 2. Get favListArr from online status
             var favListArr;
-            if ( ConnManagerNew.isAppMode_Online() )
-            {
-                favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
-            }
-            else
-            {
-                favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
-            } 
-            
+            if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
+            else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
+
 
             // 3. favItems populate
-            me.populateFavItems( favListArr, me.favIconsTag );
+            me.populateFavItems( favListArr, me.favIconsTag, me.targetBlockTag, me.targetBlockContainerTag );
+
 
             // 4. Translate the favItem terms
             TranslationManager.translatePage();
@@ -290,7 +284,7 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
     
     // -------------------------------------------
     // ---- POPULATE FAV ITEMS RELATED
-    me.populateFavItems = function( favItems, favIconsTag )
+    me.populateFavItems = function( favItems, favIconsTag, targetBlockTag, targetBlockContainerTag )
     {
         if ( favItems )
         {
@@ -303,7 +297,7 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
                 favItemTag.insertBefore( favButtonSectionTag );
                 
                 // 2. Click event
-                me.setFavItemClickEvent( favItemTag, favItem, me.favItemTargetBlockContainerTag );
+                me.setFavItemClickEvent( favItemTag, favItem, targetBlockTag, targetBlockContainerTag );
 
                 // 3. populate the favItem content
                 me.populateFavItemDetail( favItemTag, favItem );
@@ -312,25 +306,30 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
     };
 
 
-    me.setFavItemClickEvent = function( favItemTag, favItem, targetBlockContainerTag )
+    me.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag )
     {
         favItemTag.click( function() 
         {
+            if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( targetBlockTag, targetBlockContainerTag );
+
+            // Also, close this FavMainButton just in case..
+            me.closeFavMainButton();
             //if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
+
             if ( favItem.target )
             {
-                // What if we pass 'me' instead?  That would make all the class variables available..
-                if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( me.parentTag );
-
                 //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
                 SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
                     ,targetBlockContainerTag, favItem );
-
-                // Also, close this FavMainButton just in case..
-                me.closeFavMainButton();
-
-                if ( me.afterItemClickActionCall )  me.afterItemClickActionCall();                
             }
+            else if ( favItem.onClick && Util.isTypeArray( favItem.onClick ) )
+            {
+                var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+
+                actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
+            }
+
+            if ( me.afterItemClickActionCall )  me.afterItemClickActionCall( targetBlockTag, targetBlockContainerTag );                
         });
     };
 
@@ -343,8 +342,12 @@ function FavIcons( favType, parentTag, favItemTargetBlockContainerTag, beforeIte
 
         contentTag.attr( 'term', favItem.term );        
         contentTag.attr( 'displayName', favItem.name );
-        contentTag.attr( 'blockId', favItem.target.blockId );
-        contentTag.attr( 'actionType', favItem.target.actionType );
+        if ( favItem.target )
+        {
+            contentTag.attr( 'blockId', favItem.target.blockId );
+            contentTag.attr( 'actionType', favItem.target.actionType );    
+        }
+
         contentTag.html( favItem.name );
 
         // svg icon setup - if available (by local file path reference)

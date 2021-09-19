@@ -74,12 +74,9 @@ ClientDataManager.getClientByActivity = function( activity )
 
 // ----- Insert Client ----------------
 
-ClientDataManager.insertClient = function( client )
-{
-    ClientDataManager.insertClients( [ client ] );
-};
 
-ClientDataManager.insertClients = function( clients )
+// Sync Related...
+ClientDataManager.insertClients = function( clients, bRemoveActivityTempClient )
 {
     // Add to the beginning of the list..
     var list = ClientDataManager.getClientList();
@@ -90,7 +87,7 @@ ClientDataManager.insertClients = function( clients )
         var client = clients[ i ];
         list.unshift( client );         
         ClientDataManager.addClientIndex( client );
-        ActivityDataManager.updateActivityListIdx( client );
+        ActivityDataManager.updateActivityListIdx( client, bRemoveActivityTempClient );
     }
     // NOTE: Not automatically saved. Manually call 'save' after insert.
 };
@@ -137,20 +134,40 @@ ClientDataManager.removeClientsAll = function()
 
 // --------------------------------------------
 
-ClientDataManager.updateClient = function( clientId, clientJson )
+ClientDataManager.updateClient_wtActivityReload = function( clientId, updateClientJson )
 {
     var existingClientJson = ClientDataManager.getClientById( clientId );
 
-    if ( existingClientJson !== clientJson )
-    {
-        // When updating clientJson, we do not want to lose reference by recreating new json.
-        // Simply clear out the existing json content and update with clientJson..
-        Util.overwriteJsonContent( existingClientJson, clientJson );
-        
-        ActivityDataManager.updateActivityListIdx( existingClientJson );
-    }
+    if ( existingClientJson !== updateClientJson )
+    {        
+        // 0. Make sure the updateClientJson._id has not been altered.. Since this is updating existing client json only.
+        updateClientJson._id = clientId;
 
-    ClientDataManager.saveCurrent_ClientsStore();
+        // 1. Delete all activities on existingClientJson
+        if ( existingClientJson.activities ) 
+        {
+            for ( var i = existingClientJson.activities.length - 1; i >= 0; i-- )
+            {
+                var activity = existingClientJson.activities[ i ];
+                if ( activity.id ) ActivityDataManager.removeExistingActivity_NTempClient( activity.id );
+            }
+        }
+
+        // 2. Add activities to existingClientJson + copy other parts as well
+        Util.overwriteJsonContent( existingClientJson, updateClientJson );
+
+
+        // 3. Index the 
+        if ( existingClientJson.activities )
+        {
+            existingClientJson.activities.forEach( activity => 
+            {
+                if ( activity.id ) ActivityDataManager.updateActivityIdx( activity.id, activity, existingClientJson );
+            });
+        }
+        
+        ClientDataManager.saveCurrent_ClientsStore();
+    }
 };
 
 
@@ -309,7 +326,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
             // NOTE: new client insert -> new activity insert -> during this, we check if other client (temp client case) has same activityId.
             //   and remove the client (temp) & activity (before sync) in it.
-            ClientDataManager.insertClients( newClients );
+            ClientDataManager.insertClients( newClients, true );
         }        
 
         // Need to create ClientDataManager..
@@ -353,7 +370,7 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
     acitivityPayloadClient.date = ClientDataManager.dateConvertFromActivityDate( activity );
 
-    ClientDataManager.insertClient( acitivityPayloadClient );
+    ClientDataManager.insertClients( [ acitivityPayloadClient ] );
 
     return acitivityPayloadClient;
 };

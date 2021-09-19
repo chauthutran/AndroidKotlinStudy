@@ -6,8 +6,8 @@ function Action( cwsRenderObj, blockObj )
 
     me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
-	
-	me.btnTargetParentTag;  // button rendering div's parent tag..  <-- if tab button, target is tab content
+	me.emptyJQueryTag = $( '.emptyJQueryElement' );
+	//me.blockParentAreaTag;  // button rendering div's parent tag..  <-- if tab button, target is tab content
 
 	me.className_btnClickInProcess = 'btnClickInProcess';
 
@@ -17,12 +17,15 @@ function Action( cwsRenderObj, blockObj )
 	me.initialize = function() { }
 
 	// ------------------------------------
+	// NOTE: Passed Param Info:
+	//		0. btnTag - The button tag that 
+	//		1. blockDivTag - The block tag containing the btnTag
+	//		2. blockParentAreaTag - The tab or contianer block containing the block. - used to clear all the blocks, etc..
+	//		3. formDivSecTag - used to get input tags values when generating payload data.
 
 	// Same level as 'render' in other type of class
-	me.handleClickActions = function( btnTag, btnOnClickActions, btnTargetParentTag, blockDivTag, formDivSecTag, blockPassingData )
+	me.handleClickActions = function( btnTag, btnOnClickActions, blockParentAreaTag, blockDivTag, formDivSecTag, blockPassingData )
 	{
-		me.btnTargetParentTag = btnTargetParentTag;
-
 		// if ( formDivSecTag.attr( 'data-fields') != undefined )
 		if ( me.blockObj.blockFormObj && me.blockObj.blockFormObj.formJsonArr )
 		{
@@ -37,7 +40,7 @@ function Action( cwsRenderObj, blockObj )
 
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) 
+			me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) 
 			{
 				me.clearBtn_ClickedMark( btnTag );
 				WsCallManager.loadingTagClear( loadingTag );
@@ -50,11 +53,11 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 
-	me.handleClickActionsAlt = function( btnOnClickActions, callBack )
+	me.handleClickActionsAlt = function( btnOnClickActions, blockDivTag, blockParentAreaTag, callBack )
 	{
 		var dataPass = {};
 
-		me.handleActionsInSync( undefined, undefined, undefined, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) 
+		me.handleActionsInSync( blockDivTag, blockParentAreaTag, undefined, undefined, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) 
 		{
 			if ( callBack ) callBack( resultStr );  /// Success  /  Failed
 		});	
@@ -63,7 +66,7 @@ function Action( cwsRenderObj, blockObj )
 
 	me.handleItemClickActions = function( btnTag, btnOnClickActions, itemIdx, blockDivTag, itemBlockTag, blockPassingData )
 	{		
-		me.btnTargetParentTag = me.blockObj.parentTag; 
+		var blockParentAreaTag = me.blockObj.parentTag; 
 
 		var dataPass = {};
 
@@ -71,7 +74,7 @@ function Action( cwsRenderObj, blockObj )
 		{
 			me.btnClickMarked( btnTag );
 
-			me.handleActionsInSync( blockDivTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
+			me.handleActionsInSync( blockDivTag, blockParentAreaTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
 				me.clearBtn_ClickedMark( btnTag );					
 			} );
 		}
@@ -85,13 +88,13 @@ function Action( cwsRenderObj, blockObj )
 
 	// Create a process to call actions one by one with waiting for each one to finish and proceed to next one
 	// me.recurrsiveActions
-	me.handleActionsInSync = function( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc )
+	me.handleActionsInSync = function( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc )
 	{
 		if ( actionIndex >= actions.length ) endOfActionsFunc( dataPass, "Success" );
 		else
 		{
 			// me.clickActionPerform
-			me.actionPerform( actions[actionIndex], blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( bResult, moreInfoJson )
+			me.actionPerform( actions[actionIndex], blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, dataPass, blockPassingData, function( bResult, moreInfoJson )
 			{			
 				if ( bResult )
 				{
@@ -103,7 +106,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else { actionIndex++; }
 
-					me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );				
+					me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, actions, actionIndex, dataPass, blockPassingData, endOfActionsFunc );				
 				}
 				else
 				{
@@ -125,11 +128,17 @@ function Action( cwsRenderObj, blockObj )
 	// ------------------------------------
 	
 	// me.clickActionPerform 
-	me.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
+	me.actionPerform = function( actionDef, blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
-		// TODO: all the blockDivTag related should be done by 'block' class method
 		try
 		{
+			// For undefined tags, create an empty jquery selection for escaping error
+			if ( !blockDivTag ) blockDivTag = me.emptyJQueryTag;
+			if ( !blockParentAreaTag ) blockParentAreaTag = me.emptyJQueryTag;
+			if ( !formDivSecTag ) formDivSecTag = me.emptyJQueryTag;
+			if ( !btnTag ) btnTag = me.emptyJQueryTag;
+
+
 			var blockId = ( blockDivTag ) ? blockDivTag.attr( "blockId" ) : undefined;
 
 			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
@@ -138,7 +147,6 @@ function Action( cwsRenderObj, blockObj )
 			else if ( Util.isTypeString( clickActionJson ) ) afterActionFunc( false, { 'errMsg': 'Bad action definition name: ' + actionDef } );
 			else 
 			{				
-
 				// ACTIVITY ADDING
 				var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );				
 
@@ -168,7 +176,7 @@ function Action( cwsRenderObj, blockObj )
 				{
 					var currBlockId = blockDivTag.attr( 'blockId' );
 	
-					me.btnTargetParentTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+					blockParentAreaTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
 	
 					afterActionFunc( true );
 				}
@@ -179,7 +187,7 @@ function Action( cwsRenderObj, blockObj )
 						// Probably not used...
 						var closeLevel = Util.getNum( clickActionJson.closeLevel );
 	
-						var divBlockTotal = me.btnTargetParentTag.find( 'div.block:visible' ).length;
+						var divBlockTotal = blockParentAreaTag.find( 'div.block:visible' ).length;
 	
 						var currBlock = blockDivTag;
 	
@@ -198,7 +206,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else if( clickActionJson.blockId != undefined )
 					{
-						me.btnTargetParentTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
+						blockParentAreaTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
 					}
 	
 					afterActionFunc( true );
@@ -216,7 +224,7 @@ function Action( cwsRenderObj, blockObj )
 					$( 'body' ).append( sheetFullL2Tag );
 					FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
 
-					me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
+					blockParentAreaTag = sheetFullL2Tag.find( '.contentBody' );
 				}
 				else if ( clickActionJson.actionType === "closeSheetFullL2" )
 				{				
@@ -231,7 +239,7 @@ function Action( cwsRenderObj, blockObj )
 						$( 'body' ).append( sheetFullL2Tag );
 						FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
 
-						me.btnTargetParentTag = sheetFullL2Tag.find( '.contentBody' );
+						blockParentAreaTag = sheetFullL2Tag.find( '.contentBody' );
 					}
 
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
@@ -258,10 +266,10 @@ function Action( cwsRenderObj, blockObj )
 						//var targetDivTag = ( me.blockObj.blockType === 'mainTab' ) ? '': me.blockObj.parentTag;
 
 						// // REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
-						// var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
+						// var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockParentAreaTag, blockPassingData, undefined, clickActionJson );
 						// newBlockObj.render();
 
-						FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, me.btnTargetParentTag, blockPassingData, undefined, clickActionJson );
+						FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, blockParentAreaTag, blockPassingData, undefined, clickActionJson );
 					}
 	
 					afterActionFunc( true );
@@ -283,8 +291,8 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "filledData" )
 				{
-					var dataFromDivTag = me.btnTargetParentTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
-					var dataToDivTag = me.btnTargetParentTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
+					var dataFromDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
+					var dataToDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
 					var dataItems = clickActionJson.dataItems;
 	
 					for ( var i = 0; i < dataItems.length; i++ )
@@ -449,7 +457,7 @@ function Action( cwsRenderObj, blockObj )
 								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	
 							}
 
-							// Generete payload - by template or other structure/format from 'forms'
+							// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
 							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
 
 							// TODO: Simply save blockId, payloadJson..
@@ -463,7 +471,7 @@ function Action( cwsRenderObj, blockObj )
 							
 							if ( dupVoucherActivityPass )
 							{
-								// Put the composed activity json in list and have 'sync' submit.
+								// #2. Use generated 'capture/search' json & place in final activity structure (id, transaction, processing (serachVal under processing) )
 								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
 								{									
 									AppInfoManager.addToActivityHistory( activityJson );

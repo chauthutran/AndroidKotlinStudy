@@ -22,14 +22,17 @@ ConfigManager.configJson_Original = {};  // Downloaded country PWA config origin
 //ConfigManager.configSetting = {}; // Not Yet coded for it.
 ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
 
-ConfigManager.defaultClientDisplayBase = `'<b>' + INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName + ' - ' + INFO.client.clientDetails.age + '</b>'`;
-ConfigManager.defaultClientDisplaySettings = `'<i>' + INFO.client._id + '</i>'`;
+ConfigManager.defaultActivity_DisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
+ConfigManager.defaultActivity_DisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
 
-ConfigManager.defaultClientRelDisplayBase = `'<b>' + INFO.relationship.client.clientDetails.firstName + ' ' + INFO.relationship.client.clientDetails.lastName + ' - ' + INFO.relationship.client.clientDetails.age + '</b>'`;
-ConfigManager.defaultClientRelDisplaySettings = `INFO.relationship.type + ', ' + Util.formatDate( INFO.relationship.date, 'MMM dd, yyyy - HH:mm' )`;
+ConfigManager.defaultClient_DisplayBase = `'<b>' + INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName + ' - ' + INFO.client.clientDetails.age + '</b>'`;
+ConfigManager.defaultClient_DisplaySettings = `'<i>' + INFO.client._id + '</i>'`;
 
-ConfigManager.defaultActivityDisplayBase = `Util.formatDate( INFO.activity.processing.created, 'MMM dd, yyyy - HH:mm' );`;
-ConfigManager.defaultActivityDisplaySettings = `'<i>' + INFO.activity.id + '</i>'`;
+ConfigManager.defaultClientRel_DisplayBase = `'<b>' + INFO.relationship.client.clientDetails.firstName + ' ' + INFO.relationship.client.clientDetails.lastName + ' - ' + INFO.relationship.client.clientDetails.age + '</b>'`;
+ConfigManager.defaultClientRel_DisplaySettings = `INFO.relationship.type + ', ' + Util.formatDate( INFO.relationship.date, 'MMM dd, yyyy - HH:mm' )`;
+
+ConfigManager.defaultClientActivityCardDef_DisplayBase = `'Created: ' + Util.formatDate( INFO.activity.date.capturedLoc, 'MMM dd, yyyy - HH:mm' );`;
+ConfigManager.defaultClientActivityCardDef_DisplaySettings = `'ActivityType: ' + INFO.activity.type`;
 
 ConfigManager.coolDownTime = '90000'; // 90 seconds - default.  Could be updated by country config setting
 
@@ -73,7 +76,8 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
             // Filter some list in config by 'sourceType' / 'userRole'
             ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
             ConfigManager.applyFilter_UserRole( ConfigManager.configJson, ConfigManager.login_UserRoles
-                ,[ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ] );
+                ,[ 'favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews'
+                    , 'definitionOptions', 'settings.sync.syncDown' ] );
 
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
         }
@@ -680,7 +684,7 @@ ConfigManager.getSettingsActivityDef = function()
 ConfigManager.getActivityDisplaySettings = function()
 {
     var displaySettings = [  
-      ConfigManager.defaultActivityDisplaySettings 
+      ConfigManager.defaultActivity_DisplaySettings 
     ];
 
     var activityDef = ConfigManager.getSettingsActivityDef();
@@ -696,7 +700,7 @@ ConfigManager.getActivityDisplaySettings = function()
 
 ConfigManager.getActivityDisplayBase = function()
 {
-    var displayBase = ConfigManager.defaultActivityDisplayBase;
+    var displayBase = ConfigManager.defaultActivity_DisplayBase;
 
     var activityDef = ConfigManager.getSettingsActivityDef();
 
@@ -729,7 +733,7 @@ ConfigManager.getSettingsClientDef = function()
 
 ConfigManager.getClientDisplayBase = function()
 {
-    var displayBase = ConfigManager.defaultClientDisplayBase;
+    var displayBase = ConfigManager.defaultClient_DisplayBase;
 
     var clientDef = ConfigManager.getSettingsClientDef();
 
@@ -745,7 +749,7 @@ ConfigManager.getClientDisplayBase = function()
 ConfigManager.getClientDisplaySettings = function()
 {
     var displaySettings = [  
-      ConfigManager.defaultClientDisplaySettings 
+      ConfigManager.defaultClient_DisplaySettings 
     ];
 
     var clientDef = ConfigManager.getSettingsClientDef();
@@ -761,7 +765,7 @@ ConfigManager.getClientDisplaySettings = function()
 
 ConfigManager.getClientRelDisplayBase = function()
 {
-    var displayBase = ConfigManager.defaultClientRelDisplayBase;
+    var displayBase = ConfigManager.defaultClientRel_DisplayBase;
 
     var clientDef = ConfigManager.getSettingsClientDef();
 
@@ -777,7 +781,7 @@ ConfigManager.getClientRelDisplayBase = function()
 ConfigManager.getClientRelDisplaySettings = function()
 {
     var displaySettings = [  
-      ConfigManager.defaultClientRelDisplaySettings 
+      ConfigManager.defaultClientRel_DisplaySettings 
     ];
 
     var clientDef = ConfigManager.getSettingsClientDef();
@@ -789,6 +793,40 @@ ConfigManager.getClientRelDisplaySettings = function()
 
     return displaySettings;
 };
+
+
+ConfigManager.getClientActivityCardDefDisplayBase = function()
+{
+    var displayBase = ConfigManager.defaultClientActivityCardDef_DisplayBase;
+
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientActivityCardDef && clientDef.clientActivityCardDef.displayBase )
+    {
+        displayBase = clientDef.clientActivityCardDef.displayBase;
+    }
+
+    return displayBase;
+};
+
+
+ConfigManager.getClientActivityCardDefDisplaySettings = function()
+{
+    var displaySettings = [  
+      ConfigManager.defaultClientActivityCardDef_DisplaySettings 
+    ];
+
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    if ( clientDef.clientActivityCardDef && clientDef.clientActivityCardDef.displaySettings )
+    {
+        displaySettings = clientDef.clientActivityCardDef.displaySettings;
+    }
+
+    return displaySettings;
+};
+
+
 
 ConfigManager.getActionQueueActivity = function()
 {
