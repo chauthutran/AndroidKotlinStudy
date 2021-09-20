@@ -378,7 +378,7 @@ function Action( cwsRenderObj, blockObj )
 							var dataPass_Status = {};
 	
 							// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
-							me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
+							me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
 								afterActionFunc( true );
 							} );
 	
@@ -405,7 +405,7 @@ function Action( cwsRenderObj, blockObj )
 						// 'displayData' is the one that gets used..
 						wsExchangeData.displayData = blockPassingData;
 
-						me.handleActionsInSync( blockDivTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
+						me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
 							afterActionFunc( true );
 						} );
 	
