@@ -2021,9 +2021,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	// ====================================================
 
-	me.populateFieldDisplayValue = function( divInputFieldTag, fieldDef )
+	me.populateFieldDisplayValue = function( divFieldBlockTag, fieldDef )
 	{
-		var dataValue = divInputFieldTag.find(".dataValue").val();
+		var dataValue = divFieldBlockTag.find(".dataValue").val();
 
 		if( dataValue != "" && fieldDef )
 		{	
@@ -2031,12 +2031,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			if( controlType == "YEAR" )
 			{
-				divInputFieldTag.find(".displayValue").val( dataValue );
+				divFieldBlockTag.find(".displayValue").val( dataValue );
 			}
 			else if( fieldDef.options == undefined && controlType == "CHECKBOX" && dataValue == "true" )
 			{
 				// For TRUE/FALSE case without options defination
-				divInputFieldTag.find("input.displayValue").prop( "checked", true );
+				divFieldBlockTag.find("input.displayValue").prop( "checked", true );
 			}
 			else if( fieldDef.options != undefined )
 			{
@@ -2044,23 +2044,24 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 				var displayValues = [];
 
-				for ( var i = 0; i < dataValueList.length; i++ )
+				dataValueList.forEach( dataVal => 
 				{
-					var searched = Util.getFromList( optionList, dataValueList[i], "value" );
+					var searched = Util.getFromList( optionList, dataVal, "value" );
 					if( searched != undefined  && ( controlType == "RADIO" || controlType == "CHECKBOX" ) )
 					{
-						divInputFieldTag.find("input[id='opt_" + dataValueList[i] + "']").prop( "checked", true );
+						if ( controlType == 'RADIO' ) divFieldBlockTag.find( "input[type=radio][value=" + dataVal + "]" ).prop( "checked", true );
+						else if ( controlType == 'CHECKBOX' ) divFieldBlockTag.find( "input[type=checkbox][value=" + dataVal + "]" ).prop( "checked", true );
 					}
 					else if( controlType == "DROPDOWN_AUTOCOMPLETE" || controlType == "MULTI_CHECKBOX" )
 					{	
-						var displayValue = ( searched == undefined ) ? dataValueList[i] : TranslationManager.translateText( searched.defaultName, searched.poTerm );
+						var displayValue = ( searched == undefined ) ? dataVal : TranslationManager.translateText( searched.defaultName, searched.poTerm );
 						displayValues.push( displayValue );
 					}
-				}
+				});
 
 				if( displayValues.length > 0 )
 				{
-					divInputFieldTag.find(".displayValue").val( displayValues.join(",") );
+					divFieldBlockTag.find(".displayValue").val( displayValues.join(",") );
 				}
 			}	
 		}
