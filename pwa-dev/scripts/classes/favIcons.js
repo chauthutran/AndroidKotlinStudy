@@ -83,8 +83,6 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
         });
     };
 
-    // -----------------------------------------
-
     me.getFavListByType = function( favType )
     {
         var favList = ConfigManager.getConfigJson().favList;
@@ -102,28 +100,44 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     me.render = function() 
     {        
         try
-        {            
-            // 1. Clear any previous generated item
-            me.clearExistingFavItems( me.favIconsTag );
-            me.closeFavMainButton();
+        {        
+            if ( me.favListByType.mainButtonMode )
+            {
+                // 1. Get favListArr from online status
+                var favMainBtnJson;
+                if ( ConnManagerNew.isAppMode_Online() ) favMainBtnJson = me.favListByType.mainButtonMode.online;
+                else favMainBtnJson = me.favListByType.mainButtonMode.offline;
+
+                // 2. Click event
+                me.setFavItemClickEvent( me.favMainButtonTag, favMainBtnJson, me.targetBlockTag, me.targetBlockContainerTag, function() {
+                    me.favMainButtonTag.remove();
+                });
+            }
+            else
+            {
+                // 1. Clear any previous generated item
+                me.clearExistingFavItems( me.favIconsTag );
+                me.closeFavMainButton();
 
 
-            // 2. Get favListArr from online status
-            var favListArr;
-            if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
-            else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
+                // 2. Get favListArr from online status
+                var favListArr;
+                if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
+                else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
 
 
-            // 3. favItems populate
-            me.populateFavItems( favListArr, me.favIconsTag, me.targetBlockTag, me.targetBlockContainerTag );
+                // 3. favItems populate
+                me.populateFavItems( favListArr, me.favIconsTag, me.targetBlockTag, me.targetBlockContainerTag );
 
 
-            // 4. Translate the favItem terms
-            TranslationManager.translatePage();
+                // 4. Translate the favItem terms
+                TranslationManager.translatePage();
+            }
         }
         catch( errMsg )
         {
-            console.log( 'ERROR in FavIcon.render(), ' + errMsg );
+            console.log( 'ERROR in FavIcons.render, ' + errMsg );
+            MsgManager.msgAreaShowErr( 'ERROR in FavIcons.render, ' + errMsg );
         }
     };
 
@@ -297,7 +311,10 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
                 favItemTag.insertBefore( favButtonSectionTag );
                 
                 // 2. Click event
-                me.setFavItemClickEvent( favItemTag, favItem, targetBlockTag, targetBlockContainerTag );
+                me.setFavItemClickEvent( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, function() {
+                    me.closeFavMainButton();
+                });
+                //{ 'closeFavMainBtn': true } );
 
                 // 3. populate the favItem content
                 me.populateFavItemDetail( favItemTag, favItem );
@@ -306,30 +323,30 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     };
 
 
-    me.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag )
+    me.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, runFunc )
     {
-        favItemTag.click( function() 
+        favItemTag.off( 'click' ).click( function() 
         {
-            if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( targetBlockTag, targetBlockContainerTag );
-
-            // Also, close this FavMainButton just in case..
-            me.closeFavMainButton();
-            //if ( $( 'div.scrim').is( ':visible' ) ) $( 'div.scrim').hide();
-
-            if ( favItem.target )
+            if ( favItem )
             {
-                //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
-                SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
-                    ,targetBlockContainerTag, favItem );
-            }
-            else if ( favItem.onClick && Util.isTypeArray( favItem.onClick ) )
-            {
-                var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( targetBlockTag, targetBlockContainerTag );
+            
+                if ( runFunc ) runFunc();
 
-                actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
+                if ( favItem.target )
+                {
+                    //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
+                    SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
+                        ,targetBlockContainerTag, favItem );
+                }
+                else if ( favItem.onClick )
+                {
+                    var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                    actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
+                }
+    
+                if ( me.afterItemClickActionCall )  me.afterItemClickActionCall( targetBlockTag, targetBlockContainerTag );                
             }
-
-            if ( me.afterItemClickActionCall )  me.afterItemClickActionCall( targetBlockTag, targetBlockContainerTag );                
         });
     };
 

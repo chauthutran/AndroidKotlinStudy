@@ -952,7 +952,7 @@ ActivityDataManager.processResponseCaseAction = function( reportJson, activityId
 
 ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode )
 {
-    var voucherData = { voucherCode: voucherCode, createdDateStr: '', activities: [], transList: [] };  // voucher Activties
+    var voucherData = { voucherCode: voucherCode, issuedUser: '', createdDateStr: '', activities: [], transList: [] };  // voucher Activties
 
     if ( voucherCode && activities && Util.isTypeArray( activities ) )
     {
@@ -967,7 +967,11 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
                     {
                         if ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
                         {
-                            if ( trans.type === 'v_iss' && activity.date ) voucherData.createdDateStr = activity.date.capturedLoc;   
+                            if ( trans.type === 'v_iss' ) {
+                                voucherData.issuedUser = activity.activeUser;
+                                if ( activity.date ) voucherData.createdDateStr = activity.date.capturedLoc;   
+                            }
+
                             voucherData.activities.push( activity );
                         }    
                     }

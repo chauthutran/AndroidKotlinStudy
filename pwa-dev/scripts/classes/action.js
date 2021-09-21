@@ -40,7 +40,7 @@ function Action( cwsRenderObj, blockObj )
 
 			var loadingTag = FormUtil.generateLoadingTag( btnTag );
 
-			me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) 
+			me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, Util.getAsArray( btnOnClickActions ), 0, dataPass, blockPassingData, function( finalPassData, resultStr ) 
 			{
 				me.clearBtn_ClickedMark( btnTag );
 				WsCallManager.loadingTagClear( loadingTag );
@@ -57,7 +57,7 @@ function Action( cwsRenderObj, blockObj )
 	{
 		var dataPass = {};
 
-		me.handleActionsInSync( blockDivTag, blockParentAreaTag, undefined, undefined, btnOnClickActions, 0, dataPass, undefined, function( finalPassData, resultStr ) 
+		me.handleActionsInSync( blockDivTag, blockParentAreaTag, undefined, undefined, Util.getAsArray( btnOnClickActions ), 0, dataPass, undefined, function( finalPassData, resultStr ) 
 		{
 			if ( callBack ) callBack( resultStr );  /// Success  /  Failed
 		});	
@@ -74,7 +74,7 @@ function Action( cwsRenderObj, blockObj )
 		{
 			me.btnClickMarked( btnTag );
 
-			me.handleActionsInSync( blockDivTag, blockParentAreaTag, itemBlockTag, btnTag, btnOnClickActions, 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
+			me.handleActionsInSync( blockDivTag, blockParentAreaTag, itemBlockTag, btnTag, Util.getAsArray( btnOnClickActions ), 0, dataPass, blockPassingData, function( finalPassData, resultStr ) {
 				me.clearBtn_ClickedMark( btnTag );					
 			} );
 		}

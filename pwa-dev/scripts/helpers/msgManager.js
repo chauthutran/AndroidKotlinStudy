@@ -75,9 +75,9 @@ MsgManager.msgAreaShow = function( msg, type, optClasses, hideTimeMs )
 };
 
 
-MsgManager.msgAreaShowErr = function( msg, optClasses )
+MsgManager.msgAreaShowErr = function( msg, optClasses, hideTimeMs )
 {
-    return MsgManager.msgAreaShow( msg, 'ERROR', optClasses );
+    return MsgManager.msgAreaShow( msg, 'ERROR', optClasses, hideTimeMs );
 };
 
 

@@ -43,8 +43,6 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
         var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag );
         favIconsObj.render();
-
-        //me.renderAddRelationshipBtn( me.listTag, me.relationshipTabTag );
     };
 
     // ----------------------------------------------------------------------------------------

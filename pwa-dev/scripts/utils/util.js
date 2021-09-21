@@ -2074,3 +2074,15 @@ Util.stylesStrAppy = function( stylesStr, tag )
 		console.log( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
 	}
 };
+
+// -----------------------------------------------------------------
+
+Util.getAsArray = function( inputData )
+{
+	var dataArray = [];
+
+	if ( Util.isTypeArray( inputData ) ) dataArray = inputData;
+	else if ( Util.isTypeObject( inputData ) ) dataArray = [ inputData ];  // if single obj, get as Array
+
+	return dataArray;
+};
