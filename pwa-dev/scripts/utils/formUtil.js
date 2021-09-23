@@ -135,36 +135,27 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
-
-// var displayBase = ConfigManager.getClientDisplayBase();
-// var displaySettings = ConfigManager.getClientDisplaySettings();
-
-// divClientContentTag.find( 'div.clientContentDisplay' ).remove();
-
-// InfoDataManager.setINFOdata( 'client', client );
-
-// ClientCardTemplate.cardContentDivTag
-
 FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySettings, cardContentTemplate )
 {
 	try
 	{
-		var appendContent = '';
-		
+		//var appendContent = '';
 		divContentTag.find( 'div.cardContentDisplay' ).remove();
 
-
 		// Display 1st line
-		var displayBaseContent = Util.evalTryCatch( displayBase, InfoDataManager.getINFO(), 'FormUtil.setCardContentDisplay, displayBase' );
-
-		if ( displayBaseContent && displayBaseContent.length && displayBaseContent.trim().length ) 
+		try
 		{
-			divContentTag.append( $( cardContentTemplate ).html( displayBaseContent ) );
+			var displayBaseContent = eval( Util.getEvalStr( displayBase ) ); // Handle array into string joining		
+			if ( displayBaseContent ) divContentTag.append( $( cardContentTemplate ).html( displayBaseContent ) );
 		}
+		catch( errMsg ) { console.log( 'setCardContentDisplay, failed on displayBaseContent, ' + errMsg ); }
+
 		
 		// Display 2nd lines and more
 		if ( displaySettings )
 		{            
+			// var INFO = InfoDataManager.getINFO();  // Globally set, thus, do not need to define it.
+
 			// If custom config display, remove 
 			for( var i = 0; i < displaySettings.length; i++ )
 			{
@@ -172,21 +163,19 @@ FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySe
 
 				if ( dispSettingEvalStr )
 				{
-					var displayEvalResult = Util.evalTryCatch( dispSettingEvalStr, InfoDataManager.getINFO(), 'FormUtil.setCardContentDisplay, displaySettings' );
-
-					if ( displayEvalResult && displayEvalResult.length && displayEvalResult.trim().length ) 
+					try
 					{
-						divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
+						var displayEvalResult = eval( Util.getEvalStr( dispSettingEvalStr ) );
+						if ( displayEvalResult ) divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
 					}
+					catch( errMsg ) { console.log( 'setCardContentDisplay, failed on displayContent, ' + errMsg ); }
 				}
 			}
 		}
-
-		//divContentTag.append( $( me.template_ClientContentDateTag ).html( appendContent ) );
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in FormUtil.setCardContentDisplay, errMsg: ' + errMsg );
+		console.log( 'ERROR in FormUtil.setCardContentDisplay, errMsg: ' + errMsg );
 	}
 };
 

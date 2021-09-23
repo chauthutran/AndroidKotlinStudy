@@ -965,7 +965,8 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
                 {
                     try
                     {
-                        if ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
+                        if ( ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
+                            || ( trans.dataValues && trans.dataValues.voucherCode === voucherCode ) )
                         {
                             if ( trans.type === 'v_iss' ) {
                                 voucherData.issuedUser = activity.activeUser;
