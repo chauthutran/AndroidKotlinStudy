@@ -1536,6 +1536,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{			
 			// If condition does not exist, it is considered as pass/true.
 			// If it exists, check eval to see if condition evaluates as true.
+			// TODO: We need to check the === true rather than below check..
 			if ( evalAction.condition === undefined || me.checkCondition( evalAction.condition, tag, tagVal, formDivSecTag, formFull_IdList ) )
 			{
 				me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, true );

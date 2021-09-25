@@ -396,6 +396,13 @@ FormUtil.convertNamedJsonArr = function( jsonArr, definitionArr )
 }
 
 
+FormUtil.getObjDefId = function( objId )
+{
+	if ( Util.isTypeObject( objId ) ) objId = objId.id;
+	return objId;
+};
+
+
 FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, passedData, options, actionJson, renderType )
 {
 	var blockObj;
@@ -406,6 +413,7 @@ FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, pass
 
 		if ( blockDefJson )
 		{            
+			blockId = FormUtil.getObjDefId( blockId );
 			blockObj = new Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, options, actionJson );
 			blockObj.render( renderType );    
 		}

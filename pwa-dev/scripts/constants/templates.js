@@ -502,6 +502,22 @@ Templates.template_dialog = `
   </div>
 </dialog>`;  
 
+
+Templates.sheetBottomBtn = `
+<div class="sheet_bottom-btn3 sheetBottomBtnDiv" style="display: block;">
+  <div class="sbtt-btn__header">
+    <div class="sbtt-btn__header_title sheetBottomBtnTitle" term="">title/label</div>
+  </div>
+  <div class="cta_buttons">
+    <div class="button c_500 sheetBottomBtn">
+      <div class="button__container">
+        <div class="button-label" term="">Next Client</div>
+      </div>
+    </div>
+  </div>
+</div> `;
+
+
 // -------------- Advanced LOGIN ------- //
 
 Templates.Advance_Login_Buttons = `
@@ -565,7 +581,7 @@ Templates.sheetFullL2Frame = `
   <div class="wapper_card">
     <div class="sheet-title c_900" style="width: 100%;">
       <img src="images/arrow_back.svg" class="btnBack">
-      <span term="term_newClient">New Client</span>
+      <span class="sheetTopTitle" term="term_newClient">New Client</span>
     </div>
     <div class="card contentBody"
       style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px); width: calc(100vw - 16px);">

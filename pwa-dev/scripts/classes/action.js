@@ -144,9 +144,21 @@ function Action( cwsRenderObj, blockObj )
 			var clickActionJson = FormUtil.getObjFromDefinition( actionDef, ConfigManager.getConfigJson().definitionActions );
 
 			if ( !clickActionJson ) afterActionFunc( false, { 'errMsg': 'Action definition undefined' } );				
-			else if ( Util.isTypeString( clickActionJson ) ) afterActionFunc( false, { 'errMsg': 'Bad action definition name: ' + actionDef } );
+			else if ( !Util.isTypeObject( clickActionJson ) ) afterActionFunc( false, { 'errMsg': 'Bad action definition name: ' + actionDef } );
 			else 
-			{				
+			{	
+				// NEW: If 'actionCondition' exists, evaluate if it can continue..  If not, simply go to next action			
+				if ( clickActionJson.actionRunCondition )
+				{
+					var result = false;
+					try { result = eval( Util.getEvalStr( clickActionJson.actionRunCondition ) ); }
+					catch( errMsg ) { console.log( 'Action.actionCondition ERROR, ' + errMsg ); }
+					
+					if ( result === true ) {} // If true, continue with below action run.
+					else afterActionFunc( true ); // If false, skip this action.
+				}	
+
+
 				// ACTIVITY ADDING
 				var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );				
 
@@ -235,8 +247,15 @@ function Action( cwsRenderObj, blockObj )
 					// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
 					if ( clickActionJson.openInSheetFullL2 )
 					{
-						var sheetFullL2Tag = $( Templates.sheetFullL2Frame );	
+						var sheetFullL2Tag = $( Templates.sheetFullL2Frame );						
 						$( 'body' ).append( sheetFullL2Tag );
+						if ( clickActionJson.sheetTopTitle ) 
+						{
+							var spanSheetTopTitleTag = sheetFullL2Tag.find( 'span.sheetTopTitle' );
+							spanSheetTopTitleTag.attr( 'term', clickActionJson.sheetTopTitle.term );
+							spanSheetTopTitleTag.text( clickActionJson.sheetTopTitle.title );
+						}
+
 						FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
 
 						blockParentAreaTag = sheetFullL2Tag.find( '.contentBody' );
@@ -247,17 +266,10 @@ function Action( cwsRenderObj, blockObj )
 					if ( blockJson )
 					{
 						// 'blockPassingData' exists is called from 'processWSResult' actions
-						if ( dataPass.formsJson )
-						{
-							blockPassingData = {};
-							blockPassingData.formsJson = dataPass.formsJson;
-						}
-						else if ( blockPassingData === undefined ) 
-						{
-							if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
-							else blockPassingData = {}; 
-						}
-						
+						if ( dataPass.formsJson ) blockPassingData = { formsJson: dataPass.formsJson };
+						else if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
+						else if ( blockPassingData === undefined ) blockPassingData = {}; 
+					
 						blockPassingData.showCase = clickActionJson.showCase;
 						blockPassingData.hideCase = clickActionJson.hideCase;
 
@@ -350,11 +362,7 @@ function Action( cwsRenderObj, blockObj )
 					{						
 						ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id, function( syncReadyJson, success ) 
 						{
-							console.log( 'queuedActivitySync' );
-							console.log( syncReadyJson );
-							console.log( success );
 							afterActionFunc( true );
-
 							// alert case?
 						});
 					}

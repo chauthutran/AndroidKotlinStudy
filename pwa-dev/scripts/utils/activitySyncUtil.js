@@ -79,69 +79,75 @@ ActivitySyncUtil.displayActivitySyncStatus = function( activityId )
             
             var statusVal = ( activityJson && activityJson.processing ) ? activityJson.processing.status: '';
         
-        
-            // reset..
-            divSyncIconTag.empty();
-            divSyncStatusTextTag.empty();
-        
-            var imgIcon = $( '<img>' );
-        
-            if ( statusVal === Constants.status_submit )        
-            {
-                // already sync..
-                divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
-                imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
-            }
-            else if ( statusVal === Constants.status_submit_wMsg )        
-            {
-                // already sync..
-                divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg*' );
-                imgIcon.attr( 'src', 'images/sync_msd.svg' ); 
-            }
-            else if ( statusVal === Constants.status_submit_wMsgRead )        
-            {
-                // already sync..
-                divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
-                imgIcon.attr( 'src', 'images/sync_msdr.svg' );
-            }
-            else if ( statusVal === Constants.status_downloaded )        
-            {
-                // already sync..
-                divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' ).attr( 'term', 'activitycard_status_downloaded' );
-                imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
-            }
-            else if ( statusVal === Constants.status_queued )
-            {
-                divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
-                imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
-            }
-            else if ( statusVal === Constants.status_processing )
-            {
-                divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
-                imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
-        
-                // NOTE: We are rotating if in 'processing' status!!!
-                FormUtil.rotateTag( divSyncIconTag, true );
-            }        
-            else if ( statusVal === Constants.status_failed )
-            {
-                // Not closed status, yet
-                divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' ).attr( 'term', 'activitycard_status_failed' );
-                imgIcon.attr( 'src', 'images/sync-postponed_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
-            }
-            else if ( statusVal === Constants.status_error )
-            {
-                divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Error' );
-                imgIcon.attr( 'src', 'images/sync-error_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
-            }
-        
-            divSyncIconTag.append( imgIcon );
-        
-        
+
+			ActivitySyncUtil.displayStatusLabelIcon( divSyncIconTag, divSyncStatusTextTag, statusVal );
+
+			
             // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) ActivitySyncUtil.syncUpCoolDownTime_CheckNProgressSet( activityId, divSyncIconTag );
         }
     }
+};
+
+
+ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatusTextTag, statusVal )
+{
+	// reset..
+	divSyncIconTag.empty();
+	divSyncStatusTextTag.empty();
+
+	var imgIcon = $( '<img>' );
+
+	if ( statusVal === Constants.status_submit )        
+	{
+		// already sync..
+		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
+		imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+	}
+	else if ( statusVal === Constants.status_submit_wMsg )        
+	{
+		// already sync..
+		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg*' );
+		imgIcon.attr( 'src', 'images/sync_msd.svg' ); 
+	}
+	else if ( statusVal === Constants.status_submit_wMsgRead )        
+	{
+		// already sync..
+		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync/Msg' );
+		imgIcon.attr( 'src', 'images/sync_msdr.svg' );
+	}
+	else if ( statusVal === Constants.status_downloaded )        
+	{
+		// already sync..
+		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Downloaded' ).attr( 'term', 'activitycard_status_downloaded' );
+		imgIcon.attr( 'src', 'images/sync.svg' ); //sync.svg //divSyncIconTag.css( 'background-image', 'url(images/sync.svg)' );
+	}
+	else if ( statusVal === Constants.status_queued )
+	{
+		divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
+		imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );
+	}
+	else if ( statusVal === Constants.status_processing )
+	{
+		divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
+		imgIcon.attr( 'src', 'images/sync-pending_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-pending_36.svg)' );    
+
+		// NOTE: We are rotating if in 'processing' status!!!
+		FormUtil.rotateTag( divSyncIconTag, true );
+	}        
+	else if ( statusVal === Constants.status_failed )
+	{
+		// Not closed status, yet
+		divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Failed' ).attr( 'term', 'activitycard_status_failed' );
+		imgIcon.attr( 'src', 'images/sync-postponed_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-postponed_36.svg)' );
+	}
+	else if ( statusVal === Constants.status_error )
+	{
+		divSyncStatusTextTag.css( 'color', '#FF0000' ).html( 'Error' );
+		imgIcon.attr( 'src', 'images/sync-error_36.svg' ); //divSyncIconTag.css( 'background-image', 'url(images/sync-error_36.svg)' );
+	}
+
+	divSyncIconTag.append( imgIcon );
 };
 
 // -----------------------------------------

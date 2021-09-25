@@ -271,6 +271,37 @@ Util.overwriteJsonContent = function( origJson, newJson )
 	}
 };
 
+
+Util.clearEmptyProp = function( inputJson )
+{
+	if ( inputJson )
+	{
+		// Clear content
+		for ( var key in inputJson )
+		{
+			if ( !inputJson[key] ) delete inputJson[key];
+		}
+	}
+
+	return inputJson;
+};
+
+Util.compareJsonPropVal = function( sourceJson, targetJson )
+{
+	var isMatch = true;
+
+	for ( var key in sourceJson )
+	{
+		if ( sourceJson[key] !== targetJson[key] ) 
+		{
+           isMatch = false; 
+           break;
+        }
+	}
+
+	return isMatch;
+};
+
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods
 

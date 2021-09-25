@@ -109,8 +109,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
                 else favMainBtnJson = me.favListByType.mainButtonMode.offline;
 
                 // 2. Click event
-                me.setFavItemClickEvent( me.favMainButtonTag, favMainBtnJson, me.targetBlockTag, me.targetBlockContainerTag, function() {
-                    me.favMainButtonTag.remove();
+                me.setFavItemClickEvent( me.favMainButtonTag, favMainBtnJson, me.targetBlockTag, me.targetBlockContainerTag, function( favJson ) {
+                    if ( favJson.mainFavRemove ) me.favMainButtonTag.remove();
                 });
             }
             else
@@ -331,7 +331,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
             {
                 if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( targetBlockTag, targetBlockContainerTag );
             
-                if ( runFunc ) runFunc();
+                if ( runFunc ) runFunc( favItem );
 
                 if ( favItem.target )
                 {

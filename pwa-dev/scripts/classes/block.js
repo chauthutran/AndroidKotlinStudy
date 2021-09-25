@@ -79,10 +79,13 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			else if ( me.blockDefJson.list === 'dataList' )
 			{
 				me.dataListObj = new DataList( me.cwsRenderObj, me );
-				//me.dataListObj = new DataList3( me.cwsRenderObj, me );
 				me.dataListObj.render( me.blockDefJson, me.blockTag, me.passedData ); //, me.options );
 			} 
-
+			else if ( me.blockDefJson.list === 'itemCardList' )
+			{
+				me.itemCardListObj = new ItemCardList( me.cwsRenderObj, me, me.blockDefJson );
+				me.itemCardListObj.render( me.blockTag, me.passedData );
+			} 
 
 			// Render Buttons
 			if ( me.blockDefJson.buttons ) 

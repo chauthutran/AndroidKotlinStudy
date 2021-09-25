@@ -316,7 +316,6 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
     }
 
 
-
     if ( dataChangeOccurred ) 
     {
         // if new list to push to pwaClients exists, add to the list.
@@ -625,29 +624,22 @@ ClientDataManager.isVoucherNotUsed = function( voucherData )
     return ( usedTrans.length === 0 );
 };
 
-/*
-
-var showCondition = false;
-
-// var voucherDataList = ClientDataManager.getVoucherDataList( INFO.client );
-//var voucherNotUsed = ClientDataManager.getVoucherNotUsed( INFO.client );
-var lastVoucherData = ClientDataManager.getLastVoucherData( INFO.client );
-
-if ( lastVoucherData )
+ClientDataManager.getClientListByFields = function( inputJson )
 {
-    var usedTrans = lastVoucherData.transList.filter( trans => trans.type && trans.type.indexOf( 'v_rdx' ) === 0 );
-    var bNotUsed = ( usedTrans.length === 0 );
+    var matchedList = [];
 
-    if ( bNotUsed ) 
-    {
-        var labVisitDate = ActivityDataManager.getLastTransDataValue( lastVoucherData.transList, 'labVisitDate' );
+	if ( inputJson )
+	{
+        var clientList = ClientDataManager.getClientList();
 
-        if ( labVisitDate ) {
-            var daysSince = UtilDate.getDaysSince( labVisitDate );       
-            if ( daysSince >= 0 && daysSince < 30 ) showCondition = true;
-        }        
-    }
-}
+        clientList.forEach( client => 
+        {
+            if ( Util.compareJsonPropVal( inputJson, client.clientDetails ) )
+            {
+                matchedList.push( client );
+            }
+        });
+	}
 
-showCondition;
-*/
+    return matchedList;
+};

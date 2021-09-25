@@ -98,17 +98,19 @@ function BlockButton( cwsRenderObj, blockObj )
 		// SETUP EMPTY PLACE HOLDERS FOR TABS + TAB-CONTENT (pregenerated)
 		for( var i = 0; i < buttonsId.length; i++ )
 		{
+			var tabButtonId = FormUtil.getObjDefId( buttonsId[i] );
+
 			// MAIN DISPLAY TAB
 			var liTabTag = $( '<li class="primary" />' );
 			var dvTabContentTag = $( me.divHeadIcon );
 			var spTabTextTag = $( me.divHeadTextSpan );
 			var dvContentTag = $( me.divTabsTargetElement );
 
-			liTabTag.attr( 'rel', buttonsId[ i ] );
-			dvTabContentTag.attr( 'rel', buttonsId[ i ] );
-			spTabTextTag.attr( 'rel', buttonsId[ i ] );
+			liTabTag.attr( 'rel', tabButtonId );
+			dvTabContentTag.attr( 'rel', tabButtonId );
+			spTabTextTag.attr( 'rel', tabButtonId );
 
-			dvContentTag.attr( 'tabButtonId', buttonsId[ i ] );
+			dvContentTag.attr( 'tabButtonId', tabButtonId );
 			
 			btnTabsUlTag.append( liTabTag );
 			liTabTag.append( dvTabContentTag );
@@ -124,13 +126,15 @@ function BlockButton( cwsRenderObj, blockObj )
 				{
 					if ( a !== i )
 					{
+						var otherTabButtonId = FormUtil.getObjDefId( buttonsId[a] );
+
 						var li2ndaryTabTag = $( me.liTab2ndary );
 						var dv2ndaryTabContentTag = $( me.divHeadIcon );
 						var sp2ndaryTabTextTag = $( me.divHeadTextSpan );
 
-						li2ndaryTabTag.attr( 'rel', buttonsId[ a ] );
-						dv2ndaryTabContentTag.attr( 'rel', buttonsId[ a ] );
-						sp2ndaryTabTextTag.attr( 'rel', buttonsId[ a ] );
+						li2ndaryTabTag.attr( 'rel',otherTabButtonId );
+						dv2ndaryTabContentTag.attr( 'rel', otherTabButtonId );
+						sp2ndaryTabTextTag.attr( 'rel',otherTabButtonId );
 
 						li2ndaryTabTag.append( dv2ndaryTabContentTag );
 						li2ndaryTabTag.append( sp2ndaryTabTextTag );
@@ -138,19 +142,21 @@ function BlockButton( cwsRenderObj, blockObj )
 					}
 				}
 
-				btnTabsUlTag.find( 'li.primary[rel=' + buttonsId[ i ] + ']' ).append( ulTabTag );
+				btnTabsUlTag.find( 'li.primary[rel=' + tabButtonId + ']' ).append( ulTabTag );
 			}
 		}	
 		
 		return btnTabsContainerTag;
 	};
-
+	
 
 	me.renderBlockButton = function( btnId, targetTag, passedData )
 	{
 		//var targetDivTag;  // target Div where the buttons will be added.
 		var btnJson = FormUtil.getObjFromDefinition( btnId, ConfigManager.getConfigJson().definitionButtons );
 
+		btnId = FormUtil.getObjDefId( btnId );
+		
 		// For TabButtons Case, they are already generaeted with some html at this point...  Simply adding more details.
 		var btnTag = me.generateBtnTag( btnJson, btnId, targetTag );
 		
