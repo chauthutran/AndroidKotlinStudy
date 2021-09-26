@@ -23,15 +23,12 @@ function ActivityCardDetail( activityId, isRestore )
         {
             INFO.activity = ActivityDataManager.getActivityById( me.activityId );
 
-            // initialize, populate template
-            var cardSheetFullTag = $( ActivityCardDetail.cardFullScreen );
-            $( 'body' ).append( cardSheetFullTag );
+
+            var cardSheetFullTag = FormUtil.sheetFullSetup( ActivityCardDetail.cardFullScreen, { title: 'Activity Detail', term: '', cssClasses: [ 'activityDetail' ] } );
+
 
             // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
-            if ( DevHelper.devMode )
-            {
-                me.setUpActivityDetailTabDev( cardSheetFullTag, me.activityId );
-            } 
+            if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( cardSheetFullTag, me.activityId );
 
             // create tab click events
             FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
@@ -47,16 +44,12 @@ function ActivityCardDetail( activityId, isRestore )
                         
 
             // Header content set
-            var actCard = new ActivityCard( me.activityId, {'detailViewCase': true }
-                //, { 'parentTag_Override': cardSheetFullTag, 'disableClicks': true } 
-            );
+            var actCard = new ActivityCard( me.activityId, {'detailViewCase': true } );
             actCard.render();
+
 
             // set tabs contents
             me.setFullPreviewTabContent( me.activityId, cardSheetFullTag );
-        
-
-            FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'activityCardDetail', me.activityId, me.isRestore );
 
             
             TranslationManager.translatePage();            
@@ -171,7 +164,7 @@ ActivityCardDetail.cardFullScreen = `
   <div class="wapper_card">
     <div class="sheet-title c_900">
       <img src='images/arrow_back.svg' class='btnBack'>
-      <span>Details</span>
+      <span class="sheetTopTitle">Details</span>
     </div>
     <div class="card _tab activity">
       <div class="activityDetailRerender" style="float: left; width: 1px; height: 1px;"></div>

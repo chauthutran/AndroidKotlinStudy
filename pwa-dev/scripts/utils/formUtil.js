@@ -197,73 +197,38 @@ FormUtil.getNextZIndex_cardFullScreen = function()
 };
 
 
-FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore )
+// FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore )
+
+
+FormUtil.sheetFullSetup = function( template, options )
 {
-	// set other events
-	var btnBackTag = sheetFull.find( 'img.btnBack' );
+	if ( !options ) options = {};
+	var title = Util.getStr( options.title );
+	var term = Util.getStr( options.term );
+	var cssClasses = ( options.cssClasses ) ? options.cssClasses : [];
 
-	btnBackTag.off( 'click' ).click( function()
-	{ 
-		sheetFull.remove();
-
-		//sheetFull.empty();
-		//sheetFull.hide();
-
-		//FormUtil.sheetFull_openPreviousOne( itemType, itemId );
-	});
 	
-	// Add to the sheetFullOpenHistory
-	//if ( !isRestore ) SessionManager.sheetFullOpenHistory.push( { 'type': itemType, 'id': itemId } );
+	// 1. create with template & append to body
+	var sheetFullTag = $( template ).css( 'z-index', FormUtil.getNextZIndex_cardFullScreen() );
+	$( 'body' ).append( sheetFullTag );
 
-	var newZIndex = FormUtil.getNextZIndex_cardFullScreen();
-	sheetFull.css( 'z-index', newZIndex );
-	console.log( 'newZIndex: ' + newZIndex );
 
-	// NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
-	sheetFull.find( '.tab_fs__container' ).css( '--width', sheetFull.find( '.tab_fs__container' ).css( 'width' ) );	
-
-	sheetFull.show();
+	// 2. Set backButton - with title and class identifications
+	var btnBackTag = sheetFull.find( 'img.btnBack' ).addClass( cssClasses );
+	btnBackTag.off( 'click' ).click( function() { sheetFullTag.remove(); });
 	
-	// Hide other same type sheetFull div..
-	//var tagIdName = sheetFull.attr( 'id' );
-    //$( '.detailFullScreen[id!=' + tagIdName + ']' ).html( '' ).hide();
+
+	// 3. NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
+	sheetFullTag.find( '.tab_fs__container' ).css( '--width', sheetFullTag.find( '.tab_fs__container' ).css( 'width' ) );
+	sheetFullTag.find( 'span.sheetTopTitle' ).attr( 'term', term ).text(  title );
+
+	sheetFullTag.show();	
+	
+	return sheetFullTag;
 };
 
-// OBSOLETE - NOT BEING USED ANYMORE..
-FormUtil.sheetFull_openPreviousOne = function( itemType, itemId )
-{
-	var prevItem;
 
-	var listLength = SessionManager.sheetFullOpenHistory.length;
-	
-	// lastItem in history could be same as current one since we push as we show..
-	// Remove/pop items as long as they have same id.  when you encounter diff id, use it.
-	for( var i = 0; i < listLength; i++ )
-	{
-		var popedItem = SessionManager.sheetFullOpenHistory.pop();
-		
-		if ( popedItem.id !== itemId )
-		{
-			prevItem = popedItem;
-			break;
-		}
-	}
-	
-	if ( prevItem )
-	{
-		if ( prevItem.type === 'activityCardDetail' )
-		{
-			var activityCardDetail = new ActivityCardDetail( prevItem.id, true ); // true - isRestore
-			activityCardDetail.render();	
-		}
-		else if ( prevItem.type === 'clientCardDetail' )
-		{
-			var clientCardDetail = new ClientCardDetail( prevItem.id, true ); // true - isRestore
-			clientCardDetail.render();	
-		}
-	}
-};
-
+// -----------------------------------------------
 
 FormUtil.getObjFromDefinition = function( def, definitions )
 {

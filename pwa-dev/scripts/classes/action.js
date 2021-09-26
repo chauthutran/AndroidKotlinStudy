@@ -147,7 +147,18 @@ function Action( cwsRenderObj, blockObj )
 			else if ( !Util.isTypeObject( clickActionJson ) ) afterActionFunc( false, { 'errMsg': 'Bad action definition name: ' + actionDef } );
 			else 
 			{	
-				// NEW: If 'actionCondition' exists, evaluate if it can continue..  If not, simply go to next action			
+				// ACTIVITY ADDING
+				var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );				
+
+
+				// #1. NEW: 'actionPreEval' - 1st run before anything			
+				if ( clickActionJson.preRunEval )
+				{
+					try { eval( Util.getEvalStr( clickActionJson.preRunEval ) ); }
+					catch( errMsg ) { console.log( 'Action.preRunEval ERROR, ' + errMsg ); }					
+				}	
+
+				// #2. NEW: If 'actionCondition' exists, evaluate if it can continue..  If not, simply go to next action			
 				if ( clickActionJson.actionRunCondition )
 				{
 					var result = false;
@@ -159,10 +170,12 @@ function Action( cwsRenderObj, blockObj )
 				}	
 
 
-				// ACTIVITY ADDING
-				var activityJson = ActivityUtil.addAsActivity( 'action', clickActionJson, actionDef );				
-
-				if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
+				// #3. Run by 'actionType'
+				if ( !clickActionJson.actionType ) // If 'actionType' not exist, simply move to next
+				{
+					afterActionFunc( true );
+				}
+				else if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
 				{
 					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
 	
@@ -230,35 +243,20 @@ function Action( cwsRenderObj, blockObj )
 	
 					afterActionFunc( true );
 				}
-				else if ( clickActionJson.actionType === "openSheetFullL2" )
+				else if ( clickActionJson.actionType === "openSheetFull" )
 				{		
-					var sheetFullL2Tag = $( Templates.sheetFullL2Frame );	
-					$( 'body' ).append( sheetFullL2Tag );
-					FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
+					var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
+					blockParentAreaTag = sheetFullTag.find( '.contentBody' );
 
-					blockParentAreaTag = sheetFullL2Tag.find( '.contentBody' );
-				}
-				else if ( clickActionJson.actionType === "closeSheetFullL2" )
-				{				
-					$( 'div.sheetFullL2Frame' ).find( 'img.btnBack' ).click();
+					afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "openBlock" )
 				{
 					// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
-					if ( clickActionJson.openInSheetFullL2 )
+					if ( clickActionJson.openSheetFull )
 					{
-						var sheetFullL2Tag = $( Templates.sheetFullL2Frame );						
-						$( 'body' ).append( sheetFullL2Tag );
-						if ( clickActionJson.sheetTopTitle ) 
-						{
-							var spanSheetTopTitleTag = sheetFullL2Tag.find( 'span.sheetTopTitle' );
-							spanSheetTopTitleTag.attr( 'term', clickActionJson.sheetTopTitle.term );
-							spanSheetTopTitleTag.text( clickActionJson.sheetTopTitle.title );
-						}
-
-						FormUtil.sheetFullSetup_Show( sheetFullL2Tag );
-
-						blockParentAreaTag = sheetFullL2Tag.find( '.contentBody' );
+						var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
+						blockParentAreaTag = sheetFullTag.find( '.contentBody' );
 					}
 
 					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
@@ -272,14 +270,6 @@ function Action( cwsRenderObj, blockObj )
 					
 						blockPassingData.showCase = clickActionJson.showCase;
 						blockPassingData.hideCase = clickActionJson.hideCase;
-
-						// IF THE CURRENT BLOCK TYPE IS MAIN TAB, (and tab button is executing this)
-						// set the target div tag as tab content rather than block parent tag..
-						//var targetDivTag = ( me.blockObj.blockType === 'mainTab' ) ? '': me.blockObj.parentTag;
-
-						// // REMOVED: me.blockObj.hideBlock(); { 'notClear': true }  <--- ??
-						// var newBlockObj = new Block( me.cwsRenderObj, blockJson, clickActionJson.blockId, me.blockParentAreaTag, blockPassingData, undefined, clickActionJson );
-						// newBlockObj.render();
 
 						FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, blockParentAreaTag, blockPassingData, undefined, clickActionJson );
 					}
@@ -360,14 +350,11 @@ function Action( cwsRenderObj, blockObj )
 				{
 					if ( dataPass.activityJson )
 					{						
-						ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id, function( syncReadyJson, success ) 
-						{
-							afterActionFunc( true );
-							// alert case?
-						});
+						ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id
+						, function() { afterActionFunc( true ); }
+						, function() { afterActionFunc( true ); });
 					}
-
-					// NOTE: TODO: HOW TO make a call back always?
+					else afterActionFunc( true );
 				}
 				else if ( clickActionJson.actionType === "processWSResult" ) 
 				{
@@ -394,7 +381,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 	
 					// If statusActions did not get started for some reason, return as this action finished
-					if ( !statusActionsCalled && afterActionFunc ) afterActionFunc( true );
+					if ( !statusActionsCalled ) afterActionFunc( true );
 				}
 				// NO NEED FOR THIS... both 'dhis' & 'mongo' version..
 				else if ( clickActionJson.actionType === "WSlocalData" )
@@ -420,7 +407,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else
 					{
-						if ( !statusActionsCalled && afterActionFunc ) afterActionFunc( true ); 
+						if ( !statusActionsCalled ) afterActionFunc( true ); 
 					}
 	
 					// If statusActions did not get started for some reason, return as this action finished

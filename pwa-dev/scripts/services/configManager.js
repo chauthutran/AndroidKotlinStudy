@@ -1222,6 +1222,22 @@ ConfigManager.downloadedData_UidMapping = function( dataJson )
     else return dataJson;
 };
 
+
+ConfigManager.getRelationOpposite = function( relValue, optionDefId )
+{
+    var valueOpposite;
+
+    var optionList = FormUtil.getObjFromDefinition( optionDefId, ConfigManager.getConfigJson().definitionOptions );
+
+    if ( optionList && Util.isTypeArray( optionList ) )
+    {
+        var optionJson = Util.getFromList( optionList, relValue, 'value' );
+        if ( optionJson && optionList.valueOpposite ) valueOpposite = optionList.valueOpposite;
+    }
+
+	return valueOpposite;
+};
+
 // ========================================================
 
 

@@ -10,6 +10,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;     
     me.blockJson = blockJson;   
+    me.blockTag;
 
     me.clientList = [];
     me.viewGroupByData; // set from 'blockListView'
@@ -34,6 +35,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     me.listTableTbodyTag;    // was me.blockList_UL_Tag;
     // --------- Templates --------------------
 
+    me.template_clientListReRenderTag = `<div class="clientListRerender" style="float: left; width: 1px; height: 1px;"></div>`;
 
     me.template_listDivTag = `<div class="list" />`;
 
@@ -68,27 +70,31 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     //  Render BlockList
     me.render = function( blockTag, passedData, options )
     {        
-        // Clear previous UI & Set containerTag with templates
-        me.clearClassTag( blockTag );        
-
+        me.blockTag = blockTag;
+        me.clearClassTag( blockTag ); // Clear previous UI & Set containerTag with templates
         blockTag.css( 'margin-bottom', me.blockListDiv_marginBottom ); // For 'Fav' button not overlapping..
-
 
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
         // Other Initial Render Setups - syncDown setup, FavIcons, etc..
         var favIconsObj = new FavIcons( 'clientListFav', blockTag, me.cwsRenderObj.pageDivTag );
-		favIconsObj.render();
-
-
-        // Set class level tags
-        me.setClassVariableTags( blockTag );
-
+        favIconsObj.render();
+        
         // Populate controls - clientLists, viewFilter/sort, related.
         me.populateControls( me.blockJson, me.hasView, me.clientList, me.listTableTbodyTag );
 
-        // Events handling
-        //me.setRenderEvents();
+
+        // Clickable rerender setup
+        me.setUpReRenderByClick( blockTag.find( 'div.clientListRerender' ) );
+    };
+
+
+    me.setUpReRenderByClick = function( clientListRerenderTag )
+    {
+        clientListRerenderTag.off( 'click' ).click( function( e ) {
+            e.stopPropagation();  // Stops calling parent tags event calls..
+            me.reRender();
+        } );    
     };
 
 
@@ -163,19 +169,14 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     me.setClassContainerTag = function( blockTag )
     {
+        blockTag.append( me.template_clientListReRenderTag );
+
         var listTableTag = $( me.template_listDivTag );
         blockTag.append( listTableTag );
 
-        var listBottomDivTag = $( me.template_listBottomDivTag );
-        blockTag.append( listBottomDivTag );
+        blockTag.append( me.template_listBottomDivTag );
 
         return listTableTag; //listTableTag.find( 'tbody' );
-    };
-
-
-    me.setClassVariableTags = function ( blockTag )
-    {
-        me.blockTag = blockTag;
     };
 
 
@@ -221,13 +222,9 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             {
                 me.listTableTbodyTag.append( $( me.template_divClientDetailEmptyTag ) );
             }
-
-            //if ( scrollEndFunc ) scrollEndFunc();
         }
         else
         {
-            var listBottomDivTag = $( '.listBottom' );
-
             // Designed to handle with/without scrolling:
             // If setting has no scrolling/paging, me.pagingData has 'enabled': false, and will return endPos as full list size.
             var currPosJson = me.getCurrentPositionRange( clientList.length, me.pagingData );
@@ -255,11 +252,10 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             // If paging is enabled, display the paging status
             if ( me.pagingData.enabled ) 
             {
-                listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
+                me.blockTag.find( '.listBottom' ).show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
             }
 
             TranslationManager.translatePage();
-            //if ( scrollEndFunc ) scrollEndFunc();
         }
     };
 

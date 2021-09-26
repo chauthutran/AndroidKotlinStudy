@@ -21,13 +21,10 @@ function ClientCardDetail( clientId, isRestore )
 
     me.render = function()
     {
-        INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places..
-        // Or INFO.getINFOJson();
+        INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places.. // Or INFO.getINFOJson();
 
-
-        // initialize / populate template
-        var cardSheetFullTag = $( ClientCardDetail.cardFullScreen );
-        $( 'body' ).append( cardSheetFullTag );
+        // sheetFull Initialize / populate template
+        var cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ] } );
 
         // create tab click events
         FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
@@ -51,13 +48,12 @@ function ClientCardDetail( clientId, isRestore )
         me.setFullPreviewTabContent( me.clientId, cardSheetFullTag );
     
 
-        FormUtil.sheetFullSetup_Show( cardSheetFullTag, 'clientCardDetail', me.clientId, me.isRestore );
-        cardSheetFullTag.find( 'img.btnBack' ).off( 'click' ).click( function()
+        /*cardSheetFullTag.find( 'img.btnBack' ).off( 'click' ).click( function()
             { 
                cardSheetFullTag.remove();
                $("#activityListViewNav").show();
             });
-        
+        */
             
         TranslationManager.translatePage();    
     };
@@ -373,14 +369,13 @@ ClientCardDetail.activityTemplateJson =
 };
 
 
-
 ClientCardDetail.cardFullScreen = `
 <div class="sheet_full-fs detailFullScreen">
     <div class="wapper_card">
 
         <div class="sheet-title c_900">
             <img src='images/arrow_back.svg' class='btnBack'>
-            <span>Details</span>
+            <span class="sheetTopTitle">Details</span>
         </div>
 
         <div class="card _tab client">

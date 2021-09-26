@@ -15,19 +15,23 @@ function ItemCard( itemJson, parentTag, blockDefJson )
     me.parentTag = parentTag;
     me.blockDefJson = blockDefJson;
 
+    me.itemCardDivTag;
     me.cardHighlightColor = '#fcffff'; // #fffff9
 
 	// =============================================
 	// === Initialize Related ========================
 
-    me.initialize = function() { };
+    me.initialize = function() 
+    { 
+        me.itemCardDivTag = $( ItemCardTemplate.cardDivTag );
+        me.parentTag.append( me.itemCardDivTag );
+    };
 
     // ----------------------------------------------------
 
     me.render = function()
     {        
-        var itemCardDivTag = $( ItemCardTemplate.cardDivTag );
-        me.parentTag.append( itemCardDivTag );
+        var itemCardDivTag = me.itemCardDivTag;
 
         try
         {
