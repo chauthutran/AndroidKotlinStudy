@@ -207,14 +207,14 @@ FormUtil.sheetFullSetup = function( template, options )
 	var term = Util.getStr( options.term );
 	var cssClasses = ( options.cssClasses ) ? options.cssClasses : [];
 
-	
+
 	// 1. create with template & append to body
 	var sheetFullTag = $( template ).css( 'z-index', FormUtil.getNextZIndex_cardFullScreen() );
 	$( 'body' ).append( sheetFullTag );
 
 
 	// 2. Set backButton - with title and class identifications
-	var btnBackTag = sheetFull.find( 'img.btnBack' ).addClass( cssClasses );
+	var btnBackTag = sheetFullTag.find( 'img.btnBack' ).addClass( cssClasses );
 	btnBackTag.off( 'click' ).click( function() { sheetFullTag.remove(); });
 	
 

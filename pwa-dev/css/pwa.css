@@ -823,9 +823,15 @@ img.rotateImg {
   -moz-box-sizing: border-box;
 } 
 
-.sheet_full-fs .tab_fs__container-content {
+.sheet_full-fs .card .tab_fs__container-content {
   height: calc(100vh - 180px) !important;
-  overflow: auto !important;
+  overflow-y: auto !important;
+  padding: 3px !important;
+}
+
+.sheet_full-fs .info .tab_fs__container-content {
+  height: calc(100vh - 136px) !important;
+  overflow-y: auto !important;
   padding: 3px !important;
 }
 
