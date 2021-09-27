@@ -96,7 +96,7 @@ ActivitySyncUtil.displayActivitySyncStatus = function( activityId )
 };
 
 
-ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatusTextTag, statusVal )
+ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatusTextTag, statusVal, statusCustomJson )
 {
 	// reset..
 	divSyncIconTag.empty();
@@ -104,7 +104,15 @@ ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatu
 
 	var imgIcon = $( '<img>' );
 
-	if ( statusVal === Constants.status_submit )        
+	if ( statusVal === Constants.status_custom )        
+	{
+		if ( !statusCustomJson ) statusCustomJson = {};
+		var color = ( statusCustomJson.color ) ? statusCustomJson.color: '#2aad5c';
+
+		divSyncStatusTextTag.css( 'color', color ).html( statusCustomJson.text ).attr( 'term', statusCustomJson.term );
+		imgIcon.attr( 'src', 'images/' + statusCustomJson.img );
+	}
+	else if ( statusVal === Constants.status_submit )        
 	{
 		// already sync..
 		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );

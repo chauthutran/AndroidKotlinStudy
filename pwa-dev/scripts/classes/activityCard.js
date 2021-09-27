@@ -461,7 +461,7 @@ function ActivityCard( activityId, options )
                 throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
             }
 
-            afterDoneCall( success );
+            afterDoneCall( success, responseJson );
         });   
     };
 

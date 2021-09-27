@@ -1232,7 +1232,7 @@ ConfigManager.getRelationOpposite = function( relValue, optionDefId )
     if ( optionList && Util.isTypeArray( optionList ) )
     {
         var optionJson = Util.getFromList( optionList, relValue, 'value' );
-        if ( optionJson && optionList.valueOpposite ) valueOpposite = optionList.valueOpposite;
+        if ( optionJson && optionJson.valueOpposite ) valueOpposite = optionJson.valueOpposite;
     }
 
 	return valueOpposite;

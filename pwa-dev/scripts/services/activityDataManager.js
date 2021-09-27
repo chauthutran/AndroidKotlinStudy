@@ -410,8 +410,9 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         {
             activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
         }
-        else activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
 
+        
+        if ( !activityPayloadClient ) activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
 
         ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true } );
     

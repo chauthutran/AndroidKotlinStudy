@@ -109,8 +109,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
     		if ( btnJson.onClick )
 			{
                 sheetBottomBtnTag.click( function() 
-                {
-        
+                {        
                     //GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
                     MsgManager.msgAreaClearAll();
                     //if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
@@ -118,10 +117,6 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
                     var formDivSecTag = undefined;
                     var passedData = {};
         
-                    //var validationPass = ( btnJson.bypassValidation || Validation.checkFormEntryTagsData( formDivSecTag, 'showMsg' ) );
-                    //if ( validationPass ) {}
-                    // ActivityUtil.addAsActivity( 'block', me.blockObj.blockJson, me.blockObj.blockId );
-                    //if ( !passedData ) passedData = me.blockObj.passedData;
                     var actionObj = new Action( me.cwsRenderObj, me.blockObj );
                     actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
                 });        
@@ -227,7 +222,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
                 {
                     var itemJson = itemCardList[i];
 
-                    var itemCardObj = new ItemCard( itemJson, listTableTbodyTag, blockDefJson );
+                    var itemCardObj = new ItemCard( itemJson, listTableTbodyTag, blockDefJson, blockObj );
                     itemCardObj.render();
                 }    
             }

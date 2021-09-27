@@ -448,7 +448,8 @@ Util.trvEval_INSERT_SUBTEMPLATES = function( obj, INFO, defPTemplates, iDepth, l
 			var key = keyArr[i];
 			var propVal = obj[key];
 
-			if ( key === Util.KEY_TEMPLATE_ADD ) 
+			//if ( key === Util.KEY_TEMPLATE_ADD ) 
+			if ( key.indexOf( Util.KEY_TEMPLATE_ADD ) === 0 ) 
 			{
 				var templateObj = defPTemplates[ propVal ];
 
@@ -462,7 +463,7 @@ Util.trvEval_INSERT_SUBTEMPLATES = function( obj, INFO, defPTemplates, iDepth, l
 
 				delete obj[ key ];
 			}
-			else if ( key === Util.KEY_TEMPLATE_ADD_ARR ) 
+			else if ( key.indexOf( Util.KEY_TEMPLATE_ADD_ARR ) === 0 ) 
 			{
 				propVal.forEach( pArrItem => 
 				{

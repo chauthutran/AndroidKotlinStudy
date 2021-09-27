@@ -26,6 +26,8 @@ function Action( cwsRenderObj, blockObj )
 	// Same level as 'render' in other type of class
 	me.handleClickActions = function( btnTag, btnOnClickActions, blockParentAreaTag, blockDivTag, formDivSecTag, blockPassingData )
 	{
+		if ( !btnTag ) btnTag = me.emptyJQueryTag;
+
 		// if ( formDivSecTag.attr( 'data-fields') != undefined )
 		if ( me.blockObj.blockFormObj && me.blockObj.blockFormObj.formJsonArr )
 		{
@@ -239,7 +241,7 @@ function Action( cwsRenderObj, blockObj )
 				else if ( clickActionJson.actionType === "hideBlock" )
 				{
 					//blockDivTag.hide();
-					me.blockObj.hideBlock();
+					if ( me.blockObj.hideBlock ) me.blockObj.hideBlock();
 	
 					afterActionFunc( true );
 				}
@@ -348,10 +350,24 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "syncActivityById" )
 				{
-					if ( dataPass.activityJson )
+					var activityId = '';
+					dataPass.relTargetClientId = undefined;
+
+					if ( dataPass.activityJson ) activityId = dataPass.activityJson.id;
+					else if ( dataPass.syncActivityId ) activityId = dataPass.syncActivityId;
+
+					if ( activityId )
 					{						
-						ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id
-						, function() { afterActionFunc( true ); }
+						ActivitySyncUtil.syncUpActivity_IfOnline( activityId
+						, function( syncReadyJson, success, responseJson ) 
+						{ 
+							if ( success && responseJson && responseJson.result && responseJson.result.client )
+							{
+								dataPass.relTargetClientId = responseJson.result.client._id;
+							}
+
+							afterActionFunc( true ); 
+						}
 						, function() { afterActionFunc( true ); });
 					}
 					else afterActionFunc( true );
@@ -446,7 +462,12 @@ function Action( cwsRenderObj, blockObj )
 						if ( passed )
 						{
 							// NEW - Create Activity under existing Client json rather than new client.
-							if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
+							if ( clickActionJson.underClient && Util.isTypeObject( clickActionJson.underClient ) && clickActionJson.underClient.clientId )
+							{
+								try { clickActionJson.clientId = eval( Util.getEvalStr( clickActionJson.underClient.clientId ) ); }
+								catch( errMsg ) { console.log( 'Action.underClient.clientId eval, ' + errMsg ); }
+							}
+							else if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
 							{
 								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
 								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	

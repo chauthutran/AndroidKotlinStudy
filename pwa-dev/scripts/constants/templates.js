@@ -583,14 +583,12 @@ Templates.sheetFullFrame = `
       <img src="images/arrow_back.svg" class="btnBack">
       <span class="sheetTopTitle" term="term_newClient">New Client</span>
     </div>
-    <div class="info contentBody"
-      style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
+    <div class="info contentBody" style="background-color: #FFF; height: calc(100vh - 60px);">
     </div>
   </div>
 </div>
 `;
 
-Templates.sffBack = `    <div class="info contentBody"
+Templates.sffBack = `<div class="info contentBody"
 style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 70px); width: calc(100vw - 16px);">
-</div>
-`;
+</div>`;

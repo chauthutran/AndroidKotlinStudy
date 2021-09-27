@@ -232,17 +232,43 @@ FormUtil.sheetFullSetup = function( template, options )
 
 FormUtil.getObjFromDefinition = function( def, definitions )
 {
-	var objJson = def;  // default is the passed in object/name
+	var objJson; // = def;  // default is the passed in object/name
 
 	try
 	{
 		if ( Util.isTypeString( def ) )
 		{
-			if ( definitions && definitions[ def ] )
+			// OPTION NEW 'local to block' - Check for Block preName with '.' (Local Def in block)
+			var blockPreNameIdx = def.indexOf ( '.' );
+			var localObjJson;
+
+			if ( blockPreNameIdx > 0 && def.length > blockPreNameIdx + 1 )
 			{
-				// get object from definition
-				objJson = definitions[ def ];
-			}		
+				var blockPreName = def.substring( 0, blockPreNameIdx );
+				var localDefName = def.substr( blockPreNameIdx + 1 );
+
+				var blockJson = FormUtil.getObjFromDefinition( blockPreName, ConfigManager.getConfigJson().definitionBlocks );
+
+				if ( blockJson && blockJson.DEFINITIONS && blockJson.DEFINITIONS[ localDefName ] )
+				{
+					localObjJson = blockJson.DEFINITIONS[ localDefName ];
+				}
+			}
+
+			if ( localObjJson ) objJson = localObjJson;
+			else
+			{
+				// OPTION ORIGINAL - Normal definition name (without '.' in name)
+				if ( definitions && definitions[ def ] )
+				{
+					// get object from definition
+					objJson = definitions[ def ];
+				}		
+			}
+		}
+		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
+		{
+			objJson = def;
 		}
 	}
 	catch ( errMsg )

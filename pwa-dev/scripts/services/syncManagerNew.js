@@ -185,7 +185,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
 
         activityCardObj.highlightActivityDiv( true );
 
-        activityCardObj.performSyncUp( function( success, errMsg ) 
+        activityCardObj.performSyncUp( function( success, responseJson ) 
         {
             // gAnalytics Event
             GAnalytics.setEvent( 'SyncEnded', activityId, success, 1 );
@@ -201,7 +201,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );
 
-            if ( returnFunc ) returnFunc( syncReadyJson, success );
+            if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson );
         });
     }
     else

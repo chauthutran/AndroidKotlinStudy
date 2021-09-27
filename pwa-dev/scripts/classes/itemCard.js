@@ -7,16 +7,19 @@
 //          - There will be cases where client items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ItemCard( itemJson, parentTag, blockDefJson )
+function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
 {
 	var me = this;
 
     me.itemJson = itemJson;
     me.parentTag = parentTag;
     me.blockDefJson = blockDefJson;
+    me.blockObj = blockObj;
 
     me.itemCardDivTag;
     me.cardHighlightColor = '#fcffff'; // #fffff9
+
+    me.option;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -49,7 +52,7 @@ function ItemCard( itemJson, parentTag, blockDefJson )
             me.setItemContentDisplay( itemContentTag, me.itemJson, me.blockDefJson );
             me.itemContentClick_FullView( itemContentTag, me.itemJson._id );
             
-            me.setStatusIconText( itemCardDivTag, me.itemJson );
+            me.setStatusIconText( itemCardDivTag, me.itemJson, me.blockDefJson );
         }
         catch( errMsg )
         {
@@ -59,11 +62,12 @@ function ItemCard( itemJson, parentTag, blockDefJson )
 
     // -----------------------------------------------------
     
-    me.setStatusIconText = function( itemCardDivTag, itemJson )
+    me.setStatusIconText = function( itemCardDivTag, itemJson, blockDefJson )
     {
         try
         {            
             var itemId = itemJson._id;
+            var operationType = ( blockDefJson.operationType ) ? blockDefJson.operationType : '';
 
             var divStatusIconTag = itemCardDivTag.find( '.itemStatusIcon' );
             var divStatusTextTag = itemCardDivTag.find( '.itemStatusText' );
@@ -73,32 +77,54 @@ function ItemCard( itemJson, parentTag, blockDefJson )
             divStatusTextTag.empty();
 
 
-            if ( me.hasMatchingLocalData( itemId ) )
+            if ( operationType === '' || operationType === 'localDownload' )
             {
-                // Icon / Label
-                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_downloaded );
-                divStatusTextTag.html( 'In Local' ).attr( 'term', '' );
+                if ( me.hasMatchingLocalData( itemId ) )
+                {
+                    // Icon / Label
+                    ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_downloaded );
+                    divStatusTextTag.html( 'In Local' ).attr( 'term', '' );
+                }
+                else
+                {
+                    // Icon / Label
+                    ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_queued );
+                    divStatusTextTag.html( 'Not downloaded' ).attr( 'term', '' );
+    
+                    // On click, remove the icon/text and allow to load..
+                    divStatusIconTag.off( 'click' ).click( function() 
+                    {
+                        var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored.' );
+    
+                        ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+                        {
+                            MsgManager.msgAreaShow( 'The client downloaded and stored.' )
+    
+                            me.itemJson = ClientDataManager.getClientById( itemId );
+    
+                            // reload the status <-- or this card..
+                            me.render();
+                        });    
+                    });
+                }
             }
-            else
+            else if ( operationType === 'selectItem' )
             {
                 // Icon / Label
-                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_queued );
-                divStatusTextTag.html( 'Not downloaded' ).attr( 'term', '' );
+                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_custom, { text: 'Choose This Client', term: '', img: 'sync_24.svg' } );
 
                 // On click, remove the icon/text and allow to load..
                 divStatusIconTag.off( 'click' ).click( function() 
                 {
-                    var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored.' );
-
-                    ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+                    if ( blockDefJson.selectActions )
                     {
-                        MsgManager.msgAreaShow( 'The client downloaded and stored.' )
+                        var formsJson = Util.cloneJson( itemJson.clientDetails );
+                        formsJson.clientId = itemJson._id;
+                        var blockPassingData = { formsJson: formsJson };
 
-                        me.itemJson = ClientDataManager.getClientById( itemId );
-
-                        // reload the status <-- or this card..
-                        me.render();
-                    });    
+                        var actionObj = new Action( SessionManager.cwsRenderObj, me.blockObj );
+                        actionObj.handleClickActions( undefined, blockDefJson.selectActions, me.blockObj.parentTag, me.blockObj.blockTag, undefined, blockPassingData );
+                    }
                 });
             }
         }

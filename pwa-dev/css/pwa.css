@@ -835,6 +835,10 @@ img.rotateImg {
   padding: 3px !important;
 }
 
+.sheet_full-fs .info .block {
+  padding: 8px 4px;
+}
+
 /* ### FORM LAYOUT  ### */
 /* 1. validation messages */
 

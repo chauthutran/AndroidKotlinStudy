@@ -16,6 +16,7 @@ Constants.status_downloaded = "downloaded";
 Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
 Constants.status_submit_wMsg = "submit_wMsg"; 
 Constants.status_submit_wMsgRead = "submit_wMsgRead";
+Constants.status_custom = "custom";
 
 
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;
