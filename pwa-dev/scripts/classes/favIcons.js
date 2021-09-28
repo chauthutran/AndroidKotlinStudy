@@ -20,6 +20,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     // --------------
     me.favListByType;
 
+    me.favIconSize = '40px';
+
     // ========================================
 
     // TODO: ORGANIZE THE METHODS..
@@ -401,6 +403,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
         svgTagStr = svgTagStr.replace( /{icon.color}/g, colorInfo.foreground );
 
         svgIconTag.append( svgTagStr );
+
+        svgIconTag.find( 'svg' ).css( 'width', me.favIconSize ).css( 'height', me.favIconSize );
     };
 
     me.getColorInfo = function( favItem, activityTypeDef )
