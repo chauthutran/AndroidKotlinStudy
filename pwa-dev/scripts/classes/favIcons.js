@@ -383,18 +383,36 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
 
         if ( svgPathStr )
         {
-            // get 'svg' file from local image path
-            $.get( svgPathStr, function( data ) 
+            try 
             {
-                var htmlElement = $( data )[0].documentElement;
-                var svgTagStr = htmlElement.outerHTML;
+                svgIconTag.each( function() 
+                {
+                    var iconDivTag = $( this );
 
-                // Modify svgTagStr, append to svgIconTag
-                me.createSvgIconAndAppend( favItem, activityTypeDef, svgTagStr, svgIconTag );
-            });
+                    if ( iconDivTag.find( 'img' ).length === 0 )
+                    {
+                        iconDivTag.html( '<img src="'+ svgPathStr + '" style="width:' + me.favIconSize + '; height:' + me.favIconSize + ';">' );
+                    }
+                });
+            }
+            catch ( errMsg )
+            {
+                console.customLog( 'Error on FavIcons.generateSvgIconFromPath, errMsg: ' + errMsg );
+            }
         }
     };
 
+    
+    /*
+    // get 'svg' file from local image path
+    $.get( svgPathStr, function( data ) 
+    {
+        var htmlElement = $( data )[0].documentElement;
+        var svgTagStr = htmlElement.outerHTML;
+
+        // Modify svgTagStr, append to svgIconTag
+        me.createSvgIconAndAppend( favItem, activityTypeDef, svgTagStr, svgIconTag );
+    });
     me.createSvgIconAndAppend = function( favItem, activityTypeDef, svgTagStr, svgIconTag )
     {
         var colorInfo = me.getColorInfo( favItem, activityTypeDef );
@@ -406,6 +424,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
 
         svgIconTag.find( 'svg' ).css( 'width', me.favIconSize ).css( 'height', me.favIconSize );
     };
+
 
     me.getColorInfo = function( favItem, activityTypeDef )
     {
@@ -429,7 +448,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
             if ( colorsJson.foreground ) colorInfo.foreground = colorsJson.foreground;
         }
     };
-    
+    */
     //-----------------------------------
 
     me.getActivityTypeByRef = function( prop, activityType )

@@ -1237,14 +1237,14 @@ FormUtil.getTagVal = function( tag, option )
 
 FormUtil.getManifest = function()	
 {
+	// Need to be called after jquery library is loaded and need to use sync call?
 	$.get( 'manifest.json', function( jsonData, status )
 	{
 		if ( status == 'success' )
 		{
 			return jsonData
 		}
-	}
-	);
+	});
 }
 
 FormUtil.tryEval = function( form, evalTry )
@@ -1511,62 +1511,25 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 	if ( jsonItem.term ) tags.attr( 'term', jsonItem.term );
 };
 
+// Used in activityCard icon rendering..
 FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
 {
-	//console.log( activityType );
 	try 
 	{
-		if ( iconObj && activityType ) //while sync action runs, the current iconObj object may not be rendered on the screen
+		if ( iconObj && activityType )
 		{
-			// read local SVG xml structure, then replace appropriate content 'holders'
-			$.get( activityType.icon.path, function(data) {
-	
-				var svgObject = ( $(data)[0].documentElement );
-				var svgStyle = ( iconStyleOverride ? iconStyleOverride : ConfigManager.getSettingsActivityDef().activityIconSize );
-	
-				if ( activityType.icon.colors )
+			if ( activityType.icon.path )
+			{
+				iconObj.each( function() 
 				{
-					if ( activityType.icon.colors.background )
-					{
-						$( svgObject ).html( $(svgObject).html().replace(/{icon.bgfill}/g, activityType.icon.colors.background) );
-						$( svgObject ).html( $(svgObject).html().replace(/{bgfill}/g, activityType.icon.colors.background) );
-						$( svgObject ).attr( 'colors.background', activityType.icon.colors.background );
-					}
-					if ( activityType.icon.colors.foreground )
-					{
-						$( svgObject ).html( $(svgObject).html().replace(/{icon.color}/g, activityType.icon.colors.foreground) );
-						$( svgObject ).html( $(svgObject).html().replace(/{color}/g, activityType.icon.colors.foreground) );
-						$( svgObject ).attr( 'colors.foreground', activityType.icon.colors.foreground );
-					}
-	
-				}
-	
-				if ( statusOpt && statusOpt.name !== Constants.status_queued ) //&& statusOpt.name !== Constants.status_failed 
-				{
-					$( svgObject ).css( 'opacity', '1' );
-				}
-				else
-				{
-					if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status )
-					{
-						$( svgObject ).css( 'opacity', '1' );
-					}
-					else
-					{
-						$( svgObject ).css( 'opacity', '0.4' );
-					}
-				}
-	
-				$( iconObj ).empty();
-				$( iconObj ).append( svgObject );
-	
-				if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getSettingsActivityDef() && svgStyle && $(iconObj).html() )
-				{
-					$( svgObject ).attr( 'width', '100%' ); //( iconObj.css( 'width' ) ? iconObj.css( 'width' ) : svgStyle.width )
-					$( svgObject ).attr( 'height', '100%' ); //( iconObj.css( 'height' ) ? iconObj.css( 'height' ) : svgStyle.height )
-				}
+					var iconDivTag = $( this );
 
-			});
+					if ( iconDivTag.find( 'img' ).length === 0 )
+					{
+						iconDivTag.html( '<img src="'+ activityType.icon.path + '" style="width:56px; height:56px;">' );
+					}
+				});
+			}
 		}
 	}
 	catch ( errMsg )
@@ -1575,6 +1538,38 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	}
 }
 
+/*
+	if ( activityType.icon.colors )
+	{
+		if ( activityType.icon.colors.background )
+		{
+			svgTag.html( svgTag.html().replace(/{icon.bgfill}/g, activityType.icon.colors.background) );
+			svgTag.html( svgTag.html().replace(/{bgfill}/g, activityType.icon.colors.background) );
+			svgTag.attr( 'colors.background', activityType.icon.colors.background );
+		}
+		if ( activityType.icon.colors.foreground )
+		{
+			svgTag.html( svgTag.html().replace(/{icon.color}/g, activityType.icon.colors.foreground) );
+			svgTag.html( svgTag.html().replace(/{color}/g, activityType.icon.colors.foreground) );
+			svgTag.attr( 'colors.foreground', activityType.icon.colors.foreground );
+		}	
+	}
+
+	if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status ) svgTag.css( 'opacity', '0.4' );
+
+	iconObj.find( 'svg' ).remove();
+	iconObj.append( svgTag );
+
+	var activityIconSize = '56px';
+	iconObj.find( 'svg' ).css( 'width', activityIconSize ).css( 'height', activityIconSize );
+
+	//if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getSettingsActivityDef() && svgStyle && $(iconObj).html() )
+	//{ svgTag.attr( 'width', '100%' ).attr( 'height', '100%' ); }
+	
+});	
+*/		
+
+/*
 FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 {
 	if ( ConfigManager.getConfigJson() )
@@ -1592,33 +1587,33 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 			{
 				$.get( statusOpt.icon.path, function(data) {
 
-					var svgObject = ( $(data)[0].documentElement );
+					var svgTag = $( $(data)[0].documentElement );
 	
 					if ( statusOpt.icon.colors )
 					{
 						if ( statusOpt.icon.colors.background )
 						{
-							$( svgObject ).html( $(svgObject).html().replace(/{icon.bgfill}/g, statusOpt.icon.colors.background) );
-							$( svgObject ).html( $(svgObject).html().replace(/{bgfill}/g, statusOpt.icon.colors.background) );
-							$( svgObject ).attr( 'colors.background', statusOpt.icon.colors.background );
+							svgTag.html( svgTag.html().replace(/{icon.bgfill}/g, statusOpt.icon.colors.background) );
+							svgTag.html( svgTag.html().replace(/{bgfill}/g, statusOpt.icon.colors.background) );
+							svgTag.attr( 'colors.background', statusOpt.icon.colors.background );
 						}
 						if ( statusOpt.icon.colors.foreground )
 						{
-							$( svgObject ).html( $(svgObject).html().replace(/{icon.color}/g, statusOpt.icon.colors.foreground) );
-							$( svgObject ).html( $(svgObject).html().replace(/{color}/g, statusOpt.icon.colors.foreground) );
-							$( svgObject ).attr( 'colors.foreground', statusOpt.icon.colors.foreground );
+							svgTag.html( svgTag.html().replace(/{icon.color}/g, statusOpt.icon.colors.foreground) );
+							svgTag.html( svgTag.html().replace(/{color}/g, statusOpt.icon.colors.foreground) );
+							svgTag.attr( 'colors.foreground', statusOpt.icon.colors.foreground );
 						}
 					}
 	
 					$( targetObj ).empty();
-					$( targetObj ).append( svgObject );
+					$( targetObj ).append( svgTag );
 
 					var activityDef = ConfigManager.getSettingsActivityDef();
 
 					if ( activityDef.statusIconSize )
 					{
-						$( svgObject ).attr( 'width', activityDef.statusIconSize.width );
-						$( svgObject ).attr( 'height', activityDef.statusIconSize.height );		
+						svgTag.attr( 'width', activityDef.statusIconSize.width );
+						svgTag.attr( 'height', activityDef.statusIconSize.height );		
 					}
 	
 				});
@@ -1629,6 +1624,8 @@ FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
 	}
 
 }
+*/
+
 
 FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj ) 
 {
