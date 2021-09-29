@@ -269,6 +269,9 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
 		{
 			objJson = def;
+
+			// TODO: If this is array, but holds string, we need to check the definition of that..
+
 		}
 	}
 	catch ( errMsg )
