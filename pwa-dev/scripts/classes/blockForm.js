@@ -33,6 +33,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
 	me.render = function( formDef, blockTag, passedData )
 	{
+
+		// TODO:
+		// 		ADD FORM FIELDS ARRAY COMBINING HERE!!
+
 		// 1. Set formDefinition variables (from Config)
 		var formDef_fieldsArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );		
 		formDef_fieldsArr = ConfigManager.filterList_ByCountryFilter( formDef_fieldsArr );
