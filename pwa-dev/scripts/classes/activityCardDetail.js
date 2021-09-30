@@ -3,62 +3,54 @@
 
 function ActivityCardDetail( activityId, isRestore )
 {
-	var me = this;
+	  var me = this;
 
     me.activityId = activityId;
-    me.isRestore = isRestore
+    me.isRestore = isRestore;
+    me.cardSheetFullTag;
 
-	// ===============================================
-	// === Initialize Related ========================
+	  // ===============================================
+	  // === Initialize Related ========================
 
-    me.initialize = function() { };
+    me.initialize = function() 
+    { 
+      me.cardSheetFullTag = FormUtil.sheetFullSetup( ActivityCardDetail.cardFullScreen, { title: 'Activity Detail', term: '', cssClasses: [ 'activityDetail' ] } );
+
+      // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
+      if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( me.cardSheetFullTag, me.activityId );
+
+      // create tab click events
+      FormUtil.setUpEntryTabClick( me.cardSheetFullTag.find( '.tab_fs' ) ); 
+  
+      // ADD TEST/DUMMY VALUE
+      me.cardSheetFullTag.find( '.activity' ).attr( 'itemid', me.activityId )
+      
+      // ReRender
+      me.cardSheetFullTag.find( '.activityDetailRerender' ).off( 'click' ).click( function() {
+          me.showFullPreview( me.activityId );
+      });
+    };
 
     // ----------------------------------
     
     me.render = function()
     {
-        console.log( 'activity showFullPreview..' );
-
         if ( me.activityId ) 
         {
             INFO.activity = ActivityDataManager.getActivityById( me.activityId );
-
-
-            var cardSheetFullTag = FormUtil.sheetFullSetup( ActivityCardDetail.cardFullScreen, { title: 'Activity Detail', term: '', cssClasses: [ 'activityDetail' ] } );
-
-
-            // If devMode, show Dev tab (primary) + li ones (2ndary <-- smaller screen hidden li)
-            if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( cardSheetFullTag, me.activityId );
-
-            // create tab click events
-            FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
-        
-            // ADD TEST/DUMMY VALUE
-            cardSheetFullTag.find( '.activity' ).attr( 'itemid', me.activityId )
-            
-
-            // ReRender
-            cardSheetFullTag.find( '.activityDetailRerender' ).off( 'click' ).click( function() {
-                me.showFullPreview( me.activityId );
-            });
-                        
-
+    
             // Header content set
             var actCard = new ActivityCard( me.activityId, {'detailViewCase': true } );
             actCard.render();
 
-
             // set tabs contents
-            me.setFullPreviewTabContent( me.activityId, cardSheetFullTag );
+            me.setFullPreviewTabContent( me.activityId, me.cardSheetFullTag );
 
-            
             TranslationManager.translatePage();            
         }
     };
-    
 
     // ----------------------------------------------------
-
 
     me.setUpActivityDetailTabDev = function( sheetFullTag, activityId )
     {

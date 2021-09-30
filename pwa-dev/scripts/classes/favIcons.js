@@ -168,6 +168,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
                 INFO.allTransDataValues = {};
                 INFO.lastActivity = {};
 
+                // TODO: TO BE REMOVED!!!
                 if ( INFO.client )
                 {
                     INFO.client.activities.forEach( activity => 

@@ -247,6 +247,7 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else if ( clickActionJson.actionType === "openSheetFull" )
 				{		
+					// NOT USED much..
 					var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
 					blockParentAreaTag = sheetFullTag.find( '.contentBody' );
 

@@ -1,9 +1,10 @@
 
-function ClientRelationshipList( _clientJson, _relationshipTabTag )
+function ClientRelationshipList( clientId, _relationshipTabTag )
 {
     var me = this;
 
-    me.clientJson = _clientJson;
+    me.clientId = clientId;
+    me.clientJson;
     me.relationshipTabTag =  _relationshipTabTag;
 
 
@@ -31,6 +32,8 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
     me.render = function()
     {
+        me.clientJson = ClientDataManager.getClientById( me.clientId );
+
         // Reset things..  maybe simply clear it out?  
         me.relationshipTabTag.html( '' );
         //me.relationshipTabTag.find( 'div.block' ).remove();
@@ -41,7 +44,12 @@ function ClientRelationshipList( _clientJson, _relationshipTabTag )
 
         me.renderRelationshipList( me.listTag, me.clientJson.relationships );
 
-        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag );
+        
+        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, function() 
+        {
+            INFO.client = me.clientJson;  /// ?? Get/refresh client json by id?
+        });
+
         favIconsObj.render();
     };
 

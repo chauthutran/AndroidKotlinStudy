@@ -8,6 +8,7 @@ function ClientCardDetail( clientId, isRestore )
     me.clientId = clientId;
     me.isRestore = isRestore;
     me.actionObj;
+    me.cardSheetFullTag;
 
 	// ===============================================
 	// === Initialize Related ========================
@@ -15,6 +16,22 @@ function ClientCardDetail( clientId, isRestore )
     me.initialize = function() 
     { 
         me.actionObj = new Action( SessionManager.cwsRenderObj, {} );
+
+        // sheetFull Initialize / populate template
+        me.cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ] } );
+
+        // create tab click events
+        FormUtil.setUpEntryTabClick( me.cardSheetFullTag.find( '.tab_fs' ) ); 
+    
+        // ADD TEST/DUMMY VALUE
+        me.cardSheetFullTag.find( '.client' ).attr( 'itemid', me.clientId )
+
+        // ReRender
+        me.cardSheetFullTag.find( '.clientDetailRerender' ).off( 'click' ).click( function() {
+            // me.render();
+            me.cardSheetFullTag.find( 'div.clientRerender' ).click();
+            me.cardSheetFullTag.find( '.tab_fs__head li.primary.active' ).click();
+        });
     };
 
     // ----------------------------------
@@ -23,39 +40,15 @@ function ClientCardDetail( clientId, isRestore )
     {
         INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places.. // Or INFO.getINFOJson();
 
-        // sheetFull Initialize / populate template
-        var cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ] } );
-
-        // create tab click events
-        FormUtil.setUpEntryTabClick( cardSheetFullTag.find( '.tab_fs' ) ); 
-    
-        // ADD TEST/DUMMY VALUE
-        cardSheetFullTag.find( '.client' ).attr( 'itemid', me.clientId )
-
-        // ReRender
-        cardSheetFullTag.find( '.clientDetailRerender' ).off( 'click' ).click( function() {
-            me.render();
-        });
-
-
         // Header content set  <--- This looks for all with $( 'div.card[itemid="' + me.clientId + '"]' );
         //      - this catches not only generated full sheet html card part.
-        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } ); // { 'parentTag_Override': cardSheetFullTag, 'disableClicks': true } 
+        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } );
         itemCard.render();
 
-
         // set tabs contents
-        me.setFullPreviewTabContent( me.clientId, cardSheetFullTag );
-    
-
-        /*cardSheetFullTag.find( 'img.btnBack' ).off( 'click' ).click( function()
-            { 
-               cardSheetFullTag.remove();
-               $("#activityListViewNav").show();
-            });
-        */
-            
-        TranslationManager.translatePage();    
+        me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag );
+                
+        //TranslationManager.translatePage();    
     };
 
     // ----------------------------------------------------
@@ -100,9 +93,14 @@ function ClientCardDetail( clientId, isRestore )
             me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
             //me.renderActivityList( activityListBlockTag, clientJson );
 
-            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, function( blockTag, blockContianerTag ) {
-                // clear the list?
+
+            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, function( blockTag, blockContianerTag ) 
+            {
+                // Clear the list?
                 blockTag.html( '' ); //activityListBlockTag.html( '' );
+
+                // Get proper client into INFO.client - since other client could been loaded by clicks.
+                INFO.client = ClientDataManager.getClientById( me.clientId );
             });
             favIconsObj.render();
     
@@ -111,7 +109,7 @@ function ClientCardDetail( clientId, isRestore )
 
         // #3. Relationship
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
-        var relationshipListObj = new ClientRelationshipList( clientJson, relationshipTabTag );
+        var relationshipListObj = new ClientRelationshipList( clientId, relationshipTabTag );
         sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() 
         {
             relationshipListObj.render();
