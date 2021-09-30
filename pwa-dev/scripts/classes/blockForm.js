@@ -2030,7 +2030,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var dataValue = divFieldBlockTag.find(".dataValue").val();
 
-		if( dataValue != "" && fieldDef )
+		if( dataValue !== "" && dataValue !== null && dataValue !== undefined && fieldDef )
 		{	
 			var controlType = fieldDef.controlType;
 

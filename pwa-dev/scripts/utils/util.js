@@ -34,17 +34,17 @@ Util.isTypeObject = function( obj )
 {
 	// Array is also 'object' type, thus, check to make sure this is not array.
 	if ( Util.isTypeArray( obj ) ) return false;
-	else return ( obj && typeof( obj ) === 'object' );
+	else return ( obj !== undefined && typeof( obj ) === 'object' );
 };
 
 Util.isTypeArray = function( obj )
 {
-	return ( obj && Array.isArray( obj ) );
+	return ( obj !== undefined && Array.isArray( obj ) );
 };
 
 Util.isTypeString = function( obj )
 {
-	return ( obj && typeof( obj ) === 'string' );
+	return ( obj !== undefined && typeof( obj ) === 'string' );
 };
 // ------------------------------------
 
